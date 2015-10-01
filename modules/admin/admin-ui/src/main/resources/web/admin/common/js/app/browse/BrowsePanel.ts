@@ -14,6 +14,8 @@ module api.app.browse {
         browseItemPanel:BrowseItemPanel<M>;
 
         filterPanel?:api.app.browse.filter.BrowseFilterPanel;
+
+        hasDetailsPanel?: boolean;
     }
 
     export class BrowsePanel<M extends api.Equitable> extends api.ui.panel.Panel implements api.ui.ActionContainer {
@@ -55,7 +57,6 @@ module api.app.browse {
             this.filterPanel = params.filterPanel;
 
             this.gridAndToolbarContainer = new api.ui.panel.Panel();
-            this.gridAndToolbarContainer.appendChild(this.browseToolbar);
 
             var gridPanel = new api.ui.panel.Panel();
             gridPanel.appendChild(this.treeGrid);
@@ -64,6 +65,11 @@ module api.app.browse {
 
             this.gridAndDetailSplitPanel = new api.ui.panel.SplitPanelBuilder(this.gridAndToolbarContainer, this.browseItemPanel)
                 .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD).build();
+            this.gridAndDetailSplitPanel.prependChild(this.browseToolbar);
+            this.gridAndDetailSplitPanel.setFirstPanelSize(38, api.ui.panel.SplitPanelUnit.PERCENT)
+
+            this.browseToolbar.addClass("browse-toolbar");
+            this.gridAndDetailSplitPanel.addClass("grid-and-detail-split-panel");
 
             if (this.filterPanel) {
                 this.setupFilterPanel();
@@ -87,7 +93,12 @@ module api.app.browse {
             });
 
             this.onRendered((event) => {
-                this.appendChild(this.filterAndGridAndDetailSplitPanel);
+                if (params.hasDetailsPanel) {
+                    this.initSplitPanelWithDetailsForLargeScreen();
+                }
+                else {
+                    this.appendChild(this.filterAndGridAndDetailSplitPanel);
+                }
             });
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
@@ -99,6 +110,13 @@ module api.app.browse {
 
                 this.togglePreviewPanelDependingOnScreenSize(item);
             });
+        }
+
+        protected initSplitPanelWithDetailsForLargeScreen() {
+        }
+
+        getFilterAndGridAndDetailSplitPanel(): api.ui.panel.SplitPanel {
+            return this.filterAndGridAndDetailSplitPanel;
         }
 
         getTreeGrid(): api.ui.treegrid.TreeGrid<Object> {

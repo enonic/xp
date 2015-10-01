@@ -98,7 +98,7 @@ public class SearchServiceImpl
 
         if ( result.isEmpty() )
         {
-            return NodeVersionQueryResult.create().build();
+            return NodeVersionQueryResult.empty();
         }
 
         return NodeVersionQueryResultFactory.create( query, result );

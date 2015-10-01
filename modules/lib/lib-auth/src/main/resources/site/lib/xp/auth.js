@@ -12,7 +12,10 @@ exports.login = function (params) {
 
     bean.user = required(params, 'user');
     bean.password = required(params, 'password');
-    bean.userStore = required(params, 'userStore');
+
+    if(params['userStore']) {
+        bean.userStore = [].concat(params['userStore']);
+    }
 
     return __.toNativeObject(bean.login());
 };

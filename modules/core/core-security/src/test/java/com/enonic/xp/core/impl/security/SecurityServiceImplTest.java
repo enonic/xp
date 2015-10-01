@@ -106,7 +106,6 @@ public class SecurityServiceImplTest
         this.versionService.setStorageDao( storageDao );
 
         this.nodeDao = new NodeDaoImpl();
-        this.nodeDao.setBranchService( this.branchService );
 
         this.indexService = new ElasticsearchIndexServiceInternal();
         this.indexService.setClient( client );

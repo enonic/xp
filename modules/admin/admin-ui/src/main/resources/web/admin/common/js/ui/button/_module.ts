@@ -2,3 +2,4 @@
 ///<reference path='ActionButton.ts' />
 ///<reference path='CycleButton.ts' />
 ///<reference path='CloseButton.ts' />
+///<reference path='TogglerButton.ts' />

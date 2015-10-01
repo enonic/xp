@@ -147,14 +147,14 @@ module api.form {
             return result;
         }
 
-        public validate(silent?: boolean): ValidationRecording {
+        public validate(silent?: boolean, triggerNotifyAnyWay: boolean = false): ValidationRecording {
 
             var recording: ValidationRecording = new ValidationRecording();
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 recording.flatten(formItemView.validate(silent));
             });
 
-            if (!silent && recording.validityChanged(this.previousValidationRecording)) {
+            if (!silent && (recording.validityChanged(this.previousValidationRecording) || triggerNotifyAnyWay)) {
                 this.notifyValidityChanged(new FormValidityChangedEvent(recording));
             }
 

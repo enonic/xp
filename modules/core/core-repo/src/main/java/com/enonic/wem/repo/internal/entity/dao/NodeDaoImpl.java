@@ -6,28 +6,20 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteStreams;
 
-import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.blob.Blob;
 import com.enonic.wem.repo.internal.blob.BlobKey;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
-import com.enonic.wem.repo.internal.branch.BranchService;
-import com.enonic.wem.repo.internal.branch.storage.BranchNodeVersion;
 import com.enonic.wem.repo.internal.entity.NodeConstants;
 import com.enonic.wem.repo.internal.entity.json.NodeJsonSerializer;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.RootNode;
 
 @Component
 public class NodeDaoImpl
@@ -36,8 +28,6 @@ public class NodeDaoImpl
     private final NodeJsonSerializer nodeJsonSerializer = NodeJsonSerializer.create( false );
 
     private final BlobStore nodeBlobStore = new FileBlobStore( NodeConstants.NODE_BLOB_STORE_DIR );
-
-    private BranchService branchService;
 
     @Override
     public NodeVersionId store( final Node node )
@@ -113,44 +103,11 @@ public class NodeDaoImpl
 
             final Node node = this.nodeJsonSerializer.toNode( new String( bytes, StandardCharsets.UTF_8 ) );
 
-            return populateWithMetaData( node );
+            return node;
         }
         catch ( IOException e )
         {
             throw new RuntimeException( "Failed to load blob with key: " + blob.getKey(), e );
         }
-    }
-
-    private Node populateWithMetaData( final Node node )
-    {
-        if ( node instanceof RootNode )
-        {
-            return node;
-        }
-
-        final BranchNodeVersion branchNodeVersion = this.branchService.get( node.id(), InternalContext.from( ContextAccessor.current() ) );
-
-        if ( branchNodeVersion == null )
-        {
-            throw new NodeNotFoundException(
-                "Cannot find node with id '" + node.id() + "' in branch: '" + ContextAccessor.current().getBranch().getName() + "'" );
-        }
-
-        final NodePath nodePath = branchNodeVersion.getNodePath();
-        final NodePath parentPath = nodePath.getParentPath();
-        final NodeName nodeName = NodeName.from( nodePath.getLastElement().toString() );
-
-        return Node.create( node ).
-            parentPath( parentPath ).
-            name( nodeName ).
-            nodeState( branchNodeVersion.getNodeState() ).
-            timestamp( branchNodeVersion.getTimestamp() ).
-            build();
-    }
-
-    @Reference
-    public void setBranchService( final BranchService branchService )
-    {
-        this.branchService = branchService;
     }
 }

@@ -9,6 +9,8 @@ import com.enonic.wem.repo.internal.search.result.SearchHit;
 import com.enonic.wem.repo.internal.search.result.SearchResult;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
 import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionQueryResult;
@@ -50,9 +52,15 @@ public class NodeVersionQueryResultFactory
 
         final String versionId = getStringValue( hit, VersionIndexPath.VERSION_ID, true );
 
+        final String nodePath = getStringValue( hit, VersionIndexPath.NODE_PATH, true );
+
+        final String nodeId = getStringValue( hit, VersionIndexPath.NODE_ID, true );
+
         return NodeVersion.create().
             nodeVersionId( NodeVersionId.from( versionId ) ).
             timestamp( Strings.isNullOrEmpty( timestamp ) ? null : Instant.parse( timestamp ) ).
+            nodePath( NodePath.create( nodePath ).build() ).
+            nodeId( NodeId.from( nodeId ) ).
             build();
     }
 

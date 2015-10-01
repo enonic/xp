@@ -8,6 +8,11 @@ module api.content.form.inputtype.relationship {
     import GetRelationshipTypeByNameRequest = api.schema.relationshiptype.GetRelationshipTypeByNameRequest;
     import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
 
+    export interface ContentSelectorConfig {
+        relationshipType: string;
+        allowedContentTypes: string[];
+    }
+
     export class ContentSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<api.content.ContentId> {
 
         private config: api.content.form.inputtype.ContentInputTypeViewContext;

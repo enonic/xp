@@ -22,6 +22,7 @@ import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
 
@@ -49,8 +50,6 @@ final class DeleteContentCommand
             {
                 publishEvents( deletedContent );
             }
-
-            this.nodeService.refresh();
 
             return deletedContents;
         }
@@ -89,7 +88,7 @@ final class DeleteContentCommand
 
             deletedNodes.addAll( setNodeStateResult.getUpdatedNodes() );
 
-            this.nodeService.refresh();
+            this.nodeService.refresh( RefreshMode.SEARCH );
 
             final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( FindNodesByParentParams.create().
                 parentPath( nodeToDelete.path() ).

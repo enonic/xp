@@ -13,7 +13,9 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
@@ -26,7 +28,7 @@ public final class LoginHandler
 
     private String password;
 
-    private UserStoreKey userStore;
+    private String[] userStore;
 
     private Supplier<SecurityService> securityService;
 
@@ -40,33 +42,15 @@ public final class LoginHandler
         this.password = password;
     }
 
-    public void setUserStore( final String userStore )
+    public void setUserStore( final String[] userStore )
     {
-        this.userStore = UserStoreKey.from( userStore );
+        this.userStore = userStore;
     }
 
     public LoginResultMapper login()
     {
-        AuthenticationInfo authInfo = null;
+        AuthenticationInfo authInfo = noUserStoreSpecified() ? attemptLoginWithAllExistingUserStores() : attemptLogin();
 
-        if ( isValidEmail( this.user ) )
-        {
-            final EmailPasswordAuthToken emailAuthToken = new EmailPasswordAuthToken();
-            emailAuthToken.setEmail( this.user );
-            emailAuthToken.setPassword( this.password );
-            emailAuthToken.setUserStore( this.userStore );
-
-            authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( emailAuthToken ) );
-        }
-        if ( authInfo == null || !authInfo.isAuthenticated() )
-        {
-            final UsernamePasswordAuthToken usernameAuthToken = new UsernamePasswordAuthToken();
-            usernameAuthToken.setUsername( this.user );
-            usernameAuthToken.setPassword( this.password );
-            usernameAuthToken.setUserStore( this.userStore );
-
-            authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( usernameAuthToken ) );
-        }
         if ( authInfo.isAuthenticated() )
         {
             final Session session = ContextAccessor.current().getLocalScope().getSession();
@@ -81,6 +65,67 @@ public final class LoginHandler
         {
             return new LoginResultMapper( authInfo, "Access Denied" );
         }
+    }
+
+    private boolean noUserStoreSpecified()
+    {
+        return this.userStore == null || this.userStore.length == 0;
+    }
+
+    private AuthenticationInfo attemptLoginWithAllExistingUserStores() {
+        final UserStores userStores = runAsAuthenticated( securityService.get()::getUserStores );
+
+        for ( UserStore userStore : userStores )
+        {
+            final AuthenticationInfo authInfo = authenticate( userStore.getKey() );
+            if ( ( authInfo != null ) && ( authInfo.isAuthenticated() ) )
+            {
+                return authInfo;
+            }
+        }
+
+        return AuthenticationInfo.unAuthenticated();
+    }
+
+    private AuthenticationInfo attemptLogin() {
+
+        for ( String uStore : userStore )
+        {
+            final AuthenticationInfo authInfo = authenticate( UserStoreKey.from( uStore ) );
+            if ( ( authInfo != null ) && ( authInfo.isAuthenticated() ) )
+            {
+                return authInfo;
+            }
+        }
+
+        return AuthenticationInfo.unAuthenticated();
+    }
+
+    private AuthenticationInfo authenticate( UserStoreKey userStore )
+    {
+        AuthenticationInfo authInfo = null;
+
+        if ( isValidEmail( this.user ) )
+        {
+            final EmailPasswordAuthToken emailAuthToken = new EmailPasswordAuthToken();
+            emailAuthToken.setEmail( this.user );
+            emailAuthToken.setPassword( this.password );
+            emailAuthToken.setUserStore( userStore );
+
+            authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( emailAuthToken ) );
+        }
+
+        if ( authInfo == null || !authInfo.isAuthenticated() )
+        {
+            final UsernamePasswordAuthToken usernameAuthToken = new UsernamePasswordAuthToken();
+            usernameAuthToken.setUsername( this.user );
+            usernameAuthToken.setPassword( this.password );
+            usernameAuthToken.setUserStore( userStore );
+
+            authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( usernameAuthToken ) );
+        }
+
+        return authInfo;
     }
 
     private <T> T runAsAuthenticated( Callable<T> runnable )

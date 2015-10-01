@@ -106,8 +106,6 @@ final class UpdateContentCommand
 
         eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.UPDATE, editedContent.getPath() ) );
 
-        nodeService.refresh();
-
         return translator.fromNode( editedNode, true );
     }
 

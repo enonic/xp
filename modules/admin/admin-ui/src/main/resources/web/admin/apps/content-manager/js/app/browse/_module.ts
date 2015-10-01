@@ -27,3 +27,4 @@
 ///<reference path='SaveSortedContentEvent.ts' />
 ///<reference path='ContentGridDragHandler.ts' />
 ///<reference path='ContentPublishPromptEvent.ts' />
+///<reference path='MobileContentBrowseToolbar.ts' />

@@ -23,6 +23,8 @@ module api.ui.grid {
 
         private rowManagerPlugin;
 
+        private loadMask: api.ui.mask.LoadMask;
+
         constructor(dataView: DataView<T>, columns: GridColumn<T>[], options?: GridOptions<T>) {
             super("grid");
 
@@ -70,6 +72,32 @@ module api.ui.grid {
             this.dataView.setItems([], options.getDataIdProperty());
         }
 
+        mask() {
+            if (this.isVisible()) {
+                if (this.loadMask) {
+                    this.loadMask.show();
+                }
+                else { //lazy mask init
+                    if (this.getParentElement()) {
+                        this.createLoadMask();
+                        this.loadMask.show();
+                    }
+                    else {
+                        this.onAdded(() => {
+                            this.createLoadMask();
+                        });
+                    }
+                }
+            }
+        }
+
+        unmask() {
+            if (this.loadMask) {
+                this.loadMask.hide();
+            }
+
+        }
+
         private autoRenderGridOnDataChanges(dataView: DataView<T>) {
 
             dataView.onRowCountChanged((eventData: Slick.EventData, args) => {
@@ -81,6 +109,11 @@ module api.ui.grid {
                 this.invalidateRows(args.rows);
                 this.render();
             });
+        }
+
+        private createLoadMask() {
+            this.loadMask = new api.ui.mask.LoadMask(this);
+            this.getParentElement().appendChild(this.loadMask);
         }
 
         setSelectionModel(selectionModel: Slick.SelectionModel<T, any>) {
@@ -422,6 +455,10 @@ module api.ui.grid {
 
         subscribeOnDrag(callback: (e, args) => void) {
             this.slickGrid.onDrag.subscribe(callback);
+        }
+
+        subscribeOnDragInit(callback: (e, args) => void) {
+            this.slickGrid.onDragInit.subscribe(callback);
         }
 
         subscribeOnDragEnd(callback: (e, args) => void) {

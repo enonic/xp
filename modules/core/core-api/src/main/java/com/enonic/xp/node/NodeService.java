@@ -51,7 +51,7 @@ public interface NodeService
 
     ReorderChildNodesResult reorderChildren( ReorderChildNodesParams params );
 
-    Node getByVersionId( NodeVersionId nodeVersionid );
+    Node getByNodeVersion( NodeVersion nodeVersion );
 
     NodeIds resolveSyncWork( SyncWorkResolverParams params );
 
@@ -63,7 +63,7 @@ public interface NodeService
 
     SnapshotResults listSnapshots();
 
-    void refresh();
+    void refresh( RefreshMode refreshMode );
 
     void deleteSnapshotRespository();
 

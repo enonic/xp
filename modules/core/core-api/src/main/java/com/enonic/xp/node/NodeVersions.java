@@ -21,9 +21,20 @@ public class NodeVersions
         this.nodeVersions = ImmutableList.copyOf( builder.nodeVersions );
     }
 
+    private NodeVersions( final NodeId nodeId, final ImmutableList<NodeVersion> nodeVersions )
+    {
+        this.nodeId = nodeId;
+        this.nodeVersions = nodeVersions;
+    }
+
     public NodeId getNodeId()
     {
         return nodeId;
+    }
+
+    public static NodeVersions empty()
+    {
+        return new NodeVersions( null, ImmutableList.of() );
     }
 
     public static Builder create( final NodeId nodeId )

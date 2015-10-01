@@ -22,3 +22,4 @@
 ///<reference path='PageComponentsItemViewer.ts' />
 ///<reference path='PageComponentsTreeGrid.ts' />
 ///<reference path='PageComponentsView.ts' />
+///<reference path='PageComponentsGridDragHandler.ts' />

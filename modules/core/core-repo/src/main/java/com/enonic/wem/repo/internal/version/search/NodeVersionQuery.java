@@ -11,7 +11,7 @@ public class NodeVersionQuery
     private NodeVersionQuery( final Builder builder )
     {
         super( builder );
-        nodeId = builder.nodeId;
+        this.nodeId = builder.nodeId;
     }
 
     public NodeId getNodeId()
@@ -27,7 +27,6 @@ public class NodeVersionQuery
     public static final class Builder
         extends AbstractQuery.Builder<Builder>
     {
-
         private NodeId nodeId;
 
         private Builder()

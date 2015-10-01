@@ -463,6 +463,19 @@ module api.dom {
         }
 
         private registerChildElement(child: Element, index?: number) {
+            // first unregister element from parent if it has one
+            // except when it equals to the one we're registering it in
+            // that happens when parentElement has been set on Element in constructor, which is evil >:)
+            // no need to do it with dom nodes because html takes care of this
+            if (child.parentElement) {
+                if (child.parentElement != this) {
+                    child.parentElement.unregisterChildElement(child);
+                } else if (this.children.indexOf(child) > -1) {
+                    // is already registered
+                    return;
+                }
+            }
+
             var parentNode = child.getHTMLElement().parentNode;
             // check for parentNode because if parent is not a HtmlElement but a Node ( i.e SVG )
             // then parentElement will be null but parentNode will not

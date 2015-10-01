@@ -11,6 +11,7 @@ import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.RefreshMode;
 
 public class GetActiveContentVersionsCommand
     extends AbstractContentCommand
@@ -33,6 +34,8 @@ public class GetActiveContentVersionsCommand
 
     public GetActiveContentVersionsResult execute()
     {
+        this.nodeService.refresh( RefreshMode.STORAGE );
+
         final NodeId nodeId = NodeId.from( contentId.toString() );
 
         final GetActiveNodeVersionsResult activeNodeVersions = this.nodeService.getActiveVersions( GetActiveNodeVersionsParams.create().

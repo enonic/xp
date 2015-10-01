@@ -41,6 +41,7 @@ public class FindNodesByIdsCommand
                     addValues( this.ids.getAsStrings() ).
                     build() ).
                 build() ).
+            size( ids.getSize() ).
             addQueryFilter( AclFilterBuilderFactory.create( context.getAuthInfo().getPrincipals() ) ).
             setOrderExpressions( this.orderExpressions ).
             size( SearchService.GET_ALL_SIZE_FLAG ).

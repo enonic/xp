@@ -189,7 +189,8 @@ module app.wizard.page {
 
             this.contextWindowController = new app.wizard.page.contextwindow.ContextWindowController(
                 this.contextWindow,
-                this.contentWizardPanel.getContextWindowToggler()
+                this.contentWizardPanel.getContextWindowToggler(),
+                this.contentWizardPanel.getComponentsViewToggler()
             );
 
             this.liveEditListen();

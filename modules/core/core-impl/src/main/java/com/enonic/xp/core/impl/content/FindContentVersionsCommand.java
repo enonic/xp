@@ -6,10 +6,13 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.RefreshMode;
 
 public class FindContentVersionsCommand
     extends AbstractContentCommand
 {
+    private final static int DEFAULT_SIZE = 10;
+
     private final ContentId contentId;
 
     private final int from;
@@ -36,6 +39,8 @@ public class FindContentVersionsCommand
 
     private FindContentVersionsResult doGetContentVersions()
     {
+        this.nodeService.refresh( RefreshMode.STORAGE );
+
         final NodeId nodeId = NodeId.from( this.contentId );
 
         final NodeVersionQueryResult nodeVersionQueryResult = nodeService.findVersions( GetNodeVersionsParams.create().
@@ -44,11 +49,11 @@ public class FindContentVersionsCommand
             size( this.size ).
             build() );
 
-        final FindContentVersionsResult.Builder findContentVersionsResultBuilder = FindContentVersionsResult.create();
-        findContentVersionsResultBuilder.hits( nodeVersionQueryResult.getHits() );
-        findContentVersionsResultBuilder.totalHits( nodeVersionQueryResult.getTotalHits() );
-        findContentVersionsResultBuilder.from( nodeVersionQueryResult.getFrom() );
-        findContentVersionsResultBuilder.size( nodeVersionQueryResult.getSize() );
+        final FindContentVersionsResult.Builder findContentVersionsResultBuilder = FindContentVersionsResult.create().
+            hits( nodeVersionQueryResult.getHits() ).
+            totalHits( nodeVersionQueryResult.getTotalHits() ).
+            from( nodeVersionQueryResult.getFrom() ).
+            size( nodeVersionQueryResult.getSize() );
 
         final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.translator, this.nodeService );
 
@@ -66,9 +71,9 @@ public class FindContentVersionsCommand
     {
         private ContentId contentId;
 
-        private int from;
+        private int from = 0;
 
-        private int size;
+        private int size = DEFAULT_SIZE;
 
         private Builder()
         {

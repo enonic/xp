@@ -11,8 +11,10 @@ import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeBinaryReferenceException;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.util.BinaryReference;
 
@@ -28,6 +30,48 @@ public class CreateNodeCommandTest
         super.setUp();
         this.createDefaultRootNode();
     }
+
+    @Test(expected = NodeAlreadyExistAtPathException.class)
+    public void path_is_case_insensitive()
+        throws Exception
+    {
+        createNode( CreateNodeParams.create().
+            name( "myNode" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            name( "MYNODE" ).
+            parent( NodePath.ROOT ).
+            build() );
+    }
+
+    @Test(expected = NodeNotFoundException.class)
+    public void parent_must_exist()
+        throws Exception
+    {
+        createNode( CreateNodeParams.create().
+            name( "myNode" ).
+            parent( NodePath.create( "/fisk" ).build() ).
+            build() );
+    }
+
+    @Test
+    public void timestamp_set()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            name( "myNode" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        assertNotNull( node.getTimestamp() );
+
+        final Node storedNode = getNodeById( node.id() );
+
+        assertNotNull( storedNode.getTimestamp() );
+    }
+
 
     @Test
     public void populate_manual_order_value_and_insert_first()
@@ -175,22 +219,6 @@ public class CreateNodeCommandTest
     }
 
     @Test
-    public void timestamp_set()
-        throws Exception
-    {
-        final Node node = createNode( CreateNodeParams.create().
-            name( "myNode" ).
-            parent( NodePath.ROOT ).
-            build() );
-
-        assertNotNull( node.getTimestamp() );
-
-        final Node storedNode = getNodeById( node.id() );
-
-        assertNotNull( storedNode.getTimestamp() );
-    }
-
-    @Test
     public void create_node_with_same_path_in_two_branches_then_delete()
         throws Exception
     {
@@ -209,8 +237,6 @@ public class CreateNodeCommandTest
         CTX_OTHER.callWith( () -> doDeleteNode( defaultNode.id() ) );
 
         doDeleteNode( defaultNode.id() );
-
-
     }
 
 }

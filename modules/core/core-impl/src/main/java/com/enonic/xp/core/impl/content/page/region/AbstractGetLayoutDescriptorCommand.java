@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.content.page.region;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -10,6 +13,7 @@ import com.enonic.xp.region.LayoutDescriptors;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
+import com.enonic.xp.resource.ResourceNotFoundException;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.xml.XmlException;
@@ -17,6 +21,8 @@ import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 
 abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDescriptorCommand>
 {
+    private final static Logger LOG = LoggerFactory.getLogger( AbstractGetLayoutDescriptorCommand.class );
+
     private final static String PATH = "/site/layouts";
 
     protected ApplicationService applicationService;
@@ -29,7 +35,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
     {
         final ResourceKey resourceKey = LayoutDescriptor.toResourceKey( key );
         final Resource resource = resourceService.getResource( resourceKey );
-
+        resource.requireExists();
         final String descriptorXml = resource.readString();
         final LayoutDescriptor.Builder builder = LayoutDescriptor.create();
 
@@ -83,10 +89,15 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
         for ( final ResourceKey resourceKey : resourceKeys )
         {
             final DescriptorKey key = DescriptorKey.from( application.getKey(), resourceKey.getName() );
-            final LayoutDescriptor layoutDescriptor = getDescriptor( key );
-            if ( layoutDescriptor != null )
+            try
             {
+                final LayoutDescriptor layoutDescriptor = getDescriptor( key );
                 layoutDescriptors.add( layoutDescriptor );
+            }
+            catch ( ResourceNotFoundException e )
+            {
+                // ignore layout descriptor if folder found but not xml
+                LOG.warn( "Layout descriptor [" + key.toString() + "] not found" );
             }
         }
     }

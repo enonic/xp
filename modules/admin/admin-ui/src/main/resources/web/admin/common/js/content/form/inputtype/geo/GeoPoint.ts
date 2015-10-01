@@ -34,9 +34,7 @@ module api.content.form.inputtype.geo {
             }
 
             geoPoint.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                var geoLocation = event.getNewValue();
-                var value = ValueTypes.GEO_POINT.newValue(geoLocation);
-                property.setValue(value);
+                this.onValueChanged(property, event.getNewValue(), ValueTypes.GEO_POINT);
             });
 
             return geoPoint;

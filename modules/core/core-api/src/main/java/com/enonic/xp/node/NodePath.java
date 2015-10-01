@@ -293,13 +293,13 @@ public final class NodePath
 
             final Element element = (Element) o;
 
-            return Objects.equals( this.name, element.name );
+            return Objects.equals( this.name.toLowerCase(), element.name.toLowerCase() );
         }
 
         @Override
         public int hashCode()
         {
-            return Objects.hash( this.name );
+            return Objects.hash( this.name.toLowerCase() );
         }
 
         @Override

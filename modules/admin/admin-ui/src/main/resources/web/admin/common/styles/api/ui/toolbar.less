@@ -8,15 +8,29 @@
   border-bottom: 1px solid @admin-bg-light-gray;
 
   .button {
-    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent);
+    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
+
+    &:focus:not(:disabled) {
+      box-shadow: none;
+      border: 1px solid transparent;
+    }
 
     display: inline-block;
     padding: 7px 14px;
 
-    &.icon-search {
-      font-size: 16px;
-      padding: 10px 14px 8px 14px;
+    &.pull-right {
+      float: right;
     }
+
+    &[class*="icon-"] {
+      font-size: 16px;
+      line-height: 24px;
+
+      span {
+        display: none;
+      }
+    }
+
   }
 
   .toggle-slide {
@@ -86,6 +100,15 @@
   &.content-browse-toolbar, &.user-browse-toolbar {
     button {
       vertical-align: top;
+    }
+  }
+
+  @media screen and (min-width: 540px) and (max-width: 1920px) {
+    &.content-browse-toolbar {
+      button {
+        z-index: 4;
+        position: relative;
+      }
     }
   }
 }
