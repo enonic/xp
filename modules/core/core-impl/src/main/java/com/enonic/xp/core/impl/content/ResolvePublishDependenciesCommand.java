@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentId;
@@ -33,9 +32,7 @@ public class ResolvePublishDependenciesCommand
 
     ResolvePublishDependenciesResult execute()
     {
-        final Stopwatch timer = Stopwatch.createStarted();
         resolveDependencies();
-        System.out.println( "##### ResolvePublishDependencies: " + timer.stop().toString() );
 
         return resultBuilder.build();
     }

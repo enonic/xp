@@ -67,8 +67,6 @@ public class ContentServiceImplTest_push
             allowPublishOutsideSelection( false ).
             build();
 
-        refresh();
-
         final PushContentsResult push = this.contentService.push( pushParams );
         assertEquals( 1, push.getPushedContent().getSize() );
 

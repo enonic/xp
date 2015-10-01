@@ -364,7 +364,7 @@ class NodeServiceMock
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
-    
+
     @Override
     public DeleteSnapshotsResult deleteSnapshot( final DeleteSnapshotParams param )
     {

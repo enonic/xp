@@ -25,6 +25,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.PushNodesResult;
+import com.enonic.xp.node.RefreshMode;
 
 import static com.enonic.xp.core.impl.content.ContentNodeHelper.translateNodePathToContentPath;
 import static java.util.stream.Collectors.toList;
@@ -57,6 +58,8 @@ public class PushContentCommand
 
     PushContentsResult execute()
     {
+        this.nodeService.refresh( RefreshMode.ALL );
+
         if ( resolveDependencies )
         {
             pushAndDelete( getWithDependents() );
@@ -66,7 +69,7 @@ public class PushContentCommand
             pushAndDelete( this.contentIds );
         }
 
-        this.nodeService.refresh();
+        this.nodeService.refresh( RefreshMode.ALL );
 
         return resultBuilder.build();
     }
