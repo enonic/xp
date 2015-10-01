@@ -1,4 +1,4 @@
-package com.enonic.xp.web.jaxrs.impl.exception;
+package com.enonic.xp.jaxrs.impl.exception;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;

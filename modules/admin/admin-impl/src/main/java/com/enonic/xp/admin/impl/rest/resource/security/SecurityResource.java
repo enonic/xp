@@ -60,8 +60,8 @@ import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
-import com.enonic.xp.web.jaxrs.JaxRsExceptions;
+import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.jaxrs.JaxRsExceptions;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringUtils.isBlank;

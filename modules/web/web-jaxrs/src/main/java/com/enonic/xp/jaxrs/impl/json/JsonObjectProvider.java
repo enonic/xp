@@ -1,4 +1,4 @@
-package com.enonic.xp.web.jaxrs.impl.json;
+package com.enonic.xp.jaxrs.impl.json;
 
 import javax.ws.rs.ext.Provider;
 

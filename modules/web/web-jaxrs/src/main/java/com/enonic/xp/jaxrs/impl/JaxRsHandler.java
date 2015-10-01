@@ -1,4 +1,4 @@
-package com.enonic.xp.web.jaxrs.impl;
+package com.enonic.xp.jaxrs.impl;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +14,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 
 @Component(immediate = true, service = WebHandler.class)
 public final class JaxRsHandler

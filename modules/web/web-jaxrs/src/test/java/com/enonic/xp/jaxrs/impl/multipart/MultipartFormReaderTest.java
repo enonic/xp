@@ -1,4 +1,4 @@
-package com.enonic.xp.web.jaxrs.impl.multipart;
+package com.enonic.xp.jaxrs.impl.multipart;
 
 import java.io.InputStream;
 import java.lang.annotation.Annotation;

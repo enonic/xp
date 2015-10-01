@@ -1,4 +1,4 @@
-package com.enonic.xp.web.jaxrs.impl.image;
+package com.enonic.xp.jaxrs.impl.image;
 
 import java.awt.image.RenderedImage;
 import java.io.IOException;

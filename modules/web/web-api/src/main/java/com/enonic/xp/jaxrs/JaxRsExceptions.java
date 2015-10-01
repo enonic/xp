@@ -1,4 +1,4 @@
-package com.enonic.xp.web.jaxrs;
+package com.enonic.xp.jaxrs;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;

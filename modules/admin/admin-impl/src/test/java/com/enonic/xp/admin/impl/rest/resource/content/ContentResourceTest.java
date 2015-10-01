@@ -68,7 +68,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.web.jaxrs.impl.MockRestResponse;
+import com.enonic.xp.jaxrs.impl.MockRestResponse;
 
 import static com.enonic.xp.security.acl.Permission.READ;
 

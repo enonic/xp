@@ -1,4 +1,4 @@
-package com.enonic.xp.web.jaxrs.impl;
+package com.enonic.xp.jaxrs.impl;
 
 import java.util.Set;
 

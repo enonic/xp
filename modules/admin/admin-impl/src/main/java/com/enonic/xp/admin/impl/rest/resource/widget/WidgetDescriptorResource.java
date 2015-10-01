@@ -14,7 +14,7 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.widget.json.WidgetDescriptorsJson;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "widget/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
