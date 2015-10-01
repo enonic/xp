@@ -7,6 +7,7 @@ module app.browse {
     import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
+    import CompareStatus = api.content.CompareStatus;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
@@ -398,6 +399,7 @@ module app.browse {
                                     if (updateResult[i].getId() === el.getId()) {
                                         updateResult[i].updateNodeData(el);
                                         this.updateStatisticsPreview(el); // update preview item
+                                        this.updateDetailPanel(el.getContentId(), el.getCompareStatus());
                                         results.push(updateResult[i]);
                                         break;
                                     }
@@ -443,6 +445,7 @@ module app.browse {
                 merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
                     if (node.getData() && node.getData().getContentSummary()) {
                         new api.content.ContentDeletedEvent(node.getData().getContentSummary().getContentId()).fire();
+                        this.updateDetailPanel(node.getData().getContentId(), node.getData().getCompareStatus());
                     }
                 });
 
@@ -483,6 +486,7 @@ module app.browse {
                             for (var i = 0; i < pendingResult.length; i++) {
                                 if (pendingResult[i].getId() === el.getId()) {
                                     pendingResult[i].updateNodeData(el);
+                                    this.updateDetailPanel(el.getContentId(), el.getCompareStatus());
                                     break;
                                 }
                             }
@@ -508,6 +512,7 @@ module app.browse {
                                 if (publishResult[i].getId() === el.getId()) {
                                     new api.content.ContentPublishedEvent(new api.content.ContentId(el.getId())).fire();
                                     publishResult[i].updateNodeData(el);
+                                    this.updateDetailPanel(el.getContentId(), el.getCompareStatus());
                                     break;
                                 }
                             }
@@ -557,6 +562,13 @@ module app.browse {
                             setRenderable(renderable);
                         this.getBrowseItemPanel().setStatisticsItem(item);
                     });
+            }
+        }
+
+
+        private updateDetailPanel(contentId: ContentId, status: CompareStatus) {
+            if (contentId && contentId.equals(this.detailsPanel.getItem().getModel().getContentId())) {
+                this.detailsPanel.setContentStatus(status);
             }
         }
     }

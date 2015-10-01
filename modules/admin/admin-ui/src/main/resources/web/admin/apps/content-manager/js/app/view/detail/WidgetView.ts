@@ -8,42 +8,51 @@ module app.view.detail {
     export class WidgetView extends api.dom.DivEl {
 
         private widgetToggleButton: WidgetViewToggleButton;
+
         private widgetName: string;
-        private widgetContents: api.dom.DivEl = new api.dom.DivEl("widget-content");
+
         private animationTimer;
+
+        private widgetItemViews: WidgetItemView[];
+
         private detailsPanel: DetailsPanel;
+
         private normalHeightOfContent: number;
 
-        constructor(name: string, detailsPanel: DetailsPanel, useToggleButton: boolean = true) {
-            super("widget");
-            this.detailsPanel = detailsPanel;
 
-            this.widgetName = name;
-            if (useToggleButton) {
+        constructor(builder: WidgetViewBuilder) {
+            super("widget-view");
+
+            this.detailsPanel = builder.detailsPanel;
+            this.widgetName = builder.name;
+            this.widgetItemViews = builder.widgetItemViews;
+
+            if (builder.useToggleButton) {
                 this.initWidgetToggleButton();
             }
 
-            this.slideOut();
-            this.appendChild(this.widgetContents);
+            this.layout();
         }
 
-        static fromWidget(widget: Widget, detailsPanel: DetailsPanel, useToggleButton: boolean = true): WidgetView {
+        public layout() {
 
-            var item: ViewItem<ContentSummary> = detailsPanel.getItem();
+            this.slideOut();
 
-            var widgetView = new WidgetView(widget.getDisplayName(), detailsPanel, useToggleButton),
+            var item: ViewItem<ContentSummary> = this.detailsPanel.getItem(),
                 widgetViewContent: api.dom.Element = item ? new api.dom.IFrameEl() : new api.dom.DivEl();
 
             if (item) {
-                (<api.dom.IFrameEl>widgetViewContent).setSrc(widgetView.getWidgetSrc(item));
-            }
-            else {
+                (<api.dom.IFrameEl>widgetViewContent).setSrc(this.getWidgetSrc(item));
+            } else {
                 widgetViewContent.setHtml("Some test contents");
             }
 
-            widgetView.setWidgetContents(widgetViewContent);
-
-            return widgetView;
+            if (this.widgetItemViews) {
+                this.widgetItemViews.forEach((itemView: WidgetItemView) => {
+                    this.appendChild(itemView);
+                    itemView.layout();
+                })
+            }
         }
 
         private getWidgetSrc(item: ViewItem<ContentSummary>): string {
@@ -60,34 +69,34 @@ module app.view.detail {
         }
 
         updateNormalHeightSilently() {
-            this.widgetContents.setVisible(false);
-            var currentHeight = this.widgetContents.getEl().getHeight();
-            this.widgetContents.getEl().setHeight("auto");
-            this.normalHeightOfContent = this.widgetContents.getEl().getHeightWithBorder();
-            this.widgetContents.getEl().setHeightPx(currentHeight);
-            this.widgetContents.setVisible(true);
+            this.setVisible(false);
+            var currentHeight = this.getEl().getHeight();
+            this.getEl().setHeight("auto");
+            this.normalHeightOfContent = this.getEl().getHeightWithBorder();
+            this.getEl().setHeightPx(currentHeight);
+            this.setVisible(true);
         }
 
         updateNormalHeight() {
-            this.widgetContents.getEl().setHeight("auto");
-            this.normalHeightOfContent = this.widgetContents.getEl().getHeightWithBorder();
-            this.widgetContents.getEl().setHeightPx(this.normalHeightOfContent);
+            this.getEl().setHeight("auto");
+            this.normalHeightOfContent = this.getEl().getHeightWithBorder();
+            this.getEl().setHeightPx(this.normalHeightOfContent);
         }
 
         getWidgetName(): string {
             return this.widgetName;
         }
 
-        setWidgetContents(value: api.dom.Element) {
-            this.widgetContents.appendChild(value);
-        }
+        /*setWidgetContents(value: api.dom.Element) {
+         this.appendChild(value);
+         }*/
 
         slideOut() {
-            this.widgetContents.getEl().setHeightPx(0);
+            this.getEl().setHeightPx(0);
         }
 
         slideIn() {
-            this.widgetContents.getEl().setHeightPx(this.normalHeightOfContent);
+            this.getEl().setHeightPx(this.normalHeightOfContent);
         }
 
         setActive() {
@@ -104,37 +113,49 @@ module app.view.detail {
             this.slideOut();
             this.removeClass("expanded");
         }
+
+        public static create(): WidgetViewBuilder {
+            return new WidgetViewBuilder();
+        }
     }
 
-    export class WidgetViewToggleButton extends api.dom.DivEl {
+    export class WidgetViewBuilder {
 
-        private labelEl: api.dom.SpanEl;
-        private widget: WidgetView;
+        name: string;
 
-        constructor(widget: WidgetView) {
-            super("widget-toggle-button");
+        detailsPanel: DetailsPanel;
 
-            this.widget = widget;
+        useToggleButton: boolean = true;
 
-            this.labelEl = new api.dom.SpanEl('label');
-            this.appendChild(this.labelEl);
+        widgetItemViews: WidgetItemView[] = [];
 
-            this.onClicked((event) => {
-                this.widget.toggleClass("expanded");
-
-                if (this.widget.hasClass("expanded")) {
-                    this.widget.setActive();
-                } else {
-                    this.widget.setInactive();
-                }
-            });
+        public setName(name: string): WidgetViewBuilder {
+            this.name = name;
+            return this;
         }
 
-        setLabel(value: string, addTitle: boolean = true) {
-            this.labelEl.setHtml(value, true);
-            if (addTitle) {
-                this.labelEl.getEl().setAttribute('title', value);
-            }
+        public setDetailsPanel(detailsPanel: DetailsPanel): WidgetViewBuilder {
+            this.detailsPanel = detailsPanel;
+            return this;
+        }
+
+        public setUseToggleButton(useToggleButton: boolean): WidgetViewBuilder {
+            this.useToggleButton = useToggleButton;
+            return this;
+        }
+
+        public addWidgetItemView(widgetItemView: WidgetItemView): WidgetViewBuilder {
+            this.widgetItemViews.push(widgetItemView);
+            return this;
+        }
+
+        public setWidgetItemView(widgetItemViews: WidgetItemView[]): WidgetViewBuilder {
+            this.widgetItemViews = widgetItemViews;
+            return this;
+        }
+
+        build(): WidgetView {
+            return new WidgetView(this);
         }
     }
 }
