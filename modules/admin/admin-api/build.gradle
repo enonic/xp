@@ -2,6 +2,7 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':portal:portal-api' )
+    compile project( ':jaxrs:jaxrs-api' )
 }
 
 bundle {
