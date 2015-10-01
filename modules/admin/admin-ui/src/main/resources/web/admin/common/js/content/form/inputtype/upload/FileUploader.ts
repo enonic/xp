@@ -186,7 +186,8 @@ module api.content.form.inputtype.upload {
         }
 
         private createUploader(): api.content.MediaUploader {
-            var allowTypes = (<any>(this.config.inputConfig)).allowTypes.map((allowType: FileUploaderConfigAllowType) => {
+            var allowTypesConfig: FileUploaderConfigAllowType[] = (<any>(this.config.inputConfig)).allowTypes || [];
+            var allowTypes = allowTypesConfig.map((allowType: FileUploaderConfigAllowType) => {
                 return {title: allowType.name, extensions: allowType.extensions};
             });
             return new api.content.MediaUploader({
