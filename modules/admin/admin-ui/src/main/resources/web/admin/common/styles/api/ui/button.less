@@ -27,7 +27,7 @@
   }
 }
 
-.button(@color: @form-button-font, @bg: @form-button-bg, @hoverColor: @color, @hoverBg: lighten(@bg, 10%)) {
+.button(@color: @form-button-font, @bg: @form-button-bg, @hoverColor: @color, @hoverBg: lighten(@bg, 10%), @useFocus: true) {
   .button-background(@bg, @hoverBg);
   .button-foreground(@color, @hoverColor, @admin-button-blue1);
   .box-sizing(border-box);
@@ -51,9 +51,11 @@
     cursor: default;
   }
 
-  &:focus:not(:disabled) {
-    box-shadow: 0 0 5px @admin-input-blue;
-    border: 1px solid @admin-input-blue;
+  & when (@useFocus = true) {
+    &:focus:not(:disabled) {
+      box-shadow: 0 0 5px @admin-input-blue;
+      border: 1px solid @admin-input-blue;
+    }
   }
 
 }
