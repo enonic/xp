@@ -1,21 +1,20 @@
-package com.enonic.xp.web.jaxrs.impl.multipart;
+package com.enonic.xp.web.impl.multipart;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.commons.fileupload.FileItem;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.util.UnicodeFormNormalizer;
-import com.enonic.xp.web.jaxrs.multipart.MultipartForm;
+import com.enonic.xp.web.multipart.MultipartForm;
+import com.enonic.xp.web.multipart.MultipartItem;
 
 final class MultipartFormImpl
     implements MultipartForm
 {
     private final ImmutableMap<String, FileItem> map;
-
 
     public MultipartFormImpl( final List<FileItem> items )
     {
@@ -29,37 +28,34 @@ final class MultipartFormImpl
     }
 
     @Override
-    public FileItem get( final String name )
+    public MultipartItem get( final String name )
     {
-        return this.map.get( name );
+        final FileItem item = this.map.get( name );
+        return item != null ? new MultipartItemImpl( item ) : null;
     }
 
     @Override
     public String getAsString( final String name )
     {
-        final FileItem fileItem = this.map.get( name );
-        if ( fileItem == null )
+        final MultipartItem item = get( name );
+        if ( item == null )
         {
             return null;
         }
 
-        final String rawString = new String( fileItem.get(), Charsets.UTF_8 );
-
-        return UnicodeFormNormalizer.normalize( rawString );
+        return item.getAsString();
     }
 
     @Override
     public void delete()
     {
-        for ( final FileItem item : this.map.values() )
-        {
-            item.delete();
-        }
+        this.map.values().forEach( FileItem::delete );
     }
 
     @Override
-    public Iterator<FileItem> iterator()
+    public Iterator<MultipartItem> iterator()
     {
-        return this.map.values().iterator();
+        final Stream<MultipartItem> items = this.map.values().stream().map( MultipartItemImpl::new );
+        return items.iterator();
     }
 }

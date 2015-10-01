@@ -1,20 +1,17 @@
-package com.enonic.xp.web.jaxrs.impl.multipart;
+package com.enonic.xp.web.impl.multipart;
 
-import java.io.IOException;
 import java.io.InputStream;
-
-import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.fileupload.RequestContext;
 
-final class MultipartFormContext
+final class RequestContextImpl
     implements RequestContext
 {
     private final InputStream in;
 
-    private final MediaType mediaType;
+    private final String mediaType;
 
-    public MultipartFormContext( final InputStream in, final MediaType mediaType )
+    public RequestContextImpl( final InputStream in, final String mediaType )
     {
         this.in = in;
         this.mediaType = mediaType;
@@ -29,7 +26,7 @@ final class MultipartFormContext
     @Override
     public String getContentType()
     {
-        return this.mediaType.toString();
+        return this.mediaType;
     }
 
     @Override
@@ -40,7 +37,6 @@ final class MultipartFormContext
 
     @Override
     public InputStream getInputStream()
-        throws IOException
     {
         return this.in;
     }

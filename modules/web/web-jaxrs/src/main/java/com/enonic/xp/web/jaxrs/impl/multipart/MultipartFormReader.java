@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
@@ -13,25 +12,17 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.Provider;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUpload;
-import org.apache.commons.fileupload.RequestContext;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.web.jaxrs.multipart.MultipartForm;
+import com.enonic.xp.web.multipart.MultipartForm;
+import com.enonic.xp.web.multipart.MultipartService;
 
 @Provider
 @Consumes(MediaType.MULTIPART_FORM_DATA)
 public final class MultipartFormReader
     implements MessageBodyReader<MultipartForm>
 {
-    private final FileUpload fileUpload;
-
-    public MultipartFormReader()
-    {
-        this.fileUpload = new FileUpload();
-        this.fileUpload.setFileItemFactory( new DiskFileItemFactory() );
-    }
+    private MultipartService multipartService;
 
     @Override
     public boolean isReadable( final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType )
@@ -45,21 +36,12 @@ public final class MultipartFormReader
                                    final InputStream entityStream )
         throws IOException, WebApplicationException
     {
-        final MultipartFormContext context = new MultipartFormContext( entityStream, mediaType );
-        final List<FileItem> items = parseRequest( context );
-        return new MultipartFormImpl( items );
+        return this.multipartService.parse( entityStream, mediaType.toString() );
     }
 
-    private List<FileItem> parseRequest( final RequestContext context )
-        throws IOException
+    @Reference
+    public void setMultipartService( final MultipartService multipartService )
     {
-        try
-        {
-            return this.fileUpload.parseRequest( context );
-        }
-        catch ( final Exception e )
-        {
-            throw new IOException( e );
-        }
+        this.multipartService = multipartService;
     }
 }

@@ -18,14 +18,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
 
 import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
 import com.enonic.xp.admin.impl.json.content.CompareContentResultsJson;
@@ -127,7 +125,8 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.jaxrs.JaxRsComponent;
 import com.enonic.xp.web.jaxrs.JaxRsExceptions;
-import com.enonic.xp.web.jaxrs.multipart.MultipartForm;
+import com.enonic.xp.web.multipart.MultipartForm;
+import com.enonic.xp.web.multipart.MultipartItem;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -184,9 +183,10 @@ public final class ContentResource
             final Content parentContent = contentService.getById( ContentId.from( parentParam ) );
             createMediaParams.parent( parentContent.getPath() );
         }
-        final DiskFileItem mediaFile = (DiskFileItem) form.get( "file" );
+
+        final MultipartItem mediaFile = form.get( "file" );
         createMediaParams.name( form.getAsString( "name" ) ).
-            mimeType( mediaFile.getContentType() ).
+            mimeType( mediaFile.getContentType().toString() ).
             byteSource( getFileItemByteSource( mediaFile ) );
 
         final String focalX = form.getAsString( "focalX" );
@@ -228,8 +228,8 @@ public final class ContentResource
             params.focalY( Double.valueOf( focalY ) );
         }
 
-        final DiskFileItem mediaFile = (DiskFileItem) form.get( "file" );
-        params.mimeType( mediaFile.getContentType() );
+        final MultipartItem mediaFile = form.get( "file" );
+        params.mimeType( mediaFile.getContentType().toString() );
         params.byteSource( getFileItemByteSource( mediaFile ) );
         persistedContent = contentService.update( params );
 
@@ -241,11 +241,11 @@ public final class ContentResource
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public ContentJson updateThumbnail( final MultipartForm form )
     {
-        final DiskFileItem mediaFile = (DiskFileItem) form.get( "file" );
+        final MultipartItem mediaFile = form.get( "file" );
 
         final CreateAttachment thumbnailAttachment = CreateAttachment.create().
             name( AttachmentNames.THUMBNAIL ).
-            mimeType( mediaFile.getContentType() ).
+            mimeType( mediaFile.getContentType().toString() ).
             byteSource( getFileItemByteSource( mediaFile ) ).
             build();
 
@@ -831,16 +831,9 @@ public final class ContentResource
         return attachments;
     }
 
-    private ByteSource getFileItemByteSource( final DiskFileItem diskFileItem )
+    private ByteSource getFileItemByteSource( final MultipartItem item )
     {
-        if ( diskFileItem.isInMemory() )
-        {
-            return ByteSource.wrap( diskFileItem.get() );
-        }
-        else
-        {
-            return Files.asByteSource( diskFileItem.getStoreLocation() );
-        }
+        return item.getBytes();
     }
 
     private ContentIconUrlResolver newContentIconUrlResolver()
