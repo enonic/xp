@@ -149,11 +149,19 @@ public class StorageServiceImpl
     }
 
     @Override
-    public boolean exists( final NodePath nodePath, final InternalContext context )
+    public NodeId getIdForPath( final NodePath nodePath, final InternalContext context )
     {
         final BranchNodeVersion branchNodeVersion = this.branchService.get( nodePath, context );
 
-        return branchNodeVersion != null;
+        return branchNodeVersion != null ? branchNodeVersion.getNodeId() : null;
+    }
+
+    @Override
+    public NodePath getParentPath( final NodeId nodeId, final InternalContext context )
+    {
+        final BranchNodeVersion branchNodeVersion = this.branchService.get( nodeId, context );
+
+        return branchNodeVersion != null ? branchNodeVersion.getNodePath().getParentPath() : null;
     }
 
     private Node doGetNode( final BranchNodeVersion branchNodeVersion )

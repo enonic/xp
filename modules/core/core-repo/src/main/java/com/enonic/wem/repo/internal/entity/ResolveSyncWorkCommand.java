@@ -6,9 +6,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.ValueTypes;
@@ -20,13 +22,10 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionDiffResult;
-import com.enonic.xp.node.Nodes;
 
 public class ResolveSyncWorkCommand
     extends AbstractNodeCommand
 {
-    //private final NodeId nodeId;
-
     private final Branch target;
 
     private final NodePath repositoryRoot;
@@ -75,15 +74,9 @@ public class ResolveSyncWorkCommand
     {
         final NodeVersionDiffResult diff = getInitialDiff();
 
-        final Nodes nodes = GetNodesByIdsCommand.create( this ).
-            ids( diff.getNodesWithDifferences() ).
-            searchService( this.searchService ).
-            build().
-            execute();
-
-        for ( final Node node : nodes )
+        for ( final NodeId nodeId : diff.getNodesWithDifferences() )
         {
-            resolveDiffWithNodeIdAsInput( node );
+            resolveDiff( nodeId );
         }
 
         return result.build();
@@ -110,46 +103,33 @@ public class ResolveSyncWorkCommand
             execute();
     }
 
-    private void resolveDiffWithNodeAsInput( final Node node )
+    private void resolveDiff( final NodeId nodeId )
     {
-        if ( isProcessed( node.id() ) )
+        if ( isProcessed( nodeId ) )
         {
             return;
         }
 
-        this.processedIds.add( node.id() );
+        this.processedIds.add( nodeId );
 
-        doResolveDiff( node );
+        doResolveDiff( nodeId );
     }
 
-    private void resolveDiffWithNodeIdAsInput( final Node node )
+    private void doResolveDiff( final NodeId nodeId )
     {
-        if ( isProcessed( node.id() ) )
-        {
-            return;
-        }
-
-        this.processedIds.add( node.id() );
-
-        doResolveDiff( node );
-
-    }
-
-    private void doResolveDiff( final Node node )
-    {
-        final NodeComparison comparison = getNodeComparison( node.id() );
+        final NodeComparison comparison = getNodeComparison( nodeId );
 
         if ( nodeNotChanged( comparison ) )
         {
             return;
         }
 
-        this.result.add( node.id() );
+        this.result.add( nodeId );
 
         if ( !allPossibleNodesAreIncluded )
         {
-            ensureThatParentExists( node );
-            includeReferences( node );
+            ensureThatParentExists( nodeId );
+            includeReferences( nodeId );
         }
     }
 
@@ -158,26 +138,32 @@ public class ResolveSyncWorkCommand
         return comparison.getCompareStatus() == CompareStatus.EQUAL;
     }
 
-    private void ensureThatParentExists( final Node node )
+    private void ensureThatParentExists( final NodeId nodeId )
     {
-        if ( !node.isRoot() && !node.parentPath().equals( NodePath.ROOT ) )
-        {
-            final Node thisParentNode = GetNodeByPathCommand.create( this ).
-                nodePath( node.parentPath() ).
-                build().
-                execute();
+        final Context context = ContextAccessor.current();
 
-            final NodeComparison nodeComparison = getNodeComparison( thisParentNode.id() );
+        final NodePath parentPath = this.storageService.getParentPath( nodeId, InternalContext.from( context ) );
+
+        if ( parentPath != null && !parentPath.equals( NodePath.ROOT ) )
+        {
+            final NodeId parentId = this.storageService.getIdForPath( parentPath, InternalContext.from( context ) );
+
+            final NodeComparison nodeComparison = getNodeComparison( parentId );
 
             if ( shouldBeResolvedDiffFor( nodeComparison ) )
             {
-                resolveDiffWithNodeAsInput( thisParentNode );
+                resolveDiff( parentId );
             }
         }
     }
 
-    private void includeReferences( final Node node )
+    private void includeReferences( final NodeId nodeId )
     {
+        final Node node = GetNodeByIdCommand.create( this ).
+            id( nodeId ).
+            build().
+            execute();
+
         final ImmutableList<Property> references = node.data().getProperties( ValueTypes.REFERENCE );
 
         final NodeIds.Builder referredNodeIds = NodeIds.create();
@@ -186,16 +172,11 @@ public class ResolveSyncWorkCommand
             referredNodeIds.add( reference.getReference().getNodeId() );
         } );
 
-        final Nodes referredNodes = GetNodesByIdsCommand.create( this ).
-            ids( referredNodeIds.build() ).
-            build().
-            execute();
-
-        for ( final Node referredNode : referredNodes )
+        for ( final NodeId referredNodeId : referredNodeIds.build() )
         {
-            if ( !this.processedIds.contains( referredNode.id() ) )
+            if ( !this.processedIds.contains( referredNodeId ) )
             {
-                resolveDiffWithNodeIdAsInput( referredNode );
+                resolveDiff( referredNodeId );
             }
         }
     }

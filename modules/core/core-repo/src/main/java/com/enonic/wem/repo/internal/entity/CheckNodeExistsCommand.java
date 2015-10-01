@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 
 public class CheckNodeExistsCommand
@@ -29,7 +30,9 @@ public class CheckNodeExistsCommand
 
     public boolean execute()
     {
-        return this.storageService.exists( nodePath, InternalContext.from( ContextAccessor.current() ) );
+        final NodeId idForPath = this.storageService.getIdForPath( nodePath, InternalContext.from( ContextAccessor.current() ) );
+
+        return idForPath != null;
     }
 
 

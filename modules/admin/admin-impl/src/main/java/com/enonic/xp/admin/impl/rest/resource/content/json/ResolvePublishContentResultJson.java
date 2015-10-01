@@ -16,11 +16,13 @@ public class ResolvePublishContentResultJson
         dependentContents = builder.dependentContents;
     }
 
+    @SuppressWarnings("unused")
     public List<ContentPublishItemJson> getRequestedContents()
     {
         return requestedContents;
     }
 
+    @SuppressWarnings("unused")
     public List<ContentPublishItemJson> getDependentContents()
     {
         return dependentContents;

@@ -34,7 +34,16 @@ abstract class AbstractQueryFieldNameResolver
         final String baseFieldName = IndexFieldNameNormalizer.normalize( valueQueryFilterFieldName );
 
         final ImmutableSet<Value> values = valueQueryFilter.getValues();
-        final Value firstValue = values.iterator().next();
+
+        final Value firstValue;
+        try
+        {
+            firstValue = values.iterator().next();
+        }
+        catch ( Exception e )
+        {
+            throw e;
+        }
 
         return createValueTypeAwareFieldName( baseFieldName, firstValue );
     }

@@ -71,7 +71,12 @@ public class FilterBuilderFactory
             }
             else if ( filter instanceof ValueFilter )
             {
-                filtersToApply.add( createTermFilter( (ValueFilter) filter ) );
+                final FilterBuilder termFilter = createTermFilter( (ValueFilter) filter );
+
+                if ( termFilter != null )
+                {
+                    filtersToApply.add( termFilter );
+                }
             }
             else if ( filter instanceof RangeFilter )
             {
@@ -138,6 +143,11 @@ public class FilterBuilderFactory
 
     private FilterBuilder createTermFilter( final ValueFilter filter )
     {
+        if ( filter.getValues().isEmpty() )
+        {
+            return null;
+        }
+
         final String queryFieldName = this.fieldNameResolver.resolve( filter );
 
         final Set<Object> values = Sets.newHashSet();

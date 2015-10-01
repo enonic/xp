@@ -40,5 +40,7 @@ public interface StorageService
 
     NodeVersion getVersion( final NodeVersionDocumentId versionId, final InternalContext context );
 
-    boolean exists( final NodePath nodePath, final InternalContext context );
+    NodeId getIdForPath( final NodePath nodePath, final InternalContext context );
+
+    NodePath getParentPath( final NodeId nodeId, final InternalContext context );
 }

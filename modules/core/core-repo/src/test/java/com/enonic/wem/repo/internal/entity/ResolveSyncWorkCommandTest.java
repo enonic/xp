@@ -24,15 +24,12 @@ import static org.junit.Assert.*;
 public class ResolveSyncWorkCommandTest
     extends AbstractNodeTest
 {
-
-    private Node rootNode;
-
     @Before
     public void setUp()
         throws Exception
     {
         super.setUp();
-        this.rootNode = this.createDefaultRootNode();
+        this.createDefaultRootNode();
     }
 
     @Test
