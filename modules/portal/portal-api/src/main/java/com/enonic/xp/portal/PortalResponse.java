@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.postprocess.HtmlTag;
@@ -163,12 +162,6 @@ public final class PortalResponse
         public Builder clearHeaders()
         {
             headers = ImmutableSortedMap.orderedBy( String.CASE_INSENSITIVE_ORDER );
-            return this;
-        }
-
-        public Builder cache()
-        {
-            header( HttpHeaders.CACHE_CONTROL, "private, max-age=31536000" );
             return this;
         }
 

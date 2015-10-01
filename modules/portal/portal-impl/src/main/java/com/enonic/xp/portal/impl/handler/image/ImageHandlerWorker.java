@@ -40,7 +40,7 @@ final class ImageHandlerWorker
 
     protected ScaleParams scaleParams;
 
-    protected boolean cache;
+    protected boolean cacheable;
 
     protected ImageService imageService;
 
@@ -88,9 +88,9 @@ final class ImageHandlerWorker
         this.response.status( HttpStatus.OK );
         this.response.body( source );
         this.response.contentType( MediaType.parse( mimeType ) );
-        if ( cache )
+        if ( cacheable )
         {
-            this.response.cache();
+            setResponseCacheable();
         }
     }
 

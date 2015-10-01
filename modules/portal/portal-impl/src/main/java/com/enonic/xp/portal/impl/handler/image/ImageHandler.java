@@ -47,7 +47,7 @@ public final class ImageHandler
 
         final ImageHandlerWorker worker = new ImageHandlerWorker();
         worker.contentId = ContentId.from( matcher.group( 1 ) );
-        worker.cache = matcher.group( 2 ) != null;
+        worker.cacheable = matcher.group( 2 ) != null;
         worker.scaleParams = new ScaleParamsParser().parse( matcher.group( 3 ) );
         worker.name = matcher.group( 4 );
         worker.imageService = this.imageService;
