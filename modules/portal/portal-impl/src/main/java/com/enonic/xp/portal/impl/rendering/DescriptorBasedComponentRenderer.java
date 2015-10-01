@@ -33,7 +33,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\" data-portal-placeholder=\"true\"></div>";
 
     private static final String COMPONENT_PLACEHOLDER_ERROR_HTML = "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE +
-        "=\"{0}\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\" data-portal-error-message=\"{1}\"></div>";
+        "=\"{0}\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">{1}</span></div>";
 
     private static final LiveEditAttributeInjection LIVE_EDIT_ATTRIBUTE_INJECTION = new LiveEditAttributeInjection();
 
