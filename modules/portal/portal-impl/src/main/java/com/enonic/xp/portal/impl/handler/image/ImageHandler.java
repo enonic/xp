@@ -38,7 +38,7 @@ public final class ImageHandler
         throws Exception
     {
         final String restPath = findRestPath( req );
-        final Matcher matcher = PATTERN.matcher( restPath );
+            final Matcher matcher = PATTERN.matcher( restPath );
 
         if ( !matcher.find() )
         {
