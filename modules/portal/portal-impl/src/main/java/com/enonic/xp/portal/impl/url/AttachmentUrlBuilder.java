@@ -29,13 +29,11 @@ final class AttachmentUrlBuilder
         }
 
         final ContentId id = resolveId();
-        appendPart( url, id.toString() );
+        Attachment attachment = resolveAttachment( id );
+        String hash = resolveHash( id, attachment );
 
-        final String name = resolveAttachmentName( id );
-        if ( name != null )
-        {
-            appendPart( url, name );
-        }
+        appendPart( url, id.toString() + ":" + hash );
+        appendPart( url, attachment.getName() );
     }
 
     private ContentId resolveId()
@@ -48,24 +46,36 @@ final class AttachmentUrlBuilder
             resolve();
     }
 
-    private String resolveAttachmentName( final ContentId id )
+    private Attachment resolveAttachment( final ContentId id )
     {
-        if ( this.params.getName() != null )
-        {
-            return this.params.getName();
-        }
-
         final Content content = this.contentService.getById( id );
         final Attachments attachments = content.getAttachments();
 
-        final String label = this.params.getLabel() != null ? this.params.getLabel() : "source";
-        final Attachment attachment = attachments.byLabel( label );
-
-        if ( attachment == null )
+        final Attachment attachment;
+        if ( this.params.getName() != null )
         {
-            throw new IllegalArgumentException( "Could not find attachment with label [" + label + "] on content [" + id + "]" );
+            attachment = attachments.byName( this.params.getName() );
+            if ( attachment == null )
+            {
+                throw new IllegalArgumentException(
+                    "Could not find attachment with name [" + this.params.getName() + "] on content [" + id + "]" );
+            }
+        }
+        else
+        {
+            final String label = this.params.getLabel() != null ? this.params.getLabel() : "source";
+            attachment = attachments.byLabel( label );
+            if ( attachment == null )
+            {
+                throw new IllegalArgumentException( "Could not find attachment with label [" + label + "] on content [" + id + "]" );
+            }
         }
 
-        return attachment.getName();
+        return attachment;
+    }
+
+    private String resolveHash( final ContentId id, final Attachment attachment )
+    {
+        return this.contentService.getBinaryKey( id, attachment.getBinaryReference() );
     }
 }

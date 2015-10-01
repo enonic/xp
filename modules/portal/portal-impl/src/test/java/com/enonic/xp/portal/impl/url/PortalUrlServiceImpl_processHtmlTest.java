@@ -93,6 +93,7 @@ public class PortalUrlServiceImpl_processHtmlTest
             attachments( attachments ).
             build();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+        Mockito.when( this.contentService.getBinaryKey( content.getId(), source.getBinaryReference() ) ).thenReturn( "binaryHash2" );
 
         //Process an html text containing an inline link to this content
         ProcessHtmlParams params = new ProcessHtmlParams().
@@ -101,9 +102,8 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the URL of the source attachment of the content is returned
         String processedHtml = this.service.processHtml( params );
-        assertEquals(
-            "<a href=\"/portal/draft/context/path/_/attachment/inline/" + content.getId() + "/" + source.getName() + "\">Media</a>",
-            processedHtml );
+        assertEquals( "<a href=\"/portal/draft/context/path/_/attachment/inline/" + content.getId() + ":binaryHash2/" + source.getName() +
+                          "\">Media</a>", processedHtml );
 
         //Process an html text containing a download link to this content
         params = new ProcessHtmlParams().
@@ -112,9 +112,8 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the URL of the source attachment of the content is returned
         processedHtml = this.service.processHtml( params );
-        assertEquals(
-            "<a href=\"/portal/draft/context/path/_/attachment/download/" + content.getId() + "/" + source.getName() + "\">Media</a>",
-            processedHtml );
+        assertEquals( "<a href=\"/portal/draft/context/path/_/attachment/download/" + content.getId() + ":binaryHash2/" + source.getName() +
+                          "\">Media</a>", processedHtml );
 
         //Process an html text containing an inline link to this content in a img tag
         params = new ProcessHtmlParams().
@@ -123,9 +122,8 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the URL of the source attachment of the content is returned
         processedHtml = this.service.processHtml( params );
-        assertEquals(
-            "<img src=\"/portal/draft/context/path/_/attachment/inline/" + content.getId() + "/" + source.getName() + "\">Media</a>",
-            processedHtml );
+        assertEquals( "<img src=\"/portal/draft/context/path/_/attachment/inline/" + content.getId() + ":binaryHash2/" + source.getName() +
+                          "\">Media</a>", processedHtml );
 
     }
 
@@ -151,6 +149,7 @@ public class PortalUrlServiceImpl_processHtmlTest
             attachments( attachments ).
             build();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+        Mockito.when( this.contentService.getBinaryKey( content.getId(), source.getBinaryReference() ) ).thenReturn( "binaryHash2" );
 
         //Process an html text containing multiple links, on multiple lines, to this content as a media and as a content
         final ProcessHtmlParams params = new ProcessHtmlParams().
@@ -167,11 +166,11 @@ public class PortalUrlServiceImpl_processHtmlTest
         assertEquals( "<p>A content link:&nbsp;<a href=\"/portal/draft" + content.getPath() + "\">FirstLink</a></p>\n" +
                           "<p>A second content link:&nbsp;<a href=\"/portal/draft" + content.getPath() + "\">SecondLink</a>" +
                           "&nbsp;and a download link:&nbsp;<a href=\"/portal/draft/context/path/_/attachment/download/" +
-                          content.getId() + "/" + source.getName() + "\">Download</a></p>\n" +
+                          content.getId() + ":binaryHash2/" + source.getName() + "\">Download</a></p>\n" +
                           "<p>An external link:&nbsp;<a href=\"http://www.enonic.com\">An external  link</a></p>\n" +
                           "<p>&nbsp;</p>\n" +
                           "<a href=\"/portal/draft/context/path/_/attachment/inline/" +
-                          content.getId() + "/" + source.getName() + "\">Inline</a>", processedHtml );
+                          content.getId() + ":binaryHash2/" + source.getName() + "\">Inline</a>", processedHtml );
     }
 
     @Test
