@@ -71,10 +71,6 @@ module api.content.form.inputtype.upload {
             this.uploader = this.createUploader();
             this.uploaderWrapper = this.createUploaderWrapper(property);
 
-            if (property.hasNonNullValue()) {
-                this.showFileName(property);
-            }
-
             if (this.getContext().contentId) {
                 this.uploader.setValue(this.getContext().contentId.toString());
                 if (property.getValue() != null) {
@@ -95,6 +91,7 @@ module api.content.form.inputtype.upload {
             });
 
             this.uploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
+
                 var content = event.getUploadItem().getModel();
                 var fileName = content.getName();
                 this.uploader.setFileName(fileName.toString());
@@ -146,6 +143,7 @@ module api.content.form.inputtype.upload {
         }
 
         private showFileName(property: Property) {
+
             var contentId = new api.content.ContentId(property.getString());
 
             new api.content.GetContentByIdRequest(contentId).
@@ -186,9 +184,14 @@ module api.content.form.inputtype.upload {
         }
 
         private createUploader(): api.content.MediaUploader {
-            var allowTypes = (<any>(this.config.inputConfig)).allowTypes.map((allowType: FileUploaderConfigAllowType) => {
-                return {title: allowType.name, extensions: allowType.extensions};
-            });
+
+            var allowTypes,
+                allowTypesConfigValue = (<any>(this.config.inputConfig)).allowTypes;
+            if (allowTypesConfigValue) {
+                allowTypes = allowTypesConfigValue.allowTypes.map((allowType: FileUploaderConfigAllowType) => {
+                    return {title: allowType.name, extensions: allowType.extensions};
+                });
+            }
             return new api.content.MediaUploader({
                 params: {
                     parent: this.getContext().contentId.toString()
