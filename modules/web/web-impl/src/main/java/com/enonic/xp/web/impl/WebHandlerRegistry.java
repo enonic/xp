@@ -30,6 +30,11 @@ final class WebHandlerRegistry
 
     public synchronized void add( final WebHandler handler )
     {
+        if ( this.handlers.contains( handler ) )
+        {
+            return;
+        }
+
         this.handlers.add( handler );
         updateList();
     }
