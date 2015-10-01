@@ -71,7 +71,7 @@ public class ValidateContentDataCommandTest
 
         // test
         assertTrue( result.hasErrors() );
-        assertEquals( 1, result.size() );
+        assertEquals( 2, result.size() );
 
     }
 

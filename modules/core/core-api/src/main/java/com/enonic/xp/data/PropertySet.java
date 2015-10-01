@@ -219,6 +219,18 @@ public final class PropertySet
         return array.size();
     }
 
+    public int countNonNullProperties( final String name )
+    {
+        final PropertyArray array = this.propertyArrayByName.get( name );
+        if ( array == null )
+        {
+            return 0;
+        }
+
+        long result = array.getProperties().stream().filter( (p) -> p.getValue() != null && p.getValue().getObject() != null).count();
+        return (int) result;
+    }
+
     void addPropertyArray( final PropertyArray array )
     {
         this.propertyArrayByName.put( array.getName(), array );
