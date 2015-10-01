@@ -128,6 +128,11 @@ public class PushContentCommand
 
     private void doPushNodes( final NodeIds nodesToPush )
     {
+        if ( nodesToPush.isEmpty() )
+        {
+            return;
+        }
+
         final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target );
 
         pushNodesResult.getSuccessful();
