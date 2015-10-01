@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.xp.content.Content;
@@ -26,7 +25,6 @@ public class ContentServiceImplTest_resolvePublishDependencies
         super.setUp();
     }
 
-    @Ignore
     @Test
     public void resolve_single()
         throws Exception
