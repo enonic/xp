@@ -10,12 +10,9 @@ import org.jboss.resteasy.logging.Logger;
 import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
 import org.jboss.resteasy.plugins.server.servlet.ServletBootstrap;
 import org.jboss.resteasy.plugins.server.servlet.ServletContainerDispatcher;
-import org.jboss.resteasy.spi.ResourceFactory;
 import org.jboss.resteasy.util.GetRestful;
 
 import com.google.common.collect.Lists;
-
-import com.enonic.xp.web.jaxrs.JaxRsResourceFactory;
 
 final class JaxRsDispatcher
     extends ServletContainerDispatcher
@@ -79,17 +76,12 @@ final class JaxRsDispatcher
     {
         final List<Object> resourceList = Lists.newArrayList();
         final List<Object> providerList = Lists.newArrayList();
-        final List<ResourceFactory> factoryList = Lists.newArrayList();
 
         for ( final Object object : this.app.getSingletons() )
         {
             if ( isRootResource( object ) )
             {
                 resourceList.add( object );
-            }
-            else if ( isResourceFactory( object ) )
-            {
-                factoryList.add( new ResourceFactoryImpl( (JaxRsResourceFactory) object ) );
             }
             else
             {
@@ -99,17 +91,11 @@ final class JaxRsDispatcher
 
         providerList.forEach( this.providerFactory::registerProviderInstance );
         resourceList.forEach( this.dispatcher.getRegistry()::addSingletonResource );
-        factoryList.forEach( this.dispatcher.getRegistry()::addResourceFactory );
     }
 
     private boolean isRootResource( final Object instance )
     {
         return GetRestful.isRootResource( instance.getClass() );
-    }
-
-    private boolean isResourceFactory( final Object instance )
-    {
-        return instance instanceof JaxRsResourceFactory;
     }
 
     public void addSingleton( final Object instance )
