@@ -40,6 +40,8 @@ final class ImageHandlerWorker
 
     protected ScaleParams scaleParams;
 
+    protected boolean cache;
+
     protected ImageService imageService;
 
     protected ContentService contentService;
@@ -86,6 +88,10 @@ final class ImageHandlerWorker
         this.response.status( HttpStatus.OK );
         this.response.body( source );
         this.response.contentType( MediaType.parse( mimeType ) );
+        if ( cache )
+        {
+            this.response.cache();
+        }
     }
 
     private String getFormat( final String fileName, final String mimeType )

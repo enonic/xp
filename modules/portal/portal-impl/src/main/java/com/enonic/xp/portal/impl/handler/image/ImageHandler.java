@@ -21,7 +21,7 @@ import com.enonic.xp.web.HttpMethod;
 public final class ImageHandler
     extends EndpointHandler
 {
-    private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)/([^/]+)" );
+    private final static Pattern PATTERN = Pattern.compile( "([^/^:]+)(:[^/]+)?/([^/]+)/([^/]+)" );
 
     private ContentService contentService;
 
@@ -47,8 +47,9 @@ public final class ImageHandler
 
         final ImageHandlerWorker worker = new ImageHandlerWorker();
         worker.contentId = ContentId.from( matcher.group( 1 ) );
-        worker.scaleParams = new ScaleParamsParser().parse( matcher.group( 2 ) );
-        worker.name = matcher.group( 3 );
+        worker.cache = matcher.group( 2 ) != null;
+        worker.scaleParams = new ScaleParamsParser().parse( matcher.group( 3 ) );
+        worker.name = matcher.group( 4 );
         worker.imageService = this.imageService;
         worker.contentService = this.contentService;
         worker.filterParam = getParameter( req, "filter" );
