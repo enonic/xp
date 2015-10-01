@@ -69,14 +69,14 @@ public class ContentServiceImplTest_push
 
         refresh();
 
-        PushContentsResult pushWithDeleted = this.contentService.push( pushParams );
-        assertEquals( 1, pushWithDeleted.getPushedContent().getSize() );
+        final PushContentsResult push = this.contentService.push( pushParams );
+        assertEquals( 1, push.getPushedContent().getSize() );
 
         contentService.delete( DeleteContentParams.create().
             contentPath( content.getPath() ).
             build() );
 
-        pushWithDeleted = this.contentService.push( pushParams );
+        final PushContentsResult pushWithDeleted = this.contentService.push( pushParams );
         assertEquals( 1, pushWithDeleted.getDeletedContent().getSize() );
     }
 
