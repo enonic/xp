@@ -7,12 +7,13 @@ import org.mockito.Mockito;
 import com.google.common.collect.HashMultimap;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.url.ImageUrlParams;
 
@@ -25,7 +26,7 @@ public class ImageUrlBuilderTest
 
     private ImageUrlParams imageUrlParams;
 
-    private Content content;
+    private Media media;
 
     @Before
     public void init()
@@ -41,14 +42,22 @@ public class ImageUrlBuilderTest
         urlBuilder = new ImageUrlBuilder();
         urlBuilder.setParams( imageUrlParams );
 
+        final Attachment attachment = Attachment.create().
+            name( "attachmentName" ).
+            mimeType( "attachmentMimeType" ).
+            size( 1 ).
+            build();
+
+        media = Mockito.mock( Media.class );
+        final ContentId contentId = ContentId.from( "testID" );
+        Mockito.when( media.getId() ).thenReturn( contentId );
+        Mockito.when( media.getName() ).thenReturn( ContentName.from( "testName" ) );
+        Mockito.when( media.getMediaAttachment() ).thenReturn( attachment );
+
         final ContentService contentService = Mockito.mock( ContentService.class );
-
-        content = Mockito.mock( Content.class );
-        Mockito.when( contentService.getByPath( Mockito.any() ) ).thenReturn( content );
-        Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
-
-        Mockito.when( content.getId() ).thenReturn( ContentId.from( "testID" ) );
-        Mockito.when( content.getName() ).thenReturn( ContentName.from( "testName" ) );
+        Mockito.when( contentService.getByPath( Mockito.any() ) ).thenReturn( media );
+        Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( media );
+        Mockito.when( contentService.getBinaryKey( contentId, attachment.getBinaryReference() ) ).thenReturn( "binaryHash" );
 
         urlBuilder.contentService = contentService;
     }
@@ -59,7 +68,7 @@ public class ImageUrlBuilderTest
         final StringBuilder stringBuilder = new StringBuilder( "test/" );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID/testScale/testName", stringBuilder.toString() );
+        assertEquals( "test/draft/context/path/_/image/testID:binaryHash/testScale/testName", stringBuilder.toString() );
     }
 
     @Test
@@ -69,7 +78,7 @@ public class ImageUrlBuilderTest
         imageUrlParams.format( "png" );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID/testScale/testName.png", stringBuilder.toString() );
+        assertEquals( "test/draft/context/path/_/image/testID:binaryHash/testScale/testName.png", stringBuilder.toString() );
     }
 
     @Test
@@ -78,10 +87,10 @@ public class ImageUrlBuilderTest
         final StringBuilder stringBuilder = new StringBuilder( "test/" );
         imageUrlParams.format( "png" );
 
-        Mockito.when( content.getName() ).thenReturn( ContentName.from( "testName.png" ) );
+        Mockito.when( media.getName() ).thenReturn( ContentName.from( "testName.png" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID/testScale/testName.png", stringBuilder.toString() );
+        assertEquals( "test/draft/context/path/_/image/testID:binaryHash/testScale/testName.png", stringBuilder.toString() );
     }
 
     @Test
@@ -90,9 +99,9 @@ public class ImageUrlBuilderTest
         final StringBuilder stringBuilder = new StringBuilder( "test/" );
         imageUrlParams.format( "png" );
 
-        Mockito.when( content.getName() ).thenReturn( ContentName.from( "testName.jpg" ) );
+        Mockito.when( media.getName() ).thenReturn( ContentName.from( "testName.jpg" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID/testScale/testName.jpg.png", stringBuilder.toString() );
+        assertEquals( "test/draft/context/path/_/image/testID:binaryHash/testScale/testName.jpg.png", stringBuilder.toString() );
     }
 }

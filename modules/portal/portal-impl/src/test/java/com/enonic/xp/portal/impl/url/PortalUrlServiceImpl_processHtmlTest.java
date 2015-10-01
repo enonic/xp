@@ -7,6 +7,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -53,18 +54,21 @@ public class PortalUrlServiceImpl_processHtmlTest
     public void process_single_image()
     {
         //Creates a content
-        final Content content = ContentFixtures.newContent();
-        Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+        final Media media = ContentFixtures.newMedia();
+        Mockito.when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+        Mockito.when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(
+            "binaryHash" );
 
         //Process an html text containing a link to this content
         final ProcessHtmlParams params = new ProcessHtmlParams().
             portalRequest( this.portalRequest ).
-            value( "<a href=\"image://" + content.getId() + "\">Image</a>" );
+            value( "<a href=\"image://" + media.getId() + "\">Image</a>" );
 
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"/portal/draft/context/path/_/image/" + content.getId() + "/" + "width-768" + "/" + content.getName() +
-                          ".jpeg\">Image</a>", processedHtml );
+        assertEquals(
+            "<a href=\"/portal/draft/context/path/_/image/" + media.getId() + ":binaryHash/" + "width-768" + "/" + media.getName() +
+                ".jpeg\">Image</a>", processedHtml );
     }
 
     @Test
