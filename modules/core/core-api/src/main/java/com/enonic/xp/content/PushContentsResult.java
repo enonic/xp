@@ -64,7 +64,7 @@ public class PushContentsResult
 
         public Builder setDeleted( final ContentIds deletedContent )
         {
-            this.pushedContent = deletedContent;
+            this.deletedContent = deletedContent;
             return this;
         }
 

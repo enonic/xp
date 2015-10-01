@@ -144,8 +144,9 @@ public class PushContentCommand
 
     private void doDeleteNodes( final NodeIds nodesToDelete )
     {
-        final Context currentContext = ContextAccessor.current();
+        this.resultBuilder.setDeleted( ContentNodeHelper.toContentIds( nodesToDelete ) );
 
+        final Context currentContext = ContextAccessor.current();
         final List<ContentPath> deletedContents = new ArrayList<>();
         deletedContents.addAll( deleteNodesInContext( nodesToDelete, currentContext ) );
 

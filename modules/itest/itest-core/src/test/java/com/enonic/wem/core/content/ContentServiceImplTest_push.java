@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.xp.content.Content;
@@ -51,7 +50,6 @@ public class ContentServiceImplTest_push
         assertEquals( 1, push.getPushedContent().getSize() );
     }
 
-    @Ignore
     @Test
     public void push_deleted()
         throws Exception
@@ -71,15 +69,15 @@ public class ContentServiceImplTest_push
 
         refresh();
 
-        this.contentService.push( pushParams );
+        PushContentsResult pushWithDeleted = this.contentService.push( pushParams );
+        assertEquals( 1, pushWithDeleted.getPushedContent().getSize() );
 
         contentService.delete( DeleteContentParams.create().
             contentPath( content.getPath() ).
             build() );
 
-        final PushContentsResult pushWithDeleted = this.contentService.push( pushParams );
-
-        assertEquals( 1, pushWithDeleted.getPushedContent().getSize() );
+        pushWithDeleted = this.contentService.push( pushParams );
+        assertEquals( 1, pushWithDeleted.getDeletedContent().getSize() );
     }
 
     @Test
