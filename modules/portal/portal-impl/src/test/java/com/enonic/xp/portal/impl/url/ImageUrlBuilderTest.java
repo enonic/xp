@@ -68,7 +68,8 @@ public class ImageUrlBuilderTest
         final StringBuilder stringBuilder = new StringBuilder( "test/" );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID:binaryHash/testScale/testName", stringBuilder.toString() );
+        assertEquals( "test/draft/context/path/_/image/testID:e57c6588d59c360d2464a5eabdaa24c78f7d1ed6/testScale/testName",
+                      stringBuilder.toString() );
     }
 
     @Test
@@ -78,7 +79,8 @@ public class ImageUrlBuilderTest
         imageUrlParams.format( "png" );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID:binaryHash/testScale/testName.png", stringBuilder.toString() );
+        assertEquals( "test/draft/context/path/_/image/testID:e57c6588d59c360d2464a5eabdaa24c78f7d1ed6/testScale/testName.png",
+                      stringBuilder.toString() );
     }
 
     @Test
@@ -90,7 +92,8 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "testName.png" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID:binaryHash/testScale/testName.png", stringBuilder.toString() );
+        assertEquals( "test/draft/context/path/_/image/testID:e57c6588d59c360d2464a5eabdaa24c78f7d1ed6/testScale/testName.png",
+                      stringBuilder.toString() );
     }
 
     @Test
@@ -102,6 +105,7 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "testName.jpg" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID:binaryHash/testScale/testName.jpg.png", stringBuilder.toString() );
+        assertEquals( "test/draft/context/path/_/image/testID:e57c6588d59c360d2464a5eabdaa24c78f7d1ed6/testScale/testName.jpg.png",
+                      stringBuilder.toString() );
     }
 }

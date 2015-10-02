@@ -67,7 +67,8 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
-            "<a href=\"/portal/draft/context/path/_/image/" + media.getId() + ":binaryHash/" + "width-768" + "/" + media.getName() +
+            "<a href=\"/portal/draft/context/path/_/image/" + media.getId() + ":992a0004e50e58383fb909fea2b588dc714a7115/" + "width-768" +
+                "/" + media.getName() +
                 ".jpeg\">Image</a>", processedHtml );
     }
 

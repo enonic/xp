@@ -1,11 +1,14 @@
 package com.enonic.xp.portal.impl.url;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 
 final class AttachmentUrlBuilder
@@ -28,27 +31,28 @@ final class AttachmentUrlBuilder
             appendPart( url, "inline" );
         }
 
-        final ContentId id = resolveId();
-        Attachment attachment = resolveAttachment( id );
-        String hash = resolveHash( id, attachment );
+        final Content content = resolveContent();
+        Attachment attachment = resolveAttachment( content );
+        String hash = resolveHash( content, attachment );
 
-        appendPart( url, id.toString() + ":" + hash );
+        appendPart( url, content.getId().toString() + ":" + hash );
         appendPart( url, attachment.getName() );
     }
 
-    private ContentId resolveId()
+    private Content resolveContent()
     {
-        return new ContentIdResolver().
+        final ContentId contentId = new ContentIdResolver().
             portalRequest( this.portalRequest ).
             contentService( this.contentService ).
             id( this.params.getId() ).
             path( this.params.getPath() ).
             resolve();
+
+        return this.contentService.getById( contentId );
     }
 
-    private Attachment resolveAttachment( final ContentId id )
+    private Attachment resolveAttachment( final Content content )
     {
-        final Content content = this.contentService.getById( id );
         final Attachments attachments = content.getAttachments();
 
         final Attachment attachment;
@@ -58,7 +62,7 @@ final class AttachmentUrlBuilder
             if ( attachment == null )
             {
                 throw new IllegalArgumentException(
-                    "Could not find attachment with name [" + this.params.getName() + "] on content [" + id + "]" );
+                    "Could not find attachment with name [" + this.params.getName() + "] on content [" + content.getId() + "]" );
             }
         }
         else
@@ -67,15 +71,24 @@ final class AttachmentUrlBuilder
             attachment = attachments.byLabel( label );
             if ( attachment == null )
             {
-                throw new IllegalArgumentException( "Could not find attachment with label [" + label + "] on content [" + id + "]" );
+                throw new IllegalArgumentException(
+                    "Could not find attachment with label [" + label + "] on content [" + content.getId() + "]" );
             }
         }
 
         return attachment;
     }
 
-    private String resolveHash( final ContentId id, final Attachment attachment )
+    private String resolveHash( final Content content, final Attachment attachment )
     {
-        return this.contentService.getBinaryKey( id, attachment.getBinaryReference() );
+        String hash = this.contentService.getBinaryKey( content.getId(), attachment.getBinaryReference() );
+        if ( content instanceof Media )
+        {
+            Media media = (Media) content;
+            final String key = hash + media.getFocalPoint() + media.getCropping();
+            hash = DigestUtils.shaHex( key );
+        }
+
+        return hash;
     }
 }

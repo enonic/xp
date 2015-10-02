@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Multimap;
@@ -52,7 +53,10 @@ final class ImageUrlBuilder
     private String resolveHash( final Media media )
     {
         final Attachment mediaAttachment = media.getMediaAttachment();
-        return this.contentService.getBinaryKey( media.getId(), mediaAttachment.getBinaryReference() );
+        String binaryKey = this.contentService.getBinaryKey( media.getId(), mediaAttachment.getBinaryReference() );
+        String key = binaryKey + media.getFocalPoint() + media.getCropping();
+        String hash = DigestUtils.shaHex( key );
+        return hash;
     }
 
     private String resolveName( final Media media )

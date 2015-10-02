@@ -28,7 +28,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:binaryHash/max-300/mycontent", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent", url );
     }
 
     @Test
@@ -42,7 +42,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:binaryHash/max-300/mycontent.png", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent.png", url );
     }
 
     @Test
@@ -59,9 +59,8 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals(
-            "/portal/draft/a/b/mycontent/_/image/123456:binaryHash/max-300/mycontent.jpg?filter=scale%2810%2C10%29&background=00ff00&quality=90",
-            url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent.jpg?" +
+                          "filter=scale%2810%2C10%29&background=00ff00&quality=90", url );
     }
 
     @Test
@@ -75,7 +74,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/context/path/_/image/123456:binaryHash/max-300/mycontent", url );
+        assertEquals( "/portal/draft/context/path/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent", url );
     }
 
     @Test
@@ -89,7 +88,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/context/path/_/image/123456:binaryHash/max-300/mycontent", url );
+        assertEquals( "/portal/draft/context/path/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent", url );
     }
 
     @Test
@@ -121,7 +120,8 @@ public class PortalUrlServiceImpl_imageUrlTest
         ServletRequestHolder.setRequest( req );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "http://localhost/portal/draft/a/b/mycontent/_/image/123456:binaryHash/max-300/mycontent", url );
+        assertEquals(
+            "http://localhost/portal/draft/a/b/mycontent/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent", url );
     }
 
     private Content createContent()
