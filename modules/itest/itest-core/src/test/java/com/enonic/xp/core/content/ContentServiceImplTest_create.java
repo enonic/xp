@@ -1,0 +1,152 @@
+package com.enonic.xp.core.content;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import com.google.common.io.ByteSource;
+
+import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.site.CreateSiteParams;
+import com.enonic.xp.site.SiteConfigs;
+
+import static org.junit.Assert.*;
+
+public class ContentServiceImplTest_create
+    extends AbstractContentServiceTest
+{
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
+    @Override
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+    }
+
+    @Test
+    public void create_content_generated_properties()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        assertNotNull( content.getName() );
+        assertEquals( "this-is-my-content", content.getName().toString() );
+        assertNotNull( content.getCreatedTime() );
+        assertNotNull( content.getCreator() );
+        assertNotNull( content.getModifiedTime() );
+        assertNotNull( content.getModifier() );
+        assertNotNull( content.getChildOrder() );
+        assertEquals( ContentConstants.DEFAULT_CHILD_ORDER, content.getChildOrder() );
+
+        final Content storedContent = this.contentService.getById( content.getId() );
+
+        assertNotNull( storedContent.getName() );
+        assertEquals( "this-is-my-content", storedContent.getName().toString() );
+        assertNotNull( storedContent.getCreatedTime() );
+        assertNotNull( storedContent.getCreator() );
+        assertNotNull( storedContent.getModifiedTime() );
+        assertNotNull( storedContent.getModifier() );
+        assertNotNull( storedContent.getChildOrder() );
+        assertEquals( ContentConstants.DEFAULT_CHILD_ORDER, storedContent.getChildOrder() );
+    }
+
+    @Test
+    public void create_content_unnamed()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final Content storedContent = this.contentService.getById( content.getId() );
+
+        assertNotNull( storedContent.getName() );
+        assertTrue( storedContent.getName().isUnnamed() );
+        assertTrue( storedContent.getName().hasUniqueness() );
+        assertNotNull( storedContent.getCreatedTime() );
+        assertNotNull( storedContent.getCreator() );
+        assertNotNull( storedContent.getModifiedTime() );
+        assertNotNull( storedContent.getModifier() );
+        assertNotNull( storedContent.getChildOrder() );
+        assertEquals( ContentConstants.DEFAULT_CHILD_ORDER, storedContent.getChildOrder() );
+    }
+
+    @Test
+    public void create_with_attachments()
+        throws Exception
+    {
+        final String name = "cat-small.jpg";
+        final ByteSource image = loadImage( name );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.imageMedia() ).
+            createAttachments( createAttachment( "cat", "image/jpeg", image ) ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final Content storedContent = this.contentService.getById( content.getId() );
+
+        final Attachments attachments = storedContent.getAttachments();
+        assertEquals( 1, attachments.getSize() );
+    }
+
+    @Test
+    public void create_site()
+        throws Exception
+    {
+        final CreateSiteParams createSiteParams = new CreateSiteParams();
+        createSiteParams.parent( ContentPath.ROOT ).
+            displayName( "My site" ).
+            description( "This is my site" ).
+            siteConfigs( SiteConfigs.empty() );
+
+        final Content content = this.contentService.create( createSiteParams );
+
+        assertNotNull( content.getName() );
+        assertNotNull( content.getCreatedTime() );
+        assertNotNull( content.getCreator() );
+        assertNotNull( content.getModifiedTime() );
+        assertNotNull( content.getModifier() );
+    }
+
+    @Test
+    public void create_incorrect_content()
+        throws Exception
+    {
+        final PropertyTree contentData = new PropertyTree();
+        contentData.addString( "target", "aStringValue" );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( contentData ).
+            displayName( "This is my shortcut" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.shortcut() ).
+            build();
+
+        exception.expect( IllegalArgumentException.class );
+        this.contentService.create( createContentParams );
+    }
+}
