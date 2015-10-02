@@ -24,8 +24,13 @@ module app.view {
             }
         }
 
-        public ReRenderActivePanel() {
+        public setStatus(status: api.content.CompareStatus) {
+            this.allGrid.setStatus(status);
+        }
+
+        public reRenderActivePanel() {
             if (this.item) {
+                this.allGrid.getGrid().invalidate();
                 this.allGrid.render();
             }
         }

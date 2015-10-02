@@ -43,6 +43,8 @@ module app.view.detail {
         private defaultWidgetView: WidgetView;
         private previousActiveWidget: WidgetView;
 
+        private versionWidgetItemView: WidgetItemView;
+
         private static DEFAULT_WIDGET_NAME: string = "Info";
 
         constructor(builder: Builder) {
@@ -67,7 +69,7 @@ module app.view.detail {
             });
 
             this.onPanelSizeChanged(() => {
-                this.versionsPanel.ReRenderActivePanel();
+                this.versionsPanel.reRenderActivePanel();
             });
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
@@ -223,8 +225,8 @@ module app.view.detail {
         }
 
         private updateCommonWidgets() {
-            this.versionsPanel.setItem(this.item);
             this.setDefaultWidget();
+            this.versionsPanel.setItem(this.item);
         }
 
         private updateCustomWidgets() {
@@ -235,6 +237,11 @@ module app.view.detail {
             this.activateDefaultWidget();
         }
 
+        private setStatus(statusWidgetItemView: StatusWidgetItemView) {
+            statusWidgetItemView.setStatus(this.contentStatus);
+            this.versionsPanel.setStatus(this.contentStatus);
+            this.versionsPanel.reRenderActivePanel();
+        }
 
         private setDefaultWidget() {
             var widgetItemView = new StatusWidgetItemView();
@@ -249,10 +256,10 @@ module app.view.detail {
                         this.detailsContainer.removeChild(this.defaultWidgetView);
                     }
 
-                    widgetItemView.setStatus(this.contentStatus);
+                    this.setStatus(widgetItemView);
 
                     this.onContentStatusChanged(() => {
-                        widgetItemView.setStatus(this.contentStatus);
+                        this.setStatus(widgetItemView);
                         widgetItemView.layout();
                     });
 
@@ -288,14 +295,14 @@ module app.view.detail {
 
         private initCommonWidgetsViews() {
 
-            var widgetItemView = new WidgetItemView();
-            widgetItemView.setItem(this.versionsPanel);
+            this.versionWidgetItemView = new WidgetItemView("version-history");
+            this.versionWidgetItemView.setItem(this.versionsPanel);
 
             var versionsWidgetView = WidgetView.create().
                 setName("Version history").
                 setDetailsPanel(this).
                 setUseToggleButton(false).
-                addWidgetItemView(widgetItemView).
+                addWidgetItemView(this.versionWidgetItemView).
                 build();
 
             this.addWidgets([versionsWidgetView]);
