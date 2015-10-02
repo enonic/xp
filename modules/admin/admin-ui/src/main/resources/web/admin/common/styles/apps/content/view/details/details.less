@@ -251,17 +251,57 @@
   }
 }
 
-.widget {
+.widget-view {
 
   margin: 0 0 2px 0;
+  overflow: hidden;
+  .transition(all 0.1s ease-in-out);
 
-  .widget-content {
-    margin-left: 5px;
-    overflow: hidden;
-    .transition(all 0.1s ease-in-out);
+  .panel {
+    position: relative;
+  }
 
-    .panel {
-      position: relative;
+  .widget-item-view {
+    // common styles for all widget items
+    position: relative;
+    margin: 10px 10px 10px;
+    padding: 5px;
+    background-color: @admin-white;
+    .box-shadow(0px 1px 2px 1px rgba(0, 0, 0, 0.1));
+  }
+
+  .properties-widget-item-view {
+
+    dl {
+      overflow: hidden;
+      padding: 5px;
+      dd {
+        float: left;
+        width: 30%;
+      }
+      dt {
+        float: left;
+        width: 70%;
+      }
+    }
+
+  }
+
+  .status-widget-item-view {
+    text-align: center;
+    height: 60px;
+
+    span {
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+      font-size: 20px;
+      line-height: 60px;
+      background-color: @admin-white;
+
+      &.equal {
+        color: @admin-green;
+      }
     }
   }
 
@@ -296,9 +336,11 @@
 
   &.expanded {
 
-    .widget-content {
-      padding: 5px 0 5px 0;
-      height: 100%;
+    padding: 5px 0 5px 0;
+    height: 100%;
+
+    .status-widget-item-view {
+      font-size: 20px;
     }
 
     .widget-toggle-button {
