@@ -17,7 +17,6 @@ module app.view.detail {
         private nameAndIconView: api.app.NamesAndIconView;
         private detailsContainer: api.dom.DivEl = new api.dom.DivEl("details-container");
         private widgetsSelectionRow: WidgetsSelectionRow;
-        private animationTimer;
 
         private splitter: api.dom.DivEl;
         private ghostDragger: api.dom.DivEl;
@@ -239,6 +238,8 @@ module app.view.detail {
 
         private setDefaultWidget() {
             var widgetItemView = new StatusWidgetItemView();
+            var propWidgetItemView = new PropertiesWidgetItemView();
+
             if (this.item) {
                 api.content.ContentSummaryAndCompareStatusFetcher.fetch(this.item.getModel().getContentId()).then((contentSummaryAndCompareStatus) => {
 
@@ -249,21 +250,21 @@ module app.view.detail {
                     }
 
                     widgetItemView.setStatus(this.contentStatus);
-                    widgetItemView.layout();
 
                     this.onContentStatusChanged(() => {
                         widgetItemView.setStatus(this.contentStatus);
                         widgetItemView.layout();
                     });
 
+                    propWidgetItemView.setContent(this.item.getModel());
+
                     this.defaultWidgetView = WidgetView.create().
                         setName(DetailsPanel.DEFAULT_WIDGET_NAME).
                         setDetailsPanel(this).
                         setUseToggleButton(false).
                         addWidgetItemView(widgetItemView).
+                        addWidgetItemView(propWidgetItemView).
                         build();
-
-                    this.defaultWidgetView.appendChild(widgetItemView);
 
                     this.detailsContainer.appendChild(this.defaultWidgetView);
 

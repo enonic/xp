@@ -11,8 +11,6 @@ module app.view.detail {
 
         private widgetName: string;
 
-        private animationTimer;
-
         private widgetItemViews: WidgetItemView[];
 
         private detailsPanel: DetailsPanel;
@@ -30,7 +28,6 @@ module app.view.detail {
             if (builder.useToggleButton) {
                 this.initWidgetToggleButton();
             }
-
             this.layout();
         }
 
@@ -38,27 +35,12 @@ module app.view.detail {
 
             this.slideOut();
 
-            var item: ViewItem<ContentSummary> = this.detailsPanel.getItem(),
-                widgetViewContent: api.dom.Element = item ? new api.dom.IFrameEl() : new api.dom.DivEl();
-
-            if (item) {
-                (<api.dom.IFrameEl>widgetViewContent).setSrc(this.getWidgetSrc(item));
-            } else {
-                widgetViewContent.setHtml("Some test contents");
-            }
-
             if (this.widgetItemViews) {
                 this.widgetItemViews.forEach((itemView: WidgetItemView) => {
                     this.appendChild(itemView);
                     itemView.layout();
                 })
             }
-        }
-
-        private getWidgetSrc(item: ViewItem<ContentSummary>): string {
-            var path = item.getModel().isSite() ? item.getPath() : item.getPath().substring(0, item.getPath().indexOf("/", 1));
-
-            return api.rendering.UriHelper.getPortalUri(path, RenderingMode.PREVIEW, api.content.Branch.DRAFT);
         }
 
         private initWidgetToggleButton() {
@@ -86,10 +68,6 @@ module app.view.detail {
         getWidgetName(): string {
             return this.widgetName;
         }
-
-        /*setWidgetContents(value: api.dom.Element) {
-         this.appendChild(value);
-         }*/
 
         slideOut() {
             this.getEl().setHeightPx(0);
@@ -149,7 +127,7 @@ module app.view.detail {
             return this;
         }
 
-        public setWidgetItemView(widgetItemViews: WidgetItemView[]): WidgetViewBuilder {
+        public setWidgetItemViews(widgetItemViews: WidgetItemView[]): WidgetViewBuilder {
             this.widgetItemViews = widgetItemViews;
             return this;
         }

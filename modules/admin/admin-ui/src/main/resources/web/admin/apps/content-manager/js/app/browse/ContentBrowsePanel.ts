@@ -399,8 +399,13 @@ module app.browse {
                                     if (updateResult[i].getId() === el.getId()) {
                                         updateResult[i].updateNodeData(el);
                                         this.updateStatisticsPreview(el); // update preview item
+
+                                        var viewItem = this.getBrowseItemPanel().getItems()[0].toViewItem();
+                                        this.detailsPanel.setItem(viewItem);
                                         this.updateDetailPanel(el.getContentId(), el.getCompareStatus());
+
                                         results.push(updateResult[i]);
+
                                         break;
                                     }
                                 }
