@@ -24,8 +24,7 @@ public class MultipartFormReaderTest
     public void setup()
     {
         this.service = Mockito.mock( MultipartService.class );
-        this.reader = new MultipartFormReader();
-        this.reader.setMultipartService( this.service );
+        this.reader = new MultipartFormReader( this.service );
     }
 
     @Test

@@ -12,8 +12,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.Provider;
 
-import org.osgi.service.component.annotations.Reference;
-
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartService;
 
@@ -22,7 +20,12 @@ import com.enonic.xp.web.multipart.MultipartService;
 public final class MultipartFormReader
     implements MessageBodyReader<MultipartForm>
 {
-    private MultipartService multipartService;
+    private final MultipartService multipartService;
+
+    public MultipartFormReader( final MultipartService multipartService )
+    {
+        this.multipartService = multipartService;
+    }
 
     @Override
     public boolean isReadable( final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType )
@@ -37,11 +40,5 @@ public final class MultipartFormReader
         throws IOException, WebApplicationException
     {
         return this.multipartService.parse( entityStream, mediaType.toString() );
-    }
-
-    @Reference
-    public void setMultipartService( final MultipartService multipartService )
-    {
-        this.multipartService = multipartService;
     }
 }

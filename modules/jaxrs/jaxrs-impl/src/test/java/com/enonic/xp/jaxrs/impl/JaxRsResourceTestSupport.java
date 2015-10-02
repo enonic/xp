@@ -16,11 +16,11 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.session.SessionKey;
-import com.enonic.xp.session.SimpleSession;
 import com.enonic.xp.jaxrs.impl.json.JsonObjectProvider;
 import com.enonic.xp.jaxrs.impl.json.ObjectMapperHelper;
 import com.enonic.xp.jaxrs.impl.multipart.MultipartFormReader;
+import com.enonic.xp.session.SessionKey;
+import com.enonic.xp.session.SimpleSession;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 public abstract class JaxRsResourceTestSupport
@@ -33,9 +33,11 @@ public abstract class JaxRsResourceTestSupport
     public final void setUp()
         throws Exception
     {
+        final MultipartFormReader reader = new MultipartFormReader( null );
+
         this.dispatcher = MockDispatcherFactory.createDispatcher();
         this.dispatcher.getProviderFactory().register( JsonObjectProvider.class );
-        this.dispatcher.getProviderFactory().register( MultipartFormReader.class );
+        this.dispatcher.getProviderFactory().register( reader );
         this.dispatcher.getRegistry().addSingletonResource( getResourceInstance() );
 
         mockCurrentContextHttpRequest();
