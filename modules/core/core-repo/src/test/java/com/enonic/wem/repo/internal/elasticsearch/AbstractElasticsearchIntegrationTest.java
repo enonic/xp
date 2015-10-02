@@ -41,8 +41,10 @@ public abstract class AbstractElasticsearchIntegrationTest
         this.elasticsearchDao = new ElasticsearchDaoImpl();
         this.elasticsearchDao.setClient( client );
 
-        final ElasticsearchStorageDao esDaoInternal = new ElasticsearchStorageDao();
-        esDaoInternal.setClient( this.client );
+        final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
+        storageDao.setClient( this.client );
+        storageDao.setElasticsearchDao( this.elasticsearchDao );
+
 
         this.elasticsearchIndexService = new ElasticsearchIndexServiceInternal();
         elasticsearchIndexService.setElasticsearchDao( elasticsearchDao );

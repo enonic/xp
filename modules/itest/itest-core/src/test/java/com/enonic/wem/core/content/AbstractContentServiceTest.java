@@ -144,6 +144,7 @@ public class AbstractContentServiceTest
 
         final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
         storageDao.setClient( this.client );
+        storageDao.setElasticsearchDao( this.elasticsearchDao );
 
         this.branchService = new BranchServiceImpl();
         this.branchService.setStorageDao( storageDao );

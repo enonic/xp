@@ -118,6 +118,7 @@ public abstract class AbstractNodeTest
 
         final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
         storageDao.setClient( this.client );
+        storageDao.setElasticsearchDao( this.elasticsearchDao );
 
         this.searchDao = new ElasticsearchSearchDao();
         this.searchDao.setElasticsearchDao( this.elasticsearchDao );
