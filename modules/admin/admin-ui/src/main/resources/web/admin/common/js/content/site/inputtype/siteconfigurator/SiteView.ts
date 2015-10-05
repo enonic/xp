@@ -69,14 +69,11 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private initFormView() {
-            this.formView = this.createFormView(this.formContext, this.siteConfig);
-            this.onRendered((event) => {
-                this.toggleClass("invalid", !this.formView.isValid())
-            });
-
             this.formValidityChangedHandler = (event: api.form.FormValidityChangedEvent) => {
                 this.toggleClass("invalid", !event.isValid())
             }
+
+            this.formView = this.createFormView(this.formContext, this.siteConfig);
         }
 
         private createEditButton(): api.dom.AEl {
@@ -158,6 +155,8 @@ module api.content.site.inputtype.siteconfigurator {
             var formView = new FormView(formContext, this.application.getForm(), siteConfig.getConfig());
             formView.addClass("site-form");
             formView.layout().then(() => {
+                this.formView.validate(false, true);
+                this.toggleClass("invalid", !this.formView.isValid());
                 this.notifySiteConfigFormDisplayed(this.application.getApplicationKey());
                 formView.onEditContentRequest((content: api.content.ContentSummary) => {
                     new api.content.EditContentEvent([content]).fire();
