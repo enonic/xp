@@ -50,7 +50,7 @@ class ContentVersionFactory
             displayName( content.getDisplayName() ).
             modified( content.getModifiedTime() ).
             modifier( content.getModifier() ).
-            id( ContentVersionId.from( nodeVersion.getNodeId().toString() ) ).
+            id( ContentVersionId.from( nodeVersion.getNodeVersionId().toString() ) ).
             build();
     }
 

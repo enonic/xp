@@ -1,12 +1,14 @@
 package com.enonic.xp.portal.impl.url;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Multimap;
 import com.google.common.io.Files;
 
-import com.enonic.xp.content.Content;
+import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.url.ImageUrlParams;
 
 final class ImageUrlBuilder
@@ -21,10 +23,12 @@ final class ImageUrlBuilder
         appendPart( url, "image" );
 
         final ContentId id = resolveId();
-        final String name = resolveName( id );
+        final Media media = resolveMedia( id );
+        final String hash = resolveHash( media );
+        final String name = resolveName( media );
         final String scale = resolveScale();
 
-        appendPart( url, id.toString() );
+        appendPart( url, id.toString() + ":" + hash );
         appendPart( url, scale );
         appendPart( url, name );
 
@@ -41,10 +45,23 @@ final class ImageUrlBuilder
         }
     }
 
-    private String resolveName( final ContentId id )
+    private Media resolveMedia( final ContentId id )
     {
-        final Content content = this.contentService.getById( id );
-        final String name = content.getName().toString();
+        return (Media) this.contentService.getById( id );
+    }
+
+    private String resolveHash( final Media media )
+    {
+        final Attachment mediaAttachment = media.getMediaAttachment();
+        String binaryKey = this.contentService.getBinaryKey( media.getId(), mediaAttachment.getBinaryReference() );
+        String key = binaryKey + media.getFocalPoint() + media.getCropping();
+        String hash = DigestUtils.shaHex( key );
+        return hash;
+    }
+
+    private String resolveName( final Media media )
+    {
+        final String name = media.getName().toString();
 
         if ( this.params.getFormat() != null )
         {

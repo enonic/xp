@@ -60,6 +60,10 @@ module api.ui.text {
             return new TextInput(className, TextInput.MIDDLE);
         }
 
+        getOldValue(): string {
+            return this.oldValue;
+        }
+
         setValue(value: string): TextInput {
             var oldValue = this.getValue();
             var newValue = this.removeForbiddenChars(value);
