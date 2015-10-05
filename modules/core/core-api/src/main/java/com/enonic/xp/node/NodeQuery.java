@@ -15,12 +15,15 @@ public class NodeQuery
 
     private final Principals principals;
 
+    private final boolean accurateScoring;
+
     private NodeQuery( final Builder builder )
     {
         super( builder );
         this.parent = builder.parent;
         this.path = builder.path;
         this.principals = builder.principals;
+        this.accurateScoring = builder.accurateScoring;
     }
 
     public NodePath getParent()
@@ -38,6 +41,11 @@ public class NodeQuery
         return principals;
     }
 
+    public boolean isAccurateScoring()
+    {
+        return accurateScoring;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -51,6 +59,8 @@ public class NodeQuery
         private NodePath path;
 
         private Principals principals;
+
+        private boolean accurateScoring = false;
 
         public Builder()
         {
@@ -72,6 +82,12 @@ public class NodeQuery
         public Builder principals( final Principals principals )
         {
             this.principals = principals;
+            return this;
+        }
+
+        public Builder accurateScoring( final boolean accurateScoring )
+        {
+            this.accurateScoring = accurateScoring;
             return this;
         }
 

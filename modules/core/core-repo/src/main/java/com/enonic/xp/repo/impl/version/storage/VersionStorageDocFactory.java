@@ -32,6 +32,7 @@ public class VersionStorageDocFactory
                 storageType( StaticStorageType.VERSION ).
                 build() ).
             data( data ).
+            routing( nodeVersion.getNodeId().toString() ).
             build();
     }
 
