@@ -1,14 +1,11 @@
 package com.enonic.xp.portal.impl.url;
 
-import org.apache.commons.codec.digest.DigestUtils;
-
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 
 final class AttachmentUrlBuilder
@@ -81,14 +78,6 @@ final class AttachmentUrlBuilder
 
     private String resolveHash( final Content content, final Attachment attachment )
     {
-        String hash = this.contentService.getBinaryKey( content.getId(), attachment.getBinaryReference() );
-        if ( content instanceof Media )
-        {
-            Media media = (Media) content;
-            final String key = hash + media.getFocalPoint() + media.getCropping();
-            hash = DigestUtils.shaHex( key );
-        }
-
-        return hash;
+        return this.contentService.getBinaryKey( content.getId(), attachment.getBinaryReference() );
     }
 }
