@@ -76,3 +76,21 @@ exports.sendMailWithContentType = function () {
     assert.assertEquals('Should be true', true, result);
 
 };
+
+exports.sendWithoutRequiredFrom = function () {
+
+    var result = mail.send({
+        subject: 'test subject',
+        to: 'to@bar.com'
+    });
+
+};
+
+exports.sendWithoutRequiredTo = function () {
+
+    var result = mail.send({
+        subject: 'test subject',
+        from: 'to@bar.com'
+    });
+
+};

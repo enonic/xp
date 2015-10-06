@@ -38,6 +38,7 @@ module app.wizard {
     import FormIcon = api.app.wizard.FormIcon;
     import ThumbnailUploader = api.content.ThumbnailUploader;
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
+    import TogglerButton = api.ui.button.TogglerButton;
     import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
     import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
     import WizardStep = api.app.wizard.WizardStep;
@@ -99,7 +100,9 @@ module app.wizard {
 
         private publishAction: api.ui.Action;
 
-        private contextWindowToggler: app.wizard.page.contextwindow.ContextWindowToggler;
+        private contextWindowToggler: TogglerButton;
+
+        private componentsViewToggler: TogglerButton;
 
         private cycleViewModeButton: api.ui.button.CycleButton;
 
@@ -161,6 +164,7 @@ module app.wizard {
             });
 
             this.contextWindowToggler = mainToolbar.getContextWindowToggler();
+            this.componentsViewToggler = mainToolbar.getComponentsViewToggler();
             this.cycleViewModeButton = mainToolbar.getCycleViewModeButton();
             this.contentWizardToolbarPublishControls = mainToolbar.getContentWizardToolbarPublishControls();
             this.showLiveEditAction = this.wizardActions.getShowLiveEditAction();
@@ -261,7 +265,6 @@ module app.wizard {
                                 this.contextWindowToggler.setEnabled(false);
                             } else {
                                 this.cycleViewModeButton.selectActiveAction(this.showLiveEditAction);
-                                this.contextWindowToggler.setEnabled(true);
                             }
                         }
                     });
@@ -557,12 +560,10 @@ module app.wizard {
         }
 
         private doLayoutPersistedItem(content: Content): wemQ.Promise<void> {
-            this.showLiveEditAction.setVisible(false);
+            this.toggleClass("rendered", false);
+
             this.showLiveEditAction.setEnabled(false);
             this.previewAction.setVisible(false);
-            this.contextWindowToggler.setVisible(false);
-            this.cycleViewModeButton.setVisible(false);
-
 
             new GetNearestSiteRequest(content.getContentId()).sendAndParse().
                 then((parentSite: Site) => {
@@ -647,13 +648,12 @@ module app.wizard {
             });
         }
 
-        private setupWizardLiveEdit(renderable) {
-            this.showLiveEditAction.setVisible(renderable);
+        private setupWizardLiveEdit(renderable: boolean) {
+            this.toggleClass("rendered", renderable);
+
             this.showLiveEditAction.setEnabled(renderable);
             this.showSplitEditAction.setEnabled(renderable);
             this.previewAction.setVisible(renderable);
-            this.contextWindowToggler.setVisible(renderable);
-            this.cycleViewModeButton.setVisible(renderable);
 
             if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && renderable) {
                 this.wizardActions.getShowSplitEditAction().execute();
@@ -921,6 +921,8 @@ module app.wizard {
 
             this.getSplitPanel().addClass("toggle-live");
             this.getSplitPanel().removeClass("toggle-form toggle-split prerendered");
+            this.getMainToolbar().toggleClass("live", true);
+            this.toggleClass("form", false);
             this.openLiveEdit();
             ResponsiveManager.fireResizeEvent();
         }
@@ -928,6 +930,8 @@ module app.wizard {
         showSplitEdit() {
             this.getSplitPanel().addClass("toggle-split");
             this.getSplitPanel().removeClass("toggle-live toggle-form prerendered");
+            this.getMainToolbar().toggleClass("live", true);
+            this.toggleClass("form", false);
             this.openLiveEdit();
             ResponsiveManager.fireResizeEvent();
         }
@@ -935,6 +939,8 @@ module app.wizard {
         showForm() {
             this.getSplitPanel().addClass("toggle-form");
             this.getSplitPanel().removeClass("toggle-live toggle-split prerendered");
+            this.getMainToolbar().toggleClass("live", false);
+            this.toggleClass("form", true);
             this.closeLiveEdit();
             ResponsiveManager.fireResizeEvent();
         }
@@ -967,8 +973,16 @@ module app.wizard {
             return this.isContentFormValid && allMetadataFormsValid && contentFormHasValidUserInput && allMetadataFormsHasValidUserInput;
         }
 
-        getContextWindowToggler(): app.wizard.page.contextwindow.ContextWindowToggler {
+        getLiveFormPanel(): page.LiveFormPanel {
+            return this.liveFormPanel;
+        }
+
+        getContextWindowToggler(): TogglerButton {
             return this.contextWindowToggler;
+        }
+
+        getComponentsViewToggler(): TogglerButton {
+            return this.componentsViewToggler;
         }
 
         getCloseAction(): api.ui.Action {

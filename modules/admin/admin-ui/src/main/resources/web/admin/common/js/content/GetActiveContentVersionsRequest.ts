@@ -38,11 +38,7 @@ module api.content {
 
             json.forEach((activeContentVersion: ActiveContentVersionJson) => {
 
-                console.log("ActiveContentVersion: ", activeContentVersion);
-
                 contentVersionJson = activeContentVersion.contentVersion;
-
-                console.log("contentVersionJson: ", activeContentVersion.contentVersion);
 
                 contentVersion = contentVersionsMap[contentVersionJson.id];
                 if (!contentVersion) {

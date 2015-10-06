@@ -76,7 +76,8 @@ public class LoginHandlerTest
             login( "user1" ).
             build();
 
-        final UserStores userStores = UserStores.from( UserStore.create().displayName( "system" ).key( UserStoreKey.from( "system" ) ).build() );
+        final UserStores userStores =
+            UserStores.from( UserStore.create().displayName( "system" ).key( UserStoreKey.from( "system" ) ).build() );
 
         final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN_LOGIN ).build();
 

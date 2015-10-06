@@ -1,20 +1,23 @@
 package com.enonic.xp.content;
 
+import java.util.List;
+
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Lists;
 
 @Beta
 public class ResolvePublishDependenciesResult
 {
-    private final PushContentRequests pushContentRequests;
+    private ContentIds contentIds;
 
     private ResolvePublishDependenciesResult( final Builder builder )
     {
-        this.pushContentRequests = builder.pushContentRequests;
+        this.contentIds = ContentIds.from( builder.contentIds );
     }
 
-    public PushContentRequests getPushContentRequests()
+    public ContentIds contentIds()
     {
-        return pushContentRequests;
+        return contentIds;
     }
 
     public static Builder create()
@@ -24,15 +27,21 @@ public class ResolvePublishDependenciesResult
 
     public static final class Builder
     {
-        private PushContentRequests pushContentRequests;
+        private List<ContentId> contentIds = Lists.newLinkedList();
 
         private Builder()
         {
         }
 
-        public Builder pushContentRequests( final PushContentRequests pushContentRequests )
+        public Builder add( final ContentId contentId )
         {
-            this.pushContentRequests = pushContentRequests;
+            this.contentIds.add( contentId );
+            return this;
+        }
+
+        public Builder addAll( final ContentIds contentIds )
+        {
+            this.contentIds.addAll( contentIds.getSet() );
             return this;
         }
 

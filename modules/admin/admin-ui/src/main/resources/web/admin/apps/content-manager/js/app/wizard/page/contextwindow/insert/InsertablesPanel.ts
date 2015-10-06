@@ -24,8 +24,6 @@ module app.wizard.page.contextwindow.insert {
 
         private pageView: PageView;
 
-        private buttonBar: api.dom.DivEl;
-
         private componentsView: app.wizard.PageComponentsView;
 
         private overIFrame: boolean = false;
@@ -49,24 +47,17 @@ module app.wizard.page.contextwindow.insert {
             this.insertablesDataView.setItems(Insertables.ALL, "name");
 
             this.componentsView = new app.wizard.PageComponentsView(config.liveEditPage);
-            this.componentsView.onShown((event: api.dom.ElementShownEvent) => button.setLabel('Hide Components View'));
-            this.componentsView.onHidden((event: api.dom.ElementHiddenEvent) => button.setLabel('Show Components View'));
 
-            var button = new api.ui.button.Button('Show Components View');
-            button.addClass('transparent').onClicked((event: MouseEvent) => {
-                event.stopPropagation();
-
+            this.componentsView.onShown(() => {
                 if (!this.componentsView.getParentElement()) {
-                    // append it on click only to be sure that content wizard panel is ready
+                    //append it on click only to be sure that content wizard panel is ready
+                    var offset = config.contentWizardPanel.getLiveFormPanel().getEl().getOffsetToParent();
+                    this.componentsView.getEl().setOffset(offset);
                     config.contentWizardPanel.appendChild(this.componentsView);
-                } else {
-                    this.componentsView.isVisible() ? this.componentsView.hide() : this.componentsView.show();
                 }
             });
 
-            this.buttonBar = new api.dom.DivEl('button-bar');
-            this.buttonBar.appendChild(button);
-            this.appendChildren(topDescription, this.insertablesGrid, this.buttonBar);
+            this.appendChildren(topDescription, this.insertablesGrid);
 
             this.liveEditPageProxy.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {
                 this.pageView = event.getPageView();
@@ -84,6 +75,10 @@ module app.wizard.page.contextwindow.insert {
 
             this.onRendered(this.initializeDraggables.bind(this));
             this.onRemoved(this.destroyDraggables.bind(this));
+        }
+
+        getComponentsView(): app.wizard.PageComponentsView {
+            return this.componentsView;
         }
 
         setPageView(pageView: api.liveedit.PageView) {

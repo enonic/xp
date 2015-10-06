@@ -13,7 +13,7 @@ exports.login = function (params) {
     bean.user = required(params, 'user');
     bean.password = required(params, 'password');
 
-    if(params['userStore']) {
+    if (params['userStore']) {
         bean.userStore = [].concat(params['userStore']);
     }
 

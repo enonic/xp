@@ -216,7 +216,9 @@ public final class PropertySet
         {
             return 0;
         }
-        return array.size();
+
+        long result = array.getProperties().stream().filter( (p) -> p.getValue() != null && p.getValue().getObject() != null).count();
+        return (int) result;
     }
 
     void addPropertyArray( final PropertyArray array )

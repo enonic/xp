@@ -19,10 +19,6 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
-import com.enonic.xp.content.CompareContentResult;
-import com.enonic.xp.content.CompareContentResults;
-import com.enonic.xp.content.CompareContentsParams;
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -40,15 +36,10 @@ import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentException;
-import com.enonic.xp.content.PushContentParams;
-import com.enonic.xp.content.PushContentRequests;
-import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
-import com.enonic.xp.content.ResolvePublishDependenciesParams;
-import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
@@ -77,7 +68,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.web.jaxrs.impl.MockRestResponse;
+import com.enonic.xp.jaxrs.impl.MockRestResponse;
 
 import static com.enonic.xp.security.acl.Permission.READ;
 
@@ -706,58 +697,6 @@ public class ContentResourceTest
         assertJson( "update_content_success.json", jsonString );
     }
 
-    @Test
-    public void publish_content_success()
-        throws Exception
-    {
-        Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
-            addPushedContent( Contents.from( Content.create().
-                id( ContentId.from( "my-content" ) ).
-                parentPath( ContentPath.ROOT ).
-                name( "content" ).
-                displayName( "My Content" ).
-                build() ) ).
-            addFailed( Content.create().
-                id( ContentId.from( "my-content2" ) ).
-                parentPath( ContentPath.ROOT ).
-                name( "content" ).
-                displayName( "My Content" ).
-                build(), PushContentsResult.FailedReason.PARENT_NOT_EXISTS ).
-            build() );
-
-        String jsonString = request().path( "content/publish" ).
-            entity( readFromFile( "publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "publish_content_success.json", jsonString );
-    }
-
-    @Test
-    public void publish_content_deleted()
-        throws Exception
-    {
-        Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
-            addPushedContent( Contents.from( Content.create().
-                id( ContentId.from( "my-content" ) ).
-                parentPath( ContentPath.ROOT ).
-                name( "content" ).
-                displayName( "My Content" ).
-                build() ) ).
-            addDeleted( Contents.from( Content.create().
-                id( ContentId.from( "myContentId" ) ).
-                parentPath( ContentPath.ROOT ).
-                name( "content" ).
-                displayName( "My deleted content" ).
-                build() ) ).
-            build() );
-
-        String jsonString = request().path( "content/publish" ).
-            entity( readFromFile( "publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "publish_content_deleted.json", jsonString );
-    }
-
 
     @Test
     public void duplicate()
@@ -984,37 +923,6 @@ public class ContentResourceTest
 
         assertEquals( 3, resultJson.getSuccesses().size() );
         assertEquals( 1, resultJson.getFailures().size() );
-    }
-
-    @Test
-    public void resolve_publish_dependencies()
-        throws Exception
-    {
-        Mockito.when( contentService.resolvePublishDependencies( Mockito.isA( ResolvePublishDependenciesParams.class ) ) ).thenReturn(
-            ResolvePublishDependenciesResult.create().
-                pushContentRequests( PushContentRequests.create().
-                    addRequested( ContentId.from( "node1_1" ), ContentId.from( "node1_1" ) ).
-                    addChildOf( ContentId.from( "node1_1_1" ), ContentId.from( "node1_1" ), ContentId.from( "node1_1" ) ).
-                    addParentOf( ContentId.from( "node1" ), ContentId.from( "node1_1" ), ContentId.from( "node1_1" ) ).
-                    build() ).
-                build() );
-
-        Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.create().
-            add( createContent( "node1", "node1_content", "myapplication:my_type" ) ).
-            add( createContent( "node1_1", "node1_1_content", "myapplication:my_type" ) ).
-            add( createContent( "node1_1_1", "node1_1_1_content", "myapplication:my_type" ) ).build() );
-
-        Mockito.when( contentService.compare( Mockito.isA( CompareContentsParams.class ) ) ).thenReturn( CompareContentResults.create().
-            add( new CompareContentResult( CompareStatus.NEW, ContentId.from( "node1_1" ) ) ).
-            add( new CompareContentResult( CompareStatus.NEW, ContentId.from( "node1" ) ) ).
-            add( new CompareContentResult( CompareStatus.NEW, ContentId.from( "node1_1_1" ) ) ).
-            build() );
-
-        String jsonString = request().path( "content/resolvePublishDependencies" ).
-            entity( readFromFile( "resolve_publish_dependencies_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "resolve_publish_dependencies.json", jsonString );
     }
 
 

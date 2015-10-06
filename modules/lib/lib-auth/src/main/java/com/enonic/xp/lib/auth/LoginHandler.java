@@ -72,7 +72,8 @@ public final class LoginHandler
         return this.userStore == null || this.userStore.length == 0;
     }
 
-    private AuthenticationInfo attemptLoginWithAllExistingUserStores() {
+    private AuthenticationInfo attemptLoginWithAllExistingUserStores()
+    {
         final UserStores userStores = runAsAuthenticated( securityService.get()::getUserStores );
 
         for ( UserStore userStore : userStores )
@@ -87,7 +88,8 @@ public final class LoginHandler
         return AuthenticationInfo.unAuthenticated();
     }
 
-    private AuthenticationInfo attemptLogin() {
+    private AuthenticationInfo attemptLogin()
+    {
 
         for ( String uStore : userStore )
         {
