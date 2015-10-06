@@ -6,6 +6,7 @@ module api.app {
     }
 
     export class ServerEventsConnection {
+        private static KEEP_ALIVE_TIME: number = 30 * 1000;
 
         private ws: WebSocket;
         private reconnectInterval: number;
@@ -16,6 +17,7 @@ module api.app {
         private disconnectTimeoutHandle: number;
         private keepConnected: boolean = false;
         private downTime: number;
+        private keepAliveIntervalId: number;
 
         public static debug: boolean = false;
 
@@ -38,6 +40,7 @@ module api.app {
             this.ws = new WebSocket(wsUrl, 'text');
 
             this.ws.addEventListener('close', (ev: CloseEvent) => {
+                clearInterval(this.keepAliveIntervalId);
                 if (ServerEventsConnection.debug) {
                     var m = 'ServerEventsConnection: connection closed to ' + wsUrl;
                     if (this.downTime > 0) {
@@ -88,7 +91,15 @@ module api.app {
                     console.log(m);
                     this.downTime = new Date().getTime();
                 }
-                clearInterval(this.disconnectTimeoutHandle);
+                clearTimeout(this.disconnectTimeoutHandle);
+                this.keepAliveIntervalId = setInterval(() => {
+                    if (this.connected) {
+                        this.ws.send("KeepAlive");
+                        if (ServerEventsConnection.debug) {
+                            console.log('ServerEventsConnection: Sending Keep Alive message');
+                        }
+                    }
+                }, ServerEventsConnection.KEEP_ALIVE_TIME);
                 if (!this.connected) {
                     this.notifyConnectionRestored();
                     this.connected = !this.connected;

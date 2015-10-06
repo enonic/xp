@@ -63,7 +63,7 @@ public final class EventHandler
 
     private void configure( final WebSocketServletFactory factory )
     {
-        factory.getPolicy().setIdleTimeout( TimeUnit.HOURS.toMillis( 2 ) );
+        factory.getPolicy().setIdleTimeout( TimeUnit.MINUTES.toMillis( 10 ) );
         factory.setCreator( this );
     }
 
