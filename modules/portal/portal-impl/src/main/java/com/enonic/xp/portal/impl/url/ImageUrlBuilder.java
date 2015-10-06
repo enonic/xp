@@ -1,9 +1,10 @@
 package com.enonic.xp.portal.impl.url;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Multimap;
+import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
 import com.enonic.xp.attachment.Attachment;
@@ -55,8 +56,11 @@ final class ImageUrlBuilder
         final Attachment mediaAttachment = media.getMediaAttachment();
         String binaryKey = this.contentService.getBinaryKey( media.getId(), mediaAttachment.getBinaryReference() );
         String key = binaryKey + media.getFocalPoint() + media.getCropping();
-        String hash = DigestUtils.shaHex( key );
-        return hash;
+        return Hashing.sha1().
+            newHasher().
+            putString( key, Charsets.UTF_8 ).
+            hash().
+            toString();
     }
 
     private String resolveName( final Media media )
