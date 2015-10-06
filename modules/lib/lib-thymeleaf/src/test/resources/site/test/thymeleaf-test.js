@@ -39,3 +39,12 @@ exports.externalFragmentTest = function () {
     return thymeleaf.render(view, {});
 
 };
+
+exports.dateTest = function () {
+
+    var view = resolve('view/date.html');
+    return thymeleaf.render(view, {
+        date: new Date(Date.parse('1995-11-12T22:24:25'))
+    });
+
+};

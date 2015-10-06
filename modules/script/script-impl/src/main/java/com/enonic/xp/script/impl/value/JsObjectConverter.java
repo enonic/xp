@@ -1,13 +1,16 @@
 package com.enonic.xp.script.impl.value;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import jdk.nashorn.internal.objects.NativeDate;
 
 import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.impl.util.ScriptMapGenerator;
@@ -66,10 +69,17 @@ public final class JsObjectConverter
 
     private static Object toObject( final Object source )
     {
-        final Object object = NashornHelper.wrap( source );
-        if ( object instanceof ScriptObjectMirror )
+        final Object wrapped = NashornHelper.wrap( source );
+        final Object unwrapped = NashornHelper.unwrap( source );
+
+        if ( unwrapped instanceof NativeDate )
         {
-            return toObject( (ScriptObjectMirror) object );
+            return toDate( (NativeDate) unwrapped );
+        }
+
+        if ( wrapped instanceof ScriptObjectMirror )
+        {
+            return toObject( (ScriptObjectMirror) wrapped );
         }
 
         return source;
@@ -135,5 +145,12 @@ public final class JsObjectConverter
     private static Function<Object[], Object> toFunction( final ScriptObjectMirror source )
     {
         return arg -> toObject( source.call( null, arg ) );
+    }
+
+    private static Date toDate( final NativeDate date )
+    {
+        final long time = (long) NativeDate.getTime( date );
+        final long tzOffsetMin = (long) NativeDate.getTimezoneOffset( date );
+        return new Date( time + TimeUnit.MINUTES.toMillis( tzOffsetMin ) );
     }
 }

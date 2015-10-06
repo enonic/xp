@@ -65,7 +65,8 @@ public class RenderThymeleafTest
         throws Exception
     {
         final String result = execute( "inlineFragmentTest" ).toString();
-        final String expected = Resources.toString( getClass().getResource( "/site/test/fragment/inline-fragment-result.html" ), Charsets.UTF_8 );
+        final String expected =
+            Resources.toString( getClass().getResource( "/site/test/fragment/inline-fragment-result.html" ), Charsets.UTF_8 );
         assertEquals( normalizeTest( expected ), normalizeTest( result ) );
     }
 
@@ -74,7 +75,17 @@ public class RenderThymeleafTest
         throws Exception
     {
         final String result = execute( "externalFragmentTest" ).toString();
-        final String expected = Resources.toString( getClass().getResource( "/site/test/fragment/external-fragment-result.html" ), Charsets.UTF_8 );
+        final String expected =
+            Resources.toString( getClass().getResource( "/site/test/fragment/external-fragment-result.html" ), Charsets.UTF_8 );
+        assertEquals( normalizeTest( expected ), normalizeTest( result ) );
+    }
+
+    @Test
+    public void dateTest()
+        throws Exception
+    {
+        final String result = execute( "dateTest" ).toString();
+        final String expected = Resources.toString( getClass().getResource( "/site/test/view/date-result.html" ), Charsets.UTF_8 );
         assertEquals( normalizeTest( expected ), normalizeTest( result ) );
     }
 
