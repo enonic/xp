@@ -1,36 +1,40 @@
 package com.enonic.xp.web.impl;
 
-import java.util.Set;
+import java.util.Collections;
+import java.util.List;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.web.handler.WebHandler;
 
 final class WebHandlerRegistry
 {
-    private final Set<WebHandler> handlers;
-
-    private ImmutableList<WebHandler> list;
+    private final List<WebHandler> handlers;
 
     public WebHandlerRegistry()
     {
-        this.handlers = Sets.newTreeSet( this::compare );
+        this.handlers = Lists.newArrayList();
         updateList();
     }
 
     public ImmutableList<WebHandler> getList()
     {
-        return this.list;
+        return ImmutableList.copyOf( this.handlers );
     }
 
     private void updateList()
     {
-        this.list = ImmutableList.copyOf( this.handlers );
+        Collections.sort( this.handlers, this::compare );
     }
 
     public synchronized void add( final WebHandler handler )
     {
+        if ( this.handlers.contains( handler ) )
+        {
+            return;
+        }
+
         this.handlers.add( handler );
         updateList();
     }

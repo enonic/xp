@@ -64,16 +64,6 @@ public final class ResourceKey
         return this.path.equals( "/" );
     }
 
-    public ResourceKey resolve( final String relPath )
-    {
-        // absolute path
-        if ( relPath.startsWith( "/" ) )
-        {
-            return new ResourceKey( this.applicationKey, relPath );
-        }
-        return new ResourceKey( this.applicationKey, this.path + "/" + relPath );
-    }
-
     @Override
     public String toString()
     {

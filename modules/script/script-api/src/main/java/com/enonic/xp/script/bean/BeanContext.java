@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceKeyResolver;
 
 public interface BeanContext
 {
@@ -14,4 +15,6 @@ public interface BeanContext
     <T> Supplier<T> getAttribute( Class<T> type );
 
     <T> Supplier<T> getService( Class<T> type );
+
+    ResourceKeyResolver getResourceKeyResolver();
 }

@@ -57,7 +57,10 @@
   <bundle level="30">${group}:web-api:${version}</bundle>
   <bundle level="30">${group}:web-impl:${version}</bundle>
   <bundle level="30">${group}:web-vhost:${version}</bundle>
-  <bundle level="30">${group}:web-jaxrs:${version}</bundle>
+
+  <!-- JaxRs app -->
+  <bundle level="30">${group}:jaxrs-api:${version}</bundle>
+  <bundle level="30">${group}:jaxrs-impl:${version}</bundle>
 
   <!-- Portal app dependencies -->
   <bundle level="30">${group}:repack-attoparser:${version}</bundle>

@@ -6,6 +6,7 @@ module api.app {
     }
 
     export class ServerEventsConnection {
+        private static KEEP_ALIVE_TIME: number = 30 * 1000;
 
         private ws: WebSocket;
         private reconnectInterval: number;
@@ -15,6 +16,10 @@ module api.app {
         private connected: boolean = false;
         private disconnectTimeoutHandle: number;
         private keepConnected: boolean = false;
+        private downTime: number;
+        private keepAliveIntervalId: number;
+
+        public static debug: boolean = false;
 
         constructor(reconnectIntervalSeconds: number = 5) {
             this.ws = null;
@@ -23,7 +28,7 @@ module api.app {
 
         public connect() {
             if (!WebSocket) {
-                console.warn('WebSockets not supported. Server events disabled.');
+                console.warn('ServerEventsConnection: WebSockets not supported. Server events disabled.');
                 return;
             }
             var wsUrl = api.util.UriHelper.joinPath(this.getWebSocketUriPrefix(), 'admin', 'event');
@@ -35,6 +40,15 @@ module api.app {
             this.ws = new WebSocket(wsUrl, 'text');
 
             this.ws.addEventListener('close', (ev: CloseEvent) => {
+                clearInterval(this.keepAliveIntervalId);
+                if (ServerEventsConnection.debug) {
+                    var m = 'ServerEventsConnection: connection closed to ' + wsUrl;
+                    if (this.downTime > 0) {
+                        m += '\nUptime: ' + (new Date().getTime() - this.downTime);
+                    }
+                    console.warn(m);
+                    this.downTime = new Date().getTime();
+                }
                 this.disconnectTimeoutHandle = setTimeout(() => {
                     if (this.connected) {
                         if (this.keepConnected) {
@@ -55,17 +69,37 @@ module api.app {
             });
 
             this.ws.addEventListener('error', (ev: ErrorEvent) => {
-                // console.log('Unable to connect to server web socket on ' + wsUrl, ev);
+                if (ServerEventsConnection.debug) {
+                    console.error('ServerEventsConnection: Unable to connect to server web socket on ' + wsUrl, ev);
+                }
             });
 
             this.ws.addEventListener('message', (remoteEvent: any) => {
                 var jsonEvent = <ServerEventJson> JSON.parse(remoteEvent.data);
-                //console.log('Server event [' + jsonEvent.type + ']', jsonEvent.event);
+                if (ServerEventsConnection.debug) {
+                    console.debug('ServerEventsConnection: Server event [' + jsonEvent.type + ']', jsonEvent.event);
+                }
                 this.handleServerEvent(jsonEvent);
             });
 
             this.ws.addEventListener('open', (event: Event) => {
-                clearInterval(this.disconnectTimeoutHandle);
+                if (ServerEventsConnection.debug) {
+                    var m = 'ServerEventsConnection: connection opened to ' + wsUrl;
+                    if (this.downTime > 0) {
+                        m += '\nDowntime: ' + (new Date().getTime() - this.downTime);
+                    }
+                    console.log(m);
+                    this.downTime = new Date().getTime();
+                }
+                clearTimeout(this.disconnectTimeoutHandle);
+                this.keepAliveIntervalId = setInterval(() => {
+                    if (this.connected) {
+                        this.ws.send("KeepAlive");
+                        if (ServerEventsConnection.debug) {
+                            console.log('ServerEventsConnection: Sending Keep Alive message');
+                        }
+                    }
+                }, ServerEventsConnection.KEEP_ALIVE_TIME);
                 if (!this.connected) {
                     this.notifyConnectionRestored();
                     this.connected = !this.connected;
@@ -126,9 +160,9 @@ module api.app {
 
         unServerEvent(listener: (event: api.event.Event) => void) {
             this.serverEventReceivedListeners =
-            this.serverEventReceivedListeners.filter((currentListener: (event: api.event.Event)=>void)=> {
-                return currentListener != listener;
-            });
+                this.serverEventReceivedListeners.filter((currentListener: (event: api.event.Event)=>void)=> {
+                    return currentListener != listener;
+                });
         }
 
         private notifyConnectionLost() {
@@ -143,9 +177,9 @@ module api.app {
 
         unConnectionLost(listener: () => void) {
             this.connectionLostListeners =
-            this.connectionLostListeners.filter((currentListener: ()=>void)=> {
-                return currentListener != listener;
-            });
+                this.connectionLostListeners.filter((currentListener: ()=>void)=> {
+                    return currentListener != listener;
+                });
         }
 
         private notifyConnectionRestored() {
@@ -160,9 +194,9 @@ module api.app {
 
         unConnectionRestored(listener: () => void) {
             this.connectionRestoredListeners =
-            this.connectionRestoredListeners.filter((currentListener: ()=>void)=> {
-                return currentListener != listener;
-            });
+                this.connectionRestoredListeners.filter((currentListener: ()=>void)=> {
+                    return currentListener != listener;
+                });
         }
 
     }

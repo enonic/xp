@@ -151,6 +151,11 @@ public final class ContentPath
         return refString.hashCode();
     }
 
+    public int compareTo( ContentPath contentPath )
+    {
+        return refString.compareTo( contentPath.refString );
+    }
+
     @Override
     public String toString()
     {

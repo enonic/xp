@@ -13,10 +13,10 @@ import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 
 @Beta
-public class Media
+public final class Media
     extends Content
 {
-    protected Media( final Builder builder )
+    private Media( final Builder builder )
     {
         super( builder );
     }

@@ -18,7 +18,7 @@ import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
 
 @Component
-public class ContentNodeTranslatorImpl
+public final class ContentNodeTranslatorImpl
     implements ContentNodeTranslator
 {
     private final static Logger LOG = LoggerFactory.getLogger( ContentNodeTranslator.class );
@@ -38,12 +38,12 @@ public class ContentNodeTranslatorImpl
         {
             return doTranslate( nodes, NodesHasChildrenResult.empty() );
         }
-
     }
 
     public Content fromNode( final Node node, final boolean resolveHasChildren )
     {
-        return doTranslate( node, resolveHasChildren );
+        final boolean hasChildren = resolveHasChildren && this.nodeService.hasChildren( node );
+        return doTranslate( node, hasChildren );
     }
 
     private Contents doTranslate( final Nodes nodes, final NodesHasChildrenResult nodeHasChildren )
@@ -63,11 +63,6 @@ public class ContentNodeTranslatorImpl
         }
 
         return contents.build();
-    }
-
-    public Content fromNode( final Node node )
-    {
-        return doTranslate( node, this.nodeService.hasChildren( node ) );
     }
 
     private Content doTranslate( final Node node, final boolean hasChildren )

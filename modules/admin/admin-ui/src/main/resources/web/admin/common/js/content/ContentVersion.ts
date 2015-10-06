@@ -16,8 +16,6 @@ module api.content {
 
         static fromJson(contentVersionJson: api.content.json.ContentVersionJson, workspaces?: string[]): ContentVersion {
 
-            console.log("WOrkspaces: " + workspaces);
-
             var contentVersion: ContentVersion = new ContentVersion();
             contentVersion.modifier = contentVersionJson.modifier;
             contentVersion.displayName = contentVersionJson.displayName;

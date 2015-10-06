@@ -36,6 +36,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RootNode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.CompareExpr;
@@ -171,6 +172,9 @@ public final class SecurityServiceImpl
         callWithContext( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.addRelationshipToUpdateNodeParams( relationship );
             nodeService.update( updateNodeParams );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return null;
         } );
     }
@@ -181,6 +185,9 @@ public final class SecurityServiceImpl
         callWithContext( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeRelationshipToUpdateNodeParams( relationship );
             nodeService.update( updateNodeParams );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return null;
         } );
     }
@@ -191,6 +198,9 @@ public final class SecurityServiceImpl
         callWithContext( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeAllRelationshipsToUpdateNodeParams( from );
             nodeService.update( updateNodeParams );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return null;
         } );
     }
@@ -202,6 +212,9 @@ public final class SecurityServiceImpl
             final Node node = this.nodeService.getByPath( userStoreNodePath );
             final UpdateNodeParams updateNodeParams = UserStoreNodeTranslator.removeAllRelationshipsToUpdateNodeParams( node );
             nodeService.update( updateNodeParams );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return null;
         } );
     }
@@ -390,6 +403,7 @@ public final class SecurityServiceImpl
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( userToUpdate );
 
             final Node updatedNode = nodeService.update( updateNodeParams );
+
             return PrincipalNodeTranslator.userFromNode( updatedNode );
         } );
     }
@@ -409,6 +423,9 @@ public final class SecurityServiceImpl
         try
         {
             final Node node = callWithContext( () -> nodeService.create( createNodeParams ) );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             if ( createUser.getPassword() != null )
             {
                 return setPassword( user.getKey(), createUser.getPassword() );
@@ -443,8 +460,12 @@ public final class SecurityServiceImpl
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( userToUpdate );
 
             final Node updatedNode = nodeService.update( updateNodeParams );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return PrincipalNodeTranslator.userFromNode( updatedNode );
         } );
+
     }
 
     @Override
@@ -477,6 +498,8 @@ public final class SecurityServiceImpl
         {
             final Node node = callWithContext( () -> this.nodeService.create( createGroupParams ) );
 
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return PrincipalNodeTranslator.groupFromNode( node );
         }
         catch ( NodeAlreadyExistAtPathException e )
@@ -506,6 +529,9 @@ public final class SecurityServiceImpl
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( groupToUpdate );
 
             final Node updatedNode = nodeService.update( updateNodeParams );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return PrincipalNodeTranslator.groupFromNode( updatedNode );
         } );
     }
@@ -540,6 +566,8 @@ public final class SecurityServiceImpl
         {
             final Node node = callWithContext( () -> this.nodeService.create( createNodeParams ) );
 
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return PrincipalNodeTranslator.roleFromNode( node );
         }
         catch ( NodeAlreadyExistAtPathException e )
@@ -569,6 +597,9 @@ public final class SecurityServiceImpl
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( roleToUpdate );
 
             final Node updatedNode = nodeService.update( updateNodeParams );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return PrincipalNodeTranslator.roleFromNode( updatedNode );
         } );
     }
@@ -733,6 +764,8 @@ public final class SecurityServiceImpl
                 build();
             nodeService.applyPermissions( applyPermissions );
 
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return userStoreNode;
         } );
 
@@ -798,6 +831,8 @@ public final class SecurityServiceImpl
                 nodeService.applyPermissions( applyPermissions );
             }
 
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return UserStoreNodeTranslator.fromNode( userStoreNode );
         } );
     }
@@ -810,6 +845,9 @@ public final class SecurityServiceImpl
             build();
 
         nodeService.update( updateParams );
+
+        this.nodeService.refresh( RefreshMode.SEARCH );
+
     }
 
     private <T> T callWithContext( Callable<T> runnable )

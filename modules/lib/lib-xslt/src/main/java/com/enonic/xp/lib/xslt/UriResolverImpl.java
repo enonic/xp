@@ -9,11 +9,14 @@ import javax.xml.transform.stream.StreamSource;
 
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceKeyResolver;
 import com.enonic.xp.resource.ResourceService;
 
 final class UriResolverImpl
     implements URIResolver
 {
+    private ResourceKeyResolver resourceKeyResolver;
+
     private ResourceService resourceService;
 
     @Override
@@ -34,9 +37,14 @@ final class UriResolverImpl
     private Source resolve( final String href, final ResourceKey base )
         throws TransformerException
     {
-        final ResourceKey resolvedResourceKey = base.resolve( "../" + href );
+        final ResourceKey resolvedResourceKey = resourceKeyResolver.resolve( base, "../" + href );
         final Resource resolvedResource = resourceService.getResource( resolvedResourceKey );
         return resolvedResource.exists() ? new StreamSource( resolvedResource.getUrl().toString() ) : null;
+    }
+
+    public void setResourceKeyResolver( final ResourceKeyResolver resourceKeyResolver )
+    {
+        this.resourceKeyResolver = resourceKeyResolver;
     }
 
     public void setResourceService( final ResourceService resourceService )

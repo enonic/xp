@@ -1,6 +1,15 @@
+function checkRequired(params, name) {
+    if (params[name] === undefined) {
+        throw "Parameter '" + name + "' is required";
+    }
+}
+
 exports.send = function (message) {
 
     var bean = __.newBean('com.enonic.xp.lib.mail.SendMailHandler');
+
+    checkRequired(message, 'from');
+    checkRequired(message, 'to');
 
     bean.subject = __.nullOrValue(message.subject);
     bean.from = [].concat(__.nullOrValue(message.from));

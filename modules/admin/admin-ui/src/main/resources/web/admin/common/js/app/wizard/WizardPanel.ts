@@ -190,6 +190,10 @@ module api.app.wizard {
             return this.stepsPanel;
         }
 
+        getMainToolbar(): api.ui.toolbar.Toolbar {
+            return this.mainToolbar;
+        }
+
         updateStickyToolbar() {
             var scrollTop = this.formPanel.getHTMLElement().scrollTop;
             var wizardHeaderHeight = this.header.getEl().getHeightWithMargin();

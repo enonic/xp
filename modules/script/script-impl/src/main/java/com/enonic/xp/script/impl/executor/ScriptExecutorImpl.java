@@ -15,6 +15,7 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceKeyResolver;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.function.CallFunction;
@@ -148,6 +149,12 @@ final class ScriptExecutorImpl
         {
             throw ErrorHelper.handleError( e );
         }
+    }
+
+    @Override
+    public ResourceKeyResolver getResourceKeyResolver()
+    {
+        return new ResourceKeyResolver( this.scriptSettings.getBasePath() );
     }
 
     @Override

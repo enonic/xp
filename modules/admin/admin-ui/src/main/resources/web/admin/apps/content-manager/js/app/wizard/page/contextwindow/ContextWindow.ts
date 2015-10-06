@@ -85,6 +85,10 @@ module app.wizard.page.contextwindow {
             });
         }
 
+        getComponentsView(): app.wizard.PageComponentsView {
+            return this.insertablesPanel.getComponentsView();
+        }
+
         private onRenderedHandler() {
             var initialPos = 0;
             var splitterPosition = 0;

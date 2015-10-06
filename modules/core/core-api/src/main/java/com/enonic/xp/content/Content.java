@@ -11,7 +11,6 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.page.Page;
@@ -371,8 +370,6 @@ public class Content
         protected ContentName name;
 
         protected ContentTypeName type;
-
-        protected Form form;
 
         protected Attachments attachments;
 

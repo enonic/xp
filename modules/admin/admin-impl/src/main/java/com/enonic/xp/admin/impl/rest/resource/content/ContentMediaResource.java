@@ -27,8 +27,8 @@ import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.Exceptions;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
-import com.enonic.xp.web.jaxrs.JaxRsExceptions;
+import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.jaxrs.JaxRsExceptions;
 
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
