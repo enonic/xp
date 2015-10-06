@@ -1,5 +1,8 @@
 package com.enonic.xp.portal.impl.filter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
@@ -12,8 +15,9 @@ import com.enonic.xp.script.ScriptValue;
 
 public final class FilterExecutor
 {
+    private final static Logger LOG = LoggerFactory.getLogger( FilterExecutor.class );
 
-    public static final String RESPONSE_FILTER_METHOD = "responseFilter";
+    private static final String RESPONSE_FILTER_METHOD = "responseFilter";
 
     private final PortalScriptService scriptService;
 
@@ -24,13 +28,14 @@ public final class FilterExecutor
 
     public PortalResponse executeResponseFilter( final String filterName, final PortalRequest request, final PortalResponse response )
     {
-
-        final ResourceKey script = ResourceKey.from( request.getApplicationKey(), "/site/filters/" + filterName + ".js" );
+        final String filterJsPath = "/site/filters/" + filterName + ".js";
+        final ResourceKey script = ResourceKey.from( request.getApplicationKey(), filterJsPath );
         final ScriptExports filterExports = this.scriptService.execute( script );
 
         final boolean exists = filterExports.hasMethod( RESPONSE_FILTER_METHOD );
         if ( !exists )
         {
+            LOG.warn( "Missing exported function '{}' in response filter '{}'.", RESPONSE_FILTER_METHOD, filterJsPath );
             return response;
         }
 
