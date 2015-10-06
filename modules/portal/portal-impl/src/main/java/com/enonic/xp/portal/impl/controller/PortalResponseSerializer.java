@@ -1,66 +1,263 @@
 package com.enonic.xp.portal.impl.controller;
 
-import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.net.HttpHeaders;
+import javax.servlet.http.Cookie;
+import javax.ws.rs.core.Response;
+
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.postprocess.HtmlTag;
+import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.web.HttpStatus;
 
 public final class PortalResponseSerializer
 {
-    private final PortalResponse from;
+    private final ScriptValue value;
 
-    public PortalResponseSerializer( final PortalResponse from )
+    public PortalResponseSerializer( final ScriptValue value )
     {
-        this.from = from;
+        this.value = value;
     }
 
     public PortalResponse serialize()
     {
-        return PortalResponse.create( from ).
-            header( HttpHeaders.CONTENT_TYPE, this.from.getContentType().toString() ).
-            body( serializeBody() ).
-            build();
+        PortalResponse.Builder builder = PortalResponse.create();
+        builder.status( HttpStatus.METHOD_NOT_ALLOWED );
+
+        if ( ( value == null ) || !value.isObject() )
+        {
+            return builder.build();
+        }
+
+        populateStatus( builder, value.getMember( "status" ) );
+        populateContentType( builder, value.getMember( "contentType" ) );
+        populateBody( builder, value.getMember( "body" ) );
+        populateHeaders( builder, value.getMember( "headers" ) );
+        populateContributions( builder, value.getMember( "pageContributions" ) );
+        populateCookies( builder, value.getMember( "cookies" ) );
+        populateFilters( builder, value.getMember( "filters" ) );
+        setRedirect( builder, value.getMember( "redirect" ) );
+
+        return builder.build();
     }
 
-    private Object serializeBody()
+    private void populateStatus( final PortalResponse.Builder builder, final ScriptValue value )
     {
-        final Object body = this.from.getBody();
-        if ( body != null )
+        final Integer status = ( value != null ) ? value.getValue( Integer.class ) : null;
+        builder.status( status != null ? HttpStatus.from( status ): HttpStatus.OK );
+    }
+
+    private void populateContentType( final PortalResponse.Builder builder, final ScriptValue value )
+    {
+        final String type = ( value != null ) ? value.getValue( String.class ) : null;
+        builder.contentType( type != null ? MediaType.parse( type ) : MediaType.create( "text", "html" ) );
+    }
+
+    private void setRedirect( final PortalResponse.Builder builder, final ScriptValue value )
+    {
+        final String redirect = ( value != null ) ? value.getValue( String.class ) : null;
+        if ( redirect == null )
         {
-            return convert( body );
+            return;
+        }
+
+        builder.status( HttpStatus.from( Response.Status.SEE_OTHER.getStatusCode() ) );
+        builder.header( "Location", redirect );
+    }
+
+    private void populateBody( final PortalResponse.Builder builder, final ScriptValue value )
+    {
+        if ( ( value == null ) || value.isFunction() )
+        {
+            return;
+        }
+
+        if ( value.isArray() )
+        {
+            builder.body( value.getValue( String.class ) );
+            return;
+        }
+
+        if ( value.isObject() )
+        {
+            builder.body( value.getMap() );
+            return;
+        }
+
+        builder.body( value.getValue() );
+    }
+
+    private void populateHeaders( final PortalResponse.Builder builder, final ScriptValue value )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+
+        if ( !value.isObject() )
+        {
+            return;
+        }
+
+        for ( final String key : value.getKeys() )
+        {
+            builder.header( key, value.getMember( key ).getValue( String.class ) );
+        }
+    }
+
+    private void populateCookies( final PortalResponse.Builder builder, final ScriptValue value )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+
+        if ( !value.isObject() )
+        {
+            return;
+        }
+
+        for ( final String key : value.getKeys() )
+        {
+            addCookie( builder, value.getMember( key ), key );
+        }
+    }
+
+    private void addCookie( final PortalResponse.Builder builder, final ScriptValue value, final String key )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+
+        if ( value.isObject() )
+        {
+            Cookie cookie = new Cookie( key, "" );
+
+            for ( final String subKey : value.getKeys() )
+            {
+                if ( "value".equals( subKey ) )
+                {
+                    cookie.setValue( value.getMember( subKey ).getValue( String.class ) );
+                }
+                else if ( "path".equals( subKey ) )
+                {
+                    cookie.setPath( value.getMember( subKey ).getValue( String.class ) );
+                }
+                else if ( "domain".equals( subKey ) )
+                {
+                    cookie.setDomain( value.getMember( subKey ).getValue( String.class ) );
+                }
+                else if ( "comment".equals( subKey ) )
+                {
+                    cookie.setComment( value.getMember( subKey ).getValue( String.class ) );
+                }
+                else if ( "maxAge".equals( subKey ) )
+                {
+                    cookie.setMaxAge( value.getMember( subKey ).getValue( Integer.class ) );
+                }
+                else if ( "secure".equals( subKey ) )
+                {
+                    cookie.setSecure( value.getMember( subKey ).getValue( Boolean.class ) );
+                }
+                else if ( "httpOnly".equals( subKey ) )
+                {
+                    cookie.setHttpOnly( value.getMember( subKey ).getValue( Boolean.class ) );
+                }
+            }
+            builder.cookie( cookie );
         }
         else
         {
-            return null;
+            final String strValue = value.getValue( String.class );
+            if ( strValue != null )
+            {
+                builder.cookie( new Cookie( key, strValue ) );
+            }
+            else
+            {
+                builder.cookie( new Cookie( key, "" ) );
+            }
         }
     }
 
-    private Object convert( final Object value )
+    private void populateContributions( final PortalResponse.Builder builder, final ScriptValue value )
     {
-        if ( value instanceof Map )
+        if ( value == null )
         {
-            return convertToJson( value );
+            return;
         }
 
-        if ( value instanceof byte[] )
+        if ( !value.isObject() )
         {
-            return value;
+            return;
         }
 
-        return value.toString();
+        for ( final String key : value.getKeys() )
+        {
+            final HtmlTag htmlTag = HtmlTag.from( key );
+            if ( htmlTag != null )
+            {
+                addContribution( builder, htmlTag, value.getMember( key ) );
+            }
+        }
     }
 
-    private String convertToJson( final Object value )
+    private void addContribution( final PortalResponse.Builder builder, final HtmlTag htmlTag, final ScriptValue value )
     {
-        try
+        if ( value == null )
         {
-            return new ObjectMapper().writeValueAsString( value );
+            return;
         }
-        catch ( final Exception e )
+
+        if ( value.isArray() )
         {
-            throw new RuntimeException( e );
+            for ( ScriptValue arrayValue : value.getArray() )
+            {
+                final String strValue = arrayValue.getValue( String.class );
+                if ( strValue != null )
+                {
+                    builder.contribution( htmlTag, strValue );
+                }
+            }
         }
+        else
+        {
+            final String strValue = value.getValue( String.class );
+            if ( strValue != null )
+            {
+                builder.contribution( htmlTag, strValue );
+            }
+        }
+    }
+
+    private void populateFilters( final PortalResponse.Builder builder, final ScriptValue value )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+
+        if ( value.isObject() || value.isFunction() )
+        {
+            return;
+        }
+
+        if ( value.isArray() )
+        {
+            final List<String> filterNames = value.getArray().stream().
+                filter( ScriptValue::isValue ).
+                map( ( item ) -> item.getValue( String.class ) ).
+                collect( Collectors.toList() );
+            builder.filters( filterNames );
+        }
+        else
+        {
+            builder.filter( value.getValue().toString() );
+        }
+
     }
 }

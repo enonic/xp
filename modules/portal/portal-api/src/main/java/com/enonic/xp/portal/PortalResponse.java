@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.Cookie;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
@@ -33,6 +34,8 @@ public final class PortalResponse
 
     private final ImmutableList<Cookie> cookies;
 
+    private final ImmutableList<String> filters;
+
     public PortalResponse( final Builder builder )
     {
         this.status = builder.status;
@@ -42,6 +45,7 @@ public final class PortalResponse
         this.postProcess = builder.postProcess;
         this.contributions = builder.contributions.build();
         this.cookies = builder.cookies.build();
+        this.filters = builder.filters.build();
     }
 
     public HttpStatus getStatus()
@@ -86,12 +90,33 @@ public final class PortalResponse
 
     public String getAsString()
     {
+        if ( this.body instanceof Map )
+        {
+            return convertToJson( this.body );
+        }
         return ( this.body != null ) ? this.body.toString() : null;
+    }
+
+    private String convertToJson( final Object value )
+    {
+        try
+        {
+            return new ObjectMapper().writeValueAsString( value );
+        }
+        catch ( final Exception e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 
     public ImmutableList<Cookie> getCookies()
     {
         return cookies;
+    }
+
+    public ImmutableList<String> getFilters()
+    {
+        return filters;
     }
 
     public static Builder create( final PortalResponse source )
@@ -115,11 +140,14 @@ public final class PortalResponse
 
         private ImmutableList.Builder<Cookie> cookies;
 
+        private ImmutableList.Builder<String> filters;
+
         private Builder()
         {
             clearHeaders();
             clearContributions();
             clearCookies();
+            clearFilters();
         }
 
         private Builder( final PortalResponse source )
@@ -131,6 +159,7 @@ public final class PortalResponse
             contributions( source.contributions );
             this.status = source.status;
             cookies( source.cookies );
+            filters( source.filters );
         }
 
         public Builder body( final Object body )
@@ -242,6 +271,32 @@ public final class PortalResponse
         public Builder status( final HttpStatus status )
         {
             this.status = status;
+            return this;
+        }
+
+        public Builder filters( final Iterable<String> filters )
+        {
+            if ( this.filters == null )
+            {
+                clearFilters();
+            }
+            this.filters.addAll( filters );
+            return this;
+        }
+
+        public Builder filter( final String filter )
+        {
+            if ( this.filters == null )
+            {
+                clearFilters();
+            }
+            this.filters.add( filter );
+            return this;
+        }
+
+        public Builder clearFilters()
+        {
+            filters = ImmutableList.builder();
             return this;
         }
 
