@@ -78,6 +78,11 @@ module api.app {
             return this;
         }
 
+        setSubNameElements(elements: api.dom.Element[]): NamesAndIconView {
+            this.namesView.setSubNameElements(elements);
+            return this;
+        }
+
         setIconClass(value: string): NamesAndIconView {
             this.iconDivEl.setClass("icon " + value);
             this.iconDivEl.getEl().setDisplay('inline-block');
