@@ -22,7 +22,7 @@ public final class ControllerScriptFactoryImpl
     @Override
     public ControllerScript fromDir( final ResourceKey dir )
     {
-        return fromScript( this.resourceKeyResolver.resolve( dir, dir.getName() + ".js" ) );
+        return fromScript( this.resourceKeyResolver.resolveFromDir( dir, dir.getName() + ".js" ) );
     }
 
     @Override

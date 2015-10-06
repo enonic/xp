@@ -47,4 +47,28 @@ public class ResourceKeyResolverTest
         final ResourceKey key6 = resolver.resolve( ResourceKey.from( "myapp:/site/some/folder" ), "../test.js" );
         assertEquals( "myapp:/site/test.js", key6.toString() );
     }
+
+    @Test
+    public void resolveFromDir()
+    {
+        final ResourceKeyResolver resolver = new ResourceKeyResolver( "/site" );
+
+        final ResourceKey key1 = resolver.resolveFromDir( ResourceKey.from( "myapp:/" ), "test.js" );
+        assertEquals( "myapp:/site/test.js", key1.toString() );
+
+        final ResourceKey key2 = resolver.resolveFromDir( ResourceKey.from( "myapp:/" ), "/some/folder/test.js" );
+        assertEquals( "myapp:/site/some/folder/test.js", key2.toString() );
+
+        final ResourceKey key3 = resolver.resolveFromDir( ResourceKey.from( "myapp:/site" ), "../test.js" );
+        assertEquals( "myapp:/site/test.js", key3.toString() );
+
+        final ResourceKey key4 = resolver.resolveFromDir( ResourceKey.from( "myapp:/site" ), "/some/folder/test.js" );
+        assertEquals( "myapp:/site/some/folder/test.js", key4.toString() );
+
+        final ResourceKey key5 = resolver.resolveFromDir( ResourceKey.from( "myapp:/some/folder" ), "./test.js" );
+        assertEquals( "myapp:/site/some/folder/test.js", key5.toString() );
+
+        final ResourceKey key6 = resolver.resolveFromDir( ResourceKey.from( "myapp:/site/some/folder" ), "../test.js" );
+        assertEquals( "myapp:/site/some/test.js", key6.toString() );
+    }
 }

@@ -13,12 +13,17 @@ public final class ResourceKeyResolver
 
     public ResourceKey resolve( final ResourceKey parent, final String relPath )
     {
+        return resolveFromDir( ResourceKey.from( parent.getApplicationKey(), parent.getPath() + "/.." ), relPath );
+    }
+
+    public ResourceKey resolveFromDir( final ResourceKey parent, final String relPath )
+    {
         if ( relPath.startsWith( "/" ) )
         {
             return newKey( parent.getApplicationKey(), this.basePath, relPath );
         }
 
-        final String path = parent.getPath() + "/../" + relPath;
+        final String path = parent.getPath() + "/" + relPath;
         if ( path.startsWith( this.basePath + "/" ) )
         {
             return newKey( parent.getApplicationKey(), "", path );
