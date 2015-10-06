@@ -8,7 +8,6 @@ module api.content {
             super();
             this.namesAndIconView = new api.app.NamesAndIconViewBuilder().
                 setSize(api.app.NamesAndIconViewSize.small).
-                setAppendIcon(false).
                 build();
             this.appendChild(this.namesAndIconView);
         }
@@ -32,13 +31,14 @@ module api.content {
         }
 
         private getSubNameElements(contentVersion: ContentVersion): api.dom.Element[] {
-            var elements: api.dom.Element[] = [this.getModifierSpan(contentVersion)],
-                commentSpan = this.getCommentSpan(contentVersion);
+            var elements: api.dom.Element[] = [this.getModifierSpan(contentVersion)]/*,
+                commentSpan = this.getCommentSpan(contentVersion)*/;
 
+/*          Uncomment to enable comments in version history
             if (commentSpan) {
                 elements.push(new api.dom.BrEl(), commentSpan);
             }
-
+*/
             return elements;
         }
 
@@ -47,8 +47,9 @@ module api.content {
 
             //TODO: use content version image and number instead of row
             this.namesAndIconView
-                .setMainName(contentVersion.modifier)
-                .setSubNameElements(this.getSubNameElements(contentVersion));
+                .setMainName(contentVersion.modifierDisplayName)
+                .setSubNameElements(this.getSubNameElements(contentVersion))
+                .setIconClass("icon-user");
         }
     }
 

@@ -13,7 +13,6 @@ module app.view {
 
         contentId: ContentId;
         private status: api.content.CompareStatus;
-        private static branchDraft = "draft";
         private static branchMaster = "master";
 
         constructor() {
@@ -21,8 +20,7 @@ module app.view {
                 setName("DisplayName").
                 setField("displayName").
                 setCssClass("description").
-                setMinWidth(165).
-                setWidth(165).
+                setMinWidth(160).
                 setFormatter(this.descriptionFormatter).
                 build();
 
@@ -40,7 +38,7 @@ module app.view {
                 setHotkeysEnabled(false).
                 setSelectedCellCssClass("").
                 setShowToolbar(false).
-                setRowHeight(80).
+                setRowHeight(70).
                 setColumns([
                     descColumn,
                     statusColumn
@@ -106,7 +104,7 @@ module app.view {
 
             value.forEach((workspace: string) => {
                 if (!hasMaster || workspace == ContentVersionsTreeGrid.branchMaster) {
-                    badges.push(new api.dom.SpanEl('badge ' + workspace).setHtml(this.getState(workspace)).toString());
+                    badges.push(new api.dom.PEl('badge ' + workspace).setHtml(this.getState(workspace)).toString());
                 }
             });
 

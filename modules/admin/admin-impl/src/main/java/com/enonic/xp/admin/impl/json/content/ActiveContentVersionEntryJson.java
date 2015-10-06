@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.json.content;
 
+import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.ActiveContentVersionEntry;
 
 public class ActiveContentVersionEntryJson
@@ -8,10 +9,12 @@ public class ActiveContentVersionEntryJson
 
     private final ContentVersionJson contentVersion;
 
-    public ActiveContentVersionEntryJson( final ActiveContentVersionEntry activeContentVersion )
+    public ActiveContentVersionEntryJson( final ActiveContentVersionEntry activeContentVersion,
+                                          final ContentPrincipalsResolver principalsResolver )
     {
         this.branch = activeContentVersion.getBranch().getName();
-        this.contentVersion = new ContentVersionJson( activeContentVersion.getContentVersion() );
+        this.contentVersion = new ContentVersionJson( activeContentVersion.getContentVersion(), principalsResolver.findPrincipal(
+            activeContentVersion.getContentVersion().getModifier() ) );
     }
 
     @SuppressWarnings("UnusedDeclaration")
