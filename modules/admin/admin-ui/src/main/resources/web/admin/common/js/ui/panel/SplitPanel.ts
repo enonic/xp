@@ -1,6 +1,7 @@
 module api.ui.panel {
 
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 
     export enum SplitPanelAlignment {
         HORIZONTAL,
@@ -33,6 +34,8 @@ module api.ui.panel {
         private alignment: SplitPanelAlignment = SplitPanelAlignment.HORIZONTAL;
 
         private alignmentTreshold: number;
+
+        private animationDelay: number;
 
         private splitterThickness: number = 5;
 
@@ -83,6 +86,11 @@ module api.ui.panel {
             return this;
         }
 
+        setAnimationDelay(value: number): SplitPanelBuilder {
+            this.animationDelay = value;
+            return this;
+        }
+
         setSplitterThickness(thickness: number): SplitPanelBuilder {
             this.splitterThickness = thickness;
             return this;
@@ -118,6 +126,10 @@ module api.ui.panel {
 
         getAlignmentTreshold(): number {
             return this.alignmentTreshold;
+        }
+
+        getAnimationDelay(): number {
+            return this.animationDelay;
         }
 
         getSplitterThickness(): number {
@@ -189,6 +201,8 @@ module api.ui.panel {
 
         private savedFirstPanelUnit: SplitPanelUnit;
 
+        private animationDelay: number;
+
         constructor(builder: SplitPanelBuilder) {
             super("split-panel");
             this.firstPanel = builder.getFirstPanel();
@@ -197,6 +211,7 @@ module api.ui.panel {
             this.secondPanel = builder.getSecondPanel();
             this.secondPanelMinSize = builder.getSecondPanelMinSize();
             this.secondPanelUnit = builder.getSecondPanelUnit();
+            this.animationDelay = builder.getAnimationDelay();
             this.firstPanelIsHidden = false;
             this.secondPanelIsHidden = false;
             this.firstPanelIsFullScreen = false;
@@ -221,11 +236,43 @@ module api.ui.panel {
             this.appendChild(this.splitter);
             this.appendChild(this.secondPanel);
 
-            this.ghostDragger = new api.dom.DivEl("ghost-dragger");
             this.mask = new api.ui.mask.DragMask(this);
             this.appendChild(this.mask);
+            this.onRendered(() => this.onRenderedDragHandler());
+
+            if (this.alignmentTreshold) {
+                ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
+                    this.runWithAnimationDelayIfPresent(() => {
+                        if (this.requiresAlignment()) {
+                            this.updateAlignment();
+                        }
+                    });
+                });
+            }
+
+            this.onShown((event: api.dom.ElementShownEvent) => {
+                var splitPanelSize = this.isHorizontal() ? this.getEl().getHeight() : this.getEl().getWidth();
+                api.util.assert(this.firstPanelMinSize + this.secondPanelMinSize <= splitPanelSize,
+                    "warning: total sum of first and second panel minimum sizes exceed total split panel size");
+                this.updateAlignment();
+            });
+
+            // Add all elements, needed to be tracked
+            ResponsiveManager.onAvailableSizeChanged(this);
+            ResponsiveManager.onAvailableSizeChanged(this.firstPanel);
+            ResponsiveManager.onAvailableSizeChanged(this.secondPanel);
+
+            this.onRemoved((event) => {
+                ResponsiveManager.unAvailableSizeChanged(this);
+                ResponsiveManager.unAvailableSizeChanged(this.firstPanel);
+                ResponsiveManager.unAvailableSizeChanged(this.secondPanel);
+            });
+        }
+
+        private onRenderedDragHandler() {
 
             var initialPos = 0;
+            this.ghostDragger = new api.dom.DivEl("ghost-dragger");
             this.dragListener = (e: MouseEvent) => {
                 if (this.isHorizontal()) {
                     if (this.splitterWithinBoundaries(initialPos - e.clientY)) {
@@ -256,28 +303,6 @@ module api.ui.panel {
                     this.stopDrag(e);
                     this.removeChild(this.ghostDragger);
                 }
-            });
-
-            if (this.alignmentTreshold) {
-                api.dom.WindowDOM.get().onResized((event: UIEvent) => this.updateAlignment(), this);
-            }
-
-            this.onShown((event: api.dom.ElementShownEvent) => {
-                var splitPanelSize = this.isHorizontal() ? this.getEl().getHeight() : this.getEl().getWidth();
-                api.util.assert(this.firstPanelMinSize + this.secondPanelMinSize <= splitPanelSize,
-                    "warning: total sum of first and second panel minimum sizes exceed total split panel size");
-                this.updateAlignment();
-            });
-
-            // Add all elements, needed to be tracked
-            ResponsiveManager.onAvailableSizeChanged(this);
-            ResponsiveManager.onAvailableSizeChanged(this.firstPanel);
-            ResponsiveManager.onAvailableSizeChanged(this.secondPanel);
-
-            this.onRemoved((event) => {
-                ResponsiveManager.unAvailableSizeChanged(this);
-                ResponsiveManager.unAvailableSizeChanged(this.firstPanel);
-                ResponsiveManager.unAvailableSizeChanged(this.secondPanel);
             });
         }
 
@@ -322,6 +347,18 @@ module api.ui.panel {
             return (newFirstPanelWidth >= this.firstPanelMinSize) && (newSecondPanelWidth >= this.secondPanelMinSize);
         }
 
+        private requiresAlignment() {
+            if (this.alignmentTreshold) {
+                var splitPanelWidth = this.getEl().getWidthWithMargin();
+                if (splitPanelWidth > this.alignmentTreshold && this.isHorizontal()) {
+                    return true;
+                } else if (splitPanelWidth < this.alignmentTreshold && !this.isHorizontal()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private updateAlignment() {
             var splitPanelWidth = this.getEl().getWidthWithMargin();
             if (splitPanelWidth > this.alignmentTreshold && this.isHorizontal()) {
@@ -329,7 +366,6 @@ module api.ui.panel {
             } else if (splitPanelWidth < this.alignmentTreshold && !this.isHorizontal()) {
                 this.alignment = SplitPanelAlignment.HORIZONTAL;
             }
-
 
             if (this.isHorizontal()) {
                 this.removeClass("vertical");
@@ -408,18 +444,28 @@ module api.ui.panel {
                 this.firstPanel.getEl().setHeight(this.getPanelSizeString(1)).setWidth(null);
                 this.secondPanel.getEl().setHeight(this.getPanelSizeString(2)).setWidth(null);
                 this.splitter.getEl().setHeightPx(this.getSplitterThickness()).setWidth(null).setLeft(null);
-                ResponsiveManager.fireResizeEvent();
+                this.runWithAnimationDelayIfPresent(ResponsiveManager.fireResizeEvent);
             } else {
                 this.firstPanel.getEl().setWidth(this.getPanelSizeString(1)).setHeight(null);
                 this.secondPanel.getEl().setWidth(this.getPanelSizeString(2)).setHeight(null);
                 this.splitter.getEl().setWidthPx(this.getSplitterThickness()).setHeight(null);
-                ResponsiveManager.fireResizeEvent();
+                this.runWithAnimationDelayIfPresent(ResponsiveManager.fireResizeEvent);
                 if (this.firstPanelUnit == SplitPanelUnit.PERCENT && this.secondPanelUnit == SplitPanelUnit.PERCENT) {
                     var positionInPercentage = (this.firstPanelSize != -1) ? this.firstPanelSize : 100 - this.secondPanelSize;
                     this.splitter.getEl().setLeft("calc(" + positionInPercentage + "% - " + (this.getSplitterThickness() / 2) + "px)");
                 } else {
                     this.splitter.getEl().setLeft(this.getPanelSizeString(1));
                 }
+            }
+        }
+
+        runWithAnimationDelayIfPresent(callee: () => void) {
+            if (this.animationDelay) {
+                setTimeout(() => {
+                    callee();
+                }, this.animationDelay);
+            } else {
+                callee();
             }
         }
 
@@ -534,6 +580,23 @@ module api.ui.panel {
 
             this.secondPanelIsHidden = true;
             this.distribute();
+        }
+
+        getActiveWidthPxOfSecondPanel(): number {
+            if (this.secondPanelIsHidden) {
+                return this.hiddenSecondPanelPreviousSize;
+            } else {
+                return this.secondPanel.getEl().getWidthWithBorder();
+            }
+        }
+
+        setActiveWidthPxOfSecondPanel(value: number) {
+            if (this.secondPanelIsHidden) {
+                this.hiddenSecondPanelPreviousSize = value;
+            } else {
+                this.secondPanelSize = value;
+            }
+            this.secondPanelUnit = SplitPanelUnit.PIXEL;
         }
 
         isFirstPanelHidden() {

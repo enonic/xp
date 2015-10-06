@@ -95,6 +95,10 @@ module app.view {
             return StringHelper.capitalize(name.replace(/-/g, " ").trim());
         }
 
+        getDetailsPanel(): DetailsPanel {
+            return this.detailsPanel;
+        }
+
         setName(name: string) {
             this.headerLabel.setHtml(name);
         }
