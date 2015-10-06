@@ -49,7 +49,7 @@ public class ScriptRuntimeTest
     @Test
     public void testResolve()
     {
-        final ResourceKey script = ResourceKey.from( "myapplication:/resolve/resolve-test.js" );
+        final ResourceKey script = ResourceKey.from( "myapplication:/site/resolve/resolve-test.js" );
         final ScriptExports exports = runTestScript( script );
         assertNotNull( exports );
         assertSame( script, exports.getScript() );
@@ -74,7 +74,7 @@ public class ScriptRuntimeTest
     @Test
     public void testCompileError()
     {
-        final ResourceKey script = ResourceKey.from( "myapplication:/error/error-test.js" );
+        final ResourceKey script = ResourceKey.from( "myapplication:/site/error/error-test.js" );
 
         try
         {
@@ -91,7 +91,7 @@ public class ScriptRuntimeTest
     @Test
     public void testRuntimeError()
     {
-        final ResourceKey script = ResourceKey.from( "myapplication:/error/error-in-export-test.js" );
+        final ResourceKey script = ResourceKey.from( "myapplication:/site/error/error-in-export-test.js" );
         final ScriptExports exports = runTestScript( script );
 
         assertNotNull( exports );
@@ -104,7 +104,7 @@ public class ScriptRuntimeTest
         catch ( final ResourceProblemException e )
         {
             assertEquals( 1, e.getLineNumber() );
-            assertEquals( ResourceKey.from( "myapplication:/error/error-test.js" ), e.getResource() );
+            assertEquals( ResourceKey.from( "myapplication:/site/error/error-test.js" ), e.getResource() );
         }
     }
 

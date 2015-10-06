@@ -9,6 +9,7 @@ import net.sf.saxon.TransformerFactoryImpl;
 
 import com.enonic.xp.lib.xslt.function.XsltFunctionLibrary;
 import com.enonic.xp.portal.view.ViewFunctionService;
+import com.enonic.xp.resource.ResourceKeyResolver;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -17,6 +18,8 @@ public final class XsltService
     implements ScriptBean
 {
     private final Configuration configuration;
+
+    private ResourceKeyResolver resourceKeyResolver;
 
     private ResourceService resourceService;
 
@@ -39,7 +42,8 @@ public final class XsltService
     {
         final TransformerFactory factory = createTransformerFactory();
         XsltProcessor processor = new XsltProcessor( factory );
-        processor.setResourceService( resourceService );
+        processor.setResourceService( this.resourceService );
+        processor.setResourceKeyResolver( this.resourceKeyResolver );
         return processor;
     }
 
@@ -52,6 +56,7 @@ public final class XsltService
     public void initialize( final BeanContext context )
     {
         this.resourceService = context.getService( ResourceService.class ).get();
+        this.resourceKeyResolver = context.getResourceKeyResolver();
         final Supplier<ViewFunctionService> service = context.getService( ViewFunctionService.class );
         setViewFunctionService( service );
     }

@@ -61,11 +61,20 @@ public class RenderThymeleafTest
     }
 
     @Test
-    public void fragmentsTest()
+    public void inlineFragment()
         throws Exception
     {
-        final String result = execute( "fragmentsTest" ).toString();
-        final String expected = Resources.toString( getClass().getResource( "/site/test/fragment/fragment-result.html" ), Charsets.UTF_8 );
+        final String result = execute( "inlineFragmentTest" ).toString();
+        final String expected = Resources.toString( getClass().getResource( "/site/test/fragment/inline-fragment-result.html" ), Charsets.UTF_8 );
+        assertEquals( normalizeTest( expected ), normalizeTest( result ) );
+    }
+
+    @Test
+    public void externalFragment()
+        throws Exception
+    {
+        final String result = execute( "externalFragmentTest" ).toString();
+        final String expected = Resources.toString( getClass().getResource( "/site/test/fragment/external-fragment-result.html" ), Charsets.UTF_8 );
         assertEquals( normalizeTest( expected ), normalizeTest( result ) );
     }
 
