@@ -61,7 +61,7 @@ module app.browse {
                     setDragAndDrop(true).
                     disableMultipleSelection(true).
                     prependClasses("content-tree-grid").
-                    setSelectedCellCssClass("selected-sort-row selected")
+                    setSelectedCellCssClass("selected-sort-row")
             );
 
         }

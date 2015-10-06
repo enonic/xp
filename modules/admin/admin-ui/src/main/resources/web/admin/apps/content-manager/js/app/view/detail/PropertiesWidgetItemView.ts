@@ -26,9 +26,10 @@ module app.view.detail {
                 var strings: FieldString[];
 
                 strings = [
-                    new FieldString().setName("Type").setValue(this.content.getType().toLocaleString()),
+                    new FieldString().setName("Type").setValue(this.content.getType().getLocalName()
+                        ? this.content.getType().getLocalName() : this.content.getType().toString()),
                     this.content.getLanguage() ? new FieldString().setName("Language").setValue(this.content.getLanguage()) : null,
-                    this.content.getOwner() ? new FieldString().setName("Owner").setValue(this.content.getOwner().toString()) : null,
+                    this.content.getOwner() ? new FieldString().setName("Owner").setValue(this.content.getOwner().getId()) : null,
                     this.content.getModifiedTime() ? new FieldString().setName("Modified").
                         setValue(DateTimeFormatter.createHtmlNoTimestamp(this.content.getModifiedTime())) : null,
                     new FieldString().setName("Created").setValue(DateTimeFormatter.createHtmlNoTimestamp(this.content.getCreatedTime())),

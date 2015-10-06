@@ -777,7 +777,7 @@ public final class ContentResource
             size( params.getSize() != null ? params.getSize() : 10 ).
             build() );
 
-        return new GetContentVersionsResultJson( result );
+        return new GetContentVersionsResultJson( result, this.principalsResolver );
     }
 
     @GET
@@ -789,7 +789,7 @@ public final class ContentResource
             contentId( ContentId.from( id ) ).
             build() );
 
-        return new GetActiveContentVersionsResultJson( result );
+        return new GetActiveContentVersionsResultJson( result , this.principalsResolver );
     }
 
 

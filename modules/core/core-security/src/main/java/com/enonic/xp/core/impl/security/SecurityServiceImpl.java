@@ -422,9 +422,11 @@ public final class SecurityServiceImpl
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
         try
         {
-            final Node node = callWithContext( () -> nodeService.create( createNodeParams ) );
-
-            this.nodeService.refresh( RefreshMode.SEARCH );
+            final Node node = callWithContext( () -> {
+                final Node createdNode = nodeService.create( createNodeParams );
+                this.nodeService.refresh( RefreshMode.SEARCH );
+                return createdNode;
+            } );
 
             if ( createUser.getPassword() != null )
             {
@@ -496,9 +498,11 @@ public final class SecurityServiceImpl
         final CreateNodeParams createGroupParams = PrincipalNodeTranslator.toCreateNodeParams( group );
         try
         {
-            final Node node = callWithContext( () -> this.nodeService.create( createGroupParams ) );
-
-            this.nodeService.refresh( RefreshMode.SEARCH );
+            final Node node = callWithContext( () -> {
+                final Node createdNode = this.nodeService.create( createGroupParams );
+                this.nodeService.refresh( RefreshMode.SEARCH );
+                return createdNode;
+            } );
 
             return PrincipalNodeTranslator.groupFromNode( node );
         }
@@ -564,9 +568,11 @@ public final class SecurityServiceImpl
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( role );
         try
         {
-            final Node node = callWithContext( () -> this.nodeService.create( createNodeParams ) );
-
-            this.nodeService.refresh( RefreshMode.SEARCH );
+            final Node node = callWithContext( () -> {
+                final Node createdNode = this.nodeService.create( createNodeParams );
+                this.nodeService.refresh( RefreshMode.SEARCH );
+                return createdNode;
+            } );
 
             return PrincipalNodeTranslator.roleFromNode( node );
         }
@@ -693,7 +699,11 @@ public final class SecurityServiceImpl
     public void deletePrincipal( final PrincipalKey principalKey )
     {
         removeRelationships( principalKey );
-        final Node deletedNode = callWithContext( () -> this.nodeService.deleteById( toNodeId( principalKey ) ) );
+        final Node deletedNode = callWithContext( () -> {
+            final Node node = this.nodeService.deleteById( toNodeId( principalKey ) );
+            this.nodeService.refresh( RefreshMode.SEARCH );
+            return node;
+        } );
         if ( deletedNode == null )
         {
             throw new PrincipalNotFoundException( principalKey );
