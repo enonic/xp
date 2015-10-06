@@ -71,10 +71,6 @@ module api.content.form.inputtype.upload {
             this.uploader = this.createUploader();
             this.uploaderWrapper = this.createUploaderWrapper(property);
 
-            if (property.hasNonNullValue()) {
-                this.showFileName(property);
-            }
-
             if (this.getContext().contentId) {
                 this.uploader.setValue(this.getContext().contentId.toString());
                 if (property.getValue() != null) {
@@ -145,23 +141,8 @@ module api.content.form.inputtype.upload {
             return new api.form.inputtype.InputValidationRecording();
         }
 
-        private showFileName(property: Property) {
-            var contentId = new api.content.ContentId(property.getString());
-
-            new api.content.GetContentByIdRequest(contentId).
-                sendAndParse().
-                then((content: api.content.Content) => {
-                    this.uploader.setFileName(content.getName().toString());
-                    this.uploader.setValue(content.getId());
-
-                }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                    this.uploaderWrapper.addClass("empty");
-                }).done();
-        }
-
         private deleteContent(property: Property) {
-            var contentId = new api.content.ContentId(property.getString());
+            var contentId = this.getContext().contentId;
 
             new api.content.GetContentByIdRequest(contentId).
                 sendAndParse().
@@ -186,7 +167,8 @@ module api.content.form.inputtype.upload {
         }
 
         private createUploader(): api.content.MediaUploader {
-            var allowTypes = (<any>(this.config.inputConfig)).allowTypes.map((allowType: FileUploaderConfigAllowType) => {
+            var allowTypesConfig: FileUploaderConfigAllowType[] = (<any>(this.config.inputConfig)).allowTypes || [];
+            var allowTypes = allowTypesConfig.map((allowType: FileUploaderConfigAllowType) => {
                 return {title: allowType.name, extensions: allowType.extensions};
             });
             return new api.content.MediaUploader({
