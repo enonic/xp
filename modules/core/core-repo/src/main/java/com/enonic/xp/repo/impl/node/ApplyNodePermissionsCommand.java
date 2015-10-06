@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.time.Instant;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,6 +100,7 @@ final class ApplyNodePermissionsCommand
     private Node createUpdatedNode( final Node persistedNode, final AccessControlList permissions, final boolean inheritsPermissions )
     {
         final Node.Builder updateNodeBuilder = Node.create( persistedNode ).
+            timestamp( Instant.now() ).
             permissions( permissions ).
             inheritPermissions( inheritsPermissions );
         return updateNodeBuilder.build();
