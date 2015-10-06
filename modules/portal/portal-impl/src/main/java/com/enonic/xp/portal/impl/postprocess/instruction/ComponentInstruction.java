@@ -75,7 +75,7 @@ public final class ComponentInstruction
         else
         {
             final String name = substringAfter( componentSelector, APPLICATION_COMPONENT_PREFIX );
-            final ComponentName componentName = name != null ? new ComponentName( name ) : null;
+            final ComponentName componentName = new ComponentName( name );
             final ApplicationKey currentApplication = portalRequest.getPageTemplate().getController().getApplicationKey();
             component = componentService.getByName( currentApplication, componentName );
         }
