@@ -12,10 +12,53 @@ module api.content {
             this.appendChild(this.namesAndIconView);
         }
 
+        private getModifiedString(modified: Date): string {
+            var timeDiff = Math.abs(Date.now() - modified.getTime());
+            var secInMs = 1000;
+            var minInMs = secInMs * 60;
+            var hrInMs = minInMs * 60;
+            var dayInMs = hrInMs * 24;
+            var monInMs = dayInMs * 31;
+            var yrInMs = dayInMs * 365;
+
+            if (timeDiff < minInMs) {
+                return "less than a minute ago";
+            }
+            else if (timeDiff < 2 * minInMs) {
+                return "a minute ago";
+            }
+            else if (timeDiff < hrInMs) {
+                return ~~(timeDiff / minInMs) + " minutes ago";
+            }
+            else if (timeDiff < 2 * hrInMs) {
+                return "over an hour ago";
+            }
+            else if (timeDiff < dayInMs) {
+                return "over " + ~~(timeDiff / hrInMs) + " hours ago";
+            }
+            else if (timeDiff < 2 * dayInMs) {
+                return "over a day ago";
+            }
+            else if (timeDiff < monInMs) {
+                return "over " + ~~(timeDiff / dayInMs) + " days ago";
+            }
+            else if (timeDiff < 2 * monInMs) {
+                return "over a month ago";
+            }
+            else if (timeDiff < yrInMs) {
+                return "over " + ~~(timeDiff / monInMs) + " months ago";
+            }
+            else if (timeDiff < 2 * yrInMs) {
+                return "over a year ago";
+            }
+
+            return "over " + ~~(timeDiff / yrInMs) + " years ago";
+        }
+
         private getModifierSpan(contentVersion: ContentVersion): api.dom.SpanEl {
             var span = new api.dom.SpanEl("version-modifier");
 
-            span.setHtml(api.ui.treegrid.DateTimeFormatter.createHtml(contentVersion.modified));
+            span.setHtml(this.getModifiedString(contentVersion.modified));
 
             return span;
         }
