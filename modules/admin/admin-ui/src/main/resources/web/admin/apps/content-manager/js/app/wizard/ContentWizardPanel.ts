@@ -241,6 +241,11 @@ module app.wizard {
                                 this.cycleViewModeButton.executePrevAction();
                             }
                         } else {
+                            if(this.inMobileViewMode && this.isLiveView()) {
+                                this.inMobileViewMode = false;
+                                this.showSplitEdit();
+                            }
+
                             this.inMobileViewMode = false;
                         }
                     }
@@ -947,6 +952,10 @@ module app.wizard {
 
         private isSplitView(): boolean {
             return this.getSplitPanel() && this.getSplitPanel().hasClass("toggle-split");
+        }
+
+        private isLiveView(): boolean {
+            return this.getSplitPanel() && this.getSplitPanel().hasClass("toggle-live");
         }
 
         public checkContentCanBePublished(displayValidationErrors: boolean): boolean {
