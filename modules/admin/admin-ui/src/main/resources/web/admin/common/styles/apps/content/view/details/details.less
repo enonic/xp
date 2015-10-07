@@ -1,11 +1,11 @@
-.grid-and-detail-split-panel {
+.content-grid-and-browse-split-panel {
   .browse-toolbar {
     .details-panel-toggle-button, .large-details-panel-toggle-button {
       // toggle button for medium screen sizes
       z-index: 2;
       float: right;
-      top: 2px;
-      right: 2px;
+      top: 4px;
+      right: 4px;
 
       overflow: hidden;
       display: block;
@@ -20,19 +20,6 @@
         display: none !important;
       }
 
-      @media screen and (min-width: 1921px) {
-        display: none !important;
-      }
-
-      &.large-details-panel-toggle-button {
-        @media screen and (max-width: 1920px) {
-          display: none;
-        }
-        @media screen and (min-width: 1921px) {
-          display: inherit !important;
-        }
-      }
-
       &:focus {
         box-shadow: none;
         border: 0px transparent;
@@ -43,7 +30,14 @@
       }
 
       &:before {
-        font-size: 21px;
+        font-size: 16px;
+      }
+      &.expanded {
+        top: 2px;
+        right: 0px;
+        &:before {
+          font-size: 21px;
+        }
       }
 
       .icon-list();
@@ -95,15 +89,11 @@
   top: 0px;
   right: -280px;
   box-shadow: 0 4px 20px -8px #000000, 0 0 0 0 rgba(0, 0, 0, 0.3);
-  opacity: 0.99;
+  opacity: 0.9;
   background-color: @admin-bg-almost-white;
   .transition(all 0.5s ease-in-out);
 
   @media screen and (max-width: 540px) {
-    display: none;
-  }
-
-  @media screen and (min-width: 1921px) {
     display: none;
   }
 
@@ -260,13 +250,13 @@
     position: relative;
   }
 
-  .widget-item-view {
-    // common styles for all widget items
-    position: relative;
-    margin: 10px 10px 10px;
-    padding: 5px;
-    background-color: @admin-white;
-    .box-shadow(0px 1px 2px 1px rgba(0, 0, 0, 0.1));
+  .widget-item-view:not(.version-history) {
+      // common styles for all widget items
+      position: relative;
+      margin: 10px 10px 10px;
+      padding: 5px;
+      background-color: @admin-white;
+      .box-shadow(0px 1px 2px 1px rgba(0, 0, 0, 0.1));
   }
 
   .properties-widget-item-view {
@@ -281,6 +271,10 @@
       dt {
         float: left;
         width: 70%;
+        .ellipsis();
+      }
+      dd, dt {
+        margin: 1px 0px;
       }
     }
 
@@ -373,7 +367,7 @@
 .split-panel {
   // styles for large screens
 
-  &.grid-and-detail-split-panel {
+  &.content-grid-and-browse-split-panel {
 
     &.vertical {
       > .panel, .splitter {
@@ -387,6 +381,10 @@
     > .split-panel {
       right: initial;
       .transition(all 0.5s ease-in-out);
+    }
+
+    > .splitter {
+      z-index: 1;
     }
 
     > .details-panel {

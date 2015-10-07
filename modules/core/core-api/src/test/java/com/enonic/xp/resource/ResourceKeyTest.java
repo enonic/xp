@@ -21,7 +21,8 @@ public class ResourceKeyTest
     }
 
     private void fromUri( final String input, final String uri, final String application, final String path, final String name,
-                          final String ext, final boolean root )
+                          final String ext,
+                          final boolean root )
     {
         final ResourceKey key = ResourceKey.from( input );
 
@@ -81,6 +82,25 @@ public class ResourceKeyTest
     {
         final boolean result = ResourceKey.from( key1 ).equals( ResourceKey.from( key2 ) );
         Assert.assertEquals( flag, result );
+    }
+
+    @Test
+    public void testResolve()
+    {
+        testResolve( "myapplication-1.0.0:/", "", "myapplication-1.0.0:/" );
+        testResolve( "myapplication-1.0.0:/", ".", "myapplication-1.0.0:/" );
+        testResolve( "myapplication-1.0.0:/", "/", "myapplication-1.0.0:/" );
+        testResolve( "myapplication-1.0.0:/a/b", "../c", "myapplication-1.0.0:/a/c" );
+        testResolve( "myapplication-1.0.0:/a", "b/c", "myapplication-1.0.0:/a/b/c" );
+    }
+
+    private void testResolve( final String uri, final String path, final String resolved )
+    {
+        final ResourceKey key1 = ResourceKey.from( uri );
+        final ResourceKey key2 = key1.resolve( path );
+
+        Assert.assertNotNull( key2 );
+        Assert.assertEquals( resolved, key2.toString() );
     }
 
     @Test

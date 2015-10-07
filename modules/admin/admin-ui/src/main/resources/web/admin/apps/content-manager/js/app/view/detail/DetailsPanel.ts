@@ -43,6 +43,8 @@ module app.view.detail {
         private defaultWidgetView: WidgetView;
         private previousActiveWidget: WidgetView;
 
+        private versionWidgetItemView: WidgetItemView;
+
         private static DEFAULT_WIDGET_NAME: string = "Info";
 
         constructor(builder: Builder) {
@@ -67,7 +69,7 @@ module app.view.detail {
             });
 
             this.onPanelSizeChanged(() => {
-                this.versionsPanel.ReRenderActivePanel();
+                this.versionsPanel.reRenderActivePanel();
             });
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
@@ -90,7 +92,7 @@ module app.view.detail {
 
         private initDivForNoSelection() {
             this.divForNoSelection = new api.dom.DivEl("no-selection-message");
-            this.divForNoSelection.getEl().setInnerHtml("You are wasting this space - select something!");
+            this.divForNoSelection.getEl().setInnerHtml("Select an item - and we'll show you the details!");
             this.appendChild(this.divForNoSelection);
         }
 
@@ -223,8 +225,8 @@ module app.view.detail {
         }
 
         private updateCommonWidgets() {
-            this.versionsPanel.setItem(this.item);
             this.setDefaultWidget();
+            this.versionsPanel.setItem(this.item);
         }
 
         private updateCustomWidgets() {
@@ -235,6 +237,11 @@ module app.view.detail {
             this.activateDefaultWidget();
         }
 
+        private setStatus(statusWidgetItemView: StatusWidgetItemView) {
+            statusWidgetItemView.setStatus(this.contentStatus);
+            this.versionsPanel.setStatus(this.contentStatus);
+            this.versionsPanel.reRenderActivePanel();
+        }
 
         private setDefaultWidget() {
             var widgetItemView = new StatusWidgetItemView();
@@ -249,10 +256,10 @@ module app.view.detail {
                         this.detailsContainer.removeChild(this.defaultWidgetView);
                     }
 
-                    widgetItemView.setStatus(this.contentStatus);
+                    this.setStatus(widgetItemView);
 
                     this.onContentStatusChanged(() => {
-                        widgetItemView.setStatus(this.contentStatus);
+                        this.setStatus(widgetItemView);
                         widgetItemView.layout();
                     });
 
@@ -288,14 +295,14 @@ module app.view.detail {
 
         private initCommonWidgetsViews() {
 
-            var widgetItemView = new WidgetItemView();
-            widgetItemView.setItem(this.versionsPanel);
+            this.versionWidgetItemView = new WidgetItemView("version-history");
+            this.versionWidgetItemView.setItem(this.versionsPanel);
 
             var versionsWidgetView = WidgetView.create().
                 setName("Version history").
                 setDetailsPanel(this).
                 setUseToggleButton(false).
-                addWidgetItemView(widgetItemView).
+                addWidgetItemView(this.versionWidgetItemView).
                 build();
 
             this.addWidgets([versionsWidgetView]);
@@ -325,9 +332,8 @@ module app.view.detail {
         private onRenderedHandler() {
             var initialPos = 0;
             var splitterPosition = 0;
-            var parent = this.getParentElement();
             this.actualWidth = this.getEl().getWidth();
-            this.mask = new api.ui.mask.DragMask(parent);
+            this.mask = new api.ui.mask.DragMask(this.getParentElement());
 
             var dragListener = (e: MouseEvent) => {
                 if (this.splitterWithinBoundaries(initialPos - e.clientX)) {
@@ -388,6 +394,15 @@ module app.view.detail {
             widgetViews.forEach((widget) => {
                 this.addWidget(widget);
             })
+        }
+
+        setWidthPx(value: number) {
+            this.getEl().setWidthPx(value);
+            this.actualWidth = value;
+        }
+
+        getActualWidth(): number {
+            return this.actualWidth;
         }
 
         getItem(): ViewItem<ContentSummary> {
@@ -549,60 +564,6 @@ module app.view.detail {
         }
     }
 
-    export class DetailsPanelToggleButton extends api.ui.button.ActionButton {
-
-        private toggleAction: DetailsPanelToggleAction;
-
-        constructor(action: DetailsPanelToggleAction) {
-            super(action);
-            this.toggleAction = action;
-            this.addClass("details-panel-toggle-button");
-
-            action.onExecuted(() => {
-                this.toggleClass("expanded", action.isExpanded());
-            });
-        }
-
-        disable() {
-            this.toggleAction.setEnabled(false);
-            this.unExpand();
-        }
-
-        unExpand() {
-            this.toggleAction.setExpanded(false);
-            this.removeClass("expanded");
-        }
-    }
-
-    export class DetailsPanelToggleAction extends api.ui.Action {
-
-        private detailsPanel: DetailsPanel;
-        private expanded: boolean = false;
-
-        constructor(detailsPanel: DetailsPanel) {
-            super("");
-
-            this.detailsPanel = detailsPanel;
-
-            this.onExecuted(() => {
-                this.expanded = !this.expanded;
-                if (this.expanded) {
-                    this.detailsPanel.slideIn();
-                } else {
-                    this.detailsPanel.slideOut();
-                }
-            });
-        }
-
-        isExpanded(): boolean {
-            return this.expanded;
-        }
-
-        setExpanded(value: boolean) {
-            this.expanded = value;
-        }
-    }
-
     export class MobileDetailsPanelToggleButton extends api.dom.DivEl {
 
         private detailsPanel: DetailsPanel;
@@ -623,41 +584,198 @@ module app.view.detail {
         }
     }
 
-    export class LargeDetailsPanelToggleButton extends api.dom.DivEl {
+    export class NonMobileDetailsPanelsToggleButton extends api.dom.DivEl {
 
         private splitPanelWithGridAndDetails: api.ui.panel.SplitPanel;
-        private detailsPanel: DetailsPanel;
+        private defaultDockedDetailsPanel: DetailsPanel;
+        private floatingDetailsPanel: DetailsPanel;
+        private resizeEventMonitorLocked: boolean = false;
 
-        constructor(splitPanel: api.ui.panel.SplitPanel, detailsPanel: DetailsPanel) {
+        constructor(builder: NonMobileDetailsPanelsToggleButtonBuilder) {
             super("button large-details-panel-toggle-button");
 
-            this.splitPanelWithGridAndDetails = splitPanel;
-            this.detailsPanel = detailsPanel;
+            this.splitPanelWithGridAndDetails = builder.getSplitPanelWithGridAndDetails();
+            this.defaultDockedDetailsPanel = builder.getDefaultDetailsPanel();
+            this.floatingDetailsPanel = builder.getFloatingDetailsPanel();
 
             this.onClicked((event) => {
-                this.detailsPanel.addClass("left-bordered");
-                if (this.toggleClass("expanded").hasClass("expanded")) {
-                    this.splitPanelWithGridAndDetails.showSecondPanel(false);
+                this.toggleClass("expanded");
+
+                if (this.requiresAnimation()) {
+                    this.doPanelAnimation();
+                }
+            });
+
+            this.defaultDockedDetailsPanel.onShown(() => {
+                this.splitPanelWithGridAndDetails.distribute();
+            });
+        }
+
+        handleResizeEvent() {
+            if (!this.resizeEventMonitorLocked) {
+                this.resizeEventMonitorLocked = true;
+                if (this.needsSwitchToFloatingMode() || this.needsSwitchToDockedMode()) {
+                    this.doPanelAnimation();
+                } else if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
+                    this.defaultDockedDetailsPanel.notifyPanelSizeChanged();
+                }
+                setTimeout(() => {
+                    this.resizeEventMonitorLocked = false;
+                }, 600);
+            } else {
+                return;
+            }
+        }
+
+        doPanelAnimation() {
+            if (this.requiresFloatingPanelDueToShortWidth()) {
+                if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
+                    this.dockedToFloatingSync();
+                }
+                if (this.hasClass("expanded")) {
+                    this.floatingDetailsPanel.slideIn();
                 } else {
+                    this.floatingDetailsPanel.slideOut();
+                }
+                this.splitPanelWithGridAndDetails.setActiveWidthPxOfSecondPanel(this.floatingDetailsPanel.getActualWidth());
+
+            } else {
+
+                if (this.floatingPanelIsShown()) {
+                    this.floatingToDockedSync();
+                }
+
+                this.defaultDockedDetailsPanel.addClass("left-bordered");
+
+                if (this.hasClass("expanded")) {
+                    this.splitPanelWithGridAndDetails.showSecondPanel(false);
+                } else if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
                     this.splitPanelWithGridAndDetails.foldSecondPanel();
                 }
 
                 setTimeout(() => {
-                    this.detailsPanel.removeClass("left-bordered");
+                    this.defaultDockedDetailsPanel.removeClass("left-bordered");
                     if (this.hasClass("expanded")) {
                         this.splitPanelWithGridAndDetails.showSplitter();
+                        this.defaultDockedDetailsPanel.notifyPanelSizeChanged();
                     }
-                    this.splitPanelWithGridAndDetails.distribute();
                 }, 500);
-            });
+            }
+
+            this.ensureButtonHasCorrectState();
+        }
+
+        hideActivePanel() {
+            this.removeClass("expanded");
+            this.doPanelAnimation();
+        }
+
+        hideDockedDetailsPanel() {
+            this.splitPanelWithGridAndDetails.hideSecondPanel();
+        }
+
+        private dockedToFloatingSync() {
+            var activePanelWidth = this.splitPanelWithGridAndDetails.getActiveWidthPxOfSecondPanel();
+            this.hideDockedDetailsPanel();
+            this.floatingDetailsPanel.setWidthPx(activePanelWidth)
+        }
+
+        private floatingToDockedSync() {
+            this.floatingDetailsPanel.slideOut();
+            var activePanelWidth: number = this.floatingDetailsPanel.getActualWidth();
+            this.splitPanelWithGridAndDetails.setActiveWidthPxOfSecondPanel(activePanelWidth);
+        }
+
+        private needsSwitchToFloatingMode(): boolean {
+            if (this.requiresFloatingPanelDueToShortWidth() && !this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
+                return true;
+            }
+            return false;
+        }
+
+        private needsSwitchToDockedMode(): boolean {
+            if (!this.requiresFloatingPanelDueToShortWidth() && this.splitPanelWithGridAndDetails.isSecondPanelHidden() &&
+                this.hasClass("expanded")) {
+                return true;
+            }
+            return false;
+        }
+
+        private requiresAnimation(): boolean {
+            if (this.hasClass("expanded")) {
+                if (this.splitPanelWithGridAndDetails.isSecondPanelHidden() && !this.floatingPanelIsShown()) {
+                    return true;
+                }
+            } else {
+                if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden() || this.floatingPanelIsShown()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private floatingPanelIsShown(): boolean {
+            var right = this.floatingDetailsPanel.getHTMLElement().style.right;
+            if (right && right.indexOf("px") > -1) {
+                right = right.substring(0, right.indexOf("px"));
+                return Number(right) >= 0;
+            }
+            return false;
+        }
+
+        requiresFloatingPanelDueToShortWidth(): boolean {
+            var splitPanelWidth = this.splitPanelWithGridAndDetails.getEl().getWidthWithBorder();
+            if (this.floatingPanelIsShown()) {
+                return ( splitPanelWidth - this.floatingDetailsPanel.getActualWidth() ) < 320;
+            } else {
+                var defaultDetailsPanelWidth = this.splitPanelWithGridAndDetails.getActiveWidthPxOfSecondPanel();
+                return ( splitPanelWidth - defaultDetailsPanelWidth ) < 320;
+            }
         }
 
         ensureButtonHasCorrectState() {
-            this.toggleClass("expanded", !this.splitPanelWithGridAndDetails.isSecondPanelHidden());
+            this.toggleClass("expanded", !this.splitPanelWithGridAndDetails.isSecondPanelHidden() || this.floatingPanelIsShown());
         }
 
-        isExpanded(): boolean {
-            return this.hasClass("expanded");
+        static create(): NonMobileDetailsPanelsToggleButtonBuilder {
+            return new NonMobileDetailsPanelsToggleButtonBuilder();
+        }
+    }
+
+    export class NonMobileDetailsPanelsToggleButtonBuilder {
+        private splitPanelWithGridAndDetails: api.ui.panel.SplitPanel;
+        private defaultDockedDetailsPanel: DetailsPanel;
+        private floatingDetailsPanel: DetailsPanel;
+
+        constructor() {
+        }
+
+        setSplitPanelWithGridAndDetails(splitPanelWithGridAndDetails: api.ui.panel.SplitPanel) {
+            this.splitPanelWithGridAndDetails = splitPanelWithGridAndDetails;
+        }
+
+        setDefaultDetailsPanel(defaultDockedDetailsPanel: DetailsPanel) {
+            this.defaultDockedDetailsPanel = defaultDockedDetailsPanel;
+        }
+
+        setFloatingDetailsPanel(floatingDetailsPanel: DetailsPanel) {
+            this.floatingDetailsPanel = floatingDetailsPanel;
+        }
+
+        getSplitPanelWithGridAndDetails(): api.ui.panel.SplitPanel {
+            return this.splitPanelWithGridAndDetails;
+        }
+
+        getDefaultDetailsPanel(): DetailsPanel {
+            return this.defaultDockedDetailsPanel;
+        }
+
+        getFloatingDetailsPanel(): DetailsPanel {
+            return this.floatingDetailsPanel;
+        }
+
+        build(): NonMobileDetailsPanelsToggleButton {
+            return new NonMobileDetailsPanelsToggleButton(this);
         }
     }
 

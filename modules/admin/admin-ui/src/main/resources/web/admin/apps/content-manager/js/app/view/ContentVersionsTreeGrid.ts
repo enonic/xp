@@ -12,13 +12,15 @@ module app.view {
     export class ContentVersionsTreeGrid extends api.ui.treegrid.TreeGrid<ContentVersion> {
 
         contentId: ContentId;
+        private status: api.content.CompareStatus;
+        private static branchMaster = "master";
 
         constructor() {
             var descColumn = new GridColumnBuilder<TreeNode<ContentVersion>>().
                 setName("DisplayName").
                 setField("displayName").
                 setCssClass("description").
-                setMinWidth(240).
+                setMinWidth(160).
                 setFormatter(this.descriptionFormatter).
                 build();
 
@@ -26,7 +28,7 @@ module app.view {
                 setName("Status").
                 setField("workspaces").
                 setCssClass("status").
-                setFormatter(this.statusFormatter).
+                setFormatter(this.statusFormatter.bind(this)).
                 setMinWidth(80).
                 build();
 
@@ -36,6 +38,7 @@ module app.view {
                 setHotkeysEnabled(false).
                 setSelectedCellCssClass("").
                 setShowToolbar(false).
+                setRowHeight(70).
                 setColumns([
                     descColumn,
                     statusColumn
@@ -50,6 +53,10 @@ module app.view {
 
         public getContentId(): ContentId {
             return this.contentId;
+        }
+
+        public setStatus(status: api.content.CompareStatus) {
+            this.status = status;
         }
 
         getDataId(data: ContentVersion): string {
@@ -76,11 +83,29 @@ module app.view {
 
         }
 
+        private getState(workspace): string {
+            if (workspace == ContentVersionsTreeGrid.branchMaster) {
+                return api.content.CompareStatusFormatter.formatStatus(api.content.CompareStatus.EQUAL);
+            }
+            else {
+                return api.content.CompareStatusFormatter.formatStatus(this.status);
+            }
+        }
+
         private statusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentVersion>) {
+            if (this.status == undefined) {
+                return "";
+            }
+
             var badges: string[] = [];
+            var hasMaster = value.some((workspace) => {
+                return workspace == ContentVersionsTreeGrid.branchMaster;
+            });
 
             value.forEach((workspace: string) => {
-                badges.push(new api.dom.SpanEl('badge ' + workspace).setHtml(workspace).toString());
+                if (!hasMaster || workspace == ContentVersionsTreeGrid.branchMaster) {
+                    badges.push(new api.dom.PEl('badge ' + workspace).setHtml(this.getState(workspace)).toString());
+                }
             });
 
             return badges.join("");

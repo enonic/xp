@@ -1,20 +1,20 @@
 package com.enonic.xp.script.impl.function;
 
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceKeyResolver;
+import com.enonic.xp.script.impl.executor.ScriptExecutor;
 
 public final class ResolveFunction
     extends AbstractFunction
 {
     private final ResourceKey script;
 
-    private final ResourceKeyResolver resourceKeyResolver;
+    private final String basePath;
 
-    public ResolveFunction( final ResourceKey script, final ResourceKeyResolver resourceKeyResolver )
+    public ResolveFunction( final ResourceKey script, final ScriptExecutor executor )
     {
         super( "resolve" );
         this.script = script;
-        this.resourceKeyResolver = resourceKeyResolver;
+        this.basePath = executor.getScriptSettings().getBasePath();
     }
 
     @Override
@@ -26,6 +26,18 @@ public final class ResolveFunction
         }
 
         final String name = args[0].toString();
-        return this.resourceKeyResolver.resolve( this.script, name );
+        return resolve( name );
+    }
+
+    private ResourceKey resolve( final String name )
+    {
+        if ( name.startsWith( "/" ) )
+        {
+            return this.script.resolve( this.basePath + name );
+        }
+        else
+        {
+            return this.script.resolve( "../" + name );
+        }
     }
 }

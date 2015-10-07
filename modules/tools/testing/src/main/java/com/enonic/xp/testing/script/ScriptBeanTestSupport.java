@@ -20,7 +20,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceKeyResolver;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.bean.BeanContext;
@@ -101,12 +100,6 @@ public abstract class ScriptBeanTestSupport
             public <T> Supplier<T> getService( final Class<T> type )
             {
                 return () -> (T) services.get( type );
-            }
-
-            @Override
-            public ResourceKeyResolver getResourceKeyResolver()
-            {
-                return new ResourceKeyResolver( "/site" );
             }
         };
     }

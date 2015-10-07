@@ -57,7 +57,12 @@ final class ThymeleafResourceResolver
             return resolveHtmlFragment( callingTemplate, name + ".html" );
         }
 
-        return this.context.getResourceKeyResolver().resolve( callingTemplate, name );
+        if ( name.startsWith( "/" ) )
+        {
+            return callingTemplate.resolve( name );
+        }
+
+        return callingTemplate.resolve( "../" + name );
     }
 
     private Resource resolveResource( final ResourceKey key )
