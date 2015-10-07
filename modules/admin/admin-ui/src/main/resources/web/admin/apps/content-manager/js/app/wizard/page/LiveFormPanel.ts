@@ -378,8 +378,12 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onItemViewSelected((event: ItemViewSelectedEvent) => {
                 var itemView = event.getItemView();
+                var toggler = this.contentWizardPanel.getContextWindowToggler();
 
-                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView) && !event.isNew()) {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
+                    if (event.isNew() && !toggler.isActive()) {
+                        toggler.setActive(true);
+                    }
                     this.inspectComponent(<ComponentView<Component>>itemView);
                 }
             });
