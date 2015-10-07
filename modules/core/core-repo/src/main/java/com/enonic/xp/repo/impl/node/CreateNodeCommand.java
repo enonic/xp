@@ -26,6 +26,7 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.blob.Blob;
 import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.security.PrincipalKey;
@@ -207,6 +208,12 @@ public final class CreateNodeCommand
 
     private Long resolveFromQuery( final Node parentNode, final InsertManualStrategy insertManualStrategy )
     {
+        RefreshCommand.create().
+            indexServiceInternal( this.indexServiceInternal ).
+            refreshMode( RefreshMode.SEARCH ).
+            build().
+            execute();
+
         final ChildOrder childOrder =
             insertManualStrategy.equals( InsertManualStrategy.LAST ) ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();
 

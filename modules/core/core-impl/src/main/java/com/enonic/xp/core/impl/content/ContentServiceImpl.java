@@ -70,7 +70,6 @@ import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
@@ -584,8 +583,6 @@ public class ContentServiceImpl
 
             eventPublisher.publish( event );
         }
-
-        nodeService.refresh( RefreshMode.SEARCH );
 
         return new ReorderChildContentsResult( reorderChildNodesResult.getSize() );
     }

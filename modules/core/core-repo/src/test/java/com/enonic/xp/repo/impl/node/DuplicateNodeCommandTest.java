@@ -302,9 +302,11 @@ public class DuplicateNodeCommandTest
 
         setManualOrder( parentNode );
 
-        put_child3_on_top( parentNode, childNode1, childNode3 );
+        assertOrder( parentNode, "child3", "child2", "child1" );
 
-        assertOrder( parentNode, "child3", "child1", "child2" );
+        put_child1_on_top( parentNode, childNode1, childNode3 );
+
+        assertOrder( parentNode, "child1", "child3", "child2" );
 
         final Node duplicateParent = DuplicateNodeCommand.create().
             id( parentNode.id() ).
@@ -317,9 +319,7 @@ public class DuplicateNodeCommandTest
 
         assertTrue( duplicateParent.getChildOrder().isManualOrder() );
 
-        assertOrder( duplicateParent, "child3", "child1", "child2" );
-
-        refresh();
+        assertOrder( duplicateParent, "child1", "child3", "child2" );
     }
 
     private void assertOrder( final Node parentNode, final String first, final String second, final String third )
@@ -333,12 +333,12 @@ public class DuplicateNodeCommandTest
         assertEquals( third, iterator.next().name().toString() );
     }
 
-    private void put_child3_on_top( final Node parentNode, final Node childNode1, final Node childNode3 )
+    private void put_child1_on_top( final Node parentNode, final Node childNode1, final Node childNode3 )
     {
         ReorderChildNodeCommand.create().
             parentNode( getNodeById( parentNode.id() ) ).
-            nodeToMove( getNodeById( childNode3.id() ) ).
-            nodeToMoveBefore( getNodeById( childNode1.id() ) ).
+            nodeToMove( getNodeById( childNode1.id() ) ).
+            nodeToMoveBefore( getNodeById( childNode3.id() ) ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
