@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.time.Instant;
 import java.util.LinkedList;
 
 import com.google.common.base.Preconditions;
@@ -49,7 +50,10 @@ public class SetNodeChildOrderCommand
             orderChildNodes( parentNode );
         }
 
-        final Node editedNode = Node.create( parentNode ).childOrder( childOrder ).build();
+        final Node editedNode = Node.create( parentNode ).
+            childOrder( childOrder ).
+            timestamp( Instant.now() ).
+            build();
 
         StoreNodeCommand.create( this ).
             node( editedNode ).
