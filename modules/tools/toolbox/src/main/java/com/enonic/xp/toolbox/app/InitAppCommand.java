@@ -96,7 +96,8 @@ public final class InitAppCommand
             cloneCommand.setCredentialsProvider(
                 new UsernamePasswordCredentialsProvider( authentificationValues[0], authentificationValues[1] ) );
         }
-        cloneCommand.call();
+        Git clone = cloneCommand.call();
+        clone.getRepository().close();
 
         //Removes the .git directory and README.md file
         FileUtils.deleteDirectory( new File( destinationDirectory, ".git" ) );
