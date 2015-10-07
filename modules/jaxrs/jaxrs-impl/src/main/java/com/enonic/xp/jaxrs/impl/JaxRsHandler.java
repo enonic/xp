@@ -1,5 +1,7 @@
 package com.enonic.xp.jaxrs.impl;
 
+import java.util.List;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,14 +13,18 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import com.google.common.collect.ImmutableList;
+
+import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.jaxrs.JaxRsService;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
-import com.enonic.xp.jaxrs.JaxRsComponent;
 
-@Component(immediate = true, service = WebHandler.class)
+@Component(immediate = true, service = {WebHandler.class, JaxRsService.class})
 public final class JaxRsHandler
     extends BaseWebHandler
+    implements JaxRsService
 {
     private final JaxRsDispatcher dispatcher;
 
@@ -89,26 +95,22 @@ public final class JaxRsHandler
         this.needsRefresh = false;
     }
 
-    protected final void addSingleton( final Object instance )
-    {
-        this.dispatcher.addSingleton( instance );
-        this.needsRefresh = true;
-    }
-
-    protected final void removeSingleton( final Object instance )
-    {
-        this.dispatcher.removeSingleton( instance );
-        this.needsRefresh = true;
-    }
-
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addResource( final JaxRsComponent resource )
     {
-        addSingleton( resource );
+        this.dispatcher.app.addSingleton( resource );
+        this.needsRefresh = true;
     }
 
     public void removeResource( final JaxRsComponent resource )
     {
-        removeSingleton( resource );
+        this.dispatcher.app.removeSingleton( resource );
+        this.needsRefresh = true;
+    }
+
+    @Override
+    public List<JaxRsComponent> getComponents()
+    {
+        return ImmutableList.copyOf( this.dispatcher.app.getComponents() );
     }
 }

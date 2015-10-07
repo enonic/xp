@@ -1,0 +1,131 @@
+package com.enonic.xp.jaxrs.swagger.impl;
+
+import java.net.URL;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.io.Resources;
+import com.google.common.net.MediaType;
+
+import io.swagger.models.Swagger;
+
+import com.enonic.xp.jaxrs.JaxRsService;
+import com.enonic.xp.util.MediaTypes;
+import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.handler.BaseWebHandler;
+import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
+
+@Component(immediate = true, service = WebHandler.class)
+public final class SwaggerHandler
+    extends BaseWebHandler
+{
+    private final static String PREFIX = "/swagger";
+
+    private final static String PREFIX_SLASH = PREFIX + "/";
+
+    private JaxRsService jaxRsService;
+
+    public SwaggerHandler()
+    {
+        setOrder( 20 );
+    }
+
+    @Override
+    protected boolean canHandle( final HttpServletRequest req )
+    {
+        final String uri = req.getRequestURI();
+        return uri.equals( PREFIX ) || uri.startsWith( PREFIX_SLASH );
+    }
+
+    @Override
+    protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
+        throws Exception
+    {
+        final HttpMethod method = HttpMethod.valueOf( req.getMethod() );
+        if ( !( method == HttpMethod.GET || method == HttpMethod.HEAD ) )
+        {
+            res.sendError( HttpServletResponse.SC_METHOD_NOT_ALLOWED );
+            return;
+        }
+
+        final String uri = req.getRequestURI();
+        if ( uri.equals( PREFIX ) )
+        {
+            redirectToIndex( res );
+            return;
+        }
+
+        if ( uri.equals( PREFIX_SLASH ) )
+        {
+            redirectToIndex( res );
+            return;
+        }
+
+        if ( uri.equals( PREFIX_SLASH + "swagger.json" ) )
+        {
+            serveApiModel( res );
+            return;
+        }
+
+        serveResource( res, uri.substring( PREFIX_SLASH.length() ) );
+    }
+
+    private void redirectToIndex( final HttpServletResponse res )
+        throws Exception
+    {
+        res.sendRedirect( PREFIX_SLASH + "index.html" );
+    }
+
+    private void serveApiModel( final HttpServletResponse res )
+        throws Exception
+    {
+        res.setContentType( MediaType.JSON_UTF_8.toString() );
+
+        final ObjectMapper mapper = new ObjectMapper();
+        mapper.writeValue( res.getWriter(), readModel() );
+    }
+
+    private Swagger readModel()
+    {
+        final SwaggerModelReader modelReader = new SwaggerModelReader( this.jaxRsService );
+        return modelReader.generate();
+    }
+
+    private URL findResource( final String path )
+    {
+        final URL url = getClass().getResource( "/web/" + path );
+        if ( url != null )
+        {
+            return url;
+        }
+
+        return getClass().getResource( "/META-INF/resources/webjars/swagger-ui/2.1.2/" + path );
+    }
+
+    private void serveResource( final HttpServletResponse res, final String path )
+        throws Exception
+    {
+        final URL url = findResource( path );
+        if ( url == null )
+        {
+            res.sendError( HttpServletResponse.SC_NOT_FOUND );
+            return;
+        }
+
+        final MediaType type = MediaTypes.instance().fromFile( path );
+        res.setContentType( type.toString() );
+        Resources.copy( url, res.getOutputStream() );
+    }
+
+    @Reference
+    public void setJaxRsService( final JaxRsService jaxRsService )
+    {
+        this.jaxRsService = jaxRsService;
+    }
+}
