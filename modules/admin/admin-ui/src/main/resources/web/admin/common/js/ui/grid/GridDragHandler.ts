@@ -113,7 +113,7 @@ module api.ui.grid {
 
             var rowDataId = this.getModelId(dataView.getItem(draggableRow).getData());
             var insertBefore = args.insertBefore;
-            var moveBeforeRowDataId = (dataView.getLength() <= insertBefore)
+            var moveBeforeRowDataId = ((dataView.getLength() - 1) <= insertBefore)
                 ? null
                 : this.getModelId(dataView.getItem(insertBefore).getData());
 
