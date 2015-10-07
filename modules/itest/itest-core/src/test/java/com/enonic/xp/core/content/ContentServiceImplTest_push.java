@@ -47,7 +47,7 @@ public class ContentServiceImplTest_push
             resolveDependencies( false ).
             build() );
 
-        assertEquals( 1, push.getPushedContent().getSize() );
+        assertEquals( 1, push.getPushedContents().getSize() );
     }
 
     @Test
@@ -68,14 +68,14 @@ public class ContentServiceImplTest_push
             build();
 
         final PushContentsResult push = this.contentService.push( pushParams );
-        assertEquals( 1, push.getPushedContent().getSize() );
+        assertEquals( 1, push.getPushedContents().getSize() );
 
         contentService.delete( DeleteContentParams.create().
             contentPath( content.getPath() ).
             build() );
 
         final PushContentsResult pushWithDeleted = this.contentService.push( pushParams );
-        assertEquals( 1, pushWithDeleted.getDeletedContent().getSize() );
+        assertEquals( 1, pushWithDeleted.getDeletedContents().getSize() );
     }
 
     @Test
@@ -84,7 +84,7 @@ public class ContentServiceImplTest_push
     {
         final PushContentsResult result = doPushWithDependencies( false );
 
-        assertEquals( 4, result.getPushedContent().getSize() );
+        assertEquals( 4, result.getPushedContents().getSize() );
     }
 
     @Test
@@ -93,7 +93,7 @@ public class ContentServiceImplTest_push
     {
         final PushContentsResult result = doPushWithDependencies( true );
 
-        assertEquals( 4, result.getPushedContent().getSize() );
+        assertEquals( 4, result.getPushedContents().getSize() );
     }
 
     private PushContentsResult doPushWithDependencies( final boolean allowPublishOutsideSelection )

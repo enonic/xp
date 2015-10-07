@@ -5,17 +5,17 @@ import com.google.common.annotations.Beta;
 @Beta
 public class PushContentsResult
 {
-    private final ContentIds pushedContent;
+    private final Contents pushedContents;
 
-    private final ContentIds deletedContent;
+    private final Contents deletedContents;
 
-    private final ContentIds failedContent;
+    private final Contents failedContents;
 
     private PushContentsResult( Builder builder )
     {
-        this.pushedContent = builder.pushedContent;
-        this.deletedContent = builder.deletedContent;
-        this.failedContent = builder.failedContent;
+        this.pushedContents = builder.pushedContents;
+        this.deletedContents = builder.deletedContents;
+        this.failedContents = builder.failedContents;
     }
 
     public static Builder create()
@@ -23,48 +23,48 @@ public class PushContentsResult
         return new Builder();
     }
 
-    public ContentIds getPushedContent()
+    public Contents getPushedContents()
     {
-        return pushedContent;
+        return pushedContents;
     }
 
-    public ContentIds getDeletedContent()
+    public Contents getDeletedContents()
     {
-        return deletedContent;
+        return deletedContents;
     }
 
-    public ContentIds getFailedContent()
+    public Contents getFailedContents()
     {
-        return failedContent;
+        return failedContents;
     }
 
     public static final class Builder
     {
-        private ContentIds pushedContent = ContentIds.empty();
+        private Contents pushedContents = Contents.empty();
 
-        private ContentIds deletedContent = ContentIds.empty();
+        private Contents deletedContents = Contents.empty();
 
-        private ContentIds failedContent = ContentIds.empty();
+        private Contents failedContents = Contents.empty();
 
         private Builder()
         {
         }
 
-        public Builder setPushed( final ContentIds pushedContent )
+        public Builder setPushed( final Contents pushedContents )
         {
-            this.pushedContent = pushedContent;
+            this.pushedContents = pushedContents;
             return this;
         }
 
-        public Builder setFailed( final ContentIds failedContent )
+        public Builder setFailed( final Contents failedContents )
         {
-            this.failedContent = failedContent;
+            this.failedContents = failedContents;
             return this;
         }
 
-        public Builder setDeleted( final ContentIds deletedContent )
+        public Builder setDeleted( final Contents deletedContents )
         {
-            this.deletedContent = deletedContent;
+            this.deletedContents = deletedContents;
             return this;
         }
 
