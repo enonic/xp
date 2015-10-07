@@ -111,6 +111,8 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -123,8 +125,6 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
@@ -385,9 +385,9 @@ public final class ContentResource
             build() );
 
         return PublishContentResultJson.create().
-            success( contentService.getByIds( new GetContentByIdsParams( result.getPushedContent() ) ) ).
-            deleted( contentService.getByIds( new GetContentByIdsParams( result.getDeletedContent() ) ) ).
-            failures( contentService.getByIds( new GetContentByIdsParams( result.getFailedContent() ) ) ).
+            success( result.getPushedContents() ).
+            deleted( result.getDeletedContents() ).
+            failures( result.getFailedContents() ).
             build();
     }
 
@@ -789,7 +789,7 @@ public final class ContentResource
             contentId( ContentId.from( id ) ).
             build() );
 
-        return new GetActiveContentVersionsResultJson( result , this.principalsResolver );
+        return new GetActiveContentVersionsResultJson( result, this.principalsResolver );
     }
 
 

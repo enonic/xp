@@ -9,17 +9,17 @@ import com.google.common.collect.Lists;
 @Beta
 public class PushNodesResult
 {
-    private final NodeIds successful;
+    private final Nodes successful;
 
     private final ImmutableSet<Failed> failed;
 
     private PushNodesResult( Builder builder )
     {
-        successful = NodeIds.from( builder.successful );
+        successful = Nodes.from( builder.successful );
         failed = ImmutableSet.copyOf( builder.failed );
     }
 
-    public NodeIds getSuccessful()
+    public Nodes getSuccessful()
     {
         return successful;
     }
@@ -37,7 +37,7 @@ public class PushNodesResult
 
     public static final class Builder
     {
-        private final List<NodeId> successful = Lists.newLinkedList();
+        private final List<Node> successful = Lists.newLinkedList();
 
         private final List<Failed> failed = Lists.newLinkedList();
 
@@ -45,7 +45,7 @@ public class PushNodesResult
         {
         }
 
-        public Builder addSuccess( final NodeId success )
+        public Builder addSuccess( final Node success )
         {
             this.successful.add( success );
             return this;

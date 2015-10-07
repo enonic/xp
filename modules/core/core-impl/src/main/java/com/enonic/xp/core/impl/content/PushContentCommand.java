@@ -1,7 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
@@ -24,10 +25,10 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 
-import static com.enonic.xp.core.impl.content.ContentNodeHelper.translateNodePathToContentPath;
 import static java.util.stream.Collectors.toList;
 
 public class PushContentCommand
@@ -138,70 +139,45 @@ public class PushContentCommand
 
         final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target );
 
-        pushNodesResult.getSuccessful();
+        final Contents publishedContents = translator.fromNodes( pushNodesResult.getSuccessful(), false );
+        this.resultBuilder.setPushed( publishedContents );
 
-        this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( pushNodesResult.getSuccessful() ) );
-
-        publishNodePublishedEvents( pushNodesResult );
+        publishContentChangeEvents( ContentChangeEvent.ContentChangeType.PUBLISH, publishedContents );
     }
 
     private void doDeleteNodes( final NodeIds nodesToDelete )
     {
-        this.resultBuilder.setDeleted( ContentNodeHelper.toContentIds( nodesToDelete ) );
-
         final Context currentContext = ContextAccessor.current();
-        final List<ContentPath> deletedContents = new ArrayList<>();
-        deletedContents.addAll( deleteNodesInContext( nodesToDelete, currentContext ) );
-
-        deletedContents.addAll( deleteNodesInContext( nodesToDelete, ContextBuilder.from( currentContext ).
+        final List<Node> deletedNodes = deleteNodesInContext( nodesToDelete, currentContext );
+        deleteNodesInContext( nodesToDelete, ContextBuilder.from( currentContext ).
             branch( target ).
-            build() ) );
+            build() );
 
-        if ( !deletedContents.isEmpty() )
-        {
-            eventPublisher.publish(
-                ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, ContentPaths.from( deletedContents ) ) );
-        }
+        final Contents deletedContents = translator.fromNodes( Nodes.from( deletedNodes ), false );
+        this.resultBuilder.setDeleted( deletedContents );
+
+        publishContentChangeEvents( ContentChangeEvent.ContentChangeType.DELETE, deletedContents );
     }
 
-    private void publishNodePublishedEvents( final PushNodesResult pushNodesResult )
+    private void publishContentChangeEvents( final ContentChangeEvent.ContentChangeType contentChangeType, final Contents contents )
     {
-        final NodeIds successful = pushNodesResult.getSuccessful();
-
-        final Contents publishedContents =
-            GetContentByIdsCommand.create( new GetContentByIdsParams( ContentNodeHelper.toContentIds( successful ) ) ).
-                translator( this.translator ).
-                contentTypeService( this.contentTypeService ).
-                eventPublisher( this.eventPublisher ).
-                nodeService( this.nodeService ).
-                build().
-                execute();
-
-        final List<ContentPath> publishedContentPaths = publishedContents.stream().
+        final List<ContentPath> contentPathList = contents.stream().
             map( Content::getPath ).
             collect( toList() );
 
-        if ( !publishedContentPaths.isEmpty() )
+        if ( !contentPathList.isEmpty() )
         {
-            final ContentPaths contentPaths = ContentPaths.from( publishedContentPaths );
-            eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.PUBLISH, contentPaths ) );
+            final ContentPaths contentPaths = ContentPaths.from( contentPathList );
+            eventPublisher.publish( ContentChangeEvent.from( contentChangeType, contentPaths ) );
         }
     }
 
-    private List<ContentPath> deleteNodesInContext( final NodeIds nodeIds, final Context context )
+    private List<Node> deleteNodesInContext( final NodeIds nodeIds, final Context context )
     {
-        return context.callWith( () -> {
-            final List<ContentPath> deletedNodes = new ArrayList<>();
-            for ( final NodeId nodeId : nodeIds )
-            {
-                final Node node = nodeService.deleteById( nodeId );
-                if ( node != null )
-                {
-                    deletedNodes.add( translateNodePathToContentPath( node.path() ) );
-                }
-            }
-            return deletedNodes;
-        } );
+        return context.callWith( () -> nodeIds.stream().
+            map( nodeId -> nodeService.deleteById( nodeId ) ).
+            filter( Objects::nonNull ).
+            collect( Collectors.toList() ) );
     }
 
 
