@@ -4,6 +4,7 @@ module app.view.detail {
     import CompareStatusFormatter = api.content.CompareStatusFormatter;
     import ContentSummary = api.content.ContentSummary;
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
+    import Application = api.application.Application;
 
     export class PropertiesWidgetItemView extends WidgetItemView {
 
@@ -21,38 +22,51 @@ module app.view.detail {
             this.removeChildren();
             if (this.content != undefined) {
 
-                var newDl = new api.dom.DlEl();
-
-                var strings: FieldString[];
-
-                strings = [
-                    new FieldString().setName("Type").setValue(this.content.getType().getLocalName()
-                        ? this.content.getType().getLocalName() : this.content.getType().toString()),
-
-                    this.content.getType()
-                        ? new FieldString().setName("Application").setValue(this.content.getType().getApplicationKey().getName())
-                        : null,
-
-                    this.content.getLanguage() ? new FieldString().setName("Language").setValue(this.content.getLanguage()) : null,
-
-                    this.content.getOwner() ? new FieldString().setName("Owner").setValue(this.content.getOwner().getId()) : null,
-
-                    this.content.getModifiedTime() ? new FieldString().setName("Modified").
-                        setValue(DateTimeFormatter.createHtmlNoTimestamp(this.content.getModifiedTime())) : null,
-
-                    new FieldString().setName("Created").setValue(DateTimeFormatter.createHtmlNoTimestamp(this.content.getCreatedTime())),
-
-                    new FieldString().setName("Id").setValue(this.content.getId())
-                ];
-
-                strings.forEach((stringItem: FieldString) => {
-                    if (stringItem) {
-                        stringItem.layout(newDl);
-                    }
-                });
-                this.appendChild(newDl);
+                if (!this.content.getType().getApplicationKey().isSystemReserved()) {
+                    new api.application.GetApplicationRequest(this.content.getType().getApplicationKey()).sendAndParse().then((application: Application) => {
+                        this.doLayout(application);
+                    }).catch(() => {
+                        this.doLayout();
+                    }).done();
+                } else {
+                    this.doLayout();
+                }
             }
             super.layout();
+        }
+
+        private doLayout(application?: Application) {
+
+            var newDl = new api.dom.DlEl();
+
+            var strings: FieldString[];
+
+
+            strings = [
+                new FieldString().setName("Type").setValue(this.content.getType().getLocalName()
+                    ? this.content.getType().getLocalName() : this.content.getType().toString()),
+
+                new FieldString().setName("Application").setValue(application ? application.getDisplayName() :
+                                                                  this.content.getType().getApplicationKey().getName()),
+
+                this.content.getLanguage() ? new FieldString().setName("Language").setValue(this.content.getLanguage()) : null,
+
+                this.content.getOwner() ? new FieldString().setName("Owner").setValue(this.content.getOwner().getId()) : null,
+
+                this.content.getModifiedTime() ? new FieldString().setName("Modified").
+                    setValue(DateTimeFormatter.createHtmlNoTimestamp(this.content.getModifiedTime())) : null,
+
+                new FieldString().setName("Created").setValue(DateTimeFormatter.createHtmlNoTimestamp(this.content.getCreatedTime())),
+
+                new FieldString().setName("Id").setValue(this.content.getId())
+            ];
+
+            strings.forEach((stringItem: FieldString) => {
+                if (stringItem) {
+                    stringItem.layout(newDl);
+                }
+            });
+            this.appendChild(newDl);
         }
     }
 
