@@ -46,6 +46,8 @@ final class DeleteContentCommand
         {
             final Contents deletedContents = doExecute();
 
+            nodeService.refresh( RefreshMode.SEARCH );
+
             for ( Content deletedContent : deletedContents )
             {
                 publishEvents( deletedContent );
