@@ -15,6 +15,7 @@ import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ContentUpdatedEvent;
 import com.enonic.xp.content.EditableContent;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.core.impl.content.validate.DataValidationError;
@@ -166,6 +167,29 @@ final class UpdateContentCommand
     private void validateBlockingChecks( final Content editedContent )
     {
         validatePropertyTree( editedContent );
+        if ( editedContent.getType().isImageMedia() )
+        {
+            validateImageMediaProperties( editedContent );
+        }
+    }
+
+    private void validateImageMediaProperties( final Content editedContent )
+    {
+        if ( !( editedContent instanceof Media ) )
+        {
+            return;
+        }
+        final Media mediaContent = (Media) editedContent;
+
+        try
+        {
+            // validate focal point values
+            mediaContent.getFocalPoint();
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw new IllegalArgumentException( "Invalid property for content: " + e.getMessage(), e );
+        }
     }
 
     private void validatePropertyTree( final Content editedContent )
@@ -183,7 +207,7 @@ final class UpdateContentCommand
         }
         catch ( final Exception e )
         {
-            throw new IllegalArgumentException( "Incorrect property for content: " + editedContent.getPath(), e );
+            throw new IllegalArgumentException( "Invalid property for content: " + editedContent.getPath(), e );
         }
     }
 

@@ -1,7 +1,5 @@
 module api.content {
 
-    import Thumbnail = api.thumb.Thumbnail;
-
     export class UpdateContentRequest extends ContentResourceRequest<api.content.json.ContentJson, Content> {
 
         private id: string;
@@ -14,11 +12,7 @@ module api.content {
 
         private displayName: string;
 
-        private valid: boolean;
-
         private requireValid: boolean;
-
-        private thumbnail: Thumbnail;
 
         private language: string;
 
@@ -27,13 +21,8 @@ module api.content {
         constructor(id: string) {
             super();
             this.id = id;
-            this.valid = false;
             this.requireValid = false;
             this.setMethod("POST");
-        }
-
-        setThumbnail(thumbnail: Thumbnail) {
-            this.thumbnail = thumbnail;
         }
 
         setId(id: string): UpdateContentRequest {
@@ -61,11 +50,6 @@ module api.content {
             return this;
         }
 
-        setValid(valid: boolean): UpdateContentRequest {
-            this.valid = valid;
-            return this;
-        }
-
         setRequireValid(requireValid: boolean): UpdateContentRequest {
             this.requireValid = requireValid;
             return this;
@@ -84,13 +68,11 @@ module api.content {
         getParams(): Object {
             return {
                 contentId: this.id,
-                valid: this.valid,
                 requireValid: this.requireValid,
                 contentName: this.name.isUnnamed() ? this.name.toUnnamed().toStringIncludingHidden() : this.name.toString(),
                 data: this.data.toJson(),
                 meta: (this.meta || []).map((extraData: ExtraData) => extraData.toJson()),
                 displayName: this.displayName,
-                thumbnail: this.thumbnail ? this.thumbnail.toJson() : undefined,
                 language: this.language,
                 owner: this.owner ? this.owner.toString() : undefined
             };
