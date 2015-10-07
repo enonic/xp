@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
@@ -22,7 +20,6 @@ import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.Nodes;
@@ -145,16 +142,17 @@ public class PushContentCommand
         publishContentChangeEvents( ContentChangeEvent.ContentChangeType.PUBLISH, publishedContents );
     }
 
-    private void doDeleteNodes( final NodeIds nodesToDelete )
+    private void doDeleteNodes( final NodeIds nodeIdsToDelete )
     {
-        final Context currentContext = ContextAccessor.current();
-        final List<Node> deletedNodes = deleteNodesInContext( nodesToDelete, currentContext );
-        deleteNodesInContext( nodesToDelete, ContextBuilder.from( currentContext ).
-            branch( target ).
-            build() );
-
+        final Nodes deletedNodes = nodeService.getByIds( nodeIdsToDelete );
         final Contents deletedContents = translator.fromNodes( Nodes.from( deletedNodes ), false );
         this.resultBuilder.setDeleted( deletedContents );
+
+        final Context currentContext = ContextAccessor.current();
+        deleteNodesInContext( nodeIdsToDelete, currentContext );
+        deleteNodesInContext( nodeIdsToDelete, ContextBuilder.from( currentContext ).
+            branch( target ).
+            build() );
 
         publishContentChangeEvents( ContentChangeEvent.ContentChangeType.DELETE, deletedContents );
     }
@@ -172,12 +170,12 @@ public class PushContentCommand
         }
     }
 
-    private List<Node> deleteNodesInContext( final NodeIds nodeIds, final Context context )
+    private void deleteNodesInContext( final NodeIds nodeIds, final Context context )
     {
-        return context.callWith( () -> nodeIds.stream().
-            map( nodeId -> nodeService.deleteById( nodeId ) ).
-            filter( Objects::nonNull ).
-            collect( Collectors.toList() ) );
+        context.callWith( () -> {
+            nodeIds.forEach( nodeService::deleteById );
+            return null;
+        } );
     }
 
 
