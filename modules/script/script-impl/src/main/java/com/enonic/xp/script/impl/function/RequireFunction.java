@@ -1,7 +1,6 @@
 package com.enonic.xp.script.impl.function;
 
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceKeyResolver;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
 
 public final class RequireFunction
@@ -13,14 +12,14 @@ public final class RequireFunction
 
     private final ScriptExecutor executor;
 
-    private final ResourceKeyResolver resourceKeyResolver;
+    private final String basePath;
 
     public RequireFunction( final ResourceKey script, final ScriptExecutor executor )
     {
         super( "require" );
         this.script = script;
         this.executor = executor;
-        this.resourceKeyResolver = this.executor.getResourceKeyResolver();
+        this.basePath = this.executor.getScriptSettings().getBasePath();
     }
 
     @Override
@@ -44,12 +43,22 @@ public final class RequireFunction
             return resolve( name + SCRIPT_SUFFIX );
         }
 
-        final ResourceKey resolved = this.resourceKeyResolver.resolve( this.script, name );
+        if ( name.startsWith( "/" ) )
+        {
+            return this.script.resolve( this.basePath + name );
+        }
+
+        if ( name.startsWith( "./" ) )
+        {
+            return this.script.resolve( "../" + name );
+        }
+
+        final ResourceKey resolved = this.script.resolve( "../" + name );
         if ( this.executor.getResourceService().getResource( resolved ).exists() )
         {
             return resolved;
         }
 
-        return this.resourceKeyResolver.resolve( this.script, "/lib/" + name );
+        return this.script.resolve( this.basePath + "/lib/" + name );
     }
 }

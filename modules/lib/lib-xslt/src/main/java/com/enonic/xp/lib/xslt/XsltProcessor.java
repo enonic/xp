@@ -19,7 +19,6 @@ import com.google.common.io.Closeables;
 
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceKeyResolver;
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptValue;
@@ -154,11 +153,6 @@ public final class XsltProcessor
         this.transformer = this.factory.newTransformer( this.xsltSource );
         this.transformer.setErrorListener( this.errors );
         this.transformer.setOutputProperty( OutputKeys.OMIT_XML_DECLARATION, "yes" );
-    }
-
-    public void setResourceKeyResolver( final ResourceKeyResolver resourceKeyResolver )
-    {
-        this.uriResolver.setResourceKeyResolver( resourceKeyResolver );
     }
 
     public void setResourceService( final ResourceService resourceService )

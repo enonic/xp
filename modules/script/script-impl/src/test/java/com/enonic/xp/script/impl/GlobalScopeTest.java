@@ -9,6 +9,6 @@ public class GlobalScopeTest
     public void testScope()
         throws Exception
     {
-        runTestScript( "site/global/main.js" );
+        runTestScript( "global/main.js" );
     }
 }

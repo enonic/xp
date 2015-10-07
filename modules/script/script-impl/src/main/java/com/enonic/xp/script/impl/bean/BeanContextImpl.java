@@ -4,7 +4,6 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceKeyResolver;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
 
@@ -38,12 +37,6 @@ public final class BeanContextImpl
     {
         final Supplier<T> supplier = this.executor.getScriptSettings().getAttribute( type );
         return supplier != null ? supplier : () -> null;
-    }
-
-    @Override
-    public ResourceKeyResolver getResourceKeyResolver()
-    {
-        return this.executor.getResourceKeyResolver();
     }
 
     public void setResourceKey( final ResourceKey resourceKey )

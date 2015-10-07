@@ -6,15 +6,12 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceKeyResolver;
 import com.enonic.xp.script.ScriptExports;
 
 @Component
 public final class ControllerScriptFactoryImpl
     implements ControllerScriptFactory
 {
-    private final ResourceKeyResolver resourceKeyResolver = new ResourceKeyResolver( "/site" );
-
     private PortalScriptService scriptService;
 
     private PostProcessor postProcessor;
@@ -22,7 +19,7 @@ public final class ControllerScriptFactoryImpl
     @Override
     public ControllerScript fromDir( final ResourceKey dir )
     {
-        return fromScript( this.resourceKeyResolver.resolveFromDir( dir, dir.getName() + ".js" ) );
+        return fromScript( dir.resolve( dir.getName() + ".js" ) );
     }
 
     @Override
