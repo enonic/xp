@@ -91,11 +91,16 @@ public class ResolveSyncWorkCommand
                 build();
         }
 
+        return findNodesWithVersionDifference( this.publishRootNode.path() );
+    }
+
+    private NodeVersionDiffResult findNodesWithVersionDifference( final NodePath nodePath )
+    {
         return FindNodesWithVersionDifferenceCommand.create().
             query( FindNodesWithVersionDifferenceParams.create().
                 target( target ).
                 source( ContextAccessor.current().getBranch() ).
-                nodePath( this.publishRootNode.path() ).
+                nodePath( nodePath ).
                 size( SearchService.GET_ALL_SIZE_FLAG ).
                 build() ).
             searchService( this.searchService ).
@@ -128,14 +133,31 @@ public class ResolveSyncWorkCommand
 
         if ( !allPossibleNodesAreIncluded )
         {
+            final Node node = GetNodeByIdCommand.create( this ).
+                id( nodeId ).
+                build().
+                execute();
+
             ensureThatParentExists( nodeId );
-            includeReferences( nodeId );
+            if ( !nodePendingDelete( comparison ) )
+            {
+                includeReferences( node );
+            }
+            if ( nodePendingDelete( comparison ) )
+            {
+                includeChildren( node );
+            }
         }
     }
 
     private boolean nodeNotChanged( final NodeComparison comparison )
     {
         return comparison.getCompareStatus() == CompareStatus.EQUAL;
+    }
+
+    private boolean nodePendingDelete( final NodeComparison comparison )
+    {
+        return comparison.getCompareStatus() == CompareStatus.PENDING_DELETE;
     }
 
     private void ensureThatParentExists( final NodeId nodeId )
@@ -157,12 +179,8 @@ public class ResolveSyncWorkCommand
         }
     }
 
-    private void includeReferences( final NodeId nodeId )
+    private void includeReferences( final Node node )
     {
-        final Node node = GetNodeByIdCommand.create( this ).
-            id( nodeId ).
-            build().
-            execute();
 
         final ImmutableList<Property> references = node.data().getProperties( ValueTypes.REFERENCE );
 
@@ -179,6 +197,15 @@ public class ResolveSyncWorkCommand
                 resolveDiff( referredNodeId );
             }
         }
+    }
+
+    private void includeChildren( final Node node )
+    {
+        findNodesWithVersionDifference( node.path() ).
+            getNodesWithDifferences().
+            stream().
+            filter( childNodeId -> !this.processedIds.contains( childNodeId ) ).
+            forEach( childNodeId -> resolveDiff( childNodeId ) );
     }
 
     private boolean shouldBeResolvedDiffFor( final NodeComparison nodeComparison )

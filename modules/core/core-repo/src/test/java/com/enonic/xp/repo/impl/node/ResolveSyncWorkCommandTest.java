@@ -1004,6 +1004,25 @@ public class ResolveSyncWorkCommandTest
         */
     }
 
+    @Test
+    public void pending_delete_with_children_and_reference()
+    {
+        createS1S2Tree();
+
+        NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
+        assertEquals( 7, result.getSize() );
+
+        pushAllNodesInS1S2Tree();
+        markAsDelete( NodeId.from( "s1" ) );
+        markAsDelete( NodeId.from( "s2" ) );
+
+        result = resolveSyncWorkResult( "s1" );
+        assertEquals( 4, result.getSize() );
+
+        result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
+        assertEquals( 4, result.getSize() );
+    }
+
 
     private void createS1S2Tree()
     {
