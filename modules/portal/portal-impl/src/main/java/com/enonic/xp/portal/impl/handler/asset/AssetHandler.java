@@ -19,7 +19,7 @@ import com.enonic.xp.web.HttpMethod;
 public final class AssetHandler
     extends EndpointHandler
 {
-    private final static Pattern PATTERN = Pattern.compile( "([^/]+)/(.+)" );
+    private final static Pattern PATTERN = Pattern.compile( "([^/^:]+)(:[^/]+)?/(.+)" );
 
     private final static String ASSET_PREFIX = "site/assets/";
 
@@ -37,15 +37,6 @@ public final class AssetHandler
     {
         final String restPath = findRestPath( req );
 
-        final AssetHandlerWorker worker = new AssetHandlerWorker();
-        worker.resourceKey = resolveResourceKey( restPath );
-        worker.resourceService = this.resourceService;
-
-        return worker;
-    }
-
-    private ResourceKey resolveResourceKey( final String restPath )
-    {
         final Matcher matcher = PATTERN.matcher( restPath );
 
         if ( !matcher.find() )
@@ -53,8 +44,13 @@ public final class AssetHandler
             throw notFound( "Not a valid asset url pattern" );
         }
 
+        final AssetHandlerWorker worker = new AssetHandlerWorker();
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
-        return ResourceKey.from( applicationKey, ASSET_PREFIX + matcher.group( 2 ) );
+        worker.cacheable = matcher.group( 2 ) != null;
+        worker.resourceKey = ResourceKey.from( applicationKey, ASSET_PREFIX + matcher.group( 3 ) );
+        worker.resourceService = this.resourceService;
+
+        return worker;
     }
 
     @Reference

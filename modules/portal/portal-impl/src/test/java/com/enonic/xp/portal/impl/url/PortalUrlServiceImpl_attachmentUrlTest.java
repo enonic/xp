@@ -27,7 +27,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             param( "a", 3 );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/attachment/inline/123456/a2.jpg?a=3", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/attachment/inline/123456:binaryHash2/a2.jpg?a=3", url );
     }
 
     @Test
@@ -40,7 +40,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             download( true );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/attachment/download/123456/a2.jpg", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/attachment/download/123456:binaryHash2/a2.jpg", url );
     }
 
     @Test
@@ -50,10 +50,10 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         final AttachmentUrlParams params = new AttachmentUrlParams().
             portalRequest( this.portalRequest ).
-            name( "myfile.pdf" );
+            name( "a1.jpg" );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/attachment/inline/123456/myfile.pdf", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/attachment/inline/123456:binaryHash1/a1.jpg", url );
     }
 
     @Test
@@ -66,7 +66,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             label( "thumb" );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/attachment/inline/123456/a1.jpg", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/attachment/inline/123456:binaryHash1/a1.jpg", url );
     }
 
     @Test
@@ -76,11 +76,11 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         final AttachmentUrlParams params = new AttachmentUrlParams().
             id( "123456" ).
-            name( "myfile.pdf" ).
+            name( "a1.jpg" ).
             portalRequest( this.portalRequest );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/portal/draft/context/path/_/attachment/inline/123456/myfile.pdf", url );
+        assertEquals( "/portal/draft/context/path/_/attachment/inline/123456:binaryHash1/a1.jpg", url );
     }
 
     @Test
@@ -90,11 +90,11 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         final AttachmentUrlParams params = new AttachmentUrlParams().
             path( "/a/b/mycontent" ).
-            name( "myfile.pdf" ).
+            name( "a1.jpg" ).
             portalRequest( this.portalRequest );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/portal/draft/context/path/_/attachment/inline/123456/myfile.pdf", url );
+        assertEquals( "/portal/draft/context/path/_/attachment/inline/123456:binaryHash1/a1.jpg", url );
     }
 
     @Test
@@ -111,7 +111,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         ServletRequestHolder.setRequest( req );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "http://localhost/portal/draft/a/b/mycontent/_/attachment/inline/123456/a2.jpg?a=3", url );
+        assertEquals( "http://localhost/portal/draft/a/b/mycontent/_/attachment/inline/123456:binaryHash2/a2.jpg?a=3", url );
     }
 
     private Content createContent()
@@ -126,6 +126,8 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+        Mockito.when( this.contentService.getBinaryKey( content.getId(), a1.getBinaryReference() ) ).thenReturn( "binaryHash1" );
+        Mockito.when( this.contentService.getBinaryKey( content.getId(), a2.getBinaryReference() ) ).thenReturn( "binaryHash2" );
         return content;
     }
 }

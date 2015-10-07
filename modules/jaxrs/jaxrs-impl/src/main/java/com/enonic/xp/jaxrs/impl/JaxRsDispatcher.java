@@ -24,7 +24,7 @@ final class JaxRsDispatcher
 
     private String mappingPrefix;
 
-    private final JaxRsApplication app;
+    protected final JaxRsApplication app;
 
     public JaxRsDispatcher()
     {
@@ -96,15 +96,5 @@ final class JaxRsDispatcher
     private boolean isRootResource( final Object instance )
     {
         return GetRestful.isRootResource( instance.getClass() );
-    }
-
-    public void addSingleton( final Object instance )
-    {
-        this.app.singletons.add( instance );
-    }
-
-    public void removeSingleton( final Object instance )
-    {
-        this.app.singletons.remove( instance );
     }
 }

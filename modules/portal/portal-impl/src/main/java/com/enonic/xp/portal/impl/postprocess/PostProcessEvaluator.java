@@ -79,15 +79,30 @@ final class PostProcessEvaluator
         for ( final PostProcessInstruction instruction : this.instructions )
         {
             final PortalResponse instructionResponse = instruction.evaluate( this.portalRequest, content );
-            if ( instructionResponse != null )
+            if ( instructionResponse == null )
             {
-                if ( instructionResponse.hasContributions() )
-                {
-                    this.portalResponse = PortalResponse.create( this.portalResponse ).contributionsFrom( instructionResponse ).build();
-                }
-                final String resultBody = instructionResponse.getAsString();
-                return resultBody == null ? null : new HtmlBlockParser().parse( resultBody );
+                continue;
             }
+
+            final boolean hasFilters = !instructionResponse.getFilters().isEmpty();
+            final boolean hasContributions = instructionResponse.hasContributions();
+            if ( hasContributions || hasFilters )
+            {
+                final PortalResponse.Builder newPortalResponse = PortalResponse.create( this.portalResponse );
+
+                if ( hasContributions )
+                {
+                    newPortalResponse.contributionsFrom( instructionResponse );
+                }
+                if ( hasFilters )
+                {
+                    newPortalResponse.filters( instructionResponse.getFilters() );
+                }
+
+                this.portalResponse = newPortalResponse.build();
+            }
+            final String resultBody = instructionResponse.getAsString();
+            return resultBody == null ? null : new HtmlBlockParser().parse( resultBody );
         }
         return null;
     }

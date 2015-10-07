@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
@@ -55,6 +56,8 @@ public final class PortalUrlServiceImpl
 
 
     private ContentService contentService;
+
+    private ApplicationService applicationService;
 
     @Override
     public String assetUrl( final AssetUrlParams params )
@@ -160,6 +163,7 @@ public final class PortalUrlServiceImpl
     {
         builder.setParams( params );
         builder.contentService = this.contentService;
+        builder.applicationService = this.applicationService;
         return builder.build();
     }
 
@@ -167,5 +171,12 @@ public final class PortalUrlServiceImpl
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+
+    @Reference
+    public void setApplicationService( final ApplicationService applicationService )
+    {
+        this.applicationService = applicationService;
     }
 }
