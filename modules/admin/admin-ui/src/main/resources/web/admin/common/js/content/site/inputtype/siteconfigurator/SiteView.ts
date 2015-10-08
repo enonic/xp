@@ -12,7 +12,7 @@ module api.content.site.inputtype.siteconfigurator {
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import ContentFormContext = api.content.form.ContentFormContext;
-    import SiteConfigRequiresSaveEvent = api.content.site.inputtype.siteconfigurator.SiteConfigRequiresSaveEvent;
+    import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
 
     export class SiteView extends api.dom.DivEl {
 
@@ -102,7 +102,7 @@ module api.content.site.inputtype.siteconfigurator {
                 var okCallback = () => {
                     if (!tempSiteConfig.equals(this.siteConfig)) {
                         this.applyTemporaryConfig(tempSiteConfig);
-                        new SiteConfigRequiresSaveEvent(this.formContext.getPersistedContent()).fire();
+                        new ContentRequiresSaveEvent(this.formContext.getPersistedContent()).fire();
                     }
                 };
 
