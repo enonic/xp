@@ -303,9 +303,11 @@ public final class ContentResource
     @Path("update")
     public ContentJson update( final UpdateContentJson json )
     {
-        if ( contentNameIsOccupied( json.getRenameContentParams() ) ) {
-            throw JaxRsExceptions.newException( Response.Status.CONFLICT , String.format( "Content [%s] could not be updated. A content with that name already exists",
-                                                                     json.getRenameContentParams().getNewName().toString() ) );
+        if ( contentNameIsOccupied( json.getRenameContentParams() ) )
+        {
+            throw JaxRsExceptions.newException( Response.Status.CONFLICT,
+                                                "Content [%s] could not be updated. A content with that name already exists",
+                                                json.getRenameContentParams().getNewName().toString() );
         }
 
         final UpdateContentParams updateParams = json.getUpdateContentParams();
@@ -316,14 +318,19 @@ public final class ContentResource
             return new ContentJson( updatedContent, newContentIconUrlResolver(), principalsResolver );
         }
 
-        try {  // in case content with same name and path was created in between content updated and renamed
+        try
+        {
+            // in case content with same name and path was created in between content updated and renamed
             final RenameContentParams renameParams = json.getRenameContentParams();
             final Content renamedContent = contentService.rename( renameParams );
             return new ContentJson( renamedContent, newContentIconUrlResolver(), principalsResolver );
         }
-        catch ( ContentAlreadyExistException e ) { // catching to throw exception with better message and other error code
-            throw JaxRsExceptions.newException( Response.Status.CONFLICT , String.format( "Content could not be renamed to [%s]. A content with that name already exists",
-                                                                                          json.getRenameContentParams().getNewName().toString() ) );
+        catch ( ContentAlreadyExistException e )
+        {
+            // catching to throw exception with better message and other error code
+            throw JaxRsExceptions.newException( Response.Status.CONFLICT,
+                                                "Content could not be renamed to [%s]. A content with that name already exists",
+                                                json.getRenameContentParams().getNewName().toString() );
         }
     }
 
@@ -901,17 +908,21 @@ public final class ContentResource
         return QueryExpr.from( expr );
     }
 
-    private boolean contentNameIsOccupied( final RenameContentParams renameParams ) {
+    private boolean contentNameIsOccupied( final RenameContentParams renameParams )
+    {
         Content content = contentService.getById( renameParams.getContentId() );
-        if ( content.getName().equals( renameParams.getNewName() ) ) {
+        if ( content.getName().equals( renameParams.getNewName() ) )
+        {
             return false;
         }
 
         ContentPath newPath = ContentPath.from( content.getParentPath(), renameParams.getNewName().toString() );
-        try {
+        try
+        {
             contentService.getByPath( newPath );
         }
-        catch ( ContentNotFoundException e ) {
+        catch ( ContentNotFoundException e )
+        {
             return false;
         }
 
