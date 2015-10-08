@@ -569,6 +569,7 @@ module app.wizard {
 
             this.showLiveEditAction.setEnabled(false);
             this.previewAction.setVisible(false);
+            this.previewAction.setEnabled(false);
 
             new GetNearestSiteRequest(content.getContentId()).sendAndParse().
                 then((parentSite: Site) => {
@@ -635,6 +636,7 @@ module app.wizard {
                             return this.initLiveEditModel(content, this.siteModel, formContext).then(() => {
                                 this.liveFormPanel.setModel(this.liveEditModel);
                                 this.liveFormPanel.loadPage();
+                                this.updatePreviewActionVisibility();
                                 return wemQ(null);
                             });
                         }
@@ -1182,6 +1184,14 @@ module app.wizard {
 
         private contentNotRenderable(): boolean {
             return this.liveEditModel.getPageModel().getMode() == api.content.page.PageMode.NO_CONTROLLER;
+        }
+
+        private updatePreviewActionVisibility() {
+            this.previewAction.setEnabled(!this.contentNotRenderable());
+
+            this.liveEditModel.getPageModel().onPageModeChanged(()=> {
+                this.previewAction.setEnabled(!this.contentNotRenderable());
+            });
         }
     }
 
