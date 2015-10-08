@@ -7,9 +7,16 @@ module components {
 function initToolTip() {
     var ID = "tooltip", CLS_ON = "tooltip_ON", FOLLOW = true,
         DATA = "_tooltip", OFFSET_X = 0, OFFSET_Y = 20,
+        pageX = 0, pageY = 0,
         showAt = function (e) {
-            var ntop = e.pageY + OFFSET_Y, nleft = e.pageX + OFFSET_X;
-            wemjq("#" + ID).html(api.util.StringHelper.escapeHtml(wemjq(e.target).data(DATA))).css({
+            var ntop = pageY + OFFSET_Y, nleft = pageX + OFFSET_X;
+            var tooltipText = api.util.StringHelper.escapeHtml(wemjq(e.target).data(DATA));
+            var tooltipWidth = tooltipText.length * 7.5;
+            var windowWidth = wemjq(window).width();
+            if (nleft + tooltipWidth >= windowWidth) {
+                nleft = windowWidth - tooltipWidth;
+            }
+            wemjq("#" + ID).html(tooltipText).css({
                 position: "absolute", top: ntop, left: nleft
             }).show();
         };
@@ -17,10 +24,19 @@ function initToolTip() {
         wemjq(this).data(DATA, wemjq(this).attr("title"));
         wemjq(this).removeAttr("title").addClass(CLS_ON);
         wemjq("<div id='" + ID + "' />").appendTo("body");
+        if (e.pageX) {
+            pageX = e.pageX;
+        }
+        if (e.pageY) {
+            pageY = e.pageY;
+        }
         showAt(e);
     });
     wemjq(document).on("mouseleave", "." + CLS_ON, function (e) {
-        wemjq(this).attr("title", wemjq(this).data(DATA)).removeClass(CLS_ON);
+        if (wemjq(this).data(DATA)) {
+            wemjq(this).attr("title", wemjq(this).data(DATA));
+        }
+        wemjq(this).removeClass(CLS_ON);
         wemjq("#" + ID).remove();
     });
     if (FOLLOW) { wemjq(document).on("mousemove", "." + CLS_ON, showAt); }

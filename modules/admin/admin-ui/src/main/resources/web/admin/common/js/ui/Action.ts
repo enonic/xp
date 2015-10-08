@@ -4,6 +4,8 @@ module api.ui {
 
         private label: string;
 
+        private title: string;
+
         private iconClass: string;
 
         private shortcut: KeyBinding;
@@ -47,6 +49,14 @@ module api.ui {
                     return false;
                 });
             }
+        }
+
+        setTitle(title: string) {
+            this.title = title;
+        }
+
+        getTitle(): string {
+            return this.title;
         }
 
         setSortOrder(sortOrder: number) {
