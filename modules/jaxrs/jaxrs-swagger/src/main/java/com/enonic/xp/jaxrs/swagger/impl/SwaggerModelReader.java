@@ -2,6 +2,9 @@ package com.enonic.xp.jaxrs.swagger.impl;
 
 import javax.ws.rs.Path;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.Info;
 import io.swagger.models.Swagger;
@@ -12,6 +15,8 @@ import com.enonic.xp.server.VersionInfo;
 
 final class SwaggerModelReader
 {
+    private final static Logger LOG = LoggerFactory.getLogger( SwaggerModelReader.class );
+
     private final JaxRsService jaxRsService;
 
     public SwaggerModelReader( final JaxRsService jaxRsService )
@@ -43,7 +48,19 @@ final class SwaggerModelReader
         final Class type = resource.getClass();
         if ( type.getAnnotation( Path.class ) != null )
         {
+            readResource( reader, type );
+        }
+    }
+
+    private void readResource( final Reader reader, final Class type )
+    {
+        try
+        {
             reader.read( type );
+        }
+        catch ( final Exception e )
+        {
+            LOG.warn( "Failed to parse [" + type.getName() + "] resource.", e );
         }
     }
 

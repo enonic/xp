@@ -33,10 +33,6 @@
   <bundle level="30">${group}:repack-jhlabs-filters:${version}</bundle>
   <bundle level="30">${group}:repack-elasticsearch:${version}</bundle>
 
-  <!-- YAML support -->
-  <!--bundle level="30">com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.6.2</bundle>
-  <bundle level="30">org.yaml:snakeyaml:1.16</bundle-->
-
   <!-- Core app bundles -->
   <bundle level="30">${group}:core-api:${version}</bundle>
   <bundle level="30">${group}:core-event:${version}</bundle>

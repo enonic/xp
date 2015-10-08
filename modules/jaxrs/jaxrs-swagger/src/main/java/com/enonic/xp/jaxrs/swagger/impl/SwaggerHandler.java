@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import com.google.common.net.MediaType;
@@ -29,11 +30,17 @@ public final class SwaggerHandler
 
     private final static String PREFIX_SLASH = PREFIX + "/";
 
+    private final ObjectMapper mapper;
+
     private JaxRsService jaxRsService;
 
     public SwaggerHandler()
     {
         setOrder( 20 );
+
+        this.mapper = new ObjectMapper();
+        this.mapper.setSerializationInclusion( JsonInclude.Include.NON_NULL );
+
     }
 
     @Override
@@ -86,9 +93,7 @@ public final class SwaggerHandler
         throws Exception
     {
         res.setContentType( MediaType.JSON_UTF_8.toString() );
-
-        final ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue( res.getWriter(), readModel() );
+        this.mapper.writeValue( res.getWriter(), readModel() );
     }
 
     private Swagger readModel()
