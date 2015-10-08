@@ -23,10 +23,10 @@
   <bundle level="30">com.google.guava:guava:18.0</bundle>
   <bundle level="30">commons-lang:commons-lang:2.4</bundle>
   <bundle level="30">commons-io:commons-io:2.4</bundle>
-  <bundle level="30">com.fasterxml.jackson.core:jackson-core:2.4.1</bundle>
-  <bundle level="30">com.fasterxml.jackson.core:jackson-annotations:2.4.1</bundle>
-  <bundle level="30">com.fasterxml.jackson.core:jackson-databind:2.4.1</bundle>
-  <bundle level="30">com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.1</bundle>
+  <bundle level="30">com.fasterxml.jackson.core:jackson-core:2.6.2</bundle>
+  <bundle level="30">com.fasterxml.jackson.core:jackson-annotations:2.6.2</bundle>
+  <bundle level="30">com.fasterxml.jackson.core:jackson-databind:2.6.2</bundle>
+  <bundle level="30">com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.6.2</bundle>
   <bundle level="30">org.apache.tika:tika-core:1.6</bundle>
   <bundle level="30">org.apache.tika:tika-bundle:1.6</bundle>
   <bundle level="30">${group}:repack-jparsec:${version}</bundle>
@@ -34,7 +34,7 @@
   <bundle level="30">${group}:repack-elasticsearch:${version}</bundle>
 
   <!-- YAML support -->
-  <!--bundle level="30">com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.4.1</bundle>
+  <!--bundle level="30">com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.6.2</bundle>
   <bundle level="30">org.yaml:snakeyaml:1.16</bundle-->
 
   <!-- Core app bundles -->
@@ -74,8 +74,8 @@
   <bundle level="30">${group}:portal-impl:${version}</bundle>
 
   <!-- Admin app dependencies -->
-  <bundle level="30">com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.4.1</bundle>
-  <bundle level="30">com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.4.1</bundle>
+  <bundle level="30">com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.6.2</bundle>
+  <bundle level="30">com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.6.2</bundle>
   <bundle level="30">commons-fileupload:commons-fileupload:1.3.1</bundle>
 
   <!-- Admin app -->
