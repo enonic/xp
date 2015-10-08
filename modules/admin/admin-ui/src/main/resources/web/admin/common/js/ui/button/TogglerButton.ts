@@ -4,11 +4,19 @@ module api.ui.button {
 
         private activeListeners: {(isActive: boolean): void}[] = [];
 
-        constructor(className?: string) {
+        constructor(className?: string, title?: string) {
             super();
             this.addClass("toggle-button icon-medium " + className);
             this.setActive(false);
             this.setEnabled(false);
+
+            if (title) {
+                this.setTitle(title);
+
+                this.onActiveChanged((isActive: boolean) => {
+                    this.setTitle(isActive ? "" : title, true);
+                });
+            }
 
             this.onClicked((event: MouseEvent) => {
                 if (this.isEnabled()) {
