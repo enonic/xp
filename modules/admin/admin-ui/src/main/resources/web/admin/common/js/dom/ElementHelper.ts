@@ -71,12 +71,12 @@ module api.dom {
         }
 
         setDisabled(value: boolean): ElementHelper {
-            this.el.disabled = value;
+            this.el["disabled"] = value;
             return this;
         }
 
         isDisabled(): boolean {
-            return this.el.disabled;
+            return this.el["disabled"];
         }
 
         getId(): string {
