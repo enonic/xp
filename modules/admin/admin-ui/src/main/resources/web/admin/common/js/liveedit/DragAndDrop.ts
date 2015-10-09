@@ -157,7 +157,7 @@ module api.liveedit {
          *  Sortable start is not fired in Firefox when dragging item from context window
          *  So listen for the draggable events as well
          */
-        handleDraggableStart(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
+        handleDraggableStart(event: Event, ui: JQueryUI.DraggableEventUIParams) {
             if (DragAndDrop.debug) {
                 console.groupCollapsed((DragAndDrop._messageCounter++) + " DragDropSort.handleDraggableStart");
                 console.log("Event", event, "\nUI", ui);
@@ -171,7 +171,7 @@ module api.liveedit {
          *  Sortable stop is not fired in Firefox when dragging item from context window
          *  So listen for the draggable events as well
          */
-        handleDraggableStop(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
+        handleDraggableStop(event: Event, ui: JQueryUI.DraggableEventUIParams) {
             if (DragAndDrop.debug) {
                 console.groupCollapsed((DragAndDrop._messageCounter++) + " DragDropSort.handleDraggableStop");
                 console.log("Event", event, "\nUI", ui);
