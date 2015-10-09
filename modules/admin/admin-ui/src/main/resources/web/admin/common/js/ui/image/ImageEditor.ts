@@ -234,8 +234,8 @@ module api.ui.image {
         private normalizePoint(point: Point): Point {
             // focus point is calculated relative to crop area
             return {
-                x: point.x / Math.min(this.frameW, this.cropData.w),
-                y: point.y / Math.min(this.frameH, this.cropData.h)
+                x: point.x / this.cropData.w,
+                y: point.y / this.cropData.h
             }
         }
 
@@ -248,8 +248,8 @@ module api.ui.image {
         private denormalizePoint(x: number, y: number): Point {
             // focus point is calculated relative to crop area
             return {
-                x: x * Math.min(this.frameW, this.cropData.w),
-                y: y * Math.min(this.frameH, this.cropData.h)
+                x: x * this.cropData.w,
+                y: y * this.cropData.h
             }
         }
 
@@ -259,11 +259,13 @@ module api.ui.image {
          * @returns {SVGRect} normalized to 0-1 rectangle
          */
         private normalizeRect(rect: SVGRect): SVGRect {
+            var minW = Math.min(this.frameW, this.imgW);
+            var minH = Math.min(this.frameH, this.imgH);
             return {
-                x: rect.x / this.frameW,
-                y: rect.y / this.frameH,
-                w: rect.w / this.frameW,
-                h: rect.h / this.frameH
+                x: rect.x / minW,
+                y: rect.y / minH,
+                w: rect.w / minW,
+                h: rect.h / minH
             }
         }
 
@@ -273,11 +275,13 @@ module api.ui.image {
          * @returns {SVGRect} denormalized rectangle
          */
         private denormalizeRect(rect: SVGRect): SVGRect {
+            var minW = Math.min(this.frameW, this.imgW);
+            var minH = Math.min(this.frameH, this.imgH);
             return {
-                x: rect.x * this.frameW,
-                y: rect.y * this.frameH,
-                w: rect.w * this.frameW,
-                h: rect.h * this.frameH
+                x: rect.x * minW,
+                y: rect.y * minH,
+                w: rect.w * minW,
+                h: rect.h * minH
             }
         }
 
@@ -287,7 +291,8 @@ module api.ui.image {
          * @returns {number} normalized to 0-1 radius
          */
         private normalizeRadius(r: number): number {
-            return r / Math.min(this.frameW, this.frameH);
+            // focus radius is calculated relative to crop area
+            return r / Math.min(this.cropData.w, this.cropData.h);
         }
 
         /**
@@ -296,7 +301,8 @@ module api.ui.image {
          * @returns {number} denormalized radius
          */
         private denormalizeRadius(r: number): number {
-            return r * Math.min(this.frameW, this.frameH);
+            // focus radius is calculated relative to crop area
+            return r * Math.min(this.cropData.w, this.cropData.h);
         }
 
         private getOffsetX(e: MouseEvent): number {
@@ -763,7 +769,7 @@ module api.ui.image {
             this.setShaderVisible(edit);
             this.toggleClass('edit-mode', edit);
 
-            var crop, zoom, focus;
+            var crop, zoom, focus, radius;
 
             if (edit) {
                 this.updateRevertCropData();
@@ -778,9 +784,10 @@ module api.ui.image {
                     crop = this.getCropPosition();
                     zoom = this.getZoomPosition();
                     focus = this.getFocusPosition();
+                    radius = this.getFocusRadius();
 
                     if (ImageEditor.debug) {
-                        console.log('Applying changes: \nCrop', crop, '\nZoom', zoom, '\nFocus', focus);
+                        console.log('Applying changes: \nCrop', crop, '\nZoom', zoom, '\nFocus', focus, '\nRadius', radius);
                     }
                 } else {
                     if (ImageEditor.debug) {
@@ -858,7 +865,9 @@ module api.ui.image {
                 console.log('setFocusEditMode', edit);
             }
             this.toggleClass('edit-focus', edit);
-            this.setImageClipPath(this.focusClipPath);
+            if (edit) {
+                this.setImageClipPath(this.focusClipPath);
+            }
         }
 
         isFocusEditMode(): boolean {
@@ -1119,13 +1128,20 @@ module api.ui.image {
         }
 
         private restrainFocusRadius(r: number) {
-            return Math.max(0, Math.min(this.cropData.w, this.cropData.h, r));
+            return Math.max(0, Math.min(this.cropData.w / 4, this.cropData.h / 4, r));
         }
 
         private isFocusNotModified(focus: FocusData): boolean {
+            return this.isFocusPositionNotModified(focus) && this.isFocusRadiusNotModified(focus.r);
+        }
+
+        private isFocusPositionNotModified(focus: FocusData): boolean {
             return focus.x == Math.min(this.frameW, this.cropData.w) / 2 &&
-                   focus.y == Math.min(this.frameH, this.cropData.h) / 2 &&
-                   focus.r == Math.min(this.frameW, this.frameH) / 4;
+                   focus.y == Math.min(this.frameH, this.cropData.h) / 2;
+        }
+
+        private isFocusRadiusNotModified(r: number): boolean {
+            return r == Math.min(this.cropData.w, this.cropData.h) / 4;
         }
 
 
@@ -1170,7 +1186,22 @@ module api.ui.image {
                 console.log('setCropEditMode, edit=' + edit);
             }
             this.toggleClass('edit-crop', edit);
-            this.setImageClipPath(this.cropClipPath);
+
+            if (edit) {
+                this.setImageClipPath(this.cropClipPath);
+
+            } else {
+                // reset radius for it to be a quarter of the smallest side
+                this.resetFocusRadius();
+
+                if (this.focusData.auto) {
+                    // reset focus position to calc new value
+                    this.resetFocusPosition();
+                } else {
+                    // set current position to restrain it with new crop data
+                    this.setFocusPositionPx(this.focusData, false);
+                }
+            }
         }
 
         isCropEditMode(): boolean {
@@ -1704,19 +1735,19 @@ module api.ui.image {
          * @returns {number}
          */
         private restrainZoomX(x: number) {
-            return Math.max(this.frameW - this.zoomData.w, Math.min(0, x));
+            return Math.max(Math.min(this.frameW, this.cropData.w) - this.zoomData.w, Math.min(0, x));
         }
 
         private restrainZoomY(y: number) {
-            return Math.max(this.frameH - this.zoomData.h, Math.min(0, y));
+            return Math.max(Math.min(this.frameH, this.cropData.h) - this.zoomData.h, Math.min(0, y));
         }
 
         private restrainZoomW(x: number) {
-            return Math.max(this.frameW, Math.min(this.maxZoom * this.frameW, x));
+            return Math.max(Math.min(this.frameW, this.cropData.w), Math.min(this.maxZoom * this.frameW, x));
         }
 
         private restrainZoomH(y: number) {
-            return Math.max(this.frameH, Math.min(this.maxZoom * this.frameH, y));
+            return Math.max(Math.min(this.frameH, this.cropData.h), Math.min(this.maxZoom * this.frameH, y));
         }
 
 
