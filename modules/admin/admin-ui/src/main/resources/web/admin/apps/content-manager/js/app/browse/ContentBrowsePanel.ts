@@ -189,7 +189,6 @@ module app.browse {
                         then((renderable: boolean) => {
                             var item: api.app.view.ViewItem<ContentSummary> = browseItems[0].toViewItem();
                             item.setRenderable(renderable);
-                            this.mobileContentItemStatisticsPanel.setItem(item);
                             this.mobileBrowseActions.updateActionsEnabledState(browseItems);
                         });
                 }
