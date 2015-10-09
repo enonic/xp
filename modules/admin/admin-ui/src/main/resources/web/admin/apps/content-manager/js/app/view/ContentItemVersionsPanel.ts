@@ -35,6 +35,10 @@ module app.view {
             }
         }
 
+        public reloadActivePanel() {
+            this.allGrid.reload();
+        }
+
         public getItem(): ViewItem<ContentSummary> {
             return this.item;
         }

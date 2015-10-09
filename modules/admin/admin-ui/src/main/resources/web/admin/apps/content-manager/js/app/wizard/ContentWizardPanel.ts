@@ -43,7 +43,7 @@ module app.wizard {
     import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
     import WizardStep = api.app.wizard.WizardStep;
     import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
-    import SiteConfigRequiresSaveEvent = api.content.site.inputtype.siteconfigurator.SiteConfigRequiresSaveEvent;
+    import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
 
     import Application = api.application.Application;
     import ApplicationKey = api.application.ApplicationKey;
@@ -306,15 +306,15 @@ module app.wizard {
         }
 
         private handleSiteConfigApply() {
-            var siteConfigApplyHandler = (event: SiteConfigRequiresSaveEvent) => {
+            var siteConfigApplyHandler = (event: ContentRequiresSaveEvent) => {
                 if (this.getPersistedItem().getId() == event.getContent().getId()) {
                     this.saveChanges()
                 }
             };
 
-            SiteConfigRequiresSaveEvent.on(siteConfigApplyHandler);
+            ContentRequiresSaveEvent.on(siteConfigApplyHandler);
             this.onClosed(() => {
-                SiteConfigRequiresSaveEvent.un(siteConfigApplyHandler);
+                ContentRequiresSaveEvent.un(siteConfigApplyHandler);
             });
         }
 

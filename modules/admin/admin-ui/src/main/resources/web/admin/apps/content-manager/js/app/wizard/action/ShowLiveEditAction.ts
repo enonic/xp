@@ -6,6 +6,7 @@ module app.wizard.action {
             super("Live");
 
             this.setEnabled(false);
+            this.setTitle("Show Page Editor");
             this.onExecuted(() => {
                 wizard.showLiveEdit();
                 new ShowLiveEditEvent().fire();

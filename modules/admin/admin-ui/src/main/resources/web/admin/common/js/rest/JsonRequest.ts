@@ -58,7 +58,7 @@ module api.rest {
                             deferred.reject(error);
                         }
 
-                        deferred.reject(new RequestError(request.status, request.statusText, errorJson ? errorJson.message : ""));
+                        deferred.reject(new RequestError(request.status, errorJson ? errorJson.message : ""));
                     }
                 }
             };

@@ -46,6 +46,7 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.jaxrs.impl.MockRestResponse;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
@@ -68,7 +69,6 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.jaxrs.impl.MockRestResponse;
 
 import static com.enonic.xp.security.acl.Permission.READ;
 
@@ -654,6 +654,9 @@ public class ContentResourceTest
 
         Exception e = new ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_DRAFT );
 
+        Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
+        Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
+
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenThrow( e );
 
         request().path( "content/update" ).
@@ -670,6 +673,7 @@ public class ContentResourceTest
 
         Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
+        Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
         String jsonString = request().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
@@ -688,6 +692,7 @@ public class ContentResourceTest
 
         Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
+        Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
         String jsonString = request().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();

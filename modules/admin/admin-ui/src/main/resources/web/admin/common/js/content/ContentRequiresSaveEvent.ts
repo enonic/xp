@@ -1,8 +1,8 @@
-module api.content.site.inputtype.siteconfigurator {
+module api.content {
 
     import Content = api.content.Content;
 
-    export class SiteConfigRequiresSaveEvent extends api.event.Event {
+    export class ContentRequiresSaveEvent extends api.event.Event {
 
         private content: Content;
 
@@ -15,11 +15,11 @@ module api.content.site.inputtype.siteconfigurator {
             return this.content;
         }
 
-        static on(handler: (event: SiteConfigRequiresSaveEvent) => void) {
+        static on(handler: (event: ContentRequiresSaveEvent) => void) {
             api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
         }
 
-        static un(handler?: (event: SiteConfigRequiresSaveEvent) => void) {
+        static un(handler?: (event: ContentRequiresSaveEvent) => void) {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
     }
