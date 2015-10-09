@@ -2,7 +2,6 @@ module app.wizard.action {
 
     import Content = api.content.Content;
     import ContentId = api.content.ContentId;
-    import PublishContentRequest = api.content.PublishContentRequest;
 
     export class PublishAction extends api.ui.Action {
 
