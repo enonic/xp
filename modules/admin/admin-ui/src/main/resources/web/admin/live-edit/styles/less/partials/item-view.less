@@ -9,6 +9,14 @@
     display: block;
   }
 
+  &[data-portal-placeholder-error=true] {
+    background-color: @admin-input-red;
+
+    .item-placeholder {
+      background-color: @admin-input-red;
+    }
+  }
+
   &.error {
     background-color: #A31012;
 
