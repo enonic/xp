@@ -5,7 +5,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.osgi.service.component.annotations.Component;
 
 import com.google.common.collect.Lists;

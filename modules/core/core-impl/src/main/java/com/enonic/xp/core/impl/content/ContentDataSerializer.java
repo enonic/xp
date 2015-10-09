@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.content;
 import java.io.IOException;
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;

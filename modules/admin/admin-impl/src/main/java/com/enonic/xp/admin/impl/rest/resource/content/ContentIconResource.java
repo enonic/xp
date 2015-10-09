@@ -13,7 +13,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -28,11 +28,11 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.Exceptions;
-import com.enonic.xp.jaxrs.JaxRsComponent;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/icon")
