@@ -12,8 +12,26 @@
   &[data-portal-placeholder-error=true] {
     background-color: @admin-input-red;
 
+    span.data-portal-placeholder-error {
+      padding: 5px 0 5px 10px;
+      color: #A31012;
+      font-size: 14px;
+      display: block;
+    }
+
     .item-placeholder {
       background-color: @admin-input-red;
+
+      border: 0px;
+      border-top: 1px solid #cccccc;
+
+      &:before {
+        color: @admin-bg-dark-gray;
+      }
+
+      .display-name {
+        color: @admin-white;
+      }
     }
   }
 
