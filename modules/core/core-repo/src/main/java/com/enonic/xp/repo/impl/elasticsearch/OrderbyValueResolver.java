@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;

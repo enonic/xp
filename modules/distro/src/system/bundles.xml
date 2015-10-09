@@ -21,7 +21,7 @@
 
   <!-- Core app dependencies -->
   <bundle level="30">com.google.guava:guava:18.0</bundle>
-  <bundle level="30">commons-lang:commons-lang:2.4</bundle>
+  <bundle level="30">org.apache.commons:commons-lang3:3.4</bundle>
   <bundle level="30">commons-io:commons-io:2.4</bundle>
   <bundle level="30">com.fasterxml.jackson.core:jackson-core:2.6.2</bundle>
   <bundle level="30">com.fasterxml.jackson.core:jackson-annotations:2.6.2</bundle>

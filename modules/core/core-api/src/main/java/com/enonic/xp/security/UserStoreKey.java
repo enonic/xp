@@ -1,6 +1,6 @@
 package com.enonic.xp.security;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
