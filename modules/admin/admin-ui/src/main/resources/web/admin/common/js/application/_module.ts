@@ -7,14 +7,10 @@
 ///<reference path='ListApplicationsRequest.ts' />
 ///<reference path='ApplicationListResult.ts' />
 ///<reference path='ApplicationLoader.ts' />
-///<reference path='ApplicationLoaderListener.ts' />
 ///<reference path='ApplicationViewer.ts' />
 ///<reference path='ApplicationComboBox.ts' />
 ///<reference path='StopApplicationRequest.ts' />
 ///<reference path='StartApplicationRequest.ts' />
-///<reference path='InstallApplicationRequest.ts' />
-///<reference path='UninstallApplicationRequest.ts' />
-///<reference path='UpdateApplicationRequest.ts' />
 ///<reference path='ApplicationUpdatedEvent.ts' />
 ///<reference path='ApplicationCache.ts' />
 ///<reference path='ApplicationBasedName.ts' />
