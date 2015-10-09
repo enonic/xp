@@ -592,7 +592,7 @@ module app.view.detail {
         private resizeEventMonitorLocked: boolean = false;
 
         constructor(builder: NonMobileDetailsPanelsToggleButtonBuilder) {
-            super("button large-details-panel-toggle-button");
+            super("button non-mobile-details-panel-toggle-button");
 
             this.splitPanelWithGridAndDetails = builder.getSplitPanelWithGridAndDetails();
             this.defaultDockedDetailsPanel = builder.getDefaultDetailsPanel();
