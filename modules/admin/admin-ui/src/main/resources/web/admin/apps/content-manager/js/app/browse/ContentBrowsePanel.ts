@@ -121,18 +121,17 @@ module app.browse {
 
             this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
                 var browseItems: api.app.browse.BrowseItem<ContentSummary>[] = this.getBrowseItemPanel().getItems();
-                if (browseItems.length == 1) {
-                    var item: api.app.view.ViewItem<ContentSummary> = browseItems[0].toViewItem();
-
+                if (browseItems.length == 0) {
+                    this.floatingDetailsPanel.makeLookEmpty();
+                    this.defaultDockedDetailsPanel.makeLookEmpty();
+                }
+                else {
+                    var item: api.app.view.ViewItem<ContentSummary> = browseItems[browseItems.length-1].toViewItem();
                     this.floatingDetailsPanel.unMakeLookEmpty();
                     this.floatingDetailsPanel.setItem(item);
 
                     this.defaultDockedDetailsPanel.unMakeLookEmpty();
                     this.defaultDockedDetailsPanel.setItem(item);
-                } else {
-
-                    this.floatingDetailsPanel.makeLookEmpty();
-                    this.defaultDockedDetailsPanel.makeLookEmpty();
                 }
             });
 
