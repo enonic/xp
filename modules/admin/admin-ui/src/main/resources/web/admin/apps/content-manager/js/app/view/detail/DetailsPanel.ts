@@ -72,9 +72,17 @@ module app.view.detail {
                 this.versionsPanel.reRenderActivePanel();
             });
 
-            ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-                if (this.item) {
-                    this.resetItem();
+            var delayedReset = api.util.AppHelper.debounce(this.resetItem.bind(this), 300, false);
+            ResponsiveManager.onAvailableSizeChanged(this, delayedReset);
+
+            api.content.ContentsPublishedEvent.on((event: api.content.ContentsPublishedEvent) => {
+                var itemId = (<ContentSummary>this.getItem().getModel()).getId();
+                var idPublished = event.getContentIds().some((id, index, array) => {
+                    return itemId === id.toString();
+                });
+
+                if (idPublished) {
+                    this.versionsPanel.reloadActivePanel();
                 }
             });
 
@@ -86,7 +94,7 @@ module app.view.detail {
             this.getAndInitCustomWidgetsViews().done(() => {
                 this.initWidgetsSelectionRow();
             });
-            this.appendChild(this.detailsContainer)
+            this.appendChild(this.detailsContainer);
             this.appendChild(this.divForNoSelection);
         }
 
