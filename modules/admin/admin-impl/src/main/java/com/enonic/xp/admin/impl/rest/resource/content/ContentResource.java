@@ -39,6 +39,7 @@ import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
+import com.enonic.xp.admin.impl.json.content.attachment.AttachmentListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
@@ -780,6 +781,16 @@ public final class ContentResource
             build() );
 
         return new GetActiveContentVersionsResultJson( result );
+    }
+
+    @GET
+    @Path("getAttachments")
+    public List<AttachmentJson> getAttachments( @QueryParam("id") final String idParam )
+    {
+        final ContentId id = ContentId.from( idParam );
+        final Content content = contentService.getById( id );
+
+        return AttachmentListJson.toJson( content.getAttachments() );
     }
 
 

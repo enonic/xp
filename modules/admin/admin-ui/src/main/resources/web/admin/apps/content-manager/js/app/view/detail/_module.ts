@@ -3,4 +3,5 @@
 ///<reference path='WidgetItemView.ts' />
 ///<reference path='StatusWidgetItemView.ts' />
 ///<reference path='PropertiesWidgetItemView.ts' />
+///<reference path='AttachmentsWidgetItemView.ts' />
 ///<reference path='WidgetViewToggleButton.ts' />
