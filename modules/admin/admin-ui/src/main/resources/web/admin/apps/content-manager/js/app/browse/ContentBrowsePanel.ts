@@ -161,9 +161,9 @@ module app.browse {
             contentPanelsAndDetailPanel.addClass("split-panel-with-details");
             contentPanelsAndDetailPanel.setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL);
 
-            this.appendChild(contentPanelsAndDetailPanel);
-
             this.defaultDockedDetailsPanel.makeLookEmpty();
+
+            this.appendChild(contentPanelsAndDetailPanel);
 
             controlButtonBuilder.setSplitPanelWithGridAndDetails(contentPanelsAndDetailPanel);
             controlButtonBuilder.setDefaultDetailsPanel(this.defaultDockedDetailsPanel);
