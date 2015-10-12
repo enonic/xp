@@ -90,9 +90,10 @@ module app.view.detail {
             this.initDefaultWidget();
             this.initCommonWidgetsViews();
             this.initDivForNoSelection();
+            this.initWidgetsSelectionRow();
 
             this.getAndInitCustomWidgetsViews().done(() => {
-                this.initWidgetsSelectionRow();
+                this.initWidgetsDropdownForSelectedItem();
             });
             this.appendChild(this.detailsContainer);
             this.appendChild(this.divForNoSelection);
@@ -109,7 +110,6 @@ module app.view.detail {
         private initWidgetsSelectionRow() {
             this.widgetsSelectionRow = new WidgetsSelectionRow(this);
             this.appendChild(this.widgetsSelectionRow);
-            this.initWidgetsDropdownForSelectedItem();
         }
 
         setActiveWidget(widgetView: WidgetView) {
@@ -898,9 +898,15 @@ module app.view.detail {
                 this.widgetSelectorDropdown.addClass("single-optioned")
             }
 
-            this.setVisible(false);
+            var visisbleNow = this.isVisible();
+
+            if (visisbleNow) {
+                this.setVisible(false);
+            }
             this.widgetSelectorDropdown.selectRow(0, true);
-            this.setVisible(true);
+            if (visisbleNow) {
+                this.setVisible(true);
+            }
         }
     }
 
