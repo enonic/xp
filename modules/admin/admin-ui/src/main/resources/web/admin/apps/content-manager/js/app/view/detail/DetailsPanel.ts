@@ -2,6 +2,7 @@ module app.view.detail {
 
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
+    import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
     import CompareStatus = api.content.CompareStatus;
@@ -731,7 +732,7 @@ module app.view.detail {
             return false;
         }
 
-        requiresFloatingPanelDueToShortWidth(): boolean {
+        private requiresFloatingPanelDueToShortWidth(): boolean {
             var splitPanelWidth = this.splitPanelWithGridAndDetails.getEl().getWidthWithBorder();
             if (this.floatingPanelIsShown()) {
                 return ( splitPanelWidth - this.floatingDetailsPanel.getActualWidth() ) < 320;
@@ -739,6 +740,11 @@ module app.view.detail {
                 var defaultDetailsPanelWidth = this.splitPanelWithGridAndDetails.getActiveWidthPxOfSecondPanel();
                 return ( splitPanelWidth - defaultDetailsPanelWidth ) < 320;
             }
+        }
+
+        requiresCollapsedDetailsPanel(): boolean {
+            var splitPanelWidth = this.splitPanelWithGridAndDetails.getEl().getWidthWithBorder();
+            return this.requiresFloatingPanelDueToShortWidth() || ResponsiveRanges._1620_1920.isFitOrSmaller(splitPanelWidth);
         }
 
         ensureButtonHasCorrectState() {

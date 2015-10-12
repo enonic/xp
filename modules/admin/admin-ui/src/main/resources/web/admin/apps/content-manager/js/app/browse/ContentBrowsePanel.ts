@@ -108,7 +108,7 @@ module app.browse {
             this.initSplitPanelWithDockedDetails(controlButtonBuilder);
 
             var nonMobileDetailsPanelsToggleButton = controlButtonBuilder.build();
-            if (nonMobileDetailsPanelsToggleButton.requiresFloatingPanelDueToShortWidth()) {
+            if (nonMobileDetailsPanelsToggleButton.requiresCollapsedDetailsPanel()) {
                 nonMobileDetailsPanelsToggleButton.hideDockedDetailsPanel();
             }
             nonMobileDetailsPanelsToggleButton.ensureButtonHasCorrectState();
