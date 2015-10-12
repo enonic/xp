@@ -29,8 +29,8 @@ module api.ui.selector.dropdown {
 
             this.onClicked((event: MouseEvent)=> {
 
-                if(document.selection && document.selection.empty) {
-                    document.selection.empty();
+                if (document["selection"] && document["selection"].empty) {
+                    document["selection"].empty();
                 } else if(window.getSelection) {
                     var sel = window.getSelection();
                     sel.removeAllRanges();

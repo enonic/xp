@@ -3,7 +3,7 @@ var baseDir = 'src/main/resources/web/admin';
 module.exports = {
 
     options: {
-        sourcemap: true
+        sourceMap: true
     }
 
 };
