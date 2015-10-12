@@ -97,7 +97,7 @@ module app.view.detail {
             this.appendChild(this.detailsContainer);
             this.appendChild(this.divForNoSelection);
 
-            this.layoutEmpty();
+            this.layout();
         }
 
         private initDivForNoSelection() {
@@ -194,10 +194,10 @@ module app.view.detail {
             if (!this.item || !this.item.equals(item)) {
                 this.item = item;
                 if (item) {
-                    this.layoutNonEmpty();
+                    this.layout(false);
                     this.updateWidgetsForItem();
                 } else {
-                    this.layoutEmpty();
+                    this.layout();
                 }
             }
         }
@@ -448,26 +448,15 @@ module app.view.detail {
             this.slideOutFunction();
         }
 
-        private layoutEmpty() {
+        private layout(empty: boolean = true) {
             if (this.widgetsSelectionRow) {
-                this.widgetsSelectionRow.setVisible(false);
+                this.widgetsSelectionRow.setVisible(!empty);
             }
             if (this.nameAndIconView) {
-                this.nameAndIconView.setVisible(false);
+                this.nameAndIconView.setVisible(!empty);
             }
-            this.detailsContainer.setVisible(false);
-            this.addClass("no-selection");
-        }
-
-        private layoutNonEmpty() {
-            if (this.widgetsSelectionRow) {
-                this.widgetsSelectionRow.setVisible(true);
-            }
-            if (this.nameAndIconView) {
-                this.nameAndIconView.setVisible(true);
-            }
-            this.detailsContainer.setVisible(true);
-            this.removeClass("no-selection");
+            this.detailsContainer.setVisible(!empty);
+            this.toggleClass("no-selection", empty);
         }
 
         private slideInRight() {

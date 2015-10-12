@@ -29,13 +29,14 @@ module api.app.view {
                 this.iconDivEl.remove();
             }
             if (item) {
-                var icon: HTMLImageElement = null;
                 if (item.getIconUrl()) {
-                    var size = item.getIconSize() || 64;
-                    icon = api.util.loader.ImageLoader.get(item.getIconUrl() + "?size=size", size, size);
+                    var size = item.getIconSize() || 64,
+                        icon: HTMLImageElement = api.util.loader.ImageLoader.get(item.getIconUrl() + "?size=size", size, size);
+
                     this.iconEl = <api.dom.ImgEl> new api.dom.Element(new api.dom.NewElementBuilder().
                         setTagName("img").
                         setHelper(new api.dom.ImgHelper(icon)));
+
                     this.iconEl.addClass("icon");
                     this.prependChild(this.iconEl);
                 } else {
@@ -44,26 +45,22 @@ module api.app.view {
                     this.prependChild(this.iconDivEl);
                 }
 
-                if (item.getDisplayName()) {
-                    this.headerTitleEl.getEl().
-                        setInnerHtml(item.getDisplayName(), true).setAttribute("title", item.getDisplayName());
-                } else {
-                    this.headerTitleEl.getEl().setInnerHtml("").setAttribute("title", "");
-                }
+                var displayName = item.getDisplayName() || '';
+                this.headerTitleEl.getEl().setInnerHtml(displayName, true).setAttribute("title", displayName);
 
                 this.headerPathEl.removeChildren();
                 if (item.getPath()) {
-                    var path = new api.dom.SpanEl("parent-path");
-                    path.getEl().setInnerHtml(item.getPath(), true);
-                    this.headerPathEl.appendChild(path);
-                }
-                if (item.getPath()) {
-                    var pathName = new api.dom.SpanEl("path-name");
-                    pathName.getEl().setInnerHtml(item.getPathName(), true);
-                    this.headerPathEl.appendChild(pathName);
+                    this.appendToHeaderPath(item.getPath(), 'parent-path');
+                    this.appendToHeaderPath(item.getPathName(), 'path-name');
                 }
             }
             this.browseItem = item;
+        }
+
+        private appendToHeaderPath(value, className) {
+            var pathName = new api.dom.SpanEl(className);
+            pathName.getEl().setInnerHtml(value, true);
+            this.headerPathEl.appendChild(pathName);
         }
     }
 
