@@ -96,6 +96,8 @@ module app.view.detail {
             });
             this.appendChild(this.detailsContainer);
             this.appendChild(this.divForNoSelection);
+
+            this.layout();
         }
 
         private initDivForNoSelection() {
@@ -189,9 +191,14 @@ module app.view.detail {
 
         public setItem(item: ViewItem<ContentSummary>) {
 
-            if (!this.item || (this.item && !this.item.equals(item))) {
+            if (!this.item || !this.item.equals(item)) {
                 this.item = item;
-                this.updateWidgetsForItem();
+                if (item) {
+                    this.layout(false);
+                    this.updateWidgetsForItem();
+                } else {
+                    this.layout();
+                }
             }
         }
 
@@ -441,22 +448,15 @@ module app.view.detail {
             this.slideOutFunction();
         }
 
-        makeLookEmpty() {
+        private layout(empty: boolean = true) {
             if (this.widgetsSelectionRow) {
-                this.widgetsSelectionRow.setVisible(false);
+                this.widgetsSelectionRow.setVisible(!empty);
             }
-            this.detailsContainer.setVisible(false);
-            this.nameAndIconView.setVisible(false);
-            this.addClass("no-selection");
-        }
-
-        unMakeLookEmpty() {
-            if (this.widgetsSelectionRow) {
-                this.widgetsSelectionRow.setVisible(true);
+            if (this.nameAndIconView) {
+                this.nameAndIconView.setVisible(!empty);
             }
-            this.detailsContainer.setVisible(true);
-            this.nameAndIconView.setVisible(true);
-            this.removeClass("no-selection");
+            this.detailsContainer.setVisible(!empty);
+            this.toggleClass("no-selection", empty);
         }
 
         private slideInRight() {
