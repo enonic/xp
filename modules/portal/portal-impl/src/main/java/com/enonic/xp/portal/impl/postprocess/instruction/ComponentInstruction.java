@@ -22,7 +22,7 @@ import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ComponentService;
 
-import static org.apache.commons.lang.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
 
 @org.osgi.service.component.annotations.Component(immediate = true)
 public final class ComponentInstruction
@@ -75,7 +75,7 @@ public final class ComponentInstruction
         else
         {
             final String name = substringAfter( componentSelector, APPLICATION_COMPONENT_PREFIX );
-            final ComponentName componentName = name != null ? new ComponentName( name ) : null;
+            final ComponentName componentName = new ComponentName( name );
             final ApplicationKey currentApplication = portalRequest.getPageTemplate().getController().getApplicationKey();
             component = componentService.getByName( currentApplication, componentName );
         }

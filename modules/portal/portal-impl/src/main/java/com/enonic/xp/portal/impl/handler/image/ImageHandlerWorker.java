@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.handler.image;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
@@ -19,7 +19,7 @@ import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
 import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpStatus;
 
-import static org.apache.commons.lang.StringUtils.substringBeforeLast;
+import static org.apache.commons.lang3.StringUtils.substringBeforeLast;
 
 final class ImageHandlerWorker
     extends PortalHandlerWorker
@@ -39,6 +39,8 @@ final class ImageHandlerWorker
     protected String backgroundParam;
 
     protected ScaleParams scaleParams;
+
+    protected boolean cacheable;
 
     protected ImageService imageService;
 
@@ -86,6 +88,10 @@ final class ImageHandlerWorker
         this.response.status( HttpStatus.OK );
         this.response.body( source );
         this.response.contentType( MediaType.parse( mimeType ) );
+        if ( cacheable )
+        {
+            setResponseCacheable();
+        }
     }
 
     private String getFormat( final String fileName, final String mimeType )

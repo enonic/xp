@@ -2,7 +2,7 @@ package com.enonic.xp.page;
 
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.annotations.Beta;
 

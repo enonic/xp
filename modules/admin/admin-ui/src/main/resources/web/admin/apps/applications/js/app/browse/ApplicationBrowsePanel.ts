@@ -4,8 +4,6 @@ module app.browse {
     import Application = api.application.Application;
     import TreeNode = api.ui.treegrid.TreeNode;
     import BrowseItem = api.app.browse.BrowseItem;
-    import UninstallApplicationRequest = api.application.UninstallApplicationRequest;
-    import UpdateApplicationRequest = api.application.UpdateApplicationRequest;
     import StartApplicationRequest = api.application.StartApplicationRequest;
     import StopApplicationRequest = api.application.StopApplicationRequest;
     import ApplicationUpdatedEvent = api.application.ApplicationUpdatedEvent;

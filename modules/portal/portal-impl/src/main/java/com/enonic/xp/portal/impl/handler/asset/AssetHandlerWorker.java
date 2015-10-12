@@ -21,6 +21,8 @@ final class AssetHandlerWorker
 
     protected ResourceKey resourceKey;
 
+    protected boolean cacheable;
+
     private Resource resource;
 
     @Override
@@ -38,6 +40,10 @@ final class AssetHandlerWorker
         if ( this.request.getMode() == RenderMode.LIVE )
         {
             this.response.header( "Cache-Control", "no-transform, max-age=" + CACHE_TIME );
+        }
+        else if ( cacheable )
+        {
+            setResponseCacheable();
         }
     }
 
