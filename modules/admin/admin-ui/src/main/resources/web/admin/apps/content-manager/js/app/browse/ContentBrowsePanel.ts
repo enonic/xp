@@ -508,7 +508,9 @@ module app.browse {
                                     new api.content.ContentPublishedEvent(new api.content.ContentId(el.getId())).fire();
                                     publishResult[i].updateNodeData(el);
 
-                                    this.updateDetailsPanels(el.getContentId(), el.getCompareStatus());
+                                    var selectedItems = this.getBrowseItemPanel().getItems();
+                                    var viewItem = selectedItems[selectedItems.length - 1].toViewItem();
+                                    this.updateDetailsPanels(el.getContentId(), el.getCompareStatus(), viewItem);
                                     break;
                                 }
                             }
@@ -563,11 +565,9 @@ module app.browse {
 
         private updateDetailsPanels(contentId: ContentId, status: CompareStatus, viewItem?: api.app.view.ViewItem<ContentSummary>) {
 
-            if (viewItem !== undefined) {
-                this.defaultDockedDetailsPanel.setItem(viewItem);
-                this.floatingDetailsPanel.setItem(viewItem);
-                this.mobileContentItemStatisticsPanel.setItem(viewItem);
-            }
+            this.defaultDockedDetailsPanel.setItem(viewItem);
+            this.floatingDetailsPanel.setItem(viewItem);
+            this.mobileContentItemStatisticsPanel.setItem(viewItem);
 
             this.updateDetailsPanelContentStatus(this.defaultDockedDetailsPanel, contentId, status);
             this.updateDetailsPanelContentStatus(this.floatingDetailsPanel, contentId, status);
@@ -575,7 +575,7 @@ module app.browse {
         }
 
         private updateDetailsPanelContentStatus(detailsPanel: DetailsPanel, contentId: ContentId, status: CompareStatus) {
-            if (contentId && detailsPanel.getItem() && contentId.equals(detailsPanel.getItem().getModel().getContentId())) {
+            if (contentId && contentId.equals(detailsPanel.getItem().getModel().getContentId())) {
                 detailsPanel.setContentStatus(status);
             }
         }
