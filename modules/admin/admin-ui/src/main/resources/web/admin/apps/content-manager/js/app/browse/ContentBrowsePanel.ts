@@ -390,7 +390,8 @@ module app.browse {
                                         updateResult[i].updateNodeData(el);
                                         this.updateStatisticsPreview(el); // update preview item
 
-                                        var viewItem = this.getBrowseItemPanel().getItems()[0].toViewItem();
+                                        var selectedItems = this.getBrowseItemPanel().getItems();
+                                        var viewItem = selectedItems[selectedItems.length - 1].toViewItem();
                                         this.updateDetailsPanels(el.getContentId(), el.getCompareStatus(), viewItem);
 
                                         results.push(updateResult[i]);
@@ -507,7 +508,10 @@ module app.browse {
                                 if (publishResult[i].getId() === el.getId()) {
                                     new api.content.ContentPublishedEvent(new api.content.ContentId(el.getId())).fire();
                                     publishResult[i].updateNodeData(el);
-                                    this.updateDetailsPanels(el.getContentId(), el.getCompareStatus());
+
+                                    var selectedItems = this.getBrowseItemPanel().getItems();
+                                    var viewItem = selectedItems[selectedItems.length - 1].toViewItem();
+                                    this.updateDetailsPanels(el.getContentId(), el.getCompareStatus(), viewItem);
                                     break;
                                 }
                             }
@@ -566,11 +570,9 @@ module app.browse {
             this.floatingDetailsPanel.setItem(viewItem);
             this.mobileContentItemStatisticsPanel.setItem(viewItem);
 
-            if (viewItem) {
-                this.updateDetailsPanelContentStatus(this.defaultDockedDetailsPanel, contentId, status);
-                this.updateDetailsPanelContentStatus(this.floatingDetailsPanel, contentId, status);
-                this.updateDetailsPanelContentStatus(this.mobileContentItemStatisticsPanel.getDetailsPanel(), contentId, status);
-            }
+            this.updateDetailsPanelContentStatus(this.defaultDockedDetailsPanel, contentId, status);
+            this.updateDetailsPanelContentStatus(this.floatingDetailsPanel, contentId, status);
+            this.updateDetailsPanelContentStatus(this.mobileContentItemStatisticsPanel.getDetailsPanel(), contentId, status);
         }
 
         private updateDetailsPanelContentStatus(detailsPanel: DetailsPanel, contentId: ContentId, status: CompareStatus) {
