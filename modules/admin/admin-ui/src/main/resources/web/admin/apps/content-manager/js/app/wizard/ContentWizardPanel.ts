@@ -241,7 +241,7 @@ module app.wizard {
                                 this.cycleViewModeButton.executePrevAction();
                             }
                         } else {
-                            if(this.inMobileViewMode && this.isLiveView()) {
+                            if (this.inMobileViewMode && this.isLiveView()) {
                                 this.inMobileViewMode = false;
                                 this.showSplitEdit();
                             }
