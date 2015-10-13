@@ -49,28 +49,28 @@ public final class EventJsonSerializer
         final ObjectNode json = newObjectNode();
         json.put( "eventType", event.getEventType().toString() );
         json.put( "applicationKey", event.getApplicationKey().toString() );
-        return eventWrapper( event.getClass().getSimpleName(), json );
+        return eventWrapper( event, json );
     }
 
     private ObjectNode toJson( final ContentUpdatedEvent event )
     {
         final ObjectNode json = newObjectNode();
         json.put( "contentId", event.getContentId().toString() );
-        return eventWrapper( event.getClass().getSimpleName(), json );
+        return eventWrapper( event, json );
     }
 
     private ObjectNode toJson( final ContentPublishedEvent event )
     {
         final ObjectNode json = newObjectNode();
         json.put( "contentId", event.getContentId().toString() );
-        return eventWrapper( event.getClass().getSimpleName(), json );
+        return eventWrapper( event, json );
     }
 
     private ObjectNode toJson( final ContentCreatedEvent event )
     {
         final ObjectNode json = newObjectNode();
         json.put( "contentId", event.getContentId().toString() );
-        return eventWrapper( event.getClass().getSimpleName(), json );
+        return eventWrapper( event, json );
     }
 
     private ObjectNode toJson( final ContentChangeEvent event )
@@ -90,7 +90,7 @@ public final class EventJsonSerializer
             }
         }
 
-        return eventWrapper( event.getClass().getSimpleName(), json );
+        return eventWrapper( event, json );
     }
 
     private ObjectNode newObjectNode()
@@ -98,11 +98,11 @@ public final class EventJsonSerializer
         return JsonNodeFactory.instance.objectNode();
     }
 
-    private ObjectNode eventWrapper( final String type, final ObjectNode event )
+    private ObjectNode eventWrapper( final Event event, final ObjectNode data )
     {
         final ObjectNode json = newObjectNode();
-        json.put( "type", type );
-        json.set( "event", event );
+        json.put( "type", event.getType() );
+        json.set( "event", data );
         return json;
     }
 }

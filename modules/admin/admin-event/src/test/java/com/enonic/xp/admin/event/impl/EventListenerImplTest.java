@@ -2,6 +2,7 @@ package com.enonic.xp.admin.event.impl;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationUpdatedEvent;
@@ -16,7 +17,6 @@ import static org.mockito.Mockito.verify;
 
 public class EventListenerImplTest
 {
-
     private EventListenerImpl eventListener;
 
     private WebSocketManager webSocketManager;
@@ -45,15 +45,9 @@ public class EventListenerImplTest
     public void testUnsupportedEvent()
         throws Exception
     {
-        final TestEvent event = new TestEvent();
+        final Event event = Mockito.mock( Event.class );
         eventListener.onEvent( event );
 
         verify( this.webSocketManager, never() ).sendToAll( anyString() );
     }
-
-    class TestEvent
-        implements Event
-    {
-    }
-
 }
