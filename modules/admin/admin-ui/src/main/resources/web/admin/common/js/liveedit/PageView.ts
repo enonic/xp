@@ -114,6 +114,9 @@ module api.liveedit {
             this.ignorePropertyChanges = false;
             this.disableContextMenu = false;
 
+            var inspectAction = new api.ui.Action("Inspect").onExecuted(() => {
+                new PageInspectedEvent().fire();
+            });
             var resetAction = new api.ui.Action('Reset');
             resetAction.onExecuted(() => {
                 if (PageView.debug) {
@@ -123,7 +126,7 @@ module api.liveedit {
                 this.pageModel.reset(this);
                 this.setIgnorePropertyChanges(false);
             });
-            this.unlockedScreenActions = [resetAction];
+            this.unlockedScreenActions = [inspectAction, resetAction];
 
             if (this.pageModel.getMode() == PageMode.AUTOMATIC || this.pageModel.getMode() == PageMode.NO_CONTROLLER) {
                 resetAction.setEnabled(false);
