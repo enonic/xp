@@ -233,6 +233,11 @@ module api.ui.treegrid {
             return this.loadBufferSize;
         }
 
+        setRowHeight(rowHeight: number): TreeGridBuilder<NODE> {
+            this.options.rowHeight = rowHeight;
+            return this;
+        }
+
         /**
          Should be overriden by child class.
          */

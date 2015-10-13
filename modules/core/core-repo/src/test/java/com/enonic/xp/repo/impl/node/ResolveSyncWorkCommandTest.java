@@ -10,8 +10,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodePublishReason;
-import com.enonic.xp.node.NodePublishRequest;
 import com.enonic.xp.node.NodePublishRequests;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.RootNode;
@@ -1006,6 +1004,25 @@ public class ResolveSyncWorkCommandTest
         */
     }
 
+    @Test
+    public void pending_delete_with_children_and_reference()
+    {
+        createS1S2Tree();
+
+        NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
+        assertEquals( 7, result.getSize() );
+
+        pushAllNodesInS1S2Tree();
+        markAsDelete( NodeId.from( "s1" ) );
+        markAsDelete( NodeId.from( "s2" ) );
+
+        result = resolveSyncWorkResult( "s1" );
+        assertEquals( 4, result.getSize() );
+
+        result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
+        assertEquals( 4, result.getSize() );
+    }
+
 
     private void createS1S2Tree()
     {
@@ -1064,66 +1081,6 @@ public class ResolveSyncWorkCommandTest
         pushNodes( NodeIds.from( RootNode.UUID.toString(), "s1", "s2", "a1", "a2", "a2_1", "b1", "b2", "b2_1" ), WS_OTHER );
     }
 
-    private void assertRequested( final NodePublishRequests nodePublishRequests, final String nodeId )
-    {
-        final NodePublishRequest nodePublishRequest = getPublishRequest( nodePublishRequests, NodeId.from( nodeId ) );
-
-        assertNotNull( nodePublishRequest );
-
-        final NodePublishReason reason = nodePublishRequest.getReason();
-
-        assertTrue( "Expected requested, got " + reason.getClass().getName(), nodePublishRequest.reasonRequested() );
-        assertNull( "Expected no contextual node", reason.getContextualNodeId() );
-    }
-
-    private void assertChildOf( final NodePublishRequests nodePublishRequests, final String nodeId, final String childOf )
-    {
-        final NodePublishRequest nodePublishRequest = getPublishRequest( nodePublishRequests, NodeId.from( nodeId ) );
-
-        assertNotNull( nodePublishRequest );
-
-        final NodePublishReason reason = nodePublishRequest.getReason();
-
-        assertTrue( "Expected node " + nodeId + " as childOf, got " + reason.getClass().getName(), nodePublishRequest.reasonChildOf() );
-        assertEquals( "Expected to be child of", NodeId.from( childOf ), reason.getContextualNodeId() );
-    }
-
-    private void assertReferredFrom( final NodePublishRequests nodePublishRequests, final String nodeId, final String referredFrom )
-    {
-        assertReferredFrom( nodePublishRequests, NodeId.from( nodeId ), NodeId.from( referredFrom ) );
-    }
-
-    private void assertReferredFrom( final NodePublishRequests nodePublishRequests, final NodeId nodeId, final NodeId referredFrom )
-    {
-        final NodePublishRequest nodePublishRequest = getPublishRequest( nodePublishRequests, nodeId );
-
-        final NodePublishReason reason = nodePublishRequest.getReason();
-
-        assertTrue( "Expected referredFrom, got " + reason.getClass().getName(), nodePublishRequest.reasonReferredFrom() );
-        assertEquals( "Expected to be referred from: " + referredFrom, referredFrom, reason.getContextualNodeId() );
-    }
-
-    private void assertParentFor( final NodePublishRequests nodePublishRequests, final String nodeId, final String parentFor )
-    {
-        assertParentFor( nodePublishRequests, NodeId.from( nodeId ), NodeId.from( parentFor ) );
-    }
-
-    private void assertParentFor( final NodePublishRequests nodePublishRequests, final NodeId nodeId, final NodeId parentFor )
-    {
-        final NodePublishRequest nodePublishRequest = getPublishRequest( nodePublishRequests, nodeId );
-
-        final NodePublishReason reason = nodePublishRequest.getReason();
-
-        assertTrue( "Expected parentFor, got " + reason.getClass().getName(), nodePublishRequest.reasonParentFor() );
-        assertEquals( "Expected to be parent for: " + parentFor, parentFor, reason.getContextualNodeId() );
-    }
-
-    private NodePublishRequest getPublishRequest( final NodePublishRequests nodePublishRequests, final NodeId nodeId )
-    {
-        final NodePublishRequest nodePublishRequest = nodePublishRequests.get( nodeId );
-        assertNotNull( "nodeId " + nodeId + " not contained in expected publish-requests", nodePublishRequest );
-        return nodePublishRequest;
-    }
 
     private void updateNode( final String nodeId )
     {
@@ -1160,18 +1117,6 @@ public class ResolveSyncWorkCommandTest
             id( NodeId.from( nodeId ) ).
             newNodeName( NodeName.from( newName ) ).
             newParent( newParent ).
-            build().
-            execute();
-    }
-
-    private void renameNode( final Node node )
-    {
-        MoveNodeCommand.create().
-            id( node.id() ).
-            newNodeName( NodeName.from( node.id().toString() + "edited" ) ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
             build().
             execute();
     }

@@ -123,6 +123,13 @@ class NodeStoreDocumentFactory
                                                  IndexConfig.MINIMAL ) );
         }
 
+        if ( this.node.getTimestamp() != null )
+        {
+            builder.addEntries(
+                StoreDocumentItemFactory.create( NodeIndexPath.TIMESTAMP, ValueFactory.newDateTime( this.node.getTimestamp() ),
+                                                 IndexConfig.MINIMAL ) );
+        }
+
         builder.addEntries(
             StoreDocumentItemFactory.create( NodeIndexPath.STATE, ValueFactory.newString( this.node.getNodeState().value() ),
                                              IndexConfig.MINIMAL ) );

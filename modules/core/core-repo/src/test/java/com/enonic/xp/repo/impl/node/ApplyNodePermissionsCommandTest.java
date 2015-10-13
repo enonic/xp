@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Iterator;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,6 +13,8 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -134,6 +138,9 @@ public class ApplyNodePermissionsCommandTest
         final Node child1_1Updated = getNodeById( child1_1.id() );
         assertEquals( permissions, child1_1Updated.getPermissions() );
 
+        assertVersions( child1_1Updated );
+        assertTrue( child1_1.getTimestamp().isBefore( child1_1_1.getTimestamp() ) );
+
         final Node child1_2Updated = getNodeById( child1_2.id() );
         assertEquals( permissions, child1_2Updated.getPermissions() );
 
@@ -145,6 +152,19 @@ public class ApplyNodePermissionsCommandTest
 
         final Node child1_2_2Updated = getNodeById( child1_2_2.id() );
         assertEquals( permissions, child1_2_2Updated.getPermissions() );
+    }
+
+    private void assertVersions( final Node node )
+    {
+        final NodeVersionQueryResult versions = GetNodeVersionsCommand.create().
+            nodeId( node.id() ).
+            searchService( this.searchService ).
+            build().
+            execute();
+
+        assertEquals( 2, versions.getHits() );
+        final Iterator<NodeVersion> iterator = versions.getNodeVersions().iterator();
+        assertTrue( iterator.next().getTimestamp().isAfter( iterator.next().getTimestamp() ) );
     }
 
     @Test

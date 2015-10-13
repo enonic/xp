@@ -133,7 +133,7 @@ public class ContentServiceImplTest_delete
             allowPublishOutsideSelection( false ).
             build() );
 
-        assertEquals( 1, result.getPushedContent().getSize() );
+        assertEquals( 1, result.getPushedContents().getSize() );
 
         //Deletes the content
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
@@ -254,7 +254,7 @@ public class ContentServiceImplTest_delete
             allowPublishOutsideSelection( true ).
             includeChildren( true ).
             build() );
-        assertEquals( 2, result.getPushedContent().getSize() );
+        assertEquals( 2, result.getPushedContents().getSize() );
 
         refresh();
 

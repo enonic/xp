@@ -22,16 +22,22 @@ module app.view {
         }
 
         private enrichWithWorkspaces(allVersions: ContentVersion[], activeVersions: ContentVersion[]): ContentVersion[] {
-            activeVersions.forEach((activeVersion: ContentVersion) => {
-                for (var i = 0; i < allVersions.length; i++) {
-                    var allVersion = allVersions[i];
-                    if (activeVersion.id == allVersion.id) {
-                        allVersion.workspaces = activeVersion.workspaces;
-                        break;
-                    }
+            var filteredVersions : ContentVersion[] = allVersions.length ? [allVersions[0]] : [];
+
+            for (var i = 1; i < allVersions.length; i++) {
+                if (Math.abs(allVersions[i-1].modified.getTime() - allVersions[i].modified.getTime()) > 500) {
+                    filteredVersions.push(allVersions[i]);
                 }
+            }
+
+            activeVersions.forEach((activeVersion: ContentVersion) => {
+                filteredVersions.filter((version: ContentVersion) => {
+                    return version.id == activeVersion.id;
+                }).forEach((version: ContentVersion) => {
+                    version.workspaces = activeVersion.workspaces;
+                });
             });
-            return allVersions;
+            return filteredVersions;
         }
 
     }

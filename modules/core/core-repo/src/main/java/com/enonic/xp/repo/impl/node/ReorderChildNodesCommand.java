@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.node;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
@@ -29,6 +30,12 @@ public class ReorderChildNodesCommand
 
         for ( final ReorderChildNodeParams reorderChildNodeParams : params )
         {
+            RefreshCommand.create().
+                refreshMode( RefreshMode.SEARCH ).
+                indexServiceInternal( this.indexServiceInternal ).
+                build().
+                execute();
+
             final Node nodeToMove = doGetById( reorderChildNodeParams.getNodeId() );
             final Node nodeToMoveBefore =
                 reorderChildNodeParams.getMoveBefore() == null ? null : doGetById( reorderChildNodeParams.getMoveBefore() );

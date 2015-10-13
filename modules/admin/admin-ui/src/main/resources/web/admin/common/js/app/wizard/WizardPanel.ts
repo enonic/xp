@@ -384,8 +384,7 @@ module api.app.wizard {
             return this.persistedItem != null;
         }
 
-        // TODO make method protected
-        setPersistedItem(newPersistedItem: EQUITABLE): void {
+        protected setPersistedItem(newPersistedItem: EQUITABLE): void {
             this.persistedItem = newPersistedItem;
         }
 

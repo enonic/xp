@@ -17,6 +17,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
@@ -73,6 +74,7 @@ import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentAlreadyExistException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -111,6 +113,8 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -123,8 +127,6 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
@@ -301,6 +303,13 @@ public final class ContentResource
     @Path("update")
     public ContentJson update( final UpdateContentJson json )
     {
+        if ( contentNameIsOccupied( json.getRenameContentParams() ) )
+        {
+            throw JaxRsExceptions.newException( Response.Status.CONFLICT,
+                                                "Content [%s] could not be updated. A content with that name already exists",
+                                                json.getRenameContentParams().getNewName().toString() );
+        }
+
         final UpdateContentParams updateParams = json.getUpdateContentParams();
 
         final Content updatedContent = contentService.update( updateParams );
@@ -309,9 +318,20 @@ public final class ContentResource
             return new ContentJson( updatedContent, newContentIconUrlResolver(), principalsResolver );
         }
 
-        final RenameContentParams renameParams = json.getRenameContentParams();
-        final Content renamedContent = contentService.rename( renameParams );
-        return new ContentJson( renamedContent, newContentIconUrlResolver(), principalsResolver );
+        try
+        {
+            // in case content with same name and path was created in between content updated and renamed
+            final RenameContentParams renameParams = json.getRenameContentParams();
+            final Content renamedContent = contentService.rename( renameParams );
+            return new ContentJson( renamedContent, newContentIconUrlResolver(), principalsResolver );
+        }
+        catch ( ContentAlreadyExistException e )
+        {
+            // catching to throw exception with better message and other error code
+            throw JaxRsExceptions.newException( Response.Status.CONFLICT,
+                                                "Content could not be renamed to [%s]. A content with that name already exists",
+                                                json.getRenameContentParams().getNewName().toString() );
+        }
     }
 
     @POST
@@ -385,9 +405,9 @@ public final class ContentResource
             build() );
 
         return PublishContentResultJson.create().
-            success( contentService.getByIds( new GetContentByIdsParams( result.getPushedContent() ) ) ).
-            deleted( contentService.getByIds( new GetContentByIdsParams( result.getDeletedContent() ) ) ).
-            failures( contentService.getByIds( new GetContentByIdsParams( result.getFailedContent() ) ) ).
+            success( result.getPushedContents() ).
+            deleted( result.getDeletedContents() ).
+            failures( result.getFailedContents() ).
             build();
     }
 
@@ -777,7 +797,7 @@ public final class ContentResource
             size( params.getSize() != null ? params.getSize() : 10 ).
             build() );
 
-        return new GetContentVersionsResultJson( result );
+        return new GetContentVersionsResultJson( result, this.principalsResolver );
     }
 
     @GET
@@ -789,7 +809,7 @@ public final class ContentResource
             contentId( ContentId.from( id ) ).
             build() );
 
-        return new GetActiveContentVersionsResultJson( result );
+        return new GetActiveContentVersionsResultJson( result, this.principalsResolver );
     }
 
 
@@ -886,6 +906,27 @@ public final class ContentResource
         }
 
         return QueryExpr.from( expr );
+    }
+
+    private boolean contentNameIsOccupied( final RenameContentParams renameParams )
+    {
+        Content content = contentService.getById( renameParams.getContentId() );
+        if ( content.getName().equals( renameParams.getNewName() ) )
+        {
+            return false;
+        }
+
+        ContentPath newPath = ContentPath.from( content.getParentPath(), renameParams.getNewName().toString() );
+        try
+        {
+            contentService.getByPath( newPath );
+        }
+        catch ( ContentNotFoundException e )
+        {
+            return false;
+        }
+
+        return true;
     }
 
     @Reference

@@ -58,4 +58,18 @@ public final class ContentPrincipalsResolver
             }
         }
     }
+
+    public Principal findPrincipal( final PrincipalKey key )
+    {
+        final Optional<? extends Principal> principalValue = securityService.getPrincipal( key );
+        if ( !principalValue.isPresent() )
+        {
+            LOG.warn( "Principal could not be resolved: " + key.toString() );
+            return null;
+        }
+        else
+        {
+            return principalValue.get();
+        }
+    }
 }

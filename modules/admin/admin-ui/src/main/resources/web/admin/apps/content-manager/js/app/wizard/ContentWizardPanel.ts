@@ -43,7 +43,7 @@ module app.wizard {
     import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
     import WizardStep = api.app.wizard.WizardStep;
     import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
-    import SiteConfigRequiresSaveEvent = api.content.site.inputtype.siteconfigurator.SiteConfigRequiresSaveEvent;
+    import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
 
     import Application = api.application.Application;
     import ApplicationKey = api.application.ApplicationKey;
@@ -241,6 +241,11 @@ module app.wizard {
                                 this.cycleViewModeButton.executePrevAction();
                             }
                         } else {
+                            if(this.inMobileViewMode && this.isLiveView()) {
+                                this.inMobileViewMode = false;
+                                this.showSplitEdit();
+                            }
+
                             this.inMobileViewMode = false;
                         }
                     }
@@ -301,15 +306,15 @@ module app.wizard {
         }
 
         private handleSiteConfigApply() {
-            var siteConfigApplyHandler = (event: SiteConfigRequiresSaveEvent) => {
+            var siteConfigApplyHandler = (event: ContentRequiresSaveEvent) => {
                 if (this.getPersistedItem().getId() == event.getContent().getId()) {
                     this.saveChanges()
                 }
             };
 
-            SiteConfigRequiresSaveEvent.on(siteConfigApplyHandler);
+            ContentRequiresSaveEvent.on(siteConfigApplyHandler);
             this.onClosed(() => {
-                SiteConfigRequiresSaveEvent.un(siteConfigApplyHandler);
+                ContentRequiresSaveEvent.un(siteConfigApplyHandler);
             });
         }
 
@@ -564,6 +569,7 @@ module app.wizard {
 
             this.showLiveEditAction.setEnabled(false);
             this.previewAction.setVisible(false);
+            this.previewAction.setEnabled(false);
 
             new GetNearestSiteRequest(content.getContentId()).sendAndParse().
                 then((parentSite: Site) => {
@@ -630,6 +636,7 @@ module app.wizard {
                             return this.initLiveEditModel(content, this.siteModel, formContext).then(() => {
                                 this.liveFormPanel.setModel(this.liveEditModel);
                                 this.liveFormPanel.loadPage();
+                                this.updatePreviewActionVisibility();
                                 return wemQ(null);
                             });
                         }
@@ -949,6 +956,10 @@ module app.wizard {
             return this.getSplitPanel() && this.getSplitPanel().hasClass("toggle-split");
         }
 
+        private isLiveView(): boolean {
+            return this.getSplitPanel() && this.getSplitPanel().hasClass("toggle-live");
+        }
+
         public checkContentCanBePublished(displayValidationErrors: boolean): boolean {
             if (!this.isContentFormValid) {
                 this.contentWizardStepForm.displayValidationErrors(displayValidationErrors);
@@ -1173,6 +1184,14 @@ module app.wizard {
 
         private contentNotRenderable(): boolean {
             return this.liveEditModel.getPageModel().getMode() == api.content.page.PageMode.NO_CONTROLLER;
+        }
+
+        private updatePreviewActionVisibility() {
+            this.previewAction.setEnabled(!this.contentNotRenderable());
+
+            this.liveEditModel.getPageModel().onPageModeChanged(()=> {
+                this.previewAction.setEnabled(!this.contentNotRenderable());
+            });
         }
     }
 

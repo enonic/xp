@@ -76,11 +76,13 @@ module app.view {
         }
 
         setItem(item: ViewItem<ContentSummary>) {
-            if (!item.equals(this.getItem())) {
+            if (!this.getItem() || !this.getItem().equals(item)) {
                 super.setItem(item);
                 this.previewPanel.setItem(item);
                 this.detailsPanel.setItem(item);
-                this.setName(this.makeDisplayName(item));
+                if (item) {
+                    this.setName(this.makeDisplayName(item));
+                }
             }
             this.slideIn();
         }
@@ -93,6 +95,10 @@ module app.view {
 
         private convertName(name: string): string {
             return StringHelper.capitalize(name.replace(/-/g, " ").trim());
+        }
+
+        getDetailsPanel(): DetailsPanel {
+            return this.detailsPanel;
         }
 
         setName(name: string) {

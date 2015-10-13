@@ -6,6 +6,7 @@ module app.wizard.action {
             super("Form");
 
             this.setEnabled(true);
+            this.setTitle("Hide Page Editor");
             this.onExecuted(() => {
                 wizard.showForm();
                 new ShowContentFormEvent().fire();

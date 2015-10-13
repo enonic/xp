@@ -11,7 +11,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.SearchMode;
-import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 
@@ -63,7 +62,6 @@ public class FindNodesByParentCommand
 
         final NodeQueryResult nodeQueryResult = this.searchService.search( NodeQuery.create().
             parent( parentPath ).
-            query( new QueryExpr( order.getOrderExpressions() ) ).
             from( params.getFrom() ).
             size( params.getSize() ).
             searchMode( params.isCountOnly() ? SearchMode.COUNT : SearchMode.SEARCH ).

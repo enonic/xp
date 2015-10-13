@@ -79,7 +79,7 @@ public class PushNodesCommand
 
             if ( nodeComparison.getCompareStatus() == CompareStatus.EQUAL )
             {
-                builder.addSuccess( node.id() );
+                builder.addSuccess( node );
                 continue;
             }
 
@@ -98,7 +98,7 @@ public class PushNodesCommand
             else
             {
                 doPushNode( context, node, nodeVersionId );
-                builder.addSuccess( node.id() );
+                builder.addSuccess( node );
             }
 
             if ( nodeComparison.getCompareStatus() == CompareStatus.MOVED )
@@ -148,7 +148,7 @@ public class PushNodesCommand
                     node( child ).
                     build(), InternalContext.from( targetContext ) );
 
-                resultBuilder.addSuccess( child.id() );
+                resultBuilder.addSuccess( child );
 
                 updateTargetChildrenMetaData( child, resultBuilder );
             }

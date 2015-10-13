@@ -73,7 +73,6 @@ module api.content.site.inputtype.siteconfigurator {
                     var selectedOption = this.comboBox.getSelectedOption(event.getOption());
                     var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView>selectedOption.getOptionView();
                     var siteConfig = selectedOptionView.getSiteConfig();
-                    selectedOptionView.initAndOpenConfigureDialog(this.comboBox);
 
                     this.validate(false);
                 });
@@ -109,6 +108,8 @@ module api.content.site.inputtype.siteconfigurator {
                                     formView.onValidityChanged((event: FormValidityChangedEvent) => {
                                         this.validate(false);
                                     });
+
+                                    this.validate(false);
                                 });
                                 this.comboBox.select(requestedApplication);
                             });

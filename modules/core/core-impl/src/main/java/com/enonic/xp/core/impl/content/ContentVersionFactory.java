@@ -48,7 +48,7 @@ class ContentVersionFactory
         return ContentVersion.create().
             comment( "No comments" ).
             displayName( content.getDisplayName() ).
-            modified( content.getModifiedTime() ).
+            modified( nodeVersion.getTimestamp() ).
             modifier( content.getModifier() ).
             id( ContentVersionId.from( nodeVersion.getNodeVersionId().toString() ) ).
             build();

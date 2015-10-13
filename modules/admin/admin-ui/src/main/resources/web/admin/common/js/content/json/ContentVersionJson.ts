@@ -4,6 +4,8 @@ module api.content.json {
 
         modifier: string;
 
+        modifierDisplayName: string;
+
         displayName: string;
 
         modified: string;

@@ -1,36 +1,36 @@
 package com.enonic.xp.query.expr;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
-import com.enonic.xp.support.AbstractImmutableEntitySet;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @Beta
 public class OrderExpressions
-    extends AbstractImmutableEntitySet<OrderExpr>
+    extends AbstractImmutableEntityList<OrderExpr>
 {
-    private OrderExpressions( final ImmutableSet<OrderExpr> set )
+    private OrderExpressions( final ImmutableList<OrderExpr> list )
     {
-        super( set );
+        super( list );
     }
 
     public static OrderExpressions empty()
     {
-        return new OrderExpressions( ImmutableSet.<OrderExpr>of() );
+        return new OrderExpressions( ImmutableList.<OrderExpr>of() );
     }
 
     public static OrderExpressions from( final OrderExpr... orderExprs )
     {
-        return new OrderExpressions( ImmutableSet.copyOf( orderExprs ) );
+        return new OrderExpressions( ImmutableList.copyOf( orderExprs ) );
     }
 
     public static OrderExpressions from( final Collection<OrderExpr> orderExprs )
     {
-        return new OrderExpressions( ImmutableSet.copyOf( orderExprs ) );
+        return new OrderExpressions( ImmutableList.copyOf( orderExprs ) );
     }
 
     public static Builder create()
@@ -40,7 +40,7 @@ public class OrderExpressions
 
     public static class Builder
     {
-        final Set<OrderExpr> orderExprs = Sets.newLinkedHashSet();
+        final List<OrderExpr> orderExprs = Lists.newLinkedList();
 
         public Builder add( final OrderExpr orderExpr )
         {
@@ -50,7 +50,7 @@ public class OrderExpressions
 
         public OrderExpressions build()
         {
-            return new OrderExpressions( ImmutableSet.copyOf( this.orderExprs ) );
+            return new OrderExpressions( ImmutableList.copyOf( this.orderExprs ) );
         }
 
     }

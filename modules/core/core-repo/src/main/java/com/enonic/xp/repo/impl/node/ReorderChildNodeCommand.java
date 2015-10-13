@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.time.Instant;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.ContextAccessor;
@@ -100,6 +102,7 @@ public class ReorderChildNodeCommand
     private Node doUpdateNodeOrderValue( final Long newOrderValue )
     {
         final Node updatedNode = Node.create( nodeToMove ).
+            timestamp( Instant.now() ).
             manualOrderValue( newOrderValue ).
             build();
 

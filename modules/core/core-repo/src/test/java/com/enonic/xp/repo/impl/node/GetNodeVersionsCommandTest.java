@@ -6,9 +6,9 @@ import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionQueryResult;
@@ -54,7 +54,11 @@ public class GetNodeVersionsCommandTest
     public void get_multiple_version()
         throws Exception
     {
+        PropertyTree data = new PropertyTree();
+        data.addLong( "test", this.random.nextLong() );
+
         final Node node = createNode( CreateNodeParams.create().
+            data( data ).
             name( "my-node" ).
             parent( NodePath.ROOT ).
             build() );
@@ -65,6 +69,8 @@ public class GetNodeVersionsCommandTest
         doUpdateNode( node );
 
         refresh();
+
+        printVersionIndex();
 
         final NodeVersionQueryResult result = GetNodeVersionsCommand.create().
             from( 0 ).
@@ -90,7 +96,7 @@ public class GetNodeVersionsCommandTest
     {
         UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( node.id() ).
-            editor( toBeEdited -> toBeEdited.name = NodeName.from( node.name() + "-" + this.random.nextLong() ) ).
+            editor( toBeEdited -> toBeEdited.data.setLong( "test", this.random.nextLong() ) ).
             build();
 
         return UpdateNodeCommand.create().

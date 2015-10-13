@@ -54,7 +54,7 @@
     display: block;
     cursor: pointer;
 
-    .icon-menu();
+    .icon-list();
 
     &.expanded {
       font-size: 25px;
@@ -85,11 +85,11 @@
 
   .details-panel {
 
-    position: absolute;
     background-color: @admin-bg-almost-white;
     display: inherit;
     width: 100%;
     right: 0px;
+    opacity: 0.95;
 
     > .details-container {
       top: 37px;
@@ -100,10 +100,8 @@
 
       .info-widget-toggle-button {
 
-        font-size: 26px;
-        padding: 4px 6px 3px 6px;
-
-        .icon-grid5();
+        font-size: 16px;
+        .icon-list();
       }
 
       .widget-selector {
@@ -144,18 +142,20 @@
       }
     }
 
-    .widget {
+    .widget-view {
 
       margin: 0 0 2px 0;
 
-      .widget-content {
-        margin-left: 5px;
-        overflow: hidden;
-        .transition(all 0.1s ease-in-out);
+      margin-left: 5px;
+      overflow: hidden;
+      .transition(all 0.1s ease-in-out);
 
-        .panel {
-          position: relative;
-        }
+      .panel {
+        position: relative;
+      }
+
+      .status-widget-item-view {
+        font-size: 20px;
       }
 
       .widget-toggle-button {
@@ -165,9 +165,7 @@
 
       &.expanded {
 
-        .widget-content {
-          padding: 5px 0 5px 0;
-        }
+        padding: 5px 0 5px 0;
 
         .widget-toggle-button {
           .icon-arrow-down2();

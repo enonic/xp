@@ -30,13 +30,13 @@ module app.wizard {
             super.addGreedySpacer();
 
             this.cycleViewModeButton = new CycleButton([params.showLiveEditAction, params.showFormAction]);
-            this.contextWindowToggler = new TogglerButton("icon-wrench");
-            this.componentsViewToggler = new TogglerButton("icon-clipboard");
+            this.componentsViewToggler = new TogglerButton("icon-clipboard", "Show Component View");
+            this.contextWindowToggler = new TogglerButton("icon-cog", "Show Inspection Panel");
             this.contentWizardToolbarPublishControls = new ContentWizardToolbarPublishControls(params.publishAction);
 
             super.addElement(this.contentWizardToolbarPublishControls);
-            super.addElement(this.contextWindowToggler);
             super.addElement(this.componentsViewToggler);
+            super.addElement(this.contextWindowToggler);
             super.addElement(this.cycleViewModeButton);
         }
 

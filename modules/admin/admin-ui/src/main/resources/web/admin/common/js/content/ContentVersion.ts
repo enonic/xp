@@ -4,6 +4,8 @@ module api.content {
 
         modifier: string;
 
+        modifierDisplayName: string;
+
         displayName: string;
 
         modified: Date;
@@ -16,12 +18,11 @@ module api.content {
 
         static fromJson(contentVersionJson: api.content.json.ContentVersionJson, workspaces?: string[]): ContentVersion {
 
-            console.log("WOrkspaces: " + workspaces);
-
             var contentVersion: ContentVersion = new ContentVersion();
             contentVersion.modifier = contentVersionJson.modifier;
             contentVersion.displayName = contentVersionJson.displayName;
             contentVersion.modified = new Date(contentVersionJson.modified);
+            contentVersion.modifierDisplayName = contentVersionJson.modifierDisplayName;
             contentVersion.comment = contentVersionJson.comment;
             contentVersion.id = contentVersionJson.id;
             contentVersion.workspaces = workspaces || [];
