@@ -4,6 +4,7 @@ module app.view.detail {
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import CompareStatus = api.content.CompareStatus;
     import Widget = api.content.Widget;
     import Dropdown = api.ui.selector.dropdown.Dropdown;
@@ -31,7 +32,7 @@ module app.view.detail {
         private contentStatusChangedListeners: {() : void}[] = [];
 
         private versionsPanel: ContentItemVersionsPanel;
-        private item: ViewItem<ContentSummary>;
+        private item: ViewItem<ContentSummaryAndCompareStatus>;
         private contentStatus: CompareStatus;
 
         private useNameAndIconView: boolean;
@@ -75,8 +76,8 @@ module app.view.detail {
             var delayedReset = api.util.AppHelper.debounce(this.resetItem.bind(this), 300, false);
             ResponsiveManager.onAvailableSizeChanged(this, delayedReset);
 
-            api.content.ContentsPublishedEvent.on((event: api.content.ContentsPublishedEvent) => {
-                var itemId = (<ContentSummary>this.getItem().getModel()).getId();
+            /* api.content.ContentsPublishedEvent.on((event: api.content.ContentsPublishedEvent) => {
+             var itemId = (<ContentSummaryAndCompareStatus>this.getItem().getModel()).getId();
                 var idPublished = event.getContentIds().some((id, index, array) => {
                     return itemId === id.toString();
                 });
@@ -84,7 +85,7 @@ module app.view.detail {
                 if (idPublished) {
                     this.versionsPanel.reloadActivePanel();
                 }
-            });
+             });*/
 
             this.initNameAndIconView(builder.getUseNameAndIconView());
             this.initDefaultWidget();
@@ -187,7 +188,7 @@ module app.view.detail {
             }
         }
 
-        public setItem(item: ViewItem<ContentSummary>) {
+        public setItem(item: ViewItem<ContentSummaryAndCompareStatus>) {
 
             if (!this.item || (this.item && !this.item.equals(item))) {
                 this.item = item;
@@ -252,43 +253,41 @@ module app.view.detail {
         }
 
         private setDefaultWidget() {
-            var widgetItemView = new StatusWidgetItemView();
+            var statusWidgetItemView = new StatusWidgetItemView();
             var propWidgetItemView = new PropertiesWidgetItemView();
 
             if (this.item) {
-                api.content.ContentSummaryAndCompareStatusFetcher.fetch(this.item.getModel().getContentId()).then((contentSummaryAndCompareStatus) => {
 
-                    this.contentStatus = contentSummaryAndCompareStatus.getCompareStatus();
+                this.contentStatus = this.item.getModel().getCompareStatus();
 
-                    if (this.defaultWidgetView) {
-                        this.detailsContainer.removeChild(this.defaultWidgetView);
-                    }
+                if (this.defaultWidgetView) {
+                    this.detailsContainer.removeChild(this.defaultWidgetView);
+                }
 
-                    this.setStatus(widgetItemView);
+                this.setStatus(statusWidgetItemView);
 
-                    this.onContentStatusChanged(() => {
-                        this.setStatus(widgetItemView);
-                        widgetItemView.layout();
-                    });
+                this.onContentStatusChanged(() => {
+                    this.setStatus(statusWidgetItemView);
+                    statusWidgetItemView.layout();
+                });
 
-                    propWidgetItemView.setContent(this.item.getModel());
+                propWidgetItemView.setContent(this.item.getModel().getContentSummary());
 
-                    this.defaultWidgetView = WidgetView.create().
-                        setName(DetailsPanel.DEFAULT_WIDGET_NAME).
-                        setDetailsPanel(this).
-                        setUseToggleButton(false).
-                        addWidgetItemView(widgetItemView).
-                        addWidgetItemView(propWidgetItemView).
-                        build();
+                this.defaultWidgetView = WidgetView.create().
+                    setName(DetailsPanel.DEFAULT_WIDGET_NAME).
+                    setDetailsPanel(this).
+                    setUseToggleButton(false).
+                    addWidgetItemView(statusWidgetItemView).
+                    addWidgetItemView(propWidgetItemView).
+                    build();
 
-                    this.detailsContainer.appendChild(this.defaultWidgetView);
+                this.detailsContainer.appendChild(this.defaultWidgetView);
 
                     if (DetailsPanel.DEFAULT_WIDGET_NAME == this.activeWidget.getWidgetName()) {
                         this.setActiveWidget(this.defaultWidgetView);
                     }
                     this.updateWidgetsHeights();
 
-                }).done();
             }
         }
 
@@ -413,7 +412,7 @@ module app.view.detail {
             return this.actualWidth;
         }
 
-        getItem(): ViewItem<ContentSummary> {
+        getItem(): ViewItem<ContentSummaryAndCompareStatus> {
             return this.item;
         }
 

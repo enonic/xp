@@ -2,14 +2,14 @@ module app.browse {
 
     export class BaseContentModelEvent extends api.event.Event {
 
-        private model: api.content.ContentSummary[];
+        private model: api.content.ContentSummaryAndCompareStatus[];
 
-        constructor(model: api.content.ContentSummary[]) {
+        constructor(model: api.content.ContentSummaryAndCompareStatus[]) {
             this.model = model;
             super();
         }
 
-        getModels(): api.content.ContentSummary[] {
+        getModels(): api.content.ContentSummaryAndCompareStatus[] {
             return this.model;
         }
     }

@@ -3,7 +3,7 @@ module app.publish {
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
     import BrowseItem = api.app.browse.BrowseItem;
     import ContentPath = api.content.ContentPath;
-    import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import DialogButton = api.ui.dialog.DialogButton;
     import PublishContentRequest = api.content.PublishContentRequest;
     import ResolvePublishContentResultJson = api.content.json.ResolvePublishContentResultJson;
@@ -35,7 +35,7 @@ module app.publish {
 
         private subheaderMessage: api.dom.H6El = new api.dom.H6El("publish-dialog-subheader");
 
-        private selectedContents: ContentSummary[];
+        private selectedContents: ContentSummaryAndCompareStatus[];
 
         private initialContentsResolvedWithChildren: ContentsResolved<ContentPublishItem> = new ContentsResolved<ContentPublishItem>();
 
@@ -125,13 +125,13 @@ module app.publish {
             return this.publishAction;
         }
 
-        setSelectedContents(contents: ContentSummary[]) {
+        setSelectedContents(contents: ContentSummaryAndCompareStatus[]) {
             this.selectedContents = contents;
         }
 
         private renderSelectedContentsWhileItemsGettingResolved() {
 
-            var initiallySelectedContents: ContentPublishItem[] = ContentPublishItem.buildPublishItemsFromContentSummaries(
+            var initiallySelectedContents: ContentPublishItem[] = ContentPublishItem.buildPublishItemsFromContentSummaryAndCompareStatuses(
                 this.sortContentSummariesArrayByPath(this.selectedContents).slice(0, 15));
 
             initiallySelectedContents.forEach((content: ContentPublishItem) => {
@@ -145,7 +145,7 @@ module app.publish {
             });
         }
 
-        private sortContentSummariesArrayByPath(arrayToSort: ContentSummary[]): ContentSummary[] {
+        private sortContentSummariesArrayByPath(arrayToSort: ContentSummaryAndCompareStatus[]): ContentSummaryAndCompareStatus[] {
             arrayToSort.sort((contentA, contentB) => {
                 var pathA = contentA.getPath().toString(),
                     pathB = contentB.getPath().toString();
@@ -451,7 +451,7 @@ module app.publish {
         }
 
         private atLeastOneInitialItemHasChild(): boolean {
-            return this.selectedContents.some((obj: ContentSummary) => {
+            return this.selectedContents.some((obj: ContentSummaryAndCompareStatus) => {
                 return obj.hasChildren();
             });
         }

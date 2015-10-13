@@ -23,7 +23,7 @@ module app.browse {
     import NonMobileDetailsPanelsToggleButton = app.view.detail.NonMobileDetailsPanelsToggleButton;
     import NonMobileDetailsPanelsToggleButtonBuilder = app.view.detail.NonMobileDetailsPanelsToggleButtonBuilder;
 
-    export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummary> {
+    export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
         private browseActions: app.browse.action.ContentTreeGridActions;
 
@@ -120,17 +120,14 @@ module app.browse {
         private subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsToggleButton: NonMobileDetailsPanelsToggleButton) {
 
             this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
-                var browseItems: api.app.browse.BrowseItem<ContentSummary>[] = this.getBrowseItemPanel().getItems();
+                var browseItems: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus>[] = this.getBrowseItemPanel().getItems();
                 if (browseItems.length == 0) {
-                    this.floatingDetailsPanel.makeLookEmpty();
-                    this.defaultDockedDetailsPanel.makeLookEmpty();
-                }
-                else {
-                    var item: api.app.view.ViewItem<ContentSummary> = browseItems[browseItems.length-1].toViewItem();
-                    this.floatingDetailsPanel.unMakeLookEmpty();
-                    this.floatingDetailsPanel.setItem(item);
+                    this.floatingDetailsPanel.setItem(null);
+                    this.defaultDockedDetailsPanel.setItem(null);
+                } else {
+                    var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItems[browseItems.length - 1].toViewItem();
 
-                    this.defaultDockedDetailsPanel.unMakeLookEmpty();
+                    this.floatingDetailsPanel.setItem(item);
                     this.defaultDockedDetailsPanel.setItem(item);
                 }
             });
@@ -163,8 +160,6 @@ module app.browse {
 
             this.appendChild(contentPanelsAndDetailPanel);
 
-            this.defaultDockedDetailsPanel.makeLookEmpty();
-
             controlButtonBuilder.setSplitPanelWithGridAndDetails(contentPanelsAndDetailPanel);
             controlButtonBuilder.setDefaultDetailsPanel(this.defaultDockedDetailsPanel);
         }
@@ -172,7 +167,6 @@ module app.browse {
         private initFloatingDetailsPanel(controlButtonBuilder: NonMobileDetailsPanelsToggleButtonBuilder) {
 
             this.floatingDetailsPanel = DetailsPanel.create().build();
-            this.floatingDetailsPanel.makeLookEmpty();
 
             controlButtonBuilder.setFloatingDetailsPanel(this.floatingDetailsPanel);
         }
@@ -182,11 +176,11 @@ module app.browse {
             this.mobileContentItemStatisticsPanel = new app.view.MobileContentItemStatisticsPanel(this.mobileBrowseActions);
 
             api.content.TreeGridItemClickedEvent.on((event) => {
-                var browseItems: api.app.browse.BrowseItem<ContentSummary>[] = this.getBrowseItemPanel().getItems();
+                var browseItems: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus>[] = this.getBrowseItemPanel().getItems();
                 if (browseItems.length == 1) {
                     new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItems[0].getId())).sendAndParse().
                         then((renderable: boolean) => {
-                            var item: api.app.view.ViewItem<ContentSummary> = browseItems[0].toViewItem();
+                            var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItems[0].toViewItem();
                             item.setRenderable(renderable);
                             this.mobileContentItemStatisticsPanel.setItem(item);
                             this.mobileBrowseActions.updateActionsEnabledState(browseItems);
@@ -197,8 +191,8 @@ module app.browse {
             this.appendChild(this.mobileContentItemStatisticsPanel);
         }
 
-        treeNodesToBrowseItems(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummary>[] {
-            var browseItems: BrowseItem<ContentSummary>[] = [];
+        treeNodesToBrowseItems(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummaryAndCompareStatus>[] {
+            var browseItems: BrowseItem<ContentSummaryAndCompareStatus>[] = [];
 
             // do not proceed duplicated content. still, it can be selected
             nodes.forEach((node: TreeNode<ContentSummaryAndCompareStatus>, index: number) => {
@@ -208,13 +202,13 @@ module app.browse {
                     }
                 }
                 if (i === index) {
-                    var content = node.getData().getContentSummary();
-                    if (!!content) {
-                        var item = new BrowseItem<ContentSummary>(content).
-                            setId(content.getId()).
-                            setDisplayName(content.getDisplayName()).
-                            setPath(content.getPath().toString()).
-                            setIconUrl(new ContentIconUrlResolver().setContent(content).resolve());
+                    var data = node.getData();
+                    if (!!data) {
+                        var item = new BrowseItem<ContentSummaryAndCompareStatus>(data).
+                            setId(data.getId()).
+                            setDisplayName(data.getContentSummary().getDisplayName()).
+                            setPath(data.getContentSummary().getPath().toString()).
+                            setIconUrl(new ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
                         browseItems.push(item);
                     }
                 }
@@ -396,7 +390,8 @@ module app.browse {
                                         updateResult[i].updateNodeData(el);
                                         this.updateStatisticsPreview(el); // update preview item
 
-                                        var viewItem = this.getBrowseItemPanel().getItems()[0].toViewItem();
+                                        var selectedItems = this.getBrowseItemPanel().getItems();
+                                        var viewItem = selectedItems[selectedItems.length - 1].toViewItem();
                                         this.updateDetailsPanels(el.getContentId(), el.getCompareStatus(), viewItem);
 
                                         results.push(updateResult[i]);
@@ -444,8 +439,9 @@ module app.browse {
 
                 merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
                     if (node.getData() && node.getData().getContentSummary()) {
-                        new api.content.ContentDeletedEvent(node.getData().getContentSummary().getContentId()).fire();
+
                         this.updateDetailsPanels(node.getData().getContentId(), node.getData().getCompareStatus());
+                        new api.content.ContentDeletedEvent(node.getData().getContentSummary().getContentId()).fire();
                     }
                 });
 
@@ -512,7 +508,10 @@ module app.browse {
                                 if (publishResult[i].getId() === el.getId()) {
                                     new api.content.ContentPublishedEvent(new api.content.ContentId(el.getId())).fire();
                                     publishResult[i].updateNodeData(el);
-                                    this.updateDetailsPanels(el.getContentId(), el.getCompareStatus());
+
+                                    var selectedItems = this.getBrowseItemPanel().getItems();
+                                    var viewItem = selectedItems[selectedItems.length - 1].toViewItem();
+                                    this.updateDetailsPanels(el.getContentId(), el.getCompareStatus(), viewItem);
                                     break;
                                 }
                             }
@@ -547,18 +546,18 @@ module app.browse {
         }
 
         private updateStatisticsPreview(el: ContentSummaryAndCompareStatus) {
-            var content = el.getContentSummary();
+            var content = el;
             var previewItem = this.getBrowseItemPanel().getStatisticsItem();
             var previewItemPath = previewItem.getPath();
 
             if (!!content && content.getPath().toString() === previewItemPath) {
                 new api.content.page.IsRenderableRequest(el.getContentId()).sendAndParse().
                     then((renderable: boolean) => {
-                        var item = new BrowseItem<ContentSummary>(content).
+                        var item = new BrowseItem<ContentSummaryAndCompareStatus>(content).
                             setId(content.getId()).
                             setDisplayName(content.getDisplayName()).
                             setPath(content.getPath().toString()).
-                            setIconUrl(new ContentIconUrlResolver().setContent(content).resolve()).
+                            setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve()).
                             setRenderable(renderable);
                         this.getBrowseItemPanel().setStatisticsItem(item);
                     });
@@ -566,11 +565,11 @@ module app.browse {
         }
 
         private updateDetailsPanels(contentId: ContentId, status: CompareStatus, viewItem?: api.app.view.ViewItem<ContentSummary>) {
-            if (viewItem) {
-                this.defaultDockedDetailsPanel.setItem(viewItem);
-                this.floatingDetailsPanel.setItem(viewItem);
-                this.mobileContentItemStatisticsPanel.setItem(viewItem);
-            }
+
+            this.defaultDockedDetailsPanel.setItem(viewItem);
+            this.floatingDetailsPanel.setItem(viewItem);
+            this.mobileContentItemStatisticsPanel.setItem(viewItem);
+
             this.updateDetailsPanelContentStatus(this.defaultDockedDetailsPanel, contentId, status);
             this.updateDetailsPanelContentStatus(this.floatingDetailsPanel, contentId, status);
             this.updateDetailsPanelContentStatus(this.mobileContentItemStatisticsPanel.getDetailsPanel(), contentId, status);
