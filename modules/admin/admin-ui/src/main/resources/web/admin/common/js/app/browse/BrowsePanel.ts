@@ -93,12 +93,7 @@ module api.app.browse {
             });
 
             this.onRendered((event) => {
-                if (params.hasDetailsPanel) {
-                    this.initNonMobileDetailsPanels();
-                }
-                else {
-                    this.appendChild(this.filterAndContentGridAndBrowseSplitPanel);
-                }
+                this.initFilterAndContentGridAndBrowseSplitPanel();
             });
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
@@ -112,7 +107,8 @@ module api.app.browse {
             });
         }
 
-        protected initNonMobileDetailsPanels() {
+        protected initFilterAndContentGridAndBrowseSplitPanel() {
+            this.appendChild(this.filterAndContentGridAndBrowseSplitPanel);
         }
 
         getFilterAndContentGridAndBrowseSplitPanel(): api.ui.panel.SplitPanel {
