@@ -62,9 +62,8 @@ public class NodeSettingsBuilderTest
         assertEquals( "local-node", settings.get( "name" ) );
         assertEquals( "false", settings.get( "client" ) );
         assertEquals( "true", settings.get( "data" ) );
-        assertEquals( "true", settings.get( "local" ) );
-        assertEquals( "true", settings.get( "http.enabled" ) );
-        assertEquals( "mycluster", settings.get( "cluster.name" ) );
+        assertEquals( "false", settings.get( "http.enabled" ) );
+        assertEquals( "my-cluster-name", settings.get( "cluster.name" ) );
         assertEquals( "127.0.0.1", settings.get( "network.host" ) );
         assertEquals( "false", settings.get( "discovery.zen.ping.multicast.enabled" ) );
         assertEquals( "false", settings.get( "cluster.routing.allocation.disk.threshold_enabled" ) );
@@ -75,6 +74,4 @@ public class NodeSettingsBuilderTest
         assertEquals( pathValue + "/logs", settings.get( "path.logs" ) );
         assertEquals( pathValue + "/plugins", settings.get( "path.plugins" ) );
     }
-
-
 }
