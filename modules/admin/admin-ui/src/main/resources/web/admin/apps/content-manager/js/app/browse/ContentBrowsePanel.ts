@@ -20,8 +20,9 @@ module app.browse {
     import ContentChangeResult = api.content.ContentChangeResult;
     import ContentId = api.content.ContentId;
     import DetailsPanel = app.view.detail.DetailsPanel;
-    import NonMobileDetailsPanelsToggleButton = app.view.detail.NonMobileDetailsPanelsToggleButton;
-    import NonMobileDetailsPanelsToggleButtonBuilder = app.view.detail.NonMobileDetailsPanelsToggleButtonBuilder;
+    import ActiveDetailsPanelsManager = app.view.detail.ActiveDetailsPanelManager;
+    import NonMobileDetailsPanelsManager = app.view.detail.NonMobileDetailsPanelsManager;
+    import NonMobileDetailsPanelsManagerBuilder = app.view.detail.NonMobileDetailsPanelsManagerBuilder;
 
     export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummary> {
 
@@ -94,61 +95,54 @@ module app.browse {
             });
 
             this.handleGlobalEvents();
-
-            this.onRendered((event) => {
-                this.appendChild(this.floatingDetailsPanel);
-                this.initItemStatisticsPanelForMobile();
-            });
         }
 
-        protected initNonMobileDetailsPanels() {
+        protected initFilterAndContentGridAndBrowseSplitPanel() {
 
-            var controlButtonBuilder = NonMobileDetailsPanelsToggleButton.create();
-            this.initFloatingDetailsPanel(controlButtonBuilder);
-            this.initSplitPanelWithDockedDetails(controlButtonBuilder);
+            var nonMobileDetailsPanelsManagerBuilder = NonMobileDetailsPanelsManager.create();
+            this.initSplitPanelWithDockedDetails(nonMobileDetailsPanelsManagerBuilder);
+            this.initFloatingDetailsPanel(nonMobileDetailsPanelsManagerBuilder);
+            this.initItemStatisticsPanelForMobile();
 
-            var nonMobileDetailsPanelsToggleButton = controlButtonBuilder.build();
-            if (nonMobileDetailsPanelsToggleButton.requiresFloatingPanelDueToShortWidth()) {
-                nonMobileDetailsPanelsToggleButton.hideDockedDetailsPanel();
+            var nonMobileDetailsPanelsManager = nonMobileDetailsPanelsManagerBuilder.build();
+            if (nonMobileDetailsPanelsManager.requiresCollapsedDetailsPanel()) {
+                nonMobileDetailsPanelsManager.hideDockedDetailsPanel();
             }
-            nonMobileDetailsPanelsToggleButton.ensureButtonHasCorrectState();
-            this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsToggleButton);
+            nonMobileDetailsPanelsManager.ensureButtonHasCorrectState();
 
-            this.toolbar.appendChild(nonMobileDetailsPanelsToggleButton);
+            this.setActiveDetailsPanel(nonMobileDetailsPanelsManager);
+
+            this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager);
+
+            this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
         }
 
-        private subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsToggleButton: NonMobileDetailsPanelsToggleButton) {
+        private subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager) {
 
             this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
-                var browseItems: api.app.browse.BrowseItem<ContentSummary>[] = this.getBrowseItemPanel().getItems();
-                if (browseItems.length == 0) {
-                    this.floatingDetailsPanel.makeLookEmpty();
-                    this.defaultDockedDetailsPanel.makeLookEmpty();
+                var browseItems: api.app.browse.BrowseItem<ContentSummary>[] = this.getBrowseItemPanel().getItems(),
+                    item: api.app.view.ViewItem<ContentSummary> = null;
+                if (browseItems.length > 0) {
+                    item = browseItems[browseItems.length - 1].toViewItem();
                 }
-                else {
-                    var item: api.app.view.ViewItem<ContentSummary> = browseItems[browseItems.length-1].toViewItem();
-                    this.floatingDetailsPanel.unMakeLookEmpty();
-                    this.floatingDetailsPanel.setItem(item);
-
-                    this.defaultDockedDetailsPanel.unMakeLookEmpty();
-                    this.defaultDockedDetailsPanel.setItem(item);
-                }
+                this.updateDetailsPanelsViewItem(item);
             });
 
             ResponsiveManager.onAvailableSizeChanged(this.getFilterAndContentGridAndBrowseSplitPanel(), (item: ResponsiveItem) => {
-                nonMobileDetailsPanelsToggleButton.handleResizeEvent();
+                nonMobileDetailsPanelsManager.handleResizeEvent();
             });
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 if (ResponsiveRanges._540_720.isFitOrBigger(item.getOldRangeValue()) &&
                     item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
-                    nonMobileDetailsPanelsToggleButton.hideActivePanel();
+                    nonMobileDetailsPanelsManager.hideActivePanel();
+                    ActiveDetailsPanelsManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
                 }
             });
 
         }
 
-        private initSplitPanelWithDockedDetails(controlButtonBuilder: NonMobileDetailsPanelsToggleButtonBuilder) {
+        private initSplitPanelWithDockedDetails(controlButtonBuilder: NonMobileDetailsPanelsManagerBuilder) {
 
             var contentPanelsAndDetailPanel: api.ui.panel.SplitPanel = new api.ui.panel.SplitPanelBuilder(this.getFilterAndContentGridAndBrowseSplitPanel(),
                 this.defaultDockedDetailsPanel).
@@ -163,18 +157,17 @@ module app.browse {
 
             this.appendChild(contentPanelsAndDetailPanel);
 
-            this.defaultDockedDetailsPanel.makeLookEmpty();
-
             controlButtonBuilder.setSplitPanelWithGridAndDetails(contentPanelsAndDetailPanel);
             controlButtonBuilder.setDefaultDetailsPanel(this.defaultDockedDetailsPanel);
         }
 
-        private initFloatingDetailsPanel(controlButtonBuilder: NonMobileDetailsPanelsToggleButtonBuilder) {
+        private initFloatingDetailsPanel(controlButtonBuilder: NonMobileDetailsPanelsManagerBuilder) {
 
             this.floatingDetailsPanel = DetailsPanel.create().build();
-            this.floatingDetailsPanel.makeLookEmpty();
 
             controlButtonBuilder.setFloatingDetailsPanel(this.floatingDetailsPanel);
+
+            this.appendChild(this.floatingDetailsPanel);
         }
 
         private initItemStatisticsPanelForMobile() {
@@ -195,6 +188,14 @@ module app.browse {
             });
 
             this.appendChild(this.mobileContentItemStatisticsPanel);
+        }
+
+        private setActiveDetailsPanel(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager) {
+            if (this.mobileContentItemStatisticsPanel.isVisible()) {
+                ActiveDetailsPanelsManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
+            } else {
+                ActiveDetailsPanelsManager.setActiveDetailsPanel(nonMobileDetailsPanelsManager.getActivePanel());
+            }
         }
 
         treeNodesToBrowseItems(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummary>[] {
@@ -444,8 +445,9 @@ module app.browse {
 
                 merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
                     if (node.getData() && node.getData().getContentSummary()) {
-                        new api.content.ContentDeletedEvent(node.getData().getContentSummary().getContentId()).fire();
+
                         this.updateDetailsPanels(node.getData().getContentId(), node.getData().getCompareStatus());
+                        new api.content.ContentDeletedEvent(node.getData().getContentSummary().getContentId()).fire();
                     }
                 });
 
@@ -566,14 +568,19 @@ module app.browse {
         }
 
         private updateDetailsPanels(contentId: ContentId, status: CompareStatus, viewItem?: api.app.view.ViewItem<ContentSummary>) {
+
+            this.updateDetailsPanelsViewItem(viewItem);
+
             if (viewItem) {
-                this.defaultDockedDetailsPanel.setItem(viewItem);
-                this.floatingDetailsPanel.setItem(viewItem);
-                this.mobileContentItemStatisticsPanel.setItem(viewItem);
+                this.updateDetailsPanelContentStatus(ActiveDetailsPanelsManager.getActiveDetailsPanel(), contentId, status);
             }
-            this.updateDetailsPanelContentStatus(this.defaultDockedDetailsPanel, contentId, status);
-            this.updateDetailsPanelContentStatus(this.floatingDetailsPanel, contentId, status);
-            this.updateDetailsPanelContentStatus(this.mobileContentItemStatisticsPanel.getDetailsPanel(), contentId, status);
+        }
+
+        private updateDetailsPanelsViewItem(viewItem: api.app.view.ViewItem<ContentSummary>) {
+            var activeDetailsPanel = ActiveDetailsPanelsManager.getActiveDetailsPanel();
+            if (activeDetailsPanel) {
+                activeDetailsPanel.setItem(viewItem);
+            }
         }
 
         private updateDetailsPanelContentStatus(detailsPanel: DetailsPanel, contentId: ContentId, status: CompareStatus) {

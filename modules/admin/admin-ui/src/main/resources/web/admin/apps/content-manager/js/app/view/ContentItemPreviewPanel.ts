@@ -56,11 +56,10 @@ module app.view {
         }
 
         public setItem(item: ViewItem<ContentSummary>) {
-            if (typeof item.isRenderable() === "undefined") {
-                return;
-            }
-            if (!this.item || !item || !this.item.equals(item)) {
-                this.item = item;
+            if (item && !item.equals(this.item)) {
+                if (typeof item.isRenderable() === "undefined") {
+                    return;
+                }
                 if (item.getModel().getType().isImage()) {
                     this.getEl().removeClass("no-preview page-preview").addClass("image-preview");
                     if (this.isVisible()) {
@@ -82,6 +81,7 @@ module app.view {
                     }
                 }
             }
+            this.item = item;
         }
 
         public getItem(): ViewItem<ContentSummary> {
