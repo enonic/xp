@@ -28,6 +28,7 @@ import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.web.websocket.EndpointProvider;
 import com.enonic.xp.web.websocket.WebSocketHandler;
 
 final class WebSocketHandlerImpl
@@ -38,7 +39,7 @@ final class WebSocketHandlerImpl
 
     private WebSocketCreator jsrCreator;
 
-    private Endpoint endpoint;
+    private EndpointProvider<?> endpointProvider;
 
     private final List<Class<? extends Decoder>> decoders;
 
@@ -122,16 +123,16 @@ final class WebSocketHandlerImpl
     {
         if ( this.jsrCreator == null )
         {
-            throw new IllegalStateException( "Endpoint is not set" );
+            throw new IllegalStateException( "EndpointProvider is not set" );
         }
 
         return this.serverFactory.acceptWebSocket( this.jsrCreator, req, res );
     }
 
     @Override
-    public void setEndpoint( final Endpoint endpoint )
+    public void setEndpointProvider( final EndpointProvider<?> provider )
     {
-        this.endpoint = endpoint;
+        this.endpointProvider = provider;
         this.jsrCreator = newCreator();
     }
 
@@ -157,7 +158,7 @@ final class WebSocketHandlerImpl
             @Override
             public <T> T getEndpointInstance( final Class<T> endpointClass )
             {
-                return endpointClass.cast( endpoint );
+                return endpointClass.cast( endpointProvider.get() );
             }
         };
     }

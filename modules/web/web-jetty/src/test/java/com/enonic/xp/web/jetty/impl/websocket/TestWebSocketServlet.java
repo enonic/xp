@@ -17,6 +17,6 @@ public class TestWebSocketServlet
     protected void configure( final WebSocketHandler handler )
         throws Exception
     {
-        handler.setEndpoint( this.endpoint );
+        handler.setEndpointProvider( () -> this.endpoint );
     }
 }

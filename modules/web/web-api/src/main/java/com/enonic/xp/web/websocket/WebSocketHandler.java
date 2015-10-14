@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.websocket.Decoder;
 import javax.websocket.Encoder;
-import javax.websocket.Endpoint;
 import javax.websocket.WebSocketContainer;
 
 public interface WebSocketHandler
@@ -24,7 +23,7 @@ public interface WebSocketHandler
     boolean acceptWebSocket( HttpServletRequest req, HttpServletResponse res )
         throws IOException;
 
-    void setEndpoint( Endpoint endpoint );
+    void setEndpointProvider( EndpointProvider<?> provider );
 
     void addDecoder( Class<Decoder> decoder );
 

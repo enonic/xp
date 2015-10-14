@@ -13,7 +13,7 @@ public abstract class WebSocketServlet
     private WebSocketHandler handler;
 
     @Override
-    public final void init()
+    public void init()
         throws ServletException
     {
         this.handler = getWebSocketHandlerFactory().create();
@@ -55,7 +55,7 @@ public abstract class WebSocketServlet
         throws Exception;
 
     @Override
-    protected final void service( HttpServletRequest req, HttpServletResponse res )
+    protected void service( HttpServletRequest req, HttpServletResponse res )
         throws ServletException, IOException
     {
         if ( !this.handler.isUpgradeRequest( req, res ) )
