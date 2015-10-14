@@ -1,6 +1,9 @@
 package com.enonic.xp.portal.impl;
 
-import org.junit.Before;
+import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.junit.Test;
 
 import com.google.common.base.Joiner;
@@ -10,33 +13,39 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
+import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.exception.ExceptionRendererImpl;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
-import com.enonic.xp.web.impl.WebHandlerTestSupport;
+import com.enonic.xp.web.filter.BaseWebFilter;
+import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 
 import static org.junit.Assert.*;
 
 public class PortalDispatcherTest
-    extends WebHandlerTestSupport
+    extends JettyTestSupport
 {
+    private PortalDispatcher servlet;
+
     private TestPortalHandler handler;
 
-    @Before
-    public void setup()
+    @Override
+    protected void configure()
+        throws Exception
     {
         this.handler = new TestPortalHandler();
 
-        final PortalDispatcher dispatcher = new PortalDispatcher();
-        dispatcher.addHandler( this.handler );
-        dispatcher.setExceptionRenderer( new ExceptionRendererImpl() );
-        addHandler( dispatcher );
+        this.servlet = new PortalDispatcher();
+        this.servlet.addHandler( this.handler );
+        this.servlet.setExceptionRenderer( new ExceptionRendererImpl() );
 
         this.handler.response = PortalResponse.create().
             status( HttpStatus.OK ).
             build();
+
+        addServlet( this.servlet, "/portal/*" );
     }
 
     @Test
@@ -50,6 +59,7 @@ public class PortalDispatcherTest
         final Response response = callRequest( request );
         assertEquals( 404, response.code() );
     }
+
 
     @Test
     public void testSimpleGet()
@@ -84,23 +94,6 @@ public class PortalDispatcherTest
         assertEquals( "text/plain", response.body().contentType().toString() );
         assertEquals( "Hello World", response.body().string() );
         assertEquals( 11, response.body().contentLength() );
-    }
-
-    @Test
-    public void testPortalAttributes()
-        throws Exception
-    {
-        final Request request = newRequest( "/admin/portal/preview/master/a/b" ).
-            get().
-            build();
-
-        this.handler.verifier = req -> {
-            assertEquals( "/admin/portal/preview", req.getBaseUri() );
-            assertEquals( RenderMode.PREVIEW, req.getMode() );
-        };
-
-        final Response response = callRequest( request );
-        assertEquals( 200, response.code() );
     }
 
     @Test
@@ -232,6 +225,52 @@ public class PortalDispatcherTest
             assertEquals( HttpMethod.POST, req.getMethod() );
             assertEquals( "application/json; charset=utf-8", req.getContentType() );
             assertEquals( "{}", req.getBodyAsString() );
+        };
+
+        final Response response = callRequest( request );
+        assertEquals( 200, response.code() );
+    }
+
+    @Test
+    public void testRemoveHandler()
+        throws Exception
+    {
+        this.servlet.removeHandler( this.handler );
+
+        final Request request = newRequest( "/portal/master/a/b" ).
+            get().
+            build();
+
+        final Response response = callRequest( request );
+        assertEquals( 404, response.code() );
+    }
+
+    @Test
+    public void testPortalAttributes()
+        throws Exception
+    {
+        final Request request = newRequest( "/portal/master/a/b" ).
+            get().
+            build();
+
+        addFilter( new BaseWebFilter()
+        {
+            @Override
+            protected void doFilter( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
+                throws Exception
+            {
+                final PortalAttributes attributes = new PortalAttributes();
+                attributes.setBaseUri( "/other" );
+                attributes.setRenderMode( RenderMode.EDIT );
+
+                req.setAttribute( PortalAttributes.class.getName(), attributes );
+                chain.doFilter( req, res );
+            }
+        }, "/*" );
+
+        this.handler.verifier = req -> {
+            assertEquals( "/other", req.getBaseUri() );
+            assertEquals( RenderMode.EDIT, req.getMode() );
         };
 
         final Response response = callRequest( request );
