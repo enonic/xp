@@ -138,7 +138,11 @@ module api.dom {
         }
 
         getData(name: string): string {
-            return wemjq(this.el).data(name).toString();
+            var data = wemjq(this.el).data(name);
+            if (data) {
+                return data.toString();
+            }
+            return null;
         }
 
         getValue(): string {
