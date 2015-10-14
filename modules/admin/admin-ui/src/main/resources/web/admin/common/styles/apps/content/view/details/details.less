@@ -1,6 +1,6 @@
 .content-grid-and-browse-split-panel {
   .browse-toolbar {
-    .details-panel-toggle-button, .large-details-panel-toggle-button {
+    .details-panel-toggle-button, .non-mobile-details-panel-toggle-button {
       // toggle button for medium screen sizes
       z-index: 2;
       float: right;
@@ -67,7 +67,7 @@
         padding-top: 13px;
         .icon-close2();
 
-        &.large-details-panel-toggle-button {
+        &.non-mobile-details-panel-toggle-button {
           padding-top: 7px;
           position: fixed;
           top: 50px;
@@ -406,7 +406,7 @@
       }
 
       .widgets-selection-row .widget-selector {
-        width: calc(~'100% - 40px');
+        width: calc(~'100% - 42px');
       }
     }
   }
