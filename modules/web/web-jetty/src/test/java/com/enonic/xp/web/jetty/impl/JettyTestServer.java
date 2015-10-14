@@ -49,6 +49,11 @@ public final class JettyTestServer
         }
     }
 
+    public ServletContextHandler getHandler()
+    {
+        return this.handler;
+    }
+
     public void addFilter( final Filter filter, final String mapping )
     {
         final FilterHolder holder = new FilterHolder();

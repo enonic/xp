@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.web.jetty.impl.configurator.HttpConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.MultipartConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.SessionConfigurator;
+import com.enonic.xp.web.jetty.impl.websocket.WebSocketConfigurator;
 
 // http://www.eclipse.org/jetty/documentation/current/configuring-connectors.html
 // https://github.com/apache/felix/blob/trunk/http/jetty/src/main/java/org/apache/felix/http/jetty/internal/JettyService.java
@@ -66,6 +67,7 @@ final class JettyService
 
         final ServletContextHandler context = new ServletContextHandler( null, "/", ServletContextHandler.SESSIONS );
         new SessionConfigurator().configure( this.config, context.getSessionHandler().getSessionManager() );
+        new WebSocketConfigurator().configure( this.config, context );
 
         final ServletHolder holder = new ServletHolder( this.dispatcherServlet );
         holder.setAsyncSupported( true );

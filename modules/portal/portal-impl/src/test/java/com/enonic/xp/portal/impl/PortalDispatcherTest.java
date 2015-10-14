@@ -223,7 +223,7 @@ public class PortalDispatcherTest
 
         this.handler.verifier = req -> {
             assertEquals( HttpMethod.POST, req.getMethod() );
-            assertEquals( "application/json; charset=utf-8", req.getContentType() );
+            assertEquals( "application/json; charset=UTF-8", req.getContentType() );
             assertEquals( "{}", req.getBodyAsString() );
         };
 

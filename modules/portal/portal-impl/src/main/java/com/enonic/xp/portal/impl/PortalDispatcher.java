@@ -127,7 +127,13 @@ public final class PortalDispatcher
 
     private void setCookies( final HttpServletRequest from, final PortalRequest to )
     {
-        for ( final Cookie cookie : from.getCookies() )
+        final Cookie[] cookies = from.getCookies();
+        if ( cookies == null )
+        {
+            return;
+        }
+
+        for ( final Cookie cookie : cookies )
         {
             to.getCookies().put( cookie.getName(), cookie.getValue() );
         }
