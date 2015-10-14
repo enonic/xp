@@ -3,14 +3,12 @@ package com.enonic.xp.admin.impl.portal;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.web.handler.WebHandlerChain;
 
 public class PortalForwardHandlerTest
 {
@@ -18,27 +16,14 @@ public class PortalForwardHandlerTest
 
     private MockHttpServletResponse res;
 
-    private WebHandlerChain chain;
-
-    private PortalForwardHandler handler;
+    private PortalForwardHandler servlet;
 
     @Before
     public void setup()
     {
         this.req = new MockHttpServletRequest();
         this.res = new MockHttpServletResponse();
-        this.handler = new PortalForwardHandler();
-        this.chain = Mockito.mock( WebHandlerChain.class );
-    }
-
-    @Test
-    public void notFound()
-        throws Exception
-    {
-        this.req.setRequestURI( "/portal/edit/ws/a/b" );
-        this.handler.handle( this.req, this.res, this.chain );
-
-        Mockito.verify( this.chain, Mockito.times( 1 ) ).handle( this.req, this.res );
+        this.servlet = new PortalForwardHandler();
     }
 
     @Test
@@ -46,22 +31,22 @@ public class PortalForwardHandlerTest
         throws Exception
     {
         this.req.setRequestURI( "/admin/portal/edit/ws/a/b" );
-        this.handler.handle( this.req, this.res, this.chain );
+        this.servlet.service( this.req, this.res );
 
         Assert.assertEquals( 403, this.res.getStatus() );
-        Mockito.verify( this.chain, Mockito.times( 0 ) ).handle( this.req, this.res );
+        Assert.assertEquals( null, this.res.getForwardedUrl() );
     }
 
     @Test
-    public void forward_notFound()
+    public void forward_illegalMode()
         throws Exception
     {
         this.req.addUserRole( RoleKeys.ADMIN_LOGIN_ID );
         this.req.setRequestURI( "/admin/portal/mode/ws/a/b" );
-        this.handler.handle( this.req, this.res, this.chain );
+        this.servlet.service( this.req, this.res );
 
         Assert.assertEquals( 404, this.res.getStatus() );
-        Mockito.verify( this.chain, Mockito.times( 0 ) ).handle( this.req, this.res );
+        Assert.assertEquals( null, this.res.getForwardedUrl() );
     }
 
     @Test
@@ -70,10 +55,9 @@ public class PortalForwardHandlerTest
     {
         this.req.addUserRole( RoleKeys.ADMIN_LOGIN_ID );
         this.req.setRequestURI( "/admin/portal/edit/ws/a/b" );
-        this.handler.handle( this.req, this.res, this.chain );
+        this.servlet.service( this.req, this.res );
 
         Assert.assertEquals( "/portal/ws/a/b", this.res.getForwardedUrl() );
-        Mockito.verify( this.chain, Mockito.times( 0 ) ).handle( this.req, this.res );
 
         final PortalAttributes portalAttributes = (PortalAttributes) this.req.getAttribute( PortalAttributes.class.getName() );
         Assert.assertNotNull( portalAttributes );
@@ -87,10 +71,9 @@ public class PortalForwardHandlerTest
     {
         this.req.addUserRole( RoleKeys.ADMIN_LOGIN_ID );
         this.req.setRequestURI( "/admin/portal/preview/ws/a/b" );
-        this.handler.handle( this.req, this.res, this.chain );
+        this.servlet.service( this.req, this.res );
 
         Assert.assertEquals( "/portal/ws/a/b", this.res.getForwardedUrl() );
-        Mockito.verify( this.chain, Mockito.times( 0 ) ).handle( this.req, this.res );
 
         final PortalAttributes portalAttributes = (PortalAttributes) this.req.getAttribute( PortalAttributes.class.getName() );
         Assert.assertNotNull( portalAttributes );
