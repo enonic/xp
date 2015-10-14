@@ -101,7 +101,7 @@ public final class EventJsonSerializer
     private ObjectNode eventWrapper( final Event event, final ObjectNode data )
     {
         final ObjectNode json = newObjectNode();
-        json.put( "type", event.getType() );
+        json.put( "type", event.getClass().getSimpleName() );
         json.set( "event", data );
         return json;
     }
