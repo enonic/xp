@@ -6,15 +6,10 @@ import com.enonic.xp.event.Event;
 public abstract class ContentEvent
     implements Event
 {
-    private ContentId id;
+    protected ContentId id;
 
     public final ContentId getId()
     {
         return this.id;
-    }
-
-    public final void setId( final ContentId id )
-    {
-        this.id = id;
     }
 }
