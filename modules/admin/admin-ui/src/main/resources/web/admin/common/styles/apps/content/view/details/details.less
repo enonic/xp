@@ -72,6 +72,7 @@
           position: fixed;
           top: 50px;
           padding-right: 5px;
+          height: 40px;
         }
       }
 
@@ -131,8 +132,18 @@
       padding: 10px 15px 7px;
     }
 
+    .content-item-versions-panel .grid-canvas {
+      width: calc(~'100% - 15px') !important;
+    }
+
     .content-item-versions-panel .slick-cell span.icon:empty {
       display: none;
+    }
+
+    .content-item-versions-panel .slick-cell.status {
+      position: static;
+      float: right;
+      margin-right: 10px;
     }
   }
 
