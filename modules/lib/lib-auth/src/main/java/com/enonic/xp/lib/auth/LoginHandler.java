@@ -3,7 +3,7 @@ package com.enonic.xp.lib.auth;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;

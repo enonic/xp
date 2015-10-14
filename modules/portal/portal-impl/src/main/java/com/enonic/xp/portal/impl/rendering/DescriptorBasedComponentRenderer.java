@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.rendering;
 
 import java.text.MessageFormat;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.google.common.html.HtmlEscapers;
 import com.google.common.net.MediaType;

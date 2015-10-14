@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Multimap;

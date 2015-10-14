@@ -3,7 +3,7 @@ package com.enonic.xp.util;
 import java.net.URL;
 import java.util.Map;
 
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.lang.text.StrSubstitutor;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
