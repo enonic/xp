@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.security;
 
 import java.util.concurrent.Callable;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;

@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.content;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 public final class ContentPathNameGenerator
 {

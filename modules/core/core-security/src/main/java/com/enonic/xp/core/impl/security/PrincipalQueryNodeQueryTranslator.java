@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.security;
 import java.util.Collections;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;

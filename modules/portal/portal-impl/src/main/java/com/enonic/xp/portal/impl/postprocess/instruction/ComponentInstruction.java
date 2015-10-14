@@ -22,7 +22,7 @@ import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ComponentService;
 
-import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang.StringUtils.substringAfter;
 
 @org.osgi.service.component.annotations.Component(immediate = true)
 public final class ComponentInstruction

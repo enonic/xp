@@ -3,7 +3,7 @@ package com.enonic.xp.form;
 
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;

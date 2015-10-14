@@ -24,13 +24,13 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.image.ImageHelper;
-import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.Exceptions;
+import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.jaxrs.JaxRsExceptions;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content/media")

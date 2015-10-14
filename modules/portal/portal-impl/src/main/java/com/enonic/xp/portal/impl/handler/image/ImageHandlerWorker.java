@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.handler.image;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
@@ -19,7 +19,7 @@ import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
 import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpStatus;
 
-import static org.apache.commons.lang3.StringUtils.substringBeforeLast;
+import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 
 final class ImageHandlerWorker
     extends PortalHandlerWorker
