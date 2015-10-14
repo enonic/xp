@@ -439,8 +439,7 @@ module app.browse {
 
                 merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
                     if (node.getData() && node.getData().getContentSummary()) {
-
-                        this.updateDetailsPanels(node.getData().getContentId(), node.getData().getCompareStatus());
+                        this.updateDetailsPanels(node.getData().getContentId(), node.getData().getCompareStatus(), null);
                         new api.content.ContentDeletedEvent(node.getData().getContentSummary().getContentId()).fire();
                     }
                 });
@@ -509,9 +508,7 @@ module app.browse {
                                     new api.content.ContentPublishedEvent(new api.content.ContentId(el.getId())).fire();
                                     publishResult[i].updateNodeData(el);
 
-                                    var selectedItems = this.getBrowseItemPanel().getItems();
-                                    var viewItem = selectedItems[selectedItems.length - 1].toViewItem();
-                                    this.updateDetailsPanels(el.getContentId(), el.getCompareStatus(), viewItem);
+                                    this.updateDetailsPanels(el.getContentId(), el.getCompareStatus());
                                     break;
                                 }
                             }
@@ -566,9 +563,11 @@ module app.browse {
 
         private updateDetailsPanels(contentId: ContentId, status: CompareStatus, viewItem?: api.app.view.ViewItem<ContentSummary>) {
 
-            this.defaultDockedDetailsPanel.setItem(viewItem);
-            this.floatingDetailsPanel.setItem(viewItem);
-            this.mobileContentItemStatisticsPanel.setItem(viewItem);
+            if (viewItem !== undefined) {
+                this.defaultDockedDetailsPanel.setItem(viewItem);
+                this.floatingDetailsPanel.setItem(viewItem);
+                this.mobileContentItemStatisticsPanel.setItem(viewItem);
+            }
 
             this.updateDetailsPanelContentStatus(this.defaultDockedDetailsPanel, contentId, status);
             this.updateDetailsPanelContentStatus(this.floatingDetailsPanel, contentId, status);
@@ -576,7 +575,7 @@ module app.browse {
         }
 
         private updateDetailsPanelContentStatus(detailsPanel: DetailsPanel, contentId: ContentId, status: CompareStatus) {
-            if (contentId && contentId.equals(detailsPanel.getItem().getModel().getContentId())) {
+            if (contentId && detailsPanel.getItem() && contentId.equals(detailsPanel.getItem().getModel().getContentId())) {
                 detailsPanel.setContentStatus(status);
             }
         }

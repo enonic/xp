@@ -77,13 +77,16 @@ module app.view.detail {
             ResponsiveManager.onAvailableSizeChanged(this, delayedReset);
 
             api.content.ContentsPublishedEvent.on((event: api.content.ContentsPublishedEvent) => {
-                var itemId = (<ContentSummary>this.getItem().getModel()).getId();
-                var idPublished = event.getContentIds().some((id, index, array) => {
-                    return itemId === id.toString();
-                });
+                if (this.getItem()) {
+                    // check for item because it can be null after publishing pending for delete item
+                    var itemId = (<ContentSummary>this.getItem().getModel()).getId();
+                    var idPublished = event.getContentIds().some((id, index, array) => {
+                        return itemId === id.toString();
+                    });
 
-                if (idPublished) {
-                    this.versionsPanel.reloadActivePanel();
+                    if (idPublished) {
+                        this.versionsPanel.reloadActivePanel();
+                    }
                 }
             });
 
