@@ -40,3 +40,9 @@ exports.hasRole = function (roleKey) {
     return bean.hasRole();
 };
 
+exports.generatePassword = function () {
+    var bean = __.newBean('com.enonic.xp.lib.auth.GeneratePasswordHandler');
+
+    return __.toNativeObject(bean.generatePassword());
+}
+
