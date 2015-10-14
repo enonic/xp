@@ -1,5 +1,6 @@
 package com.enonic.xp.web.impl.context;
 
+import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Assert;
@@ -10,7 +11,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.web.handler.WebHandlerChain;
 
 public class ContextHandlerTest
 {
@@ -18,18 +18,18 @@ public class ContextHandlerTest
     public void testHandle()
         throws Exception
     {
-        final ContextHandler handler = new ContextHandler();
+        final ContextHandler filter = new ContextHandler();
 
         Assert.assertNull( ContextAccessor.current().getLocalScope().getSession() );
 
         final MockHttpServletRequest req = new MockHttpServletRequest();
         final MockHttpServletResponse res = new MockHttpServletResponse();
-        final WebHandlerChain chain = Mockito.mock( WebHandlerChain.class );
+        final FilterChain chain = Mockito.mock( FilterChain.class );
 
-        handler.handle( req, res, chain );
+        filter.doFilter( req, res, chain );
 
         final ArgumentCaptor<HttpServletRequest> reqArg = ArgumentCaptor.forClass( HttpServletRequest.class );
-        Mockito.verify( chain, Mockito.times( 1 ) ).handle( reqArg.capture(), Mockito.eq( res ) );
+        Mockito.verify( chain, Mockito.times( 1 ) ).doFilter( reqArg.capture(), Mockito.eq( res ) );
         Assert.assertEquals( HttpRequestDelegate.class, reqArg.getValue().getClass() );
     }
 }
