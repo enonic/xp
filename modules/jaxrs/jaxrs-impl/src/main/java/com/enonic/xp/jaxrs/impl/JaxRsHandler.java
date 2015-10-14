@@ -30,26 +30,17 @@ public final class JaxRsHandler
 
     private boolean needsRefresh;
 
-    private String path;
-
     public JaxRsHandler()
     {
         this.dispatcher = new JaxRsDispatcher();
         this.needsRefresh = true;
         setOrder( MAX_ORDER - 20 );
-        setPath( "/" );
-    }
-
-    protected final void setPath( final String path )
-    {
-        this.path = path;
-        this.dispatcher.setMappingPrefix( this.path );
     }
 
     @Override
     protected boolean canHandle( final HttpServletRequest req )
     {
-        return req.getRequestURI().startsWith( this.path );
+        return true;
     }
 
     @Override

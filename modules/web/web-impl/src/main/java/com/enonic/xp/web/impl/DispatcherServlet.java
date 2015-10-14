@@ -33,7 +33,7 @@ public final class DispatcherServlet
     public void initialize()
         throws Exception
     {
-        this.httpService.registerServlet( "/*", this, null, null );
+        this.httpService.registerServlet( "/", this, null, null );
     }
 
     @Override

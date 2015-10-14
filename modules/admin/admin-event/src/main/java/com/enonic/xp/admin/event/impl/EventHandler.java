@@ -70,7 +70,7 @@ public final class EventHandler
     @Override
     protected boolean canHandle( final HttpServletRequest req )
     {
-        return req.getPathInfo().equals( "/admin/event" );
+        return req.getRequestURI().equals( "/admin/event" );
     }
 
     @Override
