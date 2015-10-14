@@ -1,7 +1,11 @@
 package com.enonic.xp.jaxrs.swagger.impl;
 
+import java.io.IOException;
 import java.net.URL;
 
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,13 +22,11 @@ import io.swagger.models.Swagger;
 import com.enonic.xp.jaxrs.JaxRsService;
 import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpMethod;
-import com.enonic.xp.web.handler.BaseWebHandler;
-import com.enonic.xp.web.handler.WebHandler;
-import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = WebHandler.class)
+@Component(immediate = true, service = Servlet.class,
+    property = {"osgi.http.whiteboard.servlet.pattern=/swagger/*"})
 public final class SwaggerHandler
-    extends BaseWebHandler
+    extends HttpServlet
 {
     private final static String PREFIX = "/swagger";
 
@@ -36,23 +38,14 @@ public final class SwaggerHandler
 
     public SwaggerHandler()
     {
-        setOrder( 20 );
-
         this.mapper = new ObjectMapper();
         this.mapper.setSerializationInclusion( JsonInclude.Include.NON_NULL );
 
     }
 
     @Override
-    protected boolean canHandle( final HttpServletRequest req )
-    {
-        final String uri = req.getRequestURI();
-        return uri.equals( PREFIX ) || uri.startsWith( PREFIX_SLASH );
-    }
-
-    @Override
-    protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
-        throws Exception
+    protected void service( final HttpServletRequest req, final HttpServletResponse res )
+        throws ServletException, IOException
     {
         final HttpMethod method = HttpMethod.valueOf( req.getMethod() );
         if ( !( method == HttpMethod.GET || method == HttpMethod.HEAD ) )
@@ -84,13 +77,13 @@ public final class SwaggerHandler
     }
 
     private void redirectToIndex( final HttpServletResponse res )
-        throws Exception
+        throws IOException
     {
         res.sendRedirect( PREFIX_SLASH + "index.html" );
     }
 
     private void serveApiModel( final HttpServletResponse res )
-        throws Exception
+        throws IOException
     {
         res.setContentType( MediaType.JSON_UTF_8.toString() );
         this.mapper.writeValue( res.getWriter(), readModel() );
@@ -114,7 +107,7 @@ public final class SwaggerHandler
     }
 
     private void serveResource( final HttpServletResponse res, final String path )
-        throws Exception
+        throws IOException
     {
         final URL url = findResource( path );
         if ( url == null )

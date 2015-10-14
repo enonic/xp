@@ -7,7 +7,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.xp.jaxrs.JaxRsService;
-import com.enonic.xp.web.handler.WebHandlerChain;
 
 import static org.junit.Assert.*;
 
@@ -18,8 +17,6 @@ public class SwaggerHandlerTest
     private MockHttpServletRequest req;
 
     private MockHttpServletResponse res;
-
-    private WebHandlerChain chain;
 
     @Before
     public void setup()
@@ -32,24 +29,7 @@ public class SwaggerHandlerTest
 
         this.req = new MockHttpServletRequest();
         this.res = new MockHttpServletResponse();
-        this.chain = Mockito.mock( WebHandlerChain.class );
         this.req.setMethod( "GET" );
-    }
-
-    @Test
-    public void canHandle()
-    {
-        this.req.setRequestURI( "/something" );
-        assertFalse( this.handler.canHandle( this.req ) );
-
-        this.req.setRequestURI( "/swaggertest" );
-        assertFalse( this.handler.canHandle( this.req ) );
-
-        this.req.setRequestURI( "/swagger" );
-        assertTrue( this.handler.canHandle( this.req ) );
-
-        this.req.setRequestURI( "/swagger/anything" );
-        assertTrue( this.handler.canHandle( this.req ) );
     }
 
     @Test
@@ -58,7 +38,7 @@ public class SwaggerHandlerTest
     {
         this.req.setMethod( "POST" );
         this.req.setRequestURI( "/swagger" );
-        this.handler.handle( this.req, this.res, this.chain );
+        this.handler.service( this.req, this.res );
 
         assertEquals( 405, this.res.getStatus() );
     }
@@ -68,7 +48,7 @@ public class SwaggerHandlerTest
         throws Exception
     {
         this.req.setRequestURI( "/swagger" );
-        this.handler.handle( this.req, this.res, this.chain );
+        this.handler.service( this.req, this.res );
 
         assertEquals( "/swagger/index.html", this.res.getRedirectedUrl() );
     }
@@ -78,7 +58,7 @@ public class SwaggerHandlerTest
         throws Exception
     {
         this.req.setRequestURI( "/swagger/" );
-        this.handler.handle( this.req, this.res, this.chain );
+        this.handler.service( this.req, this.res );
 
         assertEquals( "/swagger/index.html", this.res.getRedirectedUrl() );
     }
@@ -88,7 +68,7 @@ public class SwaggerHandlerTest
         throws Exception
     {
         this.req.setRequestURI( "/swagger/swagger.json" );
-        this.handler.handle( this.req, this.res, this.chain );
+        this.handler.service( this.req, this.res );
 
         assertEquals( 200, this.res.getStatus() );
         assertEquals( "application/json; charset=utf-8", this.res.getContentType() );
@@ -99,7 +79,7 @@ public class SwaggerHandlerTest
         throws Exception
     {
         this.req.setRequestURI( "/swagger/index.html" );
-        this.handler.handle( this.req, this.res, this.chain );
+        this.handler.service( this.req, this.res );
 
         assertEquals( 200, this.res.getStatus() );
         assertEquals( "text/html", this.res.getContentType() );
@@ -110,7 +90,7 @@ public class SwaggerHandlerTest
         throws Exception
     {
         this.req.setRequestURI( "/swagger/not/found.txt" );
-        this.handler.handle( this.req, this.res, this.chain );
+        this.handler.service( this.req, this.res );
 
         assertEquals( 404, this.res.getStatus() );
     }
