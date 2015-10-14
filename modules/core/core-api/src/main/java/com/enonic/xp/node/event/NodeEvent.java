@@ -8,12 +8,12 @@ public abstract class NodeEvent
 {
     private NodeId id;
 
-    public NodeId getId()
+    public final NodeId getId()
     {
         return this.id;
     }
 
-    public void setId( final NodeId id )
+    public final void setId( final NodeId id )
     {
         this.id = id;
     }
