@@ -11,11 +11,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.jetty.websocket.api.UpgradeRequest;
-import org.eclipse.jetty.websocket.api.UpgradeResponse;
 import org.eclipse.jetty.websocket.api.WebSocketBehavior;
 import org.eclipse.jetty.websocket.api.WebSocketPolicy;
 import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.osgi.service.component.annotations.Component;
@@ -44,14 +44,13 @@ public final class EventHandler
     public void init()
         throws ServletException
     {
-        final WebSocketPolicy webSocketPolicy = new WebSocketPolicy( WebSocketBehavior.SERVER );
-        final WebSocketServletFactory baseFactory = new WebSocketServerFactory();
-        this.factory = baseFactory.createFactory( webSocketPolicy );
-        this.configure( this.factory );
+        final WebSocketPolicy policy = new WebSocketPolicy( WebSocketBehavior.SERVER );
+        this.factory = new WebSocketServerFactory().createFactory( policy );
+        configure( this.factory );
 
         try
         {
-            this.factory.init();
+            this.factory.init( getServletContext() );
         }
         catch ( final Exception e )
         {
@@ -90,9 +89,9 @@ public final class EventHandler
     }
 
     @Override
-    public Object createWebSocket( final UpgradeRequest upgradeRequest, final UpgradeResponse upgradeResponse )
+    public Object createWebSocket( final ServletUpgradeRequest req, final ServletUpgradeResponse res )
     {
-        upgradeResponse.setAcceptedSubProtocol( PROTOCOL );
+        res.setAcceptedSubProtocol( PROTOCOL );
         return new EventWebSocket( this );
     }
 
@@ -111,7 +110,7 @@ public final class EventHandler
     @Override
     public void sendToAll( final String message )
     {
-        for ( EventWebSocket eventWebSocket : this.sockets )
+        for ( final EventWebSocket eventWebSocket : this.sockets )
         {
             try
             {

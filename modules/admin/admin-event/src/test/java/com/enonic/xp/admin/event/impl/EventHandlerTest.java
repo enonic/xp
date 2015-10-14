@@ -42,9 +42,9 @@ public class EventHandlerTest
         newWebSocketRequest( listener1 );
         newWebSocketRequest( listener2 );
 
-        Thread.sleep( 200L );
+        Thread.sleep( 400L );
         this.servlet.sendToAll( "Hello World" );
-        Thread.sleep( 200L );
+        Thread.sleep( 400L );
 
         Assert.assertEquals( "TEXT", listener1.type );
         Assert.assertEquals( "Hello World", listener1.message );

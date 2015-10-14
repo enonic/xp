@@ -1,14 +1,13 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
 ext {
-    jettyVersion = '9.0.7.v20131107' // '9.3.3.v20150827'
+    jettyVersion = '9.3.5.v20151012'
 }
 
 dependencies {
     compile project( ':web:web-api' )
     compile 'org.apache.felix:org.apache.felix.http.api:3.0.0'
     compile 'org.apache.felix:org.apache.felix.http.base:3.0.2'
-    // compile 'org.apache.felix:org.apache.felix.http.servlet-api:1.1.2'
     compile "org.eclipse.jetty:jetty-server:${jettyVersion}"
     compile "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
     compile "org.eclipse.jetty:jetty-servlets:${jettyVersion}"
@@ -19,7 +18,6 @@ dependencies {
 }
 
 bundle {
-    // TODO: Should not export jetty classes. Fix websockets, then it's no need.
     instruction 'Bundle-Name', 'Enonic XP Web - Jetty'
     instruction 'Export-Package', 'org.eclipse.jetty.*'
     instruction 'Export-Package', 'org.apache.felix.http.api.*'
