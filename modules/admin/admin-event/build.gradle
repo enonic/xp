@@ -1,10 +1,17 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
+ext {
+    jettyVersion = '9.0.7.v20131107'
+}
+
 dependencies {
     compile project( ':web:web-api' )
-    compile 'org.eclipse.jetty.websocket:websocket-servlet:9.0.7.v20131107'
-    compile 'org.eclipse.jetty.websocket:websocket-server:9.0.7.v20131107'
+    compile "org.eclipse.jetty.websocket:websocket-servlet:${jettyVersion}"
+    compile "org.eclipse.jetty.websocket:websocket-server:${jettyVersion}"
     testCompile project( path: ':web:web-api', configuration: 'testOutput' )
+    testCompile project( path: ':web:web-jetty', configuration: 'testOutput' )
+    testCompile 'com.squareup.okhttp:okhttp:2.5.0'
+    testCompile 'com.squareup.okhttp:okhttp-ws:2.5.0'
 }
 
 bundle {

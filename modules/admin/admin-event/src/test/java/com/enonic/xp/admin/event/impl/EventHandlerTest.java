@@ -1,91 +1,55 @@
 package com.enonic.xp.admin.event.impl;
 
-import org.eclipse.jetty.websocket.api.RemoteEndpoint;
-import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.UpgradeRequest;
-import org.eclipse.jetty.websocket.api.UpgradeResponse;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.Assert;
 import org.junit.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.ws.WebSocketCall;
+import com.squareup.okhttp.ws.WebSocketListener;
+
+import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 
 public class EventHandlerTest
+    extends JettyTestSupport
 {
-    private EventHandler handler;
+    private EventHandler servlet;
 
-    @Before
-    public void setUp()
+    @Override
+    protected void configure()
         throws Exception
     {
-        handler = new EventHandler();
-        handler.init();
+        this.servlet = new EventHandler();
+        this.servlet.securityEnabled = false;
+        addServlet( this.servlet, "/admin/event" );
     }
 
-    @After
-    public void tearDown()
+    private void newWebSocketRequest( final WebSocketListener listener )
     {
-        this.handler.destroy();
-    }
+        final Request request = new Request.Builder().
+            url( "ws://localhost:" + this.server.getPort() + "/admin/event" ).
+            build();
 
-    @Test
-    public void sendDataToOpenWebSocket()
-        throws Exception
-    {
-        final UpgradeRequest req = mock( UpgradeRequest.class );
-        final UpgradeResponse resp = mock( UpgradeResponse.class );
-        final Session session = mock( Session.class );
-        final RemoteEndpoint remoteEndPoint = mock( RemoteEndpoint.class );
-        when( session.getRemote() ).thenReturn( remoteEndPoint );
-        when( session.isOpen() ).thenReturn( true );
-
-        final EventWebSocket webSocket = (EventWebSocket) handler.createWebSocket( req, resp );
-
-        webSocket.onConnect( session );
-
-        handler.sendToAll( "Hello" );
-
-        verify( remoteEndPoint ).sendString( "Hello" );
+        WebSocketCall.create( this.client, request ).enqueue( listener );
     }
 
     @Test
-    public void sendDataToClosedWebSocket()
+    public void sendData()
         throws Exception
     {
-        final UpgradeRequest req = mock( UpgradeRequest.class );
-        final UpgradeResponse resp = mock( UpgradeResponse.class );
-        final Session session = mock( Session.class );
-        when( session.isOpen() ).thenReturn( false );
+        final ClientTestListener listener1 = new ClientTestListener();
+        final ClientTestListener listener2 = new ClientTestListener();
 
-        final EventWebSocket webSocket = (EventWebSocket) handler.createWebSocket( req, resp );
+        newWebSocketRequest( listener1 );
+        newWebSocketRequest( listener2 );
 
-        webSocket.onConnect( session );
-        webSocket.onClose( session, -1, "" );
+        Thread.sleep( 200L );
+        this.servlet.sendToAll( "Hello World" );
+        Thread.sleep( 200L );
 
-        handler.sendToAll( "Hello" );
-    }
+        Assert.assertEquals( "TEXT", listener1.type );
+        Assert.assertEquals( "Hello World", listener1.message );
 
-    @Test
-    public void sendDataToMultipleWebSockets()
-        throws Exception
-    {
-        final UpgradeRequest req = mock( UpgradeRequest.class );
-        final UpgradeResponse resp = mock( UpgradeResponse.class );
-        final UpgradeRequest req2 = mock( UpgradeRequest.class );
-        final UpgradeResponse resp2 = mock( UpgradeResponse.class );
-        final Session session = mock( Session.class );
-        final Session session2 = mock( Session.class );
-        when( session.isOpen() ).thenReturn( false );
-        when( session2.isOpen() ).thenReturn( false );
-
-        final EventWebSocket webSocket = (EventWebSocket) handler.createWebSocket( req, resp );
-        final EventWebSocket webSocket2 = (EventWebSocket) handler.createWebSocket( req2, resp2 );
-
-        webSocket.onConnect( session );
-        webSocket2.onConnect( session );
-
-        handler.sendToAll( "Hello" );
+        Assert.assertEquals( "TEXT", listener2.type );
+        Assert.assertEquals( "Hello World", listener2.message );
     }
 }

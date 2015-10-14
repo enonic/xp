@@ -5,6 +5,9 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,20 +18,16 @@ import org.eclipse.jetty.websocket.api.WebSocketPolicy;
 import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
 import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.web.handler.BaseWebHandler;
-import com.enonic.xp.web.handler.WebHandler;
-import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = {WebHandler.class, WebSocketManager.class})
+@Component(immediate = true, service = {Servlet.class, WebSocketManager.class},
+    property = {"osgi.http.whiteboard.servlet.pattern=/admin/event"})
 public final class EventHandler
-    extends BaseWebHandler
+    extends HttpServlet
     implements WebSocketCreator, WebSocketManager
 {
     private final static Logger LOG = LoggerFactory.getLogger( EventHandler.class );
@@ -39,23 +38,28 @@ public final class EventHandler
 
     private final Set<EventWebSocket> sockets = new CopyOnWriteArraySet<>();
 
-    public EventHandler()
-    {
-        setOrder( 0 );
-    }
+    protected boolean securityEnabled = true;
 
-    @Activate
+    @Override
     public void init()
-        throws Exception
+        throws ServletException
     {
         final WebSocketPolicy webSocketPolicy = new WebSocketPolicy( WebSocketBehavior.SERVER );
         final WebSocketServletFactory baseFactory = new WebSocketServerFactory();
         this.factory = baseFactory.createFactory( webSocketPolicy );
         this.configure( this.factory );
-        this.factory.init();
+
+        try
+        {
+            this.factory.init();
+        }
+        catch ( final Exception e )
+        {
+            throw new ServletException( e );
+        }
     }
 
-    @Deactivate
+    @Override
     public void destroy()
     {
         this.factory.cleanup();
@@ -68,21 +72,15 @@ public final class EventHandler
     }
 
     @Override
-    protected boolean canHandle( final HttpServletRequest req )
-    {
-        return req.getRequestURI().equals( "/admin/event" );
-    }
-
-    @Override
-    protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
-        throws Exception
+    protected void service( HttpServletRequest req, HttpServletResponse res )
+        throws ServletException, IOException
     {
         if ( !this.factory.isUpgradeRequest( req, res ) )
         {
             return;
         }
 
-        if ( !req.isUserInRole( RoleKeys.ADMIN_LOGIN.getId() ) )
+        if ( this.securityEnabled && !req.isUserInRole( RoleKeys.ADMIN_LOGIN.getId() ) )
         {
             res.setStatus( HttpServletResponse.SC_FORBIDDEN );
             return;
