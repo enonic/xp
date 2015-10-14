@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 
 import org.jboss.resteasy.core.SynchronousDispatcher;
 import org.jboss.resteasy.logging.Logger;
@@ -37,7 +38,7 @@ final class JaxRsDispatcher
     }
 
     public void init( final ServletContext context )
-        throws Exception
+        throws ServletException
     {
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader( ServletContainerDispatcher.class.getClassLoader() );
@@ -53,7 +54,7 @@ final class JaxRsDispatcher
     }
 
     private void doInit( final ServletContext context )
-        throws Exception
+        throws ServletException
     {
         final ServletConfigImpl config = new ServletConfigImpl( "jaxrs", context );
         config.setInitParameter( ResteasyContextParameters.RESTEASY_SERVLET_MAPPING_PREFIX, this.mappingPrefix );

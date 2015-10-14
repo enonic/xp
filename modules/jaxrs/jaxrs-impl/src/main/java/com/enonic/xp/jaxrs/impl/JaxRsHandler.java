@@ -1,14 +1,17 @@
 package com.enonic.xp.jaxrs.impl;
 
+import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.resteasy.spi.UnhandledException;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
@@ -17,13 +20,11 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsService;
-import com.enonic.xp.web.handler.BaseWebHandler;
-import com.enonic.xp.web.handler.WebHandler;
-import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = {WebHandler.class, JaxRsService.class})
+@Component(immediate = true, service = Servlet.class,
+    property = {"osgi.http.whiteboard.servlet.pattern=/"})
 public final class JaxRsHandler
-    extends BaseWebHandler
+    extends HttpServlet
     implements JaxRsService
 {
     private final JaxRsDispatcher dispatcher;
@@ -34,18 +35,12 @@ public final class JaxRsHandler
     {
         this.dispatcher = new JaxRsDispatcher();
         this.needsRefresh = true;
-        setOrder( MAX_ORDER - 20 );
+        this.dispatcher.setMappingPrefix( "/" );
     }
 
     @Override
-    protected boolean canHandle( final HttpServletRequest req )
-    {
-        return true;
-    }
-
-    @Override
-    protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
-        throws Exception
+    protected void service( final HttpServletRequest req, final HttpServletResponse res )
+        throws ServletException, IOException
     {
         try
         {
@@ -61,14 +56,14 @@ public final class JaxRsHandler
         }
     }
 
-    @Deactivate
+    @Override
     public void destroy()
     {
         this.dispatcher.destroy();
     }
 
     private void refreshIfNeeded( final ServletContext context )
-        throws Exception
+        throws ServletException
     {
         if ( !this.needsRefresh )
         {
@@ -79,7 +74,7 @@ public final class JaxRsHandler
     }
 
     private synchronized void refresh( final ServletContext context )
-        throws Exception
+        throws ServletException
     {
         destroy();
         this.dispatcher.init( context );
@@ -87,13 +82,13 @@ public final class JaxRsHandler
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addResource( final JaxRsComponent resource )
+    public void addComponent( final JaxRsComponent resource )
     {
         this.dispatcher.app.addSingleton( resource );
         this.needsRefresh = true;
     }
 
-    public void removeResource( final JaxRsComponent resource )
+    public void removeComponent( final JaxRsComponent resource )
     {
         this.dispatcher.app.removeSingleton( resource );
         this.needsRefresh = true;

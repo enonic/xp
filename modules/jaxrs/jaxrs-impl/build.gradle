@@ -7,6 +7,8 @@ dependencies {
     compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.6.2'
     compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.8.Final'
     testCompile project( path: ':jaxrs:jaxrs-api', configuration: 'testOutput' )
+    testCompile project( path: ':web:web-jetty', configuration: 'testOutput' )
+    testCompile 'com.squareup.okhttp:okhttp:2.5.0'
 }
 
 bundle {
