@@ -2,6 +2,7 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':admin:admin-api' )
+    compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.8.Final'
     testCompile project( ':jaxrs:jaxrs-impl' )
     testCompile project( path: ':portal:portal-api', configuration: 'testOutput' )
     testCompile project( path: ':jaxrs:jaxrs-impl', configuration: 'testOutput' )
