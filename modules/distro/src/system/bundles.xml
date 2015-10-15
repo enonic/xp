@@ -14,11 +14,6 @@
   <bundle level="10">org.apache.felix:org.apache.felix.gogo.shell:0.10.0</bundle>
   <bundle level="11">org.apache.felix:org.apache.felix.shell.remote:1.1.2</bundle>
 
-  <!-- Jetty bundles -->
-  <!--bundle level="25">org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0</bundle>
-  <bundle level="25">org.apache.geronimo.specs:geronimo-annotation_1.1_spec:1.0.1</bundle>
-  <bundle level="25">org.ops4j.pax.web:pax-web-jetty-bundle:4.0.0</bundle-->
-
   <!-- Core app dependencies -->
   <bundle level="30">com.google.guava:guava:18.0</bundle>
   <bundle level="30">commons-lang:commons-lang:2.4</bundle>
