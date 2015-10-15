@@ -1,11 +1,13 @@
 package com.enonic.xp.web.jetty.impl.websocket;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.ws.WebSocketCall;
 import com.squareup.okhttp.ws.WebSocketListener;
 
+import com.enonic.xp.web.jetty.impl.JettyController;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 
 import static org.junit.Assert.*;
@@ -19,9 +21,15 @@ public class RealWebSocketServletTest
     protected void configure()
         throws Exception
     {
-        new WebSocketHandlerFactoryImpl().configure( this.server.getHandler().getServletContext() );
+        final JettyController controller = Mockito.mock( JettyController.class );
+        Mockito.when( controller.getServletContext() ).thenReturn( this.server.getHandler().getServletHandler().getServletContext() );
+
+        final WebSocketHandlerFactoryImpl factory = new WebSocketHandlerFactoryImpl();
+        factory.setController( controller );
 
         this.servlet = new TestWebSocketServlet();
+        this.servlet.setHandlerFactory( factory );
+
         addServlet( this.servlet, "/ws" );
     }
 

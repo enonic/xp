@@ -23,8 +23,8 @@ public abstract class JettyTestSupport
         throws Exception
     {
         this.server = new JettyTestServer();
-        configure();
         this.server.start();
+        configure();
 
         this.client = new OkHttpClient();
         this.baseUrl = "http://localhost:" + this.server.getPort();

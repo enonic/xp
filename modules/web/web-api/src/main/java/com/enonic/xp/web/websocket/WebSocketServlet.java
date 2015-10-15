@@ -10,14 +10,20 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class WebSocketServlet
     extends HttpServlet
 {
+    private WebSocketHandlerFactory handlerFactory;
+
     private WebSocketHandler handler;
 
     @Override
     public void init()
         throws ServletException
     {
-        this.handler = getWebSocketHandlerFactory().create();
-        this.handler.init( getServletContext() );
+        if ( this.handlerFactory == null )
+        {
+            throw new ServletException( WebSocketHandlerFactory.class.getSimpleName() + " not registered" );
+        }
+
+        this.handler = this.handlerFactory.create();
 
         try
         {
@@ -31,18 +37,6 @@ public abstract class WebSocketServlet
         {
             throw new ServletException( "Failed to configure endpoint", e );
         }
-    }
-
-    private WebSocketHandlerFactory getWebSocketHandlerFactory()
-        throws ServletException
-    {
-        final Object factory = getServletContext().getAttribute( WebSocketHandlerFactory.class.getName() );
-        if ( factory instanceof WebSocketHandlerFactory )
-        {
-            return (WebSocketHandlerFactory) factory;
-        }
-
-        throw new ServletException( WebSocketHandlerFactory.class.getName() + " is not registered" );
     }
 
     @Override
@@ -75,5 +69,10 @@ public abstract class WebSocketServlet
         }
 
         super.service( req, res );
+    }
+
+    public void setHandlerFactory( final WebSocketHandlerFactory handlerFactory )
+    {
+        this.handlerFactory = handlerFactory;
     }
 }

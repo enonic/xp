@@ -25,6 +25,7 @@ public class WebSocketServletTest
 
     @Before
     public void setup()
+        throws Exception
     {
         this.config = new MockServletConfig();
         this.servlet = new WebSocketServlet()
@@ -47,7 +48,7 @@ public class WebSocketServletTest
 
     private void setupFactory()
     {
-        this.config.getServletContext().setAttribute( WebSocketHandlerFactory.class.getName(), this.factory );
+        this.servlet.setHandlerFactory( this.factory );
     }
 
     @Test(expected = ServletException.class)

@@ -11,11 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.websocket.WebSocketHandler;
+import com.enonic.xp.web.websocket.WebSocketHandlerFactory;
 import com.enonic.xp.web.websocket.WebSocketServlet;
 
 @Component(immediate = true, service = {Servlet.class, WebSocketManager.class},
@@ -83,5 +85,12 @@ public final class EventHandler
                 LOG.warn( "Failed to send message via web socket", e );
             }
         }
+    }
+
+    @Override
+    @Reference
+    public void setHandlerFactory( final WebSocketHandlerFactory handlerFactory )
+    {
+        super.setHandlerFactory( handlerFactory );
     }
 }

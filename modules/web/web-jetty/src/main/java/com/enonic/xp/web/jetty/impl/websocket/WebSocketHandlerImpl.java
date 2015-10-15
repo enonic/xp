@@ -16,10 +16,13 @@ import javax.websocket.DeploymentException;
 import javax.websocket.Encoder;
 import javax.websocket.Endpoint;
 import javax.websocket.Extension;
+import javax.websocket.HandshakeResponse;
 import javax.websocket.Session;
+import javax.websocket.server.HandshakeRequest;
 import javax.websocket.server.ServerEndpointConfig;
 
 import org.eclipse.jetty.websocket.common.extensions.WebSocketExtensionFactory;
+import org.eclipse.jetty.websocket.jsr356.server.ContainerDefaultConfigurator;
 import org.eclipse.jetty.websocket.jsr356.server.JsrCreator;
 import org.eclipse.jetty.websocket.jsr356.server.ServerContainer;
 import org.eclipse.jetty.websocket.jsr356.server.SimpleServerEndpointMetadata;
@@ -104,7 +107,6 @@ final class WebSocketHandlerImpl
         return Collections.emptySet();
     }
 
-    @Override
     public void init( final ServletContext context )
         throws ServletException
     {
@@ -153,8 +155,34 @@ final class WebSocketHandlerImpl
 
     private ServerEndpointConfig.Configurator newConfigurator()
     {
+        final ContainerDefaultConfigurator defaultConfigurator = new ContainerDefaultConfigurator();
+
         return new ServerEndpointConfig.Configurator()
         {
+            @Override
+            public String getNegotiatedSubprotocol( final List<String> supported, final List<String> requested )
+            {
+                return defaultConfigurator.getNegotiatedSubprotocol( supported, requested );
+            }
+
+            @Override
+            public List<Extension> getNegotiatedExtensions( final List<Extension> installed, final List<Extension> requested )
+            {
+                return defaultConfigurator.getNegotiatedExtensions( installed, requested );
+            }
+
+            @Override
+            public boolean checkOrigin( final String originHeaderValue )
+            {
+                return defaultConfigurator.checkOrigin( originHeaderValue );
+            }
+
+            @Override
+            public void modifyHandshake( final ServerEndpointConfig sec, final HandshakeRequest request, final HandshakeResponse response )
+            {
+                defaultConfigurator.modifyHandshake( sec, request, response );
+            }
+
             @Override
             public <T> T getEndpointInstance( final Class<T> endpointClass )
             {

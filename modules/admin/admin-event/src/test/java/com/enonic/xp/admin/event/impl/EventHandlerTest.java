@@ -25,8 +25,6 @@ public class EventHandlerTest
 
     private MockHttpServletResponse res;
 
-    private WebSocketHandler handler;
-
     @Before
     public void setup()
         throws Exception
@@ -37,12 +35,12 @@ public class EventHandlerTest
         this.req = new MockHttpServletRequest();
         this.res = new MockHttpServletResponse();
 
-        this.handler = Mockito.mock( WebSocketHandler.class );
+        final WebSocketHandler handler = Mockito.mock( WebSocketHandler.class );
 
         final WebSocketHandlerFactory factory = Mockito.mock( WebSocketHandlerFactory.class );
-        Mockito.when( factory.create() ).thenReturn( this.handler );
-        config.getServletContext().setAttribute( WebSocketHandlerFactory.class.getName(), factory );
+        Mockito.when( factory.create() ).thenReturn( handler );
 
+        this.servlet.setHandlerFactory( factory );
         this.servlet.init( config );
     }
 
@@ -121,44 +119,4 @@ public class EventHandlerTest
         Mockito.when( session.isOpen() ).thenReturn( true );
         return session;
     }
-
-    /*
-    @Override
-    protected void configure()
-        throws Exception
-    {
-        this.servlet = new EventHandler();
-        this.servlet.securityEnabled = false;
-    }
-
-    private void newWebSocketRequest( final WebSocketListener listener )
-    {
-        final Request request = new Request.Builder().
-            url( "ws://localhost:" + this.server.getPort() + "/admin/event" ).
-            build();
-
-        WebSocketCall.create( this.client, request ).enqueue( listener );
-    }
-
-    @Test
-    public void sendData()
-        throws Exception
-    {
-        final ClientTestListener listener1 = new ClientTestListener();
-        final ClientTestListener listener2 = new ClientTestListener();
-
-        newWebSocketRequest( listener1 );
-        newWebSocketRequest( listener2 );
-
-        Thread.sleep( 400L );
-        this.servlet.sendToAll( "Hello World" );
-        Thread.sleep( 400L );
-
-        Assert.assertEquals( "TEXT", listener1.type );
-        Assert.assertEquals( "Hello World", listener1.message );
-
-        Assert.assertEquals( "TEXT", listener2.type );
-        Assert.assertEquals( "Hello World", listener2.message );
-    }
-    */
 }

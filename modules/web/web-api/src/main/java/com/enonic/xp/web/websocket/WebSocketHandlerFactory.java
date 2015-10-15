@@ -1,6 +1,9 @@
 package com.enonic.xp.web.websocket;
 
+import javax.servlet.ServletException;
+
 public interface WebSocketHandlerFactory
 {
-    WebSocketHandler create();
+    WebSocketHandler create()
+        throws ServletException;
 }

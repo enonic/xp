@@ -1,7 +1,5 @@
 package com.enonic.xp.web.jetty.impl;
 
-// import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-
 import javax.servlet.Servlet;
 
 import org.apache.felix.http.base.internal.EventDispatcher;
@@ -14,10 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.web.jetty.impl.configurator.HttpConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.MultipartConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.SessionConfigurator;
-import com.enonic.xp.web.jetty.impl.websocket.WebSocketConfigurator;
 
-// http://www.eclipse.org/jetty/documentation/current/configuring-connectors.html
-// https://github.com/apache/felix/blob/trunk/http/jetty/src/main/java/org/apache/felix/http/jetty/internal/JettyService.java
 final class JettyService
 {
     private final static Logger LOG = LoggerFactory.getLogger( JettyService.class );
@@ -29,6 +24,8 @@ final class JettyService
     protected EventDispatcher eventDispatcher;
 
     protected Servlet dispatcherServlet;
+
+    protected ServletContextHandler context;
 
     public void start()
     {
@@ -65,18 +62,17 @@ final class JettyService
     {
         this.server = new Server();
 
-        final ServletContextHandler context = new ServletContextHandler( null, "/", ServletContextHandler.SESSIONS );
-        new SessionConfigurator().configure( this.config, context.getSessionHandler().getSessionManager() );
-        new WebSocketConfigurator().configure( this.config, context );
+        this.context = new ServletContextHandler( null, "/", ServletContextHandler.SESSIONS );
+        new SessionConfigurator().configure( this.config, this.context.getSessionHandler().getSessionManager() );
 
         final ServletHolder holder = new ServletHolder( this.dispatcherServlet );
         holder.setAsyncSupported( true );
-        context.addServlet( holder, "/*" );
+        this.context.addServlet( holder, "/*" );
 
         new MultipartConfigurator().configure( this.config, holder );
         new HttpConfigurator().configure( this.config, this.server );
 
-        this.server.setHandler( context );
+        this.server.setHandler( this.context );
         this.eventDispatcher.setActive( true );
         this.server.start();
     }

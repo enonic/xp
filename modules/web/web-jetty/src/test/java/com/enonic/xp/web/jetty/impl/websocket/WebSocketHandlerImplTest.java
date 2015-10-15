@@ -9,24 +9,24 @@ import javax.websocket.Encoder;
 import javax.websocket.Endpoint;
 import javax.websocket.server.ServerEndpointConfig;
 
+import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.enonic.xp.web.websocket.WebSocketHandler;
-
 import static org.junit.Assert.*;
 
 public class WebSocketHandlerImplTest
 {
-    private WebSocketHandler handler;
+    private WebSocketHandlerImpl handler;
 
     @Before
     public void setup()
+        throws Exception
     {
-        this.handler = new WebSocketHandlerFactoryImpl().create();
+        this.handler = new WebSocketHandlerImpl( new WebSocketServerFactory() );
     }
 
     @Test(expected = DeploymentException.class)
@@ -61,21 +61,21 @@ public class WebSocketHandlerImplTest
     public void testAddEndpoint1()
         throws Exception
     {
-        ( (WebSocketHandlerImpl) this.handler ).addEndpoint( Endpoint.class );
+        this.handler.addEndpoint( Endpoint.class );
     }
 
     @Test(expected = DeploymentException.class)
     public void testAddEndpoint2()
         throws Exception
     {
-        ( (WebSocketHandlerImpl) this.handler ).addEndpoint( Object.class );
+        this.handler.addEndpoint( Object.class );
     }
 
     @Test(expected = DeploymentException.class)
     public void testAddEndpoint3()
         throws Exception
     {
-        ( (WebSocketHandlerImpl) this.handler ).addEndpoint( Mockito.mock( ServerEndpointConfig.class ) );
+        this.handler.addEndpoint( Mockito.mock( ServerEndpointConfig.class ) );
     }
 
     @Test
