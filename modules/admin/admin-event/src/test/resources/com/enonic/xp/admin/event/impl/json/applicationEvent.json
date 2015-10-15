@@ -1,5 +1,5 @@
 {
-  "type": "ApplicationUpdatedEvent",
+  "type": "ApplicationEvent",
   "event": {
     "eventType": "INSTALLED",
     "applicationKey": "myapp"
