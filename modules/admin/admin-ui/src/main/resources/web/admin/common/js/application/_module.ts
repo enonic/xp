@@ -15,7 +15,7 @@
 ///<reference path='InstallApplicationRequest.ts' />
 ///<reference path='UninstallApplicationRequest.ts' />
 ///<reference path='UpdateApplicationRequest.ts' />
-///<reference path='ApplicationUpdatedEvent.ts' />
+///<reference path='ApplicationEvent.ts' />
 ///<reference path='ApplicationCache.ts' />
 ///<reference path='ApplicationBasedName.ts' />
 ///<reference path='ApplicationCaches.ts' />

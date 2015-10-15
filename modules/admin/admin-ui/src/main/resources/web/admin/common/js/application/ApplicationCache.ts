@@ -7,8 +7,8 @@ module api.application {
         constructor() {
             super();
 
-            ApplicationUpdatedEvent.on((event: ApplicationUpdatedEvent) => {
-                console.log("ApplicationCache on ApplicationUpdatedEvent, deleting: " + event.getApplicationKey().toString());
+            ApplicationEvent.on((event: ApplicationEvent) => {
+                console.log("ApplicationCache on ApplicationEvent, deleting: " + event.getApplicationKey().toString());
                 this.deleteByKey(event.getApplicationKey());
             });
         }
