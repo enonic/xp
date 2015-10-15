@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleEvent;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,9 +19,7 @@ import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.app.ApplicationEventType;
-import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationUpdatedEvent;
+import com.enonic.xp.app.ApplicationEvent;
 import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentCreatedEvent;
 import com.enonic.xp.content.ContentId;
@@ -32,21 +33,32 @@ public class EventJsonSerializerTest
 {
     private EventJsonSerializer serializer;
 
+    private BundleEvent bundleEvent;
+
+    private Bundle myBundle;
+
     @Before
     public void setup()
     {
         this.serializer = new EventJsonSerializer();
+
+        bundleEvent = Mockito.mock( BundleEvent.class );
+        myBundle = Mockito.mock( Bundle.class );
+
+        Mockito.when( bundleEvent.getType() ).thenReturn( 0x00000001 );
+        Mockito.when( myBundle.getSymbolicName() ).thenReturn( "myapp" );
+        Mockito.when( bundleEvent.getBundle() ).thenReturn( myBundle );
     }
 
     @Test
-    public void applicationUpdatedEvent()
+    public void ApplicationEvent()
         throws Exception
     {
-        final ApplicationUpdatedEvent event = new ApplicationUpdatedEvent( ApplicationKey.from( "myapp" ), ApplicationEventType.INSTALLED );
+        final ApplicationEvent event = new ApplicationEvent( bundleEvent );
         final ObjectNode json = this.serializer.toJson( event );
 
         assertNotNull( json );
-        assertJson( "applicationUpdatedEvent.json", json );
+        assertJson( "applicationEvent.json", json );
     }
 
     @Test
