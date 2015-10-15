@@ -157,8 +157,8 @@ module app.wizard.page.contextwindow.insert {
             }
         }
 
-        private isOverIFrame(event: JQueryEventObject): boolean {
-            return event.originalEvent.target == this.liveEditPageProxy.getDragMask().getHTMLElement();
+        private isOverIFrame(event: Event): boolean {
+            return event.target == this.liveEditPageProxy.getDragMask().getHTMLElement();
         }
 
         private onLeftIFrame(event: Event, ui: JQueryUI.DraggableEventUIParams) {
