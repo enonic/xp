@@ -21,7 +21,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsService;
 
-@Component(immediate = true, service = Servlet.class,
+@Component(immediate = true, service = {Servlet.class, JaxRsService.class},
     property = {"osgi.http.whiteboard.servlet.pattern=/"})
 public final class JaxRsHandler
     extends HttpServlet

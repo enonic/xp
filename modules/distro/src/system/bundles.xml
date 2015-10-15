@@ -5,13 +5,13 @@
   <bundle level="5">org.apache.felix:org.apache.felix.metatype:1.1.2</bundle>
   <bundle level="5">org.apache.felix:org.apache.felix.eventadmin:1.4.4</bundle>
   <bundle level="5">org.apache.felix:org.apache.felix.configadmin:1.8.8</bundle>
-  <bundle level="5">org.apache.felix:org.apache.felix.scr:2.0.0</bundle>
+  <bundle level="5">org.apache.felix:org.apache.felix.scr:2.0.2</bundle>
   <bundle level="5">org.apache.felix:org.apache.felix.fileinstall:3.5.0</bundle>
 
   <!-- Shell bundles -->
   <bundle level="10">org.apache.felix:org.apache.felix.gogo.runtime:0.16.2</bundle>
-  <bundle level="10">org.apache.felix:org.apache.felix.gogo.command:0.14.0</bundle>
-  <bundle level="10">org.apache.felix:org.apache.felix.gogo.shell:0.10.0</bundle>
+  <bundle level="10">org.apache.felix:org.apache.felix.gogo.command:0.16.0</bundle>
+  <bundle level="10">org.apache.felix:org.apache.felix.gogo.shell:0.12.0</bundle>
   <bundle level="11">org.apache.felix:org.apache.felix.shell.remote:1.1.2</bundle>
 
   <!-- Core app dependencies -->

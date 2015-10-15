@@ -40,7 +40,6 @@ public final class SwaggerHandler
     {
         this.mapper = new ObjectMapper();
         this.mapper.setSerializationInclusion( JsonInclude.Include.NON_NULL );
-
     }
 
     @Override
