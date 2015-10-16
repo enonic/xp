@@ -5,8 +5,8 @@ import java.time.Instant;
 import com.google.common.annotations.Beta;
 
 @Beta
-public class NodeVersion
-    implements Comparable<NodeVersion>
+public class NodeVersionMetadata
+    implements Comparable<NodeVersionMetadata>
 {
     private final NodeVersionId nodeVersionId;
 
@@ -16,7 +16,7 @@ public class NodeVersion
 
     private final Instant timestamp;
 
-    private NodeVersion( Builder builder )
+    private NodeVersionMetadata( Builder builder )
     {
         nodeVersionId = builder.nodeVersionId;
         nodeId = builder.nodeId;
@@ -51,7 +51,7 @@ public class NodeVersion
 
     // Insert with newest first
     @Override
-    public int compareTo( final NodeVersion o )
+    public int compareTo( final NodeVersionMetadata o )
     {
         if ( this.timestamp == o.timestamp )
         {
@@ -104,9 +104,9 @@ public class NodeVersion
             return this;
         }
 
-        public NodeVersion build()
+        public NodeVersionMetadata build()
         {
-            return new NodeVersion( this );
+            return new NodeVersionMetadata( this );
         }
     }
 
@@ -122,7 +122,7 @@ public class NodeVersion
             return false;
         }
 
-        final NodeVersion that = (NodeVersion) o;
+        final NodeVersionMetadata that = (NodeVersionMetadata) o;
 
         if ( nodeVersionId != null ? !nodeVersionId.equals( that.nodeVersionId ) : that.nodeVersionId != null )
         {

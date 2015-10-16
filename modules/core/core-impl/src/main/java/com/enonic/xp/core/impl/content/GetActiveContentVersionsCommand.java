@@ -10,7 +10,7 @@ import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.RefreshMode;
 
 public class GetActiveContentVersionsCommand
@@ -47,11 +47,11 @@ public class GetActiveContentVersionsCommand
 
         final GetActiveContentVersionsResult.Builder builder = GetActiveContentVersionsResult.create();
 
-        final ImmutableMap<Branch, NodeVersion> nodeVersionsMap = activeNodeVersions.getNodeVersions();
+        final ImmutableMap<Branch, NodeVersionMetadata> nodeVersionsMap = activeNodeVersions.getNodeVersions();
         for ( final Branch branch : nodeVersionsMap.keySet() )
         {
-            final NodeVersion nodeVersion = nodeVersionsMap.get( branch );
-            builder.add( ActiveContentVersionEntry.from( branch, contentVersionFactory.create( nodeVersion ) ) );
+            final NodeVersionMetadata nodeVersionMetadata = nodeVersionsMap.get( branch );
+            builder.add( ActiveContentVersionEntry.from( branch, contentVersionFactory.create( nodeVersionMetadata ) ) );
         }
 
         return builder.build();

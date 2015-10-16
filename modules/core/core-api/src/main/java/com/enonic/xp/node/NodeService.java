@@ -51,7 +51,7 @@ public interface NodeService
 
     ReorderChildNodesResult reorderChildren( ReorderChildNodesParams params );
 
-    Node getByNodeVersion( NodeVersion nodeVersion );
+    Node getByNodeVersion( NodeVersionMetadata nodeVersionMetadata );
 
     NodeIds resolveSyncWork( SyncWorkResolverParams params );
 

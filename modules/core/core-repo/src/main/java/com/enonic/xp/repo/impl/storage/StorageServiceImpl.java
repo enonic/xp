@@ -12,9 +12,9 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeState;
-import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RootNode;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -153,11 +153,11 @@ public class StorageServiceImpl
     }
 
     @Override
-    public Node get( final NodeVersion nodeVersion )
+    public Node get( final NodeVersionMetadata nodeVersionMetadata )
     {
-        final Node node = this.nodeDao.get( nodeVersion.getNodeVersionId() );
+        final Node node = this.nodeDao.get( nodeVersionMetadata.getNodeVersionId() );
 
-        return populateWithMetaData( node, nodeVersion );
+        return populateWithMetaData( node, nodeVersionMetadata );
     }
 
     @Override
@@ -173,7 +173,7 @@ public class StorageServiceImpl
     }
 
     @Override
-    public NodeVersion getVersion( final NodeVersionDocumentId versionId, final InternalContext context )
+    public NodeVersionMetadata getVersion( final NodeVersionDocumentId versionId, final InternalContext context )
     {
         return this.versionService.getVersion( versionId, context );
     }
@@ -226,14 +226,14 @@ public class StorageServiceImpl
             build();
     }
 
-    private Node populateWithMetaData( final Node node, final NodeVersion nodeVersion )
+    private Node populateWithMetaData( final Node node, final NodeVersionMetadata nodeVersionMetadata )
     {
         if ( node instanceof RootNode )
         {
             return node;
         }
 
-        final NodePath nodePath = nodeVersion.getNodePath();
+        final NodePath nodePath = nodeVersionMetadata.getNodePath();
         final NodePath parentPath = nodePath.getParentPath();
         final NodeName nodeName = NodeName.from( nodePath.getLastElement().toString() );
 
@@ -241,7 +241,7 @@ public class StorageServiceImpl
             parentPath( parentPath ).
             name( nodeName ).
             nodeState( NodeState.ARCHIVED ).
-            timestamp( nodeVersion.getTimestamp() ).
+            timestamp( nodeVersionMetadata.getTimestamp() ).
             build();
     }
 

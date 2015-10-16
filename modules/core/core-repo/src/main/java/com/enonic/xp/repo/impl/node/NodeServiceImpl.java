@@ -33,7 +33,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
@@ -338,9 +338,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node getByNodeVersion( final NodeVersion nodeVersion )
+    public Node getByNodeVersion( final NodeVersionMetadata nodeVersionMetadata )
     {
-        return this.storageService.get( nodeVersion );
+        return this.storageService.get( nodeVersionMetadata );
     }
 
     @Override
