@@ -10,6 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+import org.jboss.resteasy.annotations.GZIP;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -39,6 +40,7 @@ public final class MainResource
 
     @GET
     @Path("{path:.+}")
+    @GZIP
     public Response getResource( @PathParam("path") final String path )
         throws Exception
     {
@@ -47,6 +49,7 @@ public final class MainResource
 
     @GET
     @Path("admin/assets/{version}/{path:.+}")
+    @GZIP
     public Response getVersionedResource( @PathParam("version") final String version, @PathParam("path") final String path )
         throws Exception
     {
@@ -56,6 +59,7 @@ public final class MainResource
     @GET
     @Path("admin")
     @Produces("text/html")
+    @GZIP
     public String getAdminApp( @QueryParam("app") @DefaultValue("app-launcher") final String app )
     {
         return this.appHtmlHandler.render( app );

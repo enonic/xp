@@ -1,5 +1,7 @@
 package com.enonic.xp.web.impl.context;
 
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -9,27 +11,15 @@ import org.osgi.service.component.annotations.Component;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.web.handler.OncePerRequestHandler;
-import com.enonic.xp.web.handler.WebHandler;
-import com.enonic.xp.web.handler.WebHandlerChain;
+import com.enonic.xp.web.filter.OncePerRequestFilter;
 
-@Component(immediate = true, service = WebHandler.class)
+@Component(immediate = true, service = Filter.class,
+    property = {"osgi.http.whiteboard.filter.pattern=/", "service.ranking:Integer=10"})
 public final class ContextHandler
-    extends OncePerRequestHandler
+    extends OncePerRequestFilter
 {
-    public ContextHandler()
-    {
-        setOrder( MIN_ORDER );
-    }
-
     @Override
-    protected boolean canHandle( final HttpServletRequest req )
-    {
-        return true;
-    }
-
-    @Override
-    protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
+    protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
         final Context context = ContextBuilder.create().build();
@@ -40,7 +30,7 @@ public final class ContextHandler
         context.getLocalScope().setSession( new SessionWrapper( session ) );
 
         context.callWith( () -> {
-            chain.handle( new HttpRequestDelegate( req ), res );
+            chain.doFilter( new HttpRequestDelegate( req ), res );
             return null;
         } );
     }

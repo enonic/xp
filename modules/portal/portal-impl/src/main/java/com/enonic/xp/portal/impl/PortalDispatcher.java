@@ -1,11 +1,15 @@
 package com.enonic.xp.portal.impl;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,14 +32,12 @@ import com.enonic.xp.portal.impl.exception.ExceptionRenderer;
 import com.enonic.xp.portal.impl.serializer.RequestBodyReader;
 import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
 import com.enonic.xp.web.HttpMethod;
-import com.enonic.xp.web.handler.BaseWebHandler;
-import com.enonic.xp.web.handler.WebHandler;
-import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
-@Component(immediate = true, service = WebHandler.class)
+@Component(immediate = true, service = Servlet.class,
+    property = {"osgi.http.whiteboard.servlet.pattern=/portal/*"})
 public final class PortalDispatcher
-    extends BaseWebHandler
+    extends HttpServlet
 {
     private final static String BASE_URI = "/portal";
 
@@ -51,18 +53,11 @@ public final class PortalDispatcher
     {
         this.exceptionMapper = new ExceptionMapper();
         this.registry = new PortalHandlerRegistry();
-        setOrder( -1 );
     }
 
     @Override
-    protected boolean canHandle( final HttpServletRequest req )
-    {
-        return req.getRequestURI().startsWith( PATH_PREFIX );
-    }
-
-    @Override
-    protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
-        throws Exception
+    protected void service( final HttpServletRequest req, final HttpServletResponse res )
+        throws ServletException, IOException
     {
         final PortalRequest portalRequest = newPortalRequest( req );
         final PortalResponse portalResponse = doHandle( portalRequest );
@@ -72,7 +67,7 @@ public final class PortalDispatcher
     }
 
     private PortalRequest newPortalRequest( final HttpServletRequest req )
-        throws Exception
+        throws IOException
     {
         final PortalRequest result = new PortalRequest();
         result.setMethod( HttpMethod.valueOf( req.getMethod().toUpperCase() ) );
@@ -132,7 +127,13 @@ public final class PortalDispatcher
 
     private void setCookies( final HttpServletRequest from, final PortalRequest to )
     {
-        for ( final Cookie cookie : from.getCookies() )
+        final Cookie[] cookies = from.getCookies();
+        if ( cookies == null )
+        {
+            return;
+        }
+
+        for ( final Cookie cookie : cookies )
         {
             to.getCookies().put( cookie.getName(), cookie.getValue() );
         }
@@ -147,7 +148,6 @@ public final class PortalDispatcher
     }
 
     private PortalResponse doHandle( final PortalRequest req )
-        throws Exception
     {
         try
         {
@@ -168,7 +168,6 @@ public final class PortalDispatcher
     }
 
     private PortalResponse handleError( final PortalRequest req, final Exception cause )
-        throws Exception
     {
         final PortalException exception = this.exceptionMapper.map( cause );
         return this.exceptionRenderer.render( req, exception );

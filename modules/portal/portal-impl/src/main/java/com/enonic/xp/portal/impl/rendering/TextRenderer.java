@@ -9,7 +9,6 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.region.TextComponent;
 
@@ -65,7 +64,7 @@ public final class TextRenderer
             }
         }
 
-        return new PortalResponseSerializer( portalResponseBuilder.build() ).serialize();
+        return portalResponseBuilder.build();
     }
 
     private void renderEmptyTextComponent( final TextComponent textComponent, final PortalRequest portalRequest,

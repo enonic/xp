@@ -278,8 +278,8 @@ module api.liveedit.text {
         private deselectText() {
             if (window['getSelection']) {  // moz, opera, webkit
                 window['getSelection']().removeAllRanges();
-            } else if (document.selection) {    // ms
-                document.selection.empty();
+            } else if (document["selection"]) {    // ms
+                document["selection"].empty();
             }
         }
 

@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.serializer;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.io.CharStreams;
@@ -10,7 +12,7 @@ public final class RequestBodyReader
     private final static MediaType JSON = MediaType.JSON_UTF_8.withoutParameters();
 
     public static Object readBody( final HttpServletRequest req )
-        throws Exception
+        throws IOException
     {
         final String type = req.getContentType();
         if ( type == null )
@@ -22,7 +24,7 @@ public final class RequestBodyReader
     }
 
     private static Object readBody( final HttpServletRequest req, final MediaType type )
-        throws Exception
+        throws IOException
     {
         if ( !isText( type ) )
         {

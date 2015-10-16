@@ -15,9 +15,11 @@ include 'script:script-impl'
 include 'web:web-api'
 include 'web:web-impl'
 include 'web:web-vhost'
+include 'web:web-jetty'
 
 include 'jaxrs:jaxrs-api'
 include 'jaxrs:jaxrs-impl'
+include 'jaxrs:jaxrs-swagger'
 
 include 'portal:portal-api'
 include 'portal:portal-impl'

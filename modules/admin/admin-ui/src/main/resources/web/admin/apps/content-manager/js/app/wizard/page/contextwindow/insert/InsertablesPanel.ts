@@ -116,7 +116,7 @@ module app.wizard.page.contextwindow.insert {
             components.draggable('destroy');
         }
 
-        private handleDragStart(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
+        private handleDragStart(event: Event, ui: JQueryUI.DraggableEventUIParams) {
             if (InsertablesPanel.debug) {
                 console.log('InsertablesPanel.handleDragStart', event, ui);
             }
@@ -129,7 +129,7 @@ module app.wizard.page.contextwindow.insert {
             this.contextWindowDraggable = wemjq(event.target);
         }
 
-        private handleDrag(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
+        private handleDrag(event: Event, ui: JQueryUI.DraggableEventUIParams) {
             var over = this.isOverIFrame(event);
             if (this.overIFrame != over) {
                 if (over) {
@@ -141,7 +141,7 @@ module app.wizard.page.contextwindow.insert {
             }
         }
 
-        private handleDragStop(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
+        private handleDragStop(event: Event, ui: JQueryUI.DraggableEventUIParams) {
             if (InsertablesPanel.debug) {
                 console.log('InsertablesPanel.handleDragStop', event, ui);
             }

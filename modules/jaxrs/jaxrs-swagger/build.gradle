@@ -1,0 +1,20 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile project( ':jaxrs:jaxrs-api' )
+    compile 'io.swagger:swagger-jaxrs:1.5.3'
+    compile 'org.webjars:swagger-ui:2.1.2'
+    testCompile project( path: ':jaxrs:jaxrs-api', configuration: 'testOutput' )
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP JaxRs - Swagger'
+    instruction 'Export-Package', 'io.swagger.annotations.*'
+    instruction 'Private-Package', 'io.swagger.*;-split-package:=merge-first'
+    instruction 'Private-Package', 'META-INF.resources.webjars.*'
+    instruction 'Private-Package', 'org.apache.commons.lang3.*'
+    instruction 'Private-Package', 'com.fasterxml.jackson.dataformat.yaml.*'
+    instruction 'Import-Package', 'org.reflections.*;resolution:=optional'
+    instruction 'Import-Package', 'javax.validation.*;resolution:=optional'
+    instruction 'Import-Package', '*'
+}

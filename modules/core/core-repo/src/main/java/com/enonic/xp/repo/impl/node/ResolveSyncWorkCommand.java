@@ -124,7 +124,7 @@ public class ResolveSyncWorkCommand
     {
         final NodeComparison comparison = getNodeComparison( nodeId );
 
-        if ( nodeNotChanged( comparison ) )
+        if ( nodeNotChanged( comparison ) || nodeNotInSource( comparison ) )
         {
             return;
         }
@@ -148,6 +148,11 @@ public class ResolveSyncWorkCommand
                 includeChildren( node );
             }
         }
+    }
+
+    private boolean nodeNotInSource( final NodeComparison comparison )
+    {
+        return comparison.getCompareStatus() == CompareStatus.NEW_TARGET;
     }
 
     private boolean nodeNotChanged( final NodeComparison comparison )
