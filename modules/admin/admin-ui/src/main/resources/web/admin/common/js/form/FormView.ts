@@ -80,15 +80,12 @@ module api.form {
                     });
 
                     formItemView.onValidityChanged((event: RecordingValidityChangedEvent) => {
-
                         if (!this.previousValidationRecording) {
                             this.previousValidationRecording = event.getRecording();
                             this.notifyValidityChanged(new FormValidityChangedEvent(this.previousValidationRecording,
                                 event.isInputValueBroken()));
                         }
                         else {
-                            var previousValidState = this.previousValidationRecording.isValid();
-
                             if (event.isValid()) {
                                 this.previousValidationRecording.removeByPath(event.getOrigin());
                             }
@@ -100,7 +97,6 @@ module api.form {
                                 event.isInputValueBroken()));
 
                         }
-                        this.previousValidationRecording = event.getRecording();
                     });
                 });
 
@@ -147,14 +143,14 @@ module api.form {
             return result;
         }
 
-        public validate(silent?: boolean, triggerNotifyAnyWay: boolean = false): ValidationRecording {
+        public validate(silent?: boolean, forceNotify: boolean = false): ValidationRecording {
 
             var recording: ValidationRecording = new ValidationRecording();
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 recording.flatten(formItemView.validate(silent));
             });
 
-            if (!silent && (recording.validityChanged(this.previousValidationRecording) || triggerNotifyAnyWay)) {
+            if (!silent && (recording.validityChanged(this.previousValidationRecording) || forceNotify)) {
                 this.notifyValidityChanged(new FormValidityChangedEvent(recording));
             }
 
