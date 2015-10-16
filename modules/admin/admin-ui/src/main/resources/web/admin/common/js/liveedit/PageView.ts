@@ -169,7 +169,6 @@ module api.liveedit {
                 setTooltipViewer(new api.content.ContentSummaryViewer()).
                 setType(PageItemType.get()).
                 setElement(builder.element).
-                setParentElement(builder.element.getParentElement()).
                 setContextMenuActions(this.unlockedScreenActions).
                 setContextMenuTitle(new PageViewContextMenuTitle(builder.liveEditModel.getContent())));
 

@@ -2,10 +2,16 @@ declare var CONFIG;
 
 declare var wemjq: JQueryStatic;
 
+var liveEditPage: LiveEdit.LiveEditPage;
 
 wemjq(document).ready(() => {
 
-    new LiveEdit.LiveEditPage();
+    if (liveEditPage) {
+        // WTF: there may be more than 1 ready events !!!
+        return;
+    }
+
+    liveEditPage = new LiveEdit.LiveEditPage();
 
     // Notify parent frame if any modifier except shift is pressed
     // For the parent shortcuts to work if the inner iframe has focus
