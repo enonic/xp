@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
@@ -140,7 +140,7 @@ public class EventJsonSerializerTest
         mapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
         mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
         mapper.setSerializationInclusion( JsonInclude.Include.ALWAYS );
-        mapper.registerModule( new JSR310Module() );
+        mapper.registerModule( new JavaTimeModule() );
         return mapper;
     }
 }

@@ -100,11 +100,9 @@ public final class ElasticsearchActivator
     public void removeTransportRequestHandler( final TransportRequestHandler transportRequestHandler, final Map<String, String> map )
     {
         final String actionPropertyValue = map.get( ACTION_PROPERTY_KEY );
-
-        if ( this.transportService != null )
+        if ( (transportRequestHandler != null) && this.transportService != null )
         {
             this.transportService.removeHandler( actionPropertyValue );
         }
     }
-
 }
