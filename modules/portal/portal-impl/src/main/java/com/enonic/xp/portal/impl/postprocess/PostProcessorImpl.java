@@ -44,10 +44,44 @@ public final class PostProcessorImpl
             return portalResponse;
         }
 
-        return doPostProcess( portalRequest, portalResponse );
+        return postProcessEvaluator( portalRequest, portalResponse ).evaluate();
     }
 
-    private PortalResponse doPostProcess( final PortalRequest portalRequest, final PortalResponse portalResponse )
+    @Override
+    public PortalResponse processResponseInstructions( final PortalRequest portalRequest, final PortalResponse portalResponse )
+    {
+        if ( !portalResponse.isPostProcess() || portalRequest.getMethod() != HttpMethod.GET )
+        {
+            return portalResponse;
+        }
+
+        final Object body = portalResponse.getBody();
+        if ( !( body instanceof String ) )
+        {
+            return portalResponse;
+        }
+
+        return postProcessEvaluator( portalRequest, portalResponse ).evaluateInstructions();
+    }
+
+    @Override
+    public PortalResponse processResponseContributions( final PortalRequest portalRequest, final PortalResponse portalResponse )
+    {
+        if ( !portalResponse.isPostProcess() || portalRequest.getMethod() != HttpMethod.GET )
+        {
+            return portalResponse;
+        }
+
+        final Object body = portalResponse.getBody();
+        if ( !( body instanceof String ) )
+        {
+            return portalResponse;
+        }
+
+        return postProcessEvaluator( portalRequest, portalResponse ).evaluateContributions();
+    }
+
+    private PostProcessEvaluator postProcessEvaluator( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
         evaluator.portalRequest = portalRequest;
@@ -55,8 +89,7 @@ public final class PostProcessorImpl
         evaluator.input = (String) portalResponse.getBody();
         evaluator.instructions = this.instructions;
         evaluator.injections = this.injections;
-
-        return evaluator.evaluate();
+        return evaluator;
     }
 
     @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE)

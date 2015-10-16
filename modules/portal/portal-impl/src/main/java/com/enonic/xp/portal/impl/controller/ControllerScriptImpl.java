@@ -4,7 +4,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
-import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.web.HttpMethod;
@@ -14,12 +13,9 @@ final class ControllerScriptImpl
 {
     private final ScriptExports scriptExports;
 
-    private final PostProcessor postProcessor;
-
-    public ControllerScriptImpl( final ScriptExports scriptExports, final PostProcessor postProcessor )
+    public ControllerScriptImpl( final ScriptExports scriptExports )
     {
         this.scriptExports = scriptExports;
-        this.postProcessor = postProcessor;
     }
 
     @Override
@@ -29,7 +25,7 @@ final class ControllerScriptImpl
 
         try
         {
-            return this.postProcessor.processResponse( portalRequest, doExecute( portalRequest ) );
+            return doExecute( portalRequest );
         }
         finally
         {
