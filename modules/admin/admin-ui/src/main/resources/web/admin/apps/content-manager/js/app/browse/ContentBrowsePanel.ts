@@ -150,6 +150,7 @@ module app.browse {
                 setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
                 setSecondPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
                 setAnimationDelay(600).
+                setSecondPanelShouldSlideRight(true).
                 build();
 
             contentPanelsAndDetailPanel.addClass("split-panel-with-details");
@@ -175,15 +176,17 @@ module app.browse {
             this.mobileContentItemStatisticsPanel = new app.view.MobileContentItemStatisticsPanel(this.mobileBrowseActions);
 
             api.content.TreeGridItemClickedEvent.on((event) => {
-                var browseItems: api.app.browse.BrowseItem<ContentSummary>[] = this.getBrowseItemPanel().getItems();
-                if (browseItems.length == 1) {
-                    new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItems[0].getId())).sendAndParse().
-                        then((renderable: boolean) => {
-                            var item: api.app.view.ViewItem<ContentSummary> = browseItems[0].toViewItem();
-                            item.setRenderable(renderable);
-                            this.mobileContentItemStatisticsPanel.setItem(item);
-                            this.mobileBrowseActions.updateActionsEnabledState(browseItems);
-                        });
+                if (ActiveDetailsPanelsManager.getActiveDetailsPanel() == this.mobileContentItemStatisticsPanel.getDetailsPanel()) {
+                    var browseItems: api.app.browse.BrowseItem<ContentSummary>[] = this.getBrowseItemPanel().getItems();
+                    if (browseItems.length == 1) {
+                        new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItems[0].getId())).sendAndParse().
+                            then((renderable: boolean) => {
+                                var item: api.app.view.ViewItem<ContentSummary> = browseItems[0].toViewItem();
+                                item.setRenderable(renderable);
+                                this.mobileContentItemStatisticsPanel.setItem(item);
+                                this.mobileBrowseActions.updateActionsEnabledState(browseItems);
+                            });
+                    }
                 }
             });
 

@@ -63,9 +63,6 @@ module app.view.detail {
                 this.versionsPanel.reRenderActivePanel();
             });
 
-            var delayedReset = api.util.AppHelper.debounce(this.resetItem.bind(this), 300, false);
-            ResponsiveManager.onAvailableSizeChanged(this, delayedReset);
-
             this.managePublishEvent();
 
             this.initNameAndIconView(builder.getUseNameAndIconView());
