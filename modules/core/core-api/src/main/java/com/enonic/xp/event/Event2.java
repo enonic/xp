@@ -1,12 +1,8 @@
 package com.enonic.xp.event;
 
-import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 
@@ -15,19 +11,18 @@ import com.enonic.xp.convert.Converters;
 public final class Event2
     implements Event
 {
+    private final String type;
 
-    private String type;
+    private final long timestamp;
 
-    private long timestamp;
+    private final boolean distributed;
 
-    private boolean distributed;
+    private final ImmutableMap<String, ?> data;
 
-    private Map<String, ?> data;
-
-    private Event2( Builder builder )
+    private Event2( final Builder builder )
     {
         this.type = builder.type;
-        this.timestamp = Instant.now().toEpochMilli();
+        this.timestamp = builder.timestamp;
         this.distributed = builder.distributed;
         this.data = builder.dataBuilder.build();
     }
@@ -52,17 +47,17 @@ public final class Event2
         return this.data;
     }
 
-    public Optional<Object> getValue( String key )
+    public Optional<Object> getValue( final String key )
     {
         return Optional.ofNullable( data.get( key ) );
     }
 
-    public boolean hasValue( String key )
+    public boolean hasValue( final String key )
     {
         return this.data.containsKey( key );
     }
 
-    public <T> Optional<T> getValueAs( Class<T> type, String key )
+    public <T> Optional<T> getValueAs( final Class<T> type, final String key )
     {
         Optional<Object> value = this.getValue( key );
         if ( value.isPresent() )
@@ -72,37 +67,14 @@ public final class Event2
         return Optional.empty();
     }
 
-    public JsonNode toJson()
-    {
-
-        final ObjectNode dataJsonNode = newObjectNode();
-        for ( final Map.Entry<String, ?> entry : this.data.entrySet() )
-        {
-            final String key = entry.getKey();
-            dataJsonNode.put( key, entry.getValue().toString() );
-        }
-
-        final ObjectNode json = newObjectNode();
-        json.put( "type", this.type );
-        json.put( "timestamp", this.timestamp );
-        json.put( "distributed", this.distributed );
-        json.set( "data", dataJsonNode );
-        return json;
-    }
-
-    private ObjectNode newObjectNode()
-    {
-        return JsonNodeFactory.instance.objectNode();
-    }
-
-    public boolean isType( String type )
+    public boolean isType( final String type )
     {
         return type.equals( this.type );
     }
 
-    public boolean isSubType( String type )
+    public boolean isSubType( final String type )
     {
-        return this.type.startsWith( type ) && !this.type.equals( type );
+        return this.type.startsWith( type + "." );
     }
 
     @Override
@@ -117,34 +89,37 @@ public final class Event2
             toString();
     }
 
-    public static Builder create( String type )
+    public static Builder create( final String type )
     {
         return new Builder( type );
     }
 
-    public static Builder create( Event2 event )
+    public static Builder create( final Event2 event )
     {
         return new Builder( event );
     }
 
-    static class Builder
+    public static final class Builder
     {
-
         private String type;
 
         private boolean distributed;
 
+        private long timestamp;
+
         private ImmutableMap.Builder<String, Object> dataBuilder = ImmutableMap.builder();
 
-        private Builder( String type )
+        private Builder( final String type )
         {
             this.type = type;
+            this.timestamp = System.currentTimeMillis();
         }
 
-        private Builder( Event2 event )
+        private Builder( final Event2 event )
         {
-            this.type = event.type;
+            this( event.type );
             this.distributed = event.distributed;
+            this.timestamp = event.timestamp;
 
             for ( final Map.Entry<String, ?> entry : event.data.entrySet() )
             {
@@ -153,32 +128,39 @@ public final class Event2
             }
         }
 
-        public Builder distributed( boolean flag )
+        public Builder distributed( final boolean flag )
         {
             this.distributed = flag;
             return this;
         }
 
-        public Builder value( String key, Object value )
+        public Builder value( final String key, final Object value )
         {
-            if ( value != null )
+            if ( value == null )
             {
-                if ( value instanceof Number || value instanceof Boolean )
-                {
-                    dataBuilder.put( key, value );
-                }
-                else
-                {
-                    dataBuilder.put( key, value.toString() );
-                }
+                return this;
             }
+
+            if ( value instanceof Number || value instanceof Boolean )
+            {
+                dataBuilder.put( key, value );
+                return this;
+            }
+
+            dataBuilder.put( key, value.toString() );
             return this;
         }
+
+        public Builder timestamp( final long timestamp )
+        {
+            this.timestamp = timestamp;
+            return this;
+        }
+
 
         public Event2 build()
         {
             return new Event2( this );
         }
     }
-
 }

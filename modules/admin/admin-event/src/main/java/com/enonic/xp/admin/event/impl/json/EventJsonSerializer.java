@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.event.impl.json;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -11,6 +13,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishedEvent;
 import com.enonic.xp.content.ContentUpdatedEvent;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.Event2;
 
 public final class EventJsonSerializer
 {
@@ -39,6 +42,11 @@ public final class EventJsonSerializer
         if ( event instanceof ContentChangeEvent )
         {
             return toJson( (ContentChangeEvent) event );
+        }
+
+        if ( event instanceof Event2 )
+        {
+            return toJson( (Event2) event );
         }
 
         return null;
@@ -91,6 +99,55 @@ public final class EventJsonSerializer
         }
 
         return eventWrapper( event, json );
+    }
+
+    private ObjectNode toJson( final Event2 event )
+    {
+        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+        json.put( "type", event.getType() );
+        json.put( "timestamp", event.getTimestamp() );
+
+        final ObjectNode dataJson = json.putObject( "data" );
+        for ( final Map.Entry<String, ?> entry : event.getData().entrySet() )
+        {
+            final String key = entry.getKey();
+            final Object value = entry.getValue();
+
+            if ( value instanceof Byte )
+            {
+                dataJson.put( key, (Byte) value );
+            }
+            else if ( value instanceof Short )
+            {
+                dataJson.put( key, (Short) value );
+            }
+            else if ( value instanceof Float )
+            {
+                dataJson.put( key, (Float) value );
+            }
+            else if ( value instanceof Double )
+            {
+                dataJson.put( key, (Double) value );
+            }
+            else if ( value instanceof Integer )
+            {
+                dataJson.put( key, (Integer) value );
+            }
+            else if ( value instanceof Long )
+            {
+                dataJson.put( key, (Long) value );
+            }
+            else if ( value instanceof Boolean )
+            {
+                dataJson.put( key, (Boolean) value );
+            }
+            else
+            {
+                dataJson.put( key, value.toString() );
+            }
+        }
+
+        return json;
     }
 
     private ObjectNode newObjectNode()

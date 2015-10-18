@@ -25,6 +25,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentPublishedEvent;
 import com.enonic.xp.content.ContentUpdatedEvent;
+import com.enonic.xp.event.Event2;
 
 import static org.junit.Assert.*;
 
@@ -92,6 +93,28 @@ public class EventJsonSerializerTest
 
         assertNotNull( json );
         assertJson( "contentChangeEvent.json", json );
+    }
+
+    @Test
+    public void testEvent()
+        throws Exception
+    {
+        final Event2 event = Event2.create( "node.created" ).
+            timestamp( 0 ).
+            value( "byte", (byte) 1 ).
+            value( "short", (short) 2 ).
+            value( "int", 3 ).
+            value( "long", 4L ).
+            value( "float", 5.6f ).
+            value( "double", 6.7d ).
+            value( "boolean", true ).
+            value( "string", "test" ).
+            build();
+
+        final ObjectNode json = this.serializer.toJson( event );
+
+        assertNotNull( json );
+        assertJson( "testEvent.json", json );
     }
 
     private void assertJson( final String fileName, final JsonNode actualNode )

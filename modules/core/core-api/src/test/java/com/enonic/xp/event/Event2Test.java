@@ -2,15 +2,12 @@ package com.enonic.xp.event;
 
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import com.enonic.xp.content.ContentId;
 
 import static org.junit.Assert.*;
 
 public class Event2Test
 {
-
     @Test
     public void testBuilder()
     {
@@ -44,30 +41,18 @@ public class Event2Test
         final Event2 clonedEvent = Event2.create( event ).build();
 
         assertNotEquals( event, clonedEvent );
-        assertNotEquals( event.getTimestamp(), clonedEvent.getTimestamp() );
+        assertEquals( event.getTimestamp(), clonedEvent.getTimestamp() );
         assertEquals( event.getType(), clonedEvent.getType() );
         assertEquals( event.isDistributed(), clonedEvent.isDistributed() );
         assertEquals( event.getData(), clonedEvent.getData() );
     }
 
     @Test
-    public void testJson()
-        throws Exception
-    {
-
-        JsonNode jsonNode = this.createTestEvent().toJson();
-        System.out.println( jsonNode );
-        assertEquals( "\"type\"", jsonNode.get( "type" ).toString() );
-        assertEquals( true, jsonNode.get( "distributed" ).booleanValue() );
-        assertEquals( "{\"key1\":\"val1\",\"key2\":\"val2\"}", jsonNode.get( "data" ).toString() );
-    }
-
-    @Test
     public void testDataValues()
     {
-        Event2 testEvent = Event2.create( "type" ).
+        final Event2 testEvent = Event2.create( "type" ).
             distributed( true ).
-            value( "int1", new Integer( 1 ) ).
+            value( "int1", 1 ).
             value( "long1", 10L ).
             value( "bool1", false ).
             value( "obj1", this.createTestEvent() ).
@@ -86,22 +71,22 @@ public class Event2Test
     @Test
     public void testGetValueAs()
     {
-        Event2 testEvent = Event2.create( "type" ).
-            value( "int1", new Integer( 1 ) ).
+        final Event2 testEvent = Event2.create( "type" ).
+            value( "int1", 1 ).
             value( "long1", 10L ).
             value( "obj1", ContentId.from( "testId" ) ).
             build();
 
-        assertTrue( testEvent.getValueAs( Double.class, "int1" ).get() instanceof Double );
-        assertTrue( testEvent.getValueAs( Boolean.class, "long1" ).get() instanceof Boolean );
-        assertTrue( testEvent.getValueAs( ContentId.class, "obj1" ).get() instanceof ContentId );
+        assertTrue( testEvent.getValueAs( Double.class, "int1" ).get() != null );
+        assertTrue( testEvent.getValueAs( Boolean.class, "long1" ).get() != null );
+        assertTrue( testEvent.getValueAs( ContentId.class, "obj1" ).get() != null );
         assertFalse( testEvent.getValueAs( ContentId.class, "obj2" ).isPresent() );
     }
 
     @Test
     public void testGetNullValues()
     {
-        Event2 testEvent = Event2.create( "type" ).
+        final Event2 testEvent = Event2.create( "type" ).
             value( "key1", "val1" ).
             build();
 
@@ -112,7 +97,7 @@ public class Event2Test
     @Test
     public void testSubTypes()
     {
-        Event2 testEvent = Event2.create( "type1.type2.type3.type4" ).build();
+        final Event2 testEvent = Event2.create( "type1.type2.type3.type4" ).build();
 
         assertTrue( testEvent.isSubType( "type1" ) );
         assertTrue( testEvent.isSubType( "type1.type2" ) );
@@ -132,9 +117,9 @@ public class Event2Test
     {
         return Event2.create( "type" ).
             distributed( true ).
+            timestamp( 0 ).
             value( "key1", "val1" ).
             value( "key2", "val2" ).
             build();
     }
-
 }
