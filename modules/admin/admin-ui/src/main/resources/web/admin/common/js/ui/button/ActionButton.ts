@@ -8,14 +8,7 @@ module api.ui.button {
         constructor(action: Action, showTooltip: boolean = true) {
             this.action = action;
 
-            var label: string;
-            if (this.action.hasMnemonic()) {
-                label = this.action.getMnemonic().underlineMnemonic(this.action.getLabel());
-            }
-            else {
-                label = this.action.getLabel();
-            }
-            super(label);
+            super(this.createLabel(action));
             this.addClass("action-button");
 
             this.setEnabled(this.action.isEnabled());
@@ -44,11 +37,22 @@ module api.ui.button {
             this.action.onPropertyChanged((action: api.ui.Action) => {
                 this.setEnabled(action.isEnabled());
                 this.setVisible(action.isVisible());
+                this.setLabel(this.createLabel(action));
             });
         }
 
         getTooltip(): Tooltip {
             return this.tooltip;
+        }
+
+        private createLabel(action: Action): string {
+            var label: string;
+            if (action.hasMnemonic()) {
+                label = action.getMnemonic().underlineMnemonic(action.getLabel());
+            } else {
+                label = action.getLabel();
+            }
+            return label;
         }
 
     }

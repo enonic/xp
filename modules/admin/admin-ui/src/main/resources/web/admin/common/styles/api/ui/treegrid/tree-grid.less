@@ -11,9 +11,17 @@
     margin-top: -40px;
     background-color: @admin-bg-almost-white;
 
-    .button {
+    > .button {
       padding: 8px 7px;
       border: none;
+
+      &.fold-button {
+        padding-right: 27px;
+
+        .dropdown {
+          margin: 0 0 0 -2px;
+        }
+      }
 
       &:first-child {
         margin-left: 10px;
@@ -31,13 +39,13 @@
         }
       }
 
-      span {
+      > span {
         color: @admin-button-blue2;
       }
 
       &:hover:not(:disabled) {
 
-        span {
+        > span {
           color: @admin-button-blue3;
         }
       }

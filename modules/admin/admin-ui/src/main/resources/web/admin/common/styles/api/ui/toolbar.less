@@ -6,6 +6,7 @@
   overflow: visible; // for the button glow
   .box-sizing(border-box);
   border-bottom: 1px solid @admin-bg-light-gray;
+  min-width: 150px;
 
   .button {
     .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
@@ -38,10 +39,8 @@
   }
 
   .fold-button {
-    height: @toolbar-height;
-    line-height: @toolbar-height;
-    margin-right: 18px;
-    padding: 0 27px 0 17px;
+    margin-right: 10px;
+    padding-right: 27px;
     text-align: center;
     overflow: visible;
     display: inline-block;
@@ -63,7 +62,7 @@
     .dropdown {
       display: none;
       position: absolute;
-      margin: -1px 0px 0px 8px;
+      margin: 0 0 0 4px;
       left: 0;
       z-index: @z-index-toolbar-element;
       padding: 4px;
