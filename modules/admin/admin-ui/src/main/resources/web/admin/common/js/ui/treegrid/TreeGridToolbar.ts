@@ -9,7 +9,7 @@ module api.ui.treegrid {
         private refreshButton: api.dom.Element;
 
         constructor(actions: TreeGridToolbarActions<any>, treeGrid: TreeGrid<any>) {
-            super();
+            super("tree-grid-toolbar");
 
             this.addActions(actions.getAllActions());
 
