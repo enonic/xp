@@ -119,7 +119,7 @@ public final class Event2
         {
             this( event.type );
             this.distributed = event.distributed;
-            this.timestamp = event.timestamp;
+            this.timestamp = System.currentTimeMillis();
 
             for ( final Map.Entry<String, ?> entry : event.data.entrySet() )
             {
