@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.node.CreateRootNodeParams;
-import com.enonic.xp.node.RootNode;
+import com.enonic.xp.node.Node;
 
 public class CreateRootNodeCommand
     extends AbstractNodeCommand
@@ -25,9 +25,9 @@ public class CreateRootNodeCommand
         return new Builder( source );
     }
 
-    public RootNode execute()
+    public Node execute()
     {
-        final RootNode rootNode = RootNode.create().
+        final Node rootNode = Node.createRoot().
             permissions( params.getPermissions() ).
             childOrder( params.getChildOrder() ).
             build();

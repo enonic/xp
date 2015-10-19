@@ -9,8 +9,8 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.RootNode;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.Assert.*;
@@ -18,6 +18,8 @@ import static org.junit.Assert.*;
 public class ContentServiceImplTest_resolvePublishDependencies
     extends AbstractContentServiceTest
 {
+    private final static NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
+
     @Override
     public void setUp()
         throws Exception
@@ -29,7 +31,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
     public void resolve_single()
         throws Exception
     {
-        nodeService.push( NodeIds.from( RootNode.UUID ), WS_OTHER );
+        nodeService.push( NodeIds.from( ROOT_UUID ), WS_OTHER );
 
         refresh();
 
