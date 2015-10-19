@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.xp.app.ApplicationUpdatedEvent;
+import com.enonic.xp.app.ApplicationEvent;
 import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentCreatedEvent;
 import com.enonic.xp.content.ContentPath;
@@ -19,9 +19,9 @@ public final class EventJsonSerializer
 {
     public ObjectNode toJson( final Event event )
     {
-        if ( event instanceof ApplicationUpdatedEvent )
+        if ( event instanceof ApplicationEvent )
         {
-            return toJson( (ApplicationUpdatedEvent) event );
+            return toJson( (ApplicationEvent) event );
         }
 
         if ( event instanceof ContentUpdatedEvent )
@@ -52,11 +52,11 @@ public final class EventJsonSerializer
         return null;
     }
 
-    private ObjectNode toJson( final ApplicationUpdatedEvent event )
+    private ObjectNode toJson( final ApplicationEvent event )
     {
         final ObjectNode json = newObjectNode();
-        json.put( "eventType", event.getEventType().toString() );
-        json.put( "applicationKey", event.getApplicationKey().toString() );
+        json.put( "eventType", event.getState() );
+        json.put( "applicationKey", event.getKey().toString() );
         return eventWrapper( event, json );
     }
 

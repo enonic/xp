@@ -131,8 +131,8 @@ module api.app {
             if (eventType === 'ContentChangeEvent') {
                 return api.content.ContentServerEvent.fromJson(serverEventJson.event);
             }
-            if (eventType === 'ApplicationUpdatedEvent') {
-                return api.application.ApplicationUpdatedEvent.fromJson(serverEventJson.event);
+            if (eventType === 'ApplicationEvent') {
+                return api.application.ApplicationEvent.fromJson(serverEventJson.event);
             }
             return null;
         }
