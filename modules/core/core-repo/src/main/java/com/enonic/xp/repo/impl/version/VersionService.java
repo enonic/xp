@@ -5,7 +5,7 @@ import com.enonic.xp.repo.impl.InternalContext;
 
 public interface VersionService
 {
-    void store( final NodeVersionDocument nodeVersionDocument, final InternalContext context );
+    void store( final NodeVersionMetadata nodeVersionMetadata, final InternalContext context );
 
     NodeVersionMetadata getVersion( final NodeVersionDocumentId versionId, final InternalContext context );
 }

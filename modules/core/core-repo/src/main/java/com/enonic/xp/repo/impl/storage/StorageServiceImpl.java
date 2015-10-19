@@ -24,7 +24,6 @@ import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.branch.storage.NodesBranchMetadata;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDao;
-import com.enonic.xp.repo.impl.version.NodeVersionDocument;
 import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 import com.enonic.xp.repo.impl.version.VersionService;
 import com.enonic.xp.security.RoleKeys;
@@ -61,7 +60,7 @@ public class StorageServiceImpl
 
     private void storeVersionMetadata( final Node node, final InternalContext context, final NodeVersionId nodeVersionId )
     {
-        this.versionService.store( NodeVersionDocument.create().
+        this.versionService.store( NodeVersionMetadata.create().
             nodeId( node.id() ).
             nodeVersionId( nodeVersionId ).
             nodePath( node.path() ).

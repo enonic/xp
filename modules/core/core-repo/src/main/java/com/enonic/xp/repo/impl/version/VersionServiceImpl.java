@@ -25,9 +25,9 @@ public class VersionServiceImpl
     private StorageDao storageDao;
 
     @Override
-    public void store( final NodeVersionDocument document, final InternalContext context )
+    public void store( final NodeVersionMetadata nodeVersionMetadata, final InternalContext context )
     {
-        final StoreRequest storeRequest = VersionStorageDocFactory.create( document, context.getRepositoryId() );
+        final StoreRequest storeRequest = VersionStorageDocFactory.create( nodeVersionMetadata, context.getRepositoryId() );
 
         this.storageDao.store( storeRequest );
     }
