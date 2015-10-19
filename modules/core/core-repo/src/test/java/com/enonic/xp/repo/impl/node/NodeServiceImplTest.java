@@ -54,6 +54,7 @@ public class NodeServiceImplTest
         this.nodeService.setSnapshotService( this.snapshotService );
         this.nodeService.setStorageService( this.storageService );
         this.nodeService.setSearchService( this.searchService );
+        this.nodeService.setEventPublisher( this.eventPublisher );
 
         this.createDefaultRootNode();
     }
