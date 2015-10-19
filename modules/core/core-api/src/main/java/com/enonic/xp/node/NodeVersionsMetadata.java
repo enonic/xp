@@ -18,7 +18,7 @@ public class NodeVersionsMetadata
     private NodeVersionsMetadata( Builder builder )
     {
         this.nodeId = builder.nodeId;
-        this.nodeVersionMetadatas = ImmutableList.copyOf( builder.nodeVersionMetadatas );
+        this.nodeVersionMetadatas = ImmutableList.copyOf( builder.nodeVersionMetadata );
     }
 
     private NodeVersionsMetadata( final NodeId nodeId, final ImmutableList<NodeVersionMetadata> nodeVersionMetadatas )
@@ -64,7 +64,7 @@ public class NodeVersionsMetadata
 
     public static final class Builder
     {
-        private final List<NodeVersionMetadata> nodeVersionMetadatas = Lists.newLinkedList();
+        private final List<NodeVersionMetadata> nodeVersionMetadata = Lists.newLinkedList();
 
         private final NodeId nodeId;
 
@@ -75,7 +75,7 @@ public class NodeVersionsMetadata
 
         public Builder add( final NodeVersionMetadata nodeVersionMetadata )
         {
-            this.nodeVersionMetadatas.add( nodeVersionMetadata );
+            this.nodeVersionMetadata.add( nodeVersionMetadata );
             return this;
         }
 
