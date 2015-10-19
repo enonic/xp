@@ -6,9 +6,9 @@ import com.enonic.xp.node.RootNode;
 
 public class NodeFactory
 {
-    public static final Node create( final NodeVersion nodeVersion, final BranchNodeVersion branchNodeVersion )
+    public static final Node create( final NodeVersion nodeVersion, final NodeBranchMetadata nodeBranchMetadata )
     {
-        if ( branchNodeVersion.getNodeId().equals( RootNode.UUID ) )
+        if ( nodeBranchMetadata.getNodeId().equals( RootNode.UUID ) )
         {
             return RootNode.create().
                 permissions( nodeVersion.getPermissions() ).
@@ -17,11 +17,11 @@ public class NodeFactory
         }
 
         return Node.create( nodeVersion ).
-            parentPath( branchNodeVersion.getNodePath().getParentPath() ).
-            name( branchNodeVersion.getNodePath().getLastElement().toString() ).
-            timestamp( branchNodeVersion.getTimestamp() ).
-            nodeState( branchNodeVersion.getNodeState() ).
-            nodeVersionId( branchNodeVersion.getVersionId() ).
+            parentPath( nodeBranchMetadata.getNodePath().getParentPath() ).
+            name( nodeBranchMetadata.getNodePath().getLastElement().toString() ).
+            timestamp( nodeBranchMetadata.getTimestamp() ).
+            nodeState( nodeBranchMetadata.getNodeState() ).
+            nodeVersionId( nodeBranchMetadata.getVersionId() ).
             build();
     }
 }

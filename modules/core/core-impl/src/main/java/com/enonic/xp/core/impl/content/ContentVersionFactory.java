@@ -10,7 +10,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.node.NodeVersionsMetaData;
+import com.enonic.xp.node.NodeVersionsMetadataX;
 import com.enonic.xp.security.PrincipalKey;
 
 class ContentVersionFactory
@@ -25,12 +25,12 @@ class ContentVersionFactory
         this.nodeService = nodeService;
     }
 
-    public ContentVersions create( final NodeId nodeId, final NodeVersionsMetaData nodeVersionsMetaData )
+    public ContentVersions create( final NodeId nodeId, final NodeVersionsMetadataX nodeVersionsMetadataX )
     {
         final ContentVersions.Builder contentVersionsBuilder = ContentVersions.create().
             contentId( ContentId.from( nodeId.toString() ) );
 
-        for ( final NodeVersionMetadata nodeVersionMetadata : nodeVersionsMetaData )
+        for ( final NodeVersionMetadata nodeVersionMetadata : nodeVersionsMetadataX )
         {
             contentVersionsBuilder.add( doCreateContentVersion( getNodeVersion( nodeVersionMetadata ) ) );
         }

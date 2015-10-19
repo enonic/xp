@@ -10,7 +10,7 @@ import com.enonic.xp.repo.impl.ReturnValues;
 
 public class NodeBranchVersionFactory
 {
-    public static BranchNodeVersion create( final ReturnValues returnValues )
+    public static NodeBranchMetadata create( final ReturnValues returnValues )
     {
         final Object path = returnValues.getSingleValue( BranchIndexPath.PATH.getPath() );
         final Object state = returnValues.getSingleValue( BranchIndexPath.STATE.getPath() );
@@ -18,7 +18,7 @@ public class NodeBranchVersionFactory
         final Object timestamp = returnValues.getSingleValue( BranchIndexPath.TIMESTAMP.getPath() );
         final Object nodeId = returnValues.getSingleValue( BranchIndexPath.NODE_ID.getPath() );
 
-        return BranchNodeVersion.create().
+        return NodeBranchMetadata.create().
             nodePath( path != null ? NodePath.create( path.toString() ).build() : NodePath.ROOT ).
             nodeState( state != null ? NodeState.from( state.toString() ) : NodeState.DEFAULT ).
             nodeVersionId( NodeVersionId.from( versionId.toString() ) ).

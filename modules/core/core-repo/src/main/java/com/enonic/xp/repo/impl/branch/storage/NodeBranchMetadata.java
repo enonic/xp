@@ -9,7 +9,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
 
-public class BranchNodeVersion
+public class NodeBranchMetadata
 {
     private final NodeVersionId nodeVersionId;
 
@@ -21,7 +21,7 @@ public class BranchNodeVersion
 
     private final NodeId nodeId;
 
-    private BranchNodeVersion( Builder builder )
+    private NodeBranchMetadata( Builder builder )
     {
         this.nodeVersionId = builder.nodeVersionId;
         this.nodeState = builder.state;
@@ -72,7 +72,7 @@ public class BranchNodeVersion
             return false;
         }
 
-        final BranchNodeVersion that = (BranchNodeVersion) o;
+        final NodeBranchMetadata that = (NodeBranchMetadata) o;
 
         if ( nodeVersionId != null ? !nodeVersionId.equals( that.nodeVersionId ) : that.nodeVersionId != null )
         {
@@ -158,10 +158,10 @@ public class BranchNodeVersion
             Preconditions.checkNotNull( this.state, "Nodestate must be set" );
         }
 
-        public BranchNodeVersion build()
+        public NodeBranchMetadata build()
         {
             validate();
-            return new BranchNodeVersion( this );
+            return new NodeBranchMetadata( this );
         }
     }
 }

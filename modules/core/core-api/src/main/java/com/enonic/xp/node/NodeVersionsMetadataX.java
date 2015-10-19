@@ -8,20 +8,20 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 @Beta
-public class NodeVersionsMetaData
+public class NodeVersionsMetadataX
     implements Iterable<NodeVersionMetadata>
 {
     private final NodeId nodeId;
 
     private final ImmutableList<NodeVersionMetadata> nodeVersionMetadatas;
 
-    private NodeVersionsMetaData( Builder builder )
+    private NodeVersionsMetadataX( Builder builder )
     {
         this.nodeId = builder.nodeId;
         this.nodeVersionMetadatas = ImmutableList.copyOf( builder.nodeVersionMetadatas );
     }
 
-    private NodeVersionsMetaData( final NodeId nodeId, final ImmutableList<NodeVersionMetadata> nodeVersionMetadatas )
+    private NodeVersionsMetadataX( final NodeId nodeId, final ImmutableList<NodeVersionMetadata> nodeVersionMetadatas )
     {
         this.nodeId = nodeId;
         this.nodeVersionMetadatas = nodeVersionMetadatas;
@@ -32,9 +32,9 @@ public class NodeVersionsMetaData
         return nodeId;
     }
 
-    public static NodeVersionsMetaData empty()
+    public static NodeVersionsMetadataX empty()
     {
-        return new NodeVersionsMetaData( null, ImmutableList.of() );
+        return new NodeVersionsMetadataX( null, ImmutableList.of() );
     }
 
     public static Builder create( final NodeId nodeId )
@@ -79,9 +79,9 @@ public class NodeVersionsMetaData
             return this;
         }
 
-        public NodeVersionsMetaData build()
+        public NodeVersionsMetadataX build()
         {
-            return new NodeVersionsMetaData( this );
+            return new NodeVersionsMetadataX( this );
         }
     }
 }

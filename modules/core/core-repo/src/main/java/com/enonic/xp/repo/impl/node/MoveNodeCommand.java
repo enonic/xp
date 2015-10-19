@@ -15,8 +15,8 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.branch.storage.BranchNodeVersion;
 import com.enonic.xp.repo.impl.branch.storage.BranchNodeVersions;
+import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.search.SearchService;
@@ -171,9 +171,9 @@ public class MoveNodeCommand
             movedNode = doStore( nodeToMoveBuilder.build(), true );
         }
 
-        for ( final BranchNodeVersion branchNodeVersion : branchNodeVersions )
+        for ( final NodeBranchMetadata nodeBranchMetadata : branchNodeVersions )
         {
-            doMoveNode( nodeToMoveBuilder.build().path(), getNodeName( branchNodeVersion ), branchNodeVersion.getNodeId() );
+            doMoveNode( nodeToMoveBuilder.build().path(), getNodeName( nodeBranchMetadata ), nodeBranchMetadata.getNodeId() );
         }
 
         return movedNode;
@@ -187,9 +187,9 @@ public class MoveNodeCommand
             build(), InternalContext.from( ContextAccessor.current() ) );
     }
 
-    private NodeName getNodeName( final BranchNodeVersion branchNodeVersion )
+    private NodeName getNodeName( final NodeBranchMetadata nodeBranchMetadata )
     {
-        return NodeName.from( branchNodeVersion.getNodePath().getLastElement().toString() );
+        return NodeName.from( nodeBranchMetadata.getNodePath().getLastElement().toString() );
     }
 
     private void verifyNoExistingAtNewPath( final NodePath newParentPath, final NodeName newNodeName )

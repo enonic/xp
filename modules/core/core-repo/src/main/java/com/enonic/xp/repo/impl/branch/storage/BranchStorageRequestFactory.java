@@ -24,7 +24,7 @@ class BranchStorageRequestFactory
     {
         final NodeVersion nodeVersion = doc.getNodeVersion();
 
-        final BranchNodeVersion branchNodeVersion = doc.getBranchNodeVersion();
+        final NodeBranchMetadata nodeBranchMetadata = doc.getNodeBranchMetadata();
 
         final PrincipalKeys principalsWithRead = nodeVersion.getPermissions().getPrincipalsWithPermission( Permission.READ );
 
@@ -32,24 +32,24 @@ class BranchStorageRequestFactory
         principalsWithRead.forEach( ( key ) -> keysAsStrings.add( key.toString() ) );
 
         final StorageData data = StorageData.create().
-            add( BranchIndexPath.VERSION_ID.getPath(), branchNodeVersion.getVersionId().toString() ).
+            add( BranchIndexPath.VERSION_ID.getPath(), nodeBranchMetadata.getVersionId().toString() ).
             add( BranchIndexPath.BRANCH_NAME.getPath(), context.getBranch().getName() ).
             add( BranchIndexPath.NODE_ID.getPath(), nodeVersion.getId().toString() ).
-            add( BranchIndexPath.STATE.getPath(), branchNodeVersion.getNodeState().value() ).
-            add( BranchIndexPath.PATH.getPath(), branchNodeVersion.getNodePath().toString() ).
+            add( BranchIndexPath.STATE.getPath(), nodeBranchMetadata.getNodeState().value() ).
+            add( BranchIndexPath.PATH.getPath(), nodeBranchMetadata.getNodePath().toString() ).
             add( BranchIndexPath.TIMESTAMP.getPath(), nodeVersion.getTimestamp() != null ? nodeVersion.getTimestamp() : Instant.now() ).
             build();
 
         return StoreRequest.create().
             id( new BranchDocumentId( nodeVersion.getId(), context.getBranch() ).toString() ).
-            nodePath( branchNodeVersion.getNodePath() ).
+            nodePath( nodeBranchMetadata.getNodePath() ).
             forceRefresh( false ).
             settings( StorageSettings.create().
                 storageName( StoreStorageName.from( context.getRepositoryId() ) ).
                 storageType( StaticStorageType.BRANCH ).
                 build() ).
             data( data ).
-            parent( new NodeVersionDocumentId( nodeVersion.getId(), branchNodeVersion.getVersionId() ).toString() ).
+            parent( new NodeVersionDocumentId( nodeVersion.getId(), nodeBranchMetadata.getVersionId() ).toString() ).
             routing( nodeVersion.getId().toString() ).
             build();
     }

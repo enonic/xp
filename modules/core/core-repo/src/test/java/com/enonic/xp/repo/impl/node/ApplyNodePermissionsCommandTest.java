@@ -163,7 +163,7 @@ public class ApplyNodePermissionsCommandTest
             execute();
 
         assertEquals( 2, versions.getHits() );
-        final Iterator<NodeVersionMetadata> iterator = versions.getNodeVersionsMetaData().iterator();
+        final Iterator<NodeVersionMetadata> iterator = versions.getNodeVersionsMetadataX().iterator();
         assertTrue( iterator.next().getTimestamp().isAfter( iterator.next().getTimestamp() ) );
     }
 

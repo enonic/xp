@@ -5,11 +5,11 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.repo.impl.branch.storage.BranchNodeVersion;
+import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 public class NodeBranchQueryResult
-    extends AbstractImmutableEntityList<BranchNodeVersion>
+    extends AbstractImmutableEntityList<NodeBranchMetadata>
 {
     private NodeBranchQueryResult( final Builder builder )
     {
@@ -28,12 +28,12 @@ public class NodeBranchQueryResult
 
     public static class Builder
     {
-        private final List<BranchNodeVersion> entries = Lists.newLinkedList();
+        private final List<NodeBranchMetadata> entries = Lists.newLinkedList();
 
 
-        public Builder add( final BranchNodeVersion branchNodeVersion )
+        public Builder add( final NodeBranchMetadata nodeBranchMetadata )
         {
-            this.entries.add( branchNodeVersion );
+            this.entries.add( nodeBranchMetadata );
             return this;
         }
 

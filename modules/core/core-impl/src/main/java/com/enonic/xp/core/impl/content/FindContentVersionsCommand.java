@@ -57,7 +57,7 @@ public class FindContentVersionsCommand
 
         final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.translator, this.nodeService );
 
-        final ContentVersions contentVersions = contentVersionFactory.create( nodeId, nodeVersionQueryResult.getNodeVersionsMetaData() );
+        final ContentVersions contentVersions = contentVersionFactory.create( nodeId, nodeVersionQueryResult.getNodeVersionsMetadataX() );
 
         findContentVersionsResultBuilder.contentVersions( contentVersions );
 

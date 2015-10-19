@@ -10,28 +10,28 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 public class BranchNodeVersions
-    extends AbstractImmutableEntityList<BranchNodeVersion>
+    extends AbstractImmutableEntityList<NodeBranchMetadata>
 {
-    private Map<NodeId, BranchNodeVersion> branchNodeVersionMap = Maps.newHashMap();
+    private Map<NodeId, NodeBranchMetadata> branchNodeVersionMap = Maps.newHashMap();
 
-    private BranchNodeVersions( final ImmutableList<BranchNodeVersion> list )
+    private BranchNodeVersions( final ImmutableList<NodeBranchMetadata> list )
     {
         super( list );
 
-        for ( final BranchNodeVersion branchNodeVersion : list )
+        for ( final NodeBranchMetadata nodeBranchMetadata : list )
         {
-            branchNodeVersionMap.put( branchNodeVersion.getNodeId(), branchNodeVersion );
+            branchNodeVersionMap.put( nodeBranchMetadata.getNodeId(), nodeBranchMetadata );
         }
     }
 
-    public BranchNodeVersion get( final NodeId nodeId )
+    public NodeBranchMetadata get( final NodeId nodeId )
     {
         return branchNodeVersionMap.get( nodeId );
     }
 
-    public static BranchNodeVersions from( final Collection<BranchNodeVersion> branchNodeVersions )
+    public static BranchNodeVersions from( final Collection<NodeBranchMetadata> nodeBranchMetadatas )
     {
-        return new BranchNodeVersions( ImmutableList.copyOf( branchNodeVersions ) );
+        return new BranchNodeVersions( ImmutableList.copyOf( nodeBranchMetadatas ) );
     }
 
 }

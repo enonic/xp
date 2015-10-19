@@ -1,18 +1,18 @@
 package com.enonic.xp.repo.impl.branch;
 
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.repo.impl.branch.storage.BranchNodeVersion;
+import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 
 public class StoreBranchDocument
 {
     private final NodeVersion nodeVersion;
 
-    private final BranchNodeVersion branchNodeVersion;
+    private final NodeBranchMetadata nodeBranchMetadata;
 
-    public StoreBranchDocument( final NodeVersion nodeVersion, final BranchNodeVersion branchNodeVersion )
+    public StoreBranchDocument( final NodeVersion nodeVersion, final NodeBranchMetadata nodeBranchMetadata )
     {
         this.nodeVersion = nodeVersion;
-        this.branchNodeVersion = branchNodeVersion;
+        this.nodeBranchMetadata = nodeBranchMetadata;
     }
 
     public NodeVersion getNodeVersion()
@@ -20,8 +20,8 @@ public class StoreBranchDocument
         return nodeVersion;
     }
 
-    public BranchNodeVersion getBranchNodeVersion()
+    public NodeBranchMetadata getNodeBranchMetadata()
     {
-        return branchNodeVersion;
+        return nodeBranchMetadata;
     }
 }
