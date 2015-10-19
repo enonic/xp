@@ -41,7 +41,6 @@ public class Event2Test
         final Event2 clonedEvent = Event2.create( event ).build();
 
         assertNotEquals( event, clonedEvent );
-        assertNotEquals( event.getTimestamp(), clonedEvent.getTimestamp() );
         assertEquals( event.getType(), clonedEvent.getType() );
         assertEquals( event.isDistributed(), clonedEvent.isDistributed() );
         assertEquals( event.getData(), clonedEvent.getData() );

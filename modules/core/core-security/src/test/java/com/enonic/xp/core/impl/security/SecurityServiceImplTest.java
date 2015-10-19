@@ -6,9 +6,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.NodePath;
@@ -87,6 +89,8 @@ public class SecurityServiceImplTest
 
     private ElasticsearchSearchDao searchDao;
 
+    protected EventPublisher eventPublisher;
+
     @Override
     @Before
     public void setUp()
@@ -128,6 +132,9 @@ public class SecurityServiceImplTest
         this.nodeService.setIndexServiceInternal( indexService );
         this.nodeService.setSearchService( searchService );
         this.nodeService.setStorageService( storageService );
+
+        this.eventPublisher = Mockito.mock( EventPublisher.class );
+        this.nodeService.setEventPublisher( this.eventPublisher );
 
         securityService = new SecurityServiceImpl();
         securityService.setNodeService( this.nodeService );
