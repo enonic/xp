@@ -28,6 +28,19 @@ public class NodeEventsTest
         assertEquals( "/mynode2/child2/to", event.getValue( "toPath" ).get() );
     }
 
+    @Test
+    public void testCreated()
+    {
+        final Node created = createNode( "created", NodePath.create( "/mynode1/child1" ).build() );
+
+        Event2 event = NodeEvents.created( created );
+
+        assertNotNull( event );
+        assertTrue( event.isDistributed() );
+        assertEquals( "/mynode1/child1/created", created.path().toString() );
+        assertEquals( "/mynode1/child1/created", event.getValue( "path" ).get() );
+    }
+
     private Node createNode( final String name, final NodePath root )
     {
         return Node.create().

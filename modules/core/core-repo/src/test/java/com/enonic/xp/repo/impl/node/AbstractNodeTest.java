@@ -188,6 +188,7 @@ public abstract class AbstractNodeTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -223,6 +224,7 @@ public abstract class AbstractNodeTest
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            eventPublisher( this.eventPublisher ).
             params( createParamsWithAnalyzer ).
             build().
             execute();

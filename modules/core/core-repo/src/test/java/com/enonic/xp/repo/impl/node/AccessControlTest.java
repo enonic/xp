@@ -33,6 +33,7 @@ public class AccessControlTest
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setStorageService( storageService );
         this.nodeService.setSearchService( searchService );
+        this.nodeService.setEventPublisher( eventPublisher );
 
         this.createDefaultRootNode();
     }
