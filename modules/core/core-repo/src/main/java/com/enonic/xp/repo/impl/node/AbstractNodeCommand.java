@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.node;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -30,11 +31,14 @@ abstract class AbstractNodeCommand
 
     final SearchService searchService;
 
+    final EventPublisher eventPublisher;
+
     AbstractNodeCommand( final Builder builder )
     {
         this.indexServiceInternal = builder.indexServiceInternal;
         this.storageService = builder.storageService;
         this.searchService = builder.searchService;
+        this.eventPublisher = builder.eventPublisher;
     }
 
     Node doGetById( final NodeId id )
@@ -91,6 +95,8 @@ abstract class AbstractNodeCommand
 
         SearchService searchService;
 
+        EventPublisher eventPublisher;
+
         Builder()
         {
         }
@@ -100,6 +106,7 @@ abstract class AbstractNodeCommand
             this.indexServiceInternal = source.indexServiceInternal;
             this.storageService = source.storageService;
             this.searchService = source.searchService;
+            this.eventPublisher = source.eventPublisher;
         }
 
         @SuppressWarnings("unchecked")
@@ -120,6 +127,13 @@ abstract class AbstractNodeCommand
         public B searchService( final SearchService searchService )
         {
             this.searchService = searchService;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B eventPublisher( final EventPublisher eventPublisher )
+        {
+            this.eventPublisher = eventPublisher;
             return (B) this;
         }
 

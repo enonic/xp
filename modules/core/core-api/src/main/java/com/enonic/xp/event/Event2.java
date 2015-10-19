@@ -22,9 +22,9 @@ public final class Event2
     private Event2( final Builder builder )
     {
         this.type = builder.type;
-        this.timestamp = builder.timestamp;
         this.distributed = builder.distributed;
         this.data = builder.dataBuilder.build();
+        this.timestamp = System.currentTimeMillis();
     }
 
     public String getType()
@@ -105,21 +105,17 @@ public final class Event2
 
         private boolean distributed;
 
-        private long timestamp;
-
         private ImmutableMap.Builder<String, Object> dataBuilder = ImmutableMap.builder();
 
         private Builder( final String type )
         {
             this.type = type;
-            this.timestamp = System.currentTimeMillis();
         }
 
         private Builder( final Event2 event )
         {
             this( event.type );
             this.distributed = event.distributed;
-            this.timestamp = event.timestamp;
 
             for ( final Map.Entry<String, ?> entry : event.data.entrySet() )
             {
@@ -150,13 +146,6 @@ public final class Event2
             dataBuilder.put( key, value.toString() );
             return this;
         }
-
-        public Builder timestamp( final long timestamp )
-        {
-            this.timestamp = timestamp;
-            return this;
-        }
-
 
         public Event2 build()
         {

@@ -11,6 +11,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
@@ -76,6 +77,8 @@ public class NodeServiceImpl
     private StorageService storageService;
 
     private SearchService searchService;
+
+    private EventPublisher eventPublisher;
 
     @Activate
     public void initialize()
@@ -214,6 +217,7 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -277,6 +281,7 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -568,5 +573,11 @@ public class NodeServiceImpl
     public void setSearchService( final SearchService searchService )
     {
         this.searchService = searchService;
+    }
+
+    @Reference
+    public void setEventPublisher( final EventPublisher eventPublisher )
+    {
+        this.eventPublisher = eventPublisher;
     }
 }

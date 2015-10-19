@@ -15,6 +15,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.branch.storage.BranchNodeVersion;
 import com.enonic.xp.repo.impl.branch.storage.BranchNodeVersions;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
@@ -60,6 +61,8 @@ public class MoveNodeCommand
         final Node movedNode = doMoveNode( newParentPath, newNodeName, nodeId );
 
         indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ) );
+
+        this.eventPublisher.publish( NodeEvents.moved( existingNode, movedNode ) );
 
         return movedNode;
     }
