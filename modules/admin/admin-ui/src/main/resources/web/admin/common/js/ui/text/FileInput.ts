@@ -29,7 +29,6 @@ module api.ui.text {
                 operation: api.content.MediaUploaderOperation.create,
                 name: 'file-input-uploader',
                 allowDrop: false,
-                showButtons: false,
                 showResult: false,
                 allowMultiSelection: true,
                 deferred: true  // wait till it's shown

@@ -2,15 +2,11 @@ module app.view.detail {
 
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
-    import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
     import CompareStatus = api.content.CompareStatus;
     import Widget = api.content.Widget;
-    import Dropdown = api.ui.selector.dropdown.Dropdown;
-    import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
-    import Option = api.ui.selector.Option;
-    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import WidgetsSelectionRow = app.view.detail.WidgetsSelectionRow;
 
     export class DetailsPanel extends api.ui.panel.Panel {
 
@@ -63,12 +59,6 @@ module app.view.detail {
                 this.onRendered(() => this.onRenderedHandler());
             }
 
-            this.onShown((event) => {
-                if (this.item) {
-                    this.resetItem();
-                } // this helps to re-init widget view sizes when window size change triggers detail panel to show
-            });
-
             this.onPanelSizeChanged(() => {
                 this.versionsPanel.reRenderActivePanel();
             });
@@ -76,19 +66,7 @@ module app.view.detail {
             var delayedReset = api.util.AppHelper.debounce(this.resetItem.bind(this), 300, false);
             ResponsiveManager.onAvailableSizeChanged(this, delayedReset);
 
-            api.content.ContentsPublishedEvent.on((event: api.content.ContentsPublishedEvent) => {
-                if (this.getItem()) {
-                    // check for item because it can be null after publishing pending for delete item
-                    var itemId = (<ContentSummary>this.getItem().getModel()).getId();
-                    var idPublished = event.getContentIds().some((id, index, array) => {
-                        return itemId === id.toString();
-                    });
-
-                    if (idPublished) {
-                        this.versionsPanel.reloadActivePanel();
-                    }
-                }
-            });
+            this.managePublishEvent();
 
             this.initNameAndIconView(builder.getUseNameAndIconView());
             this.initDefaultWidget();
@@ -103,6 +81,19 @@ module app.view.detail {
             this.appendChild(this.divForNoSelection);
 
             this.layout();
+        }
+
+        private managePublishEvent() {
+            api.content.ContentsPublishedEvent.on((event: api.content.ContentsPublishedEvent) => {
+                var itemId = (<ContentSummary>this.getItem().getModel()).getId();
+                var idPublished = event.getContentIds().some((id, index, array) => {
+                    return itemId === id.toString();
+                });
+
+                if (idPublished) {
+                    this.versionsPanel.reloadActivePanel();
+                }
+            });
         }
 
         private initDivForNoSelection() {
@@ -128,6 +119,22 @@ module app.view.detail {
             this.activeWidget = widgetView;
 
             this.widgetsSelectionRow.updateState(this.activeWidget);
+        }
+
+        getActiveWidget(): WidgetView {
+            return this.activeWidget;
+        }
+
+        setActiveWidgetWithName(value: string) {
+            if (DetailsPanel.DEFAULT_WIDGET_NAME == value) {
+                this.defaultWidgetView.setActive();
+                return;
+            }
+            this.widgetViews.forEach((widgetView: WidgetView) => {
+                if (widgetView.getWidgetName() == value && widgetView != this.activeWidget) {
+                    widgetView.setActive();
+                }
+            });
         }
 
         resetActiveWidget() {
@@ -271,7 +278,7 @@ module app.view.detail {
 
                     this.contentStatus = contentSummaryAndCompareStatus.getCompareStatus();
 
-                    if (this.defaultWidgetView) {
+                    if (this.defaultWidgetView && this.detailsContainer.hasChild(this.defaultWidgetView)) {
                         this.detailsContainer.removeChild(this.defaultWidgetView);
                     }
 
@@ -576,371 +583,11 @@ module app.view.detail {
         }
     }
 
-    export class MobileDetailsPanelToggleButton extends api.dom.DivEl {
-
-        private detailsPanel: DetailsPanel;
-
-        constructor(detailsPanel: DetailsPanel) {
-            super("mobile-details-panel-toggle-button");
-
-            this.detailsPanel = detailsPanel;
-
-            this.onClicked((event) => {
-                this.toggleClass("expanded");
-                if (this.hasClass("expanded")) {
-                    this.detailsPanel.slideIn();
-                } else {
-                    this.detailsPanel.slideOut();
-                }
-            });
-        }
-    }
-
-    export class NonMobileDetailsPanelsToggleButton extends api.dom.DivEl {
-
-        private splitPanelWithGridAndDetails: api.ui.panel.SplitPanel;
-        private defaultDockedDetailsPanel: DetailsPanel;
-        private floatingDetailsPanel: DetailsPanel;
-        private resizeEventMonitorLocked: boolean = false;
-
-        constructor(builder: NonMobileDetailsPanelsToggleButtonBuilder) {
-            super("button non-mobile-details-panel-toggle-button");
-
-            this.splitPanelWithGridAndDetails = builder.getSplitPanelWithGridAndDetails();
-            this.defaultDockedDetailsPanel = builder.getDefaultDetailsPanel();
-            this.floatingDetailsPanel = builder.getFloatingDetailsPanel();
-
-            this.onClicked((event) => {
-                this.toggleClass("expanded");
-
-                if (this.requiresAnimation()) {
-                    this.doPanelAnimation();
-                }
-            });
-
-            this.defaultDockedDetailsPanel.onShown(() => {
-                this.splitPanelWithGridAndDetails.distribute();
-            });
-        }
-
-        handleResizeEvent() {
-            if (!this.resizeEventMonitorLocked) {
-                this.resizeEventMonitorLocked = true;
-                if (this.needsSwitchToFloatingMode() || this.needsSwitchToDockedMode()) {
-                    this.doPanelAnimation();
-                } else if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
-                    this.defaultDockedDetailsPanel.notifyPanelSizeChanged();
-                }
-                setTimeout(() => {
-                    this.resizeEventMonitorLocked = false;
-                }, 600);
-            } else {
-                return;
-            }
-        }
-
-        doPanelAnimation() {
-            if (this.requiresFloatingPanelDueToShortWidth()) {
-                if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
-                    this.dockedToFloatingSync();
-                }
-                if (this.hasClass("expanded")) {
-                    this.floatingDetailsPanel.slideIn();
-                } else {
-                    this.floatingDetailsPanel.slideOut();
-                }
-                this.splitPanelWithGridAndDetails.setActiveWidthPxOfSecondPanel(this.floatingDetailsPanel.getActualWidth());
-
-            } else {
-
-                if (this.floatingPanelIsShown()) {
-                    this.floatingToDockedSync();
-                }
-
-                this.defaultDockedDetailsPanel.addClass("left-bordered");
-
-                if (this.hasClass("expanded")) {
-                    this.splitPanelWithGridAndDetails.showSecondPanel(false);
-                } else if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
-                    this.splitPanelWithGridAndDetails.foldSecondPanel();
-                }
-
-                setTimeout(() => {
-                    this.defaultDockedDetailsPanel.removeClass("left-bordered");
-                    if (this.hasClass("expanded")) {
-                        this.splitPanelWithGridAndDetails.showSplitter();
-                        this.defaultDockedDetailsPanel.notifyPanelSizeChanged();
-                    }
-                }, 500);
-            }
-
-            this.ensureButtonHasCorrectState();
-        }
-
-        hideActivePanel() {
-            this.removeClass("expanded");
-            this.doPanelAnimation();
-        }
-
-        hideDockedDetailsPanel() {
-            this.splitPanelWithGridAndDetails.hideSecondPanel();
-        }
-
-        private dockedToFloatingSync() {
-            var activePanelWidth = this.splitPanelWithGridAndDetails.getActiveWidthPxOfSecondPanel();
-            this.hideDockedDetailsPanel();
-            this.floatingDetailsPanel.setWidthPx(activePanelWidth)
-        }
-
-        private floatingToDockedSync() {
-            this.floatingDetailsPanel.slideOut();
-            var activePanelWidth: number = this.floatingDetailsPanel.getActualWidth();
-            this.splitPanelWithGridAndDetails.setActiveWidthPxOfSecondPanel(activePanelWidth);
-        }
-
-        private needsSwitchToFloatingMode(): boolean {
-            if (this.requiresFloatingPanelDueToShortWidth() && !this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
-                return true;
-            }
-            return false;
-        }
-
-        private needsSwitchToDockedMode(): boolean {
-            if (!this.requiresFloatingPanelDueToShortWidth() && this.splitPanelWithGridAndDetails.isSecondPanelHidden() &&
-                this.hasClass("expanded")) {
-                return true;
-            }
-            return false;
-        }
-
-        private requiresAnimation(): boolean {
-            if (this.hasClass("expanded")) {
-                if (this.splitPanelWithGridAndDetails.isSecondPanelHidden() && !this.floatingPanelIsShown()) {
-                    return true;
-                }
-            } else {
-                if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden() || this.floatingPanelIsShown()) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private floatingPanelIsShown(): boolean {
-            var right = this.floatingDetailsPanel.getHTMLElement().style.right;
-            if (right && right.indexOf("px") > -1) {
-                right = right.substring(0, right.indexOf("px"));
-                return Number(right) >= 0;
-            }
-            return false;
-        }
-
-        private requiresFloatingPanelDueToShortWidth(): boolean {
-            var splitPanelWidth = this.splitPanelWithGridAndDetails.getEl().getWidthWithBorder();
-            if (this.floatingPanelIsShown()) {
-                return ( splitPanelWidth - this.floatingDetailsPanel.getActualWidth() ) < 320;
-            } else {
-                var defaultDetailsPanelWidth = this.splitPanelWithGridAndDetails.getActiveWidthPxOfSecondPanel();
-                return ( splitPanelWidth - defaultDetailsPanelWidth ) < 320;
-            }
-        }
-
-        requiresCollapsedDetailsPanel(): boolean {
-            var splitPanelWidth = this.splitPanelWithGridAndDetails.getEl().getWidthWithBorder();
-            return this.requiresFloatingPanelDueToShortWidth() || ResponsiveRanges._1620_1920.isFitOrSmaller(splitPanelWidth);
-        }
-
-        ensureButtonHasCorrectState() {
-            this.toggleClass("expanded", !this.splitPanelWithGridAndDetails.isSecondPanelHidden() || this.floatingPanelIsShown());
-        }
-
-        static create(): NonMobileDetailsPanelsToggleButtonBuilder {
-            return new NonMobileDetailsPanelsToggleButtonBuilder();
-        }
-    }
-
-    export class NonMobileDetailsPanelsToggleButtonBuilder {
-        private splitPanelWithGridAndDetails: api.ui.panel.SplitPanel;
-        private defaultDockedDetailsPanel: DetailsPanel;
-        private floatingDetailsPanel: DetailsPanel;
-
-        constructor() {
-        }
-
-        setSplitPanelWithGridAndDetails(splitPanelWithGridAndDetails: api.ui.panel.SplitPanel) {
-            this.splitPanelWithGridAndDetails = splitPanelWithGridAndDetails;
-        }
-
-        setDefaultDetailsPanel(defaultDockedDetailsPanel: DetailsPanel) {
-            this.defaultDockedDetailsPanel = defaultDockedDetailsPanel;
-        }
-
-        setFloatingDetailsPanel(floatingDetailsPanel: DetailsPanel) {
-            this.floatingDetailsPanel = floatingDetailsPanel;
-        }
-
-        getSplitPanelWithGridAndDetails(): api.ui.panel.SplitPanel {
-            return this.splitPanelWithGridAndDetails;
-        }
-
-        getDefaultDetailsPanel(): DetailsPanel {
-            return this.defaultDockedDetailsPanel;
-        }
-
-        getFloatingDetailsPanel(): DetailsPanel {
-            return this.floatingDetailsPanel;
-        }
-
-        build(): NonMobileDetailsPanelsToggleButton {
-            return new NonMobileDetailsPanelsToggleButton(this);
-        }
-    }
-
-    export class InfoWidgetToggleButton extends api.dom.DivEl {
-
-        private detailsPanel: DetailsPanel;
-
-        constructor(detailsPanel: DetailsPanel) {
-            super("info-widget-toggle-button");
-
-            this.detailsPanel = detailsPanel;
-
-            this.onClicked((event) => {
-                this.addClass("active");
-                detailsPanel.activateDefaultWidget();
-                /*if (this.hasClass("active")) {
-                 detailsPanel.activateDefaultWidget();
-                 } else {
-                 detailsPanel.activatePreviousWidget();
-                 }*/
-            });
-        }
-
-        setActive() {
-            this.addClass("active");
-        }
-
-        setInactive() {
-            this.removeClass("active");
-        }
-    }
-
     export enum SLIDE_FROM {
 
         LEFT,
         RIGHT,
         BOTTOM,
         TOP,
-    }
-
-    export class WidgetViewOption {
-
-        private widgetView: WidgetView;
-
-        constructor(widgetView: WidgetView) {
-            this.widgetView = widgetView;
-        }
-
-        getWidgetView(): WidgetView {
-            return this.widgetView;
-        }
-
-        toString(): string {
-            return this.widgetView.getWidgetName();
-        }
-
-    }
-
-    export class WidgetsSelectionRow extends api.dom.DivEl {
-
-        private detailsPanel: DetailsPanel;
-
-        private widgetSelectorDropdown: WidgetSelectorDropdown;
-        private infoWidgetToggleButton: InfoWidgetToggleButton;
-
-        constructor(detailsPanel: DetailsPanel) {
-            super("widgets-selection-row");
-
-            this.detailsPanel = detailsPanel;
-
-            this.infoWidgetToggleButton = new InfoWidgetToggleButton(detailsPanel);
-
-            this.widgetSelectorDropdown = new WidgetSelectorDropdown();
-
-            this.widgetSelectorDropdown.addClass("widget-selector");
-            this.widgetSelectorDropdown.getInput().getEl().setDisabled(true);
-            this.widgetSelectorDropdown.getInput().setPlaceholder("");
-
-            this.widgetSelectorDropdown.onOptionSelected((event: OptionSelectedEvent<WidgetViewOption>) => {
-                var widgetView = event.getOption().displayValue.getWidgetView();
-                widgetView.setActive();
-            });
-
-            this.appendChild(this.infoWidgetToggleButton);
-            this.appendChild(this.widgetSelectorDropdown);
-        }
-
-        updateState(widgetView: WidgetView) {
-            if (this.detailsPanel.isDefaultWidget(widgetView)) {
-                this.infoWidgetToggleButton.setActive();
-                this.widgetSelectorDropdown.removeClass("non-default-selected");
-            } else {
-                this.widgetSelectorDropdown.addClass("non-default-selected");
-                this.infoWidgetToggleButton.setInactive();
-            }
-        }
-
-        updateWidgetsDropdown(widgetViews: WidgetView[]) {
-            this.widgetSelectorDropdown.removeAllOptions();
-
-            widgetViews.forEach((view: WidgetView) => {
-
-                var option = {
-                    value: view.getWidgetName(),
-                    displayValue: new WidgetViewOption(view)
-                };
-
-                this.widgetSelectorDropdown.addOption(option);
-            });
-
-            if (this.widgetSelectorDropdown.getOptionCount() < 2) {
-                this.widgetSelectorDropdown.addClass("single-optioned")
-            }
-
-            var visisbleNow = this.isVisible();
-
-            if (visisbleNow) {
-                this.setVisible(false);
-            }
-            this.widgetSelectorDropdown.selectRow(0, true);
-            if (visisbleNow) {
-                this.setVisible(true);
-            }
-        }
-    }
-
-    export class WidgetSelectorDropdown extends Dropdown<WidgetViewOption> {
-
-        constructor() {
-            super("widgetSelector", <DropdownConfig<WidgetViewOption>>{});
-
-            this.onClicked((event) => {
-                if (!this.isDropdownHandle(event.target)) {
-                    if (this.getSelectedOption()) {
-                        var widgetView = this.getSelectedOption().displayValue.getWidgetView();
-                        widgetView.setActive();
-                        this.hideDropdown();
-                    }
-                }
-            });
-        }
-
-        private isDropdownHandle(object: Object) {
-            if (object && object["id"] && object["id"].toString().indexOf("DropdownHandle") > 0) {
-                return true;
-            }
-            return false;
-        }
-
     }
 }

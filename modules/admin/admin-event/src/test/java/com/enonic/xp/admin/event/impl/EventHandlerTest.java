@@ -1,91 +1,95 @@
 package com.enonic.xp.admin.event.impl;
 
-import org.eclipse.jetty.websocket.api.RemoteEndpoint;
-import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.UpgradeRequest;
-import org.eclipse.jetty.websocket.api.UpgradeResponse;
-import org.junit.After;
+import javax.websocket.Endpoint;
+import javax.websocket.RemoteEndpoint;
+import javax.websocket.Session;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
 
 public class EventHandlerTest
 {
     private EventHandler handler;
 
     @Before
-    public void setUp()
+    public void setup()
         throws Exception
     {
-        handler = new EventHandler();
-        handler.init();
-    }
-
-    @After
-    public void tearDown()
-    {
-        this.handler.destroy();
+        this.handler = new EventHandler();
     }
 
     @Test
-    public void sendDataToOpenWebSocket()
+    public void testConfig()
         throws Exception
     {
-        final UpgradeRequest req = mock( UpgradeRequest.class );
-        final UpgradeResponse resp = mock( UpgradeResponse.class );
-        final Session session = mock( Session.class );
-        final RemoteEndpoint remoteEndPoint = mock( RemoteEndpoint.class );
-        when( session.getRemote() ).thenReturn( remoteEndPoint );
-        when( session.isOpen() ).thenReturn( true );
-
-        final EventWebSocket webSocket = (EventWebSocket) handler.createWebSocket( req, resp );
-
-        webSocket.onConnect( session );
-
-        handler.sendToAll( "Hello" );
-
-        verify( remoteEndPoint ).sendString( "Hello" );
+        assertEquals( "/admin/event", this.handler.getPath() );
+        assertEquals( "[text]", this.handler.getSubProtocols().toString() );
     }
 
     @Test
-    public void sendDataToClosedWebSocket()
+    public void testNewEndpoint()
         throws Exception
     {
-        final UpgradeRequest req = mock( UpgradeRequest.class );
-        final UpgradeResponse resp = mock( UpgradeResponse.class );
-        final Session session = mock( Session.class );
-        when( session.isOpen() ).thenReturn( false );
+        final Endpoint e1 = this.handler.newEndpoint();
+        assertNotNull( e1 );
 
-        final EventWebSocket webSocket = (EventWebSocket) handler.createWebSocket( req, resp );
+        final Endpoint e2 = this.handler.newEndpoint();
+        assertNotNull( e2 );
 
-        webSocket.onConnect( session );
-        webSocket.onClose( session, -1, "" );
-
-        handler.sendToAll( "Hello" );
+        assertNotSame( e1, e2 );
     }
 
     @Test
-    public void sendDataToMultipleWebSockets()
+    public void openCloseSocket()
+    {
+        final EventWebSocket socket = (EventWebSocket) this.handler.newEndpoint();
+        assertFalse( socket.isOpen() );
+
+        final Session session = mockSession();
+
+        socket.onOpen( session, null );
+        assertTrue( socket.isOpen() );
+
+        socket.onClose( session, null );
+        assertFalse( socket.isOpen() );
+
+        socket.onOpen( session, null );
+        assertTrue( socket.isOpen() );
+
+        socket.onError( session, null );
+        assertFalse( socket.isOpen() );
+    }
+
+    @Test
+    public void sendToAll()
         throws Exception
     {
-        final UpgradeRequest req = mock( UpgradeRequest.class );
-        final UpgradeResponse resp = mock( UpgradeResponse.class );
-        final UpgradeRequest req2 = mock( UpgradeRequest.class );
-        final UpgradeResponse resp2 = mock( UpgradeResponse.class );
-        final Session session = mock( Session.class );
-        final Session session2 = mock( Session.class );
-        when( session.isOpen() ).thenReturn( false );
-        when( session2.isOpen() ).thenReturn( false );
+        final EventWebSocket socket1 = (EventWebSocket) this.handler.newEndpoint();
+        final Session session1 = mockSession();
+        final RemoteEndpoint.Basic basic1 = Mockito.mock( RemoteEndpoint.Basic.class );
+        Mockito.when( session1.getBasicRemote() ).thenReturn( basic1 );
+        socket1.onOpen( session1, null );
 
-        final EventWebSocket webSocket = (EventWebSocket) handler.createWebSocket( req, resp );
-        final EventWebSocket webSocket2 = (EventWebSocket) handler.createWebSocket( req2, resp2 );
+        final EventWebSocket socket2 = (EventWebSocket) this.handler.newEndpoint();
+        final Session session2 = mockSession();
+        final RemoteEndpoint.Basic basic2 = Mockito.mock( RemoteEndpoint.Basic.class );
+        Mockito.when( session2.getBasicRemote() ).thenReturn( basic2 );
+        socket2.onOpen( session2, null );
 
-        webSocket.onConnect( session );
-        webSocket2.onConnect( session );
+        this.handler.sendToAll( "hello" );
 
-        handler.sendToAll( "Hello" );
+        Mockito.verify( basic1, Mockito.times( 1 ) ).sendText( "hello" );
+        Mockito.verify( basic2, Mockito.times( 1 ) ).sendText( "hello" );
+    }
+
+    private Session mockSession()
+    {
+        final Session session = Mockito.mock( Session.class );
+        Mockito.when( session.isOpen() ).thenReturn( true );
+        return session;
     }
 }
+

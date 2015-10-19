@@ -41,7 +41,7 @@ final class GradlePropertiesProcessor
         this.appNamePropertyValue = applicationName;
         this.displayNamePropertyValue = this.projectNamePropertyValue.isEmpty()
             ? ""
-            : Character.toUpperCase( this.projectNamePropertyValue.charAt( 0 ) ) + this.projectNamePropertyValue.substring( 1 ) + " App";
+            : Character.toUpperCase( this.projectNamePropertyValue.charAt( 0 ) ) + this.projectNamePropertyValue.substring( 1 );
     }
 
     public List<String> process( final List<String> lines )

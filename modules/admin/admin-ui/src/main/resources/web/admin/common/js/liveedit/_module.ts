@@ -59,3 +59,5 @@
 ///<reference path='LiveEditPageViewReadyEvent.ts' />
 ///<reference path='DragAndDrop.ts' />
 ///<reference path='LiveEditPageInitializationErrorEvent.ts' />
+///<reference path='ComponentInspectedEvent.ts' />
+///<reference path='PageInspectedEvent.ts' />

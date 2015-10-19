@@ -41,7 +41,8 @@ module api.liveedit.layout {
 
             super(builder.
                 setTooltipViewer(new LayoutComponentViewer()).
-                setPlaceholder(new LayoutPlaceholder(this)));
+                setPlaceholder(new LayoutPlaceholder(this)).
+                setInspectActionRequired(true));
             this.addClass('layout-view');
 
             this.parseRegions();

@@ -12,7 +12,7 @@ module api.content {
             var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
             loader.setAllowedContentTypes(builder.allowedContentTypes);
 
-            var richComboBoxBuilder = new RichComboBoxBuilder().
+            var richComboBoxBuilder = new RichComboBoxBuilder<ContentSummary>().
                 setComboBoxName(builder.name ? builder.name : 'contentSelector').
                 setLoader(loader).
                 setSelectedOptionsView(new ContentSelectedOptionsView()).

@@ -24,7 +24,8 @@ module api.liveedit.image {
 
             super(builder.setPlaceholder(
                 new ImagePlaceholder(this)).
-                setTooltipViewer(new ImageComponentViewer()));
+                setTooltipViewer(new ImageComponentViewer()).
+                setInspectActionRequired(true));
 
             this.initializeImage();
 

@@ -151,7 +151,6 @@ module app.create {
                     parent: ContentPath.ROOT.toString()
                 },
                 name: 'new-content-uploader',
-                showButtons: false,
                 showResult: false,
                 allowMultiSelection: true,
                 deferred: true  // wait till the window is shown

@@ -7,6 +7,7 @@ import java.io.InputStream;
 
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
+import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,8 +43,6 @@ public class MultipartServiceImplTest
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         multipart.writeTo( out );
 
-        System.out.println( multipart.getContentType() );
-
         Mockito.when( this.req.getContentType() ).thenReturn( multipart.getContentType() );
         final InputStream in = new ByteArrayInputStream( out.toByteArray() );
 
@@ -54,6 +53,24 @@ public class MultipartServiceImplTest
                 throws IOException
             {
                 return in.read();
+            }
+
+            @Override
+            public boolean isFinished()
+            {
+                return false;
+            }
+
+            @Override
+            public boolean isReady()
+            {
+                return false;
+            }
+
+            @Override
+            public void setReadListener( final ReadListener readListener )
+            {
+
             }
         } );
     }

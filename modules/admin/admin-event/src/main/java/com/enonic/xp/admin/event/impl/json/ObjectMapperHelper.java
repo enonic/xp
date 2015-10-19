@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public final class ObjectMapperHelper
 {
@@ -23,7 +23,7 @@ public final class ObjectMapperHelper
         mapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
         mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
         mapper.setSerializationInclusion( JsonInclude.Include.ALWAYS );
-        mapper.registerModule( new JSR310Module() );
+        mapper.registerModule( new JavaTimeModule() );
         return mapper;
     }
 }

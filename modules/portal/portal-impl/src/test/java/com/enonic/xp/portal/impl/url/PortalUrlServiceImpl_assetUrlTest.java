@@ -1,9 +1,13 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.time.Instant;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
@@ -23,19 +27,25 @@ public class PortalUrlServiceImpl_assetUrlTest
             path( "css/my.css" );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "/portal/draft/_/asset/myapplication/css/my.css", url );
+        assertEquals( "/portal/draft/_/asset/myapplication:31556889864403199/css/my.css", url );
     }
 
     @Test
     public void createUrl_withApplication()
     {
+        final ApplicationKey applicationKey = ApplicationKey.from( "otherapplication" );
+        final Application application = Mockito.mock( Application.class );
+        Mockito.when( application.getKey() ).thenReturn( applicationKey );
+        Mockito.when( application.getModifiedTime() ).thenReturn( Instant.MAX );
+        Mockito.when( this.applicationService.getApplication( applicationKey ) ).thenReturn( application );
+
         final AssetUrlParams params = new AssetUrlParams().
             portalRequest( this.portalRequest ).
             application( "otherapplication" ).
             path( "css/my.css" );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "/portal/draft/_/asset/otherapplication/css/my.css", url );
+        assertEquals( "/portal/draft/_/asset/otherapplication:31556889864403199/css/my.css", url );
     }
 
     @Test
@@ -56,37 +66,37 @@ public class PortalUrlServiceImpl_assetUrlTest
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/" );
         String url = this.service.assetUrl( params );
-        assertEquals( "/main/portal/draft/_/asset/myapplication/css/my.css", url );
+        assertEquals( "/main/portal/draft/_/asset/myapplication:31556889864403199/css/my.css", url );
 
         //Calls the method with a virtual mapping /main -> /portal/draft/context
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/portal" );
         url = this.service.assetUrl( params );
-        assertEquals( "/main/draft/_/asset/myapplication/css/my.css", url );
+        assertEquals( "/main/draft/_/asset/myapplication:31556889864403199/css/my.css", url );
 
         //Calls the method with a virtual mapping /main -> /portal/draft/context
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/portal/draft" );
         url = this.service.assetUrl( params );
-        assertEquals( "/main/_/asset/myapplication/css/my.css", url );
+        assertEquals( "/main/_/asset/myapplication:31556889864403199/css/my.css", url );
 
         //Calls the method with a virtual mapping / -> /portal/draft/context
         Mockito.when( virtualHost.getSource() ).thenReturn( "/" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/portal/draft/context" );
         url = this.service.assetUrl( params );
-        assertEquals( "/_/asset/myapplication/css/my.css", url );
+        assertEquals( "/_/asset/myapplication:31556889864403199/css/my.css", url );
 
         //Calls the method with a virtual mapping /main/path -> /portal/draft/context/path
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main/path" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/portal/draft/context/path" );
         url = this.service.assetUrl( params );
-        assertEquals( "/main/path/_/asset/myapplication/css/my.css", url );
+        assertEquals( "/main/path/_/asset/myapplication:31556889864403199/css/my.css", url );
 
         //Calls the method with a virtual mapping /portal/draft/context/path -> /portal/draft/context/path
         Mockito.when( virtualHost.getSource() ).thenReturn( "/portal/draft/context/path" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/portal/draft/context/path" );
         url = this.service.assetUrl( params );
-        assertEquals( "/portal/draft/context/path/_/asset/myapplication/css/my.css", url );
+        assertEquals( "/portal/draft/context/path/_/asset/myapplication:31556889864403199/css/my.css", url );
 
         //Post treatment
         ServletRequestHolder.setRequest( null );
@@ -104,7 +114,7 @@ public class PortalUrlServiceImpl_assetUrlTest
         ServletRequestHolder.setRequest( req );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "http://localhost/portal/draft/_/asset/myapplication/css/my.css", url );
+        assertEquals( "http://localhost/portal/draft/_/asset/myapplication:31556889864403199/css/my.css", url );
     }
 
     @Test
@@ -115,6 +125,6 @@ public class PortalUrlServiceImpl_assetUrlTest
             path( "css/my other & strange.css" );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "/portal/draft/_/asset/myapplication/css/my+other+%26+strange.css", url );
+        assertEquals( "/portal/draft/_/asset/myapplication:31556889864403199/css/my+other+%26+strange.css", url );
     }
 }

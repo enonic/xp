@@ -17,7 +17,7 @@ module app.view {
 
         private previewPanel: ContentItemPreviewPanel;
         private detailsPanel: DetailsPanel = DetailsPanel.create().setUseSplitter(false).setUseNameAndIconView(false).setSlideFrom(app.view.detail.SLIDE_FROM.BOTTOM).build();
-        private detailsToggleButton: app.view.detail.MobileDetailsPanelToggleButton;
+        private detailsToggleButton: app.view.detail.button.MobileDetailsPanelToggleButton;
 
         private mobileBrowseActions: MobileContentTreeGridActions;
         private toolbar: MobileContentBrowseToolbar;
@@ -53,7 +53,7 @@ module app.view {
 
         private initHeader() {
             this.itemHeader.appendChild(this.headerLabel);
-            this.detailsToggleButton = new app.view.detail.MobileDetailsPanelToggleButton(this.detailsPanel);
+            this.detailsToggleButton = new app.view.detail.button.MobileDetailsPanelToggleButton(this.detailsPanel);
             var backButton = new api.dom.DivEl("back-button");
             backButton.onClicked((event) => {
                 this.slideAllOut();
@@ -66,6 +66,7 @@ module app.view {
         }
 
         private initDetailsPanel() {
+            this.detailsPanel.addClass("mobile");
             this.appendChild(this.detailsPanel);
         }
 
@@ -110,7 +111,6 @@ module app.view {
             this.detailsPanel.slideOut();
             this.detailsToggleButton.removeClass("expanded");
         }
-
 
         slideOut() {
             this.getEl().setRightPx(-this.getEl().getWidthWithBorder());

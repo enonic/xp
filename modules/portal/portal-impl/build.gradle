@@ -7,7 +7,7 @@ dependencies {
     testCompile project( ':script:script-impl' )
     testCompile project( ':web:web-impl' )
     testCompile project( path: ':script:script-impl', configuration: 'testOutput' )
-    testCompile project( path: ':web:web-impl', configuration: 'testOutput' )
+    testCompile project( path: ':web:web-jetty', configuration: 'testOutput' )
     testCompile 'com.squareup.okhttp:okhttp:2.5.0'
 }
 
