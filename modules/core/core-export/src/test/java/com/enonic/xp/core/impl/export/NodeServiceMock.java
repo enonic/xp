@@ -48,7 +48,6 @@ import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;
-import com.enonic.xp.node.RootNode;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
@@ -319,7 +318,7 @@ class NodeServiceMock
     }
 
     @Override
-    public RootNode createRootNode( final CreateRootNodeParams params )
+    public Node createRootNode( final CreateRootNodeParams params )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -337,7 +336,7 @@ class NodeServiceMock
     }
 
     @Override
-    public RootNode getRoot()
+    public Node getRoot()
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

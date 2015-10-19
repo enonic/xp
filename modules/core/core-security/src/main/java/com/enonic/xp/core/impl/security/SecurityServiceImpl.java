@@ -37,7 +37,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.RootNode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -142,7 +141,7 @@ public final class SecurityServiceImpl
     @Override
     public UserStoreAccessControlList getDefaultUserStorePermissions()
     {
-        final RootNode rootNode = callWithContext( () -> this.nodeService.getRoot() );
+        final Node rootNode = callWithContext( this.nodeService::getRoot );
 
         return UserStoreNodeTranslator.userStorePermissionsFromNode( rootNode, rootNode, rootNode );
     }
@@ -744,7 +743,7 @@ public final class SecurityServiceImpl
             AccessControlList usersNodePermissions = UserStoreNodeTranslator.userStorePermissionsToUsersNodePermissions( permissions );
             AccessControlList groupsNodePermissions = UserStoreNodeTranslator.userStorePermissionsToGroupsNodePermissions( permissions );
 
-            final RootNode rootNode = nodeService.getRoot();
+            final Node rootNode = nodeService.getRoot();
             userStoreNodePermissions = mergeWithRootPermissions( userStoreNodePermissions, rootNode.getPermissions() );
             usersNodePermissions = mergeWithRootPermissions( usersNodePermissions, rootNode.getPermissions() );
             groupsNodePermissions = mergeWithRootPermissions( groupsNodePermissions, rootNode.getPermissions() );
@@ -824,7 +823,7 @@ public final class SecurityServiceImpl
                 AccessControlList groupsNodePermissions =
                     UserStoreNodeTranslator.userStorePermissionsToGroupsNodePermissions( permissions );
 
-                final RootNode rootNode = nodeService.getRoot();
+                final Node rootNode = nodeService.getRoot();
                 userStoreNodePermissions = mergeWithRootPermissions( userStoreNodePermissions, rootNode.getPermissions() );
                 usersNodePermissions = mergeWithRootPermissions( usersNodePermissions, rootNode.getPermissions() );
                 groupsNodePermissions = mergeWithRootPermissions( groupsNodePermissions, rootNode.getPermissions() );

@@ -73,11 +73,11 @@ public interface NodeService
 
     String getBinaryKey( final NodeId nodeId, final BinaryReference reference );
 
-    RootNode createRootNode( CreateRootNodeParams params );
+    Node createRootNode( CreateRootNodeParams params );
 
     SetNodeStateResult setNodeState( final SetNodeStateParams params );
 
-    RootNode getRoot();
+    Node getRoot();
 
     Node importNode( final ImportNodeParams params );
 
