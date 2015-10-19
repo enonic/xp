@@ -9,12 +9,12 @@ import com.google.common.collect.Maps;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-public class BranchNodeVersions
+public class NodesBranchMetadata
     extends AbstractImmutableEntityList<NodeBranchMetadata>
 {
     private Map<NodeId, NodeBranchMetadata> branchNodeVersionMap = Maps.newHashMap();
 
-    private BranchNodeVersions( final ImmutableList<NodeBranchMetadata> list )
+    private NodesBranchMetadata( final ImmutableList<NodeBranchMetadata> list )
     {
         super( list );
 
@@ -29,9 +29,9 @@ public class BranchNodeVersions
         return branchNodeVersionMap.get( nodeId );
     }
 
-    public static BranchNodeVersions from( final Collection<NodeBranchMetadata> nodeBranchMetadatas )
+    public static NodesBranchMetadata from( final Collection<NodeBranchMetadata> nodeBranchMetadatas )
     {
-        return new BranchNodeVersions( ImmutableList.copyOf( nodeBranchMetadatas ) );
+        return new NodesBranchMetadata( ImmutableList.copyOf( nodeBranchMetadatas ) );
     }
 
 }

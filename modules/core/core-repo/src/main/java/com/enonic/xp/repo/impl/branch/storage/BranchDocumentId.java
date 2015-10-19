@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.branch;
+package com.enonic.xp.repo.impl.branch.storage;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;

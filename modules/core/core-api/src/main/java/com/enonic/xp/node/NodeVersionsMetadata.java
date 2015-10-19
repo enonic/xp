@@ -42,15 +42,6 @@ public class NodeVersionsMetadata
         return new Builder( nodeId );
     }
 
-    public NodeVersionIds getNodeVersionIds()
-    {
-        final NodeVersionIds.Builder builder = NodeVersionIds.create();
-
-        nodeVersionMetadatas.forEach( ( nodeVersion ) -> builder.add( nodeVersion.getNodeVersionId() ) );
-
-        return builder.build();
-    }
-
     @Override
     public Iterator<NodeVersionMetadata> iterator()
     {
