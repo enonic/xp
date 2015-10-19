@@ -14,6 +14,10 @@
   <bundle level="10">org.apache.felix:org.apache.felix.gogo.shell:0.12.0</bundle>
   <bundle level="11">org.apache.felix:org.apache.felix.shell.remote:1.1.2</bundle>
 
+  <!-- JMX bundles -->
+  <bundle level="30">org.apache.aries.jmx:org.apache.aries.jmx.api:1.1.5</bundle>
+  <bundle level="30">org.apache.aries.jmx:org.apache.aries.jmx.whiteboard:1.1.5</bundle>
+
   <!-- Core app dependencies -->
   <bundle level="30">com.google.guava:guava:18.0</bundle>
   <bundle level="30">commons-lang:commons-lang:2.4</bundle>
