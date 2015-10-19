@@ -5,7 +5,7 @@ import com.google.common.annotations.Beta;
 @Beta
 public class NodeVersionQueryResult
 {
-    final NodeVersionsMetadataX nodeVersionsMetadataX;
+    final NodeVersionsMetadata nodeVersionsMetadata;
 
     private final int from;
 
@@ -17,7 +17,7 @@ public class NodeVersionQueryResult
 
     private NodeVersionQueryResult( Builder builder )
     {
-        nodeVersionsMetadataX = builder.nodeVersionsMetadataX;
+        nodeVersionsMetadata = builder.nodeVersionsMetadata;
         from = builder.from;
         size = builder.size;
         totalHits = builder.totalHits;
@@ -27,7 +27,7 @@ public class NodeVersionQueryResult
     public static NodeVersionQueryResult empty()
     {
         return create().
-            entityVersions( NodeVersionsMetadataX.empty() ).
+            entityVersions( NodeVersionsMetadata.empty() ).
             build();
     }
 
@@ -36,9 +36,9 @@ public class NodeVersionQueryResult
         return new Builder();
     }
 
-    public NodeVersionsMetadataX getNodeVersionsMetadataX()
+    public NodeVersionsMetadata getNodeVersionsMetadata()
     {
-        return nodeVersionsMetadataX;
+        return nodeVersionsMetadata;
     }
 
     public long getTotalHits()
@@ -63,7 +63,7 @@ public class NodeVersionQueryResult
 
     public static final class Builder
     {
-        private NodeVersionsMetadataX nodeVersionsMetadataX;
+        private NodeVersionsMetadata nodeVersionsMetadata;
 
         private int from;
 
@@ -77,9 +77,9 @@ public class NodeVersionQueryResult
         {
         }
 
-        public Builder entityVersions( NodeVersionsMetadataX nodeVersionsMetadataX )
+        public Builder entityVersions( NodeVersionsMetadata nodeVersionsMetadata )
         {
-            this.nodeVersionsMetadataX = nodeVersionsMetadataX;
+            this.nodeVersionsMetadata = nodeVersionsMetadata;
             return this;
         }
 

@@ -10,7 +10,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
-import com.enonic.xp.node.NodeVersionsMetadataX;
+import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
@@ -27,16 +27,16 @@ public class NodeVersionQueryResultFactory
         findNodeVersionsResult.from( query.getFrom() );
         findNodeVersionsResult.to( query.getSize() );
 
-        final NodeVersionsMetadataX nodeVersionsMetadataX = buildEntityVersions( query, searchResult );
+        final NodeVersionsMetadata nodeVersionsMetadata = buildEntityVersions( query, searchResult );
 
-        findNodeVersionsResult.entityVersions( nodeVersionsMetadataX );
+        findNodeVersionsResult.entityVersions( nodeVersionsMetadata );
 
         return findNodeVersionsResult.build();
     }
 
-    private static NodeVersionsMetadataX buildEntityVersions( final NodeVersionQuery query, final SearchResult searchResult )
+    private static NodeVersionsMetadata buildEntityVersions( final NodeVersionQuery query, final SearchResult searchResult )
     {
-        final NodeVersionsMetadataX.Builder entityVersionsBuilder = NodeVersionsMetadataX.create( query.getNodeId() );
+        final NodeVersionsMetadata.Builder entityVersionsBuilder = NodeVersionsMetadata.create( query.getNodeId() );
 
         for ( final SearchHit searchHit : searchResult.getResults() )
         {
