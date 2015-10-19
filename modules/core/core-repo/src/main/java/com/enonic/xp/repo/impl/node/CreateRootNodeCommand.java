@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.RootNode;
+import com.enonic.xp.repo.impl.NodeEvents;
 
 public class CreateRootNodeCommand
     extends AbstractNodeCommand
@@ -37,8 +38,11 @@ public class CreateRootNodeCommand
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
+
+        this.eventPublisher.publish( NodeEvents.created( rootNode ) );
 
         return rootNode;
     }
