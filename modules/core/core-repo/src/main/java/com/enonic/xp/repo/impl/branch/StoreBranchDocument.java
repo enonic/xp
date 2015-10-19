@@ -1,57 +1,27 @@
 package com.enonic.xp.repo.impl.branch;
 
-import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.branch.storage.BranchNodeVersion;
 
 public class StoreBranchDocument
 {
-    private final Node node;
+    private final NodeVersion nodeVersion;
 
-    private final NodeVersionId nodeVersionId;
+    private final BranchNodeVersion branchNodeVersion;
 
-    private StoreBranchDocument( final Builder builder )
+    public StoreBranchDocument( final NodeVersion nodeVersion, final BranchNodeVersion branchNodeVersion )
     {
-        this.node = builder.node;
-        this.nodeVersionId = builder.nodeVersionId;
+        this.nodeVersion = nodeVersion;
+        this.branchNodeVersion = branchNodeVersion;
     }
 
-    public Node getNode()
+    public NodeVersion getNodeVersion()
     {
-        return node;
+        return nodeVersion;
     }
 
-    public NodeVersionId getNodeVersionId()
+    public BranchNodeVersion getBranchNodeVersion()
     {
-        return nodeVersionId;
+        return branchNodeVersion;
     }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static class Builder
-    {
-        private Node node;
-
-        private NodeVersionId nodeVersionId;
-
-        public Builder node( final Node node )
-        {
-            this.node = node;
-            return this;
-        }
-
-        public Builder nodeVersionId( final NodeVersionId nodeVersionId )
-        {
-            this.nodeVersionId = nodeVersionId;
-            return this;
-        }
-
-        public StoreBranchDocument build()
-        {
-            return new StoreBranchDocument( this );
-        }
-    }
-
 }

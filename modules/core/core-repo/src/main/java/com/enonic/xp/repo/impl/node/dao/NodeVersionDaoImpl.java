@@ -11,23 +11,24 @@ import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
-import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.repo.impl.blob.Blob;
 import com.enonic.xp.repo.impl.blob.BlobKey;
 import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.repo.impl.blob.file.FileBlobStore;
 import com.enonic.xp.repo.impl.node.NodeConstants;
-import com.enonic.xp.repo.impl.node.json.NodeJsonSerializer;
+import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
 
 @Component
-public class NodeDaoImpl
-    implements NodeDao
+public class NodeVersionDaoImpl
+    implements NodeVersionDao
 {
-    private final NodeJsonSerializer nodeJsonSerializer = NodeJsonSerializer.create( false );
+    private final NodeVersionJsonSerializer nodeVersionJsonSerializer = NodeVersionJsonSerializer.create( false );
 
-    private final BlobStore nodeBlobStore = new FileBlobStore( NodeConstants.NODE_BLOB_STORE_DIR );
+    private final BlobStore nodeVersionBlobStore = new FileBlobStore( NodeConstants.NODE_VERSION_BLOB_STORE_DIR );
 
     @Override
     public NodeVersionId store( final Node node )
@@ -37,60 +38,60 @@ public class NodeDaoImpl
         return NodeVersionId.from( blob.getKey().toString() );
     }
 
-    private Blob doStoreNodeAsBlob( final Node newNode )
+    private Blob doStoreNodeAsBlob( final Node node )
     {
-        final String serializedNode = this.nodeJsonSerializer.toString( newNode );
+        final String serializedNode = this.nodeVersionJsonSerializer.toString( NodeVersion.from( node ) );
 
         try (final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
             serializedNode.getBytes( StandardCharsets.UTF_8 ) ))
         {
-            return nodeBlobStore.addRecord( byteArrayInputStream );
+            return nodeVersionBlobStore.addRecord( byteArrayInputStream );
         }
         catch ( IOException e )
         {
-            throw new RuntimeException( "Failed to create blob for node: " + newNode.toString(), e );
+            throw new RuntimeException( "Failed to create blob for nodeVersion: " + node.toString(), e );
         }
     }
 
     @Override
-    public Nodes get( final NodeVersionIds nodeVersionIds )
+    public NodeVersions get( final NodeVersionIds nodeVersionIds )
     {
         return doGetFromVersionIds( nodeVersionIds );
     }
 
     @Override
-    public Node get( final NodeVersionId nodeVersionId )
+    public NodeVersion get( final NodeVersionId nodeVersionId )
     {
         return doGetByVersionId( nodeVersionId );
     }
 
-    private Node doGetByVersionId( final NodeVersionId nodeVersionId )
+    private NodeVersion doGetByVersionId( final NodeVersionId nodeVersionId )
     {
         final BlobKey blobKey = new BlobKey( nodeVersionId.toString() );
 
-        return getNodeFromBlob( nodeBlobStore.getRecord( blobKey ) );
+        return getNodeFromBlob( nodeVersionBlobStore.getRecord( blobKey ) );
     }
 
-    private Nodes doGetFromVersionIds( final NodeVersionIds nodeVersionIds )
+    private NodeVersions doGetFromVersionIds( final NodeVersionIds nodeVersionIds )
     {
-        final Nodes.Builder nodesBuilder = Nodes.create();
+        NodeVersions.Builder builder = NodeVersions.create();
 
         for ( final NodeVersionId nodeVersionId : nodeVersionIds )
         {
-            final Blob blob = nodeBlobStore.getRecord( new BlobKey( nodeVersionId.toString() ) );
+            final Blob blob = nodeVersionBlobStore.getRecord( new BlobKey( nodeVersionId.toString() ) );
 
             if ( blob == null )
             {
                 throw new NodeNotFoundException( "Blob for node with BlobKey " + nodeVersionId + " not found" );
             }
 
-            nodesBuilder.add( getNodeFromBlob( blob ) );
+            builder.add( getNodeFromBlob( blob ) );
         }
 
-        return nodesBuilder.build();
+        return builder.build();
     }
 
-    private Node getNodeFromBlob( final Blob blob )
+    private NodeVersion getNodeFromBlob( final Blob blob )
     {
         if ( blob == null )
         {
@@ -101,9 +102,7 @@ public class NodeDaoImpl
         {
             final byte[] bytes = ByteStreams.toByteArray( stream );
 
-            final Node node = this.nodeJsonSerializer.toNode( new String( bytes, StandardCharsets.UTF_8 ) );
-
-            return node;
+            return this.nodeVersionJsonSerializer.toNodeVersion( new String( bytes, StandardCharsets.UTF_8 ) );
         }
         catch ( IOException e )
         {

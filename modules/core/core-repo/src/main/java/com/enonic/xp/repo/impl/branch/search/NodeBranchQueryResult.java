@@ -1,20 +1,19 @@
 package com.enonic.xp.repo.impl.branch.search;
 
-import java.util.Set;
+import java.util.List;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
+import com.enonic.xp.repo.impl.branch.storage.BranchNodeVersion;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 public class NodeBranchQueryResult
-    extends AbstractImmutableEntitySet<NodeBranchQueryResultEntry>
+    extends AbstractImmutableEntityList<BranchNodeVersion>
 {
     private NodeBranchQueryResult( final Builder builder )
     {
-        super( ImmutableSet.copyOf( builder.entries ) );
+        super( ImmutableList.copyOf( builder.entries ) );
     }
 
     public static Builder create()
@@ -29,16 +28,12 @@ public class NodeBranchQueryResult
 
     public static class Builder
     {
-        private final Set<NodeBranchQueryResultEntry> entries = Sets.newLinkedHashSet();
+        private final List<BranchNodeVersion> entries = Lists.newLinkedList();
 
 
-        public Builder add( final String nodeId, final String nodeVersionId )
+        public Builder add( final BranchNodeVersion branchNodeVersion )
         {
-            this.entries.add( NodeBranchQueryResultEntry.create().
-                nodeId( NodeId.from( nodeId ) ).
-                nodeVersionId( NodeVersionId.from( nodeVersionId ) ).
-                build() );
-
+            this.entries.add( branchNodeVersion );
             return this;
         }
 

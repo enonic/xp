@@ -7,21 +7,23 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.ReturnValues;
-import com.enonic.xp.repo.impl.storage.GetResult;
 
-class NodeBranchVersionFactory
+public class NodeBranchVersionFactory
 {
-    public static BranchNodeVersion create( final GetResult getResult )
+    public static BranchNodeVersion create( final ReturnValues returnValues )
     {
-        final ReturnValues resultFields = getResult.getReturnValues();
+        final Object path = returnValues.getSingleValue( BranchIndexPath.PATH.getPath() );
+        final Object state = returnValues.getSingleValue( BranchIndexPath.STATE.getPath() );
+        final Object versionId = returnValues.getSingleValue( BranchIndexPath.VERSION_ID.getPath() );
+        final Object timestamp = returnValues.getSingleValue( BranchIndexPath.TIMESTAMP.getPath() );
+        final Object nodeId = returnValues.getSingleValue( BranchIndexPath.NODE_ID.getPath() );
 
         return BranchNodeVersion.create().
-            nodePath( NodePath.create( resultFields.getSingleValue( BranchIndexPath.PATH.getPath() ).toString() ).build() ).
-            nodeState( NodeState.from( resultFields.getSingleValue( BranchIndexPath.STATE.getPath() ).toString() ) ).
-            nodeVersionId( NodeVersionId.from( resultFields.getSingleValue( BranchIndexPath.VERSION_ID.getPath() ).toString() ) ).
-            timestamp( Instant.parse( resultFields.getSingleValue( BranchIndexPath.TIMESTAMP.getPath() ).toString() ) ).
-            nodeId( NodeId.from( resultFields.getSingleValue( BranchIndexPath.NODE_ID.getPath() ).toString() ) ).
+            nodePath( path != null ? NodePath.create( path.toString() ).build() : NodePath.ROOT ).
+            nodeState( state != null ? NodeState.from( state.toString() ) : NodeState.DEFAULT ).
+            nodeVersionId( NodeVersionId.from( versionId.toString() ) ).
+            timestamp( Instant.parse( timestamp.toString() ) ).
+            nodeId( NodeId.from( nodeId.toString() ) ).
             build();
     }
-
 }

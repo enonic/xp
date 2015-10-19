@@ -58,7 +58,7 @@ public class BranchServiceImpl
         final StoreRequest storeRequest = BranchStorageRequestFactory.create( storeBranchDocument, context );
         final String id = this.storageDao.store( storeRequest );
 
-        pathCache.cache( createPath( storeBranchDocument.getNode().path(), context ), id );
+        pathCache.cache( createPath( storeBranchDocument.getBranchNodeVersion().getNodePath(), context ), id );
 
         return id;
     }
@@ -68,10 +68,8 @@ public class BranchServiceImpl
     {
         this.pathCache.evict( createPath( moveBranchDocument.getPreviousPath(), context ) );
 
-        return doStore( StoreBranchDocument.create().
-            node( moveBranchDocument.getNode() ).
-            nodeVersionId( moveBranchDocument.getNodeVersionId() ).
-            build(), context );
+        return doStore( new StoreBranchDocument( moveBranchDocument.getNodeVersion(), moveBranchDocument.getBranchNodeVersion() ),
+                        context );
     }
 
     @Override
@@ -105,7 +103,7 @@ public class BranchServiceImpl
             return null;
         }
 
-        final BranchNodeVersion branchNodeVersion = NodeBranchVersionFactory.create( getResult );
+        final BranchNodeVersion branchNodeVersion = NodeBranchVersionFactory.create( getResult.getReturnValues() );
 
         pathCache.cache( new BranchPath( context.getBranch(), branchNodeVersion.getNodePath() ), getResult.getId() );
 
@@ -185,7 +183,7 @@ public class BranchServiceImpl
 
             doCacheResult( context, getResult );
 
-            return NodeBranchVersionFactory.create( getResult );
+            return NodeBranchVersionFactory.create( getResult.getReturnValues() );
         }
 
         return null;
@@ -199,7 +197,7 @@ public class BranchServiceImpl
 
     private void doCacheResult( final InternalContext context, final GetResult getResult )
     {
-        final BranchNodeVersion branchNodeVersion = NodeBranchVersionFactory.create( getResult );
+        final BranchNodeVersion branchNodeVersion = NodeBranchVersionFactory.create( getResult.getReturnValues() );
 
         pathCache.cache( new BranchPath( context.getBranch(), branchNodeVersion.getNodePath() ), getResult.getId() );
     }

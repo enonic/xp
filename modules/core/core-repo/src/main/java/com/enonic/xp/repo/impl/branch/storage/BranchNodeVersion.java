@@ -2,6 +2,8 @@ package com.enonic.xp.repo.impl.branch.storage;
 
 import java.time.Instant;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
@@ -149,8 +151,16 @@ public class BranchNodeVersion
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkNotNull( this.nodePath, "NodePath must be set" );
+            Preconditions.checkNotNull( this.nodeId, "NodeId must be set" );
+            Preconditions.checkNotNull( this.state, "Nodestate must be set" );
+        }
+
         public BranchNodeVersion build()
         {
+            validate();
             return new BranchNodeVersion( this );
         }
     }

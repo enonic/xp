@@ -44,6 +44,8 @@ public class Node
 
     private final NodeState nodeState;
 
+    private final NodeVersionId nodeVersionId;
+
     protected Node( final Builder builder )
     {
         Preconditions.checkNotNull( builder.permissions, "permissions are required" );
@@ -61,6 +63,7 @@ public class Node
         this.attachedBinaries = builder.attachedBinaries;
         this.nodeState = builder.nodeState;
         this.timestamp = builder.timestamp;
+        this.nodeVersionId = builder.nodeVersionId;
 
         this.path = this.parentPath != null && this.name != null ? new NodePath( this.parentPath, this.name ) : null;
 
@@ -151,6 +154,11 @@ public class Node
         return nodeState;
     }
 
+    public NodeVersionId getNodeVersionId()
+    {
+        return nodeVersionId;
+    }
+
     public void validateForIndexing()
     {
         Preconditions.checkNotNull( this.id, "Id must be set" );
@@ -166,6 +174,20 @@ public class Node
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public static Builder create( final NodeVersion nodeVersion )
+    {
+        return new Builder().
+            id( nodeVersion.getId() ).
+            nodeType( nodeVersion.getNodeType() ).
+            data( nodeVersion.getData() ).
+            indexConfigDocument( nodeVersion.getIndexConfigDocument() ).
+            childOrder( nodeVersion.getChildOrder() ).
+            manualOrderValue( nodeVersion.getManualOrderValue() ).
+            permissions( nodeVersion.getPermissions() ).
+            inheritPermissions( nodeVersion.isInheritPermissions() ).
+            attachedBinaries( nodeVersion.getAttachedBinaries() );
     }
 
     public static Builder create( final NodeId id )
@@ -206,6 +228,8 @@ public class Node
 
         private NodeState nodeState = NodeState.DEFAULT;
 
+        private NodeVersionId nodeVersionId;
+
         public Builder()
         {
             super();
@@ -231,6 +255,7 @@ public class Node
             this.attachedBinaries = node.attachedBinaries;
             this.nodeState = node.nodeState;
             this.timestamp = node.timestamp;
+            this.nodeVersionId = node.nodeVersionId;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -329,6 +354,12 @@ public class Node
             return this;
         }
 
+        public Builder nodeVersionId( final NodeVersionId nodeVersionId )
+        {
+            this.nodeVersionId = nodeVersionId;
+            return this;
+        }
+
         public Node build()
         {
             return new Node( this );
@@ -359,6 +390,7 @@ public class Node
             Objects.equals( permissions, node.permissions ) &&
             Objects.equals( data, node.data ) &&
             Objects.equals( attachedBinaries, node.attachedBinaries ) &&
+            Objects.equals( nodeVersionId, node.nodeVersionId ) &&
             Objects.equals( indexConfigDocument, node.indexConfigDocument );
     }
 
@@ -366,6 +398,6 @@ public class Node
     public int hashCode()
     {
         return Objects.hash( id, name, parentPath, nodeType, inheritPermissions, manualOrderValue, childOrder, permissions, data,
-                             indexConfigDocument, attachedBinaries );
+                             indexConfigDocument, attachedBinaries, nodeVersionId );
     }
 }

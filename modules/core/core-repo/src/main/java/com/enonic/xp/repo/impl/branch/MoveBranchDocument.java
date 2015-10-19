@@ -1,22 +1,37 @@
 package com.enonic.xp.repo.impl.branch;
 
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.branch.storage.BranchNodeVersion;
 
 public class MoveBranchDocument
 {
-    private final Node node;
+    private final NodeVersion nodeVersion;
+
+    private final BranchNodeVersion branchNodeVersion;
 
     private final NodePath previousPath;
 
-    private final NodeVersionId nodeVersionId;
-
     private MoveBranchDocument( Builder builder )
     {
-        node = builder.node;
+        nodeVersion = builder.nodeVersion;
+        branchNodeVersion = builder.branchNodeVersion;
         previousPath = builder.previousPath;
-        nodeVersionId = builder.nodeVersionId;
+    }
+
+    public NodeVersion getNodeVersion()
+    {
+        return nodeVersion;
+    }
+
+    public BranchNodeVersion getBranchNodeVersion()
+    {
+        return branchNodeVersion;
+    }
+
+    public NodePath getPreviousPath()
+    {
+        return previousPath;
     }
 
     public static Builder create()
@@ -24,38 +39,27 @@ public class MoveBranchDocument
         return new Builder();
     }
 
-
-    public Node getNode()
-    {
-        return node;
-    }
-
-
-    public NodePath getPreviousPath()
-    {
-        return previousPath;
-    }
-
-    public NodeVersionId getNodeVersionId()
-    {
-        return nodeVersionId;
-    }
-
     public static final class Builder
     {
-        private Node node;
+        private NodeVersion nodeVersion;
+
+        private BranchNodeVersion branchNodeVersion;
 
         private NodePath previousPath;
-
-        private NodeVersionId nodeVersionId;
 
         private Builder()
         {
         }
 
-        public Builder node( Node node )
+        public Builder nodeVersion( NodeVersion nodeVersion )
         {
-            this.node = node;
+            this.nodeVersion = nodeVersion;
+            return this;
+        }
+
+        public Builder branchNodeVersion( BranchNodeVersion branchNodeVersion )
+        {
+            this.branchNodeVersion = branchNodeVersion;
             return this;
         }
 
@@ -65,15 +69,10 @@ public class MoveBranchDocument
             return this;
         }
 
-        public Builder nodeVersionId( NodeVersionId nodeVersionId )
-        {
-            this.nodeVersionId = nodeVersionId;
-            return this;
-        }
-
         public MoveBranchDocument build()
         {
             return new MoveBranchDocument( this );
         }
     }
 }
+

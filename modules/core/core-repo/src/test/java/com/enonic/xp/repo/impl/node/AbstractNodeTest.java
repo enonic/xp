@@ -35,7 +35,7 @@ import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.xp.repo.impl.elasticsearch.search.ElasticsearchSearchDao;
 import com.enonic.xp.repo.impl.elasticsearch.snapshot.ElasticsearchSnapshotService;
 import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchStorageDao;
-import com.enonic.xp.repo.impl.node.dao.NodeDaoImpl;
+import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
@@ -88,7 +88,7 @@ public abstract class AbstractNodeTest
 
     public BlobStore binaryBlobStore;
 
-    protected NodeDaoImpl nodeDao;
+    protected NodeVersionDaoImpl nodeDao;
 
     protected VersionServiceImpl versionService;
 
@@ -137,13 +137,13 @@ public abstract class AbstractNodeTest
 
         // Storage-service
 
-        this.nodeDao = new NodeDaoImpl();
+        this.nodeDao = new NodeVersionDaoImpl();
 
         this.storageService = new StorageServiceImpl();
         this.storageService.setVersionService( this.versionService );
         this.storageService.setBranchService( this.branchService );
         this.storageService.setIndexServiceInternal( this.indexServiceInternal );
-        this.storageService.setNodeDao( this.nodeDao );
+        this.storageService.setNodeVersionDao( this.nodeDao );
 
         // Search-service
 

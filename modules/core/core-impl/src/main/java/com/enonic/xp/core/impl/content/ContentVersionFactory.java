@@ -1,15 +1,17 @@
 package com.enonic.xp.core.impl.content;
 
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.ContentVersions;
-import com.enonic.xp.node.Node;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionsMetaData;
+import com.enonic.xp.security.PrincipalKey;
 
 class ContentVersionFactory
 {
@@ -30,7 +32,7 @@ class ContentVersionFactory
 
         for ( final NodeVersionMetadata nodeVersionMetadata : nodeVersionsMetaData )
         {
-            contentVersionsBuilder.add( doCreateContentVersion( nodeVersionMetadata, getNode( nodeVersionMetadata ) ) );
+            contentVersionsBuilder.add( doCreateContentVersion( getNodeVersion( nodeVersionMetadata ) ) );
         }
 
         return contentVersionsBuilder.build();
@@ -38,23 +40,23 @@ class ContentVersionFactory
 
     public ContentVersion create( final NodeVersionMetadata nodeVersionMetadata )
     {
-        return doCreateContentVersion( nodeVersionMetadata, getNode( nodeVersionMetadata ) );
+        return doCreateContentVersion( getNodeVersion( nodeVersionMetadata ) );
     }
 
-    private ContentVersion doCreateContentVersion( final NodeVersionMetadata nodeVersionMetadata, final Node node )
+    private ContentVersion doCreateContentVersion( final NodeVersion nodeVersion )
     {
-        final Content content = translator.fromNode( node, false );
+        final PropertyTree data = nodeVersion.getData();
 
         return ContentVersion.create().
+            displayName( data.getProperty( ContentPropertyNames.DISPLAY_NAME ).toString() ).
             comment( "No comments" ).
-            displayName( content.getDisplayName() ).
-            modified( nodeVersionMetadata.getTimestamp() ).
-            modifier( content.getModifier() ).
-            id( ContentVersionId.from( nodeVersionMetadata.getNodeVersionId().toString() ) ).
+            modified( data.getProperty( ContentPropertyNames.MODIFIED_TIME ).getInstant() ).
+            modifier( PrincipalKey.from( data.getProperty( ContentPropertyNames.MODIFIER ).getString() ) ).
+            id( ContentVersionId.from( nodeVersion.getId().toString() ) ).
             build();
     }
 
-    private Node getNode( final NodeVersionMetadata nodeVersionMetadata )
+    private NodeVersion getNodeVersion( final NodeVersionMetadata nodeVersionMetadata )
     {
         return nodeService.getByNodeVersion( nodeVersionMetadata );
     }
