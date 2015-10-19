@@ -27,6 +27,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.blob.Blob;
 import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.security.PrincipalKey;
@@ -103,11 +104,15 @@ public final class CreateNodeCommand
 
         final Node newNode = nodeBuilder.build();
 
-        return StoreNodeCommand.create( this ).
+        final Node createdNode = StoreNodeCommand.create( this ).
             node( newNode ).
             updateMetadataOnly( false ).
             build().
             execute();
+
+        this.eventPublisher.publish( NodeEvents.created( createdNode ) );
+
+        return createdNode;
     }
 
     private AttachedBinaries storeAndAttachBinaries()
