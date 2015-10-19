@@ -419,13 +419,63 @@ module api.liveedit {
             return !this.pageModel || this.pageModel.getMode() == PageMode.NO_CONTROLLER;
         }
 
-        getName(): string {
+        private isContentEmpty() {
             var content = this.liveEditModel.getContent();
-            if (!content || api.util.StringHelper.isEmpty(content.getDisplayName())) {
-                return "[No name]";
+            return (!content || api.util.StringHelper.isEmpty(content.getDisplayName()));
+        }
+
+        getName(): string {
+            if (this.isContentEmpty()) {
+                return this.getNameForEmptyContent();
             } else {
-                return content.getDisplayName();
+                return this.liveEditModel.getContent().getDisplayName();
             }
+        }
+
+        getIconUrl(content: api.content.Content): string {
+            if (!content.isSite() && this.isContentEmpty()) {
+                return "";
+            } else {
+                return new api.content.ContentIconUrlResolver().setContent(content).resolve();
+            }
+        }
+
+        getIconClass(): string {
+            if (this.isContentEmpty()) {
+                return this.getIconClassForEmptyContent();
+            } else {
+                return super.getIconClass();
+            }
+        }
+
+        private getIconClassForEmptyContent(): string {
+            var largeIconCls = " icon-large";
+
+            if (this.pageModel.hasTemplate()) {
+                return "icon-newspaper" + largeIconCls;
+            }
+            if (this.pageModel.isCustomized()) {
+                return "icon-cog" + largeIconCls;
+            }
+            if (this.pageModel.getMode() == PageMode.AUTOMATIC) {
+                return "icon-wand" + largeIconCls;
+            }
+
+            return super.getIconClass();
+        }
+
+        private getNameForEmptyContent(): string {
+            if (this.pageModel.hasTemplate()) {
+                return this.pageModel.getTemplate().getDisplayName();
+            }
+            if (this.pageModel.isCustomized()) {
+                return this.pageModel.getController().getDisplayName();
+            }
+            if (this.pageModel.getMode() == PageMode.AUTOMATIC) {
+                return this.pageModel.getDefaultPageTemplate().getDisplayName();
+            }
+
+            return "[No name]";
         }
 
         getParentItemView(): ItemView {
