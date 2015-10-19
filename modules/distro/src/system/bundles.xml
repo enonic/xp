@@ -39,6 +39,7 @@
   <bundle level="30">${group}:core-impl:${version}</bundle>
   <bundle level="30">${group}:core-mail:${version}</bundle>
   <bundle level="30">${group}:core-elasticsearch:${version}</bundle>
+  <bundle level="30">${group}:core-jmx:${version}</bundle>
 
   <!-- Script app -->
   <bundle level="30">${group}:script-api:${version}</bundle>
