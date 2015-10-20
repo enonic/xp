@@ -2,15 +2,15 @@ package com.enonic.xp.repo.impl.branch.storage;
 
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.RootNode;
+
 
 public class NodeFactory
 {
     public static final Node create( final NodeVersion nodeVersion, final NodeBranchMetadata nodeBranchMetadata )
     {
-        if ( nodeBranchMetadata.getNodeId().equals( RootNode.UUID ) )
+        if ( nodeBranchMetadata.getNodeId().equals( Node.ROOT_UUID ) )
         {
-            return RootNode.create().
+            return Node.createRoot().
                 permissions( nodeVersion.getPermissions() ).
                 childOrder( nodeVersion.getChildOrder() ).
                 build();
