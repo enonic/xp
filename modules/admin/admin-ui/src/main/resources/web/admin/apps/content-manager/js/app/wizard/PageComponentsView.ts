@@ -201,11 +201,8 @@ module app.wizard {
             };
             this.tree.getGrid().subscribeOnClick(this.clickListener);
             this.tree.onSelectionChanged((data, nodes) => {
-                if (nodes.length > 0) {
-
-                    if (this.isModal()) {
-                        this.hide();
-                    }
+                if (nodes.length > 0 && this.isModal()) {
+                    this.hide();
                 }
 
                 this.hideContextMenu();
@@ -379,8 +376,9 @@ module app.wizard {
 
             if (!this.contextMenu) {
                 this.contextMenu = new api.liveedit.ItemViewContextMenu(null, contextMenuActions);
-            }
-            else {
+                this.contextMenu.onShown((event) => this.setMenuOpenStyleOnMenuIcon(row));
+                this.contextMenu.onHidden((event) => this.removeMenuOpenStyleFromMenuIcon());
+            } else {
                 this.contextMenu.setActions(contextMenuActions);
             }
 
@@ -400,8 +398,6 @@ module app.wizard {
             var y = clickPosition.y;
 
             this.contextMenu.showAt(x, y, false);
-
-            this.setMenuOpenStyleOnMenuIcon(row);
         }
 
         private setMenuOpenStyleOnMenuIcon(row: number) {
@@ -417,7 +413,6 @@ module app.wizard {
         private hideContextMenu() {
             if (this.contextMenu && this.contextMenu.isVisible()) {
                 this.contextMenu.hide();
-                this.removeMenuOpenStyleFromMenuIcon();
             }
         }
 
