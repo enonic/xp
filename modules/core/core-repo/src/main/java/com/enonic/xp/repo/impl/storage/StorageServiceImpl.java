@@ -16,7 +16,6 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.RootNode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.MoveBranchDocument;
@@ -209,7 +208,7 @@ public class StorageServiceImpl
 
     private Node populateWithMetaData( final Node node, final BranchNodeVersion branchNodeVersion )
     {
-        if ( node instanceof RootNode )
+        if ( node != null && node.isRoot() )
         {
             return node;
         }
@@ -228,7 +227,7 @@ public class StorageServiceImpl
 
     private Node populateWithMetaData( final Node node, final NodeVersion nodeVersion )
     {
-        if ( node instanceof RootNode )
+        if ( node != null && node.isRoot() )
         {
             return node;
         }

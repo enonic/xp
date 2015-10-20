@@ -2,7 +2,6 @@ module app.create {
 
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
     import Content = api.content.Content;
-    import Attachment = api.content.attachment.Attachment;
 
     export class NewContentEvent extends api.event.Event {
 

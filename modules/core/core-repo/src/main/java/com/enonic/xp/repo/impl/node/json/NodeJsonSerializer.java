@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.RootNode;
 import com.enonic.xp.util.Exceptions;
 
 public final class NodeJsonSerializer
@@ -44,9 +43,9 @@ public final class NodeJsonSerializer
 
             final Node node = nodeJson.fromJson();
 
-            if ( node.id().equals( RootNode.UUID ) )
+            if ( node.isRoot() )
             {
-                return RootNode.create().
+                return Node.createRoot().
                     permissions( node.getPermissions() ).
                     childOrder( node.getChildOrder() ).
                     build();

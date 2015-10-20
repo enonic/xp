@@ -39,8 +39,9 @@
   }
 
   .fold-button {
-    margin-right: 10px;
-    padding-right: 27px;
+    height: @toolbar-height - 1px; // minus border
+    margin-right: 18px;
+    padding: 7px 27px 7px 17px;
     text-align: center;
     overflow: visible;
     display: inline-block;
@@ -62,7 +63,7 @@
     .dropdown {
       display: none;
       position: absolute;
-      margin: 0 0 0 4px;
+      margin: -1px 0px 0px 8px;
       left: 0;
       z-index: @z-index-toolbar-element;
       padding: 4px;
@@ -72,9 +73,6 @@
       .button {
         width: 100%;
         padding: 5px;
-        &:hover {
-          background-color: @admin-bg-light-gray;
-        }
 
         span {
           line-height: 1em;

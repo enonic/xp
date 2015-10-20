@@ -12,7 +12,6 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePublishRequests;
 import com.enonic.xp.node.NodeState;
-import com.enonic.xp.node.RootNode;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.Reference;
@@ -22,6 +21,8 @@ import static org.junit.Assert.*;
 public class ResolveSyncWorkCommandTest
     extends AbstractNodeTest
 {
+    private final static NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
+
     @Before
     public void setUp()
         throws Exception
@@ -70,7 +71,7 @@ public class ResolveSyncWorkCommandTest
         markAsDelete( node3.id() );
 
         final NodeIds result = ResolveSyncWorkCommand.create().
-            nodeId( RootNode.UUID ).
+            nodeId( ROOT_UUID ).
             includeChildren( true ).
             target( WS_OTHER ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -1078,7 +1079,7 @@ public class ResolveSyncWorkCommandTest
 
     private void pushAllNodesInS1S2Tree()
     {
-        pushNodes( NodeIds.from( RootNode.UUID.toString(), "s1", "s2", "a1", "a2", "a2_1", "b1", "b2", "b2_1" ), WS_OTHER );
+        pushNodes( NodeIds.from( ROOT_UUID.toString(), "s1", "s2", "a1", "a2", "a2_1", "b1", "b2", "b2_1" ), WS_OTHER );
     }
 
 

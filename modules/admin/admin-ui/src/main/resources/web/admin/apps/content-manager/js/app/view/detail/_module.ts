@@ -1,8 +1,8 @@
 ///<reference path='button/_module.ts' />
-///<reference path='NonMobileDetailsPanelsManager.ts' />
 ///<reference path='WidgetsSelectionRow.ts' />
 ///<reference path='DetailsPanel.ts' />
 ///<reference path='ActiveDetailsPanelManager.ts' />
+///<reference path='NonMobileDetailsPanelsManager.ts' />
 ///<reference path='WidgetView.ts' />
 ///<reference path='WidgetItemView.ts' />
 ///<reference path='StatusWidgetItemView.ts' />
