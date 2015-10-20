@@ -273,7 +273,6 @@ module app.wizard {
                         }
                     });
 
-                    this.wizardActions.getShowSplitEditAction().execute();
                     responsiveItem.update();
                 });
 
