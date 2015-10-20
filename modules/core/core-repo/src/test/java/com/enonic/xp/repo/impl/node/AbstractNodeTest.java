@@ -204,7 +204,7 @@ public abstract class AbstractNodeTest
     }
 
 
-    protected Node createNode( final CreateNodeParams createNodeParams )
+    protected Node createNode( final CreateNodeParams createNodeParams, final boolean refresh )
     {
         final CreateNodeParams createParamsWithAnalyzer = CreateNodeParams.create( createNodeParams ).
             indexConfigDocument( PatternIndexConfigDocument.create().
@@ -221,9 +221,18 @@ public abstract class AbstractNodeTest
             build().
             execute();
 
-        refresh();
+        if ( refresh )
+        {
+            refresh();
+        }
 
         return createdNode;
+    }
+
+
+    protected Node createNode( final CreateNodeParams createNodeParams )
+    {
+        return createNode( createNodeParams, true );
     }
 
     Node getNodeById( final NodeId nodeId )

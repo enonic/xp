@@ -1,13 +1,11 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
-import java.util.List;
 import java.util.Set;
 
 import org.elasticsearch.common.Strings;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.node.NodeId;
@@ -24,8 +22,10 @@ import com.enonic.xp.repo.impl.cache.PathCacheImpl;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
+import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
 import com.enonic.xp.repo.impl.storage.GetByValuesRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
+import com.enonic.xp.repo.impl.storage.GetResults;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
@@ -111,20 +111,37 @@ public class BranchServiceImpl
     @Override
     public NodesBranchMetadata get( final NodeIds nodeIds, final InternalContext context )
     {
-        List<NodeBranchMetadata> nodeBranchMetadatas = Lists.newLinkedList();
+        final GetByIdsRequest getByIdsRequest = new GetByIdsRequest();
 
         for ( final NodeId nodeId : nodeIds )
         {
-            final NodeBranchMetadata branchVersion = doGetById( nodeId, context );
+            getByIdsRequest.add( GetByIdRequest.create().
+                id( new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
+                storageSettings( createStorageSettings( context ) ).
+                returnFields( BRANCH_RETURN_FIELDS ).
+                routing( nodeId.toString() ).
+                build() );
+        }
 
-            if ( branchVersion != null )
+        final GetResults getResults = this.storageDao.getByIds( getByIdsRequest );
+
+        final NodesBranchMetadata.Builder builder = NodesBranchMetadata.create();
+
+        for ( final GetResult getResult : getResults )
+        {
+            if ( !getResult.isEmpty() )
             {
-                nodeBranchMetadatas.add( branchVersion );
+                final NodeBranchMetadata nodeBranchMetadata = NodeBranchVersionFactory.create( getResult.getReturnValues() );
+
+                pathCache.cache( new BranchPath( context.getBranch(), nodeBranchMetadata.getNodePath() ), getResult.getId() );
+
+                builder.add( nodeBranchMetadata );
             }
         }
 
-        return NodesBranchMetadata.from( nodeBranchMetadatas );
+        return builder.build();
     }
+
 
     @Override
     public NodeBranchMetadata get( final NodePath nodePath, final InternalContext context )

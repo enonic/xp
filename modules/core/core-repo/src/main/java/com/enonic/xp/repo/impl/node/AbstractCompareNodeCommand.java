@@ -13,9 +13,9 @@ import com.enonic.xp.repo.impl.storage.StorageService;
 
 public class AbstractCompareNodeCommand
 {
-    private final Branch target;
+    protected final Branch target;
 
-    private final StorageService storageService;
+    protected final StorageService storageService;
 
     AbstractCompareNodeCommand( Builder builder )
     {
