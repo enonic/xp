@@ -8,7 +8,6 @@ module app.wizard {
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import CompareStatus = api.content.CompareStatus;
     import ContentBuilder = api.content.ContentBuilder;
-    import Attachment = api.content.attachment.Attachment;
     import Thumbnail = api.thumb.Thumbnail;
     import ContentName = api.content.ContentName;
     import ContentUnnamed = api.content.ContentUnnamed;
