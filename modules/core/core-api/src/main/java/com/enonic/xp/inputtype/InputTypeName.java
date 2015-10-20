@@ -45,6 +45,8 @@ public final class InputTypeName
 
     public final static InputTypeName TIME = InputTypeName.from( "Time" );
 
+    public final static InputTypeName ATTACHMENT = InputTypeName.from( "Attachment" );
+
     private final String name;
 
     private InputTypeName( final String name )
