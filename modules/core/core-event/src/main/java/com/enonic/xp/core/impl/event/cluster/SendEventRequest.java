@@ -7,26 +7,26 @@ import org.elasticsearch.common.io.stream.StreamOutput;
 import org.elasticsearch.common.io.stream.Streamable;
 import org.elasticsearch.transport.TransportRequest;
 
-import com.enonic.xp.event.Event;
+import com.enonic.xp.event.Event2;
 
 // See https://github.com/enonic/cms/blob/master/cms-ee/cms-ee-core/src/main/java/com/enonic/cms/ee/cluster/SendClusterEventRequest.java
 public final class SendEventRequest
     extends TransportRequest
     implements Streamable
 {
-    private Event event;
+    private Event2 event;
 
     public SendEventRequest()
     {
         this( null );
     }
 
-    public SendEventRequest( final Event event )
+    public SendEventRequest( final Event2 event )
     {
         this.event = event;
     }
 
-    public Event getEvent()
+    public Event2 getEvent()
     {
         return this.event;
     }
