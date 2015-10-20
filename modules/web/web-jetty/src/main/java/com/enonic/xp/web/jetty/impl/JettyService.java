@@ -9,6 +9,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.web.jetty.impl.configurator.GZipConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.HttpConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.MultipartConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.SessionConfigurator;
@@ -64,6 +65,9 @@ final class JettyService
 
         this.context = new ServletContextHandler( null, "/", ServletContextHandler.SESSIONS );
         new SessionConfigurator().configure( this.config, this.context.getSessionHandler().getSessionManager() );
+        new GZipConfigurator().configure( this.config, this.context );
+
+        new GZipConfigurator().configure( this.config, this.context );
 
         final ServletHolder holder = new ServletHolder( this.dispatcherServlet );
         holder.setAsyncSupported( true );

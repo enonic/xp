@@ -56,4 +56,14 @@ public @interface JettyConfig
      * File size treshold for when to store to disk. 0 means always. Specified in bytes.
      */
     int multipart_fileSizeThreshold() default 0;
+
+    /**
+     * True if GZip should be enabled.
+     */
+    boolean gzip_enabled() default true;
+
+    /**
+     * Content will only be compressed if content length is either unknown or greater than value.
+     */
+    int gzip_minSize() default 16;
 }
