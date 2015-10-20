@@ -3,8 +3,6 @@ package com.enonic.xp.content;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 
-import com.enonic.xp.security.PrincipalKey;
-
 import static java.util.Objects.requireNonNull;
 
 @Beta
@@ -14,12 +12,9 @@ public final class ApplyContentPermissionsParams
 
     private final boolean overwriteChildPermissions;
 
-    private final PrincipalKey modifier;
-
     private ApplyContentPermissionsParams( Builder builder )
     {
         contentId = requireNonNull( builder.contentId );
-        modifier = java.util.Objects.requireNonNull( builder.modifier );
         overwriteChildPermissions = builder.overwriteChildPermissions;
     }
 
@@ -38,11 +33,6 @@ public final class ApplyContentPermissionsParams
         return overwriteChildPermissions;
     }
 
-    public PrincipalKey getModifier()
-    {
-        return modifier;
-    }
-
     @Override
     public boolean equals( final Object o )
     {
@@ -56,8 +46,7 @@ public final class ApplyContentPermissionsParams
         }
         final ApplyContentPermissionsParams that = (ApplyContentPermissionsParams) o;
         return Objects.equal( this.contentId, that.contentId ) &&
-            Objects.equal( this.overwriteChildPermissions, that.overwriteChildPermissions ) &&
-            Objects.equal( this.modifier, that.modifier );
+            Objects.equal( this.overwriteChildPermissions, that.overwriteChildPermissions );
     }
 
     @Override
@@ -72,8 +61,6 @@ public final class ApplyContentPermissionsParams
 
         private boolean overwriteChildPermissions;
 
-        private PrincipalKey modifier;
-
         private Builder()
         {
         }
@@ -87,12 +74,6 @@ public final class ApplyContentPermissionsParams
         public Builder overwriteChildPermissions( final boolean overwriteChildPermissions )
         {
             this.overwriteChildPermissions = overwriteChildPermissions;
-            return this;
-        }
-
-        public Builder modifier( final PrincipalKey modifier )
-        {
-            this.modifier = modifier;
             return this;
         }
 
