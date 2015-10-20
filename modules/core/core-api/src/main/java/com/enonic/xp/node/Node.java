@@ -14,8 +14,10 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.security.acl.AccessControlList;
 
 @Beta
-public class Node
+public final class Node
 {
+    final static NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
+
     private final NodeId id;
 
     private final NodeName name;
@@ -52,8 +54,7 @@ public class Node
         Preconditions.checkNotNull( builder.data, "data are required" );
 
         this.id = builder.id;
-        this.name = builder.name;
-        this.parentPath = builder.parentPath;
+
         this.nodeType = builder.nodeType;
         this.data = builder.data;
         this.childOrder = builder.childOrder;
@@ -65,7 +66,24 @@ public class Node
         this.timestamp = builder.timestamp;
         this.nodeVersionId = builder.nodeVersionId;
 
-        this.path = this.parentPath != null && this.name != null ? new NodePath( this.parentPath, this.name ) : null;
+        if ( ROOT_UUID.equals( this.id ) )
+        {
+            this.parentPath = null;
+            this.path = NodePath.ROOT;
+            this.name = NodeName.ROOT;
+        }
+        else if ( builder.parentPath != null && builder.name != null )
+        {
+            this.parentPath = builder.parentPath;
+            this.name = builder.name;
+            this.path = new NodePath( this.parentPath, this.name );
+        }
+        else
+        {
+            this.parentPath = builder.parentPath;
+            this.name = builder.name;
+            this.path = null;
+        }
 
         if ( builder.indexConfigDocument != null )
         {
@@ -81,7 +99,7 @@ public class Node
 
     public boolean isRoot()
     {
-        return this instanceof RootNode;
+        return ROOT_UUID.equals( this.id );
     }
 
     public NodeName name()
@@ -198,6 +216,11 @@ public class Node
     public static Builder create( final Node node )
     {
         return new Builder( node );
+    }
+
+    public static Builder createRoot()
+    {
+        return new Builder( ROOT_UUID );
     }
 
     public static class Builder
@@ -360,8 +383,17 @@ public class Node
             return this;
         }
 
+        private void validate()
+        {
+            if ( ROOT_UUID.equals( this.id ) )
+            {
+                Preconditions.checkNotNull( this.childOrder );
+            }
+        }
+
         public Node build()
         {
+            this.validate();
             return new Node( this );
         }
     }

@@ -484,7 +484,6 @@ public final class ContentResource
         contentService.applyPermissions( ApplyContentPermissionsParams.create().
             contentId( updatedContent.getId() ).
             overwriteChildPermissions( jsonParams.isOverwriteChildPermissions() ).
-            modifier( modifier ).
             build() );
 
         return new ContentJson( updatedContent, newContentIconUrlResolver(), principalsResolver );

@@ -41,6 +41,8 @@ module api.ui.panel {
 
         private firstPanelIsDecidingPanel: boolean = true;
 
+        private secondPanelShouldSlideRight: boolean = false; //property that indicates to slide second panel instead of hide while in horizontal layout
+
         constructor(firstPanel: Panel, secondPanel: Panel) {
             this.firstPanel = firstPanel;
             this.secondPanel = secondPanel;
@@ -96,6 +98,11 @@ module api.ui.panel {
             return this;
         }
 
+        setSecondPanelShouldSlideRight(value: boolean): SplitPanelBuilder {
+            this.secondPanelShouldSlideRight = value;
+            return this;
+        }
+
         getFirstPanel(): Panel {
             return this.firstPanel;
         }
@@ -146,6 +153,10 @@ module api.ui.panel {
 
         isFirstPanelDecidingPanel(): boolean {
             return this.firstPanelIsDecidingPanel;
+        }
+
+        isSecondPanelShouldSlideRight(): boolean {
+            return this.secondPanelShouldSlideRight;
         }
     }
 
@@ -203,6 +214,8 @@ module api.ui.panel {
 
         private animationDelay: number;
 
+        private secondPanelShouldSlideRight: boolean;
+
         constructor(builder: SplitPanelBuilder) {
             super("split-panel");
             this.firstPanel = builder.getFirstPanel();
@@ -212,6 +225,7 @@ module api.ui.panel {
             this.secondPanelMinSize = builder.getSecondPanelMinSize();
             this.secondPanelUnit = builder.getSecondPanelUnit();
             this.animationDelay = builder.getAnimationDelay();
+            this.secondPanelShouldSlideRight = builder.isSecondPanelShouldSlideRight();
             this.firstPanelIsHidden = false;
             this.secondPanelIsHidden = false;
             this.firstPanelIsFullScreen = false;
@@ -540,6 +554,10 @@ module api.ui.panel {
 
             this.secondPanelIsHidden = false;
             this.distribute();
+
+            if (this.secondPanelShouldSlideRight) {
+                this.slideInSecondPanelFromRight();
+            }
         }
 
         hideFirstPanel() {
@@ -575,6 +593,10 @@ module api.ui.panel {
             this.splitterIsHidden = true;
             this.splitter.hide();
 
+            if (this.secondPanelShouldSlideRight) {
+                this.slideOutSecondPanelRight();
+            }
+
             this.hiddenSecondPanelPreviousSize = this.secondPanelSize;
             this.secondPanelSize = 0;
 
@@ -605,6 +627,14 @@ module api.ui.panel {
 
         isSecondPanelHidden() {
             return this.secondPanelIsHidden;
+        }
+
+        private slideInSecondPanelFromRight() {
+            this.secondPanel.getEl().setRightPx(0);
+        }
+
+        private slideOutSecondPanelRight() {
+            this.secondPanel.getEl().setRightPx(-this.secondPanel.getEl().getWidthWithBorder());
         }
 
         private getUnitString(panelNumber: number): string {

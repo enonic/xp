@@ -19,7 +19,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.RootNode;
 import com.enonic.xp.query.Direction;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -79,11 +78,11 @@ public final class ContentInitializer
 
     public final void initialize()
     {
-        final RootNode rootNode = runAsAdmin( this::doInitNodeRoot );
+        final Node rootNode = runAsAdmin( this::doInitNodeRoot );
         runAsAdmin( () -> this.doInitContentRootNode( rootNode ) );
     }
 
-    private void doInitContentRootNode( final RootNode rootNode )
+    private void doInitContentRootNode( final Node rootNode )
     {
         final Node contentRootNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
 
@@ -145,13 +144,13 @@ public final class ContentInitializer
             build();
     }
 
-    private RootNode doInitNodeRoot()
+    private Node doInitNodeRoot()
     {
-        final RootNode existingRoot = this.nodeService.getRoot();
+        final Node existingRoot = this.nodeService.getRoot();
 
         if ( existingRoot == null )
         {
-            final RootNode rootNode = this.nodeService.createRootNode( CreateRootNodeParams.create().
+            final Node rootNode = this.nodeService.createRootNode( CreateRootNodeParams.create().
                 childOrder( ChildOrder.from( "_name ASC" ) ).
                 permissions( CONTENT_REPO_DEFAULT_ACL ).
                 build() );
