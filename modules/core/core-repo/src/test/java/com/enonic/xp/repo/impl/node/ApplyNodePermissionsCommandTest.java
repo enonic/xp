@@ -116,7 +116,6 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsParams params = ApplyNodePermissionsParams.create().
             nodeId( topNode.id() ).
-            modifier( user1 ).
             overwriteChildPermissions( true ).
             build();
 
@@ -237,7 +236,6 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsParams params = ApplyNodePermissionsParams.create().
             nodeId( topNode.id() ).
-            modifier( user1 ).
             overwriteChildPermissions( false ).
             build();
         final int appliedNodeCount = ApplyNodePermissionsCommand.create().
