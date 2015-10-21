@@ -6,7 +6,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.repo.impl.NodeEvents;
 
 final class DeleteNodeByPathCommand
     extends AbstractDeleteNodeCommand
@@ -32,8 +31,6 @@ final class DeleteNodeByPathCommand
         {
             deleteNodeWithChildren( node, context );
         }
-
-        this.eventPublisher.publish( NodeEvents.deleted( node ) );
 
         return node;
     }
