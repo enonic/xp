@@ -507,10 +507,7 @@ module app.browse {
                                 if (publishResult[i].getId() === el.getId()) {
                                     new api.content.ContentPublishedEvent(new api.content.ContentId(el.getId())).fire();
                                     publishResult[i].updateNodeData(el);
-
-                                    var selectedItems = this.getBrowseItemPanel().getItems();
-                                    var viewItem = selectedItems[selectedItems.length - 1].toViewItem();
-                                    this.updateDetailsPanels(el.getContentId(), el.getCompareStatus(), viewItem);
+                                    this.updateDetailsPanels(el.getContentId(), el.getCompareStatus());
                                     break;
                                 }
                             }
@@ -564,10 +561,11 @@ module app.browse {
         }
 
         private updateDetailsPanels(contentId: ContentId, status: CompareStatus, viewItem?: api.app.view.ViewItem<ContentSummary>) {
-
-            this.defaultDockedDetailsPanel.setItem(viewItem);
-            this.floatingDetailsPanel.setItem(viewItem);
-            this.mobileContentItemStatisticsPanel.setItem(viewItem);
+            if (viewItem !== undefined) {
+                this.defaultDockedDetailsPanel.setItem(viewItem);
+                this.floatingDetailsPanel.setItem(viewItem);
+                this.mobileContentItemStatisticsPanel.setItem(viewItem);
+            }
 
             this.updateDetailsPanelContentStatus(this.defaultDockedDetailsPanel, contentId, status);
             this.updateDetailsPanelContentStatus(this.floatingDetailsPanel, contentId, status);
@@ -575,7 +573,8 @@ module app.browse {
         }
 
         private updateDetailsPanelContentStatus(detailsPanel: DetailsPanel, contentId: ContentId, status: CompareStatus) {
-            if (contentId && contentId.equals(detailsPanel.getItem().getModel().getContentId())) {
+            var item = detailsPanel.getItem();
+            if (contentId && item && contentId.equals(item.getModel().getContentId())) {
                 detailsPanel.setContentStatus(status);
             }
         }
