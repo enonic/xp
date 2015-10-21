@@ -118,7 +118,7 @@ module api {
          */
         static distanceTo(instance: any, clazz: Function): number {
 
-            if (instance.constructor.name === (<any>clazz).name) {
+            if (ClassHelper.getClassName(instance) === ClassHelper.getFunctionName(clazz)) {
                 return 0;
             }
 
@@ -131,10 +131,11 @@ module api {
                 }
                 distance++;
             }
-            while (prototype.constructor.name !== (<any>clazz).name);
+            while (ClassHelper.getClassName(instance) !== ClassHelper.getFunctionName(clazz));
 
             return distance;
         }
+
     }
 
 }
