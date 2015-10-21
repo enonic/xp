@@ -469,7 +469,7 @@ module api.liveedit {
                 return this.pageModel.getTemplate().getDisplayName();
             }
             if (this.pageModel.isCustomized()) {
-                return this.pageModel.getController().getDisplayName();
+                return this.pageModel.hasController() ? this.pageModel.getController().getDisplayName() : "Custom";
             }
             if (this.pageModel.getMode() == PageMode.AUTOMATIC) {
                 return this.pageModel.getDefaultPageTemplate().getDisplayName();
