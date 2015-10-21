@@ -15,9 +15,7 @@ module api.ui.toolbar {
             this.fold.hide();
             this.appendChild(this.fold);
 
-            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
-                this.foldOrExpand();
-            });
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item) => this.foldOrExpand());
 
             this.onShown((event) => this.foldOrExpand());
         }
@@ -25,12 +23,12 @@ module api.ui.toolbar {
         addAction(action: api.ui.Action) {
             this.actions.push(action);
             this.addElement(new api.ui.button.ActionButton(action));
+            action.onPropertyChanged((action) => this.foldOrExpand());
         }
 
         addActions(actions: api.ui.Action[]) {
-            this.actions = this.actions.concat(actions);
             actions.forEach((action) => {
-                this.addElement(new api.ui.button.ActionButton(action));
+                this.addAction(action);
             });
         }
 
@@ -74,12 +72,12 @@ module api.ui.toolbar {
             }
 
             var toolbarWidth = this.getEl().getWidth();
-            if (toolbarWidth < this.getVisibleButtonsWidth()) {
+            if (toolbarWidth <= this.getVisibleButtonsWidth()) {
 
                 while (toolbarWidth <= this.getVisibleButtonsWidth() && this.getNextFoldableButton()) {
 
                     var buttonToHide = this.getNextFoldableButton();
-                    var buttonWidth = buttonToHide.getEl().getWidthWithBorder();
+                    var buttonWidth = buttonToHide.getEl().getWidthWithMargin();
 
                     this.removeChild(buttonToHide);
                     this.fold.push(buttonToHide, buttonWidth);
