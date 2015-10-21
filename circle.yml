@@ -1,7 +1,0 @@
-machine:
-  java:
-    version: oraclejdk8
-
-test:
-  post:
-    - ./gradlew clean build
