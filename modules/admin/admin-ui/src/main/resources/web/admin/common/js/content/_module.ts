@@ -23,6 +23,7 @@
 ///<reference path='TreeNodesOfContentPath.ts' />
 ///<reference path='TreeNodeParentOfContent.ts' />
 
+///<reference path='OpenEditPermissionsDialogEvent.ts' />
 ///<reference path='ContentServerEvent.ts' />
 ///<reference path='ContentChangeResult.ts' />
 ///<reference path='ContentResourceRequest.ts' />

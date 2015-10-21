@@ -8,3 +8,5 @@
 ///<reference path='StatusWidgetItemView.ts' />
 ///<reference path='PropertiesWidgetItemView.ts' />
 ///<reference path='WidgetViewToggleButton.ts' />
+///<reference path='UserAccessWidgetItemView.ts' />
+
