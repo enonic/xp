@@ -231,6 +231,7 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -243,6 +244,7 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
