@@ -429,12 +429,14 @@ module app.wizard.page {
             this.liveEditPageProxy.onComponentInspected((event: ComponentInspectedEvent) => {
                 var componentView = event.getComponentView();
                 if (!componentView.isEmpty()) {
+                    this.contentWizardPanel.getContextWindowToggler().setActive(true);
                     this.contextWindow.slideIn();
                     this.inspectComponent(componentView);
                 }
             });
 
             this.liveEditPageProxy.onPageInspected((event: PageInspectedEvent) => {
+                this.contentWizardPanel.getContextWindowToggler().setActive(true);
                 this.contextWindow.slideIn();
                 this.inspectPage();
             });
