@@ -3,7 +3,7 @@ package com.enonic.xp.site.filter;
 public class FilterDescriptor
 {
 
-    private final FilterType filterType;
+    private final FilterType type;
 
     private final String name;
 
@@ -11,14 +11,14 @@ public class FilterDescriptor
 
     private FilterDescriptor( final Builder builder )
     {
-        this.filterType = builder.filterType;
+        this.type = builder.type;
         this.name = builder.name;
         this.order = builder.order;
     }
 
-    public FilterType getFilterType()
+    public FilterType getType()
     {
-        return filterType;
+        return type;
     }
 
     public String getName()
@@ -38,16 +38,15 @@ public class FilterDescriptor
 
     public static class Builder
     {
-        private FilterType filterType = FilterType.RESPONSE;
+        private FilterType type = FilterType.RESPONSE;
 
         private String name;
 
         private int order;
 
-        @SuppressWarnings("unused")
-        public Builder filterType( final FilterType filterType )
+        public Builder type( final FilterType type )
         {
-            this.filterType = filterType;
+            this.type = type;
             return this;
         }
 

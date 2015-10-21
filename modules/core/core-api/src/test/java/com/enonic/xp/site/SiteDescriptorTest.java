@@ -24,6 +24,7 @@ public class SiteDescriptorTest
         SiteDescriptor siteDescriptor = SiteDescriptor.create().build();
         assertEquals( null, siteDescriptor.getForm() );
         assertEquals( null, siteDescriptor.getMetaSteps() );
+        assertNotNull( siteDescriptor.getFilterDescriptors() );
     }
 
     @Test

@@ -20,7 +20,7 @@ public final class SiteDescriptor
     {
         this.form = builder.form;
         this.metaSteps = builder.metaSteps;
-        this.filterDescriptors = builder.filterDescriptors;
+        this.filterDescriptors = builder.filterDescriptors != null ? builder.filterDescriptors : FilterDescriptors.empty();
     }
 
     public Form getForm()
