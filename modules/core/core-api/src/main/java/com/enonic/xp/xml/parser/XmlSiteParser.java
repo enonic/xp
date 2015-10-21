@@ -11,6 +11,7 @@ import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.filter.FilterDescriptor;
 import com.enonic.xp.site.filter.FilterDescriptors;
+import com.enonic.xp.site.filter.FilterType;
 import com.enonic.xp.xml.DomElement;
 
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
@@ -86,6 +87,7 @@ public final class XmlSiteParser
             builder.order( Integer.parseInt( filterElement.getAttribute( FILTER_DESCRIPTOR_ORDER_ATTRIBUTE ) ) );
         }
         builder.name( filterElement.getAttribute( FILTER_DESCRIPTOR_NAME_ATTRIBUTE ) );
+        builder.type( FilterType.RESPONSE );
         return builder.build();
     }
 }
