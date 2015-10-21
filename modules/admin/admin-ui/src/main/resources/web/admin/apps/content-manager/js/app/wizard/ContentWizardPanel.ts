@@ -871,6 +871,11 @@ module app.wizard {
             }
         }
 
+        public getCurrentContent(): Content {
+            var persistedContent: Content = this.getPersistedItem();
+            return this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
+        }
+
         private assembleViewedContent(viewedContentBuilder: ContentBuilder): ContentBuilder {
 
             viewedContentBuilder.setName(this.resolveContentNameForUpdateRequest());
@@ -1190,6 +1195,10 @@ module app.wizard {
             this.liveEditModel.getPageModel().onPageModeChanged(()=> {
                 this.previewAction.setEnabled(!this.contentNotRenderable());
             });
+        }
+
+        public getHeader(): WizardHeaderWithDisplayNameAndName {
+            return this.contentWizardHeader;
         }
     }
 
