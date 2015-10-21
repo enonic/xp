@@ -16,7 +16,7 @@ import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 @Component(immediate = true, service = Filter.class,
     property = {"osgi.http.whiteboard.filter.pattern=/", "service.ranking:Integer=20"})
-public final class VirtualHostHandler
+public final class VirtualHostFilter
     extends OncePerRequestFilter
 {
     private VirtualHostConfig config;

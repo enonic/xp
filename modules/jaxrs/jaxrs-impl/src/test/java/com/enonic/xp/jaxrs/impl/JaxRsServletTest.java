@@ -8,16 +8,16 @@ import com.squareup.okhttp.Response;
 
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 
-public class JaxRsHandlerTest
+public class JaxRsServletTest
     extends JettyTestSupport
 {
-    private JaxRsHandler servlet;
+    private JaxRsServlet servlet;
 
     @Override
     protected void configure()
         throws Exception
     {
-        this.servlet = new JaxRsHandler();
+        this.servlet = new JaxRsServlet();
         addServlet( this.servlet, "/*" );
         this.servlet.addComponent( new TestErrorHandler() );
     }

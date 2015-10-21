@@ -15,9 +15,9 @@ import com.enonic.xp.web.vhost.impl.config.VirtualHostConfig;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMappings;
 
-public class VirtualHostHandlerTest
+public class VirtualHostFilterTest
 {
-    private VirtualHostHandler filter;
+    private VirtualHostFilter filter;
 
     private VirtualHostConfig config;
 
@@ -40,7 +40,7 @@ public class VirtualHostHandlerTest
         this.config = Mockito.mock( VirtualHostConfig.class );
         Mockito.when( this.config.getMappings() ).thenReturn( this.mappings );
 
-        this.filter = new VirtualHostHandler();
+        this.filter = new VirtualHostFilter();
         this.filter.setConfig( this.config );
     }
 

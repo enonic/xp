@@ -12,13 +12,13 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.xp.context.ContextAccessor;
 
-public class ContextHandlerTest
+public class ContextFilterTest
 {
     @Test
     public void testHandle()
         throws Exception
     {
-        final ContextHandler filter = new ContextHandler();
+        final ContextFilter filter = new ContextFilter();
 
         Assert.assertNull( ContextAccessor.current().getLocalScope().getSession() );
 

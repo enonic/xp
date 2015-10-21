@@ -24,10 +24,10 @@ import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 
 import static org.junit.Assert.*;
 
-public class PortalDispatcherTest
+public class PortalServletTest
     extends JettyTestSupport
 {
-    private PortalDispatcher servlet;
+    private PortalServlet servlet;
 
     private TestPortalHandler handler;
 
@@ -37,7 +37,7 @@ public class PortalDispatcherTest
     {
         this.handler = new TestPortalHandler();
 
-        this.servlet = new PortalDispatcher();
+        this.servlet = new PortalServlet();
         this.servlet.addHandler( this.handler );
         this.servlet.setExceptionRenderer( new ExceptionRendererImpl() );
 
