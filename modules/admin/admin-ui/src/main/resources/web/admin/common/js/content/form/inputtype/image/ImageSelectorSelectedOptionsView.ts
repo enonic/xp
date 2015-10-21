@@ -9,6 +9,7 @@ module api.content.form.inputtype.image {
     import ValueTypes = api.data.ValueTypes;
     import ValueChangedEvent = api.form.inputtype.ValueChangedEvent;
     import LoadMask = api.ui.mask.LoadMask;
+    import Tooltip = api.ui.Tooltip;
 
     export class ImageSelectorSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<ImageSelectorDisplayValue> {
 
@@ -19,8 +20,6 @@ module api.content.form.inputtype.image {
         private selection: SelectedOption<ImageSelectorDisplayValue>[] = [];
 
         private toolbar: SelectionToolbar;
-
-        private dialog: ImageSelectorDialog;
 
         private editSelectedOptionsListeners: {(option: SelectedOption<ImageSelectorDisplayValue>[]): void}[] = [];
 
@@ -37,8 +36,6 @@ module api.content.form.inputtype.image {
 
         constructor() {
             super();
-
-            this.dialog = new ImageSelectorDialog();
 
             wemjq(this.getHTMLElement()).sortable({
                 containment: this.getHTMLElement(),
@@ -77,8 +74,6 @@ module api.content.form.inputtype.image {
 
         addOption(option: Option<ImageSelectorDisplayValue>): boolean {
 
-            this.dialog.remove();
-
             var selectedOption = this.getByOption(option);
             if (!selectedOption && !this.maximumOccurrencesReached()) {
                 this.addNewOption(option);
@@ -101,16 +96,10 @@ module api.content.form.inputtype.image {
             optionView.updateProportions(this.calculateOptionHeight());
 
             optionView.onClicked((event: MouseEvent) => {
-                if (this.dialog.isVisible()) {
-                    if(this.activeOption != selectedOption) {
-                        this.hideImageSelectorDialog();
-                        this.showImageSelectorDialog(selectedOption);
-                    }
-                } else {
-                    this.showImageSelectorDialog(selectedOption);
-                }
+
                 this.uncheckOthers(selectedOption);
-                if(document.activeElement == optionView.getEl().getHTMLElement()) {
+
+                if (document.activeElement == optionView.getEl().getHTMLElement() || this.activeOption == selectedOption) {
                     optionView.getCheckbox().toggleChecked();
                 } else {
                     optionView.getCheckbox().setChecked(true);
@@ -167,6 +156,8 @@ module api.content.form.inputtype.image {
             });
 
             optionView.insertBeforeEl(this.toolbar);
+
+            new Tooltip(optionView, option.displayValue.getPath(), 1000);
         }
 
         updateUploadedOption(option: Option<ImageSelectorDisplayValue>) {
@@ -206,32 +197,13 @@ module api.content.form.inputtype.image {
 
         private showImageSelectorDialog(option: SelectedOption<ImageSelectorDisplayValue>) {
 
-            if (this.dialog) {
-                if(this.activeOption == option) {
-                    return;
-                }
-                this.dialog.remove();
-            }
-
-            var selectedOptions = this.getSelectedOptions();
-            for (var i = 0; i < selectedOptions.length; i++) {
-                var view = <ImageSelectorSelectedOptionView>selectedOptions[i].getOptionView();
-                var passedSelectedOption = i >= option.getIndex();
-                if ((this.isLastInRow(i) || this.isLast(i)) && passedSelectedOption) {
-                    this.dialog.insertAfterEl(view);
-                    break;
-                }
-            }
-
             if (this.activeOption) {
                 this.activeOption.getOptionView().removeClass("editing");
             }
             this.activeOption = option;
             option.getOptionView().addClass("editing");
 
-            this.dialog.setContent(option.getOption().displayValue);
             this.setOutsideClickListener();
-            this.updateDialogLayout(this.calculateOptionHeight());
 
             wemjq(this.getHTMLElement()).sortable("disable");
         }
@@ -241,13 +213,6 @@ module api.content.form.inputtype.image {
             this.getSelectedOptions().forEach((selectedOption: SelectedOption<ImageSelectorDisplayValue>) => {
                 (<ImageSelectorSelectedOptionView>selectedOption.getOptionView()).updateProportions(optionHeight);
             });
-            if (this.dialog.isVisible()) {
-                this.updateDialogLayout(optionHeight);
-            }
-        }
-
-        private updateDialogLayout(optionHeight) {
-            this.dialog.getEl().setMarginTop(((optionHeight / 3) - 20) + 'px');
         }
 
         private updateSelectionToolbarLayout() {
@@ -264,7 +229,6 @@ module api.content.form.inputtype.image {
         }
 
         private hideImageSelectorDialog() {
-            this.dialog.remove();
             if(this.activeOption) {
                 this.activeOption.getOptionView().removeClass('editing first-in-row last-in-row');
                 this.activeOption = null;
