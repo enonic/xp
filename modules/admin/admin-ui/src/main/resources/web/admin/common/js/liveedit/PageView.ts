@@ -760,5 +760,9 @@ module api.liveedit {
         isDisabledContextMenu(): boolean {
             return this.disableContextMenu;
         }
+
+        setContent(content: Content) {
+            this.liveEditModel.setContent(content);
+        }
     }
 }

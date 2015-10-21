@@ -40,10 +40,19 @@ module app.wizard {
         private mouseDown: boolean = false;
         public static debug: boolean = false;
 
-        constructor(liveEditPage: LiveEditPageProxy) {
+        constructor(liveEditPage: LiveEditPageProxy, contentWizardPanel: app.wizard.ContentWizardPanel) {
             super('page-components-view');
 
             this.liveEditPage = liveEditPage;
+
+            contentWizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
+                if (event.getPropertyName() == api.query.QueryField.DISPLAY_NAME) {
+                    var currentContent = contentWizardPanel.getCurrentContent();
+                    this.pageView.setContent(currentContent);
+
+                    this.tree.reload();
+                }
+            });
 
             var closeButton = new api.ui.button.CloseButton();
             closeButton.onClicked((event: MouseEvent) => this.hide());
