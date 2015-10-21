@@ -400,7 +400,8 @@ module app.browse {
                                         updateResult[i].updateNodeData(el);
                                         this.updateStatisticsPreview(el); // update preview item
 
-                                        var viewItem = this.getBrowseItemPanel().getItems()[0].toViewItem();
+                                        var selectedItems = this.getBrowseItemPanel().getItems();
+                                        var viewItem = selectedItems[selectedItems.length - 1].toViewItem();
                                         this.updateDetailsPanels(el.getContentId(), el.getCompareStatus(), viewItem);
 
                                         results.push(updateResult[i]);
@@ -449,7 +450,7 @@ module app.browse {
                 merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
                     if (node.getData() && node.getData().getContentSummary()) {
 
-                        this.updateDetailsPanels(node.getData().getContentId(), node.getData().getCompareStatus());
+                        this.updateDetailsPanels(node.getData().getContentId(), node.getData().getCompareStatus(), null);
                         new api.content.ContentDeletedEvent(node.getData().getContentSummary().getContentId()).fire();
                     }
                 });
@@ -571,12 +572,10 @@ module app.browse {
         }
 
         private updateDetailsPanels(contentId: ContentId, status: CompareStatus, viewItem?: api.app.view.ViewItem<ContentSummary>) {
-
-            this.updateDetailsPanelsViewItem(viewItem);
-
-            if (viewItem) {
-                this.updateDetailsPanelContentStatus(ActiveDetailsPanelsManager.getActiveDetailsPanel(), contentId, status);
+            if (viewItem !== undefined) {
+                this.updateDetailsPanelsViewItem(viewItem);
             }
+            this.updateDetailsPanelContentStatus(ActiveDetailsPanelsManager.getActiveDetailsPanel(), contentId, status);
         }
 
         private updateDetailsPanelsViewItem(viewItem: api.app.view.ViewItem<ContentSummary>) {
@@ -587,7 +586,8 @@ module app.browse {
         }
 
         private updateDetailsPanelContentStatus(detailsPanel: DetailsPanel, contentId: ContentId, status: CompareStatus) {
-            if (contentId && contentId.equals(detailsPanel.getItem().getModel().getContentId())) {
+            var item = detailsPanel.getItem();
+            if (contentId && item && contentId.equals(item.getModel().getContentId())) {
                 detailsPanel.setContentStatus(status);
             }
         }
