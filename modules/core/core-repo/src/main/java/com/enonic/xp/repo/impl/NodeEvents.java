@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl;
 
 import com.enonic.xp.event.Event2;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.Nodes;
 
 public class NodeEvents
@@ -22,6 +23,8 @@ public class NodeEvents
     public static final String NODE_RENAMED_EVENT = "node.renamed";
 
     public static final String NODE_SORTED_EVENT = "node.sorted";
+
+    public static final String NODE_STATE_UPDATED_EVENT = "node.state_updated";
 
     public static Event2 moved( final Node from, final Node to )
     {
@@ -58,6 +61,21 @@ public class NodeEvents
             final Event2.Builder builder = Event2.create( NODE_PUSHED_EVENT ).distributed( true );
 
             addNodeValuesToEventData( builder, pushedNodes );
+
+            return builder.build();
+        }
+        return null;
+    }
+
+    public static Event2 stateUpdated( final Nodes updatedNodes, final NodeState nodeState )
+    {
+        if ( updatedNodes != null && updatedNodes.getSize() > 0 )
+        {
+            final Event2.Builder builder = Event2.create( NODE_STATE_UPDATED_EVENT ).
+                distributed( true ).
+                value( "state", nodeState.toString() );
+
+            addNodeValuesToEventData( builder, updatedNodes );
 
             return builder.build();
         }
