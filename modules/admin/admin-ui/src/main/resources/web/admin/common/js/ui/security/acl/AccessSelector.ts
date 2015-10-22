@@ -1,14 +1,7 @@
 module api.ui.security.acl {
 
     import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
-
-    export enum Access {
-        READ,
-        WRITE,
-        PUBLISH,
-        FULL,
-        CUSTOM
-    }
+    import Access = api.security.acl.Access;
 
     interface AccessSelectorOption {
         value: Access;

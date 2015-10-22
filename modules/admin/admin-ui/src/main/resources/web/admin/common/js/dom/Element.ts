@@ -200,12 +200,12 @@ module api.dom {
         }
 
         init() {
-            this.children.forEach((child: Element) => {
-                child.init();
-            });
             if (!this.isRendered()) {
                 this.render(false);
             }
+            this.children.forEach((child: Element) => {
+                child.init();
+            });
             if (this.isVisible()) {
                 this.notifyShown();
             }

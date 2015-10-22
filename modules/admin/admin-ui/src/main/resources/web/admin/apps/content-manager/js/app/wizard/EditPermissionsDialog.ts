@@ -80,7 +80,7 @@ module app.wizard {
             api.dom.Body.get().appendChild(this);
 
             this.parentPermissions = [];
-            OpenEditPermissionsDialogEvent.on((event) => {
+            api.content.OpenEditPermissionsDialogEvent.on((event) => {
                 this.content = event.getContent();
 
                 this.getParentPermissions().then((parentPermissions: AccessControlList) => {

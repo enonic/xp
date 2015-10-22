@@ -270,8 +270,9 @@ module app.view.detail {
         }
 
         private setDefaultWidget() {
-            var widgetItemView = new StatusWidgetItemView();
+            var statusWidgetItemView = new StatusWidgetItemView();
             var propWidgetItemView = new PropertiesWidgetItemView();
+            var userAccessWidgetItemView = new UserAccessWidgetItemView();
 
             if (this.item) {
                 api.content.ContentSummaryAndCompareStatusFetcher.fetch(this.item.getModel().getContentId()).then((contentSummaryAndCompareStatus) => {
@@ -282,21 +283,23 @@ module app.view.detail {
                         this.detailsContainer.removeChild(this.defaultWidgetView);
                     }
 
-                    this.setStatus(widgetItemView);
+                    this.setStatus(statusWidgetItemView);
 
                     this.onContentStatusChanged(() => {
-                        this.setStatus(widgetItemView);
-                        widgetItemView.layout();
+                        this.setStatus(statusWidgetItemView);
+                        statusWidgetItemView.layout();
                     });
 
                     propWidgetItemView.setContent(this.item.getModel());
+                    userAccessWidgetItemView.setContentId(this.item.getModel().getContentId());
 
                     this.defaultWidgetView = WidgetView.create().
                         setName(DetailsPanel.DEFAULT_WIDGET_NAME).
                         setDetailsPanel(this).
                         setUseToggleButton(false).
-                        addWidgetItemView(widgetItemView).
+                        addWidgetItemView(statusWidgetItemView).
                         addWidgetItemView(propWidgetItemView).
+                        addWidgetItemView(userAccessWidgetItemView).
                         build();
 
                     this.detailsContainer.appendChild(this.defaultWidgetView);

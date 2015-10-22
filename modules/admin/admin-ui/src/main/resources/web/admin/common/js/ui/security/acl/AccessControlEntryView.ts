@@ -4,6 +4,7 @@ module api.ui.security.acl {
     import PrincipalType = api.security.PrincipalType;
     import PrincipalKey = api.security.PrincipalKey;
     import Permission = api.security.acl.Permission;
+    import Access = api.security.acl.Access;
     import AccessControlEntry = api.security.acl.AccessControlEntry;
 
     export class AccessControlEntryView extends api.ui.security.PrincipalViewer {
@@ -108,11 +109,7 @@ module api.ui.security.acl {
                 ace.getPrincipalDisplayName());
             this.setObject(principal);
 
-            var permissions = {
-                allow: ace.getAllowedPermissions().sort(),
-                deny: ace.getDeniedPermissions().sort()
-            };
-            this.accessSelector.setValue(this.getAccessValueFromPermissions(permissions), silent);
+            this.accessSelector.setValue(ace.getAccess(), silent);
             // permissions will be set on access selector value change
         }
 
@@ -148,53 +145,6 @@ module api.ui.security.acl {
             permissions.deny.sort();
             return permissions;
         }
-
-        private getAccessValueFromPermissions(permissions: {allow:Permission[]; deny:Permission[]}): Access {
-
-            if (permissions.deny.length == 0) {
-                if (this.isFullAccess(permissions.allow)) {
-                    return Access.FULL;
-                } else if (this.isCanPublish(permissions.allow)) {
-                    return Access.PUBLISH;
-                } else if (this.isCanWrite(permissions.allow)) {
-                    return Access.WRITE;
-                } else if (this.isCanRead(permissions.allow)) {
-                    return Access.READ;
-                }
-            }
-            return Access.CUSTOM;
-        }
-
-        private isCanRead(allowed: Permission[]): boolean {
-            return allowed.indexOf(Permission.READ) >= 0 && allowed.length === 1;
-        }
-
-        private isCanWrite(allowed: Permission[]): boolean {
-            return allowed.indexOf(Permission.READ) >= 0 &&
-                   allowed.indexOf(Permission.CREATE) >= 0 &&
-                   allowed.indexOf(Permission.MODIFY) >= 0 &&
-                   allowed.indexOf(Permission.DELETE) >= 0 && allowed.length === 4;
-        }
-
-        private isCanPublish(allowed: Permission[]): boolean {
-            return allowed.indexOf(Permission.READ) >= 0 &&
-                   allowed.indexOf(Permission.CREATE) >= 0 &&
-                   allowed.indexOf(Permission.MODIFY) >= 0 &&
-                   allowed.indexOf(Permission.DELETE) >= 0 &&
-                   allowed.indexOf(Permission.PUBLISH) >= 0 && allowed.length === 5;
-        }
-
-        private isFullAccess(allowed: Permission[]): boolean {
-            return allowed.indexOf(Permission.READ) >= 0 &&
-                   allowed.indexOf(Permission.CREATE) >= 0 &&
-                   allowed.indexOf(Permission.MODIFY) >= 0 &&
-                   allowed.indexOf(Permission.DELETE) >= 0 &&
-                   allowed.indexOf(Permission.PUBLISH) >= 0 &&
-                   allowed.indexOf(Permission.READ_PERMISSIONS) >= 0 &&
-                   allowed.indexOf(Permission.WRITE_PERMISSIONS) >= 0 && allowed.length === 7;
-        }
-
-
     }
 
 }
