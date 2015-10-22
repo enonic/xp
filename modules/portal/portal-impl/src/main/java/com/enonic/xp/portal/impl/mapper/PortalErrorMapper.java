@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.mapper;
 
 
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.PortalError;
+import com.enonic.xp.portal.impl.error.PortalError;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 

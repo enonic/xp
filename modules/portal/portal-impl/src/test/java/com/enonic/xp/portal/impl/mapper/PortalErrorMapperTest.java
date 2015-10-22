@@ -14,7 +14,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.ContentFixtures;
-import com.enonic.xp.portal.impl.PortalError;
+import com.enonic.xp.portal.impl.error.PortalError;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.web.HttpMethod;
