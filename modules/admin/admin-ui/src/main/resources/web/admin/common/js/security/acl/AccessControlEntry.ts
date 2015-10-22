@@ -54,6 +54,50 @@ module api.security.acl {
             this.deniedPermissions = permissions;
         }
 
+        getAccess(): Access {
+            if (this.deniedPermissions.length == 0) {
+                if (this.isFullAccess(this.allowedPermissions)) {
+                    return Access.FULL;
+                } else if (this.isCanPublish(this.allowedPermissions)) {
+                    return Access.PUBLISH;
+                } else if (this.isCanWrite(this.allowedPermissions)) {
+                    return Access.WRITE;
+                } else if (this.isCanRead(this.allowedPermissions)) {
+                    return Access.READ;
+                }
+            }
+            return Access.CUSTOM;
+        }
+
+        private isCanRead(allowed: Permission[]): boolean {
+            return allowed.indexOf(Permission.READ) >= 0 && allowed.length === 1;
+        }
+
+        private isCanWrite(allowed: Permission[]): boolean {
+            return allowed.indexOf(Permission.READ) >= 0 &&
+                   allowed.indexOf(Permission.CREATE) >= 0 &&
+                   allowed.indexOf(Permission.MODIFY) >= 0 &&
+                   allowed.indexOf(Permission.DELETE) >= 0 && allowed.length === 4;
+        }
+
+        private isCanPublish(allowed: Permission[]): boolean {
+            return allowed.indexOf(Permission.READ) >= 0 &&
+                   allowed.indexOf(Permission.CREATE) >= 0 &&
+                   allowed.indexOf(Permission.MODIFY) >= 0 &&
+                   allowed.indexOf(Permission.DELETE) >= 0 &&
+                   allowed.indexOf(Permission.PUBLISH) >= 0 && allowed.length === 5;
+        }
+
+        private isFullAccess(allowed: Permission[]): boolean {
+            return allowed.indexOf(Permission.READ) >= 0 &&
+                   allowed.indexOf(Permission.CREATE) >= 0 &&
+                   allowed.indexOf(Permission.MODIFY) >= 0 &&
+                   allowed.indexOf(Permission.DELETE) >= 0 &&
+                   allowed.indexOf(Permission.PUBLISH) >= 0 &&
+                   allowed.indexOf(Permission.READ_PERMISSIONS) >= 0 &&
+                   allowed.indexOf(Permission.WRITE_PERMISSIONS) >= 0 && allowed.length === 7;
+        }
+
         isAllowed(permission: Permission): boolean {
             return (this.allowedPermissions.indexOf(permission) > -1) && (this.deniedPermissions.indexOf(permission) === -1);
         }

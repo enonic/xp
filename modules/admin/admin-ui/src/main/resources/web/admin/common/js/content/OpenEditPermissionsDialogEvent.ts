@@ -1,4 +1,4 @@
-module app.wizard {
+module api.content {
 
     export class OpenEditPermissionsDialogEvent extends api.event.Event {
         private content: any;
