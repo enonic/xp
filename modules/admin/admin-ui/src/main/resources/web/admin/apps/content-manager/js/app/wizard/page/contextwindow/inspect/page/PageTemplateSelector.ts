@@ -57,12 +57,12 @@ module app.wizard.page.contextwindow.inspect.page {
                     }
 
                     this.onOptionSelected((event: OptionSelectedEvent<PageTemplateOption>) => {
-                        var pageTemplate = event.getOption().displayValue.getPageTemplate();
-                        if(pageTemplate && pageTemplate.getDisplayName() == "Customized") {
+                        var selectedOption = event.getOption().displayValue;
+                        if (selectedOption.getPageTemplate() && selectedOption.isCustom()) {
                             this.notifyCustomizedSelected();
                         }
                         else {
-                            this.notifySelection(pageTemplate);
+                            this.notifySelection(selectedOption.getPageTemplate());
                         }
                     });
 
@@ -127,7 +127,7 @@ module app.wizard.page.contextwindow.inspect.page {
         }
 
         private createCustomizedOption(): Option<PageTemplateOption> {
-            var pageTemplate:PageTemplate = (<PageTemplateBuilder> new PageTemplateBuilder().setData(new api.data.PropertyTree()).setDisplayName("Customized")).build();
+            var pageTemplate:PageTemplate = (<PageTemplateBuilder> new PageTemplateBuilder().setData(new api.data.PropertyTree()).setDisplayName(PageTemplateOption.displayNameCustom)).build();
             var option = {
                 value: "Customized",
                 displayValue: new PageTemplateOption(pageTemplate, this.pageModel)

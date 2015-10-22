@@ -4,8 +4,6 @@ import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.security.PrincipalKey;
-
 @Beta
 public final class ApplyNodePermissionsParams
 {
@@ -13,12 +11,9 @@ public final class ApplyNodePermissionsParams
 
     private final boolean overwriteChildPermissions;
 
-    private final PrincipalKey modifier;
-
     private ApplyNodePermissionsParams( Builder builder )
     {
         nodeId = Objects.requireNonNull( builder.nodeId );
-        modifier = Objects.requireNonNull( builder.modifier );
         overwriteChildPermissions = builder.overwriteChildPermissions;
     }
 
@@ -37,18 +32,12 @@ public final class ApplyNodePermissionsParams
         return overwriteChildPermissions;
     }
 
-    public PrincipalKey getModifier()
-    {
-        return modifier;
-    }
 
     public static final class Builder
     {
         private NodeId nodeId;
 
         private boolean overwriteChildPermissions;
-
-        private PrincipalKey modifier;
 
         private Builder()
         {
@@ -63,12 +52,6 @@ public final class ApplyNodePermissionsParams
         public Builder overwriteChildPermissions( final boolean overwriteChildPermissions )
         {
             this.overwriteChildPermissions = overwriteChildPermissions;
-            return this;
-        }
-
-        public Builder modifier( final PrincipalKey modifier )
-        {
-            this.modifier = modifier;
             return this;
         }
 

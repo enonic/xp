@@ -7,6 +7,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -27,7 +28,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456/max-300/mycontent", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent", url );
     }
 
     @Test
@@ -41,7 +42,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456/max-300/mycontent.png", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent.png", url );
     }
 
     @Test
@@ -58,9 +59,8 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals(
-            "/portal/draft/a/b/mycontent/_/image/123456/max-300/mycontent.jpg?filter=scale%2810%2C10%29&background=00ff00&quality=90",
-            url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent.jpg?" +
+                          "filter=scale%2810%2C10%29&background=00ff00&quality=90", url );
     }
 
     @Test
@@ -74,7 +74,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/context/path/_/image/123456/max-300/mycontent", url );
+        assertEquals( "/portal/draft/context/path/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent", url );
     }
 
     @Test
@@ -88,7 +88,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/context/path/_/image/123456/max-300/mycontent", url );
+        assertEquals( "/portal/draft/context/path/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent", url );
     }
 
     @Test
@@ -120,15 +120,18 @@ public class PortalUrlServiceImpl_imageUrlTest
         ServletRequestHolder.setRequest( req );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "http://localhost/portal/draft/a/b/mycontent/_/image/123456/max-300/mycontent", url );
+        assertEquals(
+            "http://localhost/portal/draft/a/b/mycontent/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent", url );
     }
 
     private Content createContent()
     {
-        final Content content = ContentFixtures.newContent();
-        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
-        Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-        return content;
+        final Media media = ContentFixtures.newMedia();
+        Mockito.when( this.contentService.getByPath( media.getPath() ) ).thenReturn( media );
+        Mockito.when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+        Mockito.when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(
+            "binaryHash" );
+        return media;
     }
 
     private Content createContentNotFound()

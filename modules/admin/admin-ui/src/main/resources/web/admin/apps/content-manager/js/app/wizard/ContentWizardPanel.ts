@@ -8,7 +8,6 @@ module app.wizard {
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import CompareStatus = api.content.CompareStatus;
     import ContentBuilder = api.content.ContentBuilder;
-    import Attachment = api.content.attachment.Attachment;
     import Thumbnail = api.thumb.Thumbnail;
     import ContentName = api.content.ContentName;
     import ContentUnnamed = api.content.ContentUnnamed;
@@ -274,7 +273,6 @@ module app.wizard {
                         }
                     });
 
-                    this.wizardActions.getShowSplitEditAction().execute();
                     responsiveItem.update();
                 });
 
@@ -873,6 +871,11 @@ module app.wizard {
             }
         }
 
+        public getCurrentContent(): Content {
+            var persistedContent: Content = this.getPersistedItem();
+            return this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
+        }
+
         private assembleViewedContent(viewedContentBuilder: ContentBuilder): ContentBuilder {
 
             viewedContentBuilder.setName(this.resolveContentNameForUpdateRequest());
@@ -1192,6 +1195,10 @@ module app.wizard {
             this.liveEditModel.getPageModel().onPageModeChanged(()=> {
                 this.previewAction.setEnabled(!this.contentNotRenderable());
             });
+        }
+
+        public getHeader(): WizardHeaderWithDisplayNameAndName {
+            return this.contentWizardHeader;
         }
     }
 

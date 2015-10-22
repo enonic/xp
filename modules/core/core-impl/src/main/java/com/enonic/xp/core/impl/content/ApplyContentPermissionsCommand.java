@@ -23,7 +23,6 @@ final class ApplyContentPermissionsCommand
         final ApplyNodePermissionsParams applyNodePermissionsParams = ApplyNodePermissionsParams.create().
             nodeId( nodeId ).
             overwriteChildPermissions( params.isOverwriteChildPermissions() ).
-            modifier( params.getModifier() ).
             build();
 
         return nodeService.applyPermissions( applyNodePermissionsParams );

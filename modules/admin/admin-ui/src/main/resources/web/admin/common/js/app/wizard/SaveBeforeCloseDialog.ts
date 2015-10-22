@@ -11,7 +11,6 @@ module api.app.wizard {
 
         constructor(wizardPanel: api.app.wizard.WizardPanel<any>) {
             super({
-                idPrefix: "SaveBeforeCloseDialog",
                 title: new api.ui.dialog.ModalDialogHeader("Close wizard")
             });
 

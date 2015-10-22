@@ -1,0 +1,69 @@
+.tree-grid-toolbar {
+  width: 100%;
+  height: 40px;
+  margin-top: -40px;
+  background-color: @admin-bg-almost-white;
+
+  .button {
+    &:not(.fold-button) {
+      padding: 8px 7px;
+    }
+
+    border: none;
+
+    &:first-child {
+      margin-left: 10px;
+    }
+
+    &:not(:first-child) {
+      margin-left: 4px;
+    }
+
+    &.icon-loop2 {
+      padding: 8px 14px;
+
+      &:before {
+        left: 0;
+      }
+    }
+
+    &:active, span {
+      color: @admin-button-blue2;
+    }
+
+    &:hover:not(:disabled) {
+
+      span {
+        color: @admin-button-blue3;
+      }
+    }
+
+    &:focus {
+      box-shadow: none;
+      border: none;
+    }
+
+    &.fold-button {
+      margin-left: 0px;
+    }
+  }
+
+  .fold-button {
+    padding: 8px 26px 8px 22px;
+
+    .dropdown {
+      width: 130px;
+      button {
+        margin: 0 28px 0 0;
+        line-height: 1.5em;
+        border: 1px solid transparent;
+        &:not(:disabled) span {
+          color: @admin-button-blue2;
+        }
+        &:hover:not(:disabled) span {
+          color: @admin-button-blue3;
+        }
+      }
+    }
+  }
+}

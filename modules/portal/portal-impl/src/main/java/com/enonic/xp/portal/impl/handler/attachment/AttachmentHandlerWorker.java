@@ -22,6 +22,8 @@ final class AttachmentHandlerWorker
 
     protected boolean download;
 
+    protected boolean cacheable;
+
     @Override
     public void execute()
         throws Exception
@@ -37,6 +39,10 @@ final class AttachmentHandlerWorker
         if ( this.download )
         {
             this.response.header( "Content-Disposition", "attachment; filename=" + attachment.getName() );
+        }
+        if ( this.cacheable )
+        {
+            setResponseCacheable();
         }
     }
 

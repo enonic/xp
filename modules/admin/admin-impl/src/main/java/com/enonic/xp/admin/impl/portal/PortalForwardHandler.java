@@ -1,6 +1,11 @@
 package com.enonic.xp.admin.impl.portal;
 
+import java.io.IOException;
+
 import javax.servlet.RequestDispatcher;
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -9,13 +14,11 @@ import org.osgi.service.component.annotations.Component;
 import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.web.handler.BaseWebHandler;
-import com.enonic.xp.web.handler.WebHandler;
-import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = WebHandler.class)
+@Component(immediate = true, service = Servlet.class,
+    property = {"osgi.http.whiteboard.servlet.pattern=/admin/portal/*"})
 public final class PortalForwardHandler
-    extends BaseWebHandler
+    extends HttpServlet
 {
     private final static String PREFIX = "/admin/portal";
 
@@ -23,20 +26,9 @@ public final class PortalForwardHandler
 
     private final static String PREVIEW_PREFIX = PREFIX + "/preview/";
 
-    public PortalForwardHandler()
-    {
-        setOrder( 10 );
-    }
-
     @Override
-    protected boolean canHandle( final HttpServletRequest req )
-    {
-        return req.getRequestURI().startsWith( PREFIX );
-    }
-
-    @Override
-    protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
-        throws Exception
+    protected void service( final HttpServletRequest req, final HttpServletResponse res )
+        throws ServletException, IOException
     {
         if ( !req.isUserInRole( RoleKeys.ADMIN_LOGIN_ID ) )
         {
@@ -64,7 +56,7 @@ public final class PortalForwardHandler
 
     private void forwardToPortal( final RenderMode renderMode, final String path, final HttpServletRequest req,
                                   final HttpServletResponse res )
-        throws Exception
+        throws ServletException, IOException
     {
         final PortalAttributes portalAttributes = new PortalAttributes();
         portalAttributes.setBaseUri( PREFIX + "/" + renderMode.toString() );

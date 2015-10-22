@@ -29,6 +29,8 @@ module api.liveedit {
 
         tooltipViewer: api.ui.Viewer<any>;
 
+        inspectActionRequired: boolean;
+
         /**
          * Optional. The ItemViewIdProducer of parentRegionView will be used if not set.
          */
@@ -81,6 +83,11 @@ module api.liveedit {
             this.tooltipViewer = value;
             return this;
         }
+
+        setInspectActionRequired(value: boolean): ComponentViewBuilder<COMPONENT> {
+            this.inspectActionRequired = value;
+            return this;
+        }
     }
 
     export class ComponentView<COMPONENT extends Component> extends ItemView implements api.Cloneable {
@@ -118,7 +125,8 @@ module api.liveedit {
                     setElement(builder.element).
                     setParentView(builder.parentRegionView).
                     setParentElement(builder.parentElement).
-                    setContextMenuActions(this.createComponentContextMenuActions(builder.contextMenuActions)).
+                    setContextMenuActions(this.createComponentContextMenuActions(builder.contextMenuActions,
+                        builder.inspectActionRequired)).
                     setContextMenuTitle(new ComponentViewContextMenuTitle(builder.component, builder.type))
             );
 
@@ -160,11 +168,18 @@ module api.liveedit {
             component.unReset(this.resetListener);
         }
 
-        private createComponentContextMenuActions(actions: api.ui.Action[]): api.ui.Action[] {
+        private createComponentContextMenuActions(actions: api.ui.Action[], inspectActionRequired: boolean): api.ui.Action[] {
             var actions = actions || [];
 
             actions.push(this.createSelectParentAction());
             actions.push(this.createInsertAction());
+
+            if (inspectActionRequired) {
+                actions.push(new api.ui.Action("Inspect").onExecuted(() => {
+                    new ComponentInspectedEvent(this).fire();
+                }));
+            }
+
             actions.push(new api.ui.Action("Reset").onExecuted(() => {
                 this.component.reset();
             }));

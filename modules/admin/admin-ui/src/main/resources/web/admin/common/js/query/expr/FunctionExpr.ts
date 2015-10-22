@@ -3,19 +3,19 @@ module api.query.expr {
     export class FunctionExpr implements Expression {
 
         private name: string;
-        private arguments: ValueExpr[] = [];
+        private args: ValueExpr[] = [];
 
-        constructor(name: string, arguments: ValueExpr[]) {
+        constructor(name: string, args: ValueExpr[]) {
             this.name = name;
-            this.arguments = arguments;
+            this.args = args;
         }
 
         getName(): string {
             return this.name;
         }
 
-        getArguments(): ValueExpr[] {
-            return this.arguments;
+        getargs(): ValueExpr[] {
+            return this.args;
         }
 
         toString() {
@@ -23,7 +23,7 @@ module api.query.expr {
             result = result.concat("(");
 
             var sub = [];
-            this.arguments.forEach((expr: ValueExpr) => {
+            this.args.forEach((expr: ValueExpr) => {
                 sub.push(expr.toString());
             });
             result = result.concat(sub.join(", "));

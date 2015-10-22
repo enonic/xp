@@ -4,9 +4,11 @@ dependencies {
     compile project( ':jaxrs:jaxrs-api' )
     compile 'org.apache.httpcomponents:httpclient:4.3.4'
     compile 'org.apache.httpcomponents:httpmime:4.3.4'
-    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.4.1'
+    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.6.2'
     compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.8.Final'
     testCompile project( path: ':jaxrs:jaxrs-api', configuration: 'testOutput' )
+    testCompile project( path: ':web:web-jetty', configuration: 'testOutput' )
+    testCompile 'com.squareup.okhttp:okhttp:2.5.0'
 }
 
 bundle {

@@ -18,7 +18,7 @@ import com.enonic.xp.web.HttpMethod;
 public final class AttachmentHandler
     extends EndpointHandler
 {
-    private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)/([^/]+)" );
+    private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/^:]+)(:[^/]+)?/([^/]+)" );
 
     private ContentService contentService;
 
@@ -44,7 +44,8 @@ public final class AttachmentHandler
         worker.contentService = this.contentService;
         worker.download = "download".equals( matcher.group( 1 ) );
         worker.id = ContentId.from( matcher.group( 2 ) );
-        worker.name = matcher.group( 3 );
+        worker.cacheable = matcher.group( 3 ) != null;
+        worker.name = matcher.group( 4 );
 
         return worker;
     }

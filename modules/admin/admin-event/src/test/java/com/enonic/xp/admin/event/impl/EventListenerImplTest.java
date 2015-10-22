@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationUpdatedEvent;
-import com.enonic.xp.event.Event;
 
 import static com.enonic.xp.app.ApplicationEventType.INSTALLED;
 import static org.mockito.Matchers.anyString;
@@ -16,7 +15,6 @@ import static org.mockito.Mockito.verify;
 
 public class EventListenerImplTest
 {
-
     private EventListenerImpl eventListener;
 
     private WebSocketManager webSocketManager;
@@ -50,10 +48,4 @@ public class EventListenerImplTest
 
         verify( this.webSocketManager, never() ).sendToAll( anyString() );
     }
-
-    class TestEvent
-        implements Event
-    {
-    }
-
 }

@@ -13,16 +13,16 @@ module api.query {
             if (searchString == null) {
                 return null;
             }
-            var arguments: api.query.expr.ValueExpr[] = [];
+            var args: api.query.expr.ValueExpr[] = [];
 
-            arguments.push(ValueExpr.stringValue(queryFields.toString()));
-            arguments.push(ValueExpr.stringValue(searchString));
-            arguments.push(ValueExpr.stringValue("AND"));
+            args.push(ValueExpr.stringValue(queryFields.toString()));
+            args.push(ValueExpr.stringValue(searchString));
+            args.push(ValueExpr.stringValue("AND"));
 
-            var fulltextExp: FunctionExpr = new FunctionExpr("fulltext", arguments);
+            var fulltextExp: FunctionExpr = new FunctionExpr("fulltext", args);
             var fulltextDynamicExpr: DynamicConstraintExpr = new DynamicConstraintExpr(fulltextExp);
 
-            var nGramExpr: FunctionExpr = new FunctionExpr("ngram", arguments);
+            var nGramExpr: FunctionExpr = new FunctionExpr("ngram", args);
             var nGramDynamicExpr: DynamicConstraintExpr = new DynamicConstraintExpr(nGramExpr);
 
             var booleanExpr: LogicalExpr = new LogicalExpr(fulltextDynamicExpr, LogicalOperator.OR, nGramDynamicExpr);

@@ -46,7 +46,7 @@ module app.wizard.page.contextwindow.insert {
 
             this.insertablesDataView.setItems(Insertables.ALL, "name");
 
-            this.componentsView = new app.wizard.PageComponentsView(config.liveEditPage);
+            this.componentsView = new app.wizard.PageComponentsView(config.liveEditPage, config.contentWizardPanel);
 
             this.componentsView.onShown(() => {
                 if (!this.componentsView.getParentElement()) {
@@ -103,10 +103,10 @@ module app.wizard.page.contextwindow.insert {
                 revert: 'true',
                 distance: 10,
                 scope: 'component',
-                helper: (event, ui) => DragHelper.get().getHTMLElement(),
-                start: (event, ui) => this.handleDragStart(event, ui),
-                drag: (event, ui) => this.handleDrag(event, ui),
-                stop: (event, ui) => this.handleDragStop(event, ui)
+                helper: (event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) => DragHelper.get().getHTMLElement(),
+                start: (event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) => this.handleDragStart(event, ui),
+                drag: (event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) => this.handleDrag(event, ui),
+                stop: (event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) => this.handleDragStop(event, ui)
             });
         }
 
@@ -161,7 +161,7 @@ module app.wizard.page.contextwindow.insert {
             return event.originalEvent.target == this.liveEditPageProxy.getDragMask().getHTMLElement();
         }
 
-        private onLeftIFrame(event: Event, ui: JQueryUI.DraggableEventUIParams) {
+        private onLeftIFrame(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
             if (InsertablesPanel.debug) {
                 console.log('InsertablesPanel.onLeftIFrame');
             }
@@ -178,7 +178,7 @@ module app.wizard.page.contextwindow.insert {
             ui.helper.show();
         }
 
-        private onEnterIFrame(event: Event, ui: JQueryUI.DraggableEventUIParams) {
+        private onEnterIFrame(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
             if (InsertablesPanel.debug) {
                 console.log('InsertablesPanel.onEnterIFrame');
             }

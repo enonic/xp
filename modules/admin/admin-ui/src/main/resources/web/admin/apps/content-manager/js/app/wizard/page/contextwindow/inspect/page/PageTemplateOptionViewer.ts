@@ -7,12 +7,12 @@ module app.wizard.page.contextwindow.inspect.page {
         }
 
         resolveDisplayName(object: PageTemplateOption): string {
-            return !!object.getPageTemplate() ? object.getPageTemplate().getDisplayName() : "Automatic";
+            return !!object.getPageTemplate() ? (object.isCustom() ? PageTemplateOption.displayNameCustom : object.getPageTemplate().getDisplayName()) : PageTemplateOption.displayNameAutomatic;
         }
 
         resolveSubName(object: PageTemplateOption, relativePath: boolean = false): string {
             if (!!object.getPageTemplate()) {
-                if (object.getPageTemplate().getDisplayName() == "Customized") {
+                if (object.isCustom()) {
                     return "Set up your own page";
                 }
                 else {
@@ -28,8 +28,9 @@ module app.wizard.page.contextwindow.inspect.page {
         }
 
         resolveIconClass(object: PageTemplateOption): string {
-            return !!object.getPageTemplate() ? object.getPageTemplate().getDisplayName() == "Customized" ? "icon-cog icon-large" :
-                                                    "icon-newspaper icon-large" : "icon-wand icon-large";
+            var iconClass = !!object.getPageTemplate() ? (object.isCustom() ? "icon-cog" : "icon-newspaper") : "icon-wand";
+
+            return iconClass + " icon-large";
         }
 
         getPreferredHeight(): number {
