@@ -29,9 +29,7 @@ module api {
                 return true;
             }
 
-            if (obj.constructor.name && obj.constructor.name === (<any>fn).name) {
-                return true;
-            } else if (Object.prototype.toString.call(obj) === (<any>fn).name) {// IE check
+            if (ClassHelper.getClassName(obj) === ClassHelper.getFunctionName(fn)) {
                 return true;
             }
 
@@ -40,22 +38,14 @@ module api {
             }
 
             var prototype = Object.getPrototypeOf(obj);
-            if (prototype.constructor.name) {
-                do {
-                    prototype = Object.getPrototypeOf(prototype);
-                    if (!prototype) {
-                        return false;
-                    }
-                } while (prototype.constructor.name !== (<any>fn).name);
-            } else {// IE check
-                do {
-                    prototype = Object.getPrototypeOf(prototype);
-                    if (!prototype) {
-                        return false;
-                    }
-                } while (Object.prototype.toString.call(prototype) !== (<any>fn).name);
-            }
 
+            do {
+                prototype = Object.getPrototypeOf(prototype);
+                if (!prototype) {
+                    return false;
+                }
+            }
+            while (ClassHelper.getClassName(prototype) !== ClassHelper.getFunctionName(fn));
 
             return true;
         }
