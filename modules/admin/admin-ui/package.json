@@ -11,11 +11,6 @@
     "load-grunt-config": "~0.17.2",
     "grunt-contrib-clean": "~0.5.0",
     "grunt-newer-explicit": "~0.9.4",
-    "karma": "~0.13.10",
-    "grunt-karma": "~0.12.1",
-    "karma-coverage": "~0.5.2",
-    "karma-jasmine": "~0.3.6",
-    "karma-phantomjs-launcher": "~0.2.1",
     "grunt-typedoc": "~0.2.3"
   }
 }
