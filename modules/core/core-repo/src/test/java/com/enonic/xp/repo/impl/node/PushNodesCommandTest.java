@@ -193,8 +193,6 @@ public class PushNodesCommandTest
 
         pushNodes( NodeIds.from( node1.id() ), WS_OTHER );
 
-        Thread.sleep( 1000L ); // it takes some time to reindex
-
         assertNotNull( getNodeByPathInOther( NodePath.create( movedNode.path(), child1.name().toString() ).build() ) );
 
         assertNull( getNodeByPathInOther( NodePath.create( node1.path(), child1.name().toString() ).build() ) );
