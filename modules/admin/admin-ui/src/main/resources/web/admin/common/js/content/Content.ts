@@ -1,6 +1,7 @@
 module api.content {
 
     import AccessControlList = api.security.acl.AccessControlList;
+    import AccessControlEntry = api.security.acl.AccessControlEntry;
     import Property = api.data.Property;
     import PropertyTree = api.data.PropertyTree;
     import PropertyPath = api.data.PropertyPath;
@@ -61,6 +62,27 @@ module api.content {
 
         isInheritPermissionsEnabled(): boolean {
             return this.inheritPermissions;
+        }
+
+        //api.security.acl.Permission.WRITE_PERMISSIONS
+        isAnyPrincipalAllowed(principalKeys: api.security.PrincipalKey[], permission: api.security.acl.Permission): boolean {
+
+            if (principalKeys.map(key => key.toString()).indexOf(api.security.RoleKeys.ADMIN.toString()) > -1) {
+                return true;
+            }
+
+            for (var i = 0; i < this.permissions.getEntries().length; i++) {
+                var item = this.permissions.getEntries()[i];
+
+                if (item.isAllowed(permission)) {
+                    return principalKeys.some((principalKey: api.security.PrincipalKey) => {
+                        if (principalKey.equals(item.getPrincipalKey())) {
+                            return true;
+                        }
+                    });
+                }
+            }
+            return false;
         }
 
         private trimPropertyTree(data: PropertyTree): PropertyTree {

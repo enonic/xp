@@ -270,8 +270,9 @@ module app.view.detail {
         }
 
         private setDefaultWidget() {
-            var widgetItemView = new StatusWidgetItemView();
+            var statusWidgetItemView = new StatusWidgetItemView();
             var propWidgetItemView = new PropertiesWidgetItemView();
+            var userAccessWidgetItemView = new UserAccessWidgetItemView();
             var attachmentsWidgetItemView = new AttachmentsWidgetItemView();
 
             if (this.item) {
@@ -283,23 +284,25 @@ module app.view.detail {
                         this.detailsContainer.removeChild(this.defaultWidgetView);
                     }
 
-                    this.setStatus(widgetItemView);
+                    this.setStatus(statusWidgetItemView);
 
                     this.onContentStatusChanged(() => {
-                        this.setStatus(widgetItemView);
-                        widgetItemView.layout();
+                        this.setStatus(statusWidgetItemView);
+                        statusWidgetItemView.layout();
                     });
 
                     propWidgetItemView.setContent(this.item.getModel());
+                    userAccessWidgetItemView.setContentId(this.item.getModel().getContentId());
                     attachmentsWidgetItemView.setContent(this.item.getModel());
 
                     this.defaultWidgetView = WidgetView.create().
                         setName(DetailsPanel.DEFAULT_WIDGET_NAME).
                         setDetailsPanel(this).
                         setUseToggleButton(false).
-                        addWidgetItemView(widgetItemView).
+                        addWidgetItemView(statusWidgetItemView).
                         addWidgetItemView(propWidgetItemView).
                         addWidgetItemView(attachmentsWidgetItemView).
+                        addWidgetItemView(userAccessWidgetItemView).
                         build();
 
                     this.detailsContainer.appendChild(this.defaultWidgetView);

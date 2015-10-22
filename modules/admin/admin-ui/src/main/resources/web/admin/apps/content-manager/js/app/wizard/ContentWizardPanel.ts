@@ -1046,32 +1046,20 @@ module app.wizard {
 
         private checkSecurityWizardStepFormAllowed(loginResult: api.security.auth.LoginResult) {
 
-            var entries = this.getPersistedItem().getPermissions().getEntries();
-            var accessEntriesWithEditPermissions: AccessControlEntry[] = entries.filter((item: AccessControlEntry) => {
-                return item.isAllowed(api.security.acl.Permission.WRITE_PERMISSIONS);
-            });
-
-            loginResult.getPrincipals().some((principalKey: api.security.PrincipalKey) => {
-                if (api.security.RoleKeys.ADMIN.equals(principalKey) ||
-                    this.isPrincipalPresent(principalKey, accessEntriesWithEditPermissions)) {
-                    this.isSecurityWizardStepFormAllowed = true;
-                    return true;
-                }
-            });
-
+            debugger;
+            if (this.getPersistedItem().isAnyPrincipalAllowed(loginResult.getPrincipals(), api.security.acl.Permission.WRITE_PERMISSIONS)) {
+                this.isSecurityWizardStepFormAllowed = true;
+            }
         }
 
         private isPrincipalPresent(principalKey: api.security.PrincipalKey,
                                    accessEntriesToCheck: AccessControlEntry[]): boolean {
-            var result = false;
-            accessEntriesToCheck.some((entry: AccessControlEntry) => {
+
+            return accessEntriesToCheck.some((entry: AccessControlEntry) => {
                 if (entry.getPrincipalKey().equals(principalKey)) {
-                    result = true;
                     return true;
                 }
             });
-
-            return result;
         }
 
         /**
