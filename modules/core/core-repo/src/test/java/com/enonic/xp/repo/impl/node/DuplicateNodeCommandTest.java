@@ -359,6 +359,7 @@ public class DuplicateNodeCommandTest
             indexServiceInternal( indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }

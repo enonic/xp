@@ -7,6 +7,7 @@ import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RenameNodeParams;
+import com.enonic.xp.repo.impl.NodeEvents;
 
 public final class RenameNodeCommand
     extends AbstractNodeCommand
@@ -34,6 +35,8 @@ public final class RenameNodeCommand
             newNodeName( params.getNewNodeName() ).
             build().
             execute();
+
+        this.eventPublisher.publish( NodeEvents.renamed( renamedNode ) );
 
         return renamedNode;
     }

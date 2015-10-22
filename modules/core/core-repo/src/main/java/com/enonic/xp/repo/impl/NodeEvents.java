@@ -15,6 +15,14 @@ public class NodeEvents
 
     public static final String NODE_PUSHED_EVENT = "node.pushed";
 
+    public static final String NODE_DUPLICATED_EVENT = "node.duplicated";
+
+    public static final String NODE_UPDATED_EVENT = "node.updated";
+
+    public static final String NODE_RENAMED_EVENT = "node.renamed";
+
+    public static final String NODE_SORTED_EVENT = "node.sorted";
+
     public static Event2 moved( final Node from, final Node to )
     {
         if ( from != null && to != null )
@@ -56,19 +64,6 @@ public class NodeEvents
         return null;
     }
 
-    private static void addNodeValuesToEventData( final Event2.Builder builder, final Nodes nodes )
-    {
-
-        final StringBuilder pushedNodesAsString = new StringBuilder();
-
-        for ( final Node node : nodes )
-        {
-            pushedNodesAsString.append( node.id() ).append( ":" ).append( node.path() ).append( ";" );
-        }
-
-        builder.value( "nodes", pushedNodesAsString.toString() );
-    }
-
     public static Event2 deleted( final Node deleted )
     {
         if ( deleted != null )
@@ -80,5 +75,70 @@ public class NodeEvents
                 build();
         }
         return null;
+    }
+
+    public static Event2 duplicated( final Node duplicated )
+    {
+        if ( duplicated != null )
+        {
+            return Event2.create( NODE_DUPLICATED_EVENT ).
+                distributed( true ).
+                value( "id", duplicated.id() ).
+                value( "path", duplicated.path() ).
+                build();
+        }
+        return null;
+    }
+
+    public static Event2 updated( final Node updated )
+    {
+        if ( updated != null )
+        {
+            return Event2.create( NODE_UPDATED_EVENT ).
+                distributed( true ).
+                value( "id", updated.id() ).
+                value( "path", updated.path() ).
+                build();
+        }
+        return null;
+    }
+
+    public static Event2 renamed( final Node renamed )
+    {
+        if ( renamed != null )
+        {
+            return Event2.create( NODE_RENAMED_EVENT ).
+                distributed( true ).
+                value( "id", renamed.id() ).
+                value( "path", renamed.path() ).
+                build();
+        }
+        return null;
+    }
+
+    public static Event2 sorted( final Node sorted )
+    {
+        if ( sorted != null )
+        {
+            return Event2.create( NODE_SORTED_EVENT ).
+                distributed( true ).
+                value( "id", sorted.id() ).
+                value( "path", sorted.path() ).
+                build();
+        }
+        return null;
+    }
+
+    private static void addNodeValuesToEventData( final Event2.Builder builder, final Nodes nodes )
+    {
+
+        final StringBuilder pushedNodesAsString = new StringBuilder();
+
+        for ( final Node node : nodes )
+        {
+            pushedNodesAsString.append( node.id() ).append( ":" ).append( node.path() ).append( ";" );
+        }
+
+        builder.value( "nodes", pushedNodesAsString.toString() );
     }
 }
