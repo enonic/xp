@@ -15,6 +15,8 @@ public class NodeEvents
 
     public static final String NODE_PUSHED_EVENT = "node.pushed";
 
+    public static final String NODE_DUPLICATED_EVENT = "node.duplicated";
+
     public static Event2 moved( final Node from, final Node to )
     {
         if ( from != null && to != null )
@@ -56,19 +58,6 @@ public class NodeEvents
         return null;
     }
 
-    private static void addNodeValuesToEventData( final Event2.Builder builder, final Nodes nodes )
-    {
-
-        final StringBuilder pushedNodesAsString = new StringBuilder();
-
-        for ( final Node node : nodes )
-        {
-            pushedNodesAsString.append( node.id() ).append( ":" ).append( node.path() ).append( ";" );
-        }
-
-        builder.value( "nodes", pushedNodesAsString.toString() );
-    }
-
     public static Event2 deleted( final Node deleted )
     {
         if ( deleted != null )
@@ -80,5 +69,31 @@ public class NodeEvents
                 build();
         }
         return null;
+    }
+
+    public static Event2 duplicated( final Node duplicated )
+    {
+        if ( duplicated != null )
+        {
+            return Event2.create( NODE_DUPLICATED_EVENT ).
+                distributed( true ).
+                value( "id", duplicated.id() ).
+                value( "path", duplicated.path() ).
+                build();
+        }
+        return null;
+    }
+
+    private static void addNodeValuesToEventData( final Event2.Builder builder, final Nodes nodes )
+    {
+
+        final StringBuilder pushedNodesAsString = new StringBuilder();
+
+        for ( final Node node : nodes )
+        {
+            pushedNodesAsString.append( node.id() ).append( ":" ).append( node.path() ).append( ";" );
+        }
+
+        builder.value( "nodes", pushedNodesAsString.toString() );
     }
 }

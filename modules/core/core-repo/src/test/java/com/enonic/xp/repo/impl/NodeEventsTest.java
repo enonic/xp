@@ -75,6 +75,20 @@ public class NodeEventsTest
     }
 
     @Test
+    public void testDuplicated()
+    {
+        final Node duplicated = createNode( "duplicated", NodePath.create( "/mynode1/child1" ).build(), "myId" );
+
+        Event2 event = NodeEvents.duplicated( duplicated );
+
+        assertNotNull( event );
+        assertTrue( event.isDistributed() );
+        assertEquals( NodeEvents.NODE_DUPLICATED_EVENT, event.getType() );
+        assertEquals( "myId", event.getValue( "id" ).get() );
+        assertEquals( "/mynode1/child1/duplicated", event.getValue( "path" ).get() );
+    }
+
+    @Test
     public void testNullArguments()
     {
         Event2 eventCreated = NodeEvents.created( null );
