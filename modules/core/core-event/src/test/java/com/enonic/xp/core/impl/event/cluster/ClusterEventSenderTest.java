@@ -30,7 +30,7 @@ public class ClusterEventSenderTest
     private DiscoveryNode node2;
 
     @Before
-    public void before()
+    public void setUp()
     {
         //Mocks the Elasticsearch nodes
         this.localNode = Mockito.mock( DiscoveryNode.class );
