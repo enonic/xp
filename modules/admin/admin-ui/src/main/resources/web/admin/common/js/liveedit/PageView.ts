@@ -425,30 +425,24 @@ module api.liveedit {
         }
 
         getName(): string {
-            if (this.isContentEmpty()) {
-                return this.getNameForEmptyContent();
-            } else {
-                return this.liveEditModel.getContent().getDisplayName();
+            if (this.pageModel.hasTemplate()) {
+                return this.pageModel.getTemplate().getDisplayName();
             }
+            if (this.pageModel.isCustomized()) {
+                return this.pageModel.hasController() ? this.pageModel.getController().getDisplayName() : "Custom";
+            }
+            if (this.pageModel.getMode() == PageMode.AUTOMATIC) {
+                return this.pageModel.getDefaultPageTemplate().getDisplayName();
+            }
+
+            return "[No name]";
         }
 
         getIconUrl(content: api.content.Content): string {
-            if (!content.isSite() && this.isContentEmpty()) {
-                return "";
-            } else {
-                return new api.content.ContentIconUrlResolver().setContent(content).resolve();
-            }
+            return "";
         }
 
         getIconClass(): string {
-            if (this.isContentEmpty()) {
-                return this.getIconClassForEmptyContent();
-            } else {
-                return super.getIconClass();
-            }
-        }
-
-        private getIconClassForEmptyContent(): string {
             var largeIconCls = " icon-large";
 
             if (this.pageModel.hasTemplate()) {
@@ -462,20 +456,6 @@ module api.liveedit {
             }
 
             return super.getIconClass();
-        }
-
-        private getNameForEmptyContent(): string {
-            if (this.pageModel.hasTemplate()) {
-                return this.pageModel.getTemplate().getDisplayName();
-            }
-            if (this.pageModel.isCustomized()) {
-                return this.pageModel.hasController() ? this.pageModel.getController().getDisplayName() : "Custom";
-            }
-            if (this.pageModel.getMode() == PageMode.AUTOMATIC) {
-                return this.pageModel.getDefaultPageTemplate().getDisplayName();
-            }
-
-            return "[No name]";
         }
 
         getParentItemView(): ItemView {
@@ -759,10 +739,6 @@ module api.liveedit {
 
         isDisabledContextMenu(): boolean {
             return this.disableContextMenu;
-        }
-
-        setContent(content: Content) {
-            this.liveEditModel.setContent(content);
         }
     }
 }
