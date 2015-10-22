@@ -4,8 +4,10 @@ import org.junit.Test;
 
 import com.enonic.xp.event.Event2;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.Nodes;
 
 import static org.junit.Assert.*;
 
@@ -42,6 +44,24 @@ public class NodeEventsTest
     }
 
     @Test
+    public void testPushed()
+    {
+        final Node pushed1 = createNode( "pushed1", NodePath.create( "/mynode1/pushed1" ).build(), "id1" );
+        final Node pushed2 = createNode( "pushed2", NodePath.create( "/mynode1/pushed2" ).build(), "id2" );
+        final Node pushed3 = createNode( "pushed3", NodePath.create( "/mynode1/pushed3" ).build(), "id3" );
+        final Nodes nodes = Nodes.from( pushed1, pushed2, pushed3 );
+
+        Event2 event = NodeEvents.pushed( nodes );
+
+        assertNotNull( event );
+        assertTrue( event.isDistributed() );
+        assertTrue( event.hasValue( "nodes" ) );
+        assertEquals( NodeEvents.NODE_PUSHED_EVENT, event.getType() );
+        assertEquals( "id1:/mynode1/pushed1/pushed1;id2:/mynode1/pushed2/pushed2;id3:/mynode1/pushed3/pushed3;",
+                      event.getValue( "nodes" ).get() );
+    }
+
+    @Test
     public void testDeleted()
     {
         final Node deleted = createNode( "deleted", NodePath.create( "/mynode1/child1" ).build() );
@@ -73,4 +93,14 @@ public class NodeEventsTest
             parentPath( root ).
             build();
     }
+
+    private Node createNode( final String name, final NodePath root, String id )
+    {
+        return Node.create().
+            name( NodeName.from( name ) ).
+            parentPath( root ).
+            id( NodeId.from( id ) ).
+            build();
+    }
+
 }

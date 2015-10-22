@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl;
 
 import com.enonic.xp.event.Event2;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.Nodes;
 
 public class NodeEvents
 {
@@ -12,7 +13,9 @@ public class NodeEvents
 
     public static final String NODE_DELETED_EVENT = "node.deleted";
 
-    public static Event2 moved( Node from, Node to )
+    public static final String NODE_PUSHED_EVENT = "node.pushed";
+
+    public static Event2 moved( final Node from, final Node to )
     {
         if ( from != null && to != null )
         {
@@ -27,7 +30,7 @@ public class NodeEvents
         return null;
     }
 
-    public static Event2 created( Node created )
+    public static Event2 created( final Node created )
     {
         if ( created != null )
         {
@@ -40,7 +43,33 @@ public class NodeEvents
         return null;
     }
 
-    public static Event2 deleted( Node deleted )
+    public static Event2 pushed( final Nodes pushedNodes )
+    {
+        if ( pushedNodes != null && pushedNodes.getSize() > 0 )
+        {
+            final Event2.Builder builder = Event2.create( NODE_PUSHED_EVENT ).distributed( true );
+
+            addNodeValuesToEventData( builder, pushedNodes );
+
+            return builder.build();
+        }
+        return null;
+    }
+
+    private static void addNodeValuesToEventData( final Event2.Builder builder, final Nodes nodes )
+    {
+
+        final StringBuilder pushedNodesAsString = new StringBuilder();
+
+        for ( final Node node : nodes )
+        {
+            pushedNodesAsString.append( node.id() ).append( ":" ).append( node.path() ).append( ";" );
+        }
+
+        builder.value( "nodes", pushedNodesAsString.toString() );
+    }
+
+    public static Event2 deleted( final Node deleted )
     {
         if ( deleted != null )
         {

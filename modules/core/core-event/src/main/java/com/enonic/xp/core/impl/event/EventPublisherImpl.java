@@ -35,8 +35,11 @@ public final class EventPublisherImpl
     @Override
     public void publish( final Event event )
     {
-        this.queue.add( event );
-        dispatchEvents();
+        if ( event != null )
+        {
+            this.queue.add( event );
+            dispatchEvents();
+        }
     }
 
     private void dispatchEvents()
