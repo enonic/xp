@@ -8,7 +8,6 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.security.acl.Permission;
 
 import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.requireContextUserPermission;
@@ -36,7 +35,6 @@ abstract class AbstractDeleteNodeCommand
         {
             doDelete( context, child );
         }
-        this.eventPublisher.publish( NodeEvents.deleted( node ) );
     }
 
     private void resolveNodesToDelete( final Node node, final List<Node> nodes )

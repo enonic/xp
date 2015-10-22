@@ -255,7 +255,8 @@ public class MoveNodeCommandTest
             id( child1.id() ).
             newParent( newParent.path() ).
             build().
-            execute();
+            execute().
+            getTargetNode();
 
         refresh();
 

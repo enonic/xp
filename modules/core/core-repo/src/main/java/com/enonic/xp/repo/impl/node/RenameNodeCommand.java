@@ -2,12 +2,12 @@ package com.enonic.xp.repo.impl.node;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RenameNodeParams;
-import com.enonic.xp.repo.impl.NodeEvents;
 
 public final class RenameNodeCommand
     extends AbstractNodeCommand
@@ -21,7 +21,7 @@ public final class RenameNodeCommand
         this.params = builder.params;
     }
 
-    public Node execute()
+    public MoveNodeResult execute()
     {
         final NodeId nodeId = params.getNodeId();
 
@@ -29,16 +29,12 @@ public final class RenameNodeCommand
 
         final NodePath parentPath = verifyNodeNotExistAtNewPath( nodeToBeRenamed );
 
-        final Node renamedNode = MoveNodeCommand.create( this ).
+        return MoveNodeCommand.create( this ).
             id( params.getNodeId() ).
             newParent( parentPath ).
             newNodeName( params.getNewNodeName() ).
             build().
             execute();
-
-        this.eventPublisher.publish( NodeEvents.renamed( renamedNode ) );
-
-        return renamedNode;
     }
 
     private NodePath verifyNodeNotExistAtNewPath( final Node nodeToBeRenamed )

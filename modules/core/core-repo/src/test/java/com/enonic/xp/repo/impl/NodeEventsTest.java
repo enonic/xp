@@ -139,7 +139,7 @@ public class NodeEventsTest
         final Node pushed3 = createNode( "state_updated3", NodePath.create( "/mynode1/state_updated3" ).build(), "id3" );
         final Nodes nodes = Nodes.from( pushed1, pushed2, pushed3 );
 
-        Event2 event = NodeEvents.stateUpdated( nodes, NodeState.DEFAULT );
+        Event2 event = NodeEvents.stateUpdated( nodes );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );

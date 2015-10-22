@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl;
 
 import com.enonic.xp.event.Event2;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.Nodes;
 
 public class NodeEvents
@@ -67,13 +66,13 @@ public class NodeEvents
         return null;
     }
 
-    public static Event2 stateUpdated( final Nodes updatedNodes, final NodeState nodeState )
+    public static Event2 stateUpdated( final Nodes updatedNodes )
     {
-        if ( updatedNodes != null && updatedNodes.getSize() > 0 )
+        if ( updatedNodes != null && updatedNodes.isNotEmpty() )
         {
             final Event2.Builder builder = Event2.create( NODE_STATE_UPDATED_EVENT ).
                 distributed( true ).
-                value( "state", nodeState.toString() );
+                value( "state", updatedNodes.first().getNodeState().toString() );
 
             addNodeValuesToEventData( builder, updatedNodes );
 

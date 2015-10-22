@@ -23,7 +23,6 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.storage.MoveNodeParams;
 import com.enonic.xp.security.acl.Permission;
@@ -110,11 +109,7 @@ public class PushNodesCommand
 
         indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ) );
 
-        final PushNodesResult result = builder.build();
-
-        this.eventPublisher.publish( NodeEvents.pushed( result.getSuccessful() ) );
-
-        return result;
+        return builder.build();
     }
 
     private void updateTargetChildrenMetaData( final Node node, PushNodesResult.Builder resultBuilder )

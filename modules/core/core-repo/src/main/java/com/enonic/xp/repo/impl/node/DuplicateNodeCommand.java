@@ -15,7 +15,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.blob.BlobKey;
 import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
@@ -63,8 +62,6 @@ public final class DuplicateNodeCommand
 
         updateNodeReferences( duplicatedNode, nodesToBeUpdated );
         updateChildReferences( duplicatedNode, nodesToBeUpdated );
-
-        this.eventPublisher.publish( NodeEvents.duplicated( duplicatedNode ) );
 
         return duplicatedNode;
     }
