@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.convert.Converters;
@@ -17,7 +18,7 @@ public final class Event2
 
     private final boolean distributed;
 
-    private final ImmutableMap<String, ?> data;
+    private final ImmutableMap<String, Object> data;
 
     private Event2( final Builder builder )
     {
@@ -42,7 +43,7 @@ public final class Event2
         return this.distributed;
     }
 
-    public Map<String, ?> getData()
+    public Map<String, Object> getData()
     {
         return this.data;
     }
@@ -87,6 +88,45 @@ public final class Event2
             add( "data", this.data != null ? this.data.toString() : null ).
             omitNullValues().
             toString();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final Event2 event2 = (Event2) o;
+
+        if ( timestamp != event2.timestamp )
+        {
+            return false;
+        }
+        if ( distributed != event2.distributed )
+        {
+            return false;
+        }
+        if ( !type.equals( event2.type ) )
+        {
+            return false;
+        }
+        return data.equals( event2.data );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = type.hashCode();
+        result = 31 * result + (int) ( timestamp ^ ( timestamp >>> 32 ) );
+        result = 31 * result + ( distributed ? 1 : 0 );
+        result = 31 * result + data.hashCode();
+        return result;
     }
 
     public static Builder create( final String type )
@@ -157,9 +197,15 @@ public final class Event2
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkNotNull( type, "type cannot be null" );
+        }
+
 
         public Event2 build()
         {
+            this.validate();
             return new Event2( this );
         }
     }
