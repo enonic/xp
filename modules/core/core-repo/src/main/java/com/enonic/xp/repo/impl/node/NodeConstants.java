@@ -10,7 +10,7 @@ public final class NodeConstants
 {
     public final static String BINARY_BLOB_STORE_DIR = "binary";
 
-    public final static String NODE_BLOB_STORE_DIR = "node";
+    public final static String NODE_VERSION_BLOB_STORE_DIR = "node";
 
     private static final PrincipalKey NODE_SUPER_USER_KEY = PrincipalKey.ofUser( UserStoreKey.system(), "node-su" );
 

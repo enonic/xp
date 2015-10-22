@@ -7,7 +7,7 @@ module app.view.detail {
 
         private static activeDetailsPanel: DetailsPanel;
 
-        private static setActivePanelFunction: (detailsPanel: DetailsPanel) => void = api.util.AppHelper.debounce(ActiveDetailsPanelManager.doSetActiveDetailsPanelLocal,
+        private static debouncedSetActiveDetailsPanel: (detailsPanel: DetailsPanel) => void = api.util.AppHelper.debounce(ActiveDetailsPanelManager.doSetActiveDetailsPanel,
             300, false);
 
         constructor() {
@@ -15,15 +15,14 @@ module app.view.detail {
         }
 
         static setActiveDetailsPanel(detailsPanelToMakeActive: DetailsPanel) {
-            ActiveDetailsPanelManager.setActivePanelFunction(detailsPanelToMakeActive);
+            ActiveDetailsPanelManager.debouncedSetActiveDetailsPanel(detailsPanelToMakeActive);
         }
 
         static getActiveDetailsPanel(): DetailsPanel {
             return ActiveDetailsPanelManager.activeDetailsPanel;
         }
 
-        private static doSetActiveDetailsPanelLocal(detailsPanelToMakeActive: DetailsPanel) {
-
+        private static doSetActiveDetailsPanel(detailsPanelToMakeActive: DetailsPanel) {
             var activeItem: ViewItem<ContentSummary> = null,
                 currentlyActivePanel = ActiveDetailsPanelManager.getActiveDetailsPanel();
             if (currentlyActivePanel) {

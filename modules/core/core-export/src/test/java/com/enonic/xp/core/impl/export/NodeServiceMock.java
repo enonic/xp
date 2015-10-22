@@ -38,6 +38,7 @@ import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
@@ -48,7 +49,6 @@ import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;
-import com.enonic.xp.node.RootNode;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
@@ -289,7 +289,7 @@ class NodeServiceMock
     }
 
     @Override
-    public Node getByNodeVersion( final NodeVersion nodeVersion )
+    public NodeVersion getByNodeVersion( final NodeVersionMetadata nodeVersionMetadata )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -319,7 +319,7 @@ class NodeServiceMock
     }
 
     @Override
-    public RootNode createRootNode( final CreateRootNodeParams params )
+    public Node createRootNode( final CreateRootNodeParams params )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -337,7 +337,7 @@ class NodeServiceMock
     }
 
     @Override
-    public RootNode getRoot()
+    public Node getRoot()
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

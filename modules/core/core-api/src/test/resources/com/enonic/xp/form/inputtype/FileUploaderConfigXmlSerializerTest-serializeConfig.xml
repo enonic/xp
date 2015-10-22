@@ -1,7 +1,0 @@
-<config>
-  <allow-types>
-    <type name="Images">jpg,png,gif</type>
-    <type name="Text">txt,doc</type>
-  </allow-types>
-  <hide-drop-zone>true</hide-drop-zone>
-</config>

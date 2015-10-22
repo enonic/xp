@@ -50,6 +50,30 @@ final class PostProcessEvaluator
         return PortalResponse.create( this.portalResponse ).body( htmlBlocks.toString() ).build();
     }
 
+    public PortalResponse evaluateInstructions()
+    {
+        HtmlBlocks htmlBlocks = new HtmlBlockParser().parse( this.input );
+
+        while ( htmlBlocks.hasInstructions() )
+        {
+            htmlBlocks = processInstructions( htmlBlocks );
+        }
+
+        return PortalResponse.create( this.portalResponse ).body( htmlBlocks.toString() ).build();
+    }
+
+    public PortalResponse evaluateContributions()
+    {
+        HtmlBlocks htmlBlocks = new HtmlBlockParser().parse( this.input );
+
+        if ( htmlBlocks.hasTagMarkers() )
+        {
+            htmlBlocks = processContributions( htmlBlocks );
+        }
+
+        return PortalResponse.create( this.portalResponse ).body( htmlBlocks.toString() ).build();
+    }
+
     private HtmlBlocks processInstructions( final HtmlBlocks htmlBlocks )
     {
         final HtmlBlocks.Builder processedHtmlBlocks = HtmlBlocks.builder();

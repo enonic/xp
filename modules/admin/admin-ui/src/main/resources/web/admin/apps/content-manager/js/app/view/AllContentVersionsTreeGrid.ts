@@ -22,10 +22,10 @@ module app.view {
         }
 
         private enrichWithWorkspaces(allVersions: ContentVersion[], activeVersions: ContentVersion[]): ContentVersion[] {
-            var filteredVersions : ContentVersion[] = allVersions.length ? [allVersions[0]] : [];
+            var filteredVersions: ContentVersion[] = allVersions.length ? [allVersions[0]] : [];
 
             for (var i = 1; i < allVersions.length; i++) {
-                if (Math.abs(allVersions[i-1].modified.getTime() - allVersions[i].modified.getTime()) > 500) {
+                if (Math.abs(allVersions[i - 1].modified.getTime() - allVersions[i].modified.getTime()) > 500) {
                     filteredVersions.push(allVersions[i]);
                 }
             }

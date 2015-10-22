@@ -45,10 +45,10 @@ module api.app.wizard {
             this.displayNameGenerator = builder.displayNameGenerator;
             this.displayNameProgrammaticallySet = this.displayNameGenerator != null;
 
-            this.displayNameEl = api.ui.text.AutosizeTextInput.large().setName('displayName');
+            this.displayNameEl = api.ui.text.AutosizeTextInput.large().setName(api.query.QueryField.DISPLAY_NAME);
             this.displayNameEl.setPlaceholder("<Display Name>");
             this.displayNameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                this.notifyPropertyChanged("displayName", event.getOldValue(), event.getNewValue());
+                this.notifyPropertyChanged(api.query.QueryField.DISPLAY_NAME, event.getOldValue(), event.getNewValue());
             });
             this.appendChild(this.displayNameEl);
 

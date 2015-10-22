@@ -36,7 +36,7 @@ public class IndexServiceImplTest
         this.indexService = new IndexServiceImpl();
         this.indexService.setSearchService( this.searchService );
         this.indexService.setIndexServiceInternal( this.indexServiceInternal );
-        this.indexService.setNodeDao( this.nodeDao );
+        this.indexService.setNodeVersionDao( this.nodeDao );
 
         this.rootNode = this.createDefaultRootNode();
     }

@@ -20,7 +20,7 @@ import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.xp.repo.impl.elasticsearch.search.ElasticsearchSearchDao;
 import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchStorageDao;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
-import com.enonic.xp.repo.impl.node.dao.NodeDaoImpl;
+import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
@@ -75,7 +75,7 @@ public class SecurityServiceImplTest
 
     private NodeServiceImpl nodeService;
 
-    private NodeDaoImpl nodeDao;
+    private NodeVersionDaoImpl nodeDao;
 
     private VersionServiceImpl versionService;
 
@@ -110,7 +110,7 @@ public class SecurityServiceImplTest
         this.versionService = new VersionServiceImpl();
         this.versionService.setStorageDao( storageDao );
 
-        this.nodeDao = new NodeDaoImpl();
+        this.nodeDao = new NodeVersionDaoImpl();
 
         this.indexService = new ElasticsearchIndexServiceInternal();
         this.indexService.setClient( client );
@@ -125,7 +125,7 @@ public class SecurityServiceImplTest
         this.storageService = new StorageServiceImpl();
         this.storageService.setBranchService( this.branchService );
         this.storageService.setVersionService( this.versionService );
-        this.storageService.setNodeDao( this.nodeDao );
+        this.storageService.setNodeVersionDao( this.nodeDao );
         this.storageService.setIndexServiceInternal( this.indexService );
 
         this.nodeService = new NodeServiceImpl();

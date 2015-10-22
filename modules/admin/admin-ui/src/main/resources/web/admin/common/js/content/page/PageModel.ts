@@ -374,10 +374,10 @@ module api.content.page {
             }
             else if (this.mode == PageMode.FORCED_TEMPLATE) {
 
-                var regionsUnchanged = this.regions.equals(this.defaultTemplate.getRegions());
+                var regionsUnchanged = this.defaultTemplate.getRegions().equals(this.regions);
                 var regions = regionsUnchanged ? null : this.regions;
 
-                var configUnchanged = this.config.equals(this.defaultTemplate.getConfig());
+                var configUnchanged = this.defaultTemplate.getConfig().equals(this.config);
                 var config = configUnchanged ? null : this.config;
 
                 return new PageBuilder().

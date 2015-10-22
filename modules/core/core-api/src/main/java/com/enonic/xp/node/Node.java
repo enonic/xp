@@ -14,8 +14,10 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.security.acl.AccessControlList;
 
 @Beta
-public class Node
+public final class Node
 {
+    public final static NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
+
     private final NodeId id;
 
     private final NodeName name;
@@ -44,14 +46,15 @@ public class Node
 
     private final NodeState nodeState;
 
+    private final NodeVersionId nodeVersionId;
+
     protected Node( final Builder builder )
     {
         Preconditions.checkNotNull( builder.permissions, "permissions are required" );
         Preconditions.checkNotNull( builder.data, "data are required" );
 
         this.id = builder.id;
-        this.name = builder.name;
-        this.parentPath = builder.parentPath;
+
         this.nodeType = builder.nodeType;
         this.data = builder.data;
         this.childOrder = builder.childOrder;
@@ -61,8 +64,26 @@ public class Node
         this.attachedBinaries = builder.attachedBinaries;
         this.nodeState = builder.nodeState;
         this.timestamp = builder.timestamp;
+        this.nodeVersionId = builder.nodeVersionId;
 
-        this.path = this.parentPath != null && this.name != null ? new NodePath( this.parentPath, this.name ) : null;
+        if ( ROOT_UUID.equals( this.id ) )
+        {
+            this.parentPath = null;
+            this.path = NodePath.ROOT;
+            this.name = NodeName.ROOT;
+        }
+        else if ( builder.parentPath != null && builder.name != null )
+        {
+            this.parentPath = builder.parentPath;
+            this.name = builder.name;
+            this.path = new NodePath( this.parentPath, this.name );
+        }
+        else
+        {
+            this.parentPath = builder.parentPath;
+            this.name = builder.name;
+            this.path = null;
+        }
 
         if ( builder.indexConfigDocument != null )
         {
@@ -78,7 +99,7 @@ public class Node
 
     public boolean isRoot()
     {
-        return this instanceof RootNode;
+        return ROOT_UUID.equals( this.id );
     }
 
     public NodeName name()
@@ -151,6 +172,11 @@ public class Node
         return nodeState;
     }
 
+    public NodeVersionId getNodeVersionId()
+    {
+        return nodeVersionId;
+    }
+
     public void validateForIndexing()
     {
         Preconditions.checkNotNull( this.id, "Id must be set" );
@@ -168,6 +194,20 @@ public class Node
         return new Builder();
     }
 
+    public static Builder create( final NodeVersion nodeVersion )
+    {
+        return new Builder().
+            id( nodeVersion.getId() ).
+            nodeType( nodeVersion.getNodeType() ).
+            data( nodeVersion.getData() ).
+            indexConfigDocument( nodeVersion.getIndexConfigDocument() ).
+            childOrder( nodeVersion.getChildOrder() ).
+            manualOrderValue( nodeVersion.getManualOrderValue() ).
+            permissions( nodeVersion.getPermissions() ).
+            inheritPermissions( nodeVersion.isInheritPermissions() ).
+            attachedBinaries( nodeVersion.getAttachedBinaries() );
+    }
+
     public static Builder create( final NodeId id )
     {
         return new Builder( id );
@@ -176,6 +216,11 @@ public class Node
     public static Builder create( final Node node )
     {
         return new Builder( node );
+    }
+
+    public static Builder createRoot()
+    {
+        return new Builder( ROOT_UUID );
     }
 
     public static class Builder
@@ -206,6 +251,8 @@ public class Node
 
         private NodeState nodeState = NodeState.DEFAULT;
 
+        private NodeVersionId nodeVersionId;
+
         public Builder()
         {
             super();
@@ -231,6 +278,7 @@ public class Node
             this.attachedBinaries = node.attachedBinaries;
             this.nodeState = node.nodeState;
             this.timestamp = node.timestamp;
+            this.nodeVersionId = node.nodeVersionId;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -329,8 +377,23 @@ public class Node
             return this;
         }
 
+        public Builder nodeVersionId( final NodeVersionId nodeVersionId )
+        {
+            this.nodeVersionId = nodeVersionId;
+            return this;
+        }
+
+        private void validate()
+        {
+            if ( ROOT_UUID.equals( this.id ) )
+            {
+                Preconditions.checkNotNull( this.childOrder );
+            }
+        }
+
         public Node build()
         {
+            this.validate();
             return new Node( this );
         }
     }
@@ -359,6 +422,7 @@ public class Node
             Objects.equals( permissions, node.permissions ) &&
             Objects.equals( data, node.data ) &&
             Objects.equals( attachedBinaries, node.attachedBinaries ) &&
+            Objects.equals( nodeVersionId, node.nodeVersionId ) &&
             Objects.equals( indexConfigDocument, node.indexConfigDocument );
     }
 
@@ -366,6 +430,6 @@ public class Node
     public int hashCode()
     {
         return Objects.hash( id, name, parentPath, nodeType, inheritPermissions, manualOrderValue, childOrder, permissions, data,
-                             indexConfigDocument, attachedBinaries );
+                             indexConfigDocument, attachedBinaries, nodeVersionId );
     }
 }

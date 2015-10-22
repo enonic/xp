@@ -11,7 +11,7 @@ import com.enonic.xp.branch.Branch;
 @Beta
 public class GetActiveNodeVersionsResult
 {
-    private final ImmutableMap<Branch, NodeVersion> nodeVersions;
+    private final ImmutableMap<Branch, NodeVersionMetadata> nodeVersions;
 
     private GetActiveNodeVersionsResult( Builder builder )
     {
@@ -23,7 +23,7 @@ public class GetActiveNodeVersionsResult
         return new Builder();
     }
 
-    public ImmutableMap<Branch, NodeVersion> getNodeVersions()
+    public ImmutableMap<Branch, NodeVersionMetadata> getNodeVersions()
     {
         return nodeVersions;
     }
@@ -31,15 +31,15 @@ public class GetActiveNodeVersionsResult
 
     public static final class Builder
     {
-        private final Map<Branch, NodeVersion> nodeVersions = Maps.newHashMap();
+        private final Map<Branch, NodeVersionMetadata> nodeVersions = Maps.newHashMap();
 
         private Builder()
         {
         }
 
-        public Builder add( final Branch branch, final NodeVersion nodeVersion )
+        public Builder add( final Branch branch, final NodeVersionMetadata nodeVersionMetadata )
         {
-            this.nodeVersions.put( branch, nodeVersion );
+            this.nodeVersions.put( branch, nodeVersionMetadata );
             return this;
         }
 

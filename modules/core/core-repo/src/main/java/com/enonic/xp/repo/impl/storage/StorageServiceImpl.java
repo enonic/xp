@@ -7,28 +7,27 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
+import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.RootNode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.BranchService;
-import com.enonic.xp.repo.impl.branch.MoveBranchDocument;
-import com.enonic.xp.repo.impl.branch.StoreBranchDocument;
-import com.enonic.xp.repo.impl.branch.storage.BranchNodeVersion;
-import com.enonic.xp.repo.impl.branch.storage.BranchNodeVersions;
+import com.enonic.xp.repo.impl.branch.storage.MoveBranchParams;
+import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
+import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
+import com.enonic.xp.repo.impl.branch.storage.NodesBranchMetadata;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.node.dao.NodeDao;
-import com.enonic.xp.repo.impl.version.NodeVersionDocument;
+import com.enonic.xp.repo.impl.node.dao.NodeVersionDao;
 import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 import com.enonic.xp.repo.impl.version.VersionService;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -40,22 +39,28 @@ public class StorageServiceImpl
 
     private BranchService branchService;
 
-    private NodeDao nodeDao;
+    private NodeVersionDao nodeVersionDao;
 
     private IndexServiceInternal indexServiceInternal;
 
     @Override
     public Node store( final Node node, final InternalContext context )
     {
-        final NodeVersionId nodeVersionId = nodeDao.store( node );
-        doStoreVersion( node, context, nodeVersionId );
+        final NodeVersionId nodeVersionId = nodeVersionDao.store( node );
 
-        return storeBranchAndIndex( node, context, nodeVersionId );
+        storeVersionMetadata( node, context, nodeVersionId );
+
+        storeBranchAndIndex( node, context, nodeVersionId );
+
+        return Node.create( node ).
+            nodeVersionId( nodeVersionId ).
+            build();
+
     }
 
-    private void doStoreVersion( final Node node, final InternalContext context, final NodeVersionId nodeVersionId )
+    private void storeVersionMetadata( final Node node, final InternalContext context, final NodeVersionId nodeVersionId )
     {
-        this.versionService.store( NodeVersionDocument.create().
+        this.versionService.store( NodeVersionMetadata.create().
             nodeId( node.id() ).
             nodeVersionId( nodeVersionId ).
             nodePath( node.path() ).
@@ -66,23 +71,23 @@ public class StorageServiceImpl
     @Override
     public Node move( final MoveNodeParams params, final InternalContext context )
     {
-        final BranchNodeVersion branchNodeVersion = this.branchService.get( params.getNode().id(), context );
+        final NodeBranchMetadata nodeBranchMetadata = this.branchService.get( params.getNode().id(), context );
 
         final NodeVersionId nodeVersionId;
 
         if ( params.isUpdateMetadataOnly() )
         {
-            nodeVersionId = branchNodeVersion.getVersionId();
+            nodeVersionId = nodeBranchMetadata.getVersionId();
 
         }
         else
         {
-            nodeVersionId = nodeDao.store( params.getNode() );
+            nodeVersionId = nodeVersionDao.store( params.getNode() );
         }
 
-        doStoreVersion( params.getNode(), context, nodeVersionId );
+        storeVersionMetadata( params.getNode(), context, nodeVersionId );
 
-        return moveInBranchAndIndex( params.getNode(), nodeVersionId, branchNodeVersion.getNodePath(), context );
+        return moveInBranchAndIndex( params.getNode(), nodeVersionId, nodeBranchMetadata.getNodePath(), context );
     }
 
     @Override
@@ -96,84 +101,88 @@ public class StorageServiceImpl
     @Override
     public Node updateMetadata( final Node node, final InternalContext context )
     {
-        final BranchNodeVersion branchNodeVersion = this.branchService.get( node.id(), context );
+        final NodeBranchMetadata nodeBranchMetadata = this.branchService.get( node.id(), context );
 
-        if ( branchNodeVersion == null )
+        if ( nodeBranchMetadata == null )
         {
             throw new NodeNotFoundException( "Cannot find node with id: " + node.id() + " in branch " + context.getBranch() );
         }
 
-        final NodeVersionId nodeVersionId = branchNodeVersion.getVersionId();
+        final NodeVersionId nodeVersionId = nodeBranchMetadata.getVersionId();
 
-        return storeBranchAndIndex( node, context, nodeVersionId );
+        storeBranchAndIndex( node, context, nodeVersionId );
+
+        return Node.create( node ).
+            nodeVersionId( nodeVersionId ).
+            build();
     }
 
     @Override
     public void updateVersion( final Node node, final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        this.branchService.store( StoreBranchDocument.create().
+        this.branchService.store( NodeBranchMetadata.create().
             nodeVersionId( nodeVersionId ).
-            node( node ).
+            nodeId( node.id() ).
+            nodeState( node.getNodeState() ).
+            timestamp( node.getTimestamp() ).
+            nodePath( node.path() ).
             build(), context );
 
-        this.indexServiceInternal.store( node, nodeVersionId, context );
+        this.indexServiceInternal.store( node, context );
     }
 
     @Override
     public Node get( final NodeId nodeId, final InternalContext context )
     {
-        final BranchNodeVersion branchNodeVersion = this.branchService.get( nodeId, context );
+        final NodeBranchMetadata nodeBranchMetadata = this.branchService.get( nodeId, context );
 
-        return doGetNode( branchNodeVersion );
+        return doGetNode( nodeBranchMetadata );
     }
 
     @Override
     public Node get( final NodePath nodePath, final InternalContext context )
     {
-        final BranchNodeVersion branchNodeVersion = this.branchService.get( nodePath, context );
+        final NodeBranchMetadata nodeBranchMetadata = this.branchService.get( nodePath, context );
 
-        return doGetNode( branchNodeVersion );
+        return doGetNode( nodeBranchMetadata );
     }
 
     @Override
     public Nodes get( final NodeIds nodeIds, final InternalContext context )
     {
-        final BranchNodeVersions branchNodeVersions = this.branchService.get( nodeIds, InternalContext.from( ContextAccessor.current() ) );
+        final NodesBranchMetadata nodesBranchMetadata = this.branchService.get( nodeIds, context );
 
-        return doReturnNodes( branchNodeVersions );
+        return doReturnNodes( nodesBranchMetadata );
     }
 
     @Override
     public Nodes get( final NodePaths nodePaths, final InternalContext context )
     {
-        final BranchNodeVersions branchNodeVersions =
-            this.branchService.get( nodePaths, InternalContext.from( ContextAccessor.current() ) );
+        final NodesBranchMetadata nodesBranchMetadata = this.branchService.get( nodePaths, context );
 
-        return doReturnNodes( branchNodeVersions );
+        return doReturnNodes( nodesBranchMetadata );
     }
 
     @Override
-    public Node get( final NodeVersion nodeVersion )
+    public NodeVersion get( final NodeVersionMetadata nodeVersionMetadata )
     {
-        final Node node = this.nodeDao.get( nodeVersion.getNodeVersionId() );
-
-        return populateWithMetaData( node, nodeVersion );
+        return this.nodeVersionDao.get( nodeVersionMetadata.getNodeVersionId() );
     }
 
     @Override
-    public BranchNodeVersion getBranchNodeVersion( final NodeId nodeId, final InternalContext context )
+    public NodeBranchMetadata getBranchNodeVersion( final NodeId nodeId, final InternalContext context )
     {
         return this.branchService.get( nodeId, context );
     }
 
     @Override
-    public BranchNodeVersions getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context )
+    public NodesBranchMetadata getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context )
     {
         return this.branchService.get( nodeIds, context );
     }
 
     @Override
-    public NodeVersion getVersion( final NodeVersionDocumentId versionId, final InternalContext context )
+    public NodeVersionMetadata getVersion( final NodeVersionDocumentId versionId, final InternalContext context )
     {
         return this.versionService.getVersion( versionId, context );
     }
@@ -181,113 +190,83 @@ public class StorageServiceImpl
     @Override
     public NodeId getIdForPath( final NodePath nodePath, final InternalContext context )
     {
-        final BranchNodeVersion branchNodeVersion = this.branchService.get( nodePath, context );
+        final NodeBranchMetadata nodeBranchMetadata = this.branchService.get( nodePath, context );
 
-        return branchNodeVersion != null ? branchNodeVersion.getNodeId() : null;
+        return nodeBranchMetadata != null ? nodeBranchMetadata.getNodeId() : null;
     }
 
     @Override
     public NodePath getParentPath( final NodeId nodeId, final InternalContext context )
     {
-        final BranchNodeVersion branchNodeVersion = this.branchService.get( nodeId, context );
+        final NodeBranchMetadata nodeBranchMetadata = this.branchService.get( nodeId, context );
 
-        return branchNodeVersion != null ? branchNodeVersion.getNodePath().getParentPath() : null;
+        return nodeBranchMetadata != null ? nodeBranchMetadata.getNodePath().getParentPath() : null;
     }
 
-    private Node doGetNode( final BranchNodeVersion branchNodeVersion )
+    private Node doGetNode( final NodeBranchMetadata nodeBranchMetadata )
     {
-        if ( branchNodeVersion == null )
+        if ( nodeBranchMetadata == null )
         {
             return null;
         }
 
-        final Node node = nodeDao.get( branchNodeVersion.getVersionId() );
+        final NodeVersion nodeVersion = nodeVersionDao.get( nodeBranchMetadata.getVersionId() );
 
-        return canRead( node ) ? populateWithMetaData( node, branchNodeVersion ) : null;
+        final Node node = NodeFactory.create( nodeVersion, nodeBranchMetadata );
+
+        return canRead( node.getPermissions() ) ? node : null;
     }
 
-
-    private Node populateWithMetaData( final Node node, final BranchNodeVersion branchNodeVersion )
-    {
-        if ( node instanceof RootNode )
-        {
-            return node;
-        }
-
-        final NodePath nodePath = branchNodeVersion.getNodePath();
-        final NodePath parentPath = nodePath.getParentPath();
-        final NodeName nodeName = NodeName.from( nodePath.getLastElement().toString() );
-
-        return Node.create( node ).
-            parentPath( parentPath ).
-            name( nodeName ).
-            nodeState( branchNodeVersion.getNodeState() ).
-            timestamp( branchNodeVersion.getTimestamp() ).
-            build();
-    }
-
-    private Node populateWithMetaData( final Node node, final NodeVersion nodeVersion )
-    {
-        if ( node instanceof RootNode )
-        {
-            return node;
-        }
-
-        final NodePath nodePath = nodeVersion.getNodePath();
-        final NodePath parentPath = nodePath.getParentPath();
-        final NodeName nodeName = NodeName.from( nodePath.getLastElement().toString() );
-
-        return Node.create( node ).
-            parentPath( parentPath ).
-            name( nodeName ).
-            nodeState( NodeState.ARCHIVED ).
-            timestamp( nodeVersion.getTimestamp() ).
-            build();
-    }
-
-    private Nodes doReturnNodes( final BranchNodeVersions branchNodeVersions )
+    private Nodes doReturnNodes( final NodesBranchMetadata nodesBranchMetadata )
     {
         final NodeVersionIds.Builder builder = NodeVersionIds.create();
-        branchNodeVersions.forEach( ( nodeBranchVersion ) -> builder.add( nodeBranchVersion.getVersionId() ) );
+        nodesBranchMetadata.forEach( ( nodeBranchVersion ) -> builder.add( nodeBranchVersion.getVersionId() ) );
 
-        final Nodes nodes = nodeDao.get( builder.build() );
+        final NodeVersions nodeVersions = nodeVersionDao.get( builder.build() );
 
         final Nodes.Builder filteredNodes = Nodes.create();
 
-        nodes.stream().filter( this::canRead ).forEach(
-            ( node ) -> filteredNodes.add( populateWithMetaData( node, branchNodeVersions.get( node.id() ) ) ) );
+        nodeVersions.stream().filter( ( nodeVersion ) -> canRead( nodeVersion.getPermissions() ) ).forEach(
+            ( nodeVersion ) -> filteredNodes.add( NodeFactory.create( nodeVersion, nodesBranchMetadata.get( nodeVersion.getId() ) ) ) );
 
         return filteredNodes.build();
     }
 
-    private Node storeBranchAndIndex( final Node node, final InternalContext context, final NodeVersionId nodeVersionId )
+    private void storeBranchAndIndex( final Node node, final InternalContext context, final NodeVersionId nodeVersionId )
     {
-        this.branchService.store( StoreBranchDocument.create().
-            node( node ).
+        this.branchService.store( NodeBranchMetadata.create().
             nodeVersionId( nodeVersionId ).
+            nodeId( node.id() ).
+            nodeState( node.getNodeState() ).
+            timestamp( node.getTimestamp() ).
+            nodePath( node.path() ).
             build(), context );
 
-        this.indexServiceInternal.store( node, nodeVersionId, context );
-
-        return node;
+        this.indexServiceInternal.store( node, context );
     }
 
     private Node moveInBranchAndIndex( final Node node, final NodeVersionId nodeVersionId, final NodePath previousPath,
                                        final InternalContext context )
     {
-        this.branchService.move( MoveBranchDocument.create().
-            node( node ).
-            nodeVersionId( nodeVersionId ).
+        final NodeVersion nodeVersion = NodeVersion.from( node );
+
+        this.branchService.move( MoveBranchParams.create().
+            branchNodeVersion( NodeBranchMetadata.create().
+                nodeVersionId( nodeVersionId ).
+                nodeId( nodeVersion.getId() ).
+                nodeState( node.getNodeState() ).
+                timestamp( node.getTimestamp() ).
+                nodePath( node.path() ).
+                build() ).
             previousPath( previousPath ).
             build(), context );
 
-        this.indexServiceInternal.store( node, nodeVersionId, context );
+        this.indexServiceInternal.store( node, context );
 
         return node;
     }
 
-
-    private boolean canRead( final Node node )
+    private boolean canRead( final AccessControlList permissions )
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
 
@@ -296,7 +275,7 @@ public class StorageServiceImpl
             return true;
         }
 
-        return node.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.READ );
+        return permissions.isAllowedFor( authInfo.getPrincipals(), Permission.READ );
     }
 
     @Reference
@@ -312,9 +291,9 @@ public class StorageServiceImpl
     }
 
     @Reference
-    public void setNodeDao( final NodeDao nodeDao )
+    public void setNodeVersionDao( final NodeVersionDao nodeVersionDao )
     {
-        this.nodeDao = nodeDao;
+        this.nodeVersionDao = nodeVersionDao;
     }
 
     @Reference

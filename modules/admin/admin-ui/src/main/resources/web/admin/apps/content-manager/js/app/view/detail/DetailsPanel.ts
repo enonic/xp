@@ -63,9 +63,6 @@ module app.view.detail {
                 this.versionsPanel.reRenderActivePanel();
             });
 
-            var delayedReset = api.util.AppHelper.debounce(this.resetItem.bind(this), 300, false);
-            ResponsiveManager.onAvailableSizeChanged(this, delayedReset);
-
             this.managePublishEvent();
 
             this.initNameAndIconView(builder.getUseNameAndIconView());
@@ -85,13 +82,16 @@ module app.view.detail {
 
         private managePublishEvent() {
             api.content.ContentsPublishedEvent.on((event: api.content.ContentsPublishedEvent) => {
-                var itemId = (<ContentSummary>this.getItem().getModel()).getId();
-                var idPublished = event.getContentIds().some((id, index, array) => {
-                    return itemId === id.toString();
-                });
+                if (this.getItem()) {
+                    // check for item because it can be null after publishing pending for delete item
+                    var itemId = (<ContentSummary>this.getItem().getModel()).getId();
+                    var idPublished = event.getContentIds().some((id, index, array) => {
+                        return itemId === id.toString();
+                    });
 
-                if (idPublished) {
-                    this.versionsPanel.reloadActivePanel();
+                    if (idPublished) {
+                        this.versionsPanel.reloadActivePanel();
+                    }
                 }
             });
         }

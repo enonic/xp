@@ -11,7 +11,7 @@ import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.UpdateNodeParams;
 
 import static org.junit.Assert.*;
@@ -51,8 +51,8 @@ public class GetActiveNodeVersionsCommandTest
             build().
             execute();
 
-        NodeVersion draft = result.getNodeVersions().get( WS_DEFAULT );
-        NodeVersion master = result.getNodeVersions().get( WS_OTHER );
+        NodeVersionMetadata draft = result.getNodeVersions().get( WS_DEFAULT );
+        NodeVersionMetadata master = result.getNodeVersions().get( WS_OTHER );
 
         assertEquals( draft, master );
 

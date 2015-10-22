@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateRootNodeParams;
-import com.enonic.xp.node.RootNode;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -19,7 +19,7 @@ public class CreateRootNodeCommandTest
     public void create()
         throws Exception
     {
-        final RootNode rootNode = CreateRootNodeCommand.create().
+        final Node rootNode = CreateRootNodeCommand.create().
             params( CreateRootNodeParams.create().
                 permissions( AccessControlList.create().add(
                     AccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).allowAll().build() ).build() ).

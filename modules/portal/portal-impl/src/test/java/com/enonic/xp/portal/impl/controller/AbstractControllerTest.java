@@ -96,7 +96,6 @@ public abstract class AbstractControllerTest
         this.factory.setScriptService( scriptService );
 
         this.postProcessor = new PostProcessorImpl();
-        this.factory.setPostProcessor( this.postProcessor );
 
         final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
         ServletRequestHolder.setRequest( req );

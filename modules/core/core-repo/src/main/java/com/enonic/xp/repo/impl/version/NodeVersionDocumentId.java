@@ -11,12 +11,29 @@ public class NodeVersionDocumentId
 
     private final String value;
 
+    private final NodeId nodeId;
+
+    private final NodeVersionId nodeVersionId;
+
     public NodeVersionDocumentId( final NodeId nodeId, final NodeVersionId nodeVersionId )
     {
         Preconditions.checkNotNull( nodeId );
         Preconditions.checkNotNull( nodeVersionId );
 
+        this.nodeId = nodeId;
+        this.nodeVersionId = nodeVersionId;
+
         this.value = nodeId + SEPARATOR + nodeVersionId.toString();
+    }
+
+    public NodeId getNodeId()
+    {
+        return nodeId;
+    }
+
+    public NodeVersionId getNodeVersionId()
+    {
+        return nodeVersionId;
     }
 
     @Override

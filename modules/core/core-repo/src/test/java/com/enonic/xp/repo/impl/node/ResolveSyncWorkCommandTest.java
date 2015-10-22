@@ -1,7 +1,10 @@
 package com.enonic.xp.repo.impl.node;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
@@ -12,7 +15,6 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePublishRequests;
 import com.enonic.xp.node.NodeState;
-import com.enonic.xp.node.RootNode;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.Reference;
@@ -22,6 +24,8 @@ import static org.junit.Assert.*;
 public class ResolveSyncWorkCommandTest
     extends AbstractNodeTest
 {
+    private final static NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
+
     @Before
     public void setUp()
         throws Exception
@@ -70,7 +74,7 @@ public class ResolveSyncWorkCommandTest
         markAsDelete( node3.id() );
 
         final NodeIds result = ResolveSyncWorkCommand.create().
-            nodeId( RootNode.UUID ).
+            nodeId( ROOT_UUID ).
             includeChildren( true ).
             target( WS_OTHER ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -1024,6 +1028,52 @@ public class ResolveSyncWorkCommandTest
         assertEquals( 4, result.getSize() );
     }
 
+    @Ignore("Just for development testing")
+    @Test
+    public void test_large_tree()
+    {
+        final Node rootNode = createNode( CreateNodeParams.create().
+            name( "rootnode" ).
+            setNodeId( NodeId.from( "rootnode" ) ).
+            parent( NodePath.ROOT ).
+            build(), false );
+
+        final Stopwatch timer2 = Stopwatch.createStarted();
+
+        for ( int i = 0; i <= 100; i++ )
+        {
+            final Node parent = createNode( CreateNodeParams.create().
+                name( "myNode" + "-" + i ).
+                setNodeId( NodeId.from( "myNode" + "-" + i ) ).
+                parent( rootNode.path() ).
+                build() );
+
+            createChildren( parent.path(), 100 );
+        }
+
+        timer2.stop();
+        System.out.println( timer2.toString() + " creating nodes" );
+
+        refresh();
+
+        final Stopwatch timer = Stopwatch.createStarted();
+        final NodeIds nodeIds = resolveSyncWorkResult( rootNode.id(), true );
+        timer.stop();
+        System.out.println( timer.toString() + " diffing " + nodeIds.getSize() + " nodes" );
+    }
+
+    private void createChildren( final NodePath parent, final int numberOfChildren )
+    {
+        for ( int i = 0; i <= numberOfChildren; i++ )
+        {
+            createNode( CreateNodeParams.create().
+                setNodeId( NodeId.from( parent.getLastElement() + "-" + i ) ).
+                name( parent.getLastElement() + "-" + i ).
+                parent( parent ).
+                build(), false );
+        }
+    }
+
 
     private void createS1S2Tree()
     {
@@ -1079,7 +1129,7 @@ public class ResolveSyncWorkCommandTest
 
     private void pushAllNodesInS1S2Tree()
     {
-        pushNodes( NodeIds.from( RootNode.UUID.toString(), "s1", "s2", "a1", "a2", "a2_1", "b1", "b2", "b2_1" ), WS_OTHER );
+        pushNodes( NodeIds.from( ROOT_UUID.toString(), "s1", "s2", "a1", "a2", "a2_1", "b1", "b2", "b2_1" ), WS_OTHER );
     }
 
 

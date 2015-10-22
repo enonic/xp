@@ -6,8 +6,6 @@ module app.create {
     import ContentName = api.content.ContentName;
     import Content = api.content.Content;
     import ContentPath = api.content.ContentPath;
-    import Attachment = api.content.attachment.Attachment;
-    import AttachmentName = api.content.attachment.AttachmentName;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
     import ContentType = api.schema.content.ContentType;

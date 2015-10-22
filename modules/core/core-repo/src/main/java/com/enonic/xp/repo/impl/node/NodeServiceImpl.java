@@ -35,6 +35,7 @@ import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
@@ -45,7 +46,6 @@ import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;
-import com.enonic.xp.node.RootNode;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
@@ -349,9 +349,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node getByNodeVersion( final NodeVersion nodeVersion )
+    public NodeVersion getByNodeVersion( final NodeVersionMetadata nodeVersionMetadata )
     {
-        return this.storageService.get( nodeVersion );
+        return this.storageService.get( nodeVersionMetadata );
     }
 
     @Override
@@ -475,7 +475,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public RootNode createRootNode( final CreateRootNodeParams params )
+    public Node createRootNode( final CreateRootNodeParams params )
     {
         return CreateRootNodeCommand.create().
             params( params ).
@@ -500,13 +500,13 @@ public class NodeServiceImpl
     }
 
     @Override
-    public RootNode getRoot()
+    public Node getRoot()
     {
         final Node node = doGetByPath( NodePath.ROOT );
 
-        if ( node instanceof RootNode || node == null )
+        if ( node == null || node.isRoot() )
         {
-            return (RootNode) node;
+            return node;
         }
 
         throw new RuntimeException( "Expected node with path " + NodePath.ROOT.toString() + " to be of type RootNode, found " + node.id() );

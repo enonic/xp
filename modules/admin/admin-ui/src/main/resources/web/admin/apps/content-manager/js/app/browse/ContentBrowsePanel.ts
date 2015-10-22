@@ -150,6 +150,7 @@ module app.browse {
                 setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
                 setSecondPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
                 setAnimationDelay(600).
+                setSecondPanelShouldSlideRight(true).
                 build();
 
             contentPanelsAndDetailPanel.addClass("split-panel-with-details");
@@ -175,15 +176,17 @@ module app.browse {
             this.mobileContentItemStatisticsPanel = new app.view.MobileContentItemStatisticsPanel(this.mobileBrowseActions);
 
             api.content.TreeGridItemClickedEvent.on((event) => {
-                var browseItems: api.app.browse.BrowseItem<ContentSummary>[] = this.getBrowseItemPanel().getItems();
-                if (browseItems.length == 1) {
-                    new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItems[0].getId())).sendAndParse().
-                        then((renderable: boolean) => {
-                            var item: api.app.view.ViewItem<ContentSummary> = browseItems[0].toViewItem();
-                            item.setRenderable(renderable);
-                            this.mobileContentItemStatisticsPanel.setItem(item);
-                            this.mobileBrowseActions.updateActionsEnabledState(browseItems);
-                        });
+                if (ActiveDetailsPanelsManager.getActiveDetailsPanel() == this.mobileContentItemStatisticsPanel.getDetailsPanel()) {
+                    var browseItems: api.app.browse.BrowseItem<ContentSummary>[] = this.getBrowseItemPanel().getItems();
+                    if (browseItems.length == 1) {
+                        new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItems[0].getId())).sendAndParse().
+                            then((renderable: boolean) => {
+                                var item: api.app.view.ViewItem<ContentSummary> = browseItems[0].toViewItem();
+                                item.setRenderable(renderable);
+                                this.mobileContentItemStatisticsPanel.setItem(item);
+                                this.mobileBrowseActions.updateActionsEnabledState(browseItems);
+                            });
+                    }
                 }
             });
 
@@ -397,7 +400,8 @@ module app.browse {
                                         updateResult[i].updateNodeData(el);
                                         this.updateStatisticsPreview(el); // update preview item
 
-                                        var viewItem = this.getBrowseItemPanel().getItems()[0].toViewItem();
+                                        var selectedItems = this.getBrowseItemPanel().getItems();
+                                        var viewItem = selectedItems[selectedItems.length - 1].toViewItem();
                                         this.updateDetailsPanels(el.getContentId(), el.getCompareStatus(), viewItem);
 
                                         results.push(updateResult[i]);
@@ -446,7 +450,7 @@ module app.browse {
                 merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
                     if (node.getData() && node.getData().getContentSummary()) {
 
-                        this.updateDetailsPanels(node.getData().getContentId(), node.getData().getCompareStatus());
+                        this.updateDetailsPanels(node.getData().getContentId(), node.getData().getCompareStatus(), null);
                         new api.content.ContentDeletedEvent(node.getData().getContentSummary().getContentId()).fire();
                     }
                 });
@@ -568,12 +572,10 @@ module app.browse {
         }
 
         private updateDetailsPanels(contentId: ContentId, status: CompareStatus, viewItem?: api.app.view.ViewItem<ContentSummary>) {
-
-            this.updateDetailsPanelsViewItem(viewItem);
-
-            if (viewItem) {
-                this.updateDetailsPanelContentStatus(ActiveDetailsPanelsManager.getActiveDetailsPanel(), contentId, status);
+            if (viewItem !== undefined) {
+                this.updateDetailsPanelsViewItem(viewItem);
             }
+            this.updateDetailsPanelContentStatus(ActiveDetailsPanelsManager.getActiveDetailsPanel(), contentId, status);
         }
 
         private updateDetailsPanelsViewItem(viewItem: api.app.view.ViewItem<ContentSummary>) {
@@ -584,7 +586,8 @@ module app.browse {
         }
 
         private updateDetailsPanelContentStatus(detailsPanel: DetailsPanel, contentId: ContentId, status: CompareStatus) {
-            if (contentId && contentId.equals(detailsPanel.getItem().getModel().getContentId())) {
+            var item = detailsPanel.getItem();
+            if (contentId && item && contentId.equals(item.getModel().getContentId())) {
                 detailsPanel.setContentStatus(status);
             }
         }

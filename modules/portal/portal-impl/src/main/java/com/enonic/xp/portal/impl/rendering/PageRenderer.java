@@ -58,9 +58,9 @@ public final class PageRenderer
             portalResponse = renderForNoPageDescriptor( portalRequest, content );
         }
 
+        portalResponse = this.postProcessor.processResponseInstructions( portalRequest, portalResponse );
         portalResponse = executeResponseFilters( portalRequest, portalResponse );
-        portalResponse = this.postProcessor.processResponse( portalRequest, portalResponse );
-
+        portalResponse = this.postProcessor.processResponseContributions( portalRequest, portalResponse );
         return portalResponse;
     }
 

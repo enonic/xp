@@ -15,11 +15,14 @@ public class SearchRequest
 
     private final PrincipalKeys acl;
 
+    private final SearchType searchType;
+
     private SearchRequest( Builder builder )
     {
-        settings = builder.settings;
-        query = builder.query;
-        returnFields = builder.returnFields;
+        this.settings = builder.settings;
+        this.query = builder.query;
+        this.returnFields = builder.returnFields;
+        this.searchType = builder.searchType;
         this.acl = builder.acl;
     }
 
@@ -43,6 +46,11 @@ public class SearchRequest
         return query;
     }
 
+    public SearchType getSearchType()
+    {
+        return searchType;
+    }
+
     public ReturnFields getReturnFields()
     {
         return returnFields;
@@ -57,6 +65,8 @@ public class SearchRequest
         private ReturnFields returnFields;
 
         private PrincipalKeys acl;
+
+        private SearchType searchType = SearchType.QUERY_THEN_FETCH;
 
         private Builder()
         {
@@ -83,6 +93,12 @@ public class SearchRequest
         public Builder acl( final PrincipalKeys acl )
         {
             this.acl = acl;
+            return this;
+        }
+
+        public Builder searchType( final SearchType searchType )
+        {
+            this.searchType = searchType;
             return this;
         }
 
