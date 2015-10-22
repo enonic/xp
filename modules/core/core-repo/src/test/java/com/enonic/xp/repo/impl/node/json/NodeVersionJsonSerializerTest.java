@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node.json;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -17,11 +18,9 @@ import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeName;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.security.PrincipalKey;
@@ -33,13 +32,13 @@ import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.Assert.*;
 
-public class NodeJsonSerializerTest
+public class NodeVersionJsonSerializerTest
 {
-    private final NodeJsonSerializer serializer;
+    private final NodeVersionJsonSerializer serializer;
 
-    public NodeJsonSerializerTest()
+    public NodeVersionJsonSerializerTest()
     {
-        this.serializer = NodeJsonSerializer.create( true );
+        this.serializer = NodeVersionJsonSerializer.create( true );
     }
 
     @Test
@@ -91,10 +90,8 @@ public class NodeJsonSerializerTest
             addIndexValueProcessor( indexValueProcessor ).
             build();
 
-        Node node = Node.create().
+        NodeVersion nodeVersion = NodeVersion.create().
             id( NodeId.from( "myId" ) ).
-            parentPath( NodePath.ROOT ).
-            name( NodeName.from( "my-name" ) ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( "myAnalyzer" ).
                 defaultConfig( IndexConfig.MINIMAL ).
@@ -111,20 +108,18 @@ public class NodeJsonSerializerTest
                 add( new AttachedBinary( BinaryReference.from( "myImage1" ), "a" ) ).
                 add( new AttachedBinary( BinaryReference.from( "myImage2" ), "b" ) ).
                 build() ).
+            timestamp( Instant.parse( "2015-10-19T08:04:51.830Z" ) ).
             build();
 
         final String expectedStr = readJson( "serialized-node.json" );
 
-        final String serializedNode = this.serializer.toString( node );
+        final String serializedNode = this.serializer.toString( nodeVersion );
         System.out.println( expectedStr );
         assertEquals( expectedStr, serializedNode );
 
-        final Node deSerializedNode = this.serializer.toNode( expectedStr );
+        final NodeVersion deSerialized = this.serializer.toNodeVersion( expectedStr );
 
-        assertEquals( node, Node.create( deSerializedNode ).
-            name( node.name() ).
-            parentPath( node.parentPath() ).
-            build() );
+        assertEquals( nodeVersion, deSerialized );
     }
 
     private String readJson( final String name )

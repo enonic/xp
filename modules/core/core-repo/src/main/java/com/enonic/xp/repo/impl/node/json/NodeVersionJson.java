@@ -13,13 +13,13 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 
-final class NodeJson
+final class NodeVersionJson
 {
     @JsonProperty("id")
     private String id;
@@ -51,9 +51,9 @@ final class NodeJson
     @JsonProperty("attachedBinaries")
     private List<AttachedBinaryJson> attachedBinaries;
 
-    public Node fromJson()
+    public NodeVersion fromJson()
     {
-        return Node.create().
+        return NodeVersion.create().
             id( NodeId.from( this.id ) ).
             data( PropertyTreeJson.fromJson( this.data ) ).
             indexConfigDocument( this.indexConfigDocument.fromJson() ).
@@ -89,19 +89,19 @@ final class NodeJson
         return builder.build();
     }
 
-    public static NodeJson toJson( final Node node )
+    public static NodeVersionJson toJson( final NodeVersion nodeVersion )
     {
-        final NodeJson json = new NodeJson();
-        json.id = node.id().toString();
-        json.data = PropertyTreeJson.toJson( node.data() );
-        json.indexConfigDocument = createEntityIndexConfig( node.getIndexConfigDocument() );
-        json.childOrder = node.getChildOrder().toString();
-        json.manualOrderValue = node.getManualOrderValue();
-        json.permissions = toJson( node.getPermissions() );
-        json.inheritPermissions = node.inheritsPermissions();
-        json.nodeType = node.getNodeType().getName();
-        json.attachedBinaries = toNodeAttachedBinaryJsonList( node.getAttachedBinaries() );
-        json.timestamp = node.getTimestamp();
+        final NodeVersionJson json = new NodeVersionJson();
+        json.id = nodeVersion.getId().toString();
+        json.data = PropertyTreeJson.toJson( nodeVersion.getData() );
+        json.indexConfigDocument = createEntityIndexConfig( nodeVersion.getIndexConfigDocument() );
+        json.childOrder = nodeVersion.getChildOrder().toString();
+        json.manualOrderValue = nodeVersion.getManualOrderValue();
+        json.permissions = toJson( nodeVersion.getPermissions() );
+        json.inheritPermissions = nodeVersion.isInheritPermissions();
+        json.nodeType = nodeVersion.getNodeType().getName();
+        json.attachedBinaries = toNodeAttachedBinaryJsonList( nodeVersion.getAttachedBinaries() );
+        json.timestamp = nodeVersion.getTimestamp();
         return json;
     }
 

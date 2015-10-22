@@ -41,7 +41,7 @@ public class NodeSettingsBuilderTest
 
         assertNotNull( settings );
         assertEquals( 15, settings.getAsMap().size() );
-        assertSettings( System.getProperty( "xp.home" ) + "/repo/index", settings );
+        assertSettings( System.getProperty( "xp.home" ) + "/index", settings );
     }
 
     @Test
@@ -63,7 +63,7 @@ public class NodeSettingsBuilderTest
         assertEquals( "false", settings.get( "client" ) );
         assertEquals( "true", settings.get( "data" ) );
         assertEquals( "false", settings.get( "http.enabled" ) );
-        assertEquals( "my-cluster-name", settings.get( "cluster.name" ) );
+        assertEquals( "mycluster", settings.get( "cluster.name" ) );
         assertEquals( "127.0.0.1", settings.get( "network.host" ) );
         assertEquals( "false", settings.get( "discovery.zen.ping.multicast.enabled" ) );
         assertEquals( "false", settings.get( "cluster.routing.allocation.disk.threshold_enabled" ) );

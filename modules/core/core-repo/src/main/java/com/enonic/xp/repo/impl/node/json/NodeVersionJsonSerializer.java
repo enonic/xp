@@ -10,23 +10,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 
-import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.util.Exceptions;
 
-public final class NodeJsonSerializer
+public final class NodeVersionJsonSerializer
 {
     protected final ObjectMapper mapper;
 
-    private NodeJsonSerializer( final ObjectMapper mapper )
+    private NodeVersionJsonSerializer( final ObjectMapper mapper )
     {
         this.mapper = mapper;
     }
 
-    public String toString( final Node node )
+    public String toString( final NodeVersion nodeVersion )
     {
         try
         {
-            return this.mapper.writeValueAsString( NodeJson.toJson( node ) );
+            return this.mapper.writeValueAsString( NodeVersionJson.toJson( nodeVersion ) );
 
         }
         catch ( final JsonProcessingException e )
@@ -35,23 +35,13 @@ public final class NodeJsonSerializer
         }
     }
 
-    public Node toNode( final String serialized )
+    public NodeVersion toNodeVersion( final String serialized )
     {
         try
         {
-            final NodeJson nodeJson = this.mapper.readValue( serialized, NodeJson.class );
+            final NodeVersionJson nodeVersionJson = this.mapper.readValue( serialized, NodeVersionJson.class );
 
-            final Node node = nodeJson.fromJson();
-
-            if ( node.isRoot() )
-            {
-                return Node.createRoot().
-                    permissions( node.getPermissions() ).
-                    childOrder( node.getChildOrder() ).
-                    build();
-            }
-
-            return node;
+            return nodeVersionJson.fromJson();
         }
         catch ( final IOException e )
         {
@@ -59,7 +49,7 @@ public final class NodeJsonSerializer
         }
     }
 
-    public static NodeJsonSerializer create( final boolean indent )
+    public static NodeVersionJsonSerializer create( final boolean indent )
     {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.setDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) );
@@ -75,6 +65,6 @@ public final class NodeJsonSerializer
             mapper.enable( SerializationFeature.INDENT_OUTPUT );
         }
 
-        return new NodeJsonSerializer( mapper );
+        return new NodeVersionJsonSerializer( mapper );
     }
 }

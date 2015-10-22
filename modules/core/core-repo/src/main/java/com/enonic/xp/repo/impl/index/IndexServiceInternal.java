@@ -5,7 +5,6 @@ import org.elasticsearch.common.unit.TimeValue;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.elasticsearch.ClusterHealthStatus;
 
@@ -17,7 +16,7 @@ public interface IndexServiceInternal
 
     boolean indicesExists( final String... indices );
 
-    void store( final Node node, final NodeVersionId nodeVersionId, final InternalContext context );
+    void store( final Node node, final InternalContext context );
 
     void delete( final NodeId nodeId, final InternalContext context );
 

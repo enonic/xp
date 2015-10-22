@@ -6,17 +6,17 @@ import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeState;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.branch.storage.BranchNodeVersion;
+import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 import com.enonic.xp.repo.impl.storage.StorageService;
 import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 
 class CompareStatusResolver
 {
-    private final BranchNodeVersion source;
+    private final NodeBranchMetadata source;
 
-    private final BranchNodeVersion target;
+    private final NodeBranchMetadata target;
 
     private final StorageService storageService;
 
@@ -75,8 +75,8 @@ class CompareStatusResolver
 
     private CompareStatus resolveFromVersion()
     {
-        final NodeVersion sourceVersion = getVersion( this.source );
-        final NodeVersion targetVersion = getVersion( this.target );
+        final NodeVersionMetadata sourceVersion = getVersion( this.source );
+        final NodeVersionMetadata targetVersion = getVersion( this.target );
 
         if ( sourceVersion.getTimestamp().isAfter( targetVersion.getTimestamp() ) )
         {
@@ -92,21 +92,21 @@ class CompareStatusResolver
     }
 
 
-    private NodeVersion getVersion( final BranchNodeVersion branchNodeVersion )
+    private NodeVersionMetadata getVersion( final NodeBranchMetadata nodeBranchMetadata )
     {
-        if ( branchNodeVersion == null )
+        if ( nodeBranchMetadata == null )
         {
             throw new IllegalArgumentException( "Expected branchNodeVersion to be != null when trying to fetch NodeVersion" );
         }
 
-        final NodeVersion version =
-            storageService.getVersion( new NodeVersionDocumentId( branchNodeVersion.getNodeId(), branchNodeVersion.getVersionId() ),
+        final NodeVersionMetadata version =
+            storageService.getVersion( new NodeVersionDocumentId( nodeBranchMetadata.getNodeId(), nodeBranchMetadata.getVersionId() ),
                                        InternalContext.from( ContextAccessor.current() ) );
 
         if ( version == null )
         {
             throw new NodeNotFoundException(
-                "Didn't find versionId '" + branchNodeVersion.getVersionId() + "' of Node with id '" + branchNodeVersion.getNodeId() +
+                "Didn't find versionId '" + nodeBranchMetadata.getVersionId() + "' of Node with id '" + nodeBranchMetadata.getNodeId() +
                     "'" );
         }
 
@@ -115,9 +115,9 @@ class CompareStatusResolver
 
     public static final class Builder
     {
-        private BranchNodeVersion source;
+        private NodeBranchMetadata source;
 
-        private BranchNodeVersion target;
+        private NodeBranchMetadata target;
 
         private StorageService storageService;
 
@@ -125,13 +125,13 @@ class CompareStatusResolver
         {
         }
 
-        public Builder source( BranchNodeVersion source )
+        public Builder source( NodeBranchMetadata source )
         {
             this.source = source;
             return this;
         }
 
-        public Builder target( BranchNodeVersion target )
+        public Builder target( NodeBranchMetadata target )
         {
             this.target = target;
             return this;
