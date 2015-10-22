@@ -1,4 +1,4 @@
-package com.enonic.xp.web.jmx.impl;
+package com.enonic.xp.web.impl.status;
 
 import java.io.IOException;
 import java.io.PrintWriter;
