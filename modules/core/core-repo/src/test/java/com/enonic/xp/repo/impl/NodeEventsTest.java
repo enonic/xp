@@ -117,6 +117,20 @@ public class NodeEventsTest
     }
 
     @Test
+    public void testSorted()
+    {
+        final Node sorted = createNode( "sorted", NodePath.create( "/mynode1/child1" ).build(), "myId" );
+
+        Event2 event = NodeEvents.sorted( sorted );
+
+        assertNotNull( event );
+        assertTrue( event.isDistributed() );
+        assertEquals( NodeEvents.NODE_SORTED_EVENT, event.getType() );
+        assertEquals( "myId", event.getValue( "id" ).get() );
+        assertEquals( "/mynode1/child1/sorted", event.getValue( "path" ).get() );
+    }
+
+    @Test
     public void testNullArguments()
     {
         Event2 eventCreated = NodeEvents.created( null );

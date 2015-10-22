@@ -12,6 +12,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.security.acl.Permission;
@@ -60,7 +61,11 @@ public class SetNodeChildOrderCommand
             build().
             execute();
 
-        return doGetById( editedNode.id() );
+        final Node result = doGetById( editedNode.id() );
+
+        this.eventPublisher.publish( NodeEvents.sorted( result ) );
+
+        return result;
     }
 
     private void checkContextUserPermissionOrAdmin( final Node parentNode )
