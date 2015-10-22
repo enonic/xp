@@ -175,11 +175,24 @@ module api.dom {
         public loadExistingChildren(): Element {
 
             var children = this.getHTMLElement().children;
-            for (var i = 0; i < children.length; i++) {
-                var child = children[i];
-                var childAsElement = Element.fromHtmlElement(<HTMLElement>child, true, this);
-                this.children.push(childAsElement);
+            if (children) { //children property not supported for IE SVGelement, Document and DocumentFragment
+                for (var i = 0; i < children.length; i++) {
+                    var child = children[i];
+                    var childAsElement = Element.fromHtmlElement(<HTMLElement>child, true, this);
+                    this.children.push(childAsElement);
+                }
             }
+            else {
+                var childNodes = this.getHTMLElement().childNodes;
+                for (var i = 0; i < childNodes.length; i++) {
+                    var childNode = childNodes[i];
+                    if (childNode.nodeType == Node.ELEMENT_NODE) {
+                        var nodeAsElement = Element.fromHtmlElement(<HTMLElement>childNode, true, this);
+                        this.children.push(nodeAsElement);
+                    }
+                }
+            }
+
             return this;
         }
 

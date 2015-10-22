@@ -217,7 +217,7 @@ module api.dom {
         }
 
         appendChild(child: Node): ElementHelper {
-            return this.insertChild(child, this.el.children.length);
+            return this.insertChild(child, this.countChildren());
         }
 
         appendChildren(children: Node[]): ElementHelper {
@@ -228,10 +228,10 @@ module api.dom {
         }
 
         insertChild(child: Node, index: number): ElementHelper {
-            if (index > this.el.children.length - 1) {
+            if (index > this.countChildren() - 1) {
                 this.el.appendChild(child);
             } else {
-                this.el.insertBefore(child, this.el.children.item(index));
+                this.el.insertBefore(child, this.getChild(index));
             }
             return this;
         }
@@ -672,6 +672,43 @@ module api.dom {
 
         isVisible(): boolean {
             return wemjq(this.el).is(':visible');
+        }
+
+        countChildren(): number { //children property not supported for IE SVGelement, Document and DocumentFragment
+            if (this.el.children) {
+                return this.el.children.length;
+            }
+
+            var result = 0;
+            for (var i = 0; i < this.el.childNodes.length; i++) {
+                if (this.el.childNodes[i].nodeType == Node.ELEMENT_NODE) {
+                    result++;
+                }
+            }
+
+            return result;
+        }
+
+        getChild(index: number): Node { //children property not supported for IE SVGelement, Document and DocumentFragment
+            if (this.el.children) {
+                return this.el.children.item(index);
+            }
+
+            var elementsCount = 0;
+            var result = null;
+            for (var i = 0; i < this.el.childNodes.length; i++) {
+                if (this.el.childNodes[i].nodeType == Node.ELEMENT_NODE) {
+                    if (elementsCount == index) {
+                        result = this.el.childNodes[i];
+                        break;
+                    }
+
+                    elementsCount++;
+                }
+            }
+
+            return result;
+
         }
 
     }
