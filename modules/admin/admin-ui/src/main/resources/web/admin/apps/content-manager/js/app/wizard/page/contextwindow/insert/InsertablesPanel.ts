@@ -46,7 +46,7 @@ module app.wizard.page.contextwindow.insert {
 
             this.insertablesDataView.setItems(Insertables.ALL, "name");
 
-            this.componentsView = new app.wizard.PageComponentsView(config.liveEditPage, config.contentWizardPanel);
+            this.componentsView = new app.wizard.PageComponentsView(config.liveEditPage);
 
             this.componentsView.onShown(() => {
                 if (!this.componentsView.getParentElement()) {
