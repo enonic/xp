@@ -89,6 +89,20 @@ public class NodeEventsTest
     }
 
     @Test
+    public void testUpdated()
+    {
+        final Node updated = createNode( "updated", NodePath.create( "/mynode1/child1" ).build(), "myId" );
+
+        Event2 event = NodeEvents.updated( updated );
+
+        assertNotNull( event );
+        assertTrue( event.isDistributed() );
+        assertEquals( NodeEvents.NODE_UPDATED_EVENT, event.getType() );
+        assertEquals( "myId", event.getValue( "id" ).get() );
+        assertEquals( "/mynode1/child1/updated", event.getValue( "path" ).get() );
+    }
+
+    @Test
     public void testNullArguments()
     {
         Event2 eventCreated = NodeEvents.created( null );

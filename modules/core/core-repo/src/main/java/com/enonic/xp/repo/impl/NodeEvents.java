@@ -17,6 +17,8 @@ public class NodeEvents
 
     public static final String NODE_DUPLICATED_EVENT = "node.duplicated";
 
+    public static final String NODE_UPDATED_EVENT = "node.updated";
+
     public static Event2 moved( final Node from, final Node to )
     {
         if ( from != null && to != null )
@@ -79,6 +81,19 @@ public class NodeEvents
                 distributed( true ).
                 value( "id", duplicated.id() ).
                 value( "path", duplicated.path() ).
+                build();
+        }
+        return null;
+    }
+
+    public static Event2 updated( final Node updated )
+    {
+        if ( updated != null )
+        {
+            return Event2.create( NODE_UPDATED_EVENT ).
+                distributed( true ).
+                value( "id", updated.id() ).
+                value( "path", updated.path() ).
                 build();
         }
         return null;

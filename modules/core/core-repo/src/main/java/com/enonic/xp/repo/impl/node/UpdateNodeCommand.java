@@ -11,6 +11,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -89,13 +90,11 @@ public final class UpdateNodeCommand
                 node( updatedNode ).
                 build().
                 execute();
+        }
 
-            return updatedNode;
-        }
-        else
-        {
-            return updatedNode;
-        }
+        this.eventPublisher.publish( NodeEvents.updated( updatedNode ) );
+
+        return updatedNode;
     }
 
     private Node createUpdatedNode( final Node editedNode )
