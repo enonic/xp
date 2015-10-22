@@ -19,6 +19,8 @@ public class NodeEvents
 
     public static final String NODE_UPDATED_EVENT = "node.updated";
 
+    public static final String NODE_RENAMED_EVENT = "node.renamed";
+
     public static Event2 moved( final Node from, final Node to )
     {
         if ( from != null && to != null )
@@ -94,6 +96,19 @@ public class NodeEvents
                 distributed( true ).
                 value( "id", updated.id() ).
                 value( "path", updated.path() ).
+                build();
+        }
+        return null;
+    }
+
+    public static Event2 renamed( final Node renamed )
+    {
+        if ( renamed != null )
+        {
+            return Event2.create( NODE_RENAMED_EVENT ).
+                distributed( true ).
+                value( "id", renamed.id() ).
+                value( "path", renamed.path() ).
                 build();
         }
         return null;

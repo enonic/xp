@@ -103,6 +103,20 @@ public class NodeEventsTest
     }
 
     @Test
+    public void testRenamed()
+    {
+        final Node renamed = createNode( "renamed", NodePath.create( "/mynode1/child1" ).build(), "myId" );
+
+        Event2 event = NodeEvents.renamed( renamed );
+
+        assertNotNull( event );
+        assertTrue( event.isDistributed() );
+        assertEquals( NodeEvents.NODE_RENAMED_EVENT, event.getType() );
+        assertEquals( "myId", event.getValue( "id" ).get() );
+        assertEquals( "/mynode1/child1/renamed", event.getValue( "path" ).get() );
+    }
+
+    @Test
     public void testNullArguments()
     {
         Event2 eventCreated = NodeEvents.created( null );
