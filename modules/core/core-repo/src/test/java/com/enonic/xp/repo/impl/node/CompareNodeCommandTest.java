@@ -210,6 +210,7 @@ public class CompareNodeCommandTest
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
