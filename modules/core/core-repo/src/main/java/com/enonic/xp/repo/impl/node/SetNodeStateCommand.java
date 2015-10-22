@@ -7,6 +7,7 @@ import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
+import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.search.SearchService;
 
 public class SetNodeStateCommand
@@ -35,7 +36,11 @@ public class SetNodeStateCommand
             setNodeState( node, setNodeStateResultBuilder );
         }
 
-        return setNodeStateResultBuilder.build();
+        final SetNodeStateResult setNodeStateResult = setNodeStateResultBuilder.build();
+
+        this.eventPublisher.publish( NodeEvents.stateUpdated( setNodeStateResult.getUpdatedNodes(), params.getNodeState() ) );
+
+        return setNodeStateResult;
     }
 
     private Node setNodeState( final Node node, final SetNodeStateResult.Builder setNodeStateResultBuilder )

@@ -7,6 +7,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.Nodes;
 
 import static org.junit.Assert.*;
@@ -128,6 +129,27 @@ public class NodeEventsTest
         assertEquals( NodeEvents.NODE_SORTED_EVENT, event.getType() );
         assertEquals( "myId", event.getValue( "id" ).get() );
         assertEquals( "/mynode1/child1/sorted", event.getValue( "path" ).get() );
+    }
+
+    @Test
+    public void testStateUpdated()
+    {
+        final Node pushed1 = createNode( "state_updated1", NodePath.create( "/mynode1/state_updated1" ).build(), "id1" );
+        final Node pushed2 = createNode( "state_updated2", NodePath.create( "/mynode1/state_updated2" ).build(), "id2" );
+        final Node pushed3 = createNode( "state_updated3", NodePath.create( "/mynode1/state_updated3" ).build(), "id3" );
+        final Nodes nodes = Nodes.from( pushed1, pushed2, pushed3 );
+
+        Event2 event = NodeEvents.stateUpdated( nodes, NodeState.DEFAULT );
+
+        assertNotNull( event );
+        assertTrue( event.isDistributed() );
+        assertTrue( event.hasValue( "nodes" ) );
+        assertTrue( event.hasValue( "state" ) );
+        assertEquals( NodeEvents.NODE_STATE_UPDATED_EVENT, event.getType() );
+        assertEquals( NodeState.DEFAULT.toString(), event.getValue( "state" ).get() );
+        assertEquals(
+            "id1:/mynode1/state_updated1/state_updated1;id2:/mynode1/state_updated2/state_updated2;id3:/mynode1/state_updated3/state_updated3;",
+            event.getValue( "nodes" ).get() );
     }
 
     @Test
