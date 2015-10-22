@@ -48,8 +48,7 @@ public class WidgetDescriptorResourceTest
 
         Mockito.when( widgetDescriptorService.getByInterface( Mockito.any() ) ).thenReturn( widgetDescriptors );
 
-        String jsonString =
-            request().path( "widget/descriptor/byInterface" ).queryParam( "interface", "someInterfaceName" ).get().getAsString();
+        String jsonString = request().path( "widget" ).queryParam( "interface", "someInterfaceName" ).get().getAsString();
 
         assertJson( "get_widgets_by_interface.json", jsonString );
     }
