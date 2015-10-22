@@ -88,8 +88,6 @@ module api.app.browse {
                     then(() => {
                         this.browseItemPanel.updateDisplayedPanel();
                     });
-
-                this.treeGrid.getToolbar().refresh(browseItems.length);
             });
 
             this.onRendered((event) => {

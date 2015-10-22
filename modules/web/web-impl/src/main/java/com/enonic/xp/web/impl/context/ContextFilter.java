@@ -15,7 +15,7 @@ import com.enonic.xp.web.filter.OncePerRequestFilter;
 
 @Component(immediate = true, service = Filter.class,
     property = {"osgi.http.whiteboard.filter.pattern=/", "service.ranking:Integer=10"})
-public final class ContextHandler
+public final class ContextFilter
     extends OncePerRequestFilter
 {
     @Override

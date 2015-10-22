@@ -23,7 +23,7 @@ import com.enonic.xp.jaxrs.JaxRsService;
 
 @Component(immediate = true, service = {Servlet.class, JaxRsService.class},
     property = {"osgi.http.whiteboard.servlet.pattern=/"})
-public final class JaxRsHandler
+public final class JaxRsServlet
     extends HttpServlet
     implements JaxRsService
 {
@@ -31,7 +31,7 @@ public final class JaxRsHandler
 
     private boolean needsRefresh;
 
-    public JaxRsHandler()
+    public JaxRsServlet()
     {
         this.dispatcher = new JaxRsDispatcher();
         this.needsRefresh = true;

@@ -36,7 +36,7 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Component(immediate = true, service = Servlet.class,
     property = {"osgi.http.whiteboard.servlet.pattern=/portal/*"})
-public final class PortalDispatcher
+public final class PortalServlet
     extends HttpServlet
 {
     private final static String BASE_URI = "/portal";
@@ -49,7 +49,7 @@ public final class PortalDispatcher
 
     private ExceptionRenderer exceptionRenderer;
 
-    public PortalDispatcher()
+    public PortalServlet()
     {
         this.exceptionMapper = new ExceptionMapper();
         this.registry = new PortalHandlerRegistry();

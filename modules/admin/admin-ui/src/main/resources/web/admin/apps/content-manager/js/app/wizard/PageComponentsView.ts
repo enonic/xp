@@ -25,7 +25,9 @@ module app.wizard {
         private content: Content;
         private pageView: PageView;
         private liveEditPage: LiveEditPageProxy;
+        private contentWizardPanel: app.wizard.ContentWizardPanel;
         private contextMenu: api.liveedit.ItemViewContextMenu;
+        private delayedTreeReloadFn: Function;
 
         private tree: PageComponentsTreeGrid;
         private header: api.dom.H3El;
@@ -40,13 +42,21 @@ module app.wizard {
         private mouseDown: boolean = false;
         public static debug: boolean = false;
 
-        constructor(liveEditPage: LiveEditPageProxy) {
+        constructor(liveEditPage: LiveEditPageProxy, contentWizardPanel: app.wizard.ContentWizardPanel) {
             super('page-components-view');
 
             this.liveEditPage = liveEditPage;
+            this.contentWizardPanel = contentWizardPanel;
 
             var closeButton = new api.ui.button.CloseButton();
-            closeButton.onClicked((event: MouseEvent) => this.hide());
+            closeButton.onClicked((event: MouseEvent) => {
+                this.hideContextMenu();
+                this.hide()
+            });
+
+            this.onRemoved(() => {
+                this.contextMenu.remove();
+            });
 
             this.header = new api.dom.H2El('header');
             this.header.setHtml('Page Components');
@@ -77,6 +87,22 @@ module app.wizard {
             } else if (this.tree) {
                 this.tree.setPageView(pageView);
             }
+
+            if (!this.delayedTreeReloadFn) {
+                this.delayedTreeReloadFn = api.util.AppHelper.debounce(this.reloadPageComponentTree.bind(this), 300, false);
+                this.contentWizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
+                    if (event.getPropertyName() == api.query.QueryField.DISPLAY_NAME) {
+                        var currentContent = this.contentWizardPanel.getCurrentContent();
+                        this.pageView.setContent(currentContent);
+
+                        this.delayedTreeReloadFn();
+                    }
+                });
+            }
+        }
+
+        private reloadPageComponentTree() {
+            this.tree.reload(null, false);
         }
 
         setContent(content: Content) {
@@ -201,11 +227,8 @@ module app.wizard {
             };
             this.tree.getGrid().subscribeOnClick(this.clickListener);
             this.tree.onSelectionChanged((data, nodes) => {
-                if (nodes.length > 0) {
-
-                    if (this.isModal()) {
-                        this.hide();
-                    }
+                if (nodes.length > 0 && this.isModal()) {
+                    this.hide();
                 }
 
                 this.hideContextMenu();
@@ -379,8 +402,9 @@ module app.wizard {
 
             if (!this.contextMenu) {
                 this.contextMenu = new api.liveedit.ItemViewContextMenu(null, contextMenuActions);
-            }
-            else {
+                this.contextMenu.onShown((event) => this.setMenuOpenStyleOnMenuIcon(row));
+                this.contextMenu.onHidden((event) => this.removeMenuOpenStyleFromMenuIcon());
+            } else {
                 this.contextMenu.setActions(contextMenuActions);
             }
 
@@ -400,8 +424,6 @@ module app.wizard {
             var y = clickPosition.y;
 
             this.contextMenu.showAt(x, y, false);
-
-            this.setMenuOpenStyleOnMenuIcon(row);
         }
 
         private setMenuOpenStyleOnMenuIcon(row: number) {
@@ -417,7 +439,6 @@ module app.wizard {
         private hideContextMenu() {
             if (this.contextMenu && this.contextMenu.isVisible()) {
                 this.contextMenu.hide();
-                this.removeMenuOpenStyleFromMenuIcon();
             }
         }
 

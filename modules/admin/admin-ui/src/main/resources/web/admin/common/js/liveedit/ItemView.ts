@@ -690,6 +690,14 @@ module api.liveedit {
             return '[No Name]';
         }
 
+        getIconUrl(content: api.content.Content): string {
+            return new api.content.ContentIconUrlResolver().setContent(content).resolve();
+        }
+
+        getIconClass() {
+            return api.liveedit.ItemViewIconClassResolver.resolve(this);
+        }
+
         showLoadingSpinner() {
             if (!this.loadMask) {
                 this.loadMask = new api.ui.mask.LoadMask(this);
