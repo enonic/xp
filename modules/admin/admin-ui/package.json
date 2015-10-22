@@ -4,7 +4,7 @@
   "devDependencies": {
     "grunt": "~0.4.5",
     "grunt-cli": "0.x.x",
-    "grunt-ts": "5.0.1",
+    "grunt-ts": "5.1.0",
     "typescript": "1.6.2",
     "grunt-contrib-less": "~1.0.1",
     "grunt-directives": "~0.1.2",
