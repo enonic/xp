@@ -88,6 +88,7 @@ public final class XmlSiteParser
         }
         builder.name( filterElement.getAttribute( FILTER_DESCRIPTOR_NAME_ATTRIBUTE ) );
         builder.type( FilterType.RESPONSE );
+        builder.application( this.currentApplication );
         return builder.build();
     }
 }

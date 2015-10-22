@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-public class FilterDescriptors
+public final class FilterDescriptors
     extends AbstractImmutableEntityList<FilterDescriptor>
 {
 

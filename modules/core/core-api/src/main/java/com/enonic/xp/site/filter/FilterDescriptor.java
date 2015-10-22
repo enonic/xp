@@ -1,6 +1,8 @@
 package com.enonic.xp.site.filter;
 
-public class FilterDescriptor
+import com.enonic.xp.app.ApplicationKey;
+
+public final class FilterDescriptor
 {
 
     private final FilterType type;
@@ -9,11 +11,14 @@ public class FilterDescriptor
 
     private final int order;
 
+    private final ApplicationKey application;
+
     private FilterDescriptor( final Builder builder )
     {
         this.type = builder.type;
         this.name = builder.name;
         this.order = builder.order;
+        this.application = builder.application;
     }
 
     public FilterType getType()
@@ -31,6 +36,11 @@ public class FilterDescriptor
         return order;
     }
 
+    public ApplicationKey getApplication()
+    {
+        return application;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -43,6 +53,8 @@ public class FilterDescriptor
         private String name;
 
         private int order;
+
+        private ApplicationKey application;
 
         public Builder type( final FilterType type )
         {
@@ -60,6 +72,11 @@ public class FilterDescriptor
         {
             this.order = order;
             return this;
+        }
+
+        public void application( final ApplicationKey application )
+        {
+            this.application = application;
         }
 
         public FilterDescriptor build()
