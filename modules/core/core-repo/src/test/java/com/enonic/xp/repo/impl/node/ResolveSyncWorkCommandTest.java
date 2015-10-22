@@ -1027,7 +1027,7 @@ public class ResolveSyncWorkCommandTest
         assertEquals( 4, result.getSize() );
     }
 
-    @Ignore
+    @Ignore("Just for development testing")
     @Test
     public void test_large_tree()
     {
@@ -1039,7 +1039,7 @@ public class ResolveSyncWorkCommandTest
 
         final Stopwatch timer2 = Stopwatch.createStarted();
 
-        for ( int i = 0; i <= 500; i++ )
+        for ( int i = 0; i <= 100; i++ )
         {
             final Node parent = createNode( CreateNodeParams.create().
                 name( "myNode" + "-" + i ).
@@ -1047,7 +1047,7 @@ public class ResolveSyncWorkCommandTest
                 parent( rootNode.path() ).
                 build() );
 
-            createChildren( parent.path(), 500 );
+            createChildren( parent.path(), 100 );
         }
 
         timer2.stop();
