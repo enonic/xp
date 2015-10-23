@@ -21,4 +21,3 @@
 ///<reference path='SetChildOrderAndReorderJson.ts' />
 ///<reference path='ResolvePublishContentResultJson.ts' />
 ///<reference path='WidgetDescriptorJson.ts' />
-///<reference path='GetWidgetsByInterfaceResultJson.ts' />

@@ -36,12 +36,12 @@ public class WidgetDescriptorResourceTest
             displayName( "My widget" ).
             addInterface( "com.enonic.xp.my-interface" ).
             addInterface( "com.enonic.xp.my-interface-2" ).
-            key( DescriptorKey.from( "module:my-widget" ) ).
+            key( DescriptorKey.from( "myapp:my-widget" ) ).
             build();
 
         final WidgetDescriptor widgetDescriptor2 = WidgetDescriptor.create().
             displayName( "My second widget" ).
-            key( DescriptorKey.from( "module:my-second-widget" ) ).
+            key( DescriptorKey.from( "myapp:my-second-widget" ) ).
             build();
 
         WidgetDescriptors widgetDescriptors = WidgetDescriptors.from( widgetDescriptor1, widgetDescriptor2 );

@@ -14,9 +14,9 @@ module api.content {
             return this.resourcePath;
         }
 
-        static fromJson(json: api.content.json.GetWidgetsByInterfaceResultJson): Widget[] {
+        static fromJson(json: api.content.json.WidgetDescriptorJson[]): Widget[] {
             var result: Widget[] = [];
-            json.widgetDescriptors.forEach((widgetDescriptor: api.content.json.WidgetDescriptorJson) => {
+            json.forEach((widgetDescriptor: api.content.json.WidgetDescriptorJson) => {
                 result.push(new Widget(widgetDescriptor.url,
                     widgetDescriptor.displayName,
                     widgetDescriptor.interfaces,
