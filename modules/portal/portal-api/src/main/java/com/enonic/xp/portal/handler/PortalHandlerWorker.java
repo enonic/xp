@@ -1,10 +1,10 @@
-package com.enonic.xp.portal.impl.handler;
+package com.enonic.xp.portal.handler;
 
 import com.google.common.net.HttpHeaders;
 
+import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.PortalException;
 import com.enonic.xp.web.HttpStatus;
 
 public abstract class PortalHandlerWorker

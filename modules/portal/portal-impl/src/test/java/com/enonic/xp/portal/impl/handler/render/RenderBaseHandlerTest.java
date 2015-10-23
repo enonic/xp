@@ -18,7 +18,7 @@ import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.handler.BaseHandlerTest;
+import com.enonic.xp.portal.handler.BaseHandlerTest;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.portal.url.PortalUrlService;

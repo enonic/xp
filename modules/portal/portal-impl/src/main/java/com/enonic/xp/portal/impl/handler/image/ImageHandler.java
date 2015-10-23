@@ -12,9 +12,9 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ScaleParamsParser;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.PortalHandler;
-import com.enonic.xp.portal.impl.handler.EndpointHandler;
-import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
+import com.enonic.xp.portal.handler.EndpointHandler;
+import com.enonic.xp.portal.handler.PortalHandler;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.web.HttpMethod;
 
 @Component(immediate = true, service = PortalHandler.class)

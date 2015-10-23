@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl;
+package com.enonic.xp.portal;
 
 import com.enonic.xp.web.HttpStatus;
 
