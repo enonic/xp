@@ -142,7 +142,7 @@ module app.browse {
 
         }
 
-        private initSplitPanelWithDockedDetails(controlButtonBuilder: NonMobileDetailsPanelsManagerBuilder) {
+        private initSplitPanelWithDockedDetails(nonMobileDetailsPanelsManagerBuilder: NonMobileDetailsPanelsManagerBuilder) {
 
             var contentPanelsAndDetailPanel: api.ui.panel.SplitPanel = new api.ui.panel.SplitPanelBuilder(this.getFilterAndContentGridAndBrowseSplitPanel(),
                 this.defaultDockedDetailsPanel).
@@ -158,15 +158,15 @@ module app.browse {
 
             this.appendChild(contentPanelsAndDetailPanel);
 
-            controlButtonBuilder.setSplitPanelWithGridAndDetails(contentPanelsAndDetailPanel);
-            controlButtonBuilder.setDefaultDetailsPanel(this.defaultDockedDetailsPanel);
+            nonMobileDetailsPanelsManagerBuilder.setSplitPanelWithGridAndDetails(contentPanelsAndDetailPanel);
+            nonMobileDetailsPanelsManagerBuilder.setDefaultDetailsPanel(this.defaultDockedDetailsPanel);
         }
 
-        private initFloatingDetailsPanel(controlButtonBuilder: NonMobileDetailsPanelsManagerBuilder) {
+        private initFloatingDetailsPanel(nonMobileDetailsPanelsManagerBuilder: NonMobileDetailsPanelsManagerBuilder) {
 
             this.floatingDetailsPanel = DetailsPanel.create().build();
 
-            controlButtonBuilder.setFloatingDetailsPanel(this.floatingDetailsPanel);
+            nonMobileDetailsPanelsManagerBuilder.setFloatingDetailsPanel(this.floatingDetailsPanel);
 
             this.appendChild(this.floatingDetailsPanel);
         }
