@@ -13,5 +13,4 @@ dependencies {
 
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Portal - Impl'
-    instruction 'Private-Package', 'org.attoparser.*'
 }
