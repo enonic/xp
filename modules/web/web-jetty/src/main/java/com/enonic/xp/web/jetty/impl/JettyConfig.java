@@ -56,4 +56,44 @@ public @interface JettyConfig
      * File size treshold for when to store to disk. 0 means always. Specified in bytes.
      */
     int multipart_fileSizeThreshold() default 0;
+
+    /**
+     * True if GZip should be enabled.
+     */
+    boolean gzip_enabled() default true;
+
+    /**
+     * Content will only be compressed if content length is either unknown or greater than value.
+     */
+    int gzip_minSize() default 16;
+
+    /**
+     * Logging to file enabled.
+     */
+    boolean log_enabled() default false;
+
+    /**
+     * Logging file name to use.
+     */
+    String log_file();
+
+    /**
+     * Append to log.
+     */
+    boolean log_append() default true;
+
+    /**
+     * Log extended information.
+     */
+    boolean log_extended() default true;
+
+    /**
+     * Timezone to log in.
+     */
+    String log_timeZone() default "GMT";
+
+    /**
+     * Retain log for number of days.
+     */
+    int log_retainDays() default 31;
 }

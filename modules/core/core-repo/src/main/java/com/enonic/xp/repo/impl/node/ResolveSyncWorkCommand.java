@@ -2,6 +2,9 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
@@ -21,6 +24,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 import com.enonic.xp.repo.impl.search.SearchService;
 
 public class ResolveSyncWorkCommand
@@ -39,6 +43,8 @@ public class ResolveSyncWorkCommand
     private boolean allPossibleNodesAreIncluded;
 
     private final NodeIds.Builder result;
+
+    private static final Logger LOG = LoggerFactory.getLogger( ResolveSyncWorkCommand.class );
 
     private ResolveSyncWorkCommand( final Builder builder )
     {
@@ -199,7 +205,17 @@ public class ResolveSyncWorkCommand
         {
             if ( !this.processedIds.contains( referredNodeId ) )
             {
-                resolveDiff( referredNodeId );
+                final NodeBranchMetadata nodeBranchMetadata =
+                    this.storageService.getBranchNodeVersion( referredNodeId, InternalContext.from( ContextAccessor.current() ) );
+
+                if ( nodeBranchMetadata != null )
+                {
+                    resolveDiff( referredNodeId );
+                }
+                else
+                {
+                    LOG.warn( "Node with id: " + referredNodeId + " referred to from node " + node.path() + " not found" );
+                }
             }
         }
     }

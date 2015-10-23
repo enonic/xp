@@ -3,83 +3,40 @@ package com.enonic.xp.admin.impl.rest.resource.repo;
 import java.time.Instant;
 import java.util.List;
 
-public class ReindexResultJson
+import com.google.common.collect.Lists;
+
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.index.ReindexResult;
+
+public final class ReindexResultJson
 {
-    private String duration;
+    public String duration;
 
-    private Instant startTime;
+    public Instant startTime;
 
-    private Instant endTime;
+    public Instant endTime;
 
-    private int numberReindexed;
+    public int numberReindexed;
 
-    private List<String> branches;
+    public List<String> branches;
 
-    private String repositoryId;
+    public String repositoryId;
 
-
-    public String getDuration()
+    public static ReindexResultJson create( final ReindexResult result )
     {
-        return duration;
-    }
+        final ReindexResultJson json = new ReindexResultJson();
+        json.duration = result.getDuration().toString();
+        json.startTime = result.getStartTime();
+        json.endTime = result.getEndTime();
+        json.repositoryId = result.getRepositoryId().toString();
+        json.numberReindexed = result.getReindexNodes().getSize();
 
-    public void setDuration( final String duration )
-    {
-        this.duration = duration;
-    }
+        json.branches = Lists.newArrayList();
+        for ( final Branch branch : result.getBranches() )
+        {
+            json.branches.add( branch.getName() );
+        }
 
-    @SuppressWarnings("UnusedDeclaration")
-    public Instant getStartTime()
-    {
-        return startTime;
-    }
-
-    public void setStartTime( final Instant startTime )
-    {
-        this.startTime = startTime;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public Instant getEndTime()
-    {
-        return endTime;
-    }
-
-    public void setEndTime( final Instant endTime )
-    {
-        this.endTime = endTime;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public int getNumberReindexed()
-    {
-        return numberReindexed;
-    }
-
-    public void setNumberReindexed( final int numberReindexed )
-    {
-        this.numberReindexed = numberReindexed;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public List<String> getBranches()
-    {
-        return branches;
-    }
-
-    public void setBranches( final List<String> branches )
-    {
-        this.branches = branches;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public String getRepositoryId()
-    {
-        return repositoryId;
-    }
-
-    public void setRepositoryId( final String repositoryId )
-    {
-        this.repositoryId = repositoryId;
+        return json;
     }
 }

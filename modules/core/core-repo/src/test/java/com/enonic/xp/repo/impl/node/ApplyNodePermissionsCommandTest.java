@@ -13,7 +13,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.UserStoreKey;
@@ -116,7 +116,6 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsParams params = ApplyNodePermissionsParams.create().
             nodeId( topNode.id() ).
-            modifier( user1 ).
             overwriteChildPermissions( true ).
             build();
 
@@ -163,7 +162,7 @@ public class ApplyNodePermissionsCommandTest
             execute();
 
         assertEquals( 2, versions.getHits() );
-        final Iterator<NodeVersion> iterator = versions.getNodeVersions().iterator();
+        final Iterator<NodeVersionMetadata> iterator = versions.getNodeVersionsMetadata().iterator();
         assertTrue( iterator.next().getTimestamp().isAfter( iterator.next().getTimestamp() ) );
     }
 
@@ -237,7 +236,6 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsParams params = ApplyNodePermissionsParams.create().
             nodeId( topNode.id() ).
-            modifier( user1 ).
             overwriteChildPermissions( false ).
             build();
         final int appliedNodeCount = ApplyNodePermissionsCommand.create().

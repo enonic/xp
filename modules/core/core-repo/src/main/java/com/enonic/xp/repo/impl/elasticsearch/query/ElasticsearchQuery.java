@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query;
 import java.util.List;
 import java.util.Set;
 
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
@@ -37,6 +38,8 @@ public class ElasticsearchQuery
 
     private final ReturnFields returnFields;
 
+    private final SearchType searchType;
+
     private ElasticsearchQuery( final Builder builder )
     {
         this.query = builder.queryBuilder;
@@ -48,6 +51,7 @@ public class ElasticsearchQuery
         this.from = builder.from;
         this.aggregations = ImmutableSet.copyOf( builder.aggregations );
         this.returnFields = builder.returnFields;
+        this.searchType = builder.searchType;
     }
 
     public ImmutableSet<AbstractAggregationBuilder> getAggregations()
@@ -100,6 +104,11 @@ public class ElasticsearchQuery
         return sortBuilders;
     }
 
+    public SearchType getSearchType()
+    {
+        return searchType;
+    }
+
     @Override
     public String toString()
     {
@@ -148,6 +157,8 @@ public class ElasticsearchQuery
         private Set<AbstractAggregationBuilder> aggregations = Sets.newHashSet();
 
         private ReturnFields returnFields = ReturnFields.empty();
+
+        private SearchType searchType = SearchType.DFS_QUERY_THEN_FETCH;
 
         public Builder query( final QueryBuilder queryBuilder )
         {
@@ -206,6 +217,12 @@ public class ElasticsearchQuery
         public Builder setReturnFields( final ReturnFields returnFields )
         {
             this.returnFields = returnFields;
+            return this;
+        }
+
+        public Builder searchType( final SearchType searchType )
+        {
+            this.searchType = searchType;
             return this;
         }
 

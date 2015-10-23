@@ -50,6 +50,7 @@ public class SearchServiceImpl
         final SearchRequest searchRequest = SearchRequest.create().
             settings( createSettings( storageType, storageName ) ).
             acl( context.getPrincipalsKeys() ).
+            searchType( query.isAccurateScoring() ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.QUERY_THEN_FETCH ).
             query( query ).
             build();
 
@@ -68,6 +69,7 @@ public class SearchServiceImpl
             settings( createSettings( storageType, storageName ) ).
             returnFields( BRANCH_RETURN_FIELDS ).
             acl( context.getPrincipalsKeys() ).
+            searchType( SearchType.DFS_QUERY_THEN_FETCH ).
             query( nodeBranchQuery ).
             build();
 
@@ -91,6 +93,7 @@ public class SearchServiceImpl
             settings( createSettings( storageType, storageName ) ).
             returnFields( VERSION_RETURN_FIELDS ).
             acl( context.getPrincipalsKeys() ).
+            searchType( SearchType.DFS_QUERY_THEN_FETCH ).
             query( query ).
             build();
 

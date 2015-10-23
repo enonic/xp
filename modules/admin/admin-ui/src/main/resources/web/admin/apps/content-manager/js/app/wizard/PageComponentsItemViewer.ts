@@ -26,13 +26,13 @@ module app.wizard {
 
         resolveIconUrl(object: ItemView): string {
             if (PageItemType.get().equals(object.getType())) {
-                return new api.content.ContentIconUrlResolver().setContent(this.content).resolve();
+                return object.getIconUrl(this.content);
             }
             return null;
         }
 
         resolveIconClass(object: ItemView): string {
-            return api.liveedit.ItemViewIconClassResolver.resolve(object);
+            return object.getIconClass();
         }
     }
 

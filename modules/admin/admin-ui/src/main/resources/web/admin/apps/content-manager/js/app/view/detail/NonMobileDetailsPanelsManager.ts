@@ -1,6 +1,8 @@
 module app.view.detail {
 
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
+    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
+    import ActiveDetailsPanelsManager = app.view.detail.ActiveDetailsPanelManager;
 
     export class NonMobileDetailsPanelsManager {
 
@@ -9,6 +11,7 @@ module app.view.detail {
         private floatingDetailsPanel: DetailsPanel;
         private resizeEventMonitorLocked: boolean = false;
         private toggleButton: api.dom.DivEl = new api.dom.DivEl("button non-mobile-details-panel-toggle-button");
+        private debouncedResizeHandler: () => void = api.util.AppHelper.debounce(this.doHandleResizeEvent, 300, false);
 
         constructor(builder: NonMobileDetailsPanelsManagerBuilder) {
 
@@ -30,7 +33,11 @@ module app.view.detail {
         }
 
         handleResizeEvent() {
-            if (!this.resizeEventMonitorLocked) {
+            this.debouncedResizeHandler();
+        }
+
+        private doHandleResizeEvent() {
+            if (!this.resizeEventMonitorLocked && this.nonMobileDetailsPanelIsActive()) {
                 this.resizeEventMonitorLocked = true;
                 if (this.needsSwitchToFloatingMode() || this.needsSwitchToDockedMode()) {
                     this.doPanelAnimation();
@@ -43,6 +50,11 @@ module app.view.detail {
             } else {
                 return;
             }
+        }
+
+        private nonMobileDetailsPanelIsActive(): boolean {
+            return ActiveDetailsPanelsManager.getActiveDetailsPanel() == this.defaultDockedDetailsPanel ||
+                   ActiveDetailsPanelsManager.getActiveDetailsPanel() == this.floatingDetailsPanel;
         }
 
         private doPanelAnimation(canSetActivePanel: boolean = true) {

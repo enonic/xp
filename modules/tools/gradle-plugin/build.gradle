@@ -1,4 +1,5 @@
 dependencies {
     compile gradleApi()
-    compile 'org.dm.gradle:gradle-bundle-plugin:0.6.2'
+    compile 'org.dm.gradle:gradle-bundle-plugin:0.6.3'
+    compile 'org.osgi:osgi.core:6.0.0'
 }

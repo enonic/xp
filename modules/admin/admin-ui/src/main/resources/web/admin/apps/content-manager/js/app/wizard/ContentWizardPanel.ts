@@ -240,7 +240,7 @@ module app.wizard {
                                 this.cycleViewModeButton.executePrevAction();
                             }
                         } else {
-                            if(this.inMobileViewMode && this.isLiveView()) {
+                            if (this.inMobileViewMode && this.isLiveView()) {
                                 this.inMobileViewMode = false;
                                 this.showSplitEdit();
                             }
@@ -273,7 +273,6 @@ module app.wizard {
                         }
                     });
 
-                    this.wizardActions.getShowSplitEditAction().execute();
                     responsiveItem.update();
                 });
 
@@ -1192,6 +1191,7 @@ module app.wizard {
                 this.previewAction.setEnabled(!this.contentNotRenderable());
             });
         }
+
     }
 
 }

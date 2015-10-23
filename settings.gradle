@@ -49,9 +49,7 @@ include 'lib:lib-mail'
 include 'lib:lib-auth'
 
 include 'repack:repack-jparsec'
-include 'repack:repack-attoparser'
 include 'repack:repack-resteasy'
-include 'repack:repack-jhlabs-filters'
 include 'repack:repack-elasticsearch'
 
 rootProject.name = 'xp'

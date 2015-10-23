@@ -769,7 +769,6 @@ public final class SecurityServiceImpl
             final ApplyNodePermissionsParams applyPermissions = ApplyNodePermissionsParams.create().
                 nodeId( rootNode.id() ).
                 overwriteChildPermissions( false ).
-                modifier( ContextAccessor.current().getAuthInfo().getUser().getKey() ).
                 build();
             nodeService.applyPermissions( applyPermissions );
 
@@ -835,7 +834,6 @@ public final class SecurityServiceImpl
                 final ApplyNodePermissionsParams applyPermissions = ApplyNodePermissionsParams.create().
                     nodeId( userStoreNode.id() ).
                     overwriteChildPermissions( false ).
-                    modifier( ContextAccessor.current().getAuthInfo().getUser().getKey() ).
                     build();
                 nodeService.applyPermissions( applyPermissions );
             }
