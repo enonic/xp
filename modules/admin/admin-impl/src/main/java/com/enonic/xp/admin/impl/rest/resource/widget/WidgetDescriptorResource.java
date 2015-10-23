@@ -12,8 +12,11 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.collect.ImmutableSet;
+
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.widget.json.WidgetDescriptorJson;
+import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.admin.widget.WidgetDescriptors;
 import com.enonic.xp.jaxrs.JaxRsComponent;
@@ -45,6 +48,16 @@ public class WidgetDescriptorResource
 
     private List<WidgetDescriptorJson> widgetDescriptorsToJsonList( final WidgetDescriptors widgetDescriptors )
     {
-        return widgetDescriptors.stream().map( WidgetDescriptorJson::new ).collect( toList() );
+        return widgetDescriptors.stream().map( this::mapWidgetDescriptorToJson ).collect( toList() );
+    }
+
+    private WidgetDescriptorJson mapWidgetDescriptorToJson( final WidgetDescriptor widgetDescriptor )
+    {
+        final WidgetDescriptorJson jsonEntry = new WidgetDescriptorJson();
+        jsonEntry.key = widgetDescriptor.getKeyString();
+        jsonEntry.displayName = widgetDescriptor.getDisplayName();
+        jsonEntry.url = widgetDescriptor.getUrl();
+        jsonEntry.interfaces = ImmutableSet.copyOf( widgetDescriptor.getInterfaces() );
+        return jsonEntry;
     }
 }
