@@ -14,6 +14,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.io.Resources;
 import com.google.common.net.MediaType;
 
@@ -24,8 +25,8 @@ import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpMethod;
 
 @Component(immediate = true, service = Servlet.class,
-    property = {"osgi.http.whiteboard.servlet.pattern=/swagger/*"})
-public final class SwaggerHandler
+    property = {"osgi.http.whiteboard.servlet.pattern=/swagger", "osgi.http.whiteboard.servlet.pattern=/swagger/*"})
+public final class SwaggerServlet
     extends HttpServlet
 {
     private final static String PREFIX = "/swagger";
@@ -36,10 +37,11 @@ public final class SwaggerHandler
 
     private JaxRsService jaxRsService;
 
-    public SwaggerHandler()
+    public SwaggerServlet()
     {
         this.mapper = new ObjectMapper();
         this.mapper.setSerializationInclusion( JsonInclude.Include.NON_NULL );
+        this.mapper.registerModule( new JavaTimeModule() );
     }
 
     @Override

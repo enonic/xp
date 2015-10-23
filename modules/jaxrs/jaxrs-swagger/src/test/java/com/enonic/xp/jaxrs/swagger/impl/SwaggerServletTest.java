@@ -10,9 +10,9 @@ import com.enonic.xp.jaxrs.JaxRsService;
 
 import static org.junit.Assert.*;
 
-public class SwaggerHandlerTest
+public class SwaggerServletTest
 {
-    private SwaggerHandler handler;
+    private SwaggerServlet handler;
 
     private MockHttpServletRequest req;
 
@@ -24,7 +24,7 @@ public class SwaggerHandlerTest
     {
         final JaxRsService jaxRsService = Mockito.mock( JaxRsService.class );
 
-        this.handler = new SwaggerHandler();
+        this.handler = new SwaggerServlet();
         this.handler.setJaxRsService( jaxRsService );
 
         this.req = new MockHttpServletRequest();
