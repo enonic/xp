@@ -57,9 +57,6 @@
   <bundle level="30">${group}:jaxrs-impl:${version}</bundle>
   <bundle level="30">${group}:jaxrs-swagger:${version}</bundle>
 
-  <!-- Portal app dependencies -->
-  <bundle level="30">${group}:repack-attoparser:${version}</bundle>
-
   <!-- Portal app -->
   <bundle level="30">${group}:portal-api:${version}</bundle>
   <bundle level="30">${group}:portal-impl:${version}</bundle>
