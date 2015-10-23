@@ -80,6 +80,42 @@ module api.content {
             var contentPaths = json.p.map((contentPath) => api.content.ContentPath.fromString(contentPath));
             return new ContentServerChange(contentPaths, contentEventType);
         }
+
+
+        static fromEvent2Json(event2Json: api.app.Event2Json): ContentServerChange {
+            var contentEventType;
+
+            switch (event2Json.type) {
+            case 'node.published':
+                contentEventType = ContentServerChangeType.PUBLISH;
+                break;
+            case 'node.created':
+                contentEventType = ContentServerChangeType.CREATE;
+                break;
+            case 'node.updated':
+                contentEventType = ContentServerChangeType.UPDATE;
+                break;
+            case 'node.deleted':
+                contentEventType = ContentServerChangeType.DELETE;
+                break;
+            case 'node.duplicated':
+                contentEventType = ContentServerChangeType.DUPLICATE;
+                break;
+            case 'node.stateChanged':
+                contentEventType = ContentServerChangeType.PENDING;
+                break;
+            case 'node.renamed':
+                contentEventType = ContentServerChangeType.RENAME;
+                break;
+            case 'node.sorted':
+                contentEventType = ContentServerChangeType.SORT;
+                break;
+            default:
+                contentEventType = ContentServerChangeType.UNKNOWN;
+            }
+            var contentPaths = event2Json.data.nodes.map((node) => api.content.ContentPath.fromString(node.path.substr("/content".length)));
+            return new ContentServerChange(contentPaths, contentEventType);
+        }
     }
 
     export class ContentServerEvent extends api.event.Event {
@@ -111,6 +147,11 @@ module api.content {
 
         static fromJson(json: ContentServerEventJson): ContentServerEvent {
             var changes = json.changes.map((changeJson) => ContentServerChange.fromJson(changeJson));
+            return new ContentServerEvent(changes);
+        }
+
+        static fromEvent2Json(json: api.app.Event2Json): ContentServerEvent {
+            var changes = [ContentServerChange.fromEvent2Json(json)];
             return new ContentServerEvent(changes);
         }
     }
