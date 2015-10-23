@@ -6,14 +6,12 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
@@ -106,8 +104,6 @@ public abstract class AbstractNodeTest
 
     protected ElasticsearchSearchDao searchDao;
 
-    protected EventPublisher eventPublisher;
-
     @Before
     public void setUp()
         throws Exception
@@ -157,8 +153,6 @@ public abstract class AbstractNodeTest
         this.snapshotService = new ElasticsearchSnapshotService();
         this.snapshotService.setElasticsearchDao( this.elasticsearchDao );
 
-        this.eventPublisher = Mockito.mock( EventPublisher.class );
-
         createContentRepository();
         waitForClusterHealth();
     }
@@ -188,7 +182,6 @@ public abstract class AbstractNodeTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -201,7 +194,6 @@ public abstract class AbstractNodeTest
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -225,7 +217,6 @@ public abstract class AbstractNodeTest
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             params( createParamsWithAnalyzer ).
             build().
             execute();
@@ -322,7 +313,6 @@ public abstract class AbstractNodeTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -334,7 +324,6 @@ public abstract class AbstractNodeTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }

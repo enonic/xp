@@ -16,22 +16,6 @@ public class NodeEventsTest
 {
 
     @Test
-    public void testMoved()
-    {
-        final Node from = createNode( "from", NodePath.create( "/mynode1/child1" ).build() );
-        final Node to = createNode( "to", NodePath.create( "/mynode2/child2" ).build() );
-
-        Event2 event = NodeEvents.moved( from, to );
-
-        assertNotNull( event );
-        assertTrue( event.isDistributed() );
-        assertEquals( "/mynode1/child1/from", from.path().toString() );
-        assertEquals( "/mynode2/child2/to", to.path().toString() );
-        assertEquals( "/mynode1/child1/from", event.getValue( "path" ).get() );
-        assertEquals( "/mynode2/child2/to", event.getValue( "toPath" ).get() );
-    }
-
-    @Test
     public void testCreated()
     {
         final Node created = createNode( "created", NodePath.create( "/mynode1/child1" ).build() );
@@ -157,11 +141,9 @@ public class NodeEventsTest
     {
         Event2 eventCreated = NodeEvents.created( null );
         Event2 eventDeleted = NodeEvents.deleted( null );
-        Event2 eventMoved = NodeEvents.moved( null, null );
 
         assertNull( eventCreated );
         assertNull( eventDeleted );
-        assertNull( eventMoved );
     }
 
     private Node createNode( final String name, final NodePath root )

@@ -47,7 +47,6 @@ public class MoveNodeCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( node.parentPath() ).
@@ -73,7 +72,6 @@ public class MoveNodeCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( node.parentPath() ).
@@ -188,7 +186,6 @@ public class MoveNodeCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             id( node.id() ).
             newParent( newParent.path() ).
             build().
@@ -251,7 +248,6 @@ public class MoveNodeCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             id( child1.id() ).
             newParent( newParent.path() ).
             build().
@@ -326,7 +322,6 @@ public class MoveNodeCommandTest
                 indexServiceInternal( this.indexServiceInternal ).
                 storageService( this.storageService ).
                 searchService( this.searchService ).
-                eventPublisher( this.eventPublisher ).
                 id( deleteUngrantedNode.id() ).
                 newParent( createGrantedNewParent.path() ).
                 build().
@@ -346,7 +341,6 @@ public class MoveNodeCommandTest
                 indexServiceInternal( this.indexServiceInternal ).
                 storageService( this.storageService ).
                 searchService( this.searchService ).
-                eventPublisher( this.eventPublisher ).
                 id( deleteGrantedNode.id() ).
                 newParent( createUngrantedNewParent.path() ).
                 build().
@@ -363,7 +357,6 @@ public class MoveNodeCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             id( deleteGrantedNode.id() ).
             newParent( createGrantedNewParent.path() ).
             build().

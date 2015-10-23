@@ -194,7 +194,6 @@ public class NodeServiceImpl
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
 
@@ -214,7 +213,6 @@ public class NodeServiceImpl
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
 
@@ -233,7 +231,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
 
@@ -258,7 +255,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
 
@@ -277,7 +273,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
 
@@ -295,7 +290,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             ids( ids ).
             target( target ).
             build().
@@ -318,7 +312,6 @@ public class NodeServiceImpl
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
 
@@ -338,7 +331,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
 
@@ -437,7 +429,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             childOrder( params.getChildOrder() ).
             nodeId( params.getNodeId() ).
             build().
@@ -557,7 +548,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
 
@@ -576,7 +566,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
 

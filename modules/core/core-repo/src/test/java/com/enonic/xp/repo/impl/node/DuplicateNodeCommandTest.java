@@ -48,7 +48,6 @@ public class DuplicateNodeCommandTest
             binaryBlobStore( binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
 
@@ -78,7 +77,6 @@ public class DuplicateNodeCommandTest
             binaryBlobStore( binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
 
@@ -271,7 +269,6 @@ public class DuplicateNodeCommandTest
             binaryBlobStore( binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
 
@@ -317,7 +314,6 @@ public class DuplicateNodeCommandTest
             binaryBlobStore( binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
 
@@ -359,7 +355,6 @@ public class DuplicateNodeCommandTest
             indexServiceInternal( indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -380,7 +375,6 @@ public class DuplicateNodeCommandTest
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }

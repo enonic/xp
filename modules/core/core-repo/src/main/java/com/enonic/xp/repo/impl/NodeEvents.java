@@ -7,8 +7,6 @@ import com.enonic.xp.node.Nodes;
 public class NodeEvents
 {
 
-    public static final String NODE_MOVED_EVENT = "node.moved";
-
     public static final String NODE_CREATED_EVENT = "node.created";
 
     public static final String NODE_DELETED_EVENT = "node.deleted";
@@ -23,22 +21,7 @@ public class NodeEvents
 
     public static final String NODE_SORTED_EVENT = "node.sorted";
 
-    public static final String NODE_STATE_UPDATED_EVENT = "node.state_updated";
-
-    public static Event2 moved( final Node from, final Node to )
-    {
-        if ( from != null && to != null )
-        {
-            return Event2.create( NODE_MOVED_EVENT ).
-                distributed( true ).
-                value( "id", from.id() ).
-                value( "path", from.path() ).
-                value( "toId", to.id() ).
-                value( "toPath", to.path() ).
-                build();
-        }
-        return null;
-    }
+    public static final String NODE_STATE_UPDATED_EVENT = "node.stateUpdated";
 
     public static Event2 created( final Node created )
     {

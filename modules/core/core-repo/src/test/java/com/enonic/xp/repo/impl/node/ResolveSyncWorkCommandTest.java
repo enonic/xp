@@ -380,7 +380,6 @@ public class ResolveSyncWorkCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             id( moveMe.id() ).
             newNodeName( NodeName.from( moveMe.name() + "_new" ) ).
             newParent( to ).
@@ -1155,7 +1154,6 @@ public class ResolveSyncWorkCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -1166,7 +1164,6 @@ public class ResolveSyncWorkCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             id( NodeId.from( nodeId ) ).
             newNodeName( NodeName.from( newName ) ).
             newParent( newParent ).
@@ -1183,7 +1180,6 @@ public class ResolveSyncWorkCommandTest
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }

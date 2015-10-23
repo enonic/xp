@@ -30,7 +30,6 @@ public class CheckNodeExistsCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             searchService( this.searchService ).
             storageService( this.storageService ).
-            eventPublisher( this.eventPublisher ).
             params( CreateNodeParams.create().
                 name( "myNode" ).
                 setNodeId( NodeId.from( "myNode" ) ).
