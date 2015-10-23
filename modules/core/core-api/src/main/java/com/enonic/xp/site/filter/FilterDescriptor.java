@@ -74,9 +74,10 @@ public final class FilterDescriptor
             return this;
         }
 
-        public void application( final ApplicationKey application )
+        public Builder application( final ApplicationKey application )
         {
             this.application = application;
+            return this;
         }
 
         public FilterDescriptor build()
