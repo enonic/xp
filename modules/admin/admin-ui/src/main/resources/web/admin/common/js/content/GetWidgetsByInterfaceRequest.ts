@@ -1,6 +1,6 @@
 module api.content {
 
-    export class GetWidgetsByInterfaceRequest extends WidgetDescriptorResourceRequest<api.content.json.GetWidgetsByInterfaceResultJson, any> {
+    export class GetWidgetsByInterfaceRequest extends WidgetDescriptorResourceRequest<api.content.json.WidgetDescriptorJson[], any> {
 
         private widgetInterface: string;
 
@@ -23,7 +23,7 @@ module api.content {
         sendAndParse(): wemQ.Promise<Widget[]> {
 
             return this.send().
-                then((response: api.rest.JsonResponse<api.content.json.GetWidgetsByInterfaceResultJson>) => {
+                then((response: api.rest.JsonResponse<api.content.json.WidgetDescriptorJson[]>) => {
                     return WidgetDescriptorResourceRequest.fromJson(response.getResult());
                 });
         }

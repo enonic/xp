@@ -1,19 +1,17 @@
-{
-  "widgetDescriptors": [
+[
     {
       "displayName": "My widget",
       "interfaces": [
         "com.enonic.xp.my-interface",
         "com.enonic.xp.my-interface-2"
       ],
-      "key": "module:my-widget",
-      "url": "_/widgets/module/my-widget"
+      "key": "myapp:my-widget",
+      "url": "_/widgets/myapp/my-widget"
     },
     {
       "displayName": "My second widget",
       "interfaces": [],
-      "key": "module:my-second-widget",
-      "url": "_/widgets/module/my-second-widget"
+      "key": "myapp:my-second-widget",
+      "url": "_/widgets/myapp/my-second-widget"
     }
-  ]
-}
+]
