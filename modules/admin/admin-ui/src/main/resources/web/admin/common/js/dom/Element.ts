@@ -260,10 +260,20 @@ module api.dom {
             return this;
         }
 
+        setClassEx(className: string): Element {
+            var cls = api.StyleHelper.getCls(className);
+            return this.setClass(cls);
+        }
+
         addClass(className: string): Element {
             api.util.assert(!api.util.StringHelper.isEmpty(className), 'Class name cannot be empty');
             this.el.addClass(className);
             return this;
+        }
+
+        addClassEx(className: string): Element {
+            var cls = api.StyleHelper.getCls(className);
+            return this.addClass(cls);
         }
 
         toggleClass(className: string, condition?: boolean): Element {
@@ -275,14 +285,29 @@ module api.dom {
             return this;
         }
 
+        toggleClassEx(className: string, condition?: boolean): Element {
+            var cls = api.StyleHelper.getCls(className);
+            return this.toggleClass(cls, condition);
+        }
+
         hasClass(className: string): boolean {
             return this.el.hasClass(className);
+        }
+
+        hasClassEx(className: string): boolean {
+            var cls = api.StyleHelper.getCls(className);
+            return this.hasClass(cls);
         }
 
         removeClass(className: string): Element {
             api.util.assert(!api.util.StringHelper.isEmpty(className), 'Class name cannot be empty');
             this.el.removeClass(className);
             return this;
+        }
+
+        removeClassEx(className: string): Element {
+            var cls = api.StyleHelper.getCls(className);
+            return this.removeClass(cls);
         }
 
         getClass(): string {

@@ -1,6 +1,8 @@
 declare var CONFIG;
-
 declare var wemjq: JQueryStatic;
+
+declare var clsPrefix: string;
+clsPrefix = api.StyleHelper.PAGE_EDITOR_PREFIX;
 
 var liveEditPage: LiveEdit.LiveEditPage;
 
