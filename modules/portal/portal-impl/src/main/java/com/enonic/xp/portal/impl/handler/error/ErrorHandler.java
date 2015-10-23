@@ -5,9 +5,9 @@ import java.util.Collection;
 import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.PortalHandler;
-import com.enonic.xp.portal.impl.handler.EndpointHandler;
-import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
+import com.enonic.xp.portal.handler.EndpointHandler;
+import com.enonic.xp.portal.handler.PortalHandler;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.web.HttpStatus;
 
 @Component(immediate = true, service = PortalHandler.class)

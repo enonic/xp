@@ -6,9 +6,9 @@ import org.junit.Test;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.PortalException;
 import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.Assert.*;

@@ -5,8 +5,8 @@ import org.junit.Test;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.PortalException;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 

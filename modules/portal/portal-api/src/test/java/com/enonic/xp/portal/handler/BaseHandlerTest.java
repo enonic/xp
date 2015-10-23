@@ -1,11 +1,10 @@
-package com.enonic.xp.portal.impl.handler;
+package com.enonic.xp.portal.handler;
 
 import org.junit.Before;
 
+import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.impl.PortalException;
-import com.enonic.xp.portal.impl.PortalHandler;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 

@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.controller;
+package com.enonic.xp.portal.controller;
 
 import com.enonic.xp.resource.ResourceKey;
 
