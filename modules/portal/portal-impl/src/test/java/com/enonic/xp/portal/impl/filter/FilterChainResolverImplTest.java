@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.filter;
 
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -20,20 +18,20 @@ import com.enonic.xp.site.filter.FilterDescriptors;
 
 import static org.junit.Assert.*;
 
-public class FilterChainResolverTest
+public class FilterChainResolverImplTest
 {
     private PortalRequest portalRequest;
 
     private SiteService siteService;
 
-    private FilterChainResolver resolver;
+    private FilterChainResolverImpl resolver;
 
     @Before
     public void before()
     {
         portalRequest = new PortalRequest();
         siteService = Mockito.mock( SiteService.class );
-        resolver = new FilterChainResolver();
+        resolver = new FilterChainResolverImpl();
         resolver.setSiteService( siteService );
     }
 
@@ -79,9 +77,9 @@ public class FilterChainResolverTest
             build();
         Mockito.when( siteService.getDescriptor( Mockito.eq( ak3 ) ) ).thenReturn( sd3 );
 
-        List<FilterDescriptor> filters = resolver.resolve( portalRequest );
+        FilterDescriptors filters = resolver.resolve( portalRequest );
 
-        assertEquals( 7, filters.size() );
+        assertEquals( 7, filters.getSize() );
 
         FilterDescriptor fd = filters.get( 0 );
         assertEquals( 1, fd.getOrder() );

@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.mapper;
 
-import java.util.Collection;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
@@ -31,10 +30,10 @@ public final class PortalResponseMapper
         gen.value( "postProcess", this.response.isPostProcess() );
 
         serializeMap( "headers", gen, this.response.getHeaders() );
-        serializeArray( "filters", gen, this.response.getFilters() );
         serializePageContributions( gen );
         serializeCookies( gen );
         gen.value( "body", this.response.getBody() );
+        gen.value( "applyFilters", this.response.applyFilters() );
         serializeBody( gen );
     }
 
@@ -130,10 +129,4 @@ public final class PortalResponseMapper
         gen.end();
     }
 
-    private void serializeArray( final String name, final MapGenerator gen, final Collection<String> values )
-    {
-        gen.array( name );
-        values.stream().forEach( gen::value );
-        gen.end();
-    }
 }

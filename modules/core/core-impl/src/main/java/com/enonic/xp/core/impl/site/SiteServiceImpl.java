@@ -27,6 +27,7 @@ public class SiteServiceImpl
             return SiteDescriptor.create().
                 metaSteps( siteDescriptor.getMetaSteps() ).
                 form( form ).
+                filterDescriptors( siteDescriptor.getFilterDescriptors() ).
                 build();
         }
         return null;
