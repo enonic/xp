@@ -1,6 +1,10 @@
 package com.enonic.xp.site.filter;
 
+import java.util.Objects;
+
 import com.enonic.xp.app.ApplicationKey;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class FilterDescriptor
 {
@@ -15,10 +19,10 @@ public final class FilterDescriptor
 
     private FilterDescriptor( final Builder builder )
     {
-        this.type = builder.type;
-        this.name = builder.name;
+        this.type = checkNotNull( builder.type, "type cannot be null" );
+        this.name = checkNotNull( builder.name, "name cannot be null" );
+        this.application = checkNotNull( builder.application, "application cannot be null" );
         this.order = builder.order;
-        this.application = builder.application;
     }
 
     public FilterType getType()
@@ -41,6 +45,30 @@ public final class FilterDescriptor
         return application;
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final FilterDescriptor that = (FilterDescriptor) o;
+        return Objects.equals( order, that.order ) &&
+            Objects.equals( type, that.type ) &&
+            Objects.equals( name, that.name ) &&
+            Objects.equals( application, that.application );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( type, name, order, application );
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -55,6 +83,10 @@ public final class FilterDescriptor
         private int order;
 
         private ApplicationKey application;
+
+        private Builder()
+        {
+        }
 
         public Builder type( final FilterType type )
         {

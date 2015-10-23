@@ -108,9 +108,11 @@ final class PostProcessEvaluator
                 continue;
             }
 
-            final boolean hasFilters = !instructionResponse.getFilters().isEmpty();
+            final boolean hasHeaders = !instructionResponse.getHeaders().isEmpty();
+            final boolean hasCookies = !instructionResponse.getCookies().isEmpty();
             final boolean hasContributions = instructionResponse.hasContributions();
-            if ( hasContributions || hasFilters )
+            final boolean skipFilters = !instructionResponse.applyFilters();
+            if ( hasContributions || hasHeaders || skipFilters || hasCookies )
             {
                 final PortalResponse.Builder newPortalResponse = PortalResponse.create( this.portalResponse );
 
@@ -118,9 +120,17 @@ final class PostProcessEvaluator
                 {
                     newPortalResponse.contributionsFrom( instructionResponse );
                 }
-                if ( hasFilters )
+                if ( hasHeaders )
                 {
-                    newPortalResponse.filters( instructionResponse.getFilters() );
+                    newPortalResponse.headers( instructionResponse.getHeaders() );
+                }
+                if ( hasCookies )
+                {
+                    newPortalResponse.cookies( instructionResponse.getCookies() );
+                }
+                if ( skipFilters )
+                {
+                    newPortalResponse.applyFilters( false );
                 }
 
                 this.portalResponse = newPortalResponse.build();
