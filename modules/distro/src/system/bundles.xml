@@ -24,8 +24,8 @@
   <bundle level="20">com.fasterxml.jackson.core:jackson-annotations:2.6.2</bundle>
   <bundle level="20">com.fasterxml.jackson.core:jackson-databind:2.6.2</bundle>
   <bundle level="20">com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.6.2</bundle>
-  <bundle level="30">com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.6.2</bundle>
-  <bundle level="30">com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.6.2</bundle>
+  <bundle level="20">com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.6.2</bundle>
+  <bundle level="20">com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.6.2</bundle>
   <bundle level="20">org.apache.tika:tika-core:1.6</bundle>
   <bundle level="20">org.apache.tika:tika-bundle:1.6</bundle>
   <bundle level="20">${group}:repack-jparsec:${version}</bundle>
