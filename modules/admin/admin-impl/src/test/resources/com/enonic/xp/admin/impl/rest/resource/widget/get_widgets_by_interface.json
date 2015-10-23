@@ -6,24 +6,14 @@
         "com.enonic.xp.my-interface",
         "com.enonic.xp.my-interface-2"
       ],
-      "key": {
-        "applicationKey": {
-          "name": "module"
-        },
-        "name": "my-widget"
-      },
-      "name": "my-widget"
+      "key": "module:my-widget",
+      "url": "_/widgets/module/my-widget"
     },
     {
       "displayName": "My second widget",
       "interfaces": [],
-      "key": {
-        "applicationKey": {
-          "name": "module"
-        },
-        "name": "my-second-widget"
-      },
-      "name": "my-second-widget"
+      "key": "module:my-second-widget",
+      "url": "_/widgets/module/my-second-widget"
     }
   ]
 }

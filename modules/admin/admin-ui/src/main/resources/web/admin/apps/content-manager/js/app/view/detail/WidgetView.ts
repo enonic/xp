@@ -1,6 +1,5 @@
 module app.view.detail {
 
-    import Widget = api.content.Widget;
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
     import RenderingMode = api.rendering.RenderingMode;

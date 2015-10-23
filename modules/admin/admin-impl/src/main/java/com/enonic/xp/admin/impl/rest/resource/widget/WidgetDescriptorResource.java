@@ -13,10 +13,10 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.widget.json.WidgetDescriptorsJson;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
-import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.security.RoleKeys;
 
-@Path(ResourceConstants.REST_ROOT + "widget/descriptor")
+@Path(ResourceConstants.REST_ROOT + "widget")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 @Component(immediate = true)
@@ -27,7 +27,6 @@ public class WidgetDescriptorResource
     private WidgetDescriptorService widgetDescriptorService;
 
     @GET
-    @Path("byInterface")
     public WidgetDescriptorsJson getByInterface( @QueryParam("interface") final String widgetInterface )
     {
         return new WidgetDescriptorsJson( widgetDescriptorService.getByInterface( widgetInterface ) );
