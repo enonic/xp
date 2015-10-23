@@ -128,13 +128,17 @@ module api.app {
 
         private translateServerEvent(serverEventJson: ServerEventJson): api.event.Event {
             var eventType = serverEventJson.type;
+            console.info("translateServerEvent: " + eventType);
             if (eventType === 'ContentChangeEvent') {
                 return api.content.ContentServerEvent.fromJson(serverEventJson.event);
             }
             if (eventType === 'ApplicationEvent') {
                 return api.application.ApplicationEvent.fromJson(serverEventJson.event);
             }
-            return null;
+            if (eventType.indexOf('node.') === 0) {
+                console.info("node.* received");
+                return null;
+            }
         }
 
         private getWebSocketUriPrefix(): string {

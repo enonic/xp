@@ -1,5 +1,6 @@
 package com.enonic.xp.event;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
@@ -181,7 +182,7 @@ public final class Event2
                 return this;
             }
 
-            if ( value instanceof Number || value instanceof Boolean )
+            if ( value instanceof Number || value instanceof Boolean || value instanceof Collection )
             {
                 dataBuilder.put( key, value );
                 return this;
