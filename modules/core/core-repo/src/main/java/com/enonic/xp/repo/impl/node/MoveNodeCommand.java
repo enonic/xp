@@ -19,6 +19,7 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 import com.enonic.xp.repo.impl.branch.storage.NodesBranchMetadata;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
+import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.repo.impl.storage.MoveNodeParams;
 import com.enonic.xp.security.acl.Permission;
@@ -60,6 +61,8 @@ public class MoveNodeCommand
         checkContextUserPermissionOrAdmin( existingNode, newParentPath );
 
         final Node movedNode = doMoveNode( newParentPath, newNodeName, nodeId );
+
+        indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ) );
 
         return MoveNodeResult.create().
             sourceNode( existingNode ).
