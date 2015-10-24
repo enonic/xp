@@ -1,0 +1,12 @@
+{
+  "results": [
+    {
+      "members": ["user:system:user1"],
+      "principalKey": "role:superuser"
+    },
+    {
+      "members": ["user:system:user2"],
+      "principalKey": "group:system:group-a"
+    }
+  ]
+}
