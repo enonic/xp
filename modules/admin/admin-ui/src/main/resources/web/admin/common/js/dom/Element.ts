@@ -13,13 +13,17 @@ module api.dom {
             return this;
         }
 
-        setClassName(name: string): ElementBuilder {
+        setClassName(name: string, usePrefix?: boolean): ElementBuilder {
             // Ensure class has only one entry
             if (name) {
                 name = name.trim().split(/\s+/)
                     .filter((elem, index, arr) => {
                         return arr.indexOf(elem) === index;
                     }).join(" ");
+
+                if (usePrefix) {
+                    name = api.StyleHelper.getCls(name);
+                }
             }
             this.className = name;
             return this;

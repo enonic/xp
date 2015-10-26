@@ -146,7 +146,7 @@ module api.liveedit {
                 props = newElementBuilder;
             }
             super(props);
-            this.addClass("item-view");
+            this.addClassEx("item-view");
 
             this.setDraggable(true);
 

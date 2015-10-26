@@ -1,11 +1,11 @@
-.item-view {
+.@{_CLS_PREFIX}item-view {
 
-  & > .item-placeholder {
+  & > .@{_CLS_PREFIX}item-placeholder {
     display: none;
   }
 
-  &.empty > .item-placeholder,
-  &[data-portal-placeholder=true] > .item-placeholder {
+  &.empty > .@{_CLS_PREFIX}item-placeholder,
+  &[data-portal-placeholder=true] > .@{_CLS_PREFIX}item-placeholder {
     display: block;
   }
 
@@ -14,16 +14,16 @@
 
     span.data-portal-placeholder-error {
       padding: 5px 0 5px 10px;
-      color: #A31012;
+      color: @page-editor-error-red;
       font-size: 14px;
       display: block;
     }
 
-    .item-placeholder {
+    .@{_CLS_PREFIX}item-placeholder {
       background-color: @admin-input-red;
 
       border: 0px;
-      border-top: 1px solid #cccccc;
+      border-top: 1px solid @admin-medium-gray-border;
 
       &:before {
         color: @admin-bg-dark-gray;
@@ -36,7 +36,7 @@
   }
 
   &.error {
-    background-color: #A31012;
+    background-color: @page-editor-error-red;
 
     .rendering-error {
       pointer-events: none;
@@ -50,7 +50,7 @@
 
     a {
       text-decoration: none;
-      color: white;
+      color: @admin-white;
       padding: 28px 10px;
       font-size: 14px;
       pointer-events: all;
@@ -69,7 +69,7 @@
   }
 }
 
-.item-placeholder {
+.@{_CLS_PREFIX}item-placeholder {
   position: relative;
   font-family: @admin-font-family;
   background-color: @placeholder-bg;
@@ -81,7 +81,7 @@
 
   .display-name {
     display: none;
-    color: #224E83;
+    color: @page-editor-message-blue;
     margin: 0;
     line-height: 37px;
     position: relative; // set the position to appear on top of the absolutely positioned :before
@@ -90,7 +90,7 @@
   }
 
   [data-portal-placeholder=true] & {
-    background-color: white;
+    background-color: @admin-white;
     border: 1px solid @admin-medium-gray-border;
 
     .display-name {
