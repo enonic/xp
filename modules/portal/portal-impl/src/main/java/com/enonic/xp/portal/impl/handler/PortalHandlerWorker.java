@@ -26,8 +26,9 @@ public abstract class PortalHandlerWorker
         return new PortalException( HttpStatus.FORBIDDEN, String.format( message, args ) );
     }
 
-    protected void setResponseCacheable()
+    protected void setResponseCacheable( final boolean isPublic )
     {
-        this.response.header( HttpHeaders.CACHE_CONTROL, "private, max-age=31536000" );
+        final String cacheControlValue = ( isPublic ? "public" : "private" ) + ", max-age=31536000";
+        this.response.header( HttpHeaders.CACHE_CONTROL, cacheControlValue );
     }
 }
