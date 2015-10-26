@@ -41,6 +41,7 @@ module app.view.detail {
         private previousActiveWidget: WidgetView;
 
         private versionWidgetItemView: WidgetItemView;
+        private alreadyFetchedCustomWidgets: boolean;
 
         private static DEFAULT_WIDGET_NAME: string = "Info";
 
@@ -71,9 +72,6 @@ module app.view.detail {
             this.initDivForNoSelection();
             this.initWidgetsSelectionRow();
 
-            this.getAndInitCustomWidgetsViews().done(() => {
-                this.initWidgetsDropdownForSelectedItem();
-            });
             this.appendChild(this.detailsContainer);
             this.appendChild(this.divForNoSelection);
 
@@ -105,6 +103,15 @@ module app.view.detail {
         private initWidgetsSelectionRow() {
             this.widgetsSelectionRow = new WidgetsSelectionRow(this);
             this.appendChild(this.widgetsSelectionRow);
+        }
+
+        getCustomWidgetViewsAndUpdateDropdown() {
+            if (!this.alreadyFetchedCustomWidgets) {
+                this.getAndInitCustomWidgetsViews().done(() => {
+                    this.initWidgetsDropdownForSelectedItem();
+                    this.alreadyFetchedCustomWidgets = true;
+                });
+            }
         }
 
         setActiveWidget(widgetView: WidgetView) {
