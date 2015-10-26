@@ -28,7 +28,7 @@ module api.liveedit {
 
         constructor() {
             super();
-            this.setId('drag-placeholder').addClass('drag-placeholder');
+            this.setId('drag-placeholder').addClassEx("drag-placeholder");
             this.messageEl = new api.dom.DivEl("message");
             this.appendChild(this.messageEl);
         }
