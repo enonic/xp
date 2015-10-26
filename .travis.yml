@@ -11,3 +11,11 @@ jdk:
   - oraclejdk8
 
 script: ./gradlew clean build
+
+cache:
+  directories:
+    - $HOME/.gradle/caches
+    - $HOME/.gradle/wrapper
+    - $HOME/.gradle/native
+    - $HOME/.gradle/daemon
+
