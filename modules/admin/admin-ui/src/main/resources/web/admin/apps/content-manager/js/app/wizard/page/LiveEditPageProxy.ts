@@ -47,8 +47,6 @@ module app.wizard.page {
 
         private loadMask: api.ui.mask.LoadMask;
 
-        private loadMaskCanBeShown: boolean = false; //can't be shown correctly until iFrame has height and width
-
         private liveEditWindow: any;
 
         private livejq: JQueryStatic;
@@ -101,28 +99,41 @@ module app.wizard.page {
 
         private LIVE_EDIT_ERROR_PAGE_BODY_ID = "wem-error-page";
 
+        private showLoadMaskHandler: () => void;
+
+        private hideLoadMaskHandler: () => void;
+
+        private liveEditPageViewReady: boolean;
+
         private static debug: boolean = false;
 
         constructor() {
 
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
             this.liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
-            this.liveEditIFrame.onShown(() => {
-                if (!this.loadMaskCanBeShown && this.liveEditFrameIsVisible()) {
-                    this.loadMask.show();
-                    this.loadMaskCanBeShown = true;
-                }
-
-            });
-
             this.loadMask = new api.ui.mask.LoadMask(this.liveEditIFrame);
             this.dragMask = new api.ui.mask.DragMask(this.liveEditIFrame);
 
-            ShowContentFormEvent.on(() => {
+            this.hideLoadMaskHandler = () => {
                 if (this.loadMask.isVisible()) {
                     this.loadMask.hide();
                 }
+            };
+            this.onLiveEditPageViewReady(() => {
+                this.liveEditPageViewReady = true;
+                this.hideLoadMaskHandler();
             });
+            ShowContentFormEvent.on(this.hideLoadMaskHandler);
+
+            this.showLoadMaskHandler = () => {
+                // in case someone tries to open live edit while it's still not loaded
+                if (!this.liveEditPageViewReady && this.liveEditIFrame.isVisible()) {
+                    this.loadMask.show();
+                }
+            };
+
+            ShowLiveEditEvent.on(this.showLoadMaskHandler);
+            ShowSplitEditEvent.on(this.showLoadMaskHandler);
         }
 
         public setModel(liveEditModel: LiveEditModel) {
@@ -178,14 +189,17 @@ module app.wizard.page {
         }
 
         public remove() {
+            ShowLiveEditEvent.un(this.showLoadMaskHandler);
+            ShowSplitEditEvent.un(this.showLoadMaskHandler);
+            ShowContentFormEvent.un(this.hideLoadMaskHandler);
+            LiveEditPageViewReadyEvent.un(this.hideLoadMaskHandler);
             this.dragMask.remove();
             this.loadMask.remove();
         }
 
         public load() {
-            if (this.loadMaskCanBeShown) {
-                this.loadMask.show();
-            }
+            this.liveEditPageViewReady = false;
+            this.showLoadMaskHandler();
 
             var contentId = this.liveEditModel.getContent().getContentId().toString();
             var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
@@ -216,14 +230,8 @@ module app.wizard.page {
 
                 this.listenToPage(this.liveEditWindow);
 
-                this.loadMask.hide();
                 new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
-
-            } else if (!liveEditWindow.document.body || (liveEditWindow.document.body.id == this.LIVE_EDIT_ERROR_PAGE_BODY_ID)) {
-                this.loadMask.hide();
             }
-
-            this.loadMaskCanBeShown = true;
 
             // Notify loaded no matter the result
             this.notifyLoaded();
@@ -645,10 +653,6 @@ module app.wizard.page {
 
         private notifyLiveEditPageInitializationError(event: LiveEditPageInitializationErrorEvent) {
             this.liveEditPageInitErrorListeners.forEach((listener) => listener(event));
-        }
-
-        private liveEditFrameIsVisible(): boolean {
-            return this.liveEditIFrame.getEl().getWidthWithBorder() > 0 && this.liveEditIFrame.getEl().getHeightWithBorder() > 0;
         }
 
     }
