@@ -5,13 +5,9 @@ module api.liveedit.text {
 
     export class TextPlaceholder extends ItemViewPlaceholder {
 
-        private textView: TextComponentView;
-
-        constructor(componentView: TextComponentView) {
-            this.textView = componentView;
-
+        constructor() {
             super();
-            this.addClass("text-placeholder");
+            this.addClassEx("text-placeholder");
         }
 
     }
