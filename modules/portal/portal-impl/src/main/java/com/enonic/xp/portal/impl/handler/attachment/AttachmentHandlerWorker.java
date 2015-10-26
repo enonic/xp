@@ -6,6 +6,7 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
@@ -47,7 +48,8 @@ final class AttachmentHandlerWorker
         {
             final AccessControlEntry publicAccessControlEntry = content.getPermissions().getEntry( RoleKeys.EVERYONE );
             final boolean everyoneCanRead = publicAccessControlEntry != null && publicAccessControlEntry.isAllowed( Permission.READ );
-            setResponseCacheable( everyoneCanRead );
+            final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
+            setResponseCacheable( everyoneCanRead && masterBranch );
         }
     }
 

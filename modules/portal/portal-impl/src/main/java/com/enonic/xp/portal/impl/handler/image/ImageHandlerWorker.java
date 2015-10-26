@@ -8,6 +8,7 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentService;
@@ -96,7 +97,8 @@ final class ImageHandlerWorker
         {
             final AccessControlEntry publicAccessControlEntry = imageContent.getPermissions().getEntry( RoleKeys.EVERYONE );
             final boolean everyoneCanRead = publicAccessControlEntry != null && publicAccessControlEntry.isAllowed( Permission.READ );
-            setResponseCacheable( everyoneCanRead );
+            final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
+            setResponseCacheable( everyoneCanRead && masterBranch );
         }
     }
 
