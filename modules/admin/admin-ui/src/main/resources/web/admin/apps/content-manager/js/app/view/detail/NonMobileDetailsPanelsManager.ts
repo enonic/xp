@@ -110,7 +110,7 @@ module app.view.detail {
         }
 
         hideDockedDetailsPanel() {
-            this.splitPanelWithGridAndDetails.hideSecondPanel();
+            this.splitPanelWithGridAndDetails.foldSecondPanel();
         }
 
         getToggleButton(): api.dom.DivEl {
