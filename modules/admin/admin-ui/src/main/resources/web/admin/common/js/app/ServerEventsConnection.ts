@@ -143,12 +143,19 @@ module api.app {
 
         private translateServerEvent(serverEventJson: ServerEventJson): api.event.Event {
             var eventType = serverEventJson.type;
+            console.log("Event " + eventType + " received");
             if (eventType === 'ApplicationEvent') {
                 return api.application.ApplicationEvent.fromJson(serverEventJson.event);
             }
             if (eventType.indexOf('node.') === 0) {
-                return api.content.ContentServerEvent.fromEvent2Json(<Event2Json>serverEventJson);
+                var event = api.content.ContentServerEvent.fromEvent2Json(<Event2Json>serverEventJson);
+                return event;
             }
+            if (eventType === 'ContentChangeEvent') {
+                var event = api.content.ContentServerEvent.fromJson(serverEventJson.event);
+                return null;
+            }
+
             return null;
         }
 

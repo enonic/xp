@@ -236,9 +236,9 @@ public class NodeServiceImpl
 
         if ( moveNodeResult.getTargetNode() != null )
         {
+            this.eventPublisher.publish( NodeEvents.renamed( moveNodeResult.getSourceNode() ) );
             this.eventPublisher.publish( NodeEvents.deleted( moveNodeResult.getSourceNode() ) );
             this.eventPublisher.publish( NodeEvents.created( moveNodeResult.getTargetNode() ) );
-            this.eventPublisher.publish( NodeEvents.renamed( moveNodeResult.getSourceNode() ) );
             return moveNodeResult.getTargetNode();
         }
         else

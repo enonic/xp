@@ -86,7 +86,7 @@ module api.content {
             var contentEventType;
 
             switch (event2Json.type) {
-            case 'node.published':
+            case 'node.pushed':
                 contentEventType = ContentServerChangeType.PUBLISH;
                 break;
             case 'node.created':
@@ -101,7 +101,7 @@ module api.content {
             case 'node.duplicated':
                 contentEventType = ContentServerChangeType.DUPLICATE;
                 break;
-            case 'node.stateChanged':
+            case 'node.stateUpdated':
                 contentEventType = ContentServerChangeType.PENDING;
                 break;
             case 'node.renamed':
