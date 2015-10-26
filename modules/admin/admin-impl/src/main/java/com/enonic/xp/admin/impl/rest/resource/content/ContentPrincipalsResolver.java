@@ -10,6 +10,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -71,5 +72,10 @@ public final class ContentPrincipalsResolver
         {
             return principalValue.get();
         }
+    }
+
+    public Principals findPrincipals( final PrincipalKeys keys )
+    {
+        return securityService.getPrincipals( keys );
     }
 }

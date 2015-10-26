@@ -19,6 +19,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateGroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateRoleJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserJson;
@@ -79,6 +80,8 @@ public final class SecurityResource
     implements JaxRsComponent
 {
     private SecurityService securityService;
+
+    private ContentPrincipalsResolver principalsResolver;
 
     @GET
     @Path("userstore/list")
@@ -256,7 +259,8 @@ public final class SecurityResource
     {
         final ResolveMembershipsResultJson resultsJson = new ResolveMembershipsResultJson();
         params.getMembers().stream().
-            forEach( principalKey -> resultsJson.add( new ResolveMembershipResultJson( principalKey, getMembers( principalKey ) ) ) );
+            forEach( principalKey -> resultsJson.add(
+                new ResolveMembershipResultJson( principalKey, getMembers( principalKey ), this.principalsResolver ) ) );
         return resultsJson;
     }
 
@@ -433,5 +437,6 @@ public final class SecurityResource
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;
+        this.principalsResolver = new ContentPrincipalsResolver( securityService );
     }
 }

@@ -14,6 +14,11 @@ module api.security {
             return this;
         }
 
+        addKey(key: PrincipalKey): ResolveMembershipsRequest {
+            this.keys.push(key);
+            return this;
+        }
+
         getParams(): Object {
             return {
                 'keys': this.keys.map((key) => key.toString())

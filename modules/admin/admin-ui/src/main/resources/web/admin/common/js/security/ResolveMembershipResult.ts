@@ -4,20 +4,20 @@ module api.security {
 
         private principalKey: PrincipalKey;
 
-        private memberKeys: PrincipalKey[];
+        private members: Principal[];
 
         getPrincipalKey(): PrincipalKey {
             return this.principalKey;
         }
 
-        getMemberKeys(): PrincipalKey[] {
-            return this.memberKeys;
+        getMembers(): Principal[] {
+            return this.members;
         }
 
         static fromJson(json: ResolveMembershipResultJson): ResolveMembershipResult {
             var result = new ResolveMembershipResult();
             result.principalKey = PrincipalKey.fromString(json.principalKey);
-            result.memberKeys = json.members.map(keyStr => PrincipalKey.fromString(keyStr));
+            result.members = json.members.principals.map(principalJson => Principal.fromJson(principalJson));
             return result;
         }
 

@@ -4,7 +4,7 @@ module api.security {
 
         principalKey: string;
 
-        members: string[];
+        members: PrincipalsJson;
 
     }
 }
