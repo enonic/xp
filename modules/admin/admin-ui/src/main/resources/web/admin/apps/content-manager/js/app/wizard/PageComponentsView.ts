@@ -45,11 +45,10 @@ module app.wizard {
 
             this.liveEditPage = liveEditPage;
 
+            this.onHidden((event) => this.hideContextMenu());
+
             var closeButton = new api.ui.button.CloseButton();
-            closeButton.onClicked((event: MouseEvent) => {
-                this.hideContextMenu();
-                this.hide()
-            });
+            closeButton.onClicked((event: MouseEvent) => this.hide());
 
             this.onRemoved(() => {
                 if (this.contextMenu) {
