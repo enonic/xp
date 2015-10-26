@@ -16,6 +16,9 @@ import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpStatus;
 
@@ -88,9 +91,12 @@ final class ImageHandlerWorker
         this.response.status( HttpStatus.OK );
         this.response.body( source );
         this.response.contentType( MediaType.parse( mimeType ) );
+
         if ( cacheable )
         {
-            setResponseCacheable();
+            final AccessControlEntry publicAccessControlEntry = imageContent.getPermissions().getEntry( RoleKeys.EVERYONE );
+            final boolean everyoneCanRead = publicAccessControlEntry != null && publicAccessControlEntry.isAllowed( Permission.READ );
+            setResponseCacheable( everyoneCanRead );
         }
     }
 

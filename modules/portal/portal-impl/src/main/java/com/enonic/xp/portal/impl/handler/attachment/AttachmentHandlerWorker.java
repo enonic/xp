@@ -9,6 +9,9 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.web.HttpStatus;
 
 final class AttachmentHandlerWorker
@@ -42,7 +45,9 @@ final class AttachmentHandlerWorker
         }
         if ( this.cacheable )
         {
-            setResponseCacheable();
+            final AccessControlEntry publicAccessControlEntry = content.getPermissions().getEntry( RoleKeys.EVERYONE );
+            final boolean everyoneCanRead = publicAccessControlEntry != null && publicAccessControlEntry.isAllowed( Permission.READ );
+            setResponseCacheable( everyoneCanRead );
         }
     }
 
