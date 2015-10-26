@@ -8,7 +8,7 @@ module api.liveedit.layout {
     import LayoutDescriptorLoader = api.content.page.region.LayoutDescriptorLoader;
     import LayoutDescriptorComboBox = api.content.page.region.LayoutDescriptorComboBox;
 
-    export class LayoutPlaceholder extends ComponentPlaceholder {
+    export class LayoutPlaceholder extends ItemViewPlaceholder {
 
         private comboBox: api.content.page.region.LayoutDescriptorComboBox;
 

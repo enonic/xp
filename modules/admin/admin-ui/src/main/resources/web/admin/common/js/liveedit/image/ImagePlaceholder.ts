@@ -6,7 +6,7 @@ module api.liveedit.image {
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ImageComponent = api.content.page.region.ImageComponent;
 
-    export class ImagePlaceholder extends api.liveedit.ComponentPlaceholder {
+    export class ImagePlaceholder extends api.liveedit.ItemViewPlaceholder {
 
         private imageComponentView: ImageComponentView;
 
@@ -18,7 +18,7 @@ module api.liveedit.image {
 
         constructor(imageView: ImageComponentView) {
             super();
-            this.addClass("image-placeholder");
+            this.addClassEx("image-placeholder");
             this.imageComponentView = imageView;
 
             var imageUploadHandler = (event: ImageUploadedEvent) => {

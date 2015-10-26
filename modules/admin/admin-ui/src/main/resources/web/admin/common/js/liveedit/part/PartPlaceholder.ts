@@ -11,7 +11,7 @@ module api.liveedit.part {
     import PageItemType = api.liveedit.PageItemType;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
-    export class PartPlaceholder extends ComponentPlaceholder {
+    export class PartPlaceholder extends ItemViewPlaceholder {
 
         private comboBox: PartDescriptorComboBox;
 
