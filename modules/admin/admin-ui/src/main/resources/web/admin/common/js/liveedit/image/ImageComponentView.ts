@@ -28,8 +28,6 @@ module api.liveedit.image {
                 setInspectActionRequired(true));
 
             this.initializeImage();
-
-            this.addClass('image-view');
         }
 
         private initializeImage() {

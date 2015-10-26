@@ -21,7 +21,7 @@ module api.liveedit.part {
 
         constructor(partView: PartComponentView) {
             super();
-            this.addClass("part-placeholder");
+            this.addClassEx("part-placeholder");
 
             this.partComponentView = partView;
 
