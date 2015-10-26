@@ -16,7 +16,7 @@ module api.liveedit.layout {
 
         constructor(layoutView: LayoutComponentView) {
             super();
-            this.addClass("layout-placeholder");
+            this.addClassEx("layout-placeholder");
             this.layoutComponentView = layoutView;
 
             var request = new GetLayoutDescriptorsByApplicationsRequest(layoutView.liveEditModel.getSiteModel().getApplicationKeys());

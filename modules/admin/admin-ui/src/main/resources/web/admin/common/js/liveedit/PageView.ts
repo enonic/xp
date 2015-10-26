@@ -172,7 +172,7 @@ module api.liveedit {
                 setContextMenuActions(this.unlockedScreenActions).
                 setContextMenuTitle(new PageViewContextMenuTitle(builder.liveEditModel.getContent())));
 
-            this.addClass('page-view');
+            this.addClassEx('page-view');
 
             this.setTooltipObject(builder.liveEditModel.getContent());
 
