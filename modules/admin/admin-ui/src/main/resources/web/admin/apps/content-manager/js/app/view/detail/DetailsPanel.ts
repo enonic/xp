@@ -228,9 +228,6 @@ module app.view.detail {
 
             this.updateCommonWidgets();
             this.updateCustomWidgets();
-            setTimeout(() => {
-                this.updateWidgetsHeights();
-            }, 400);
         }
 
         private updateWidgetsHeights() {
@@ -304,7 +301,9 @@ module app.view.detail {
                     if (DetailsPanel.DEFAULT_WIDGET_NAME == this.activeWidget.getWidgetName()) {
                         this.setActiveWidget(this.defaultWidgetView);
                     }
-                    this.updateWidgetsHeights();
+                    setTimeout(() => {
+                        this.updateWidgetsHeights();
+                    }, 1000);
 
                 }).done();
             }
