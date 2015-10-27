@@ -269,6 +269,7 @@ module app.view.detail {
         private setDefaultWidget() {
             var widgetItemView = new StatusWidgetItemView();
             var propWidgetItemView = new PropertiesWidgetItemView();
+            var attachmentsWidgetItemView = new AttachmentsWidgetItemView();
 
             if (this.item) {
                 api.content.ContentSummaryAndCompareStatusFetcher.fetch(this.item.getModel().getContentId()).then((contentSummaryAndCompareStatus) => {
@@ -287,6 +288,7 @@ module app.view.detail {
                     });
 
                     propWidgetItemView.setContent(this.item.getModel());
+                    attachmentsWidgetItemView.setContent(this.item.getModel());
 
                     this.defaultWidgetView = WidgetView.create().
                         setName(DetailsPanel.DEFAULT_WIDGET_NAME).
@@ -294,6 +296,7 @@ module app.view.detail {
                         setUseToggleButton(false).
                         addWidgetItemView(widgetItemView).
                         addWidgetItemView(propWidgetItemView).
+                        addWidgetItemView(attachmentsWidgetItemView).
                         build();
 
                     this.detailsContainer.appendChild(this.defaultWidgetView);

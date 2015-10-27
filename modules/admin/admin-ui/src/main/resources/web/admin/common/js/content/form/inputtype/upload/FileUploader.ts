@@ -104,6 +104,31 @@ module api.content.form.inputtype.upload {
             return new api.form.inputtype.InputValidationRecording();
         }
 
+        private deleteContent(property: Property) {
+            var contentId = this.getContext().contentId;
+
+            new api.content.GetContentByIdRequest(contentId).
+                sendAndParse().
+                then((content: api.content.Content) => {
+                    var deleteRequest = new api.content.DeleteContentRequest();
+
+                    deleteRequest.addContentPath(content.getPath());
+                    deleteRequest.sendAndParse().then((result: api.content.DeleteContentResult) => {
+                        this.uploader.getResultContainer().removeChildren();
+                        this.uploaderWrapper.addClass("empty");
+                        property.setValue(this.newInitialValue());
+
+                        api.notify.showFeedback('\"' + result.getDeleted()[0].getName() + '\" deleted');
+                    }).catch((reason: any) => {
+                        if (reason && reason.message) {
+                            api.notify.showError(reason.message);
+                        } else {
+                            api.notify.showError('Content could not be deleted.');
+                        }
+                    }).done();
+                });
+        }
+        
         private getFileNameFromProperty(property: Property): string {
             if (property.getValue() != null) {
                 switch (property.getType()) {
