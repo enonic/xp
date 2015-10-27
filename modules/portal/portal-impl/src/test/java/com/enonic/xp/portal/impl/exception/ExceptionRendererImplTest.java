@@ -18,7 +18,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.PortalException;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.resource.Resource;
