@@ -80,19 +80,6 @@ public class NodeEvents
         return event( NODE_SORTED_EVENT, sortedNode );
     }
 
-    private static void addNodeValuesToEventData( final Event2.Builder builder, final Nodes nodes )
-    {
-
-        final StringBuilder pushedNodesAsString = new StringBuilder();
-
-        for ( final Node node : nodes )
-        {
-            pushedNodesAsString.append( node.id() ).append( ":" ).append( node.path() ).append( ";" );
-        }
-
-        builder.value( "nodes", pushedNodesAsString.toString() );
-    }
-
     private static Event2 event( String type, Node node )
     {
         if ( node != null )
@@ -122,8 +109,8 @@ public class NodeEvents
     private static ImmutableMap nodeToMap( final Node node )
     {
         return ImmutableMap.builder().
-            put( "id", node.id() ).
-            put( "path", node.path() ).
+            put( "id", node.id().toString() ).
+            put( "path", node.path().toString() ).
             build();
 
 
