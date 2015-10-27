@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.exception;
 
+import java.util.concurrent.Callable;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -10,6 +12,9 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -20,9 +25,10 @@ import com.enonic.xp.portal.impl.error.PortalError;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.web.HttpStatus;
 
 @Component
 public final class ExceptionRendererImpl
@@ -60,7 +66,7 @@ public final class ExceptionRendererImpl
     private PortalResponse renderCustomError( final PortalRequest req, final PortalException cause )
     {
         Site site = req.getSite();
-        if ( site == null && cause.getStatus() == HttpStatus.NOT_FOUND )
+        if ( site == null )
         {
             site = resolveSiteFromPath( req );
         }
@@ -88,12 +94,13 @@ public final class ExceptionRendererImpl
 
     private Site resolveSiteFromPath( final PortalRequest req )
     {
-        ContentPath path = req.getContentPath().getParentPath();
+        ContentPath path = req.getContentPath();
         while ( path != null && !path.isRoot() )
         {
             try
             {
-                final Content content = this.contentService.getByPath( path );
+                final ContentPath cp = path;
+                final Content content = runAsContentAdmin( () -> this.contentService.getByPath( cp ) );
                 if ( content.isSite() )
                 {
                     return (Site) content;
@@ -106,6 +113,16 @@ public final class ExceptionRendererImpl
             path = path.getParentPath();
         }
         return null;
+    }
+
+    private <T> T runAsContentAdmin( final Callable<T> callable )
+    {
+        final Context context = ContextAccessor.current();
+        return ContextBuilder.from( ContextAccessor.current() ).
+            authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).
+                principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).build() ).
+            build().
+            callWith( callable );
     }
 
     private PortalResponse renderApplicationCustomError( final ApplicationKey appKey, final PortalError portalError )
