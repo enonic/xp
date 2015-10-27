@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.handler;
+package com.enonic.xp.portal.handler;
 
 import java.util.EnumSet;
 
@@ -6,10 +6,9 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.PortalException;
-import com.enonic.xp.portal.impl.PortalHandler;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 

@@ -8,7 +8,8 @@ public enum RenderMode
 {
     EDIT( "edit" ),
     PREVIEW( "preview" ),
-    LIVE( "live" );
+    LIVE( "live" ),
+    ADMIN( "admin" );
 
     private final String name;
 

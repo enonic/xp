@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.handler.service;
+package com.enonic.xp.admin.impl.portal;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,12 +11,11 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.EndpointHandler;
-import com.enonic.xp.portal.handler.PortalHandler;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.ResourceKey;
 
-@Component(immediate = true, service = PortalHandler.class)
-public final class ServiceHandler
+@Component(immediate = true, service = WidgetHandler.class)
+public final class WidgetHandler
     extends EndpointHandler
 {
     private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
@@ -25,9 +24,9 @@ public final class ServiceHandler
 
     private ControllerScriptFactory controllerScriptFactory;
 
-    public ServiceHandler()
+    public WidgetHandler()
     {
-        super( "service" );
+        super( "widgets" );
     }
 
     @Override
@@ -43,12 +42,12 @@ public final class ServiceHandler
         }
 
         final ApplicationKey appKey = ApplicationKey.from( matcher.group( 1 ) );
-        final ResourceKey scriptDir = ResourceKey.from( appKey, "site/services/" + matcher.group( 2 ) );
+        final ResourceKey scriptDir = ResourceKey.from( appKey, "admin/widgets/" + matcher.group( 2 ) );
 
-        final ServiceHandlerWorker worker = new ServiceHandlerWorker();
+        final WidgetHandlerWorker worker = new WidgetHandlerWorker();
         worker.scriptDir = scriptDir;
-        worker.setContentService( this.contentService );
         worker.controllerScriptFactory = this.controllerScriptFactory;
+        worker.setContentService( this.contentService );
         return worker;
     }
 

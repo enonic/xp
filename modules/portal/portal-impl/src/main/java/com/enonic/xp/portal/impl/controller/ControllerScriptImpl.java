@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.controller;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;

@@ -7,21 +7,20 @@ module api.content {
 
         constructor() {
             super();
-            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "widget/descriptor");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "widget");
         }
 
         getResourcePath(): api.rest.Path {
             return this.resourcePath;
         }
 
-        static fromJson(json: api.content.json.GetWidgetsByInterfaceResultJson): Widget[] {
+        static fromJson(json: api.content.json.WidgetDescriptorJson[]): Widget[] {
             var result: Widget[] = [];
-            json.widgetDescriptors.forEach((widgetDescriptor: api.content.json.WidgetDescriptorJson) => {
-                result.push(new Widget(widgetDescriptor.name,
+            json.forEach((widgetDescriptor: api.content.json.WidgetDescriptorJson) => {
+                result.push(new Widget(widgetDescriptor.url,
                     widgetDescriptor.displayName,
                     widgetDescriptor.interfaces,
-                    widgetDescriptor.key.applicationKey.name,
-                    widgetDescriptor.key.name));
+                    widgetDescriptor.key));
             });
             return result;
         }

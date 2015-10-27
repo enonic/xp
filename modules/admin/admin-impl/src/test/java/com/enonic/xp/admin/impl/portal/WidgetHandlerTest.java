@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.handler.service;
+package com.enonic.xp.admin.impl.portal;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -13,6 +13,7 @@ import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.BaseHandlerTest;
@@ -27,14 +28,15 @@ import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.Assert.*;
 
-public class ServiceHandlerTest
+public class WidgetHandlerTest
     extends BaseHandlerTest
 {
+
     protected ContentService contentService;
 
     private ControllerScript controllerScript;
 
-    private ServiceHandler handler;
+    private WidgetHandler handler;
 
     @Override
     protected void configure()
@@ -49,13 +51,13 @@ public class ServiceHandlerTest
 
         this.contentService = Mockito.mock( ContentService.class );
 
-        this.handler = new ServiceHandler();
+        this.handler = new WidgetHandler();
         this.handler.setControllerScriptFactory( controllerScriptFactory );
         this.handler.setContentService( this.contentService );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
-        this.request.setEndpointPath( "/_/service/demo/myservice" );
+        this.request.setEndpointPath( "/_/widgets/demo/mywidget" );
     }
 
     @Test
@@ -70,13 +72,13 @@ public class ServiceHandlerTest
         this.request.setEndpointPath( null );
         assertEquals( false, this.handler.canHandle( this.request ) );
 
-        this.request.setEndpointPath( "/_/other/demo/myservice" );
+        this.request.setEndpointPath( "/_/other/demo/mywidget" );
         assertEquals( false, this.handler.canHandle( this.request ) );
 
-        this.request.setEndpointPath( "/service/demo/myservice" );
+        this.request.setEndpointPath( "/widgets/demo/mywidget" );
         assertEquals( false, this.handler.canHandle( this.request ) );
 
-        this.request.setEndpointPath( "/_/service/demo/myservice" );
+        this.request.setEndpointPath( "/_/widgets/demo/mywidget" );
         assertEquals( true, this.handler.canHandle( this.request ) );
     }
 
@@ -96,7 +98,7 @@ public class ServiceHandlerTest
     public void testNotValidUrlPattern()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/service/" );
+        this.request.setEndpointPath( "/_/widgets/" );
 
         try
         {
@@ -110,11 +112,25 @@ public class ServiceHandlerTest
         }
     }
 
+    @Test(expected = PortalException.class)
+    public void executeFailsWithWrongMode()
+        throws Exception
+    {
+        this.request.setEndpointPath( "/_/widgets/demo/test" );
+        this.request.setMode( RenderMode.EDIT );
+
+        final PortalResponse response = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+
+        Mockito.verify( this.controllerScript ).execute( this.request );
+    }
+
     @Test
     public void executeScript_noContent()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/service/demo/test" );
+        this.request.setEndpointPath( "/_/widgets/demo/test" );
+        this.request.setMode( RenderMode.ADMIN );
 
         final PortalResponse response = this.handler.handle( this.request );
         assertEquals( HttpStatus.OK, response.getStatus() );
@@ -132,7 +148,8 @@ public class ServiceHandlerTest
     {
         setupContentAndSite();
 
-        this.request.setEndpointPath( "/_/service/demo/test" );
+        this.request.setEndpointPath( "/_/widgets/demo/test" );
+        this.request.setMode( RenderMode.ADMIN );
 
         final PortalResponse response = this.handler.handle( this.request );
         assertEquals( HttpStatus.OK, response.getStatus() );
@@ -142,6 +159,31 @@ public class ServiceHandlerTest
         assertNotNull( this.request.getApplicationKey() );
         assertNotNull( this.request.getSite() );
         assertNotNull( this.request.getContent() );
+    }
+
+    @Test
+    public void testContentDependentWidget()
+        throws Exception
+    {
+        final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", false );
+
+        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
+            thenReturn( content );
+
+        Mockito.when( this.contentService.getById( content.getId() ) ).
+            thenReturn( content );
+
+        this.request.setEndpointPath( "/_/widgets/demo/test" );
+        this.request.setMode( RenderMode.ADMIN );
+
+        final PortalResponse response = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+
+        Mockito.verify( this.controllerScript ).execute( this.request );
+
+        assertNotNull( this.request.getApplicationKey() );
+        assertNotNull( this.request.getContent() );
+
     }
 
     private void setupContentAndSite()

@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.handler.PortalHandler;
 
 public final class TestPortalHandler
     implements PortalHandler

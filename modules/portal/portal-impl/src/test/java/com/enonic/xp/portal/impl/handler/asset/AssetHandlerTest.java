@@ -9,10 +9,10 @@ import org.mockito.invocation.InvocationOnMock;
 import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.impl.PortalException;
-import com.enonic.xp.portal.impl.handler.BaseHandlerTest;
+import com.enonic.xp.portal.handler.BaseHandlerTest;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
