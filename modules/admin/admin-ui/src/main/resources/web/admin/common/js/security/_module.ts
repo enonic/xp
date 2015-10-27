@@ -46,8 +46,8 @@
 ///<reference path="UserItemCreatedEvent.ts"/>
 ///<reference path="UserItemUpdatedEvent.ts"/>
 ///<reference path="UserItemDeletedEvent.ts"/>
-///<reference path="ResolveMembershipResult.ts"/>
-///<reference path="ResolveMembershipsRequest.ts"/>
-///<reference path="ResolveMembershipResultJson.ts"/>
-///<reference path="ResolveMembershipsResult.ts"/>
-///<reference path="ResolveMembershipsResultJson.ts"/>
+///<reference path="ResolveMemberResult.ts"/>
+///<reference path="ResolveMembersRequest.ts"/>
+///<reference path="ResolveMemberResultJson.ts"/>
+///<reference path="ResolveMembersResult.ts"/>
+///<reference path="ResolveMembersResultJson.ts"/>

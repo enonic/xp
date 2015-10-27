@@ -5,21 +5,21 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-public final class ResolveMembershipsResultJson
+public final class ResolveMembersResultJson
 {
-    private final List<ResolveMembershipResultJson> results;
+    private final List<ResolveMemberResultJson> results;
 
-    public ResolveMembershipsResultJson()
+    public ResolveMembersResultJson()
     {
         this.results = Lists.newArrayList();
     }
 
-    public void add( ResolveMembershipResultJson resolveResult )
+    public void add( ResolveMemberResultJson resolveResult )
     {
         this.results.add( resolveResult );
     }
 
-    public List<ResolveMembershipResultJson> getResults()
+    public List<ResolveMemberResultJson> getResults()
     {
         return results;
     }

@@ -1,6 +1,6 @@
 module api.security {
 
-    export class ResolveMembershipResult {
+    export class ResolveMemberResult {
 
         private principalKey: PrincipalKey;
 
@@ -14,8 +14,8 @@ module api.security {
             return this.members;
         }
 
-        static fromJson(json: ResolveMembershipResultJson): ResolveMembershipResult {
-            var result = new ResolveMembershipResult();
+        static fromJson(json: ResolveMemberResultJson): ResolveMemberResult {
+            var result = new ResolveMemberResult();
             result.principalKey = PrincipalKey.fromString(json.principalKey);
             result.members = json.members.principals.map(principalJson => Principal.fromJson(principalJson));
             return result;

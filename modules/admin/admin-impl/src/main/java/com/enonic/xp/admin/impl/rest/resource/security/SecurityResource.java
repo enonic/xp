@@ -34,9 +34,9 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.EmailAvailabilityJso
 import com.enonic.xp.admin.impl.rest.resource.security.json.GroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalsJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.ResolveMembershipResultJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.ResolveMembershipsJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.ResolveMembershipsResultJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.ResolveMemberResultJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.ResolveMembersJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.ResolveMembersResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.RoleJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateGroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
@@ -252,14 +252,14 @@ public final class SecurityResource
     }
 
     @POST
-    @Path("principals/resolveMemberships")
-    public ResolveMembershipsResultJson resolveMemberships( final ResolveMembershipsJson params )
+    @Path("principals/resolveMembers")
+    public ResolveMembersResultJson resolveMembers( final ResolveMembersJson params )
     {
-        final ResolveMembershipsResultJson resultsJson = new ResolveMembershipsResultJson();
+        final ResolveMembersResultJson resultsJson = new ResolveMembersResultJson();
         for ( PrincipalKey principalKey : params.getMembers() )
         {
             final Principals members = this.securityService.getPrincipals( getUserMembers( principalKey ) );
-            resultsJson.add( new ResolveMembershipResultJson( principalKey, members ) );
+            resultsJson.add( new ResolveMemberResultJson( principalKey, members ) );
         }
         return resultsJson;
     }
@@ -422,15 +422,8 @@ public final class SecurityResource
     private PrincipalKeys getMembers( final PrincipalKey principal )
     {
         final PrincipalRelationships relationships = this.securityService.getRelationships( principal );
-        if ( relationships != null )
-        {
-            final List<PrincipalKey> members = relationships.stream().map( PrincipalRelationship::getTo ).collect( toList() );
-            return PrincipalKeys.from( members );
-        }
-        else
-        {
-            return PrincipalKeys.empty();
-        }
+        final List<PrincipalKey> members = relationships.stream().map( PrincipalRelationship::getTo ).collect( toList() );
+        return PrincipalKeys.from( members );
     }
 
     private PrincipalKeys getUserMembers( final PrincipalKey principal )
@@ -445,7 +438,6 @@ public final class SecurityResource
 
         return PrincipalKeys.from( members.stream().filter( member -> member.isUser() ).collect( toList() ) );
     }
-
 
 
     @Reference
