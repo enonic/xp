@@ -1,7 +1,9 @@
 {
   "results": [
     {
-      "members": [],
+      "members": {
+        "principals": []
+      },
       "principalKey": "role:superuser"
     }
   ]
