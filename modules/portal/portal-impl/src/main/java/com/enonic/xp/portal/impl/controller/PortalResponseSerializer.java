@@ -1,8 +1,5 @@
 package com.enonic.xp.portal.impl.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.servlet.http.Cookie;
 import javax.ws.rs.core.Response;
 
@@ -54,7 +51,7 @@ public final class PortalResponseSerializer
         populateHeaders( builder, value.getMember( "headers" ) );
         populateContributions( builder, value.getMember( "pageContributions" ) );
         populateCookies( builder, value.getMember( "cookies" ) );
-        populateFilters( builder, value.getMember( "filters" ) );
+        populateApplyFilters( builder, value.getMember( "applyFilters" ) );
         setRedirect( builder, value.getMember( "redirect" ) );
         populatePostProcess( builder, value.getMember( "postProcess" ) );
 
@@ -266,30 +263,9 @@ public final class PortalResponseSerializer
         }
     }
 
-    private void populateFilters( final PortalResponse.Builder builder, final ScriptValue value )
+    private void populateApplyFilters( final PortalResponse.Builder builder, final ScriptValue value )
     {
-        if ( value == null )
-        {
-            return;
-        }
-
-        if ( value.isObject() || value.isFunction() )
-        {
-            return;
-        }
-
-        if ( value.isArray() )
-        {
-            final List<String> filterNames = value.getArray().stream().
-                filter( ScriptValue::isValue ).
-                map( ( item ) -> item.getValue( String.class ) ).
-                collect( Collectors.toList() );
-            builder.filters( filterNames );
-        }
-        else
-        {
-            builder.filter( value.getValue().toString() );
-        }
-
+        final Boolean applyFilters = value != null ? value.getValue( Boolean.class ) : null;
+        builder.applyFilters( applyFilters != null ? applyFilters : true );
     }
 }

@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Stream;
 
+import javax.servlet.http.Cookie;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
@@ -12,6 +14,7 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
@@ -144,6 +147,36 @@ public class PostProcessEvaluatorTest
     }
 
     @Test
+    public void testEvaluateInstructionsAndContributions()
+        throws Exception
+    {
+        final PostProcessInjection contributionsInjection = ( portalRequest, portalResponse, tag ) -> {
+            switch ( tag )
+            {
+                case HEAD_BEGIN:
+                    return Arrays.asList( "<!-- HEAD BEGIN -->" );
+                case HEAD_END:
+                    return Arrays.asList( "<!-- HEAD END -->" );
+                case BODY_BEGIN:
+                    return Arrays.asList( "<!-- BODY BEGIN -->" );
+                case BODY_END:
+                    return Arrays.asList( "<!-- BODY END -->" );
+                default:
+                    return null;
+            }
+        };
+
+        final PostProcessEvaluator evaluator = new PostProcessEvaluator();
+        evaluator.input = readResource( "postProcessEvalSource2.html" );
+        evaluator.injections = Lists.newArrayList( contributionsInjection );
+        evaluator.instructions = Collections.emptyList();
+        evaluator.portalResponse = PortalResponse.create().build();
+        evaluator.evaluateInstructions();
+        final PortalResponse result = evaluator.evaluateContributions();
+        assertEqualsTrimmed( readResource( "postProcessEvalResult2.html" ), result.getAsString() );
+    }
+
+    @Test
     public void testEvaluateInstructions()
         throws Exception
     {
@@ -173,6 +206,102 @@ public class PostProcessEvaluatorTest
         evaluator.portalResponse = PortalResponse.create().build();
         final PortalResponse result = evaluator.evaluate();
         assertEqualsTrimmed( readResource( "postProcessEvalResult3.html" ), result.getAsString() );
+    }
+
+    @Test
+    public void testEvaluateInstructionSetCookie()
+        throws Exception
+    {
+        final PostProcessInstruction setCookieInstruction = ( portalRequest, instruction ) -> {
+            if ( instruction.startsWith( "INSTRUCTION" ) )
+            {
+                return PortalResponse.create().
+                    cookie( new Cookie( "cookie-name", "cookie-value" ) ).
+                    build();
+            }
+            return null;
+        };
+
+        final PostProcessEvaluator evaluator = new PostProcessEvaluator();
+        evaluator.input = readResource( "postProcessEvalSource6.html" );
+        evaluator.injections = Collections.emptyList();
+        evaluator.instructions = Lists.newArrayList( setCookieInstruction );
+        evaluator.portalResponse = PortalResponse.create().build();
+        final PortalResponse result = evaluator.evaluate();
+        assertEquals( 1, result.getCookies().size() );
+        assertEquals( "cookie-name", result.getCookies().get( 0 ).getName() );
+        assertEquals( "cookie-value", result.getCookies().get( 0 ).getValue() );
+    }
+
+    @Test
+    public void testEvaluateInstructionSetHeader()
+        throws Exception
+    {
+        final PostProcessInstruction setCookieInstruction = ( portalRequest, instruction ) -> {
+            if ( instruction.startsWith( "INSTRUCTION" ) )
+            {
+                return PortalResponse.create().
+                    header( "header-name", "header-value" ).
+                    build();
+            }
+            return null;
+        };
+
+        final PostProcessEvaluator evaluator = new PostProcessEvaluator();
+        evaluator.input = readResource( "postProcessEvalSource6.html" );
+        evaluator.injections = Collections.emptyList();
+        evaluator.instructions = Lists.newArrayList( setCookieInstruction );
+        evaluator.portalResponse = PortalResponse.create().build();
+        final PortalResponse result = evaluator.evaluate();
+        assertEquals( 1, result.getHeaders().size() );
+        assertEquals( "header-value", result.getHeaders().get( "header-name" ) );
+    }
+
+    @Test
+    public void testEvaluateInstructionSetApplyFilters()
+        throws Exception
+    {
+        final PostProcessInstruction setCookieInstruction = ( portalRequest, instruction ) -> {
+            if ( instruction.startsWith( "INSTRUCTION" ) )
+            {
+                return PortalResponse.create().
+                    applyFilters( false ).
+                    build();
+            }
+            return null;
+        };
+
+        final PostProcessEvaluator evaluator = new PostProcessEvaluator();
+        evaluator.input = readResource( "postProcessEvalSource6.html" );
+        evaluator.injections = Collections.emptyList();
+        evaluator.instructions = Lists.newArrayList( setCookieInstruction );
+        evaluator.portalResponse = PortalResponse.create().build();
+        final PortalResponse result = evaluator.evaluate();
+        assertEquals( false, result.applyFilters() );
+    }
+
+    @Test
+    public void testEvaluateInstructionSetContribution()
+        throws Exception
+    {
+        final PostProcessInstruction setCookieInstruction = ( portalRequest, instruction ) -> {
+            if ( instruction.startsWith( "INSTRUCTION" ) )
+            {
+                return PortalResponse.create().
+                    contribution( HtmlTag.BODY_END, "<script src='my-script.js'/>" ).
+                    build();
+            }
+            return null;
+        };
+
+        final PostProcessEvaluator evaluator = new PostProcessEvaluator();
+        evaluator.input = readResource( "postProcessEvalSource6.html" );
+        evaluator.injections = Collections.emptyList();
+        evaluator.instructions = Lists.newArrayList( setCookieInstruction );
+        evaluator.portalResponse = PortalResponse.create().build();
+        final PortalResponse result = evaluator.evaluate();
+        assertEquals( 1, result.getContributions( HtmlTag.BODY_END ).size() );
+        assertEquals( "<script src='my-script.js'/>", result.getContributions( HtmlTag.BODY_END ).get( 0 ) );
     }
 
     private void assertEqualsTrimmed( final String expected, final String actual )
