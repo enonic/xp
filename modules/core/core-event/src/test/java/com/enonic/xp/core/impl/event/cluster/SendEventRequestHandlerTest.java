@@ -6,6 +6,7 @@ import org.elasticsearch.common.io.stream.BytesStreamInput;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportChannel;
+import org.elasticsearch.transport.TransportService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,12 +22,27 @@ public class SendEventRequestHandlerTest
 
     private EventPublisher eventPublisher;
 
+    private TransportService transportService;
+
     @Before
     public void setUp()
     {
         this.eventPublisher = Mockito.mock( EventPublisher.class );
+        this.transportService = Mockito.mock( TransportService.class );
+
         this.sendEventRequestHandler = new SendEventRequestHandler();
         this.sendEventRequestHandler.setEventPublisher( this.eventPublisher );
+        this.sendEventRequestHandler.setTransportService( this.transportService );
+    }
+
+    @Test
+    public void testActivationDeactivation()
+        throws IOException
+    {
+        this.sendEventRequestHandler.activate();
+        Mockito.verify( this.transportService ).registerHandler( ClusterEventSender.ACTION, this.sendEventRequestHandler );
+        this.sendEventRequestHandler.deactivate();
+        Mockito.verify( this.transportService ).removeHandler( ClusterEventSender.ACTION );
     }
 
     @Test

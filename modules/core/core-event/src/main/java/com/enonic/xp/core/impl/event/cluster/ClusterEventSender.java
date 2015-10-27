@@ -17,6 +17,8 @@ import com.enonic.xp.event.EventListener;
 public final class ClusterEventSender
     implements EventListener
 {
+    public static final String ACTION = "xp/event";
+
     private ClusterService clusterService;
 
     private TransportService transportService;
@@ -50,7 +52,7 @@ public final class ClusterEventSender
     private void send( final TransportRequest transportRequest, final DiscoveryNode node )
     {
         final EmptyTransportResponseHandler responseHandler = new EmptyTransportResponseHandler( ThreadPool.Names.MANAGEMENT );
-        this.transportService.sendRequest( node, "xp/event", transportRequest, responseHandler );
+        this.transportService.sendRequest( node, ACTION, transportRequest, responseHandler );
     }
 
     @Reference
