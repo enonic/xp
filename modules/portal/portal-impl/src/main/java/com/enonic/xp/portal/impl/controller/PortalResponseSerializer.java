@@ -17,9 +17,25 @@ public final class PortalResponseSerializer
 {
     private final ScriptValue value;
 
+    private HttpStatus forceStatus;
+
+    private Boolean forcePostProcess;
+
     public PortalResponseSerializer( final ScriptValue value )
     {
         this.value = value;
+    }
+
+    public PortalResponseSerializer postProcess( final boolean value )
+    {
+        this.forcePostProcess = value;
+        return this;
+    }
+
+    public PortalResponseSerializer status( final HttpStatus value )
+    {
+        this.forceStatus = value;
+        return this;
     }
 
     public PortalResponse serialize()
@@ -40,14 +56,30 @@ public final class PortalResponseSerializer
         populateCookies( builder, value.getMember( "cookies" ) );
         populateFilters( builder, value.getMember( "filters" ) );
         setRedirect( builder, value.getMember( "redirect" ) );
+        populatePostProcess( builder, value.getMember( "postProcess" ) );
+
+        if ( this.forcePostProcess != null )
+        {
+            builder.postProcess( this.forcePostProcess );
+        }
+        if ( this.forceStatus != null )
+        {
+            builder.status( this.forceStatus );
+        }
 
         return builder.build();
+    }
+
+    private void populatePostProcess( final PortalResponse.Builder builder, final ScriptValue value )
+    {
+        final Boolean postProcess = ( value != null ) ? value.getValue( Boolean.class ) : null;
+        builder.postProcess( postProcess != null ? postProcess : true );
     }
 
     private void populateStatus( final PortalResponse.Builder builder, final ScriptValue value )
     {
         final Integer status = ( value != null ) ? value.getValue( Integer.class ) : null;
-        builder.status( status != null ? HttpStatus.from( status ): HttpStatus.OK );
+        builder.status( status != null ? HttpStatus.from( status ) : HttpStatus.OK );
     }
 
     private void populateContentType( final PortalResponse.Builder builder, final ScriptValue value )
