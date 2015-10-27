@@ -118,7 +118,19 @@ public final class ExceptionRendererImpl
         }
 
         final ErrorHandlerScript errorHandlerScript = this.errorHandlerScriptFactory.errorScript( script );
-        return errorHandlerScript.execute( portalError );
+
+        final PortalRequest request = portalError.getRequest();
+        final ApplicationKey previousApp = request.getApplicationKey();
+        // set application of the error handler in the current context PortalRequest
+        try
+        {
+            request.setApplicationKey( appKey );
+            return errorHandlerScript.execute( portalError );
+        }
+        finally
+        {
+            request.setApplicationKey( previousApp );
+        }
     }
 
     private PortalResponse renderInternalErrorPage( final PortalRequest req, final PortalException cause )

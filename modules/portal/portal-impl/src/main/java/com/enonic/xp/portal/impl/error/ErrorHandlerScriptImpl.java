@@ -3,7 +3,7 @@ package com.enonic.xp.portal.impl.error;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
-import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
+import com.enonic.xp.portal.impl.mapper.PortalErrorMapper;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.web.HttpStatus;
@@ -54,8 +54,8 @@ final class ErrorHandlerScriptImpl
             }
         }
 
-        final PortalRequestMapper requestMapper = new PortalRequestMapper( portalError.getRequest() );
-        final ScriptValue result = this.scriptExports.executeMethod( runMethod, requestMapper );
+        final PortalErrorMapper portalErrorMapper = new PortalErrorMapper( portalError );
+        final ScriptValue result = this.scriptExports.executeMethod( runMethod, portalErrorMapper );
 
         if ( ( result == null ) || !result.isObject() )
         {
