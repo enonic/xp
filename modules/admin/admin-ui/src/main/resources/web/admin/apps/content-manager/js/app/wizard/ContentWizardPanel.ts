@@ -264,7 +264,7 @@ module app.wizard {
 
                     this.wizardActions.getShowSplitEditAction().onExecuted(() => {
                         if (!this.inMobileViewMode) {
-                            if (this.contentNotRenderable()) {
+                            if (!this.isContentRenderable()) {
                                 this.closeLiveEdit();
                                 this.contextWindowToggler.setEnabled(false);
                             } else {
@@ -272,6 +272,10 @@ module app.wizard {
                             }
                         }
                     });
+
+                    if (this.isContentRenderable()) {
+                        this.wizardActions.getShowSplitEditAction().execute();
+                    }
 
                     responsiveItem.update();
                 });
@@ -1180,15 +1184,15 @@ module app.wizard {
             }
         }
 
-        private contentNotRenderable(): boolean {
-            return this.liveEditModel.getPageModel().getMode() == api.content.page.PageMode.NO_CONTROLLER;
+        private isContentRenderable(): boolean {
+            return this.liveEditModel && this.liveEditModel.getPageModel() && this.liveEditModel.getPageModel().hasController();
         }
 
         private updatePreviewActionVisibility() {
-            this.previewAction.setEnabled(!this.contentNotRenderable());
+            this.previewAction.setEnabled(this.isContentRenderable());
 
             this.liveEditModel.getPageModel().onPageModeChanged(()=> {
-                this.previewAction.setEnabled(!this.contentNotRenderable());
+                this.previewAction.setEnabled(this.isContentRenderable());
             });
         }
 
