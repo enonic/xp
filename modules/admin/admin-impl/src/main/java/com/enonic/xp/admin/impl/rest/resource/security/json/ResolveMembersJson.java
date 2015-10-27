@@ -11,12 +11,12 @@ import com.enonic.xp.security.PrincipalKeys;
 
 import static java.util.stream.Collectors.toList;
 
-public final class ResolveMembershipsJson
+public final class ResolveMembersJson
 {
     public PrincipalKeys keys;
 
     @JsonCreator
-    public ResolveMembershipsJson( @JsonProperty("keys") final List<String> keys )
+    public ResolveMembersJson( @JsonProperty("keys") final List<String> keys )
     {
         this.keys = PrincipalKeys.from( keys.stream().map( PrincipalKey::from ).collect( toList() ) );
     }

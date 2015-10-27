@@ -371,7 +371,7 @@ public class SecurityResourceTest
 
 
     @Test
-    public void resolveMemberships_for_role()
+    public void resolveMembers_for_role()
         throws Exception
     {
         final Role role = Role.create().
@@ -406,15 +406,15 @@ public class SecurityResourceTest
         Mockito.when( securityService.getPrincipals( keys ) ).thenReturn( Principals.from( user1, user2 ) );
 
         String jsonString = request().
-            path( "security/principals/resolveMemberships" ).
+            path( "security/principals/resolveMembers" ).
             entity( "{\"keys\": [\"" + role.getKey().toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertJson( "resolveMembershipsForRole.json", jsonString );
+        assertJson( "resolveMembersForRole.json", jsonString );
     }
 
     @Test
-    public void resolveMemberships_for_group()
+    public void resolveMembers_for_group()
         throws Exception
     {
         final Group group = Group.create().
@@ -449,15 +449,15 @@ public class SecurityResourceTest
         Mockito.when( securityService.getPrincipals( keys ) ).thenReturn( Principals.from( user1, user2 ) );
 
         String jsonString = request().
-            path( "security/principals/resolveMemberships" ).
+            path( "security/principals/resolveMembers" ).
             entity( "{\"keys\": [\"" + group.getKey().toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertJson( "resolveMembershipsForGroup.json", jsonString );
+        assertJson( "resolveMembersForGroup.json", jsonString );
     }
 
     @Test
-    public void resolveMemberships_multiple()
+    public void resolveMembers_multiple()
         throws Exception
     {
         final Role role = Role.create().
@@ -502,16 +502,16 @@ public class SecurityResourceTest
 
 
         String jsonString = request().
-            path( "security/principals/resolveMemberships" ).
+            path( "security/principals/resolveMembers" ).
             entity( "{\"keys\": [\"" + role.getKey().toString() + "\", \"" + group.getKey().toString() + "\"  ]}",
                     MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertJson( "resolveMembershipsMultiple.json", jsonString );
+        assertJson( "resolveMembersMultiple.json", jsonString );
     }
 
     @Test
-    public void resolveMemberships_deep()
+    public void resolveMembers_deep()
         throws Exception
     {
         final Group parentGroup = Group.create().
@@ -546,15 +546,15 @@ public class SecurityResourceTest
         Mockito.when( securityService.getPrincipals( PrincipalKeys.from( user1.getKey() ) ) ).thenReturn( Principals.from( user1 ) );
 
         String jsonString = request().
-            path( "security/principals/resolveMemberships" ).
+            path( "security/principals/resolveMembers" ).
             entity( "{\"keys\": [\"" + parentGroup.getKey().toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertJson( "resolveMembershipsDeep.json", jsonString );
+        assertJson( "resolveMembersDeep.json", jsonString );
     }
 
     @Test
-    public void resolveMemberships_for_user()
+    public void resolveMembers_for_user()
         throws Exception
     {
         final User user = User.create().
@@ -570,7 +570,7 @@ public class SecurityResourceTest
     }
 
     @Test
-    public void resolveMemberships_for_empty()
+    public void resolveMembers_for_empty()
         throws Exception
     {
         final Role role = Role.create().
@@ -579,12 +579,15 @@ public class SecurityResourceTest
             modifiedTime( Instant.now( clock ) ).
             build();
 
+        PrincipalRelationships memberships = PrincipalRelationships.empty();
+        Mockito.when( securityService.getRelationships( role.getKey() ) ).thenReturn( memberships );
+
         String jsonString = request().
-            path( "security/principals/resolveMemberships" ).
+            path( "security/principals/resolveMembers" ).
             entity( "{\"keys\": [\"" + role.getKey().toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertJson( "resolveMembershipsForEmpty.json", jsonString );
+        assertJson( "resolveMembersForEmpty.json", jsonString );
     }
 
 

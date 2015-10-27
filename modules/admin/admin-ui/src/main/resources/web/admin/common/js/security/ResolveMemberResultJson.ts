@@ -1,6 +1,6 @@
 module api.security {
 
-    export interface ResolveMembershipResultJson {
+    export interface ResolveMemberResultJson {
 
         principalKey: string;
 
