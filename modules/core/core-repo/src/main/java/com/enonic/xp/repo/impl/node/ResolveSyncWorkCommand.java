@@ -24,7 +24,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.branch.storage.BranchNodeVersion;
+import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 import com.enonic.xp.repo.impl.search.SearchService;
 
 public class ResolveSyncWorkCommand
@@ -205,10 +205,10 @@ public class ResolveSyncWorkCommand
         {
             if ( !this.processedIds.contains( referredNodeId ) )
             {
-                final BranchNodeVersion branchNodeVersion =
+                final NodeBranchMetadata nodeBranchMetadata =
                     this.storageService.getBranchNodeVersion( referredNodeId, InternalContext.from( ContextAccessor.current() ) );
 
-                if ( branchNodeVersion != null )
+                if ( nodeBranchMetadata != null )
                 {
                     resolveDiff( referredNodeId );
                 }

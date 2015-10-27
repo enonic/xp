@@ -7,10 +7,10 @@ import com.google.common.base.Strings;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
-import com.enonic.xp.node.NodeVersions;
+import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
@@ -27,16 +27,16 @@ public class NodeVersionQueryResultFactory
         findNodeVersionsResult.from( query.getFrom() );
         findNodeVersionsResult.to( query.getSize() );
 
-        final NodeVersions nodeVersions = buildEntityVersions( query, searchResult );
+        final NodeVersionsMetadata nodeVersionsMetadata = buildEntityVersions( query, searchResult );
 
-        findNodeVersionsResult.entityVersions( nodeVersions );
+        findNodeVersionsResult.entityVersions( nodeVersionsMetadata );
 
         return findNodeVersionsResult.build();
     }
 
-    private static NodeVersions buildEntityVersions( final NodeVersionQuery query, final SearchResult searchResult )
+    private static NodeVersionsMetadata buildEntityVersions( final NodeVersionQuery query, final SearchResult searchResult )
     {
-        final NodeVersions.Builder entityVersionsBuilder = NodeVersions.create( query.getNodeId() );
+        final NodeVersionsMetadata.Builder entityVersionsBuilder = NodeVersionsMetadata.create( query.getNodeId() );
 
         for ( final SearchHit searchHit : searchResult.getResults() )
         {
@@ -46,7 +46,7 @@ public class NodeVersionQueryResultFactory
         return entityVersionsBuilder.build();
     }
 
-    private static NodeVersion createVersionEntry( final SearchHit hit )
+    private static NodeVersionMetadata createVersionEntry( final SearchHit hit )
     {
         final String timestamp = getStringValue( hit, VersionIndexPath.TIMESTAMP, true );
 
@@ -56,7 +56,7 @@ public class NodeVersionQueryResultFactory
 
         final String nodeId = getStringValue( hit, VersionIndexPath.NODE_ID, true );
 
-        return NodeVersion.create().
+        return NodeVersionMetadata.create().
             nodeVersionId( NodeVersionId.from( versionId ) ).
             timestamp( Strings.isNullOrEmpty( timestamp ) ? null : Instant.parse( timestamp ) ).
             nodePath( NodePath.create( nodePath ).build() ).

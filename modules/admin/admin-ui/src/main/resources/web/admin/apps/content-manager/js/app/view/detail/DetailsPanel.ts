@@ -82,13 +82,16 @@ module app.view.detail {
 
         private managePublishEvent() {
             api.content.ContentsPublishedEvent.on((event: api.content.ContentsPublishedEvent) => {
-                var itemId = (<ContentSummary>this.getItem().getModel()).getId();
-                var idPublished = event.getContentIds().some((id, index, array) => {
-                    return itemId === id.toString();
-                });
+                if (this.getItem()) {
+                    // check for item because it can be null after publishing pending for delete item
+                    var itemId = (<ContentSummary>this.getItem().getModel()).getId();
+                    var idPublished = event.getContentIds().some((id, index, array) => {
+                        return itemId === id.toString();
+                    });
 
-                if (idPublished) {
-                    this.versionsPanel.reloadActivePanel();
+                    if (idPublished) {
+                        this.versionsPanel.reloadActivePanel();
+                    }
                 }
             });
         }
@@ -334,7 +337,7 @@ module app.view.detail {
         private getAndInitCustomWidgetsViews(): wemQ.Promise<any> {
             var getWidgetsByInterfaceRequest = new api.content.GetWidgetsByInterfaceRequest(this.getWidgetsInterfaceName());
 
-            return getWidgetsByInterfaceRequest.sendAndParse().then((widgets: api.content.Widget[]) => {
+            return getWidgetsByInterfaceRequest.sendAndParse().then((widgets: Widget[]) => {
                 widgets.forEach((widget) => {
                     var widgetView = WidgetView.create().
                         setName(widget.getDisplayName()).

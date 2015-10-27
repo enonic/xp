@@ -8,14 +8,14 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.branch.storage.BranchNodeVersion;
+import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 import com.enonic.xp.repo.impl.storage.StorageService;
 
 public class AbstractCompareNodeCommand
 {
-    private final Branch target;
+    protected final Branch target;
 
-    private final StorageService storageService;
+    protected final StorageService storageService;
 
     AbstractCompareNodeCommand( Builder builder )
     {
@@ -25,8 +25,8 @@ public class AbstractCompareNodeCommand
 
     NodeComparison doCompareNodeVersions( final Context context, final NodeId nodeId )
     {
-        final BranchNodeVersion sourceWsVersion = storageService.getBranchNodeVersion( nodeId, InternalContext.from( context ) );
-        final BranchNodeVersion targetWsVersion = storageService.getBranchNodeVersion( nodeId, InternalContext.create( context ).
+        final NodeBranchMetadata sourceWsVersion = storageService.getBranchNodeVersion( nodeId, InternalContext.from( context ) );
+        final NodeBranchMetadata targetWsVersion = storageService.getBranchNodeVersion( nodeId, InternalContext.create( context ).
             branch( this.target ).
             build() );
 

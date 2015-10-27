@@ -8,7 +8,6 @@ include 'core:core-export'
 include 'core:core-mail'
 include 'core:core-elasticsearch'
 include 'core:core-impl'
-include 'core:core-jmx'
 
 include 'script:script-api'
 include 'script:script-impl'
@@ -17,7 +16,6 @@ include 'web:web-api'
 include 'web:web-impl'
 include 'web:web-vhost'
 include 'web:web-jetty'
-include 'web:web-jmx'
 
 include 'jaxrs:jaxrs-api'
 include 'jaxrs:jaxrs-impl'
@@ -38,9 +36,6 @@ include 'tools:toolbox'
 include 'tools:testing'
 include 'tools:gradle-plugin'
 
-include 'launcher'
-include 'distro'
-
 include 'lib:lib-content'
 include 'lib:lib-i18n'
 include 'lib:lib-portal'
@@ -53,8 +48,10 @@ include 'lib:lib-auth'
 include 'repack:repack-jparsec'
 include 'repack:repack-attoparser'
 include 'repack:repack-resteasy'
-include 'repack:repack-jhlabs-filters'
 include 'repack:repack-elasticsearch'
+
+include 'launcher'
+include 'distro'
 
 rootProject.name = 'xp'
 

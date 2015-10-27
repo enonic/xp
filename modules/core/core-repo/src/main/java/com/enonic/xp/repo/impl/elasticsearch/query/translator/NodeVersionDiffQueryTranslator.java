@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator;
 
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -32,6 +33,7 @@ public class NodeVersionDiffQueryTranslator
             size( query.getSize() ).
             from( query.getFrom() ).
             addSortBuilder( new FieldSortBuilder( VersionIndexPath.NODE_PATH.getPath() ).order( SortOrder.ASC ) ).
+            searchType( SearchType.valueOf( request.getSearchType().toString() ) ).
             build();
     }
 }

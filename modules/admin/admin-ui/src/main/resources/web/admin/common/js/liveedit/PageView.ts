@@ -419,13 +419,41 @@ module api.liveedit {
             return !this.pageModel || this.pageModel.getMode() == PageMode.NO_CONTROLLER;
         }
 
-        getName(): string {
+        private isContentEmpty() {
             var content = this.liveEditModel.getContent();
-            if (!content || api.util.StringHelper.isEmpty(content.getDisplayName())) {
-                return "[No name]";
-            } else {
-                return content.getDisplayName();
+            return (!content || api.util.StringHelper.isEmpty(content.getDisplayName()));
+        }
+
+        getName(): string {
+            var pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
+            if (this.pageModel.hasTemplate()) {
+                return this.pageModel.getTemplate().getDisplayName();
             }
+            if (this.pageModel.isCustomized()) {
+                return this.pageModel.hasController() ? this.pageModel.getController().getDisplayName() : pageTemplateDisplayName[pageTemplateDisplayName.Custom];
+            }
+            if (this.pageModel.getMode() == PageMode.AUTOMATIC) {
+                return this.pageModel.getDefaultPageTemplate().getDisplayName();
+            }
+
+            return pageTemplateDisplayName[pageTemplateDisplayName.Automatic];
+        }
+
+        getIconUrl(content: api.content.Content): string {
+            return "";
+        }
+
+        getIconClass(): string {
+            var largeIconCls = " icon-large";
+
+            if (this.pageModel.hasTemplate()) {
+                return "icon-newspaper" + largeIconCls;
+            }
+            if (this.pageModel.isCustomized()) {
+                return "icon-cog" + largeIconCls;
+            }
+
+            return "icon-wand" + largeIconCls;
         }
 
         getParentItemView(): ItemView {

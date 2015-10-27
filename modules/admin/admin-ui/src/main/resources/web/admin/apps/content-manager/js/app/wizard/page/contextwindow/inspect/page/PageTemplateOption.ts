@@ -21,5 +21,11 @@ module app.wizard.page.contextwindow.inspect.page {
         getPageModel(): PageModel {
             return this.pageModel;
         }
+
+        isCustom(): boolean {
+            var pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
+
+            return this.template && this.template.getDisplayName() == pageTemplateDisplayName[pageTemplateDisplayName.Custom];
+        }
     }
 }

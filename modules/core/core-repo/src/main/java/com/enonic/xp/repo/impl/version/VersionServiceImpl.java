@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.version;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.StorageSettings;
@@ -25,20 +25,21 @@ public class VersionServiceImpl
     private StorageDao storageDao;
 
     @Override
-    public void store( final NodeVersionDocument document, final InternalContext context )
+    public void store( final NodeVersionMetadata nodeVersionMetadata, final InternalContext context )
     {
-        final StoreRequest storeRequest = VersionStorageDocFactory.create( document, context.getRepositoryId() );
+        final StoreRequest storeRequest = VersionStorageDocFactory.create( nodeVersionMetadata, context.getRepositoryId() );
 
         this.storageDao.store( storeRequest );
     }
 
     @Override
-    public NodeVersion getVersion( final NodeVersionDocumentId nodeVersionDocumentId, final InternalContext context )
+    public NodeVersionMetadata getVersion( final NodeVersionDocumentId nodeVersionDocumentId, final InternalContext context )
     {
         final GetByIdRequest getByIdRequest = GetByIdRequest.create().
             id( nodeVersionDocumentId.toString() ).
             returnFields( VERSION_RETURN_FIELDS ).
             storageSettings( createStorageSettings( context ) ).
+            routing( nodeVersionDocumentId.getNodeId().toString() ).
             build();
 
         final GetResult getResult = this.storageDao.getById( getByIdRequest );

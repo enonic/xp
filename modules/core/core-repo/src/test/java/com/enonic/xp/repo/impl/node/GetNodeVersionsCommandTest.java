@@ -10,9 +10,9 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
-import com.enonic.xp.node.NodeVersions;
+import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.node.UpdateNodeParams;
 
 import static org.junit.Assert.*;
@@ -82,13 +82,13 @@ public class GetNodeVersionsCommandTest
 
         assertEquals( 5, result.getHits() );
 
-        final NodeVersions nodeVersions = result.getNodeVersions();
+        final NodeVersionsMetadata nodeVersionsMetadata = result.getNodeVersionsMetadata();
         Instant previousTimestamp = null;
 
-        for ( final NodeVersion nodeVersion : nodeVersions )
+        for ( final NodeVersionMetadata nodeVersionMetadata : nodeVersionsMetadata )
         {
-            assertTrue( previousTimestamp == null || nodeVersion.getTimestamp().isBefore( previousTimestamp ) );
-            previousTimestamp = nodeVersion.getTimestamp();
+            assertTrue( previousTimestamp == null || nodeVersionMetadata.getTimestamp().isBefore( previousTimestamp ) );
+            previousTimestamp = nodeVersionMetadata.getTimestamp();
         }
     }
 

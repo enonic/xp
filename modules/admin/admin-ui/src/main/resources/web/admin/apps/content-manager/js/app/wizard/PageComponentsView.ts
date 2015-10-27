@@ -46,7 +46,16 @@ module app.wizard {
             this.liveEditPage = liveEditPage;
 
             var closeButton = new api.ui.button.CloseButton();
-            closeButton.onClicked((event: MouseEvent) => this.hide());
+            closeButton.onClicked((event: MouseEvent) => {
+                this.hideContextMenu();
+                this.hide()
+            });
+
+            this.onRemoved(() => {
+                if (this.contextMenu) {
+                    this.contextMenu.remove();
+                }
+            });
 
             this.header = new api.dom.H2El('header');
             this.header.setHtml('Page Components');
