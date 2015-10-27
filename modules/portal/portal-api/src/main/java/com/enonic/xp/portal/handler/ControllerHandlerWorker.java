@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.handler.controller;
+package com.enonic.xp.portal.handler;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -6,7 +6,6 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.site.Site;
 
 public abstract class ControllerHandlerWorker
