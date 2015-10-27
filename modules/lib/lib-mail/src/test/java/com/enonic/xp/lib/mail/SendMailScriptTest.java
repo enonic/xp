@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
+import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
 import static org.junit.Assert.*;
@@ -107,6 +108,50 @@ public class SendMailScriptTest
         assertArrayEquals( toAddresses( "from@bar.com" ), message.getFrom() );
         assertArrayEquals( toAddresses( "to@bar.com" ), message.getRecipients( Message.RecipientType.TO ) );
         Assert.assertEquals( "text/html", message.getHeader( "Content-Type" )[0] );
+    }
+
+    @Test
+    public void testFailMissingFrom()
+        throws Exception
+    {
+        final MailService mailService = message -> {
+            throw new RuntimeException( "Error sending mail" );
+        };
+        addService( MailService.class, mailService );
+
+        try
+        {
+            runTestFunction( "test/send-test.js", "sendWithoutRequiredFrom" );
+            Assert.fail( "Expected exception" );
+        }
+        catch ( ResourceProblemException e )
+        {
+            assertEquals( "Parameter 'from' is required", e.getMessage() );
+        }
+
+        Assert.assertNull( this.actualMessage );
+    }
+
+    @Test
+    public void testFailMissingTo()
+        throws Exception
+    {
+        final MailService mailService = message -> {
+            throw new RuntimeException( "Error sending mail" );
+        };
+        addService( MailService.class, mailService );
+
+        try
+        {
+            runTestFunction( "test/send-test.js", "sendWithoutRequiredTo" );
+            Assert.fail( "Expected exception" );
+        }
+        catch ( ResourceProblemException e )
+        {
+            assertEquals( "Parameter 'to' is required", e.getMessage() );
+        }
+
+        Assert.assertNull( this.actualMessage );
     }
 
     private InternetAddress[] toAddresses( final String... addresses )

@@ -43,6 +43,7 @@ public class JavaTypeConvertersTest
     {
         assertEquals( new Long( 1000 ), JavaTypeConverters.LONG.convertFrom( 1000 ) );
         assertEquals( new Long( 1001 ), JavaTypeConverters.LONG.convertFrom( "1001" ) );
+        assertEquals( new Long( 1001 ), JavaTypeConverters.LONG.convertFrom( "1001.0" ) );
         assertNull( JavaTypeConverters.LONG.convertFrom( "1001test" ) );
         assertNull( JavaTypeConverters.LONG.convertFrom( new Object() ) );
     }

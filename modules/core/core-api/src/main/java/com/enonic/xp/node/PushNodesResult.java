@@ -1,36 +1,29 @@
 package com.enonic.xp.node;
 
-import java.util.Set;
+import java.util.List;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 @Beta
 public class PushNodesResult
 {
-    private final Nodes successfull;
-
-    private final Nodes childrenSuccessfull;
+    private final Nodes successful;
 
     private final ImmutableSet<Failed> failed;
 
     private PushNodesResult( Builder builder )
     {
-        successfull = Nodes.from( builder.successfull );
-        childrenSuccessfull = Nodes.from( builder.childrenSuccessfull );
+        successful = Nodes.from( builder.successful );
         failed = ImmutableSet.copyOf( builder.failed );
     }
 
-    public Nodes getSuccessfull()
+    public Nodes getSuccessful()
     {
-        return successfull;
+        return successful;
     }
 
-    public Nodes getChildrenSuccessfull()
-    {
-        return childrenSuccessfull;
-    }
 
     public ImmutableSet<Failed> getFailed()
     {
@@ -44,11 +37,9 @@ public class PushNodesResult
 
     public static final class Builder
     {
-        private final Set<Node> successfull = Sets.newHashSet();
+        private final List<Node> successful = Lists.newLinkedList();
 
-        private final Set<Failed> failed = Sets.newHashSet();
-
-        private final Set<Node> childrenSuccessfull = Sets.newHashSet();
+        private final List<Failed> failed = Lists.newLinkedList();
 
         private Builder()
         {
@@ -56,13 +47,7 @@ public class PushNodesResult
 
         public Builder addSuccess( final Node success )
         {
-            this.successfull.add( success );
-            return this;
-        }
-
-        public Builder addChildSuccess( final Node success )
-        {
-            this.childrenSuccessfull.add( success );
+            this.successful.add( success );
             return this;
         }
 

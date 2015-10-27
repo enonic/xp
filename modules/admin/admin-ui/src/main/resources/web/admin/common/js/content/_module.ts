@@ -97,6 +97,7 @@
 
 ///<reference path='EditContentEvent.ts' />
 ///<reference path='TreeGridItemClickedEvent.ts' />
+///<reference path='ContentRequiresSaveEvent.ts' />
 
 ///<reference path='Widget.ts' />
 ///<reference path='WidgetDescriptorResourceRequest.ts' />

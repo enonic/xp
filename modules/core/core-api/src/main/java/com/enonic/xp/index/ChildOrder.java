@@ -19,6 +19,8 @@ public class ChildOrder
 {
     private static final OrderExpr DEFAULT_ORDER = FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.DESC );
 
+    private static final OrderExpr REVERSE_DEFAULT_ORDER = FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.ASC );
+
     private static final FieldOrderExpr MANUAL_ORDER = FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
 
     private static final FieldOrderExpr MANUAL_ORDER_REVERSE =
@@ -35,6 +37,7 @@ public class ChildOrder
     {
         return ChildOrder.create().
             add( MANUAL_ORDER ).
+            add( DEFAULT_ORDER ).
             build();
     }
 
@@ -42,9 +45,9 @@ public class ChildOrder
     {
         return ChildOrder.create().
             add( MANUAL_ORDER_REVERSE ).
+            add( REVERSE_DEFAULT_ORDER ).
             build();
     }
-
 
     public static ChildOrder defaultOrder()
     {

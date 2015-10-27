@@ -6,9 +6,15 @@
   overflow: visible; // for the button glow
   .box-sizing(border-box);
   border-bottom: 1px solid @admin-bg-light-gray;
+  min-width: 200px;
 
   .button {
-    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent);
+    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
+
+    &:focus:not(:disabled) {
+      box-shadow: none;
+      border: 1px solid transparent;
+    }
 
     display: inline-block;
     padding: 7px 14px;
@@ -33,10 +39,9 @@
   }
 
   .fold-button {
-    height: @toolbar-height;
-    line-height: @toolbar-height;
+    height: @toolbar-height - 1px; // minus border
     margin-right: 18px;
-    padding: 0 27px 0 17px;
+    padding: 7px 27px 7px 17px;
     text-align: center;
     overflow: visible;
     display: inline-block;
@@ -68,9 +73,6 @@
       .button {
         width: 100%;
         padding: 5px;
-        &:hover {
-          background-color: @admin-bg-light-gray;
-        }
 
         span {
           line-height: 1em;
@@ -98,12 +100,4 @@
     }
   }
 
-  @media screen and (min-width: 540px) and (max-width: 1920px) {
-    &.content-browse-toolbar {
-      button {
-        z-index: 4;
-        position: relative;
-      }
-    }
-  }
 }

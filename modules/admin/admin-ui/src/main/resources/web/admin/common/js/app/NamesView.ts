@@ -35,5 +35,13 @@ module api.app {
             }
             return this;
         }
+
+        setSubNameElements(elements: api.dom.Element[]): NamesView {
+            elements.forEach((element: api.dom.Element) => {
+                this.subNameEl.appendChild(element);
+            });
+
+            return this;
+        }
     }
 }

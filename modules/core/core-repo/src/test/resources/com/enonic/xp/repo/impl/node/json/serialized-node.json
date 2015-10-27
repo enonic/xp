@@ -1,0 +1,132 @@
+{
+  "attachedBinaries": [
+    {
+      "binaryReference": "myImage1",
+      "blobKey": "a"
+    },
+    {
+      "binaryReference": "myImage2",
+      "blobKey": "b"
+    }
+  ],
+  "childOrder": "modifiedtime ASC, displayname DESC",
+  "data": [
+    {
+      "name": "a",
+      "type": "PropertySet",
+      "values": [
+        {
+          "set": [
+            {
+              "name": "b",
+              "type": "PropertySet",
+              "values": [
+                {
+                  "set": [
+                    {
+                      "name": "c",
+                      "type": "Double",
+                      "values": [
+                        {
+                          "v": 2.0
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "b",
+      "type": "LocalDate",
+      "values": [
+        {
+          "v": "2013-01-02"
+        }
+      ]
+    },
+    {
+      "name": "c",
+      "type": "String",
+      "values": [
+        {
+          "v": "runar"
+        }
+      ]
+    },
+    {
+      "name": "d",
+      "type": "LocalDateTime",
+      "values": [
+        {
+          "v": "2013-01-02T03:04:05"
+        }
+      ]
+    },
+    {
+      "name": "e",
+      "type": "BinaryReference",
+      "values": [
+        {
+          "v": "myImage1"
+        }
+      ]
+    },
+    {
+      "name": "f",
+      "type": "BinaryReference",
+      "values": [
+        {
+          "v": "myImage2"
+        }
+      ]
+    }
+  ],
+  "id": "myId",
+  "indexConfigDocument": {
+    "analyzer": "myAnalyzer",
+    "defaultConfig": {
+      "decideByType": false,
+      "enabled": true,
+      "fulltext": false,
+      "includeInAllText": false,
+      "nGram": false
+    },
+    "patternConfigs": [
+      {
+        "indexConfig": {
+          "decideByType": false,
+          "enabled": true,
+          "fulltext": true,
+          "includeInAllText": true,
+          "indexValueProcessors": [
+            "indexValueProcessor",
+            "indexValueProcessor"
+          ],
+          "nGram": true
+        },
+        "path": "myPath"
+      }
+    ]
+  },
+  "inheritPermissions": false,
+  "manualOrderValue": null,
+  "nodeType": "myNodeType",
+  "permissions": [
+    {
+      "allow": ["READ"],
+      "deny": ["DELETE"],
+      "principal": "user:system:anonymous"
+    },
+    {
+      "allow": ["MODIFY"],
+      "deny": ["PUBLISH"],
+      "principal": "user:system:user1"
+    }
+  ],
+  "timestamp": "2015-10-19T08:04:51.830Z"
+}

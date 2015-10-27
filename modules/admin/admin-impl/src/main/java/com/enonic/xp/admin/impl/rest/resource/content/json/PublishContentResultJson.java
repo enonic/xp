@@ -1,20 +1,19 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.PushContentsResult;
+import com.enonic.xp.content.Contents;
 
 public class PublishContentResultJson
 {
-    private final List<Success> successes = new ArrayList<>();
+    private final List<Success> successes;
 
-    private final List<Failure> failures = new ArrayList<>();
+    private final List<Failure> failures;
 
-    private final List<Deleted> deleted = new ArrayList<>();
+    private final List<Deleted> deleted;
 
     @SuppressWarnings("unused")
     public List<Success> getSuccesses()
@@ -34,30 +33,61 @@ public class PublishContentResultJson
         return deleted;
     }
 
-    private PublishContentResultJson()
+    private PublishContentResultJson( final Builder builder )
     {
+        this.successes = builder.successes;
+        this.deleted = builder.deleted;
+        this.failures = builder.failures;
     }
 
-    public static PublishContentResultJson from( final PushContentsResult pushContentsResult )
+    public static Builder create()
     {
-        final PublishContentResultJson json = new PublishContentResultJson();
+        return new Builder();
+    }
 
-        for ( final Content content : pushContentsResult.getPushedContent() )
+    public static class Builder
+    {
+        private final List<Success> successes = new ArrayList<>();
+
+        private final List<Failure> failures = new ArrayList<>();
+
+        private final List<Deleted> deleted = new ArrayList<>();
+
+        public Builder success( final Contents contents )
         {
-            json.successes.add( new Success( content.getId(), content.getDisplayName() ) );
+            for ( final Content content : contents )
+            {
+                this.successes.add( new Success( content.getId(), content.getDisplayName() ) );
+            }
+
+            return this;
         }
 
-        for ( final PushContentsResult.Failed failed : pushContentsResult.getFailed() )
+        public Builder deleted( final Contents contents )
         {
-            json.failures.add( new Failure( failed.getContent().getName().toString(), failed.getFailedReason().getMessage() ) );
+            for ( final Content content : contents )
+            {
+                this.deleted.add( new Deleted( content.getId(), content.getDisplayName() ) );
+            }
+
+            return this;
         }
 
-        for ( final Content content : pushContentsResult.getDeleted() )
+        public Builder failures( final Contents contents )
         {
-            json.deleted.add( new Deleted( content.getId(), content.getDisplayName() ) );
+            for ( final Content content : contents )
+            {
+                this.failures.add( new Failure( content.getName().toString(), "" ) );
+            }
+
+            return this;
         }
 
-        return json;
+        public PublishContentResultJson build()
+        {
+            return new PublishContentResultJson( this );
+        }
+
     }
 
     public static class Success
@@ -83,7 +113,8 @@ public class PublishContentResultJson
         }
     }
 
-    public static class Deleted {
+    public static class Deleted
+    {
         private final String id;
 
 
@@ -129,5 +160,4 @@ public class PublishContentResultJson
             return reason;
         }
     }
-
 }

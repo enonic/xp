@@ -1,37 +1,18 @@
-.grid-and-detail-split-panel {
+.content-grid-and-browse-split-panel {
   .browse-toolbar {
-    .details-panel-toggle-button, .large-details-panel-toggle-button {
+    .details-panel-toggle-button, .non-mobile-details-panel-toggle-button {
       // toggle button for medium screen sizes
       z-index: 2;
       float: right;
-      top: 0px;
-      right: 2px;
-      padding: 7px 7px 7px 14px;
+      line-height: 24px;
 
       overflow: hidden;
       display: block;
       background-color: transparent;
       border: 1px transparent;
 
-      height: 100%;
-
-      position: absolute;
-
       @media screen and (max-width: 540px) {
         display: none !important;
-      }
-
-      @media screen and (min-width: 1921px) {
-        display: none !important;
-      }
-
-      &.large-details-panel-toggle-button {
-        @media screen and (max-width: 1920px) {
-          display: none;
-        }
-        @media screen and (min-width: 1921px) {
-          display: inherit !important;
-        }
       }
 
       &:focus {
@@ -44,10 +25,17 @@
       }
 
       &:before {
-        font-size: 24px;
+        font-size: 16px;
+      }
+      &.expanded {
+        top: 2px;
+        right: 0px;
+        &:before {
+          font-size: 21px;
+        }
       }
 
-      .icon-grid5();
+      .icon-list();
 
       &.expanded {
 
@@ -74,11 +62,12 @@
         padding-top: 13px;
         .icon-close2();
 
-        &.large-details-panel-toggle-button {
+        &.non-mobile-details-panel-toggle-button {
           padding-top: 7px;
           position: fixed;
           top: 50px;
           padding-right: 5px;
+          height: 40px;
         }
       }
 
@@ -96,15 +85,11 @@
   top: 0px;
   right: -280px;
   box-shadow: 0 4px 20px -8px #000000, 0 0 0 0 rgba(0, 0, 0, 0.3);
-  opacity: 0.99;
+  opacity: 0.9;
   background-color: @admin-bg-almost-white;
   .transition(all 0.5s ease-in-out);
 
   @media screen and (max-width: 540px) {
-    display: none;
-  }
-
-  @media screen and (min-width: 1921px) {
     display: none;
   }
 
@@ -142,8 +127,18 @@
       padding: 10px 15px 7px;
     }
 
+    .content-item-versions-panel .grid-canvas {
+      width: calc(~'100% - 15px') !important;
+    }
+
     .content-item-versions-panel .slick-cell span.icon:empty {
       display: none;
+    }
+
+    .content-item-versions-panel .slick-cell.status {
+      position: static;
+      float: right;
+      margin-right: 10px;
     }
   }
 
@@ -165,7 +160,7 @@
     font-size: 14px;
     border-bottom: 1px transparent;
 
-    .sub-name {
+    .sub-name, .main-name {
       padding-right: 45px;
     }
   }
@@ -261,30 +256,36 @@
     position: relative;
   }
 
-  .widget-item-view {
+  .widget-item-view:not(.version-history) {
     // common styles for all widget items
     position: relative;
     margin: 10px 10px 10px;
     padding: 5px;
     background-color: @admin-white;
     .box-shadow(0px 1px 2px 1px rgba(0, 0, 0, 0.1));
+  }
 
-    &.properties-widget-item-view {
+    .properties-widget-item-view {
 
-      dl {
-        overflow: hidden;
-        padding: 5px;
-        dd {
-          float: left;
-          width: 30%;
-        }
-        dt {
-          float: left;
-          width: 70%;
-        }
+    dl {
+      overflow: hidden;
+      padding: 5px;
+      dd {
+        float: left;
+        width: 30%;
+      }
+      dt {
+        float: left;
+        width: 70%;
+        .ellipsis();
+      }
+      dd, dt {
+        margin: 1px 0px;
       }
     }
 
+    min-height: 100px;
+  }
     &.attachments-widget-item-view {
 
       ul.uploader-list {
@@ -405,7 +406,7 @@
 .split-panel {
   // styles for large screens
 
-  &.grid-and-detail-split-panel {
+  &.content-grid-and-browse-split-panel {
 
     &.vertical {
       > .panel, .splitter {
@@ -419,6 +420,10 @@
     > .split-panel {
       right: initial;
       .transition(all 0.5s ease-in-out);
+    }
+
+    > .splitter {
+      z-index: 1;
     }
 
     > .details-panel {
@@ -440,7 +445,7 @@
       }
 
       .widgets-selection-row .widget-selector {
-        width: calc(~'100% - 40px');
+        width: calc(~'100% - 42px');
       }
     }
   }

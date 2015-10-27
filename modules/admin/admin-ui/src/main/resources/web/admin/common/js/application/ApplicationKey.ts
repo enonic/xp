@@ -7,6 +7,12 @@ module api.application {
         static PORTAL: ApplicationKey = ApplicationKey.fromString('portal');
         static MEDIA: ApplicationKey = ApplicationKey.fromString('media');
 
+        static SYSTEM_RESERVED_APPLICATION_KEYS = [
+            ApplicationKey.SYSTEM,
+            ApplicationKey.BASE,
+            ApplicationKey.PORTAL,
+            ApplicationKey.MEDIA];
+
         private name: string;
 
         public static fromString(applicationName: string): ApplicationKey {
@@ -19,6 +25,15 @@ module api.application {
 
         getName(): string {
             return this.name;
+        }
+
+        isSystemReserved(): boolean {
+            for (var key in ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS) {
+                if (ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS[key].equals(this)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         toString(): string {

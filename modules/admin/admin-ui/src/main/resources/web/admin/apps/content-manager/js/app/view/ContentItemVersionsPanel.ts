@@ -6,61 +6,37 @@ module app.view {
     export class ContentItemVersionsPanel extends api.ui.panel.Panel {
 
         private item: ViewItem<ContentSummary>;
-
-        private deckPanel: api.ui.panel.NavigatedDeckPanel;
-        private activeGrid: ContentVersionsTreeGrid;
         private allGrid: ContentVersionsTreeGrid;
-        private mask: api.ui.mask.LoadMask;
 
         constructor() {
             super("content-item-versions-panel");
 
-            var navigator = new api.ui.tab.TabBar();
-            this.deckPanel = new api.ui.panel.NavigatedDeckPanel(navigator);
-            this.deckPanel.setDoOffset(false);
-            this.appendChild(navigator);
-            this.appendChild(this.deckPanel);
-            this.mask = new api.ui.mask.LoadMask(this);
-            this.appendChild(this.mask);
-
-            navigator.onNavigationItemSelected((event: api.ui.NavigatorEvent) => {
-                this.setItem(this.item);
-            });
-
-
             this.allGrid = new AllContentVersionsTreeGrid();
-            this.allGrid.onLoaded(() => {
-                this.mask.hide();
-            });
-            this.deckPanel.addNavigablePanel(new api.ui.tab.TabBarItemBuilder().setLabel('All Versions').setAddLabelTitleAttribute(false).build(),
-                this.allGrid, true);
-
-            this.activeGrid = new ActiveContentVersionsTreeGrid();
-            this.activeGrid.onLoaded(() => {
-                this.mask.hide();
-            });
-
-            this.deckPanel.addNavigablePanel(new api.ui.tab.TabBarItemBuilder().setLabel('Active Versions').setAddLabelTitleAttribute(false).build(),
-                this.activeGrid);
-
+            this.appendChild(this.allGrid);
         }
 
         public setItem(item: ViewItem<ContentSummary>) {
             this.item = item;
             if (this.item) {
-                var panel = <ContentVersionsTreeGrid>this.deckPanel.getPanelShown();
-                if (panel.getContentId() != this.item.getModel().getContentId()) {
-                    this.mask.show();
-                    (<ContentVersionsTreeGrid>this.deckPanel.getPanelShown()).setContentId(item.getModel().getContentId());
+                if (this.allGrid.getContentId() != this.item.getModel().getContentId()) {
+                    this.allGrid.setContentId(item.getModel().getContentId());
                 }
             }
         }
 
-        public ReRenderActivePanel() {
+        public setStatus(status: api.content.CompareStatus) {
+            this.allGrid.setStatus(status);
+        }
+
+        public reRenderActivePanel() {
             if (this.item) {
-                var panel = <ContentVersionsTreeGrid>this.deckPanel.getPanelShown();
-                panel.render();
+                this.allGrid.getGrid().invalidate();
+                this.allGrid.render();
             }
+        }
+
+        public reloadActivePanel() {
+            this.allGrid.reload();
         }
 
         public getItem(): ViewItem<ContentSummary> {

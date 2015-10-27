@@ -36,7 +36,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.RootNode;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -141,7 +141,7 @@ public final class SecurityServiceImpl
     @Override
     public UserStoreAccessControlList getDefaultUserStorePermissions()
     {
-        final RootNode rootNode = callWithContext( () -> this.nodeService.getRoot() );
+        final Node rootNode = callWithContext( this.nodeService::getRoot );
 
         return UserStoreNodeTranslator.userStorePermissionsFromNode( rootNode, rootNode, rootNode );
     }
@@ -171,6 +171,9 @@ public final class SecurityServiceImpl
         callWithContext( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.addRelationshipToUpdateNodeParams( relationship );
             nodeService.update( updateNodeParams );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return null;
         } );
     }
@@ -181,6 +184,9 @@ public final class SecurityServiceImpl
         callWithContext( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeRelationshipToUpdateNodeParams( relationship );
             nodeService.update( updateNodeParams );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return null;
         } );
     }
@@ -191,6 +197,9 @@ public final class SecurityServiceImpl
         callWithContext( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeAllRelationshipsToUpdateNodeParams( from );
             nodeService.update( updateNodeParams );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return null;
         } );
     }
@@ -202,6 +211,9 @@ public final class SecurityServiceImpl
             final Node node = this.nodeService.getByPath( userStoreNodePath );
             final UpdateNodeParams updateNodeParams = UserStoreNodeTranslator.removeAllRelationshipsToUpdateNodeParams( node );
             nodeService.update( updateNodeParams );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return null;
         } );
     }
@@ -390,6 +402,7 @@ public final class SecurityServiceImpl
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( userToUpdate );
 
             final Node updatedNode = nodeService.update( updateNodeParams );
+
             return PrincipalNodeTranslator.userFromNode( updatedNode );
         } );
     }
@@ -408,7 +421,12 @@ public final class SecurityServiceImpl
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
         try
         {
-            final Node node = callWithContext( () -> nodeService.create( createNodeParams ) );
+            final Node node = callWithContext( () -> {
+                final Node createdNode = nodeService.create( createNodeParams );
+                this.nodeService.refresh( RefreshMode.SEARCH );
+                return createdNode;
+            } );
+
             if ( createUser.getPassword() != null )
             {
                 return setPassword( user.getKey(), createUser.getPassword() );
@@ -443,8 +461,12 @@ public final class SecurityServiceImpl
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( userToUpdate );
 
             final Node updatedNode = nodeService.update( updateNodeParams );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return PrincipalNodeTranslator.userFromNode( updatedNode );
         } );
+
     }
 
     @Override
@@ -475,7 +497,11 @@ public final class SecurityServiceImpl
         final CreateNodeParams createGroupParams = PrincipalNodeTranslator.toCreateNodeParams( group );
         try
         {
-            final Node node = callWithContext( () -> this.nodeService.create( createGroupParams ) );
+            final Node node = callWithContext( () -> {
+                final Node createdNode = this.nodeService.create( createGroupParams );
+                this.nodeService.refresh( RefreshMode.SEARCH );
+                return createdNode;
+            } );
 
             return PrincipalNodeTranslator.groupFromNode( node );
         }
@@ -506,6 +532,9 @@ public final class SecurityServiceImpl
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( groupToUpdate );
 
             final Node updatedNode = nodeService.update( updateNodeParams );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return PrincipalNodeTranslator.groupFromNode( updatedNode );
         } );
     }
@@ -538,7 +567,11 @@ public final class SecurityServiceImpl
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( role );
         try
         {
-            final Node node = callWithContext( () -> this.nodeService.create( createNodeParams ) );
+            final Node node = callWithContext( () -> {
+                final Node createdNode = this.nodeService.create( createNodeParams );
+                this.nodeService.refresh( RefreshMode.SEARCH );
+                return createdNode;
+            } );
 
             return PrincipalNodeTranslator.roleFromNode( node );
         }
@@ -569,6 +602,9 @@ public final class SecurityServiceImpl
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( roleToUpdate );
 
             final Node updatedNode = nodeService.update( updateNodeParams );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
             return PrincipalNodeTranslator.roleFromNode( updatedNode );
         } );
     }
@@ -662,7 +698,11 @@ public final class SecurityServiceImpl
     public void deletePrincipal( final PrincipalKey principalKey )
     {
         removeRelationships( principalKey );
-        final Node deletedNode = callWithContext( () -> this.nodeService.deleteById( toNodeId( principalKey ) ) );
+        final Node deletedNode = callWithContext( () -> {
+            final Node node = this.nodeService.deleteById( toNodeId( principalKey ) );
+            this.nodeService.refresh( RefreshMode.SEARCH );
+            return node;
+        } );
         if ( deletedNode == null )
         {
             throw new PrincipalNotFoundException( principalKey );
@@ -703,7 +743,7 @@ public final class SecurityServiceImpl
             AccessControlList usersNodePermissions = UserStoreNodeTranslator.userStorePermissionsToUsersNodePermissions( permissions );
             AccessControlList groupsNodePermissions = UserStoreNodeTranslator.userStorePermissionsToGroupsNodePermissions( permissions );
 
-            final RootNode rootNode = nodeService.getRoot();
+            final Node rootNode = nodeService.getRoot();
             userStoreNodePermissions = mergeWithRootPermissions( userStoreNodePermissions, rootNode.getPermissions() );
             usersNodePermissions = mergeWithRootPermissions( usersNodePermissions, rootNode.getPermissions() );
             groupsNodePermissions = mergeWithRootPermissions( groupsNodePermissions, rootNode.getPermissions() );
@@ -729,9 +769,10 @@ public final class SecurityServiceImpl
             final ApplyNodePermissionsParams applyPermissions = ApplyNodePermissionsParams.create().
                 nodeId( rootNode.id() ).
                 overwriteChildPermissions( false ).
-                modifier( ContextAccessor.current().getAuthInfo().getUser().getKey() ).
                 build();
             nodeService.applyPermissions( applyPermissions );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
 
             return userStoreNode;
         } );
@@ -781,7 +822,7 @@ public final class SecurityServiceImpl
                 AccessControlList groupsNodePermissions =
                     UserStoreNodeTranslator.userStorePermissionsToGroupsNodePermissions( permissions );
 
-                final RootNode rootNode = nodeService.getRoot();
+                final Node rootNode = nodeService.getRoot();
                 userStoreNodePermissions = mergeWithRootPermissions( userStoreNodePermissions, rootNode.getPermissions() );
                 usersNodePermissions = mergeWithRootPermissions( usersNodePermissions, rootNode.getPermissions() );
                 groupsNodePermissions = mergeWithRootPermissions( groupsNodePermissions, rootNode.getPermissions() );
@@ -793,10 +834,11 @@ public final class SecurityServiceImpl
                 final ApplyNodePermissionsParams applyPermissions = ApplyNodePermissionsParams.create().
                     nodeId( userStoreNode.id() ).
                     overwriteChildPermissions( false ).
-                    modifier( ContextAccessor.current().getAuthInfo().getUser().getKey() ).
                     build();
                 nodeService.applyPermissions( applyPermissions );
             }
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
 
             return UserStoreNodeTranslator.fromNode( userStoreNode );
         } );
@@ -810,6 +852,9 @@ public final class SecurityServiceImpl
             build();
 
         nodeService.update( updateParams );
+
+        this.nodeService.refresh( RefreshMode.SEARCH );
+
     }
 
     private <T> T callWithContext( Callable<T> runnable )

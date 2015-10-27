@@ -4,6 +4,8 @@ package com.enonic.xp.admin.widget;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -19,6 +21,8 @@ public final class WidgetDescriptor
 
     private final ImmutableList<String> interfaces;
 
+    private static final String URL_PREFIX = "_/widgets/";
+
     private WidgetDescriptor( final Builder builder )
     {
         Preconditions.checkNotNull( builder.key, "key cannot be null" );
@@ -32,6 +36,18 @@ public final class WidgetDescriptor
         return key;
     }
 
+    public String getUrl()
+    {
+        return new StringBuilder().append( URL_PREFIX ).append( this.key.getApplicationKey().toString() ).append( "/" ).append(
+            this.key.getName() ).toString();
+    }
+
+    @JsonProperty("key")
+    public String getKeyString()
+    {
+        return key.toString();
+    }
+
     public String getDisplayName()
     {
         return displayName;
@@ -42,6 +58,7 @@ public final class WidgetDescriptor
         return interfaces;
     }
 
+    @JsonIgnore
     public String getName()
     {
         return this.key.getName();

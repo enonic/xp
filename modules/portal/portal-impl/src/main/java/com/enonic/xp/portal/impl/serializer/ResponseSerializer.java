@@ -1,10 +1,12 @@
 package com.enonic.xp.portal.impl.serializer;
 
+import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
@@ -27,7 +29,7 @@ public final class ResponseSerializer
     }
 
     public void serialize( final HttpServletResponse response )
-        throws Exception
+        throws IOException
     {
         response.setStatus( this.portalResponse.getStatus().value() );
         response.setContentType( this.portalResponse.getContentType().toString() );
@@ -46,7 +48,7 @@ public final class ResponseSerializer
     }
 
     private void serializeBody( final HttpServletResponse response, final Object body )
-        throws Exception
+        throws IOException
     {
         if ( body instanceof Resource )
         {
@@ -60,26 +62,56 @@ public final class ResponseSerializer
             return;
         }
 
+        if ( body instanceof Map )
+        {
+            serializeBody( response, convertToJson( body ) );
+            return;
+        }
+
+        if ( body instanceof byte[] )
+        {
+            serializeBody( response, (byte[]) body );
+            return;
+        }
+
         if ( body != null )
         {
             serializeBody( response, body.toString() );
         }
     }
 
+    private String convertToJson( final Object value )
+    {
+        try
+        {
+            return new ObjectMapper().writeValueAsString( value );
+        }
+        catch ( final Exception e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
     private void serializeBody( final HttpServletResponse response, final ByteSource body )
-        throws Exception
+        throws IOException
     {
         writeToStream( response, body.read() );
     }
 
+    private void serializeBody( final HttpServletResponse response, final byte[] body )
+        throws IOException
+    {
+        writeToStream( response, body );
+    }
+
     private void serializeBody( final HttpServletResponse response, final String body )
-        throws Exception
+        throws IOException
     {
         writeToStream( response, body.getBytes( Charsets.UTF_8 ) );
     }
 
     private void writeToStream( final HttpServletResponse response, final byte[] data )
-        throws Exception
+        throws IOException
     {
         response.setContentLength( data.length );
 
@@ -90,7 +122,7 @@ public final class ResponseSerializer
     }
 
     private void serializeBody( final HttpServletResponse response, final Resource body )
-        throws Exception
+        throws IOException
     {
         writeToStream( response, body.readBytes() );
     }

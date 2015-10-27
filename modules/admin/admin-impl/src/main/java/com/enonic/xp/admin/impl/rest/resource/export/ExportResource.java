@@ -23,7 +23,7 @@ import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.vfs.VirtualFiles;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "export")
 @Produces(MediaType.APPLICATION_JSON)

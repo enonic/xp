@@ -1,27 +1,7 @@
 .content-item-versions-panel {
   width: 100%;
   height: 100%;
-  padding: 0 !important;
   overflow: hidden;
-
-  .tab-bar {
-    margin-bottom: 28px;
-
-    .tab-bar-item {
-      display: inline-block;
-      padding: 10px 25px 7px;
-      border-bottom: 4px solid transparent;
-      cursor: pointer;
-      font-size: 14px;
-
-      &.active {
-        border-bottom-color: @admin-blue;
-        color: @admin-blue;
-      }
-
-    }
-
-  }
 
   .names-and-icon-view {
     .names-view {
@@ -31,6 +11,28 @@
 
 
   .tree-grid {
+
+    .slick-row {
+      .box-shadow(0px 1px 2px 1px rgba(0, 0, 0, 0.1));
+      margin: 5px 5px 0 7px;
+      height: 60px !important;
+
+      &.odd {
+        background-color: @admin-white;
+      }
+
+      .slick-cell {
+        padding: 0;
+        &.description {
+          padding: 10px 7px 7px 7px;
+          width: 70%;
+        }
+        &.status {
+          margin: 7px 0 0 7px;
+          width: 70px;
+        }
+      }
+    }
 
     .description {
 
@@ -47,16 +49,19 @@
     .status {
 
       .badge {
-        color: white;
-        padding: 2px 10px;
-        margin-right: 5px;
-        .border-radius(10px);
+        line-height: 26px;
+        text-align: center;
+        margin-top: 9px;
+        overflow: hidden;
+        text-overflow: ellipsis;
 
         &.draft {
-          background-color: @admin-blue;
+          color: @admin-black;
+          background-color: @admin-bg-light-gray;
         }
 
         &.master {
+          color: @admin-white;
           background-color: forestgreen;
         }
 

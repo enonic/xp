@@ -16,7 +16,7 @@ import com.enonic.xp.image.FocalPoint;
 public class Media
     extends Content
 {
-    protected Media( final Builder builder )
+    private Media( final Builder builder )
     {
         super( builder );
     }

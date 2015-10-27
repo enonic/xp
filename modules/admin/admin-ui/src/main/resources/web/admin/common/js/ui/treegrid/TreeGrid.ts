@@ -276,7 +276,7 @@ module api.ui.treegrid {
                 this.notifySelectionChanged(event, rows.rows);
             });
 
-            this.onLoaded(() => this.grid.unmask());
+            this.onLoaded(() => this.unmask());
 
             /* if (this.toolbar) {
              this.gridData.onRowCountChanged(() => {
@@ -620,7 +620,7 @@ module api.ui.treegrid {
             this.root.resetCurrentRoot(parentNodeData);
             this.initData([]);
 
-            this.grid.mask();
+            this.mask();
             this.reloadNode(null, expandedNodesDataId)
                 .then(() => {
                     this.root.setCurrentSelection(selection);
@@ -950,7 +950,7 @@ module api.ui.treegrid {
                         });
                     }
                 } else {
-                    this.grid.mask();
+                    this.mask();
                     this.fetchData(node)
                         .then((dataList: DATA[]) => {
                             node.setChildren(this.dataToTreeNodes(dataList, node));

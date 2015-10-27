@@ -15,9 +15,12 @@ module api.ui.button {
             if (this.actionList.length > 0) {
                 this.active = -1;
                 this.updateActive();
+                this.setTitle(this.actionList[this.active].getTitle(), false);
 
                 this.onClicked(() => {
+                    this.removeAndHdeTitle();
                     this.doAction();
+                    this.setAndShowTitle();
                 });
             }
         }
@@ -25,6 +28,19 @@ module api.ui.button {
         private doAction() {
             this.actionList[this.active].execute();
             this.updateActive();
+        }
+
+        private removeAndHdeTitle() {
+            if (this.actionList[this.active].getTitle()) {
+                this.setTitle("");
+            }
+        }
+
+        private setAndShowTitle() {
+            var title = this.actionList[this.active].getTitle();
+            if (title) {
+                this.setTitle(title);
+            }
         }
 
         private updateActive() {
@@ -37,7 +53,6 @@ module api.ui.button {
             if (this.active >= this.actionList.length) {
                 this.active = 0;
             }
-
             name = this.actionList[this.active] ? this.actionList[this.active].getLabel().toLowerCase() : "";
 
             if (prevName) {
@@ -63,6 +78,8 @@ module api.ui.button {
                 if (this.actionList[i] === action) {
                     this.active = i;
                     this.updateActive();
+                    this.setTitle(this.actionList[this.active].getTitle(), false);
+
                     return;
                 }
             }

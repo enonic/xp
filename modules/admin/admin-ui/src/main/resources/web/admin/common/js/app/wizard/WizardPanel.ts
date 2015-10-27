@@ -190,6 +190,10 @@ module api.app.wizard {
             return this.stepsPanel;
         }
 
+        getMainToolbar(): api.ui.toolbar.Toolbar {
+            return this.mainToolbar;
+        }
+
         updateStickyToolbar() {
             var scrollTop = this.formPanel.getHTMLElement().scrollTop;
             var wizardHeaderHeight = this.header.getEl().getHeightWithMargin();
@@ -380,8 +384,7 @@ module api.app.wizard {
             return this.persistedItem != null;
         }
 
-        // TODO make method protected
-        setPersistedItem(newPersistedItem: EQUITABLE): void {
+        protected setPersistedItem(newPersistedItem: EQUITABLE): void {
             this.persistedItem = newPersistedItem;
         }
 

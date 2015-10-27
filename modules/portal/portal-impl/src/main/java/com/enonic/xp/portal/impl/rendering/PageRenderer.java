@@ -10,11 +10,15 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.impl.controller.ControllerScript;
-import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
+import com.enonic.xp.portal.controller.ControllerScript;
+import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.impl.filter.FilterChainResolver;
+import com.enonic.xp.portal.impl.filter.FilterExecutor;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.rendering.Renderer;
+import com.enonic.xp.portal.script.PortalScriptService;
+import com.enonic.xp.site.filter.FilterDescriptor;
+import com.enonic.xp.site.filter.FilterDescriptors;
 import com.enonic.xp.web.HttpStatus;
 
 @Component(immediate = true, service = Renderer.class)
@@ -24,6 +28,10 @@ public final class PageRenderer
     private ControllerScriptFactory controllerScriptFactory;
 
     private PostProcessor postProcessor;
+
+    private FilterExecutor filterExecutor;
+
+    private FilterChainResolver filterChainResolver;
 
     @Override
     public Class<Content> getType()
@@ -46,7 +54,10 @@ public final class PageRenderer
             portalResponse = renderForNoPageDescriptor( portalRequest, content );
         }
 
-        return new PortalResponseSerializer( portalResponse ).serialize();
+        portalResponse = this.postProcessor.processResponseInstructions( portalRequest, portalResponse );
+        portalResponse = executeResponseFilters( portalRequest, portalResponse );
+        portalResponse = this.postProcessor.processResponseContributions( portalRequest, portalResponse );
+        return portalResponse;
     }
 
     private PortalResponse renderForNoPageDescriptor( final PortalRequest portalRequest, final Content content )
@@ -75,6 +86,27 @@ public final class PageRenderer
         return this.postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
     }
 
+    private PortalResponse executeResponseFilters( final PortalRequest portalRequest, final PortalResponse portalResponse )
+    {
+        final FilterDescriptors filters = this.filterChainResolver.resolve( portalRequest );
+        if ( !portalResponse.applyFilters() || filters.isEmpty() )
+        {
+            return portalResponse;
+        }
+
+        PortalResponse filterResponse = portalResponse;
+        for ( FilterDescriptor filter : filters )
+        {
+            filterResponse = this.filterExecutor.executeResponseFilter( filter, portalRequest, filterResponse );
+            if ( !filterResponse.applyFilters() )
+            {
+                break;
+            }
+        }
+
+        return filterResponse;
+    }
+
     @Reference
     public void setControllerScriptFactory( final ControllerScriptFactory controllerScriptFactory )
     {
@@ -85,5 +117,18 @@ public final class PageRenderer
     public void setPostProcessor( final PostProcessor postProcessor )
     {
         this.postProcessor = postProcessor;
+    }
+
+    @Reference
+    public void setScriptService( final PortalScriptService scriptService )
+    {
+        this.filterExecutor = new FilterExecutor( scriptService );
+    }
+
+
+    @Reference
+    public void setFilterChainResolver( final FilterChainResolver filterChainResolver )
+    {
+        this.filterChainResolver = filterChainResolver;
     }
 }

@@ -56,6 +56,8 @@ module app.wizard.page {
     import RegionSelectedEvent = api.liveedit.RegionSelectedEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
+    import ComponentInspectedEvent = api.liveedit.ComponentInspectedEvent;
+    import PageInspectedEvent = api.liveedit.PageInspectedEvent;
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
@@ -189,7 +191,8 @@ module app.wizard.page {
 
             this.contextWindowController = new app.wizard.page.contextwindow.ContextWindowController(
                 this.contextWindow,
-                this.contentWizardPanel.getContextWindowToggler()
+                this.contentWizardPanel.getContextWindowToggler(),
+                this.contentWizardPanel.getComponentsViewToggler()
             );
 
             this.liveEditListen();
@@ -377,8 +380,12 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onItemViewSelected((event: ItemViewSelectedEvent) => {
                 var itemView = event.getItemView();
+                var toggler = this.contentWizardPanel.getContextWindowToggler();
 
-                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView) && !event.isNew()) {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
+                    if (event.isNew() && !toggler.isActive()) {
+                        toggler.setActive(true);
+                    }
                     this.inspectComponent(<ComponentView<Component>>itemView);
                 }
             });
@@ -417,6 +424,21 @@ module app.wizard.page {
             this.liveEditPageProxy.onComponentDuplicated((event: ComponentDuplicatedEvent) => {
 
                 this.saveAndReloadOnlyComponent(event.getDuplicatedComponentView());
+            });
+
+            this.liveEditPageProxy.onComponentInspected((event: ComponentInspectedEvent) => {
+                var componentView = event.getComponentView();
+                if (!componentView.isEmpty()) {
+                    this.contentWizardPanel.getContextWindowToggler().setActive(true);
+                    this.contextWindow.slideIn();
+                    this.inspectComponent(componentView);
+                }
+            });
+
+            this.liveEditPageProxy.onPageInspected((event: PageInspectedEvent) => {
+                this.contentWizardPanel.getContextWindowToggler().setActive(true);
+                this.contextWindow.slideIn();
+                this.inspectPage();
             });
 
             this.liveEditPageProxy.onLiveEditPageInitializationError((event: LiveEditPageInitializationErrorEvent) => {

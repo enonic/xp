@@ -29,6 +29,8 @@ module app.wizard.page {
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
+    import ComponentInspectedEvent = api.liveedit.ComponentInspectedEvent;
+    import PageInspectedEvent = api.liveedit.PageInspectedEvent;
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
     import ComponentResetEvent = api.liveedit.ComponentResetEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
@@ -84,6 +86,10 @@ module app.wizard.page {
         private componentRemovedListeners: {(event: ComponentRemovedEvent): void;}[] = [];
 
         private componentDuplicatedListeners: {(event: ComponentDuplicatedEvent): void;}[] = [];
+
+        private componentInspectedListeners: {(event: ComponentInspectedEvent): void;}[] = [];
+
+        private pageInspectedListeners: {(event: PageInspectedEvent): void;}[] = [];
 
         private componentLoadedListeners: {(event: ComponentLoadedEvent): void;}[] = [];
 
@@ -302,6 +308,10 @@ module app.wizard.page {
 
             ComponentDuplicatedEvent.un(null, contextWindow);
 
+            ComponentInspectedEvent.un(null, contextWindow);
+
+            PageInspectedEvent.un(null, contextWindow);
+
             ComponentLoadedEvent.un(null, contextWindow);
 
             ComponentResetEvent.un(null, contextWindow);
@@ -355,6 +365,10 @@ module app.wizard.page {
             ComponentRemovedEvent.on(this.notifyComponentRemoved.bind(this), contextWindow);
 
             ComponentDuplicatedEvent.on(this.notifyComponentDuplicated.bind(this), contextWindow);
+
+            ComponentInspectedEvent.on(this.notifyComponentInspected.bind(this), contextWindow);
+
+            PageInspectedEvent.on(this.notifyPageInspected.bind(this), contextWindow);
 
             ComponentLoadedEvent.on(this.notifyComponentLoaded.bind(this), contextWindow);
 
@@ -559,6 +573,30 @@ module app.wizard.page {
 
         private notifyComponentDuplicated(event: ComponentDuplicatedEvent) {
             this.componentDuplicatedListeners.forEach((listener) => listener(event));
+        }
+
+        onComponentInspected(listener: {(event: ComponentInspectedEvent): void;}) {
+            this.componentInspectedListeners.push(listener);
+        }
+
+        unComponentInspected(listener: {(event: ComponentInspectedEvent): void;}) {
+            this.componentInspectedListeners = this.componentInspectedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyComponentInspected(event: ComponentInspectedEvent) {
+            this.componentInspectedListeners.forEach((listener) => listener(event));
+        }
+
+        onPageInspected(listener: {(event: PageInspectedEvent): void;}) {
+            this.pageInspectedListeners.push(listener);
+        }
+
+        unPageInspected(listener: {(event: PageInspectedEvent): void;}) {
+            this.pageInspectedListeners = this.pageInspectedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyPageInspected(event: PageInspectedEvent) {
+            this.pageInspectedListeners.forEach((listener) => listener(event));
         }
 
         onComponentLoaded(listener: {(event: ComponentLoadedEvent): void;}) {

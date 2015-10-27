@@ -53,7 +53,7 @@ public class InitAppCommandTest
         Assert.assertTrue( gradlePropertiesContent.contains( "version = 1.0.1" ) );
         Assert.assertTrue( gradlePropertiesContent.contains( "projectName = initCommandTest" ) );
         Assert.assertTrue( gradlePropertiesContent.contains( "appName = com.enonic.xp.toolbox.app.initCommandTest" ) );
-        Assert.assertTrue( gradlePropertiesContent.contains( "displayName = InitCommandTest App" ) );
+        Assert.assertTrue( gradlePropertiesContent.contains( "displayName = InitCommandTest" ) );
         Assert.assertTrue( gradlePropertiesContent.contains( "xpVersion = 6.1.0-SNAPSHOT" ) );
     }
 }

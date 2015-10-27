@@ -5,10 +5,8 @@ module app.publish {
     import ContentPath = api.content.ContentPath;
     import ContentSummary = api.content.ContentSummary;
     import DialogButton = api.ui.dialog.DialogButton;
-    import PublishContentRequest = api.content.PublishContentRequest;
     import CompareStatus = api.content.CompareStatus;
-    import ResolvePublishDependenciesResultJson = api.content.json.ResolvePublishRequestedContentsResultJson;
-    import ResolvedPublishContentJson = api.content.json.ResolvedPublishContentJson;
+    import ContentPublishItemJson = api.content.json.ContentPublishItemJson;
     import ContentName = api.content.ContentName;
     import ContentTypeName = api.schema.content.ContentTypeName;
 
@@ -118,11 +116,11 @@ module app.publish {
         }
 
         /**
-         * Builds array of ContentPublishItem[] from resolved contents.
+         * Builds array of ContentPublishItem[] from NewContentPublishItems.
          */
-        static getResolvedContents(jsonItems: ResolvedPublishContentJson[]): ContentPublishItem[] {
+        static fromNewContentPublishItems(jsonItems: ContentPublishItemJson[]): ContentPublishItem[] {
             var array: ContentPublishItem[] = [];
-            jsonItems.forEach((obj: ResolvedPublishContentJson) => {
+            jsonItems.forEach((obj: ContentPublishItemJson) => {
                 array.push(new ContentPublishItemBuilder().fromJson(obj).build());
             });
             return array;
@@ -176,7 +174,7 @@ module app.publish {
             }
         }
 
-        fromJson(json: ResolvedPublishContentJson): ContentPublishItemBuilder {
+        fromJson(json: ContentPublishItemJson): ContentPublishItemBuilder {
             this.id = json.id;
             this.path = ContentPath.fromString(json.path);
             this.compareStatus = <CompareStatus>CompareStatus[json.compareStatus];

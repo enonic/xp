@@ -1,7 +1,7 @@
 module app.wizard {
 
     import CycleButton = api.ui.button.CycleButton;
-    import ContextWindowToggler = app.wizard.page.contextwindow.ContextWindowToggler;
+    import TogglerButton = api.ui.button.TogglerButton;
 
     export interface ContentWizardToolbarParams {
         saveAction:api.ui.Action;
@@ -16,7 +16,8 @@ module app.wizard {
 
     export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
 
-        private contextWindowToggler: ContextWindowToggler;
+        private contextWindowToggler: TogglerButton;
+        private componentsViewToggler: TogglerButton;
         private cycleViewModeButton: CycleButton;
         private contentWizardToolbarPublishControls: ContentWizardToolbarPublishControls;
 
@@ -29,21 +30,26 @@ module app.wizard {
             super.addGreedySpacer();
 
             this.cycleViewModeButton = new CycleButton([params.showLiveEditAction, params.showFormAction]);
-            this.contextWindowToggler = new ContextWindowToggler();
+            this.componentsViewToggler = new TogglerButton("icon-clipboard", "Show Component View");
+            this.contextWindowToggler = new TogglerButton("icon-cog", "Show Inspection Panel");
             this.contentWizardToolbarPublishControls = new ContentWizardToolbarPublishControls(params.publishAction);
 
             super.addElement(this.contentWizardToolbarPublishControls);
-            super.addElement(this.cycleViewModeButton);
+            super.addElement(this.componentsViewToggler);
             super.addElement(this.contextWindowToggler);
-
+            super.addElement(this.cycleViewModeButton);
         }
 
         getCycleViewModeButton(): CycleButton {
             return this.cycleViewModeButton;
         }
 
-        getContextWindowToggler() {
+        getContextWindowToggler(): TogglerButton {
             return this.contextWindowToggler;
+        }
+
+        getComponentsViewToggler(): TogglerButton {
+            return this.componentsViewToggler;
         }
 
         getContentWizardToolbarPublishControls() {

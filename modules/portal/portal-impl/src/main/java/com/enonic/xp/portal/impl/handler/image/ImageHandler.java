@@ -12,16 +12,16 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ScaleParamsParser;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.PortalHandler;
-import com.enonic.xp.portal.impl.handler.EndpointHandler;
-import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
+import com.enonic.xp.portal.handler.EndpointHandler;
+import com.enonic.xp.portal.handler.PortalHandler;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.web.HttpMethod;
 
 @Component(immediate = true, service = PortalHandler.class)
 public final class ImageHandler
     extends EndpointHandler
 {
-    private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)/([^/]+)" );
+    private final static Pattern PATTERN = Pattern.compile( "([^/^:]+)(:[^/]+)?/([^/]+)/([^/]+)" );
 
     private ContentService contentService;
 
@@ -38,7 +38,7 @@ public final class ImageHandler
         throws Exception
     {
         final String restPath = findRestPath( req );
-        final Matcher matcher = PATTERN.matcher( restPath );
+            final Matcher matcher = PATTERN.matcher( restPath );
 
         if ( !matcher.find() )
         {
@@ -47,8 +47,9 @@ public final class ImageHandler
 
         final ImageHandlerWorker worker = new ImageHandlerWorker();
         worker.contentId = ContentId.from( matcher.group( 1 ) );
-        worker.scaleParams = new ScaleParamsParser().parse( matcher.group( 2 ) );
-        worker.name = matcher.group( 3 );
+        worker.cacheable = matcher.group( 2 ) != null;
+        worker.scaleParams = new ScaleParamsParser().parse( matcher.group( 3 ) );
+        worker.name = matcher.group( 4 );
         worker.imageService = this.imageService;
         worker.contentService = this.contentService;
         worker.filterParam = getParameter( req, "filter" );

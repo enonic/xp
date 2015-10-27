@@ -3,6 +3,7 @@
   .uploader-wrapper {
 
     padding-left: 2px;
+    line-height: 15px;
 
     .label-wrapper {
       display: table-cell;
@@ -10,36 +11,44 @@
     }
 
     .uploader {
-      display: table-cell;
-      width: 100%;
+      display: inline-block;
       white-space: nowrap;
+    }
 
+    .upload-button {
+      width: 38px;
+      float: right;
+      display: inline-block;
+      background-image: url("../../common/images/upload_white.png");
+      background-repeat: no-repeat;
+      background-size: 20px;
+      background-position: 9px;
+
+      &:before {
+        color: transparent;
+        font-size: 34px;
+      }
+
+      height: 38px;
+      vertical-align: top;
+      padding: 0;
+      .button-foreground(@admin-font-gray2);
+
+      span {
+        display: none;
+      }
+    }
+
+    .media-uploader {
+
+      width: 80%;
       .progress-bar {
-        display: none;
+        margin: 0px;
       }
 
-    }
-
-    &.empty {
-      .remove-button {
-        display: none;
+      .result-container a {
+        line-height: inherit;
       }
-      .upload-text {
-        display: block;
-      }
-    }
-
-    &:not(.empty) {
-      .remove-button {
-        display: table-cell;
-      }
-      .upload-text {
-        display: none !important;
-      }
-    }
-
-    .media-uploader .result-container a {
-      line-height: inherit;
     }
   }
 

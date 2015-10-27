@@ -47,11 +47,10 @@ final class UpdateMediaCommand
             params.mimeType( mediaInfo.getMediaType() );
         }
 
-        final ContentTypeName type = ContentTypeFromMimeTypeResolver.resolve( params.getMimeType() );
-        if ( type == null )
-        {
-            throw new IllegalArgumentException( "Could not resolve a ContentType from MIME type: " + params.getMimeType() );
-        }
+        Preconditions.checkNotNull( params.getMimeType(), "Unable to resolve media type" );
+
+        final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( params.getMimeType() );
+        final ContentTypeName type = resolvedTypeFromMimeType != null ? resolvedTypeFromMimeType : ContentTypeName.unknownMedia();
 
         final CreateAttachment mediaAttachment = CreateAttachment.create().
             name( params.getName() ).

@@ -5,7 +5,7 @@ import com.google.common.annotations.Beta;
 @Beta
 public class NodeVersionQueryResult
 {
-    final NodeVersions nodeVersions;
+    final NodeVersionsMetadata nodeVersionsMetadata;
 
     private final int from;
 
@@ -17,7 +17,7 @@ public class NodeVersionQueryResult
 
     private NodeVersionQueryResult( Builder builder )
     {
-        nodeVersions = builder.nodeVersions;
+        nodeVersionsMetadata = builder.nodeVersionsMetadata;
         from = builder.from;
         size = builder.size;
         totalHits = builder.totalHits;
@@ -27,7 +27,7 @@ public class NodeVersionQueryResult
     public static NodeVersionQueryResult empty()
     {
         return create().
-            entityVersions( NodeVersions.empty() ).
+            entityVersions( NodeVersionsMetadata.empty() ).
             build();
     }
 
@@ -36,9 +36,9 @@ public class NodeVersionQueryResult
         return new Builder();
     }
 
-    public NodeVersions getNodeVersions()
+    public NodeVersionsMetadata getNodeVersionsMetadata()
     {
-        return nodeVersions;
+        return nodeVersionsMetadata;
     }
 
     public long getTotalHits()
@@ -63,7 +63,7 @@ public class NodeVersionQueryResult
 
     public static final class Builder
     {
-        private NodeVersions nodeVersions;
+        private NodeVersionsMetadata nodeVersionsMetadata;
 
         private int from;
 
@@ -77,9 +77,9 @@ public class NodeVersionQueryResult
         {
         }
 
-        public Builder entityVersions( NodeVersions nodeVersions )
+        public Builder entityVersions( NodeVersionsMetadata nodeVersionsMetadata )
         {
-            this.nodeVersions = nodeVersions;
+            this.nodeVersionsMetadata = nodeVersionsMetadata;
             return this;
         }
 

@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl.exception;
 
 import com.enonic.xp.exception.NotFoundException;
+import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.PortalException;
 import com.enonic.xp.web.HttpStatus;
 
 public final class ExceptionMapper
@@ -31,7 +31,7 @@ public final class ExceptionMapper
         throws PortalException
     {
         final HttpStatus status = res.getStatus();
-        if ( isError( status ) )
+        if ( ( res.getBody() == null ) && isError( status ) )
         {
             throw new PortalException( status, status.getReasonPhrase() );
         }

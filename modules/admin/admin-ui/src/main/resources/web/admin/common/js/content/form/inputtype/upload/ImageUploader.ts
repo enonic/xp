@@ -77,6 +77,9 @@ module api.content.form.inputtype.upload {
                     var set = this.property.getPropertySet();
                     set.setProperty('attachment', 0, value);
                     set.removeProperty('focalPoint', 0);
+                    set.removeProperty('cropPosition', 0);
+                    set.removeProperty('zoomPosition', 0);
+
                     break;
                 case ValueTypes.STRING:
                     this.property.setValue(value);

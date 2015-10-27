@@ -31,5 +31,20 @@ module api.ui.button {
         getLabel(): string {
             return this.labelEl.getEl().getInnerHtml();
         }
+
+        setTitle(title: string, forceAction: boolean = true) {
+            if (title) {
+                this.getEl().setAttribute('title', title);
+                if (forceAction) {
+                    wemjq(this.getEl().getHTMLElement()).trigger("mouseenter");
+                }
+            }
+            else {
+                if (forceAction) {
+                    wemjq(this.getEl().getHTMLElement()).trigger("mouseleave");
+                }
+                this.getEl().removeAttribute('title');
+            }
+        }
     }
 }

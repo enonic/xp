@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.Cookie;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
@@ -33,7 +34,9 @@ public final class PortalResponse
 
     private final ImmutableList<Cookie> cookies;
 
-    public PortalResponse( final Builder builder )
+    private final boolean applyFilters;
+
+    private PortalResponse( final Builder builder )
     {
         this.status = builder.status;
         this.contentType = builder.contentType;
@@ -42,6 +45,7 @@ public final class PortalResponse
         this.postProcess = builder.postProcess;
         this.contributions = builder.contributions.build();
         this.cookies = builder.cookies.build();
+        this.applyFilters = builder.applyFilters;
     }
 
     public HttpStatus getStatus()
@@ -86,12 +90,33 @@ public final class PortalResponse
 
     public String getAsString()
     {
+        if ( this.body instanceof Map )
+        {
+            return convertToJson( this.body );
+        }
         return ( this.body != null ) ? this.body.toString() : null;
+    }
+
+    private String convertToJson( final Object value )
+    {
+        try
+        {
+            return new ObjectMapper().writeValueAsString( value );
+        }
+        catch ( final Exception e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 
     public ImmutableList<Cookie> getCookies()
     {
         return cookies;
+    }
+
+    public boolean applyFilters()
+    {
+        return applyFilters;
     }
 
     public static Builder create( final PortalResponse source )
@@ -115,6 +140,8 @@ public final class PortalResponse
 
         private ImmutableList.Builder<Cookie> cookies;
 
+        private boolean applyFilters = true;
+
         private Builder()
         {
             clearHeaders();
@@ -131,6 +158,7 @@ public final class PortalResponse
             contributions( source.contributions );
             this.status = source.status;
             cookies( source.cookies );
+            this.applyFilters = source.applyFilters;
         }
 
         public Builder body( final Object body )
@@ -242,6 +270,12 @@ public final class PortalResponse
         public Builder status( final HttpStatus status )
         {
             this.status = status;
+            return this;
+        }
+
+        public Builder applyFilters( final boolean applyFilters )
+        {
+            this.applyFilters = applyFilters;
             return this;
         }
 

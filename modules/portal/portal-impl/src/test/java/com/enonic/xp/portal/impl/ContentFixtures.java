@@ -3,10 +3,13 @@ package com.enonic.xp.portal.impl;
 import java.time.Instant;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
@@ -23,6 +26,7 @@ import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
@@ -43,6 +47,35 @@ public final class ContentFixtures
         builder.creator( PrincipalKey.from( "user:system:admin" ) );
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
         builder.data( newPropertyTree() );
+
+        builder.addExtraData( new ExtraData( MixinName.from( "myapplication:myschema" ), newTinyPropertyTree() ) );
+        builder.page( newPage() );
+
+        return builder.build();
+    }
+
+    public static Media newMedia()
+    {
+        final Attachment attachment = Attachment.create().
+            name( "logo.png" ).
+            mimeType( "image/png" ).
+            label( "small" ).
+            build();
+        final PropertyTree data = newPropertyTree();
+        data.addString( "media", attachment.getName() );
+
+        final Media.Builder builder = Media.create();
+        builder.id( ContentId.from( "123456" ) );
+        builder.type( ContentTypeName.imageMedia() );
+        builder.name( "mycontent" );
+        builder.displayName( "My Content" );
+        builder.parentPath( ContentPath.from( "/a/b" ) );
+        builder.modifier( PrincipalKey.from( "user:system:admin" ) );
+        builder.modifiedTime( Instant.ofEpochSecond( 0 ) );
+        builder.creator( PrincipalKey.from( "user:system:admin" ) );
+        builder.createdTime( Instant.ofEpochSecond( 0 ) );
+        builder.attachments( Attachments.from( attachment ) );
+        builder.data( data );
 
         builder.addExtraData( new ExtraData( MixinName.from( "myapplication:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );

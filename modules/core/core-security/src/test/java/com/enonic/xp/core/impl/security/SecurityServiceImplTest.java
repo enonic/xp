@@ -7,22 +7,22 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.enonic.wem.repo.internal.branch.storage.BranchServiceImpl;
-import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
-import com.enonic.wem.repo.internal.elasticsearch.search.ElasticsearchSearchDao;
-import com.enonic.wem.repo.internal.elasticsearch.storage.ElasticsearchStorageDao;
-import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
-import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
-import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
-import com.enonic.wem.repo.internal.search.SearchServiceImpl;
-import com.enonic.wem.repo.internal.storage.StorageServiceImpl;
-import com.enonic.wem.repo.internal.version.VersionServiceImpl;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
+import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
+import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchIndexServiceInternal;
+import com.enonic.xp.repo.impl.elasticsearch.search.ElasticsearchSearchDao;
+import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchStorageDao;
+import com.enonic.xp.repo.impl.node.NodeServiceImpl;
+import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
+import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
+import com.enonic.xp.repo.impl.search.SearchServiceImpl;
+import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
+import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateRoleParams;
@@ -73,7 +73,7 @@ public class SecurityServiceImplTest
 
     private NodeServiceImpl nodeService;
 
-    private NodeDaoImpl nodeDao;
+    private NodeVersionDaoImpl nodeDao;
 
     private VersionServiceImpl versionService;
 
@@ -98,6 +98,7 @@ public class SecurityServiceImplTest
 
         final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
         storageDao.setClient( this.client );
+        storageDao.setElasticsearchDao( this.elasticsearchDao );
 
         this.branchService = new BranchServiceImpl();
         this.branchService.setStorageDao( storageDao );
@@ -105,7 +106,7 @@ public class SecurityServiceImplTest
         this.versionService = new VersionServiceImpl();
         this.versionService.setStorageDao( storageDao );
 
-        this.nodeDao = new NodeDaoImpl();
+        this.nodeDao = new NodeVersionDaoImpl();
 
         this.indexService = new ElasticsearchIndexServiceInternal();
         this.indexService.setClient( client );
@@ -120,7 +121,7 @@ public class SecurityServiceImplTest
         this.storageService = new StorageServiceImpl();
         this.storageService.setBranchService( this.branchService );
         this.storageService.setVersionService( this.versionService );
-        this.storageService.setNodeDao( this.nodeDao );
+        this.storageService.setNodeVersionDao( this.nodeDao );
         this.storageService.setIndexServiceInternal( this.indexService );
 
         this.nodeService = new NodeServiceImpl();

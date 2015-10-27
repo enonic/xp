@@ -100,34 +100,13 @@ final class JavaTypeConverters
         }
         else if ( value instanceof String )
         {
-            if ( isNumber( value.toString() ) )
+            final Double number = parseNumber( value.toString() );
+            if ( number != null )
             {
-                return new Long( (String) value );
-            }
-            else
-            {
-                return null;
+                return number.longValue();
             }
         }
-        else
-        {
-            return null;
-        }
-    }
-
-    public static boolean isNumber( String strNum )
-    {
-        boolean ret = true;
-        try
-        {
-            Double.parseDouble( strNum );
-
-        }
-        catch ( NumberFormatException e )
-        {
-            ret = false;
-        }
-        return ret;
+        return null;
     }
 
     private static Double convertToDouble( final Object value )
@@ -138,13 +117,24 @@ final class JavaTypeConverters
         }
         else if ( value instanceof String )
         {
-            if ( isNumber( value.toString() ) )
-            {
-                return new Double( (String) value );
-            }
-            return null;
+            return parseNumber( value.toString() );
         }
-        else
+        return null;
+    }
+
+    public static boolean isNumber( String strNum )
+    {
+        return parseNumber( strNum ) != null;
+    }
+
+    private static Double parseNumber( String strNum )
+    {
+        try
+        {
+            return Double.parseDouble( strNum );
+
+        }
+        catch ( NumberFormatException e )
         {
             return null;
         }

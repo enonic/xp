@@ -1,0 +1,15 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile project( ':web:web-api' )
+    compile 'org.jboss.resteasy:jaxrs-api:3.0.8.Final'
+    compile 'javax.annotation:javax.annotation-api:1.2'
+    compile 'io.swagger:swagger-annotations:1.5.3'
+
+    testCompile project( path: ':web:web-api', configuration: 'testOutput' )
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP JaxRs - Api'
+    instruction 'Export-Package', 'com.enonic.xp.jaxrs.*'
+}

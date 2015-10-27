@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.net.UrlEscapers;
 
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.exception.NotFoundException;
@@ -32,6 +33,8 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     protected T params;
 
     protected ContentService contentService;
+
+    protected ApplicationService applicationService;
 
     private String getBaseUri()
     {

@@ -8,6 +8,8 @@ public final class RequireFunction
 {
     private final static String SCRIPT_SUFFIX = ".js";
 
+    private final static String DEFAULT_RESOURCE = "/index.js";
+
     private final ResourceKey script;
 
     private final ScriptExecutor executor;
@@ -40,7 +42,15 @@ public final class RequireFunction
     {
         if ( !name.endsWith( SCRIPT_SUFFIX ) )
         {
-            return resolve( name + SCRIPT_SUFFIX );
+            ResourceKey resolved = resolve( name + SCRIPT_SUFFIX );
+            if ( this.executor.getResourceService().getResource( resolved ).exists() )
+            {
+                return resolved;
+            }
+            else
+            {
+                return resolve( name + DEFAULT_RESOURCE );
+            }
         }
 
         if ( name.startsWith( "/" ) )

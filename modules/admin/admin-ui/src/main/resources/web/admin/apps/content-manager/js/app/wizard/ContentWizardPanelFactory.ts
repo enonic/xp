@@ -4,7 +4,6 @@ module app.wizard {
     import ContentTypeName = api.schema.content.ContentTypeName;
     import Content = api.content.Content;
     import ContentSummary = api.content.ContentSummary;
-    import Attachment = api.content.attachment.Attachment;
     import Site = api.content.site.Site;
     import ContentType = api.schema.content.ContentType;
     import DefaultModels = app.wizard.page.DefaultModels;

@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.FindContentVersionsResult;
 
@@ -19,7 +20,7 @@ public class GetContentVersionsResultJson
 
     private final int size;
 
-    public GetContentVersionsResultJson( final FindContentVersionsResult result )
+    public GetContentVersionsResultJson( final FindContentVersionsResult result, final ContentPrincipalsResolver principalsResolver )
     {
         this.totalHits = result.getTotalHits();
         this.hits = result.getHits();
@@ -28,7 +29,8 @@ public class GetContentVersionsResultJson
 
         for ( final ContentVersion contentVersion : result.getContentVersions() )
         {
-            this.contentVersions.add( new ContentVersionJson( contentVersion ) );
+            this.contentVersions.add(
+                new ContentVersionJson( contentVersion, principalsResolver.findPrincipal( contentVersion.getModifier() ) ) );
         }
     }
 

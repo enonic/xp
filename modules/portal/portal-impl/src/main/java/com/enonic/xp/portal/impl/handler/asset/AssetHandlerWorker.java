@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -20,6 +20,8 @@ final class AssetHandlerWorker
     protected ResourceService resourceService;
 
     protected ResourceKey resourceKey;
+
+    protected boolean cacheable;
 
     private Resource resource;
 
@@ -38,6 +40,10 @@ final class AssetHandlerWorker
         if ( this.request.getMode() == RenderMode.LIVE )
         {
             this.response.header( "Cache-Control", "no-transform, max-age=" + CACHE_TIME );
+        }
+        else if ( cacheable )
+        {
+            setResponseCacheable( true );
         }
     }
 

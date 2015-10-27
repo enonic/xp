@@ -26,9 +26,25 @@ exports.functionsTest = function () {
 
 };
 
-exports.fragmentsTest = function () {
+exports.inlineFragmentTest = function () {
 
-    var view = resolve('fragment/fragment-main.html');
+    var view = resolve('fragment/inline-fragment.html');
     return thymeleaf.render(view, {});
+
+};
+
+exports.externalFragmentTest = function () {
+
+    var view = resolve('fragment/external-fragment.html');
+    return thymeleaf.render(view, {});
+
+};
+
+exports.dateTest = function () {
+
+    var view = resolve('view/date.html');
+    return thymeleaf.render(view, {
+        date: new Date(Date.parse('1995-11-12T22:24:25'))
+    });
 
 };

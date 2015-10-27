@@ -1,13 +1,15 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
-    compile project( ':web:web-jaxrs' )
+    compile project( ':web:web-api' )
     compile project( ':portal:portal-api' )
     compile 'org.attoparser:attoparser:1.3'
+    testCompile project( ':portal:portal-api' )
     testCompile project( ':script:script-impl' )
     testCompile project( ':web:web-impl' )
+    testCompile project( path: ':portal:portal-api', configuration: 'testOutput' )
     testCompile project( path: ':script:script-impl', configuration: 'testOutput' )
-    testCompile project( path: ':web:web-impl', configuration: 'testOutput' )
+    testCompile project( path: ':web:web-jetty', configuration: 'testOutput' )
     testCompile 'com.squareup.okhttp:okhttp:2.5.0'
 }
 

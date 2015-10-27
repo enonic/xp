@@ -118,7 +118,8 @@ public final class SendMailHandler
         message.addRecipients( Message.RecipientType.BCC, toAddresses( this.bcc ) );
         message.setReplyTo( toAddresses( this.replyTo ) );
 
-        if ( this.contentType != null ) {
+        if ( this.contentType != null )
+        {
             message.addHeader( "Content-Type", this.contentType );
         }
 

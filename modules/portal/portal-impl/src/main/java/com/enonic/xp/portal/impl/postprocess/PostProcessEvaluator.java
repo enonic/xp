@@ -50,6 +50,30 @@ final class PostProcessEvaluator
         return PortalResponse.create( this.portalResponse ).body( htmlBlocks.toString() ).build();
     }
 
+    public PortalResponse evaluateInstructions()
+    {
+        HtmlBlocks htmlBlocks = new HtmlBlockParser().parse( this.input );
+
+        while ( htmlBlocks.hasInstructions() )
+        {
+            htmlBlocks = processInstructions( htmlBlocks );
+        }
+
+        return PortalResponse.create( this.portalResponse ).body( htmlBlocks.toString() ).build();
+    }
+
+    public PortalResponse evaluateContributions()
+    {
+        HtmlBlocks htmlBlocks = new HtmlBlockParser().parse( this.input );
+
+        if ( htmlBlocks.hasTagMarkers() )
+        {
+            htmlBlocks = processContributions( htmlBlocks );
+        }
+
+        return PortalResponse.create( this.portalResponse ).body( htmlBlocks.toString() ).build();
+    }
+
     private HtmlBlocks processInstructions( final HtmlBlocks htmlBlocks )
     {
         final HtmlBlocks.Builder processedHtmlBlocks = HtmlBlocks.builder();
@@ -79,15 +103,40 @@ final class PostProcessEvaluator
         for ( final PostProcessInstruction instruction : this.instructions )
         {
             final PortalResponse instructionResponse = instruction.evaluate( this.portalRequest, content );
-            if ( instructionResponse != null )
+            if ( instructionResponse == null )
             {
-                if ( instructionResponse.hasContributions() )
-                {
-                    this.portalResponse = PortalResponse.create( this.portalResponse ).contributionsFrom( instructionResponse ).build();
-                }
-                final String resultBody = instructionResponse.getAsString();
-                return resultBody == null ? null : new HtmlBlockParser().parse( resultBody );
+                continue;
             }
+
+            final boolean hasHeaders = !instructionResponse.getHeaders().isEmpty();
+            final boolean hasCookies = !instructionResponse.getCookies().isEmpty();
+            final boolean hasContributions = instructionResponse.hasContributions();
+            final boolean skipFilters = !instructionResponse.applyFilters();
+            if ( hasContributions || hasHeaders || skipFilters || hasCookies )
+            {
+                final PortalResponse.Builder newPortalResponse = PortalResponse.create( this.portalResponse );
+
+                if ( hasContributions )
+                {
+                    newPortalResponse.contributionsFrom( instructionResponse );
+                }
+                if ( hasHeaders )
+                {
+                    newPortalResponse.headers( instructionResponse.getHeaders() );
+                }
+                if ( hasCookies )
+                {
+                    newPortalResponse.cookies( instructionResponse.getCookies() );
+                }
+                if ( skipFilters )
+                {
+                    newPortalResponse.applyFilters( false );
+                }
+
+                this.portalResponse = newPortalResponse.build();
+            }
+            final String resultBody = instructionResponse.getAsString();
+            return resultBody == null ? null : new HtmlBlockParser().parse( resultBody );
         }
         return null;
     }

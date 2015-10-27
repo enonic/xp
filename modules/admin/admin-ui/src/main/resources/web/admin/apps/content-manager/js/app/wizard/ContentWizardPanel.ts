@@ -8,7 +8,6 @@ module app.wizard {
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import CompareStatus = api.content.CompareStatus;
     import ContentBuilder = api.content.ContentBuilder;
-    import Attachment = api.content.attachment.Attachment;
     import Thumbnail = api.thumb.Thumbnail;
     import ContentName = api.content.ContentName;
     import ContentUnnamed = api.content.ContentUnnamed;
@@ -38,11 +37,12 @@ module app.wizard {
     import FormIcon = api.app.wizard.FormIcon;
     import ThumbnailUploader = api.content.ThumbnailUploader;
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
+    import TogglerButton = api.ui.button.TogglerButton;
     import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
     import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
     import WizardStep = api.app.wizard.WizardStep;
     import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
-    import SiteConfigRequiresSaveEvent = api.content.site.inputtype.siteconfigurator.SiteConfigRequiresSaveEvent;
+    import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
 
     import Application = api.application.Application;
     import ApplicationKey = api.application.ApplicationKey;
@@ -99,7 +99,9 @@ module app.wizard {
 
         private publishAction: api.ui.Action;
 
-        private contextWindowToggler: app.wizard.page.contextwindow.ContextWindowToggler;
+        private contextWindowToggler: TogglerButton;
+
+        private componentsViewToggler: TogglerButton;
 
         private cycleViewModeButton: api.ui.button.CycleButton;
 
@@ -161,6 +163,7 @@ module app.wizard {
             });
 
             this.contextWindowToggler = mainToolbar.getContextWindowToggler();
+            this.componentsViewToggler = mainToolbar.getComponentsViewToggler();
             this.cycleViewModeButton = mainToolbar.getCycleViewModeButton();
             this.contentWizardToolbarPublishControls = mainToolbar.getContentWizardToolbarPublishControls();
             this.showLiveEditAction = this.wizardActions.getShowLiveEditAction();
@@ -237,6 +240,11 @@ module app.wizard {
                                 this.cycleViewModeButton.executePrevAction();
                             }
                         } else {
+                            if (this.inMobileViewMode && this.isLiveView()) {
+                                this.inMobileViewMode = false;
+                                this.showSplitEdit();
+                            }
+
                             this.inMobileViewMode = false;
                         }
                     }
@@ -256,17 +264,19 @@ module app.wizard {
 
                     this.wizardActions.getShowSplitEditAction().onExecuted(() => {
                         if (!this.inMobileViewMode) {
-                            if (this.contentNotRenderable()) {
+                            if (!this.isContentRenderable()) {
                                 this.closeLiveEdit();
                                 this.contextWindowToggler.setEnabled(false);
                             } else {
                                 this.cycleViewModeButton.selectActiveAction(this.showLiveEditAction);
-                                this.contextWindowToggler.setEnabled(true);
                             }
                         }
                     });
 
-                    this.wizardActions.getShowSplitEditAction().execute();
+                    if (this.isContentRenderable()) {
+                        this.wizardActions.getShowSplitEditAction().execute();
+                    }
+
                     responsiveItem.update();
                 });
 
@@ -298,15 +308,15 @@ module app.wizard {
         }
 
         private handleSiteConfigApply() {
-            var siteConfigApplyHandler = (event: SiteConfigRequiresSaveEvent) => {
+            var siteConfigApplyHandler = (event: ContentRequiresSaveEvent) => {
                 if (this.getPersistedItem().getId() == event.getContent().getId()) {
                     this.saveChanges()
                 }
             };
 
-            SiteConfigRequiresSaveEvent.on(siteConfigApplyHandler);
+            ContentRequiresSaveEvent.on(siteConfigApplyHandler);
             this.onClosed(() => {
-                SiteConfigRequiresSaveEvent.un(siteConfigApplyHandler);
+                ContentRequiresSaveEvent.un(siteConfigApplyHandler);
             });
         }
 
@@ -557,12 +567,11 @@ module app.wizard {
         }
 
         private doLayoutPersistedItem(content: Content): wemQ.Promise<void> {
-            this.showLiveEditAction.setVisible(false);
+            this.toggleClass("rendered", false);
+
             this.showLiveEditAction.setEnabled(false);
             this.previewAction.setVisible(false);
-            this.contextWindowToggler.setVisible(false);
-            this.cycleViewModeButton.setVisible(false);
-
+            this.previewAction.setEnabled(false);
 
             new GetNearestSiteRequest(content.getContentId()).sendAndParse().
                 then((parentSite: Site) => {
@@ -629,6 +638,7 @@ module app.wizard {
                             return this.initLiveEditModel(content, this.siteModel, formContext).then(() => {
                                 this.liveFormPanel.setModel(this.liveEditModel);
                                 this.liveFormPanel.loadPage();
+                                this.updatePreviewActionVisibility();
                                 return wemQ(null);
                             });
                         }
@@ -647,13 +657,12 @@ module app.wizard {
             });
         }
 
-        private setupWizardLiveEdit(renderable) {
-            this.showLiveEditAction.setVisible(renderable);
+        private setupWizardLiveEdit(renderable: boolean) {
+            this.toggleClass("rendered", renderable);
+
             this.showLiveEditAction.setEnabled(renderable);
             this.showSplitEditAction.setEnabled(renderable);
             this.previewAction.setVisible(renderable);
-            this.contextWindowToggler.setVisible(renderable);
-            this.cycleViewModeButton.setVisible(renderable);
 
             if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && renderable) {
                 this.wizardActions.getShowSplitEditAction().execute();
@@ -921,6 +930,8 @@ module app.wizard {
 
             this.getSplitPanel().addClass("toggle-live");
             this.getSplitPanel().removeClass("toggle-form toggle-split prerendered");
+            this.getMainToolbar().toggleClass("live", true);
+            this.toggleClass("form", false);
             this.openLiveEdit();
             ResponsiveManager.fireResizeEvent();
         }
@@ -928,6 +939,8 @@ module app.wizard {
         showSplitEdit() {
             this.getSplitPanel().addClass("toggle-split");
             this.getSplitPanel().removeClass("toggle-live toggle-form prerendered");
+            this.getMainToolbar().toggleClass("live", true);
+            this.toggleClass("form", false);
             this.openLiveEdit();
             ResponsiveManager.fireResizeEvent();
         }
@@ -935,12 +948,18 @@ module app.wizard {
         showForm() {
             this.getSplitPanel().addClass("toggle-form");
             this.getSplitPanel().removeClass("toggle-live toggle-split prerendered");
+            this.getMainToolbar().toggleClass("live", false);
+            this.toggleClass("form", true);
             this.closeLiveEdit();
             ResponsiveManager.fireResizeEvent();
         }
 
         private isSplitView(): boolean {
             return this.getSplitPanel() && this.getSplitPanel().hasClass("toggle-split");
+        }
+
+        private isLiveView(): boolean {
+            return this.getSplitPanel() && this.getSplitPanel().hasClass("toggle-live");
         }
 
         public checkContentCanBePublished(displayValidationErrors: boolean): boolean {
@@ -967,8 +986,16 @@ module app.wizard {
             return this.isContentFormValid && allMetadataFormsValid && contentFormHasValidUserInput && allMetadataFormsHasValidUserInput;
         }
 
-        getContextWindowToggler(): app.wizard.page.contextwindow.ContextWindowToggler {
+        getLiveFormPanel(): page.LiveFormPanel {
+            return this.liveFormPanel;
+        }
+
+        getContextWindowToggler(): TogglerButton {
             return this.contextWindowToggler;
+        }
+
+        getComponentsViewToggler(): TogglerButton {
+            return this.componentsViewToggler;
         }
 
         getCloseAction(): api.ui.Action {
@@ -1157,9 +1184,18 @@ module app.wizard {
             }
         }
 
-        private contentNotRenderable(): boolean {
-            return this.liveEditModel.getPageModel().getMode() == api.content.page.PageMode.NO_CONTROLLER;
+        private isContentRenderable(): boolean {
+            return this.liveEditModel && this.liveEditModel.getPageModel() && this.liveEditModel.getPageModel().hasController();
         }
+
+        private updatePreviewActionVisibility() {
+            this.previewAction.setEnabled(this.isContentRenderable());
+
+            this.liveEditModel.getPageModel().onPageModeChanged(()=> {
+                this.previewAction.setEnabled(this.isContentRenderable());
+            });
+        }
+
     }
 
 }

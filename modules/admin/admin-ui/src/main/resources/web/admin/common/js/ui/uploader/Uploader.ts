@@ -612,7 +612,7 @@ module api.ui.uploader {
 
                 try {
                     var responseObj = JSON.parse(response.response);
-                    var error = new api.rest.RequestError(responseObj.status, responseObj.cause, responseObj.message);
+                    var error = new api.rest.RequestError(responseObj.status, responseObj.message);
                     api.DefaultErrorHandler.handle(error);
                 } catch (e) {
                     console.warn("Failed to parse the response", response, e);

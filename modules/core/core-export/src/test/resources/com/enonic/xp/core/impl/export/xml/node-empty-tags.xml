@@ -1,6 +1,6 @@
 <node>
   <id>abc</id>
-  <childOrder>_manualordervalue DESC</childOrder>
+  <childOrder>_manualordervalue DESC, _timestamp DESC</childOrder>
   <nodeType>content</nodeType>
   <inheritPermissions>false</inheritPermissions>
   <permissions>

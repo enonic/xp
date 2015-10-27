@@ -13,7 +13,7 @@ exports.login = function (params) {
     bean.user = required(params, 'user');
     bean.password = required(params, 'password');
 
-    if(params['userStore']) {
+    if (params['userStore']) {
         bean.userStore = [].concat(params['userStore']);
     }
 
@@ -39,4 +39,10 @@ exports.hasRole = function (roleKey) {
 
     return bean.hasRole();
 };
+
+exports.generatePassword = function () {
+    var bean = __.newBean('com.enonic.xp.lib.auth.GeneratePasswordHandler');
+
+    return __.toNativeObject(bean.generatePassword());
+}
 

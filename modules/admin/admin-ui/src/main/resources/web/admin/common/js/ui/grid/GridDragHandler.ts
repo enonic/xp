@@ -112,13 +112,18 @@ module api.ui.grid {
             var draggableRow = args.rows[0];
 
             var rowDataId = this.getModelId(dataView.getItem(draggableRow).getData());
-            var insertBefore = args.insertBefore;
-            var moveBeforeRowDataId = (dataView.getLength() <= insertBefore)
+            var insertTarget = args.insertBefore;
+
+            // when dragging forwards/down insertBefore is the target element
+            // when dragging backwards/up insertBefore is one position after the target element
+            var insertBefore = draggableRow < insertTarget ? insertTarget + 1 : insertTarget;
+
+            var moveBeforeRowDataId = ((dataView.getLength() - 1) <= insertTarget)
                 ? null
                 : this.getModelId(dataView.getItem(insertBefore).getData());
 
             // draggable count in new data
-            var selectedRow = this.makeMovementInNodes(draggableRow, insertBefore);
+            var selectedRow = this.makeMovementInNodes(draggableRow, insertTarget);
 
             if (selectedRow <= this.contentGrid.getRoot().getCurrentRoot().treeToList().length - 1) {
                 this.contentGrid.getGrid().setSelectedRows([selectedRow]);
@@ -127,7 +132,6 @@ module api.ui.grid {
 
             this.notifyPositionChanged();
         }
-
 
         protected makeMovementInNodes(draggableRow: number, insertBefore: number): number {
 

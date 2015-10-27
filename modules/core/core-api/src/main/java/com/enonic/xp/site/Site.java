@@ -10,7 +10,7 @@ import com.enonic.xp.data.PropertyTree;
 public final class Site
     extends Content
 {
-    public Site( final Builder builder )
+    private Site( final Builder builder )
     {
         super( builder );
     }

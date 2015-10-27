@@ -4,7 +4,9 @@ module api.ui.geo {
 
         private geoLocationInput: api.ui.text.TextInput;
 
-        private  validUserInput: boolean;
+        private validUserInput: boolean;
+
+        private valueChangedListeners: {(event: ValueChangedEvent):void}[] = [];
 
         constructor() {
             super("geo-point");
@@ -18,18 +20,11 @@ module api.ui.geo {
             this.geoLocationInput.onKeyUp((event: KeyboardEvent) => {
 
                 var typedGeoPoint = this.geoLocationInput.getValue();
-                if (api.util.StringHelper.isEmpty(typedGeoPoint)) {
-                    this.validUserInput = true;
-                } else {
-
-                    if (api.util.GeoPoint.isValidString(typedGeoPoint)) {
-                        this.validUserInput = true;
-                    } else {
-                        this.validUserInput = false;
-                    }
-                }
+                this.validUserInput = api.util.StringHelper.isEmpty(typedGeoPoint) ||
+                                      api.util.GeoPoint.isValidString(typedGeoPoint);
 
                 this.updateInputStyling();
+                this.notifyValueChanged();
             });
         }
 
@@ -42,7 +37,16 @@ module api.ui.geo {
         }
 
         onValueChanged(listener: (event: api.ui.ValueChangedEvent)=>void) {
-            this.geoLocationInput.onValueChanged(listener);
+            this.valueChangedListeners.push(listener);
+        }
+
+        private notifyValueChanged() {
+            var newValue = this.validUserInput ? this.geoLocationInput.getValue() : null;
+            var oldValue = this.geoLocationInput.getOldValue();
+
+            this.valueChangedListeners.forEach((listener: (event: ValueChangedEvent)=>void) => {
+                listener.call(this, new ValueChangedEvent(oldValue, newValue));
+            });
         }
 
 
@@ -55,7 +59,7 @@ module api.ui.geo {
             if (api.util.StringHelper.isEmpty(this.geoLocationInput.getValue())) {
                 return null;
             }
-            return  api.util.GeoPoint.fromString(this.geoLocationInput.getValue());
+            return <api.util.GeoPoint>api.util.GeoPoint.fromString(this.geoLocationInput.getValue());
 
         }
 
