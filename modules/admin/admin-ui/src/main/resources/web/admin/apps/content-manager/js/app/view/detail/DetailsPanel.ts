@@ -228,25 +228,22 @@ module app.view.detail {
 
             this.updateCommonWidgets();
             this.updateCustomWidgets();
-            setTimeout(() => {
-                this.updateWidgetsHeights();
-            }, 400);
         }
 
         private updateWidgetsHeights() {
             this.widgetViews.forEach((widgetView: WidgetView) => {
-                if (widgetView != this.activeWidget) {
-                    widgetView.updateNormalHeightSilently();
-                } else {
-                    widgetView.updateNormalHeight();
-                }
+                this.updateWidgetHeight(widgetView);
             });
             if (this.defaultWidgetView) {
-                if (this.defaultWidgetView != this.activeWidget) {
-                    this.defaultWidgetView.updateNormalHeightSilently();
-                } else {
-                    this.defaultWidgetView.updateNormalHeight();
-                }
+                this.updateWidgetHeight(this.defaultWidgetView);
+            }
+        }
+
+        private updateWidgetHeight(widgetView: WidgetView) {
+            if (widgetView != this.activeWidget) {
+                widgetView.updateNormalHeightSilently();
+            } else {
+                widgetView.updateNormalHeight();
             }
         }
 
@@ -304,7 +301,9 @@ module app.view.detail {
                     if (DetailsPanel.DEFAULT_WIDGET_NAME == this.activeWidget.getWidgetName()) {
                         this.setActiveWidget(this.defaultWidgetView);
                     }
-                    this.updateWidgetsHeights();
+                    setTimeout(() => {
+                        this.updateWidgetsHeights();
+                    }, 1000);
 
                 }).done();
             }
