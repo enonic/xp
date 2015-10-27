@@ -85,16 +85,32 @@ public class NodeEventsTest
     }
 
     @Test
+    public void testMoved()
+    {
+        final Node sourceNode = createNode( "before", NodePath.create( "/mynode1/child1" ).build(), "myId" );
+        final Node targetNode = createNode( "after", NodePath.create( "/mynode1" ).build(), "myId" );
+
+        Event2 event = NodeEvents.moved( sourceNode, targetNode );
+
+        assertNotNull( event );
+        assertTrue( event.isDistributed() );
+        assertEquals( NodeEvents.NODE_MOVED_EVENT, event.getType() );
+        assertEquals( "[{id=myId, path=/mynode1/child1/before, newPath=/mynode1/after}]", event.getValue( "nodes" ).get().toString() );
+    }
+
+    @Test
     public void testRenamed()
     {
-        final Node renamed = createNode( "renamed", NodePath.create( "/mynode1/child1" ).build(), "myId" );
+        final Node sourceNode = createNode( "before", NodePath.create( "/mynode1/child1" ).build(), "myId" );
+        final Node targetNode = createNode( "after", NodePath.create( "/mynode1/child1" ).build(), "myId" );
 
-        Event2 event = NodeEvents.renamed( renamed );
+        Event2 event = NodeEvents.renamed( sourceNode, targetNode );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_RENAMED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/renamed}]", event.getValue( "nodes" ).get().toString() );
+        assertEquals( "[{id=myId, path=/mynode1/child1/before, newPath=/mynode1/child1/after}]",
+                      event.getValue( "nodes" ).get().toString() );
     }
 
     @Test
