@@ -273,6 +273,10 @@ module app.wizard {
                         }
                     });
 
+                    if (this.liveEditModel && this.liveEditModel.getPageModel() && this.liveEditModel.getPageModel().hasController()) {
+                        this.wizardActions.getShowSplitEditAction().execute();
+                    }
+
                     responsiveItem.update();
                 });
 
