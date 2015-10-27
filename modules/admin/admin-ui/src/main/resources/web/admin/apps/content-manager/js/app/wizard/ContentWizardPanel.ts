@@ -1046,7 +1046,6 @@ module app.wizard {
 
         private checkSecurityWizardStepFormAllowed(loginResult: api.security.auth.LoginResult) {
 
-            debugger;
             if (this.getPersistedItem().isAnyPrincipalAllowed(loginResult.getPrincipals(), api.security.acl.Permission.WRITE_PERMISSIONS)) {
                 this.isSecurityWizardStepFormAllowed = true;
             }

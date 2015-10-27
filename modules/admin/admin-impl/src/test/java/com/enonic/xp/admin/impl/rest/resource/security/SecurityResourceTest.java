@@ -369,6 +369,226 @@ public class SecurityResourceTest
         assertJson( "getPrincipalRoleById.json", jsonString );
     }
 
+
+    @Test
+    public void resolveMemberships_for_role()
+        throws Exception
+    {
+        final Role role = Role.create().
+            key( PrincipalKey.ofRole( "superuser" ) ).
+            displayName( "Super user role" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        final User user1 = User.create().
+            key( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
+            displayName( "Alice" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "alice@a.org" ).
+            login( "alice" ).
+            build();
+
+        final User user2 = User.create().
+            key( PrincipalKey.ofUser( USER_STORE_2, "b" ) ).
+            displayName( "Bobby" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "bobby@b.org" ).
+            login( "bobby" ).
+            build();
+
+        PrincipalKeys keys = PrincipalKeys.from( user1.getKey(), user2.getKey() );
+
+        PrincipalRelationship membership1 = from( role.getKey() ).to( user1.getKey() );
+        PrincipalRelationship membership2 = from( role.getKey() ).to( user2.getKey() );
+        PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
+
+        Mockito.when( securityService.getRelationships( role.getKey() ) ).thenReturn( memberships );
+        Mockito.when( securityService.getPrincipals( keys ) ).thenReturn( Principals.from( user1, user2 ) );
+
+        String jsonString = request().
+            path( "security/principals/resolveMemberships" ).
+            entity( "{\"keys\": [\"" + role.getKey().toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "resolveMembershipsForRole.json", jsonString );
+    }
+
+    @Test
+    public void resolveMemberships_for_group()
+        throws Exception
+    {
+        final Group group = Group.create().
+            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            displayName( "Group A" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        final User user1 = User.create().
+            key( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
+            displayName( "Alice" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "alice@a.org" ).
+            login( "alice" ).
+            build();
+
+        final User user2 = User.create().
+            key( PrincipalKey.ofUser( USER_STORE_2, "b" ) ).
+            displayName( "Bobby" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "bobby@b.org" ).
+            login( "bobby" ).
+            build();
+
+        PrincipalKeys keys = PrincipalKeys.from( user1.getKey(), user2.getKey() );
+
+        PrincipalRelationship membership1 = from( group.getKey() ).to( user1.getKey() );
+        PrincipalRelationship membership2 = from( group.getKey() ).to( user2.getKey() );
+        PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
+
+        Mockito.when( securityService.getRelationships( group.getKey() ) ).thenReturn( memberships );
+        Mockito.when( securityService.getPrincipals( keys ) ).thenReturn( Principals.from( user1, user2 ) );
+
+        String jsonString = request().
+            path( "security/principals/resolveMemberships" ).
+            entity( "{\"keys\": [\"" + group.getKey().toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "resolveMembershipsForGroup.json", jsonString );
+    }
+
+    @Test
+    public void resolveMemberships_multiple()
+        throws Exception
+    {
+        final Role role = Role.create().
+            key( PrincipalKey.ofRole( "superuser" ) ).
+            displayName( "Super user role" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        final Group group = Group.create().
+            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            displayName( "Group A" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        final User user1 = User.create().
+            key( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
+            displayName( "Alice" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "alice@a.org" ).
+            login( "alice" ).
+            build();
+
+        final User user2 = User.create().
+            key( PrincipalKey.ofUser( USER_STORE_2, "b" ) ).
+            displayName( "Bobby" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "bobby@b.org" ).
+            login( "bobby" ).
+            build();
+
+        PrincipalRelationship membership1 = from( role.getKey() ).to( user1.getKey() );
+        PrincipalRelationships memberships1 = PrincipalRelationships.from( membership1 );
+        PrincipalRelationship membership2 = from( role.getKey() ).to( user2.getKey() );
+        PrincipalRelationships memberships2 = PrincipalRelationships.from( membership2 );
+
+        Mockito.when( securityService.getRelationships( role.getKey() ) ).thenReturn( memberships1 );
+        Mockito.when( securityService.getRelationships( group.getKey() ) ).thenReturn( memberships2 );
+
+        Mockito.when( securityService.getPrincipals( PrincipalKeys.from( user1.getKey() ) ) ).thenReturn( Principals.from( user1 ) );
+        Mockito.when( securityService.getPrincipals( PrincipalKeys.from( user2.getKey() ) ) ).thenReturn( Principals.from( user2 ) );
+
+
+
+        String jsonString = request().
+            path( "security/principals/resolveMemberships" ).
+            entity( "{\"keys\": [\"" + role.getKey().toString() + "\", \"" + group.getKey().toString() + "\"  ]}",
+                    MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "resolveMembershipsMultiple.json", jsonString );
+    }
+
+    @Test
+    public void resolveMemberships_deep()
+        throws Exception
+    {
+        final Group parentGroup = Group.create().
+            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            displayName( "Group A" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        final Group subGroup = Group.create().
+            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-b" ) ).
+            displayName( "Group B" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        final User user1 = User.create().
+            key( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
+            displayName( "Alice" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "alice@a.org" ).
+            login( "alice" ).
+            build();
+
+        PrincipalRelationship membership1 = from( subGroup.getKey() ).to( user1.getKey() );
+        PrincipalRelationships memberships1 = PrincipalRelationships.from( membership1 );
+
+        PrincipalRelationship membership2 = from( parentGroup.getKey() ).to( subGroup.getKey() );
+        PrincipalRelationships memberships2 = PrincipalRelationships.from( membership2 );
+
+        Mockito.when( securityService.getRelationships( subGroup.getKey() ) ).thenReturn( memberships1 );
+        Mockito.when( securityService.getRelationships( parentGroup.getKey() ) ).thenReturn( memberships2 );
+
+        Mockito.when( securityService.getPrincipals( PrincipalKeys.from( user1.getKey() ) ) ).thenReturn( Principals.from( user1 ) );
+
+        String jsonString = request().
+            path( "security/principals/resolveMemberships" ).
+            entity( "{\"keys\": [\"" + parentGroup.getKey().toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "resolveMembershipsDeep.json", jsonString );
+    }
+
+    @Test
+    public void resolveMemberships_for_user()
+        throws Exception
+    {
+        final User user = User.create().
+            key( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
+            displayName( "Alice" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "alice@a.org" ).
+            login( "alice" ).
+            build();
+
+        exception.expect( IllegalArgumentException.class );
+        PrincipalRelationship membership1 = from( user.getKey() ).to( user.getKey() );
+    }
+
+    @Test
+    public void resolveMemberships_for_empty()
+        throws Exception
+    {
+        final Role role = Role.create().
+            key( PrincipalKey.ofRole( "superuser" ) ).
+            displayName( "Super user role" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        String jsonString = request().
+            path( "security/principals/resolveMemberships" ).
+            entity( "{\"keys\": [\"" + role.getKey().toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "resolveMembershipsForEmpty.json", jsonString );
+    }
+
+
+
     @Test
     public void isEmailAvailableNegative()
         throws Exception

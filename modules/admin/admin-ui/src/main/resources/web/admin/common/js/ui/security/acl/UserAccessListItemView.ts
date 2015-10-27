@@ -45,7 +45,6 @@ module api.ui.security.acl {
                 if (principal.isUser()) {
                     isEmpty = false;
 
-                    debugger;
                     var icon = new api.dom.SpanEl("user-icon").setHtml(principal.getDisplayName().substring(0, 2));
                     if (this.currentUser && this.currentUser.getKey().equals(principal.getKey())) {
                         icon.addClass("active");
