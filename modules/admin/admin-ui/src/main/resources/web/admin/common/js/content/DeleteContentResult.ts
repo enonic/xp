@@ -28,14 +28,14 @@ module api.content {
         static fromJson(json: DeleteContentResultJson): DeleteContentResult {
             if (json.successes) {
                 var success: DeleteContentResultSuccess[] = json.successes.
-                    map((success) => new DeleteContentResultSuccess(success.id, success.name));
+                    map((success) => new DeleteContentResultSuccess(success.id, success.name, success.type));
             }
             if (json.pendings) {
                 var pending: string[] = json.pendings.map((pending) => pending.name);
             }
             if (json.failures) {
                 var failure: DeleteContentResultFailure[] = json.failures.
-                    map((failure) => new DeleteContentResultFailure(failure.id, failure.name, failure.reason));
+                    map((failure) => new DeleteContentResultFailure(failure.id, failure.name, failure.type, failure.reason));
             }
             return new DeleteContentResult(success, pending, failure);
         }
@@ -46,10 +46,12 @@ module api.content {
 
         private id: string;
         private name: string;
+        private type: string;
 
-        constructor(id: string, name: string) {
+        constructor(id: string, name: string, type: string) {
             this.id = id;
             this.name = name;
+            this.type = type;
         }
 
         getId(): string {
@@ -59,14 +61,18 @@ module api.content {
         getName(): string {
             return this.name;
         }
+
+        getType(): string {
+            return this.type;
+        }
     }
 
     export class DeleteContentResultFailure extends DeleteContentResultSuccess {
 
         private reason: string;
 
-        constructor(id: string, name: string, reason: string) {
-            super(id, name);
+        constructor(id: string, name: string, type: string, reason: string) {
+            super(id, name, type);
             this.reason = reason;
         }
 
