@@ -161,7 +161,7 @@
     border-bottom: 1px transparent;
 
     .sub-name, .main-name {
-      padding-right: 45px;
+      padding-right: 40px;
     }
   }
 
@@ -267,32 +267,33 @@
 
     .properties-widget-item-view {
 
-    dl {
-      overflow: hidden;
-      padding: 5px;
-      dd {
-        float: left;
-        width: 30%;
+      dl {
+        overflow: hidden;
+        padding: 5px;
+        dd {
+          float: left;
+          width: 30%;
+        }
+        dt {
+          float: left;
+          width: 70%;
+          .ellipsis();
+        }
+        dd, dt {
+          margin: 1px 0px;
+        }
       }
-      dt {
-        float: left;
-        width: 70%;
-        .ellipsis();
-      }
-      dd, dt {
-        margin: 1px 0px;
-      }
+
+      min-height: 100px;
     }
 
-    min-height: 100px;
-  }
-    &.attachments-widget-item-view {
+    .attachments-widget-item-view {
 
       ul.uploader-list {
 
         li.uploader-container {
           margin: 5px;
-          font-size: 15px;
+          font-size: 12px;
 
           .result-container {
             .icon-attachment2();
@@ -318,7 +319,7 @@
       }
     }
 
-    &.status-widget-item-view {
+    .status-widget-item-view {
       text-align: center;
       height: 60px;
 
@@ -386,7 +387,7 @@
       width: 100%;
     }
   }
-}
+
 
 &.dragging {
   overflow: visible;
