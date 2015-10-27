@@ -18,6 +18,7 @@ module api.app {
     export interface Event2NodeJson {
         id: string;
         path: string;
+        newPath: string;
     }
 
     export class ServerEventsConnection {

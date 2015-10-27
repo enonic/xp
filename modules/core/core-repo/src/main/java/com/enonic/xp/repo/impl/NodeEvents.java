@@ -70,9 +70,18 @@ public class NodeEvents
         return event( NODE_UPDATED_EVENT, updatedNode );
     }
 
-    public static Event2 renamed( final Node renamedNode )
+    public static Event2 renamed( final Node sourceNode, final Node targetNode )
     {
-        return event( NODE_RENAMED_EVENT, renamedNode );
+        final ImmutableMap<Object, Object> node = ImmutableMap.builder().
+            put( "id", sourceNode.id().toString() ).
+            put( "path", sourceNode.path().toString() ).
+            put( "newPath", targetNode.path().toString() ).
+            build();
+
+        return Event2.create( NODE_RENAMED_EVENT ).
+            distributed( true ).
+            value( "nodes", ImmutableList.of( node ) ).
+            build();
     }
 
     public static Event2 sorted( final Node sortedNode )

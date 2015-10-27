@@ -82,8 +82,10 @@ module api.content {
         }
 
 
-        static fromEvent2Json(event2Json: api.app.Event2Json): ContentServerChange {
+        static fromEvent2Json(event2Json: api.app.Event2Json): ContentServerChange[] {
             var contentEventType;
+
+            var contentPaths = event2Json.data.nodes.map((node) => api.content.ContentPath.fromString(node.path.substr("/content".length)));
 
             switch (event2Json.type) {
             case 'node.pushed':
@@ -105,16 +107,19 @@ module api.content {
                 contentEventType = ContentServerChangeType.PENDING;
                 break;
             case 'node.renamed':
-                contentEventType = ContentServerChangeType.RENAME;
-                break;
+                var newContentPaths = event2Json.data.nodes.map((node) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
+                var renamedContentServerChange = new ContentServerChange(contentPaths, ContentServerChangeType.RENAME);
+                var deletedContentServerChange = new ContentServerChange(contentPaths, ContentServerChangeType.DELETE);
+                var createdContentServerChange = new ContentServerChange(newContentPaths, ContentServerChangeType.CREATE);
+                return [renamedContentServerChange, deletedContentServerChange, createdContentServerChange];
             case 'node.sorted':
                 contentEventType = ContentServerChangeType.SORT;
                 break;
             default:
                 contentEventType = ContentServerChangeType.UNKNOWN;
             }
-            var contentPaths = event2Json.data.nodes.map((node) => api.content.ContentPath.fromString(node.path.substr("/content".length)));
-            return new ContentServerChange(contentPaths, contentEventType);
+
+            return [new ContentServerChange(contentPaths, contentEventType)];
         }
     }
 
@@ -151,7 +156,7 @@ module api.content {
         }
 
         static fromEvent2Json(json: api.app.Event2Json): ContentServerEvent {
-            var changes = [ContentServerChange.fromEvent2Json(json)];
+            var changes = ContentServerChange.fromEvent2Json(json);
             return new ContentServerEvent(changes);
         }
     }
