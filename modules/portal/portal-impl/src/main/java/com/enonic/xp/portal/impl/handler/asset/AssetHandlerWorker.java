@@ -43,7 +43,7 @@ final class AssetHandlerWorker
         }
         else if ( cacheable )
         {
-            setResponseCacheable();
+            setResponseCacheable( true );
         }
     }
 
