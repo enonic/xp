@@ -106,6 +106,11 @@ module api.content {
             case 'node.stateUpdated':
                 contentEventType = ContentServerChangeType.PENDING;
                 break;
+            case 'node.moved':
+                var newContentPaths = event2Json.data.nodes.map((node) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
+                var deletedContentServerChange = new ContentServerChange(contentPaths, ContentServerChangeType.DELETE);
+                var createdContentServerChange = new ContentServerChange(newContentPaths, ContentServerChangeType.CREATE);
+                return [deletedContentServerChange, createdContentServerChange];
             case 'node.renamed':
                 var newContentPaths = event2Json.data.nodes.map((node) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
                 var renamedContentServerChange = new ContentServerChange(contentPaths, ContentServerChangeType.RENAME);

@@ -23,6 +23,8 @@ public class NodeEvents
 
     public static final String NODE_UPDATED_EVENT = "node.updated";
 
+    public static final String NODE_MOVED_EVENT = "node.moved";
+
     public static final String NODE_RENAMED_EVENT = "node.renamed";
 
     public static final String NODE_SORTED_EVENT = "node.sorted";
@@ -68,6 +70,20 @@ public class NodeEvents
     public static Event2 updated( final Node updatedNode )
     {
         return event( NODE_UPDATED_EVENT, updatedNode );
+    }
+
+    public static Event2 moved( final Node sourceNode, final Node targetNode )
+    {
+        final ImmutableMap<Object, Object> node = ImmutableMap.builder().
+            put( "id", sourceNode.id().toString() ).
+            put( "path", sourceNode.path().toString() ).
+            put( "newPath", targetNode.path().toString() ).
+            build();
+
+        return Event2.create( NODE_MOVED_EVENT ).
+            distributed( true ).
+            value( "nodes", ImmutableList.of( node ) ).
+            build();
     }
 
     public static Event2 renamed( final Node sourceNode, final Node targetNode )
