@@ -14,6 +14,11 @@ module api.security {
             return this;
         }
 
+        addKeys(keys: PrincipalKey[]): ResolveMembersRequest {
+            this.keys = this.keys.concat(keys);
+            return this;
+        }
+
         addKey(key: PrincipalKey): ResolveMembersRequest {
             this.keys.push(key);
             return this;

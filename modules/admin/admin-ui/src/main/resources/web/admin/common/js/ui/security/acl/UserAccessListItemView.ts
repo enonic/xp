@@ -1,6 +1,5 @@
 module api.ui.security.acl {
 
-    import Access = api.security.acl.Access;
     import Principal = api.security.Principal;
     import Tooltip = api.ui.Tooltip;
     import User = api.security.User;

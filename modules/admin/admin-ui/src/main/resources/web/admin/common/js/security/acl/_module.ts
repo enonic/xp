@@ -4,7 +4,6 @@
 ///<reference path="AccessControlEntry.ts"/>
 ///<reference path='AccessControlEntryLoader.ts' />
 ///<reference path="AccessControlList.ts"/>
-///<reference path="Access.ts"/>
 ///<reference path="UserStoreAccess.ts"/>
 ///<reference path="UserStoreAccessControlEntryJson.ts"/>
 ///<reference path="UserStoreAccessControlEntry.ts"/>

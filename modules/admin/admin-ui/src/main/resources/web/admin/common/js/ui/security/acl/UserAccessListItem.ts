@@ -1,17 +1,15 @@
 module api.ui.security.acl {
 
-    import Access = api.security.acl.Access;
     import Principal = api.security.Principal;
 
     export class UserAccessListItem implements api.Equitable {
 
         private access: Access;
 
-        private principals: Principal[];
+        private principals: Principal[] = [];
 
-        constructor(access: Access, principals: Principal[]) {
+        constructor(access: Access) {
             this.access = access;
-            this.principals = principals;
         }
 
         getAccess(): Access {
@@ -20,6 +18,24 @@ module api.ui.security.acl {
 
         getPrincipals(): Principal[] {
             return this.principals;
+        }
+
+        addItem(principal: Principal) {
+            if (principal) {
+                var exist = this.principals.some((curPrincipal: Principal) => {
+                    return curPrincipal.equals(principal);
+                });
+
+                if (!exist) {
+                    this.principals.push(principal);
+                }
+            }
+        }
+
+        addItems(principals: Principal[]) {
+            if (principals) {
+                principals.forEach((principal) => this.addItem(principal));
+            }
         }
 
         equals(o: api.Equitable): boolean {

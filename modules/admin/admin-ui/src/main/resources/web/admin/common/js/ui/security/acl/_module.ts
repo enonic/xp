@@ -1,3 +1,4 @@
+///<reference path='Access.ts' />
 ///<reference path='AccessSelector.ts' />
 ///<reference path='PermissionSelector.ts' />
 ///<reference path='AccessControlEntryView.ts' />
