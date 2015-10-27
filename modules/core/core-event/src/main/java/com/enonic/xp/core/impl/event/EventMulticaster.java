@@ -1,11 +1,12 @@
 package com.enonic.xp.core.impl.event;
 
-import java.util.Set;
+import java.util.Collections;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
@@ -14,21 +15,27 @@ final class EventMulticaster
 {
     private final static Logger LOG = LoggerFactory.getLogger( EventMulticaster.class );
 
-    private final Set<EventListener> listeners;
+    protected final List<EventListener> listeners;
 
     public EventMulticaster()
     {
-        this.listeners = Sets.newConcurrentHashSet();
+        this.listeners = Lists.newArrayList();
     }
 
-    public void add( final EventListener listener )
+    public synchronized void add( final EventListener listener )
     {
         this.listeners.add( listener );
+        sortListeners();
     }
 
-    public void remove( final EventListener listener )
+    public synchronized void remove( final EventListener listener )
     {
         this.listeners.remove( listener );
+    }
+
+    private void sortListeners()
+    {
+        Collections.sort( this.listeners, ( o1, o2 ) -> o1.getOrder() - o2.getOrder() );
     }
 
     public void publish( final Event event )
