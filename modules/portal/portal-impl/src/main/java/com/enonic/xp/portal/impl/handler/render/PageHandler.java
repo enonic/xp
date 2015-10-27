@@ -7,9 +7,9 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.PortalHandler;
-import com.enonic.xp.portal.impl.handler.BaseHandler;
-import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
+import com.enonic.xp.portal.handler.BaseHandler;
+import com.enonic.xp.portal.handler.PortalHandler;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.portal.url.PortalUrlService;
 

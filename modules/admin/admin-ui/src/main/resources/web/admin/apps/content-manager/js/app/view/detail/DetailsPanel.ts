@@ -337,7 +337,7 @@ module app.view.detail {
         private getAndInitCustomWidgetsViews(): wemQ.Promise<any> {
             var getWidgetsByInterfaceRequest = new api.content.GetWidgetsByInterfaceRequest(this.getWidgetsInterfaceName());
 
-            return getWidgetsByInterfaceRequest.sendAndParse().then((widgets: api.content.Widget[]) => {
+            return getWidgetsByInterfaceRequest.sendAndParse().then((widgets: Widget[]) => {
                 widgets.forEach((widget) => {
                     var widgetView = WidgetView.create().
                         setName(widget.getDisplayName()).

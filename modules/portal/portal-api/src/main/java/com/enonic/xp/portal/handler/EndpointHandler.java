@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.handler;
+package com.enonic.xp.portal.handler;
 
 import com.google.common.base.Strings;
 

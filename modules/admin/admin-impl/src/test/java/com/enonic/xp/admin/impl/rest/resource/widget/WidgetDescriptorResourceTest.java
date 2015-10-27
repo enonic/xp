@@ -36,20 +36,19 @@ public class WidgetDescriptorResourceTest
             displayName( "My widget" ).
             addInterface( "com.enonic.xp.my-interface" ).
             addInterface( "com.enonic.xp.my-interface-2" ).
-            key( DescriptorKey.from( "module:my-widget" ) ).
+            key( DescriptorKey.from( "myapp:my-widget" ) ).
             build();
 
         final WidgetDescriptor widgetDescriptor2 = WidgetDescriptor.create().
             displayName( "My second widget" ).
-            key( DescriptorKey.from( "module:my-second-widget" ) ).
+            key( DescriptorKey.from( "myapp:my-second-widget" ) ).
             build();
 
         WidgetDescriptors widgetDescriptors = WidgetDescriptors.from( widgetDescriptor1, widgetDescriptor2 );
 
         Mockito.when( widgetDescriptorService.getByInterface( Mockito.any() ) ).thenReturn( widgetDescriptors );
 
-        String jsonString =
-            request().path( "widget/descriptor/byInterface" ).queryParam( "interface", "someInterfaceName" ).get().getAsString();
+        String jsonString = request().path( "widget" ).queryParam( "interface", "someInterfaceName" ).get().getAsString();
 
         assertJson( "get_widgets_by_interface.json", jsonString );
     }
