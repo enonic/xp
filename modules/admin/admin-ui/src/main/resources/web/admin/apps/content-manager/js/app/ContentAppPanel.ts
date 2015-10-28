@@ -104,9 +104,11 @@ module app {
             });
 
             api.content.ContentDeletedEvent.on((event: api.content.ContentDeletedEvent) => {
-                var item = this.getNavigator().getNavigationItemByIdValue(event.getContentId().toString());
-                if (item) {
-                    item.getCloseAction().execute(true);
+                if (!event.isPending()) {
+                    var item = this.getNavigator().getNavigationItemByIdValue(event.getContentId().toString());
+                    if (item) {
+                        item.getCloseAction().execute(true);
+                    }
                 }
             });
         }

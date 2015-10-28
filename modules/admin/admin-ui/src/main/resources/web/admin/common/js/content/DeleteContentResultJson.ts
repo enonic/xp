@@ -4,7 +4,7 @@ module api.content {
 
         successes: {id:string; name:string}[];
 
-        pendings: {name:string}[];
+        pendings: {id:string; name:string}[];
 
         failures: {id:string; name:string; reason:string}[];
     }

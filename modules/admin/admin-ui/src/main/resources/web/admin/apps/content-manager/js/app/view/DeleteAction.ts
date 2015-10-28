@@ -32,7 +32,7 @@ module app.view {
 
         public static showDeleteResult(result: api.content.DeleteContentResult) {
             if (result.getPendings().length == 1) {
-                api.notify.showFeedback('\"' + result.getPendings()[0] + '\" marked for deletion');
+                api.notify.showFeedback('\"' + result.getPendings()[0].getName() + '\" marked for deletion');
             } else if (result.getPendings().length > 1) {
                 api.notify.showFeedback(result.getPendings().length + ' items marked for deletion');
             }
