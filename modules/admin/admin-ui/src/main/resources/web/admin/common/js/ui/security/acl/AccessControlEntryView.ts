@@ -123,46 +123,59 @@ module api.ui.security.acl {
         public static getAccessValueFromEntry(ace: AccessControlEntry): Access {
 
             if (ace.getDeniedPermissions().length == 0) {
-                if (this.isFullAccess(ace.getAllowedPermissions())) {
+                var allowedPermissions = ace.getAllowedPermissions();
+                if (this.onlyFullAccess(allowedPermissions)) {
                     return Access.FULL;
-                } else if (this.isCanPublish(ace.getAllowedPermissions())) {
+                }
+                if (this.canOnlyPublish(allowedPermissions)) {
                     return Access.PUBLISH;
-                } else if (this.isCanWrite(ace.getAllowedPermissions())) {
+                }
+                if (this.canOnlyWrite(allowedPermissions)) {
                     return Access.WRITE;
-                } else if (this.isCanRead(ace.getAllowedPermissions())) {
+                }
+                if (this.canOnlyRead(allowedPermissions)) {
                     return Access.READ;
                 }
             }
             return Access.CUSTOM;
         }
 
-        private static isCanRead(allowed: Permission[]): boolean {
-            return allowed.indexOf(Permission.READ) >= 0 && allowed.length === 1;
+        private static canRead(allowed: Permission[]): boolean {
+            return allowed.indexOf(Permission.READ) >= 0;
         }
 
-        private static isCanWrite(allowed: Permission[]): boolean {
-            return allowed.indexOf(Permission.READ) >= 0 &&
-                   allowed.indexOf(Permission.CREATE) >= 0 &&
-                   allowed.indexOf(Permission.MODIFY) >= 0 &&
-                   allowed.indexOf(Permission.DELETE) >= 0 && allowed.length === 4;
+        private static canOnlyRead(allowed: Permission[]): boolean {
+            return this.canRead(allowed) && allowed.length === 1;
         }
 
-        private static isCanPublish(allowed: Permission[]): boolean {
-            return allowed.indexOf(Permission.READ) >= 0 &&
+        private static canWrite(allowed: Permission[]): boolean {
+            return this.canRead(allowed) &&
                    allowed.indexOf(Permission.CREATE) >= 0 &&
                    allowed.indexOf(Permission.MODIFY) >= 0 &&
-                   allowed.indexOf(Permission.DELETE) >= 0 &&
-                   allowed.indexOf(Permission.PUBLISH) >= 0 && allowed.length === 5;
+                   allowed.indexOf(Permission.DELETE) >= 0;
+        }
+
+        private static canOnlyWrite(allowed: Permission[]): boolean {
+            return this.canWrite(allowed) && allowed.length === 4;
+        }
+
+        private static canPublish(allowed: Permission[]): boolean {
+            return this.canWrite(allowed) &&
+                   allowed.indexOf(Permission.PUBLISH) >= 0;
+        }
+
+        private static canOnlyPublish(allowed: Permission[]): boolean {
+            return this.canPublish(allowed) && allowed.length === 5;
         }
 
         private static isFullAccess(allowed: Permission[]): boolean {
-            return allowed.indexOf(Permission.READ) >= 0 &&
-                   allowed.indexOf(Permission.CREATE) >= 0 &&
-                   allowed.indexOf(Permission.MODIFY) >= 0 &&
-                   allowed.indexOf(Permission.DELETE) >= 0 &&
-                   allowed.indexOf(Permission.PUBLISH) >= 0 &&
+            return this.canPublish(allowed) &&
                    allowed.indexOf(Permission.READ_PERMISSIONS) >= 0 &&
-                   allowed.indexOf(Permission.WRITE_PERMISSIONS) >= 0 && allowed.length === 7;
+                   allowed.indexOf(Permission.WRITE_PERMISSIONS) >= 0;
+        }
+
+        private static onlyFullAccess(allowed: Permission[]): boolean {
+            return this.isFullAccess(allowed) && allowed.length === 7;
         }
 
 

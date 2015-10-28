@@ -34,9 +34,9 @@ module app.view.detail {
 
         private static OPTIONS: any[] = [
             {value: Access.FULL, name: 'has full access to'},
-            {value: Access.READ, name: 'Can Read'},
-            {value: Access.WRITE, name: 'Can Write'},
             {value: Access.PUBLISH, name: 'Can Publish'},
+            {value: Access.WRITE, name: 'Can Write'},
+            {value: Access.READ, name: 'Can Read'},
             {value: Access.CUSTOM, name: 'has custom access to'}
         ];
 
@@ -102,40 +102,8 @@ module app.view.detail {
             );
 
             request.sendAndParse().then((results: ResolveMembersResult) => {
-                var keys = results.getValues().map((entry: ResolveMemberResult) => entry.getPrincipalKey().toString());
 
-                var userAccessList: UserAccessListItemView[] = [],
-                    unicalKeys = [];
-
-
-                for (var key in accessUsersMap) {
-
-                    var listItem = new UserAccessListItem(key);
-
-                    accessUsersMap[key].forEach((principal: api.security.Principal) => {
-                        var members = [];
-                        if (keys.indexOf(principal.getKey().toString()) > -1) {
-                            members = results.getByPrincipalKey(principal.getKey()).getMembers();
-                        } else {
-                            members = accessUsersMap[key];
-                        }
-
-                        members = members.filter((member) => {
-                            return unicalKeys.indexOf(member.getKey().toString()) == -1;
-                        });
-
-                        listItem.addItems(members);
-
-                        unicalKeys = unicalKeys.concat(members.map((curPrincipal: Principal) => curPrincipal.getKey().toString()));
-                    });
-
-                    var listItemView = new UserAccessListItemView();
-                    listItemView.setCurrentUser(this.currentUser);
-
-                    listItemView.setObject(listItem);
-
-                    userAccessList.push(listItemView);
-                }
+                var userAccessList = this.getUserAccessList(accessUsersMap, results);
 
                 this.accessListView.setItemViews(userAccessList);
                 this.appendChild(this.accessListView);
@@ -171,6 +139,44 @@ module app.view.detail {
             });
 
             return true;
+        }
+
+        private getUserAccessList(accessUsersMap, results: ResolveMembersResult): UserAccessListItemView[] {
+
+            var keys = results.getValues().map((entry: ResolveMemberResult) => entry.getPrincipalKey().toString()),
+                uniqueKeys: string[] = [],
+                userAccessList: UserAccessListItemView[] = [];
+
+            for (var key in accessUsersMap) {
+
+                var listItem = new UserAccessListItem(key);
+
+                accessUsersMap[key].forEach((principal: api.security.Principal) => {
+                    var members = [];
+                    if (keys.indexOf(principal.getKey().toString()) > -1) {
+                        members = results.getByPrincipalKey(principal.getKey()).getMembers();
+                    } else {
+                        members = accessUsersMap[key];
+                    }
+
+                    members = members.filter((member) => {
+                        return uniqueKeys.indexOf(member.getKey().toString()) == -1;
+                    });
+
+                    listItem.addItems(members);
+
+                    uniqueKeys = uniqueKeys.concat(members.map((curPrincipal: Principal) => curPrincipal.getKey().toString()));
+                });
+
+                var listItemView = new UserAccessListItemView();
+                listItemView.setCurrentUser(this.currentUser);
+
+                listItemView.setObject(listItem);
+
+                userAccessList.push(listItemView);
+            }
+
+            return userAccessList;
         }
 
 

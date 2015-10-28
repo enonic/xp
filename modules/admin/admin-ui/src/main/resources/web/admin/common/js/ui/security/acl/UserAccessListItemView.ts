@@ -17,9 +17,9 @@ module api.ui.security.acl {
 
         private static OPTIONS: any[] = [
             {value: Access.FULL, name: 'Full Access'},
-            {value: Access.READ, name: 'Can Read'},
-            {value: Access.WRITE, name: 'Can Write'},
             {value: Access.PUBLISH, name: 'Can Publish'},
+            {value: Access.WRITE, name: 'Can Write'},
+            {value: Access.READ, name: 'Can Read'},
             {value: Access.CUSTOM, name: 'Custom...'}
         ];
 
