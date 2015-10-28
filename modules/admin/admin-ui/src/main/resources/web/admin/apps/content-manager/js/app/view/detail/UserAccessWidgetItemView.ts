@@ -6,12 +6,17 @@ module app.view.detail {
     import ContentId = api.content.ContentId;
     import CompareStatusFormatter = api.content.CompareStatusFormatter;
     import AccessControlList = api.security.acl.AccessControlList;
-    import Access = api.security.acl.Access;
+    import Access = api.ui.security.acl.Access;
     import AccessControlEntry = api.security.acl.AccessControlEntry;
+    import AccessControlEntryView = api.ui.security.acl.AccessControlEntryView;
     import UserAccessListView = api.ui.security.acl.UserAccessListView;
     import UserAccessListItem = api.ui.security.acl.UserAccessListItem;
     import UserAccessListItemView = api.ui.security.acl.UserAccessListItemView;
     import Permission = api.security.acl.Permission;
+    import ResolveMembersRequest = api.security.ResolveMembersRequest;
+    import ResolveMemberResult = api.security.ResolveMemberResult;
+    import ResolveMembersResult = api.security.ResolveMembersResult;
+    import Principal = api.security.Principal;
     import PrincipalKey = api.security.PrincipalKey;
     import User = api.security.User;
 
@@ -29,9 +34,9 @@ module app.view.detail {
 
         private static OPTIONS: any[] = [
             {value: Access.FULL, name: 'has full access to'},
-            {value: Access.READ, name: 'Can Read'},
-            {value: Access.WRITE, name: 'Can Write'},
             {value: Access.PUBLISH, name: 'Can Publish'},
+            {value: Access.WRITE, name: 'Can Write'},
+            {value: Access.READ, name: 'Can Read'},
             {value: Access.CUSTOM, name: 'has custom access to'}
         ];
 
@@ -49,7 +54,9 @@ module app.view.detail {
         private layoutHeader(content: Content) {
             var entry = content.getPermissions().getEntry(api.security.RoleKeys.EVERYONE);
             if (entry) {
-                var headerStr = entry.getPrincipalDisplayName() + " " + UserAccessWidgetItemView.OPTIONS[entry.getAccess()].name +
+
+                var headerStr = entry.getPrincipalDisplayName() + " " +
+                                UserAccessWidgetItemView.OPTIONS[AccessControlEntryView.getAccessValueFromEntry(entry)].name +
                                 " this item";
                 var headerStrEl = new api.dom.SpanEl("header-string").setHtml(headerStr);
 
@@ -72,33 +79,40 @@ module app.view.detail {
 
         }
 
-        private layoutList(content: Content) {
-            var accessList = [];
+        private layoutList(content: Content): wemQ.Promise<boolean> {
+
+            var deferred = wemQ.defer<boolean>();
+
+
+            var accessUsersMap = [],
+                request = new ResolveMembersRequest();
+
             content.getPermissions().getEntries().map(
                 (entry) => {
-                    var access = entry.getAccess();
-                    if (!accessList[access]) {
-                        accessList[access] = [];
+
+                    var access = AccessControlEntryView.getAccessValueFromEntry(entry);
+                    if (!accessUsersMap[access]) {
+                        accessUsersMap[access] = [];
                     }
-                    accessList[access].push(entry.getPrincipal());
+                    accessUsersMap[access].push(entry.getPrincipal());
+                    if (entry.getPrincipal().isGroup() || entry.getPrincipal().isRole()) {
+                        request.addKey(entry.getPrincipalKey());
+                    }
                 }
             );
 
-            var userAccessList: UserAccessListItemView[] = [];
+            request.sendAndParse().then((results: ResolveMembersResult) => {
 
-            for (var key in accessList) {
-                var listItem = new UserAccessListItem(key, accessList[key]);
-                var listItemView = new UserAccessListItemView();
-                listItemView.setCurrentUser(this.currentUser);
+                var userAccessList = this.getUserAccessList(accessUsersMap, results);
 
-                listItemView.setObject(listItem);
+                this.accessListView.setItemViews(userAccessList);
+                this.appendChild(this.accessListView);
 
-                userAccessList.push(listItemView);
-            }
+                deferred.resolve(true);
+            }).done();
 
-            this.accessListView.setItemViews(userAccessList);
+            return deferred.promise;
 
-            this.appendChild(this.accessListView);
         }
 
         public doRender(): boolean {
@@ -112,11 +126,12 @@ module app.view.detail {
                     then((content: Content) => {
                         if (content) {
                             this.layoutHeader(content);
-                            this.layoutList(content);
-                            if (content.isAnyPrincipalAllowed(loginResult.getPrincipals(),
-                                    api.security.acl.Permission.WRITE_PERMISSIONS)) {
-                                this.layoutBottom(content);
-                            }
+                            this.layoutList(content).then(() => {
+                                if (content.isAnyPrincipalAllowed(loginResult.getPrincipals(),
+                                        api.security.acl.Permission.WRITE_PERMISSIONS)) {
+                                    this.layoutBottom(content);
+                                }
+                            });
                         }
 
                     }).done();
@@ -124,6 +139,44 @@ module app.view.detail {
             });
 
             return true;
+        }
+
+        private getUserAccessList(accessUsersMap, results: ResolveMembersResult): UserAccessListItemView[] {
+
+            var keys = results.getValues().map((entry: ResolveMemberResult) => entry.getPrincipalKey().toString()),
+                uniqueKeys: string[] = [],
+                userAccessList: UserAccessListItemView[] = [];
+
+            for (var key in accessUsersMap) {
+
+                var listItem = new UserAccessListItem(key);
+
+                accessUsersMap[key].forEach((principal: api.security.Principal) => {
+                    var members = [];
+                    if (keys.indexOf(principal.getKey().toString()) > -1) {
+                        members = results.getByPrincipalKey(principal.getKey()).getMembers();
+                    } else {
+                        members = accessUsersMap[key];
+                    }
+
+                    members = members.filter((member) => {
+                        return uniqueKeys.indexOf(member.getKey().toString()) == -1;
+                    });
+
+                    listItem.addItems(members);
+
+                    uniqueKeys = uniqueKeys.concat(members.map((curPrincipal: Principal) => curPrincipal.getKey().toString()));
+                });
+
+                var listItemView = new UserAccessListItemView();
+                listItemView.setCurrentUser(this.currentUser);
+
+                listItemView.setObject(listItem);
+
+                userAccessList.push(listItemView);
+            }
+
+            return userAccessList;
         }
 
 

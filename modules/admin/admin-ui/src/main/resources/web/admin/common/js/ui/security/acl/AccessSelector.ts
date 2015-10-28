@@ -1,7 +1,6 @@
 module api.ui.security.acl {
 
     import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
-    import Access = api.security.acl.Access;
 
     interface AccessSelectorOption {
         value: Access;

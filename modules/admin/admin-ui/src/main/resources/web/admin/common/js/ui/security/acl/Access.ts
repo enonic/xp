@@ -1,4 +1,4 @@
-module api.security.acl {
+module api.ui.security.acl {
 
     export enum Access {
         FULL,
