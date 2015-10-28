@@ -63,8 +63,9 @@ final class ErrorHandlerScriptImpl
         }
         else
         {
-            // TODO set applyFilters to false
-            return new PortalResponseSerializer( result ).postProcess( false ).status( portalError.getStatus() ).serialize();
+            return new PortalResponseSerializer( result ).
+                postProcess( false ).status( portalError.getStatus() ).applyFilters( false ).
+                serialize();
         }
     }
 
