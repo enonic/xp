@@ -158,9 +158,6 @@ module api.content.site.inputtype.siteconfigurator {
                 this.formView.validate(false, true);
                 this.toggleClass("invalid", !this.formView.isValid());
                 this.notifySiteConfigFormDisplayed(this.application.getApplicationKey());
-                formView.onEditContentRequest((content: api.content.ContentSummary) => {
-                    new api.content.EditContentEvent([content]).fire();
-                });
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
