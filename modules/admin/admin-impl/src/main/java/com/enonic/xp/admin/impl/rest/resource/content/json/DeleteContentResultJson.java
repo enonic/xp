@@ -27,9 +27,9 @@ public class DeleteContentResultJson
         return failures;
     }
 
-    public void addSuccess( final String id, final String contentName )
+    public void addSuccess( final String id, final String contentName, final String type )
     {
-        successes.add( new Success( id, contentName ) );
+        successes.add( new Success( id, contentName, type ) );
     }
 
     public void addPending( final String contentName )
@@ -37,22 +37,30 @@ public class DeleteContentResultJson
         pendings.add( new Pending( contentName ) );
     }
 
-    public void addFailure( final String id, final String contentName, final String reason )
+    public void addFailure( final String id, final String contentName, final String type, final String reason )
     {
-        failures.add( new Failure( id, contentName, reason ) );
+        failures.add( new Failure( id, contentName, type, reason ) );
     }
 
     public class Success
     {
 
-        private String name;
-
         private String id;
 
-        public Success( final String id, final String contentName )
+        private String name;
+
+        private String type;
+
+        public Success( final String id, final String contentName, final String type )
         {
             this.id = id;
             this.name = contentName;
+            this.type = type;
+        }
+
+        public String getId()
+        {
+            return id;
         }
 
         public String getName()
@@ -60,9 +68,9 @@ public class DeleteContentResultJson
             return name;
         }
 
-        public String getId()
+        public String getType()
         {
-            return id;
+            return type;
         }
     }
 
@@ -88,9 +96,9 @@ public class DeleteContentResultJson
 
         private String reason;
 
-        public Failure( final String id, final String contentName, final String reason )
+        public Failure( final String id, final String contentName, final String type, final String reason )
         {
-            super( id, contentName );
+            super( id, contentName, type );
             this.reason = reason;
         }
 

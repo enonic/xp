@@ -537,6 +537,7 @@ public class ContentResourceTest
             parentPath( ContentPath.ROOT ).
             name( "one" ).
             displayName( "one" ).
+            type( ContentTypeName.folder() ).
             build();
         Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn( Contents.from( content ) );
 
