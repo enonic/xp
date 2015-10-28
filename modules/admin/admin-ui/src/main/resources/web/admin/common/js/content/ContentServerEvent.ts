@@ -17,10 +17,6 @@ module api.content {
         p: string[];
     }
 
-    export interface ContentServerEventJson {
-        changes: ContentServerEventItemJson[];
-    }
-
     export class ContentServerChange {
 
         private contentPaths: api.content.ContentPath[];
@@ -46,43 +42,7 @@ module api.content {
                    ">";
         }
 
-        static fromJson(json: ContentServerEventItemJson): ContentServerChange {
-            var contentEventType;
-
-            switch (json.t) {
-            case 'P':
-                contentEventType = ContentServerChangeType.PUBLISH;
-                break;
-            case 'C':
-                contentEventType = ContentServerChangeType.CREATE;
-                break;
-            case 'U':
-                contentEventType = ContentServerChangeType.UPDATE;
-                break;
-            case 'X':
-                contentEventType = ContentServerChangeType.DELETE;
-                break;
-            case 'D':
-                contentEventType = ContentServerChangeType.DUPLICATE;
-                break;
-            case 'A':
-                contentEventType = ContentServerChangeType.PENDING;
-                break;
-            case 'R':
-                contentEventType = ContentServerChangeType.RENAME;
-                break;
-            case 'S':
-                contentEventType = ContentServerChangeType.SORT;
-                break;
-            default:
-                contentEventType = ContentServerChangeType.UNKNOWN;
-            }
-            var contentPaths = json.p.map((contentPath) => api.content.ContentPath.fromString(contentPath));
-            return new ContentServerChange(contentPaths, contentEventType);
-        }
-
-
-        static fromEvent2Json(event2Json: api.app.Event2Json): ContentServerChange[] {
+        static fromJson(event2Json: api.app.Event2Json): ContentServerChange[] {
             var contentEventType;
 
             var contentPaths = event2Json.data.nodes.map((node) => api.content.ContentPath.fromString(node.path.substr("/content".length)));
@@ -155,13 +115,8 @@ module api.content {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
 
-        static fromJson(json: ContentServerEventJson): ContentServerEvent {
-            var changes = json.changes.map((changeJson) => ContentServerChange.fromJson(changeJson));
-            return new ContentServerEvent(changes);
-        }
-
-        static fromEvent2Json(json: api.app.Event2Json): ContentServerEvent {
-            var changes = ContentServerChange.fromEvent2Json(json);
+        static fromJson(json: api.app.Event2Json): ContentServerEvent {
+            var changes = ContentServerChange.fromJson(json);
             return new ContentServerEvent(changes);
         }
     }
