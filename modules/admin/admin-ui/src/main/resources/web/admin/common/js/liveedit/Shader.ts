@@ -6,7 +6,7 @@ module api.liveedit {
 
     export class Shader {
 
-        private static CLS_NAME: string = 'shader';
+        private static CLS_NAME: string = "shader";
 
         private target: Element;
         private scrollEnabled: boolean = true;
@@ -29,11 +29,11 @@ module api.liveedit {
         private static debug: boolean = false;
 
         constructor() {
-            this.pageShader = new DivEl(Shader.CLS_NAME + " page");
-            this.northShader = new DivEl(Shader.CLS_NAME + " north");
-            this.eastShader = new DivEl(Shader.CLS_NAME + " east");
-            this.southShader = new DivEl(Shader.CLS_NAME + " south");
-            this.westShader = new DivEl(Shader.CLS_NAME + " west");
+            this.pageShader = this.createShaderDiv("page");
+            this.northShader = this.createShaderDiv("north");
+            this.eastShader = this.createShaderDiv("east");
+            this.southShader = this.createShaderDiv("south");
+            this.westShader = this.createShaderDiv("west");
 
             this.shaders = [this.pageShader, this.northShader, this.eastShader, this.southShader, this.westShader];
 
@@ -61,6 +61,10 @@ module api.liveedit {
                 shader.onMouseEnter((event: MouseEvent) => this.notifyMouseEntered(event));
                 shader.onMouseLeave((event: MouseEvent) => this.notifyMouseLeft(event));
             });
+        }
+
+        private createShaderDiv(cls: string): DivEl {
+            return new DivEl(Shader.CLS_NAME + " " + cls, true)
         }
 
         public static get(): Shader {

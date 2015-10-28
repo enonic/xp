@@ -1,4 +1,4 @@
-.item-view-context-menu {
+.@{_CLS_PREFIX}item-view-context-menu {
   .reset(); // both context menu and names and icon view have their own resets
   .material-layer-shadow();
 
@@ -9,18 +9,18 @@
   width: 160px;
   padding: 4px;
 
-  .item-view-context-menu-arrow {
+  .@{_CLS_PREFIX}item-view-context-menu-arrow {
     .arrow(#fff, 7px);
 
     position: absolute;
 
     left: 50%;
 
-    &.bottom {
+    &.@{_CLS_PREFIX}bottom {
       top: -7px;
     }
 
-    &.top {
+    &.@{_CLS_PREFIX}top {
       bottom: -7px;
     }
   }
