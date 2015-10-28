@@ -201,7 +201,7 @@ module app.browse {
             }
         }
 
-        treeNodesToBrowseItems(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummary>[] {
+        treeNodesToBrowseItems(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummaryAndCompareStatus>[] {
             var browseItems: BrowseItem<ContentSummaryAndCompareStatus>[] = [];
 
             // do not proceed duplicated content. still, it can be selected
@@ -571,14 +571,15 @@ module app.browse {
             }
         }
 
-        private updateDetailsPanels(contentId: ContentId, status: CompareStatus, viewItem?: api.app.view.ViewItem<ContentSummary>) {
+        private updateDetailsPanels(contentId: ContentId, status: CompareStatus,
+                                    viewItem?: api.app.view.ViewItem<ContentSummaryAndCompareStatus>) {
             if (viewItem !== undefined) {
                 this.updateDetailsPanelsViewItem(viewItem);
             }
             this.updateDetailsPanelContentStatus(ActiveDetailsPanelsManager.getActiveDetailsPanel(), contentId, status);
         }
 
-        private updateDetailsPanelsViewItem(viewItem: api.app.view.ViewItem<ContentSummary>) {
+        private updateDetailsPanelsViewItem(viewItem: api.app.view.ViewItem<ContentSummaryAndCompareStatus>) {
             var activeDetailsPanel = ActiveDetailsPanelsManager.getActiveDetailsPanel();
             if (activeDetailsPanel) {
                 activeDetailsPanel.setItem(viewItem);

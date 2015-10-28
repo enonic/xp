@@ -85,7 +85,7 @@ module app.view.detail {
             api.content.ContentsPublishedEvent.on((event: api.content.ContentsPublishedEvent) => {
                 if (this.getItem()) {
                     // check for item because it can be null after publishing pending for delete item
-                    var itemId = (<ContentSummary>this.getItem().getModel()).getId();
+                    var itemId = (<ContentSummaryAndCompareStatus>this.getItem().getModel()).getId();
                     var idPublished = event.getContentIds().some((id, index, array) => {
                         return itemId === id.toString();
                     });
@@ -280,37 +280,37 @@ module app.view.detail {
 
                 this.contentStatus = this.item.getModel().getCompareStatus();
 
-                    if (this.defaultWidgetView && this.detailsContainer.hasChild(this.defaultWidgetView)) {
-                        this.detailsContainer.removeChild(this.defaultWidgetView);
-                    }
+                if (this.defaultWidgetView && this.detailsContainer.hasChild(this.defaultWidgetView)) {
+                    this.detailsContainer.removeChild(this.defaultWidgetView);
+                }
 
+                this.setStatus(statusWidgetItemView);
+
+                this.onContentStatusChanged(() => {
                     this.setStatus(statusWidgetItemView);
+                    statusWidgetItemView.layout();
+                });
 
-                    this.onContentStatusChanged(() => {
-                        this.setStatus(statusWidgetItemView);
-                        statusWidgetItemView.layout();
-                    });
+                propWidgetItemView.setContent(this.item.getModel().getContentSummary());
+                userAccessWidgetItemView.setContentId(this.item.getModel().getContentId());
+                attachmentsWidgetItemView.setContent(this.item.getModel().getContentSummary());
 
-                    propWidgetItemView.setContent(this.item.getModel().getContentSummary());
-                    userAccessWidgetItemView.setContentId(this.item.getModel().getContentId());
-                    attachmentsWidgetItemView.setContent(this.item.getModel().getContentSummary());
-
-                    this.defaultWidgetView = WidgetView.create().
-                        setName(DetailsPanel.DEFAULT_WIDGET_NAME).
-                        setDetailsPanel(this).
-                        setUseToggleButton(false).
-                        addWidgetItemView(statusWidgetItemView).
-                        addWidgetItemView(propWidgetItemView).
-                        addWidgetItemView(attachmentsWidgetItemView).
-                        addWidgetItemView(userAccessWidgetItemView).
-                        build();
+                this.defaultWidgetView = WidgetView.create().
+                    setName(DetailsPanel.DEFAULT_WIDGET_NAME).
+                    setDetailsPanel(this).
+                    setUseToggleButton(false).
+                    addWidgetItemView(statusWidgetItemView).
+                    addWidgetItemView(propWidgetItemView).
+                    addWidgetItemView(attachmentsWidgetItemView).
+                    addWidgetItemView(userAccessWidgetItemView).
+                    build();
 
                 this.detailsContainer.appendChild(this.defaultWidgetView);
 
-                    if (DetailsPanel.DEFAULT_WIDGET_NAME == this.activeWidget.getWidgetName()) {
-                        this.setActiveWidget(this.defaultWidgetView);
-                    }
-                    this.updateWidgetsHeights();
+                if (DetailsPanel.DEFAULT_WIDGET_NAME == this.activeWidget.getWidgetName()) {
+                    this.setActiveWidget(this.defaultWidgetView);
+                }
+                this.updateWidgetsHeights();
 
             }
         }

@@ -274,7 +274,7 @@ module app {
         private handleSort(event: app.browse.SortContentEvent) {
 
             var contents: ContentSummaryAndCompareStatus[] = event.getModels();
-            new app.browse.OpenSortDialogEvent(contents[0].getContentSummary()).fire();
+            new app.browse.OpenSortDialogEvent(contents[0]).fire();
         }
 
         private handleMove(event: app.browse.MoveContentEvent) {
