@@ -1185,7 +1185,7 @@ module app.wizard {
         }
 
         private isContentRenderable(): boolean {
-            return this.liveEditModel && this.liveEditModel.getPageModel() && this.liveEditModel.getPageModel().hasController();
+            return this.liveEditModel && this.liveEditModel.isPageRenderable();
         }
 
         private updatePreviewActionVisibility() {
