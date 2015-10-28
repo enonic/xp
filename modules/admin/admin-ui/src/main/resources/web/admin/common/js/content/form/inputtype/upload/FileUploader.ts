@@ -6,6 +6,7 @@ module api.content.form.inputtype.upload {
     import ValueTypes = api.data.ValueTypes;
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
+    import PluploadFile = api.ui.uploader.PluploadFile;
 
     export interface FileUploaderConfigAllowType {
         name: string;
@@ -36,10 +37,12 @@ module api.content.form.inputtype.upload {
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
 
+            var fileName = this.getFileNameFromProperty(property);
+
             if (this.propertyAlreadyHasAttachment(property)) {
-                this.uploader = this.createUploader(this.getAllowTypeFromFileName(this.getFileNameFromProperty(property)));
+                this.uploader = this.createUploader(fileName, this.getAllowTypeFromFileName(fileName));
             } else {
-                this.uploader = this.createUploader();
+                this.uploader = this.createUploader(fileName);
             }
 
             this.uploaderWrapper = this.createUploaderWrapper(property);
@@ -174,11 +177,19 @@ module api.content.form.inputtype.upload {
             return wrapper;
         }
 
-        private createUploader(predefinedAllowTypes?: FileUploaderConfigAllowType[]): api.content.MediaUploader {
+        private createUploader(attachmentFileName: string,
+                               predefinedAllowTypes?: FileUploaderConfigAllowType[]): api.content.MediaUploader {
             var allowTypesConfig: FileUploaderConfigAllowType[] = predefinedAllowTypes || (<any>(this.config.inputConfig)).allowTypes || [];
             var allowTypes = allowTypesConfig.map((allowType: FileUploaderConfigAllowType) => {
                 return {title: allowType.name, extensions: allowType.extensions};
             });
+
+            var beforeUploadCallback = (files: PluploadFile[]) => {
+                if (attachmentFileName && files && files.length == 1) {
+                    files[0].name = attachmentFileName;
+                }
+            };
+
             return new api.content.MediaUploader({
                 params: {
                     content: this.getContext().contentId.toString()
@@ -191,7 +202,8 @@ module api.content.form.inputtype.upload {
                 maximumOccurrences: 1,
                 allowMultiSelection: false,
                 hideDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
-                deferred: true
+                deferred: true,
+                beforeUploadCallback: beforeUploadCallback
             });
         }
 
