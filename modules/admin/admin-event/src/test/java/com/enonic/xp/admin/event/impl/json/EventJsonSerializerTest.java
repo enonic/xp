@@ -20,12 +20,6 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.app.ApplicationEvent;
-import com.enonic.xp.content.ContentChangeEvent;
-import com.enonic.xp.content.ContentCreatedEvent;
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentPaths;
-import com.enonic.xp.content.ContentPublishedEvent;
-import com.enonic.xp.content.ContentUpdatedEvent;
 import com.enonic.xp.event.Event2;
 
 import static org.junit.Assert.*;
@@ -60,51 +54,6 @@ public class EventJsonSerializerTest
 
         assertNotNull( json );
         assertJson( "applicationEvent.json", json );
-    }
-
-    @Test
-    public void contentUpdatedEvent()
-        throws Exception
-    {
-        final ContentUpdatedEvent event = new ContentUpdatedEvent( ContentId.from( "myid" ) );
-        final ObjectNode json = this.serializer.toJson( event );
-
-        assertNotNull( json );
-        assertJson( "contentUpdatedEvent.json", json );
-    }
-
-    @Test
-    public void contentPublishedEvent()
-        throws Exception
-    {
-        final ContentPublishedEvent event = new ContentPublishedEvent( ContentId.from( "myid" ) );
-        final ObjectNode json = this.serializer.toJson( event );
-
-        assertNotNull( json );
-        assertJson( "contentPublishedEvent.json", json );
-    }
-
-    @Test
-    public void contentCreatedEvent()
-        throws Exception
-    {
-        final ContentCreatedEvent event = new ContentCreatedEvent( ContentId.from( "myid" ) );
-        final ObjectNode json = this.serializer.toJson( event );
-
-        assertNotNull( json );
-        assertJson( "contentCreatedEvent.json", json );
-    }
-
-    @Test
-    public void contentChangeEvent()
-        throws Exception
-    {
-        final ContentChangeEvent event =
-            ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.PUBLISH, ContentPaths.from( "my/path" ) );
-        final ObjectNode json = this.serializer.toJson( event );
-
-        assertNotNull( json );
-        assertJson( "contentChangeEvent.json", json );
     }
 
     @Test
