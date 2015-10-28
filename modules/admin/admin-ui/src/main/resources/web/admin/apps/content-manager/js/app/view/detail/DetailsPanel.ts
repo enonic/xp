@@ -4,6 +4,7 @@ module app.view.detail {
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import CompareStatus = api.content.CompareStatus;
     import Widget = api.content.Widget;
     import WidgetsSelectionRow = app.view.detail.WidgetsSelectionRow;
@@ -28,7 +29,7 @@ module app.view.detail {
         private contentStatusChangedListeners: {() : void}[] = [];
 
         private versionsPanel: ContentItemVersionsPanel;
-        private item: ViewItem<ContentSummary>;
+        private item: ViewItem<ContentSummaryAndCompareStatus>;
         private contentStatus: CompareStatus;
 
         private useNameAndIconView: boolean;
@@ -84,7 +85,7 @@ module app.view.detail {
             api.content.ContentsPublishedEvent.on((event: api.content.ContentsPublishedEvent) => {
                 if (this.getItem()) {
                     // check for item because it can be null after publishing pending for delete item
-                    var itemId = (<ContentSummary>this.getItem().getModel()).getId();
+                    var itemId = (<ContentSummaryAndCompareStatus>this.getItem().getModel()).getId();
                     var idPublished = event.getContentIds().some((id, index, array) => {
                         return itemId === id.toString();
                     });
@@ -200,7 +201,7 @@ module app.view.detail {
             }
         }
 
-        public setItem(item: ViewItem<ContentSummary>) {
+        public setItem(item: ViewItem<ContentSummaryAndCompareStatus>) {
 
             if (!this.item || !this.item.equals(item)) {
                 this.item = item;
@@ -276,43 +277,41 @@ module app.view.detail {
             var attachmentsWidgetItemView = new AttachmentsWidgetItemView();
 
             if (this.item) {
-                api.content.ContentSummaryAndCompareStatusFetcher.fetch(this.item.getModel().getContentId()).then((contentSummaryAndCompareStatus) => {
 
-                    this.contentStatus = contentSummaryAndCompareStatus.getCompareStatus();
+                this.contentStatus = this.item.getModel().getCompareStatus();
 
-                    if (this.defaultWidgetView && this.detailsContainer.hasChild(this.defaultWidgetView)) {
-                        this.detailsContainer.removeChild(this.defaultWidgetView);
-                    }
+                if (this.defaultWidgetView && this.detailsContainer.hasChild(this.defaultWidgetView)) {
+                    this.detailsContainer.removeChild(this.defaultWidgetView);
+                }
 
+                this.setStatus(statusWidgetItemView);
+
+                this.onContentStatusChanged(() => {
                     this.setStatus(statusWidgetItemView);
+                    statusWidgetItemView.layout();
+                });
 
-                    this.onContentStatusChanged(() => {
-                        this.setStatus(statusWidgetItemView);
-                        statusWidgetItemView.layout();
-                    });
+                propWidgetItemView.setContent(this.item.getModel().getContentSummary());
+                userAccessWidgetItemView.setContentId(this.item.getModel().getContentId());
+                attachmentsWidgetItemView.setContent(this.item.getModel().getContentSummary());
 
-                    propWidgetItemView.setContent(this.item.getModel());
-                    userAccessWidgetItemView.setContentId(this.item.getModel().getContentId());
-                    attachmentsWidgetItemView.setContent(this.item.getModel());
+                this.defaultWidgetView = WidgetView.create().
+                    setName(DetailsPanel.DEFAULT_WIDGET_NAME).
+                    setDetailsPanel(this).
+                    setUseToggleButton(false).
+                    addWidgetItemView(statusWidgetItemView).
+                    addWidgetItemView(propWidgetItemView).
+                    addWidgetItemView(attachmentsWidgetItemView).
+                    addWidgetItemView(userAccessWidgetItemView).
+                    build();
 
-                    this.defaultWidgetView = WidgetView.create().
-                        setName(DetailsPanel.DEFAULT_WIDGET_NAME).
-                        setDetailsPanel(this).
-                        setUseToggleButton(false).
-                        addWidgetItemView(statusWidgetItemView).
-                        addWidgetItemView(propWidgetItemView).
-                        addWidgetItemView(attachmentsWidgetItemView).
-                        addWidgetItemView(userAccessWidgetItemView).
-                        build();
+                this.detailsContainer.appendChild(this.defaultWidgetView);
 
-                    this.detailsContainer.appendChild(this.defaultWidgetView);
+                if (DetailsPanel.DEFAULT_WIDGET_NAME == this.activeWidget.getWidgetName()) {
+                    this.setActiveWidget(this.defaultWidgetView);
+                }
+                this.updateWidgetsHeights();
 
-                    if (DetailsPanel.DEFAULT_WIDGET_NAME == this.activeWidget.getWidgetName()) {
-                        this.setActiveWidget(this.defaultWidgetView);
-                    }
-                    this.updateWidgetsHeights();
-
-                }).done();
             }
         }
 
@@ -437,7 +436,7 @@ module app.view.detail {
             return this.actualWidth;
         }
 
-        getItem(): ViewItem<ContentSummary> {
+        getItem(): ViewItem<ContentSummaryAndCompareStatus> {
             return this.item;
         }
 

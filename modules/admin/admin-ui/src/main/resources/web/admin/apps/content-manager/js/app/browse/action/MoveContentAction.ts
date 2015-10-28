@@ -8,11 +8,9 @@ module app.browse.action {
             super("Move");
             this.setEnabled(false);
             this.onExecuted(() => {
-                var contentSummaries: api.content.ContentSummary[]
-                    = grid.getSelectedDataList().map((elem) => {
-                    return elem.getContentSummary();
-                });
-                new MoveContentEvent(contentSummaries).fire();
+                var contents: api.content.ContentSummaryAndCompareStatus[]
+                    = grid.getSelectedDataList();
+                new MoveContentEvent(contents).fire();
             });
         }
     }

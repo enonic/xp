@@ -193,18 +193,6 @@ module api.form {
             return focusGiven;
         }
 
-        onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
-            this.formItemViews.forEach((formItemView: FormItemView) => {
-                formItemView.onEditContentRequest(listener);
-            });
-        }
-
-        unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
-            this.formItemViews.forEach((formItemView: FormItemView) => {
-                formItemView.unEditContentRequest(listener);
-            });
-        }
-
         onValidityChanged(listener: (event: FormValidityChangedEvent)=>void) {
             this.formValidityChangedListeners.push(listener);
         }
@@ -229,12 +217,6 @@ module api.form {
             this.formValidityChangedListeners.forEach((listener: (event: FormValidityChangedEvent)=>void)=> {
                 listener.call(this, event);
             });
-        }
-
-        private notifyEditContentRequested(content: api.content.ContentSummary) {
-            this.formItemViews.forEach((formItemView: FormItemView) => {
-                formItemView.notifyEditContentRequested(content);
-            })
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

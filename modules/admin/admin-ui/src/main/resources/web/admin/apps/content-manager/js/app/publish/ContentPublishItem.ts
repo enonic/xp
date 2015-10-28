@@ -4,6 +4,7 @@ module app.publish {
     import BrowseItem = api.app.browse.BrowseItem;
     import ContentPath = api.content.ContentPath;
     import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import DialogButton = api.ui.dialog.DialogButton;
     import CompareStatus = api.content.CompareStatus;
     import ContentPublishItemJson = api.content.json.ContentPublishItemJson;
@@ -129,10 +130,10 @@ module app.publish {
         /**
          * Builds array of ContentPublishItem[] from content summaries.
          */
-        static buildPublishItemsFromContentSummaries(items: ContentSummary[]): ContentPublishItem[] {
+        static buildPublishItemsFromContentSummaryAndCompareStatuses(items: ContentSummaryAndCompareStatus[]): ContentPublishItem[] {
             var array: ContentPublishItem[] = [];
-            items.forEach((obj: ContentSummary) => {
-                array.push(new ContentPublishItemBuilder().fromContentSummary(obj).build());
+            items.forEach((obj: ContentSummaryAndCompareStatus) => {
+                array.push(new ContentPublishItemBuilder().fromContentSummary(obj.getContentSummary()).build());
             });
             return array;
         }

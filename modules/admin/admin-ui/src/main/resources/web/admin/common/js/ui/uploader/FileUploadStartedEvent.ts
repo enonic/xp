@@ -1,6 +1,6 @@
 module api.ui.uploader {
 
-    export class FileUploadStartedEvent<ITEM> {
+    export class FileUploadStartedEvent<ITEM extends api.Equitable> {
 
         private uploadItems: UploadItem<ITEM>[];
 

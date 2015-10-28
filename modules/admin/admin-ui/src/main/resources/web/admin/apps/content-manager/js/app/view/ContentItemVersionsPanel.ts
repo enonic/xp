@@ -2,10 +2,11 @@ module app.view {
 
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
     export class ContentItemVersionsPanel extends api.ui.panel.Panel {
 
-        private item: ViewItem<ContentSummary>;
+        private item: ViewItem<ContentSummaryAndCompareStatus>;
         private allGrid: ContentVersionsTreeGrid;
 
         constructor() {
@@ -15,7 +16,7 @@ module app.view {
             this.appendChild(this.allGrid);
         }
 
-        public setItem(item: ViewItem<ContentSummary>) {
+        public setItem(item: ViewItem<ContentSummaryAndCompareStatus>) {
             this.item = item;
             if (this.item) {
                 if (this.allGrid.getContentId() != this.item.getModel().getContentId()) {
@@ -39,7 +40,7 @@ module app.view {
             this.allGrid.reload();
         }
 
-        public getItem(): ViewItem<ContentSummary> {
+        public getItem(): ViewItem<ContentSummaryAndCompareStatus> {
             return this.item;
         }
     }
