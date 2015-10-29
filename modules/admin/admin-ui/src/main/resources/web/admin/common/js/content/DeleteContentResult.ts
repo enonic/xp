@@ -4,10 +4,10 @@ module api.content {
     export class DeleteContentResult {
 
         private deleteSuccess: DeleteContentResultSuccess[];
-        private deletePending: string[];
+        private deletePending: DeleteContentResultPending[];
         private deleteFailures: DeleteContentResultFailure[];
 
-        constructor(success: DeleteContentResultSuccess[], pending: string[], failures: DeleteContentResultFailure[]) {
+        constructor(success: DeleteContentResultSuccess[], pending: DeleteContentResultPending[], failures: DeleteContentResultFailure[]) {
             this.deleteSuccess = !!success ? success : [];
             this.deleteFailures = !!failures ? failures : [];
             this.deletePending = !!pending ? pending : [];
@@ -17,7 +17,7 @@ module api.content {
             return this.deleteSuccess;
         }
 
-        getPendings(): string[] {
+        getPendings(): DeleteContentResultPending[] {
             return this.deletePending;
         }
 
@@ -31,7 +31,8 @@ module api.content {
                     map((success) => new DeleteContentResultSuccess(success.id, success.name, success.type));
             }
             if (json.pendings) {
-                var pending: string[] = json.pendings.map((pending) => pending.name);
+                var pending: DeleteContentResultPending[] = json.pendings.
+                    map((pending) => new DeleteContentResultPending(pending.id, pending.name));
             }
             if (json.failures) {
                 var failure: DeleteContentResultFailure[] = json.failures.
@@ -64,6 +65,25 @@ module api.content {
 
         getType(): string {
             return this.type;
+        }
+    }
+
+    export class DeleteContentResultPending {
+
+        private id: string;
+        private name: string;
+
+        constructor(id: string, name: string) {
+            this.id = id;
+            this.name = name;
+        }
+
+        getId(): string {
+            return this.id;
+        }
+
+        getName(): string {
+            return this.name;
         }
     }
 

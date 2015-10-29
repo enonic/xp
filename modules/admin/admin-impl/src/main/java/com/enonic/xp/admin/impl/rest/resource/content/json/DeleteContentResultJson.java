@@ -32,9 +32,9 @@ public class DeleteContentResultJson
         successes.add( new Success( id, contentName, type ) );
     }
 
-    public void addPending( final String contentName )
+    public void addPending( final String id, final String contentName )
     {
-        pendings.add( new Pending( contentName ) );
+        pendings.add( new Pending( id, contentName ) );
     }
 
     public void addFailure( final String id, final String contentName, final String type, final String reason )
@@ -76,12 +76,19 @@ public class DeleteContentResultJson
 
     public class Pending
     {
+        private String id;
 
         private String name;
 
-        public Pending( final String contentName )
+        public Pending( final String id, final String contentName )
         {
+            this.id = id;
             this.name = contentName;
+        }
+
+        public String getId()
+        {
+            return id;
         }
 
         public String getName()

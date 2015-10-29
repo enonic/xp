@@ -360,7 +360,7 @@ public final class ContentResource
                 contents.forEach( ( content ) -> {
                     if ( ContentState.PENDING_DELETE.equals( content.getContentState() ) )
                     {
-                        jsonResult.addPending( content.getDisplayName() );
+                        jsonResult.addPending( content.getId().toString(), content.getDisplayName() );
                     }
                     else
                     {

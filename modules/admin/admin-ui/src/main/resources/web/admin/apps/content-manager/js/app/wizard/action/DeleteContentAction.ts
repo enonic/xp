@@ -11,7 +11,6 @@ module app.wizard.action {
                     .setQuestion("Are you sure you want to delete this content?")
                     .setNoCallback(null)
                     .setYesCallback(() => {
-                        wizardPanel.close();
                         new api.content.DeleteContentRequest()
                             .addContentPath(wizardPanel.getPersistedItem().getPath())
                             .sendAndParse()
@@ -19,6 +18,9 @@ module app.wizard.action {
                                 app.view.DeleteAction.showDeleteResult(result);
                                 result.getDeleted().forEach((deleted) => {
                                     new api.content.ContentDeletedEvent(new ContentId(deleted.getId())).fire();
+                                });
+                                result.getPendings().forEach((pending) => {
+                                    new api.content.ContentDeletedEvent(new ContentId(pending.getId()), true).fire();
                                 });
                             }).catch((reason: any) => {
                                 if (reason && reason.message) {

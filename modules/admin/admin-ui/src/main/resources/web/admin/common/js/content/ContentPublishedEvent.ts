@@ -1,20 +1,23 @@
 module api.content {
 
-    export interface ContentPublishedEventJson {
-        contentId: string;
-    }
-
     export class ContentPublishedEvent extends api.event.Event {
 
         private contentId: api.content.ContentId;
 
-        constructor(contentId: api.content.ContentId) {
+        private compareStatus: api.content.CompareStatus;
+
+        constructor(contentId: api.content.ContentId, compareStatus: api.content.CompareStatus) {
             super();
             this.contentId = contentId;
+            this.compareStatus = compareStatus;
         }
 
         public getContentId(): api.content.ContentId {
             return this.contentId;
+        }
+
+        public getCompareStatus(): api.content.CompareStatus {
+            return this.compareStatus;
         }
 
         static on(handler: (event: ContentPublishedEvent) => void) {
@@ -25,8 +28,5 @@ module api.content {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
 
-        static fromJson(json: ContentPublishedEventJson): ContentPublishedEvent {
-            return new ContentPublishedEvent(new ContentId(json.contentId));
-        }
     }
 }
