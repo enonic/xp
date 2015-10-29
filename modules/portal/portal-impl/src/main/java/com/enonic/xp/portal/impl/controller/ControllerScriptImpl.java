@@ -8,6 +8,7 @@ import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
 
 final class ControllerScriptImpl
     implements ControllerScript
@@ -43,7 +44,7 @@ final class ControllerScriptImpl
         boolean exists = this.scriptExports.hasMethod( runMethod );
         if ( !exists )
         {
-            return new PortalResponseSerializer( null ).serialize();
+            return new PortalResponseSerializer( null, HttpStatus.METHOD_NOT_ALLOWED ).serialize();
         }
 
         final PortalRequestMapper requestMapper = new PortalRequestMapper( portalRequest );
@@ -51,5 +52,4 @@ final class ControllerScriptImpl
 
         return new PortalResponseSerializer( result ).serialize();
     }
-
 }

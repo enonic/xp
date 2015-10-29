@@ -14,6 +14,8 @@ public final class PortalResponseSerializer
 {
     private final ScriptValue value;
 
+    private final HttpStatus defaultStatus;
+
     private HttpStatus forceStatus;
 
     private Boolean forcePostProcess;
@@ -22,7 +24,13 @@ public final class PortalResponseSerializer
 
     public PortalResponseSerializer( final ScriptValue value )
     {
+        this( value, HttpStatus.OK );
+    }
+
+    public PortalResponseSerializer( final ScriptValue value, final HttpStatus defaultStatus )
+    {
         this.value = value;
+        this.defaultStatus = defaultStatus;
     }
 
     public PortalResponseSerializer postProcess( final boolean value )
@@ -46,7 +54,7 @@ public final class PortalResponseSerializer
     public PortalResponse serialize()
     {
         PortalResponse.Builder builder = PortalResponse.create();
-        builder.status( HttpStatus.METHOD_NOT_ALLOWED );
+        builder.status( this.defaultStatus );
 
         if ( ( value == null ) || !value.isObject() )
         {
