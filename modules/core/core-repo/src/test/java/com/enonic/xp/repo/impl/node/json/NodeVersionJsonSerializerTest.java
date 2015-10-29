@@ -94,8 +94,8 @@ public class NodeVersionJsonSerializerTest
         NodeVersionId nodeVersionId = NodeVersionId.from( "versionId" );
 
         NodeVersion nodeVersion = NodeVersion.create().
-            id( nodeVersionId ).
-            nodeId( NodeId.from( "nodeId" ) ).
+            id( NodeId.from( "nodeId" ) ).
+            versionId( nodeVersionId ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( "myAnalyzer" ).
                 defaultConfig( IndexConfig.MINIMAL ).

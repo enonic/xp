@@ -23,11 +23,11 @@ import com.enonic.xp.security.acl.AccessControlList;
 
 final class NodeVersionJson
 {
-    @JsonIgnore
+    @JsonProperty("id")
     private String id;
 
-    @JsonProperty("nodeId")
-    private String nodeId;
+    @JsonIgnore
+    private String versionId;
 
     @JsonProperty("timestamp")
     private Instant timestamp;
@@ -59,8 +59,8 @@ final class NodeVersionJson
     public NodeVersion fromJson( NodeVersionId nodeVersionId )
     {
         return NodeVersion.create().
-            id( nodeVersionId ).
-            nodeId( NodeId.from( this.nodeId ) ).
+            id( NodeId.from( this.id ) ).
+            versionId( nodeVersionId ).
             data( PropertyTreeJson.fromJson( this.data ) ).
             indexConfigDocument( this.indexConfigDocument.fromJson() ).
             childOrder( ChildOrder.from( this.childOrder ) ).
@@ -98,8 +98,8 @@ final class NodeVersionJson
     public static NodeVersionJson toJson( final NodeVersion nodeVersion )
     {
         final NodeVersionJson json = new NodeVersionJson();
-        json.id = nodeVersion.getId() != null ? nodeVersion.getId().toString() : null;
-        json.nodeId = nodeVersion.getNodeId().toString();
+        json.id = nodeVersion.getId().toString();
+        json.versionId = nodeVersion.getVersionId() != null ? nodeVersion.getVersionId().toString() : null;
         json.data = PropertyTreeJson.toJson( nodeVersion.getData() );
         json.indexConfigDocument = createEntityIndexConfig( nodeVersion.getIndexConfigDocument() );
         json.childOrder = nodeVersion.getChildOrder().toString();
