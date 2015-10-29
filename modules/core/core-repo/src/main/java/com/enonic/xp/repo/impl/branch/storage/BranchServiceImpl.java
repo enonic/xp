@@ -5,6 +5,8 @@ import java.util.Set;
 import org.elasticsearch.common.Strings;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -43,6 +45,7 @@ public class BranchServiceImpl
 
     private final PathCache pathCache = new PathCacheImpl();
 
+    private static final Logger LOG = LoggerFactory.getLogger( BranchServiceImpl.class );
 
     @Override
     public String store( final NodeBranchMetadata nodeBranchMetadata, final InternalContext context )
@@ -165,6 +168,13 @@ public class BranchServiceImpl
         }
 
         return NodesBranchMetadata.from( nodeBranchMetadatas );
+    }
+
+    @Override
+    public void handleNodeCreated( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
+    {
+        LOG.info( "########### Adding to cache" );
+        pathCache.cache( new BranchPath( context.getBranch(), nodePath ), nodeId.toString() );
     }
 
     private BranchPath createPath( final NodePath nodePath, final InternalContext context )
