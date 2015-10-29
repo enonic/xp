@@ -1,6 +1,5 @@
 package com.enonic.xp.script.runtime;
 
-import java.util.Map;
 import java.util.function.Supplier;
 
 import com.google.common.collect.ImmutableMap;
@@ -9,15 +8,12 @@ public final class ScriptSettings
 {
     private final String basePath;
 
-    private final ImmutableMap<String, Object> globalMap;
-
-    private final ImmutableMap<Class, Supplier> attributes;
+    private final ImmutableMap<Class, Supplier> bindings;
 
     private ScriptSettings( final Builder builder )
     {
         this.basePath = builder.basePath;
-        this.globalMap = builder.globalMap.build();
-        this.attributes = builder.attributes.build();
+        this.bindings = builder.attributes.build();
     }
 
     public String getBasePath()
@@ -25,14 +21,9 @@ public final class ScriptSettings
         return this.basePath != null ? this.basePath : "";
     }
 
-    public Map<String, Object> getGlobalVariables()
+    public <T> Supplier<T> getBinding( final Class<T> type )
     {
-        return this.globalMap;
-    }
-
-    public <T> Supplier<T> getAttribute( final Class<T> type )
-    {
-        return typecast( this.attributes.get( type ) );
+        return typecast( this.bindings.get( type ) );
     }
 
     @SuppressWarnings("unchecked")
@@ -50,13 +41,10 @@ public final class ScriptSettings
     {
         private String basePath;
 
-        private final ImmutableMap.Builder<String, Object> globalMap;
-
         private final ImmutableMap.Builder<Class, Supplier> attributes;
 
         private Builder()
         {
-            this.globalMap = ImmutableMap.builder();
             this.attributes = ImmutableMap.builder();
         }
 
@@ -66,13 +54,7 @@ public final class ScriptSettings
             return this;
         }
 
-        public Builder globalVariable( final String name, final Object value )
-        {
-            this.globalMap.put( name, value );
-            return this;
-        }
-
-        public <T> Builder attribute( final Class<T> type, final Supplier<T> supplier )
+        public <T> Builder binding( final Class<T> type, final Supplier<T> supplier )
         {
             this.attributes.put( type, supplier );
             return this;

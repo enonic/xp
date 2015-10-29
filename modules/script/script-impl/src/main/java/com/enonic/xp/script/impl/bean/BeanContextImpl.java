@@ -2,7 +2,7 @@ package com.enonic.xp.script.impl.bean;
 
 import java.util.function.Supplier;
 
-import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
@@ -15,9 +15,9 @@ public final class BeanContextImpl
     private ScriptExecutor executor;
 
     @Override
-    public Application getApplication()
+    public ApplicationKey getApplicationKey()
     {
-        return this.executor.getApplication();
+        return this.resourceKey.getApplicationKey();
     }
 
     @Override
@@ -33,9 +33,9 @@ public final class BeanContextImpl
     }
 
     @Override
-    public <T> Supplier<T> getAttribute( final Class<T> type )
+    public <T> Supplier<T> getBinding( final Class<T> type )
     {
-        final Supplier<T> supplier = this.executor.getScriptSettings().getAttribute( type );
+        final Supplier<T> supplier = this.executor.getScriptSettings().getBinding( type );
         return supplier != null ? supplier : () -> null;
     }
 
