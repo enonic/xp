@@ -301,19 +301,18 @@ module app.view.detail {
                         setName(DetailsPanel.DEFAULT_WIDGET_NAME).
                         setDetailsPanel(this).
                         setUseToggleButton(false).
+                        setLayoutCallbackFunction(() => {
+                            if (DetailsPanel.DEFAULT_WIDGET_NAME == this.activeWidget.getWidgetName()) {
+                                this.setActiveWidget(this.defaultWidgetView);
+                            }
+                            this.updateWidgetsHeights();
+                        }).
                         addWidgetItemView(widgetItemView).
                         addWidgetItemView(propWidgetItemView).
                         addWidgetItemView(attachmentsWidgetItemView).
                         build();
 
                     this.detailsContainer.appendChild(this.defaultWidgetView);
-
-                    if (DetailsPanel.DEFAULT_WIDGET_NAME == this.activeWidget.getWidgetName()) {
-                        this.setActiveWidget(this.defaultWidgetView);
-                    }
-                    setTimeout(() => {
-                        this.updateWidgetsHeights();
-                    }, 1000);
 
                 }).done();
             }

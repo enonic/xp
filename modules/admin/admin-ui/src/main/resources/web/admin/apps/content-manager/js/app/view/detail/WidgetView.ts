@@ -16,6 +16,7 @@ module app.view.detail {
 
         private normalHeightOfContent: number;
 
+        private layoutCallbackFunction: () => void;
 
         constructor(builder: WidgetViewBuilder) {
             super("widget-view");
@@ -23,23 +24,33 @@ module app.view.detail {
             this.detailsPanel = builder.detailsPanel;
             this.widgetName = builder.name;
             this.widgetItemViews = builder.widgetItemViews;
+            this.layoutCallbackFunction = builder.layoutCallbackFunction;
 
             if (builder.useToggleButton) {
                 this.initWidgetToggleButton();
             }
-            this.layout();
+
+            this.layout().done(() => {
+                if (this.layoutCallbackFunction) {
+                    this.layoutCallbackFunction();
+                }
+            });
         }
 
-        public layout() {
+        public layout(): wemQ.Promise<any> {
 
             this.slideOut();
+
+            var layoutTasks: wemQ.Promise<any>[] = [];
 
             if (this.widgetItemViews) {
                 this.widgetItemViews.forEach((itemView: WidgetItemView) => {
                     this.appendChild(itemView);
-                    itemView.layout();
+                    layoutTasks.push(itemView.layout());
                 })
             }
+
+            return wemQ.all(layoutTasks);
         }
 
         private initWidgetToggleButton() {
@@ -106,6 +117,8 @@ module app.view.detail {
 
         widgetItemViews: WidgetItemView[] = [];
 
+        layoutCallbackFunction: () => void;
+
         public setName(name: string): WidgetViewBuilder {
             this.name = name;
             return this;
@@ -128,6 +141,11 @@ module app.view.detail {
 
         public setWidgetItemViews(widgetItemViews: WidgetItemView[]): WidgetViewBuilder {
             this.widgetItemViews = widgetItemViews;
+            return this;
+        }
+
+        public setLayoutCallbackFunction(layoutCallbackFunction: () => void): WidgetViewBuilder {
+            this.layoutCallbackFunction = layoutCallbackFunction;
             return this;
         }
 
