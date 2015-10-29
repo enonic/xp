@@ -24,6 +24,7 @@ import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.ImportNodeParams;
+import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
@@ -588,9 +589,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node importNode( final ImportNodeParams params )
+    public ImportNodeResult importNode( final ImportNodeParams params )
     {
-        return ImportNodeCommand.create().
+        final ImportNodeResult importNodeResult = ImportNodeCommand.create().
             binaryAttachments( params.getBinaryAttachments() ).
             importNode( params.getNode() ).
             insertManualStrategy( params.getInsertManualStrategy() ).
@@ -602,6 +603,17 @@ public class NodeServiceImpl
             searchService( this.searchService ).
             build().
             execute();
+
+        if ( importNodeResult.isPreExisting() )
+        {
+            this.eventPublisher.publish( NodeEvents.updated( importNodeResult.getNode() ) );
+        }
+        else
+        {
+            this.eventPublisher.publish( NodeEvents.created( importNodeResult.getNode() ) );
+        }
+
+        return importNodeResult;
     }
 
     @Override
