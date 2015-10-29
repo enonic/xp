@@ -157,6 +157,10 @@ module app {
                     });
 
                     this.addWizardPanel(tabMenuItem, wizard);
+
+                    if (newContentEvent.getContentType().isSite() && this.getBrowsePanel()) {
+                        this.getBrowsePanel().getTreeGrid().reload(); // reload content grid to show that site has underlying folders
+                    }
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).finally(() => {
