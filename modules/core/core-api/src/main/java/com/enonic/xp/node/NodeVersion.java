@@ -14,6 +14,8 @@ public class NodeVersion
 {
     private final NodeId id;
 
+    private final NodeVersionId versionId;
+
     private final NodeType nodeType;
 
     private final Instant timestamp;
@@ -35,6 +37,7 @@ public class NodeVersion
     private NodeVersion( Builder builder )
     {
         id = builder.id;
+        versionId = builder.versionId;
         nodeType = builder.nodeType;
         timestamp = builder.timestamp;
         data = builder.data;
@@ -50,6 +53,7 @@ public class NodeVersion
     {
         return NodeVersion.create().
             id( node.id() ).
+            versionId( node.getNodeVersionId() ).
             nodeType( node.getNodeType() ).
             data( node.data() ).
             indexConfigDocument( node.getIndexConfigDocument() ).
@@ -65,6 +69,11 @@ public class NodeVersion
     public NodeId getId()
     {
         return id;
+    }
+
+    public NodeVersionId getVersionId()
+    {
+        return versionId;
     }
 
     public NodeType getNodeType()
@@ -117,10 +126,17 @@ public class NodeVersion
         return new Builder();
     }
 
+    public static Builder create( NodeVersion source )
+    {
+        return new Builder( source );
+    }
+
 
     public static final class Builder
     {
         private NodeId id;
+
+        private NodeVersionId versionId;
 
         private NodeType nodeType = NodeType.DEFAULT_NODE_COLLECTION;
 
@@ -144,9 +160,30 @@ public class NodeVersion
         {
         }
 
+        private Builder( NodeVersion nodeVersion )
+        {
+            this.id = nodeVersion.id;
+            this.versionId = nodeVersion.versionId;
+            this.nodeType = nodeVersion.nodeType;
+            this.timestamp = nodeVersion.timestamp;
+            this.data = nodeVersion.data;
+            this.indexConfigDocument = nodeVersion.indexConfigDocument;
+            this.childOrder = nodeVersion.childOrder;
+            this.manualOrderValue = nodeVersion.manualOrderValue;
+            this.permissions = nodeVersion.permissions;
+            this.inheritPermissions = nodeVersion.inheritPermissions;
+            this.attachedBinaries = nodeVersion.attachedBinaries;
+        }
+
         public Builder id( NodeId id )
         {
             this.id = id;
+            return this;
+        }
+
+        public Builder versionId( NodeVersionId versionId )
+        {
+            this.versionId = versionId;
             return this;
         }
 
