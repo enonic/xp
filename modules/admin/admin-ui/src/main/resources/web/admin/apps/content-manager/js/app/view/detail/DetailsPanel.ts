@@ -7,11 +7,12 @@ module app.view.detail {
     import CompareStatus = api.content.CompareStatus;
     import Widget = api.content.Widget;
     import WidgetsSelectionRow = app.view.detail.WidgetsSelectionRow;
+    import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
     export class DetailsPanel extends api.ui.panel.Panel {
 
         private widgetViews: WidgetView[] = [];
-        private nameAndIconView: api.app.NamesAndIconView;
+        private viewer: ContentSummaryViewer;
         private detailsContainer: api.dom.DivEl = new api.dom.DivEl("details-container");
         private widgetsSelectionRow: WidgetsSelectionRow;
 
@@ -31,7 +32,7 @@ module app.view.detail {
         private item: ViewItem<ContentSummary>;
         private contentStatus: CompareStatus;
 
-        private useNameAndIconView: boolean;
+        private useViewer: boolean;
         private useSplitter: boolean;
         private slideInFunction: () => void;
         private slideOutFunction: () => void;
@@ -49,7 +50,7 @@ module app.view.detail {
             super("details-panel");
             this.setDoOffset(false);
             this.initSlideFunctions(builder.getSlideFrom());
-            this.useSplitter = builder.getUseSplitter();
+            this.useSplitter = builder.isUseSplitter();
 
             this.versionsPanel = new ContentItemVersionsPanel();
             this.ghostDragger = new api.dom.DivEl("ghost-dragger");
@@ -66,7 +67,7 @@ module app.view.detail {
 
             this.managePublishEvent();
 
-            this.initNameAndIconView(builder.getUseNameAndIconView());
+            this.initViewer(builder.isUseViewer());
             this.initDefaultWidget();
             this.initCommonWidgetsViews();
             this.initDivForNoSelection();
@@ -193,17 +194,15 @@ module app.view.detail {
             }
         }
 
-        private initNameAndIconView(useNameAndIconView: boolean) {
-            this.useNameAndIconView = useNameAndIconView;
+        private initViewer(useViewer: boolean) {
+            this.useViewer = useViewer;
 
-            if (useNameAndIconView) {
+            if (useViewer) {
 
-                this.nameAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
-                    setSize(api.app.NamesAndIconViewSize.small));
+                this.viewer = new ContentSummaryViewer();
+                this.viewer.addClass("details-panel-label");
 
-                this.nameAndIconView.addClass("details-panel-label");
-
-                this.appendChild(this.nameAndIconView);
+                this.appendChild(this.viewer);
             }
         }
 
@@ -231,7 +230,7 @@ module app.view.detail {
 
         private updateWidgetsForItem() {
 
-            this.updateNameAndIconView();
+            this.updateViewer();
 
             this.updateCommonWidgets();
             this.updateCustomWidgets();
@@ -451,11 +450,10 @@ module app.view.detail {
             }
         }
 
-        updateNameAndIconView() {
-            if (this.useNameAndIconView && this.item) {
-                this.nameAndIconView.setMainName(this.item.getDisplayName());
-                this.nameAndIconView.setSubName(this.item.getPath());
-                this.nameAndIconView.setIconUrl(this.item.getIconUrl());
+        updateViewer() {
+            if (this.useViewer && this.item) {
+                //#
+                this.viewer.setObject(this.item.getModel());
             }
         }
 
@@ -471,8 +469,8 @@ module app.view.detail {
             if (this.widgetsSelectionRow) {
                 this.widgetsSelectionRow.setVisible(!empty);
             }
-            if (this.nameAndIconView) {
-                this.nameAndIconView.setVisible(!empty);
+            if (this.viewer) {
+                this.viewer.setVisible(!empty);
             }
             this.detailsContainer.setVisible(!empty);
             this.toggleClass("no-selection", empty);
@@ -518,24 +516,12 @@ module app.view.detail {
             this.sizeChangedListeners.push(listener);
         }
 
-        unPanelSizeChanged(listener: () => void) {
-            this.sizeChangedListeners.filter((currentListener: () => void) => {
-                return listener == currentListener;
-            });
-        }
-
         notifyContentStatusChanged() {
             this.contentStatusChangedListeners.forEach((listener: ()=> void) => listener());
         }
 
         onContentStatusChanged(listener: () => void) {
             this.contentStatusChangedListeners.push(listener);
-        }
-
-        unContentStatusChanged(listener: () => void) {
-            this.contentStatusChangedListeners.filter((currentListener: () => void) => {
-                return listener == currentListener;
-            });
         }
 
         static create(): Builder {
@@ -545,13 +531,13 @@ module app.view.detail {
 
     export class Builder {
 
-        private useNameAndIconView: boolean = true;
+        private useViewer: boolean = true;
         private slideFrom: SLIDE_FROM = SLIDE_FROM.RIGHT;
         private name: string;
         private useSplitter: boolean = true;
 
-        public setUseNameAndIconView(value: boolean): Builder {
-            this.useNameAndIconView = value;
+        public setUseViewer(value: boolean): Builder {
+            this.useViewer = value;
             return this;
         }
 
@@ -570,8 +556,8 @@ module app.view.detail {
             return this;
         }
 
-        public getUseNameAndIconView(): boolean {
-            return this.useNameAndIconView;
+        public isUseViewer(): boolean {
+            return this.useViewer;
         }
 
         public getSlideFrom(): app.view.detail.SLIDE_FROM {
@@ -582,7 +568,7 @@ module app.view.detail {
             return this.name;
         }
 
-        public getUseSplitter(): boolean {
+        public isUseSplitter(): boolean {
             return this.useSplitter;
         }
 
