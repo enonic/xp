@@ -60,9 +60,6 @@ module app.remove {
 
         private createSelectionItemForDelete(content: ContentSummaryAndCompareStatus): SelectionItem<ContentSummaryAndCompareStatus> {
 
-            if (!content || !content.getContentSummary()) {
-                debugger;
-            }
             var deleteItemViewer = new api.content.ContentSummaryAndCompareStatusViewer();
             deleteItemViewer.setObject(content);
 
