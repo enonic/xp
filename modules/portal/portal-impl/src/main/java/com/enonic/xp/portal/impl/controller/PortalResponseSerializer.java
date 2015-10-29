@@ -18,6 +18,8 @@ public final class PortalResponseSerializer
 
     private Boolean forcePostProcess;
 
+    private Boolean forceApplyFilters;
+
     public PortalResponseSerializer( final ScriptValue value )
     {
         this.value = value;
@@ -32,6 +34,12 @@ public final class PortalResponseSerializer
     public PortalResponseSerializer status( final HttpStatus value )
     {
         this.forceStatus = value;
+        return this;
+    }
+
+    public PortalResponseSerializer applyFilters( final boolean value )
+    {
+        this.forceApplyFilters = value;
         return this;
     }
 
@@ -62,6 +70,10 @@ public final class PortalResponseSerializer
         if ( this.forceStatus != null )
         {
             builder.status( this.forceStatus );
+        }
+        if ( this.forceApplyFilters != null )
+        {
+            builder.applyFilters( this.forceApplyFilters );
         }
 
         return builder.build();

@@ -28,11 +28,11 @@ module app.publish {
             var contentName = object.getName();
             if (relativePath) {
                 return !contentName.isUnnamed() ? object.getName().toString() :
-                       api.ui.NamesAndIconViewer.EMPTY_SUB_NAME;
+                       api.content.ContentUnnamed.prettifyUnnamed();
             } else {
                 return !contentName.isUnnamed() ? object.getPath().toString() :
                        ContentPath.fromParent(object.getPath().getParentPath(),
-                           api.ui.NamesAndIconViewer.EMPTY_SUB_NAME).toString();
+                           api.content.ContentUnnamed.prettifyUnnamed()).toString();
             }
         }
 

@@ -15,14 +15,14 @@ module app.view.detail {
             this.status = status;
         }
 
-        public layout() {
+        public layout(): wemQ.Promise<any> {
             this.removeChildren();
             if (this.status != undefined) {
                 var statusEl = new api.dom.SpanEl().setHtml(CompareStatusFormatter.formatStatus(this.status).toLocaleUpperCase());
                 statusEl.addClass(CompareStatus[this.status].toLowerCase().replace("_", "-") || "unknown");
                 this.appendChild(statusEl);
             }
-            super.layout();
+            return super.layout();
         }
     }
 }
