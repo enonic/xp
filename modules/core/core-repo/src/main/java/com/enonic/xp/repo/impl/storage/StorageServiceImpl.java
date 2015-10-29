@@ -227,7 +227,7 @@ public class StorageServiceImpl
         final Nodes.Builder filteredNodes = Nodes.create();
 
         nodeVersions.stream().filter( ( nodeVersion ) -> canRead( nodeVersion.getPermissions() ) ).forEach(
-            ( nodeVersion ) -> filteredNodes.add( NodeFactory.create( nodeVersion, nodesBranchMetadata.get( nodeVersion.getId() ) ) ) );
+            ( nodeVersion ) -> filteredNodes.add( NodeFactory.create( nodeVersion, nodesBranchMetadata.get( nodeVersion.getNodeId() ) ) ) );
 
         return filteredNodes.build();
     }
@@ -253,7 +253,7 @@ public class StorageServiceImpl
         this.branchService.move( MoveBranchParams.create().
             branchNodeVersion( NodeBranchMetadata.create().
                 nodeVersionId( nodeVersionId ).
-                nodeId( nodeVersion.getId() ).
+                nodeId( nodeVersion.getNodeId() ).
                 nodeState( node.getNodeState() ).
                 timestamp( node.getTimestamp() ).
                 nodePath( node.path() ).

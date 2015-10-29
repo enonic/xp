@@ -197,7 +197,8 @@ public final class Node
     public static Builder create( final NodeVersion nodeVersion )
     {
         return new Builder().
-            id( nodeVersion.getId() ).
+            id( nodeVersion.getNodeId() ).
+            nodeVersionId( nodeVersion.getId() ).
             nodeType( nodeVersion.getNodeType() ).
             data( nodeVersion.getData() ).
             indexConfigDocument( nodeVersion.getIndexConfigDocument() ).

@@ -12,7 +12,9 @@ import com.enonic.xp.security.acl.AccessControlList;
 @Beta
 public class NodeVersion
 {
-    private final NodeId id;
+    private final NodeVersionId id;
+
+    private final NodeId nodeId;
 
     private final NodeType nodeType;
 
@@ -35,6 +37,7 @@ public class NodeVersion
     private NodeVersion( Builder builder )
     {
         id = builder.id;
+        nodeId = builder.nodeId;
         nodeType = builder.nodeType;
         timestamp = builder.timestamp;
         data = builder.data;
@@ -49,7 +52,8 @@ public class NodeVersion
     public static NodeVersion from( final Node node )
     {
         return NodeVersion.create().
-            id( node.id() ).
+            id( node.getNodeVersionId() ).
+            nodeId( node.id() ).
             nodeType( node.getNodeType() ).
             data( node.data() ).
             indexConfigDocument( node.getIndexConfigDocument() ).
@@ -62,9 +66,14 @@ public class NodeVersion
             build();
     }
 
-    public NodeId getId()
+    public NodeVersionId getId()
     {
         return id;
+    }
+
+    public NodeId getNodeId()
+    {
+        return nodeId;
     }
 
     public NodeType getNodeType()
@@ -120,7 +129,9 @@ public class NodeVersion
 
     public static final class Builder
     {
-        private NodeId id;
+        private NodeVersionId id;
+
+        private NodeId nodeId;
 
         private NodeType nodeType = NodeType.DEFAULT_NODE_COLLECTION;
 
@@ -144,9 +155,15 @@ public class NodeVersion
         {
         }
 
-        public Builder id( NodeId id )
+        public Builder id( NodeVersionId id )
         {
             this.id = id;
+            return this;
+        }
+
+        public Builder nodeId( NodeId nodeId )
+        {
+            this.nodeId = nodeId;
             return this;
         }
 
@@ -233,6 +250,10 @@ public class NodeVersion
         {
             return false;
         }
+        if ( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null )
+        {
+            return false;
+        }
         if ( nodeType != null ? !nodeType.equals( that.nodeType ) : that.nodeType != null )
         {
             return false;
@@ -269,6 +290,7 @@ public class NodeVersion
     public int hashCode()
     {
         int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
         result = 31 * result + ( nodeType != null ? nodeType.hashCode() : 0 );
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
         result = 31 * result + ( data != null ? data.hashCode() : 0 );

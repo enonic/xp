@@ -102,7 +102,8 @@ public class NodeVersionDaoImpl
         {
             final byte[] bytes = ByteStreams.toByteArray( stream );
 
-            return this.nodeVersionJsonSerializer.toNodeVersion( new String( bytes, StandardCharsets.UTF_8 ) );
+            return this.nodeVersionJsonSerializer.toNodeVersion( new String( bytes, StandardCharsets.UTF_8 ),
+                                                                 NodeVersionId.from( blob.getKey().toString() ) );
         }
         catch ( IOException e )
         {

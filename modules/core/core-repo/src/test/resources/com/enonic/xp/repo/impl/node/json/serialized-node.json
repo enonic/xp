@@ -86,7 +86,6 @@
       ]
     }
   ],
-  "id": "myId",
   "indexConfigDocument": {
     "analyzer": "myAnalyzer",
     "defaultConfig": {
@@ -115,6 +114,7 @@
   },
   "inheritPermissions": false,
   "manualOrderValue": null,
+  "nodeId": "nodeId",
   "nodeType": "myNodeType",
   "permissions": [
     {
