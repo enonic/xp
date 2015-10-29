@@ -69,7 +69,10 @@ public class NodeVersionDaoImpl
     {
         final BlobKey blobKey = new BlobKey( nodeVersionId.toString() );
 
-        return getNodeFromBlob( nodeVersionBlobStore.getRecord( blobKey ) );
+        final NodeVersion nodeVersionFromBlob = getNodeVersionFromBlob( nodeVersionBlobStore.getRecord( blobKey ) );
+        return NodeVersion.create( nodeVersionFromBlob ).
+            versionId( nodeVersionId ).
+            build();
     }
 
     private NodeVersions doGetFromVersionIds( final NodeVersionIds nodeVersionIds )
@@ -85,13 +88,18 @@ public class NodeVersionDaoImpl
                 throw new NodeNotFoundException( "Blob for node with BlobKey " + nodeVersionId + " not found" );
             }
 
-            builder.add( getNodeFromBlob( blob ) );
+            final NodeVersion nodeVersionFromBlob = getNodeVersionFromBlob( blob );
+            final NodeVersion nodeVersion = NodeVersion.create( nodeVersionFromBlob ).
+                versionId( nodeVersionId ).
+                build();
+
+            builder.add( nodeVersion );
         }
 
         return builder.build();
     }
 
-    private NodeVersion getNodeFromBlob( final Blob blob )
+    private NodeVersion getNodeVersionFromBlob( final Blob blob )
     {
         if ( blob == null )
         {

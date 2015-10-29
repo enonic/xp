@@ -12,9 +12,9 @@ import com.enonic.xp.security.acl.AccessControlList;
 @Beta
 public class NodeVersion
 {
-    private final NodeVersionId id;
+    private final NodeId id;
 
-    private final NodeId nodeId;
+    private final NodeVersionId versionId;
 
     private final NodeType nodeType;
 
@@ -37,7 +37,7 @@ public class NodeVersion
     private NodeVersion( Builder builder )
     {
         id = builder.id;
-        nodeId = builder.nodeId;
+        versionId = builder.versionId;
         nodeType = builder.nodeType;
         timestamp = builder.timestamp;
         data = builder.data;
@@ -52,8 +52,8 @@ public class NodeVersion
     public static NodeVersion from( final Node node )
     {
         return NodeVersion.create().
-            id( node.getNodeVersionId() ).
-            nodeId( node.id() ).
+            id( node.id() ).
+            versionId( node.getNodeVersionId() ).
             nodeType( node.getNodeType() ).
             data( node.data() ).
             indexConfigDocument( node.getIndexConfigDocument() ).
@@ -66,14 +66,14 @@ public class NodeVersion
             build();
     }
 
-    public NodeVersionId getId()
+    public NodeId getId()
     {
         return id;
     }
 
-    public NodeId getNodeId()
+    public NodeVersionId getVersionId()
     {
-        return nodeId;
+        return versionId;
     }
 
     public NodeType getNodeType()
@@ -126,12 +126,17 @@ public class NodeVersion
         return new Builder();
     }
 
+    public static Builder create( NodeVersion source )
+    {
+        return new Builder( source );
+    }
+
 
     public static final class Builder
     {
-        private NodeVersionId id;
+        private NodeId id;
 
-        private NodeId nodeId;
+        private NodeVersionId versionId;
 
         private NodeType nodeType = NodeType.DEFAULT_NODE_COLLECTION;
 
@@ -155,15 +160,30 @@ public class NodeVersion
         {
         }
 
-        public Builder id( NodeVersionId id )
+        private Builder( NodeVersion nodeVersion )
+        {
+            this.id = nodeVersion.id;
+            this.versionId = nodeVersion.versionId;
+            this.nodeType = nodeVersion.nodeType;
+            this.timestamp = nodeVersion.timestamp;
+            this.data = nodeVersion.data;
+            this.indexConfigDocument = nodeVersion.indexConfigDocument;
+            this.childOrder = nodeVersion.childOrder;
+            this.manualOrderValue = nodeVersion.manualOrderValue;
+            this.permissions = nodeVersion.permissions;
+            this.inheritPermissions = nodeVersion.inheritPermissions;
+            this.attachedBinaries = nodeVersion.attachedBinaries;
+        }
+
+        public Builder id( NodeId id )
         {
             this.id = id;
             return this;
         }
 
-        public Builder nodeId( NodeId nodeId )
+        public Builder versionId( NodeVersionId versionId )
         {
-            this.nodeId = nodeId;
+            this.versionId = versionId;
             return this;
         }
 
