@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.enonic.xp.event.Event2;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.storage.NodeMovedParams;
 import com.enonic.xp.repo.impl.storage.StorageService;
 
-public class NodeCreatedHandler
+public class NodeMovedHandler
     extends AbstractNodeEventHandler
 {
 
@@ -19,9 +21,10 @@ public class NodeCreatedHandler
         for ( final Map<Object, Object> map : valueMapList )
 
         {
-            storageService.handleNodeCreated( getId( map ), getPath( map ), context );
+            final NodeMovedParams nodeMovedParams =
+                new NodeMovedParams( getPath( map ), NodePath.create( map.get( NEW_PATH ).toString() ).build(), getId( map ) );
+
+            storageService.handleNodeMoved( nodeMovedParams, context );
         }
     }
-
-
 }

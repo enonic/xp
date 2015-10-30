@@ -25,6 +25,8 @@ public class NodeEventListener
 
     private NodeDeletedHandler nodeDeletedHandler = new NodeDeletedHandler();
 
+    private NodeMovedHandler nodeMovedHandler = new NodeMovedHandler();
+
     @Override
     public int getOrder()
     {
@@ -53,6 +55,12 @@ public class NodeEventListener
             case NodeEvents.NODE_DELETED_EVENT:
                 handleEventType( event, nodeDeletedHandler );
                 break;
+            case NodeEvents.NODE_MOVED_EVENT:
+                handleEventType( event, nodeMovedHandler );
+                break;
+            case NodeEvents.NODE_RENAMED_EVENT:
+                handleEventType( event, nodeMovedHandler );
+                break;
         }
     }
 
@@ -60,12 +68,7 @@ public class NodeEventListener
     {
         try
         {
-            final NodesEventData nodesEventData = NodesEventData.create( event );
-
-            for ( final NodeEventData eventValues : nodesEventData.getNodeEventDataList() )
-            {
-                nodeEventHandler.handleEvent( this.storageService, eventValues, InternalContext.from( ContextAccessor.current() ) );
-            }
+            nodeEventHandler.handleEvent( this.storageService, event, InternalContext.from( ContextAccessor.current() ) );
         }
         catch ( Exception e )
         {

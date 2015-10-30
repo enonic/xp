@@ -173,13 +173,13 @@ public class BranchServiceImpl
     }
 
     @Override
-    public void handleNodeCreated( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
+    public void cachePath( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
     {
         pathCache.cache( new BranchPath( context.getBranch(), nodePath ), new BranchDocumentId( nodeId, context.getBranch() ) );
     }
 
     @Override
-    public void handleNodeDeleted( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
+    public void evictPath( final NodePath nodePath, final InternalContext context )
     {
         pathCache.evict( new BranchPath( context.getBranch(), nodePath ) );
     }

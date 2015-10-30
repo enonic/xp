@@ -25,7 +25,8 @@ public interface BranchService
 
     NodesBranchMetadata get( final NodePaths nodePath, final InternalContext context );
 
-    void handleNodeCreated( final NodeId nodeId, final NodePath nodePath, final InternalContext context );
+    void cachePath( final NodeId nodeId, final NodePath nodePath, final InternalContext context );
 
-    void handleNodeDeleted( final NodeId nodeId, final NodePath nodePath, final InternalContext context );
+    void evictPath( final NodePath nodePath, final InternalContext context );
+
 }

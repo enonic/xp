@@ -10,6 +10,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
+import com.enonic.xp.repo.impl.storage.NodeMovedParams;
 import com.enonic.xp.repo.impl.storage.StorageService;
 
 public class NodeEventListenerTest
@@ -83,5 +84,30 @@ public class NodeEventListenerTest
 
         Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodeDeleted( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
                                                                                 Mockito.isA( InternalContext.class ) );
+    }
+
+    @Test
+    public void node_moved_event()
+        throws Exception
+    {
+        final NodeId nodeId = NodeId.from( "node1" );
+        final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
+
+        final Node sourceNode = Node.create().
+            id( nodeId ).
+            parentPath( nodePath.getParentPath() ).
+            name( nodePath.getLastElement().toString() ).
+            build();
+
+        final Node movedNode = Node.create( sourceNode ).
+            parentPath( NodePath.create( "newParent" ).build() ).
+            build();
+
+        nodeEventListener.onEvent( NodeEvents.moved( sourceNode, movedNode ) );
+
+        final NodeMovedParams nodeMovedParams = new NodeMovedParams( sourceNode.path(), movedNode.path(), sourceNode.id() );
+
+        Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodeMoved( Mockito.eq( nodeMovedParams ),
+                                                                              Mockito.isA( InternalContext.class ) );
     }
 }
