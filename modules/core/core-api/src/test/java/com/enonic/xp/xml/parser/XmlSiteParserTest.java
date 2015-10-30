@@ -41,6 +41,7 @@ public class XmlSiteParserTest
 
         Assert.assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
         Assert.assertEquals( 2, siteDescriptor.getMetaSteps().getSize() );
+        Assert.assertEquals( 2, siteDescriptor.getFilterDescriptors().getSize() );
     }
 
     @Test
@@ -60,5 +61,6 @@ public class XmlSiteParserTest
 
         Assert.assertEquals( 0, siteDescriptor.getForm().getFormItems().size() );
         Assert.assertEquals( 0, siteDescriptor.getMetaSteps().getSize() );
+        Assert.assertEquals( 0, siteDescriptor.getFilterDescriptors().getSize() );
     }
 }

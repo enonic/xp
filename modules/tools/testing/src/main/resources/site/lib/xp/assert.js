@@ -28,6 +28,11 @@ function assertNull() {
     }
 }
 
+function assertNotNull() {
+    assert.assertNotNull(arguments[0]);
+}
+
 exports.assertEquals = assertEquals;
 exports.assertJsonEquals = assertJsonEquals;
 exports.assertNull = assertNull;
+exports.assertNotNull = assertNotNull;

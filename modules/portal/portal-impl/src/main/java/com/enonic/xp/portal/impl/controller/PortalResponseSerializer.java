@@ -1,8 +1,5 @@
 package com.enonic.xp.portal.impl.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.servlet.http.Cookie;
 import javax.ws.rs.core.Response;
 
@@ -17,15 +14,47 @@ public final class PortalResponseSerializer
 {
     private final ScriptValue value;
 
+    private final HttpStatus defaultStatus;
+
+    private HttpStatus forceStatus;
+
+    private Boolean forcePostProcess;
+
+    private Boolean forceApplyFilters;
+
     public PortalResponseSerializer( final ScriptValue value )
     {
+        this( value, HttpStatus.OK );
+    }
+
+    public PortalResponseSerializer( final ScriptValue value, final HttpStatus defaultStatus )
+    {
         this.value = value;
+        this.defaultStatus = defaultStatus;
+    }
+
+    public PortalResponseSerializer postProcess( final boolean value )
+    {
+        this.forcePostProcess = value;
+        return this;
+    }
+
+    public PortalResponseSerializer status( final HttpStatus value )
+    {
+        this.forceStatus = value;
+        return this;
+    }
+
+    public PortalResponseSerializer applyFilters( final boolean value )
+    {
+        this.forceApplyFilters = value;
+        return this;
     }
 
     public PortalResponse serialize()
     {
         PortalResponse.Builder builder = PortalResponse.create();
-        builder.status( HttpStatus.METHOD_NOT_ALLOWED );
+        builder.status( this.defaultStatus );
 
         if ( ( value == null ) || !value.isObject() )
         {
@@ -38,16 +67,36 @@ public final class PortalResponseSerializer
         populateHeaders( builder, value.getMember( "headers" ) );
         populateContributions( builder, value.getMember( "pageContributions" ) );
         populateCookies( builder, value.getMember( "cookies" ) );
-        populateFilters( builder, value.getMember( "filters" ) );
+        populateApplyFilters( builder, value.getMember( "applyFilters" ) );
         setRedirect( builder, value.getMember( "redirect" ) );
+        populatePostProcess( builder, value.getMember( "postProcess" ) );
+
+        if ( this.forcePostProcess != null )
+        {
+            builder.postProcess( this.forcePostProcess );
+        }
+        if ( this.forceStatus != null )
+        {
+            builder.status( this.forceStatus );
+        }
+        if ( this.forceApplyFilters != null )
+        {
+            builder.applyFilters( this.forceApplyFilters );
+        }
 
         return builder.build();
+    }
+
+    private void populatePostProcess( final PortalResponse.Builder builder, final ScriptValue value )
+    {
+        final Boolean postProcess = ( value != null ) ? value.getValue( Boolean.class ) : null;
+        builder.postProcess( postProcess != null ? postProcess : true );
     }
 
     private void populateStatus( final PortalResponse.Builder builder, final ScriptValue value )
     {
         final Integer status = ( value != null ) ? value.getValue( Integer.class ) : null;
-        builder.status( status != null ? HttpStatus.from( status ): HttpStatus.OK );
+        builder.status( status != null ? HttpStatus.from( status ) : HttpStatus.OK );
     }
 
     private void populateContentType( final PortalResponse.Builder builder, final ScriptValue value )
@@ -234,30 +283,9 @@ public final class PortalResponseSerializer
         }
     }
 
-    private void populateFilters( final PortalResponse.Builder builder, final ScriptValue value )
+    private void populateApplyFilters( final PortalResponse.Builder builder, final ScriptValue value )
     {
-        if ( value == null )
-        {
-            return;
-        }
-
-        if ( value.isObject() || value.isFunction() )
-        {
-            return;
-        }
-
-        if ( value.isArray() )
-        {
-            final List<String> filterNames = value.getArray().stream().
-                filter( ScriptValue::isValue ).
-                map( ( item ) -> item.getValue( String.class ) ).
-                collect( Collectors.toList() );
-            builder.filters( filterNames );
-        }
-        else
-        {
-            builder.filter( value.getValue().toString() );
-        }
-
+        final Boolean applyFilters = value != null ? value.getValue( Boolean.class ) : null;
+        builder.applyFilters( applyFilters != null ? applyFilters : true );
     }
 }

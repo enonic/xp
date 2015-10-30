@@ -8,4 +8,5 @@ dependencies {
 
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Core - Image'
+    instruction 'Private-Package', 'com.jhlabs.*'
 }

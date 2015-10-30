@@ -234,6 +234,11 @@ module api.liveedit {
             return deferred.promise;
         }
 
+        isPageRenderable(): boolean {
+            return !!this.pageModel && (this.pageModel.hasController() ||
+                                        this.pageModel.getMode() != api.content.page.PageMode.NO_CONTROLLER);
+        }
+
         setContent(value: Content) {
             this.content = value;
         }

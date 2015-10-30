@@ -142,7 +142,7 @@ module app.browse {
 
         }
 
-        private initSplitPanelWithDockedDetails(controlButtonBuilder: NonMobileDetailsPanelsManagerBuilder) {
+        private initSplitPanelWithDockedDetails(nonMobileDetailsPanelsManagerBuilder: NonMobileDetailsPanelsManagerBuilder) {
 
             var contentPanelsAndDetailPanel: api.ui.panel.SplitPanel = new api.ui.panel.SplitPanelBuilder(this.getFilterAndContentGridAndBrowseSplitPanel(),
                 this.defaultDockedDetailsPanel).
@@ -158,15 +158,15 @@ module app.browse {
 
             this.appendChild(contentPanelsAndDetailPanel);
 
-            controlButtonBuilder.setSplitPanelWithGridAndDetails(contentPanelsAndDetailPanel);
-            controlButtonBuilder.setDefaultDetailsPanel(this.defaultDockedDetailsPanel);
+            nonMobileDetailsPanelsManagerBuilder.setSplitPanelWithGridAndDetails(contentPanelsAndDetailPanel);
+            nonMobileDetailsPanelsManagerBuilder.setDefaultDetailsPanel(this.defaultDockedDetailsPanel);
         }
 
-        private initFloatingDetailsPanel(controlButtonBuilder: NonMobileDetailsPanelsManagerBuilder) {
+        private initFloatingDetailsPanel(nonMobileDetailsPanelsManagerBuilder: NonMobileDetailsPanelsManagerBuilder) {
 
             this.floatingDetailsPanel = DetailsPanel.create().build();
 
-            controlButtonBuilder.setFloatingDetailsPanel(this.floatingDetailsPanel);
+            nonMobileDetailsPanelsManagerBuilder.setFloatingDetailsPanel(this.floatingDetailsPanel);
 
             this.appendChild(this.floatingDetailsPanel);
         }
@@ -433,6 +433,7 @@ module app.browse {
 
         private handleContentDeleted(change: ContentServerChange, promise: wemQ.Promise<any>,
                                      changes: ContentServerChange[]): wemQ.Promise<any> {
+
             promise = promise.then((result: ContentChangeResult) => {
                 // Do not remove renamed elements
                 if (result && result.getChangeType() === ContentServerChangeType.RENAME) {
@@ -473,6 +474,7 @@ module app.browse {
 
         private handleContentPending(change: ContentServerChange, promise: wemQ.Promise<any>,
                                      changes: ContentServerChange[]): wemQ.Promise<any> {
+
             promise = promise.then(() => {
 
                 var pendingResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
@@ -493,6 +495,7 @@ module app.browse {
                                 if (pendingResult[i].getId() === el.getId()) {
                                     pendingResult[i].updateNodeData(el);
                                     this.updateDetailsPanels(el.getContentId(), el.getCompareStatus());
+                                    new api.content.ContentDeletedEvent(el.getContentId(), true).fire();
                                     break;
                                 }
                             }
@@ -516,7 +519,8 @@ module app.browse {
                         data.forEach((el) => {
                             for (var i = 0; i < publishResult.length; i++) {
                                 if (publishResult[i].getId() === el.getId()) {
-                                    new api.content.ContentPublishedEvent(new api.content.ContentId(el.getId())).fire();
+                                    new api.content.ContentPublishedEvent(new api.content.ContentId(el.getId()),
+                                        el.getCompareStatus()).fire();
                                     publishResult[i].updateNodeData(el);
                                     this.updateDetailsPanels(el.getContentId(), el.getCompareStatus());
                                     break;

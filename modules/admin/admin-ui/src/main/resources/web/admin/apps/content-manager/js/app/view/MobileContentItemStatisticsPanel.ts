@@ -16,7 +16,11 @@ module app.view {
         private headerLabel: api.dom.SpanEl = new api.dom.SpanEl();
 
         private previewPanel: ContentItemPreviewPanel;
-        private detailsPanel: DetailsPanel = DetailsPanel.create().setUseSplitter(false).setUseNameAndIconView(false).setSlideFrom(app.view.detail.SLIDE_FROM.BOTTOM).build();
+        private detailsPanel: DetailsPanel = DetailsPanel.create().
+            setUseSplitter(false).
+            setUseViewer(false).
+            setSlideFrom(app.view.detail.SLIDE_FROM.BOTTOM).
+            build();
         private detailsToggleButton: app.view.detail.button.MobileDetailsPanelToggleButton;
 
         private mobileBrowseActions: MobileContentTreeGridActions;
@@ -89,13 +93,10 @@ module app.view {
         }
 
         private makeDisplayName(item: ViewItem<ContentSummary>): string {
-            return StringHelper.isEmpty(item.getDisplayName()) ? StringHelper.escapeHtml("<Unnamed " +
-                                                                                         this.convertName(item.getModel().getType().getLocalName() +
-                                                                                         "") + ">") : item.getDisplayName();
-        }
-
-        private convertName(name: string): string {
-            return StringHelper.capitalize(name.replace(/-/g, " ").trim());
+            let localName = item.getModel().getType().getLocalName() || "";
+            return StringHelper.isEmpty(item.getDisplayName())
+                ? api.content.ContentUnnamed.prettifyUnnamed(localName)
+                : item.getDisplayName();
         }
 
         getDetailsPanel(): DetailsPanel {
@@ -103,7 +104,7 @@ module app.view {
         }
 
         setName(name: string) {
-            this.headerLabel.setHtml(name);
+            this.headerLabel.setHtml(name, true);
         }
 
         slideAllOut() {

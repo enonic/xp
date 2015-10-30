@@ -3,12 +3,14 @@
     {
       "id": "aaa",
       "name": "My Content",
-      "reason": "Content with path [/one] was not found in branch [draft]"
+      "reason": "Content with path [/one] was not found in branch [draft]",
+      "type": "my_type"
     },
     {
       "id": "aaa",
       "name": "My Content",
-      "reason": "Not able to delete content with path [/two]: Some reason"
+      "reason": "Not able to delete content with path [/two]: Some reason",
+      "type": "my_type"
     }
   ],
   "pendings": [],

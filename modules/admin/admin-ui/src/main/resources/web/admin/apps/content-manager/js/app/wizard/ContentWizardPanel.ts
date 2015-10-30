@@ -264,7 +264,7 @@ module app.wizard {
 
                     this.wizardActions.getShowSplitEditAction().onExecuted(() => {
                         if (!this.inMobileViewMode) {
-                            if (this.contentNotRenderable()) {
+                            if (!this.isContentRenderable()) {
                                 this.closeLiveEdit();
                                 this.contextWindowToggler.setEnabled(false);
                             } else {
@@ -272,6 +272,10 @@ module app.wizard {
                             }
                         }
                     });
+
+                    if (this.isContentRenderable()) {
+                        this.wizardActions.getShowSplitEditAction().execute();
+                    }
 
                     responsiveItem.update();
                 });
@@ -464,11 +468,19 @@ module app.wizard {
                     var ignore = contentSummaryAndCompareStatus.getCompareStatus() !== CompareStatus.NEW;
                     this.contentWizardHeader.disableNameGeneration(ignore);
 
+                    var deleteHandler = (event: api.content.ContentDeletedEvent) => {
+                        if (event.isPending() && this.getPersistedItem() && event.getContentId() &&
+                            this.getPersistedItem().getId() === event.getContentId().toString()) {
+
+                            this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.PENDING_DELETE);
+                        }
+                    }
+
                     var publishHandler = (event: api.content.ContentPublishedEvent) => {
                         if (this.getPersistedItem() && event.getContentId() &&
                             (this.getPersistedItem().getId() === event.getContentId().toString())) {
 
-                            this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.EQUAL);
+                            this.contentWizardToolbarPublishControls.setCompareStatus(event.getCompareStatus());
 
                             if (!ignore) {
                                 this.contentWizardHeader.disableNameGeneration(true);
@@ -477,9 +489,11 @@ module app.wizard {
                         }
                     };
                     api.content.ContentPublishedEvent.on(publishHandler);
+                    api.content.ContentDeletedEvent.on(deleteHandler);
 
                     this.onClosed(() => {
                         api.content.ContentPublishedEvent.un(publishHandler);
+                        api.content.ContentDeletedEvent.un(deleteHandler);
                     });
                     this.contentWizardToolbarPublishControls.setCompareStatus(contentSummaryAndCompareStatus.getCompareStatus());
                     this.managePublishButtonStateForMobile(contentSummaryAndCompareStatus.getCompareStatus());
@@ -959,6 +973,10 @@ module app.wizard {
         }
 
         public checkContentCanBePublished(displayValidationErrors: boolean): boolean {
+            if (this.contentWizardToolbarPublishControls.isPendingDelete()) {
+                // allow deleting published content without validity check
+                return true;
+            }
             if (!this.isContentFormValid) {
                 this.contentWizardStepForm.displayValidationErrors(displayValidationErrors);
             }
@@ -1180,15 +1198,15 @@ module app.wizard {
             }
         }
 
-        private contentNotRenderable(): boolean {
-            return this.liveEditModel.getPageModel().getMode() == api.content.page.PageMode.NO_CONTROLLER;
+        private isContentRenderable(): boolean {
+            return this.liveEditModel && this.liveEditModel.isPageRenderable();
         }
 
         private updatePreviewActionVisibility() {
-            this.previewAction.setEnabled(!this.contentNotRenderable());
+            this.previewAction.setEnabled(this.isContentRenderable());
 
             this.liveEditModel.getPageModel().onPageModeChanged(()=> {
-                this.previewAction.setEnabled(!this.contentNotRenderable());
+                this.previewAction.setEnabled(this.isContentRenderable());
             });
         }
 

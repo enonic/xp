@@ -5,6 +5,7 @@ import com.google.common.annotations.Beta;
 
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.mixin.MixinNames;
+import com.enonic.xp.site.filter.FilterDescriptors;
 
 @Beta
 public final class SiteDescriptor
@@ -13,10 +14,13 @@ public final class SiteDescriptor
 
     private final MixinNames metaSteps;
 
+    private final FilterDescriptors filterDescriptors;
+
     private SiteDescriptor( final Builder builder )
     {
         this.form = builder.form;
         this.metaSteps = builder.metaSteps;
+        this.filterDescriptors = builder.filterDescriptors != null ? builder.filterDescriptors : FilterDescriptors.empty();
     }
 
     public Form getForm()
@@ -29,6 +33,11 @@ public final class SiteDescriptor
         return metaSteps;
     }
 
+    public FilterDescriptors getFilterDescriptors()
+    {
+        return filterDescriptors;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -39,6 +48,8 @@ public final class SiteDescriptor
         private Form form;
 
         private MixinNames metaSteps;
+
+        private FilterDescriptors filterDescriptors;
 
         private Builder()
         {
@@ -53,6 +64,12 @@ public final class SiteDescriptor
         public Builder metaSteps( final MixinNames metaSteps )
         {
             this.metaSteps = metaSteps;
+            return this;
+        }
+
+        public Builder filterDescriptors( final FilterDescriptors filterDescriptors )
+        {
+            this.filterDescriptors = filterDescriptors;
             return this;
         }
 
