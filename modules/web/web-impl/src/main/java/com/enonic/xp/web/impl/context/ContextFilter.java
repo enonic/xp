@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
+import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 @Component(immediate = true, service = Filter.class,
     property = {"osgi.http.whiteboard.filter.pattern=/", "service.ranking:Integer=10"})
@@ -30,8 +31,15 @@ public final class ContextFilter
         context.getLocalScope().setSession( new SessionWrapper( session ) );
 
         context.callWith( () -> {
-            chain.doFilter( new HttpRequestDelegate( req ), res );
+            chain.doFilter( wrapRequest( req ), res );
             return null;
         } );
+    }
+
+    private HttpServletRequest wrapRequest( final HttpServletRequest req )
+    {
+        final HttpServletRequest wrapped = new HttpRequestDelegate( req );
+        ServletRequestHolder.setRequest( wrapped );
+        return wrapped;
     }
 }
