@@ -110,4 +110,54 @@ public class NodeEventListenerTest
         Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodeMoved( Mockito.eq( nodeMovedParams ),
                                                                               Mockito.isA( InternalContext.class ) );
     }
+
+    @Test
+    public void node_renamed_event()
+        throws Exception
+    {
+        final NodeId nodeId = NodeId.from( "node1" );
+        final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
+
+        final Node sourceNode = Node.create().
+            id( nodeId ).
+            parentPath( nodePath.getParentPath() ).
+            name( nodePath.getLastElement().toString() ).
+            build();
+
+        final Node movedNode = Node.create( sourceNode ).
+            parentPath( NodePath.create( "newParent" ).build() ).
+            build();
+
+        nodeEventListener.onEvent( NodeEvents.renamed( sourceNode, movedNode ) );
+
+        final NodeMovedParams nodeMovedParams = new NodeMovedParams( sourceNode.path(), movedNode.path(), sourceNode.id() );
+
+        Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodeMoved( Mockito.eq( nodeMovedParams ),
+                                                                              Mockito.isA( InternalContext.class ) );
+    }
+
+    @Test
+    public void node_duplicated_event()
+        throws Exception
+    {
+        final NodeId nodeId = NodeId.from( "node1" );
+        final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
+
+        final Node sourceNode = Node.create().
+            id( nodeId ).
+            parentPath( nodePath.getParentPath() ).
+            name( nodePath.getLastElement().toString() ).
+            build();
+
+        final Node movedNode = Node.create( sourceNode ).
+            parentPath( NodePath.create( "newParent" ).build() ).
+            build();
+
+        nodeEventListener.onEvent( NodeEvents.duplicated( sourceNode ) );
+
+        Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
+                                                                                Mockito.isA( InternalContext.class ) );
+    }
+
+
 }
