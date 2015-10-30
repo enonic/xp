@@ -42,8 +42,6 @@ final class EventMulticaster
     {
         for ( final EventListener eventListener : this.listeners )
         {
-            System.out.println( "publish event: " + event + ", eventListener: " + eventListener );
-
             publish( eventListener, event );
         }
     }

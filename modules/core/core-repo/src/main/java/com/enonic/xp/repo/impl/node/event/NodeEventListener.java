@@ -61,6 +61,9 @@ public class NodeEventListener
             case NodeEvents.NODE_RENAMED_EVENT:
                 handleEventType( event, nodeMovedHandler );
                 break;
+            case NodeEvents.NODE_DUPLICATED_EVENT:
+                handleEventType( event, nodeCreatedHandler );
+                break;
         }
     }
 
