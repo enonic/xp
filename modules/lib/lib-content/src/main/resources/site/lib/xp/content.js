@@ -52,6 +52,8 @@ exports.create = function (params) {
     bean.data = __.toScriptValue(params.data);
     bean.x = __.toScriptValue(params.x);
 
+    bean.idGenerator = nullOrValue(params.idGenerator);
+
     return __.toNativeObject(bean.execute());
 };
 
