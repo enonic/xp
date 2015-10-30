@@ -91,7 +91,7 @@ public class PrincipalMapperTest
         final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
         final URL url = getClass().getResource( resource );
 
-        Assert.assertNotNull( "File [" + resource + "] not found", url );
+        Assert.assertNotNull( "File [" + resource + "] not found", url );
         final JsonNode expectedJson = this.mapper.readTree( url );
 
         final JsonMapGenerator generator = new JsonMapGenerator();
