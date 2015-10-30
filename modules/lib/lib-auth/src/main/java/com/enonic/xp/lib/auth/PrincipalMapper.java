@@ -5,7 +5,7 @@ import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.User;
 
-final class PrincipalMapper
+public final class PrincipalMapper
     implements MapSerializable
 {
     private final Principal value;
