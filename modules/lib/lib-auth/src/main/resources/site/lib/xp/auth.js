@@ -32,6 +32,14 @@ exports.getUser = function () {
     return __.toNativeObject(bean.getUser());
 };
 
+exports.getPrincipal = function (principalKey) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.GetPrincipalHandler');
+
+    bean.principalKey = __.nullOrValue(principalKey);
+
+    return __.toNativeObject(bean.getPrincipal());
+};
+
 exports.hasRole = function (roleKey) {
     var bean = __.newBean('com.enonic.xp.lib.auth.HasRoleHandler');
 
