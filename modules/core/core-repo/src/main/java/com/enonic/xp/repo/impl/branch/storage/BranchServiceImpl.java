@@ -58,7 +58,7 @@ public class BranchServiceImpl
         final StoreRequest storeRequest = BranchStorageRequestFactory.create( nodeBranchMetadata, context );
         final String id = this.storageDao.store( storeRequest );
 
-        pathCache.cache( createPath( nodeBranchMetadata.getNodePath(), context ), id );
+        pathCache.cache( createPath( nodeBranchMetadata.getNodePath(), context ), BranchDocumentId.from( id ) );
 
         return id;
     }
@@ -106,7 +106,8 @@ public class BranchServiceImpl
 
         final NodeBranchMetadata nodeBranchMetadata = NodeBranchVersionFactory.create( getResult.getReturnValues() );
 
-        pathCache.cache( new BranchPath( context.getBranch(), nodeBranchMetadata.getNodePath() ), getResult.getId() );
+        pathCache.cache( new BranchPath( context.getBranch(), nodeBranchMetadata.getNodePath() ),
+                         BranchDocumentId.from( getResult.getId() ) );
 
         return nodeBranchMetadata;
     }
@@ -136,7 +137,8 @@ public class BranchServiceImpl
             {
                 final NodeBranchMetadata nodeBranchMetadata = NodeBranchVersionFactory.create( getResult.getReturnValues() );
 
-                pathCache.cache( new BranchPath( context.getBranch(), nodeBranchMetadata.getNodePath() ), getResult.getId() );
+                pathCache.cache( new BranchPath( context.getBranch(), nodeBranchMetadata.getNodePath() ),
+                                 BranchDocumentId.from( getResult.getId() ) );
 
                 builder.add( nodeBranchMetadata );
             }
@@ -173,8 +175,13 @@ public class BranchServiceImpl
     @Override
     public void handleNodeCreated( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
     {
-        LOG.info( "########### Adding to cache" );
-        pathCache.cache( new BranchPath( context.getBranch(), nodePath ), nodeId.toString() );
+        pathCache.cache( new BranchPath( context.getBranch(), nodePath ), new BranchDocumentId( nodeId, context.getBranch() ) );
+    }
+
+    @Override
+    public void handleNodeDeleted( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
+    {
+        pathCache.evict( new BranchPath( context.getBranch(), nodePath ) );
     }
 
     private BranchPath createPath( final NodePath nodePath, final InternalContext context )
@@ -217,6 +224,12 @@ public class BranchServiceImpl
     private NodeId createNodeId( final String id )
     {
         final int branchSeparator = id.lastIndexOf( "_" );
+
+        if ( branchSeparator < 0 )
+        {
+            throw new StorageException( "Invalid BranchNodeId: " + id );
+        }
+
         return NodeId.from( Strings.substring( id, 0, branchSeparator ) );
     }
 
@@ -224,7 +237,8 @@ public class BranchServiceImpl
     {
         final NodeBranchMetadata nodeBranchMetadata = NodeBranchVersionFactory.create( getResult.getReturnValues() );
 
-        pathCache.cache( new BranchPath( context.getBranch(), nodeBranchMetadata.getNodePath() ), getResult.getId() );
+        pathCache.cache( new BranchPath( context.getBranch(), nodeBranchMetadata.getNodePath() ),
+                         BranchDocumentId.from( getResult.getId() ) );
     }
 
     private GetResult createGetResult( final SearchHit searchHit )

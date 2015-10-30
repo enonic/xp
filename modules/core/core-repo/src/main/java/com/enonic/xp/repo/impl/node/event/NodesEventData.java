@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node.event;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -26,9 +27,7 @@ class NodesEventData
             throw new IllegalArgumentException( "Unexpected format on event, expected 'nodes'-list" );
         }
 
-        final boolean isList = nodesList.getClass().isAssignableFrom( List.class );
-
-        if ( !isList )
+        if ( !( nodesList instanceof Collection ) )
         {
             throw new IllegalArgumentException( "Unexpected format on event, expected 'nodes'-list, got " + nodesList.getClass() );
         }
@@ -44,9 +43,7 @@ class NodesEventData
 
         for ( final Object listItem : nodesList )
         {
-            final boolean isMap = nodesList.getClass().isAssignableFrom( Map.class );
-
-            if ( !isMap )
+            if ( !( listItem instanceof Map ) )
             {
                 throw new IllegalArgumentException( "Unexpected format on event, expected nodes-list do be list of Map<String, String>" );
             }

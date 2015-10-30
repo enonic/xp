@@ -47,6 +47,7 @@ public interface StorageService
 
     NodePath getParentPath( final NodeId nodeId, final InternalContext context );
 
-    void handleNodeAdded( final NodeId nodeId, final NodePath nodePath, final InternalContext context );
+    void handleNodeCreated( final NodeId nodeId, final NodePath nodePath, final InternalContext context );
 
+    void handleNodeDeleted( final NodeId nodeId, final NodePath nodePath, final InternalContext context );
 }

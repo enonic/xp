@@ -204,9 +204,15 @@ public class StorageServiceImpl
     }
 
     @Override
-    public void handleNodeAdded( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
+    public void handleNodeCreated( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
     {
         this.branchService.handleNodeCreated( nodeId, nodePath, context );
+    }
+
+    @Override
+    public void handleNodeDeleted( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
+    {
+        this.branchService.handleNodeDeleted( nodeId, nodePath, context );
     }
 
     private Node doGetNode( final NodeBranchMetadata nodeBranchMetadata )

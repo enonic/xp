@@ -21,6 +21,10 @@ public class NodeEventListener
 
     private final static Logger LOG = LoggerFactory.getLogger( NodeEventListener.class );
 
+    private NodeCreatedHandler nodeCreatedHandler = new NodeCreatedHandler();
+
+    private NodeDeletedHandler nodeDeletedHandler = new NodeDeletedHandler();
+
     @Override
     public int getOrder()
     {
@@ -37,28 +41,30 @@ public class NodeEventListener
 
     }
 
-    private void doHandleEvent( final Event2 event2 )
+    private void doHandleEvent( final Event2 event )
     {
-        final String type = event2.getType();
+        final String type = event.getType();
 
         switch ( type )
         {
             case NodeEvents.NODE_CREATED_EVENT:
-                handleNodeCreated( event2 );
+                handleEventType( event, nodeCreatedHandler );
+                break;
+            case NodeEvents.NODE_DELETED_EVENT:
+                handleEventType( event, nodeDeletedHandler );
                 break;
         }
     }
 
-    private void handleNodeCreated( final Event2 event2 )
+    private void handleEventType( final Event2 event, final NodeEventHandler nodeEventHandler )
     {
         try
         {
-            final NodesEventData nodesEventData = NodesEventData.create( event2 );
+            final NodesEventData nodesEventData = NodesEventData.create( event );
 
             for ( final NodeEventData eventValues : nodesEventData.getNodeEventDataList() )
             {
-                this.storageService.handleNodeAdded( eventValues.getNodeId(), eventValues.getNodePath(),
-                                                     InternalContext.from( ContextAccessor.current() ) );
+                nodeEventHandler.handleEvent( this.storageService, eventValues, InternalContext.from( ContextAccessor.current() ) );
             }
         }
         catch ( Exception e )

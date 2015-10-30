@@ -1,9 +1,7 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.Iterators;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeId;
@@ -42,11 +40,9 @@ public class BranchDocumentId
             throw new IllegalArgumentException( "Invalid format of branch-key: " + value );
         }
 
-        final Iterable<String> split = Splitter.on( SEPARATOR ).
-            split( value );
-
-        final String nodeIdAsString = Iterators.get( split.iterator(), 0 );
-        final String branchName = Iterators.get( split.iterator(), 1 );
+        final int separator = value.lastIndexOf( SEPARATOR );
+        final String nodeIdAsString = value.substring( 0, separator );
+        final String branchName = value.substring( separator + 1, value.length() );
 
         Preconditions.checkArgument( !Strings.isNullOrEmpty( nodeIdAsString ) );
         Preconditions.checkArgument( !Strings.isNullOrEmpty( branchName ) );
