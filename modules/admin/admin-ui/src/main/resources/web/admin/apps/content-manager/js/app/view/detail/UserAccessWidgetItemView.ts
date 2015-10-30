@@ -180,7 +180,6 @@ module app.view.detail {
         }
 
         private getOptionName(access: Access): string {
-            debugger;
             var currentOption = UserAccessWidgetItemView.OPTIONS.filter(option => {
                 return option.value == access;
             });

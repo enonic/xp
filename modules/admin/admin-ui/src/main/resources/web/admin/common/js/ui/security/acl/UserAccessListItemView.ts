@@ -96,7 +96,6 @@ module api.ui.security.acl {
         }
 
         private getOptionName(access: Access): string {
-            debugger;
             var currentOption = UserAccessListItemView.OPTIONS.filter(option => {
                 return option.value == access;
             });
