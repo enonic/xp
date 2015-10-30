@@ -2,14 +2,30 @@ var fs = require('fs');
 var path = require('path');
 
 var srcDir = 'src/main/resources/web/admin';
-var destDir = 'src/main/resources/web/admin/defs';
+var destDir = 'src/main/resources/web/admin/d.ts';
+
+var includedFiles = [];
+
+function contains(a, obj) {
+    for (var i = 0; i < a.length; i++) {
+        if (a[i] === obj) {
+            return true;
+        }
+    }
+    return false;
+}
 
 function loadReference(baseFile, file) {
 
     var dirName = path.dirname(baseFile);
     var includeFile = path.resolve(dirName, file);
 
-    var src = fs.readFileSync(includeFile);
+    if (includedFiles[includeFile]) {
+        return "";
+    }
+
+    includedFiles[includeFile] = true;
+    var src = fs.readFileSync(includeFile, 'utf-8');
     return replaceReferences(src, includeFile);
 }
 
@@ -22,7 +38,7 @@ function replaceReferences(src, filepath) {
 
 module.exports = {
 
-    defs: {
+    commonDef: {
         options: {
             process: function (src, filepath) {
                 return replaceReferences(src, filepath);
