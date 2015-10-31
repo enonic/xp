@@ -34,9 +34,9 @@ module app.view.detail {
 
         private static OPTIONS: any[] = [
             {value: Access.FULL, name: 'has full access to'},
-            {value: Access.PUBLISH, name: 'Can Publish'},
-            {value: Access.WRITE, name: 'Can Write'},
-            {value: Access.READ, name: 'Can Read'},
+            {value: Access.PUBLISH, name: 'can publish'},
+            {value: Access.WRITE, name: 'can write'},
+            {value: Access.READ, name: 'can read'},
             {value: Access.CUSTOM, name: 'has custom access to'}
         ];
 
@@ -56,7 +56,7 @@ module app.view.detail {
             if (entry) {
 
                 var headerStr = entry.getPrincipalDisplayName() + " " +
-                                UserAccessWidgetItemView.OPTIONS[AccessControlEntryView.getAccessValueFromEntry(entry)].name +
+                                                                      this.getOptionName(AccessControlEntryView.getAccessValueFromEntry(entry)) +
                                 " this item";
                 var headerStrEl = new api.dom.SpanEl("header-string").setHtml(headerStr);
 
@@ -179,6 +179,13 @@ module app.view.detail {
             return userAccessList;
         }
 
-
+        private getOptionName(access: Access): string {
+            var currentOption = UserAccessWidgetItemView.OPTIONS.filter(option => {
+                return option.value == access;
+            });
+            if (currentOption && currentOption.length > 0) {
+                return currentOption[0].name;
+            }
+        }
     }
 }

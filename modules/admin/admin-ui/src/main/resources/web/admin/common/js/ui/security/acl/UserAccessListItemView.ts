@@ -34,7 +34,7 @@ module api.ui.security.acl {
         doRender(): boolean {
             var data = <UserAccessListItem>this.getObject();
 
-            this.accessLine = new api.dom.SpanEl("access-line").setHtml(UserAccessListItemView.OPTIONS[data.getAccess()].name);
+            this.accessLine = new api.dom.SpanEl("access-line").setHtml(this.getOptionName(data.getAccess()));
             this.userLine = new api.dom.DivEl("user-line");
 
             var isEmpty: boolean = true;
@@ -44,7 +44,11 @@ module api.ui.security.acl {
                 if (principal.isUser()) {
                     isEmpty = false;
 
-                    var icon = new api.dom.SpanEl("user-icon").setHtml(principal.getDisplayName().substring(0, 2));
+                    var display = principal.getDisplayName().split(" ").map(word => word.substring(0, 1).toUpperCase());
+
+                    var icon = new api.dom.SpanEl("user-icon").setHtml(display.length >= 2
+                        ? display.join("").substring(0, 2)
+                        : principal.getDisplayName().substring(0, 2).toUpperCase());
                     if (this.currentUser && this.currentUser.getKey().equals(principal.getKey())) {
                         icon.addClass("active");
                         this.userLine.insertChild(icon, 0);
@@ -89,6 +93,16 @@ module api.ui.security.acl {
                     this.userLine.getEl().setAttribute("extra-count", "+" + extraCount);
                 }
             }
+        }
+
+        private getOptionName(access: Access): string {
+            var currentOption = UserAccessListItemView.OPTIONS.filter(option => {
+                return option.value == access;
+            });
+            if (currentOption && currentOption.length > 0) {
+                return currentOption[0].name;
+            }
+
         }
 
 
