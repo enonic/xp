@@ -10,15 +10,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.security.Group;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.Role;
-import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 import com.enonic.xp.testing.script.ScriptTestSupport;
@@ -43,23 +37,16 @@ public class GetPrincipalHandlerTest
         this.session = new SimpleSession( SessionKey.generate() );
         ContextAccessor.current().getLocalScope().setSession( session );
 
-        this.session.setAttribute( this.createAuthenticationInfo() );
+        this.session.setAttribute( HandlerTestHelper.createAuthenticationInfo() );
     }
 
     @Test
     public void testGetUserPrincipal()
         throws Exception
     {
-        final User user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.from( "enonic" ), "user1" ) ).
-            displayName( "User 1" ).
-            modifiedTime( Instant.now( clock ) ).
-            email( "user1@enonic.com" ).
-            login( "user1" ).
-            build();
-
         Mockito.<Optional<? extends Principal>>when(
-            securityService.getPrincipal( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn( Optional.of( user ) );
+            securityService.getPrincipal( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn(
+            Optional.of( HandlerTestHelper.getTestUser() ) );
 
         runTestFunction( "/test/getPrincipal-test.js", "getUserPrincipal" );
     }
@@ -68,14 +55,8 @@ public class GetPrincipalHandlerTest
     public void testGetRolePrincipal()
         throws Exception
     {
-        final Role role = Role.create().
-            key( PrincipalKey.ofRole( "aRole" ) ).
-            displayName( "Role Display Name" ).
-            modifiedTime( Instant.now( clock ) ).
-            build();
-
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "role:roleId" ) ) ).thenReturn(
-            Optional.of( role ) );
+            Optional.of( HandlerTestHelper.getTestRole() ) );
 
         runTestFunction( "/test/getPrincipal-test.js", "getRolePrincipal" );
     }
@@ -84,14 +65,9 @@ public class GetPrincipalHandlerTest
     public void testGetGroupPrincipal()
         throws Exception
     {
-        final Group group = Group.create().
-            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
-            displayName( "Group A" ).
-            modifiedTime( Instant.now( clock ) ).
-            build();
-
         Mockito.<Optional<? extends Principal>>when(
-            securityService.getPrincipal( PrincipalKey.from( "group:myGroupStore:groupId" ) ) ).thenReturn( Optional.of( group ) );
+            securityService.getPrincipal( PrincipalKey.from( "group:myGroupStore:groupId" ) ) ).thenReturn(
+            Optional.of( HandlerTestHelper.getTestGroup() ) );
 
         runTestFunction( "/test/getPrincipal-test.js", "getGroupPrincipal" );
     }
@@ -105,21 +81,5 @@ public class GetPrincipalHandlerTest
             securityService.getPrincipal( PrincipalKey.from( "user:myUserStore:XXX" ) ) ).thenReturn( Optional.ofNullable( null ) );
 
         runTestFunction( "/test/getPrincipal-test.js", "getNonExistingPrincipal" );
-    }
-
-    private User createTestAdminUser()
-    {
-        return User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.from( "enonic" ), "user1" ) ).
-            displayName( "User 1" ).
-            modifiedTime( Instant.now( clock ) ).
-            email( "user1@enonic.com" ).
-            login( "user1" ).
-            build();
-    }
-
-    private AuthenticationInfo createAuthenticationInfo()
-    {
-        return AuthenticationInfo.create().user( createTestAdminUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
     }
 }

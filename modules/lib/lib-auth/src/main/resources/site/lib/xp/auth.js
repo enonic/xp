@@ -40,6 +40,14 @@ exports.getPrincipal = function (principalKey) {
     return __.toNativeObject(bean.getPrincipal());
 };
 
+exports.getMemberships = function (principalKey) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.GetMembershipsHandler');
+
+    bean.principalKey = __.nullOrValue(principalKey);
+
+    return __.toNativeObject(bean.getMemberships());
+};
+
 exports.hasRole = function (roleKey) {
     var bean = __.newBean('com.enonic.xp.lib.auth.HasRoleHandler');
 

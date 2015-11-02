@@ -14,12 +14,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
-import com.enonic.xp.security.Group;
-import com.enonic.xp.security.Principal;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.Role;
-import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 
 public class PrincipalMapperTest
 {
@@ -43,15 +37,7 @@ public class PrincipalMapperTest
         throws Exception
     {
 
-        final Principal user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.from( "enonic" ), "user1" ) ).
-            displayName( "User 1" ).
-            modifiedTime( Instant.now( clock ) ).
-            email( "user1@enonic.com" ).
-            login( "user1" ).
-            build();
-
-        final PrincipalMapper principalMapper = new PrincipalMapper( user );
+        final PrincipalMapper principalMapper = new PrincipalMapper( HandlerTestHelper.getTestUser() );
         assertJson( "user", principalMapper );
     }
 
@@ -59,14 +45,7 @@ public class PrincipalMapperTest
     public void testGroupSerialized()
         throws Exception
     {
-
-        final Group group = Group.create().
-            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
-            displayName( "Group A" ).
-            modifiedTime( Instant.now( clock ) ).
-            build();
-
-        final PrincipalMapper principalMapper = new PrincipalMapper( group );
+        final PrincipalMapper principalMapper = new PrincipalMapper( HandlerTestHelper.getTestGroup() );
         assertJson( "group", principalMapper );
     }
 
@@ -74,14 +53,7 @@ public class PrincipalMapperTest
     public void testRoleSerialized()
         throws Exception
     {
-
-        final Role role = Role.create().
-            key( PrincipalKey.ofRole( "aRole" ) ).
-            displayName( "Role Display Name" ).
-            modifiedTime( Instant.now( clock ) ).
-            build();
-
-        final PrincipalMapper principalMapper = new PrincipalMapper( role );
+        final PrincipalMapper principalMapper = new PrincipalMapper( HandlerTestHelper.getTestRole() );
         assertJson( "role", principalMapper );
     }
 
