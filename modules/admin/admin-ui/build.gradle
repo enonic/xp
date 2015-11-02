@@ -3,6 +3,7 @@ apply plugin: 'com.moowork.grunt'
 
 node {
     download = true
+    version = '4.2.1'
 }
 
 bundle {
@@ -19,7 +20,7 @@ task gruntAll( type: GruntTask, dependsOn: npmInstall ) {
     description = 'Build admin UI resources (ts, css, etc).'
     inputs.files fileTree( dir: 'src/main/resources', exclude: '**/_all.*' )
     outputs.files fileTree( dir: 'src/main/resources', include: '**/_all.*' )
-    args = ['all'] //, 'karma'
+    args = ['all']
 }
 
 task copyAll( type: Copy, dependsOn: gruntAll ) {
