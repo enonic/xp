@@ -133,7 +133,7 @@ module app.browse {
                      * node is clicked, edit event will be triggered by default.
                      */
                     if (!!this.getDataId(node.getData())) { // default event
-                        new api.content.EditContentEvent([node.getData().getContentSummary()]).fire();
+                        new api.content.EditContentEvent([node.getData()]).fire();
                     }
                 }
             });
@@ -196,13 +196,7 @@ module app.browse {
         }
 
         private sortIconClickCallback() {
-            new app.browse.SortContentEvent(this.getSelectedContentsSummaries()).fire();
-        }
-
-        private getSelectedContentsSummaries(): api.content.ContentSummary[] {
-            return this.getSelectedDataList().map((elem) => {
-                return elem.getContentSummary();
-            });
+            new app.browse.SortContentEvent(this.getSelectedDataList()).fire();
         }
 
         private statusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {

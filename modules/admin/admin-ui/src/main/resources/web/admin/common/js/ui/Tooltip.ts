@@ -12,6 +12,7 @@ module api.ui {
         static TRIGGER_NONE = "none";
 
         static MODE_STATIC = "static";
+        static MODE_GLOBAL_STATIC = "global_static";
         static MODE_FOLLOW = "follow";
 
         private static multipleAllowed: boolean = true;
@@ -93,7 +94,7 @@ module api.ui {
                 }
                 this.tooltipEl.show();
 
-                if (this.mode == Tooltip.MODE_STATIC) {
+                if (this.mode == Tooltip.MODE_STATIC || this.mode == Tooltip.MODE_GLOBAL_STATIC) {
                     this.positionByTarget();
                 }
             }
@@ -197,7 +198,7 @@ module api.ui {
         setMode(mode: string): Tooltip {
             if (mode == this.mode) {
                 return this;
-            } else if (mode == Tooltip.MODE_STATIC) {
+            } else if (mode == Tooltip.MODE_STATIC || mode == Tooltip.MODE_GLOBAL_STATIC) {
                 api.dom.Body.get().unMouseMove(this.moveListener);
             } else if (mode == Tooltip.MODE_FOLLOW) {
                 api.dom.Body.get().onMouseMove(this.moveListener);

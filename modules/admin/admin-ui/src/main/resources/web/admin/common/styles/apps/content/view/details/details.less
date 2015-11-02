@@ -263,9 +263,8 @@
     padding: 5px;
     background-color: @admin-white;
     .box-shadow(0px 1px 2px 1px rgba(0, 0, 0, 0.1));
-  }
 
-    .properties-widget-item-view {
+    &.properties-widget-item-view {
 
       dl {
         overflow: hidden;
@@ -287,7 +286,7 @@
       min-height: 100px;
     }
 
-    .attachments-widget-item-view {
+    &.attachments-widget-item-view {
 
       ul.uploader-list {
 
@@ -321,7 +320,7 @@
       }
     }
 
-    .status-widget-item-view {
+    &.status-widget-item-view {
       text-align: center;
       height: 60px;
 
@@ -336,9 +335,107 @@
         &.equal {
           color: @admin-green;
         }
+
+      }
+    }
+
+    &.user-access-widget-item-view {
+
+      text-align: center;
+
+      .tooltip {
+
+        z-index: 99999;
+      }
+
+      .user-access-widget-header {
+        .icon-menu4 {
+          display: inline-block;
+          font-size: 25px;
+          float: left;
+          margin-left: 7px;
+        }
+        .header-string {
+          line-height: 30px;
+        }
+      }
+
+      .edit-permissions-link {
+        display: inline-block;
+        margin-top: 5px;
+
+      }
+
+      .empty + .edit-permissions-link {
+        margin-top: 0px;
+      }
+
+      .user-access-list-view {
+
+        margin-top: 5px;
+
+        &.empty {
+          display: none;
+        }
+
+        .user-access-list-item-view {
+
+          padding: 3px;
+          position: relative;
+
+          .clearfix();
+
+          .user-line {
+
+            position: relative;
+            margin-right: 100px;
+            height: 29px;
+            overflow: hidden;
+            padding-right: 30px;
+            float: left;
+
+            &:after {
+              position: absolute;
+              content: attr(extra-count);
+              font-size: 14px;
+              line-height: 29px;
+            }
+
+            .user-icon {
+              cursor: default;
+              display: inline-block;
+              width: 25px;
+              height: 25px;
+              background-color: @admin-bg-dark-gray;
+              color: @admin-white;
+              font-size: 12px;
+              line-height: 25px;
+              text-align: center;
+              overflow: hidden;
+              float: left;
+              margin: 0px 3px;
+              .border-radius(25px);
+              border: 2px solid transparent;
+
+              &.active {
+                border: 2px solid @admin-blue;
+              }
+            }
+
+          }
+
+          .access-line {
+            font-size: 14px;
+            position: absolute;
+            line-height: 29px;
+            top: 3px;
+            right: 10px;
+          }
+        }
       }
     }
   }
+}
 
   .widget-toggle-button {
 

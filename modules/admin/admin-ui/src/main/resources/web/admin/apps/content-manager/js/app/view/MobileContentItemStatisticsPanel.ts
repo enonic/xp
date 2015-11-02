@@ -4,13 +4,14 @@ module app.view {
     import DetailsPanel = app.view.detail.DetailsPanel;
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import StringHelper = api.util.StringHelper;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import MobileContentTreeGridActions = app.browse.action.MobileContentTreeGridActions;
     import MobileContentBrowseToolbar = app.browse.MobileContentBrowseToolbar;
 
-    export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummary> {
+    export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
 
         private itemHeader: api.dom.DivEl = new api.dom.DivEl("mobile-content-item-statistics-header");
         private headerLabel: api.dom.SpanEl = new api.dom.SpanEl();
@@ -80,7 +81,7 @@ module app.view {
             this.appendChild(this.previewPanel);
         }
 
-        setItem(item: ViewItem<ContentSummary>) {
+        setItem(item: ViewItem<ContentSummaryAndCompareStatus>) {
             if (!this.getItem() || !this.getItem().equals(item)) {
                 super.setItem(item);
                 this.previewPanel.setItem(item);
@@ -92,7 +93,7 @@ module app.view {
             this.slideIn();
         }
 
-        private makeDisplayName(item: ViewItem<ContentSummary>): string {
+        private makeDisplayName(item: ViewItem<ContentSummaryAndCompareStatus>): string {
             let localName = item.getModel().getType().getLocalName() || "";
             return StringHelper.isEmpty(item.getDisplayName())
                 ? api.content.ContentUnnamed.prettifyUnnamed(localName)

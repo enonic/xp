@@ -45,7 +45,7 @@ module api.ui.uploader {
         beforeUploadCallback?: (files: PluploadFile[]) => void;
     }
 
-    export class Uploader<MODEL> extends api.dom.FormInputEl {
+    export class Uploader<MODEL extends api.Equitable> extends api.dom.FormInputEl {
 
         private config: UploaderConfig;
         private uploader;
