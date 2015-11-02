@@ -24,6 +24,8 @@ public final class ContextFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
+        ServletRequestHolder.setRequest( req );
+
         final Context context = ContextBuilder.create().build();
         context.getLocalScope().setAttribute( ContentConstants.BRANCH_DRAFT );
         context.getLocalScope().setAttribute( ContentConstants.CONTENT_REPO.getId() );
@@ -32,15 +34,8 @@ public final class ContextFilter
         context.getLocalScope().setSession( new SessionWrapper( session ) );
 
         context.callWith( () -> {
-            chain.doFilter( wrapRequest( req ), res );
+            chain.doFilter( req, res );
             return null;
         } );
-    }
-
-    private HttpServletRequest wrapRequest( final HttpServletRequest req )
-    {
-        final HttpServletRequest wrapped = new HttpRequestDelegate( req );
-        ServletRequestHolder.setRequest( wrapped );
-        return wrapped;
     }
 }
