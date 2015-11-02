@@ -6,9 +6,13 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.web.HttpStatus;
 
 final class AttachmentHandlerWorker
@@ -42,7 +46,10 @@ final class AttachmentHandlerWorker
         }
         if ( this.cacheable )
         {
-            setResponseCacheable();
+            final AccessControlEntry publicAccessControlEntry = content.getPermissions().getEntry( RoleKeys.EVERYONE );
+            final boolean everyoneCanRead = publicAccessControlEntry != null && publicAccessControlEntry.isAllowed( Permission.READ );
+            final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
+            setResponseCacheable( everyoneCanRead && masterBranch );
         }
     }
 

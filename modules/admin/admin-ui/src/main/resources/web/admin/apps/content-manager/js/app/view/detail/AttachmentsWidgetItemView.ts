@@ -20,11 +20,11 @@ module app.view.detail {
             this.content = content;
         }
 
-        public layout() {
+        public layout(): wemQ.Promise<any> {
             this.removeChildren();
             if (this.content != undefined) {
 
-                new api.content.GetContentAttachmentsRequest(this.content.getContentId()).sendAndParse().then((attachments: Attachments) => {
+                return new api.content.GetContentAttachmentsRequest(this.content.getContentId()).sendAndParse().then((attachments: Attachments) => {
                     if (attachments) {
 
                         var uploaderList = new api.dom.UlEl("uploader-list");
@@ -59,9 +59,13 @@ module app.view.detail {
                         this.appendChild(new api.dom.SpanEl("att-placeholder").setHtml("This item has no attachments"));
                     }
 
-                }).done();
+                    super.layout();
+
+                });
+            } else {
+                return super.layout();
             }
-            super.layout();
+
         }
     }
 

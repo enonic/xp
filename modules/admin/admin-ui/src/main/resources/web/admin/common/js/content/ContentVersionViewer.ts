@@ -75,13 +75,13 @@ module api.content {
 
         private getSubNameElements(contentVersion: ContentVersion): api.dom.Element[] {
             var elements: api.dom.Element[] = [this.getModifierSpan(contentVersion)]/*,
-                commentSpan = this.getCommentSpan(contentVersion)*/;
+             commentSpan = this.getCommentSpan(contentVersion)*/;
 
-/*          Uncomment to enable comments in version history
-            if (commentSpan) {
-                elements.push(new api.dom.BrEl(), commentSpan);
-            }
-*/
+            /*          Uncomment to enable comments in version history
+             if (commentSpan) {
+             elements.push(new api.dom.BrEl(), commentSpan);
+             }
+             */
             return elements;
         }
 

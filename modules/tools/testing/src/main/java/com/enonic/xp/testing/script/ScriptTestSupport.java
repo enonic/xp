@@ -15,6 +15,8 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
@@ -74,6 +76,8 @@ public abstract class ScriptTestSupport
 
         this.scriptRuntime = scriptRuntimeFactory.create( ScriptSettings.create().
             basePath( "/site" ).
+            binding( Context.class, ContextAccessor::current ).
+            binding( PortalRequest.class, () -> this.portalRequest ).
             build() );
     }
 

@@ -9,8 +9,6 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.tasks.Copy;
 import org.gradle.api.tasks.bundling.Jar;
 
-import com.enonic.xp.tools.gradle.watch.WatchTask;
-
 public class AppPlugin
     extends BasePlugin
 {
@@ -29,7 +27,6 @@ public class AppPlugin
 
         addLibraryConfig();
         applyDeployTask();
-        applyWatcherTask();
     }
 
     private void configure( final BundleExtension bundle )
@@ -80,15 +77,6 @@ public class AppPlugin
         task.doFirst( task1 -> {
             checkHomeDir();
         } );
-    }
-
-    private void applyWatcherTask()
-    {
-        final WatchTask task = this.project.getTasks().create( "watch", WatchTask.class );
-        task.setGroup( "Application" );
-        task.setDescription( "Watch for changes and re-deploy application jar" );
-        task.setDir( new File( this.project.getProjectDir(), "src" ) );
-        task.setTask( "deploy" );
     }
 
     private void addLibraryConfig()

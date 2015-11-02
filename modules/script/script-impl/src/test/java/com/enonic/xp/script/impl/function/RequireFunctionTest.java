@@ -5,7 +5,8 @@ import org.junit.Test;
 
 import com.enonic.xp.script.impl.AbstractScriptTest;
 
-public class RequireFunctionTest extends AbstractScriptTest
+public class RequireFunctionTest
+    extends AbstractScriptTest
 {
     @Test
     public void testDefaultResourceExecuted()

@@ -66,6 +66,7 @@ public class FindNodesByParentCommand
             size( params.getSize() ).
             searchMode( params.isCountOnly() ? SearchMode.COUNT : SearchMode.SEARCH ).
             setOrderExpressions( order.getOrderExpressions() ).
+            accurateScoring( true ).
             build(), InternalContext.from( ContextAccessor.current() ) );
 
         if ( nodeQueryResult.getHits() == 0 )

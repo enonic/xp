@@ -59,6 +59,10 @@ module app.wizard {
             return this.contentCompareStatus === CompareStatus.EQUAL;
         }
 
+        public isPendingDelete(): boolean {
+            return this.contentCompareStatus == CompareStatus.PENDING_DELETE;
+        }
+
         public enableActionsForExisting(existing: api.content.Content) {
             new api.security.auth.IsAuthenticatedRequest().
                 sendAndParse().

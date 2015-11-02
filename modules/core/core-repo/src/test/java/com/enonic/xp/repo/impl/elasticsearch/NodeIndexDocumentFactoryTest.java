@@ -16,7 +16,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.index.IndexValueType;
@@ -40,7 +39,6 @@ public class NodeIndexDocumentFactoryTest
         {
             NodeStoreDocumentFactory.createBuilder().
                 node( node ).
-                nodeVersionId( NodeVersionId.from( "test" ) ).
                 branch( TEST_BRANCH ).
                 repositoryId( TEST_REPOSITORY.getId() ).
                 build().
@@ -64,7 +62,6 @@ public class NodeIndexDocumentFactoryTest
 
         final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
-            nodeVersionId( NodeVersionId.from( "test" ) ).
             branch( TEST_BRANCH ).
             repositoryId( TEST_REPOSITORY.getId() ).
             build().
@@ -83,7 +80,6 @@ public class NodeIndexDocumentFactoryTest
 
         final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
-            nodeVersionId( NodeVersionId.from( "test" ) ).
             branch( TEST_BRANCH ).
             repositoryId( TEST_REPOSITORY.getId() ).
             build().
@@ -109,7 +105,6 @@ public class NodeIndexDocumentFactoryTest
 
         final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
-            nodeVersionId( NodeVersionId.from( "test" ) ).
             branch( TEST_BRANCH ).
             repositoryId( TEST_REPOSITORY.getId() ).
             build().
@@ -138,7 +133,6 @@ public class NodeIndexDocumentFactoryTest
 
         final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
-            nodeVersionId( NodeVersionId.from( "test" ) ).
             branch( TEST_BRANCH ).
             repositoryId( TEST_REPOSITORY.getId() ).
             build().
@@ -166,7 +160,6 @@ public class NodeIndexDocumentFactoryTest
 
         final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
-            nodeVersionId( NodeVersionId.from( "test" ) ).
             branch( TEST_BRANCH ).
             repositoryId( TEST_REPOSITORY.getId() ).
             build().
@@ -193,7 +186,6 @@ public class NodeIndexDocumentFactoryTest
 
         final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
-            nodeVersionId( NodeVersionId.from( "test" ) ).
             branch( TEST_BRANCH ).
             repositoryId( TEST_REPOSITORY.getId() ).
             build().

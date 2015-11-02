@@ -107,7 +107,6 @@ public class CompareNodeCommandTest
     public void status_newer()
         throws Exception
     {
-
         draft.callWith( this::createDefaultRootNode );
 
         final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
@@ -120,8 +119,6 @@ public class CompareNodeCommandTest
 
         draft.runWith( () -> doUpdateNode( createdNode ) );
         refresh();
-
-        printVersionIndex();
 
         final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 

@@ -47,7 +47,8 @@ public final class RequireFunction
             {
                 return resolved;
             }
-            else {
+            else
+            {
                 return resolve( name + DEFAULT_RESOURCE );
             }
         }

@@ -10,6 +10,7 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentChangeEvent;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
@@ -74,17 +75,8 @@ public class PushContentCommand
 
     private void pushAndDelete( final ContentIds contentIds )
     {
-        final Contents contentsToPush = getContentByIds( new GetContentByIdsParams( contentIds ).setGetChildrenIds( false ) );
-
-        final boolean validContents = ensureValidContents( contentsToPush );
-
-        if ( !validContents )
-        {
-            return;
-        }
-
-        NodeIds.Builder pushContentsIds = NodeIds.create();
-        NodeIds.Builder deletedContentsIds = NodeIds.create();
+        NodeIds.Builder pushNodesIds = NodeIds.create();
+        NodeIds.Builder deletedNodesIds = NodeIds.create();
 
         final CompareContentResults contentsComparisons = CompareContentsCommand.create().
             nodeService( this.nodeService ).
@@ -97,17 +89,27 @@ public class PushContentCommand
         {
             if ( compareResult.getCompareStatus() == CompareStatus.PENDING_DELETE )
             {
-                deletedContentsIds.add( NodeId.from( compareResult.getContentId() ) );
+                deletedNodesIds.add( NodeId.from( compareResult.getContentId() ) );
             }
             else
             {
-                pushContentsIds.add( NodeId.from( compareResult.getContentId() ) );
+                pushNodesIds.add( NodeId.from( compareResult.getContentId() ) );
             }
         }
 
-        doPushNodes( pushContentsIds.build() );
-        doDeleteNodes( deletedContentsIds.build() );
+        final ContentIds pushContentsIds = ContentIds.from( pushNodesIds.build().stream().
+            map( ( n ) -> ContentId.from( n.toString() ) ).
+            toArray( ContentId[]::new ) );
+        final Contents contentsToPush = getContentByIds( new GetContentByIdsParams( pushContentsIds ).setGetChildrenIds( false ) );
+        final boolean validContents = ensureValidContents( contentsToPush );
 
+        if ( !validContents )
+        {
+            return;
+        }
+
+        doPushNodes( pushNodesIds.build() );
+        doDeleteNodes( deletedNodesIds.build() );
     }
 
     private ContentIds getWithDependents()
@@ -181,17 +183,7 @@ public class PushContentCommand
 
     private boolean ensureValidContents( final Contents contents )
     {
-        boolean allOk = true;
-
-        for ( final Content content : contents )
-        {
-            if ( !content.isValid() )
-            {
-                allOk = false;
-            }
-        }
-
-        return allOk;
+        return contents.stream().allMatch( Content::isValid );
     }
 
     private Contents getContentByIds( final GetContentByIdsParams getContentParams )

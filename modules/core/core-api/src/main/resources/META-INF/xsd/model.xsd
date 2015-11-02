@@ -17,6 +17,7 @@
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="x-data" type="xdata"/>
       <xs:element minOccurs="0" name="config" type="form"/>
+      <xs:element minOccurs="0" name="filters" type="filters"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -208,6 +209,17 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="responseFilter">
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="order" type="xs:int" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="filters">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="response-filter" type="responseFilter"/>
     </xs:sequence>
   </xs:complexType>
 

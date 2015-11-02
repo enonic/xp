@@ -76,9 +76,11 @@ module app {
                 if (event.getPropertyName() === "displayName") {
                     var name = <string>event.getNewValue();
                     if (api.ObjectHelper.iFrameSafeInstanceOf(wizardPanel, app.wizard.UserStoreWizardPanel)) {
-                        name = name || "<Unnamed " + (<app.wizard.UserStoreWizardPanel>wizardPanel).getUserItemType()  + ">";
+                        name = name ||
+                               api.content.ContentUnnamed.prettifyUnnamed((<app.wizard.UserStoreWizardPanel>wizardPanel).getUserItemType());
                     } else if (api.ObjectHelper.iFrameSafeInstanceOf(wizardPanel, app.wizard.PrincipalWizardPanel)) {
-                        name = name || "<Unnamed " + (<app.wizard.PrincipalWizardPanel>wizardPanel).getUserItemType()  + ">";
+                        name = name ||
+                               api.content.ContentUnnamed.prettifyUnnamed((<app.wizard.PrincipalWizardPanel>wizardPanel).getUserItemType());
                     }
                     tabMenuItem.setLabel(name, !<string>event.getNewValue());
                 }
@@ -117,7 +119,7 @@ module app {
 
 
         private handleWizardCreated(wizard: UserItemWizardPanel<api.Equitable>, tabName: string) {
-            var tabMenuItem = new AppBarTabMenuItemBuilder().setLabel("<Unnamed " + tabName + ">").
+            var tabMenuItem = new AppBarTabMenuItemBuilder().setLabel(api.content.ContentUnnamed.prettifyUnnamed(tabName)).
                 setTabId(wizard.getTabId()).
                 setCloseAction(wizard.getCloseAction()).
                 build();
@@ -133,11 +135,11 @@ module app {
             var displayName, id: string;
             if (api.ObjectHelper.iFrameSafeInstanceOf(wizard.getPersistedItem(), api.security.Principal)) {
                 displayName = (<api.security.Principal>wizard.getPersistedItem()).getDisplayName() ||
-                              "<Unnamed " + (<app.wizard.PrincipalWizardPanel>wizard).getUserItemType()  + ">";
+                              api.content.ContentUnnamed.prettifyUnnamed((<api.security.Principal>wizard.getPersistedItem()).getDisplayName());
                 id = (<api.security.Principal>wizard.getPersistedItem()).getKey().getId();
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(wizard.getPersistedItem(), api.security.UserStore)) {
                 displayName = (<api.security.UserStore>wizard.getPersistedItem()).getDisplayName() ||
-                              "<Unnamed " + (<app.wizard.UserStoreWizardPanel>wizard).getUserItemType()  + ">";
+                              api.content.ContentUnnamed.prettifyUnnamed((<app.wizard.UserStoreWizardPanel>wizard).getUserItemType());
                 id = (<api.security.UserStore>wizard.getPersistedItem()).getKey().getId();
             }
 
@@ -310,7 +312,8 @@ module app {
 
             var name = e.getPrincipal().getDisplayName();
             if (api.ObjectHelper.iFrameSafeInstanceOf(wizard, app.wizard.PrincipalWizardPanel)) {
-                name = name || "<Unnamed " + (<app.wizard.UserItemWizardPanel<Principal>>wizard).getUserItemType()  + ">";
+                name = name ||
+                       api.content.ContentUnnamed.prettifyUnnamed((<app.wizard.UserItemWizardPanel<Principal>>wizard).getUserItemType());
             }
             this.getAppBarTabMenu().getNavigationItemById(newTabId).setLabel(name, !e.getPrincipal().getDisplayName());
         }

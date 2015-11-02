@@ -2,8 +2,6 @@ package com.enonic.xp.script.runtime;
 
 import org.junit.Test;
 
-import com.google.common.base.Joiner;
-
 import static org.junit.Assert.*;
 
 public class ScriptSettingsTest
@@ -14,9 +12,7 @@ public class ScriptSettingsTest
         final ScriptSettings settings = ScriptSettings.create().build();
 
         assertEquals( "", settings.getBasePath() );
-        assertNotNull( settings.getGlobalVariables() );
-        assertEquals( 0, settings.getGlobalVariables().size() );
-        assertNull( settings.getAttribute( String.class ) );
+        assertNull( settings.getBinding( String.class ) );
     }
 
     @Test
@@ -30,30 +26,17 @@ public class ScriptSettingsTest
     }
 
     @Test
-    public void testGlobalVariable()
-    {
-        final ScriptSettings settings = ScriptSettings.create().
-            globalVariable( "a", 1 ).
-            globalVariable( "b", 2 ).
-            build();
-
-        assertNotNull( settings.getGlobalVariables() );
-        assertEquals( 2, settings.getGlobalVariables().size() );
-        assertEquals( "a=1,b=2", Joiner.on( "," ).withKeyValueSeparator( "=" ).join( settings.getGlobalVariables() ) );
-    }
-
-    @Test
     public void testAttributes()
     {
         final ScriptSettings settings = ScriptSettings.create().
-            attribute( String.class, () -> "hello" ).
-            attribute( Integer.class, () -> 2 ).
+            binding( String.class, () -> "hello" ).
+            binding( Integer.class, () -> 2 ).
             build();
 
-        assertNotNull( settings.getAttribute( String.class ) );
-        assertEquals( "hello", settings.getAttribute( String.class ).get() );
+        assertNotNull( settings.getBinding( String.class ) );
+        assertEquals( "hello", settings.getBinding( String.class ).get() );
 
-        assertNotNull( settings.getAttribute( Integer.class ) );
-        assertEquals( new Integer( 2 ), settings.getAttribute( Integer.class ).get() );
+        assertNotNull( settings.getBinding( Integer.class ) );
+        assertEquals( new Integer( 2 ), settings.getBinding( Integer.class ).get() );
     }
 }

@@ -42,6 +42,7 @@ module api.ui.uploader {
         value?: string;
         disabled?: boolean;
         hideDropZone?: boolean;
+        beforeUploadCallback?: (files: PluploadFile[]) => void;
     }
 
     export class Uploader<MODEL extends api.Equitable> extends api.dom.FormInputEl {
@@ -68,6 +69,8 @@ module api.ui.uploader {
         private uploadCompleteListeners: { (event: FileUploadCompleteEvent<MODEL>):void }[] = [];
         private uploadFailedListeners: { (event: FileUploadFailedEvent<MODEL>):void }[] = [];
         private uploadResetListeners: {():void }[] = [];
+
+        private beforeUploadCallback: (files: PluploadFile[]) => void;
 
         public static debug: boolean = false;
 
@@ -279,6 +282,8 @@ module api.ui.uploader {
             if (this.config.disabled == undefined) {
                 this.config.disabled = false;
             }
+
+            this.beforeUploadCallback = this.config.beforeUploadCallback;
         }
 
         getName(): string {
@@ -534,6 +539,11 @@ module api.ui.uploader {
             }, this);
 
             uploader.bind('FilesAdded', (up, files: PluploadFile[]) => {
+
+                if (this.beforeUploadCallback) {
+                    this.beforeUploadCallback(files);
+                }
+
                 if (Uploader.debug) {
                     console.log('uploader files added', up, files);
                 }

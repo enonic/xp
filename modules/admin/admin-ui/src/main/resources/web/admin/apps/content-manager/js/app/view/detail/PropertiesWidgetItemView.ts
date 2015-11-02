@@ -18,21 +18,23 @@ module app.view.detail {
             this.content = content;
         }
 
-        public layout() {
+        public layout(): wemQ.Promise<any> {
             this.removeChildren();
             if (this.content != undefined) {
 
                 if (!this.content.getType().getApplicationKey().isSystemReserved()) {
-                    new api.application.GetApplicationRequest(this.content.getType().getApplicationKey()).sendAndParse().then((application: Application) => {
+                    return new api.application.GetApplicationRequest(this.content.getType().getApplicationKey()).sendAndParse().then((application: Application) => {
                         this.doLayout(application);
                     }).catch(() => {
                         this.doLayout();
-                    }).done();
+                    });
                 } else {
                     this.doLayout();
+                    return super.layout();
                 }
+            } else {
+                return super.layout();
             }
-            super.layout();
         }
 
         private doLayout(application?: Application) {

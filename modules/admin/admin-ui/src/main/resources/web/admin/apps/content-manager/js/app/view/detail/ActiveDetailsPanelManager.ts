@@ -33,6 +33,7 @@ module app.view.detail {
                 }
             }
             ActiveDetailsPanelManager.activeDetailsPanel = detailsPanelToMakeActive;
+            detailsPanelToMakeActive.getCustomWidgetViewsAndUpdateDropdown();
             detailsPanelToMakeActive.setItem(activeItem);
         }
 

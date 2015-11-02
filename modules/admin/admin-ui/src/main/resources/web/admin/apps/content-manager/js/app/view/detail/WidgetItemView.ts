@@ -15,10 +15,11 @@ module app.view.detail {
             this.item = item;
         }
 
-        public layout() {
+        public layout(): wemQ.Promise<any> {
             if (this.item) {
                 this.appendChild(this.item);
             }
+            return wemQ<any>(null);
         }
 
     }

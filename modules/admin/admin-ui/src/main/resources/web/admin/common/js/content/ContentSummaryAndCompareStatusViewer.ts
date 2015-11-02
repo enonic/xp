@@ -37,11 +37,11 @@ module api.content {
 
                 if (relativePath) {
                     return !contentName.isUnnamed() ? contentName.toString() :
-                                                      api.ui.NamesAndIconViewer.EMPTY_SUB_NAME;
+                           api.content.ContentUnnamed.prettifyUnnamed();
                 } else {
                     return !contentName.isUnnamed() ? contentSummary.getPath().toString() :
                                                       ContentPath.fromParent(contentSummary.getPath().getParentPath(),
-                                                                             api.ui.NamesAndIconViewer.EMPTY_SUB_NAME).toString();
+                                                          api.content.ContentUnnamed.prettifyUnnamed()).toString();
                 }
             } else if (uploadItem) {
                 return uploadItem.getName();

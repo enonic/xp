@@ -53,6 +53,8 @@ public class XmlWidgetDescriptorParserTest
         assertEquals( "myapplication:mywidget", result.getKey().toString() );
         assertEquals( "mywidget", result.getName() );
         assertEquals( "My widget", result.getDisplayName() );
+        assertEquals( "myapplication:mywidget", result.getKeyString() );
+        assertEquals( "_/widgets/myapplication/mywidget", result.getUrl() );
 
         final ImmutableList<String> interfaces = result.getInterfaces();
         assertNotNull( interfaces );

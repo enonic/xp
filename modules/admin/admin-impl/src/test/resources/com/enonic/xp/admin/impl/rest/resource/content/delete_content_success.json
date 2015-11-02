@@ -4,11 +4,13 @@
   "successes": [
     {
       "id": "123",
-      "name": "one"
+      "name": "one",
+      "type": "folder"
     },
     {
       "id": "123",
-      "name": "one"
+      "name": "one",
+      "type": "folder"
     }
   ]
 }

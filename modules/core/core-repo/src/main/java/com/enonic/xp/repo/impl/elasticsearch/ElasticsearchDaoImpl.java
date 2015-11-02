@@ -137,26 +137,7 @@ public class ElasticsearchDaoImpl
 
         //System.out.println( "######################\n\r" + searchRequest.toString() );
 
-        return doSearchRequest( searchRequest );
-    }
-
-    private SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder )
-    {
-        try
-        {
-            final SearchResponse searchResponse = searchRequestBuilder.
-                setPreference( searchPreference ).
-                execute().
-                actionGet( searchTimeout );
-
-            return SearchResultFactory.create( searchResponse );
-        }
-        catch ( ElasticsearchException e )
-        {
-            LOG.error( "Search request failed", e.getRootCause() );
-
-            throw new IndexException( "Search request failed", e );
-        }
+        return doSearchRequest( searchRequest, query.getSearchType() );
     }
 
     @Override
@@ -169,7 +150,7 @@ public class ElasticsearchDaoImpl
             setSearchType( SearchType.COUNT ).
             setPreference( searchPreference );
 
-        final SearchResult searchResult = doSearchRequest( searchRequestBuilder );
+        final SearchResult searchResult = doSearchRequest( searchRequestBuilder, query.getSearchType() );
 
         return searchResult.getResults().getTotalHits();
     }
@@ -296,6 +277,26 @@ public class ElasticsearchDaoImpl
         final GetSnapshotsResponse getSnapshotsResponse = this.client.admin().cluster().getSnapshots( getSnapshotsRequest ).actionGet();
 
         return SnapshotResultsFactory.create( getSnapshotsResponse );
+    }
+
+    private SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder, final SearchType searchType )
+    {
+        try
+        {
+            final SearchResponse searchResponse = searchRequestBuilder.
+                setPreference( searchPreference ).
+                setSearchType( searchType ).
+                execute().
+                actionGet( searchTimeout );
+
+            return SearchResultFactory.create( searchResponse );
+        }
+        catch ( ElasticsearchException e )
+        {
+            LOG.error( "Search request failed", e.getRootCause() );
+
+            throw new IndexException( "Search request failed", e );
+        }
     }
 
     private Set<String> getSnapshotIndexNames( final RepositoryId repositoryId, final boolean includeIndexedData )

@@ -608,7 +608,7 @@ module api.ui.treegrid {
 
         // Hard reset
 
-        reload(parentNodeData?: DATA, mask: boolean = true): void {
+        reload(parentNodeData?: DATA): void {
             var expandedNodesDataId = this.grid.getDataView().getItems().filter((item) => {
                 return item.isExpanded();
             }).map((item) => {
@@ -620,9 +620,7 @@ module api.ui.treegrid {
             this.root.resetCurrentRoot(parentNodeData);
             this.initData([]);
 
-            if (mask) {
-                this.mask();
-            }
+            this.mask();
             this.reloadNode(null, expandedNodesDataId)
                 .then(() => {
                     this.root.setCurrentSelection(selection);
