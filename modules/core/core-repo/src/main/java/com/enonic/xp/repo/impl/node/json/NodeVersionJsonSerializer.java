@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.util.Exceptions;
 
 public final class NodeVersionJsonSerializer
@@ -35,13 +36,13 @@ public final class NodeVersionJsonSerializer
         }
     }
 
-    public NodeVersion toNodeVersion( final String serialized )
+    public NodeVersion toNodeVersion( final String serialized, NodeVersionId nodeVersionId )
     {
         try
         {
             final NodeVersionJson nodeVersionJson = this.mapper.readValue( serialized, NodeVersionJson.class );
 
-            return nodeVersionJson.fromJson();
+            return nodeVersionJson.fromJson( nodeVersionId );
         }
         catch ( final IOException e )
         {

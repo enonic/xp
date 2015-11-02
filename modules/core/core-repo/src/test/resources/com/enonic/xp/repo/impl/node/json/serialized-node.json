@@ -86,7 +86,7 @@
       ]
     }
   ],
-  "id": "myId",
+  "id": "nodeId",
   "indexConfigDocument": {
     "analyzer": "myAnalyzer",
     "defaultConfig": {

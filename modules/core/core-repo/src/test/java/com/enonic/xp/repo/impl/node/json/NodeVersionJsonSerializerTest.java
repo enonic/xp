@@ -21,6 +21,7 @@ import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.security.PrincipalKey;
@@ -90,8 +91,11 @@ public class NodeVersionJsonSerializerTest
             addIndexValueProcessor( indexValueProcessor ).
             build();
 
+        NodeVersionId nodeVersionId = NodeVersionId.from( "versionId" );
+
         NodeVersion nodeVersion = NodeVersion.create().
-            id( NodeId.from( "myId" ) ).
+            id( NodeId.from( "nodeId" ) ).
+            versionId( nodeVersionId ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( "myAnalyzer" ).
                 defaultConfig( IndexConfig.MINIMAL ).
@@ -117,7 +121,7 @@ public class NodeVersionJsonSerializerTest
         System.out.println( expectedStr );
         assertEquals( expectedStr, serializedNode );
 
-        final NodeVersion deSerialized = this.serializer.toNodeVersion( expectedStr );
+        final NodeVersion deSerialized = this.serializer.toNodeVersion( expectedStr, nodeVersionId );
 
         assertEquals( nodeVersion, deSerialized );
     }

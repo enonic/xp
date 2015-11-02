@@ -198,6 +198,7 @@ public final class Node
     {
         return new Builder().
             id( nodeVersion.getId() ).
+            nodeVersionId( nodeVersion.getVersionId() ).
             nodeType( nodeVersion.getNodeType() ).
             data( nodeVersion.getData() ).
             indexConfigDocument( nodeVersion.getIndexConfigDocument() ).

@@ -17,6 +17,8 @@ public class NodeFactory
         }
 
         return Node.create( nodeVersion ).
+            id( nodeBranchMetadata.getNodeId() ).
+            nodeVersionId( nodeBranchMetadata.getVersionId() ).
             parentPath( nodeBranchMetadata.getNodePath().getParentPath() ).
             name( nodeBranchMetadata.getNodePath().getLastElement().toString() ).
             timestamp( nodeBranchMetadata.getTimestamp() ).
