@@ -12,7 +12,6 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 @Component(immediate = true, service = Filter.class,
     property = {"osgi.http.whiteboard.filter.pattern=/", "service.ranking:Integer=10", "osgi.http.whiteboard.filter.dispatcher=FORWARD",
@@ -24,8 +23,6 @@ public final class ContextFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        ServletRequestHolder.setRequest( req );
-
         final Context context = ContextBuilder.create().build();
         context.getLocalScope().setAttribute( ContentConstants.BRANCH_DRAFT );
         context.getLocalScope().setAttribute( ContentConstants.CONTENT_REPO.getId() );
