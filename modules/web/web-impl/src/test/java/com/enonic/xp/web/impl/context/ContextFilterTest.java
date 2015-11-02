@@ -1,9 +1,11 @@
 package com.enonic.xp.web.impl.context;
 
 import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -26,6 +28,8 @@ public class ContextFilterTest
 
         filter.doFilter( req, res, chain );
 
-        Mockito.verify( chain, Mockito.times( 1 ) ).doFilter( Mockito.eq( req ), Mockito.eq( res ) );
+        final ArgumentCaptor<HttpServletRequest> reqArg = ArgumentCaptor.forClass( HttpServletRequest.class );
+        Mockito.verify( chain, Mockito.times( 1 ) ).doFilter( reqArg.capture(), Mockito.eq( res ) );
+        Assert.assertEquals( HttpRequestDelegate.class, reqArg.getValue().getClass() );
     }
 }

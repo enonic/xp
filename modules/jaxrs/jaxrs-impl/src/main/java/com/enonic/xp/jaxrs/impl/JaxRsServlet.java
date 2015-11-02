@@ -45,8 +45,7 @@ public final class JaxRsServlet
         try
         {
             refreshIfNeeded( req.getServletContext() );
-            final HttpRequestDelegate wrapped = new HttpRequestDelegate( req );
-            this.dispatcher.service( req.getMethod(), wrapped, res, true );
+            this.dispatcher.service( req.getMethod(), req, res, true );
         }
         catch ( final UnhandledException e )
         {
