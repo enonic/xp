@@ -265,7 +265,7 @@ module app {
                     }
 
                     var contentItem = new api.app.view.ViewItem(content)
-                        .setDisplayName(content..getDisplayName())
+                        .setDisplayName(content.getDisplayName())
                         .setPath(content.getPath().toString())
                         .setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve());
 

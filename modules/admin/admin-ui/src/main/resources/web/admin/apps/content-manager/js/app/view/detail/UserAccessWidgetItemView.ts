@@ -120,30 +120,33 @@ module app.view.detail {
 
         }
 
-        public doRender(): boolean {
-            super.doRender();
+        public layout(): wemQ.Promise<any> {
+            this.removeChildren();
 
-            new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
+            return super.layout().then(this.layoutUserAccess.bind(this));
+        }
+
+        private layoutUserAccess(): wemQ.Promise<any> {
+            return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
 
                 this.currentUser = loginResult.getUser();
+                if (this.contentId) {
+                    return new api.content.GetContentByIdRequest(this.contentId).sendAndParse().
+                        then((content: Content) => {
 
-                new api.content.GetContentByIdRequest(this.contentId).sendAndParse().
-                    then((content: Content) => {
-                        if (content) {
-                            this.layoutHeader(content);
-                            this.layoutList(content).then(() => {
-                                if (content.isAnyPrincipalAllowed(loginResult.getPrincipals(),
-                                        api.security.acl.Permission.WRITE_PERMISSIONS)) {
-                                    this.layoutBottom(content);
-                                }
-                            });
-                        }
+                            if (content) {
+                                this.layoutHeader(content);
+                                return this.layoutList(content).then(() => {
+                                    if (content.isAnyPrincipalAllowed(loginResult.getPrincipals(),
+                                            api.security.acl.Permission.WRITE_PERMISSIONS)) {
 
-                    }).done();
-
+                                        this.layoutBottom(content);
+                                    }
+                                });
+                            }
+                        });
+                }
             });
-
-            return true;
         }
 
         private getUserAccessList(accessUsersMap, results: ResolveMembersResult): UserAccessListItemView[] {

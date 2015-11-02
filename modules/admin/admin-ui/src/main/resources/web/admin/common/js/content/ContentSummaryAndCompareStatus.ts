@@ -73,6 +73,10 @@ module api.content {
             return this.contentSummary ? this.contentSummary.getPath() : null;
         }
 
+        getType(): api.schema.content.ContentTypeName {
+            return this.contentSummary ? this.contentSummary.getType() : null;
+        }
+
         getDisplayName(): string {
             return this.contentSummary ? this.contentSummary.getDisplayName() : null;
         }

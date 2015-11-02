@@ -7,7 +7,6 @@ module app.view.detail {
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import CompareStatus = api.content.CompareStatus;
     import Widget = api.content.Widget;
-    import WidgetsSelectionRow = app.view.detail.WidgetsSelectionRow;
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
     export class DetailsPanel extends api.ui.panel.Panel {
@@ -308,7 +307,7 @@ module app.view.detail {
                             }
                             this.updateWidgetsHeights();
                         }).
-                        addWidgetItemView(widgetItemView).
+                        addWidgetItemView(statusWidgetItemView).
                         addWidgetItemView(propWidgetItemView).
                         addWidgetItemView(attachmentsWidgetItemView).
                         addWidgetItemView(userAccessWidgetItemView).
@@ -455,7 +454,7 @@ module app.view.detail {
         updateViewer() {
             if (this.useViewer && this.item) {
                 //#
-                this.viewer.setObject(this.item.getModel());
+                this.viewer.setObject(this.item.getModel().getContentSummary());
             }
         }
 
