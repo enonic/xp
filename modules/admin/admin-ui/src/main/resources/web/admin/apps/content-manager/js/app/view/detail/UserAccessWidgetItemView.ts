@@ -32,6 +32,8 @@ module app.view.detail {
 
         private currentUser: User;// TODO: need to implement caching for current user value;
 
+        private everyoneAccessValue: Access;
+
         private static OPTIONS: any[] = [
             {value: Access.FULL, name: 'has full access to'},
             {value: Access.PUBLISH, name: 'can publish'},
@@ -53,10 +55,11 @@ module app.view.detail {
 
         private layoutHeader(content: Content) {
             var entry = content.getPermissions().getEntry(api.security.RoleKeys.EVERYONE);
+            this.everyoneAccessValue = null;
             if (entry) {
 
-                var headerStr = entry.getPrincipalDisplayName() + " " +
-                                                                      this.getOptionName(AccessControlEntryView.getAccessValueFromEntry(entry)) +
+                this.everyoneAccessValue = AccessControlEntryView.getAccessValueFromEntry(entry);
+                var headerStr = entry.getPrincipalDisplayName() + " " + this.getOptionName(this.everyoneAccessValue) +
                                 " this item";
                 var headerStrEl = new api.dom.SpanEl("header-string").setHtml(headerStr);
 
@@ -87,7 +90,9 @@ module app.view.detail {
             var accessUsersMap = [],
                 request = new ResolveMembersRequest();
 
-            content.getPermissions().getEntries().map(
+            content.getPermissions().getEntries().
+                filter(entry => !(AccessControlEntryView.getAccessValueFromEntry(entry) == this.everyoneAccessValue)).
+                map(
                 (entry) => {
 
                     var access = AccessControlEntryView.getAccessValueFromEntry(entry);
