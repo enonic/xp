@@ -6,7 +6,6 @@ import java.time.Instant;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -30,7 +29,6 @@ import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.blob.Blob;
 import com.enonic.xp.repo.impl.blob.BlobStore;
-import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -105,15 +103,11 @@ public final class CreateNodeCommand
 
         final Node newNode = nodeBuilder.build();
 
-        final Node createdNode = StoreNodeCommand.create( this ).
+        return StoreNodeCommand.create( this ).
             node( newNode ).
             updateMetadataOnly( false ).
             build().
             execute();
-
-        indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ) );
-        return createdNode;
-
     }
 
     private AttachedBinaries storeAndAttachBinaries()
