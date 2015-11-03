@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-import org.osgi.service.component.annotations.Component;
-
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.context.Context;
@@ -18,7 +16,6 @@ import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-@Component(immediate = true)
 public final class GetMembershipsHandler
     implements ScriptBean
 {

@@ -31,6 +31,16 @@ public class HandlerTestHelper
             build();
     }
 
+    public static User getTestUserWithouEmail()
+    {
+        return User.create().
+            key( PrincipalKey.ofUser( UserStoreKey.from( "enonic" ), "user1" ) ).
+            displayName( "User 1" ).
+            modifiedTime( Instant.now( clock ) ).
+            login( "user1" ).
+            build();
+    }
+
     public static Role getTestRole()
     {
         return Role.create().

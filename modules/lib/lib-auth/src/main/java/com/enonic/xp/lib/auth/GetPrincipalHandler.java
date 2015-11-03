@@ -3,8 +3,6 @@ package com.enonic.xp.lib.auth;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import org.osgi.service.component.annotations.Component;
-
 import com.enonic.xp.context.Context;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -13,7 +11,6 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-@Component(immediate = true)
 public final class GetPrincipalHandler
     implements ScriptBean
 {
