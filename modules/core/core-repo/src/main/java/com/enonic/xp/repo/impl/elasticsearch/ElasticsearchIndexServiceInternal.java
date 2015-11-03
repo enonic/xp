@@ -13,7 +13,6 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.unit.TimeValue;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -57,7 +56,7 @@ public class ElasticsearchIndexServiceInternal
     private Client client;
 
     @Override
-    public ClusterHealthStatus getClusterHealth( final TimeValue timeout, final String... indexNames )
+    public ClusterHealthStatus getClusterHealth( final String timeout, final String... indexNames )
     {
         return doGetClusterHealth( timeout, indexNames );
     }
@@ -134,7 +133,7 @@ public class ElasticsearchIndexServiceInternal
         return response.isExists();
     }
 
-    private ClusterHealthStatus doGetClusterHealth( final TimeValue timeout, final String... indexNames )
+    private ClusterHealthStatus doGetClusterHealth( final String timeout, final String... indexNames )
     {
         LOG.info( "Executing ClusterHealtRequest" );
 

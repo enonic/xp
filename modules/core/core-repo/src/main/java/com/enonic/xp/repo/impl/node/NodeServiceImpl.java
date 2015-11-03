@@ -81,8 +81,8 @@ public class NodeServiceImpl
     public void initialize()
     {
         final RepositoryInitializer repoInitializer = new RepositoryInitializer( this.indexServiceInternal );
-        repoInitializer.initializeRepository( ContentConstants.CONTENT_REPO.getId() );
-        repoInitializer.initializeRepository( SystemConstants.SYSTEM_REPO.getId() );
+
+        repoInitializer.initializeRepositories( ContentConstants.CONTENT_REPO.getId(), SystemConstants.SYSTEM_REPO.getId() );
     }
 
     @Override

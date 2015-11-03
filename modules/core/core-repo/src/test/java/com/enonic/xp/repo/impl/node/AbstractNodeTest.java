@@ -165,7 +165,7 @@ public abstract class AbstractNodeTest
         nodeService.setStorageService( this.storageService );
 
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexServiceInternal );
-        repositoryInitializer.initializeRepository( repository.getId() );
+        repositoryInitializer.initializeRepositories( repository.getId() );
 
         refresh();
     }

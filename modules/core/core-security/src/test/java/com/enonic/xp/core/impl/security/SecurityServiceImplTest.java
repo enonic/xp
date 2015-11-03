@@ -153,7 +153,7 @@ public class SecurityServiceImplTest
     void createRepository( final Repository repository )
     {
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
-        repositoryInitializer.initializeRepository( repository.getId() );
+        repositoryInitializer.initializeRepositories( repository.getId() );
 
         refresh();
 
