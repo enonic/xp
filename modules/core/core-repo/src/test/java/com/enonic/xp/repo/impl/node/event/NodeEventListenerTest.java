@@ -36,6 +36,7 @@ public class NodeEventListenerTest
     {
         nodeEventListener.onEvent( Event2.create( NodeEvents.NODE_CREATED_EVENT ).
             value( "fisk", "ost" ).
+            localOrigin( false ).
             build() );
 
         Mockito.verify( storageService, Mockito.never() ).handleNodeCreated( Mockito.any(), Mockito.any(), Mockito.any() );
@@ -47,9 +48,29 @@ public class NodeEventListenerTest
     {
         nodeEventListener.onEvent( Event2.create( NodeEvents.NODE_CREATED_EVENT ).
             value( "nodes", "ost" ).
+            localOrigin( false ).
             build() );
 
         Mockito.verify( storageService, Mockito.never() ).handleNodeCreated( Mockito.any(), Mockito.any(), Mockito.any() );
+    }
+
+    @Test
+    public void local_event_ignored()
+        throws Exception
+    {
+        final NodeId nodeId = NodeId.from( "node1" );
+        final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
+
+        final Event2 localEvent = NodeEvents.created( Node.create().
+            id( nodeId ).
+            parentPath( nodePath.getParentPath() ).
+            name( nodePath.getLastElement().toString() ).
+            build() );
+
+        nodeEventListener.onEvent( localEvent );
+
+        Mockito.verify( storageService, Mockito.never() ).handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
+                                                                             Mockito.isA( InternalContext.class ) );
     }
 
     @Test
@@ -59,11 +80,15 @@ public class NodeEventListenerTest
         final NodeId nodeId = NodeId.from( "node1" );
         final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
 
-        nodeEventListener.onEvent( NodeEvents.created( Node.create().
+        final Event2 localEvent = NodeEvents.created( Node.create().
             id( nodeId ).
             parentPath( nodePath.getParentPath() ).
             name( nodePath.getLastElement().toString() ).
-            build() ) );
+            build() );
+
+        nodeEventListener.onEvent( Event2.create( localEvent ).
+            localOrigin( false ).
+            build() );
 
         Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
                                                                                 Mockito.isA( InternalContext.class ) );
@@ -76,11 +101,15 @@ public class NodeEventListenerTest
         final NodeId nodeId = NodeId.from( "node1" );
         final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
 
-        nodeEventListener.onEvent( NodeEvents.deleted( Node.create().
+        final Event2 localEvent = NodeEvents.deleted( Node.create().
             id( nodeId ).
             parentPath( nodePath.getParentPath() ).
             name( nodePath.getLastElement().toString() ).
-            build() ) );
+            build() );
+
+        nodeEventListener.onEvent( Event2.create( localEvent ).
+            localOrigin( false ).
+            build() );
 
         Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodeDeleted( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
                                                                                 Mockito.isA( InternalContext.class ) );
@@ -103,7 +132,11 @@ public class NodeEventListenerTest
             parentPath( NodePath.create( "newParent" ).build() ).
             build();
 
-        nodeEventListener.onEvent( NodeEvents.moved( sourceNode, movedNode ) );
+        final Event2 localEvent = NodeEvents.moved( sourceNode, movedNode );
+
+        nodeEventListener.onEvent( Event2.create( localEvent ).
+            localOrigin( false ).
+            build() );
 
         final NodeMovedParams nodeMovedParams = new NodeMovedParams( sourceNode.path(), movedNode.path(), sourceNode.id() );
 
@@ -128,7 +161,11 @@ public class NodeEventListenerTest
             parentPath( NodePath.create( "newParent" ).build() ).
             build();
 
-        nodeEventListener.onEvent( NodeEvents.renamed( sourceNode, movedNode ) );
+        final Event2 localEvent = NodeEvents.renamed( sourceNode, movedNode );
+
+        nodeEventListener.onEvent( Event2.create( localEvent ).
+            localOrigin( false ).
+            build() );
 
         final NodeMovedParams nodeMovedParams = new NodeMovedParams( sourceNode.path(), movedNode.path(), sourceNode.id() );
 
@@ -153,7 +190,11 @@ public class NodeEventListenerTest
             parentPath( NodePath.create( "newParent" ).build() ).
             build();
 
-        nodeEventListener.onEvent( NodeEvents.duplicated( sourceNode ) );
+        final Event2 localEvent = NodeEvents.duplicated( sourceNode );
+
+        nodeEventListener.onEvent( Event2.create( localEvent ).
+            localOrigin( false ).
+            build() );
 
         Mockito.verify( storageService, Mockito.times( 1 ) ).handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
                                                                                 Mockito.isA( InternalContext.class ) );

@@ -38,9 +38,13 @@ public class NodeEventListener
     {
         if ( event instanceof Event2 )
         {
+            if ( ( (Event2) event ).isLocalOrigin() )
+            {
+                return;
+            }
+
             doHandleEvent( (Event2) event );
         }
-
     }
 
     private void doHandleEvent( final Event2 event )

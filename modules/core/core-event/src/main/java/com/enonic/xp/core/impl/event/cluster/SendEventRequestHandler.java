@@ -43,7 +43,7 @@ public final class SendEventRequestHandler
     public void messageReceived( final SendEventRequest request, final TransportChannel channel )
     {
         final Event2 receivedEvent = request.getEvent();
-        final Event2 forwardedEvent = Event2.create( receivedEvent ).distributed( false ).build();
+        final Event2 forwardedEvent = Event2.create( receivedEvent ).distributed( false ).localOrigin( false ).build();
         this.eventPublisher.publish( forwardedEvent );
     }
 

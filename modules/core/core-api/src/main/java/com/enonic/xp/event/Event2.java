@@ -19,6 +19,8 @@ public final class Event2
 
     private final boolean distributed;
 
+    private final boolean localOrigin;
+
     private final ImmutableMap<String, Object> data;
 
     private Event2( final Builder builder )
@@ -27,6 +29,7 @@ public final class Event2
         this.timestamp = builder.timestamp;
         this.distributed = builder.distributed;
         this.data = builder.dataBuilder.build();
+        this.localOrigin = builder.localOrigin;
     }
 
     public String getType()
@@ -79,6 +82,11 @@ public final class Event2
         return this.type.startsWith( type + "." );
     }
 
+    public boolean isLocalOrigin()
+    {
+        return localOrigin;
+    }
+
     @Override
     public String toString()
     {
@@ -86,6 +94,7 @@ public final class Event2
             add( "type", this.type ).
             add( "timestamp", this.timestamp ).
             add( "distributed", this.distributed ).
+            add( "localOrigin", this.localOrigin ).
             add( "data", this.data != null ? this.data.toString() : null ).
             omitNullValues().
             toString();
@@ -148,6 +157,8 @@ public final class Event2
 
         private long timestamp;
 
+        private boolean localOrigin = true;
+
         private ImmutableMap.Builder<String, Object> dataBuilder = ImmutableMap.builder();
 
         private Builder( final String type )
@@ -161,6 +172,7 @@ public final class Event2
             this( event.type );
             this.distributed = event.distributed;
             this.timestamp = event.timestamp;
+            this.localOrigin = event.localOrigin;
 
             for ( final Map.Entry<String, ?> entry : event.data.entrySet() )
             {
@@ -195,6 +207,12 @@ public final class Event2
         public Builder timestamp( final long timestamp )
         {
             this.timestamp = timestamp;
+            return this;
+        }
+
+        public Builder localOrigin( final boolean local )
+        {
+            this.localOrigin = local;
             return this;
         }
 
