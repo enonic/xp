@@ -62,6 +62,18 @@ exports.createUser = function (userStore, name, displayName, email) {
     return __.toNativeObject(bean.createUser());
 };
 
+exports.createGroup = function (userStore, groupName, displayName) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.CreateGroupHandler');
+
+    bean.userStore = __.nullOrValue(userStore);
+
+    bean.name = __.nullOrValue(groupName);
+
+    bean.displayName = __.nullOrValue(displayName);
+
+    return __.toNativeObject(bean.createGroup());
+};
+
 exports.hasRole = function (roleKey) {
     var bean = __.newBean('com.enonic.xp.lib.auth.HasRoleHandler');
 
