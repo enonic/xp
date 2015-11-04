@@ -81,15 +81,13 @@ public final class InitAppCommand
 
         // Creates the destination directory if it does not exist
         File destinationDirectory = new File( destination );
-        if ( !destinationDirectory.exists() )
-        {
-            destinationDirectory.mkdirs();
-        }
+        File temporaryDirectory = new File( destinationDirectory, ".InitAppTemporaryDirectory" );
+        temporaryDirectory.mkdirs();
 
         // Clones the Git repository
         final CloneCommand cloneCommand = Git.cloneRepository().
             setURI( gitRepositoryUri ).
-            setDirectory( destinationDirectory );
+            setDirectory( temporaryDirectory );
         if ( authentication != null )
         {
             final String[] authentificationValues = authentication.split( ":" );
@@ -99,12 +97,25 @@ public final class InitAppCommand
         Git clone = cloneCommand.call();
         clone.getRepository().close();
 
+        // Removes the Git related content
+        removeGitRelatedContent( temporaryDirectory );
+
+        //Copies the content from the temporary folder and remove it
+        FileUtils.copyDirectory( temporaryDirectory, destinationDirectory );
+        FileUtils.deleteDirectory( temporaryDirectory );
+
+        LOGGER.info( "Git repository retrieved." );
+    }
+
+    private void removeGitRelatedContent( File directory )
+        throws IOException
+    {
         //Removes the .git directory and README.md file
-        FileUtils.deleteDirectory( new File( destinationDirectory, ".git" ) );
-        FileUtils.deleteQuietly( new File( destinationDirectory, "README.md" ) );
+        FileUtils.deleteDirectory( new File( directory, ".git" ) );
+        FileUtils.deleteQuietly( new File( directory, "README.md" ) );
 
         //Remove the .gitkeep and .gitignore files
-        Files.walkFileTree( destinationDirectory.toPath(), new SimpleFileVisitor<Path>()
+        Files.walkFileTree( directory.toPath(), new SimpleFileVisitor<Path>()
         {
             @Override
             public FileVisitResult visitFile( final Path file, final BasicFileAttributes attrs )
@@ -118,8 +129,6 @@ public final class InitAppCommand
                 return FileVisitResult.CONTINUE;
             }
         } );
-
-        LOGGER.info( "Git repository retrieved." );
     }
 
     private void processGradleProperties()

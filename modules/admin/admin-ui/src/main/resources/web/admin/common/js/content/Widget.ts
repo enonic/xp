@@ -4,21 +4,26 @@ module api.content {
 
     export class Widget {
 
-        private name: string;
+        private url: string;
         private displayName: string;
         private interfaces: string[];
         private widgetDescriptorKey: WidgetDescriptorKey;
 
-        constructor(name: string, displayName: string, interfaces: string[], applicationKey: string, descriptorKeyName) {
-            this.name = name;
+        constructor(url: string, displayName: string, interfaces: string[], key: string) {
+            this.url = url;
             this.displayName = displayName;
             this.interfaces = interfaces;
-            this.widgetDescriptorKey = new WidgetDescriptorKey(ApplicationKey.fromString(applicationKey), descriptorKeyName);
+            this.widgetDescriptorKey = this.makeWidgetDescriptorKey(key);
         }
 
+        private makeWidgetDescriptorKey(key: string): WidgetDescriptorKey {
+            var applicationKey = key.split(":")[0],
+                descriptorKeyName = key.split(":")[1];
+            return new WidgetDescriptorKey(ApplicationKey.fromString(applicationKey), descriptorKeyName);
+        }
 
-        public getName(): string {
-            return this.name;
+        public getUrl(): string {
+            return this.url;
         }
 
         public getDisplayName(): string {

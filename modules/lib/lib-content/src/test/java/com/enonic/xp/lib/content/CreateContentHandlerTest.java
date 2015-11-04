@@ -6,7 +6,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentAlreadyExistException;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
@@ -23,6 +25,8 @@ import com.enonic.xp.security.PrincipalKey;
 public class CreateContentHandlerTest
     extends BaseContentHandlerTest
 {
+    private final static char[] REPLACE_WITH_HYPHEN_CHARS =
+        {'$', '&', '|', ':', ';', '#', '/', '\\', '<', '>', '\"', '*', '+', ',', '=', '@', '%', '{', '}', '[', ']', '`', '~', '^', '_'};
 
     @Test
     public void createContent()
@@ -92,6 +96,68 @@ public class CreateContentHandlerTest
         runTestFunction( "/test/CreateContentHandlerTest.js", "createContent" );
     }
 
+    @Test
+    public void createContentAlreadyExists()
+        throws Exception
+    {
+        final Exception alreadyExistException = new ContentAlreadyExistException( ContentPath.from( "/a/b/mycontent" ) );
+        Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenThrow( alreadyExistException );
+
+        final ContentType contentType = ContentType.create().
+            name( "test:myContentType" ).
+            superType( ContentTypeName.structured() ).
+            build();
+
+        GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
+        Mockito.when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+
+        runTestFunction( "/test/CreateContentHandlerTest.js", "createContentNameAlreadyExists" );
+    }
+
+    @Test
+    public void createContentAutoGenerateName()
+        throws Exception
+    {
+        Mockito.when( this.contentService.generateContentName( Mockito.anyString() ) ).thenAnswer(
+            mock -> mockGenerateContentName( (String) mock.getArguments()[0] ) );
+        Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenAnswer(
+            mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
+
+        final ContentType contentType = ContentType.create().
+            name( "test:myContentType" ).
+            superType( ContentTypeName.structured() ).
+            build();
+
+        GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
+        Mockito.when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+
+        runTestFunction( "/test/CreateContentHandlerTest.js", "createContentAutoGenerateName" );
+    }
+
+    @Test
+    public void createContentAutoGenerateNameWithExistingName()
+        throws Exception
+    {
+        Mockito.when( this.contentService.generateContentName( Mockito.anyString() ) ).thenAnswer(
+            mock -> mockGenerateContentName( (String) mock.getArguments()[0] ) );
+        Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenAnswer(
+            mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
+
+        Mockito.when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content" ) ) ) ).thenReturn( true );
+        Mockito.when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content-1" ) ) ) ).thenReturn( true );
+        Mockito.when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content-2" ) ) ) ).thenReturn( true );
+
+        final ContentType contentType = ContentType.create().
+            name( "test:myContentType" ).
+            superType( ContentTypeName.structured() ).
+            build();
+
+        GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
+        Mockito.when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+
+        runTestFunction( "/test/CreateContentHandlerTest.js", "createContentAutoGenerateNameWithExistingName" );
+    }
+
     private Content createContent( final CreateContentParams params )
     {
         final Content.Builder builder = Content.create();
@@ -112,5 +178,15 @@ public class CreateContentHandlerTest
         }
 
         return builder.build();
+    }
+
+    private String mockGenerateContentName( final String displayName )
+    {
+        String prettifiedName = displayName.toLowerCase().replaceAll( "\\s+", "-" );
+        for ( char toBeReplaced : REPLACE_WITH_HYPHEN_CHARS )
+        {
+            prettifiedName = prettifiedName.replace( toBeReplaced, '-' );
+        }
+        return prettifiedName;
     }
 }

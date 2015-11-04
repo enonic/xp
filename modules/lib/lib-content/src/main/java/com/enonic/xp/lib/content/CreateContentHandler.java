@@ -1,7 +1,10 @@
 package com.enonic.xp.lib.content;
 
+import java.security.SecureRandom;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
+import java.util.function.Supplier;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,9 +21,14 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.script.ScriptValue;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 public final class CreateContentHandler
     extends BaseContextHandler
 {
+    private final static Random RANDOM = new SecureRandom();
+
     private String name;
 
     private String parentPath;
@@ -37,9 +45,16 @@ public final class CreateContentHandler
 
     private String language;
 
+    private Supplier<String> idGenerator = () -> Long.toString( RANDOM.nextLong() );
+
     @Override
     protected Object doExecute()
     {
+        if ( isBlank( this.name ) && isNotBlank( this.displayName ) && isNotBlank( this.parentPath ) )
+        {
+            this.name = generateUniqueContentName( ContentPath.from( this.parentPath ), this.displayName );
+        }
+
         final CreateContentParams params = createParams();
         final Content result = this.contentService.create( params );
         return new ContentMapper( result );
@@ -140,6 +155,20 @@ public final class CreateContentHandler
         return null;
     }
 
+    private String generateUniqueContentName( final ContentPath parent, final String displayName )
+    {
+        final String baseName = this.contentService.generateContentName( displayName );
+
+        String name = baseName;
+        while ( this.contentService.contentExists( ContentPath.from( parent, name ) ) )
+        {
+            final String randomId = this.idGenerator.get();
+            name = this.contentService.generateContentName( baseName + "-" + randomId );
+        }
+
+        return name;
+    }
+
     public void setName( final String name )
     {
         this.name = name;
@@ -178,5 +207,13 @@ public final class CreateContentHandler
     public void setLanguage( final String language )
     {
         this.language = language;
+    }
+
+    public void setIdGenerator( final Supplier<String> idGenerator )
+    {
+        if ( idGenerator != null )
+        {
+            this.idGenerator = idGenerator;
+        }
     }
 }

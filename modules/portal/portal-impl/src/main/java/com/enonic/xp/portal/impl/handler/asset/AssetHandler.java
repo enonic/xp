@@ -8,9 +8,9 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.PortalHandler;
-import com.enonic.xp.portal.impl.handler.EndpointHandler;
-import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
+import com.enonic.xp.portal.handler.EndpointHandler;
+import com.enonic.xp.portal.handler.PortalHandler;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.web.HttpMethod;

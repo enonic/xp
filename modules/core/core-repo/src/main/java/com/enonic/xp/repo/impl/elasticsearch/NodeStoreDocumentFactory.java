@@ -15,8 +15,6 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.xp.node.NodeState;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.document.StoreDocumentItemFactory;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
@@ -27,24 +25,18 @@ class NodeStoreDocumentFactory
 {
     private final Node node;
 
-    private final NodeVersionId nodeVersionId;
-
     private final Branch branch;
 
     private final RepositoryId repositoryId;
 
     private final boolean refresh;
 
-    private final NodeState state;
-
     private NodeStoreDocumentFactory( final Builder builder )
     {
         node = builder.node;
-        nodeVersionId = builder.nodeVersionId;
         branch = builder.branch;
         repositoryId = builder.repositoryId;
         this.refresh = builder.refresh;
-        this.state = builder.state;
     }
 
     public Collection<IndexDocument> create()
@@ -84,9 +76,9 @@ class NodeStoreDocumentFactory
 
     private void addNodeBaseProperties( final IndexDocument.Builder builder )
     {
-        if ( this.nodeVersionId != null )
+        if ( node.getNodeVersionId() != null )
         {
-            final Value nodeVersionIdValue = ValueFactory.newString( this.nodeVersionId.toString() );
+            final Value nodeVersionIdValue = ValueFactory.newString( node.getNodeVersionId().toString() );
             builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.VERSION, nodeVersionIdValue, IndexConfig.MINIMAL ) );
         }
 
@@ -169,15 +161,11 @@ class NodeStoreDocumentFactory
     {
         private Node node;
 
-        private NodeVersionId nodeVersionId;
-
         private Branch branch;
 
         private RepositoryId repositoryId;
 
         private boolean refresh = false;
-
-        private NodeState state = NodeState.DEFAULT;
 
         private Builder()
         {
@@ -186,12 +174,6 @@ class NodeStoreDocumentFactory
         public Builder node( Node node )
         {
             this.node = node;
-            return this;
-        }
-
-        public Builder nodeVersionId( NodeVersionId nodeVersionId )
-        {
-            this.nodeVersionId = nodeVersionId;
             return this;
         }
 
@@ -204,12 +186,6 @@ class NodeStoreDocumentFactory
         public Builder repositoryId( RepositoryId repositoryId )
         {
             this.repositoryId = repositoryId;
-            return this;
-        }
-
-        public Builder state( final NodeState state )
-        {
-            this.state = state;
             return this;
         }
 

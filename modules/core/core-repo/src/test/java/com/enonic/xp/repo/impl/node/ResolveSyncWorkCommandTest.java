@@ -1,7 +1,10 @@
 package com.enonic.xp.repo.impl.node;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
@@ -1022,6 +1025,52 @@ public class ResolveSyncWorkCommandTest
 
         result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
         assertEquals( 4, result.getSize() );
+    }
+
+    @Ignore("Just for development testing")
+    @Test
+    public void test_large_tree()
+    {
+        final Node rootNode = createNode( CreateNodeParams.create().
+            name( "rootnode" ).
+            setNodeId( NodeId.from( "rootnode" ) ).
+            parent( NodePath.ROOT ).
+            build(), false );
+
+        final Stopwatch timer2 = Stopwatch.createStarted();
+
+        for ( int i = 0; i <= 100; i++ )
+        {
+            final Node parent = createNode( CreateNodeParams.create().
+                name( "myNode" + "-" + i ).
+                setNodeId( NodeId.from( "myNode" + "-" + i ) ).
+                parent( rootNode.path() ).
+                build() );
+
+            createChildren( parent.path(), 100 );
+        }
+
+        timer2.stop();
+        System.out.println( timer2.toString() + " creating nodes" );
+
+        refresh();
+
+        final Stopwatch timer = Stopwatch.createStarted();
+        final NodeIds nodeIds = resolveSyncWorkResult( rootNode.id(), true );
+        timer.stop();
+        System.out.println( timer.toString() + " diffing " + nodeIds.getSize() + " nodes" );
+    }
+
+    private void createChildren( final NodePath parent, final int numberOfChildren )
+    {
+        for ( int i = 0; i <= numberOfChildren; i++ )
+        {
+            createNode( CreateNodeParams.create().
+                setNodeId( NodeId.from( parent.getLastElement() + "-" + i ) ).
+                name( parent.getLastElement() + "-" + i ).
+                parent( parent ).
+                build(), false );
+        }
     }
 
 

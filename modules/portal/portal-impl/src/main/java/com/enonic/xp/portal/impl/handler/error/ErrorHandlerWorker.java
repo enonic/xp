@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.handler.error;
 
-import com.enonic.xp.portal.impl.PortalException;
-import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
+import com.enonic.xp.portal.PortalException;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.web.HttpStatus;
 
 final class ErrorHandlerWorker

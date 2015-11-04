@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -32,6 +32,8 @@ public final class LoginHandler
 
     private Supplier<SecurityService> securityService;
 
+    private Supplier<Context> context;
+
     public void setUser( final String user )
     {
         this.user = user;
@@ -53,7 +55,7 @@ public final class LoginHandler
 
         if ( authInfo.isAuthenticated() )
         {
-            final Session session = ContextAccessor.current().getLocalScope().getSession();
+            final Session session = this.context.get().getLocalScope().getSession();
             if ( session != null )
             {
                 session.setAttribute( authInfo );
@@ -133,7 +135,7 @@ public final class LoginHandler
     private <T> T runAsAuthenticated( Callable<T> runnable )
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
-        return ContextBuilder.from( ContextAccessor.current() ).
+        return ContextBuilder.from( this.context.get() ).
             authInfo( authInfo ).
             repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
             branch( SystemConstants.BRANCH_SECURITY ).build().
@@ -149,5 +151,6 @@ public final class LoginHandler
     public void initialize( final BeanContext context )
     {
         this.securityService = context.getService( SecurityService.class );
+        this.context = context.getBinding( Context.class );
     }
 }

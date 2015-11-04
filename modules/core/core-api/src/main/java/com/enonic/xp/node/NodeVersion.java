@@ -4,44 +4,81 @@ import java.time.Instant;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.security.acl.AccessControlList;
+
 @Beta
 public class NodeVersion
-    implements Comparable<NodeVersion>
 {
-    private final NodeVersionId nodeVersionId;
+    private final NodeId id;
 
-    private final NodeId nodeId;
+    private final NodeVersionId versionId;
 
-    private final NodePath nodePath;
+    private final NodeType nodeType;
 
     private final Instant timestamp;
 
+    private final PropertyTree data;
+
+    private final IndexConfigDocument indexConfigDocument;
+
+    private final ChildOrder childOrder;
+
+    private final Long manualOrderValue;
+
+    private final AccessControlList permissions;
+
+    private final boolean inheritPermissions;
+
+    private final AttachedBinaries attachedBinaries;
+
     private NodeVersion( Builder builder )
     {
-        nodeVersionId = builder.nodeVersionId;
-        nodeId = builder.nodeId;
-        nodePath = builder.nodePath;
+        id = builder.id;
+        versionId = builder.versionId;
+        nodeType = builder.nodeType;
         timestamp = builder.timestamp;
+        data = builder.data;
+        indexConfigDocument = builder.indexConfigDocument;
+        childOrder = builder.childOrder;
+        manualOrderValue = builder.manualOrderValue;
+        permissions = builder.permissions;
+        inheritPermissions = builder.inheritPermissions;
+        attachedBinaries = builder.attachedBinaries;
     }
 
-    public static Builder create()
+    public static NodeVersion from( final Node node )
     {
-        return new Builder();
+        return NodeVersion.create().
+            id( node.id() ).
+            versionId( node.getNodeVersionId() ).
+            nodeType( node.getNodeType() ).
+            data( node.data() ).
+            indexConfigDocument( node.getIndexConfigDocument() ).
+            childOrder( node.getChildOrder() ).
+            manualOrderValue( node.getManualOrderValue() ).
+            permissions( node.getPermissions() ).
+            inheritPermissions( node.inheritsPermissions() ).
+            attachedBinaries( node.getAttachedBinaries() ).
+            timestamp( Instant.now() ).
+            build();
     }
 
-    public NodeVersionId getNodeVersionId()
+    public NodeId getId()
     {
-        return nodeVersionId;
+        return id;
     }
 
-    public NodeId getNodeId()
+    public NodeVersionId getVersionId()
     {
-        return nodeId;
+        return versionId;
     }
 
-    public NodePath getNodePath()
+    public NodeType getNodeType()
     {
-        return nodePath;
+        return nodeType;
     }
 
     public Instant getTimestamp()
@@ -49,52 +86,110 @@ public class NodeVersion
         return timestamp;
     }
 
-    // Insert with newest first
-    @Override
-    public int compareTo( final NodeVersion o )
+    public PropertyTree getData()
     {
-        if ( this.timestamp == o.timestamp )
-        {
-            return 0;
-        }
-
-        if ( this.timestamp.isBefore( o.timestamp ) )
-        {
-            return 1;
-        }
-
-        return -1;
+        return data;
     }
+
+    public IndexConfigDocument getIndexConfigDocument()
+    {
+        return indexConfigDocument;
+    }
+
+    public ChildOrder getChildOrder()
+    {
+        return childOrder;
+    }
+
+    public Long getManualOrderValue()
+    {
+        return manualOrderValue;
+    }
+
+    public AccessControlList getPermissions()
+    {
+        return permissions;
+    }
+
+    public boolean isInheritPermissions()
+    {
+        return inheritPermissions;
+    }
+
+    public AttachedBinaries getAttachedBinaries()
+    {
+        return attachedBinaries;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static Builder create( NodeVersion source )
+    {
+        return new Builder( source );
+    }
+
 
     public static final class Builder
     {
-        private NodeVersionId nodeVersionId;
+        private NodeId id;
 
-        private NodeId nodeId;
+        private NodeVersionId versionId;
 
-        private NodePath nodePath;
+        private NodeType nodeType = NodeType.DEFAULT_NODE_COLLECTION;
 
-        private Instant timestamp;
+        private Instant timestamp = Instant.now();
+
+        private PropertyTree data = new PropertyTree();
+
+        private IndexConfigDocument indexConfigDocument;
+
+        private ChildOrder childOrder;
+
+        private Long manualOrderValue;
+
+        private AccessControlList permissions = AccessControlList.empty();
+
+        private boolean inheritPermissions;
+
+        private AttachedBinaries attachedBinaries = AttachedBinaries.empty();
 
         private Builder()
         {
         }
 
-        public Builder nodeVersionId( NodeVersionId nodeVersionId )
+        private Builder( NodeVersion nodeVersion )
         {
-            this.nodeVersionId = nodeVersionId;
+            this.id = nodeVersion.id;
+            this.versionId = nodeVersion.versionId;
+            this.nodeType = nodeVersion.nodeType;
+            this.timestamp = nodeVersion.timestamp;
+            this.data = nodeVersion.data;
+            this.indexConfigDocument = nodeVersion.indexConfigDocument;
+            this.childOrder = nodeVersion.childOrder;
+            this.manualOrderValue = nodeVersion.manualOrderValue;
+            this.permissions = nodeVersion.permissions;
+            this.inheritPermissions = nodeVersion.inheritPermissions;
+            this.attachedBinaries = nodeVersion.attachedBinaries;
+        }
+
+        public Builder id( NodeId id )
+        {
+            this.id = id;
             return this;
         }
 
-        public Builder nodeId( NodeId nodeId )
+        public Builder versionId( NodeVersionId versionId )
         {
-            this.nodeId = nodeId;
+            this.versionId = versionId;
             return this;
         }
 
-        public Builder nodePath( NodePath nodePath )
+        public Builder nodeType( NodeType nodeType )
         {
-            this.nodePath = nodePath;
+            this.nodeType = nodeType;
             return this;
         }
 
@@ -104,11 +199,54 @@ public class NodeVersion
             return this;
         }
 
+        public Builder data( PropertyTree data )
+        {
+            this.data = data;
+            return this;
+        }
+
+        public Builder indexConfigDocument( IndexConfigDocument indexConfigDocument )
+        {
+            this.indexConfigDocument = indexConfigDocument;
+            return this;
+        }
+
+        public Builder childOrder( ChildOrder childOrder )
+        {
+            this.childOrder = childOrder;
+            return this;
+        }
+
+        public Builder manualOrderValue( Long manualOrderValue )
+        {
+            this.manualOrderValue = manualOrderValue;
+            return this;
+        }
+
+        public Builder permissions( AccessControlList permissions )
+        {
+            this.permissions = permissions;
+            return this;
+        }
+
+        public Builder inheritPermissions( boolean inheritPermissions )
+        {
+            this.inheritPermissions = inheritPermissions;
+            return this;
+        }
+
+        public Builder attachedBinaries( AttachedBinaries attachedBinaries )
+        {
+            this.attachedBinaries = attachedBinaries;
+            return this;
+        }
+
         public NodeVersion build()
         {
             return new NodeVersion( this );
         }
     }
+
 
     @Override
     public boolean equals( final Object o )
@@ -124,29 +262,59 @@ public class NodeVersion
 
         final NodeVersion that = (NodeVersion) o;
 
-        if ( nodeVersionId != null ? !nodeVersionId.equals( that.nodeVersionId ) : that.nodeVersionId != null )
+        if ( inheritPermissions != that.inheritPermissions )
         {
             return false;
         }
-        if ( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null )
+        if ( id != null ? !id.equals( that.id ) : that.id != null )
         {
             return false;
         }
-        if ( nodePath != null ? !nodePath.equals( that.nodePath ) : that.nodePath != null )
+        if ( nodeType != null ? !nodeType.equals( that.nodeType ) : that.nodeType != null )
         {
             return false;
         }
-        return !( timestamp != null ? !timestamp.equals( that.timestamp ) : that.timestamp != null );
+        if ( timestamp != null ? !timestamp.equals( that.timestamp ) : that.timestamp != null )
+        {
+            return false;
+        }
+        if ( data != null ? !data.equals( that.data ) : that.data != null )
+        {
+            return false;
+        }
+        if ( indexConfigDocument != null ? !indexConfigDocument.equals( that.indexConfigDocument ) : that.indexConfigDocument != null )
+        {
+            return false;
+        }
+        if ( childOrder != null ? !childOrder.equals( that.childOrder ) : that.childOrder != null )
+        {
+            return false;
+        }
+        if ( manualOrderValue != null ? !manualOrderValue.equals( that.manualOrderValue ) : that.manualOrderValue != null )
+        {
+            return false;
+        }
+        if ( permissions != null ? !permissions.equals( that.permissions ) : that.permissions != null )
+        {
+            return false;
+        }
+        return !( attachedBinaries != null ? !attachedBinaries.equals( that.attachedBinaries ) : that.attachedBinaries != null );
 
     }
 
     @Override
     public int hashCode()
     {
-        int result = nodeVersionId != null ? nodeVersionId.hashCode() : 0;
-        result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
-        result = 31 * result + ( nodePath != null ? nodePath.hashCode() : 0 );
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + ( nodeType != null ? nodeType.hashCode() : 0 );
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
+        result = 31 * result + ( data != null ? data.hashCode() : 0 );
+        result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
+        result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
+        result = 31 * result + ( manualOrderValue != null ? manualOrderValue.hashCode() : 0 );
+        result = 31 * result + ( permissions != null ? permissions.hashCode() : 0 );
+        result = 31 * result + ( inheritPermissions ? 1 : 0 );
+        result = 31 * result + ( attachedBinaries != null ? attachedBinaries.hashCode() : 0 );
         return result;
     }
 }

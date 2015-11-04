@@ -4,14 +4,14 @@ import java.time.Instant;
 
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.repo.impl.storage.GetResult;
 
 class NodeVersionFactory
 {
-    public static NodeVersion create( final GetResult getResult )
+    public static NodeVersionMetadata create( final GetResult getResult )
     {
         final ReturnValues values = getResult.getReturnValues();
 
@@ -20,7 +20,7 @@ class NodeVersionFactory
         final String id = values.getSingleValue( VersionIndexPath.NODE_ID.getPath() ).toString();
         final String path = values.getSingleValue( VersionIndexPath.NODE_PATH.getPath() ).toString();
 
-        return NodeVersion.create().
+        return NodeVersionMetadata.create().
             nodeId( NodeId.from( id ) ).
             nodePath( NodePath.create( path ).build() ).
             timestamp( timestamp ).

@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.branch;
 
 import org.junit.Test;
 
-import com.enonic.xp.repo.impl.branch.BranchDocumentId;
+import com.enonic.xp.repo.impl.branch.storage.BranchDocumentId;
 
 import static org.junit.Assert.*;
 

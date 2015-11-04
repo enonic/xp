@@ -79,7 +79,6 @@ final class ScriptExecutorImpl
         this.exportsCache = Maps.newHashMap();
         this.global = this.engine.createBindings();
         new CallFunction().register( this.global );
-        this.global.putAll( this.scriptSettings.getGlobalVariables() );
     }
 
     @Override

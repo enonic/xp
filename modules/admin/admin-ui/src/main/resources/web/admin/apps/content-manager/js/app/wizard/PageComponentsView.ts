@@ -25,9 +25,7 @@ module app.wizard {
         private content: Content;
         private pageView: PageView;
         private liveEditPage: LiveEditPageProxy;
-        private contentWizardPanel: app.wizard.ContentWizardPanel;
         private contextMenu: api.liveedit.ItemViewContextMenu;
-        private delayedTreeReloadFn: Function;
 
         private tree: PageComponentsTreeGrid;
         private header: api.dom.H3El;
@@ -42,20 +40,20 @@ module app.wizard {
         private mouseDown: boolean = false;
         public static debug: boolean = false;
 
-        constructor(liveEditPage: LiveEditPageProxy, contentWizardPanel: app.wizard.ContentWizardPanel) {
+        constructor(liveEditPage: LiveEditPageProxy) {
             super('page-components-view');
 
             this.liveEditPage = liveEditPage;
-            this.contentWizardPanel = contentWizardPanel;
+
+            this.onHidden((event) => this.hideContextMenu());
 
             var closeButton = new api.ui.button.CloseButton();
-            closeButton.onClicked((event: MouseEvent) => {
-                this.hideContextMenu();
-                this.hide()
-            });
+            closeButton.onClicked((event: MouseEvent) => this.hide());
 
             this.onRemoved(() => {
-                this.contextMenu.remove();
+                if (this.contextMenu) {
+                    this.contextMenu.remove();
+                }
             });
 
             this.header = new api.dom.H2El('header');
@@ -87,22 +85,6 @@ module app.wizard {
             } else if (this.tree) {
                 this.tree.setPageView(pageView);
             }
-
-            if (!this.delayedTreeReloadFn) {
-                this.delayedTreeReloadFn = api.util.AppHelper.debounce(this.reloadPageComponentTree.bind(this), 300, false);
-                this.contentWizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                    if (event.getPropertyName() == api.query.QueryField.DISPLAY_NAME) {
-                        var currentContent = this.contentWizardPanel.getCurrentContent();
-                        this.pageView.setContent(currentContent);
-
-                        this.delayedTreeReloadFn();
-                    }
-                });
-            }
-        }
-
-        private reloadPageComponentTree() {
-            this.tree.reload(null, false);
         }
 
         setContent(content: Content) {

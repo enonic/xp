@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -43,7 +43,7 @@ final class AssetHandlerWorker
         }
         else if ( cacheable )
         {
-            setResponseCacheable();
+            setResponseCacheable( true );
         }
     }
 

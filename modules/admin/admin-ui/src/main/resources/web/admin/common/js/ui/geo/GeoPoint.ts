@@ -59,7 +59,7 @@ module api.ui.geo {
             if (api.util.StringHelper.isEmpty(this.geoLocationInput.getValue())) {
                 return null;
             }
-            return  <api.util.GeoPoint>api.util.GeoPoint.fromString(this.geoLocationInput.getValue());
+            return <api.util.GeoPoint>api.util.GeoPoint.fromString(this.geoLocationInput.getValue());
 
         }
 

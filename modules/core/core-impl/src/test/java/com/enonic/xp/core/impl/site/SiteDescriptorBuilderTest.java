@@ -42,5 +42,9 @@ public class SiteDescriptorBuilderTest
 
         Assert.assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
         Assert.assertEquals( 2, siteDescriptor.getMetaSteps().getSize() );
+        Assert.assertEquals( 2, siteDescriptor.getFilterDescriptors().getSize() );
+        Assert.assertEquals( "filter1", siteDescriptor.getFilterDescriptors().get( 0 ).getName() );
+        Assert.assertEquals( 20, siteDescriptor.getFilterDescriptors().get( 1 ).getOrder() );
+
     }
 }

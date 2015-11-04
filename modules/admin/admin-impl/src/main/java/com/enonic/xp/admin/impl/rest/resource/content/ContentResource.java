@@ -39,6 +39,7 @@ import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
+import com.enonic.xp.admin.impl.json.content.attachment.AttachmentListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
@@ -359,11 +360,11 @@ public final class ContentResource
                 contents.forEach( ( content ) -> {
                     if ( ContentState.PENDING_DELETE.equals( content.getContentState() ) )
                     {
-                        jsonResult.addPending( content.getDisplayName() );
+                        jsonResult.addPending( content.getId().toString(), content.getDisplayName() );
                     }
                     else
                     {
-                        jsonResult.addSuccess( content.getId().toString(), content.getDisplayName() );
+                        jsonResult.addSuccess( content.getId().toString(), content.getDisplayName(), content.getType().getLocalName() );
                     }
 
                 } );
@@ -376,12 +377,13 @@ public final class ContentResource
                     Content content = contentService.getByPath( contentToDelete );
                     if ( content != null )
                     {
-                        jsonResult.addFailure( content.getId().toString(), content.getDisplayName(), e.getMessage() );
+                        jsonResult.addFailure( content.getId().toString(), content.getDisplayName(), content.getType().getLocalName(),
+                                               e.getMessage() );
                     }
                 }
                 catch ( final Exception e2 )
                 {
-                    jsonResult.addFailure( null, deleteContent.getContentPath().toString(), e2.getMessage() );
+                    jsonResult.addFailure( null, deleteContent.getContentPath().toString(), null, e2.getMessage() );
                 }
 
             }
@@ -809,6 +811,16 @@ public final class ContentResource
             build() );
 
         return new GetActiveContentVersionsResultJson( result, this.principalsResolver );
+    }
+
+    @GET
+    @Path("getAttachments")
+    public List<AttachmentJson> getAttachments( @QueryParam("id") final String idParam )
+    {
+        final ContentId id = ContentId.from( idParam );
+        final Content content = contentService.getById( id );
+
+        return AttachmentListJson.toJson( content.getAttachments() );
     }
 
 

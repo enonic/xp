@@ -37,7 +37,7 @@ module app.view.detail {
         }
 
         private doHandleResizeEvent() {
-            if (!this.resizeEventMonitorLocked && this.nonMobileDetailsPanelIsActive()) {
+            if (!this.resizeEventMonitorLocked && this.nonMobileDetailsPanelIsActive() && this.contentBrowsePanelIsVisible()) {
                 this.resizeEventMonitorLocked = true;
                 if (this.needsSwitchToFloatingMode() || this.needsSwitchToDockedMode()) {
                     this.doPanelAnimation();
@@ -50,6 +50,10 @@ module app.view.detail {
             } else {
                 return;
             }
+        }
+
+        private contentBrowsePanelIsVisible(): boolean {
+            return this.splitPanelWithGridAndDetails.getParentElement().isVisible();
         }
 
         private nonMobileDetailsPanelIsActive(): boolean {
@@ -110,7 +114,7 @@ module app.view.detail {
         }
 
         hideDockedDetailsPanel() {
-            this.splitPanelWithGridAndDetails.hideSecondPanel();
+            this.splitPanelWithGridAndDetails.foldSecondPanel();
         }
 
         getToggleButton(): api.dom.DivEl {

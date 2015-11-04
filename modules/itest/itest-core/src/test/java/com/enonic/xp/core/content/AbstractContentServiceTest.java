@@ -50,7 +50,7 @@ import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.xp.repo.impl.elasticsearch.search.ElasticsearchSearchDao;
 import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchStorageDao;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
-import com.enonic.xp.repo.impl.node.dao.NodeDaoImpl;
+import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
@@ -116,7 +116,7 @@ public class AbstractContentServiceTest
 
     protected ContentNodeTranslatorImpl translator;
 
-    private NodeDaoImpl nodeDao;
+    private NodeVersionDaoImpl nodeDao;
 
     private VersionServiceImpl versionService;
 
@@ -156,14 +156,14 @@ public class AbstractContentServiceTest
         this.indexService.setClient( client );
         this.indexService.setElasticsearchDao( elasticsearchDao );
 
-        this.nodeDao = new NodeDaoImpl();
+        this.nodeDao = new NodeVersionDaoImpl();
 
         this.contentService = new ContentServiceImpl();
 
         this.storageService = new StorageServiceImpl();
         this.storageService.setBranchService( this.branchService );
         this.storageService.setVersionService( this.versionService );
-        this.storageService.setNodeDao( this.nodeDao );
+        this.storageService.setNodeVersionDao( this.nodeDao );
         this.storageService.setIndexServiceInternal( this.indexService );
 
         this.searchDao = new ElasticsearchSearchDao();

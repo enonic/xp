@@ -16,7 +16,8 @@ public final class JavaVersion
 
     public int getUpdate()
     {
-        final int index = this.value.indexOf( '_' );
+        final String version = getVersion();
+        final int index = version.indexOf( '_' );
         if ( index <= 0 )
         {
             return 0;
@@ -24,11 +25,24 @@ public final class JavaVersion
 
         try
         {
-            return Integer.parseInt( this.value.substring( index + 1 ) );
+            return Integer.parseInt( version.substring( index + 1 ) );
         }
         catch ( final Exception e )
         {
             return 0;
+        }
+    }
+
+    private String getVersion()
+    {
+        final int index = this.value.indexOf( '-' );
+        if ( index <= 0 )
+        {
+            return this.value;
+        }
+        else
+        {
+            return this.value.substring( 0, index );
         }
     }
 

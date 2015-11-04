@@ -31,6 +31,7 @@ module api.app.browse {
 
             var removeCallback = () => {
                 this.removeItem(item);
+                this.notifyDeselected(item);
             };
             var selectionItem = new SelectionItem(this.createItemViewer(item), item, removeCallback);
 
@@ -52,8 +53,6 @@ module api.app.browse {
             if (this.items.length === 0) {
                 this.getEl().addClass('no-selection').setInnerHtml(this.messageForNoSelection);
             }
-
-            // this.notifyDeselected(item);
         }
 
         getItems(): BrowseItem<M>[] {
@@ -114,6 +113,16 @@ module api.app.browse {
                 }
             }
             return -1;
+        }
+
+        onDeselected(listener: (event: ItemDeselectedEvent<M>)=>void) {
+            this.deselectedListeners.push(listener);
+        }
+
+        private notifyDeselected(item: BrowseItem<M>) {
+            this.deselectedListeners.forEach((listener: (event: ItemDeselectedEvent<M>)=>void) => {
+                listener.call(this, new ItemDeselectedEvent(item));
+            });
         }
     }
 }

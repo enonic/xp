@@ -2,9 +2,9 @@ package com.enonic.xp.portal.impl.handler.service;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.controller.ControllerScript;
-import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.impl.handler.controller.ControllerHandlerWorker;
+import com.enonic.xp.portal.controller.ControllerScript;
+import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.handler.ControllerHandlerWorker;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.site.Site;
 

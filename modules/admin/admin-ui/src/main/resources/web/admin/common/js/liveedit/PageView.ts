@@ -425,30 +425,25 @@ module api.liveedit {
         }
 
         getName(): string {
-            if (this.isContentEmpty()) {
-                return this.getNameForEmptyContent();
-            } else {
-                return this.liveEditModel.getContent().getDisplayName();
+            var pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
+            if (this.pageModel.hasTemplate()) {
+                return this.pageModel.getTemplate().getDisplayName();
             }
+            if (this.pageModel.isCustomized()) {
+                return this.pageModel.hasController() ? this.pageModel.getController().getDisplayName() : pageTemplateDisplayName[pageTemplateDisplayName.Custom];
+            }
+            if (this.pageModel.getMode() == PageMode.AUTOMATIC) {
+                return this.pageModel.getDefaultPageTemplate().getDisplayName();
+            }
+
+            return pageTemplateDisplayName[pageTemplateDisplayName.Automatic];
         }
 
         getIconUrl(content: api.content.Content): string {
-            if (!content.isSite() && this.isContentEmpty()) {
-                return "";
-            } else {
-                return new api.content.ContentIconUrlResolver().setContent(content).resolve();
-            }
+            return "";
         }
 
         getIconClass(): string {
-            if (this.isContentEmpty()) {
-                return this.getIconClassForEmptyContent();
-            } else {
-                return super.getIconClass();
-            }
-        }
-
-        private getIconClassForEmptyContent(): string {
             var largeIconCls = " icon-large";
 
             if (this.pageModel.hasTemplate()) {
@@ -457,25 +452,8 @@ module api.liveedit {
             if (this.pageModel.isCustomized()) {
                 return "icon-cog" + largeIconCls;
             }
-            if (this.pageModel.getMode() == PageMode.AUTOMATIC) {
-                return "icon-wand" + largeIconCls;
-            }
 
-            return super.getIconClass();
-        }
-
-        private getNameForEmptyContent(): string {
-            if (this.pageModel.hasTemplate()) {
-                return this.pageModel.getTemplate().getDisplayName();
-            }
-            if (this.pageModel.isCustomized()) {
-                return this.pageModel.hasController() ? this.pageModel.getController().getDisplayName() : "Custom";
-            }
-            if (this.pageModel.getMode() == PageMode.AUTOMATIC) {
-                return this.pageModel.getDefaultPageTemplate().getDisplayName();
-            }
-
-            return "[No name]";
+            return "icon-wand" + largeIconCls;
         }
 
         getParentItemView(): ItemView {
@@ -759,10 +737,6 @@ module api.liveedit {
 
         isDisabledContextMenu(): boolean {
             return this.disableContextMenu;
-        }
-
-        setContent(content: Content) {
-            this.liveEditModel.setContent(content);
         }
     }
 }

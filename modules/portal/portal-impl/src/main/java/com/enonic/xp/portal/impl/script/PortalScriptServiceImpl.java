@@ -5,6 +5,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.script.PortalScriptService;
@@ -27,7 +29,8 @@ public final class PortalScriptServiceImpl
     {
         final ScriptSettings settings = ScriptSettings.create().
             basePath( "/site" ).
-            attribute( PortalRequest.class, PortalRequestAccessor::get ).
+            binding( Context.class, ContextAccessor::current ).
+            binding( PortalRequest.class, PortalRequestAccessor::get ).
             build();
 
         this.scriptRuntime = this.scriptRuntimeFactory.create( settings );

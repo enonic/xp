@@ -9,9 +9,6 @@ module app.wizard.page.contextwindow.inspect.page {
 
         private pageModel: PageModel;
 
-        static displayNameCustom = "Custom";
-        static displayNameAutomatic = "Automatic";
-
         constructor(template: PageTemplate, pageModel: PageModel) {
             this.template = template;
             this.pageModel = pageModel;
@@ -26,7 +23,9 @@ module app.wizard.page.contextwindow.inspect.page {
         }
 
         isCustom(): boolean {
-            return this.template && this.template.getDisplayName() == PageTemplateOption.displayNameCustom;
+            var pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
+
+            return this.template && this.template.getDisplayName() == pageTemplateDisplayName[pageTemplateDisplayName.Custom];
         }
     }
 }

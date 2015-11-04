@@ -8,7 +8,7 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.impl.handler.controller.ControllerHandlerWorker;
+import com.enonic.xp.portal.handler.ControllerHandlerWorker;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.Site;
 
