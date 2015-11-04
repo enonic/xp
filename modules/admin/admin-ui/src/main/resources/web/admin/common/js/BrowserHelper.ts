@@ -41,6 +41,16 @@ module api {
             return false;
         }
 
+        static isIE(): boolean {
+            if (!BrowserHelper.BROWSER_NAME) {
+                this.init();
+            }
+
+            return BrowserHelper.BROWSER_NAME === BrowserName.TRIDENT ||
+                   BrowserHelper.BROWSER_NAME === BrowserName.MSIE ||
+                   navigator.userAgent.indexOf('Edge/') > 0;
+        }
+
         private static init() {
             var M = navigator.userAgent.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
             BrowserHelper.BROWSER_NAME = (<any>BrowserName)[M[1].toLocaleUpperCase()];

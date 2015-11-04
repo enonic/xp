@@ -107,6 +107,10 @@ module app.wizard.page {
 
         private static debug: boolean = false;
 
+        private regionsCopyForIE;
+
+        private controllerCopyForIE;
+
         constructor() {
 
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
@@ -206,6 +210,11 @@ module app.wizard.page {
             if (LiveEditPageProxy.debug) {
                 console.log("LiveEditPageProxy.load pageUrl: " + pageUrl);
             }
+
+            if (api.BrowserHelper.isIE()) {
+                this.copyObjectsBeforeFrameReloadForIE();
+            }
+
             this.liveEditIFrame.setSrc(pageUrl);
         }
 
@@ -230,6 +239,10 @@ module app.wizard.page {
 
                 this.listenToPage(this.liveEditWindow);
 
+                if (api.BrowserHelper.isIE()) {
+                    this.resetObjectsAfterFrameReloadForIE();
+                }
+                
                 new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
             }
 
@@ -653,6 +666,45 @@ module app.wizard.page {
 
         private notifyLiveEditPageInitializationError(event: LiveEditPageInitializationErrorEvent) {
             this.liveEditPageInitErrorListeners.forEach((listener) => listener(event));
+        }
+
+        private copyObjectsBeforeFrameReloadForIE() {
+            this.copyControllerForIE();
+            this.copyRegionsForIE();
+        }
+
+        private copyControllerForIE() {
+            var controller = this.liveEditModel.getPageModel().getController();
+            if (controller) {
+                this.controllerCopyForIE = JSON.parse(JSON.stringify(controller));
+                this.controllerCopyForIE.key = controller.getKey().toString();
+            }
+        }
+
+        private copyRegionsForIE() {
+            var regions = this.liveEditModel.getPageModel().getRegions();
+            if (regions) {
+                this.regionsCopyForIE = JSON.parse(JSON.stringify(regions.toJson()));
+            }
+        }
+
+        private resetObjectsAfterFrameReloadForIE() {
+            this.resetControllerForIE();
+            this.resetRegionsForIE();
+        }
+
+        private resetControllerForIE() {
+            if (this.controllerCopyForIE) {
+                var controller = new api.content.page.PageDescriptorBuilder().fromJson(this.controllerCopyForIE).build();
+                this.liveEditModel.getPageModel().setControllerDescriptor(controller);
+            }
+        }
+
+        private resetRegionsForIE() {
+            if (this.regionsCopyForIE) {
+                var regions = api.content.page.region.Regions.create().fromJson(this.regionsCopyForIE, null).build();
+                this.liveEditModel.getPageModel().setRegions(regions);
+            }
         }
 
     }

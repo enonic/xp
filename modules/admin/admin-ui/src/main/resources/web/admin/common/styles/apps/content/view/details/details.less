@@ -421,6 +421,7 @@
   &.split-panel-with-details {
 
     > .split-panel {
+      right: auto; //ie fix - 'auto' will be used for ie as 'initial' not supported; last value mentioned will be used
       right: initial;
       .transition(all 0.5s ease-in-out);
     }
