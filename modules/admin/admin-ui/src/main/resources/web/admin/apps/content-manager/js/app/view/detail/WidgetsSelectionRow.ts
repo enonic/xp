@@ -31,7 +31,7 @@ module app.view.detail {
                 widgetView.setActive();
             });
 
-            this.appendChild(this.infoWidgetToggleButton);
+            this.widgetSelectorDropdown.prependChild(this.infoWidgetToggleButton);
             this.appendChild(this.widgetSelectorDropdown);
         }
 
@@ -80,7 +80,7 @@ module app.view.detail {
             super("widgetSelector", <DropdownConfig<WidgetViewOption>>{});
 
             this.onClicked((event) => {
-                if (!this.isDropdownHandle(event.target)) {
+                if (!this.isDropdownHandle(event.target) && !this.isInfoWidgetToggleButton(event.target)) {
                     if (this.getSelectedOption()) {
                         var widgetView = this.getSelectedOption().displayValue.getWidgetView();
                         widgetView.setActive();
@@ -92,6 +92,13 @@ module app.view.detail {
 
         private isDropdownHandle(object: Object) {
             if (object && object["id"] && object["id"].toString().indexOf("DropdownHandle") > 0) {
+                return true;
+            }
+            return false;
+        }
+
+        private isInfoWidgetToggleButton(object: Object) {
+            if (object && object["id"] && object["id"].toString().indexOf("InfoWidgetToggleButton") > 0) {
                 return true;
             }
             return false;
