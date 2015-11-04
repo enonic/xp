@@ -85,7 +85,7 @@ module app.view {
             if (!this.getItem() || !this.getItem().equals(item)) {
                 super.setItem(item);
                 this.previewPanel.setItem(item);
-                this.detailsPanel.setItem(item);
+                this.detailsPanel.setItem(item ? item.getModel() : null);
                 if (item) {
                     this.setName(this.makeDisplayName(item));
                 }

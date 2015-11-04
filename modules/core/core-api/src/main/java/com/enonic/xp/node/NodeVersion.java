@@ -270,6 +270,10 @@ public class NodeVersion
         {
             return false;
         }
+        if ( versionId != null ? !versionId.equals( that.versionId ) : that.versionId != null )
+        {
+            return false;
+        }
         if ( nodeType != null ? !nodeType.equals( that.nodeType ) : that.nodeType != null )
         {
             return false;
@@ -306,6 +310,7 @@ public class NodeVersion
     public int hashCode()
     {
         int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + ( versionId != null ? versionId.hashCode() : 0 );
         result = 31 * result + ( nodeType != null ? nodeType.hashCode() : 0 );
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
         result = 31 * result + ( data != null ? data.hashCode() : 0 );
