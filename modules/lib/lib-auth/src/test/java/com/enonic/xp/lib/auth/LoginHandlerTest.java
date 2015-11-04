@@ -10,10 +10,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.UserStores;
@@ -46,14 +44,8 @@ public class LoginHandlerTest
     public void testLoginSuccess()
         throws Exception
     {
-        final User user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.from( "enonic" ), "user1" ) ).
-            displayName( "User 1" ).
-            modifiedTime( Instant.now( clock ) ).
-            email( "user1@enonic.com" ).
-            login( "user1" ).
-            build();
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN_LOGIN ).build();
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( HandlerTestHelper.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
 
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
 
@@ -68,18 +60,11 @@ public class LoginHandlerTest
     public void testLoginNoUserStore()
         throws Exception
     {
-        final User user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.from( "enonic" ), "user1" ) ).
-            displayName( "User 1" ).
-            modifiedTime( Instant.now( clock ) ).
-            email( "user1@enonic.com" ).
-            login( "user1" ).
-            build();
 
         final UserStores userStores =
             UserStores.from( UserStore.create().displayName( "system" ).key( UserStoreKey.from( "system" ) ).build() );
 
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN_LOGIN ).build();
+        final AuthenticationInfo authInfo = HandlerTestHelper.createAuthenticationInfo();
 
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
         Mockito.when( this.securityService.getUserStores() ).thenReturn( userStores );
@@ -95,14 +80,8 @@ public class LoginHandlerTest
     public void testLoginMultipleUserStore()
         throws Exception
     {
-        final User user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.from( "enonic" ), "user1" ) ).
-            displayName( "User 1" ).
-            modifiedTime( Instant.now( clock ) ).
-            email( "user1@enonic.com" ).
-            login( "user1" ).
-            build();
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN_LOGIN ).build();
+
+        final AuthenticationInfo authInfo = HandlerTestHelper.createAuthenticationInfo();
 
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
 

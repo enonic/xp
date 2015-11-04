@@ -32,6 +32,36 @@ exports.getUser = function () {
     return __.toNativeObject(bean.getUser());
 };
 
+exports.getPrincipal = function (principalKey) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.GetPrincipalHandler');
+
+    bean.principalKey = __.nullOrValue(principalKey);
+
+    return __.toNativeObject(bean.getPrincipal());
+};
+
+exports.getMemberships = function (principalKey) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.GetMembershipsHandler');
+
+    bean.principalKey = __.nullOrValue(principalKey);
+
+    return __.toNativeObject(bean.getMemberships());
+};
+
+exports.createUser = function (userStore, name, displayName, email) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.CreateUserHandler');
+
+    bean.userStore = __.nullOrValue(userStore);
+
+    bean.name = __.nullOrValue(name);
+
+    bean.displayName = __.nullOrValue(displayName);
+
+    bean.email = __.nullOrValue(email);
+
+    return __.toNativeObject(bean.createUser());
+};
+
 exports.hasRole = function (roleKey) {
     var bean = __.newBean('com.enonic.xp.lib.auth.HasRoleHandler');
 
