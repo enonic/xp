@@ -166,6 +166,8 @@ module app.browse {
 
             this.floatingDetailsPanel = DetailsPanel.create().build();
 
+            this.floatingDetailsPanel.addClass("floating-details-panel");
+
             nonMobileDetailsPanelsManagerBuilder.setFloatingDetailsPanel(this.floatingDetailsPanel);
 
             this.appendChild(this.floatingDetailsPanel);
