@@ -1,0 +1,25 @@
+{
+  "clusterName": "ClusterName",
+  "localNode": {
+    "hostName": null,
+    "id": "first-node-id",
+    "master": "false",
+    "numberOfNodesSeen": 2
+  },
+  "members": [
+    {
+      "address": "local[10.10.10.2]",
+      "id": "second-node-id",
+      "name": "vbradnitski",
+      "master": "true",
+      "version": "1.4.4"
+    },
+    {
+      "address": "local[10.10.10.1]",
+      "id": "first-node-id",
+      "name": "vbradnitski",
+      "master": "false",
+      "version": "1.4.4"
+    }
+  ]
+}
