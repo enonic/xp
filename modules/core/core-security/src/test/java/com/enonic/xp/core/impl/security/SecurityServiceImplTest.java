@@ -19,6 +19,7 @@ import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTes
 import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.xp.repo.impl.elasticsearch.search.ElasticsearchSearchDao;
 import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchStorageDao;
+import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
@@ -81,7 +82,7 @@ public class SecurityServiceImplTest
 
     private BranchServiceImpl branchService;
 
-    private ElasticsearchIndexServiceInternal indexService;
+    private ElasticsearchIndexServiceInternal indexServiceInternal;
 
     private SearchServiceImpl searchService;
 
@@ -112,9 +113,9 @@ public class SecurityServiceImplTest
 
         this.nodeDao = new NodeVersionDaoImpl();
 
-        this.indexService = new ElasticsearchIndexServiceInternal();
-        this.indexService.setClient( client );
-        this.indexService.setElasticsearchDao( elasticsearchDao );
+        this.indexServiceInternal = new ElasticsearchIndexServiceInternal();
+        this.indexServiceInternal.setClient( client );
+        this.indexServiceInternal.setElasticsearchDao( elasticsearchDao );
 
         this.searchDao = new ElasticsearchSearchDao();
         this.searchDao.setElasticsearchDao( this.elasticsearchDao );
@@ -126,18 +127,23 @@ public class SecurityServiceImplTest
         this.storageService.setBranchService( this.branchService );
         this.storageService.setVersionService( this.versionService );
         this.storageService.setNodeVersionDao( this.nodeDao );
-        this.storageService.setIndexServiceInternal( this.indexService );
+        this.storageService.setIndexServiceInternal( this.indexServiceInternal );
 
         this.nodeService = new NodeServiceImpl();
-        this.nodeService.setIndexServiceInternal( indexService );
+        this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setSearchService( searchService );
         this.nodeService.setStorageService( storageService );
 
         this.eventPublisher = Mockito.mock( EventPublisher.class );
         this.nodeService.setEventPublisher( this.eventPublisher );
 
+        IndexServiceImpl indexService = new IndexServiceImpl();
+        indexService.setSearchService( this.searchService );
+        indexService.setIndexServiceInternal( this.indexServiceInternal );
+
         securityService = new SecurityServiceImpl();
         securityService.setNodeService( this.nodeService );
+        securityService.setIndexService( indexService );
 
         runAsAdmin( () -> {
 
@@ -159,7 +165,7 @@ public class SecurityServiceImplTest
 
     void createRepository( final Repository repository )
     {
-        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
+        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexServiceInternal );
         repositoryInitializer.initializeRepositories( repository.getId() );
 
         refresh();

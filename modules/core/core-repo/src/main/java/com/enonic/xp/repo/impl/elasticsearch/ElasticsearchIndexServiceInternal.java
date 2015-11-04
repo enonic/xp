@@ -5,6 +5,8 @@ import java.util.Collection;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateRequestBuilder;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -65,6 +67,22 @@ public class ElasticsearchIndexServiceInternal
     public void refresh( final String... indexNames )
     {
         client.admin().indices().prepareRefresh( indexNames ).execute().actionGet();
+    }
+
+    @Override
+    public boolean isMaster()
+    {
+        final ClusterStateRequestBuilder requestBuilder = new ClusterStateRequestBuilder( this.client.admin().cluster() ).
+            setBlocks( false ).
+            setIndices().
+            setBlocks( false ).
+            setMetaData( false ).
+            setNodes( true ).
+            setRoutingTable( false );
+
+        final ClusterStateResponse clusterStateResponse = client.admin().cluster().state( requestBuilder.request() ).actionGet();
+
+        return clusterStateResponse.getState().nodes().localNodeMaster();
     }
 
     @Override

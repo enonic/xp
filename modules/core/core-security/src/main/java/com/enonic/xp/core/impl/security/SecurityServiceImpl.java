@@ -24,6 +24,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -91,6 +92,8 @@ public final class SecurityServiceImpl
 
     private NodeService nodeService;
 
+    private IndexService indexService;
+
     private final Clock clock;
 
     public SecurityServiceImpl()
@@ -103,7 +106,10 @@ public final class SecurityServiceImpl
     @Activate
     public void initialize()
     {
-        new SecurityInitializer( this, this.nodeService ).initialize();
+        if ( indexService.isMaster() )
+        {
+            new SecurityInitializer( this, this.nodeService ).initialize();
+        }
     }
 
     @Override
@@ -872,5 +878,11 @@ public final class SecurityServiceImpl
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
+    }
+
+    @Reference
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
     }
 }

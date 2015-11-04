@@ -39,9 +39,11 @@ public final class RepositoryInitializer
             throw new RepositoryException( "Not able to initialize repositories" );
         }
 
+        final boolean isMaster = indexServiceInternal.isMaster();
+
         for ( final RepositoryId repositoryId : repositoryIds )
         {
-            if ( !isInitialized( repositoryId ) )
+            if ( !isInitialized( repositoryId ) && isMaster )
             {
                 doInitializeRepo( repositoryId );
             }
@@ -50,6 +52,7 @@ public final class RepositoryInitializer
                 waitForInitialized( repositoryId );
             }
         }
+
     }
 
     private boolean checkClusterHealth( int numberOfTries )

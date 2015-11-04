@@ -95,6 +95,12 @@ public class IndexServiceImpl
     }
 
     @Override
+    public boolean isMaster()
+    {
+        return indexServiceInternal.isMaster();
+    }
+
+    @Override
     public void purgeSearchIndex( final PurgeIndexParams params )
     {
         doInitializeSearchIndex( params.getRepositoryId() );
