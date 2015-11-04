@@ -177,10 +177,16 @@
 .input-wrapper {
 
   &.valid-regexp, &.invalid-regexp {
+    position: relative;
+
+    input {
+      padding-right: 100px;
+    }
+
     &:after {
-      position: relative;
-      top: 4px;
-      right: 2px;
+      position: absolute;
+      top: 7px;
+      right: 7px;
     }
   }
 
