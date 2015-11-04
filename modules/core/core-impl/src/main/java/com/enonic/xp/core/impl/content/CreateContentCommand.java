@@ -32,7 +32,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
@@ -73,7 +72,6 @@ final class CreateContentCommand
         try
         {
             final Node createdNode = nodeService.create( createNodeParams );
-           
             nodeService.refresh( RefreshMode.SEARCH );
             return translator.fromNode( createdNode, false );
         }
