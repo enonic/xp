@@ -33,7 +33,7 @@ module app {
             wizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() === "displayName") {
                     var contentType = (<app.wizard.ContentWizardPanel>wizardPanel).getContentType(),
-                        name = <string>event.getNewValue() || "<Unnamed " + this.convertName(contentType.getDisplayName()) + ">";
+                        name = <string>event.getNewValue() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
                     tabMenuItem.setLabel(name, !<string>event.getNewValue(), false);
                 }
             });
@@ -104,9 +104,11 @@ module app {
             });
 
             api.content.ContentDeletedEvent.on((event: api.content.ContentDeletedEvent) => {
-                var item = this.getNavigator().getNavigationItemByIdValue(event.getContentId().toString());
-                if (item) {
-                    item.getCloseAction().execute(true);
+                if (!event.isPending()) {
+                    var item = this.getNavigator().getNavigationItemByIdValue(event.getContentId().toString());
+                    if (item) {
+                        item.getCloseAction().execute(true);
+                    }
                 }
             });
         }
@@ -147,7 +149,7 @@ module app {
                     }
 
                     tabMenuItem = new AppBarTabMenuItemBuilder().
-                        setLabel("<Unnamed " + this.convertName(contentTypeSummary.getDisplayName()) + ">").
+                        setLabel(api.content.ContentUnnamed.prettifyUnnamed(contentTypeSummary.getDisplayName())).
                         setTabId(tabId).
                         setCloseAction(wizard.getCloseAction()).
                         build();
@@ -157,6 +159,10 @@ module app {
                     });
 
                     this.addWizardPanel(tabMenuItem, wizard);
+
+                    if (newContentEvent.getContentType().isSite() && this.getBrowsePanel()) {
+                        this.getBrowsePanel().getTreeGrid().reload(); // reload content grid to show that site has underlying folders
+                    }
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).finally(() => {
@@ -193,7 +199,7 @@ module app {
                             }
 
                             var contentType = (<app.wizard.ContentWizardPanel>wizard).getContentType(),
-                                name = content.getDisplayName() || "<Unnamed " + this.convertName(contentType.getDisplayName()) + ">";
+                                name = content.getDisplayName() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
 
                             tabMenuItem = new AppBarTabMenuItemBuilder().
                                 setLabel(name).
@@ -253,7 +259,7 @@ module app {
                         new api.schema.content.GetContentTypeByNameRequest(content.getType()).
                             sendAndParse().
                             then((contentType: api.schema.content.ContentType) => {
-                                tabMenuItem.setLabel("<Unnamed " + this.convertName(contentType.getDisplayName()) + ">", true);
+                                tabMenuItem.setLabel(api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName()), true);
                             }).done();
                     }
 
@@ -319,10 +325,6 @@ module app {
             }
 
             return null;
-        }
-
-        private convertName(name: string): string {
-            return api.util.StringHelper.capitalizeAll(name.replace(/-/g, " ").trim());
         }
     }
 

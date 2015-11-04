@@ -46,7 +46,8 @@ module app.wizard {
                 var currentEntries: AccessControlEntry[] = this.getEntries().sort();
                 var permissionsModified: boolean = !api.ObjectHelper.arrayEquals(currentEntries, this.originalValues);
                 var inheritCheckModified: boolean = this.inheritPermissionsCheck.isChecked() !== this.originalInherit;
-                this.applyAction.setEnabled(permissionsModified || inheritCheckModified);
+                var overwriteModified: boolean = this.overwriteChildPermissionsCheck.isChecked();
+                this.applyAction.setEnabled(permissionsModified || inheritCheckModified || overwriteModified);
             };
 
             var changeListener = () => {
@@ -63,10 +64,6 @@ module app.wizard {
             };
             this.inheritPermissionsCheck.onValueChanged(changeListener);
 
-            this.comboBox.onOptionValueChanged(comboBoxChangeListener);
-            this.comboBox.onOptionSelected(comboBoxChangeListener);
-            this.comboBox.onOptionDeselected(comboBoxChangeListener);
-
             this.overwriteChildPermissionsCheck = new api.ui.Checkbox().setLabel('Overwrite child permissions');
             this.overwriteChildPermissionsCheck.addClass('overwrite-child-check');
             this.appendChildToContentPanel(this.overwriteChildPermissionsCheck);
@@ -79,6 +76,11 @@ module app.wizard {
 
             api.dom.Body.get().appendChild(this);
 
+            this.comboBox.onOptionValueChanged(comboBoxChangeListener);
+            this.comboBox.onOptionSelected(comboBoxChangeListener);
+            this.comboBox.onOptionDeselected(comboBoxChangeListener);
+            this.overwriteChildPermissionsCheck.onValueChanged(comboBoxChangeListener);
+
             this.parentPermissions = [];
             OpenEditPermissionsDialogEvent.on((event) => {
                 this.content = event.getContent();
@@ -90,7 +92,7 @@ module app.wizard {
 
                     this.open();
 
-                }).catch((reason: any) => {
+                }).catch(() => {
                     api.notify.showWarning('Could not read inherit permissions for content ' + this.content.getPath().toString());
                 }).done();
             });

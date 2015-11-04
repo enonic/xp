@@ -2,7 +2,6 @@ package com.enonic.xp.lib.portal.current;
 
 import com.enonic.xp.lib.content.mapper.ComponentMapper;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -26,6 +25,6 @@ public final class GetCurrentComponentHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.request = PortalRequestAccessor.get();
+        this.request = context.getBinding( PortalRequest.class ).get();
     }
 }

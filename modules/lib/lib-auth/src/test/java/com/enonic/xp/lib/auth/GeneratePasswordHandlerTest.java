@@ -16,7 +16,7 @@ public class GeneratePasswordHandlerTest
 
         for ( int i = 0; i < 20; i++ )
         {
-            assertTrue( isExtreme( PasswordGenerator.generatePassword() ) );
+            assertTrue( isExtreme( new GeneratePasswordHandler().generatePassword() ) );
         }
 
     }

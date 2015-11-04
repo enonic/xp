@@ -468,11 +468,19 @@ module app.wizard {
                     var ignore = contentSummaryAndCompareStatus.getCompareStatus() !== CompareStatus.NEW;
                     this.contentWizardHeader.disableNameGeneration(ignore);
 
+                    var deleteHandler = (event: api.content.ContentDeletedEvent) => {
+                        if (event.isPending() && this.getPersistedItem() && event.getContentId() &&
+                            this.getPersistedItem().getId() === event.getContentId().toString()) {
+
+                            this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.PENDING_DELETE);
+                        }
+                    }
+
                     var publishHandler = (event: api.content.ContentPublishedEvent) => {
                         if (this.getPersistedItem() && event.getContentId() &&
                             (this.getPersistedItem().getId() === event.getContentId().toString())) {
 
-                            this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.EQUAL);
+                            this.contentWizardToolbarPublishControls.setCompareStatus(event.getCompareStatus());
 
                             if (!ignore) {
                                 this.contentWizardHeader.disableNameGeneration(true);
@@ -481,9 +489,11 @@ module app.wizard {
                         }
                     };
                     api.content.ContentPublishedEvent.on(publishHandler);
+                    api.content.ContentDeletedEvent.on(deleteHandler);
 
                     this.onClosed(() => {
                         api.content.ContentPublishedEvent.un(publishHandler);
+                        api.content.ContentDeletedEvent.un(deleteHandler);
                     });
                     this.contentWizardToolbarPublishControls.setCompareStatus(contentSummaryAndCompareStatus.getCompareStatus());
                     this.managePublishButtonStateForMobile(contentSummaryAndCompareStatus.getCompareStatus());
@@ -963,6 +973,10 @@ module app.wizard {
         }
 
         public checkContentCanBePublished(displayValidationErrors: boolean): boolean {
+            if (this.contentWizardToolbarPublishControls.isPendingDelete()) {
+                // allow deleting published content without validity check
+                return true;
+            }
             if (!this.isContentFormValid) {
                 this.contentWizardStepForm.displayValidationErrors(displayValidationErrors);
             }
@@ -1185,7 +1199,7 @@ module app.wizard {
         }
 
         private isContentRenderable(): boolean {
-            return this.liveEditModel && this.liveEditModel.getPageModel() && this.liveEditModel.getPageModel().hasController();
+            return this.liveEditModel && this.liveEditModel.isPageRenderable();
         }
 
         private updatePreviewActionVisibility() {

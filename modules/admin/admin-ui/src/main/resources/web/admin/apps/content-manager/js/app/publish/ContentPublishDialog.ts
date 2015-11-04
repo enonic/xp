@@ -82,9 +82,7 @@ module app.publish {
                 this.getButtonRow().addClass("no-checkbox");
             }
 
-            this.runResolveTasks(this.getResolveTasks(), () => {
-                this.centerMyself();
-            })
+            this.runResolveTasks(this.getResolveTasks(), () => this.centerMyself());
             this.open();
         }
 
@@ -436,18 +434,12 @@ module app.publish {
         }
 
         private contentItemsAreValid(contentPublishItems: ContentsResolved<ContentPublishItem>): boolean {
-            var result = true;
 
-            contentPublishItems.getContentsResolved().forEach((content: ContentPublishItem) => {
-                var contentName = content.getName(),
-                    invalid = !content.isValid() || !content.getDisplayName() || contentName.isUnnamed();
-                if (invalid) {
-                    result = false;
-                    return;
-                }
+            return contentPublishItems.getContentsResolved().every((content: ContentPublishItem) => {
+                return content.getCompareStatus() == CompareStatus.PENDING_DELETE ||
+                       (content.isValid() && !api.util.StringHelper.isBlank(content.getDisplayName()) && !content.getName().isUnnamed());
             });
 
-            return result;
         }
 
         private atLeastOneInitialItemHasChild(): boolean {
@@ -459,19 +451,15 @@ module app.publish {
         private allResolvedItemsAreValid(): boolean {
             var includeChildItems = this.includeChildItemsCheck.isChecked();
 
-            if (!this.contentItemsAreValid(includeChildItems
-                    ? this.initialContentsResolvedWithChildren
-                    : this.initialContentsResolvedWithoutChildren)) {
-                return false;
-            }
+            var initialValid = this.contentItemsAreValid(includeChildItems
+                ? this.initialContentsResolvedWithChildren
+                : this.initialContentsResolvedWithoutChildren);
 
-            if (!this.contentItemsAreValid(includeChildItems
-                    ? this.dependenciesContentsResolvedWithChildren
-                    : this.dependenciesContentsResolvedWithoutChildren)) {
-                return false;
-            }
+            var dependenciesValid = this.contentItemsAreValid(includeChildItems
+                ? this.dependenciesContentsResolvedWithChildren
+                : this.dependenciesContentsResolvedWithoutChildren);
 
-            return true;
+            return initialValid && dependenciesValid;
         }
 
         private showLoadingSpinnerAtButton() {

@@ -52,7 +52,7 @@ class ContentVersionFactory
             comment( "No comments" ).
             modified( data.getProperty( ContentPropertyNames.MODIFIED_TIME ).getInstant() ).
             modifier( PrincipalKey.from( data.getProperty( ContentPropertyNames.MODIFIER ).getString() ) ).
-            id( ContentVersionId.from( nodeVersion.getId().toString() ) ).
+            id( ContentVersionId.from( nodeVersion.getVersionId().toString() ) ).
             build();
     }
 

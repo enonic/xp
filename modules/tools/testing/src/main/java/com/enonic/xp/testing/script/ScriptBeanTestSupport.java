@@ -34,13 +34,11 @@ public abstract class ScriptBeanTestSupport
 
     protected final ResourceService resourceService;
 
-    private final Application application;
-
     public ScriptBeanTestSupport()
     {
         this.services = Maps.newHashMap();
 
-        this.application = Mockito.mock( Application.class );
+        final Application application = Mockito.mock( Application.class );
         Mockito.when( application.getBundle() ).thenReturn( Mockito.mock( Bundle.class ) );
         Mockito.when( application.getKey() ).thenReturn( DEFAULT_APPLICATION_KEY );
         Mockito.when( application.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
@@ -78,9 +76,9 @@ public abstract class ScriptBeanTestSupport
         return new BeanContext()
         {
             @Override
-            public Application getApplication()
+            public ApplicationKey getApplicationKey()
             {
-                return application;
+                return resourceKey.getApplicationKey();
             }
 
             @Override
@@ -90,7 +88,7 @@ public abstract class ScriptBeanTestSupport
             }
 
             @Override
-            public <T> Supplier<T> getAttribute( final Class<T> type )
+            public <T> Supplier<T> getBinding( final Class<T> type )
             {
                 return () -> null;
             }
