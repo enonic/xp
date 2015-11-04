@@ -12,11 +12,8 @@ import com.google.common.base.Strings;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistException;
-import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentCreatedEvent;
 import com.enonic.xp.content.ContentDataValidationException;
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
@@ -76,12 +73,7 @@ final class CreateContentCommand
         {
             final Node createdNode = nodeService.create( createNodeParams );
             nodeService.refresh( RefreshMode.SEARCH );
-            final Content createdContent = translator.fromNode( createdNode, false );
-
-            eventPublisher.publish( new ContentCreatedEvent( ContentId.from( createdNode.id().toString() ) ) );
-            eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.CREATE, createdContent.getPath() ) );
-
-            return createdContent;
+            return translator.fromNode( createdNode, false );
         }
         catch ( NodeAlreadyExistAtPathException e )
         {

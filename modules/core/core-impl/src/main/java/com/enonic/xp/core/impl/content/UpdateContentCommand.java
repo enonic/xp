@@ -9,11 +9,9 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
-import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.ContentUpdatedEvent;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
@@ -102,11 +100,6 @@ final class UpdateContentCommand
 
         final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( updateContentTranslatorParams );
         final Node editedNode = this.nodeService.update( updateNodeParams );
-
-        eventPublisher.publish( new ContentUpdatedEvent( editedContent.getId() ) );
-
-        eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.UPDATE, editedContent.getPath() ) );
-
         return translator.fromNode( editedNode, true );
     }
 

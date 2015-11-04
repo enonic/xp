@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -39,24 +40,30 @@ public class ImportNodeCommand
         return new Builder();
     }
 
-    public Node execute()
+    public ImportNodeResult execute()
     {
         final boolean exists = CheckNodeExistsCommand.create( this ).
             nodePath( this.importNode.path() ).
             build().
             execute();
 
+        final Node node;
         if ( !exists )
         {
-            return createNode();
+            node = createNode();
         }
         else
         {
-            return updateNode( GetNodeByPathCommand.create( this ).
+            node = updateNode( GetNodeByPathCommand.create( this ).
                 nodePath( this.importNode.path() ).
                 build().
                 execute() );
         }
+
+        return ImportNodeResult.create().
+            node( node ).
+            preExisting( exists ).
+            build();
     }
 
     private Node createNode()

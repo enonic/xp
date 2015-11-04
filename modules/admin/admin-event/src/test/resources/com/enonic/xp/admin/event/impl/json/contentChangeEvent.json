@@ -1,0 +1,11 @@
+{
+  "type": "ContentChangeEvent",
+  "event": {
+    "changes": [
+      {
+        "t": "P",
+        "p": ["/my/path"]
+      }
+    ]
+  }
+}

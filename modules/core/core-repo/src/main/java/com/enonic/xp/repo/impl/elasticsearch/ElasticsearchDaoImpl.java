@@ -100,7 +100,7 @@ public class ElasticsearchDaoImpl
                 index( indexDocument.getIndexName() ).
                 type( indexDocument.getIndexTypeName() ).
                 source( xContentBuilder ).
-                refresh( indexDocument.isRefreshAfterOperation() );
+                refresh( indexDocument.isRefreshAfterOperation() ); //TODO Temporary fix. Should be corrected by XP-1986
 
             this.client.index( req ).actionGet( storeTimeout );
         }

@@ -1,8 +1,24 @@
 module api.app {
 
-    interface ServerEventJson {
+    export interface ServerEventJson {
         type: string;
         event: any;
+    }
+
+    export interface Event2Json extends ServerEventJson {
+        timestamp: number;
+        distributed: boolean;
+        data: Event2DataJson;
+    }
+
+    export interface Event2DataJson {
+        nodes: Event2NodeJson[];
+    }
+
+    export interface Event2NodeJson {
+        id: string;
+        path: string;
+        newPath: string;
     }
 
     export class ServerEventsConnection {
@@ -128,12 +144,16 @@ module api.app {
 
         private translateServerEvent(serverEventJson: ServerEventJson): api.event.Event {
             var eventType = serverEventJson.type;
-            if (eventType === 'ContentChangeEvent') {
-                return api.content.ContentServerEvent.fromJson(serverEventJson.event);
+
+            if (eventType === 'ApplicationEvent') {
+                return api.application.ApplicationEvent.fromJson(serverEventJson.event);
             }
-            if (eventType === 'ApplicationUpdatedEvent') {
-                return api.application.ApplicationUpdatedEvent.fromJson(serverEventJson.event);
+            if (eventType.indexOf('node.') === 0) {
+                console.log("Event " + eventType + " received");
+                var event = api.content.ContentServerEvent.fromJson(<Event2Json>serverEventJson);
+                return event;
             }
+
             return null;
         }
 

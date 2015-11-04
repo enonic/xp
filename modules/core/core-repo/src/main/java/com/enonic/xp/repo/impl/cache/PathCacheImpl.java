@@ -3,6 +3,8 @@ package com.enonic.xp.repo.impl.cache;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import com.enonic.xp.repo.impl.branch.storage.BranchDocumentId;
+
 public class PathCacheImpl
     implements PathCache
 {
@@ -16,9 +18,9 @@ public class PathCacheImpl
     }
 
     @Override
-    public void cache( final CachePath path, final String id )
+    public void cache( final CachePath path, final BranchDocumentId id )
     {
-        this.pathCache.put( path, id );
+        this.pathCache.put( path, id.toString() );
     }
 
     @Override

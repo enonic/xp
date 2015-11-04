@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import static org.junit.Assert.*;
 
@@ -34,7 +34,7 @@ public class JsonTestHelper
         objectMapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
         objectMapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
         objectMapper.setSerializationInclusion( JsonInclude.Include.ALWAYS );
-        objectMapper.registerModule( new JSR310Module() );
+        objectMapper.registerModule( new JavaTimeModule() );
         objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
     }
 
