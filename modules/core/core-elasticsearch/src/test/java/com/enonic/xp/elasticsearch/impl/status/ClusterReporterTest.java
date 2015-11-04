@@ -20,12 +20,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-
-import com.enonic.xp.jaxrs.impl.json.ObjectMapperHelper;
 
 
 public class ClusterReporterTest
@@ -144,7 +145,7 @@ public class ClusterReporterTest
     private JsonNode parseJson( final String json )
         throws Exception
     {
-        final ObjectMapper mapper = ObjectMapperHelper.create();
+        final ObjectMapper mapper = createObjectMapper();
         return mapper.readTree( json );
     }
 
@@ -163,8 +164,18 @@ public class ClusterReporterTest
     private String toJson( final Object value )
         throws Exception
     {
-        final ObjectMapper mapper = ObjectMapperHelper.create();
+        final ObjectMapper mapper = createObjectMapper();
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString( value );
+    }
+
+    private ObjectMapper createObjectMapper()
+    {
+        final ObjectMapper mapper = new ObjectMapper();
+        mapper.disable( SerializationFeature.FAIL_ON_EMPTY_BEANS );
+        mapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
+        mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
+        mapper.setSerializationInclusion( JsonInclude.Include.ALWAYS );
+        return mapper;
     }
 
     private final void assertEquals( Object a1, Object a2 )
