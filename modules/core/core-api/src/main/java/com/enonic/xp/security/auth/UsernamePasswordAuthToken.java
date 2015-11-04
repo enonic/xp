@@ -22,8 +22,21 @@ public final class UsernamePasswordAuthToken
         if ( StringUtils.countMatches( username, "\\" ) == 1 )
         {
             final String[] userParts = username.split( "\\\\" );
-            setUserStore( UserStoreKey.from( userParts[0] ) );
-            this.username = userParts[1];
+            if ( userParts.length != 2 )
+            {
+                this.username = username;
+                return;
+            }
+
+            try
+            {
+                setUserStore( UserStoreKey.from( userParts[0] ) );
+                this.username = userParts[1];
+            }
+            catch ( java.lang.IllegalArgumentException e )
+            {
+                this.username = username;
+            }
         }
         else
         {
