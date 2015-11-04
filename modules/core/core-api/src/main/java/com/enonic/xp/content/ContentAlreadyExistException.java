@@ -22,4 +22,9 @@ public final class ContentAlreadyExistException
     {
         return path;
     }
+
+    public String getCode()
+    {
+        return "contentAlreadyExist";
+    }
 }
