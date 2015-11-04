@@ -22,6 +22,8 @@ module api.content {
                 setMinWidth(builder.minWidth);
 
             super(richComboBoxBuilder);
+
+            this.addClass('content-combo-box');
         }
 
         getContent(contentId: ContentId): ContentSummary {
@@ -78,6 +80,19 @@ module api.content {
 
         resolveSubTitle(content: ContentSummary): string {
             return content.getPath().toString();
+        }
+
+        createActionButtons(content: ContentSummary): api.dom.Element[] {
+            let editButton = new api.dom.AEl("edit");
+            editButton.onClicked((event: Event) => {
+                new api.content.EditContentEvent([content]).fire();
+
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
+            });
+
+            return [editButton];
         }
 
     }
