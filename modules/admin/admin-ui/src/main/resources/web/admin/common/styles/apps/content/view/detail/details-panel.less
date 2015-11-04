@@ -140,6 +140,197 @@
       float: right;
       margin-right: 10px;
     }
+
+    .widget-view {
+
+      margin: 0 0 2px 0;
+      overflow: hidden;
+      .transition(all 0.1s ease-in-out);
+
+      .panel {
+        position: relative;
+      }
+
+      .widget-item-view:not(.version-history) {
+        // common styles for all widget items
+        position: relative;
+        margin: 10px 10px 10px;
+        padding: 5px;
+        background-color: @admin-white;
+        .box-shadow(0px 1px 2px 1px rgba(0, 0, 0, 0.1));
+
+        &.properties-widget-item-view {
+
+          dl {
+            overflow: hidden;
+            padding: 5px;
+            dd {
+              float: left;
+              width: 30%;
+            }
+            dt {
+              float: left;
+              width: 70%;
+              .ellipsis();
+            }
+            dd, dt {
+              margin: 1px 0px;
+            }
+          }
+
+          min-height: 100px;
+        }
+
+        &.attachments-widget-item-view {
+
+          ul.uploader-list {
+
+            li.uploader-container {
+              margin: 5px;
+              font-size: 12px;
+
+              .result-container {
+                .icon-attachment2();
+
+                &:before {
+                  font-size: 24px;
+                }
+              }
+
+              a {
+                font-family: "Open Sans", sans-serif !important;
+                display: inline-block;
+                line-height: 23px;
+                margin-left: 10px;
+                width: 80%;
+                text-decoration: none;
+                .ellipsis();
+              }
+            }
+          }
+
+          .att-placeholder {
+            display: block;
+            text-align: center;
+          }
+        }
+
+        &.status-widget-item-view {
+          text-align: center;
+          height: 60px;
+
+          span {
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+            font-size: 20px;
+            line-height: 60px;
+            background-color: @admin-white;
+
+            &.equal {
+              color: @admin-green;
+            }
+
+          }
+        }
+
+        &.user-access-widget-item-view {
+
+          text-align: center;
+
+          .tooltip {
+
+            z-index: 99999;
+          }
+
+          .user-access-widget-header {
+            .icon-menu4 {
+              display: inline-block;
+              font-size: 25px;
+              float: left;
+              margin-left: 7px;
+            }
+            .header-string {
+              line-height: 30px;
+            }
+          }
+
+          .edit-permissions-link {
+            display: inline-block;
+            margin-top: 5px;
+
+          }
+
+          .empty + .edit-permissions-link {
+            margin-top: 0px;
+          }
+
+          .user-access-list-view {
+
+            margin-top: 5px;
+
+            &.empty {
+              display: none;
+            }
+
+            .user-access-list-item-view {
+
+              padding: 3px;
+              position: relative;
+
+              .clearfix();
+
+              .user-line {
+
+                position: relative;
+                margin-right: 100px;
+                height: 29px;
+                overflow: hidden;
+                padding-right: 30px;
+                float: left;
+
+                &:after {
+                  position: absolute;
+                  content: attr(extra-count);
+                  font-size: 14px;
+                  line-height: 29px;
+                }
+
+                .user-icon {
+                  cursor: default;
+                  display: inline-block;
+                  width: 25px;
+                  height: 25px;
+                  background-color: @admin-bg-dark-gray;
+                  color: @admin-white;
+                  font-size: 12px;
+                  line-height: 25px;
+                  text-align: center;
+                  overflow: hidden;
+                  float: left;
+                  margin: 0px 3px;
+                  .border-radius(25px);
+                  border: 2px solid transparent;
+
+                  &.active {
+                    border: 2px solid @admin-blue;
+                  }
+                }
+
+              }
+
+              .access-line {
+                font-size: 14px;
+                position: absolute;
+                line-height: 29px;
+                top: 3px;
+                right: 10px;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   .splitter {
@@ -244,263 +435,21 @@
       }
     }
   }
-}
 
-.widget-view {
-
-  margin: 0 0 2px 0;
-  overflow: hidden;
-  .transition(all 0.1s ease-in-out);
-
-  .panel {
-    position: relative;
+  &.dragging {
+    overflow: visible;
   }
 
-  .widget-item-view:not(.version-history) {
-    // common styles for all widget items
-    position: relative;
-    margin: 10px 10px 10px;
-    padding: 5px;
-    background-color: @admin-white;
-    .box-shadow(0px 1px 2px 1px rgba(0, 0, 0, 0.1));
-
-    &.properties-widget-item-view {
-
-      dl {
-        overflow: hidden;
-        padding: 5px;
-        dd {
-          float: left;
-          width: 30%;
-        }
-        dt {
-          float: left;
-          width: 70%;
-          .ellipsis();
-        }
-        dd, dt {
-          margin: 1px 0px;
-        }
-      }
-
-      min-height: 100px;
-    }
-
-    &.attachments-widget-item-view {
-
-      ul.uploader-list {
-
-        li.uploader-container {
-          margin: 5px;
-          font-size: 12px;
-
-          .result-container {
-            .icon-attachment2();
-
-            &:before {
-              font-size: 24px;
-            }
-          }
-
-          a {
-            font-family: "Open Sans", sans-serif !important;
-            display: inline-block;
-            line-height: 23px;
-            margin-left: 10px;
-            width: 80%;
-            text-decoration: none;
-            .ellipsis();
-          }
-        }
-      }
-
-      .att-placeholder {
-        display: block;
-        text-align: center;
-      }
-    }
-
-    &.status-widget-item-view {
-      text-align: center;
-      height: 60px;
-
-      span {
-        display: inline-block;
-        width: 100%;
-        height: 100%;
-        font-size: 20px;
-        line-height: 60px;
-        background-color: @admin-white;
-
-        &.equal {
-          color: @admin-green;
-        }
-
-      }
-    }
-
-    &.user-access-widget-item-view {
-
-      text-align: center;
-
-      .tooltip {
-
-        z-index: 99999;
-      }
-
-      .user-access-widget-header {
-        .icon-menu4 {
-          display: inline-block;
-          font-size: 25px;
-          float: left;
-          margin-left: 7px;
-        }
-        .header-string {
-          line-height: 30px;
-        }
-      }
-
-      .edit-permissions-link {
-        display: inline-block;
-        margin-top: 5px;
-
-      }
-
-      .empty + .edit-permissions-link {
-        margin-top: 0px;
-      }
-
-      .user-access-list-view {
-
-        margin-top: 5px;
-
-        &.empty {
-          display: none;
-        }
-
-        .user-access-list-item-view {
-
-          padding: 3px;
-          position: relative;
-
-          .clearfix();
-
-          .user-line {
-
-            position: relative;
-            margin-right: 100px;
-            height: 29px;
-            overflow: hidden;
-            padding-right: 30px;
-            float: left;
-
-            &:after {
-              position: absolute;
-              content: attr(extra-count);
-              font-size: 14px;
-              line-height: 29px;
-            }
-
-            .user-icon {
-              cursor: default;
-              display: inline-block;
-              width: 25px;
-              height: 25px;
-              background-color: @admin-bg-dark-gray;
-              color: @admin-white;
-              font-size: 12px;
-              line-height: 25px;
-              text-align: center;
-              overflow: hidden;
-              float: left;
-              margin: 0px 3px;
-              .border-radius(25px);
-              border: 2px solid transparent;
-
-              &.active {
-                border: 2px solid @admin-blue;
-              }
-            }
-
-          }
-
-          .access-line {
-            font-size: 14px;
-            position: absolute;
-            line-height: 29px;
-            top: 3px;
-            right: 10px;
-          }
-        }
-      }
-    }
-  }
-}
-
-  .widget-toggle-button {
-
-    .icon-arrow-right2();
-
-    position: relative;
-    overflow: hidden;
-    display: block;
-    line-height: 20px;
-    padding: 8px 5px;
-    background-color: @admin-bg-light-gray;
-    cursor: pointer;
-
-    * {
-      vertical-align: top;
-    }
-
-    &:before {
-      font-size: 20px;
-      position: absolute;
-      right: 13px;
-    }
-
-    .label {
-      margin-left: 5px;
-      display: block;
-      font-size: 14px;
-    }
-  }
-
-  &.expanded {
-
-    padding: 5px 0 5px 0;
+  .ghost-dragger {
     height: 100%;
-
-    .status-widget-item-view {
-      font-size: 20px;
-    }
-
-    .widget-toggle-button {
-      .icon-arrow-down2();
-      line-height: 20px;
-    }
-
-    iframe {
-      border: none;
-      height: 100%;
-      width: 100%;
-    }
+    background-color: @admin-dark-gray;
+    opacity: 0.5;
+    position: absolute;
+    z-index: @z-index-draggable;
+    cursor: ew-resize;
+    width: 5px;
+    .notSelectable();
   }
-
-
-&.dragging {
-  overflow: visible;
-}
-
-.ghost-dragger {
-  height: 100%;
-  background-color: @admin-dark-gray;
-  opacity: 0.5;
-  position: absolute;
-  z-index: @z-index-draggable;
-  cursor: ew-resize;
-  width: 5px;
-  .notSelectable();
 }
 
 .split-panel {
@@ -538,10 +487,6 @@
 
       > .details-container {
         left: 0px;
-      }
-
-      .widget-toggle-button {
-        border-left: 1px #d3d3d3 solid;
       }
 
       .widgets-selection-row .widget-selector {
