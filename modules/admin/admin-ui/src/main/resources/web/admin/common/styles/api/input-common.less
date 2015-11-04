@@ -173,3 +173,27 @@
     }
   }
 }
+
+.input-wrapper {
+
+  &.valid-regexp, &.invalid-regexp {
+    &:after {
+      position: relative;
+      top: 4px;
+      right: 2px;
+    }
+  }
+
+  &.valid-regexp {
+    &:after {
+      content: 'Valid';
+    }
+  }
+
+  &.invalid-regexp {
+    &:after {
+      content: 'Invalid value';
+    }
+  }
+
+}
