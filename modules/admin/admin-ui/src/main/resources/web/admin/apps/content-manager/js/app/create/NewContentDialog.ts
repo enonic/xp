@@ -82,6 +82,7 @@ module app.create {
         private initMostPopularItemsBlock() {
             this.mostPopularItemsBlock = new MostPopularItemsBlock();
             this.mostPopularItemsBlock.hide();
+            this.mostPopularItems = [];
 
             this.mostPopularItemsBlock.getMostPopularList().onSelected((event: app.create.NewContentDialogItemSelectedEvent) => {
                 this.closeAndFireEventFromContentType(event.getItem());
