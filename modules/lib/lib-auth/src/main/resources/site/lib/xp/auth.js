@@ -250,3 +250,22 @@ exports.createGroup = function (params) {
     return __.toNativeObject(bean.createGroup());
 };
 
+/**
+ * Adds memberships from list to principal with passed key.
+ *
+ * @example
+ * auth.addMemberships('user-key', ['role-key', 'group-key']);
+ *
+ * @param {string} key Principal key to add memeberships to.
+ * @param {string} list Principal keys list to add.
+ */
+exports.addMemberships = function (key, list) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.AddMembershipsHandler');
+
+    bean.principalKey = nullOrValue(key);
+
+    bean.membershipsList = __.toScriptValue(list);
+
+    return __.toNativeObject(bean.addMemberships());
+};
+
