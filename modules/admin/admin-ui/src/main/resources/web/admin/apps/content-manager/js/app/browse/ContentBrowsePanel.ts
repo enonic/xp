@@ -114,10 +114,6 @@ module app.browse {
 
             this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager);
 
-            this.onShown(() => {
-                nonMobileDetailsPanelsManager.getActivePanel().updateWidgetsHeights();
-            });
-
             this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
         }
 

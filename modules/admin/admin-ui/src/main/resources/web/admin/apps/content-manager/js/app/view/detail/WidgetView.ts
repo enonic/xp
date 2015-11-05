@@ -21,10 +21,6 @@ module app.view.detail {
             this.widgetName = builder.name;
             this.widgetItemViews = builder.widgetItemViews;
 
-            if (builder.useToggleButton) {
-                this.initWidgetToggleButton();
-            }
-
             this.layout();
         }
 
@@ -87,13 +83,6 @@ module app.view.detail {
                 console.debug('WidgetView.setInactive: ', this);
             }
             this.detailsPanel.resetActiveWidget();
-            this.deactivate();
-        }
-
-        deactivate() {
-            if (WidgetView.debug) {
-                console.debug('WidgetView.deactivate: ', this);
-            }
             this.slideOut();
         }
 

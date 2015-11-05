@@ -90,7 +90,6 @@ module app.view {
                     this.setName(this.makeDisplayName(item));
                 }
             }
-            this.detailsPanel.updateWidgetsHeights();
             this.slideIn();
         }
 

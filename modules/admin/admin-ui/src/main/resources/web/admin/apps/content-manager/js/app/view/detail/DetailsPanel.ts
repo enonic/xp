@@ -115,7 +115,7 @@ module app.view.detail {
 
         setActiveWidget(widgetView: WidgetView) {
             if (this.activeWidget) {
-                this.activeWidget.deactivate();
+                this.activeWidget.setInactive();
             }
 
             this.activeWidget = widgetView;
@@ -285,7 +285,7 @@ module app.view.detail {
             var versionsWidgetView = WidgetView.create().
                 setName("Version history").
                 setDetailsPanel(this).
-                addWidgetItemView(this.versionWidgetItemView).
+                addWidgetItemView(this.versionsWidgetItemView).
                 build();
 
             this.addWidgets([versionsWidgetView]);
