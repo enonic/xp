@@ -1,5 +1,8 @@
 package com.enonic.xp.elasticsearch.impl.status;
 
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequestBuilder;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoRequest;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
@@ -20,6 +23,8 @@ public final class ClusterReporter
 {
     private Client client;
 
+    private static final String CLUSTER_HEALTH_TIMEOUT = "3s";
+
     @Override
     public String getName()
     {
@@ -31,11 +36,14 @@ public final class ClusterReporter
     {
         final ClusterStateResponse clusterStateResponse = getClusterStateInfo();
 
+        final ClusterHealthResponse clusterHealthResponse = getClusterHealthResponse();
+
         final NodeInfo localNodeInfo = this.getNodesInfo( "_local" ).getAt( 0 );
 
         final ClusterReport clusterReport = ClusterReport.create().
             clusterState( clusterStateResponse.getState() ).
             localNodeInfo( localNodeInfo ).
+            clusterHealthResponse( clusterHealthResponse ).
             build();
 
         return clusterReport.toJson();
@@ -43,9 +51,27 @@ public final class ClusterReporter
 
     private ClusterStateResponse getClusterStateInfo()
     {
-        final ClusterStateRequest clusterStateRequest = Requests.clusterStateRequest();
-        clusterStateRequest.listenerThreaded( false );
+        final ClusterStateRequest clusterStateRequest = Requests.clusterStateRequest().
+            listenerThreaded( false ).
+            blocks( false ).
+            routingTable( false ).
+            indices( "" ).
+            metaData( false ).
+            masterNodeTimeout( CLUSTER_HEALTH_TIMEOUT );
+
         return client.admin().cluster().state( clusterStateRequest ).actionGet();
+    }
+
+    private ClusterHealthResponse getClusterHealthResponse()
+    {
+        String[] indices = new String[]{};
+
+        final ClusterHealthRequest request = new ClusterHealthRequestBuilder( this.client.admin().cluster() ).
+            setTimeout( CLUSTER_HEALTH_TIMEOUT ).
+            setIndices( indices ).
+            request();
+
+        return client.admin().cluster().health( request ).actionGet();
     }
 
     private NodesInfoResponse getNodesInfo( String... nodeIds )

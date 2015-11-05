@@ -1,18 +1,19 @@
 {
-  "clusterName": "ClusterName",
+  "name": "clusterName",
+  "state": "GREEN",
   "localNode": {
     "hostName": null,
-    "id": "first-node-id",
-    "master": "false",
+    "id": "nodeId",
+    "isMaster": "false",
     "numberOfNodesSeen": 1
   },
   "members": [
     {
       "address": "local[10.10.10.1]",
-      "id": "first-node-id",
-      "name": "vbradnitski",
-      "master": "false",
-      "version": "1.4.4"
+      "hostName": "hostName",
+      "id": "nodeId",
+      "isMaster": "false",
+      "version": "1.0.0"
     }
   ]
 }

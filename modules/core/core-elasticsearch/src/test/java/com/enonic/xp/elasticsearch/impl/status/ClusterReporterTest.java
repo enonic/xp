@@ -1,9 +1,12 @@
 package com.enonic.xp.elasticsearch.impl.status;
 
 import java.net.URL;
+import java.util.HashMap;
 
 import org.elasticsearch.Version;
 import org.elasticsearch.action.ActionFuture;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
@@ -31,8 +34,7 @@ import com.google.common.io.Resources;
 
 public class ClusterReporterTest
 {
-
-    private ClusterReporter clusterReporter = new ClusterReporter();
+    private final ClusterReporter clusterReporter = new ClusterReporter();
 
     private ClusterState clusterState;
 
@@ -40,9 +42,11 @@ public class ClusterReporterTest
 
     private NodesInfoResponse nodesInfoResponse;
 
+    private ClusterHealthResponse clusterHealthResponse;
+
     private NodeInfo localNodeInfo;
 
-
+    @SuppressWarnings("unchecked")
     @Before
     public void setup()
         throws Exception
@@ -52,35 +56,42 @@ public class ClusterReporterTest
         final ClusterAdminClient clusterAdminClient = Mockito.mock( ClusterAdminClient.class );
         final ActionFuture<ClusterStateResponse> clusterStateInfo = Mockito.mock( ActionFuture.class );
         final ActionFuture<NodesInfoResponse> nodesInfo = Mockito.mock( ActionFuture.class );
+        final ActionFuture<ClusterHealthResponse> clusterHealth = Mockito.mock( ActionFuture.class );
 
         Mockito.when( client.admin() ).thenReturn( adminClient );
         Mockito.when( adminClient.cluster() ).thenReturn( clusterAdminClient );
         Mockito.when( clusterAdminClient.state( Mockito.any() ) ).thenReturn( clusterStateInfo );
         Mockito.when( clusterAdminClient.nodesInfo( Mockito.any() ) ).thenReturn( nodesInfo );
+        Mockito.when( clusterAdminClient.health( Mockito.any() ) ).thenReturn( clusterHealth );
 
         this.clusterState = Mockito.mock( ClusterState.class );
         this.localNodeInfo = Mockito.mock( NodeInfo.class );
         this.clusterStateResponse = Mockito.mock( ClusterStateResponse.class );
         this.nodesInfoResponse = Mockito.mock( NodesInfoResponse.class );
+        this.clusterHealthResponse = Mockito.mock( ClusterHealthResponse.class );
 
         Mockito.when( clusterStateInfo.actionGet() ).thenReturn( clusterStateResponse );
         Mockito.when( nodesInfo.actionGet() ).thenReturn( nodesInfoResponse );
+        Mockito.when( clusterHealth.actionGet() ).thenReturn( clusterHealthResponse );
 
-        final ClusterName clusterName = Mockito.mock( ClusterName.class );
+        final ClusterName clusterName = new ClusterName( "clusterName" );
         Mockito.when( clusterState.getClusterName() ).thenReturn( clusterName );
-        Mockito.when( clusterName.toString() ).thenReturn( "ClusterName" );
 
         Mockito.when( clusterStateResponse.getState() ).thenReturn( clusterState );
         Mockito.when( nodesInfoResponse.getAt( 0 ) ).thenReturn( localNodeInfo );
+        Mockito.when( clusterHealthResponse.getStatus() ).thenReturn( ClusterHealthStatus.GREEN );
 
         clusterReporter.setClient( client );
     }
 
     @Test
-    public void testOneNodeCluster()
+    public void cluster_with_one_node()
         throws Exception
     {
-        final DiscoveryNode node1 = new DiscoveryNode( "first-node-id", new LocalTransportAddress( "10.10.10.1" ), Version.CURRENT );
+        final DiscoveryNode node1 =
+            new DiscoveryNode( "nodeName", "nodeId", "hostName", "hostAddress", new LocalTransportAddress( "10.10.10.1" ), new HashMap<>(),
+                               Version.fromString( "1.0.0" ) );
+
         final DiscoveryNodes nodes = DiscoveryNodes.builder().
             put( node1 ).
             localNodeId( node1.getId() ).
@@ -111,11 +122,17 @@ public class ClusterReporterTest
     }
 
     @Test
-    public void testMasterNode()
+    public void cluster_with_two_nodes()
         throws Exception
     {
-        final DiscoveryNode node1 = new DiscoveryNode( "first-node-id", new LocalTransportAddress( "10.10.10.1" ), Version.CURRENT );
-        final DiscoveryNode node2 = new DiscoveryNode( "second-node-id", new LocalTransportAddress( "10.10.10.2" ), Version.CURRENT );
+        final DiscoveryNode node1 =
+            new DiscoveryNode( "nodeName1", "nodeId1", "hostName1", "hostAddress1", new LocalTransportAddress( "10.10.10.1" ),
+                               new HashMap<>(), Version.fromString( "1.0.0" ) );
+
+        final DiscoveryNode node2 =
+            new DiscoveryNode( "nodeName2", "nodeId2", "hostName2", "hostAddress2", new LocalTransportAddress( "10.10.10.2" ),
+                               new HashMap<>(), Version.fromString( "1.0.0" ) );
+
         final DiscoveryNodes nodes = DiscoveryNodes.builder().
             put( node1 ).
             put( node2 ).
@@ -126,7 +143,7 @@ public class ClusterReporterTest
         Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
         Mockito.when( localNodeInfo.getNode() ).thenReturn( node1 );
 
-        assertJson( "cluster_with_master_node.json", clusterReporter.getReport().toString() );
+        assertJson( "cluster_with_two_nodes.json", clusterReporter.getReport().toString() );
     }
 
 
