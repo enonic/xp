@@ -3,7 +3,7 @@ package com.enonic.xp.elasticsearch.impl;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.common.inject.Injector;
 import org.elasticsearch.common.logging.ESLoggerFactory;
@@ -24,12 +24,13 @@ public final class ElasticsearchActivator
 {
     private Node node;
 
-    private ServiceRegistration<Client> clientReg;
+    private ServiceRegistration<Node> nodeReg;
+
+    private ServiceRegistration<AdminClient> adminClientReg;
 
     private ServiceRegistration<ClusterService> clusterServiceReg;
 
     private ServiceRegistration<TransportService> transportServiceReg;
-
 
     public ElasticsearchActivator()
     {
@@ -49,17 +50,19 @@ public final class ElasticsearchActivator
         final ClusterService clusterService = injector.getInstance( ClusterService.class );
         final TransportService transportService = injector.getInstance( TransportService.class );
 
-        this.clientReg = context.registerService( Client.class, this.node.client(), new Hashtable<>() );
+        this.nodeReg = context.registerService( Node.class, this.node, new Hashtable<>() );
         this.clusterServiceReg = context.registerService( ClusterService.class, clusterService, new Hashtable<>() );
         this.transportServiceReg = context.registerService( TransportService.class, transportService, new Hashtable<>() );
+        this.adminClientReg = context.registerService( AdminClient.class, this.node.client().admin(), new Hashtable<>() );
     }
 
     @Deactivate
     public void deactivate()
     {
+        this.nodeReg.unregister();
         this.transportServiceReg.unregister();
         this.clusterServiceReg.unregister();
-        this.clientReg.unregister();
+        this.adminClientReg.unregister();
         this.node.stop();
     }
 }
