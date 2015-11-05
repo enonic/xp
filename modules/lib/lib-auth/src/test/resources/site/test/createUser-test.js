@@ -3,7 +3,12 @@ var auth = require('/lib/xp/auth.js');
 
 exports.createUser = function () {
 
-    var result = auth.createUser('myUserStore', 'userId', 'user display name', 'email');
+    var result = auth.createUser({
+        userStore: 'myUserStore',
+        name: 'userId',
+        displayName: 'user display name',
+        email: 'email'
+    });
 
     var expectedJson = {
         "type": "user",
@@ -22,7 +27,11 @@ exports.createUser = function () {
 
 exports.createUserNoEmail = function () {
 
-    var result = auth.createUser('myUserStore', 'userId', 'user display name');
+    var result = auth.createUser({
+        userStore: 'myUserStore',
+        name: 'userId',
+        displayName: 'user display name',
+    });
 
     var expectedJson = {
         "type": "user",
@@ -40,5 +49,8 @@ exports.createUserNoEmail = function () {
 
 exports.createUserWithMissingArg = function () {
 
-    auth.createUser('myUserStore', 'userId');
+    auth.createUser({
+        userStore: 'myUserStore',
+        name: 'userId'
+    });
 };

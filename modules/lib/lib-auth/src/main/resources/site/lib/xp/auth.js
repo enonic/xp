@@ -7,6 +7,14 @@ function required(params, name) {
     return value;
 }
 
+function nullOrValue(value) {
+    if (value === undefined) {
+        return null;
+    }
+
+    return value;
+}
+
 exports.login = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.LoginHandler');
 
@@ -48,28 +56,38 @@ exports.getMemberships = function (principalKey) {
     return __.toNativeObject(bean.getMemberships());
 };
 
-exports.createUser = function (userStore, name, displayName, email) {
+exports.createUser = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.CreateUserHandler');
 
-    bean.userStore = __.nullOrValue(userStore);
+    bean.userStore = required(params, 'userStore');
 
-    bean.name = __.nullOrValue(name);
+    bean.name = required(params, 'name');
 
-    bean.displayName = __.nullOrValue(displayName);
+    bean.displayName = nullOrValue(params.displayName);
 
-    bean.email = __.nullOrValue(email);
+    bean.email = nullOrValue(params.email);
 
     return __.toNativeObject(bean.createUser());
 };
 
-exports.createGroup = function (userStore, groupName, displayName) {
+exports.modifyUser = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.ModifyUserHandler');
+
+    bean.principalKey = required(params, 'key');
+
+    bean.editor = __.toScriptValue(params.editor);
+
+    return __.toNativeObject(bean.modifyUser());
+};
+
+exports.createGroup = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.CreateGroupHandler');
 
-    bean.userStore = __.nullOrValue(userStore);
+    bean.userStore = required(params, 'userStore');
 
-    bean.name = __.nullOrValue(groupName);
+    bean.name = required(params, 'name');
 
-    bean.displayName = __.nullOrValue(displayName);
+    bean.displayName = nullOrValue(params.displayName);
 
     return __.toNativeObject(bean.createGroup());
 };

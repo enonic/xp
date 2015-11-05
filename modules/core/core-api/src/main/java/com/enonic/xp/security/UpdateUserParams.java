@@ -16,6 +16,7 @@ public final class UpdateUserParams
 
     private final String login;
 
+    private final UserEditor editor;
 
     private UpdateUserParams( final Builder builder )
     {
@@ -23,6 +24,7 @@ public final class UpdateUserParams
         this.displayName = builder.displayName;
         this.email = builder.email;
         this.login = builder.login;
+        this.editor = builder.editor;
     }
 
     public PrincipalKey getKey()
@@ -45,8 +47,20 @@ public final class UpdateUserParams
         return login;
     }
 
+    public UserEditor getEditor()
+    {
+        return editor;
+    }
+
     public User update( final User source )
     {
+        if ( this.editor != null )
+        {
+            final EditableUser editableUser = new EditableUser( source );
+            editor.edit( editableUser );
+            return editableUser.build();
+        }
+
         User.Builder result = User.create( source );
         if ( this.displayName != null )
         {
@@ -83,6 +97,8 @@ public final class UpdateUserParams
 
         private String login;
 
+        private UserEditor editor;
+
         private Builder()
         {
         }
@@ -117,6 +133,12 @@ public final class UpdateUserParams
         public Builder email( final String value )
         {
             this.email = value;
+            return this;
+        }
+
+        public Builder editor( final UserEditor value )
+        {
+            this.editor = value;
             return this;
         }
 
