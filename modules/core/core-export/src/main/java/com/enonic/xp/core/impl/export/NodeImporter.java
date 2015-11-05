@@ -26,6 +26,7 @@ import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFilePath;
@@ -81,6 +82,8 @@ public class NodeImporter
         verifyImportRoot();
 
         importFromDirectoryLayout( this.exportRoot );
+
+        nodeService.refresh( RefreshMode.ALL );
 
         return this.result.build();
     }

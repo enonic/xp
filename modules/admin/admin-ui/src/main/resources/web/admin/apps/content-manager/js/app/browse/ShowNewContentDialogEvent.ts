@@ -2,14 +2,14 @@ module app.browse {
 
     export class ShowNewContentDialogEvent extends BaseContentModelEvent {
 
-        private parentContent: api.content.ContentSummary;
+        private parentContent: api.content.ContentSummaryAndCompareStatus;
 
-        constructor(parentContent: api.content.ContentSummary) {
+        constructor(parentContent: api.content.ContentSummaryAndCompareStatus) {
             super([parentContent]);
             this.parentContent = parentContent;
         }
 
-        getParentContent(): api.content.ContentSummary {
+        getParentContent(): api.content.ContentSummaryAndCompareStatus {
             return this.parentContent;
         }
 

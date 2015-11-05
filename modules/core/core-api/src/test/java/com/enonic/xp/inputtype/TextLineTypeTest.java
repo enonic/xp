@@ -10,6 +10,9 @@ import static org.junit.Assert.*;
 public class TextLineTypeTest
     extends BaseInputTypeTest
 {
+
+    public static final String IP_ADDRESS_REGEXP = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
+
     public TextLineTypeTest()
     {
         super( TextLineType.INSTANCE );
@@ -49,5 +52,47 @@ public class TextLineTypeTest
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.validate( booleanProperty( true ), config );
+    }
+
+    @Test(expected = InputTypeValidationException.class)
+    public void testValidateRegexInvalid()
+    {
+        final InputTypeConfig config = newValidConfig();
+        this.type.validate( stringProperty( "abc" ), config );
+    }
+
+    @Test(expected = InputTypeValidationException.class)
+    public void testValidateRegexEmptyValue()
+    {
+        final InputTypeConfig config = newValidConfig();
+        this.type.validate( stringProperty( "" ), config );
+    }
+
+    @Test
+    public void testValidateRegexValid()
+    {
+        final InputTypeConfig config = newValidConfig();
+        this.type.validate( stringProperty( "10.192.6.144" ), config );
+    }
+
+    @Test(expected = InputTypeValidationException.class)
+    public void testValidateMalformedRegex()
+    {
+        final InputTypeConfig config = newInvalidConfig();
+        this.type.validate( stringProperty( "abc" ), config );
+    }
+
+    private InputTypeConfig newValidConfig()
+    {
+        return InputTypeConfig.create().
+            property( InputTypeProperty.create( "regexp", IP_ADDRESS_REGEXP ).build() ).
+            build();
+    }
+
+    private InputTypeConfig newInvalidConfig()
+    {
+        return InputTypeConfig.create().
+            property( InputTypeProperty.create( "regexp", "[" ).build() ).
+            build();
     }
 }

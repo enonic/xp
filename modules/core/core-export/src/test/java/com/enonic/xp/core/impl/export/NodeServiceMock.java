@@ -334,7 +334,7 @@ class NodeServiceMock
     @Override
     public void refresh( final RefreshMode refreshMode )
     {
-        throw new UnsupportedOperationException( "Not implemented in mock" );
+        // Dont do anything
     }
 
     @Override

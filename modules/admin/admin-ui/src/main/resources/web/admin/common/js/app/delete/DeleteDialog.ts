@@ -2,6 +2,7 @@ module api.app.remove {
 
     import SelectionItem = api.app.browse.SelectionItem;
     import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import DialogButton = api.ui.dialog.DialogButton;
 
     export class DeleteDialog extends api.ui.dialog.ModalDialog {
@@ -46,7 +47,7 @@ module api.app.remove {
             return this.deleteAction;
         }
 
-        renderSelectedItems(selectedItems: SelectionItem<ContentSummary>[]) {
+        renderSelectedItems(selectedItems: SelectionItem<ContentSummaryAndCompareStatus>[]) {
             this.itemList.clear();
 
             if (selectedItems.length > 1) {
@@ -57,7 +58,7 @@ module api.app.remove {
             }
 
             for (var i in selectedItems) {
-                var selectionItem: SelectionItem<ContentSummary> = selectedItems[i];
+                var selectionItem: SelectionItem<ContentSummaryAndCompareStatus> = selectedItems[i];
                 this.itemList.appendChild(selectionItem);
             }
         }

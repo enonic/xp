@@ -4,12 +4,13 @@ module app.remove {
     import BrowseItem = api.app.browse.BrowseItem;
     import SelectionItem = api.app.browse.SelectionItem;
     import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import ContentPath = api.content.ContentPath;
     import DialogButton = api.ui.dialog.DialogButton;
 
     export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
 
-        private selectedItems: SelectionItem<ContentSummary>[];
+        private selectedItems: SelectionItem<ContentSummaryAndCompareStatus>[];
 
         private deleteButton: DialogButton;
 
@@ -35,11 +36,11 @@ module app.remove {
             this.addCancelButtonToBottom();
         }
 
-        setContentToDelete(contents: ContentSummary[]) {
+        setContentToDelete(contents: ContentSummaryAndCompareStatus[]) {
 
             this.selectedItems = [];
 
-            contents.forEach((content: ContentSummary) => {
+            contents.forEach((content: ContentSummaryAndCompareStatus) => {
                 this.selectedItems.push(this.createSelectionItemForDelete(content));
             });
 
@@ -48,7 +49,7 @@ module app.remove {
             this.countItemsToDeleteAndUpdateButtonCounter();
         }
 
-        private indexOf(item: SelectionItem<ContentSummary>): number {
+        private indexOf(item: SelectionItem<ContentSummaryAndCompareStatus>): number {
             for (var i = 0; i < this.selectedItems.length; i++) {
                 if (item.getBrowseItem().getPath() == this.selectedItems[i].getBrowseItem().getPath()) {
                     return i;
@@ -57,16 +58,16 @@ module app.remove {
             return -1;
         }
 
-        private createSelectionItemForDelete(content: ContentSummary): SelectionItem<ContentSummary> {
+        private createSelectionItemForDelete(content: ContentSummaryAndCompareStatus): SelectionItem<ContentSummaryAndCompareStatus> {
 
-            var deleteItemViewer = new api.content.ContentSummaryViewer();
+            var deleteItemViewer = new api.content.ContentSummaryAndCompareStatusViewer();
             deleteItemViewer.setObject(content);
 
-            var browseItem = new BrowseItem<ContentSummary>(content).
+            var browseItem = new BrowseItem<ContentSummaryAndCompareStatus>(content).
                 setId(content.getId()).
                 setDisplayName(content.getDisplayName()).
                 setPath(content.getPath().toString()).
-                setIconUrl(new ContentIconUrlResolver().setContent(content).resolve());
+                setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve());
 
             var selectionItem = new SelectionItem(deleteItemViewer, browseItem, () => {
                 var index = this.indexOf(selectionItem);

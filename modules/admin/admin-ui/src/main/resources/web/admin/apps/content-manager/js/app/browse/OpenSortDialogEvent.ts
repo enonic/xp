@@ -1,14 +1,14 @@
 module app.browse {
 
     export class OpenSortDialogEvent extends api.event.Event {
-        private content: api.content.ContentSummary;
+        private content: api.content.ContentSummaryAndCompareStatus;
 
-        constructor(content: api.content.ContentSummary) {
+        constructor(content: api.content.ContentSummaryAndCompareStatus) {
             super();
             this.content = content;
         }
 
-        getContent(): api.content.ContentSummary {
+        getContent(): api.content.ContentSummaryAndCompareStatus {
             return this.content;
         }
 

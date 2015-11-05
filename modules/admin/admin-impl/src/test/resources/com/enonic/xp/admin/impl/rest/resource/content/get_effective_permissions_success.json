@@ -1,0 +1,62 @@
+{
+  "READ": {
+    "count": 2,
+    "users": [
+      {
+        "displayName": "user3",
+        "key": "user:system:user3"
+      },
+      {
+        "displayName": "user4",
+        "key": "user:system:user4"
+      }
+    ]
+  },
+  "CUSTOM": {
+    "count": 0,
+    "users": []
+  },
+  "PUBLISH": {
+    "count": 200,
+    "users": [
+      {
+        "displayName": "user1",
+        "key": "user:system:user1"
+      },
+      {
+        "displayName": "user2",
+        "key": "user:system:user2"
+      },
+      {
+        "displayName": "user3",
+        "key": "user:system:user3"
+      },
+      {
+        "displayName": "user4",
+        "key": "user:system:user4"
+      }
+    ]
+  },
+  "FULL": {
+    "count": 1,
+    "users": [
+      {
+        "displayName": "user1",
+        "key": "user:system:user1"
+      }
+    ]
+  },
+  "WRITE": {
+    "count": 2,
+    "users": [
+      {
+        "displayName": "user1",
+        "key": "user:system:user1"
+      },
+      {
+        "displayName": "user2",
+        "key": "user:system:user2"
+      }
+    ]
+  }
+}

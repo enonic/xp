@@ -4,11 +4,12 @@ module app.view {
     import ContentImageUrlResolver = api.content.ContentImageUrlResolver;
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
     export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
 
         private image: api.dom.ImgEl;
-        private item: ViewItem<ContentSummary>;
+        private item: ViewItem<ContentSummaryAndCompareStatus>;
 
         constructor() {
             super("content-item-preview-panel");
@@ -46,21 +47,21 @@ module app.view {
 
         }
 
-        public addImageSizeToUrl(item: ViewItem<ContentSummary>) {
+        public addImageSizeToUrl(item: ViewItem<ContentSummaryAndCompareStatus>) {
             var imgSize = Math.max(this.getEl().getWidth(), this.getEl().getHeight());
             var imgUrl = new ContentImageUrlResolver().
                 setContentId(item.getModel().getContentId()).
-                setTimestamp(item.getModel().getModifiedTime()).
+                setTimestamp(item.getModel().getContentSummary().getModifiedTime()).
                 setSize(imgSize).resolve();
             this.image.setSrc(imgUrl);
         }
 
-        public setItem(item: ViewItem<ContentSummary>) {
+        public setItem(item: ViewItem<ContentSummaryAndCompareStatus>) {
             if (item && !item.equals(this.item)) {
                 if (typeof item.isRenderable() === "undefined") {
                     return;
                 }
-                if (item.getModel().getType().isImage()) {
+                if (item.getModel().getContentSummary().getType().isImage()) {
                     this.getEl().removeClass("no-preview page-preview").addClass("image-preview");
                     if (this.isVisible()) {
                         this.addImageSizeToUrl(item);
@@ -84,7 +85,7 @@ module app.view {
             this.item = item;
         }
 
-        public getItem(): ViewItem<ContentSummary> {
+        public getItem(): ViewItem<ContentSummaryAndCompareStatus> {
             return this.item;
         }
 

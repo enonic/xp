@@ -8,8 +8,18 @@ module api.form.inputtype.text {
 
     export class TextLine extends support.BaseInputTypeNotManagingAdd<string> {
 
+        private regexpStr: string;
+        private regexp: RegExp;
+
         constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
+            this.readConfig(config.inputConfig);
+        }
+
+        private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
+            var regexpConfig = inputConfig['regexp'] && inputConfig['regexp'][0];
+            var regexp = regexpConfig && regexpConfig['value'];
+            this.regexpStr = regexp || null;
         }
 
         getValueType(): ValueType {
@@ -33,7 +43,11 @@ module api.form.inputtype.text {
             }
 
             inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                property.setValue(this.newValue(event.getNewValue()));
+                var isValid = this.isValid(event.getNewValue(), inputEl);
+                if (isValid) {
+                    property.setValue(this.newValue(event.getNewValue()));
+                }
+                inputEl.updateValidationStatusOnUserInput(isValid);
             });
             return inputEl;
         }
@@ -51,9 +65,25 @@ module api.form.inputtype.text {
         }
 
         hasInputElementValidUserInput(inputElement: api.dom.Element) {
+            var textInput = <api.ui.text.TextInput>inputElement;
+            return this.isValid(textInput.getValue(), textInput, true);
+        }
 
-            // TODO
-            return true;
+        private isValid(value: string, textInput: api.ui.text.TextInput, silent: boolean = false): boolean {
+            var parent = textInput.getParentElement();
+            if (!this.regexpStr || api.util.StringHelper.isEmpty(value)) {
+                parent.removeClass('valid-regexp').removeClass('invalid-regexp');
+                return true;
+            }
+            if (!this.regexp) {
+                this.regexp = new RegExp(this.regexpStr);
+            }
+            var valid = this.regexp.test(value);
+            if (!silent) {
+                parent.toggleClass('valid-regexp', valid)
+                parent.toggleClass('invalid-regexp', !valid);
+            }
+            return valid;
         }
 
         static getName(): api.form.InputTypeName {

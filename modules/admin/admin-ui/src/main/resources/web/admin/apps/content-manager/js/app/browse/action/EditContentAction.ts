@@ -8,11 +8,9 @@ module app.browse.action {
             super("Edit", "mod+e");
             this.setEnabled(false);
             this.onExecuted(() => {
-                var contentSummaries: api.content.ContentSummary[]
-                    = grid.getSelectedDataList().map((elem) => {
-                    return elem.getContentSummary();
-                });
-                new api.content.EditContentEvent(contentSummaries).fire();
+                var contents: api.content.ContentSummaryAndCompareStatus[]
+                    = grid.getSelectedDataList();
+                new api.content.EditContentEvent(contents).fire();
             });
         }
     }

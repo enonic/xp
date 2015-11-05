@@ -21,7 +21,7 @@ public abstract class AbstractWidgetDescriptorServiceTest
     @Override
     protected final ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), "/ui/widgets/" + key.getName() + "/" + key.getName() + ".xml" );
+        return ResourceKey.from( key.getApplicationKey(), "/admin/widgets/" + key.getName() + "/" + key.getName() + ".xml" );
     }
 
     @Override

@@ -1,3 +1,12 @@
+/**
+ * XSLT template related functions.
+ *
+ * @example
+ * var authLib = require('/lib/xp/xslt');
+ *
+ * @module lib/xp/xslt
+ */
+
 var service = __.newBean('com.enonic.xp.lib.xslt.XsltService');
 
 exports.render = function (view, model) {

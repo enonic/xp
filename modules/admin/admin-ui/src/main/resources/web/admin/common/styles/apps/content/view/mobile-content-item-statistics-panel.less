@@ -105,10 +105,21 @@
       }
 
       .widget-selector {
-        width: calc(~'100% - 42px');
+
+        margin-left: 1px;
 
         .viewer {
           font-size: 12px;
+        }
+
+        .selected-option {
+          width: calc(~'100% - 42px');
+        }
+
+        .dropdown-handle {
+          &.down {
+            right: 2px;
+          }
         }
       }
     }

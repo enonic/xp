@@ -291,18 +291,42 @@ public final class SecurityServiceImpl
     @Override
     public AuthenticationInfo authenticate( final AuthenticationToken token )
     {
-        if ( token instanceof UsernamePasswordAuthToken )
+        if ( token.getUserStore() != null )
         {
-            return authenticateUsernamePassword( (UsernamePasswordAuthToken) token );
-        }
-        else if ( token instanceof EmailPasswordAuthToken )
-        {
-            return authenticateEmailPassword( (EmailPasswordAuthToken) token );
+            return doAuthenticate( token );
         }
         else
         {
-            throw new AuthenticationException( "Authentication token not supported: " + token.getClass().getSimpleName() );
+            final UserStores userStores = callAsAuthenticated( this::getUserStores );
+            for ( UserStore userStore : userStores )
+            {
+                token.setUserStore( userStore.getKey() );
+                final AuthenticationInfo authInfo = doAuthenticate( token );
+                if ( authInfo.isAuthenticated() )
+                {
+                    return authInfo;
+                }
+            }
+            return AuthenticationInfo.unAuthenticated();
         }
+    }
+
+    private AuthenticationInfo doAuthenticate( final AuthenticationToken token )
+    {
+        return callAsAuthenticated( () -> {
+            if ( token instanceof UsernamePasswordAuthToken )
+            {
+                return authenticateUsernamePassword( (UsernamePasswordAuthToken) token );
+            }
+            else if ( token instanceof EmailPasswordAuthToken )
+            {
+                return authenticateEmailPassword( (EmailPasswordAuthToken) token );
+            }
+            else
+            {
+                throw new AuthenticationException( "Authentication token not supported: " + token.getClass().getSimpleName() );
+            }
+        } );
     }
 
     private AuthenticationInfo authenticateEmailPassword( final EmailPasswordAuthToken token )
@@ -871,6 +895,17 @@ public final class SecurityServiceImpl
     private Context getContext()
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        return ContextBuilder.from( CONTEXT_SECURITY ).authInfo( authInfo ).build();
+    }
+
+    private <T> T callAsAuthenticated( Callable<T> runnable )
+    {
+        return this.getAuthenticatedContext().callWith( runnable );
+    }
+
+    private Context getAuthenticatedContext()
+    {
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
         return ContextBuilder.from( CONTEXT_SECURITY ).authInfo( authInfo ).build();
     }
 

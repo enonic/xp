@@ -52,6 +52,7 @@ include 'repack:repack-elasticsearch'
 
 include 'launcher'
 include 'distro'
+include 'docs'
 
 rootProject.name = 'xp'
 
