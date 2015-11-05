@@ -1,14 +1,18 @@
 package com.enonic.xp.elasticsearch.impl.status;
 
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequestBuilder;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoRequest;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.Requests;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.status.StatusReporter;
@@ -19,6 +23,8 @@ public final class ClusterReporter
 {
     private Client client;
 
+    private static final String CLUSTER_HEALTH_TIMEOUT = "3s";
+
     @Override
     public String getName()
     {
@@ -28,30 +34,50 @@ public final class ClusterReporter
     @Override
     public ObjectNode getReport()
     {
-        final NodesInfoResponse info = getInfo();
-        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+        final ClusterStateResponse clusterStateResponse = getClusterStateInfo();
 
-        json.put( "name", info.getClusterNameAsString() );
-        final ArrayNode nodesJson = json.putArray( "nodes" );
+        final ClusterHealthResponse clusterHealthResponse = getClusterHealthResponse();
 
-        for ( final NodeInfo node : info.getNodes() )
-        {
-            nodesJson.add( toJson( node ) );
-        }
+        final NodeInfo localNodeInfo = this.getNodesInfo( "_local" ).getAt( 0 );
 
-        return json;
+        final ClusterReport clusterReport = ClusterReport.create().
+            clusterState( clusterStateResponse.getState() ).
+            localNodeInfo( localNodeInfo ).
+            clusterHealthResponse( clusterHealthResponse ).
+            build();
+
+        return clusterReport.toJson();
     }
 
-    private ObjectNode toJson( final NodeInfo info )
+    private ClusterStateResponse getClusterStateInfo()
     {
-        final ObjectNode json = JsonNodeFactory.instance.objectNode();
-        json.put( "hostName", info.getHostname() );
-        return json;
+        final ClusterStateRequest clusterStateRequest = Requests.clusterStateRequest().
+            listenerThreaded( false ).
+            blocks( false ).
+            routingTable( false ).
+            indices( "" ).
+            metaData( false ).
+            masterNodeTimeout( CLUSTER_HEALTH_TIMEOUT );
+
+        return client.admin().cluster().state( clusterStateRequest ).actionGet();
     }
 
-    private NodesInfoResponse getInfo()
+    private ClusterHealthResponse getClusterHealthResponse()
     {
-        final NodesInfoRequest req = new NodesInfoRequest().all();
+        String[] indices = new String[]{};
+
+        final ClusterHealthRequest request = new ClusterHealthRequestBuilder( this.client.admin().cluster() ).
+            setTimeout( CLUSTER_HEALTH_TIMEOUT ).
+            setIndices( indices ).
+            request();
+
+        return client.admin().cluster().health( request ).actionGet();
+    }
+
+    private NodesInfoResponse getNodesInfo( String... nodeIds )
+    {
+        final NodesInfoRequest req =
+            ( nodeIds != null && nodeIds.length > 0 ) ? new NodesInfoRequest( nodeIds ) : new NodesInfoRequest().all();
         return this.client.admin().cluster().nodesInfo( req ).actionGet();
     }
 
