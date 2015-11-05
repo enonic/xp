@@ -20,8 +20,6 @@ public final class RepositoryInitializer
 
     private final static Logger LOG = LoggerFactory.getLogger( RepositoryInitializer.class );
 
-    private final static int NUMBER_OF_TRIES_ON_GET_HEALTH = 3;
-
     private final IndexServiceInternal indexServiceInternal;
 
     public RepositoryInitializer( final IndexServiceInternal indexServiceInternal )
@@ -33,10 +31,7 @@ public final class RepositoryInitializer
     {
         if ( !checkClusterHealth() )
         {
-            LOG.error( "Cannot initialize repositories: cannot get cluster health state in " +
-                           NUMBER_OF_TRIES_ON_GET_HEALTH + " attempts" );
-
-            throw new RepositoryException( "Not able to initialize repositories" );
+            throw new RepositoryException( "Unable to initialize repositories" );
         }
 
         final boolean isMaster = indexServiceInternal.isMaster();
@@ -63,7 +58,7 @@ public final class RepositoryInitializer
 
             if ( clusterHealth.isTimedOut() || clusterHealth.getClusterStatusCode().equals( ClusterStatusCode.RED ) )
             {
-                LOG.error( "Failed to get cluster health status; " + "timed out: " + clusterHealth.isTimedOut() + ", state: " +
+                LOG.error( "Cluster not healthy: " + "timed out: " + clusterHealth.isTimedOut() + ", state: " +
                                clusterHealth.getClusterStatusCode() );
             }
 
