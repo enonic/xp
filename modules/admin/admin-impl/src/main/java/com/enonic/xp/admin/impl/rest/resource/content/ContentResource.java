@@ -75,7 +75,7 @@ import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentAlreadyExistException;
+import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -326,7 +326,7 @@ public final class ContentResource
             final Content renamedContent = contentService.rename( renameParams );
             return new ContentJson( renamedContent, newContentIconUrlResolver(), principalsResolver );
         }
-        catch ( ContentAlreadyExistException e )
+        catch ( ContentAlreadyExistsException e )
         {
             // catching to throw exception with better message and other error code
             throw JaxRsExceptions.newException( Response.Status.CONFLICT,

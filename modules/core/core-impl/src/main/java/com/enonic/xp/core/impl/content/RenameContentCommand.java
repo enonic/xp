@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentAlreadyExistException;
+import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.RenameContentParams;
@@ -36,7 +36,7 @@ final class RenameContentCommand
         catch ( final NodeAlreadyExistAtPathException e )
         {
             final ContentPath path = translateNodePathToContentPath( e.getNode() );
-            throw new ContentAlreadyExistException( path );
+            throw new ContentAlreadyExistsException( path );
         }
     }
 
