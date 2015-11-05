@@ -70,7 +70,7 @@ module api.content.page.region {
 
             var removeButtonEl = new api.dom.AEl("remove");
             removeButtonEl.onClicked((event: MouseEvent) => {
-                this.notifySelectedOptionRemoveRequested();
+                this.notifyRemoveClicked();
 
                 event.stopPropagation();
                 event.preventDefault();

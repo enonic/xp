@@ -3,6 +3,7 @@ module api.content.site.inputtype.siteconfigurator {
     import PropertyTree = api.data.PropertyTree;
     import Property = api.data.Property;
     import PropertyArray = api.data.PropertyArray;
+    import PropertySet = api.data.PropertySet;
     import FormView = api.form.FormView;
     import FormValidityChangedEvent = api.form.FormValidityChangedEvent;
     import Value = api.data.Value;
@@ -20,7 +21,7 @@ module api.content.site.inputtype.siteconfigurator {
     import GetApplicationRequest = api.application.GetApplicationRequest;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
-    export class SiteConfigurator extends api.form.inputtype.support.BaseInputTypeManagingAdd<SiteView> {
+    export class SiteConfigurator extends api.form.inputtype.support.BaseInputTypeManagingAdd<Application> {
 
         private context: api.form.inputtype.InputTypeViewContext;
 
@@ -63,20 +64,38 @@ module api.content.site.inputtype.siteconfigurator {
                     this.validate(false);
                 });
 
-                this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<Application>) => {
+                this.comboBox.onOptionSelected((selectedOption: SelectedOption<Application>) => {
 
-                    var key = event.getOption().displayValue.getApplicationKey();
+                    var key = selectedOption.getOption().displayValue.getApplicationKey();
                     if (!key) {
                         return;
                     }
 
-                    var selectedOption = this.comboBox.getSelectedOption(event.getOption());
                     var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView>selectedOption.getOptionView();
-                    var siteConfig = selectedOptionView.getSiteConfig();
+
+                    this.saveToSet(selectedOptionView.getSiteConfig(), this.getPropertyArray().addSet());
 
                     this.validate(false);
                 });
+
+                this.comboBox.onOptionMoved((selectedOption: SelectedOption<Application>) => {
+
+                    var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView> selectedOption.getOptionView();
+                    var propertySet = this.getPropertyArray().get(selectedOption.getIndex()).getPropertySet();
+
+                    this.saveToSet(selectedOptionView.getSiteConfig(), propertySet);
+
+                    this.validate(false);
+                })
             });
+        }
+
+        private saveToSet(siteConfig: SiteConfig, propertySet: PropertySet) {
+            var config = siteConfig.getConfig();
+            var appKey = siteConfig.getApplicationKey();
+
+            propertySet.setStringByPath('applicationKey', appKey.toString());
+            propertySet.setPropertySetByPath('config', config);
         }
 
         private doLoadApplications(propertyArray: PropertyArray): wemQ.Promise<void> {

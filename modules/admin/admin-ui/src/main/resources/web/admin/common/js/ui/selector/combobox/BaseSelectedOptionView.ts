@@ -6,7 +6,7 @@ module api.ui.selector.combobox {
 
         private optionValueEl: api.dom.DivEl;
 
-        private selectedOptionToBeRemovedListeners: {(): void;}[] = [];
+        private removeClickedListeners: {(): void;}[] = [];
 
         constructor(option: api.ui.selector.Option<T>) {
             super("selected-option");
@@ -30,7 +30,7 @@ module api.ui.selector.combobox {
             this.optionValueEl = new api.dom.DivEl('option-value');
 
             removeButtonEl.onClicked((event: Event) => {
-                this.notifySelectedOptionRemoveRequested();
+                this.notifyRemoveClicked();
 
                 event.stopPropagation();
                 event.preventDefault();
@@ -41,18 +41,18 @@ module api.ui.selector.combobox {
             this.appendChild(this.optionValueEl);
         }
 
-        notifySelectedOptionRemoveRequested() {
-            this.selectedOptionToBeRemovedListeners.forEach((listener) => {
+        protected notifyRemoveClicked() {
+            this.removeClickedListeners.forEach((listener) => {
                 listener();
             });
         }
 
-        onSelectedOptionRemoveRequest(listener: {(): void;}) {
-            this.selectedOptionToBeRemovedListeners.push(listener);
+        onRemoveClicked(listener: {(): void;}) {
+            this.removeClickedListeners.push(listener);
         }
 
-        unSelectedOptionRemoveRequest(listener: {(): void;}) {
-            this.selectedOptionToBeRemovedListeners = this.selectedOptionToBeRemovedListeners.filter(function (curr) {
+        unRemoveClicked(listener: {(): void;}) {
+            this.removeClickedListeners = this.removeClickedListeners.filter(function (curr) {
                 return curr != listener;
             });
         }

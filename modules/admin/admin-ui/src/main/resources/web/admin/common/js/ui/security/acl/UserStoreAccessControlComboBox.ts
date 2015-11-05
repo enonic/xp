@@ -58,14 +58,6 @@ module api.ui.security.acl {
             return this.option;
         }
 
-        onSelectedOptionRemoveRequest(listener: {(): void}) {
-            this.onRemoveClicked(listener);
-        }
-
-        unSelectedOptionRemoveRequest(listener: {(): void}) {
-            this.unRemoveClicked(listener);
-        }
-
     }
 
     class UserStoreACESelectedOptionsView extends UserStoreAccessControlListView implements api.ui.selector.combobox.SelectedOptionsView<UserStoreAccessControlEntry> {
@@ -74,6 +66,7 @@ module api.ui.security.acl {
         private list: SelectedOption<UserStoreAccessControlEntry>[] = [];
 
         private selectedOptionRemovedListeners: {(removed: SelectedOption<UserStoreAccessControlEntry>): void;}[] = [];
+        private selectedOptionAddedListeners: {(added: SelectedOption<UserStoreAccessControlEntry>): void;}[] = [];
 
         constructor(className?: string) {
             super(className);
@@ -109,9 +102,7 @@ module api.ui.security.acl {
             });
             var selectedOption = new SelectedOption<UserStoreAccessControlEntry>(itemView, this.list.length);
 
-            itemView.onSelectedOptionRemoveRequest(() => {
-                this.removeOption(option, false);
-            });
+            itemView.onRemoveClicked(() => this.removeOption(option, false));
 
             if(readOnly)
             {
@@ -124,7 +115,7 @@ module api.ui.security.acl {
         }
 
 
-        addOption(option: Option<UserStoreAccessControlEntry>): boolean {
+        addOption(option: Option<UserStoreAccessControlEntry>, silent: boolean = false): boolean {
             if(option.readOnly)
             {
                 this.addItemReadOnly(option.displayValue)
@@ -133,11 +124,14 @@ module api.ui.security.acl {
             {
                 this.addItem(option.displayValue);
             }
-
+            if (!silent) {
+                var selectedOption = this.getByOption(option);
+                this.notifySelectedOptionAdded(selectedOption);
+            }
             return true;
         }
 
-        removeOption(optionToRemove: Option<UserStoreAccessControlEntry>, silent: boolean) {
+        removeOption(optionToRemove: Option<UserStoreAccessControlEntry>, silent: boolean = false) {
             api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
 
             var selectedOption = this.getByOption(optionToRemove);
@@ -216,6 +210,28 @@ module api.ui.security.acl {
             this.selectedOptionRemovedListeners = this.selectedOptionRemovedListeners.filter(function (curr) {
                 return curr != listener;
             });
+        }
+
+        onOptionSelected(listener: {(added: SelectedOption<UserStoreAccessControlEntry>): void;}) {
+            this.selectedOptionAddedListeners.push(listener);
+        }
+
+        unOptionSelected(listener: {(added: SelectedOption<UserStoreAccessControlEntry>): void;}) {
+            this.selectedOptionAddedListeners = this.selectedOptionAddedListeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        private notifySelectedOptionAdded(added: SelectedOption<UserStoreAccessControlEntry>) {
+            this.selectedOptionAddedListeners.forEach((listener) => {
+                listener(added);
+            });
+        }
+
+        onOptionMoved(listener: {(moved: SelectedOption<UserStoreAccessControlEntry>): void;}) {
+        }
+
+        unOptionMoved(listener: {(moved: SelectedOption<UserStoreAccessControlEntry>): void;}) {
         }
 
     }
