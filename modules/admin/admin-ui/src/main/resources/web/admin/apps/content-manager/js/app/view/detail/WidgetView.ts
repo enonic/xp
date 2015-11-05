@@ -6,8 +6,6 @@ module app.view.detail {
 
     export class WidgetView extends api.dom.DivEl {
 
-        private widgetToggleButton: WidgetViewToggleButton;
-
         private widgetName: string;
 
         private widgetItemViews: WidgetItemView[];
@@ -25,10 +23,6 @@ module app.view.detail {
             this.widgetName = builder.name;
             this.widgetItemViews = builder.widgetItemViews;
             this.layoutCallbackFunction = builder.layoutCallbackFunction;
-
-            if (builder.useToggleButton) {
-                this.initWidgetToggleButton();
-            }
 
             this.layout().done(() => {
                 if (this.layoutCallbackFunction) {
@@ -51,13 +45,6 @@ module app.view.detail {
             }
 
             return wemQ.all(layoutTasks);
-        }
-
-        private initWidgetToggleButton() {
-
-            this.widgetToggleButton = new WidgetViewToggleButton(this);
-            this.widgetToggleButton.setLabel(this.widgetName);
-            this.appendChild(this.widgetToggleButton);
         }
 
         updateNormalHeightSilently() {
@@ -99,7 +86,6 @@ module app.view.detail {
 
         deactivate() {
             this.slideOut();
-            this.removeClass("expanded");
         }
 
         public static create(): WidgetViewBuilder {
@@ -113,8 +99,6 @@ module app.view.detail {
 
         detailsPanel: DetailsPanel;
 
-        useToggleButton: boolean = true;
-
         widgetItemViews: WidgetItemView[] = [];
 
         layoutCallbackFunction: () => void;
@@ -126,11 +110,6 @@ module app.view.detail {
 
         public setDetailsPanel(detailsPanel: DetailsPanel): WidgetViewBuilder {
             this.detailsPanel = detailsPanel;
-            return this;
-        }
-
-        public setUseToggleButton(useToggleButton: boolean): WidgetViewBuilder {
-            this.useToggleButton = useToggleButton;
             return this;
         }
 
