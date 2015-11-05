@@ -31,7 +31,7 @@ public final class RepositoryInitializer
 
     public void initializeRepositories( final RepositoryId... repositoryIds )
     {
-        if ( !checkClusterHealth( 1 ) )
+        if ( !checkClusterHealth() )
         {
             LOG.error( "Cannot initialize repositories: cannot get cluster health state in " +
                            NUMBER_OF_TRIES_ON_GET_HEALTH + " attempts" );
@@ -55,15 +55,8 @@ public final class RepositoryInitializer
 
     }
 
-    private boolean checkClusterHealth( int numberOfTries )
+    private boolean checkClusterHealth()
     {
-        if ( numberOfTries > NUMBER_OF_TRIES_ON_GET_HEALTH )
-        {
-            return false;
-        }
-
-        LOG.info( "Getting cluster health status, attempt " + numberOfTries + " of " + NUMBER_OF_TRIES_ON_GET_HEALTH );
-
         try
         {
             final ClusterHealthStatus clusterHealth = indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
@@ -72,8 +65,6 @@ public final class RepositoryInitializer
             {
                 LOG.error( "Failed to get cluster health status; " + "timed out: " + clusterHealth.isTimedOut() + ", state: " +
                                clusterHealth.getClusterStatusCode() );
-
-                checkClusterHealth( ++numberOfTries );
             }
 
             return true;
@@ -81,7 +72,6 @@ public final class RepositoryInitializer
         catch ( Exception e )
         {
             LOG.error( "Failed to get cluster health status", e );
-            checkClusterHealth( ++numberOfTries );
         }
 
         return false;
