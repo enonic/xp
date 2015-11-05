@@ -60,7 +60,7 @@ module app.wizard {
 
             this.editLink.onClicked(() => {
                 if (!!this.content) {
-                    new OpenEditPermissionsDialogEvent(this.content).fire();
+                    new api.content.OpenEditPermissionsDialogEvent(this.content).fire();
                 }
             });
 

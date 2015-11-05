@@ -44,9 +44,6 @@ module app.wizard {
                 this.formView.onBlur((event) => {
                     this.notifyBlurred(event);
                 });
-                this.formView.onEditContentRequest((content: api.content.ContentSummary) => {
-                    new api.content.EditContentEvent([content]).fire();
-                });
 
                 this.appendChild(this.formView);
 

@@ -73,19 +73,28 @@ public final class ExceptionRendererImpl
 
         if ( site != null )
         {
-            final PortalError portalError = PortalError.create().
-                status( cause.getStatus() ).
-                message( cause.getMessage() ).
-                exception( cause ).
-                request( req ).build();
-
-            for ( SiteConfig siteConfig : site.getSiteConfigs() )
+            final Site prevSite = req.getSite();
+            req.setSite( site );
+            try
             {
-                final PortalResponse response = renderApplicationCustomError( siteConfig.getApplicationKey(), portalError );
-                if ( response != null )
+                final PortalError portalError = PortalError.create().
+                    status( cause.getStatus() ).
+                    message( cause.getMessage() ).
+                    exception( cause ).
+                    request( req ).build();
+
+                for ( SiteConfig siteConfig : site.getSiteConfigs() )
                 {
-                    return response;
+                    final PortalResponse response = renderApplicationCustomError( siteConfig.getApplicationKey(), portalError );
+                    if ( response != null )
+                    {
+                        return response;
+                    }
                 }
+            }
+            finally
+            {
+                req.setSite( prevSite );
             }
         }
 

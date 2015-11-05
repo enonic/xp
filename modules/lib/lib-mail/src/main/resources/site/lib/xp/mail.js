@@ -1,3 +1,12 @@
+/**
+ * Mail related functions.
+ *
+ * @example
+ * var authLib = require('/lib/xp/mail');
+ *
+ * @module lib/xp/mail
+ */
+
 function checkRequired(params, name) {
     if (params[name] === undefined) {
         throw "Parameter '" + name + "' is required";

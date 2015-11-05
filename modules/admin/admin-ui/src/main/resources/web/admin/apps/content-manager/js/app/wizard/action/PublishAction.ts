@@ -2,6 +2,7 @@ module app.wizard.action {
 
     import Content = api.content.Content;
     import ContentId = api.content.ContentId;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
     export class PublishAction extends api.ui.Action {
 
@@ -20,7 +21,7 @@ module app.wizard.action {
                     wizard.saveChanges().
                         then((content) => {
                             if (content) {
-                                new app.browse.ContentPublishPromptEvent([content]).fire();
+                                new app.browse.ContentPublishPromptEvent([ContentSummaryAndCompareStatus.fromContentSummary(content)]).fire();
                             }
                         }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason)
