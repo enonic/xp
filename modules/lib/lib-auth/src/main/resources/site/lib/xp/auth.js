@@ -16,6 +16,14 @@ function required(params, name) {
     return value;
 }
 
+function nullOrValue(value) {
+    if (value === undefined) {
+        return null;
+    }
+
+    return value;
+}
+
 /**
  * Login a user with the specified userStore, userName and password.
  *
@@ -124,6 +132,15 @@ exports.changePassword = function (params) {
     bean.changePassword();
 };
 
+
+/**
+ * Finds principal with given key or null if it doesn't exist.
+ *
+ * @example
+ * authLib.getPrincipal('principal-key');
+ *
+ * @param {string} principalKey Principal key to look for.
+ */
 exports.getPrincipal = function (principalKey) {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetPrincipalHandler');
 
@@ -132,6 +149,14 @@ exports.getPrincipal = function (principalKey) {
     return __.toNativeObject(bean.getPrincipal());
 };
 
+/**
+ * Returns list of membership principals for given key.
+ *
+ * @example
+ * authLib.getMemberships('principal-key');
+ *
+ * @param {string} principalKey Principal key to look for.
+ */
 exports.getMemberships = function (principalKey) {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetMembershipsHandler');
 
@@ -140,28 +165,87 @@ exports.getMemberships = function (principalKey) {
     return __.toNativeObject(bean.getMemberships());
 };
 
-exports.createUser = function (userStore, name, displayName, email) {
+/**
+ * Creates user from passed parameters.
+ *
+ * @example
+ * authLib.createUser({
+ *   userStore: 'user-store-key',
+ *   name: 'user-id',
+ *   displayName: 'user-display-name',
+ *   email: 'email'
+ * });
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.userStore Key for user store where user has to be created.
+ * @param {string} params.name User login name to set.
+ * @param {string} params.displayName User display name.
+ * @param {string} params.email User email.
+ */
+exports.createUser = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.CreateUserHandler');
 
-    bean.userStore = __.nullOrValue(userStore);
+    bean.userStore = required(params, 'userStore');
 
-    bean.name = __.nullOrValue(name);
+    bean.name = required(params, 'name');
 
-    bean.displayName = __.nullOrValue(displayName);
+    bean.displayName = nullOrValue(params.displayName);
 
-    bean.email = __.nullOrValue(email);
+    bean.email = nullOrValue(params.email);
 
     return __.toNativeObject(bean.createUser());
 };
 
-exports.createGroup = function (userStore, groupName, displayName) {
+/**
+ * Modifies user with passed parameters.
+ *
+ * @example
+ * authLib.modifyUser({
+ *   key: 'user-key',
+ *   editor: function(user) {
+ *     user.displayName = 'new-display-name';
+ *     user.email = 'new-email';
+ *     return user;
+ *   }
+ * });
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} key Principal key of the user to modify.
+ * @param {string} params.editor User editor function to apply to user.
+ */
+exports.modifyUser = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.ModifyUserHandler');
+
+    bean.principalKey = required(params, 'key');
+
+    bean.editor = __.toScriptValue(params.editor);
+
+    return __.toNativeObject(bean.modifyUser());
+};
+
+/**
+ * Creates group from passed parameters.
+ *
+ * @example
+ * authLib.createGroup({
+ *   userStore: 'user-store',
+ *   name: 'group-name',
+ *   displayName: 'group-display-name'
+ * });
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.userStore Key for user store where group has to be created.
+ * @param {string} params.name Group name.
+ * @param {string} params.displayName Group display name.
+ */
+exports.createGroup = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.CreateGroupHandler');
 
-    bean.userStore = __.nullOrValue(userStore);
+    bean.userStore = required(params, 'userStore');
 
-    bean.name = __.nullOrValue(groupName);
+    bean.name = required(params, 'name');
 
-    bean.displayName = __.nullOrValue(displayName);
+    bean.displayName = nullOrValue(params.displayName);
 
     return __.toNativeObject(bean.createGroup());
 };
