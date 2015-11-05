@@ -3,7 +3,11 @@ var auth = require('/lib/xp/auth.js');
 
 exports.createGroup = function () {
 
-    var result = auth.createGroup('myUserStore', 'groupId', 'group display name');
+    var result = auth.createGroup({
+        userStore: 'myUserStore',
+        name: 'groupId',
+        displayName: 'group display name'
+    });
 
     var expectedJson = {
         "type": "group",
@@ -18,7 +22,10 @@ exports.createGroup = function () {
 
 exports.createGroupUnAuthenticated = function () {
 
-    var result = auth.createGroup('myUserStore', 'groupId');
+    var result = auth.createGroup({
+        userStore: 'myUserStore',
+        name: 'groupId'
+    });
 
     var expectedJson = null;
 
