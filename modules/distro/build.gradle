@@ -117,29 +117,6 @@ task distZip( type: Zip, dependsOn: installDist ) {
     into archiveBase
 }
 
-def javadocProjects = leafProjects.findAll { project -> project.name.endsWith( '-api' ) }
-
-task javadoc( type: Javadoc ) {
-    source javadocProjects.collect { project -> project.sourceSets.main.allJava }
-    classpath = files( javadocProjects.collect { project -> project.sourceSets.main.compileClasspath } )
-    failOnError = false
-    title = "Enonic XP API ${version}"
-    verbose = false
-
-    options {
-        links 'http://docs.oracle.com/javase/8/docs/api'
-        links 'http://docs.guava-libraries.googlecode.com/git-history/v18.0/javadoc'
-        quiet()
-        encoding( 'UTF-8' )
-    }
-}
-
-task javadocZip( type: Zip ) {
-    from javadoc
-    classifier = 'javadoc'
-}
-
 artifacts {
     archives distZip
-    archives javadocZip
 }
