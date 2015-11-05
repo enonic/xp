@@ -15,7 +15,7 @@ module app.browse {
 
         private sortAction: SaveSortedContentAction;
 
-        private parentContent: api.content.ContentSummary;
+        private parentContent: api.content.ContentSummaryAndCompareStatus;
 
         private contentGrid: app.browse.SortContentTreeGrid;
 
@@ -81,7 +81,7 @@ module app.browse {
             this.gridDragHandler.clearContentMovements();
         }
 
-        getContent(): ContentSummary {
+        getContent(): ContentSummaryAndCompareStatus {
             return this.parentContent;
         }
 
@@ -142,7 +142,7 @@ module app.browse {
         }
 
         private handleSortAction() {
-            if (this.curChildOrder.equals(this.parentContent.getChildOrder()) && !this.curChildOrder.isManual()) {
+            if (this.curChildOrder.equals(this.getParentChildOrder()) && !this.curChildOrder.isManual()) {
                 this.close();
             } else {
                 this.showLoadingSpinner();
@@ -158,20 +158,18 @@ module app.browse {
 
         private handleOpenSortDialogEvent(event) {
             this.parentContent = event.getContent();
-            this.curChildOrder = this.parentContent.getChildOrder();
+            this.curChildOrder = this.getParentChildOrder();
             this.prevChildOrder = undefined;
             this.sortContentMenu.selectNavigationItemByOrder(this.curChildOrder);
-            api.content.ContentSummaryAndCompareStatusFetcher.fetch(this.parentContent.getContentId()).
-                done((response: api.content.ContentSummaryAndCompareStatus) => {
-                    this.contentGrid.reload(response);
-                    if (!response.hasChildren()) {
-                        this.contentGrid.getEl().setAttribute("data-content", event.getContent().getPath().toString());
-                        this.contentGrid.addClass("no-content");
-                    } else {
-                        this.contentGrid.removeClass("no-content");
-                        this.contentGrid.getEl().removeAttribute("data-content");
-                    }
-                });
+
+            this.contentGrid.reload(this.parentContent);
+            if (!this.parentContent.hasChildren()) {
+                this.contentGrid.getEl().setAttribute("data-content", event.getContent().getPath().toString());
+                this.contentGrid.addClass("no-content");
+            } else {
+                this.contentGrid.removeClass("no-content");
+                this.contentGrid.getEl().removeAttribute("data-content");
+            }
         }
 
         private handleOnSortOrderChangedEvent() {
@@ -180,10 +178,11 @@ module app.browse {
                 if (!newOrder.isManual()) {
                     this.curChildOrder = newOrder;
                     this.contentGrid.setChildOrder(this.curChildOrder);
-                    api.content.ContentSummaryAndCompareStatusFetcher.fetch(this.parentContent.getContentId()).
+                    /*api.content.ContentSummaryAndCompareStatusFetcher.fetch(this.parentContent.getContentId()).
                         done((response: api.content.ContentSummaryAndCompareStatus) => {
                             this.contentGrid.reload(response);
-                        });
+                     });*/
+                    this.contentGrid.reload(this.parentContent);
                     this.gridDragHandler.clearContentMovements();
                 } else {
                     this.prevChildOrder = this.curChildOrder;
@@ -200,7 +199,7 @@ module app.browse {
         }
 
         private hasChangedPrevChildOrder(): boolean {
-            return this.prevChildOrder && !this.prevChildOrder.equals(this.parentContent.getChildOrder());
+            return this.prevChildOrder && !this.prevChildOrder.equals(this.getParentChildOrder());
         }
 
         private showLoadingSpinner() {
@@ -227,6 +226,14 @@ module app.browse {
                 setChildOrder(order).
                 setContentMovements(movements).
                 sendAndParse();
+        }
+
+        private getParentChildOrder(): ChildOrder {
+            if (this.parentContent && this.parentContent.getContentSummary()) {
+                return this.parentContent.getContentSummary().getChildOrder();
+            }
+
+            return null;
         }
     }
 }

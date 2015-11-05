@@ -1,7 +1,7 @@
 module app.view.detail {
 
     import ViewItem = api.app.view.ViewItem;
-    import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
     export class ActiveDetailsPanelManager {
 
@@ -23,7 +23,7 @@ module app.view.detail {
         }
 
         private static doSetActiveDetailsPanel(detailsPanelToMakeActive: DetailsPanel) {
-            var activeItem: ViewItem<ContentSummary> = null,
+            var activeItem: ViewItem<ContentSummaryAndCompareStatus> = null,
                 currentlyActivePanel = ActiveDetailsPanelManager.getActiveDetailsPanel();
             if (currentlyActivePanel) {
                 activeItem = currentlyActivePanel.getItem();

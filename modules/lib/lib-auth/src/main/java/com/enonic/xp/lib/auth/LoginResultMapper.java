@@ -39,7 +39,7 @@ final class LoginResultMapper
             return;
         }
         gen.map( "user" );
-        new UserMapper( value ).serialize( gen );
+        new PrincipalMapper( value ).serialize( gen );
         gen.end();
     }
 

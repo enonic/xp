@@ -1,0 +1,28 @@
+{
+  "results": [
+    {
+      "members": {
+        "principals": [
+          {
+            "displayName": "Alice",
+            "key": "user:local:a",
+            "modifiedTime": "1970-01-01T00:00:00Z"
+          }
+        ]
+      },
+      "principalKey": "role:superuser"
+    },
+    {
+      "members": {
+        "principals": [
+          {
+            "displayName": "Bobby",
+            "key": "user:file-store:b",
+            "modifiedTime": "1970-01-01T00:00:00Z"
+          }
+        ]
+      },
+      "principalKey": "group:system:group-a"
+    }
+  ]
+}

@@ -4,9 +4,9 @@ module app.view.detail {
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import CompareStatus = api.content.CompareStatus;
     import Widget = api.content.Widget;
-    import WidgetsSelectionRow = app.view.detail.WidgetsSelectionRow;
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
     export class DetailsPanel extends api.ui.panel.Panel {
@@ -29,7 +29,7 @@ module app.view.detail {
         private contentStatusChangedListeners: {() : void}[] = [];
 
         private versionsPanel: ContentItemVersionsPanel;
-        private item: ViewItem<ContentSummary>;
+        private item: ViewItem<ContentSummaryAndCompareStatus>;
         private contentStatus: CompareStatus;
 
         private useViewer: boolean;
@@ -83,7 +83,7 @@ module app.view.detail {
             api.content.ContentsPublishedEvent.on((event: api.content.ContentsPublishedEvent) => {
                 if (this.getItem()) {
                     // check for item because it can be null after publishing pending for delete item
-                    var itemId = (<ContentSummary>this.getItem().getModel()).getId();
+                    var itemId = (<ContentSummaryAndCompareStatus>this.getItem().getModel()).getId();
                     var idPublished = event.getContentIds().some((id, index, array) => {
                         return itemId === id.toString();
                     });
@@ -206,7 +206,7 @@ module app.view.detail {
             }
         }
 
-        public setItem(item: ViewItem<ContentSummary>) {
+        public setItem(item: ViewItem<ContentSummaryAndCompareStatus>) {
 
             if (!this.item || !this.item.equals(item)) {
                 this.item = item;
@@ -273,28 +273,29 @@ module app.view.detail {
         }
 
         private setDefaultWidget() {
-            var widgetItemView = new StatusWidgetItemView();
+            var statusWidgetItemView = new StatusWidgetItemView();
             var propWidgetItemView = new PropertiesWidgetItemView();
+            var userAccessWidgetItemView = new UserAccessWidgetItemView();
             var attachmentsWidgetItemView = new AttachmentsWidgetItemView();
 
             if (this.item) {
-                api.content.ContentSummaryAndCompareStatusFetcher.fetch(this.item.getModel().getContentId()).then((contentSummaryAndCompareStatus) => {
 
-                    this.contentStatus = contentSummaryAndCompareStatus.getCompareStatus();
+                this.contentStatus = this.item.getModel().getCompareStatus();
 
-                    if (this.defaultWidgetView && this.detailsContainer.hasChild(this.defaultWidgetView)) {
-                        this.detailsContainer.removeChild(this.defaultWidgetView);
-                    }
+                if (this.defaultWidgetView && this.detailsContainer.hasChild(this.defaultWidgetView)) {
+                    this.detailsContainer.removeChild(this.defaultWidgetView);
+                }
 
-                    this.setStatus(widgetItemView);
+                this.setStatus(statusWidgetItemView);
 
-                    this.onContentStatusChanged(() => {
-                        this.setStatus(widgetItemView);
-                        widgetItemView.layout();
-                    });
+                this.onContentStatusChanged(() => {
+                    this.setStatus(statusWidgetItemView);
+                    statusWidgetItemView.layout();
+                });
 
-                    propWidgetItemView.setContent(this.item.getModel());
-                    attachmentsWidgetItemView.setContent(this.item.getModel());
+                propWidgetItemView.setContent(this.item.getModel().getContentSummary());
+                userAccessWidgetItemView.setContentId(this.item.getModel().getContentId());
+                attachmentsWidgetItemView.setContent(this.item.getModel().getContentSummary());
 
                     this.defaultWidgetView = WidgetView.create().
                         setName(DetailsPanel.DEFAULT_WIDGET_NAME).
@@ -306,14 +307,14 @@ module app.view.detail {
                             }
                             this.updateWidgetsHeights();
                         }).
-                        addWidgetItemView(widgetItemView).
+                        addWidgetItemView(statusWidgetItemView).
                         addWidgetItemView(propWidgetItemView).
                         addWidgetItemView(attachmentsWidgetItemView).
+                        addWidgetItemView(userAccessWidgetItemView).
                         build();
 
-                    this.detailsContainer.appendChild(this.defaultWidgetView);
+                this.detailsContainer.appendChild(this.defaultWidgetView);
 
-                }).done();
             }
         }
 
@@ -438,7 +439,7 @@ module app.view.detail {
             return this.actualWidth;
         }
 
-        getItem(): ViewItem<ContentSummary> {
+        getItem(): ViewItem<ContentSummaryAndCompareStatus> {
             return this.item;
         }
 
@@ -453,7 +454,7 @@ module app.view.detail {
         updateViewer() {
             if (this.useViewer && this.item) {
                 //#
-                this.viewer.setObject(this.item.getModel());
+                this.viewer.setObject(this.item.getModel().getContentSummary());
             }
         }
 

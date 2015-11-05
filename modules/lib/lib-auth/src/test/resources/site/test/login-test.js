@@ -12,13 +12,14 @@ exports.loginSuccess = function () {
     var expectedJson = {
         authenticated: true,
         user: {
-            disabled: false,
-            displayName: 'User 1',
-            email: 'user1@enonic.com',
-            key: 'user:enonic:user1',
-            login: 'user1',
-            userStore: "enonic",
-            modifiedTime: '1970-01-01T00:00:00Z'
+            "type": "user",
+            "key": "user:enonic:user1",
+            "displayName": "User 1",
+            "modifiedTime": "1970-01-01T00:00:00Z",
+            "disabled": false,
+            "email": "user1@enonic.com",
+            "login": "user1",
+            "userStore": "enonic"
         }
     };
 
@@ -53,13 +54,14 @@ exports.loginNoUserStore = function () {
     var expectedJson = {
         authenticated: true,
         user: {
-            disabled: false,
-            displayName: 'User 1',
-            email: 'user1@enonic.com',
-            key: 'user:enonic:user1',
-            login: 'user1',
-            userStore: "enonic",
-            modifiedTime: '1970-01-01T00:00:00Z'
+            "type": "user",
+            "key": "user:enonic:user1",
+            "displayName": "User 1",
+            "modifiedTime": "1970-01-01T00:00:00Z",
+            "disabled": false,
+            "email": "user1@enonic.com",
+            "login": "user1",
+            "userStore": "enonic"
         }
     };
 
@@ -78,13 +80,14 @@ exports.loginMultipleUserStore = function () {
     var expectedJson = {
         authenticated: true,
         user: {
-            disabled: false,
-            displayName: 'User 1',
-            email: 'user1@enonic.com',
-            key: 'user:enonic:user1',
-            login: 'user1',
-            userStore: "enonic",
-            modifiedTime: '1970-01-01T00:00:00Z'
+            "type": "user",
+            "key": "user:enonic:user1",
+            "displayName": "User 1",
+            "modifiedTime": "1970-01-01T00:00:00Z",
+            "disabled": false,
+            "email": "user1@enonic.com",
+            "login": "user1",
+            "userStore": "enonic"
         }
     };
 

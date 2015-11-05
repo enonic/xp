@@ -12,12 +12,12 @@ public final class GetUserHandler
 {
     private Supplier<Context> context;
 
-    public UserMapper getUser()
+    public PrincipalMapper getUser()
     {
         final AuthenticationInfo authInfo = this.context.get().getAuthInfo();
         if ( authInfo.isAuthenticated() )
         {
-            return new UserMapper( authInfo.getUser() );
+            return new PrincipalMapper( authInfo.getUser() );
         }
         else
         {

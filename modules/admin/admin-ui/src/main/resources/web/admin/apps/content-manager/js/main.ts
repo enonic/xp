@@ -69,7 +69,8 @@ function startApplication() {
     var newContentDialog = new app.create.NewContentDialog();
     app.browse.ShowNewContentDialogEvent.on((event) => {
 
-        var parentContent: api.content.ContentSummary = event.getParentContent();
+        var parentContent: api.content.ContentSummary = event.getParentContent()
+            ? event.getParentContent().getContentSummary() : null;
 
         if (parentContent != null) {
             new api.content.GetContentByIdRequest(parentContent.getContentId()).sendAndParse().

@@ -8,11 +8,9 @@ module app.browse.action {
             super("Delete", "mod+del");
             this.setEnabled(false);
             this.onExecuted(() => {
-                var contentSummaries: api.content.ContentSummary[]
-                    = grid.getSelectedDataList().map((elem) => {
-                    return elem.getContentSummary();
-                });
-                new ContentDeletePromptEvent(contentSummaries).fire();
+                var contents: api.content.ContentSummaryAndCompareStatus[]
+                    = grid.getSelectedDataList();
+                new ContentDeletePromptEvent(contents).fire();
             });
         }
     }

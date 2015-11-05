@@ -4,6 +4,7 @@
 ///<reference path="RoleKeys.ts"/>
 ///<reference path="Principal.ts"/>
 ///<reference path="PrincipalJson.ts"/>
+///<reference path="PrincipalsJson.ts"/>
 ///<reference path="UserJson.ts"/>
 ///<reference path="GroupJson.ts"/>
 ///<reference path="RoleJson.ts"/>
@@ -45,3 +46,8 @@
 ///<reference path="UserItemCreatedEvent.ts"/>
 ///<reference path="UserItemUpdatedEvent.ts"/>
 ///<reference path="UserItemDeletedEvent.ts"/>
+///<reference path="ResolveMemberResult.ts"/>
+///<reference path="ResolveMembersRequest.ts"/>
+///<reference path="ResolveMemberResultJson.ts"/>
+///<reference path="ResolveMembersResult.ts"/>
+///<reference path="ResolveMembersResultJson.ts"/>

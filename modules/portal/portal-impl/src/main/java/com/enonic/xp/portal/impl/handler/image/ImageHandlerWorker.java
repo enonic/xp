@@ -16,6 +16,8 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
+import com.enonic.xp.media.ImageOrientation;
+import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -50,6 +52,8 @@ final class ImageHandlerWorker
 
     protected ContentService contentService;
 
+    protected MediaInfoService mediaInfoService;
+
     @Override
     public void execute()
         throws Exception
@@ -74,6 +78,7 @@ final class ImageHandlerWorker
 
         final String mimeType = getMimeType( this.name, imageContent.getName(), attachment );
         final String format = getFormat( this.name, mimeType );
+        final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
 
         final ReadImageParams readImageParams = ReadImageParams.newImageParams().
             contentId( this.contentId ).
@@ -85,6 +90,7 @@ final class ImageHandlerWorker
             backgroundColor( getBackgroundColor() ).
             format( format ).
             quality( getImageQuality() ).
+            orientation( imageOrientation ).
             build();
 
         final ByteSource source = this.imageService.readImage( readImageParams );

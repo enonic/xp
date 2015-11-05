@@ -82,7 +82,7 @@ module app.wizard {
             this.overwriteChildPermissionsCheck.onValueChanged(comboBoxChangeListener);
 
             this.parentPermissions = [];
-            OpenEditPermissionsDialogEvent.on((event) => {
+            api.content.OpenEditPermissionsDialogEvent.on((event) => {
                 this.content = event.getContent();
 
                 this.getParentPermissions().then((parentPermissions: AccessControlList) => {

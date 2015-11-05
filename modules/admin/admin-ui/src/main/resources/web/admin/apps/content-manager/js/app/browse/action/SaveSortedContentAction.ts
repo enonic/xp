@@ -7,7 +7,7 @@ module app.browse.action {
             this.setEnabled(true);
 
             this.onExecuted(() => {
-                new SaveSortedContentEvent(dialog.getContent()).fire();
+                new SaveSortedContentEvent(dialog.getContent().getContentSummary()).fire();
             });
         }
     }

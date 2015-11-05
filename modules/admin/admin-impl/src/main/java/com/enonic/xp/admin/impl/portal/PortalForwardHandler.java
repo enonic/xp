@@ -26,6 +26,9 @@ public final class PortalForwardHandler
 
     private final static String PREVIEW_PREFIX = PREFIX + "/preview/";
 
+    private final static String ADMIN_PREFIX = PREFIX + "/admin/";
+
+
     @Override
     protected void service( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
@@ -48,6 +51,13 @@ public final class PortalForwardHandler
         {
             final String newPath = path.substring( PREVIEW_PREFIX.length() );
             forwardToPortal( RenderMode.PREVIEW, newPath, req, res );
+            return;
+        }
+
+        if ( path.startsWith( ADMIN_PREFIX ) )
+        {
+            final String newPath = path.substring( ADMIN_PREFIX.length() );
+            forwardToPortal( RenderMode.ADMIN, newPath, req, res );
             return;
         }
 

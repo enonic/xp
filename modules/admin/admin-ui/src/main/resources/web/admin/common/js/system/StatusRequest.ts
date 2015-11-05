@@ -7,7 +7,7 @@ module api.system {
         }
 
         getParams(): Object {
-            return {};
+            return {"cb": Date.now()}; //adding cache breaker for ie
         }
 
         sendAndParse(): wemQ.Promise<StatusResult> {
