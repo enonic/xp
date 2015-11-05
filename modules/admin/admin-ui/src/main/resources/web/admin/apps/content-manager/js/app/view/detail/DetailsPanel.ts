@@ -300,7 +300,6 @@ module app.view.detail {
                     this.defaultWidgetView = WidgetView.create().
                         setName(DetailsPanel.DEFAULT_WIDGET_NAME).
                         setDetailsPanel(this).
-                        setUseToggleButton(false).
                         setLayoutCallbackFunction(() => {
                             if (DetailsPanel.DEFAULT_WIDGET_NAME == this.activeWidget.getWidgetName()) {
                                 this.setActiveWidget(this.defaultWidgetView);
@@ -322,7 +321,6 @@ module app.view.detail {
             this.defaultWidgetView = WidgetView.create().
                 setName(DetailsPanel.DEFAULT_WIDGET_NAME).
                 setDetailsPanel(this).
-                setUseToggleButton(false).
                 build();
             this.detailsContainer.appendChild(this.defaultWidgetView);
         }
@@ -335,7 +333,6 @@ module app.view.detail {
             var versionsWidgetView = WidgetView.create().
                 setName("Version history").
                 setDetailsPanel(this).
-                setUseToggleButton(false).
                 addWidgetItemView(this.versionWidgetItemView).
                 build();
 
@@ -350,7 +347,6 @@ module app.view.detail {
                     var widgetView = WidgetView.create().
                         setName(widget.getDisplayName()).
                         setDetailsPanel(this).
-                        setUseToggleButton(false).
                         build();
                     this.addWidget(widgetView);
                 })
