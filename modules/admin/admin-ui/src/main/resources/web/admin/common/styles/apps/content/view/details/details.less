@@ -178,9 +178,9 @@
       display: inline-block;
       font-size: 16px;
       float: left;
-      padding: 9px 12px 8px 11px;
-      border: 1px solid #cccccc;
-      border-right: 0px;
+      padding: 10px 11px 9px 11px;
+      border-right: 1px solid #cccccc;
+      border-left: 1px solid #cccccc;
       box-sizing: border-box;
 
       .icon-list();
@@ -196,7 +196,9 @@
     .widget-selector {
 
       max-width: none;
-      width: calc(~'100% - 47px');
+      width: 100%;
+      border: 1px solid #cccccc;
+      border-left: 0px;
 
       input {
         cursor: pointer;
@@ -224,23 +226,58 @@
 
       .dropdown-handle {
         border-left: 1px solid #cccccc;
+        border-right: 1px solid #cccccc;
+        max-height: 35px;
+
+        &:after {
+          margin: -5px 0 0 -6px;
+        }
 
         &.down {
           background-color: @admin-blue;
+          right: 2px;
           &:after {
             border-bottom: 10px solid @admin-white;
+            margin: -6px 0 0 -5px;
           }
         }
       }
 
       .selected-option {
         background: none;
+        width: calc(~'100% - 41px');
+        max-height: 35px;
+        display: inline-block;
+        border: 0px;
       }
 
       .viewer {
         font-size: 14px;
         text-align: center;
         cursor: pointer;
+      }
+
+      .options-container {
+        border-top: 0px;
+      }
+
+      .grid {
+        width: calc(~'100% - 2px') !important;
+      }
+    }
+  }
+
+  &.floating-details-panel {
+    .widget-selector {
+      position: absolute;
+      .dropdown-handle.down {
+        right: 7px;
+      }
+      .selected-option {
+        width: calc(~'100% - 46px');
+      }
+      .grid {
+        width: calc(~'100% - 7px') !important;
       }
     }
   }
@@ -518,6 +555,7 @@
   &.split-panel-with-details {
 
     > .split-panel {
+      right: auto; //ie fix - 'auto' will be used for ie as 'initial' not supported; last value mentioned will be used
       right: initial;
       .transition(all 0.5s ease-in-out);
     }
@@ -542,10 +580,6 @@
 
       .widget-toggle-button {
         border-left: 1px #d3d3d3 solid;
-      }
-
-      .widgets-selection-row .widget-selector {
-        width: calc(~'100% - 42px');
       }
     }
   }

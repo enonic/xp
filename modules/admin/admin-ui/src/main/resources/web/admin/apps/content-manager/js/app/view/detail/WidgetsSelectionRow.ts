@@ -20,7 +20,7 @@ module app.view.detail {
 
             this.infoWidgetToggleButton = new InfoWidgetToggleButton(detailsPanel);
 
-            this.widgetSelectorDropdown = new WidgetSelectorDropdown();
+            this.widgetSelectorDropdown = new WidgetSelectorDropdown(detailsPanel);
 
             this.widgetSelectorDropdown.addClass("widget-selector");
             this.widgetSelectorDropdown.getInput().getEl().setDisabled(true);
@@ -31,7 +31,7 @@ module app.view.detail {
                 widgetView.setActive();
             });
 
-            this.appendChild(this.infoWidgetToggleButton);
+            this.widgetSelectorDropdown.prependChild(this.infoWidgetToggleButton);
             this.appendChild(this.widgetSelectorDropdown);
         }
 
@@ -76,22 +76,24 @@ module app.view.detail {
 
     export class WidgetSelectorDropdown extends Dropdown<WidgetViewOption> {
 
-        constructor() {
+        constructor(detailsPanel: DetailsPanel) {
             super("widgetSelector", <DropdownConfig<WidgetViewOption>>{});
 
             this.onClicked((event) => {
-                if (!this.isDropdownHandle(event.target)) {
+                if (this.isDefaultOptionDisplayValueViewer(event.target)) {
                     if (this.getSelectedOption()) {
                         var widgetView = this.getSelectedOption().displayValue.getWidgetView();
-                        widgetView.setActive();
+                        if (widgetView != detailsPanel.getActiveWidget()) {
+                            widgetView.setActive();
+                        }
                         this.hideDropdown();
                     }
                 }
             });
         }
 
-        private isDropdownHandle(object: Object) {
-            if (object && object["id"] && object["id"].toString().indexOf("DropdownHandle") > 0) {
+        private isDefaultOptionDisplayValueViewer(object: Object) {
+            if (object && object["id"] && object["id"].toString().indexOf("DefaultOptionDisplayValueViewer") > 0) {
                 return true;
             }
             return false;
