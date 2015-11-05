@@ -236,7 +236,7 @@ module app.view.detail {
             this.updateCustomWidgets();
         }
 
-        private updateWidgetsHeights() {
+        updateWidgetsHeights() {
             this.widgetViews.forEach((widgetView: WidgetView) => {
                 this.updateWidgetHeight(widgetView);
             });
