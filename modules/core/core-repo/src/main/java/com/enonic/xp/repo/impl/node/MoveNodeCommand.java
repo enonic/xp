@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.MoveNodeException;
+import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
@@ -40,7 +41,7 @@ public class MoveNodeCommand
         this.newNodeName = builder.newNodeName;
     }
 
-    public Node execute()
+    public MoveNodeResult execute()
     {
         final Node existingNode = doGetById( nodeId );
 
@@ -50,7 +51,9 @@ public class MoveNodeCommand
 
         if ( noChanges( existingNode, newParentPath, newNodeName ) )
         {
-            return existingNode;
+            return MoveNodeResult.create().
+                sourceNode( existingNode ).
+                build();
         }
 
         checkNotMovedToSelfOrChild( existingNode, newParentPath );
@@ -61,7 +64,10 @@ public class MoveNodeCommand
 
         indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ) );
 
-        return movedNode;
+        return MoveNodeResult.create().
+            sourceNode( existingNode ).
+            targetNode( movedNode ).
+            build();
     }
 
     private void checkContextUserPermissionOrAdmin( final Node existingSourceNode, final NodePath newParentPath )

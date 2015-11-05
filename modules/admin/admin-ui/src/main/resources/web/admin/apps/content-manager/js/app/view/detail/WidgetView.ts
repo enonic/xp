@@ -6,8 +6,6 @@ module app.view.detail {
 
     export class WidgetView extends api.dom.DivEl {
 
-        private widgetToggleButton: WidgetViewToggleButton;
-
         private widgetName: string;
 
         private widgetItemViews: WidgetItemView[];
@@ -44,13 +42,6 @@ module app.view.detail {
             }
 
             return wemQ.all(layoutTasks);
-        }
-
-        private initWidgetToggleButton() {
-
-            this.widgetToggleButton = new WidgetViewToggleButton(this);
-            this.widgetToggleButton.setLabel(this.widgetName);
-            this.appendChild(this.widgetToggleButton);
         }
 
         private calcHeight(): number {
@@ -104,7 +95,6 @@ module app.view.detail {
                 console.debug('WidgetView.deactivate: ', this);
             }
             this.slideOut();
-            this.removeClass("expanded");
         }
 
         public static create(): WidgetViewBuilder {
@@ -118,8 +108,6 @@ module app.view.detail {
 
         detailsPanel: DetailsPanel;
 
-        useToggleButton: boolean = true;
-
         widgetItemViews: WidgetItemView[] = [];
 
         public setName(name: string): WidgetViewBuilder {
@@ -129,11 +117,6 @@ module app.view.detail {
 
         public setDetailsPanel(detailsPanel: DetailsPanel): WidgetViewBuilder {
             this.detailsPanel = detailsPanel;
-            return this;
-        }
-
-        public setUseToggleButton(useToggleButton: boolean): WidgetViewBuilder {
-            this.useToggleButton = useToggleButton;
             return this;
         }
 

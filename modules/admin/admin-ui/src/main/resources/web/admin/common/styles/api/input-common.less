@@ -30,6 +30,10 @@
   }
 }
 
+::-ms-clear {
+  display: none;
+}
+
 .input-view {
 
   .clearfix();
@@ -172,4 +176,34 @@
       margin-left: 0;
     }
   }
+}
+
+.input-wrapper {
+
+  &.valid-regexp, &.invalid-regexp {
+    position: relative;
+
+    input {
+      padding-right: 100px;
+    }
+
+    &:after {
+      position: absolute;
+      top: 7px;
+      right: 7px;
+    }
+  }
+
+  &.valid-regexp {
+    &:after {
+      content: 'Valid';
+    }
+  }
+
+  &.invalid-regexp {
+    &:after {
+      content: 'Invalid value';
+    }
+  }
+
 }

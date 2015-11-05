@@ -10,4 +10,3 @@
 ///<reference path='UserAccessWidgetItemView.ts' />
 ///<reference path='AttachmentsWidgetItemView.ts' />
 ///<reference path='VersionsWidgetItemView.ts' />
-///<reference path='WidgetViewToggleButton.ts' />

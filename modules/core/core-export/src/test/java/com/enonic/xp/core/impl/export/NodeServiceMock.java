@@ -27,6 +27,7 @@ import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.ImportNodeParams;
+import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
@@ -333,7 +334,7 @@ class NodeServiceMock
     @Override
     public void refresh( final RefreshMode refreshMode )
     {
-        throw new UnsupportedOperationException( "Not implemented in mock" );
+        // Dont do anything
     }
 
     @Override
@@ -408,11 +409,12 @@ class NodeServiceMock
     }
 
     @Override
-    public Node importNode( final ImportNodeParams params )
+    public ImportNodeResult importNode( final ImportNodeParams params )
     {
         final Node importNode = params.getNode();
+        final boolean preExist = this.nodePathMap.get( importNode.path() ) != null;
 
-        return doCreate( CreateNodeParams.create().
+        final Node createdNode = doCreate( CreateNodeParams.create().
             setBinaryAttachments( params.getBinaryAttachments() ).
             childOrder( importNode.getChildOrder() ).
             data( importNode.data() ).
@@ -424,5 +426,7 @@ class NodeServiceMock
             setNodeId( importNode.id() ).
             permissions( importNode.getPermissions() ).
             build(), importNode.getTimestamp() );
+
+        return ImportNodeResult.create().node( createdNode ).preExisting( preExist ).build();
     }
 }

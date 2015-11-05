@@ -63,7 +63,9 @@ module app.login {
                 }, 100);
             });
             this.onHidden((event) => {
-                (<HTMLElement>document.activeElement).blur();
+                if (<HTMLElement>document.activeElement) {
+                    (<HTMLElement>document.activeElement).blur();
+                }
             });
         }
 

@@ -28,6 +28,10 @@ module api.ui.selector.combobox {
             return "";
         }
 
+        createActionButtons(content: T): api.dom.Element[] {
+            return [];
+        }
+
         layout() {
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(this.size).build();
 
@@ -51,8 +55,11 @@ module api.ui.selector.combobox {
                 return false;
             });
 
+            var buttons: api.dom.Element[] = this.createActionButtons(this.optionDisplayValue);
+
             this.appendChild(new api.dom.DivEl("drag-control"));
             this.appendChild(removeButton);
+            this.appendChildren(...buttons);
             this.appendChild(namesAndIconView);
         }
     }

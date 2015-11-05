@@ -13,9 +13,10 @@ module api.ui.treegrid.actions {
                 treeGrid.getGrid().clearSelection();
             });
 
-            treeGrid.onSelectionChanged((selection) => {
-                this.setLabel(this.createLabel(selection.length));
-                this.setEnabled(!!selection.length);
+            treeGrid.onSelectionChanged(() => {
+                var selectedCount = treeGrid.getRoot().getFullSelection().length;
+                this.setLabel(this.createLabel(selectedCount));
+                this.setEnabled(!!selectedCount);
             });
         }
 

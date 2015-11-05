@@ -114,6 +114,10 @@ module app.browse {
 
             this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager);
 
+            this.onShown(() => {
+                nonMobileDetailsPanelsManager.getActivePanel().updateWidgetsHeights();
+            });
+
             this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
         }
 
@@ -165,6 +169,8 @@ module app.browse {
         private initFloatingDetailsPanel(nonMobileDetailsPanelsManagerBuilder: NonMobileDetailsPanelsManagerBuilder) {
 
             this.floatingDetailsPanel = DetailsPanel.create().build();
+
+            this.floatingDetailsPanel.addClass("floating-details-panel");
 
             nonMobileDetailsPanelsManagerBuilder.setFloatingDetailsPanel(this.floatingDetailsPanel);
 

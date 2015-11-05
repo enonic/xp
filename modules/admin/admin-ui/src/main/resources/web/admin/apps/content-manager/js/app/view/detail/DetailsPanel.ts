@@ -269,7 +269,6 @@ module app.view.detail {
             this.defaultWidgetView = WidgetView.create().
                 setName(DetailsPanel.DEFAULT_WIDGET_NAME).
                 setDetailsPanel(this).
-                setUseToggleButton(false).
                 addWidgetItemView(this.statusWidgetItemView).
                 addWidgetItemView(this.propWidgetItemView).
                 addWidgetItemView(this.attachmentsWidgetItemView).
@@ -283,15 +282,10 @@ module app.view.detail {
 
             this.versionsWidgetItemView = new VersionsWidgetItemView();
 
-            this.onPanelSizeChanged(() => {
-                this.versionsWidgetItemView.invalidateActivePanel();
-            });
-
             var versionsWidgetView = WidgetView.create().
                 setName("Version history").
                 setDetailsPanel(this).
-                setUseToggleButton(false).
-                addWidgetItemView(this.versionsWidgetItemView).
+                addWidgetItemView(this.versionWidgetItemView).
                 build();
 
             this.addWidgets([versionsWidgetView]);
@@ -305,7 +299,6 @@ module app.view.detail {
                     var widgetView = WidgetView.create().
                         setName(widget.getDisplayName()).
                         setDetailsPanel(this).
-                        setUseToggleButton(false).
                         build();
                     this.addWidget(widgetView);
                 })

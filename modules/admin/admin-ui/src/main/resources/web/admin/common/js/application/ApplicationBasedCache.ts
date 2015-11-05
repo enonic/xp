@@ -8,16 +8,17 @@ module api.application {
 
             this.applicationCaches = new ApplicationCaches<CACHE>();
 
-            ApplicationUpdatedEvent.on((event: ApplicationUpdatedEvent) => {
+            ApplicationEvent.on((event: ApplicationEvent) => {
 
-                if (ApplicationUpdatedEventType.STARTED == event.getEventType()) {
+                if (ApplicationEventType.STARTED == event.getEventType()) {
                     console.log(api.ClassHelper.getClassName(this) +
-                                " received ApplicationUpdatedEvent STARTED, calling - loadByApplication.. " +
+                                " received ApplicationEvent STARTED, calling - loadByApplication.. " +
                                 event.getApplicationKey().toString());
                     this.loadByApplication(event.getApplicationKey());
                 }
-                else if (ApplicationUpdatedEventType.STOPPED == event.getEventType()) {
-                    console.log(api.ClassHelper.getClassName(this) + " received ApplicationUpdatedEvent STOPPED - calling deleteByApplicationKey.. " +
+                else if (ApplicationEventType.STOPPED == event.getEventType()) {
+                    console.log(api.ClassHelper.getClassName(this) +
+                                " received ApplicationEvent STOPPED - calling deleteByApplicationKey.. " +
                                 event.getApplicationKey().toString());
                     this.deleteByApplicationKey(event.getApplicationKey())
                 }

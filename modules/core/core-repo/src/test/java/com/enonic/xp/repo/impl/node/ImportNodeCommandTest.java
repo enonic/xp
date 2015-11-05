@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
@@ -41,9 +42,9 @@ public class ImportNodeCommandTest
             data( new PropertyTree() ).
             build();
 
-        final Node createdNode = importNode( importNode );
+        final ImportNodeResult importNodeResult = importNode( importNode );
 
-        assertNotNull( createdNode.getTimestamp() );
+        assertNotNull( importNodeResult.getNode().getTimestamp() );
     }
 
     @Test
@@ -120,13 +121,12 @@ public class ImportNodeCommandTest
             permissions( aclList ).
             build();
 
-        importNode( importNode );
-
+        final ImportNodeResult importNodeResult = importNode( importNode );
         final Node abc = getNodeById( NodeId.from( "abc" ) );
-
         assertNotNull( abc );
-
         assertEquals( aclList, abc.getPermissions() );
+        assertEquals( importNodeResult.getNode().getPermissions(), abc.getPermissions() );
+        assertFalse( importNodeResult.isPreExisting() );
     }
 
     @Test
@@ -157,14 +157,16 @@ public class ImportNodeCommandTest
             data( data2 ).
             build();
 
-        importNode( importNode2 );
+        final ImportNodeResult importNodeResult = importNode( importNode2 );
         final Node abc2 = getNodeById( NodeId.from( "abc" ) );
         assertNotNull( abc2 );
         assertEquals( data2, abc2.data() );
+        assertEquals( importNodeResult.getNode().data(), abc2.data() );
+        assertTrue( importNodeResult.isPreExisting() );
     }
 
 
-    private Node importNode( final Node importNode )
+    private ImportNodeResult importNode( final Node importNode )
     {
         return ImportNodeCommand.create().
             importNode( importNode ).

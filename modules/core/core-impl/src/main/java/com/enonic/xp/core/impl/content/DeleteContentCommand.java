@@ -5,11 +5,8 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
-import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentState;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.context.Context;
@@ -45,14 +42,7 @@ final class DeleteContentCommand
         try
         {
             final Contents deletedContents = doExecute();
-
             nodeService.refresh( RefreshMode.SEARCH );
-
-            for ( Content deletedContent : deletedContents )
-            {
-                publishEvents( deletedContent );
-            }
-
             return deletedContents;
         }
         catch ( NodeAccessException e )
@@ -118,21 +108,6 @@ final class DeleteContentCommand
             compare = this.nodeService.compare( nodeToDelete.id(), ContentConstants.BRANCH_DRAFT );
         }
         return compare.getCompareStatus();
-    }
-
-    private void publishEvents( final Content deletedContent )
-    {
-        if ( deletedContent != null )
-        {
-            if ( deletedContent.getContentState() == ContentState.PENDING_DELETE )
-            {
-                eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.PENDING, deletedContent.getPath() ) );
-            }
-            else
-            {
-                eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, deletedContent.getPath() ) );
-            }
-        }
     }
 
 

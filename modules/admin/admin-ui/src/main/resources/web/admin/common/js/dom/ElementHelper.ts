@@ -217,7 +217,7 @@ module api.dom {
         }
 
         appendChild(child: Node): ElementHelper {
-            return this.insertChild(child, this.el.children.length);
+            return this.insertChild(child, this.countChildren());
         }
 
         appendChildren(children: Node[]): ElementHelper {
@@ -228,10 +228,10 @@ module api.dom {
         }
 
         insertChild(child: Node, index: number): ElementHelper {
-            if (index > this.el.children.length - 1) {
+            if (index > this.countChildren() - 1) {
                 this.el.appendChild(child);
             } else {
-                this.el.insertBefore(child, this.el.children.item(index));
+                this.el.insertBefore(child, this.getChild(index));
             }
             return this;
         }
@@ -674,5 +674,20 @@ module api.dom {
             return wemjq(this.el).is(':visible');
         }
 
+        countChildren(): number {
+            return this.getChildren().length;
+        }
+
+        getChild(index: number): Node {
+            return this.getChildren()[index];
+        }
+
+        getChildren(): Node[] {
+
+            return this.el.children || //children property not supported for IE SVGelement, Document and DocumentFragment
+                   Array.prototype.slice.call(this.el.childNodes).filter((childNode: Node) => {
+                       return (childNode.nodeType == Node.ELEMENT_NODE);
+                   });
+        }
     }
 }

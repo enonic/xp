@@ -22,7 +22,7 @@ import com.enonic.xp.xml.XmlException;
 final class GetWidgetDescriptorsByInterfaceCommand
     extends AbstractGetWidgetDescriptorCommand<GetWidgetDescriptorsByInterfaceCommand>
 {
-    private final static String PATH = "ui/widgets/";
+    private final static String PATH = "admin/widgets/";
 
     private String interfaceName;
 
