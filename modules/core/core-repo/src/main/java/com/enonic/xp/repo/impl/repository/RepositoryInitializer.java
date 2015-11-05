@@ -60,6 +60,7 @@ public final class RepositoryInitializer
             {
                 LOG.error( "Cluster not healthy: " + "timed out: " + clusterHealth.isTimedOut() + ", state: " +
                                clusterHealth.getClusterStatusCode() );
+                return false;
             }
 
             return true;
