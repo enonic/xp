@@ -251,6 +251,32 @@ exports.createGroup = function (params) {
 };
 
 /**
+ * Modifies group with passed parameters.
+ *
+ * @example
+ * authLib.modifyGroup({
+ *   key: 'group-key',
+ *   editor: function(group) {
+ *     group.displayName = 'new-display-name';
+ *     return group;
+ *   }
+ * });
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} key Principal key of the group to modify.
+ * @param {string} params.editor Group editor function to apply to group.
+ */
+exports.modifyGroup = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.ModifyGroupHandler');
+
+    bean.principalKey = required(params, 'key');
+
+    bean.editor = __.toScriptValue(params.editor);
+
+    return __.toNativeObject(bean.modifyGroup());
+};
+
+/**
  * Adds memberships from list to principal with passed key.
  *
  * @example
@@ -287,4 +313,3 @@ exports.removeMemberships = function (key, list) {
 
     return __.toNativeObject(bean.removeMemberships());
 };
-
