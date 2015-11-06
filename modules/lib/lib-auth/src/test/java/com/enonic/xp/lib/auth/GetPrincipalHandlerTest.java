@@ -37,7 +37,7 @@ public class GetPrincipalHandlerTest
         this.session = new SimpleSession( SessionKey.generate() );
         ContextAccessor.current().getLocalScope().setSession( session );
 
-        this.session.setAttribute( HandlerTestHelper.createAuthenticationInfo() );
+        this.session.setAttribute( TestDataFixtures.createAuthenticationInfo() );
     }
 
     @Test
@@ -46,7 +46,7 @@ public class GetPrincipalHandlerTest
     {
         Mockito.<Optional<? extends Principal>>when(
             securityService.getPrincipal( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn(
-            Optional.of( HandlerTestHelper.getTestUser() ) );
+            Optional.of( TestDataFixtures.getTestUser() ) );
 
         runTestFunction( "/test/getPrincipal-test.js", "getUserPrincipal" );
     }
@@ -56,7 +56,7 @@ public class GetPrincipalHandlerTest
         throws Exception
     {
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "role:roleId" ) ) ).thenReturn(
-            Optional.of( HandlerTestHelper.getTestRole() ) );
+            Optional.of( TestDataFixtures.getTestRole() ) );
 
         runTestFunction( "/test/getPrincipal-test.js", "getRolePrincipal" );
     }
@@ -67,7 +67,7 @@ public class GetPrincipalHandlerTest
     {
         Mockito.<Optional<? extends Principal>>when(
             securityService.getPrincipal( PrincipalKey.from( "group:myGroupStore:groupId" ) ) ).thenReturn(
-            Optional.of( HandlerTestHelper.getTestGroup() ) );
+            Optional.of( TestDataFixtures.getTestGroup() ) );
 
         runTestFunction( "/test/getPrincipal-test.js", "getGroupPrincipal" );
     }

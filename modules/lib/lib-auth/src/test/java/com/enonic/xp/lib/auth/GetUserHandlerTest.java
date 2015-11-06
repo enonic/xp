@@ -27,7 +27,7 @@ public class GetUserHandlerTest
         throws Exception
     {
         final AuthenticationInfo authInfo =
-            AuthenticationInfo.create().user( HandlerTestHelper.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
 
         this.session.setAttribute( authInfo );
 

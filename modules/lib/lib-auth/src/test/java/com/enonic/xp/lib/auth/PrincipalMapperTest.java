@@ -37,7 +37,7 @@ public class PrincipalMapperTest
         throws Exception
     {
 
-        final PrincipalMapper principalMapper = new PrincipalMapper( HandlerTestHelper.getTestUser() );
+        final PrincipalMapper principalMapper = new PrincipalMapper( TestDataFixtures.getTestUser() );
         assertJson( "user", principalMapper );
     }
 
@@ -45,7 +45,7 @@ public class PrincipalMapperTest
     public void testGroupSerialized()
         throws Exception
     {
-        final PrincipalMapper principalMapper = new PrincipalMapper( HandlerTestHelper.getTestGroup() );
+        final PrincipalMapper principalMapper = new PrincipalMapper( TestDataFixtures.getTestGroup() );
         assertJson( "group", principalMapper );
     }
 
@@ -53,7 +53,7 @@ public class PrincipalMapperTest
     public void testRoleSerialized()
         throws Exception
     {
-        final PrincipalMapper principalMapper = new PrincipalMapper( HandlerTestHelper.getTestRole() );
+        final PrincipalMapper principalMapper = new PrincipalMapper( TestDataFixtures.getTestRole() );
         assertJson( "role", principalMapper );
     }
 

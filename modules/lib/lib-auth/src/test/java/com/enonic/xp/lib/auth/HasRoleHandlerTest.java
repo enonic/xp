@@ -28,7 +28,7 @@ public class HasRoleHandlerTest
         throws Exception
     {
         final AuthenticationInfo authInfo =
-            AuthenticationInfo.create().user( HandlerTestHelper.getTestUser() ).principals( PrincipalKey.ofRole( "my-role" ) ).build();
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( PrincipalKey.ofRole( "my-role" ) ).build();
 
         this.session.setAttribute( authInfo );
 
@@ -40,7 +40,7 @@ public class HasRoleHandlerTest
         throws Exception
     {
         final AuthenticationInfo authInfo =
-            AuthenticationInfo.create().user( HandlerTestHelper.getTestUser() ).principals( PrincipalKey.ofRole( "my-role" ) ).build();
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( PrincipalKey.ofRole( "my-role" ) ).build();
 
         this.session.setAttribute( authInfo );
 
@@ -52,7 +52,7 @@ public class HasRoleHandlerTest
         throws Exception
     {
         final AuthenticationInfo authInfo =
-            AuthenticationInfo.create().user( HandlerTestHelper.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
 
         this.session.setAttribute( authInfo );
 
