@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.repo.impl.branch.storage.BranchDocumentId;
 
 import static org.junit.Assert.*;
 
@@ -18,8 +19,8 @@ public class PathCacheImplTest
 
         final CachePath a = createPath( "a" );
 
-        cache.cache( a, "1" );
-        assertEquals( "1", cache.get( a ) );
+        cache.cache( a, BranchDocumentId.from( "_1_draft" ) );
+        assertEquals( "_1_draft", cache.get( a ) );
     }
 
     @Test
@@ -30,7 +31,7 @@ public class PathCacheImplTest
 
         final CachePath a = createPath( "a" );
 
-        cache.cache( a, "1" );
+        cache.cache( a, BranchDocumentId.from( "1_draft" ) );
         cache.evict( a );
         assertNull( cache.get( a ) );
     }
@@ -42,10 +43,10 @@ public class PathCacheImplTest
     {
         final PathCacheImpl cache = new PathCacheImpl();
 
-        cache.cache( createPath( "/oldPath" ), "1" );
-        cache.cache( createPath( "/newPath" ), "1" );
+        cache.cache( createPath( "/oldPath" ), BranchDocumentId.from( "1_draft" ) );
+        cache.cache( createPath( "/newPath" ), BranchDocumentId.from( "1_draft" ) );
 
-        assertEquals( "1", cache.get( createPath( "/newPath" ) ) );
+        assertEquals( "1_draft", cache.get( createPath( "/newPath" ) ) );
     }
 
     @Test
@@ -54,12 +55,12 @@ public class PathCacheImplTest
     {
         final PathCacheImpl cache = new PathCacheImpl();
 
-        cache.cache( createPath( "/oldPath" ), "1" );
-        cache.cache( createPath( "/oldPath" ), "2" );
-        cache.cache( createPath( "/newPath" ), "1" );
+        cache.cache( createPath( "/oldPath" ), BranchDocumentId.from( "1_draft" ) );
+        cache.cache( createPath( "/oldPath" ), BranchDocumentId.from( "2_draft" ) );
+        cache.cache( createPath( "/newPath" ), BranchDocumentId.from( "1_draft" ) );
 
-        assertEquals( "2", cache.get( createPath( "/oldPath" ) ) );
-        assertEquals( "1", cache.get( createPath( "/newPath" ) ) );
+        assertEquals( "2_draft", cache.get( createPath( "/oldPath" ) ) );
+        assertEquals( "1_draft", cache.get( createPath( "/newPath" ) ) );
     }
 
 

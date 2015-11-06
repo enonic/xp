@@ -7,8 +7,8 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.app.ApplicationEvent;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.app.ApplicationUpdatedEvent;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.resource.ResourceService;
@@ -52,15 +52,15 @@ public final class ScriptRuntimeFactoryImpl
     @Override
     public void onEvent( final Event event )
     {
-        if ( event instanceof ApplicationUpdatedEvent )
+        if ( event instanceof ApplicationEvent )
         {
-            onEvent( (ApplicationUpdatedEvent) event );
+            onEvent( (ApplicationEvent) event );
         }
     }
 
-    private void onEvent( final ApplicationUpdatedEvent event )
+    private void onEvent( final ApplicationEvent event )
     {
-        this.list.forEach( runtime -> runtime.invalidate( event.getApplicationKey() ) );
+        this.list.forEach( runtime -> runtime.invalidate( event.getKey() ) );
     }
 
     @Reference

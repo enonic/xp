@@ -1,6 +1,11 @@
 apply plugin: 'java-base'
 apply plugin: 'com.moowork.grunt'
 
+node {
+    download = true
+    version = '4.2.1'
+}
+
 ext {
     leafProjects = rootProject.subprojects.findAll { p -> p.subprojects.empty }
     jsDocOutput = "${buildDir}/jsdoc"

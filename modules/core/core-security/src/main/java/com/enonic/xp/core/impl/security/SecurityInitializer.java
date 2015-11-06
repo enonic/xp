@@ -69,6 +69,7 @@ public final class SecurityInitializer
             createUsers();
 
             LOG.info( "[" + branchName + "] branch successfully initialized" );
+
         } );
     }
 

@@ -2,17 +2,14 @@ package com.enonic.xp.support;
 
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+
+import com.enonic.xp.json.ObjectMapperHelper;
 
 import static org.junit.Assert.*;
 
@@ -27,14 +24,7 @@ public class JsonTestHelper
     public JsonTestHelper( final Object testInstance )
     {
         this.resourceTestHelper = new ResourceTestHelper( testInstance );
-        objectMapper = new ObjectMapper();
-        objectMapper.setDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) );
-        objectMapper.disable( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS );
-        objectMapper.disable( SerializationFeature.FAIL_ON_EMPTY_BEANS );
-        objectMapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
-        objectMapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
-        objectMapper.setSerializationInclusion( JsonInclude.Include.ALWAYS );
-        objectMapper.registerModule( new JSR310Module() );
+        objectMapper = ObjectMapperHelper.create();
         objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
     }
 

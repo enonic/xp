@@ -2,97 +2,47 @@ package com.enonic.xp.core.impl.event;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class EventPublisherImplTest
 {
-    private EventPublisherImpl eventPublisher;
+    private EventPublisherImpl publisher;
 
     @Before
-    public final void setUp()
-        throws Exception
+    public void setUp()
     {
-        eventPublisher = new EventPublisherImpl();
+        this.publisher = new EventPublisherImpl();
     }
 
     @Test
-    public void testPublishWithoutListeners()
-        throws Exception
+    public void testPublish_noListener()
     {
         final Event event = new TestEvent();
-        eventPublisher.publish( event );
+        this.publisher.publish( event );
     }
 
     @Test
-    public void testPublishOneListener()
+    public void testPublish_withListener()
         throws Exception
     {
-        final EventListener eventListener1 = mock( EventListener.class );
-        eventPublisher.addListener( eventListener1 );
+        final EventListener listener = mock( EventListener.class );
+        this.publisher.addListener( listener );
 
         final Event event = new TestEvent();
-        eventPublisher.publish( event );
+        for ( int i = 0; i < 100; i++ )
+        {
+            this.publisher.publish( event );
+        }
 
-        eventPublisher.removeListener( eventListener1 );
-        eventPublisher.publish( event );
+        Thread.sleep( 200L );
 
-        verify( eventListener1, times( 1 ) ).onEvent( any( TestEvent.class ) );
-    }
-
-    @Test
-    public void testPublishMultipleListeners()
-        throws Exception
-    {
-        final EventListener eventListener1 = mock( EventListener.class );
-        eventPublisher.addListener( eventListener1 );
-
-        final EventListener eventListener2 = mock( EventListener.class );
-        eventPublisher.addListener( eventListener2 );
-
-        final EventListener eventListener3 = mock( EventListener.class );
-        eventPublisher.addListener( eventListener3 );
-
-        final Event event = new TestEvent();
-        eventPublisher.publish( event );
-
-        verify( eventListener1, times( 1 ) ).onEvent( any( TestEvent.class ) );
-        verify( eventListener2, times( 1 ) ).onEvent( any( TestEvent.class ) );
-        verify( eventListener3, times( 1 ) ).onEvent( any( TestEvent.class ) );
-    }
-
-    @Test
-    public void testPublishExceptionOnListener()
-        throws Exception
-    {
-        final EventListener eventListener1 = mock( EventListener.class );
-        eventPublisher.addListener( eventListener1 );
-
-        final EventListener eventListener2 = mock( EventListener.class );
-        eventPublisher.addListener( eventListener2 );
-
-        final EventListener eventListener3 = mock( EventListener.class );
-        eventPublisher.addListener( eventListener3 );
-
-        doThrow( new RuntimeException( "Error" ) ).when( eventListener2 ).onEvent( any( Event.class ) );
-
-        final Event event = new TestEvent();
-        eventPublisher.publish( event );
-
-        verify( eventListener1, times( 1 ) ).onEvent( any( TestEvent.class ) );
-        verify( eventListener2, times( 1 ) ).onEvent( any( TestEvent.class ) );
-        verify( eventListener3, times( 1 ) ).onEvent( any( TestEvent.class ) );
-    }
-
-    class TestEvent
-        implements Event
-    {
+        verify( listener, times( 100 ) ).onEvent( Mockito.any() );
     }
 }

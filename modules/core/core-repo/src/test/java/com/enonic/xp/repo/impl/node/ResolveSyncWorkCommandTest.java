@@ -138,7 +138,10 @@ public class ResolveSyncWorkCommandTest
             build().
             execute();
 
-        assertEquals( 0, result.getSize() );
+        assertEquals( 3, result.getSize() );
+        assertTrue( result.contains( node1_1.id() ) );
+        assertTrue( result.contains( node1_1_1.id() ) );
+        assertTrue( result.contains( node1_1_1_1.id() ) );
     }
 
     @Test

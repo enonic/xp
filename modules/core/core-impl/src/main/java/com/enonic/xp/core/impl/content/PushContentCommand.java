@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.List;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
@@ -9,11 +7,8 @@ import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.PushContentsResult;
@@ -26,8 +21,6 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
-
-import static java.util.stream.Collectors.toList;
 
 public class PushContentCommand
     extends AbstractContentCommand
@@ -140,8 +133,6 @@ public class PushContentCommand
 
         final Contents publishedContents = translator.fromNodes( pushNodesResult.getSuccessful(), false );
         this.resultBuilder.setPushed( publishedContents );
-
-        publishContentChangeEvents( ContentChangeEvent.ContentChangeType.PUBLISH, publishedContents );
     }
 
     private void doDeleteNodes( final NodeIds nodeIdsToDelete )
@@ -155,21 +146,6 @@ public class PushContentCommand
         deleteNodesInContext( nodeIdsToDelete, ContextBuilder.from( currentContext ).
             branch( target ).
             build() );
-
-        publishContentChangeEvents( ContentChangeEvent.ContentChangeType.DELETE, deletedContents );
-    }
-
-    private void publishContentChangeEvents( final ContentChangeEvent.ContentChangeType contentChangeType, final Contents contents )
-    {
-        final List<ContentPath> contentPathList = contents.stream().
-            map( Content::getPath ).
-            collect( toList() );
-
-        if ( !contentPathList.isEmpty() )
-        {
-            final ContentPaths contentPaths = ContentPaths.from( contentPathList );
-            eventPublisher.publish( ContentChangeEvent.from( contentChangeType, contentPaths ) );
-        }
     }
 
     private void deleteNodesInContext( final NodeIds nodeIds, final Context context )

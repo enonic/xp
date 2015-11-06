@@ -1,0 +1,19 @@
+{
+  "name": "clusterName",
+  "state": "GREEN",
+  "localNode": {
+    "hostName": null,
+    "id": "nodeId",
+    "isMaster": "false",
+    "numberOfNodesSeen": 1
+  },
+  "members": [
+    {
+      "address": "local[10.10.10.1]",
+      "hostName": "hostName",
+      "id": "nodeId",
+      "isMaster": "false",
+      "version": "1.0.0"
+    }
+  ]
+}

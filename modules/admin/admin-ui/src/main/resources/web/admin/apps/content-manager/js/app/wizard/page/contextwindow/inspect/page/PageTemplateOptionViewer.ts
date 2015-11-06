@@ -10,8 +10,8 @@ module app.wizard.page.contextwindow.inspect.page {
             var pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
 
             return !!object.getPageTemplate() ?
-                        (object.isCustom() ? pageTemplateDisplayName[pageTemplateDisplayName.Custom] : object.getPageTemplate().getDisplayName())
-                    : pageTemplateDisplayName[pageTemplateDisplayName.Automatic];
+                   (object.isCustom() ? pageTemplateDisplayName[pageTemplateDisplayName.Custom] : object.getPageTemplate().getDisplayName())
+                : pageTemplateDisplayName[pageTemplateDisplayName.Automatic];
         }
 
         resolveSubName(object: PageTemplateOption, relativePath: boolean = false): string {

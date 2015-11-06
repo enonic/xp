@@ -5,6 +5,8 @@ import java.util.Collection;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateRequestBuilder;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -13,7 +15,6 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.unit.TimeValue;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -52,12 +53,14 @@ public class ElasticsearchIndexServiceInternal
 
     private final static String EXISTS_TIMEOUT = "5s";
 
+    private final static String CLUSTER_STATE_TIMEOUT = "5s";
+
     private ElasticsearchDao elasticsearchDao;
 
     private Client client;
 
     @Override
-    public ClusterHealthStatus getClusterHealth( final TimeValue timeout, final String... indexNames )
+    public ClusterHealthStatus getClusterHealth( final String timeout, final String... indexNames )
     {
         return doGetClusterHealth( timeout, indexNames );
     }
@@ -66,6 +69,23 @@ public class ElasticsearchIndexServiceInternal
     public void refresh( final String... indexNames )
     {
         client.admin().indices().prepareRefresh( indexNames ).execute().actionGet();
+    }
+
+    @Override
+    public boolean isMaster()
+    {
+        final ClusterStateRequestBuilder requestBuilder = new ClusterStateRequestBuilder( this.client.admin().cluster() ).
+            setBlocks( false ).
+            setIndices().
+            setBlocks( false ).
+            setMetaData( false ).
+            setNodes( true ).
+            setRoutingTable( false );
+
+        final ClusterStateResponse clusterStateResponse =
+            client.admin().cluster().state( requestBuilder.request() ).actionGet( CLUSTER_STATE_TIMEOUT );
+
+        return clusterStateResponse.getState().nodes().localNodeMaster();
     }
 
     @Override
@@ -134,7 +154,7 @@ public class ElasticsearchIndexServiceInternal
         return response.isExists();
     }
 
-    private ClusterHealthStatus doGetClusterHealth( final TimeValue timeout, final String... indexNames )
+    private ClusterHealthStatus doGetClusterHealth( final String timeout, final String... indexNames )
     {
         LOG.info( "Executing ClusterHealtRequest" );
 
