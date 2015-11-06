@@ -36,7 +36,7 @@ public class ModifyUserHandlerTest
         this.session = new SimpleSession( SessionKey.generate() );
         ContextAccessor.current().getLocalScope().setSession( session );
 
-        this.session.setAttribute( HandlerTestHelper.createAuthenticationInfo() );
+        this.session.setAttribute( TestDataFixtures.createAuthenticationInfo() );
     }
 
     @Test
@@ -44,7 +44,7 @@ public class ModifyUserHandlerTest
         throws Exception
     {
         Mockito.<Optional<? extends Principal>>when( securityService.getUser( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn(
-            Optional.of( HandlerTestHelper.getTestUser() ) );
+            Optional.of( TestDataFixtures.getTestUser() ) );
 
         Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateUserParams) invocationOnMock.getArguments()[0] ) );
@@ -58,7 +58,7 @@ public class ModifyUserHandlerTest
         final UserEditor editor = params.getEditor();
         Assert.assertNotNull( editor );
 
-        final User user = HandlerTestHelper.getTestUser();
+        final User user = TestDataFixtures.getTestUser();
         final EditableUser editable = new EditableUser( user );
 
         editor.edit( editable );

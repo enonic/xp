@@ -313,3 +313,40 @@ exports.removeMemberships = function (key, list) {
 
     return __.toNativeObject(bean.removeMemberships());
 };
+
+/**
+ * Search for principals matching the specified criteria.
+ *
+ * @example
+ * authLib.findPrincipals({
+ *   type: 'user'
+ *   userStore: 'user-store',
+ *   start: 0,
+ *   count: 10,
+ *   name: 'user1',
+ *   email: 'user1@enonic.com',
+ *   displayName: 'User 1',
+ * });
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.type Principal type to look for, one of: 'user', 'group' or 'role'. If not specified all principal types will be included.
+ * @param {string} params.userStore Key of the user store to look for. If not specified all user stores will be included.
+ * @param {string} params.start First principal to return from the search results. It can be used for pagination.
+ * @param {string} params.count A limit on the number of principals to be returned.
+ * @param {string} params.name Name of the principal to look for.
+ * @param {string} params.email Email of the user to look for.
+ * @param {string} params.displayName Display name of the principal to look for.
+ */
+exports.findPrincipals = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.FindPrincipalsHandler');
+
+    bean.type = __.nullOrValue(params.type);
+    bean.userStore = __.nullOrValue(params.userStore);
+    bean.start = __.nullOrValue(params.start);
+    bean.count = __.nullOrValue(params.count);
+    bean.name = __.nullOrValue(params.name);
+    bean.email = __.nullOrValue(params.email);
+    bean.displayName = __.nullOrValue(params.displayName);
+
+    return __.toNativeObject(bean.findPrincipals());
+};

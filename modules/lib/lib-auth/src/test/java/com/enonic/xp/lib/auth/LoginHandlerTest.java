@@ -45,7 +45,7 @@ public class LoginHandlerTest
         throws Exception
     {
         final AuthenticationInfo authInfo =
-            AuthenticationInfo.create().user( HandlerTestHelper.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
 
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
 
@@ -64,7 +64,7 @@ public class LoginHandlerTest
         final UserStores userStores =
             UserStores.from( UserStore.create().displayName( "system" ).key( UserStoreKey.from( "system" ) ).build() );
 
-        final AuthenticationInfo authInfo = HandlerTestHelper.createAuthenticationInfo();
+        final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
 
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
         Mockito.when( this.securityService.getUserStores() ).thenReturn( userStores );
@@ -81,7 +81,7 @@ public class LoginHandlerTest
         throws Exception
     {
 
-        final AuthenticationInfo authInfo = HandlerTestHelper.createAuthenticationInfo();
+        final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
 
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
 

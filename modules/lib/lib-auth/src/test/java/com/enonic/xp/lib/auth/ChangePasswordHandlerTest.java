@@ -33,7 +33,7 @@ public class ChangePasswordHandlerTest
     public void testFunction()
         throws Exception
     {
-        final AuthenticationInfo authInfo = HandlerTestHelper.createAuthenticationInfo();
+        final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
         this.session.setAttribute( authInfo );
 
         runTestFunction( "/test/changePassword-test.js", "changePassword" );

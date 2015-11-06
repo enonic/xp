@@ -28,14 +28,14 @@ public class CreateGroupHandlerTest
         this.session = new SimpleSession( SessionKey.generate() );
         ContextAccessor.current().getLocalScope().setSession( session );
 
-        this.session.setAttribute( HandlerTestHelper.createAuthenticationInfo() );
+        this.session.setAttribute( TestDataFixtures.createAuthenticationInfo() );
     }
 
     @Test
     public void testCreateGroup()
         throws Exception
     {
-        Mockito.when( securityService.createGroup( Mockito.any() ) ).thenReturn( HandlerTestHelper.getTestGroup() );
+        Mockito.when( securityService.createGroup( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestGroup() );
 
         runTestFunction( "/test/createGroup-test.js", "createGroup" );
     }

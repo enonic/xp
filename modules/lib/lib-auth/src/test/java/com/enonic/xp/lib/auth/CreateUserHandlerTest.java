@@ -28,14 +28,14 @@ public class CreateUserHandlerTest
         this.session = new SimpleSession( SessionKey.generate() );
         ContextAccessor.current().getLocalScope().setSession( session );
 
-        this.session.setAttribute( HandlerTestHelper.createAuthenticationInfo() );
+        this.session.setAttribute( TestDataFixtures.createAuthenticationInfo() );
     }
 
     @Test
     public void testCreateUser()
         throws Exception
     {
-        Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( HandlerTestHelper.getTestUser() );
+        Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUser() );
 
         runTestFunction( "/test/createUser-test.js", "createUser" );
     }
@@ -44,7 +44,7 @@ public class CreateUserHandlerTest
     public void testCreateUserNoEmail()
         throws Exception
     {
-        Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( HandlerTestHelper.getTestUserWithouEmail() );
+        Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUserWithoutEmail() );
 
         runTestFunction( "/test/createUser-test.js", "createUserNoEmail" );
     }

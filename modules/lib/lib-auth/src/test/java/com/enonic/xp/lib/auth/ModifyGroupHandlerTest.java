@@ -36,7 +36,7 @@ public class ModifyGroupHandlerTest
         this.session = new SimpleSession( SessionKey.generate() );
         ContextAccessor.current().getLocalScope().setSession( session );
 
-        this.session.setAttribute( HandlerTestHelper.createAuthenticationInfo() );
+        this.session.setAttribute( TestDataFixtures.createAuthenticationInfo() );
     }
 
     @Test
@@ -45,7 +45,7 @@ public class ModifyGroupHandlerTest
     {
         Mockito.<Optional<? extends Principal>>when(
             securityService.getGroup( PrincipalKey.from( "group:myGroupStore:groupId" ) ) ).thenReturn(
-            Optional.of( HandlerTestHelper.getTestUser() ) );
+            Optional.of( TestDataFixtures.getTestUser() ) );
 
         Mockito.when( this.securityService.updateGroup( Mockito.isA( UpdateGroupParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateGroupParams) invocationOnMock.getArguments()[0] ) );
@@ -59,7 +59,7 @@ public class ModifyGroupHandlerTest
         final GroupEditor editor = params.getEditor();
         Assert.assertNotNull( editor );
 
-        final Group group = HandlerTestHelper.getTestGroup();
+        final Group group = TestDataFixtures.getTestGroup();
         final EditableGroup editable = new EditableGroup( group );
 
         editor.edit( editable );

@@ -13,7 +13,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-public class HandlerTestHelper
+public class TestDataFixtures
 {
 
     private static final Instant NOW = Instant.ofEpochSecond( 0 );
@@ -31,7 +31,7 @@ public class HandlerTestHelper
             build();
     }
 
-    public static User getTestUserWithouEmail()
+    public static User getTestUserWithoutEmail()
     {
         return User.create().
             key( PrincipalKey.ofUser( UserStoreKey.from( "enonic" ), "user1" ) ).

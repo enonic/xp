@@ -30,7 +30,7 @@ public class GetMembershipsHandlerTest
         this.session = new SimpleSession( SessionKey.generate() );
         ContextAccessor.current().getLocalScope().setSession( session );
 
-        this.session.setAttribute( HandlerTestHelper.createAuthenticationInfo() );
+        this.session.setAttribute( TestDataFixtures.createAuthenticationInfo() );
     }
 
     @Test
@@ -41,7 +41,7 @@ public class GetMembershipsHandlerTest
 
         Mockito.when( securityService.getMemberships( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn( principalKeys );
 
-        Mockito.when( securityService.getPrincipals( principalKeys ) ).thenReturn( Principals.from( HandlerTestHelper.getTestUser() ) );
+        Mockito.when( securityService.getPrincipals( principalKeys ) ).thenReturn( Principals.from( TestDataFixtures.getTestUser() ) );
 
         runTestFunction( "/test/getMemberships-test.js", "getUserMemberships" );
     }
@@ -55,7 +55,7 @@ public class GetMembershipsHandlerTest
         Mockito.when( securityService.getMemberships( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn( principalKeys );
 
         Mockito.when( securityService.getPrincipals( principalKeys ) ).thenReturn(
-            Principals.from( HandlerTestHelper.getTestUser(), HandlerTestHelper.getTestRole(), HandlerTestHelper.getTestGroup() ) );
+            Principals.from( TestDataFixtures.getTestUser(), TestDataFixtures.getTestRole(), TestDataFixtures.getTestGroup() ) );
 
         runTestFunction( "/test/getMemberships-test.js", "getUserMembershipsWithRoleAndGroup" );
     }
