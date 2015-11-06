@@ -62,10 +62,8 @@ public class AddMembershipsHandlerTest
     public void testAddMembershipsEmptyListPassed()
         throws Exception
     {
-
-        Mockito.verify( this.securityService, Mockito.times( 0 ) );
-
         runTestFunction( "/test/addMemberships-test.js", "addMembershipsEmptyList" );
+        Mockito.verify( this.securityService, Mockito.times( 0 ) ).addRelationship( Mockito.any() );
     }
 
     private PrincipalRelationship invokeAddRelationshipsToUser( final PrincipalRelationship relationship )

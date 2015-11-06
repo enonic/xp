@@ -62,10 +62,8 @@ public class RemoveMembershipsHandlerTest
     public void testRemoveMembershipsEmptyListPassed()
         throws Exception
     {
-
-        Mockito.verify( this.securityService, Mockito.times( 0 ) );
-
         runTestFunction( "/test/removeMemberships-test.js", "removeMembershipsEmptyList" );
+        Mockito.verify( this.securityService, Mockito.times( 0 ) ).removeRelationship( Mockito.any() );
     }
 
     private PrincipalRelationship invokeRemoveRelationshipsFromUser( final PrincipalRelationship relationship )
