@@ -19,7 +19,7 @@ module api.liveedit.layout {
                 cssSelector: '[data-portal-component-type=layout]',
                 draggable: true,
                 cursor: 'move',
-                iconCls: 'live-edit-font-icon-layout',
+                iconCls: api.StyleHelper.COMMON_PREFIX + 'icon-layout',
                 highlighterStyle: {
                     stroke: 'rgba(255, 165, 0, 1)',
                     strokeDasharray: '5 5',

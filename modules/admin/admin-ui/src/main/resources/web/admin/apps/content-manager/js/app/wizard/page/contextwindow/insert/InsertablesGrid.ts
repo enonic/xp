@@ -57,9 +57,7 @@ module app.wizard.page.contextwindow.insert {
                 rowEl.addClass(this.componentGridOptions.rowClass)
             }
 
-            var icon = new api.dom.DivEl();
-            icon.setClass('live-edit-font-icon-' + insertable.getIconCls());
-            icon.addClass('icon');
+            var icon = new api.ui.FontIcon(insertable.getIconCls());
 
             var title = new api.dom.H5El();
             title.getEl().setInnerHtml(insertable.getDisplayName());

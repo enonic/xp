@@ -11,7 +11,7 @@ module app.wizard.page.contextwindow.inspect {
 
             this.namesAndIcon = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
                 setSize(api.app.NamesAndIconViewSize.medium)).
-                setIconClass("live-edit-font-icon-content icon-xlarge");
+                setIconClass(api.liveedit.ItemViewIconClassResolver.resolveByType("content", "icon-xlarge"));
 
             this.appendChild(this.namesAndIcon);
         }

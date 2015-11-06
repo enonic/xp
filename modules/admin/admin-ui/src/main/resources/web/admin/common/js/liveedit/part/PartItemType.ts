@@ -18,7 +18,7 @@ module api.liveedit.part {
                 cssSelector: '[data-portal-component-type=part]',
                 draggable: true,
                 cursor: 'move',
-                iconCls: 'live-edit-font-icon-part',
+                iconCls: api.StyleHelper.COMMON_PREFIX + 'icon-part',
                 highlighterStyle: {
                     stroke: 'rgba(68, 68, 68, 1)',
                     strokeDasharray: '5 5',

@@ -15,7 +15,7 @@ module api.liveedit.layout {
         }
 
         resolveIconClass(object: api.content.page.region.LayoutComponent): string {
-            return "live-edit-font-icon-layout";
+            return api.liveedit.ItemViewIconClassResolver.resolveByType("layout");
         }
     }
 

@@ -18,7 +18,7 @@ module api.liveedit.text {
                 cssSelector: '[data-portal-component-type=text]',
                 draggable: true,
                 cursor: 'move',
-                iconCls: 'live-edit-font-icon-text',
+                iconCls: api.StyleHelper.COMMON_PREFIX + 'icon-text',
                 highlighterStyle: {
                     stroke: 'rgba(152, 201, 242, 1)',
                     strokeDasharray: '5 5',

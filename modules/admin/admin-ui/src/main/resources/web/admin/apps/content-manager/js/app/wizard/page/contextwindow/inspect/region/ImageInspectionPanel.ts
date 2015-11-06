@@ -30,7 +30,7 @@ module app.wizard.page.contextwindow.inspect.region {
 
         constructor() {
             super(<ComponentInspectionPanelConfig>{
-                iconClass: "live-edit-font-icon-image icon-xlarge"
+                iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("image", "icon-xlarge")
             });
             this.imageSelector = ContentComboBox.create().
                 setMaximumOccurrences(1).

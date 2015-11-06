@@ -52,10 +52,10 @@ module api.app {
                 this.wrapperDivEl = new api.dom.DivEl("wrapper");
                 this.appendChild(this.wrapperDivEl);
 
-                this.iconImageEl = new api.dom.ImgEl(null, "icon");
+                this.iconImageEl = new api.dom.ImgEl(null, "font-icon-default");
                 this.wrapperDivEl.appendChild(this.iconImageEl);
 
-                this.iconDivEl = new api.dom.DivEl("icon");
+                this.iconDivEl = new api.dom.DivEl("font-icon-default");
                 this.wrapperDivEl.appendChild(this.iconDivEl);
                 this.iconDivEl.hide();
             }
@@ -84,7 +84,7 @@ module api.app {
         }
 
         setIconClass(value: string): NamesAndIconView {
-            this.iconDivEl.setClass("icon " + value);
+            this.iconDivEl.setClass("font-icon-default " + value);
             this.iconDivEl.getEl().setDisplay('inline-block');
             this.iconImageEl.hide();
             return this;
