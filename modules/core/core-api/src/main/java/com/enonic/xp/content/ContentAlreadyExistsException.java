@@ -7,12 +7,12 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.exception.NotFoundException;
 
 @Beta
-public final class ContentAlreadyExistException
+public final class ContentAlreadyExistsException
     extends NotFoundException
 {
     private final ContentPath path;
 
-    public ContentAlreadyExistException( final ContentPath path )
+    public ContentAlreadyExistsException( final ContentPath path )
     {
         super( MessageFormat.format( "Content at path [{0}] already exist", path.toString() ) );
         this.path = path;
@@ -25,6 +25,6 @@ public final class ContentAlreadyExistException
 
     public String getCode()
     {
-        return "contentAlreadyExist";
+        return "contentAlreadyExists";
     }
 }

@@ -11,7 +11,7 @@ import com.google.common.base.Strings;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
-import com.enonic.xp.content.ContentAlreadyExistException;
+import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentName;
@@ -77,7 +77,7 @@ final class CreateContentCommand
         }
         catch ( NodeAlreadyExistAtPathException e )
         {
-            throw new ContentAlreadyExistException(
+            throw new ContentAlreadyExistsException(
                 ContentPath.from( createContentTranslatorParams.getParent(), createContentTranslatorParams.getName().toString() ) );
         }
         catch ( NodeAccessException e )

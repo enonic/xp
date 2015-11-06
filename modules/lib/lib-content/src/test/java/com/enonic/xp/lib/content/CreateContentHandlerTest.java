@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentAlreadyExistException;
+import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
@@ -100,7 +100,7 @@ public class CreateContentHandlerTest
     public void createContentAlreadyExists()
         throws Exception
     {
-        final Exception alreadyExistException = new ContentAlreadyExistException( ContentPath.from( "/a/b/mycontent" ) );
+        final Exception alreadyExistException = new ContentAlreadyExistsException( ContentPath.from( "/a/b/mycontent" ) );
         Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenThrow( alreadyExistException );
 
         final ContentType contentType = ContentType.create().
