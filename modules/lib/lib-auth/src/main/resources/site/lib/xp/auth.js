@@ -269,3 +269,22 @@ exports.addMemberships = function (key, list) {
     return __.toNativeObject(bean.addMemberships());
 };
 
+/**
+ * Remove memberships from list for principal with passed key.
+ *
+ * @example
+ * auth.removeMemberships('user-key', ['role-key', 'group-key']);
+ *
+ * @param {string} key Principal key to add memeberships to.
+ * @param {string} list Principal keys list to add.
+ */
+exports.removeMemberships = function (key, list) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.RemoveMembershipsHandler');
+
+    bean.principalKey = nullOrValue(key);
+
+    bean.membershipsList = __.toScriptValue(list);
+
+    return __.toNativeObject(bean.removeMemberships());
+};
+
