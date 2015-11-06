@@ -97,6 +97,7 @@ public class IndexServiceImpl
     @Override
     public boolean isMaster()
     {
+
         return indexServiceInternal.isMaster();
     }
 

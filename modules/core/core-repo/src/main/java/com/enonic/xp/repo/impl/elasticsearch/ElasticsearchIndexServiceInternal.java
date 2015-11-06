@@ -53,6 +53,8 @@ public class ElasticsearchIndexServiceInternal
 
     private final static String EXISTS_TIMEOUT = "5s";
 
+    private final static String CLUSTER_STATE_TIMEOUT = "5s";
+
     private ElasticsearchDao elasticsearchDao;
 
     private Client client;
@@ -80,7 +82,8 @@ public class ElasticsearchIndexServiceInternal
             setNodes( true ).
             setRoutingTable( false );
 
-        final ClusterStateResponse clusterStateResponse = client.admin().cluster().state( requestBuilder.request() ).actionGet();
+        final ClusterStateResponse clusterStateResponse =
+            client.admin().cluster().state( requestBuilder.request() ).actionGet( CLUSTER_STATE_TIMEOUT );
 
         return clusterStateResponse.getState().nodes().localNodeMaster();
     }
