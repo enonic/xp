@@ -86,7 +86,7 @@ public final class ApplicationRegistryImpl
 
     private boolean isApplication( final Bundle bundle )
     {
-        return ( bundle.getState() != Bundle.UNINSTALLED ) && Application.isApplication( bundle );
+        return ( bundle.getState() != Bundle.UNINSTALLED ) && ApplicationImpl.isApplication( bundle );
     }
 
     private void publishApplicationChangeEvent( final BundleEvent event )
@@ -114,8 +114,7 @@ public final class ApplicationRegistryImpl
 
     private void installApplication( final Bundle bundle )
     {
-        final Application application = Application.from( bundle );
-        installApplication( application );
+        installApplication( new ApplicationImpl( bundle ) );
     }
 
     @Override

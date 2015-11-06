@@ -44,8 +44,7 @@ public class ApplicationServiceImplTest
 
     private Application createApplication( final String key )
     {
-        final Application application = Application.from( mockBundle( key ) );
-        return application;
+        return new ApplicationImpl( mockBundle( key ) );
     }
 
     @Test
@@ -141,11 +140,11 @@ public class ApplicationServiceImplTest
 
     private Dictionary<String, String> createBundleHeaders()
     {
-        Dictionary<String, String> headers = new Hashtable<String, String>();
+        Dictionary<String, String> headers = new Hashtable<>();
         headers.put( Constants.BUNDLE_NAME, "myapplication" );
-        headers.put( Application.X_APPLICATION_URL, "http://enonic.com/path/to/application" );
-        headers.put( Application.X_VENDOR_NAME, "Enonic AS" );
-        headers.put( Application.X_VENDOR_URL, "http://enonic.com" );
+        headers.put( ApplicationImpl.X_APPLICATION_URL, "http://enonic.com/path/to/application" );
+        headers.put( ApplicationImpl.X_VENDOR_NAME, "Enonic AS" );
+        headers.put( ApplicationImpl.X_VENDOR_URL, "http://enonic.com" );
 
         return headers;
     }
