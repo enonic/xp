@@ -103,3 +103,4 @@
 ///<reference path='Widget.ts' />
 ///<reference path='WidgetDescriptorResourceRequest.ts' />
 ///<reference path='GetWidgetsByInterfaceRequest.ts' />
+///<reference path='GetEffectivePermissions.ts' />

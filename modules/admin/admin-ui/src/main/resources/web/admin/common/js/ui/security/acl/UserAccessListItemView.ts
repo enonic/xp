@@ -5,7 +5,7 @@ module api.ui.security.acl {
     import User = api.security.User;
 
 
-    export class UserAccessListItemView extends api.ui.Viewer<UserAccessListItem> {
+    export class UserAccessListItemView extends api.ui.Viewer<EffectivePermission> {
 
         private userLine: api.dom.DivEl;
 
@@ -32,7 +32,7 @@ module api.ui.security.acl {
         }
 
         doRender(): boolean {
-            var data = <UserAccessListItem>this.getObject();
+            var data = <EffectivePermission>this.getObject();
 
             this.accessLine = new api.dom.SpanEl("access-line").setHtml(this.getOptionName(data.getAccess()));
             this.userLine = new api.dom.DivEl("user-line");
@@ -40,23 +40,22 @@ module api.ui.security.acl {
             var isEmpty: boolean = true;
 
 
-            data.getPrincipals().forEach((principal: Principal) => {
-                if (principal.isUser()) {
-                    isEmpty = false;
+            data.getMembers().forEach((principal: EffectivePermissionMember) => {
 
-                    var display = principal.getDisplayName().split(" ").map(word => word.substring(0, 1).toUpperCase());
+                isEmpty = false;
 
-                    var icon = new api.dom.SpanEl("user-icon").setHtml(display.length >= 2
-                        ? display.join("").substring(0, 2)
-                        : principal.getDisplayName().substring(0, 2).toUpperCase());
-                    if (this.currentUser && this.currentUser.getKey().equals(principal.getKey())) {
-                        icon.addClass("active");
-                        this.userLine.insertChild(icon, 0);
-                    } else {
-                        this.userLine.appendChild(icon);
-                    }
-                    new Tooltip(icon, principal.getDisplayName(), 200).setMode(Tooltip.MODE_GLOBAL_STATIC);
+                var display = principal.getDisplayName().split(" ").map(word => word.substring(0, 1).toUpperCase());
+
+                var icon = new api.dom.SpanEl("user-icon").setHtml(display.length >= 2
+                    ? display.join("").substring(0, 2)
+                    : principal.getDisplayName().substring(0, 2).toUpperCase());
+                if (this.currentUser && this.currentUser.getKey().equals(principal.getUserKey())) {
+                    icon.addClass("active");
+                    this.userLine.insertChild(icon, 0);
+                } else {
+                    this.userLine.appendChild(icon);
                 }
+                new Tooltip(icon, principal.getDisplayName(), 200).setMode(Tooltip.MODE_GLOBAL_STATIC);
             });
 
             if (isEmpty) {
