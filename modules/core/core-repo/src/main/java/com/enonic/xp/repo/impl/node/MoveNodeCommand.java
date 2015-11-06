@@ -14,12 +14,12 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 import com.enonic.xp.repo.impl.branch.storage.NodesBranchMetadata;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
-import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.repo.impl.storage.MoveNodeParams;
 import com.enonic.xp.security.acl.Permission;
@@ -62,7 +62,11 @@ public class MoveNodeCommand
 
         final Node movedNode = doMoveNode( newParentPath, newNodeName, nodeId );
 
-        indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ) );
+        RefreshCommand.create().
+            refreshMode( RefreshMode.SEARCH ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
 
         return MoveNodeResult.create().
             sourceNode( existingNode ).
