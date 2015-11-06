@@ -26,7 +26,7 @@ public class LogoutHandlerTest
     public void testLogout()
         throws Exception
     {
-        final AuthenticationInfo authInfo = HandlerTestHelper.createAuthenticationInfo();
+        final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
         this.session.setAttribute( authInfo );
 
         Assert.assertTrue( ContextAccessor.current().getAuthInfo().isAuthenticated() );

@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.content.mapper;
+package com.enonic.xp.lib.auth;
 
 import java.net.URL;
 import java.time.Clock;

@@ -8,18 +8,18 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.security.EditableUser;
+import com.enonic.xp.security.EditableGroup;
+import com.enonic.xp.security.Group;
+import com.enonic.xp.security.GroupEditor;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UpdateUserParams;
-import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserEditor;
+import com.enonic.xp.security.UpdateGroupParams;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
-public class ModifyUserHandlerTest
+public class ModifyGroupHandlerTest
     extends ScriptTestSupport
 {
 
@@ -40,26 +40,27 @@ public class ModifyUserHandlerTest
     }
 
     @Test
-    public void testModifyUser()
+    public void testModifyGroup()
         throws Exception
     {
-        Mockito.<Optional<? extends Principal>>when( securityService.getUser( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn(
+        Mockito.<Optional<? extends Principal>>when(
+            securityService.getGroup( PrincipalKey.from( "group:myGroupStore:groupId" ) ) ).thenReturn(
             Optional.of( TestDataFixtures.getTestUser() ) );
 
-        Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateUserParams) invocationOnMock.getArguments()[0] ) );
+        Mockito.when( this.securityService.updateGroup( Mockito.isA( UpdateGroupParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( (UpdateGroupParams) invocationOnMock.getArguments()[0] ) );
 
-        runTestFunction( "/test/modifyUser-test.js", "modifyUser" );
+        runTestFunction( "/test/modifyGroup-test.js", "modifyGroup" );
     }
 
-    private User invokeUpdate( final UpdateUserParams params )
+    private Group invokeUpdate( final UpdateGroupParams params )
     {
 
-        final UserEditor editor = params.getEditor();
+        final GroupEditor editor = params.getEditor();
         Assert.assertNotNull( editor );
 
-        final User user = TestDataFixtures.getTestUser();
-        final EditableUser editable = new EditableUser( user );
+        final Group group = TestDataFixtures.getTestGroup();
+        final EditableGroup editable = new EditableGroup( group );
 
         editor.edit( editable );
         return editable.build();
