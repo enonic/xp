@@ -15,11 +15,15 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component(immediate = true)
 public final class ClientActivator
 {
     private final static long CHECK_INTERVAL_MS = 1000L;
+
+    private final String CLUSTER_HEALTH_TIMEOUT = "5s";
 
     private Node node;
 
@@ -28,6 +32,8 @@ public final class ClientActivator
     private final Timer timer;
 
     protected ServiceRegistration<Client> reg;
+
+    private final static Logger LOG = LoggerFactory.getLogger( ClientActivator.class );
 
     public ClientActivator()
     {
@@ -78,6 +84,7 @@ public final class ClientActivator
             return;
         }
 
+        LOG.error( "Cluster operational, register elasticsearch-client" );
         this.reg = this.context.registerService( Client.class, this.node.client(), new Hashtable<>() );
     }
 
@@ -90,6 +97,7 @@ public final class ClientActivator
 
         try
         {
+            LOG.error( "Cluster not operational , unregister elasticsearch-client" );
             this.reg.unregister();
         }
         finally
@@ -102,11 +110,23 @@ public final class ClientActivator
     {
         try
         {
-            final ClusterHealthResponse response = this.node.client().admin().cluster().health( new ClusterHealthRequest() ).actionGet();
-            return response.getStatus() == ClusterHealthStatus.RED;
+            final ClusterHealthResponse response = this.node.client().admin().cluster().health( new ClusterHealthRequest().
+                timeout( CLUSTER_HEALTH_TIMEOUT ).
+                waitForYellowStatus() ).
+                actionGet();
+
+            final boolean isRed = response.getStatus() == ClusterHealthStatus.RED;
+
+            if ( isRed )
+            {
+                LOG.error( "Cluster health in state 'RED' " );
+            }
+
+            return isRed;
         }
         catch ( final Exception e )
         {
+            LOG.error( "Cluster health in state 'RED' ", e );
             return true;
         }
     }
