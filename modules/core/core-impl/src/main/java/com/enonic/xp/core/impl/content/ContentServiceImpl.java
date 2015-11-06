@@ -61,6 +61,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.index.IndexService;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
@@ -116,6 +117,8 @@ public class ContentServiceImpl
 
     private ContentNodeTranslator translator;
 
+    private IndexService indexService;
+
     public ContentServiceImpl()
     {
         final ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().
@@ -128,7 +131,10 @@ public class ContentServiceImpl
     @Activate
     public void initialize()
     {
-        new ContentInitializer( this.nodeService ).initialize();
+        if ( this.indexService.isMaster() )
+        {
+            new ContentInitializer( this.nodeService ).initialize();
+        }
     }
 
     @Override
@@ -696,5 +702,11 @@ public class ContentServiceImpl
     public void setTranslator( final ContentNodeTranslator translator )
     {
         this.translator = translator;
+    }
+
+    @Reference
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
     }
 }

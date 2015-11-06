@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.repository;
 
 import java.util.Set;
 
-import org.elasticsearch.common.unit.TimeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +16,7 @@ import com.enonic.xp.repository.RepositoryId;
 
 public final class RepositoryInitializer
 {
-    private final static TimeValue CLUSTER_HEALTH_TIMEOUT_VALUE = TimeValue.timeValueSeconds( 10 );
+    private final static String CLUSTER_HEALTH_TIMEOUT_VALUE = "10s";
 
     private final static Logger LOG = LoggerFactory.getLogger( RepositoryInitializer.class );
 
@@ -28,28 +27,55 @@ public final class RepositoryInitializer
         this.indexServiceInternal = indexServiceInternal;
     }
 
-    public void initializeRepository( final RepositoryId repositoryId )
+    public void initializeRepositories( final RepositoryId... repositoryIds )
     {
-        if ( !isInitialized( repositoryId ) )
+        if ( !checkClusterHealth() )
         {
-            doInitializeRepo( repositoryId );
+            throw new RepositoryException( "Unable to initialize repositories" );
         }
-        else
+
+        final boolean isMaster = indexServiceInternal.isMaster();
+
+        for ( final RepositoryId repositoryId : repositoryIds )
         {
-            waitForInitialized( repositoryId );
+            if ( !isInitialized( repositoryId ) && isMaster )
+            {
+                doInitializeRepo( repositoryId );
+            }
+            else
+            {
+                waitForInitialized( repositoryId );
+            }
         }
+
+    }
+
+    private boolean checkClusterHealth()
+    {
+        try
+        {
+            final ClusterHealthStatus clusterHealth = indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
+
+            if ( clusterHealth.isTimedOut() || clusterHealth.getClusterStatusCode().equals( ClusterStatusCode.RED ) )
+            {
+                LOG.error( "Cluster not healthy: " + "timed out: " + clusterHealth.isTimedOut() + ", state: " +
+                               clusterHealth.getClusterStatusCode() );
+                return false;
+            }
+
+            return true;
+        }
+        catch ( Exception e )
+        {
+            LOG.error( "Failed to get cluster health status", e );
+        }
+
+        return false;
     }
 
     private void doInitializeRepo( final RepositoryId repositoryId )
     {
         LOG.info( "Initializing repositoryId {}", repositoryId );
-
-        final ClusterHealthStatus clusterHealth = indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
-
-        if ( clusterHealth.isTimedOut() || !clusterHealth.getClusterStatusCode().equals( ClusterStatusCode.RED ) )
-        {
-            deleteExistingRepoIndices( repositoryId );
-        }
 
         createIndexes( repositoryId );
 

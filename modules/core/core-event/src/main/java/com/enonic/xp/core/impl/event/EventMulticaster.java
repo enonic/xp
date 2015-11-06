@@ -38,7 +38,7 @@ final class EventMulticaster
         Collections.sort( this.listeners, ( o1, o2 ) -> o1.getOrder() - o2.getOrder() );
     }
 
-    public void publish( final Event event )
+    public synchronized void publish( final Event event )
     {
         for ( final EventListener eventListener : this.listeners )
         {

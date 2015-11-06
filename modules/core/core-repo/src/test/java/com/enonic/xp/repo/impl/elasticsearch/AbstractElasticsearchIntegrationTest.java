@@ -5,7 +5,6 @@ import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.unit.TimeValue;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
@@ -80,7 +79,7 @@ public abstract class AbstractElasticsearchIntegrationTest
 
     public void waitForClusterHealth()
     {
-        elasticsearchIndexService.getClusterHealth( TimeValue.timeValueSeconds( 10 ) );
+        elasticsearchIndexService.getClusterHealth( "10s" );
     }
 
     protected final RefreshResponse refresh()

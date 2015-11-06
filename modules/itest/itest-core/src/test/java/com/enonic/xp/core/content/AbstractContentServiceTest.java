@@ -226,7 +226,7 @@ public class AbstractContentServiceTest
         nodeService.setStorageService( storageService );
 
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
-        repositoryInitializer.initializeRepository( repository.getId() );
+        repositoryInitializer.initializeRepositories( repository.getId() );
 
         refresh();
     }
