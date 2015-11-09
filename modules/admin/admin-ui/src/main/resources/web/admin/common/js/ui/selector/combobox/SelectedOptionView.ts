@@ -6,8 +6,8 @@ module api.ui.selector.combobox {
 
         getOption(): api.ui.selector.Option<T>;
 
-        onSelectedOptionRemoveRequest(listener: {(): void;});
+        onRemoveClicked(listener: {(): void;});
 
-        unSelectedOptionRemoveRequest(listener: {(): void;});
+        unRemoveClicked(listener: {(): void;});
     }
 }

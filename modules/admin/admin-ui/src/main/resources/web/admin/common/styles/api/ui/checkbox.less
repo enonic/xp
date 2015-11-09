@@ -1,6 +1,5 @@
 .checkbox {
   .reset(true);
-
   position: relative;
 
   &:hover {
@@ -13,13 +12,13 @@
   label {
     color: #777 !important;
     display: block;
-    padding-left: 20px;
     white-space: nowrap;
+    padding: 5px;
+    cursor: pointer;
 
     &:before {
       content: '';
       display: block;
-      position: absolute;
       background: url("../images/admin-unchecked.gif") -1px -2px no-repeat;
       width: 13px;
       height: 13px;
@@ -49,14 +48,7 @@
       color: #333 !important;
 
       &:before {
-        content: '';
-        display: block;
-        position: absolute;
         background: url("../images/admin-checked.gif") -1px -2px no-repeat;
-        width: 13px;
-        height: 13px;
-        top: 0;
-        left: 0;
       }
     }
   }

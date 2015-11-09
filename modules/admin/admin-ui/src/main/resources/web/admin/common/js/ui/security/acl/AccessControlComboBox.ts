@@ -63,14 +63,6 @@ module api.ui.security.acl {
             return this.option;
         }
 
-        onSelectedOptionRemoveRequest(listener: {(): void}) {
-            this.onRemoveClicked(listener);
-        }
-
-        unSelectedOptionRemoveRequest(listener: {(): void}) {
-            this.unRemoveClicked(listener);
-        }
-
     }
 
     class ACESelectedOptionsView extends AccessControlListView implements api.ui.selector.combobox.SelectedOptionsView<AccessControlEntry> {
@@ -79,6 +71,7 @@ module api.ui.security.acl {
         private list: SelectedOption<AccessControlEntry>[] = [];
 
         private selectedOptionRemovedListeners: {(removed: SelectedOption<AccessControlEntry>): void;}[] = [];
+        private selectedOptionAddedListeners: {(added: SelectedOption<AccessControlEntry>): void;}[] = [];
 
         constructor(className?: string) {
             super(className);
@@ -113,9 +106,7 @@ module api.ui.security.acl {
             });
             var selectedOption = new SelectedOption<AccessControlEntry>(itemView, this.list.length);
 
-            itemView.onSelectedOptionRemoveRequest(() => {
-                this.removeOption(option, false);
-            });
+            itemView.onRemoveClicked(() => this.removeOption(option, false));
 
             // keep track of selected options for SelectedOptionsView
             this.list.push(selectedOption);
@@ -123,12 +114,17 @@ module api.ui.security.acl {
         }
 
 
-        addOption(option: Option<AccessControlEntry>): boolean {
+        addOption(option: Option<AccessControlEntry>, silent: boolean = false): boolean {
             this.addItem(option.displayValue);
+
+            if (!silent) {
+                var selectedOption = this.getByOption(option);
+                this.notifySelectedOptionAdded(selectedOption);
+            }
             return true;
         }
 
-        removeOption(optionToRemove: Option<AccessControlEntry>, silent: boolean) {
+        removeOption(optionToRemove: Option<AccessControlEntry>, silent: boolean = false) {
             api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
 
             var selectedOption = this.getByOption(optionToRemove);
@@ -206,6 +202,28 @@ module api.ui.security.acl {
             this.selectedOptionRemovedListeners = this.selectedOptionRemovedListeners.filter(function (curr) {
                 return curr != listener;
             });
+        }
+
+        onOptionSelected(listener: {(added: SelectedOption<AccessControlEntry>): void;}) {
+            this.selectedOptionAddedListeners.push(listener);
+        }
+
+        unOptionSelected(listener: {(added: SelectedOption<AccessControlEntry>): void;}) {
+            this.selectedOptionAddedListeners = this.selectedOptionAddedListeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        private notifySelectedOptionAdded(added: SelectedOption<AccessControlEntry>) {
+            this.selectedOptionAddedListeners.forEach((listener) => {
+                listener(added);
+            });
+        }
+
+        onOptionMoved(listener: {(moved: SelectedOption<AccessControlEntry>): void;}) {
+        }
+
+        unOptionMoved(listener: {(moved: SelectedOption<AccessControlEntry>): void;}) {
         }
 
     }

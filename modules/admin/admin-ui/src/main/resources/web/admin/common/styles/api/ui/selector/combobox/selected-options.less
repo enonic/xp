@@ -1,0 +1,71 @@
+// can be out of combobox (i.e ImageSelector)
+.selected-options {
+  float: none;
+
+  &.sortable {
+    .selected-option {
+      cursor: move;
+    }
+  }
+
+  .selected-option {
+    .option-cell();
+    width: 100%;
+    padding-right: 0;
+    cursor: default;
+
+    &:hover {
+      background: none;
+    }
+
+    &.placeholder {
+      background-color: transparent;
+      border: 2px dashed @admin-medium-gray-border;
+      text-align: center;
+      font-size: 22px;
+      line-height: 44px;
+
+      &:before {
+        color: @admin-font-gray1;
+        content: 'Drop here';
+      }
+    }
+
+    .remove {
+      &:extend(.icon);
+      .icon-close;
+
+      float: right;
+      font-size: 12px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  }
+}
+
+.option-cell() {
+  .default-slick-cell-styling();
+
+  &:hover, &.active {
+    background: @admin-bg-light-gray;
+  }
+
+  &.slick-cell-checkboxsel {
+    padding-right: 0;
+
+    label {
+      cursor: pointer;
+    }
+  }
+
+  &.selected {
+    font-style: italic;
+    color: #d3d3d3;
+
+    &.readonly {
+      opacity: 0.5;
+      cursor: default;
+      pointer-events: none;
+    }
+  }
+}

@@ -57,22 +57,16 @@ module api.content.form.inputtype.image {
 
         layout() {
             this.icon = new api.dom.ImgEl();
-            this.appendChild(this.icon);
-
             this.label = new api.dom.DivEl("label");
-            this.appendChild(this.label);
-
             this.check = new api.ui.Checkbox();
-            this.appendChild(this.check);
-
             this.progress = new api.ui.ProgressBar();
-            this.appendChild(this.progress);
-
             this.error = new api.dom.DivEl("error");
-            this.appendChild(this.error);
-
             this.loadMask = new LoadMask(this);
-            this.appendChild(this.loadMask);
+
+            var squaredContent = new api.dom.DivEl('squared-content');
+            squaredContent.appendChildren(this.icon, this.label, this.check, this.progress, this.error, this.loadMask);
+
+            this.appendChild(squaredContent);
 
             this.check.onClicked((event: MouseEvent) => {
                 this.check.toggleChecked();
@@ -132,21 +126,18 @@ module api.content.form.inputtype.image {
             this.check.show();
         }
 
-        updateProportions(optionHeight: number) {
-            this.getEl().setHeightPx(optionHeight);
-            var iconHeight = this.icon.getEl().getHeightWithBorder();
-            var contentHeight = optionHeight - this.getEl().getBorderTopWidth() - this.getEl().getBorderBottomWidth();
-            if (iconHeight <= contentHeight && iconHeight !== 0) {
-                this.icon.getEl().setMarginTop((contentHeight - iconHeight) / 2 + 'px');
-            } else {
-                this.icon.getEl().setMarginTop('0px');
-            }
+        updateProportions() {
+            var contentHeight = this.getEl().getHeightWithBorder() -
+                                this.getEl().getBorderTopWidth() -
+                                this.getEl().getBorderBottomWidth();
+
+            this.centerVertically(this.icon, contentHeight);
             this.centerVertically(this.progress, contentHeight);
             this.centerVertically(this.error, contentHeight);
         }
 
         private centerVertically(el: api.dom.Element, contentHeight: number) {
-            el.getEl().setMarginTop((contentHeight - this.progress.getEl().getHeight()) / 2 + 'px');
+            el.getEl().setMarginTop(Math.max(0, (contentHeight - el.getEl().getHeight()) / 2) + 'px');
         }
 
         getIcon(): api.dom.ImgEl {
