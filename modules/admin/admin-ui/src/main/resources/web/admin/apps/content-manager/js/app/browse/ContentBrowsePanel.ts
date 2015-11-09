@@ -407,9 +407,10 @@ module app.browse {
                                         this.updateStatisticsPreview(el); // update preview item
 
                                         var selectedItems = this.getBrowseItemPanel().getItems();
-                                        var viewItem = selectedItems[selectedItems.length - 1].toViewItem();
-                                        this.updateDetailsPanels(el.getContentId(), el.getCompareStatus(), viewItem);
-
+                                        if (selectedItems.length > 0) {
+                                            var viewItem = selectedItems[selectedItems.length - 1].toViewItem();
+                                            this.updateDetailsPanels(el.getContentId(), el.getCompareStatus(), viewItem);
+                                        }
                                         results.push(updateResult[i]);
 
                                         break;
@@ -563,11 +564,10 @@ module app.browse {
         }
 
         private updateStatisticsPreview(el: ContentSummaryAndCompareStatus) {
-            var content = el;
-            var previewItem = this.getBrowseItemPanel().getStatisticsItem();
-            var previewItemPath = previewItem.getPath();
+            var content = el,
+                previewItem = this.getBrowseItemPanel().getStatisticsItem();
 
-            if (!!content && content.getPath().toString() === previewItemPath) {
+            if (!!content && !!previewItem && content.getPath().toString() === previewItem.getPath()) {
                 new api.content.page.IsRenderableRequest(el.getContentId()).sendAndParse().
                     then((renderable: boolean) => {
                         var item = new BrowseItem<ContentSummaryAndCompareStatus>(content).
