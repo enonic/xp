@@ -37,6 +37,20 @@ module api.ui.responsive {
             });
         }
 
+        static unAvailableSizeChangedByItem(item: ResponsiveItem) {
+
+            ResponsiveManager.responsiveListeners =
+            ResponsiveManager.responsiveListeners.filter((curr) => {
+                if (curr.getItem() === item) {
+                    ResponsiveManager.window.getHTMLElement().removeEventListener('availablesizechange', curr.getListener());
+                    ResponsiveManager.window.unResized(curr.getListener());
+                    return false;
+                } else {
+                    return true;
+                }
+            });
+        }
+
         // Manual event triggering
         static fireResizeEvent() {
             var customEvent = document.createEvent('Event');
