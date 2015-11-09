@@ -26,7 +26,9 @@ public class AppPlugin
         } );
 
         addLibraryConfig();
+        addWebJarConfig();
         applyDeployTask();
+        applyUnpackWebJarTask();
     }
 
     private void configure( final BundleExtension bundle )
@@ -86,5 +88,35 @@ public class AppPlugin
         } );
 
         this.project.getConfigurations().getByName( "compile" ).extendsFrom( libConfig );
+    }
+
+    private void addWebJarConfig()
+    {
+        this.project.getConfigurations().create( "webjar", conf -> {
+            conf.setTransitive( true );
+        } );
+    }
+
+    private void applyUnpackWebJarTask()
+    {
+        this.project.afterEvaluate( project1 -> {
+            doApplyUnpackWebJarTask();
+        } );
+    }
+
+    private void doApplyUnpackWebJarTask()
+    {
+        final Copy task = this.project.getTasks().create( "unpackWebJars", Copy.class );
+        task.setGroup( "Application" );
+        task.setDescription( "Unpack all webjars into temporary directory." );
+
+        final Configuration config = this.project.getConfigurations().getByName( "webjar" );
+        for ( final File dependency : config.getAsFileTree() )
+        {
+            task.from( this.project.zipTree( dependency ) );
+        }
+
+        task.into( new File( this.project.getBuildDir(), "webjars" ) );
+        this.project.getTasks().getByName( "jar" ).dependsOn( task );
     }
 }

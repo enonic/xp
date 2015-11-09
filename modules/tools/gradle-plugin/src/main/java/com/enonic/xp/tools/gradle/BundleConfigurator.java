@@ -1,5 +1,6 @@
 package com.enonic.xp.tools.gradle;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,6 +60,7 @@ final class BundleConfigurator
 
         instruction( "Bundle-ClassPath", getBundleClassPath( filteredConfig ) );
         instruction( "Include-Resource", getIncludeResource( filteredConfig ) );
+        includeWebJars();
 
         for ( final Map.Entry<String, String> entry : instructions.entrySet() )
         {
@@ -116,5 +118,11 @@ final class BundleConfigurator
         }
 
         return name + "." + artifact.getExtension();
+    }
+
+    private void includeWebJars()
+    {
+        final File webjarsDir = new File( this.project.getBuildDir(), "webjars/META-INF/resources/webjars" );
+        instruction( "Include-Resource", "/site/assets=" + webjarsDir.getAbsolutePath() );
     }
 }
