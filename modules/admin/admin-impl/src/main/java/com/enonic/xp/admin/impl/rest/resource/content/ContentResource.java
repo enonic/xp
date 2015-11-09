@@ -62,6 +62,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionAccessJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionMemberJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetContentVersionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
@@ -869,7 +870,7 @@ public final class ContentResource
 
     @GET
     @Path("effectivePermissions")
-    public Map<String, EffectivePermissionAccessJson> getEffectivePermissions( @QueryParam("id") final String idParam )
+    public List<EffectivePermissionJson> getEffectivePermissions( @QueryParam("id") final String idParam )
     {
         final ContentId id = ContentId.from( idParam );
         final AccessControlList acl = contentService.getPermissionsById( id );
@@ -920,7 +921,7 @@ public final class ContentResource
             accessPrincipals.put( access, principals );
         }
 
-        final Map<String, EffectivePermissionAccessJson> permissionsJson = new HashMap<>();
+        final List<EffectivePermissionJson> permissionsJson = Lists.newArrayList();
         for ( Access access : Access.values() )
         {
             final EffectivePermissionAccessJson accessJson = new EffectivePermissionAccessJson();
@@ -929,7 +930,7 @@ public final class ContentResource
                 stream().map( ( p ) -> new EffectivePermissionMemberJson( p.getKey().toString(), p.getDisplayName() ) ).
                 toArray( EffectivePermissionMemberJson[]::new );
 
-            permissionsJson.put( access.name(), accessJson );
+            permissionsJson.add( new EffectivePermissionJson( access.name(), accessJson ) );
         }
         return permissionsJson;
     }
