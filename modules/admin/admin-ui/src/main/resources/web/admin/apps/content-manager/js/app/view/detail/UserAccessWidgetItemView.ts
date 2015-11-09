@@ -34,6 +34,8 @@ module app.view.detail {
 
         private everyoneAccessValue: Access;
 
+        public static debug = false;
+
         private static OPTIONS: any[] = [
             {value: Access.FULL, name: 'has full access to'},
             {value: Access.PUBLISH, name: 'can publish'},
@@ -48,8 +50,15 @@ module app.view.detail {
             this.accessListView = new UserAccessListView();
         }
 
-        public setContentId(content: ContentId) {
-            this.contentId = content;
+        public setContentId(contentId: ContentId): wemQ.Promise<any> {
+            if (UserAccessWidgetItemView.debug) {
+                console.debug('UserAccessWidgetItemView.setContentId: ', contentId);
+            }
+            if (!api.ObjectHelper.equals(contentId, this.contentId)) {
+                this.contentId = contentId;
+                return this.layout();
+            }
+            return wemQ<any>(null);
         }
 
 
@@ -92,8 +101,7 @@ module app.view.detail {
 
             content.getPermissions().getEntries().
                 filter(entry => !(AccessControlEntryView.getAccessValueFromEntry(entry) == this.everyoneAccessValue)).
-                map(
-                (entry) => {
+                map((entry) => {
 
                     var access = AccessControlEntryView.getAccessValueFromEntry(entry);
                     if (!accessUsersMap[access]) {
@@ -121,6 +129,9 @@ module app.view.detail {
         }
 
         public layout(): wemQ.Promise<any> {
+            if (UserAccessWidgetItemView.debug) {
+                console.debug('UserAccessWidgetItemView.layout');
+            }
             this.removeChildren();
 
             return super.layout().then(this.layoutUserAccess.bind(this));
