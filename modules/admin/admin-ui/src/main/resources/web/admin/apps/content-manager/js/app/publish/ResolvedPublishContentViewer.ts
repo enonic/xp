@@ -47,11 +47,11 @@ module app.publish {
 
     export class ResolvedDependantContentViewer<M extends ContentPublishItem> extends api.ui.Viewer<M> {
 
-        private namesAndIconView: DependantNamesAndIconView;
+        private namesAndIconView: api.app.NamesAndIconView;
 
         constructor(className?: string, size: api.app.NamesAndIconViewSize = api.app.NamesAndIconViewSize.small) {
             super(className);
-            this.namesAndIconView = new DependantNamesAndIconView(size);
+            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(size).build();
             this.addClass("content-resolved-dependant-viewer");
         }
 
@@ -92,67 +92,6 @@ module app.publish {
             this.removeChildren();
             this.appendChild(this.namesAndIconView);
             return true;
-        }
-    }
-
-    export class DependantNamesAndIconView extends api.dom.DivEl {
-
-        private wrapperDivEl: api.dom.DivEl;
-
-        private iconImageEl: api.dom.ImgEl;
-
-        private iconDivEl: api.dom.DivEl;
-
-        private namesView: api.dom.SpanEl;
-
-        private iconLabelEl: api.dom.SpanEl;
-
-        private size: api.app.NamesAndIconViewSize
-
-        constructor(size?: api.app.NamesAndIconViewSize) {
-            super("names-and-icon-view");
-
-            if (size) {
-                this.size = size;
-                this.addClass(api.app.NamesAndIconViewSize[size]);
-            }
-
-            this.wrapperDivEl = new api.dom.DivEl("wrapper");
-            this.appendChild(this.wrapperDivEl);
-
-            this.iconImageEl = new api.dom.ImgEl(null, "icon");
-            this.wrapperDivEl.appendChild(this.iconImageEl);
-
-            this.iconDivEl = new api.dom.DivEl("icon");
-            this.wrapperDivEl.appendChild(this.iconDivEl);
-            this.iconDivEl.hide();
-
-            this.namesView = new api.dom.SpanEl();
-            this.namesView.addClass("name-span");
-            this.appendChild(this.namesView);
-
-            this.iconLabelEl = new api.dom.SpanEl("icon-label");
-            this.iconLabelEl.hide();
-            this.appendChild(this.iconLabelEl);
-        }
-
-        setMainName(value: string): DependantNamesAndIconView {
-            this.namesView.setHtml(value, true);
-            return this;
-        }
-
-        setIconClass(value: string): DependantNamesAndIconView {
-            this.iconDivEl.setClass("icon " + value);
-            this.iconDivEl.getEl().setDisplay('inline-block');
-            this.iconImageEl.hide();
-            return this;
-        }
-
-        setIconUrl(value: string): DependantNamesAndIconView {
-            this.iconImageEl.setSrc(value);
-            this.iconDivEl.hide();
-            this.iconImageEl.show();
-            return this;
         }
     }
 }
