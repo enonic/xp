@@ -80,4 +80,20 @@ public class PortalForwardHandlerTest
         Assert.assertEquals( "/admin/portal/preview", portalAttributes.getBaseUri() );
         Assert.assertEquals( RenderMode.PREVIEW, portalAttributes.getRenderMode() );
     }
+
+    @Test
+    public void forward_admin()
+        throws Exception
+    {
+        this.req.addUserRole( RoleKeys.ADMIN_LOGIN_ID );
+        this.req.setRequestURI( "/admin/portal/admin/ws/a/b" );
+        this.servlet.service( this.req, this.res );
+
+        Assert.assertEquals( "/portal/ws/a/b", this.res.getForwardedUrl() );
+
+        final PortalAttributes portalAttributes = (PortalAttributes) this.req.getAttribute( PortalAttributes.class.getName() );
+        Assert.assertNotNull( portalAttributes );
+        Assert.assertEquals( "/admin/portal/admin", portalAttributes.getBaseUri() );
+        Assert.assertEquals( RenderMode.ADMIN, portalAttributes.getRenderMode() );
+    }
 }

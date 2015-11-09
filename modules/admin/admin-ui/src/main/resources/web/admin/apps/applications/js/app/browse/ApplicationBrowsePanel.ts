@@ -6,8 +6,8 @@ module app.browse {
     import BrowseItem = api.app.browse.BrowseItem;
     import StartApplicationRequest = api.application.StartApplicationRequest;
     import StopApplicationRequest = api.application.StopApplicationRequest;
-    import ApplicationUpdatedEvent = api.application.ApplicationUpdatedEvent;
-    import ApplicationUpdatedEventType = api.application.ApplicationUpdatedEventType;
+    import ApplicationEvent = api.application.ApplicationEvent;
+    import ApplicationEventType = api.application.ApplicationEventType;
 
     export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<api.application.Application> {
 
@@ -77,10 +77,10 @@ module app.browse {
                     }).done();
             });
 
-            api.application.ApplicationUpdatedEvent.on((event: ApplicationUpdatedEvent) => {
-                if (ApplicationUpdatedEventType.INSTALLED == event.getEventType()) {
+            api.application.ApplicationEvent.on((event: ApplicationEvent) => {
+                if (ApplicationEventType.INSTALLED == event.getEventType()) {
                     this.applicationTreeGrid.appendApplicationNode(event.getApplicationKey());
-                } else if (ApplicationUpdatedEventType.UNINSTALLED == event.getEventType()) {
+                } else if (ApplicationEventType.UNINSTALLED == event.getEventType()) {
                     this.applicationTreeGrid.deleteApplicationNode(event.getApplicationKey());
                 } else if (event.isNeedToUpdateApplication()) {
                     this.applicationTreeGrid.updateApplicationNode(event.getApplicationKey());

@@ -12,11 +12,11 @@ module app.wizard {
             return this.content;
         }
 
-        static on(handler: (event: OpenEditPermissionsDialogEvent) => void, contextWindow: Window = window) {
+        static on(handler: (event: api.content.OpenEditPermissionsDialogEvent) => void, contextWindow: Window = window) {
             api.event.Event.bind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
 
-        static un(handler?: (event: OpenEditPermissionsDialogEvent) => void, contextWindow: Window = window) {
+        static un(handler?: (event: api.content.OpenEditPermissionsDialogEvent) => void, contextWindow: Window = window) {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
     }

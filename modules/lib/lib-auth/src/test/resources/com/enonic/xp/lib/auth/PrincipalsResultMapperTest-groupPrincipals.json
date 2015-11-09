@@ -1,0 +1,18 @@
+{
+  "total": 5,
+  "count": 2,
+  "hits": [
+    {
+      "type": "group",
+      "key": "group:system:group1",
+      "displayName": "Group1",
+      "modifiedTime": "1970-01-01T00:00:00Z"
+    },
+    {
+      "type": "group",
+      "key": "group:system:group2",
+      "displayName": "Group2",
+      "modifiedTime": "1970-01-01T00:00:00Z"
+    }
+  ]
+}

@@ -8,11 +8,9 @@ module app.browse.action {
             super("Sort");
             this.setEnabled(false);
             this.onExecuted(() => {
-                var contentSummaries: api.content.ContentSummary[]
-                    = grid.getSelectedDataList().map((elem) => {
-                    return elem.getContentSummary();
-                });
-                new app.browse.SortContentEvent(contentSummaries).fire();
+                var contents: api.content.ContentSummaryAndCompareStatus[]
+                    = grid.getSelectedDataList();
+                new app.browse.SortContentEvent(contents).fire();
             });
         }
     }

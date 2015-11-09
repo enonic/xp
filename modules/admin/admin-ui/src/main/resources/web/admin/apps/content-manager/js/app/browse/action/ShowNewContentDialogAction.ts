@@ -8,11 +8,9 @@ module app.browse.action {
             super("New", "alt+n");
             this.setEnabled(true);
             this.onExecuted(() => {
-                var contentSummaries: api.content.ContentSummary[]
-                    = grid.getSelectedDataList().map((elem) => {
-                    return elem.getContentSummary();
-                });
-                new ShowNewContentDialogEvent(contentSummaries.length > 0 ? contentSummaries[0] : null).fire();
+                var contents: api.content.ContentSummaryAndCompareStatus[]
+                    = grid.getSelectedDataList();
+                new ShowNewContentDialogEvent(contents.length > 0 ? contents[0] : null).fire();
             });
         }
     }

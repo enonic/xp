@@ -203,6 +203,25 @@ public class StorageServiceImpl
         return nodeBranchMetadata != null ? nodeBranchMetadata.getNodePath().getParentPath() : null;
     }
 
+    @Override
+    public void handleNodeCreated( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
+    {
+        this.branchService.cachePath( nodeId, nodePath, context );
+    }
+
+    @Override
+    public void handleNodeDeleted( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
+    {
+        this.branchService.evictPath( nodePath, context );
+    }
+
+    @Override
+    public void handleNodeMoved( final NodeMovedParams params, final InternalContext context )
+    {
+        this.branchService.evictPath( params.getExistingPath(), context );
+        this.branchService.cachePath( params.getNodeId(), params.getNewPath(), context );
+    }
+
     private Node doGetNode( final NodeBranchMetadata nodeBranchMetadata )
     {
         if ( nodeBranchMetadata == null )

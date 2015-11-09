@@ -7,14 +7,22 @@ public class ReorderChildNodesResult
 {
     private final NodeIds nodeIds;
 
+    private final Nodes parentNodes;
+
     private ReorderChildNodesResult( Builder builder )
     {
         nodeIds = builder.nodeIds.build();
+        parentNodes = builder.parentNodes.build();
     }
 
     public int getSize()
     {
         return nodeIds.getSize();
+    }
+
+    public Nodes getParentNodes()
+    {
+        return parentNodes;
     }
 
     public static Builder create()
@@ -26,6 +34,8 @@ public class ReorderChildNodesResult
     {
         final NodeIds.Builder nodeIds = NodeIds.create();
 
+        final Nodes.Builder parentNodes = Nodes.create();
+
         private Builder()
         {
         }
@@ -33,6 +43,12 @@ public class ReorderChildNodesResult
         public Builder addNodeId( final NodeId nodeIds )
         {
             this.nodeIds.add( nodeIds );
+            return this;
+        }
+
+        public Builder addParentNode( final Node parentNode )
+        {
+            this.parentNodes.add( parentNode );
             return this;
         }
 

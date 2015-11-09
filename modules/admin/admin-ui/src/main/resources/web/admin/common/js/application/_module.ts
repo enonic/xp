@@ -11,7 +11,7 @@
 ///<reference path='ApplicationComboBox.ts' />
 ///<reference path='StopApplicationRequest.ts' />
 ///<reference path='StartApplicationRequest.ts' />
-///<reference path='ApplicationUpdatedEvent.ts' />
+///<reference path='ApplicationEvent.ts' />
 ///<reference path='ApplicationCache.ts' />
 ///<reference path='ApplicationBasedName.ts' />
 ///<reference path='ApplicationCaches.ts' />

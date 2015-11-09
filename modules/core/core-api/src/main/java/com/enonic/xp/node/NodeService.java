@@ -79,7 +79,7 @@ public interface NodeService
 
     Node getRoot();
 
-    Node importNode( final ImportNodeParams params );
+    ImportNodeResult importNode( final ImportNodeParams params );
 
     NodesHasChildrenResult hasChildren( final Nodes nodes );
 

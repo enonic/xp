@@ -32,15 +32,13 @@ public class CreateRootNodeCommand
             childOrder( params.getChildOrder() ).
             build();
 
-        StoreNodeCommand.create().
+        return StoreNodeCommand.create().
             node( rootNode ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
             execute();
-
-        return rootNode;
     }
 
     public static class Builder

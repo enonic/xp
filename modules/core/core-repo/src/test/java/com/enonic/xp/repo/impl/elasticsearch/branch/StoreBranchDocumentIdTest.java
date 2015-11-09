@@ -18,6 +18,16 @@ public class StoreBranchDocumentIdTest
         assertEquals( "myBranch", id.getBranch().getName() );
     }
 
+    @Test
+    public void from_contains_underscore()
+        throws Exception
+    {
+        final BranchDocumentId branchDocumentId = BranchDocumentId.from( "_a_myBranch" );
+
+        assertEquals( "_a", branchDocumentId.getNodeId().toString() );
+        assertEquals( "myBranch", branchDocumentId.getBranch().getName() );
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void from_missing_ws()
         throws Exception

@@ -2,10 +2,15 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -23,7 +28,10 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
@@ -53,6 +61,8 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.CreateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionAccessJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionMemberJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetContentVersionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
@@ -123,14 +133,20 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.PrincipalQuery;
+import com.enonic.xp.security.PrincipalQueryResult;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
+import static java.lang.Math.toIntExact;
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -154,11 +170,15 @@ public final class ContentResource
 
     private final static String EXPAND_NONE = "none";
 
+    private static final int MAX_EFFECTIVE_PERMISSIONS_PRINCIPALS = 10;
+
     private ContentService contentService;
 
     private ContentTypeService contentTypeService;
 
     private ContentPrincipalsResolver principalsResolver;
+
+    private SecurityService securityService;
 
     @POST
     @Path("create")
@@ -847,6 +867,79 @@ public final class ContentResource
         return new LocaleListJson( locales );
     }
 
+    @GET
+    @Path("effectivePermissions")
+    public Map<String, EffectivePermissionAccessJson> getEffectivePermissions( @QueryParam("id") final String idParam )
+    {
+        final ContentId id = ContentId.from( idParam );
+        final AccessControlList acl = contentService.getPermissionsById( id );
+
+        final Multimap<Access, PrincipalKey> accessMembers = ArrayListMultimap.create();
+        for ( AccessControlEntry ace : acl )
+        {
+            final Access access = Access.fromPermissions( ace.getAllowedPermissions() );
+            accessMembers.put( access, ace.getPrincipal() );
+        }
+
+        final Map<Access, Integer> accessCount = new HashMap<>();
+        final Map<Access, List<Principal>> accessPrincipals = new HashMap<>();
+
+        final UserMembersResolver resolver = new UserMembersResolver( this.securityService );
+        for ( Access access : Access.values() )
+        {
+            final Set<PrincipalKey> resolvedMembers = new HashSet<>();
+            final Collection<PrincipalKey> permissionPrincipals = accessMembers.get( access );
+            if ( permissionPrincipals.contains( RoleKeys.EVERYONE ) )
+            {
+                final PrincipalQueryResult totalUsersResult = this.getTotalUsers();
+                accessCount.put( access, totalUsersResult.getTotalSize() );
+                accessPrincipals.put( access, totalUsersResult.getPrincipals().getList() );
+                continue;
+            }
+
+            for ( PrincipalKey principal : permissionPrincipals )
+            {
+                if ( principal.isUser() )
+                {
+                    resolvedMembers.add( principal );
+                }
+                else
+                {
+                    final PrincipalKeys members = resolver.getUserMembers( principal );
+                    Iterables.addAll( resolvedMembers, members );
+                }
+            }
+
+            accessCount.put( access, toIntExact( resolvedMembers.stream().filter( PrincipalKey::isUser ).count() ) );
+            final List<Principal> principals = resolvedMembers.stream().
+                filter( PrincipalKey::isUser ).
+                map( ( key ) -> this.securityService.getUser( key ).orElse( null ) ).
+                filter( Objects::nonNull ).
+                limit( MAX_EFFECTIVE_PERMISSIONS_PRINCIPALS ).
+                collect( Collectors.toList() );
+            accessPrincipals.put( access, principals );
+        }
+
+        final Map<String, EffectivePermissionAccessJson> permissionsJson = new HashMap<>();
+        for ( Access access : Access.values() )
+        {
+            final EffectivePermissionAccessJson accessJson = new EffectivePermissionAccessJson();
+            accessJson.count = accessCount.get( access );
+            accessJson.users = accessPrincipals.get( access ).
+                stream().map( ( p ) -> new EffectivePermissionMemberJson( p.getKey().toString(), p.getDisplayName() ) ).
+                toArray( EffectivePermissionMemberJson[]::new );
+
+            permissionsJson.put( access.name(), accessJson );
+        }
+        return permissionsJson;
+    }
+
+    private PrincipalQueryResult getTotalUsers()
+    {
+        final PrincipalQuery query = PrincipalQuery.create().includeUsers().size( MAX_EFFECTIVE_PERMISSIONS_PRINCIPALS ).build();
+        return this.securityService.query( query );
+    }
+
     private String getFormattedDisplayName( Locale locale )
     {
         return locale.getDisplayName( locale ) + " (" + locale.toLanguageTag() + ")";
@@ -956,5 +1049,6 @@ public final class ContentResource
     public void setSecurityService( final SecurityService securityService )
     {
         this.principalsResolver = new ContentPrincipalsResolver( securityService );
+        this.securityService = securityService;
     }
 }

@@ -174,12 +174,12 @@ module api.dom {
 
         public loadExistingChildren(): Element {
 
-            var children = this.getHTMLElement().children;
+            var children = this.el.getChildren();
             for (var i = 0; i < children.length; i++) {
-                var child = children[i];
-                var childAsElement = Element.fromHtmlElement(<HTMLElement>child, true, this);
+                var childAsElement = Element.fromHtmlElement(<HTMLElement>children[i], true, this);
                 this.children.push(childAsElement);
             }
+
             return this;
         }
 
@@ -200,12 +200,12 @@ module api.dom {
         }
 
         init() {
-            this.children.forEach((child: Element) => {
-                child.init();
-            });
             if (!this.isRendered()) {
                 this.render(false);
             }
+            this.children.forEach((child: Element) => {
+                child.init();
+            });
             if (this.isVisible()) {
                 this.notifyShown();
             }

@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.MoveNodeException;
+import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
@@ -13,12 +14,12 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 import com.enonic.xp.repo.impl.branch.storage.NodesBranchMetadata;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
-import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.repo.impl.storage.MoveNodeParams;
 import com.enonic.xp.security.acl.Permission;
@@ -40,7 +41,7 @@ public class MoveNodeCommand
         this.newNodeName = builder.newNodeName;
     }
 
-    public Node execute()
+    public MoveNodeResult execute()
     {
         final Node existingNode = doGetById( nodeId );
 
@@ -50,7 +51,9 @@ public class MoveNodeCommand
 
         if ( noChanges( existingNode, newParentPath, newNodeName ) )
         {
-            return existingNode;
+            return MoveNodeResult.create().
+                sourceNode( existingNode ).
+                build();
         }
 
         checkNotMovedToSelfOrChild( existingNode, newParentPath );
@@ -59,9 +62,16 @@ public class MoveNodeCommand
 
         final Node movedNode = doMoveNode( newParentPath, newNodeName, nodeId );
 
-        indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ) );
+        RefreshCommand.create().
+            refreshMode( RefreshMode.SEARCH ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
 
-        return movedNode;
+        return MoveNodeResult.create().
+            sourceNode( existingNode ).
+            targetNode( movedNode ).
+            build();
     }
 
     private void checkContextUserPermissionOrAdmin( final Node existingSourceNode, final NodePath newParentPath )

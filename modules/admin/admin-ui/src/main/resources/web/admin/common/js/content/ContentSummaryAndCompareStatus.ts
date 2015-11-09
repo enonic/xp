@@ -2,7 +2,7 @@ module api.content {
 
     import UploadItem = api.ui.uploader.UploadItem;
 
-    export class ContentSummaryAndCompareStatus {
+    export class ContentSummaryAndCompareStatus implements api.Equitable {
 
         private uploadItem: UploadItem<ContentSummary>;
 
@@ -69,8 +69,43 @@ module api.content {
                    "";
         }
 
+        getPath(): ContentPath {
+            return this.contentSummary ? this.contentSummary.getPath() : null;
+        }
+
+        getType(): api.schema.content.ContentTypeName {
+            return this.contentSummary ? this.contentSummary.getType() : null;
+        }
+
+        getDisplayName(): string {
+            return this.contentSummary ? this.contentSummary.getDisplayName() : null;
+        }
+
         hasChildren(): boolean {
             return !!this.contentSummary ? this.contentSummary.hasChildren() : false;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentSummaryAndCompareStatus)) {
+                return false;
+            }
+
+            var other = <ContentSummaryAndCompareStatus>o;
+
+            if (!api.ObjectHelper.equals(this.uploadItem, other.uploadItem)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.equals(this.contentSummary, other.contentSummary)) {
+                return false;
+            }
+
+            if (this.compareStatus != other.compareStatus) {
+                return false;
+            }
+
+            return true;
         }
     }
 }

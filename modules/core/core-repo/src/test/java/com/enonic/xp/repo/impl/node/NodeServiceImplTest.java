@@ -5,12 +5,14 @@ import java.time.Instant;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
@@ -54,6 +56,7 @@ public class NodeServiceImplTest
         this.nodeService.setSnapshotService( this.snapshotService );
         this.nodeService.setStorageService( this.storageService );
         this.nodeService.setSearchService( this.searchService );
+        this.nodeService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
         this.createDefaultRootNode();
     }
