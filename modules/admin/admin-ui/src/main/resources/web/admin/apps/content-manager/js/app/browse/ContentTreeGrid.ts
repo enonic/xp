@@ -36,6 +36,7 @@ module app.browse {
 
     import CompareStatus = api.content.CompareStatus;
 
+    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 
     export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
@@ -117,9 +118,9 @@ module app.browse {
 
             }, 100, true);
 
-            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, () => {
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 if (this.isInRenderingView()) {
-                    updateColumns();
+                    updateColumns(item);
                 }
             });
 
