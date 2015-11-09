@@ -8,7 +8,7 @@ module api.util {
         // leading edge, instead of the trailing.
         static debounce(func, wait, immediate) {
             var timeout;
-            return function (...args: any[]) {
+            return function (...anyArgs: any[]) {
                 var context = this, args = arguments;
                 var later = function () {
                     timeout = null;
