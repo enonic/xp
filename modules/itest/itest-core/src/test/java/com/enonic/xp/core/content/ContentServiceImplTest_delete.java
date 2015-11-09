@@ -103,7 +103,7 @@ public class ContentServiceImplTest_delete
         final Contents deletedContents =
             this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
         assertNotNull( deletedContents );
-        assertEquals( Contents.from( content ), deletedContents );
+        assertEquals( Contents.from( content, child1Content, child2Content, subChildContent ), deletedContents );
 
         //Checks that the content and the children are deleted
         final GetContentByIdsParams getContentByIdsParams = new GetContentByIdsParams(
@@ -268,13 +268,23 @@ public class ContentServiceImplTest_delete
 
         refresh();
 
+        //Creates an child that we wont publish
+        final Content unpublishedChildContent2 = this.contentService.create( CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Unpublished Child Content 2" ).
+            parent( unpublishedChildContent.getPath() ).
+            type( ContentTypeName.folder() ).
+            build() );
+
+        refresh();
+
         //Deletes the root content
         final Contents deletedContents = this.contentService.delete( DeleteContentParams.create().
             contentPath( parent.getPath() ).
             build() );
 
         assertNotNull( deletedContents );
-        assertEquals( 3, deletedContents.getSize() );
+        assertEquals( 4, deletedContents.getSize() );
 
         DeleteContentParams.create().
             contentPath( parent.getPath() ).
@@ -282,7 +292,8 @@ public class ContentServiceImplTest_delete
 
         for ( Content deletedContent : deletedContents )
         {
-            if ( unpublishedChildContent.getId().equals( deletedContent.getId() ) )
+            if ( unpublishedChildContent.getId().equals( deletedContent.getId() ) ||
+                unpublishedChildContent2.getId().equals( deletedContent.getId() ) )
             {
                 assertTrue( ContentState.DEFAULT == deletedContent.getContentState() );
             }

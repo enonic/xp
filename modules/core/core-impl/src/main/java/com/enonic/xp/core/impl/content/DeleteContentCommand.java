@@ -7,21 +7,28 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 
 
 final class DeleteContentCommand
@@ -62,12 +69,14 @@ final class DeleteContentCommand
         return this.translator.fromNodes( nodesToDelete.build(), false );
     }
 
-    private void recursiveDelete( Node nodeToDelete, Nodes.Builder deletedNodes )
+    private void recursiveDelete( final Node nodeToDelete, final Nodes.Builder deletedNodes )
     {
         final CompareStatus status = getCompareStatus( nodeToDelete );
 
         if ( status == CompareStatus.NEW )
         {
+            deletedNodes.addAll( this.getDeletedNodeChildren( nodeToDelete.path() ) );
+
             final Node deletedNode = nodeService.deleteById( nodeToDelete.id() );
             deletedNodes.add( deletedNode );
         }
@@ -91,6 +100,21 @@ final class DeleteContentCommand
                 recursiveDelete( childNodeToDelete, deletedNodes );
             }
         }
+    }
+
+    private Nodes getDeletedNodeChildren( final NodePath deletedNodePath )
+    {
+        final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate(
+            ContentQuery.create().queryExpr( constructExprToFetchChildren( deletedNodePath ) ).build() );
+
+        final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
+
+        return result.getNodes();
+    }
+
+    private QueryExpr constructExprToFetchChildren( final NodePath nodePath )
+    {
+        return QueryExpr.from( CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( nodePath + "/*" ) ) );
     }
 
     private CompareStatus getCompareStatus( final Node nodeToDelete )

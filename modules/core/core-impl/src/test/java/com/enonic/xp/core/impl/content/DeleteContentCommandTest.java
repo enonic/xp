@@ -15,10 +15,12 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.Nodes;
@@ -71,6 +73,8 @@ public class DeleteContentCommandTest
                 create().
                 addUpdatedNode( node ).
                 build() );
+
+        Mockito.when( this.nodeService.findByQuery( Mockito.isA( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create().build() );
 
         Mockito.when( this.translator.fromNodes( Nodes.from( node ), false ) ).thenReturn( Contents.create().
             add( Content.create().

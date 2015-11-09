@@ -7,6 +7,7 @@ module app.remove {
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import ContentPath = api.content.ContentPath;
     import DialogButton = api.ui.dialog.DialogButton;
+    import ContentId = api.content.ContentId;
 
     export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
 
@@ -22,6 +23,12 @@ module app.remove {
             this.getDeleteAction().onExecuted(() => {
 
                 this.createDeleteRequest().sendAndParse().then((result: api.content.DeleteContentResult) => {
+                    result.getDeleted().forEach((deleted) => {
+                        new api.content.ContentDeletedEvent(new ContentId(deleted.getId())).fire();
+                    });
+                    result.getPendings().forEach((pending) => {
+                        new api.content.ContentDeletedEvent(new ContentId(pending.getId()), true).fire();
+                    });
                     this.close();
                     app.view.DeleteAction.showDeleteResult(result);
                 }).catch((reason: any) => {
