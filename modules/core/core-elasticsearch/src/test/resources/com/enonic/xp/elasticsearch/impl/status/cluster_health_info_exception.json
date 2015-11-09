@@ -15,5 +15,5 @@
       "version": "1.0.0"
     }
   ],
-  "state": "GREEN"
+  "errorMessages": ["cluster health info exception"]
 }

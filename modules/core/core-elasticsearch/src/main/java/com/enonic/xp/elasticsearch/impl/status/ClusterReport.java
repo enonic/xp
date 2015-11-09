@@ -1,9 +1,6 @@
 package com.enonic.xp.elasticsearch.impl.status;
 
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
-import org.elasticsearch.cluster.ClusterState;
-import org.elasticsearch.cluster.node.DiscoveryNode;
+import org.apache.commons.lang.StringUtils;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -13,71 +10,63 @@ public final class ClusterReport
 {
     private final ClusterState clusterState;
 
-    private final NodeInfo localNodeInfo;
-
-    private final ClusterHealthResponse clusterHealthResponse;
-
-    private String masterNodeId;
+    private final ClusterHealth clusterHealth;
 
     private ClusterReport( final Builder builder )
     {
         this.clusterState = builder.clusterState;
-        this.localNodeInfo = builder.localNodeInfo;
-        this.clusterHealthResponse = builder.clusterHealthResponse;
+        this.clusterHealth = builder.clusterHealth;
     }
 
     public ObjectNode toJson()
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
-        if ( clusterState == null )
+        final ArrayNode errorMessages = JsonNodeFactory.instance.arrayNode();
+
+        if ( clusterState != null )
         {
-            json.put( "error", "not able to get cluster state" );
-            return json;
+            json.put( "name", clusterState.getClusterName() );
+            if ( clusterState.getLocalNodeState() != null )
+            {
+                json.set( "localNode", clusterState.getLocalNodeState().toJson() );
+            }
+            final ArrayNode nodesJson = json.putArray( "members" );
+            for ( final MemberNodeState node : clusterState.getMemberNodeStateList() )
+            {
+                nodesJson.add( node.toJson() );
+            }
+
+            if ( StringUtils.isNotEmpty( clusterState.getErrorMessage() ) )
+            {
+                errorMessages.add( clusterState.getErrorMessage() );
+            }
+
+        }
+        else
+        {
+            errorMessages.add( "not able to get cluster state" );
         }
 
-        if ( localNodeInfo == null )
+        if ( clusterHealth != null )
         {
-            json.put( "error", "not able to get localNodeInfo" );
-            return json;
+            if ( StringUtils.isNotEmpty( clusterHealth.getClusterHealthStatus() ) )
+            {
+                json.put( "state", clusterHealth.getClusterHealthStatus() );
+            }
+            if ( StringUtils.isNotEmpty( clusterHealth.getErrorMessage() ) )
+            {
+                errorMessages.add( clusterHealth.getErrorMessage() );
+            }
+        }
+        else
+        {
+            errorMessages.add( "not able to get cluster health info" );
         }
 
-        this.masterNodeId = clusterState.getNodes().getMasterNodeId();
-
-        json.put( "name", clusterState.getClusterName().value() );
-        json.put( "state", clusterHealthResponse.getStatus().toString() );
-        json.set( "localNode", getLocalNodeJson() );
-
-        final ArrayNode nodesJson = json.putArray( "members" );
-        for ( final DiscoveryNode node : clusterState.getNodes() )
+        if ( errorMessages.size() > 0 )
         {
-            nodesJson.add( getMemberNodeJson( node ) );
+            json.set( "errorMessages", errorMessages );
         }
-
-        return json;
-    }
-
-    private ObjectNode getLocalNodeJson()
-    {
-        final ObjectNode json = JsonNodeFactory.instance.objectNode();
-
-        final String nodeId = localNodeInfo.getNode().getId();
-        json.put( "hostName", localNodeInfo.getHostname() );
-        json.put( "id", nodeId );
-        json.put( "isMaster", Boolean.toString( nodeId.equals( masterNodeId ) ) );
-        json.put( "numberOfNodesSeen", clusterState.getNodes().size() );
-        return json;
-    }
-
-    private ObjectNode getMemberNodeJson( final DiscoveryNode node )
-    {
-        final ObjectNode json = JsonNodeFactory.instance.objectNode();
-
-        final String nodeId = node.getId();
-        json.put( "address", node.getAddress().toString() );
-        json.put( "hostName", node.getHostName() );
-        json.put( "id", nodeId );
-        json.put( "isMaster", Boolean.toString( nodeId.equals( masterNodeId ) ) );
-        json.put( "version", node.getVersion().toString() );
         return json;
     }
 
@@ -90,9 +79,7 @@ public final class ClusterReport
     {
         private ClusterState clusterState;
 
-        private NodeInfo localNodeInfo;
-
-        private ClusterHealthResponse clusterHealthResponse;
+        private ClusterHealth clusterHealth;
 
         private Builder()
         {
@@ -104,15 +91,9 @@ public final class ClusterReport
             return this;
         }
 
-        public Builder localNodeInfo( final NodeInfo localNodeInfo )
+        public Builder clusterHealth( final ClusterHealth clusterHealth )
         {
-            this.localNodeInfo = localNodeInfo;
-            return this;
-        }
-
-        public Builder clusterHealthResponse( final ClusterHealthResponse response )
-        {
-            this.clusterHealthResponse = response;
+            this.clusterHealth = clusterHealth;
             return this;
         }
 

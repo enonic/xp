@@ -1,11 +1,5 @@
 {
   "name": "clusterName",
-  "localNode": {
-    "hostName": "hostName",
-    "id": "nodeId",
-    "isMaster": false,
-    "numberOfNodesSeen": 1
-  },
   "members": [
     {
       "hostName": "hostName",
@@ -15,5 +9,6 @@
       "version": "1.0.0"
     }
   ],
-  "state": "GREEN"
+  "state": "GREEN",
+  "errorMessages": ["local node info exception"]
 }
