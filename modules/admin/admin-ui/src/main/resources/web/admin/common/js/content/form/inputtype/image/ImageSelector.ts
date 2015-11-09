@@ -111,12 +111,6 @@ module api.content.form.inputtype.image {
             }
         }
 
-        availableSizeChanged() {
-            if (this.selectedOptionsView) {
-                this.selectedOptionsView.updateLayout();
-            }
-        }
-
         getValueType(): ValueType {
             return ValueTypes.REFERENCE;
         }
@@ -159,11 +153,6 @@ module api.content.form.inputtype.image {
                 this.validate(false);
             });
 
-            selectedOptionsView.onValueChanged((event: api.form.inputtype.ValueChangedEvent) => {
-                this.getPropertyArray().set(event.getArrayIndex(), event.getNewValue());
-                this.validate(false);
-            });
-
             return selectedOptionsView;
         }
 
@@ -199,15 +188,21 @@ module api.content.form.inputtype.image {
                 this.validate(false);
             });
 
-            comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<ImageSelectorDisplayValue>) => {
+            comboBox.onOptionSelected((added: SelectedOption<ImageSelectorDisplayValue>) => {
                 if (!this.isLayoutInProgress()) {
-                    var contentId = event.getOption().displayValue.getContentId();
+                    var contentId = added.getOption().displayValue.getContentId();
                     if (!contentId) {
                         return;
                     }
 
                     this.setContentIdProperty(contentId);
                 }
+                this.validate(false);
+            });
+
+            comboBox.onOptionMoved((moved: SelectedOption<ImageSelectorDisplayValue>) => {
+
+                this.getPropertyArray().set(moved.getIndex(), ValueTypes.REFERENCE.newValue(moved.getOption().value));
                 this.validate(false);
             });
 

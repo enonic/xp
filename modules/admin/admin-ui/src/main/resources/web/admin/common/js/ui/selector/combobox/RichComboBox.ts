@@ -1,6 +1,5 @@
 module api.ui.selector.combobox {
 
-    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import OptionFilterInputValueChangedEvent = api.ui.selector.OptionFilterInputValueChangedEvent;
     import Viewer = api.ui.Viewer;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
@@ -228,7 +227,7 @@ module api.ui.selector.combobox {
 
             });
 
-            this.comboBox.onOptionSelected((event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>) => {
+            this.comboBox.onOptionSelected((selectedOption: SelectedOption<OPTION_DISPLAY_VALUE>) => {
                 this.selectedOptionsView.show();
             });
 
@@ -268,12 +267,21 @@ module api.ui.selector.combobox {
             this.comboBox.unOptionDeselected(listener);
         }
 
-        onOptionSelected(listener: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>): void;}) {
+        onOptionSelected(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
             this.comboBox.onOptionSelected(listener);
         }
 
-        unOptionSelected(listener: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>): void;}) {
+        unOptionSelected(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
             this.comboBox.unOptionSelected(listener);
+        }
+
+
+        onOptionMoved(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+            this.comboBox.onOptionMoved(listener);
+        }
+
+        unOptionMoved(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+            this.comboBox.unOptionMoved(listener);
         }
 
         private notifyLoading() {

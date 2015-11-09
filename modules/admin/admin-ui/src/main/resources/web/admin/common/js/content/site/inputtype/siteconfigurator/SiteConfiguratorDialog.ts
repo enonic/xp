@@ -14,7 +14,7 @@ module api.content.site.inputtype.siteconfigurator {
                 title: this.initHeader(name, subName)
             });
 
-            this.getEl().addClass("app-configurator-dialog");
+            this.getEl().addClass("site-configurator-dialog");
             this.appendChildToContentPanel(formView);
 
             this.addOkButton(okCallback);

@@ -137,55 +137,10 @@
     }
 
     .slick-cell {
-      .default-slick-cell-styling();
-
-      &:hover, &.active {
-        background: @admin-bg-light-gray;
-        cursor: pointer;
-      }
-
-      &.slick-cell-checkboxsel {
-        padding-right: 0;
-      }
-
-      &.selected {
-        font-style: italic;
-        color: #d3d3d3;
-
-        &.readonly {
-          opacity: 0.5;
-          cursor: default;
-          pointer-events: none;
-        }
-      }
-
+      .option-cell();
     }
   }
 
-  & + .selected-options {
-    float: none;
-
-    .selected-option {
-      .options-container > .slick-cell;
-      width: 100%;
-      padding-right: 0;
-
-      &:hover {
-        background: none;
-        cursor: default;
-      }
-
-      .remove {
-        &:extend(.icon);
-        .icon-close;
-
-        float: right;
-        font-size: 12px;
-        text-decoration: none;
-        cursor: pointer;
-      }
-    }
-  }
   .names-and-icon-view {
     .icon-large {
       line-height: 30px;
