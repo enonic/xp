@@ -46,13 +46,19 @@
 
         .names-and-icon-view {
           float: left;
+          cursor: move;
 
-          .names-view h6 {
-            height: auto;
-            font-size: 22px;
-            line-height: 30px;
+          .names-view {
+            > * {
+              cursor: move;
+            }
+            h6 {
+              height: auto;
+              font-size: 22px;
+              line-height: 30px;
 
-            .ellipsis();
+              .ellipsis();
+            }
           }
         }
 
@@ -74,18 +80,6 @@
         }
 
       }
-
-      .form-view {
-        padding: 15px 0;
-        background-color: @admin-white;
-
-        .bottom-button-row {
-          margin-left: 0px;
-          padding-right: 0px;
-        }
-
-      }
-
     }
   }
 
