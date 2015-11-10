@@ -4,20 +4,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.security.Group;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.Principals;
+import com.enonic.xp.security.Role;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.session.SessionKey;
-import com.enonic.xp.session.SimpleSession;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class GetMembershipsHandlerTest
     extends ScriptTestSupport
 {
-
-    private SimpleSession session;
 
     private SecurityService securityService;
 
@@ -26,22 +23,18 @@ public class GetMembershipsHandlerTest
     {
         this.securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, this.securityService );
-
-        this.session = new SimpleSession( SessionKey.generate() );
-        ContextAccessor.current().getLocalScope().setSession( session );
-
-        this.session.setAttribute( TestDataFixtures.createAuthenticationInfo() );
     }
 
     @Test
     public void testGetUserMemberships()
         throws Exception
     {
-        final PrincipalKeys principalKeys = PrincipalKeys.from( "user:myUserStore:userId" );
+        final Group group = TestDataFixtures.getTestGroup();
+        final PrincipalKeys principalKeys = PrincipalKeys.from( group.getKey() );
 
         Mockito.when( securityService.getMemberships( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn( principalKeys );
 
-        Mockito.when( securityService.getPrincipals( principalKeys ) ).thenReturn( Principals.from( TestDataFixtures.getTestUser() ) );
+        Mockito.when( securityService.getPrincipals( principalKeys ) ).thenReturn( Principals.from( group ) );
 
         runTestFunction( "/test/getMemberships-test.js", "getUserMemberships" );
     }
@@ -50,12 +43,13 @@ public class GetMembershipsHandlerTest
     public void testGetUserMembershipsWithRoleAndGroup()
         throws Exception
     {
-        final PrincipalKeys principalKeys = PrincipalKeys.from( "user:myUserStore:userId" );
+        final Role role = TestDataFixtures.getTestRole();
+        final Group group = TestDataFixtures.getTestGroup();
+        final PrincipalKeys principalKeys = PrincipalKeys.from( role.getKey(), group.getKey() );
 
         Mockito.when( securityService.getMemberships( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn( principalKeys );
 
-        Mockito.when( securityService.getPrincipals( principalKeys ) ).thenReturn(
-            Principals.from( TestDataFixtures.getTestUser(), TestDataFixtures.getTestRole(), TestDataFixtures.getTestGroup() ) );
+        Mockito.when( securityService.getPrincipals( principalKeys ) ).thenReturn( Principals.from( role, group ) );
 
         runTestFunction( "/test/getMemberships-test.js", "getUserMembershipsWithRoleAndGroup" );
     }
