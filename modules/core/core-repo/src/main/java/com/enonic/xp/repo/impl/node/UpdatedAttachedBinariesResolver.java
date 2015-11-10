@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -22,11 +21,10 @@ import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBinaryReferenceException;
-import com.enonic.xp.repo.impl.blob.Blob;
+import com.enonic.xp.repo.impl.blob.BlobRecord;
 import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.BinaryReferences;
-import com.enonic.xp.util.Exceptions;
 
 class UpdatedAttachedBinariesResolver
 {
@@ -132,16 +130,9 @@ class UpdatedAttachedBinariesResolver
 
     private void storeAndAttachBinary( final Map<BinaryReference, AttachedBinary> resolved, final BinaryAttachment newBinaryAttachment )
     {
-        try
-        {
-            final Blob blob = this.blobStore.addRecord( newBinaryAttachment.getByteSource().openStream() );
-            resolved.put( newBinaryAttachment.getReference(),
-                          new AttachedBinary( newBinaryAttachment.getReference(), blob.getKey().toString() ) );
-        }
-        catch ( final IOException e )
-        {
-            throw Exceptions.unchecked( e );
-        }
+        final BlobRecord blob = this.blobStore.addRecord( newBinaryAttachment.getByteSource() );
+        resolved.put( newBinaryAttachment.getReference(),
+                      new AttachedBinary( newBinaryAttachment.getReference(), blob.getKey().toString() ) );
     }
 
     static Builder create()

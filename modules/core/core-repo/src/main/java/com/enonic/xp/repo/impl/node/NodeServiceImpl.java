@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.io.File;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -12,6 +13,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
@@ -71,7 +73,7 @@ import com.enonic.xp.util.BinaryReference;
 public class NodeServiceImpl
     implements NodeService
 {
-    private final BlobStore binaryBlobStore = new FileBlobStore( NodeConstants.BINARY_BLOB_STORE_DIR );
+    private final BlobStore binaryBlobStore;
 
     private IndexServiceInternal indexServiceInternal;
 
@@ -83,11 +85,16 @@ public class NodeServiceImpl
 
     private EventPublisher eventPublisher;
 
+    public NodeServiceImpl()
+    {
+        final File blobStoreDir = new File( HomeDir.get().toFile(), "repo/blob/" + NodeConstants.BINARY_BLOB_STORE_DIR );
+        this.binaryBlobStore = new FileBlobStore( blobStoreDir );
+    }
+
     @Activate
     public void initialize()
     {
         final RepositoryInitializer repoInitializer = new RepositoryInitializer( this.indexServiceInternal );
-
         repoInitializer.initializeRepositories( ContentConstants.CONTENT_REPO.getId(), SystemConstants.SYSTEM_REPO.getId() );
     }
 

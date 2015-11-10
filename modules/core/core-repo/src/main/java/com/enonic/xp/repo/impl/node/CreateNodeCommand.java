@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.io.IOException;
 import java.time.Instant;
 
 import com.google.common.base.Preconditions;
@@ -27,12 +26,11 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.repo.impl.blob.Blob;
+import com.enonic.xp.repo.impl.blob.BlobRecord;
 import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.util.Exceptions;
 
 import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.requireContextUserPermission;
 
@@ -127,16 +125,8 @@ public final class CreateNodeCommand
                 throw new NodeBinaryReferenceException( "No binary with reference " + binaryRef + " attached in createNodeParams" );
             }
 
-            try
-            {
-                final Blob blob = this.binaryBlobStore.addRecord( binaryAttachment.getByteSource().openStream() );
-                builder.add( new AttachedBinary( binaryAttachment.getReference(), blob.getKey().toString() ) );
-
-            }
-            catch ( final IOException e )
-            {
-                throw Exceptions.unchecked( e );
-            }
+            final BlobRecord blob = this.binaryBlobStore.addRecord( binaryAttachment.getByteSource() );
+            builder.add( new AttachedBinary( binaryAttachment.getReference(), blob.getKey().toString() ) );
         }
 
         return builder.build();

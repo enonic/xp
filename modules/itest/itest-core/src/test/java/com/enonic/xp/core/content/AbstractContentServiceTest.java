@@ -1,5 +1,6 @@
 package com.enonic.xp.core.content;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
@@ -140,7 +141,8 @@ public class AbstractContentServiceTest
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
-        this.binaryBlobStore = new FileBlobStore( "test" );
+        final File blobStoreDir = new File( xpHome.getRoot(), "repo/blob/test" );
+        this.binaryBlobStore = new FileBlobStore( blobStoreDir );
 
         final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
         storageDao.setClient( this.client );
