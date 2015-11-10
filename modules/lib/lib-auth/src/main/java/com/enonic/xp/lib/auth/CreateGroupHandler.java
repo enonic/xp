@@ -2,20 +2,17 @@ package com.enonic.xp.lib.auth;
 
 import java.util.function.Supplier;
 
-import com.enonic.xp.context.Context;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.CreateGroupParams;
+import com.enonic.xp.security.Group;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public final class CreateGroupHandler
     implements ScriptBean
 {
-    private Supplier<Context> context;
-
     private Supplier<SecurityService> securityService;
 
     private UserStoreKey userStore;
@@ -41,24 +38,16 @@ public final class CreateGroupHandler
 
     public PrincipalMapper createGroup()
     {
-        final AuthenticationInfo authInfo = this.context.get().getAuthInfo();
-        if ( authInfo.isAuthenticated() )
-        {
-            return new PrincipalMapper( this.securityService.get().createGroup( CreateGroupParams.create().
-                displayName( this.displayName != null ? this.displayName : this.name ).
-                groupKey( PrincipalKey.ofGroup( this.userStore, this.name ) ).
-                build() ) );
-        }
-        else
-        {
-            return null;
-        }
+        final Group group = this.securityService.get().createGroup( CreateGroupParams.create().
+            displayName( this.displayName != null ? this.displayName : this.name ).
+            groupKey( PrincipalKey.ofGroup( this.userStore, this.name ) ).
+            build() );
+        return group != null ? new PrincipalMapper( group ) : null;
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
-        this.context = context.getBinding( Context.class );
         this.securityService = context.getService( SecurityService.class );
     }
 }

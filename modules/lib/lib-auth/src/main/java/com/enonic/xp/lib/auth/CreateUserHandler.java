@@ -2,20 +2,17 @@ package com.enonic.xp.lib.auth;
 
 import java.util.function.Supplier;
 
-import com.enonic.xp.context.Context;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public final class CreateUserHandler
     implements ScriptBean
 {
-    private Supplier<Context> context;
-
     private Supplier<SecurityService> securityService;
 
     private UserStoreKey userStore;
@@ -48,23 +45,15 @@ public final class CreateUserHandler
 
     public PrincipalMapper createUser()
     {
-        final AuthenticationInfo authInfo = this.context.get().getAuthInfo();
-        if ( authInfo.isAuthenticated() )
-        {
-            return new PrincipalMapper( this.securityService.get().createUser(
-                CreateUserParams.create().displayName( this.displayName ).email( this.email ).login( this.name ).userKey(
-                    PrincipalKey.ofUser( this.userStore, this.name ) ).build() ) );
-        }
-        else
-        {
-            return null;
-        }
+        final User user = this.securityService.get().createUser(
+            CreateUserParams.create().displayName( this.displayName ).email( this.email ).login( this.name ).userKey(
+                PrincipalKey.ofUser( this.userStore, this.name ) ).build() );
+        return user != null ? new PrincipalMapper( user ) : null;
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
-        this.context = context.getBinding( Context.class );
         this.securityService = context.getService( SecurityService.class );
     }
 }

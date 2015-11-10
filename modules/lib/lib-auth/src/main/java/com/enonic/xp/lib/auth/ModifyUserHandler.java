@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.enonic.xp.context.Context;
 import com.enonic.xp.convert.Converters;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
@@ -15,13 +14,10 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserEditor;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public final class ModifyUserHandler
     implements ScriptBean
 {
-    private Supplier<Context> context;
-
     private Supplier<SecurityService> securityService;
 
     private ScriptValue editor;
@@ -47,20 +43,16 @@ public final class ModifyUserHandler
 
     public PrincipalMapper modifyUser()
     {
-        final AuthenticationInfo authInfo = this.context.get().getAuthInfo();
-        if ( authInfo.isAuthenticated() )
+        final Optional<User> existingUser = this.securityService.get().getUser( principalKey );
+
+        if ( existingUser.isPresent() )
         {
-            final Optional<User> existingUser = this.securityService.get().getUser( principalKey );
+            final UpdateUserParams params = UpdateUserParams.create().
+                userKey( this.principalKey ).
+                editor( this.newUserEditor() ).
+                build();
 
-            if ( existingUser.isPresent() )
-            {
-                final UpdateUserParams params = UpdateUserParams.create().
-                    userKey( this.principalKey ).
-                    editor( this.newUserEditor() ).
-                    build();
-
-                return new PrincipalMapper( this.securityService.get().updateUser( params ) );
-            }
+            return new PrincipalMapper( this.securityService.get().updateUser( params ) );
         }
         return null;
     }
@@ -94,7 +86,6 @@ public final class ModifyUserHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.context = context.getBinding( Context.class );
         this.securityService = context.getService( SecurityService.class );
     }
 }

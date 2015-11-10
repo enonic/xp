@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.enonic.xp.context.Context;
 import com.enonic.xp.convert.Converters;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
@@ -15,13 +14,10 @@ import com.enonic.xp.security.GroupEditor;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateGroupParams;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public final class ModifyGroupHandler
     implements ScriptBean
 {
-    private Supplier<Context> context;
-
     private Supplier<SecurityService> securityService;
 
     private ScriptValue editor;
@@ -47,20 +43,16 @@ public final class ModifyGroupHandler
 
     public PrincipalMapper modifyGroup()
     {
-        final AuthenticationInfo authInfo = this.context.get().getAuthInfo();
-        if ( authInfo.isAuthenticated() )
+        final Optional<Group> existingGroup = this.securityService.get().getGroup( principalKey );
+
+        if ( existingGroup.isPresent() )
         {
-            final Optional<Group> existingGroup = this.securityService.get().getGroup( principalKey );
+            final UpdateGroupParams params = UpdateGroupParams.create().
+                groupKey( this.principalKey ).
+                editor( this.newGroupEditor() ).
+                build();
 
-            if ( existingGroup.isPresent() )
-            {
-                final UpdateGroupParams params = UpdateGroupParams.create().
-                    groupKey( this.principalKey ).
-                    editor( this.newGroupEditor() ).
-                    build();
-
-                return new PrincipalMapper( this.securityService.get().updateGroup( params ) );
-            }
+            return new PrincipalMapper( this.securityService.get().updateGroup( params ) );
         }
         return null;
     }
@@ -88,7 +80,6 @@ public final class ModifyGroupHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.context = context.getBinding( Context.class );
         this.securityService = context.getService( SecurityService.class );
     }
 }

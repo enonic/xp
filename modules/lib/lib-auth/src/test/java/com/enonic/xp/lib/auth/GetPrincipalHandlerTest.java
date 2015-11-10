@@ -1,31 +1,19 @@
 package com.enonic.xp.lib.auth;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.session.SessionKey;
-import com.enonic.xp.session.SimpleSession;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class GetPrincipalHandlerTest
     extends ScriptTestSupport
 {
-    private static final Instant NOW = Instant.ofEpochSecond( 0 );
-
-    private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
-
-    private SimpleSession session;
-
     private SecurityService securityService;
 
     @Before
@@ -33,11 +21,6 @@ public class GetPrincipalHandlerTest
     {
         this.securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, this.securityService );
-
-        this.session = new SimpleSession( SessionKey.generate() );
-        ContextAccessor.current().getLocalScope().setSession( session );
-
-        this.session.setAttribute( TestDataFixtures.createAuthenticationInfo() );
     }
 
     @Test
