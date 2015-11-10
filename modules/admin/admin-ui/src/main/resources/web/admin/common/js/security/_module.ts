@@ -46,8 +46,3 @@
 ///<reference path="UserItemCreatedEvent.ts"/>
 ///<reference path="UserItemUpdatedEvent.ts"/>
 ///<reference path="UserItemDeletedEvent.ts"/>
-///<reference path="ResolveMemberResult.ts"/>
-///<reference path="ResolveMembersRequest.ts"/>
-///<reference path="ResolveMemberResultJson.ts"/>
-///<reference path="ResolveMembersResult.ts"/>
-///<reference path="ResolveMembersResultJson.ts"/>
