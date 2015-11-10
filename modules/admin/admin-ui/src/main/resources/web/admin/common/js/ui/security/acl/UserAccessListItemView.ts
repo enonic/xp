@@ -81,17 +81,29 @@ module api.ui.security.acl {
 
         private setExtraCount() {
             if (this.userLine.getChildren().length > 0) {
-                var iconWidth = this.userLine.getChildren()[0].getEl().getWidthWithMargin(),
-                    lineWidth = this.userLine.getEl().getWidthWithoutPadding(),
-                    iconCount = this.getObject().getPermissionAccess().getCount();
+                var visibleCount = this.getVisibleCount(),
+                    iconCount = this.getObject().getPermissionAccess().getCount(),
+                    extraCount = iconCount - visibleCount;
 
-                if (lineWidth >= (iconCount * iconWidth)) {
-                    this.userLine.getEl().removeAttribute("extra-count");
-                } else {
-                    var extraCount = Math.floor(((iconCount * iconWidth) - lineWidth) / iconWidth) + 1;
+                if (extraCount > 0) {
                     this.userLine.getEl().setAttribute("extra-count", "+" + extraCount);
+                } else {
+                    this.userLine.getEl().removeAttribute("extra-count");
                 }
             }
+        }
+
+        private getVisibleCount(): number {
+            var userIcons = this.userLine.getChildren(),
+                count = 0;
+            for (var userIconKey in userIcons) {
+                if (userIcons[userIconKey].getEl().getOffsetTopRelativeToParent() == 0) {
+                    count++;
+                } else {
+                    break;
+                }
+            }
+            return count;
         }
 
         private getOptionName(access: Access): string {

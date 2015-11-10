@@ -50,11 +50,8 @@ module app.view.detail {
             if (UserAccessWidgetItemView.debug) {
                 console.debug('UserAccessWidgetItemView.setContentId: ', contentId);
             }
-            if (!api.ObjectHelper.equals(contentId, this.contentId)) {
-                this.contentId = contentId;
-                return this.layout();
-            }
-            return wemQ<any>(null);
+            this.contentId = contentId;
+            return this.layout();
         }
 
 
@@ -97,6 +94,7 @@ module app.view.detail {
 
                 var userAccessList = this.getUserAccessList(results);
 
+                this.accessListView = new UserAccessListView();
                 this.accessListView.setItemViews(userAccessList);
                 this.appendChild(this.accessListView);
 
