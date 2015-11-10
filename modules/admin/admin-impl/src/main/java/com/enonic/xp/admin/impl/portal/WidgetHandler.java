@@ -11,10 +11,11 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.EndpointHandler;
+import com.enonic.xp.portal.handler.PortalHandler;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.ResourceKey;
 
-@Component(immediate = true, service = WidgetHandler.class)
+@Component(immediate = true, service = PortalHandler.class)
 public final class WidgetHandler
     extends EndpointHandler
 {

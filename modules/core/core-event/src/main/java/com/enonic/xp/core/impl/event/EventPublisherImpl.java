@@ -1,15 +1,15 @@
 package com.enonic.xp.core.impl.event;
 
-import java.util.Set;
+import java.util.Queue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Queues;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
@@ -19,44 +19,56 @@ import com.enonic.xp.event.EventPublisher;
 public final class EventPublisherImpl
     implements EventPublisher
 {
-    private final static Logger LOG = LoggerFactory.getLogger( EventPublisherImpl.class );
+    private final Queue<Event> queue;
 
-    private final Set<EventListener> listeners;
+    private final EventMulticaster multicaster;
+
+    private final Executor executor;
 
     public EventPublisherImpl()
     {
-        this.listeners = Sets.newConcurrentHashSet();
+        this.queue = Queues.newConcurrentLinkedQueue();
+        this.multicaster = new EventMulticaster();
+        this.executor = Executors.newSingleThreadExecutor();
     }
 
     @Override
     public void publish( final Event event )
     {
-        for ( EventListener eventListener : this.listeners )
+        if ( event != null )
         {
-            doPublish( eventListener, event );
+            this.queue.add( event );
+            dispatchEvents();
         }
     }
 
-    private void doPublish( final EventListener eventListener, final Event event )
+    private void dispatchEvents()
     {
-        try
+        while ( true )
         {
-            eventListener.onEvent( event );
+            final Event event = this.queue.poll();
+            if ( event == null )
+            {
+                return;
+            }
+
+            dispatchEvent( event );
         }
-        catch ( final Exception t )
-        {
-            LOG.error( "Failed to deliver event [" + event.getClass().getName() + "] to [" + eventListener + "]", t );
-        }
+    }
+
+    private void dispatchEvent( final Event event )
+    {
+        this.executor.execute( () -> this.multicaster.publish( event ) );
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addListener( final EventListener listener )
     {
-        this.listeners.add( listener );
+        this.multicaster.add( listener );
     }
 
     public void removeListener( final EventListener listener )
     {
-        this.listeners.remove( listener );
+        this.multicaster.remove( listener );
     }
 }

@@ -435,6 +435,10 @@ module api.content.page {
             return this.controller;
         }
 
+        setControllerDescriptor(controller: PageDescriptor) {
+            this.controller = controller;
+        }
+
         hasTemplate(): boolean {
             return !!this.template;
         }

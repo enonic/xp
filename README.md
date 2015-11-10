@@ -18,6 +18,12 @@ Build all code skipping all tests:
 
     gradle build -x test
 
+## Running
+
+After building the project, you can start it locally by running the server script:
+
+    modules/distro/target/install/bin/server.sh
+
 ## License
 
 This software is licensed under AGPL 3.0 license. See full license terms [here](http://www.enonic.com/license). Also the distribution includes

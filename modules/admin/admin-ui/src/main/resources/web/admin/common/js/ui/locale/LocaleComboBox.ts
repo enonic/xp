@@ -53,14 +53,6 @@ module api.ui.locale {
             return this.option;
         }
 
-        onSelectedOptionRemoveRequest(listener: {(): void}) {
-            this.onRemoveClicked(listener);
-        }
-
-        unSelectedOptionRemoveRequest(listener: {(): void}) {
-            this.unRemoveClicked(listener);
-        }
-
     }
 
     class LocaleSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<Locale> {

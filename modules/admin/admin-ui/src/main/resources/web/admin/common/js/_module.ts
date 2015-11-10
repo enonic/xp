@@ -43,6 +43,8 @@
 
 ///<reference path='rest/_module.ts' />
 
+///<reference path='data/_module-doc.ts' />
+///<reference path='data/_module.ts' />
 
 ///<reference path='icon/_module.ts' />
 
@@ -82,9 +84,6 @@
 ///<reference path='ui/security/acl/_module.ts' />
 
 ///<reference path='ui/locale/_module.ts' />
-
-///<reference path='data/_module-doc.ts' />
-///<reference path='data/_module.ts' />
 
 ///<reference path='form/_module-doc.ts' />
 ///<reference path='form/json/_module.ts' />

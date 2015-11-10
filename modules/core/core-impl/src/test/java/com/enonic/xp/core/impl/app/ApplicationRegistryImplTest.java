@@ -1,68 +1,67 @@
 package com.enonic.xp.core.impl.app;
 
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.Constants;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-import de.kalpatec.pojosr.framework.PojoServiceRegistryFactoryImpl;
-import de.kalpatec.pojosr.framework.launch.BundleDescriptor;
-import de.kalpatec.pojosr.framework.launch.PojoServiceRegistry;
 
 import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationEventType;
+import com.enonic.xp.app.ApplicationEvent;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationUpdatedEvent;
 import com.enonic.xp.event.Event;
 
 import static org.junit.Assert.*;
 
 public class ApplicationRegistryImplTest
 {
-    private PojoServiceRegistry serviceRegistry;
-
     private ApplicationRegistryImpl registry;
 
     private List<Event> events;
+
+    private BundleContext bundleContext;
 
     @Before
     public void setup()
         throws Exception
     {
-        final Map<String, Object> config = Maps.newHashMap();
-        this.serviceRegistry = new PojoServiceRegistryFactoryImpl().newPojoServiceRegistry( config );
         this.events = Lists.newArrayList();
+        this.bundleContext = Mockito.mock( BundleContext.class );
     }
 
-    private void startBundles( final BundleDescriptor... bundles )
+    private void startBundles( final Bundle... bundles )
         throws Exception
     {
-        this.serviceRegistry.startBundles( Lists.newArrayList( bundles ) );
+        for ( final Bundle bundle : bundles )
+        {
+            Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
+        }
+
+        Mockito.when( this.bundleContext.getBundles() ).thenReturn( bundles );
     }
 
     private void startRegistry()
     {
-        final BundleContext bundleContext = this.serviceRegistry.getBundleContext();
-
         this.registry = new ApplicationRegistryImpl();
         this.registry.setEventPublisher( this.events::add );
-        this.registry.start( bundleContext );
+        this.registry.start( this.bundleContext );
     }
 
     @Test
     public void testStart_noApplications()
         throws Exception
     {
+        startBundles();
         startRegistry();
 
         final Application application = this.registry.get( ApplicationKey.from( "bundle1" ) );
@@ -74,11 +73,11 @@ public class ApplicationRegistryImplTest
         assertEquals( 0, this.events.size() );
     }
 
-    private void assertEvent( final int index, final ApplicationEventType type, final ApplicationKey key )
+    private void assertEvent( final int index, final String type, final ApplicationKey key )
     {
-        final ApplicationUpdatedEvent event = (ApplicationUpdatedEvent) this.events.get( index );
-        assertEquals( type, event.getEventType() );
-        assertEquals( key, event.getApplicationKey() );
+        final ApplicationEvent event = (ApplicationEvent) this.events.get( index );
+        assertEquals( type, event.getState() );
+        assertEquals( key, event.getKey() );
     }
 
     @Test
@@ -90,8 +89,8 @@ public class ApplicationRegistryImplTest
 
         assertEquals( 2, this.registry.getAll().size() );
         assertEquals( 2, this.events.size() );
-        assertEvent( 0, ApplicationEventType.STARTED, ApplicationKey.from( "bundle1" ) );
-        assertEvent( 1, ApplicationEventType.STARTED, ApplicationKey.from( "bundle3" ) );
+        assertEvent( 0, ApplicationEvent.STARTED, ApplicationKey.from( "bundle1" ) );
+        assertEvent( 1, ApplicationEvent.STARTED, ApplicationKey.from( "bundle3" ) );
 
         final Application application1 = this.registry.get( ApplicationKey.from( "bundle1" ) );
         assertNotNull( application1 );
@@ -113,31 +112,39 @@ public class ApplicationRegistryImplTest
         assertNotNull( application );
         assertEquals( 1, this.registry.getAll().size() );
         assertEquals( 1, this.events.size() );
-        assertEvent( 0, ApplicationEventType.STARTED, ApplicationKey.from( "bundle1" ) );
+        assertEvent( 0, ApplicationEvent.STARTED, ApplicationKey.from( "bundle1" ) );
 
         this.registry.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, application.getBundle() ) );
         assertEquals( 0, this.registry.getAll().size() );
         assertNull( this.registry.get( ApplicationKey.from( "bundle1" ) ) );
         assertEquals( 2, this.events.size() );
-        assertEvent( 1, ApplicationEventType.UNINSTALLED, ApplicationKey.from( "bundle1" ) );
+        assertEvent( 1, ApplicationEvent.UNINSTALLED, ApplicationKey.from( "bundle1" ) );
 
         this.registry.bundleChanged( new BundleEvent( BundleEvent.INSTALLED, application.getBundle() ) );
         assertEquals( 1, this.registry.getAll().size() );
         assertNotNull( this.registry.get( ApplicationKey.from( "bundle1" ) ) );
         assertEquals( 3, this.events.size() );
-        assertEvent( 2, ApplicationEventType.INSTALLED, ApplicationKey.from( "bundle1" ) );
+        assertEvent( 2, ApplicationEvent.INSTALLED, ApplicationKey.from( "bundle1" ) );
     }
 
-    private BundleDescriptor newBundle( final String name, final String displayName )
+    private Bundle newBundle( final String name, final String displayName )
+        throws Exception
     {
-        final URL url = getClass().getResource( "/bundles/" + name + "/" );
-        final URLClassLoader loader = new URLClassLoader( new URL[]{url}, null );
-
-        final Map<String, String> headers = Maps.newHashMap();
+        final Hashtable<String, String> headers = new Hashtable<>();
         headers.put( Constants.BUNDLE_SYMBOLICNAME, name );
         headers.put( Constants.BUNDLE_VERSION, "1.0.0" );
         headers.put( Constants.BUNDLE_NAME, displayName );
 
-        return new BundleDescriptor( loader, url, headers );
+        final Bundle bundle = Mockito.mock( Bundle.class );
+        Mockito.when( bundle.getSymbolicName() ).thenReturn( name );
+        Mockito.when( bundle.getEntry( Mockito.any() ) ).then( i -> doGetResource( name, i ) );
+        Mockito.when( bundle.getHeaders() ).thenReturn( headers );
+        return bundle;
+    }
+
+    private URL doGetResource( final String name, final InvocationOnMock invocation )
+        throws Exception
+    {
+        return getClass().getClassLoader().getResource( "bundles/" + name + "/" + invocation.getArguments()[0].toString() );
     }
 }

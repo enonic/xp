@@ -5,6 +5,7 @@ module api.form.inputtype.combobox {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
+    import SelectedOption = api.ui.selector.combobox.SelectedOption;
 
     export class ComboBox extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
@@ -83,11 +84,11 @@ module api.form.inputtype.combobox {
             comboBox.onOptionFilterInputValueChanged((event: api.ui.selector.OptionFilterInputValueChangedEvent<string>) => {
                 this.comboBox.setFilterArgs({searchString: event.getNewValue()});
             });
-            comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<string>) => {
+            comboBox.onOptionSelected((selectedOption: SelectedOption<string>) => {
 
-                var value = new Value(event.getOption().value, ValueTypes.STRING);
-                if (event.getIndex() >= 0) {
-                    this.getPropertyArray().set(event.getIndex(), value);
+                var value = new Value(selectedOption.getOption().value, ValueTypes.STRING);
+                if (selectedOption.getIndex() >= 0) {
+                    this.getPropertyArray().set(selectedOption.getIndex(), value);
                 } else {
                     this.getPropertyArray().add(value);
                 }

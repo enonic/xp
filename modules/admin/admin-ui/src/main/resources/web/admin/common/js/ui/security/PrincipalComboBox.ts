@@ -44,14 +44,6 @@ module api.ui.security {
             return this.option;
         }
 
-        onSelectedOptionRemoveRequest(listener: {(): void}) {
-            this.onRemoveClicked(listener);
-        }
-
-        unSelectedOptionRemoveRequest(listener: {(): void}) {
-            this.unRemoveClicked(listener);
-        }
-
     }
 
     class PrincipalSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<Principal> {

@@ -188,7 +188,8 @@ public class PushNodesCommandTest
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
-            execute();
+            execute().
+            getTargetNode();
 
         pushNodes( NodeIds.from( node1.id() ), WS_OTHER );
 

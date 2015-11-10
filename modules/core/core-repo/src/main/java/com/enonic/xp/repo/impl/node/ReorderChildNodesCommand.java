@@ -56,6 +56,7 @@ public class ReorderChildNodesCommand
                 execute();
 
             result.addNodeId( reorderedNode.id() );
+            result.addParentNode( parentNode );
         }
 
         return result.build();

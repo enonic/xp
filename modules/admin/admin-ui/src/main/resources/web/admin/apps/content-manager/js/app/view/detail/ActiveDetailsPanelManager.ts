@@ -23,9 +23,12 @@ module app.view.detail {
         }
 
         private static doSetActiveDetailsPanel(detailsPanelToMakeActive: DetailsPanel) {
-            var activeItem: ViewItem<ContentSummaryAndCompareStatus> = null,
+            var activeItem: ContentSummaryAndCompareStatus = null,
                 currentlyActivePanel = ActiveDetailsPanelManager.getActiveDetailsPanel();
-            if (currentlyActivePanel) {
+
+            if (currentlyActivePanel == detailsPanelToMakeActive || !detailsPanelToMakeActive) {
+                return;
+            } else if (currentlyActivePanel) {
                 activeItem = currentlyActivePanel.getItem();
                 var currentlyActiveWidget: WidgetView = currentlyActivePanel.getActiveWidget();
                 if (currentlyActiveWidget) {

@@ -21,10 +21,12 @@ import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.ImportNodeParams;
+import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFilePath;
@@ -80,6 +82,8 @@ public class NodeImporter
         verifyImportRoot();
 
         importFromDirectoryLayout( this.exportRoot );
+
+        nodeService.refresh( RefreshMode.ALL );
 
         return this.result.build();
     }
@@ -190,23 +194,22 @@ public class NodeImporter
 
         final NodePath importNodePath = NodeImportPathResolver.resolveNodeImportPath( nodeFolder, this.exportRoot, this.importRoot );
 
-        final boolean isNodeExisting = this.nodeService.getByPath( importNodePath ) != null;
-        final Node importedNode = importNode( nodeFolder, processNodeSettings, newNode, importNodePath );
+        final ImportNodeResult importNodeResult = importNode( nodeFolder, processNodeSettings, newNode, importNodePath );
 
-        if ( isNodeExisting )
+        if ( importNodeResult.isPreExisting() )
         {
-            result.updated( importedNode.path() );
+            result.updated( importNodeResult.getNode().path() );
         }
         else
         {
-            result.added( importedNode.path() );
+            result.added( importNodeResult.getNode().path() );
         }
 
-        return importedNode;
+        return importNodeResult.getNode();
     }
 
-    private Node importNode( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings, final Node serializedNode,
-                             final NodePath importNodePath )
+    private ImportNodeResult importNode( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings,
+                                         final Node serializedNode, final NodePath importNodePath )
     {
         final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, serializedNode );
 
@@ -228,9 +231,9 @@ public class NodeImporter
             importPermissions( this.importPermissions ).
             build();
 
-        final Node importedNode = this.nodeService.importNode( importNodeParams );
+        final ImportNodeResult importNodeResult = this.nodeService.importNode( importNodeParams );
 
-        return importedNode;
+        return importNodeResult;
     }
 
     private List<String> processBinarySource( final VirtualFile nodeFolder )

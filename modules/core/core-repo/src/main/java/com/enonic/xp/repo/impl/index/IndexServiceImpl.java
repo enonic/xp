@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.index;
 import java.time.Duration;
 import java.time.Instant;
 
-import org.elasticsearch.common.unit.TimeValue;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -37,7 +36,7 @@ import com.enonic.xp.repository.RepositoryId;
 public class IndexServiceImpl
     implements IndexService
 {
-    private final static TimeValue CLUSTER_HEALTH_TIMEOUT_VALUE = TimeValue.timeValueSeconds( 10 );
+    private final static String CLUSTER_HEALTH_TIMEOUT_VALUE = "10s";
 
     private IndexServiceInternal indexServiceInternal;
 
@@ -93,6 +92,13 @@ public class IndexServiceImpl
         builder.duration( Duration.ofMillis( start - stop ) );
 
         return builder.build();
+    }
+
+    @Override
+    public boolean isMaster()
+    {
+
+        return indexServiceInternal.isMaster();
     }
 
     @Override

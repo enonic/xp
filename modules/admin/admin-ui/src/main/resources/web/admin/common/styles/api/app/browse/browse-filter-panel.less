@@ -34,6 +34,7 @@
         & + label {
           color: @admin-font-gray2 !important;
           padding-left: 21px;
+          .ellipsis();
           &:before {
             top: 2px;
             left: 1px;
@@ -63,7 +64,7 @@
   }
 
   h2 {
-    color: #000000 !important;
+    color: @admin-black !important;
     font-size: 14px !important;
     padding: 0px 0px 0px 21px !important;
     text-transform: capitalize;
@@ -75,6 +76,7 @@
     font-size: 16px;
     margin-bottom: 20px;
     padding-left: 21px;
+    white-space: pre;
   }
 
   .hide-filter-panel-button {

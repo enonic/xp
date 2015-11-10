@@ -11,6 +11,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
@@ -23,6 +24,8 @@ import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.ImportNodeParams;
+import com.enonic.xp.node.ImportNodeResult;
+import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
@@ -53,6 +56,7 @@ import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.repo.impl.blob.file.FileBlobStore;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
@@ -77,12 +81,14 @@ public class NodeServiceImpl
 
     private SearchService searchService;
 
+    private EventPublisher eventPublisher;
+
     @Activate
     public void initialize()
     {
         final RepositoryInitializer repoInitializer = new RepositoryInitializer( this.indexServiceInternal );
-        repoInitializer.initializeRepository( ContentConstants.CONTENT_REPO.getId() );
-        repoInitializer.initializeRepository( SystemConstants.SYSTEM_REPO.getId() );
+
+        repoInitializer.initializeRepositories( ContentConstants.CONTENT_REPO.getId(), SystemConstants.SYSTEM_REPO.getId() );
     }
 
     @Override
@@ -183,7 +189,7 @@ public class NodeServiceImpl
 
     private Node doCreate( final CreateNodeParams params )
     {
-        return CreateNodeCommand.create().
+        final Node createdNode = CreateNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryBlobStore( this.binaryBlobStore ).
@@ -191,12 +197,18 @@ public class NodeServiceImpl
             searchService( this.searchService ).
             build().
             execute();
+
+        if ( createdNode != null )
+        {
+            this.eventPublisher.publish( NodeEvents.created( createdNode ) );
+        }
+        return createdNode;
     }
 
     @Override
     public Node update( final UpdateNodeParams params )
     {
-        return UpdateNodeCommand.create().
+        final Node updatedNode = UpdateNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryBlobStore( this.binaryBlobStore ).
@@ -204,48 +216,76 @@ public class NodeServiceImpl
             searchService( this.searchService ).
             build().
             execute();
+
+        if ( updatedNode != null )
+        {
+            this.eventPublisher.publish( NodeEvents.updated( updatedNode ) );
+        }
+        return updatedNode;
     }
 
     @Override
     public Node rename( final RenameNodeParams params )
     {
-        return RenameNodeCommand.create().
+        final MoveNodeResult moveNodeResult = RenameNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
             execute();
+
+        if ( moveNodeResult.getTargetNode() != null )
+        {
+            this.eventPublisher.publish( NodeEvents.renamed( moveNodeResult.getSourceNode(), moveNodeResult.getTargetNode() ) );
+            return moveNodeResult.getTargetNode();
+        }
+        else
+        {
+            return moveNodeResult.getSourceNode();
+        }
     }
 
     @Override
     public Node deleteById( final NodeId id )
     {
-        return DeleteNodeByIdCommand.create().
+        final Node deletedNode = DeleteNodeByIdCommand.create().
             nodeId( id ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
             execute();
+
+        if ( deletedNode != null )
+        {
+            this.eventPublisher.publish( NodeEvents.deleted( deletedNode ) );
+        }
+        return deletedNode;
     }
 
     @Override
     public Node deleteByPath( final NodePath path )
     {
-        return DeleteNodeByPathCommand.create().
+        final Node deletedNode = DeleteNodeByPathCommand.create().
             nodePath( path ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
             execute();
+
+        if ( deletedNode != null )
+        {
+            this.eventPublisher.publish( NodeEvents.deleted( deletedNode ) );
+        }
+        return deletedNode;
     }
 
     @Override
     public PushNodesResult push( final NodeIds ids, final Branch target )
     {
-        return PushNodesCommand.create().
+        final PushNodesResult pushNodesResult = PushNodesCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -253,12 +293,19 @@ public class NodeServiceImpl
             target( target ).
             build().
             execute();
+
+        if ( pushNodesResult.getSuccessful().isNotEmpty() )
+        {
+            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getSuccessful() ) );
+        }
+
+        return pushNodesResult;
     }
 
     @Override
     public Node duplicate( final NodeId nodeId )
     {
-        return DuplicateNodeCommand.create().
+        final Node duplicatedNode = DuplicateNodeCommand.create().
             id( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryBlobStore( this.binaryBlobStore ).
@@ -266,12 +313,18 @@ public class NodeServiceImpl
             searchService( this.searchService ).
             build().
             execute();
+
+        if ( duplicatedNode != null )
+        {
+            this.eventPublisher.publish( NodeEvents.duplicated( duplicatedNode ) );
+        }
+        return duplicatedNode;
     }
 
     @Override
     public Node move( final NodeId nodeId, final NodePath parentNodePath )
     {
-        return MoveNodeCommand.create().
+        final MoveNodeResult moveNodeResult = MoveNodeCommand.create().
             id( nodeId ).
             newParent( parentNodePath ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -279,6 +332,16 @@ public class NodeServiceImpl
             searchService( this.searchService ).
             build().
             execute();
+
+        if ( moveNodeResult.getTargetNode() != null )
+        {
+            this.eventPublisher.publish( NodeEvents.moved( moveNodeResult.getSourceNode(), moveNodeResult.getTargetNode() ) );
+            return moveNodeResult.getTargetNode();
+        }
+        else
+        {
+            return moveNodeResult.getSourceNode();
+        }
     }
 
     @Override
@@ -360,7 +423,7 @@ public class NodeServiceImpl
     @Override
     public Node setChildOrder( final SetNodeChildOrderParams params )
     {
-        return SetNodeChildOrderCommand.create().
+        final Node sortedNode = SetNodeChildOrderCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -368,18 +431,31 @@ public class NodeServiceImpl
             nodeId( params.getNodeId() ).
             build().
             execute();
+
+        if ( sortedNode != null )
+        {
+            this.eventPublisher.publish( NodeEvents.sorted( sortedNode ) );
+        }
+        return sortedNode;
     }
 
     @Override
     public ReorderChildNodesResult reorderChildren( final ReorderChildNodesParams params )
     {
-        return ReorderChildNodesCommand.create().
+        final ReorderChildNodesResult reorderChildNodesResult = ReorderChildNodesCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
             execute();
+
+        for ( Node parentNode : reorderChildNodesResult.getParentNodes() ) //TODO Modify after Event2 data restructuration
+        {
+            this.eventPublisher.publish( NodeEvents.sorted( parentNode ) );
+        }
+
+        return reorderChildNodesResult;
     }
 
     @Override
@@ -465,25 +541,38 @@ public class NodeServiceImpl
     @Override
     public Node createRootNode( final CreateRootNodeParams params )
     {
-        return CreateRootNodeCommand.create().
+        final Node createdNode = CreateRootNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
             execute();
+
+        if ( createdNode != null )
+        {
+            this.eventPublisher.publish( NodeEvents.created( createdNode ) );
+        }
+        return createdNode;
     }
 
     @Override
     public SetNodeStateResult setNodeState( final SetNodeStateParams params )
     {
-        return SetNodeStateCommand.create().
+        final SetNodeStateResult setNodeStateResult = SetNodeStateCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
             execute();
+
+        if ( setNodeStateResult.getUpdatedNodes().isNotEmpty() )
+        {
+            this.eventPublisher.publish( NodeEvents.stateUpdated( setNodeStateResult.getUpdatedNodes() ) );
+        }
+
+        return setNodeStateResult;
     }
 
     @Override
@@ -500,9 +589,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node importNode( final ImportNodeParams params )
+    public ImportNodeResult importNode( final ImportNodeParams params )
     {
-        return ImportNodeCommand.create().
+        final ImportNodeResult importNodeResult = ImportNodeCommand.create().
             binaryAttachments( params.getBinaryAttachments() ).
             importNode( params.getNode() ).
             insertManualStrategy( params.getInsertManualStrategy() ).
@@ -514,6 +603,17 @@ public class NodeServiceImpl
             searchService( this.searchService ).
             build().
             execute();
+
+        if ( importNodeResult.isPreExisting() )
+        {
+            this.eventPublisher.publish( NodeEvents.updated( importNodeResult.getNode() ) );
+        }
+        else
+        {
+            this.eventPublisher.publish( NodeEvents.created( importNodeResult.getNode() ) );
+        }
+
+        return importNodeResult;
     }
 
     @Override
@@ -568,5 +668,11 @@ public class NodeServiceImpl
     public void setSearchService( final SearchService searchService )
     {
         this.searchService = searchService;
+    }
+
+    @Reference
+    public void setEventPublisher( final EventPublisher eventPublisher )
+    {
+        this.eventPublisher = eventPublisher;
     }
 }

@@ -2,9 +2,11 @@ package com.enonic.xp.repo.impl.node;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -33,6 +35,7 @@ public class AccessControlTest
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setStorageService( storageService );
         this.nodeService.setSearchService( searchService );
+        this.nodeService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
         this.createDefaultRootNode();
     }

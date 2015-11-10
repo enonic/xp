@@ -6,17 +6,13 @@ module app.view.detail {
 
     export class WidgetView extends api.dom.DivEl {
 
-        private widgetToggleButton: WidgetViewToggleButton;
-
         private widgetName: string;
 
         private widgetItemViews: WidgetItemView[];
 
         private detailsPanel: DetailsPanel;
 
-        private normalHeightOfContent: number;
-
-        private layoutCallbackFunction: () => void;
+        public static debug = false;
 
         constructor(builder: WidgetViewBuilder) {
             super("widget-view");
@@ -24,17 +20,8 @@ module app.view.detail {
             this.detailsPanel = builder.detailsPanel;
             this.widgetName = builder.name;
             this.widgetItemViews = builder.widgetItemViews;
-            this.layoutCallbackFunction = builder.layoutCallbackFunction;
 
-            if (builder.useToggleButton) {
-                this.initWidgetToggleButton();
-            }
-
-            this.layout().done(() => {
-                if (this.layoutCallbackFunction) {
-                    this.layoutCallbackFunction();
-                }
-            });
+            this.layout();
         }
 
         public layout(): wemQ.Promise<any> {
@@ -53,26 +40,22 @@ module app.view.detail {
             return wemQ.all(layoutTasks);
         }
 
-        private initWidgetToggleButton() {
-
-            this.widgetToggleButton = new WidgetViewToggleButton(this);
-            this.widgetToggleButton.setLabel(this.widgetName);
-            this.appendChild(this.widgetToggleButton);
-        }
-
-        updateNormalHeightSilently() {
-            this.setVisible(false);
-            var currentHeight = this.getEl().getHeight();
+        private calcHeight(): number {
+            var originalHeight = this.getEl().getHeight();
+            if (originalHeight == 0) {
+                // prevent jitter if widget is collapsed
+                this.setVisible(false);
+            }
             this.getEl().setHeight("auto");
-            this.normalHeightOfContent = this.getEl().getHeightWithBorder();
-            this.getEl().setHeightPx(currentHeight);
-            this.setVisible(true);
-        }
-
-        updateNormalHeight() {
-            this.getEl().setHeight("auto");
-            this.normalHeightOfContent = this.getEl().getHeightWithBorder();
-            this.getEl().setHeightPx(this.normalHeightOfContent);
+            var height = this.getEl().getHeight();
+            this.getEl().setHeightPx(originalHeight);
+            if (originalHeight == 0) {
+                this.setVisible(true);
+            }
+            if (WidgetView.debug) {
+                console.debug('WidgetView.calcHeight: ', height, 'originalHeight: ', originalHeight);
+            }
+            return height;
         }
 
         getWidgetName(): string {
@@ -84,22 +67,23 @@ module app.view.detail {
         }
 
         slideIn() {
-            this.getEl().setHeightPx(this.normalHeightOfContent);
+            this.getEl().setHeightPx(this.calcHeight());
         }
 
         setActive() {
+            if (WidgetView.debug) {
+                console.debug('WidgetView.setActive: ', this);
+            }
             this.detailsPanel.setActiveWidget(this);
             this.slideIn();
         }
 
         setInactive() {
+            if (WidgetView.debug) {
+                console.debug('WidgetView.setInactive: ', this);
+            }
             this.detailsPanel.resetActiveWidget();
-            this.deactivate();
-        }
-
-        deactivate() {
             this.slideOut();
-            this.removeClass("expanded");
         }
 
         public static create(): WidgetViewBuilder {
@@ -113,11 +97,7 @@ module app.view.detail {
 
         detailsPanel: DetailsPanel;
 
-        useToggleButton: boolean = true;
-
         widgetItemViews: WidgetItemView[] = [];
-
-        layoutCallbackFunction: () => void;
 
         public setName(name: string): WidgetViewBuilder {
             this.name = name;
@@ -129,23 +109,8 @@ module app.view.detail {
             return this;
         }
 
-        public setUseToggleButton(useToggleButton: boolean): WidgetViewBuilder {
-            this.useToggleButton = useToggleButton;
-            return this;
-        }
-
         public addWidgetItemView(widgetItemView: WidgetItemView): WidgetViewBuilder {
             this.widgetItemViews.push(widgetItemView);
-            return this;
-        }
-
-        public setWidgetItemViews(widgetItemViews: WidgetItemView[]): WidgetViewBuilder {
-            this.widgetItemViews = widgetItemViews;
-            return this;
-        }
-
-        public setLayoutCallbackFunction(layoutCallbackFunction: () => void): WidgetViewBuilder {
-            this.layoutCallbackFunction = layoutCallbackFunction;
             return this;
         }
 

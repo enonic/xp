@@ -5,39 +5,52 @@ module app.view.detail {
     import ContentSummary = api.content.ContentSummary;
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
     import Application = api.application.Application;
+    import ApplicationKey = api.application.ApplicationKey;
 
     export class PropertiesWidgetItemView extends WidgetItemView {
 
         private content: ContentSummary;
+
+        public static debug = false;
 
         constructor() {
             super("properties-widget-item-view");
         }
 
         public setContent(content: ContentSummary) {
-            this.content = content;
+            if (AttachmentsWidgetItemView.debug) {
+                console.debug('PropertiesWidgetItemView.setContent: ', content);
+            }
+            if (!api.ObjectHelper.equals(content, this.content)) {
+                this.content = content;
+                return this.layout();
+            }
+            return wemQ<any>(null);
         }
 
         public layout(): wemQ.Promise<any> {
-            this.removeChildren();
-            if (this.content != undefined) {
-
-                if (!this.content.getType().getApplicationKey().isSystemReserved()) {
-                    return new api.application.GetApplicationRequest(this.content.getType().getApplicationKey()).sendAndParse().then((application: Application) => {
-                        this.doLayout(application);
-                    }).catch(() => {
-                        this.doLayout();
-                    });
-                } else {
-                    this.doLayout();
-                    return super.layout();
-                }
-            } else {
-                return super.layout();
+            if (PropertiesWidgetItemView.debug) {
+                console.debug('PropertiesWidgetItemView.layout');
             }
+            this.removeChildren();
+
+            return super.layout().then(() => {
+                if (this.content != undefined) {
+                    var applicationKey = this.content.getType().getApplicationKey();
+                    if (!applicationKey.isSystemReserved()) {
+                        return new api.application.GetApplicationRequest(applicationKey).sendAndParse().then((application: Application) => {
+                            this.layoutApplication(application);
+                        }).catch(() => {
+                            this.layoutApplication();
+                        });
+                    } else {
+                        this.layoutApplication();
+                    }
+                }
+            });
         }
 
-        private doLayout(application?: Application) {
+        private layoutApplication(application?: Application) {
 
             var newDl = new api.dom.DlEl();
 

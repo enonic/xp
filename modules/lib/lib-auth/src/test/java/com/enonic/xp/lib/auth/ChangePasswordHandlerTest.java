@@ -5,10 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
@@ -36,13 +33,7 @@ public class ChangePasswordHandlerTest
     public void testFunction()
         throws Exception
     {
-        final User user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.from( "enonic" ), "user1" ) ).
-            displayName( "User 1" ).
-            email( "user1@enonic.com" ).
-            login( "user1" ).
-            build();
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).principals( PrincipalKey.ofRole( "my-role" ) ).build();
+        final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
         this.session.setAttribute( authInfo );
 
         runTestFunction( "/test/changePassword-test.js", "changePassword" );

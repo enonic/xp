@@ -10,7 +10,7 @@ module app.home {
             super('branding');
 
             this.productHeader = new api.dom.H1El();
-            this.productHeader.setHtml('Enonic experience platform');
+            this.productHeader.setHtml('Enonic XP');
             this.installation = new api.dom.DivEl("installation-info");
 
             this.appendChild(this.productHeader);

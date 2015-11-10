@@ -130,7 +130,7 @@ module app.wizard.page.contextwindow.insert {
         }
 
         private handleDrag(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
-            var over = this.isOverIFrame(event);
+            var over = this.isOverIFrame(<JQueryEventObject>event);
             if (this.overIFrame != over) {
                 if (over) {
                     this.onEnterIFrame(event, ui);

@@ -87,15 +87,17 @@ module api.app {
         hide() {
             if (this.appFrame) {
                 this.appFrame.hide();
+                this.status = ApplicationShowStatus.NOT_DISPLAYED;
             }
-            this.status = ApplicationShowStatus.NOT_DISPLAYED;
+
         }
 
         show() {
             if (this.appFrame) {
                 this.appFrame.show();
+                this.status = ApplicationShowStatus.DISPLAYED;
             }
-            this.status = ApplicationShowStatus.DISPLAYED;
+
         }
 
         setOpenTabs(value: number): Application {

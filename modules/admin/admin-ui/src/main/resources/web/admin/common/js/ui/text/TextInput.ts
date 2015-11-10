@@ -47,8 +47,10 @@ module api.ui.text {
             });
 
             this.onInput((event: Event) => {
-                this.notifyValueChanged(this.oldValue, this.getValue());
-                this.oldValue = this.getValue();
+                if (this.oldValue !== this.getValue()) {  //IE fix of input event fired when input placeholder removed/added on focus/unfocus
+                    this.notifyValueChanged(this.oldValue, this.getValue());
+                    this.oldValue = this.getValue();
+                }
             });
         }
 

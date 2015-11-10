@@ -16,9 +16,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationEventType;
+import com.enonic.xp.app.ApplicationEvent;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationUpdatedEvent;
 import com.enonic.xp.event.EventPublisher;
 
 @Component(immediate = true)
@@ -87,14 +86,12 @@ public final class ApplicationRegistryImpl
 
     private boolean isApplication( final Bundle bundle )
     {
-        return ( bundle.getState() != Bundle.UNINSTALLED ) && Application.isApplication( bundle );
+        return ( bundle.getState() != Bundle.UNINSTALLED ) && ApplicationImpl.isApplication( bundle );
     }
 
     private void publishApplicationChangeEvent( final BundleEvent event )
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( event.getBundle() );
-        final ApplicationEventType state = ApplicationEventType.fromBundleEvent( event );
-        this.eventPublisher.publish( new ApplicationUpdatedEvent( applicationKey, state ) );
+        this.eventPublisher.publish( new ApplicationEvent( event ) );
     }
 
     private void addBundle( final Bundle bundle )
@@ -117,8 +114,7 @@ public final class ApplicationRegistryImpl
 
     private void installApplication( final Bundle bundle )
     {
-        final Application application = Application.from( bundle );
-        installApplication( application );
+        installApplication( new ApplicationImpl( bundle ) );
     }
 
     @Override

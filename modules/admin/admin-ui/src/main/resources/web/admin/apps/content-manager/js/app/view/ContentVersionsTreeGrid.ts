@@ -1,10 +1,13 @@
 module app.view {
 
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import ContentId = api.content.ContentId;
+    import CompareStatus = api.content.CompareStatus;
     import ContentVersion = api.content.ContentVersion;
     import ContentVersionViewer = api.content.ContentVersionViewer;
 
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
+    import GridOptionsBuilder = api.ui.grid.GridOptionsBuilder;
 
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
@@ -34,6 +37,7 @@ module app.view {
 
             super(new TreeGridBuilder<ContentVersion>().
                 setAutoLoad(false).
+                setAutoHeight(true).
                 setCheckableRows(false).
                 setHotkeysEnabled(false).
                 setSelectedCellCssClass("").
@@ -46,17 +50,9 @@ module app.view {
                 prependClasses("content-versions-tree-grid"));
         }
 
-        public setContentId(contentId: ContentId) {
-            this.contentId = contentId;
-            this.reload();
-        }
-
-        public getContentId(): ContentId {
-            return this.contentId;
-        }
-
-        public setStatus(status: api.content.CompareStatus) {
-            this.status = status;
+        public setItem(item: ContentSummaryAndCompareStatus) {
+            this.contentId = item.getContentId();
+            this.status = item.getCompareStatus();
         }
 
         getDataId(data: ContentVersion): string {
@@ -96,7 +92,6 @@ module app.view {
             if (this.status == undefined) {
                 return "";
             }
-
             var badges: string[] = [];
             var hasMaster = value.some((workspace) => {
                 return workspace == ContentVersionsTreeGrid.branchMaster;

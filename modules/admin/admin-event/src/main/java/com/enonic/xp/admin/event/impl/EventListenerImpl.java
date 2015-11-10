@@ -3,22 +3,9 @@ package com.enonic.xp.admin.event.impl;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.xp.admin.event.impl.json.ApplicationUpdatedEventJson;
-import com.enonic.xp.admin.event.impl.json.ContentChangeEventJson;
-import com.enonic.xp.admin.event.impl.json.ContentCreatedEventJson;
-import com.enonic.xp.admin.event.impl.json.ContentPublishedEventJson;
-import com.enonic.xp.admin.event.impl.json.ContentUpdatedEventJson;
-import com.enonic.xp.admin.event.impl.json.EventJson;
-import com.enonic.xp.admin.event.impl.json.ObjectMapperHelper;
-import com.enonic.xp.app.ApplicationUpdatedEvent;
-import com.enonic.xp.content.ContentChangeEvent;
-import com.enonic.xp.content.ContentCreatedEvent;
-import com.enonic.xp.content.ContentPublishedEvent;
-import com.enonic.xp.content.ContentUpdatedEvent;
+import com.enonic.xp.admin.event.impl.json.EventJsonSerializer;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 
@@ -28,61 +15,23 @@ public final class EventListenerImpl
 {
     private WebSocketManager webSocketManager;
 
-    private final ObjectMapper objectMapper;
+    private final EventJsonSerializer serializer;
 
     public EventListenerImpl()
     {
-        this.objectMapper = ObjectMapperHelper.create();
+        this.serializer = new EventJsonSerializer();
     }
 
     @Override
     public void onEvent( final Event event )
     {
-        final EventJson eventJson = getEventJsonSerializer( event );
-        if ( eventJson == null )
+        final ObjectNode json = this.serializer.toJson( event );
+        if ( json == null )
         {
             return;
         }
 
-        final String serializedEvent = serializeEvent( event, eventJson );
-        webSocketManager.sendToAll( serializedEvent );
-    }
-
-    private String serializeEvent( final Event event, final EventJson eventJson )
-    {
-        try
-        {
-            return objectMapper.writeValueAsString( new EventJsonWrapper( event, eventJson ) );
-        }
-        catch ( JsonProcessingException e )
-        {
-            throw Throwables.propagate( e );
-        }
-    }
-
-    private EventJson getEventJsonSerializer( final Event event )
-    {
-        if ( event instanceof ContentChangeEvent )
-        {
-            return new ContentChangeEventJson( (ContentChangeEvent) event );
-        }
-        else if ( event instanceof ApplicationUpdatedEvent )
-        {
-            return new ApplicationUpdatedEventJson( (ApplicationUpdatedEvent) event );
-        }
-        else if ( event instanceof ContentCreatedEvent )
-        {
-            return new ContentCreatedEventJson( (ContentCreatedEvent) event );
-        }
-        else if ( event instanceof ContentUpdatedEvent )
-        {
-            return new ContentUpdatedEventJson( (ContentUpdatedEvent) event );
-        }
-        else if ( event instanceof ContentPublishedEvent )
-        {
-            return new ContentPublishedEventJson( (ContentPublishedEvent) event );
-        }
-        return null;
+        this.webSocketManager.sendToAll( json.toString() );
     }
 
     @Reference

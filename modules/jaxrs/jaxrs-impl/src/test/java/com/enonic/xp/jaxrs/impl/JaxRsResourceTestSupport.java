@@ -17,8 +17,8 @@ import com.google.common.io.Resources;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.jaxrs.impl.json.JsonObjectProvider;
-import com.enonic.xp.jaxrs.impl.json.ObjectMapperHelper;
 import com.enonic.xp.jaxrs.impl.multipart.MultipartFormReader;
+import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 import com.enonic.xp.web.servlet.ServletRequestHolder;

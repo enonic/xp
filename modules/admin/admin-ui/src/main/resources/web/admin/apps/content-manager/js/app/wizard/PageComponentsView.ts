@@ -27,6 +27,8 @@ module app.wizard {
         private liveEditPage: LiveEditPageProxy;
         private contextMenu: api.liveedit.ItemViewContextMenu;
 
+        private responsiveItem: ResponsiveItem;
+
         private tree: PageComponentsTreeGrid;
         private header: api.dom.H3El;
         private modal: boolean;
@@ -67,7 +69,7 @@ module app.wizard {
                 this.constrainToParent();
             });
 
-            ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get(), (item: ResponsiveItem) => {
+            this.responsiveItem = ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get(), (item: ResponsiveItem) => {
                 var smallSize = item.isInRangeOrSmaller(ResponsiveRanges._360_540);
                 if (!smallSize && this.isVisible()) {
                     this.constrainToParent();
@@ -85,6 +87,10 @@ module app.wizard {
             } else if (this.tree) {
                 this.tree.setPageView(pageView);
             }
+
+            this.pageView.onRemoved(() => {
+                ResponsiveManager.unAvailableSizeChangedByItem(this.responsiveItem);
+            })
         }
 
         setContent(content: Content) {
