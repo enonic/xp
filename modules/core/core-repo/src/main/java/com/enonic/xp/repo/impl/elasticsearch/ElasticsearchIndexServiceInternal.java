@@ -14,6 +14,8 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequestBuilder;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
+import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
 import org.elasticsearch.client.Client;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -48,6 +50,8 @@ public class ElasticsearchIndexServiceInternal
     private final static String DELETE_TIMEOUT = "5s";
 
     private final static String CREATE_TIMEOUT = "5s";
+
+    private final static String UPDATE_TIMEOUT = "5s";
 
     private final static String APPLY_MAPPING_TIMEOUT = "5s";
 
@@ -108,6 +112,29 @@ public class ElasticsearchIndexServiceInternal
         catch ( ElasticsearchException e )
         {
             throw new IndexException( "Failed to create index: " + indexName, e );
+        }
+    }
+
+    @Override
+    public void updateIndex( final String indexName, final IndexSettings settings )
+    {
+        LOG.info( "updating index {}", indexName );
+
+        final UpdateSettingsRequest updateSettingsRequest = new UpdateSettingsRequest().
+            indices( indexName ).
+            settings( settings.getSettingsAsString() );
+        try
+        {
+            final UpdateSettingsResponse updateSettingsResponse = client.admin().
+                indices().
+                updateSettings( updateSettingsRequest ).
+                actionGet( UPDATE_TIMEOUT );
+
+            LOG.info( "Index {} updated with status {}", indexName, updateSettingsResponse.isAcknowledged() );
+        }
+        catch ( ElasticsearchException e )
+        {
+            throw new IndexException( "Failed to update index: " + indexName, e );
         }
     }
 

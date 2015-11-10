@@ -8,6 +8,8 @@ public interface IndexService
     // Check if node is master
     boolean isMaster();
 
+    UpdateIndexSettingsResult updateIndexSettings( final UpdateIndexSettingsParams params );
+
     ReindexResult reindex( ReindexParams params );
 
     void purgeSearchIndex( PurgeIndexParams params );
