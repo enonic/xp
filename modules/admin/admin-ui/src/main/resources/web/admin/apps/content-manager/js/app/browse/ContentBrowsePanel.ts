@@ -114,6 +114,12 @@ module app.browse {
 
             this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager);
 
+            this.onShown(() => {
+                if (!!nonMobileDetailsPanelsManager.getActivePanel().getActiveWidget()) {
+                    nonMobileDetailsPanelsManager.getActivePanel().getActiveWidget().slideIn();
+                }
+            });
+
             this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
         }
 
@@ -402,7 +408,8 @@ module app.browse {
                                         updateResult[i].updateNodeData(el);
 
                                         this.updateStatisticsPreview(el); // update preview item
-                                        this.updateDetailsPanel(el);
+
+                                        this.updateItemInDetailsPanelIfNeeded(el);
 
                                         results.push(updateResult[i]);
                                         break;
@@ -493,7 +500,8 @@ module app.browse {
                                 if (pendingResult[i].getId() === el.getId()) {
                                     pendingResult[i].updateNodeData(el);
 
-                                    this.updateDetailsPanel(el);
+                                    this.updateItemInDetailsPanelIfNeeded(el);
+
                                     new api.content.ContentDeletedEvent(el.getContentId(), true).fire();
                                     break;
                                 }
@@ -520,7 +528,8 @@ module app.browse {
                                 if (publishResult[i].getId() === el.getId()) {
                                     publishResult[i].updateNodeData(el);
 
-                                    this.updateDetailsPanel(el);
+                                    this.updateItemInDetailsPanelIfNeeded(el);
+
                                     new api.content.ContentPublishedEvent(el.getContentId(), el.getCompareStatus()).fire();
                                     break;
                                 }
@@ -577,6 +586,13 @@ module app.browse {
         private updateDetailsPanel(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
             var detailsPanel = ActiveDetailsPanelsManager.getActiveDetailsPanel();
             return detailsPanel ? detailsPanel.setItem(item) : wemQ<any>(null);
+        }
+
+        private updateItemInDetailsPanelIfNeeded(item: ContentSummaryAndCompareStatus) {
+            var detailsPanelItem: ContentSummaryAndCompareStatus = ActiveDetailsPanelsManager.getActiveDetailsPanel().getItem();
+            if (detailsPanelItem && (detailsPanelItem.getId() == item.getId())) {
+                this.updateDetailsPanel(item);
+            }
         }
     }
 }
