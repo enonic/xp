@@ -166,6 +166,22 @@ exports.getMemberships = function (principalKey) {
 };
 
 /**
+ * Returns a list of principals that are members of the specified principal.
+ *
+ * @example
+ * authLib.getMembers('principal-key');
+ *
+ * @param {string} principalKey Principal key to retrieve members for.
+ */
+exports.getMembers = function (principalKey) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.GetMembersHandler');
+
+    bean.principalKey = __.nullOrValue(principalKey);
+
+    return __.toNativeObject(bean.getMembers());
+};
+
+/**
  * Creates user from passed parameters.
  *
  * @example
