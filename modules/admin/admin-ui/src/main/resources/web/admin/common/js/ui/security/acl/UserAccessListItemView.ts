@@ -83,10 +83,10 @@ module api.ui.security.acl {
             if (this.userLine.getChildren().length > 0) {
                 var iconWidth = this.userLine.getChildren()[0].getEl().getWidthWithMargin(),
                     lineWidth = this.userLine.getEl().getWidthWithoutPadding(),
-                    iconCount = this.userLine.getChildren().length;
+                    iconCount = this.getObject().getPermissionAccess().getCount();
 
                 if (lineWidth >= (iconCount * iconWidth)) {
-                    this.userLine.getEl().setAttribute("extra-count", "");
+                    this.userLine.getEl().removeAttribute("extra-count");
                 } else {
                     var extraCount = Math.floor(((iconCount * iconWidth) - lineWidth) / iconWidth) + 1;
                     this.userLine.getEl().setAttribute("extra-count", "+" + extraCount);

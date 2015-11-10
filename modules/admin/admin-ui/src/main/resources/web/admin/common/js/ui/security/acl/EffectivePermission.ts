@@ -10,6 +10,10 @@ module api.ui.security.acl {
             return this.access;
         }
 
+        public getPermissionAccess(): EffectivePermissionAccess {
+            return this.permissionAccess;
+        }
+
         public getMembers(): EffectivePermissionMember[] {
             return this.permissionAccess.getUsers();
         }

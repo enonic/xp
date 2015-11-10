@@ -25,9 +25,12 @@ module api.content {
         sendAndParse(): wemQ.Promise<api.ui.security.acl.EffectivePermission[]> {
 
             return this.send().then((response: api.rest.JsonResponse<api.content.json.EffectivePermissionJson[]>) => {
-                return response.getJson().map((json) => {
-                    return api.ui.security.acl.EffectivePermission.fromJson(json);
-                });
+                if (response.getJson()) {
+                    return response.getJson().map((json) => {
+                        return api.ui.security.acl.EffectivePermission.fromJson(json);
+                    });
+                }
+                return null;
             });
         }
     }
