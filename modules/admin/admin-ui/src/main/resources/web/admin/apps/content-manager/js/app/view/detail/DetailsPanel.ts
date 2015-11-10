@@ -270,9 +270,9 @@ module app.view.detail {
                 setName(DetailsPanel.DEFAULT_WIDGET_NAME).
                 setDetailsPanel(this).
                 addWidgetItemView(this.statusWidgetItemView).
+                addWidgetItemView(this.userAccessWidgetItemView).
                 addWidgetItemView(this.propWidgetItemView).
                 addWidgetItemView(this.attachmentsWidgetItemView).
-                addWidgetItemView(this.userAccessWidgetItemView).
                 build();
 
             this.detailsContainer.appendChild(this.defaultWidgetView);
