@@ -82,7 +82,7 @@ module app.browse {
                 }
             });
 
-            this.onShown((event) => {
+            this.onShown(() => {
                 app.Router.setHash("browse");
             });
 
