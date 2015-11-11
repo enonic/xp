@@ -90,6 +90,9 @@ module app.view {
                     this.setName(this.makeDisplayName(item));
                 }
             }
+            if (!!this.detailsPanel.getActiveWidget()) {
+                this.detailsPanel.getActiveWidget().slideIn();
+            }
             this.slideIn();
         }
 
