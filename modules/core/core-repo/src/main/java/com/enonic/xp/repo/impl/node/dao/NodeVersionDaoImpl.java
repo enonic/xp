@@ -19,6 +19,7 @@ import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.repo.impl.blob.BlobKey;
 import com.enonic.xp.repo.impl.blob.BlobRecord;
 import com.enonic.xp.repo.impl.blob.BlobStore;
+import com.enonic.xp.repo.impl.blob.cache.CachedBlobStore;
 import com.enonic.xp.repo.impl.blob.file.FileBlobStore;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
@@ -34,7 +35,10 @@ public class NodeVersionDaoImpl
     public NodeVersionDaoImpl()
     {
         final File blobStoreDir = new File( HomeDir.get().toFile(), "repo/blob/" + NodeConstants.NODE_VERSION_BLOB_STORE_DIR );
-        this.nodeVersionBlobStore = new FileBlobStore( blobStoreDir );
+        this.nodeVersionBlobStore = CachedBlobStore.create().
+            blobStore( new FileBlobStore( blobStoreDir ) ).
+            sizeTreshold( Long.MAX_VALUE ).
+            build();
     }
 
     @Override

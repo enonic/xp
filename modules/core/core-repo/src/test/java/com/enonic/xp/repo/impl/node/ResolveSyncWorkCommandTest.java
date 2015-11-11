@@ -128,6 +128,8 @@ public class ResolveSyncWorkCommandTest
         markAsDelete( node1_1_1.id() );
         markAsDelete( node1_1_1_1.id() );
 
+        refresh();
+
         final NodeIds result = ResolveSyncWorkCommand.create().
             nodeId( node1_1.id() ).
             includeChildren( true ).
