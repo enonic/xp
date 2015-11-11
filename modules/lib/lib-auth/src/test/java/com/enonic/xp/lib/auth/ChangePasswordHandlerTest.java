@@ -6,12 +6,12 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.OldScriptTestSupport;
 
 import static org.mockito.Matchers.eq;
 
 public class ChangePasswordHandlerTest
-    extends ScriptTestSupport
+    extends OldScriptTestSupport
 {
 
     private SecurityService securityService;

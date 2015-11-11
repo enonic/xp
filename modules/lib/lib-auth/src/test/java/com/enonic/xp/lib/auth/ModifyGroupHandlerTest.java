@@ -14,10 +14,10 @@ import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateGroupParams;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.OldScriptTestSupport;
 
 public class ModifyGroupHandlerTest
-    extends ScriptTestSupport
+    extends OldScriptTestSupport
 {
 
     private SecurityService securityService;

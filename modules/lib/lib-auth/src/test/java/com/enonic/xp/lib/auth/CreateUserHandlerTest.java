@@ -6,10 +6,10 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.OldScriptTestSupport;
 
 public class CreateUserHandlerTest
-    extends ScriptTestSupport
+    extends OldScriptTestSupport
 {
 
     private SecurityService securityService;

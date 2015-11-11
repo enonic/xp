@@ -1,8 +1,8 @@
 var xslt = require('/lib/xp/xslt.js');
 
-exports.render = function () {
+exports.simple = function () {
 
-    var view = resolve('./view/test.xsl');
+    var view = resolve('./view/simple.xsl');
     return xslt.render(view, {
             fruits: [
                 {
@@ -16,5 +16,12 @@ exports.render = function () {
             ]
         }
     );
+
+};
+
+exports.urlFunctions = function () {
+
+    var view = resolve('./view/url-functions.xsl');
+    return xslt.render(view, {});
 
 };

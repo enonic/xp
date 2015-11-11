@@ -14,12 +14,12 @@ import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.OldScriptTestSupport;
 
 import static org.junit.Assert.*;
 
 public class RenderMustacheTest
-    extends ScriptTestSupport
+    extends OldScriptTestSupport
 {
 
     @Before
