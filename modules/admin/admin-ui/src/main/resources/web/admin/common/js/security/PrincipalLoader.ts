@@ -37,6 +37,12 @@ module api.security {
             return this;
         }
 
+        skipPrincipal(principalKey: PrincipalKey): PrincipalLoader {
+            this.skipPrincipalKeys[principalKey.toString()] = principalKey;
+            this.findRequest.setResultFilter((principal) => !this.skipPrincipalKeys[principal.getKey().toString()])
+            return this;
+        }
+
     }
 
 }
