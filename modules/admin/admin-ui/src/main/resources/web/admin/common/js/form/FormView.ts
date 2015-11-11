@@ -98,6 +98,11 @@ module api.form {
 
                         }
                     });
+
+                    formItemView.onEditContentRequest((content: api.content.ContentSummary) => {
+                        var summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
+                        new api.content.EditContentEvent([summaryAndStatus]).fire();
+                    })
                 });
 
                 api.dom.WindowDOM.get().onResized((event: UIEvent) => this.checkSizeChanges(), this);
@@ -199,9 +204,9 @@ module api.form {
 
         unValidityChanged(listener: (event: FormValidityChangedEvent)=>void) {
             this.formValidityChangedListeners =
-            this.formValidityChangedListeners.filter((currentListener: (event: FormValidityChangedEvent)=>void)=> {
-                return listener != currentListener;
-            });
+                this.formValidityChangedListeners.filter((currentListener: (event: FormValidityChangedEvent)=>void)=> {
+                    return listener != currentListener;
+                });
         }
 
         private notifyValidityChanged(event: FormValidityChangedEvent) {

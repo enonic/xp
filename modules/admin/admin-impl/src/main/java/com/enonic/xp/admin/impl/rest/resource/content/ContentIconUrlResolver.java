@@ -10,13 +10,10 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 public final class ContentIconUrlResolver
 {
-    private ContentTypeService contentTypeService;
-
     private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
     public ContentIconUrlResolver( final ContentTypeService contentTypeService )
     {
-        this.contentTypeService = contentTypeService;
         final ContentTypeIconResolver contentTypeIconResolver = new ContentTypeIconResolver( contentTypeService );
         this.contentTypeIconUrlResolver = new ContentTypeIconUrlResolver( contentTypeIconResolver );
     }

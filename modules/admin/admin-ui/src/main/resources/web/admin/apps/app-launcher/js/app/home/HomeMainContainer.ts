@@ -17,7 +17,7 @@ module app.home {
         constructor(builder: HomeMainContainerBuilder) {
             super('home-main-container');
 
-            var lazyImage = new api.ui.image.LazyImage();
+            var lazyImage = new api.ui.image.LazyImage(api.util.UriHelper.getAdminUri("/common/images/image1x1.png"));
             this.appendChild(lazyImage);
 
             this.getEl().setAttribute("tabindex", "100"); //Need tabindex to be able to focus element

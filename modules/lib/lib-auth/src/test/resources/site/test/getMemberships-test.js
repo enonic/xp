@@ -5,16 +5,14 @@ exports.getUserMemberships = function () {
 
     var result = auth.getMemberships('user:myUserStore:userId');
 
-    var expectedJson = [{
-        "type": "user",
-        "key": "user:enonic:user1",
-        "displayName": "User 1",
-        "modifiedTime": "1970-01-01T00:00:00Z",
-        "disabled": false,
-        "email": "user1@enonic.com",
-        "login": "user1",
-        "userStore": "enonic"
-    }];
+    var expectedJson = [
+        {
+            "type": "group",
+            "key": "group:system:group-a",
+            "displayName": "Group A",
+            "modifiedTime": "1970-01-01T00:00:00Z"
+        }
+    ];
 
     assert.assertJsonEquals('getMemberships result not equals', expectedJson, result);
 
@@ -24,16 +22,7 @@ exports.getUserMembershipsWithRoleAndGroup = function () {
 
     var result = auth.getMemberships('user:myUserStore:userId');
 
-    var expectedJson = [{
-        "type": "user",
-        "key": "user:enonic:user1",
-        "displayName": "User 1",
-        "modifiedTime": "1970-01-01T00:00:00Z",
-        "disabled": false,
-        "email": "user1@enonic.com",
-        "login": "user1",
-        "userStore": "enonic"
-    },
+    var expectedJson = [
         {
             "type": "role",
             "key": "role:aRole",
@@ -45,7 +34,8 @@ exports.getUserMembershipsWithRoleAndGroup = function () {
             "key": "group:system:group-a",
             "displayName": "Group A",
             "modifiedTime": "1970-01-01T00:00:00Z"
-        }];
+        }
+    ];
 
     assert.assertJsonEquals('getMemberships result not equals', expectedJson, result);
 

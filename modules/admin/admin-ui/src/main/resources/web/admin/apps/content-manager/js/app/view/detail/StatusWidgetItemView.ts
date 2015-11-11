@@ -7,22 +7,36 @@ module app.view.detail {
 
         private status: CompareStatus;
 
+        public static debug = false;
+
         constructor() {
             super("status-widget-item-view");
         }
 
         public setStatus(status: CompareStatus) {
-            this.status = status;
+            if (StatusWidgetItemView.debug) {
+                console.debug('StatusWidgetItemView.setStatus: ', status);
+            }
+            if (status != this.status) {
+                this.status = status;
+                return this.layout();
+            }
+            return wemQ<any>(null);
         }
 
         public layout(): wemQ.Promise<any> {
-            this.removeChildren();
-            if (this.status != undefined) {
-                var statusEl = new api.dom.SpanEl().setHtml(CompareStatusFormatter.formatStatus(this.status).toLocaleUpperCase());
-                statusEl.addClass(CompareStatus[this.status].toLowerCase().replace("_", "-") || "unknown");
-                this.appendChild(statusEl);
+            if (StatusWidgetItemView.debug) {
+                console.debug('StatusWidgetItemView.layout');
             }
-            return super.layout();
+            this.removeChildren();
+
+            return super.layout().then(() => {
+                if (this.status != undefined) {
+                    var statusEl = new api.dom.SpanEl().setHtml(CompareStatusFormatter.formatStatus(this.status).toLocaleUpperCase());
+                    statusEl.addClass(CompareStatus[this.status].toLowerCase().replace("_", "-") || "unknown");
+                    this.appendChild(statusEl);
+                }
+            });
         }
     }
 }

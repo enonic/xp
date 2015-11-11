@@ -9,12 +9,11 @@ module api.content.site.inputtype.siteconfigurator {
     import Application = api.application.Application;
     import ApplicationKey = api.application.ApplicationKey;
     import SiteConfig = api.content.site.SiteConfig;
-    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import ContentFormContext = api.content.form.ContentFormContext;
     import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
 
-    export class SiteView extends api.dom.DivEl {
+    export class SiteConfiguratorSelectedOptionView extends api.ui.selector.combobox.BaseSelectedOptionView<Application> {
 
         private application: Application;
 
@@ -22,26 +21,26 @@ module api.content.site.inputtype.siteconfigurator {
 
         private siteConfig: SiteConfig;
 
-        private removeClickedListeners: {(event: MouseEvent): void;}[];
+        private editClickedListeners: {(event: MouseEvent): void;}[];
 
-        private collapseClickedListeners: {(event: MouseEvent): void;}[];
-
-        private siteConfigFormDisplayedListeners: {(applicationKey: ApplicationKey) : void}[] = [];
+        private siteConfigFormDisplayedListeners: {(applicationKey: ApplicationKey) : void}[];
 
         private formContext: ContentFormContext;
 
         private formValidityChangedHandler: {(event: api.form.FormValidityChangedEvent):void};
 
-        constructor(application: Application, siteConfig: SiteConfig, formContext: ContentFormContext) {
-            super("site-view");
+        constructor(option: Option<Application>, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext) {
+            this.editClickedListeners = [];
+            this.siteConfigFormDisplayedListeners = [];
 
-            this.removeClickedListeners = [];
-            this.collapseClickedListeners = [];
-
-            this.application = application;
+            this.application = option.displayValue;
             this.siteConfig = siteConfig;
             this.formContext = formContext;
 
+            super(option);
+        }
+
+        layout() {
             var header = new api.dom.DivEl('header');
 
             var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
@@ -53,9 +52,7 @@ module api.content.site.inputtype.siteconfigurator {
             header.appendChild(namesAndIconView);
 
             var removeButton = new api.dom.AEl("remove-button icon-close");
-            removeButton.onClicked((event: MouseEvent) => {
-                this.notifyRemoveClicked(event);
-            });
+            removeButton.onClicked((event: MouseEvent) => this.notifyRemoveClicked());
             header.appendChild(removeButton);
 
             this.appendChild(header);
@@ -65,7 +62,6 @@ module api.content.site.inputtype.siteconfigurator {
             if (this.application.getForm().getFormItems().length > 0) {
                 header.appendChild(this.createEditButton());
             }
-
         }
 
         private initFormView() {
@@ -80,7 +76,7 @@ module api.content.site.inputtype.siteconfigurator {
             var editButton = new api.dom.AEl('edit-button');
 
             editButton.onClicked((event: MouseEvent) => {
-                this.notifyCollapseClicked(event);
+                this.notifyEditClicked(event);
                 this.initAndOpenConfigureDialog();
             });
 
@@ -189,34 +185,18 @@ module api.content.site.inputtype.siteconfigurator {
             return this.formView;
         }
 
-        onRemoveClicked(listener: (event: MouseEvent) => void) {
-            this.removeClickedListeners.push(listener);
+        onEditClicked(listener: (event: MouseEvent) => void) {
+            this.editClickedListeners.push(listener);
         }
 
-        unRemoveClicked(listener: (event: MouseEvent) => void) {
-            this.removeClickedListeners = this.removeClickedListeners.filter((curr) => {
+        unEditClicked(listener: (event: MouseEvent) => void) {
+            this.editClickedListeners = this.editClickedListeners.filter((curr) => {
                 return listener != curr;
             })
         }
 
-        private notifyRemoveClicked(event: MouseEvent) {
-            this.removeClickedListeners.forEach((listener) => {
-                listener(event);
-            })
-        }
-
-        onCollapseClicked(listener: (event: MouseEvent) => void) {
-            this.collapseClickedListeners.push(listener);
-        }
-
-        unCollapseClicked(listener: (event: MouseEvent) => void) {
-            this.collapseClickedListeners = this.collapseClickedListeners.filter((curr) => {
-                return listener != curr;
-            })
-        }
-
-        private notifyCollapseClicked(event: MouseEvent) {
-            this.collapseClickedListeners.forEach((listener) => {
+        private notifyEditClicked(event: MouseEvent) {
+            this.editClickedListeners.forEach((listener) => {
                 listener(event);
             })
         }

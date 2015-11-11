@@ -150,12 +150,12 @@ exports.getPrincipal = function (principalKey) {
 };
 
 /**
- * Returns list of membership principals for given key.
+ * Returns a list of principals the specified principal is a member of.
  *
  * @example
  * authLib.getMemberships('principal-key');
  *
- * @param {string} principalKey Principal key to look for.
+ * @param {string} principalKey Principal key to retrieve memberships for.
  */
 exports.getMemberships = function (principalKey) {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetMembershipsHandler');
@@ -277,41 +277,39 @@ exports.modifyGroup = function (params) {
 };
 
 /**
- * Adds memberships from list to principal with passed key.
+ * Adds members to a principal (user or role).
  *
  * @example
- * auth.addMemberships('user-key', ['role-key', 'group-key']);
+ * auth.addMembers('role-key', ['user-key', 'group-key']);
  *
- * @param {string} key Principal key to add memeberships to.
- * @param {string} list Principal keys list to add.
+ * @param {string} principalKey Key of the principal to add members to.
+ * @param {string} members Keys of the principals to add.
  */
-exports.addMemberships = function (key, list) {
-    var bean = __.newBean('com.enonic.xp.lib.auth.AddMembershipsHandler');
+exports.addMembers = function (principalKey, members) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.AddMembersHandler');
 
-    bean.principalKey = nullOrValue(key);
+    bean.principalKey = nullOrValue(principalKey);
+    bean.members = [].concat(__.nullOrValue(members));
 
-    bean.membershipsList = __.toScriptValue(list);
-
-    return __.toNativeObject(bean.addMemberships());
+    return __.toNativeObject(bean.addMembers());
 };
 
 /**
- * Remove memberships from list for principal with passed key.
+ * Removes members from a principal (user or role).
  *
  * @example
- * auth.removeMemberships('user-key', ['role-key', 'group-key']);
+ * auth.removeMembers('group-key', ['user-key', 'group-key']);
  *
- * @param {string} key Principal key to add memeberships to.
- * @param {string} list Principal keys list to add.
+ * @param {string} principalKey Key of the principal to remove members from.
+ * @param {string} members Keys of the principals to remove.
  */
-exports.removeMemberships = function (key, list) {
-    var bean = __.newBean('com.enonic.xp.lib.auth.RemoveMembershipsHandler');
+exports.removeMembers = function (principalKey, members) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.RemoveMembersHandler');
 
-    bean.principalKey = nullOrValue(key);
+    bean.principalKey = nullOrValue(principalKey);
+    bean.members = [].concat(__.nullOrValue(members));
 
-    bean.membershipsList = __.toScriptValue(list);
-
-    return __.toNativeObject(bean.removeMemberships());
+    return __.toNativeObject(bean.removeMembers());
 };
 
 /**

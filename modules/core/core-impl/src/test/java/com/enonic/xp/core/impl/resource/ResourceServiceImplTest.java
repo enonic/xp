@@ -11,6 +11,7 @@ import org.osgi.framework.Bundle;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -18,6 +19,8 @@ import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.support.ResourceTestHelper;
 
 import static org.junit.Assert.*;
+import static org.mockito.AdditionalMatchers.not;
+import static org.mockito.Matchers.eq;
 
 public class ResourceServiceImplTest
 {
@@ -60,6 +63,8 @@ public class ResourceServiceImplTest
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( applicationService.getApplication( applicationKey ) ).thenReturn( application );
+        Mockito.when( applicationService.getApplication( not( eq( applicationKey ) ) ) ).thenThrow(
+            new ApplicationNotFoundException( ApplicationKey.from( "otherapplication" ) ) );
 
         resourceService = new ResourceServiceImpl();
         resourceService.setApplicationService( applicationService );

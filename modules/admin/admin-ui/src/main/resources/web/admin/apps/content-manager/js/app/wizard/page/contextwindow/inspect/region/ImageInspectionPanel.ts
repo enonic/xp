@@ -11,7 +11,6 @@ module app.wizard.page.contextwindow.inspect.region {
     import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
-    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import PropertyTree = api.data.PropertyTree;
 
     export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponent> {
@@ -120,9 +119,9 @@ module app.wizard.page.contextwindow.inspect.region {
 
         private initSelectorListeners() {
 
-            this.imageSelector.onOptionSelected((event: OptionSelectedEvent<ContentSummary>) => {
+            this.imageSelector.onOptionSelected((selectedOption: SelectedOption<ContentSummary>) => {
                 if (this.handleSelectorEvents) {
-                    var option: Option<ContentSummary> = event.getOption();
+                    var option: Option<ContentSummary> = selectedOption.getOption();
                     var imageContent = option.displayValue;
                     this.imageComponent.setImage(imageContent.getContentId(), imageContent.getDisplayName());
                 }

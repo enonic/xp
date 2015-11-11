@@ -25,25 +25,12 @@ module api.content.form.inputtype.image {
 
         private removeSelectedOptionsListeners: {(option: SelectedOption<ImageSelectorDisplayValue>[]): void}[] = [];
 
-        private valueChangedListeners: {(event: ValueChangedEvent) : void}[] = [];
-
         private mouseClickListener: {(MouseEvent): void};
-
-        /**
-         * The index of child Data being dragged.
-         */
-        private draggingIndex: number;
 
         constructor() {
             super();
 
-            wemjq(this.getHTMLElement()).sortable({
-                containment: this.getHTMLElement(),
-                cursor: 'move',
-                tolerance: 'pointer',
-                start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
-                update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
-            });
+            this.setOccurrencesSortable(true);
 
             this.toolbar = new SelectionToolbar();
             this.toolbar.hide();
@@ -54,10 +41,6 @@ module api.content.form.inputtype.image {
                 this.removeSelectedOptions(this.selection);
             });
             this.appendChild(this.toolbar);
-
-            this.onShown((event: api.dom.ElementShownEvent) => {
-                this.updateLayout();
-            });
         }
 
         removeSelectedOptions(options: SelectedOption<ImageSelectorDisplayValue>[]) {
@@ -72,11 +55,11 @@ module api.content.form.inputtype.image {
             return new SelectedOption<ImageSelectorDisplayValue>(new ImageSelectorSelectedOptionView(option), this.count());
         }
 
-        addOption(option: Option<ImageSelectorDisplayValue>): boolean {
+        addOption(option: Option<ImageSelectorDisplayValue>, silent: boolean = false): boolean {
 
             var selectedOption = this.getByOption(option);
             if (!selectedOption && !this.maximumOccurrencesReached()) {
-                this.addNewOption(option);
+                this.addNewOption(option, silent);
                 return true;
             } else if (selectedOption) {
                 var displayValue = selectedOption.getOption().displayValue;
@@ -88,12 +71,11 @@ module api.content.form.inputtype.image {
             return false;
         }
 
-        addNewOption(option: Option<ImageSelectorDisplayValue>) {
+        private addNewOption(option: Option<ImageSelectorDisplayValue>, silent: boolean) {
             var selectedOption: SelectedOption<ImageSelectorDisplayValue> = this.createSelectedOption(option);
             this.getSelectedOptions().push(selectedOption);
 
             var optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView();
-            optionView.updateProportions(this.calculateOptionHeight());
 
             optionView.onClicked((event: MouseEvent) => {
 
@@ -151,11 +133,15 @@ module api.content.form.inputtype.image {
             });
 
             optionView.getIcon().onLoaded((event: UIEvent) => {
-                optionView.updateProportions(this.calculateOptionHeight());
+                optionView.updateProportions();
                 wemjq(this.getHTMLElement()).sortable("refresh");
             });
 
             optionView.insertBeforeEl(this.toolbar);
+
+            if (!silent) {
+                this.notifyOptionSelected(selectedOption);
+            }
 
             new Tooltip(optionView, option.displayValue.getPath(), 1000);
         }
@@ -206,13 +192,6 @@ module api.content.form.inputtype.image {
             this.setOutsideClickListener();
 
             wemjq(this.getHTMLElement()).sortable("disable");
-        }
-
-        updateLayout() {
-            var optionHeight = this.calculateOptionHeight();
-            this.getSelectedOptions().forEach((selectedOption: SelectedOption<ImageSelectorDisplayValue>) => {
-                (<ImageSelectorSelectedOptionView>selectedOption.getOptionView()).updateProportions(optionHeight);
-            });
         }
 
         private updateSelectionToolbarLayout() {
@@ -267,40 +246,6 @@ module api.content.form.inputtype.image {
             return index == this.getSelectedOptions().length - 1;
         }
 
-        private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
-
-            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
-            this.draggingIndex = draggedElement.getSiblingIndex();
-        }
-
-        private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
-
-            if (this.draggingIndex >= 0) {
-                var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
-                var draggedToIndex = draggedElement.getSiblingIndex();
-                this.handleMovedOccurrence(this.draggingIndex, draggedToIndex);
-            }
-
-            this.draggingIndex = -1;
-        }
-
-        private handleMovedOccurrence(fromIndex: number, toIndex: number) {
-
-            this.moveOccurrence(fromIndex, toIndex);
-
-            this.getValues().forEach((value: Value, index: number) => {
-                if (Math.min(fromIndex, toIndex) <= index && index <= Math.max(fromIndex, toIndex)) {
-                    this.notifyValueChanged(new ValueChangedEvent(value, index));
-                }
-            });
-        }
-
-        getValues(): Value[] {
-            return this.getSelectedOptions().map((selectedOption: SelectedOption<ImageSelectorDisplayValue>) => {
-                return ValueTypes.REFERENCE.newValue(selectedOption.getOption().value);
-            });
-        }
-
         private notifyRemoveSelectedOptions(option: SelectedOption<ImageSelectorDisplayValue>[]) {
             this.removeSelectedOptionsListeners.forEach((listener) => {
                 listener(option);
@@ -333,21 +278,6 @@ module api.content.form.inputtype.image {
             });
         }
 
-        onValueChanged(listener: (event: ValueChangedEvent) => void) {
-            this.valueChangedListeners.push(listener);
-        }
-
-        unValueChanged(listener: (event: ValueChangedEvent) => void) {
-            this.valueChangedListeners.filter((currentListener: (event: ValueChangedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        private notifyValueChanged(event: ValueChangedEvent) {
-            this.valueChangedListeners.forEach((listener: (event: ValueChangedEvent)=>void) => {
-                listener(event);
-            });
-        }
     }
 
 }

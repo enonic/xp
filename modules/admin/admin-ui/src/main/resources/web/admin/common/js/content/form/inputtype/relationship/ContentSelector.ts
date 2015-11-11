@@ -91,9 +91,9 @@ module api.content.form.inputtype.relationship {
                                 this.contentComboBox.select(content);
                             });
 
-                            this.contentComboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
+                            this.contentComboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
 
-                                var reference = api.util.Reference.from(event.getOption().displayValue.getContentId());
+                                var reference = api.util.Reference.from(selectedOption.getOption().displayValue.getContentId());
 
                                 var value = new Value(reference, ValueTypes.REFERENCE);
                                 if (this.contentComboBox.countSelected() == 1) { // overwrite initial value

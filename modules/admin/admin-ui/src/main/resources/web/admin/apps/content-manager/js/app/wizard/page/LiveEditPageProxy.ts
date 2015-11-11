@@ -241,6 +241,7 @@ module app.wizard.page {
 
                 if (api.BrowserHelper.isIE()) {
                     this.resetObjectsAfterFrameReloadForIE();
+                    this.disableLinksInLiveEditForIE();
                 }
                 new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
             }
@@ -704,6 +705,10 @@ module app.wizard.page {
                 var regions = api.content.page.region.Regions.create().fromJson(this.regionsCopyForIE, null).build();
                 this.liveEditModel.getPageModel().setRegions(regions);
             }
+        }
+
+        private disableLinksInLiveEditForIE() {
+            this.livejq("a").attr("disabled", "disabled"); // this works only in IE
         }
 
     }

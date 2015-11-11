@@ -6,7 +6,6 @@
 ///<reference path='ContentVersionsTreeGrid.ts' />
 ///<reference path='AllContentVersionsTreeGrid.ts' />
 ///<reference path='ActiveContentVersionsTreeGrid.ts' />
-///<reference path='ContentItemVersionsPanel.ts' />
 ///<reference path='ContentItemStatisticsPanel.ts' />
 ///<reference path='ContentItemViewPanel.ts' />
 ///<reference path='MobileContentItemStatisticsPanel.ts' />

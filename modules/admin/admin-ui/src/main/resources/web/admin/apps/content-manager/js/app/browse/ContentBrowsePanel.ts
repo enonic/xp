@@ -114,10 +114,6 @@ module app.browse {
 
             this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager);
 
-            this.onShown(() => {
-                nonMobileDetailsPanelsManager.getActivePanel().updateWidgetsHeights();
-            });
-
             this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
         }
 
@@ -125,11 +121,11 @@ module app.browse {
 
             this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
                 var browseItems: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus>[] = this.getBrowseItemPanel().getItems(),
-                    item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = null;
+                    item: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus> = null;
                 if (browseItems.length > 0) {
-                    item = browseItems[browseItems.length - 1].toViewItem();
+                    item = browseItems[browseItems.length - 1];
                 }
-                this.updateDetailsPanelsViewItem(item);
+                this.updateDetailsPanel(item ? item.getModel() : null);
             });
 
             ResponsiveManager.onAvailableSizeChanged(this.getFilterAndContentGridAndBrowseSplitPanel(), (item: ResponsiveItem) => {
@@ -404,15 +400,11 @@ module app.browse {
                                 for (var i = 0; i < updateResult.length; i++) {
                                     if (updateResult[i].getId() === el.getId()) {
                                         updateResult[i].updateNodeData(el);
+
                                         this.updateStatisticsPreview(el); // update preview item
+                                        this.updateDetailsPanel(el);
 
-                                        var selectedItems = this.getBrowseItemPanel().getItems();
-                                        if (selectedItems.length > 0) {
-                                            var viewItem = selectedItems[selectedItems.length - 1].toViewItem();
-                                            this.updateDetailsPanels(el.getContentId(), el.getCompareStatus(), viewItem);
-                                        }
                                         results.push(updateResult[i]);
-
                                         break;
                                     }
                                 }
@@ -458,7 +450,7 @@ module app.browse {
                 merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
                     if (node.getData() && node.getData().getContentSummary()) {
 
-                        this.updateDetailsPanels(node.getData().getContentId(), node.getData().getCompareStatus(), null);
+                        this.updateDetailsPanel(null);
                         new api.content.ContentDeletedEvent(node.getData().getContentSummary().getContentId()).fire();
                     }
                 });
@@ -486,8 +478,7 @@ module app.browse {
 
                 var pendingResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
-                return ContentSummaryAndCompareStatusFetcher.
-                    fetchByPaths(pendingResult.
+                return ContentSummaryAndCompareStatusFetcher.fetchByPaths(pendingResult.
                         map((el) => {
                             return (el.getNodes().length > 0 && el.getNodes()[0].getData())
                                 ? el.getNodes()[0].getData().getContentSummary().getPath()
@@ -501,7 +492,8 @@ module app.browse {
                             for (var i = 0; i < pendingResult.length; i++) {
                                 if (pendingResult[i].getId() === el.getId()) {
                                     pendingResult[i].updateNodeData(el);
-                                    this.updateDetailsPanels(el.getContentId(), el.getCompareStatus());
+
+                                    this.updateDetailsPanel(el);
                                     new api.content.ContentDeletedEvent(el.getContentId(), true).fire();
                                     break;
                                 }
@@ -526,10 +518,10 @@ module app.browse {
                         data.forEach((el) => {
                             for (var i = 0; i < publishResult.length; i++) {
                                 if (publishResult[i].getId() === el.getId()) {
-                                    new api.content.ContentPublishedEvent(new api.content.ContentId(el.getId()),
-                                        el.getCompareStatus()).fire();
                                     publishResult[i].updateNodeData(el);
-                                    this.updateDetailsPanels(el.getContentId(), el.getCompareStatus());
+
+                                    this.updateDetailsPanel(el);
+                                    new api.content.ContentPublishedEvent(el.getContentId(), el.getCompareStatus()).fire();
                                     break;
                                 }
                             }
@@ -581,26 +573,9 @@ module app.browse {
             }
         }
 
-        private updateDetailsPanels(contentId: ContentId, status: CompareStatus,
-                                    viewItem?: api.app.view.ViewItem<ContentSummaryAndCompareStatus>) {
-            if (viewItem !== undefined) {
-                this.updateDetailsPanelsViewItem(viewItem);
-            }
-            this.updateDetailsPanelContentStatus(ActiveDetailsPanelsManager.getActiveDetailsPanel(), contentId, status);
-        }
-
-        private updateDetailsPanelsViewItem(viewItem: api.app.view.ViewItem<ContentSummaryAndCompareStatus>) {
-            var activeDetailsPanel = ActiveDetailsPanelsManager.getActiveDetailsPanel();
-            if (activeDetailsPanel) {
-                activeDetailsPanel.setItem(viewItem);
-            }
-        }
-
-        private updateDetailsPanelContentStatus(detailsPanel: DetailsPanel, contentId: ContentId, status: CompareStatus) {
-            var item = detailsPanel.getItem();
-            if (contentId && item && contentId.equals(item.getModel().getContentId())) {
-                detailsPanel.setContentStatus(status);
-            }
+        private updateDetailsPanel(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
+            var detailsPanel = ActiveDetailsPanelsManager.getActiveDetailsPanel();
+            return detailsPanel ? detailsPanel.setItem(item) : wemQ<any>(null);
         }
     }
 }
