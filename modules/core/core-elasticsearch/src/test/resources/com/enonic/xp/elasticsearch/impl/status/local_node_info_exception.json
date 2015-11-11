@@ -10,5 +10,5 @@
     }
   ],
   "state": "GREEN",
-  "errorMessages": ["local node info exception"]
+  "errorMessages": ["ElasticsearchException[local node info exception]"]
 }

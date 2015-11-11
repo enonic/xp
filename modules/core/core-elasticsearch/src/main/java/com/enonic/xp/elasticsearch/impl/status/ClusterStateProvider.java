@@ -8,23 +8,20 @@ import org.elasticsearch.action.admin.cluster.node.info.NodesInfoRequest;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Lists;
 
-
+@Component(service = ClusterStateProvider.class)
 public final class ClusterStateProvider
-    extends ClusterInfoProvider<ClusterState>
+    implements ClusterInfoProvider<ClusterState>
 {
-    private String masterNodeId;
-
-    public ClusterStateProvider( final Client client )
-    {
-        super( client );
-    }
+    private ClusterAdminClient clusterAdminClient;
 
     @Override
     public ClusterState getInfo()
@@ -37,31 +34,37 @@ public final class ClusterStateProvider
         {
             clusterStateResponse = this.getClusterStateResponse();
             builder.clusterName( clusterStateResponse.getClusterName().value() );
+        }
+        catch ( ElasticsearchException ex )
+        {
+            builder.errorMessage( ex.getClass().getSimpleName() + "[" + ex.getMessage() + "]" ).
+                build();
+        }
 
+        try
+        {
             localNodeInfoResponse = this.getNodesResponse();
         }
         catch ( ElasticsearchException ex )
         {
-            if ( clusterStateResponse == null )
-            {
-                return null;
-            }
-            builder.errorMessage( ex.getMessage() );
+            builder.errorMessage( ex.getClass().getSimpleName() + "[" + ex.getMessage() + "]" ).
+                build();
         }
 
-        final org.elasticsearch.cluster.ClusterState clusterState = clusterStateResponse.getState();
-
-        this.masterNodeId = clusterState.getNodes().getMasterNodeId();
-
-        if ( localNodeInfoResponse != null )
+        if ( clusterStateResponse != null )
         {
-            final NodeInfo localNodeInfo = localNodeInfoResponse.getAt( 0 );
-            final LocalNodeState localNodeState = this.getLocalNodeState( clusterState, localNodeInfo );
-            builder.localNodeState( localNodeState );
-        }
+            final org.elasticsearch.cluster.ClusterState clusterState = clusterStateResponse.getState();
 
-        List<MemberNodeState> memberNodeStates = this.getMembersState( clusterState.getNodes() );
-        builder.addMemberNodeStates( memberNodeStates );
+            if ( localNodeInfoResponse != null )
+            {
+                final NodeInfo localNodeInfo = localNodeInfoResponse.getAt( 0 );
+                final LocalNodeState localNodeState = this.getLocalNodeState( clusterState, localNodeInfo );
+                builder.localNodeState( localNodeState );
+            }
+
+            List<MemberNodeState> memberNodeStates = this.getMembersState( clusterState.getNodes() );
+            builder.addMemberNodeStates( memberNodeStates );
+        }
 
         return builder.build();
     }
@@ -74,7 +77,7 @@ public final class ClusterStateProvider
             numberOfNodesSeen( clusterState.getNodes().size() ).
             id( nodeId ).
             hostName( localNodeInfo.getNode().getHostName() ).
-            master( nodeId.equals( this.masterNodeId ) ).
+            master( nodeId.equals( clusterState.getNodes().getMasterNodeId() ) ).
             build();
     }
 
@@ -90,7 +93,7 @@ public final class ClusterStateProvider
                 version( node.getVersion() ).
                 id( node.id() ).
                 hostName( node.getHostName() ).
-                master( node.getId().equals( this.masterNodeId ) ).build();
+                master( node.getId().equals( members.getMasterNodeId() ) ).build();
 
             results.add( memberNodeState );
         }
@@ -109,13 +112,19 @@ public final class ClusterStateProvider
             metaData( false ).
             masterNodeTimeout( CLUSTER_HEALTH_TIMEOUT );
 
-        return client.admin().cluster().state( clusterStateRequest ).actionGet();
+        return clusterAdminClient.state( clusterStateRequest ).actionGet();
     }
 
     private NodesInfoResponse getNodesResponse( String... nodeIds )
     {
         final NodesInfoRequest req =
             ( nodeIds != null && nodeIds.length > 0 ) ? new NodesInfoRequest( nodeIds ) : new NodesInfoRequest().all();
-        return this.client.admin().cluster().nodesInfo( req ).actionGet();
+        return clusterAdminClient.nodesInfo( req ).actionGet();
+    }
+
+    @Reference
+    public void setClusterAdminClient( ClusterAdminClient clusterAdminClient )
+    {
+        this.clusterAdminClient = clusterAdminClient;
     }
 }

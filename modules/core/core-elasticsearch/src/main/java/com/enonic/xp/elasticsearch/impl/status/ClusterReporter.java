@@ -1,6 +1,5 @@
 package com.enonic.xp.elasticsearch.impl.status;
 
-import org.elasticsearch.client.Client;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -34,9 +33,14 @@ public final class ClusterReporter
     }
 
     @Reference
-    public void setClient( final Client client )
+    public void setClusterStateProvider( final ClusterStateProvider clusterStateProvider )
     {
-        this.clusterStateProvider = new ClusterStateProvider( client );
-        this.clusterHealthProvider = new ClusterHealthProvider( client );
+        this.clusterStateProvider = clusterStateProvider;
+    }
+
+    @Reference
+    public void setClusterHealthProvider( final ClusterHealthProvider clusterHealthProvider )
+    {
+        this.clusterHealthProvider = clusterHealthProvider;
     }
 }

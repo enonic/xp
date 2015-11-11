@@ -22,5 +22,6 @@
       "version": "1.0.0"
     }
   ],
-  "state": "GREEN"
+  "state": "GREEN",
+  "errorMessages": []
 }
