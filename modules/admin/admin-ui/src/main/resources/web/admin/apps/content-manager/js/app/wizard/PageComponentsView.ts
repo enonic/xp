@@ -390,8 +390,7 @@ module app.wizard {
 
             if (!this.contextMenu) {
                 this.contextMenu = new api.liveedit.ItemViewContextMenu(null, contextMenuActions);
-                this.contextMenu.onShown((event) => this.setMenuOpenStyleOnMenuIcon(row));
-                this.contextMenu.onHidden((event) => this.removeMenuOpenStyleFromMenuIcon());
+                this.contextMenu.onHidden(this.removeMenuOpenStyleFromMenuIcon.bind(this));
             } else {
                 this.contextMenu.setActions(contextMenuActions);
             }
@@ -406,6 +405,8 @@ module app.wizard {
                     this.contextMenu.getMenu().clearActionListeners();
                 }, 500);
             });
+
+            this.setMenuOpenStyleOnMenuIcon(row);
 
             // show menu at position
             var x = clickPosition.x;
