@@ -215,7 +215,7 @@ module app.browse {
                 }
                 if (i === index) {
                     var data = node.getData();
-                    if (!!data) {
+                    if (!!data && !!data.getContentSummary()) {
                         var item = new BrowseItem<ContentSummaryAndCompareStatus>(data).
                             setId(data.getId()).
                             setDisplayName(data.getContentSummary().getDisplayName()).
