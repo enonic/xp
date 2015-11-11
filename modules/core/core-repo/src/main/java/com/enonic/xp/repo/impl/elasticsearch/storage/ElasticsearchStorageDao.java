@@ -52,7 +52,7 @@ public class ElasticsearchStorageDao
             type( settings.getStorageType().getName() ).
             source( XContentBuilderFactory.create( request ) ).
             id( request.getId() ).
-            refresh( true ); //TODO Temporary fix. Should be corrected by XP-1986
+            refresh( request.isForceRefresh() );
 
         if ( request.getRouting() != null )
         {

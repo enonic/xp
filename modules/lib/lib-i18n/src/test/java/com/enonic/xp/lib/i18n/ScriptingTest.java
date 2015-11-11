@@ -15,10 +15,10 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.OldScriptTestSupport;
 
 public class ScriptingTest
-    extends ScriptTestSupport
+    extends OldScriptTestSupport
 {
     @Before
     public void setUp()

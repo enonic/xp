@@ -7,9 +7,9 @@ module api.liveedit {
         private arrow: ItemViewContextMenuArrow;
 
         constructor(menuTitle: ItemViewContextMenuTitle, actions: api.ui.Action[]) {
-            super('item-view-context-menu bottom');
+            super('item-view-context-menu');
 
-            this.arrow = new ItemViewContextMenuArrow(this);
+            this.arrow = new ItemViewContextMenuArrow();
             this.appendChild(this.arrow);
 
             this.title = menuTitle;
@@ -73,7 +73,7 @@ module api.liveedit {
         }
 
         showAt(x: number, y: number, notClicked: boolean = false) {
-            this.menu.showAt.call(this, this.getXPosition(x), this.getYPosition(y, notClicked));
+            this.menu.showAt.call(this, this.restrainX(x), this.restrainY(y, notClicked));
         }
 
         moveBy(dx: number, dy: number) {
@@ -98,112 +98,80 @@ module api.liveedit {
             api.dom.Body.get().unMouseUp(upListener);
         }
 
-        private getXPosition(x: number): number {
-            var pageView = wemjq(this.getHTMLElement()).closest(".page-view");
-            var minDistFromFrameBorder = (pageView.outerWidth(true) - pageView.innerWidth()) / 2;
+        private restrainX(x: number): number {
+            var parentEl = this.getParentElement().getEl();
 
-            if (this.overflowsLeftFrameBorder(x)) {
-                this.arrow.shiftXPositionLeft(x, pageView);
-                return minDistFromFrameBorder;
-            }
-            else if (this.overflowsRightFrameBorder(x)) {
-                this.arrow.shiftXPositionRight(x, pageView);
-                return pageView.outerWidth(true) - this.getEl().getWidth() - minDistFromFrameBorder;
-            }
-            else {
-                this.arrow.resetXPosition();
-                return x - this.getEl().getWidth() / 2;
+            var width = this.getEl().getWidth(),
+                halfWidth = width / 2,
+                arrowHalfWidth = this.arrow.getWidth() / 2,
+                desiredX = x - halfWidth,
+                deltaX,
+                minX = parentEl.getMarginLeft(),
+                maxX = parentEl.getWidthWithMargin() - parentEl.getMarginRight() - width;
+
+            if (desiredX < minX) {
+                deltaX = minX - desiredX;
+                this.arrow.getEl().setLeftPx(Math.max(arrowHalfWidth, halfWidth - deltaX));
+                return minX;
+            } else if (desiredX > maxX) {
+                deltaX = maxX - desiredX;
+                this.arrow.getEl().setLeftPx(Math.min(halfWidth - deltaX, width - arrowHalfWidth));
+                return maxX;
+            } else {
+                this.arrow.getEl().setLeft("");
+                return desiredX;
             }
         }
 
-        private getYPosition(y: number, notClicked?: boolean): number {
-            if (this.overflowsBottom(y, notClicked)) {
+        private restrainY(y: number, notClicked?: boolean): number {
+            var height = this.getEl().getHeight(),
+                arrowHeight = this.arrow.getHeight(),
+                bottomY = y + height + arrowHeight,
+                maxY;
+
+            if (notClicked) {
+                maxY = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+            } else {
+                maxY = Math.max(document.body.scrollTop, document.documentElement.scrollTop) + window.innerHeight;
+            }
+
+            if (bottomY > maxY) {
                 this.arrow.toggleVerticalPosition(false);
-                return y - this.getEl().getHeight() - this.arrow.getHeight();
+                return y - height - arrowHeight;
             } else {
                 this.arrow.toggleVerticalPosition(true);
-                return y + this.arrow.getHeight();
+                return y + arrowHeight;
             }
 
         }
 
-        private overflowsLeftFrameBorder(x: number): boolean {
-            return (x - this.getEl().getWidth() / 2) < 0;
-        }
-
-        private overflowsRightFrameBorder(x: number): boolean {
-            return (x + this.getEl().getWidth() / 2) > window.innerWidth;
-        }
-
-        private overflowsBottom(y: number, notClicked?: boolean): boolean {
-            var yPos = y + this.getEl().getHeight() + this.arrow.getHeight() + 1;
-
-            return yPos >
-                   (notClicked ? Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) : (wemjq(window).scrollTop() +
-                                                                                                                window.innerHeight));
-        }
     }
 
     export class ItemViewContextMenuArrow extends api.dom.DivEl {
 
-        private height: number = 7; //height of pseudo element
-
-        private width: number = 7; //width of pseudo element
-
-        private contextMenu: ItemViewContextMenu;
-
-        constructor(contextMenu: ItemViewContextMenu) {
+        constructor() {
             super("item-view-context-menu-arrow bottom");
-
-            this.contextMenu = contextMenu;
         }
 
-        toggleVerticalPosition(bottom: boolean) {
-            this.toggleClass("bottom", bottom);
-            this.toggleClass("top", !bottom);
+        public toggleVerticalPosition(bottom: boolean) {
+            this.toggleClass('bottom', bottom);
+            this.toggleClass('top', !bottom);
         }
 
-        updateArrowXPosition(x:number) {
-            this.getEl().setLeftPx(x);
-        }
-
-        resetXPosition() {
-            this.getEl().setLeft("");
-        }
-
-        shiftXPositionLeft(x: number, pageView: JQuery) {
-            var minDistFromFrameBorder = (pageView.outerWidth(true) - pageView.innerWidth()) / 2;
-
-            if (this.overflowsLeftFrameBorder(x, minDistFromFrameBorder)) {
-                this.updateArrowXPosition(this.width);
-            }
-            else {
-                this.updateArrowXPosition(x - minDistFromFrameBorder);
-            }
-        }
-
-        shiftXPositionRight(x: number, pageView: JQuery) {
-            var minDistFromFrameBorder = (pageView.outerWidth(true) - pageView.innerWidth()) / 2;
-            var arrowPos = this.contextMenu.getEl().getWidth() - (pageView.outerWidth(true) - x) + minDistFromFrameBorder;
-
-            if (this.overflowsRightFrameBorder(arrowPos)) {
-                this.updateArrowXPosition(this.contextMenu.getEl().getWidth() - this.width);
-            }
-            else {
-                this.updateArrowXPosition(arrowPos);
+        getWidth(): number {
+            if (this.hasClass('top') || this.hasClass('bottom')) {
+                return 14;
+            } else if (this.hasClass('left') || this.hasClass('right')) {
+                return 7;
             }
         }
 
         getHeight(): number {
-            return this.height;
-        }
-
-        private overflowsLeftFrameBorder(x: number, minimalDistFromFrameBorder: number): boolean {
-            return (minimalDistFromFrameBorder + this.width) > x;
-        }
-
-        private overflowsRightFrameBorder(arrowPos: number): boolean {
-            return (this.contextMenu.getEl().getWidth() - this.width) < arrowPos;
+            if (this.hasClass('top') || this.hasClass('bottom')) {
+                return 7;
+            } else if (this.hasClass('left') || this.hasClass('right')) {
+                return 14;
+            }
         }
     }
 

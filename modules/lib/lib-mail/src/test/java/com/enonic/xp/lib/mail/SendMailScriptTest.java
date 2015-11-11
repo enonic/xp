@@ -15,12 +15,12 @@ import org.junit.Test;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
 import com.enonic.xp.resource.ResourceProblemException;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.OldScriptTestSupport;
 
 import static org.junit.Assert.*;
 
 public class SendMailScriptTest
-    extends ScriptTestSupport
+    extends OldScriptTestSupport
 {
     private MailMessage actualMessage;
 

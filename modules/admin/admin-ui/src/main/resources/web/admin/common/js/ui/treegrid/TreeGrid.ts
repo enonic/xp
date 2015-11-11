@@ -447,24 +447,22 @@ module api.ui.treegrid {
 
         private postLoad() {
             // Skip if not visible or active (is loading something)
-            let disabled = this.isInRenderingView();
+            var disabled = !this.isInRenderingView();
 
             if (disabled) {
                 return;
             }
 
-            let viewportRange = this.grid.getViewport();
-            let lastIndex = this.gridData.getItems().length - 1;
-
+            var viewportRange = this.grid.getViewport(),
+                lastIndex = this.gridData.getItems().length - 1,
             // first and last rows, that are visible in grid
-            let firstVisible = viewportRange.top;
-            let lastVisible = Math.min(viewportRange.bottom, lastIndex);
-
+                firstVisible = viewportRange.top,
+                lastVisible = Math.min(viewportRange.bottom, lastIndex),
             // interval borders to search for the empty node
-            let from = firstVisible;
-            let to = Math.min(lastVisible + this.loadBufferSize, lastIndex);
+                from = firstVisible,
+                to = Math.min(lastVisible + this.loadBufferSize, lastIndex);
 
-            for (let i = from; i <= to; i++) {
+            for (var i = from; i <= to; i++) {
                 if (!!this.gridData.getItem(i) && this.gridData.getItem(i).getDataId() === "") {
                     //emptyNode = this.gridData.getItem(i);
                     this.loadEmptyNode(this.gridData.getItem(i));

@@ -25,20 +25,12 @@
 
         &:checked + label {
           color: @admin-black !important;
-          &:before {
-            top: 2px;
-            left: 1px;
-          }
         }
 
         & + label {
+          padding-bottom: 1px;
           color: @admin-font-gray2 !important;
-          padding-left: 21px;
           .ellipsis();
-          &:before {
-            top: 2px;
-            left: 1px;
-          }
         }
       }
     }

@@ -73,7 +73,7 @@ module api.content.site.inputtype.siteconfigurator {
 
                     var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView>selectedOption.getOptionView();
 
-                    this.saveToSet(selectedOptionView.getSiteConfig(), this.getPropertyArray().addSet());
+                    this.saveToSet(selectedOptionView.getSiteConfig(), selectedOption.getIndex());
 
                     this.validate(false);
                 });
@@ -81,16 +81,21 @@ module api.content.site.inputtype.siteconfigurator {
                 this.comboBox.onOptionMoved((selectedOption: SelectedOption<Application>) => {
 
                     var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView> selectedOption.getOptionView();
-                    var propertySet = this.getPropertyArray().get(selectedOption.getIndex()).getPropertySet();
 
-                    this.saveToSet(selectedOptionView.getSiteConfig(), propertySet);
+                    this.saveToSet(selectedOptionView.getSiteConfig(), selectedOption.getIndex());
 
                     this.validate(false);
                 })
             });
         }
 
-        private saveToSet(siteConfig: SiteConfig, propertySet: PropertySet) {
+        private saveToSet(siteConfig: SiteConfig, index) {
+
+            var propertySet = this.getPropertyArray().get(index).getPropertySet();
+            if (!propertySet) {
+                propertySet = this.getPropertyArray().addSet();
+            }
+
             var config = siteConfig.getConfig();
             var appKey = siteConfig.getApplicationKey();
 

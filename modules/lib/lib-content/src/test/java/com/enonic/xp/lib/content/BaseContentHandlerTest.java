@@ -6,10 +6,10 @@ import org.mockito.Mockito;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.OldScriptTestSupport;
 
 abstract class BaseContentHandlerTest
-    extends ScriptTestSupport
+    extends OldScriptTestSupport
 {
     protected ContentService contentService;
 

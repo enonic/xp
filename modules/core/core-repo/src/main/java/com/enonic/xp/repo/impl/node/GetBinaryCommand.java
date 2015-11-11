@@ -8,6 +8,7 @@ import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.blob.BlobKey;
+import com.enonic.xp.repo.impl.blob.BlobRecord;
 import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.util.BinaryReference;
 
@@ -74,8 +75,8 @@ public class GetBinaryCommand
     private ByteSource doGetByteSource( final AttachedBinary attachedBinary )
     {
         final BlobKey blobKey = new BlobKey( attachedBinary.getBlobKey() );
-
-        return this.binaryBlobStore.getByteSource( blobKey );
+        final BlobRecord record = this.binaryBlobStore.getRecord( blobKey );
+        return record != null ? record.getBytes() : null;
     }
 
     public static Builder create()

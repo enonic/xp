@@ -10,12 +10,8 @@ module app.view.detail {
     import AccessControlEntry = api.security.acl.AccessControlEntry;
     import AccessControlEntryView = api.ui.security.acl.AccessControlEntryView;
     import UserAccessListView = api.ui.security.acl.UserAccessListView;
-    import UserAccessListItem = api.ui.security.acl.UserAccessListItem;
     import UserAccessListItemView = api.ui.security.acl.UserAccessListItemView;
     import Permission = api.security.acl.Permission;
-    import ResolveMembersRequest = api.security.ResolveMembersRequest;
-    import ResolveMemberResult = api.security.ResolveMemberResult;
-    import ResolveMembersResult = api.security.ResolveMembersResult;
     import Principal = api.security.Principal;
     import PrincipalKey = api.security.PrincipalKey;
     import User = api.security.User;
@@ -54,11 +50,8 @@ module app.view.detail {
             if (UserAccessWidgetItemView.debug) {
                 console.debug('UserAccessWidgetItemView.setContentId: ', contentId);
             }
-            if (!api.ObjectHelper.equals(contentId, this.contentId)) {
-                this.contentId = contentId;
-                return this.layout();
-            }
-            return wemQ<any>(null);
+            this.contentId = contentId;
+            return this.layout();
         }
 
 
@@ -95,29 +88,13 @@ module app.view.detail {
 
             var deferred = wemQ.defer<boolean>();
 
+            var request = new api.content.GetEffectivePermissions(content.getContentId());
 
-            var accessUsersMap = [],
-                request = new ResolveMembersRequest();
+            request.sendAndParse().then((results: api.ui.security.acl.EffectivePermission[]) => {
 
-            content.getPermissions().getEntries().
-                filter(entry => !(AccessControlEntryView.getAccessValueFromEntry(entry) == this.everyoneAccessValue)).
-                map((entry) => {
+                var userAccessList = this.getUserAccessList(results);
 
-                    var access = AccessControlEntryView.getAccessValueFromEntry(entry);
-                    if (!accessUsersMap[access]) {
-                        accessUsersMap[access] = [];
-                    }
-                    accessUsersMap[access].push(entry.getPrincipal());
-                    if (entry.getPrincipal().isGroup() || entry.getPrincipal().isRole()) {
-                        request.addKey(entry.getPrincipalKey());
-                    }
-                }
-            );
-
-            request.sendAndParse().then((results: ResolveMembersResult) => {
-
-                var userAccessList = this.getUserAccessList(accessUsersMap, results);
-
+                this.accessListView = new UserAccessListView();
                 this.accessListView.setItemViews(userAccessList);
                 this.appendChild(this.accessListView);
 
@@ -160,42 +137,16 @@ module app.view.detail {
             });
         }
 
-        private getUserAccessList(accessUsersMap, results: ResolveMembersResult): UserAccessListItemView[] {
+        private getUserAccessList(results: api.ui.security.acl.EffectivePermission[]): UserAccessListItemView[] {
 
-            var keys = results.getValues().map((entry: ResolveMemberResult) => entry.getPrincipalKey().toString()),
-                uniqueKeys: string[] = [],
-                userAccessList: UserAccessListItemView[] = [];
-
-            for (var key in accessUsersMap) {
-
-                var listItem = new UserAccessListItem(key);
-
-                accessUsersMap[key].forEach((principal: api.security.Principal) => {
-                    var members = [];
-                    if (keys.indexOf(principal.getKey().toString()) > -1) {
-                        members = results.getByPrincipalKey(principal.getKey()).getMembers();
-                    } else {
-                        members = accessUsersMap[key];
-                    }
-
-                    members = members.filter((member) => {
-                        return uniqueKeys.indexOf(member.getKey().toString()) == -1;
-                    });
-
-                    listItem.addItems(members);
-
-                    uniqueKeys = uniqueKeys.concat(members.map((curPrincipal: Principal) => curPrincipal.getKey().toString()));
+            return results.
+                filter(item => item.getAccess() != this.everyoneAccessValue).
+                map((item: api.ui.security.acl.EffectivePermission) => {
+                    var view = new UserAccessListItemView();
+                    view.setObject(item);
+                    view.setCurrentUser(this.currentUser);
+                    return view;
                 });
-
-                var listItemView = new UserAccessListItemView();
-                listItemView.setCurrentUser(this.currentUser);
-
-                listItemView.setObject(listItem);
-
-                userAccessList.push(listItemView);
-            }
-
-            return userAccessList;
         }
 
         private getOptionName(access: Access): string {

@@ -12,6 +12,8 @@ module api {
 
         private static BROWSER_VERSION: string;
 
+        private static IS_IE: boolean = false;
+
         static isAvailableBrowser(): boolean {
             if (!BrowserHelper.BROWSER_NAME) {
                 this.init();
@@ -46,9 +48,7 @@ module api {
                 this.init();
             }
 
-            return BrowserHelper.BROWSER_NAME === BrowserName.TRIDENT ||
-                   BrowserHelper.BROWSER_NAME === BrowserName.MSIE ||
-                   navigator.userAgent.indexOf('Edge/') > 0;
+            return BrowserHelper.IS_IE;
         }
 
         private static init() {
@@ -58,6 +58,10 @@ module api {
 
             BrowserHelper.AVAILABLE_VERSIONS[BrowserName.CHROME] = "39";
             BrowserHelper.AVAILABLE_VERSIONS[BrowserName.FIREFOX] = "27";
+
+            BrowserHelper.IS_IE = BrowserHelper.BROWSER_NAME === BrowserName.TRIDENT ||
+                                  BrowserHelper.BROWSER_NAME === BrowserName.MSIE ||
+                                  navigator.userAgent.indexOf('Edge/') > 0;
 
         }
     }

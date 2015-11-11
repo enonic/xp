@@ -34,9 +34,6 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.EmailAvailabilityJso
 import com.enonic.xp.admin.impl.rest.resource.security.json.GroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalsJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.ResolveMemberResultJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.ResolveMembersJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.ResolveMembersResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.RoleJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateGroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
@@ -249,19 +246,6 @@ public final class SecurityResource
         final PrincipalQuery query = PrincipalQuery.create().email( email ).userStore( userStoreKey ).build();
         final PrincipalQueryResult queryResult = securityService.query( query );
         return new EmailAvailabilityJson( queryResult.isEmpty() );
-    }
-
-    @POST
-    @Path("principals/resolveMembers")
-    public ResolveMembersResultJson resolveMembers( final ResolveMembersJson params )
-    {
-        final ResolveMembersResultJson resultsJson = new ResolveMembersResultJson();
-        for ( PrincipalKey principalKey : params.getMembers() )
-        {
-            final Principals members = this.securityService.getPrincipals( getUserMembers( principalKey ) );
-            resultsJson.add( new ResolveMemberResultJson( principalKey, members ) );
-        }
-        return resultsJson;
     }
 
     @POST

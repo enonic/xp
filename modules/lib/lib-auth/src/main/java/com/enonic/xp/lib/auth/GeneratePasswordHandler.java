@@ -1,8 +1,8 @@
 package com.enonic.xp.lib.auth;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public final class GeneratePasswordHandler
 {
@@ -21,6 +21,8 @@ public final class GeneratePasswordHandler
     private static final String UPPERCASE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     private static final String DIGIT_CHARS = "0123456789";
+
+    private SecureRandom random = new SecureRandom();
 
     public String generatePassword()
     {
@@ -101,9 +103,8 @@ public final class GeneratePasswordHandler
         return result.toString();
     }
 
-    private static int getRandomNumberInRange( int min, int max )
+    private int getRandomNumberInRange( int min, int max )
     {
-        Random r = new Random();
-        return r.ints( min, ( max + 1 ) ).limit( 1 ).findFirst().getAsInt();
+        return this.random.ints( min, ( max + 1 ) ).limit( 1 ).findFirst().getAsInt();
     }
 }

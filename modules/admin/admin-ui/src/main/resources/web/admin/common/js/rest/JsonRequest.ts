@@ -81,6 +81,10 @@ module api.rest {
             request.open(this.method, api.util.UriHelper.getUri(this.path.toString()) + '?' + paramString, true);
             request.timeout = this.timeoutMillis;
             request.setRequestHeader("Accept", "application/json");
+            if (api.BrowserHelper.isIE()) {
+                request.setRequestHeader("Pragma", "no-cache");
+                request.setRequestHeader("Cache-Control", "no-cache");
+            }
             return request;
         }
 

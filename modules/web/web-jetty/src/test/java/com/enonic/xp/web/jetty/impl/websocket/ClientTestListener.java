@@ -77,6 +77,6 @@ public final class ClientTestListener
     public void waitForMessage()
         throws Exception
     {
-        this.messageLatch.await( 10, TimeUnit.SECONDS );
+        this.messageLatch.await( 20, TimeUnit.SECONDS );
     }
 }

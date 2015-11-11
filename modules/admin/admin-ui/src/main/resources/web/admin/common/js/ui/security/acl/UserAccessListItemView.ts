@@ -5,7 +5,7 @@ module api.ui.security.acl {
     import User = api.security.User;
 
 
-    export class UserAccessListItemView extends api.ui.Viewer<UserAccessListItem> {
+    export class UserAccessListItemView extends api.ui.Viewer<EffectivePermission> {
 
         private userLine: api.dom.DivEl;
 
@@ -32,7 +32,7 @@ module api.ui.security.acl {
         }
 
         doRender(): boolean {
-            var data = <UserAccessListItem>this.getObject();
+            var data = <EffectivePermission>this.getObject();
 
             this.accessLine = new api.dom.SpanEl("access-line").setHtml(this.getOptionName(data.getAccess()));
             this.userLine = new api.dom.DivEl("user-line");
@@ -40,23 +40,22 @@ module api.ui.security.acl {
             var isEmpty: boolean = true;
 
 
-            data.getPrincipals().forEach((principal: Principal) => {
-                if (principal.isUser()) {
-                    isEmpty = false;
+            data.getMembers().forEach((principal: EffectivePermissionMember) => {
 
-                    var display = principal.getDisplayName().split(" ").map(word => word.substring(0, 1).toUpperCase());
+                isEmpty = false;
 
-                    var icon = new api.dom.SpanEl("user-icon").setHtml(display.length >= 2
-                        ? display.join("").substring(0, 2)
-                        : principal.getDisplayName().substring(0, 2).toUpperCase());
-                    if (this.currentUser && this.currentUser.getKey().equals(principal.getKey())) {
-                        icon.addClass("active");
-                        this.userLine.insertChild(icon, 0);
-                    } else {
-                        this.userLine.appendChild(icon);
-                    }
-                    new Tooltip(icon, principal.getDisplayName(), 200).setMode(Tooltip.MODE_GLOBAL_STATIC);
+                var display = principal.getDisplayName().split(" ").map(word => word.substring(0, 1).toUpperCase());
+
+                var icon = new api.dom.SpanEl("user-icon").setHtml(display.length >= 2
+                    ? display.join("").substring(0, 2)
+                    : principal.getDisplayName().substring(0, 2).toUpperCase());
+                if (this.currentUser && this.currentUser.getKey().equals(principal.getUserKey())) {
+                    icon.addClass("active");
+                    this.userLine.insertChild(icon, 0);
+                } else {
+                    this.userLine.appendChild(icon);
                 }
+                new Tooltip(icon, principal.getDisplayName(), 200).setMode(Tooltip.MODE_GLOBAL_STATIC);
             });
 
             if (isEmpty) {
@@ -82,17 +81,29 @@ module api.ui.security.acl {
 
         private setExtraCount() {
             if (this.userLine.getChildren().length > 0) {
-                var iconWidth = this.userLine.getChildren()[0].getEl().getWidthWithMargin(),
-                    lineWidth = this.userLine.getEl().getWidthWithoutPadding(),
-                    iconCount = this.userLine.getChildren().length;
+                var visibleCount = this.getVisibleCount(),
+                    iconCount = this.getObject().getPermissionAccess().getCount(),
+                    extraCount = iconCount - visibleCount;
 
-                if (lineWidth >= (iconCount * iconWidth)) {
-                    this.userLine.getEl().setAttribute("extra-count", "");
-                } else {
-                    var extraCount = Math.floor(((iconCount * iconWidth) - lineWidth) / iconWidth) + 1;
+                if (extraCount > 0) {
                     this.userLine.getEl().setAttribute("extra-count", "+" + extraCount);
+                } else {
+                    this.userLine.getEl().removeAttribute("extra-count");
                 }
             }
+        }
+
+        private getVisibleCount(): number {
+            var userIcons = this.userLine.getChildren(),
+                count = 0;
+            for (var userIconKey in userIcons) {
+                if (userIcons[userIconKey].getEl().getOffsetTopRelativeToParent() == 0) {
+                    count++;
+                } else {
+                    break;
+                }
+            }
+            return count;
         }
 
         private getOptionName(access: Access): string {
