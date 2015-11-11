@@ -6,6 +6,8 @@ import org.junit.Test;
 import com.enonic.xp.index.PurgeIndexParams;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
+import com.enonic.xp.index.UpdateIndexSettingsParams;
+import com.enonic.xp.index.UpdateIndexSettingsResult;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
@@ -17,6 +19,7 @@ import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.FindNodesByQueryCommand;
 import com.enonic.xp.repo.impl.node.PushNodesCommand;
+import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 
 import static org.junit.Assert.*;
 
@@ -184,6 +187,20 @@ public class IndexServiceImplTest
             execute();
 
         return result.getNodes().getNodeById( nodeId );
+    }
+
+
+    @Test
+    public void updateIndexSettings()
+        throws Exception
+    {
+
+        final UpdateIndexSettingsResult result = this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().
+            indexName( IndexNameResolver.resolveStorageIndexName( TEST_REPO.getId() ) ).
+            settings( "{\"index\": {\"number_of_replicas\": 2}}" ).
+            build() );
+
+        assertEquals( 1, result.getUpdatedIndexes().size() );
     }
 
 }

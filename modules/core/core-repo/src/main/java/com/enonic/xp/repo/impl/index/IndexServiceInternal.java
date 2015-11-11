@@ -10,6 +10,8 @@ public interface IndexServiceInternal
 {
     void createIndex( final String indexName, final IndexSettings settings );
 
+    void updateIndex( final String indexName, final IndexSettings settings );
+
     void deleteIndices( final String... indexNames );
 
     boolean indicesExists( final String... indices );
