@@ -93,7 +93,7 @@ public class CreateContentHandlerTest
         Mockito.when( this.mixinService.getByName( Mockito.eq( MixinName.from( "com.enonic.myapplication:myschema" ) ) ) ).thenReturn(
             mixin );
 
-        runTestFunction( "/test/CreateContentHandlerTest.js", "createContent" );
+        runFunction( "/site/test/CreateContentHandlerTest.js", "createContent" );
     }
 
     @Test
@@ -111,7 +111,7 @@ public class CreateContentHandlerTest
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
         Mockito.when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
 
-        runTestFunction( "/test/CreateContentHandlerTest.js", "createContentNameAlreadyExists" );
+        runFunction( "/site/test/CreateContentHandlerTest.js", "createContentNameAlreadyExists" );
     }
 
     @Test
@@ -131,7 +131,7 @@ public class CreateContentHandlerTest
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
         Mockito.when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
 
-        runTestFunction( "/test/CreateContentHandlerTest.js", "createContentAutoGenerateName" );
+        runFunction( "/site/test/CreateContentHandlerTest.js", "createContentAutoGenerateName" );
     }
 
     @Test
@@ -155,7 +155,7 @@ public class CreateContentHandlerTest
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
         Mockito.when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
 
-        runTestFunction( "/test/CreateContentHandlerTest.js", "createContentAutoGenerateNameWithExistingName" );
+        runFunction( "/site/test/CreateContentHandlerTest.js", "createContentAutoGenerateNameWithExistingName" );
     }
 
     private Content createContent( final CreateContentParams params )

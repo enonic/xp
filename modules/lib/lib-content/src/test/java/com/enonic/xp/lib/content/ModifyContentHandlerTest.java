@@ -20,7 +20,6 @@ import com.enonic.xp.schema.mixin.Mixin;
 public class ModifyContentHandlerTest
     extends BaseContentHandlerTest
 {
-
     @Test
     public void modifyById()
         throws Exception
@@ -33,7 +32,7 @@ public class ModifyContentHandlerTest
 
         mockXData();
 
-        runTestFunction( "/test/ModifyContentHandlerTest.js", "modifyById" );
+        runFunction( "/site/test/ModifyContentHandlerTest.js", "modifyById" );
     }
 
     @Test
@@ -48,14 +47,14 @@ public class ModifyContentHandlerTest
 
         mockXData();
 
-        runTestFunction( "/test/ModifyContentHandlerTest.js", "modifyByPath" );
+        runFunction( "/site/test/ModifyContentHandlerTest.js", "modifyByPath" );
     }
 
     @Test
     public void modifyNotFound()
         throws Exception
     {
-        runTestFunction( "/test/ModifyContentHandlerTest.js", "modify_notFound" );
+        runFunction( "/site/test/ModifyContentHandlerTest.js", "modify_notFound" );
     }
 
     private void mockXData()
@@ -140,5 +139,4 @@ public class ModifyContentHandlerTest
         editor.edit( editable );
         return editable.build();
     }
-
 }

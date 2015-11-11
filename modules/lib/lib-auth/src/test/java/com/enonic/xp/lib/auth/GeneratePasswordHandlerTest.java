@@ -2,30 +2,27 @@ package com.enonic.xp.lib.auth;
 
 import org.junit.Test;
 
-import com.enonic.xp.testing.script.OldScriptTestSupport;
+import com.enonic.xp.testing.script.ScriptTestSupport;
 
 import static org.junit.Assert.*;
 
 public class GeneratePasswordHandlerTest
-    extends OldScriptTestSupport
+    extends ScriptTestSupport
 {
     @Test
     public void testPasswordGeneration()
         throws Exception
     {
-
         for ( int i = 0; i < 20; i++ )
         {
             assertTrue( isExtreme( new GeneratePasswordHandler().generatePassword() ) );
         }
-
     }
 
     @Test
     public void testFunction()
-        throws Exception
     {
-        runTestFunction( "/test/generatePassword-test.js", "generatePassword" );
+        runFunction( "/site/test/generatePassword-test.js", "generatePassword" );
     }
 
     private boolean isExtreme( String value )
