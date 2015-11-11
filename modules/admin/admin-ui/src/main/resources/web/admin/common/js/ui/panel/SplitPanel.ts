@@ -204,7 +204,7 @@ module api.ui.panel {
 
         private hiddenSecondPanelPreviousSize: number;
 
-        private splitterIsHidden: boolean
+        private splitterIsHidden: boolean;
 
         private savedFirstPanelSize: number;
 
@@ -213,6 +213,8 @@ module api.ui.panel {
         private savedFirstPanelUnit: SplitPanelUnit;
 
         private animationDelay: number;
+
+        public static debug: boolean = false;
 
         private secondPanelShouldSlideRight: boolean;
 
@@ -405,7 +407,7 @@ module api.ui.panel {
             }
         }
 
-        setFirstPanelIsFullScreen(fullScreen:boolean) {
+        setFirstPanelIsFullScreen(fullScreen: boolean) {
             this.firstPanelIsFullScreen = fullScreen;
         }
 
@@ -475,12 +477,25 @@ module api.ui.panel {
 
         runWithAnimationDelayIfPresent(callee: () => void) {
             if (this.animationDelay) {
+                if (SplitPanel.debug) {
+                    console.debug(this.toString() + '.runWithAnimationDelayIfPresent: delaying for ' + this.animationDelay, callee);
+                }
                 setTimeout(() => {
+                    if (SplitPanel.debug) {
+                        console.debug(this.toString() + '.runWithAnimationDelayIfPresent: running delayed', callee);
+                    }
                     callee();
                 }, this.animationDelay);
             } else {
+                if (SplitPanel.debug) {
+                    console.debug(this.toString() + '.runWithAnimationDelayIfPresent: no delay, running now', callee);
+                }
                 callee();
             }
+        }
+
+        toString(): string {
+            return api.ClassHelper.getClassName(this) + '[' + this.getId() + ']';
         }
 
         isHorizontal() {
@@ -523,7 +538,7 @@ module api.ui.panel {
                 return;
             }
 
-            if(this.firstPanelIsFullScreen) {
+            if (this.firstPanelIsFullScreen) {
                 this.firstPanelSize = -1;
             }
             else {
@@ -568,7 +583,7 @@ module api.ui.panel {
             this.splitterIsHidden = true;
             this.splitter.hide();
 
-            if(!this.firstPanelIsFullScreen) {
+            if (!this.firstPanelIsFullScreen) {
                 this.hiddenFirstPanelPreviousSize = this.firstPanelSize;
             }
 

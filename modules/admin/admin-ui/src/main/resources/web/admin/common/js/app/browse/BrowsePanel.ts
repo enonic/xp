@@ -79,14 +79,14 @@ module api.app.browse {
             this.contentGridAndBrowseSplitPanel = new api.ui.panel.SplitPanelBuilder(this.gridAndToolbarContainer, this.browseItemPanel)
                 .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD).build();
             this.contentGridAndBrowseSplitPanel.prependChild(this.browseToolbar);
-            this.contentGridAndBrowseSplitPanel.setFirstPanelSize(38, api.ui.panel.SplitPanelUnit.PERCENT)
+            this.contentGridAndBrowseSplitPanel.setFirstPanelSize(38, api.ui.panel.SplitPanelUnit.PERCENT);
 
             this.browseToolbar.addClass("browse-toolbar");
             this.contentGridAndBrowseSplitPanel.addClass("content-grid-and-browse-split-panel");
 
             if (this.filterPanel) {
                 this.setupFilterPanel();
-                if(this.filterPanelIsHiddenByDefault) {
+                if (this.filterPanelIsHiddenByDefault) {
                     this.hideFilterPanel();
                 }
             } else {
@@ -110,7 +110,7 @@ module api.app.browse {
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.checkFilterPanelToBeShownFullScreen(item);
 
-                if(!this.filterPanelIsHiddenByDefault) { //not relevant if filter panel is hidden by default
+                if (!this.filterPanelIsHiddenByDefault) { //not relevant if filter panel is hidden by default
                     this.toggleFilterPanelDependingOnScreenSize(item);
                 }
 
@@ -163,7 +163,7 @@ module api.app.browse {
         toggleFilterPanel() {
             this.filterAndContentGridAndBrowseSplitPanel.setFirstPanelIsFullScreen(this.filterPanelToBeShownFullScreen);
 
-            if(this.filterPanelIsHidden()) {
+            if (this.filterPanelIsHidden()) {
                 this.showFilterPanel();
             } else {
                 this.hideFilterPanel();
@@ -178,7 +178,7 @@ module api.app.browse {
             this.filterPanelForcedShown = true;
             this.filterPanelForcedHidden = false;
 
-            if(this.filterPanelToBeShownFullScreen) {
+            if (this.filterPanelToBeShownFullScreen) {
                 this.filterAndContentGridAndBrowseSplitPanel.hideSecondPanel();
             }
 
@@ -198,9 +198,11 @@ module api.app.browse {
 
         private setupFilterPanel() {
             this.filterAndContentGridAndBrowseSplitPanel =
-                new api.ui.panel.SplitPanelBuilder(this.filterPanel, this.contentGridAndBrowseSplitPanel)
-                .setFirstPanelSize(200,
-                api.ui.panel.SplitPanelUnit.PIXEL).setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).build();
+                new api.ui.panel.SplitPanelBuilder(this.filterPanel, this.contentGridAndBrowseSplitPanel).
+                    setFirstPanelSize(200, api.ui.panel.SplitPanelUnit.PIXEL).
+                    setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).
+                    setAnimationDelay(100).     // filter panel animation time
+                    build();
 
             this.filterPanel.onHideFilterPanelButtonClicked(() => {
                 this.toggleFilterPanel();
