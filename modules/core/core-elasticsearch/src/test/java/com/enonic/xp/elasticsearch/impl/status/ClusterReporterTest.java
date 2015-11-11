@@ -3,6 +3,7 @@ package com.enonic.xp.elasticsearch.impl.status;
 import java.net.URL;
 import java.util.HashMap;
 
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.Version;
 import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
@@ -38,11 +39,11 @@ public class ClusterReporterTest
 
     private ClusterState clusterState;
 
-    private ClusterStateResponse clusterStateResponse;
+    private ActionFuture<ClusterStateResponse> clusterStateInfo;
 
-    private NodesInfoResponse nodesInfoResponse;
+    private ActionFuture<NodesInfoResponse> nodesInfo;
 
-    private ClusterHealthResponse clusterHealthResponse;
+    private ActionFuture<ClusterHealthResponse> clusterHealthInfo;
 
     private NodeInfo localNodeInfo;
 
@@ -54,28 +55,29 @@ public class ClusterReporterTest
         final Client client = Mockito.mock( Client.class );
         final AdminClient adminClient = Mockito.mock( AdminClient.class );
         final ClusterAdminClient clusterAdminClient = Mockito.mock( ClusterAdminClient.class );
-        final ActionFuture<ClusterStateResponse> clusterStateInfo = Mockito.mock( ActionFuture.class );
-        final ActionFuture<NodesInfoResponse> nodesInfo = Mockito.mock( ActionFuture.class );
-        final ActionFuture<ClusterHealthResponse> clusterHealth = Mockito.mock( ActionFuture.class );
+        this.clusterStateInfo = Mockito.mock( ActionFuture.class );
+        this.nodesInfo = Mockito.mock( ActionFuture.class );
+        this.clusterHealthInfo = Mockito.mock( ActionFuture.class );
 
         Mockito.when( client.admin() ).thenReturn( adminClient );
         Mockito.when( adminClient.cluster() ).thenReturn( clusterAdminClient );
         Mockito.when( clusterAdminClient.state( Mockito.any() ) ).thenReturn( clusterStateInfo );
         Mockito.when( clusterAdminClient.nodesInfo( Mockito.any() ) ).thenReturn( nodesInfo );
-        Mockito.when( clusterAdminClient.health( Mockito.any() ) ).thenReturn( clusterHealth );
+        Mockito.when( clusterAdminClient.health( Mockito.any() ) ).thenReturn( clusterHealthInfo );
 
         this.clusterState = Mockito.mock( ClusterState.class );
         this.localNodeInfo = Mockito.mock( NodeInfo.class );
-        this.clusterStateResponse = Mockito.mock( ClusterStateResponse.class );
-        this.nodesInfoResponse = Mockito.mock( NodesInfoResponse.class );
-        this.clusterHealthResponse = Mockito.mock( ClusterHealthResponse.class );
+        final ClusterStateResponse clusterStateResponse = Mockito.mock( ClusterStateResponse.class );
+        final NodesInfoResponse nodesInfoResponse = Mockito.mock( NodesInfoResponse.class );
+        final ClusterHealthResponse clusterHealthResponse = Mockito.mock( ClusterHealthResponse.class );
 
         Mockito.when( clusterStateInfo.actionGet() ).thenReturn( clusterStateResponse );
         Mockito.when( nodesInfo.actionGet() ).thenReturn( nodesInfoResponse );
-        Mockito.when( clusterHealth.actionGet() ).thenReturn( clusterHealthResponse );
+        Mockito.when( clusterHealthInfo.actionGet() ).thenReturn( clusterHealthResponse );
 
         final ClusterName clusterName = new ClusterName( "clusterName" );
         Mockito.when( clusterState.getClusterName() ).thenReturn( clusterName );
+        Mockito.when( clusterStateResponse.getClusterName() ).thenReturn( clusterName );
 
         Mockito.when( clusterStateResponse.getState() ).thenReturn( clusterState );
         Mockito.when( nodesInfoResponse.getAt( 0 ) ).thenReturn( localNodeInfo );
@@ -104,21 +106,54 @@ public class ClusterReporterTest
     }
 
     @Test
-    public void testEmptyClusterState()
+    public void testClusterState_Exception()
         throws Exception
     {
-        Mockito.when( clusterStateResponse.getState() ).thenReturn( null );
+        Mockito.when( clusterStateInfo.actionGet() ).thenThrow( new ElasticsearchException( "cluster state exception" ) );
 
-        assertJson( "cluster_empty_state_error.json", clusterReporter.getReport().toString() );
+        assertJson( "cluster_state_exception.json", clusterReporter.getReport().toString() );
     }
 
     @Test
-    public void testEmptyLocalNodeInfo()
+    public void testLocalNodeInfo_Exception()
         throws Exception
     {
-        Mockito.when( nodesInfoResponse.getAt( 0 ) ).thenReturn( null );
+        Mockito.when( nodesInfo.actionGet() ).thenThrow( new ElasticsearchException( "local node info exception" ) );
 
-        assertJson( "cluster_with_empty_local_node_info_error.json", clusterReporter.getReport().toString() );
+        final DiscoveryNode node1 =
+            new DiscoveryNode( "nodeName", "nodeId", "hostName", "hostAddress", new LocalTransportAddress( "10.10.10.1" ), new HashMap<>(),
+                               Version.fromString( "1.0.0" ) );
+
+        final DiscoveryNodes nodes = DiscoveryNodes.builder().
+            put( node1 ).
+            localNodeId( node1.getId() ).
+            build();
+
+        Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
+        Mockito.when( localNodeInfo.getNode() ).thenReturn( node1 );
+
+        assertJson( "local_node_info_exception.json", clusterReporter.getReport().toString() );
+    }
+
+    @Test
+    public void testClusterHealth_Exception()
+        throws Exception
+    {
+        Mockito.when( clusterHealthInfo.actionGet() ).thenThrow( new ElasticsearchException( "cluster health info exception" ) );
+
+        final DiscoveryNode node1 =
+            new DiscoveryNode( "nodeName", "nodeId", "hostName", "hostAddress", new LocalTransportAddress( "10.10.10.1" ), new HashMap<>(),
+                               Version.fromString( "1.0.0" ) );
+
+        final DiscoveryNodes nodes = DiscoveryNodes.builder().
+            put( node1 ).
+            localNodeId( node1.getId() ).
+            build();
+
+        Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
+        Mockito.when( localNodeInfo.getNode() ).thenReturn( node1 );
+
+        assertJson( "cluster_health_info_exception.json", clusterReporter.getReport().toString() );
     }
 
     @Test
