@@ -7,7 +7,7 @@ import io.airlift.airline.Command;
 
 import com.enonic.xp.toolbox.util.JsonHelper;
 
-@Command(name = "set-replicas", description = "Set the number of replicas.")
+@Command(name = "set-replicas", description = "Set the number of replicas in the cluster.")
 public final class SetReplicasCommand
     extends RepoCommand
 {
