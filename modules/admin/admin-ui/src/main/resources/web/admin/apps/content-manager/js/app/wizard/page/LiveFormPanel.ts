@@ -367,7 +367,13 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {
                 this.pageView = event.getPageView();
-                this.insertablesPanel.setPageView(this.pageView);
+                if (this.pageView) {
+                    this.insertablesPanel.setPageView(this.pageView);
+                }
+                else {
+                    this.contentWizardPanel.getContextWindowToggler().hide();
+                    this.contentWizardPanel.getComponentsViewToggler().hide();
+                }
             });
 
             this.liveEditPageProxy.onPageSelected((event: PageSelectedEvent) => {

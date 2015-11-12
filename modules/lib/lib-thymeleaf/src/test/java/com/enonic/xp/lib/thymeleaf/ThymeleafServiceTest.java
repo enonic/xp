@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.thymeleaf;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -16,10 +15,10 @@ public class ThymeleafServiceTest
 {
     private ThymeleafService service;
 
-    @Before
-    public void setup()
+    @Override
+    protected void initialize()
     {
-        setupRequest();
+        super.initialize();
         addService( ViewFunctionService.class, Mockito.mock( ViewFunctionService.class, (Answer) this::urlAnswer ) );
 
         this.service = new ThymeleafService();
@@ -30,13 +29,12 @@ public class ThymeleafServiceTest
     public void testProcess()
     {
         final ThymeleafProcessor processor = this.service.newProcessor();
-        processor.setView( ResourceKey.from( "myapplication:/site/test/view/test.html" ) );
+        processor.setView( ResourceKey.from( "myapplication:/site/view/test.html" ) );
         processor.setModel( null );
         processor.process();
     }
 
     private Object urlAnswer( final InvocationOnMock invocation )
-        throws Exception
     {
         final ViewFunctionParams params = (ViewFunctionParams) invocation.getArguments()[0];
         return params.getName() + "(" + params.getArgs().toString() + ")";

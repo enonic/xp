@@ -1,19 +1,18 @@
 package com.enonic.xp.lib.auth;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.testing.script.OldScriptTestSupport;
+import com.enonic.xp.testing.script.ScriptTestSupport;
 
 import static org.mockito.Matchers.eq;
 
 public class RemoveMembersHandlerTest
-    extends OldScriptTestSupport
+    extends ScriptTestSupport
 {
     private final PrincipalKey USER = PrincipalKey.from( "user:myUserStore:userId" );
 
@@ -25,9 +24,10 @@ public class RemoveMembersHandlerTest
 
     private SecurityService securityService;
 
-    @Before
-    public void setup()
+    @Override
+    public void initialize()
     {
+        super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, this.securityService );
     }
@@ -38,7 +38,7 @@ public class RemoveMembersHandlerTest
     {
         try
         {
-            runTestFunction( "/test/removeMembers-test.js", "removeMembersFromUser" );
+            runFunction( "/site/test/removeMembers-test.js", "removeMembersFromUser" );
             Assert.fail( "Expected exception" );
         }
         catch ( Exception e )
@@ -52,7 +52,7 @@ public class RemoveMembersHandlerTest
     public void testRemoveMembersFromRole()
         throws Exception
     {
-        runTestFunction( "/test/removeMembers-test.js", "removeMembersFromRole" );
+        runFunction( "/site/test/removeMembers-test.js", "removeMembersFromRole" );
 
         Mockito.verify( this.securityService ).removeRelationship( eq( PrincipalRelationship.from( ROLE ).to( USER ) ) );
         Mockito.verify( this.securityService ).removeRelationship( eq( PrincipalRelationship.from( ROLE ).to( GROUP ) ) );
@@ -62,7 +62,7 @@ public class RemoveMembersHandlerTest
     public void testRemoveMembersFromGroup()
         throws Exception
     {
-        runTestFunction( "/test/removeMembers-test.js", "removeMembersFromGroup" );
+        runFunction( "/site/test/removeMembers-test.js", "removeMembersFromGroup" );
 
         Mockito.verify( this.securityService ).removeRelationship( eq( PrincipalRelationship.from( GROUP ).to( USER ) ) );
         Mockito.verify( this.securityService ).removeRelationship( eq( PrincipalRelationship.from( GROUP ).to( GROUP2 ) ) );
@@ -72,8 +72,7 @@ public class RemoveMembersHandlerTest
     public void testRemoveMembersEmptyListPassed()
         throws Exception
     {
-        runTestFunction( "/test/removeMembers-test.js", "removeMembersEmptyList" );
+        runFunction( "/site/test/removeMembers-test.js", "removeMembersEmptyList" );
         Mockito.verify( this.securityService, Mockito.times( 0 ) ).removeRelationship( Mockito.any() );
     }
-
 }

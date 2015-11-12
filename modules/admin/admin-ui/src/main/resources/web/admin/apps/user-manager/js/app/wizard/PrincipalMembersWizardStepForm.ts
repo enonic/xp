@@ -57,6 +57,7 @@ module app.wizard {
 
         layout(principal: Principal) {
             this.principal = principal;
+            this.loader.skipPrincipal(principal.getKey());
             this.selectMembers();
         }
 

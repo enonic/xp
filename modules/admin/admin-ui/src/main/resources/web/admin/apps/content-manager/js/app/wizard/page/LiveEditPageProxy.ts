@@ -223,27 +223,32 @@ module app.wizard.page {
         }
 
         private handleIFrameLoadedEvent() {
-
             var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
-            if (liveEditWindow && liveEditWindow.wemjq) {
-                // Give loaded page same CONFIG.baseUri as in admin
-                liveEditWindow.CONFIG = {baseUri: CONFIG.baseUri};
 
-                this.livejq = <JQueryStatic>liveEditWindow.wemjq;
+            if (liveEditWindow) {
+                if (liveEditWindow.wemjq) {
+                    // Give loaded page same CONFIG.baseUri as in admin
+                    liveEditWindow.CONFIG = {baseUri: CONFIG.baseUri};
 
-                if (this.liveEditWindow) {
-                    this.stopListening(this.liveEditWindow);
+                    this.livejq = <JQueryStatic>liveEditWindow.wemjq;
+
+                    if (this.liveEditWindow) {
+                        this.stopListening(this.liveEditWindow);
+                    }
+
+                    this.liveEditWindow = liveEditWindow;
+
+                    this.listenToPage(this.liveEditWindow);
+
+                    if (api.BrowserHelper.isIE()) {
+                        this.resetObjectsAfterFrameReloadForIE();
+                        this.disableLinksInLiveEditForIE();
+                    }
+                    new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
                 }
-
-                this.liveEditWindow = liveEditWindow;
-
-                this.listenToPage(this.liveEditWindow);
-
-                if (api.BrowserHelper.isIE()) {
-                    this.resetObjectsAfterFrameReloadForIE();
-                    this.disableLinksInLiveEditForIE();
+                else {
+                    this.notifyLiveEditPageViewReady(new api.liveedit.LiveEditPageViewReadyEvent());
                 }
-                new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
             }
 
             // Notify loaded no matter the result
@@ -708,7 +713,9 @@ module app.wizard.page {
         }
 
         private disableLinksInLiveEditForIE() {
-            this.livejq("a").attr("disabled", "disabled"); // this works only in IE
+            if (this.livejq) {
+                this.livejq("a").attr("disabled", "disabled"); // this works only in IE
+            }
         }
 
     }

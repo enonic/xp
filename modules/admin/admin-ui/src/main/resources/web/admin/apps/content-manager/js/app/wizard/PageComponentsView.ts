@@ -386,12 +386,19 @@ module app.wizard {
         }
 
         private showContextMenu(row: number, clickPosition: api.liveedit.Position) {
-            var contextMenuActions: api.ui.Action[] = this.tree.getGrid().getDataView().getItem(row).getData().getContextMenuActions();
+            var itemView: ItemView = this.tree.getGrid().getDataView().getItem(row).getData();
+            var pageView: api.liveedit.PageView = itemView.getPageView();
+            var contextMenuActions: api.ui.Action[];
+
+            if (pageView.isLocked()) {
+                contextMenuActions = pageView.getLockedMenuActions();
+            } else {
+                contextMenuActions = itemView.getContextMenuActions();
+            }
 
             if (!this.contextMenu) {
                 this.contextMenu = new api.liveedit.ItemViewContextMenu(null, contextMenuActions);
-                this.contextMenu.onShown((event) => this.setMenuOpenStyleOnMenuIcon(row));
-                this.contextMenu.onHidden((event) => this.removeMenuOpenStyleFromMenuIcon());
+                this.contextMenu.onHidden(this.removeMenuOpenStyleFromMenuIcon.bind(this));
             } else {
                 this.contextMenu.setActions(contextMenuActions);
             }
@@ -406,6 +413,8 @@ module app.wizard {
                     this.contextMenu.getMenu().clearActionListeners();
                 }, 500);
             });
+
+            this.setMenuOpenStyleOnMenuIcon(row);
 
             // show menu at position
             var x = clickPosition.x;

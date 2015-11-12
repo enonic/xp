@@ -43,8 +43,7 @@ module app.home {
             this.appendChild(this.centerPanel);
 
             this.onAdded(() => {
-                // See `.home-main-container .lazy-image` content property
-                lazyImage.setSrc(lazyImage.getEl().getComputedProperty("content").slice(1, -1));
+                lazyImage.setSrc("/admin/common/images/background-1920.jpg");
             });
 
             LogOutEvent.on(() => {

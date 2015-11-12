@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.mustache;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -16,10 +15,10 @@ public class MustacheServiceTest
 {
     private MustacheService service;
 
-    @Before
-    public void setup()
+    @Override
+    protected void initialize()
     {
-        setupRequest();
+        super.initialize();
         addService( ViewFunctionService.class, Mockito.mock( ViewFunctionService.class, (Answer) this::urlAnswer ) );
 
         this.service = new MustacheService();
@@ -36,7 +35,6 @@ public class MustacheServiceTest
     }
 
     private Object urlAnswer( final InvocationOnMock invocation )
-        throws Exception
     {
         final ViewFunctionParams params = (ViewFunctionParams) invocation.getArguments()[0];
         return params.getName() + "(" + params.getArgs().toString() + ")";

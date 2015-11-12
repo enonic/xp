@@ -1,31 +1,20 @@
 package com.enonic.xp.testing.script;
 
-import java.net.URL;
+import java.util.Map;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
 
 import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
-import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.ScriptRuntimeFactoryImpl;
@@ -33,36 +22,23 @@ import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
 public abstract class ScriptTestSupport
+    extends AbstractScriptTest
 {
-    private ApplicationKey applicationKey;
-
-    protected PortalRequest portalRequest;
-
     protected ScriptSettings.Builder scriptSettings;
-
-    private BundleContext bundleContext;
 
     public ScriptTestSupport()
     {
         setApplicationKey( "myapplication" );
     }
 
-    @Before
-    public final void setup()
+    @Override
+    protected void initialize()
     {
-        setupRequest();
-
+        super.initialize();
         this.scriptSettings = ScriptSettings.create();
         this.scriptSettings.basePath( "/site" );
         this.scriptSettings.binding( Context.class, ContextAccessor::current );
         this.scriptSettings.binding( PortalRequest.class, () -> this.portalRequest );
-
-        this.bundleContext = Mockito.mock( BundleContext.class );
-    }
-
-    protected final void setApplicationKey( final String name )
-    {
-        this.applicationKey = ApplicationKey.from( name );
     }
 
     protected final ScriptExports runScript( final String path )
@@ -89,7 +65,7 @@ public abstract class ScriptTestSupport
     {
         final ScriptRuntimeFactoryImpl runtimeFactory = new ScriptRuntimeFactoryImpl();
         runtimeFactory.setApplicationService( createApplicationService() );
-        runtimeFactory.setResourceService( createResourceService() );
+        runtimeFactory.setResourceService( this.resourceService );
 
         return runtimeFactory.create( this.scriptSettings.build() );
     }
@@ -117,60 +93,27 @@ public abstract class ScriptTestSupport
     private Bundle createBundle()
     {
         final Bundle bundle = Mockito.mock( Bundle.class );
-        Mockito.when( bundle.getBundleContext() ).thenReturn( this.bundleContext );
+        final BundleContext bundleContext = createBundleContext();
+
+        Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
         return bundle;
     }
 
-    private ResourceService createResourceService()
+    private BundleContext createBundleContext()
     {
-        final ResourceService resourceService = Mockito.mock( ResourceService.class );
-        Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( this::loadResource );
+        final BundleContext bundleContext = Mockito.mock( BundleContext.class );
+        for ( final Map.Entry<Class, Object> service : this.services.entrySet() )
+        {
+            registerService( bundleContext, service.getKey(), service.getValue() );
+        }
 
-        addService( ResourceService.class, resourceService );
-        return resourceService;
+        return bundleContext;
     }
 
-    private Resource loadResource( final InvocationOnMock invocation )
+    private void registerService( final BundleContext context, final Class type, final Object instance )
     {
-        return loadResource( (ResourceKey) invocation.getArguments()[0] );
-    }
-
-    protected final Resource loadResource( final String path )
-    {
-        return loadResource( ResourceKey.from( this.applicationKey, path ) );
-    }
-
-    private Resource loadResource( final ResourceKey key )
-    {
-        final URL url = findResource( key.getPath() );
-        return new UrlResource( key, url );
-    }
-
-    private URL findResource( final String path )
-    {
-        return getClass().getResource( path );
-    }
-
-    @SuppressWarnings("unchecked")
-    protected final <T> void addService( final Class<T> type, final T instance )
-    {
-        final ServiceReference<T> ref = Mockito.mock( ServiceReference.class );
-        Mockito.when( this.bundleContext.getServiceReference( type ) ).thenReturn( ref );
-        Mockito.when( this.bundleContext.getService( ref ) ).thenReturn( instance );
-    }
-
-    private void setupRequest()
-    {
-        this.portalRequest = new PortalRequest();
-
-        this.portalRequest.setMode( RenderMode.LIVE );
-        this.portalRequest.setBranch( Branch.from( "draft" ) );
-        this.portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
-        this.portalRequest.setBaseUri( "/portal" );
-
-        final Content content = Content.create().id( ContentId.from( "123" ) ).path( "some/path" ).build();
-        this.portalRequest.setContent( content );
-
-        PortalRequestAccessor.set( this.portalRequest );
+        final ServiceReference ref = Mockito.mock( ServiceReference.class );
+        Mockito.when( context.getServiceReference( type ) ).thenReturn( ref );
+        Mockito.when( context.getService( ref ) ).thenReturn( instance );
     }
 }
