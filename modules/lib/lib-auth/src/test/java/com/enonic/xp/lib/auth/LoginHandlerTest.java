@@ -1,11 +1,6 @@
 package com.enonic.xp.lib.auth;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
-
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -19,20 +14,17 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
-import com.enonic.xp.testing.script.OldScriptTestSupport;
+import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class LoginHandlerTest
-    extends OldScriptTestSupport
+    extends ScriptTestSupport
 {
-    private static final Instant NOW = Instant.ofEpochSecond( 0 );
-
-    private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
-
     private SecurityService securityService;
 
-    @Before
-    public void setup()
+    @Override
+    public void initialize()
     {
+        super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, this.securityService );
 
@@ -42,14 +34,13 @@ public class LoginHandlerTest
 
     @Test
     public void testLoginSuccess()
-        throws Exception
     {
         final AuthenticationInfo authInfo =
             AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
 
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
 
-        runTestFunction( "/test/login-test.js", "loginSuccess" );
+        runFunction( "/site/test/login-test.js", "loginSuccess" );
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
@@ -58,9 +49,7 @@ public class LoginHandlerTest
 
     @Test
     public void testLoginNoUserStore()
-        throws Exception
     {
-
         final UserStores userStores =
             UserStores.from( UserStore.create().displayName( "system" ).key( UserStoreKey.from( "system" ) ).build() );
 
@@ -69,7 +58,7 @@ public class LoginHandlerTest
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
         Mockito.when( this.securityService.getUserStores() ).thenReturn( userStores );
 
-        runTestFunction( "/test/login-test.js", "loginNoUserStore" );
+        runFunction( "/site/test/login-test.js", "loginNoUserStore" );
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
@@ -78,14 +67,12 @@ public class LoginHandlerTest
 
     @Test
     public void testLoginMultipleUserStore()
-        throws Exception
     {
-
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
 
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
 
-        runTestFunction( "/test/login-test.js", "loginMultipleUserStore" );
+        runFunction( "/site/test/login-test.js", "loginMultipleUserStore" );
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
@@ -94,13 +81,12 @@ public class LoginHandlerTest
 
     @Test
     public void testInvalidLogin()
-        throws Exception
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.unAuthenticated();
 
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
 
-        runTestFunction( "/test/login-test.js", "invalidLogin" );
+        runFunction( "/site/test/login-test.js", "invalidLogin" );
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );

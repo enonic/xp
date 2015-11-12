@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.auth;
 
-
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -15,7 +14,6 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class TestDataFixtures
 {
-
     private static final Instant NOW = Instant.ofEpochSecond( 0 );
 
     private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );

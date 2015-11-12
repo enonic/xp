@@ -4,9 +4,11 @@ module api.liveedit {
 
         private pageView: PageView;
 
-        constructor(pageView: PageView) {
+        constructor(pageView?: PageView) {
             super();
-            this.pageView = pageView;
+            if (pageView) {
+                this.pageView = pageView;
+            }
         }
 
         getPageView(): PageView {

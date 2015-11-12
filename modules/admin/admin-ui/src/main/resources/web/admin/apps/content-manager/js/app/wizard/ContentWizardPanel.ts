@@ -277,7 +277,9 @@ module app.wizard {
                         this.wizardActions.getShowSplitEditAction().execute();
                     }
                     else {
-                        this.wizardActions.getShowFormAction().execute();
+                        if (!!this.getSplitPanel()) {
+                            this.wizardActions.getShowFormAction().execute();
+                        }
                     }
 
                     responsiveItem.update();

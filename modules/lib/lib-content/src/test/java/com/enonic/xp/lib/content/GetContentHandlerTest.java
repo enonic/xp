@@ -11,7 +11,6 @@ import com.enonic.xp.content.ContentPath;
 public class GetContentHandlerTest
     extends BaseContentHandlerTest
 {
-
     @Test
     public void getById()
         throws Exception
@@ -19,7 +18,7 @@ public class GetContentHandlerTest
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
-        runTestFunction( "/test/GetContentHandlerTest.js", "getById" );
+        runFunction( "/site/test/GetContentHandlerTest.js", "getById" );
     }
 
     @Test
@@ -29,7 +28,7 @@ public class GetContentHandlerTest
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
-        runTestFunction( "/test/GetContentHandlerTest.js", "getByPath" );
+        runFunction( "/site/test/GetContentHandlerTest.js", "getByPath" );
     }
 
     @Test
@@ -39,7 +38,7 @@ public class GetContentHandlerTest
         final ContentId id = ContentId.from( "123456" );
         Mockito.when( this.contentService.getById( id ) ).thenThrow( new ContentNotFoundException( id, null ) );
 
-        runTestFunction( "/test/GetContentHandlerTest.js", "getById_notFound" );
+        runFunction( "/site/test/GetContentHandlerTest.js", "getById_notFound" );
     }
 
     @Test
@@ -49,6 +48,6 @@ public class GetContentHandlerTest
         final ContentPath path = ContentPath.from( "/a/b/mycontent" );
         Mockito.when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, null ) );
 
-        runTestFunction( "/test/GetContentHandlerTest.js", "getByPath_notFound" );
+        runFunction( "/site/test/GetContentHandlerTest.js", "getByPath_notFound" );
     }
 }

@@ -149,11 +149,15 @@ module app {
                         return;
                     }
 
+                    var newTabId = AppBarTabId.forNew(wizard.getPersistedItem().getContentId().toString());
+
                     tabMenuItem = new AppBarTabMenuItemBuilder().
                         setLabel(api.content.ContentUnnamed.prettifyUnnamed(contentTypeSummary.getDisplayName())).
-                        setTabId(tabId).
+                        setTabId(newTabId).
                         setCloseAction(wizard.getCloseAction()).
                         build();
+
+                    wizard.setTabId(newTabId);
 
                     wizard.onContentNamed((event: ContentNamedEvent) => {
                         this.handleContentNamedEvent(event);

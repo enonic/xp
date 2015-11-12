@@ -12,7 +12,6 @@ import com.enonic.xp.content.Contents;
 public class DeleteContentHandlerTest
     extends BaseContentHandlerTest
 {
-
     @Test
     public void deleteById()
         throws Exception
@@ -21,7 +20,7 @@ public class DeleteContentHandlerTest
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
         Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( Contents.from( content ) );
 
-        runTestFunction( "/test/DeleteContentHandlerTest.js", "deleteById" );
+        runFunction( "/site/test/DeleteContentHandlerTest.js", "deleteById" );
     }
 
     @Test
@@ -31,7 +30,7 @@ public class DeleteContentHandlerTest
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( Contents.from( content ) );
 
-        runTestFunction( "/test/DeleteContentHandlerTest.js", "deleteByPath" );
+        runFunction( "/site/test/DeleteContentHandlerTest.js", "deleteByPath" );
     }
 
     @Test
@@ -41,7 +40,7 @@ public class DeleteContentHandlerTest
         final ContentId id = ContentId.from( "123456" );
         Mockito.when( this.contentService.getById( Mockito.any() ) ).thenThrow( new ContentNotFoundException( id, null ) );
 
-        runTestFunction( "/test/DeleteContentHandlerTest.js", "deleteById_notFound" );
+        runFunction( "/site/test/DeleteContentHandlerTest.js", "deleteById_notFound" );
     }
 
     @Test
@@ -51,6 +50,6 @@ public class DeleteContentHandlerTest
         final ContentPath path = ContentPath.from( "/a/b" );
         Mockito.when( this.contentService.delete( Mockito.any() ) ).thenThrow( new ContentNotFoundException( path, null ) );
 
-        runTestFunction( "/test/DeleteContentHandlerTest.js", "deleteByPath_notFound" );
+        runFunction( "/site/test/DeleteContentHandlerTest.js", "deleteByPath_notFound" );
     }
 }
