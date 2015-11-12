@@ -90,6 +90,7 @@ module api.form.inputtype.text {
                     "image": baseUrl + "/common/js/form/inputtype/text/plugins/image.js",
                     "anchor": baseUrl + "/common/js/form/inputtype/text/plugins/anchor.js"
                 },
+                object_resizing: "table",
                 autoresize_min_height: 100,
                 autoresize_bottom_margin: 0,
                 height: 100,
