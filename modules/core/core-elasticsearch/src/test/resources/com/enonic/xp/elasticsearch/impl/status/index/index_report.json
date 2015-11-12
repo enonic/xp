@@ -1,0 +1,13 @@
+{
+  "shards": [
+    {
+      "id": {
+        "index": "myindex",
+        "id": 0
+      },
+      "primary": true,
+      "state": "STARTED",
+      "node": "nodeId"
+    }
+  ]
+}
