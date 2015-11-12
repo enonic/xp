@@ -148,28 +148,32 @@ module api.liveedit {
     }
 
     export class ItemViewContextMenuArrow extends api.dom.DivEl {
+        private static clsBottom = "arrow-bottom";
+        private static clsTop = "arrow-top";
+        private static clsLeft = "arrow-left";
+        private static clsRight = "arrow-right";
 
         constructor() {
-            super("item-view-context-menu-arrow-bottom");
+            super(ItemViewContextMenuArrow.clsBottom);
         }
 
         toggleVerticalPosition(bottom: boolean) {
-            this.toggleClassEx("item-view-context-menu-arrow-bottom", bottom);
-            this.toggleClassEx("item-view-context-menu-arrow-top", !bottom);
+            this.toggleClassEx(ItemViewContextMenuArrow.clsBottom, bottom);
+            this.toggleClassEx(ItemViewContextMenuArrow.clsTop, !bottom);
         }
 
         getWidth(): number {
-            if (this.hasClass('top') || this.hasClass('bottom')) {
+            if (this.hasClass(ItemViewContextMenuArrow.clsTop) || this.hasClass(ItemViewContextMenuArrow.clsBottom)) {
                 return 14;
-            } else if (this.hasClass('left') || this.hasClass('right')) {
+            } else if (this.hasClass(ItemViewContextMenuArrow.clsLeft) || this.hasClass(ItemViewContextMenuArrow.clsRight)) {
                 return 7;
             }
         }
 
         getHeight(): number {
-            if (this.hasClass('top') || this.hasClass('bottom')) {
+            if (this.hasClass(ItemViewContextMenuArrow.clsTop) || this.hasClass(ItemViewContextMenuArrow.clsBottom)) {
                 return 7;
-            } else if (this.hasClass('left') || this.hasClass('right')) {
+            } else if (this.hasClass(ItemViewContextMenuArrow.clsLeft) || this.hasClass(ItemViewContextMenuArrow.clsRight)) {
                 return 14;
             }
         }
