@@ -4,9 +4,7 @@ module api.app.view {
 
         private browseItem: ViewItem<M>;
 
-        private iconEl: api.dom.ImgEl;
-
-        private iconDivEl: api.dom.DivEl;
+        private iconEl: api.dom.Element;
 
         private headerTitleEl: api.dom.H1El;
 
@@ -25,25 +23,10 @@ module api.app.view {
             if (this.iconEl) {
                 this.iconEl.remove();
             }
-            if (this.iconDivEl) {
-                this.iconDivEl.remove();
-            }
+
             if (item) {
-                if (item.getIconUrl()) {
-                    var size = item.getIconSize() || 64,
-                        icon: HTMLImageElement = api.util.loader.ImageLoader.get(item.getIconUrl() + "?size=size", size, size);
-
-                    this.iconEl = <api.dom.ImgEl> new api.dom.Element(new api.dom.NewElementBuilder().
-                        setTagName("img").
-                        setHelper(new api.dom.ImgHelper(icon)));
-
-                    this.iconEl.addClass("icon");
-                    this.prependChild(this.iconEl);
-                } else {
-                    this.iconDivEl = new api.dom.DivEl(item.getIconClass());
-                    this.iconDivEl.addClass("icon");
-                    this.prependChild(this.iconDivEl);
-                }
+                this.iconEl = this.createIconEl(item);
+                this.prependChild(this.iconEl);
 
                 var displayName = item.getDisplayName() || '';
                 this.headerTitleEl.getEl().setInnerHtml(displayName, true).setAttribute("title", displayName);
@@ -55,6 +38,25 @@ module api.app.view {
                 }
             }
             this.browseItem = item;
+        }
+
+        private createIconEl(item: ViewItem<M>) {
+            var iconEl: api.dom.Element;
+
+            if (item.getIconUrl()) {
+                var size = item.getIconSize() || 64,
+                    icon: HTMLImageElement = api.util.loader.ImageLoader.get(item.getIconUrl() + "?size=size", size, size);
+
+                iconEl = <api.dom.ImgEl> new api.dom.Element(new api.dom.NewElementBuilder().
+                    setTagName("img").
+                    setHelper(new api.dom.ImgHelper(icon)));
+            } else {
+                iconEl = new api.dom.DivEl(item.getIconClass());
+            }
+
+            iconEl.addClass("font-icon-default");
+
+            return iconEl;
         }
 
         private appendToHeaderPath(value, className) {

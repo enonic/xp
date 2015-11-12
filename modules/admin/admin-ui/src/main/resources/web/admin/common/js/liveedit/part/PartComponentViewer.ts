@@ -15,7 +15,7 @@ module api.liveedit.part {
         }
 
         resolveIconClass(object: api.content.page.region.PartComponent): string {
-            return "live-edit-font-icon-part";
+            return api.liveedit.ItemViewIconClassResolver.resolveByType("part");
         }
     }
 

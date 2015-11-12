@@ -32,7 +32,6 @@ module api.liveedit.part {
                 setTooltipViewer(new PartComponentViewer()).
                 setPlaceholder(this.partPlaceholder).
                 setInspectActionRequired(true));
-            this.addClass('part-view');
 
             this.parseContentViews(this);
         }

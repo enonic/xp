@@ -6,11 +6,13 @@ module api.liveedit {
         private menu: api.ui.menu.TreeContextMenu;
         private arrow: ItemViewContextMenuArrow;
 
-        constructor(menuTitle: ItemViewContextMenuTitle, actions: api.ui.Action[]) {
+        constructor(menuTitle: ItemViewContextMenuTitle, actions: api.ui.Action[], showArrow: boolean = true) {
             super('item-view-context-menu');
 
-            this.arrow = new ItemViewContextMenuArrow();
-            this.appendChild(this.arrow);
+            if (showArrow) {
+                this.arrow = new ItemViewContextMenuArrow();
+                this.appendChild(this.arrow);
+            }
 
             this.title = menuTitle;
             if (this.title) {
@@ -103,29 +105,33 @@ module api.liveedit {
 
             var width = this.getEl().getWidth(),
                 halfWidth = width / 2,
-                arrowHalfWidth = this.arrow.getWidth() / 2,
+                arrowHalfWidth = this.arrow ? this.arrow.getWidth() / 2 : 0,
                 desiredX = x - halfWidth,
+                resultX = desiredX,
                 deltaX,
+                arrowPos,
                 minX = parentEl.getMarginLeft(),
                 maxX = parentEl.getWidthWithMargin() - parentEl.getMarginRight() - width;
 
             if (desiredX < minX) {
                 deltaX = minX - desiredX;
-                this.arrow.getEl().setLeftPx(Math.max(arrowHalfWidth, halfWidth - deltaX));
-                return minX;
-            } else if (desiredX > maxX) {
-                deltaX = maxX - desiredX;
-                this.arrow.getEl().setLeftPx(Math.min(halfWidth - deltaX, width - arrowHalfWidth));
-                return maxX;
-            } else {
-                this.arrow.getEl().setLeft("");
-                return desiredX;
+                arrowPos = Math.max(arrowHalfWidth, halfWidth - deltaX);
+                resultX = minX;
             }
+            if (desiredX > maxX) {
+                deltaX = maxX - desiredX;
+                arrowPos = Math.min(halfWidth - deltaX, width - arrowHalfWidth);
+                resultX = maxX;
+            }
+            if (this.arrow && arrowPos) {
+                this.arrow.getEl().setLeftPx(arrowPos);
+            }
+            return resultX;
         }
 
         private restrainY(y: number, notClicked?: boolean): number {
             var height = this.getEl().getHeight(),
-                arrowHeight = this.arrow.getHeight(),
+                arrowHeight = this.arrow ? this.arrow.getHeight() : 0,
                 bottomY = y + height + arrowHeight,
                 maxY;
 
@@ -135,11 +141,12 @@ module api.liveedit {
                 maxY = Math.max(document.body.scrollTop, document.documentElement.scrollTop) + window.innerHeight;
             }
 
+            if (this.arrow) {
+                this.arrow.toggleVerticalPosition(bottomY <= maxY);
+            }
             if (bottomY > maxY) {
-                this.arrow.toggleVerticalPosition(false);
                 return y - height - arrowHeight;
             } else {
-                this.arrow.toggleVerticalPosition(true);
                 return y + arrowHeight;
             }
 
@@ -148,28 +155,32 @@ module api.liveedit {
     }
 
     export class ItemViewContextMenuArrow extends api.dom.DivEl {
+        private static clsBottom = "bottom";
+        private static clsTop = "top";
+        private static clsLeft = "left";
+        private static clsRight = "right";
 
         constructor() {
-            super("item-view-context-menu-arrow bottom");
+            super("item-view-context-menu-arrow " + ItemViewContextMenuArrow.clsBottom);
         }
 
-        public toggleVerticalPosition(bottom: boolean) {
-            this.toggleClass('bottom', bottom);
-            this.toggleClass('top', !bottom);
+        toggleVerticalPosition(bottom: boolean) {
+            this.toggleClass(ItemViewContextMenuArrow.clsBottom, bottom);
+            this.toggleClass(ItemViewContextMenuArrow.clsTop, !bottom);
         }
 
         getWidth(): number {
-            if (this.hasClass('top') || this.hasClass('bottom')) {
+            if (this.hasClass(ItemViewContextMenuArrow.clsTop) || this.hasClass(ItemViewContextMenuArrow.clsBottom)) {
                 return 14;
-            } else if (this.hasClass('left') || this.hasClass('right')) {
+            } else if (this.hasClass(ItemViewContextMenuArrow.clsLeft) || this.hasClass(ItemViewContextMenuArrow.clsRight)) {
                 return 7;
             }
         }
 
         getHeight(): number {
-            if (this.hasClass('top') || this.hasClass('bottom')) {
+            if (this.hasClass(ItemViewContextMenuArrow.clsTop) || this.hasClass(ItemViewContextMenuArrow.clsBottom)) {
                 return 7;
-            } else if (this.hasClass('left') || this.hasClass('right')) {
+            } else if (this.hasClass(ItemViewContextMenuArrow.clsLeft) || this.hasClass(ItemViewContextMenuArrow.clsRight)) {
                 return 14;
             }
         }

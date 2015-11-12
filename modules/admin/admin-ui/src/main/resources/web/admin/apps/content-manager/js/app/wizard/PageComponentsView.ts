@@ -397,7 +397,7 @@ module app.wizard {
             }
 
             if (!this.contextMenu) {
-                this.contextMenu = new api.liveedit.ItemViewContextMenu(null, contextMenuActions);
+                this.contextMenu = new api.liveedit.ItemViewContextMenu(null, contextMenuActions, false);
                 this.contextMenu.onHidden(this.removeMenuOpenStyleFromMenuIcon.bind(this));
             } else {
                 this.contextMenu.setActions(contextMenuActions);

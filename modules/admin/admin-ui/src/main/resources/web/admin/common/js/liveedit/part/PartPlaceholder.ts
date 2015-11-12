@@ -10,7 +10,7 @@ module api.liveedit.part {
     import PartItemType = api.liveedit.part.PartItemType;
     import PageItemType = api.liveedit.PageItemType;
 
-    export class PartPlaceholder extends ComponentPlaceholder {
+    export class PartPlaceholder extends ItemViewPlaceholder {
 
         private comboBox: PartDescriptorComboBox;
 
@@ -20,7 +20,7 @@ module api.liveedit.part {
 
         constructor(partView: PartComponentView) {
             super();
-            this.addClass("part-placeholder");
+            this.addClassEx("part-placeholder");
 
             this.partComponentView = partView;
 

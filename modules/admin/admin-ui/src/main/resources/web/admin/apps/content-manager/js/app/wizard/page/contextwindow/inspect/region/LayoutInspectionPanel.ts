@@ -38,7 +38,7 @@ module app.wizard.page.contextwindow.inspect.region {
 
         constructor() {
             super(<DescriptorBasedComponentInspectionPanelConfig>{
-                iconClass: "live-edit-font-icon-layout icon-xlarge"
+                iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("layout", "icon-xlarge")
             });
         }
 
