@@ -21,4 +21,7 @@
 ///<reference path='SetChildOrderAndReorderJson.ts' />
 ///<reference path='ResolvePublishContentResultJson.ts' />
 ///<reference path='WidgetDescriptorJson.ts' />
-///<reference path='GetWidgetsByInterfaceResultJson.ts' />
+///<reference path='EffectivePermissionsJson.ts' />
+///<reference path='EffectivePermissionJson.ts' />
+///<reference path='EffectivePermissionAccessJson.ts' />
+///<reference path='EffectivePermissionMemberJson.ts' />

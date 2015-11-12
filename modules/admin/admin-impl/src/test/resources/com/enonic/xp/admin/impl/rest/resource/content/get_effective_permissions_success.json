@@ -1,0 +1,77 @@
+[
+  {
+    "access": "READ",
+    "permissionAccessJson": {
+      "count": 2,
+      "users": [
+        {
+          "displayName": "user3",
+          "key": "user:system:user3"
+        },
+        {
+          "displayName": "user4",
+          "key": "user:system:user4"
+        }
+      ]
+  }
+  },
+  {
+    "access": "WRITE",
+    "permissionAccessJson": {
+      "count": 2,
+      "users": [
+        {
+          "displayName": "user1",
+          "key": "user:system:user1"
+        },
+        {
+          "displayName": "user2",
+          "key": "user:system:user2"
+        }
+      ]
+    }
+  },
+  {
+    "access": "PUBLISH",
+    "permissionAccessJson": {
+      "count": 200,
+      "users": [
+        {
+          "displayName": "user1",
+          "key": "user:system:user1"
+        },
+        {
+          "displayName": "user2",
+          "key": "user:system:user2"
+        },
+        {
+          "displayName": "user3",
+          "key": "user:system:user3"
+        },
+        {
+          "displayName": "user4",
+          "key": "user:system:user4"
+        }
+      ]
+    }
+  },
+  {
+    "access": "FULL",
+    "permissionAccessJson": {
+      "count": 1,
+      "users": [
+        {
+          "displayName": "user1",
+          "key": "user:system:user1"
+        }
+      ]
+    }
+  },
+  {
+    "access": "CUSTOM",
+    "permissionAccessJson": {
+      "count": 0,
+      "users": []
+    }
+  }
+]

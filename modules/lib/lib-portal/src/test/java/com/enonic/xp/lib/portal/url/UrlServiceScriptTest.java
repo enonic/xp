@@ -18,7 +18,6 @@ public class UrlServiceScriptTest
     @Before
     public void setUp()
     {
-        setupRequest();
         addService( PortalUrlService.class, Mockito.mock( PortalUrlService.class, (Answer) this::urlAnswer ) );
     }
 
@@ -29,58 +28,50 @@ public class UrlServiceScriptTest
     }
 
     private boolean execute( final String method )
-        throws Exception
     {
-        final ScriptExports exports = runTestScript( "test/url-test.js" );
+        final ScriptExports exports = runScript( "/site/test/url-test.js" );
         final ScriptValue value = exports.executeMethod( method );
         return value != null ? value.getValue( Boolean.class ) : false;
     }
 
     @Test
     public void assertUrlTest()
-        throws Exception
     {
         Assert.assertTrue( execute( "assetUrlTest" ) );
     }
 
     @Test
     public void attachmentUrlTest()
-        throws Exception
     {
         Assert.assertTrue( execute( "attachmentUrlTest" ) );
     }
 
     @Test
     public void componentUrlTest()
-        throws Exception
     {
         Assert.assertTrue( execute( "componentUrlTest" ) );
     }
 
     @Test
     public void imageUrlTest()
-        throws Exception
     {
         Assert.assertTrue( execute( "imageUrlTest" ) );
     }
 
     @Test
     public void pageUrlTest()
-        throws Exception
     {
         Assert.assertTrue( execute( "pageUrlTest" ) );
     }
 
     @Test
     public void serviceUrlTest()
-        throws Exception
     {
         Assert.assertTrue( execute( "serviceUrlTest" ) );
     }
 
     @Test
     public void processHtmlTest()
-        throws Exception
     {
         Assert.assertTrue( execute( "processHtmlTest" ) );
     }

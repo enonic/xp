@@ -12,6 +12,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -108,15 +109,15 @@ public class ResourceServiceImpl
 
     private Application getActiveApplication( final ApplicationKey applicationKey )
     {
-        Application activeApplication = null;
-
-        final Application application = applicationService.getApplication( applicationKey );
-        if ( application != null && application.getBundle().getState() == Bundle.ACTIVE )
+        try
         {
-            activeApplication = application;
+            final Application application = applicationService.getApplication( applicationKey );
+            return application.getBundle().getState() == Bundle.ACTIVE ? application : null;
         }
-
-        return activeApplication;
+        catch ( ApplicationNotFoundException e )
+        {
+            return null;
+        }
     }
 
     @Reference

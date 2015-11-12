@@ -1,45 +1,12 @@
 package com.enonic.xp.repo.impl.blob;
 
-import java.io.InputStream;
+import com.google.common.io.ByteSource;
 
-public abstract class BlobRecord
-    implements Blob
+public interface BlobRecord
 {
-    private final BlobKey key;
+    BlobKey getKey();
 
-    protected BlobRecord( final BlobKey key )
-    {
-        this.key = key;
-    }
+    long getLength();
 
-    @Override
-    public final BlobKey getKey()
-    {
-        return this.key;
-    }
-
-    @Override
-    public abstract long getLength();
-
-    @Override
-    public abstract InputStream getStream()
-        throws BlobStoreException;
-
-    @Override
-    public final String toString()
-    {
-        return this.key.toString();
-    }
-
-    @Override
-    public final int hashCode()
-    {
-        return this.key.hashCode();
-    }
-
-    @Override
-    public final boolean equals( final Object object )
-    {
-        return ( object instanceof BlobRecord ) && this.key.equals( ( (BlobRecord) object ).key );
-    }
+    ByteSource getBytes();
 }

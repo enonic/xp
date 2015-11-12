@@ -289,6 +289,12 @@ module api.ui.treegrid {
              }*/
         }
 
+        public isInRenderingView(): boolean {
+            let iFrame = api.app.Application.getApplication().getAppFrame();
+            // iFrame is visible, or TreeGrid in visible tab, or TreeGrid is active
+            return iFrame.isVisible() && this.isVisible() && this.isActive();
+        }
+
         private updateColumnsFormatter(columns: GridColumn<TreeNode<DATA>>[]) {
             if (columns.length > 0) {
                 var formatter = columns[0].getFormatter();
@@ -441,10 +447,7 @@ module api.ui.treegrid {
 
         private postLoad() {
             // Skip if not visible or active (is loading something)
-            var iFrame = api.app.Application.getApplication().getAppFrame(),
-                disabled = !iFrame.isVisible() || // application's iframe is visible
-                           !this.isVisible() ||   // TreeGrid is visible in tab
-                           !this.isActive();      // TreeGrid is active
+            var disabled = !this.isInRenderingView();
 
             if (disabled) {
                 return;

@@ -17,7 +17,7 @@ module app.home {
         constructor(builder: HomeMainContainerBuilder) {
             super('home-main-container');
 
-            var lazyImage = new api.ui.image.LazyImage();
+            var lazyImage = new api.ui.image.LazyImage(api.util.UriHelper.getAdminUri("/common/images/image1x1.png"));
             this.appendChild(lazyImage);
 
             this.getEl().setAttribute("tabindex", "100"); //Need tabindex to be able to focus element
@@ -43,8 +43,7 @@ module app.home {
             this.appendChild(this.centerPanel);
 
             this.onAdded(() => {
-                // See `.home-main-container .lazy-image` content property
-                lazyImage.setSrc(lazyImage.getEl().getComputedProperty("content").slice(1, -1));
+                lazyImage.setSrc("/admin/common/images/background-1920.jpg");
             });
 
             LogOutEvent.on(() => {

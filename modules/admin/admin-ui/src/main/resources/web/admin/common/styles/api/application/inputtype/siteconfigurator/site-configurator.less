@@ -1,14 +1,135 @@
 .site-configurator {
 
   .multiple-occurrence {
-    .site-view {
+    .selected-option {
       .drag-control, .site-form .remove-button {
         display: none;
       }
 
       .site-form {
-        padding-right: 0px;
+        padding-right: 0;
       }
+    }
+  }
+
+  .selected-options {
+
+    .selected-option {
+      padding: 10px !important;
+      height: auto !important;
+      margin-bottom: 15px; // each child should have this for smooth sorting
+
+      &:not(.placeholder) {
+        background-color: @admin-bg-light-gray;
+
+        &:hover {
+          background-color: @admin-bg-light-gray;
+        }
+
+        &.invalid {
+          background-color: @admin-input-red;
+        }
+      }
+
+      &.collapsed {
+        .header {
+          margin: 0;
+        }
+      }
+
+      .header {
+        position: relative;
+        line-height: 48px;
+        overflow: hidden;
+
+        .clearfix();
+
+        .names-and-icon-view {
+          float: left;
+          cursor: move;
+
+          .names-view {
+            > * {
+              cursor: move;
+            }
+            h6 {
+              height: auto;
+              font-size: 22px;
+              line-height: 30px;
+
+              .ellipsis();
+            }
+          }
+        }
+
+        .edit-button, .remove-button {
+          cursor: pointer;
+          text-decoration: none;
+        }
+
+        .edit-button {
+          float: right;
+          margin: 17px 20px 0px 20px;
+          font-size: 13px;
+          .icon-pencil2();
+        }
+
+        .remove-button {
+          float: right;
+          line-height: 48px;
+        }
+
+      }
+    }
+  }
+
+}
+
+.wizard-panel .wizard-steps-panel .wizard-step-form .site-configurator .form-view {
+  margin: 10px 0 0 0;
+}
+
+.site-configurator-dialog {
+
+  &.animated {
+    .transition(margin-top 0.2s);
+  }
+
+  .dialog-header {
+    position: relative;
+    line-height: 48px;
+    overflow: hidden;
+
+    .clearfix();
+
+    .names-and-icon-view {
+      float: left;
+
+      .names-view h6 {
+        height: auto;
+        font-size: 22px;
+        line-height: 30px;
+
+        .ellipsis();
+      }
+    }
+  }
+
+  .dialog-content {
+
+    max-height: 500px;
+    overflow-y: auto;
+
+    @media screen and (max-height: 720px) {
+      max-height: 400px;
+    }
+
+    @media screen and (max-height: 540px) {
+      max-height: 300px;
+    }
+
+    @media screen and (max-height: 360px) {
+      max-height: 200px;
     }
   }
 }

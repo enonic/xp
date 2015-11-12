@@ -36,6 +36,7 @@ module app.browse {
 
     import CompareStatus = api.content.CompareStatus;
 
+    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 
     export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
@@ -93,7 +94,7 @@ module app.browse {
                     prependClasses("content-tree-grid")
             );
 
-            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+            let updateColumns = api.util.AppHelper.debounce((item: api.ui.responsive.ResponsiveItem) => {
                 if (item.isRangeSizeChanged()) {
 
                     if (item.isInRangeOrSmaller(ResponsiveRanges._240_360)) {
@@ -115,6 +116,12 @@ module app.browse {
                     this.getGrid().resizeCanvas();
                 }
 
+            }, 100, true);
+
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
+                if (this.isInRenderingView()) {
+                    updateColumns(item);
+                }
             });
 
             this.getGrid().subscribeOnClick((event, data) => {
@@ -133,7 +140,7 @@ module app.browse {
                      * node is clicked, edit event will be triggered by default.
                      */
                     if (!!this.getDataId(node.getData())) { // default event
-                        new api.content.EditContentEvent([node.getData().getContentSummary()]).fire();
+                        new api.content.EditContentEvent([node.getData()]).fire();
                     }
                 }
             });
@@ -196,13 +203,7 @@ module app.browse {
         }
 
         private sortIconClickCallback() {
-            new app.browse.SortContentEvent(this.getSelectedContentsSummaries()).fire();
-        }
-
-        private getSelectedContentsSummaries(): api.content.ContentSummary[] {
-            return this.getSelectedDataList().map((elem) => {
-                return elem.getContentSummary();
-            });
+            new app.browse.SortContentEvent(this.getSelectedDataList()).fire();
         }
 
         private statusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {

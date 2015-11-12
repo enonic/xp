@@ -10,11 +10,9 @@ module app.browse.action {
             super("Publish");
             this.setEnabled(false);
             this.onExecuted(() => {
-                var contentSummaries: api.content.ContentSummary[]
-                    = grid.getSelectedDataList().map((elem) => {
-                    return elem.getContentSummary();
-                });
-                new ContentPublishPromptEvent(contentSummaries).fire();
+                var contents: api.content.ContentSummaryAndCompareStatus[]
+                    = grid.getSelectedDataList();
+                new ContentPublishPromptEvent(contents).fire();
             });
         }
     }

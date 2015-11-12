@@ -12,7 +12,6 @@ module api.schema.content.inputtype {
     import Input = api.form.Input;
     import ContentTypeComboBox = api.schema.content.ContentTypeComboBox;
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
-    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import ApplicationKey = api.application.ApplicationKey;
 
@@ -49,7 +48,7 @@ module api.schema.content.inputtype {
                 comboBox = new ContentTypeComboBox(this.getInput().getOccurrences().getMaximum(), loader);
 
             comboBox.onLoaded((contentTypeArray: ContentTypeSummary[]) => this.onContentTypesLoaded(contentTypeArray));
-            comboBox.onOptionSelected((event: OptionSelectedEvent<ContentTypeSummary>) => this.onContentTypeSelected(event));
+            comboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<ContentTypeSummary>) => this.onContentTypeSelected(selectedOption));
             comboBox.onOptionDeselected((option: SelectedOption<ContentTypeSummary>) => this.onContentTypeDeselected(option));
 
             return comboBox;
@@ -69,12 +68,12 @@ module api.schema.content.inputtype {
             this.validate(false);
         }
 
-        private onContentTypeSelected(event: OptionSelectedEvent<ContentTypeSummary>): void {
+        private onContentTypeSelected(selectedOption: api.ui.selector.combobox.SelectedOption<ContentTypeSummary>): void {
             if (this.isLayoutInProgress()) {
                 return;
             }
 
-            var value = new Value(event.getOption().displayValue.getContentTypeName().toString(), ValueTypes.STRING);
+            var value = new Value(selectedOption.getOption().displayValue.getContentTypeName().toString(), ValueTypes.STRING);
             if (this.combobox.countSelected() == 1) { // overwrite initial value
                 this.getPropertyArray().set(0, value);
             }

@@ -3,7 +3,6 @@ package com.enonic.xp.lib.i18n;
 import java.util.Arrays;
 import java.util.Locale;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -20,10 +19,10 @@ import com.enonic.xp.testing.script.ScriptTestSupport;
 public class ScriptingTest
     extends ScriptTestSupport
 {
-    @Before
-    public void setUp()
+    @Override
+    public void initialize()
     {
-        setupRequest();
+        super.initialize();
 
         this.portalRequest.setSite( Site.create().
             name( ContentName.from( "test" ) ).
@@ -44,21 +43,21 @@ public class ScriptingTest
     public void testLocalize()
         throws Exception
     {
-        runTestFunction( "test/localize-test.js", "localize" );
+        runFunction( "/site/test/localize-test.js", "localize" );
     }
 
     @Test
     public void testLocalize_withLocale()
         throws Exception
     {
-        runTestFunction( "test/localize-test.js", "localize_with_locale" );
+        runFunction( "/site/test/localize-test.js", "localize_with_locale" );
     }
 
     @Test
     public void testLocalize_withPlaceholders()
         throws Exception
     {
-        runTestFunction( "test/localize-test.js", "localize_with_placeholders" );
+        runFunction( "/site/test/localize-test.js", "localize_with_placeholders" );
     }
 
     private Object answer( final InvocationOnMock invocation )

@@ -22,6 +22,8 @@ module api.ui.treegrid {
 
         private autoLoad: boolean = true;
 
+        private autoHeight: boolean = true;
+
         private hotkeysEnabled: boolean = true;
 
         private partialLoadEnabled: boolean = false;
@@ -168,6 +170,15 @@ module api.ui.treegrid {
 
         isAutoLoad(): boolean {
             return this.autoLoad;
+        }
+
+        setAutoHeight(autoHeight: boolean): TreeGridBuilder<NODE> {
+            this.options.setAutoHeight(autoHeight);
+            return this;
+        }
+
+        isAutoHeight(): boolean {
+            return this.options.isAutoHeight();
         }
 
         setCheckableRows(checkable: boolean): TreeGridBuilder<NODE> {

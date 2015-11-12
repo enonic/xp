@@ -5,7 +5,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.handler.PortalHandler;
 
 final class PortalHandlerRegistry
 {

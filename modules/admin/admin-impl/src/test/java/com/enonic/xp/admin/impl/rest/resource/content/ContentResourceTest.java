@@ -2,7 +2,6 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
@@ -62,19 +61,30 @@ import com.enonic.xp.schema.content.GetContentTypesParams;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalQuery;
+import com.enonic.xp.security.PrincipalQueryResult;
+import com.enonic.xp.security.PrincipalRelationship;
+import com.enonic.xp.security.PrincipalRelationships;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 
 import static com.enonic.xp.security.acl.Permission.READ;
+import static java.util.Arrays.asList;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 
 public class ContentResourceTest
     extends AdminResourceTestSupport
 {
+
     private final LocalDate currentDate = LocalDate.of( 2013, 8, 23 );
 
     private final String currentTime = "2013-08-23T12:55:09.162Z";
@@ -84,6 +94,8 @@ public class ContentResourceTest
     private ContentService contentService;
 
     private SecurityService securityService;
+
+    private static final UserStoreKey SYSTEM = UserStoreKey.system();
 
     @Override
     protected Object getResourceInstance()
@@ -537,6 +549,7 @@ public class ContentResourceTest
             parentPath( ContentPath.ROOT ).
             name( "one" ).
             displayName( "one" ).
+            type( ContentTypeName.folder() ).
             build();
         Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn( Contents.from( content ) );
 
@@ -878,7 +891,7 @@ public class ContentResourceTest
     @Test
     public void countContentsWithDescendants_check_children_filtered()
     {
-        Set<String> contentPaths = new HashSet<String>( Arrays.asList( "/root/a", "/root/a/b", "/root/c", "root/a/b/c" ) );
+        Set<String> contentPaths = new HashSet<String>( asList( "/root/a", "/root/a/b", "/root/c", "root/a/b/c" ) );
 
         CountItemsWithChildrenJson json = new CountItemsWithChildrenJson();
         json.setContentPaths( contentPaths );
@@ -903,7 +916,7 @@ public class ContentResourceTest
     @Test
     public void countContentsWithDescendants_no_children()
     {
-        Set<String> contentPaths = new HashSet<String>( Arrays.asList( "/root/a", "/root/b", "/root/c" ) );
+        Set<String> contentPaths = new HashSet<String>( asList( "/root/a", "/root/b", "/root/c" ) );
 
         CountItemsWithChildrenJson json = new CountItemsWithChildrenJson();
         json.setContentPaths( contentPaths );
@@ -918,7 +931,7 @@ public class ContentResourceTest
     public void move_with_moveContentException()
     {
         MoveContentJson json = new MoveContentJson();
-        json.setContentIds( Arrays.asList( "id1", "id2", "id3", "id4" ) );
+        json.setContentIds( asList( "id1", "id2", "id3", "id4" ) );
         json.setParentContentPath( "/root" );
 
         ContentResource contentResource = ( (ContentResource) getResourceInstance() );
@@ -930,6 +943,58 @@ public class ContentResourceTest
         assertEquals( 1, resultJson.getFailures().size() );
     }
 
+    @Test
+    public void getEffectivePermissions()
+        throws Exception
+    {
+        final User user1 = createUser( "User 1" );
+        final User user2 = createUser( "User 2" );
+        final User user3 = createUser( "User 3" );
+        final User user4 = createUser( "User 4" );
+        final PrincipalKey groupA = PrincipalKey.ofGroup( SYSTEM, "groupA" );
+        final PrincipalKey groupB = PrincipalKey.ofGroup( SYSTEM, "groupB" );
+        Mockito.<Optional<? extends Principal>>when( securityService.getUser( user1.getKey() ) ).thenReturn( Optional.of( user1 ) );
+        Mockito.<Optional<? extends Principal>>when( securityService.getUser( user2.getKey() ) ).thenReturn( Optional.of( user2 ) );
+        Mockito.<Optional<? extends Principal>>when( securityService.getUser( user3.getKey() ) ).thenReturn( Optional.of( user3 ) );
+        Mockito.<Optional<? extends Principal>>when( securityService.getUser( user4.getKey() ) ).thenReturn( Optional.of( user4 ) );
+
+        final PrincipalRelationships group1Memberships =
+            PrincipalRelationships.from( PrincipalRelationship.from( groupA ).to( user1.getKey() ),
+                                         PrincipalRelationship.from( groupA ).to( user2.getKey() ) );
+        Mockito.when( this.securityService.getRelationships( eq( groupA ) ) ).thenReturn( group1Memberships );
+
+        final PrincipalRelationships group2Memberships =
+            PrincipalRelationships.from( PrincipalRelationship.from( groupB ).to( user3.getKey() ),
+                                         PrincipalRelationship.from( groupA ).to( user4.getKey() ) );
+        Mockito.when( this.securityService.getRelationships( eq( groupB ) ) ).thenReturn( group2Memberships );
+
+        final Permission[] ACCESS_WRITE = {Permission.READ, Permission.CREATE, Permission.DELETE, Permission.MODIFY};
+        final Permission[] ACCESS_PUBLISH = {Permission.READ, Permission.CREATE, Permission.DELETE, Permission.MODIFY, Permission.PUBLISH};
+        final AccessControlList permissions =
+            AccessControlList.of( AccessControlEntry.create().principal( user1.getKey() ).allowAll().build(),
+                                  AccessControlEntry.create().principal( groupA ).allow( ACCESS_WRITE ).build(),
+                                  AccessControlEntry.create().principal( groupB ).allow( Permission.READ ).build(),
+                                  AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( ACCESS_PUBLISH ).build() );
+
+        final PrincipalQueryResult totalUsers = PrincipalQueryResult.create().
+            totalSize( 200 ).
+            addPrincipals( asList( user1, user2, user3, user4 ) ).
+            build();
+        Mockito.when( this.securityService.query( any( PrincipalQuery.class ) ) ).thenReturn( totalUsers );
+
+        Mockito.when( contentService.getPermissionsById( Mockito.isA( ContentId.class ) ) ).
+            thenReturn( permissions );
+
+        String jsonString = request().path( "content/effectivePermissions" ).queryParam( "id", "/my_content" ).get().getAsString();
+
+        assertJson( "get_effective_permissions_success.json", jsonString );
+    }
+
+    private User createUser( final String displayName )
+    {
+        final String userId = displayName.replace( " ", "" ).toLowerCase();
+        return User.create().displayName( userId ).key( PrincipalKey.ofUser( SYSTEM, userId ) ).login( userId ).build();
+    }
 
     private Content createContent( final String id, final String name, final String contentTypeName )
     {

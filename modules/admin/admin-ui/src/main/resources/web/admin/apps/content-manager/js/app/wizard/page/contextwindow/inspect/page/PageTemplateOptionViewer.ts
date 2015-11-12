@@ -7,7 +7,11 @@ module app.wizard.page.contextwindow.inspect.page {
         }
 
         resolveDisplayName(object: PageTemplateOption): string {
-            return !!object.getPageTemplate() ? (object.isCustom() ? PageTemplateOption.displayNameCustom : object.getPageTemplate().getDisplayName()) : PageTemplateOption.displayNameAutomatic;
+            var pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
+
+            return !!object.getPageTemplate() ?
+                   (object.isCustom() ? pageTemplateDisplayName[pageTemplateDisplayName.Custom] : object.getPageTemplate().getDisplayName())
+                : pageTemplateDisplayName[pageTemplateDisplayName.Automatic];
         }
 
         resolveSubName(object: PageTemplateOption, relativePath: boolean = false): string {

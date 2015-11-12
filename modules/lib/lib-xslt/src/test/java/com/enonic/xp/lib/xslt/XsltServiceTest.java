@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.xslt;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -16,10 +15,10 @@ public class XsltServiceTest
 {
     private XsltService service;
 
-    @Before
-    public void setup()
+    @Override
+    protected void initialize()
     {
-        setupRequest();
+        super.initialize();
         addService( ViewFunctionService.class, Mockito.mock( ViewFunctionService.class, (Answer) this::urlAnswer ) );
 
         this.service = new XsltService();
@@ -30,13 +29,12 @@ public class XsltServiceTest
     public void testProcess()
     {
         final XsltProcessor processor = this.service.newProcessor();
-        processor.setView( ResourceKey.from( "myapplication:/site/test/view/test.xsl" ) );
+        processor.setView( ResourceKey.from( "myapplication:/site/view/simple.xsl" ) );
         processor.setModel( null );
         processor.process();
     }
 
     private Object urlAnswer( final InvocationOnMock invocation )
-        throws Exception
     {
         final ViewFunctionParams params = (ViewFunctionParams) invocation.getArguments()[0];
         return params.getName() + "(" + params.getArgs().toString() + ")";

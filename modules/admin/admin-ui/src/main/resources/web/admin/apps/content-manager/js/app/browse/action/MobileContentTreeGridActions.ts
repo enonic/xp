@@ -4,11 +4,12 @@ module app.browse.action {
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
     import BrowseItem = api.app.browse.BrowseItem;
     import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import Content = api.content.Content;
     import AccessControlEntry = api.security.acl.AccessControlEntry;
     import AccessControlList = api.security.acl.AccessControlList;
 
-    export class MobileContentTreeGridActions implements TreeGridActions<ContentSummary> {
+    export class MobileContentTreeGridActions implements TreeGridActions<ContentSummaryAndCompareStatus> {
 
         public SHOW_NEW_CONTENT_DIALOG_ACTION: Action;
         public EDIT_CONTENT: Action;
@@ -44,13 +45,13 @@ module app.browse.action {
             return this.actions;
         }
 
-        updateActionsEnabledState(contentBrowseItems: BrowseItem<ContentSummary>[]): wemQ.Promise<BrowseItem<ContentSummary>[]> {
+        updateActionsEnabledState(contentBrowseItems: BrowseItem<ContentSummaryAndCompareStatus>[]): wemQ.Promise<BrowseItem<ContentSummaryAndCompareStatus>[]> {
 
-            var contentSummaries: ContentSummary[] = contentBrowseItems.map((elem: BrowseItem<ContentSummary>) => {
-                return elem.getModel();
+            var contentSummaries: ContentSummary[] = contentBrowseItems.map((elem: BrowseItem<ContentSummaryAndCompareStatus>) => {
+                return elem.getModel().getContentSummary();
             });
 
-            var deferred = wemQ.defer<BrowseItem<ContentSummary>[]>();
+            var deferred = wemQ.defer<BrowseItem<ContentSummaryAndCompareStatus>[]>();
 
             switch (contentBrowseItems.length) {
             case 0:

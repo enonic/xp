@@ -56,6 +56,19 @@ module api.app.browse {
             this.browseItemPanel = params.browseItemPanel;
             this.filterPanel = params.filterPanel;
 
+            this.browseItemPanel.onDeselected((event: ItemDeselectedEvent<M>) => {
+                let oldSelectedCount = this.treeGrid.getGrid().getSelectedRows().length;
+                this.treeGrid.deselectNode(event.getBrowseItem().getId());
+                let newSelectedCount = this.treeGrid.getGrid().getSelectedRows().length;
+
+                if (oldSelectedCount === newSelectedCount) {
+                    this.treeGrid.getContextMenu().getActions().updateActionsEnabledState(this.browseItemPanel.getItems()).
+                        then(() => {
+                            this.browseItemPanel.updateDisplayedPanel();
+                        });
+                }
+            });
+
             this.gridAndToolbarContainer = new api.ui.panel.Panel();
 
             var gridPanel = new api.ui.panel.Panel();
@@ -90,7 +103,7 @@ module api.app.browse {
                     });
             });
 
-            this.onRendered((event) => {
+            this.onRendered(() => {
                 this.initFilterAndContentGridAndBrowseSplitPanel();
             });
 
@@ -152,8 +165,7 @@ module api.app.browse {
 
             if(this.filterPanelIsHidden()) {
                 this.showFilterPanel();
-            }
-            else {
+            } else {
                 this.hideFilterPanel();
             }
         }

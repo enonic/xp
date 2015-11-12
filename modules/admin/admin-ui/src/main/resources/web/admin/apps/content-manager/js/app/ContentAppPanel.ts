@@ -2,6 +2,7 @@ module app {
 
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
     import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import Content = api.content.Content;
     import ContentId = api.content.ContentId;
     import ContentNamedEvent = api.content.ContentNamedEvent;
@@ -11,7 +12,7 @@ module app {
     import AppBarTabMenuItemBuilder = api.app.bar.AppBarTabMenuItemBuilder;
     import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 
-    export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<ContentSummary> {
+    export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<ContentSummaryAndCompareStatus> {
 
         private mask: api.ui.mask.LoadMask;
 
@@ -33,7 +34,7 @@ module app {
             wizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() === "displayName") {
                     var contentType = (<app.wizard.ContentWizardPanel>wizardPanel).getContentType(),
-                        name = <string>event.getNewValue() || "<Unnamed " + this.convertName(contentType.getDisplayName()) + ">";
+                        name = <string>event.getNewValue() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
                     tabMenuItem.setLabel(name, !<string>event.getNewValue(), false);
                 }
             });
@@ -53,8 +54,8 @@ module app {
             case 'edit':
                 var id = path.getElement(1);
                 if (id) {
-                    new api.content.GetContentByIdRequest(new ContentId(id)).sendAndParse().
-                        done((content: Content) => {
+                    api.content.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).
+                        done((content: ContentSummaryAndCompareStatus) => {
                             new api.content.EditContentEvent([content]).fire();
                         });
                 }
@@ -62,8 +63,8 @@ module app {
             case 'view' :
                 var id = path.getElement(1);
                 if (id) {
-                    new api.content.GetContentByIdRequest(new ContentId(id)).sendAndParse().
-                        done((content: Content) => {
+                    api.content.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).
+                        done((content: ContentSummaryAndCompareStatus) => {
                             new app.browse.ViewContentEvent([content]).fire();
                         });
                 }
@@ -104,9 +105,11 @@ module app {
             });
 
             api.content.ContentDeletedEvent.on((event: api.content.ContentDeletedEvent) => {
-                var item = this.getNavigator().getNavigationItemByIdValue(event.getContentId().toString());
-                if (item) {
-                    item.getCloseAction().execute(true);
+                if (!event.isPending()) {
+                    var item = this.getNavigator().getNavigationItemByIdValue(event.getContentId().toString());
+                    if (item) {
+                        item.getCloseAction().execute(true);
+                    }
                 }
             });
         }
@@ -116,7 +119,7 @@ module app {
         }
 
         private handleBrowse(event: ShowBrowsePanelEvent) {
-            var browsePanel: api.app.browse.BrowsePanel<ContentSummary> = this.getBrowsePanel();
+            var browsePanel: api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> = this.getBrowsePanel();
             if (!browsePanel) {
                 this.addBrowsePanel(new app.browse.ContentBrowsePanel());
             } else {
@@ -146,17 +149,25 @@ module app {
                         return;
                     }
 
+                    var newTabId = AppBarTabId.forNew(wizard.getPersistedItem().getContentId().toString());
+
                     tabMenuItem = new AppBarTabMenuItemBuilder().
-                        setLabel("<Unnamed " + this.convertName(contentTypeSummary.getDisplayName()) + ">").
-                        setTabId(tabId).
+                        setLabel(api.content.ContentUnnamed.prettifyUnnamed(contentTypeSummary.getDisplayName())).
+                        setTabId(newTabId).
                         setCloseAction(wizard.getCloseAction()).
                         build();
+
+                    wizard.setTabId(newTabId);
 
                     wizard.onContentNamed((event: ContentNamedEvent) => {
                         this.handleContentNamedEvent(event);
                     });
 
                     this.addWizardPanel(tabMenuItem, wizard);
+
+                    if (newContentEvent.getContentType().isSite() && this.getBrowsePanel()) {
+                        this.getBrowsePanel().getTreeGrid().reload(); // reload content grid to show that site has underlying folders
+                    }
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).finally(() => {
@@ -168,13 +179,13 @@ module app {
 
         private handleEdit(event: api.content.EditContentEvent) {
 
-            var contents: ContentSummary[] = event.getModels();
-            contents.forEach((content: ContentSummary) => {
-                if (!content) {
+            var contents: ContentSummaryAndCompareStatus[] = event.getModels();
+            contents.forEach((content: ContentSummaryAndCompareStatus) => {
+                if (!content || !content.getContentSummary()) {
                     return;
                 }
-                var closeViewPanelMenuItem = this.resolveTabMenuItemForContentBeingViewed(content);
-                var tabMenuItem = this.resolveTabMenuItemForContentBeingEdited(content);
+                var closeViewPanelMenuItem = this.resolveTabMenuItemForContentBeingViewed(content.getContentSummary());
+                var tabMenuItem = this.resolveTabMenuItemForContentBeingEdited(content.getContentSummary());
 
                 if (tabMenuItem != null) {
                     this.selectPanel(tabMenuItem);
@@ -185,7 +196,7 @@ module app {
                     new app.wizard.ContentWizardPanelFactory().
                         setAppBarTabId(tabId).
                         setContentIdToEdit(content.getContentId()).
-                        createForEdit(content).then((wizard: app.wizard.ContentWizardPanel) => {
+                        createForEdit(content.getContentSummary()).then((wizard: app.wizard.ContentWizardPanel) => {
                             if (closeViewPanelMenuItem != null) {
                                 this.getAppBarTabMenu().deselectNavigationItem();
                                 this.getAppBarTabMenu().removeNavigationItem(closeViewPanelMenuItem);
@@ -193,12 +204,12 @@ module app {
                             }
 
                             var contentType = (<app.wizard.ContentWizardPanel>wizard).getContentType(),
-                                name = content.getDisplayName() || "<Unnamed " + this.convertName(contentType.getDisplayName()) + ">";
+                                name = content.getDisplayName() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
 
                             tabMenuItem = new AppBarTabMenuItemBuilder().
                                 setLabel(name).
                                 setMarkUnnamed(!content.getDisplayName()).
-                                setMarkInvalid(!content.isValid()).
+                                setMarkInvalid(!content.getContentSummary().isValid()).
                                 setTabId(tabId).
                                 setEditing(true).
                                 setCloseAction(wizard.getCloseAction()).
@@ -228,13 +239,13 @@ module app {
 
         private handleView(event: app.browse.ViewContentEvent) {
 
-            var contents: ContentSummary[] = event.getModels();
-            contents.forEach((content: ContentSummary) => {
-                if (!content) {
+            var contents: ContentSummaryAndCompareStatus[] = event.getModels();
+            contents.forEach((content: ContentSummaryAndCompareStatus) => {
+                if (!content || !content.getContentSummary()) {
                     return;
                 }
 
-                var tabMenuItem = this.resolveTabMenuItemForContentBeingEditedOrViewed(content);
+                var tabMenuItem = this.resolveTabMenuItemForContentBeingEditedOrViewed(content.getContentSummary());
 
                 if (tabMenuItem) {
                     this.selectPanel(tabMenuItem);
@@ -244,23 +255,23 @@ module app {
 
                     tabMenuItem = new AppBarTabMenuItemBuilder().
                         setLabel(content.getDisplayName()).
-                        setMarkInvalid(!content.isValid()).
+                        setMarkInvalid(!content.getContentSummary().isValid()).
                         setTabId(tabId).
                         setCloseAction(contentItemViewPanel.getCloseAction()).
                         build();
 
                     if (!content.getDisplayName()) {
-                        new api.schema.content.GetContentTypeByNameRequest(content.getType()).
+                        new api.schema.content.GetContentTypeByNameRequest(content.getContentSummary().getType()).
                             sendAndParse().
                             then((contentType: api.schema.content.ContentType) => {
-                                tabMenuItem.setLabel("<Unnamed " + this.convertName(contentType.getDisplayName()) + ">", true);
+                                tabMenuItem.setLabel(api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName()), true);
                             }).done();
                     }
 
                     var contentItem = new api.app.view.ViewItem(content)
                         .setDisplayName(content.getDisplayName())
                         .setPath(content.getPath().toString())
-                        .setIconUrl(new ContentIconUrlResolver().setContent(content).resolve());
+                        .setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve());
 
                     contentItemViewPanel.setItem(contentItem);
 
@@ -271,14 +282,14 @@ module app {
 
         private handleSort(event: app.browse.SortContentEvent) {
 
-            var contents: ContentSummary[] = event.getModels();
+            var contents: ContentSummaryAndCompareStatus[] = event.getModels();
             new app.browse.OpenSortDialogEvent(contents[0]).fire();
         }
 
         private handleMove(event: app.browse.MoveContentEvent) {
 
-            var contents: ContentSummary[] = event.getModels();
-            new app.browse.OpenMoveDialogEvent(contents).fire();
+            var contents: ContentSummaryAndCompareStatus[] = event.getModels();
+            new app.browse.OpenMoveDialogEvent(contents.map(content => content.getContentSummary())).fire();
         }
 
         private handleContentNamedEvent(event: ContentNamedEvent) {
@@ -319,10 +330,6 @@ module app {
             }
 
             return null;
-        }
-
-        private convertName(name: string): string {
-            return api.util.StringHelper.capitalizeAll(name.replace(/-/g, " ").trim());
         }
     }
 

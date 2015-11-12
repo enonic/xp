@@ -28,6 +28,10 @@ module api.ui.selector.combobox {
             return "";
         }
 
+        createActionButtons(content: T): api.dom.Element[] {
+            return [];
+        }
+
         layout() {
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(this.size).build();
 
@@ -44,15 +48,18 @@ module api.ui.selector.combobox {
 
             var removeButton = new api.dom.AEl("remove");
             removeButton.onClicked((event: Event) => {
-                this.notifySelectedOptionRemoveRequested();
+                this.notifyRemoveClicked();
 
                 event.stopPropagation();
                 event.preventDefault();
                 return false;
             });
 
+            var buttons: api.dom.Element[] = this.createActionButtons(this.optionDisplayValue);
+
             this.appendChild(new api.dom.DivEl("drag-control"));
             this.appendChild(removeButton);
+            this.appendChildren(...buttons);
             this.appendChild(namesAndIconView);
         }
     }

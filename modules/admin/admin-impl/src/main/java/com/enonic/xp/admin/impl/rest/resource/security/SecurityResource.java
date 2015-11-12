@@ -15,6 +15,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jparsec.util.Lists;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -42,6 +43,8 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateUserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UserJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UserStoresJson;
+import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
@@ -60,8 +63,6 @@ import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
-import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.jaxrs.JaxRsExceptions;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -408,6 +409,20 @@ public final class SecurityResource
         final List<PrincipalKey> members = relationships.stream().map( PrincipalRelationship::getTo ).collect( toList() );
         return PrincipalKeys.from( members );
     }
+
+    private PrincipalKeys getUserMembers( final PrincipalKey principal )
+    {
+        PrincipalKeys members = this.getMembers( principal );
+
+        List<PrincipalKey> subMembers = Lists.arrayList();
+        members.stream().filter( member -> member.isGroup() || member.isRole() ).forEach( member -> {
+            subMembers.addAll( getUserMembers( member ).getSet() );
+        } );
+        members = PrincipalKeys.from( members, subMembers );
+
+        return PrincipalKeys.from( members.stream().filter( member -> member.isUser() ).collect( toList() ) );
+    }
+
 
     @Reference
     public void setSecurityService( final SecurityService securityService )

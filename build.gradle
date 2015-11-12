@@ -5,7 +5,7 @@ apply plugin: 'build-dashboard'
 
 ext {
     leafProjects = subprojects.findAll { p -> p.subprojects.empty }
-    javaProjects = leafProjects - project( ':distro' )
+    javaProjects = leafProjects - project( ':distro' ) - project( ':docs' )
     mavenProjects = leafProjects
 }
 

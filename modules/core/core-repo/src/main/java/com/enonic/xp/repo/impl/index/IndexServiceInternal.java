@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.index;
 
-import org.elasticsearch.common.unit.TimeValue;
-
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -22,9 +20,11 @@ public interface IndexServiceInternal
 
     void applyMapping( final String indexName, final IndexType indexType, final String mapping );
 
-    ClusterHealthStatus getClusterHealth( final TimeValue timeout, final String... indexNames );
+    ClusterHealthStatus getClusterHealth( final String timeout, final String... indexNames );
 
     void refresh( final String... indexNames );
+
+    boolean isMaster();
 
 }
 

@@ -12,6 +12,8 @@ module api {
 
         private static BROWSER_VERSION: string;
 
+        private static IS_IE: boolean = false;
+
         static isAvailableBrowser(): boolean {
             if (!BrowserHelper.BROWSER_NAME) {
                 this.init();
@@ -41,6 +43,14 @@ module api {
             return false;
         }
 
+        static isIE(): boolean {
+            if (!BrowserHelper.BROWSER_NAME) {
+                this.init();
+            }
+
+            return BrowserHelper.IS_IE;
+        }
+
         private static init() {
             var M = navigator.userAgent.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
             BrowserHelper.BROWSER_NAME = (<any>BrowserName)[M[1].toLocaleUpperCase()];
@@ -48,6 +58,10 @@ module api {
 
             BrowserHelper.AVAILABLE_VERSIONS[BrowserName.CHROME] = "39";
             BrowserHelper.AVAILABLE_VERSIONS[BrowserName.FIREFOX] = "27";
+
+            BrowserHelper.IS_IE = BrowserHelper.BROWSER_NAME === BrowserName.TRIDENT ||
+                                  BrowserHelper.BROWSER_NAME === BrowserName.MSIE ||
+                                  navigator.userAgent.indexOf('Edge/') > 0;
 
         }
     }

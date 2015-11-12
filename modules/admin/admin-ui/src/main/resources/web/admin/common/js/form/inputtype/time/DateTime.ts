@@ -12,8 +12,8 @@ module api.content.form.inputtype.time {
      */
     export class DateTime extends support.BaseInputTypeNotManagingAdd<Date> {
 
-        withTimezone: boolean = false;
-        valueType: ValueType = ValueTypes.LOCAL_DATE_TIME;
+        private withTimezone: boolean = false;
+        private valueType: ValueType = ValueTypes.LOCAL_DATE_TIME;
 
         constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);

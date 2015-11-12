@@ -1,8 +1,8 @@
 module app.view {
 
-    export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content.ContentSummary> {
+    export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content.ContentSummaryAndCompareStatus> {
 
-        private statisticsPanel: api.app.view.ItemStatisticsPanel<api.content.ContentSummary>;
+        private statisticsPanel: api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus>;
 
         private statisticsPanelIndex: number;
 
@@ -62,7 +62,7 @@ module app.view {
             });
         }
 
-        setItem(item: api.app.view.ViewItem<api.content.ContentSummary>) {
+        setItem(item: api.app.view.ViewItem<api.content.ContentSummaryAndCompareStatus>) {
             super.setItem(item);
             this.statisticsPanel.setItem(item);
             this.previewPanel.setItem(item);

@@ -264,7 +264,7 @@ module app.wizard {
 
                     this.wizardActions.getShowSplitEditAction().onExecuted(() => {
                         if (!this.inMobileViewMode) {
-                            if (this.contentNotRenderable()) {
+                            if (!this.isContentRenderable()) {
                                 this.closeLiveEdit();
                                 this.contextWindowToggler.setEnabled(false);
                             } else {
@@ -272,6 +272,15 @@ module app.wizard {
                             }
                         }
                     });
+
+                    if (this.isContentRenderable()) {
+                        this.wizardActions.getShowSplitEditAction().execute();
+                    }
+                    else {
+                        if (!!this.getSplitPanel()) {
+                            this.wizardActions.getShowFormAction().execute();
+                        }
+                    }
 
                     responsiveItem.update();
                 });
@@ -464,11 +473,19 @@ module app.wizard {
                     var ignore = contentSummaryAndCompareStatus.getCompareStatus() !== CompareStatus.NEW;
                     this.contentWizardHeader.disableNameGeneration(ignore);
 
+                    var deleteHandler = (event: api.content.ContentDeletedEvent) => {
+                        if (event.isPending() && this.getPersistedItem() && event.getContentId() &&
+                            this.getPersistedItem().getId() === event.getContentId().toString()) {
+
+                            this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.PENDING_DELETE);
+                        }
+                    }
+
                     var publishHandler = (event: api.content.ContentPublishedEvent) => {
                         if (this.getPersistedItem() && event.getContentId() &&
                             (this.getPersistedItem().getId() === event.getContentId().toString())) {
 
-                            this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.EQUAL);
+                            this.contentWizardToolbarPublishControls.setCompareStatus(event.getCompareStatus());
 
                             if (!ignore) {
                                 this.contentWizardHeader.disableNameGeneration(true);
@@ -477,9 +494,11 @@ module app.wizard {
                         }
                     };
                     api.content.ContentPublishedEvent.on(publishHandler);
+                    api.content.ContentDeletedEvent.on(deleteHandler);
 
                     this.onClosed(() => {
                         api.content.ContentPublishedEvent.un(publishHandler);
+                        api.content.ContentDeletedEvent.un(deleteHandler);
                     });
                     this.contentWizardToolbarPublishControls.setCompareStatus(contentSummaryAndCompareStatus.getCompareStatus());
                     this.managePublishButtonStateForMobile(contentSummaryAndCompareStatus.getCompareStatus());
@@ -959,6 +978,10 @@ module app.wizard {
         }
 
         public checkContentCanBePublished(displayValidationErrors: boolean): boolean {
+            if (this.contentWizardToolbarPublishControls.isPendingDelete()) {
+                // allow deleting published content without validity check
+                return true;
+            }
             if (!this.isContentFormValid) {
                 this.contentWizardStepForm.displayValidationErrors(displayValidationErrors);
             }
@@ -1041,32 +1064,19 @@ module app.wizard {
 
         private checkSecurityWizardStepFormAllowed(loginResult: api.security.auth.LoginResult) {
 
-            var entries = this.getPersistedItem().getPermissions().getEntries();
-            var accessEntriesWithEditPermissions: AccessControlEntry[] = entries.filter((item: AccessControlEntry) => {
-                return item.isAllowed(api.security.acl.Permission.WRITE_PERMISSIONS);
-            });
-
-            loginResult.getPrincipals().some((principalKey: api.security.PrincipalKey) => {
-                if (api.security.RoleKeys.ADMIN.equals(principalKey) ||
-                    this.isPrincipalPresent(principalKey, accessEntriesWithEditPermissions)) {
-                    this.isSecurityWizardStepFormAllowed = true;
-                    return true;
-                }
-            });
-
+            if (this.getPersistedItem().isAnyPrincipalAllowed(loginResult.getPrincipals(), api.security.acl.Permission.WRITE_PERMISSIONS)) {
+                this.isSecurityWizardStepFormAllowed = true;
+            }
         }
 
         private isPrincipalPresent(principalKey: api.security.PrincipalKey,
                                    accessEntriesToCheck: AccessControlEntry[]): boolean {
-            var result = false;
-            accessEntriesToCheck.some((entry: AccessControlEntry) => {
+
+            return accessEntriesToCheck.some((entry: AccessControlEntry) => {
                 if (entry.getPrincipalKey().equals(principalKey)) {
-                    result = true;
                     return true;
                 }
             });
-
-            return result;
         }
 
         /**
@@ -1180,15 +1190,15 @@ module app.wizard {
             }
         }
 
-        private contentNotRenderable(): boolean {
-            return this.liveEditModel.getPageModel().getMode() == api.content.page.PageMode.NO_CONTROLLER;
+        private isContentRenderable(): boolean {
+            return this.liveEditModel && this.liveEditModel.isPageRenderable();
         }
 
         private updatePreviewActionVisibility() {
-            this.previewAction.setEnabled(!this.contentNotRenderable());
+            this.previewAction.setEnabled(this.isContentRenderable());
 
             this.liveEditModel.getPageModel().onPageModeChanged(()=> {
-                this.previewAction.setEnabled(!this.contentNotRenderable());
+                this.previewAction.setEnabled(this.isContentRenderable());
             });
         }
 

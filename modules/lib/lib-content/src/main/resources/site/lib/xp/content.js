@@ -1,3 +1,12 @@
+/**
+ * Functions to find and manipulate content.
+ *
+ * @example
+ * var authLib = require('/lib/xp/content');
+ *
+ * @module lib/xp/content
+ */
+
 function required(params, name) {
     var value = params[name];
     if (value === undefined) {
@@ -51,6 +60,8 @@ exports.create = function (params) {
 
     bean.data = __.toScriptValue(params.data);
     bean.x = __.toScriptValue(params.x);
+
+    bean.idGenerator = nullOrValue(params.idGenerator);
 
     return __.toNativeObject(bean.execute());
 };

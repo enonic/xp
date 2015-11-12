@@ -9,7 +9,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.mail.MailMessage;
@@ -24,9 +23,10 @@ public class SendMailScriptTest
 {
     private MailMessage actualMessage;
 
-    @Before
-    public void setUp()
+    @Override
+    public void initialize()
     {
+        super.initialize();
         final MailService mailService = message -> this.actualMessage = message;
         addService( MailService.class, mailService );
     }
@@ -35,7 +35,7 @@ public class SendMailScriptTest
     public void testSimpleMail()
         throws Exception
     {
-        runTestFunction( "test/send-test.js", "simpleMail" );
+        runFunction( "/site/test/send-test.js", "simpleMail" );
 
         final MimeMessage message = mockCompose( this.actualMessage );
 
@@ -54,7 +54,7 @@ public class SendMailScriptTest
     public void testMultiRecipientsMail()
         throws Exception
     {
-        runTestFunction( "test/send-test.js", "multiRecipientsMail" );
+        runFunction( "/site/test/send-test.js", "multiRecipientsMail" );
 
         final MimeMessage message = mockCompose( this.actualMessage );
 
@@ -71,7 +71,7 @@ public class SendMailScriptTest
     public void testRFC822AddressMail()
         throws Exception
     {
-        runTestFunction( "test/send-test.js", "rfc822AddressMail" );
+        runFunction( "/site/test/send-test.js", "rfc822AddressMail" );
 
         final MimeMessage message = mockCompose( this.actualMessage );
 
@@ -90,7 +90,7 @@ public class SendMailScriptTest
         };
         addService( MailService.class, mailService );
 
-        runTestFunction( "test/send-test.js", "failSendMail" );
+        runFunction( "/site/test/send-test.js", "failSendMail" );
 
         Assert.assertNull( this.actualMessage );
     }
@@ -99,7 +99,7 @@ public class SendMailScriptTest
     public void testMailWithContentType()
         throws Exception
     {
-        runTestFunction( "test/send-test.js", "sendMailWithContentType" );
+        runFunction( "/site/test/send-test.js", "sendMailWithContentType" );
 
         final MimeMessage message = mockCompose( this.actualMessage );
 
@@ -121,7 +121,7 @@ public class SendMailScriptTest
 
         try
         {
-            runTestFunction( "test/send-test.js", "sendWithoutRequiredFrom" );
+            runFunction( "/site/test/send-test.js", "sendWithoutRequiredFrom" );
             Assert.fail( "Expected exception" );
         }
         catch ( ResourceProblemException e )
@@ -143,7 +143,7 @@ public class SendMailScriptTest
 
         try
         {
-            runTestFunction( "test/send-test.js", "sendWithoutRequiredTo" );
+            runFunction( "/site/test/send-test.js", "sendWithoutRequiredTo" );
             Assert.fail( "Expected exception" );
         }
         catch ( ResourceProblemException e )

@@ -4,14 +4,15 @@ module app.view.detail {
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import CompareStatus = api.content.CompareStatus;
     import Widget = api.content.Widget;
-    import WidgetsSelectionRow = app.view.detail.WidgetsSelectionRow;
+    import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
     export class DetailsPanel extends api.ui.panel.Panel {
 
         private widgetViews: WidgetView[] = [];
-        private nameAndIconView: api.app.NamesAndIconView;
+        private viewer: ContentSummaryViewer;
         private detailsContainer: api.dom.DivEl = new api.dom.DivEl("details-container");
         private widgetsSelectionRow: WidgetsSelectionRow;
 
@@ -25,32 +26,35 @@ module app.view.detail {
         private parentMinWidth: number = 15;
 
         private sizeChangedListeners: {() : void}[] = [];
-        private contentStatusChangedListeners: {() : void}[] = [];
 
-        private versionsPanel: ContentItemVersionsPanel;
-        private item: ViewItem<ContentSummary>;
-        private contentStatus: CompareStatus;
+        private item: ContentSummaryAndCompareStatus;
 
-        private useNameAndIconView: boolean;
+        private useViewer: boolean;
         private useSplitter: boolean;
         private slideInFunction: () => void;
         private slideOutFunction: () => void;
 
         private activeWidget: WidgetView;
         private defaultWidgetView: WidgetView;
-        private previousActiveWidget: WidgetView;
 
-        private versionWidgetItemView: WidgetItemView;
+        private alreadyFetchedCustomWidgets: boolean;
+
+        private versionsWidgetItemView: VersionsWidgetItemView;
+        private statusWidgetItemView: StatusWidgetItemView;
+        private propWidgetItemView: PropertiesWidgetItemView;
+        private attachmentsWidgetItemView: AttachmentsWidgetItemView;
+        private userAccessWidgetItemView: UserAccessWidgetItemView;
 
         private static DEFAULT_WIDGET_NAME: string = "Info";
+
+        public static debug = false;
 
         constructor(builder: Builder) {
             super("details-panel");
             this.setDoOffset(false);
             this.initSlideFunctions(builder.getSlideFrom());
-            this.useSplitter = builder.getUseSplitter();
+            this.useSplitter = builder.isUseSplitter();
 
-            this.versionsPanel = new ContentItemVersionsPanel();
             this.ghostDragger = new api.dom.DivEl("ghost-dragger");
 
             if (this.useSplitter) {
@@ -59,21 +63,14 @@ module app.view.detail {
                 this.onRendered(() => this.onRenderedHandler());
             }
 
-            this.onPanelSizeChanged(() => {
-                this.versionsPanel.reRenderActivePanel();
-            });
-
             this.managePublishEvent();
 
-            this.initNameAndIconView(builder.getUseNameAndIconView());
-            this.initDefaultWidget();
-            this.initCommonWidgetsViews();
+            this.initViewer(builder.isUseViewer());
+            this.initDefaultWidgetView();
+            this.initCommonWidgetViews();
             this.initDivForNoSelection();
             this.initWidgetsSelectionRow();
 
-            this.getAndInitCustomWidgetsViews().done(() => {
-                this.initWidgetsDropdownForSelectedItem();
-            });
             this.appendChild(this.detailsContainer);
             this.appendChild(this.divForNoSelection);
 
@@ -84,13 +81,13 @@ module app.view.detail {
             api.content.ContentsPublishedEvent.on((event: api.content.ContentsPublishedEvent) => {
                 if (this.getItem()) {
                     // check for item because it can be null after publishing pending for delete item
-                    var itemId = (<ContentSummary>this.getItem().getModel()).getId();
+                    var itemId = this.getItem().getId();
                     var idPublished = event.getContentIds().some((id, index, array) => {
                         return itemId === id.toString();
                     });
 
                     if (idPublished) {
-                        this.versionsPanel.reloadActivePanel();
+                        this.versionsWidgetItemView.reloadActivePanel();
                     }
                 }
             });
@@ -107,13 +104,18 @@ module app.view.detail {
             this.appendChild(this.widgetsSelectionRow);
         }
 
+        getCustomWidgetViewsAndUpdateDropdown() {
+            if (!this.alreadyFetchedCustomWidgets) {
+                this.getAndInitCustomWidgetViews().done(() => {
+                    this.initWidgetsDropdownForSelectedItem();
+                    this.alreadyFetchedCustomWidgets = true;
+                });
+            }
+        }
+
         setActiveWidget(widgetView: WidgetView) {
             if (this.activeWidget) {
-                this.activeWidget.deactivate();
-            }
-
-            if (!this.isDefaultWidget(this.activeWidget)) {
-                this.previousActiveWidget = this.activeWidget;
+                this.activeWidget.setInactive();
             }
 
             this.activeWidget = widgetView;
@@ -145,12 +147,6 @@ module app.view.detail {
             var defaultWidget = this.getDefaultWidget();
             if (defaultWidget) {
                 defaultWidget.setActive();
-            }
-        }
-
-        activatePreviousWidget() {
-            if (this.previousActiveWidget) {
-                this.previousActiveWidget.setActive();
             }
         }
 
@@ -186,76 +182,77 @@ module app.view.detail {
             }
         }
 
-        private initNameAndIconView(useNameAndIconView: boolean) {
-            this.useNameAndIconView = useNameAndIconView;
+        private initViewer(useViewer: boolean) {
+            this.useViewer = useViewer;
 
-            if (useNameAndIconView) {
+            if (useViewer) {
 
-                this.nameAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
-                    setSize(api.app.NamesAndIconViewSize.small));
+                this.viewer = new ContentSummaryViewer();
+                this.viewer.addClass("details-panel-label");
 
-                this.nameAndIconView.addClass("details-panel-label");
-
-                this.appendChild(this.nameAndIconView);
+                this.appendChild(this.viewer);
             }
         }
 
-        public setItem(item: ViewItem<ContentSummary>) {
+        public setItem(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
+            if (DetailsPanel.debug) {
+                console.debug('DetailsPanel.setItem: ', item);
+            }
 
-            if (!this.item || !this.item.equals(item)) {
+            if (!api.ObjectHelper.equals(item, this.item)) {
                 this.item = item;
                 if (item) {
                     this.layout(false);
-                    this.updateWidgetsForItem();
+                    return this.updateWidgetsForItem();
                 } else {
                     this.layout();
                 }
             }
+            return wemQ<any>(null);
         }
 
-        public setContentStatus(status: CompareStatus) {
-            this.contentStatus = status;
-            this.notifyContentStatusChanged();
+        getItem(): ContentSummaryAndCompareStatus {
+            return this.item;
         }
 
         private getWidgetsInterfaceName(): string {
             return "com.enonic.xp.content-manager.context-widget";
         }
 
-        private updateWidgetsForItem() {
-
-            this.updateNameAndIconView();
-
-            this.updateCommonWidgets();
-            this.updateCustomWidgets();
-            setTimeout(() => {
-                this.updateWidgetsHeights();
-            }, 400);
-        }
-
-        private updateWidgetsHeights() {
-            this.widgetViews.forEach((widgetView: WidgetView) => {
-                if (widgetView != this.activeWidget) {
-                    widgetView.updateNormalHeightSilently();
-                } else {
-                    widgetView.updateNormalHeight();
-                }
-            });
-            if (this.defaultWidgetView) {
-                if (this.defaultWidgetView != this.activeWidget) {
-                    this.defaultWidgetView.updateNormalHeightSilently();
-                } else {
-                    this.defaultWidgetView.updateNormalHeight();
-                }
+        private updateWidgetsForItem(): wemQ.Promise<any> {
+            if (DetailsPanel.debug) {
+                console.debug('DetailsPanel.updateWidgetsForItem');
             }
+
+            this.updateViewer();
+
+            var defaultPromise = this.updateDefaultWidgetViews();
+            var commonPromise = this.updateCommonWidgetViews();
+            var customPromise = this.updateCustomWidgetViews();
+
+            return wemQ.all([defaultPromise, commonPromise, customPromise]).then(() => {
+                // update active widget's height
+                this.activeWidget.slideIn();
+            });
         }
 
-        private updateCommonWidgets() {
-            this.setDefaultWidget();
-            this.versionsPanel.setItem(this.item);
+        private updateDefaultWidgetViews(): wemQ.Promise<any> {
+            var promises = [];
+            if (this.item) {
+                promises.push(this.statusWidgetItemView.setStatus(this.item.getCompareStatus()));
+                promises.push(this.propWidgetItemView.setContent(this.item.getContentSummary()));
+                promises.push(this.attachmentsWidgetItemView.setContent(this.item.getContentSummary()));
+                promises.push(this.userAccessWidgetItemView.setContentId(this.item.getContentId()));
+            }
+            return wemQ.all(promises);
         }
 
-        private updateCustomWidgets() {
+        private updateCommonWidgetViews(): wemQ.Promise<any> {
+            return this.versionsWidgetItemView.setItem(this.item);
+        }
+
+        private updateCustomWidgetViews(): wemQ.Promise<any> {
+            return wemQ<any>(null);
         }
 
         private initWidgetsDropdownForSelectedItem() {
@@ -263,86 +260,45 @@ module app.view.detail {
             this.activateDefaultWidget();
         }
 
-        private setStatus(statusWidgetItemView: StatusWidgetItemView) {
-            statusWidgetItemView.setStatus(this.contentStatus);
-            this.versionsPanel.setStatus(this.contentStatus);
-            this.versionsPanel.reRenderActivePanel();
-        }
+        private initDefaultWidgetView() {
+            this.statusWidgetItemView = new StatusWidgetItemView();
+            this.propWidgetItemView = new PropertiesWidgetItemView();
+            this.attachmentsWidgetItemView = new AttachmentsWidgetItemView();
+            this.userAccessWidgetItemView = new UserAccessWidgetItemView();
 
-        private setDefaultWidget() {
-            var widgetItemView = new StatusWidgetItemView();
-            var propWidgetItemView = new PropertiesWidgetItemView();
-
-            if (this.item) {
-                api.content.ContentSummaryAndCompareStatusFetcher.fetch(this.item.getModel().getContentId()).then((contentSummaryAndCompareStatus) => {
-
-                    this.contentStatus = contentSummaryAndCompareStatus.getCompareStatus();
-
-                    if (this.defaultWidgetView && this.detailsContainer.hasChild(this.defaultWidgetView)) {
-                        this.detailsContainer.removeChild(this.defaultWidgetView);
-                    }
-
-                    this.setStatus(widgetItemView);
-
-                    this.onContentStatusChanged(() => {
-                        this.setStatus(widgetItemView);
-                        widgetItemView.layout();
-                    });
-
-                    propWidgetItemView.setContent(this.item.getModel());
-
-                    this.defaultWidgetView = WidgetView.create().
-                        setName(DetailsPanel.DEFAULT_WIDGET_NAME).
-                        setDetailsPanel(this).
-                        setUseToggleButton(false).
-                        addWidgetItemView(widgetItemView).
-                        addWidgetItemView(propWidgetItemView).
-                        build();
-
-                    this.detailsContainer.appendChild(this.defaultWidgetView);
-
-                    if (DetailsPanel.DEFAULT_WIDGET_NAME == this.activeWidget.getWidgetName()) {
-                        this.setActiveWidget(this.defaultWidgetView);
-                    }
-                    this.updateWidgetsHeights();
-
-                }).done();
-            }
-        }
-
-        private initDefaultWidget() {
             this.defaultWidgetView = WidgetView.create().
                 setName(DetailsPanel.DEFAULT_WIDGET_NAME).
                 setDetailsPanel(this).
-                setUseToggleButton(false).
+                addWidgetItemView(this.statusWidgetItemView).
+                addWidgetItemView(this.userAccessWidgetItemView).
+                addWidgetItemView(this.propWidgetItemView).
+                addWidgetItemView(this.attachmentsWidgetItemView).
                 build();
+
             this.detailsContainer.appendChild(this.defaultWidgetView);
         }
 
-        private initCommonWidgetsViews() {
+        private initCommonWidgetViews() {
 
-            this.versionWidgetItemView = new WidgetItemView("version-history");
-            this.versionWidgetItemView.setItem(this.versionsPanel);
+            this.versionsWidgetItemView = new VersionsWidgetItemView();
 
             var versionsWidgetView = WidgetView.create().
                 setName("Version history").
                 setDetailsPanel(this).
-                setUseToggleButton(false).
-                addWidgetItemView(this.versionWidgetItemView).
+                addWidgetItemView(this.versionsWidgetItemView).
                 build();
 
             this.addWidgets([versionsWidgetView]);
         }
 
-        private getAndInitCustomWidgetsViews(): wemQ.Promise<any> {
+        private getAndInitCustomWidgetViews(): wemQ.Promise<any> {
             var getWidgetsByInterfaceRequest = new api.content.GetWidgetsByInterfaceRequest(this.getWidgetsInterfaceName());
 
-            return getWidgetsByInterfaceRequest.sendAndParse().then((widgets: api.content.Widget[]) => {
+            return getWidgetsByInterfaceRequest.sendAndParse().then((widgets: Widget[]) => {
                 widgets.forEach((widget) => {
                     var widgetView = WidgetView.create().
                         setName(widget.getDisplayName()).
                         setDetailsPanel(this).
-                        setUseToggleButton(false).
                         build();
                     this.addWidget(widgetView);
                 })
@@ -431,23 +387,10 @@ module app.view.detail {
             return this.actualWidth;
         }
 
-        getItem(): ViewItem<ContentSummary> {
-            return this.item;
-        }
-
-        resetItem() {
-            if (this.item) {
-                var temp = this.item;
-                this.item = null;
-                this.setItem(temp);
-            }
-        }
-
-        updateNameAndIconView() {
-            if (this.useNameAndIconView && this.item) {
-                this.nameAndIconView.setMainName(this.item.getDisplayName());
-                this.nameAndIconView.setSubName(this.item.getPath());
-                this.nameAndIconView.setIconUrl(this.item.getIconUrl());
+        updateViewer() {
+            if (this.useViewer && this.item) {
+                //#
+                this.viewer.setObject(this.item.getContentSummary());
             }
         }
 
@@ -463,8 +406,8 @@ module app.view.detail {
             if (this.widgetsSelectionRow) {
                 this.widgetsSelectionRow.setVisible(!empty);
             }
-            if (this.nameAndIconView) {
-                this.nameAndIconView.setVisible(!empty);
+            if (this.viewer) {
+                this.viewer.setVisible(!empty);
             }
             this.detailsContainer.setVisible(!empty);
             this.toggleClass("no-selection", empty);
@@ -510,26 +453,6 @@ module app.view.detail {
             this.sizeChangedListeners.push(listener);
         }
 
-        unPanelSizeChanged(listener: () => void) {
-            this.sizeChangedListeners.filter((currentListener: () => void) => {
-                return listener == currentListener;
-            });
-        }
-
-        notifyContentStatusChanged() {
-            this.contentStatusChangedListeners.forEach((listener: ()=> void) => listener());
-        }
-
-        onContentStatusChanged(listener: () => void) {
-            this.contentStatusChangedListeners.push(listener);
-        }
-
-        unContentStatusChanged(listener: () => void) {
-            this.contentStatusChangedListeners.filter((currentListener: () => void) => {
-                return listener == currentListener;
-            });
-        }
-
         static create(): Builder {
             return new Builder();
         }
@@ -537,13 +460,13 @@ module app.view.detail {
 
     export class Builder {
 
-        private useNameAndIconView: boolean = true;
+        private useViewer: boolean = true;
         private slideFrom: SLIDE_FROM = SLIDE_FROM.RIGHT;
         private name: string;
         private useSplitter: boolean = true;
 
-        public setUseNameAndIconView(value: boolean): Builder {
-            this.useNameAndIconView = value;
+        public setUseViewer(value: boolean): Builder {
+            this.useViewer = value;
             return this;
         }
 
@@ -562,8 +485,8 @@ module app.view.detail {
             return this;
         }
 
-        public getUseNameAndIconView(): boolean {
-            return this.useNameAndIconView;
+        public isUseViewer(): boolean {
+            return this.useViewer;
         }
 
         public getSlideFrom(): app.view.detail.SLIDE_FROM {
@@ -574,7 +497,7 @@ module app.view.detail {
             return this.name;
         }
 
-        public getUseSplitter(): boolean {
+        public isUseSplitter(): boolean {
             return this.useSplitter;
         }
 

@@ -19,7 +19,6 @@ import com.enonic.xp.content.FindContentByQueryResult;
 public class QueryContentHandlerTest
     extends BaseContentHandlerTest
 {
-
     @Test
     public void query()
         throws Exception
@@ -64,7 +63,7 @@ public class QueryContentHandlerTest
             build();
         Mockito.when( this.contentService.find( Mockito.isA( FindContentByQueryParams.class ) ) ).thenReturn( findResult );
 
-        runTestFunction( "/test/QueryContentHandlerTest.js", "query" );
+        runFunction( "/site/test/QueryContentHandlerTest.js", "query" );
     }
 
     @Test
@@ -79,6 +78,6 @@ public class QueryContentHandlerTest
             build();
         Mockito.when( this.contentService.find( Mockito.isA( FindContentByQueryParams.class ) ) ).thenReturn( findResult );
 
-        runTestFunction( "/test/QueryContentHandlerTest.js", "queryEmpty" );
+        runFunction( "/site/test/QueryContentHandlerTest.js", "queryEmpty" );
     }
 }

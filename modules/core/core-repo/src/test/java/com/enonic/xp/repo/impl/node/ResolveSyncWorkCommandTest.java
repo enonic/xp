@@ -128,6 +128,8 @@ public class ResolveSyncWorkCommandTest
         markAsDelete( node1_1_1.id() );
         markAsDelete( node1_1_1_1.id() );
 
+        refresh();
+
         final NodeIds result = ResolveSyncWorkCommand.create().
             nodeId( node1_1.id() ).
             includeChildren( true ).
@@ -138,7 +140,10 @@ public class ResolveSyncWorkCommandTest
             build().
             execute();
 
-        assertEquals( 0, result.getSize() );
+        assertEquals( 3, result.getSize() );
+        assertTrue( result.contains( node1_1.id() ) );
+        assertTrue( result.contains( node1_1_1.id() ) );
+        assertTrue( result.contains( node1_1_1_1.id() ) );
     }
 
     @Test

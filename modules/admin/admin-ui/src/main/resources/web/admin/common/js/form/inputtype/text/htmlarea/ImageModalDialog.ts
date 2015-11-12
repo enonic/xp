@@ -65,8 +65,8 @@ module api.form.inputtype.text.htmlarea {
                 loader.load();
             }
 
-            imageSelectorComboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
-                var imageContent = event.getOption().displayValue;
+            imageSelectorComboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
+                var imageContent = selectedOption.getOption().displayValue;
                 if (!imageContent.getContentId()) {
                     return;
                 }

@@ -98,6 +98,11 @@ module api.form {
 
                         }
                     });
+
+                    formItemView.onEditContentRequest((content: api.content.ContentSummary) => {
+                        var summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
+                        new api.content.EditContentEvent([summaryAndStatus]).fire();
+                    })
                 });
 
                 api.dom.WindowDOM.get().onResized((event: UIEvent) => this.checkSizeChanges(), this);
@@ -193,27 +198,15 @@ module api.form {
             return focusGiven;
         }
 
-        onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
-            this.formItemViews.forEach((formItemView: FormItemView) => {
-                formItemView.onEditContentRequest(listener);
-            });
-        }
-
-        unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
-            this.formItemViews.forEach((formItemView: FormItemView) => {
-                formItemView.unEditContentRequest(listener);
-            });
-        }
-
         onValidityChanged(listener: (event: FormValidityChangedEvent)=>void) {
             this.formValidityChangedListeners.push(listener);
         }
 
         unValidityChanged(listener: (event: FormValidityChangedEvent)=>void) {
             this.formValidityChangedListeners =
-            this.formValidityChangedListeners.filter((currentListener: (event: FormValidityChangedEvent)=>void)=> {
-                return listener != currentListener;
-            });
+                this.formValidityChangedListeners.filter((currentListener: (event: FormValidityChangedEvent)=>void)=> {
+                    return listener != currentListener;
+                });
         }
 
         private notifyValidityChanged(event: FormValidityChangedEvent) {
@@ -229,12 +222,6 @@ module api.form {
             this.formValidityChangedListeners.forEach((listener: (event: FormValidityChangedEvent)=>void)=> {
                 listener.call(this, event);
             });
-        }
-
-        private notifyEditContentRequested(content: api.content.ContentSummary) {
-            this.formItemViews.forEach((formItemView: FormItemView) => {
-                formItemView.notifyEditContentRequested(content);
-            })
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

@@ -1,23 +1,30 @@
 package com.enonic.xp.repo.impl.blob.file;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+
+import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 
 import com.enonic.xp.repo.impl.blob.BlobKey;
 import com.enonic.xp.repo.impl.blob.BlobRecord;
-import com.enonic.xp.repo.impl.blob.BlobStoreException;
 
 final class FileBlobRecord
-    extends BlobRecord
+    implements BlobRecord
 {
+    private final BlobKey key;
+
     private final File file;
 
     public FileBlobRecord( final BlobKey key, final File file )
     {
-        super( key );
+        this.key = key;
         this.file = file;
+    }
+
+    @Override
+    public final BlobKey getKey()
+    {
+        return this.key;
     }
 
     @Override
@@ -26,22 +33,9 @@ final class FileBlobRecord
         return this.file.length();
     }
 
-    public File getAsFile()
-    {
-        return file;
-    }
-
     @Override
-    public InputStream getStream()
-        throws BlobStoreException
+    public ByteSource getBytes()
     {
-        try
-        {
-            return new FileInputStream( this.file );
-        }
-        catch ( FileNotFoundException e )
-        {
-            throw new BlobStoreException( "Could not find blob [" + getKey().toString() + "]", e );
-        }
+        return Files.asByteSource( this.file );
     }
 }

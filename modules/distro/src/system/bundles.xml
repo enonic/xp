@@ -31,6 +31,7 @@
   <bundle level="20">${group}:repack-jparsec:${version}</bundle>
   <bundle level="20">${group}:repack-elasticsearch:${version}</bundle>
   <bundle level="20">${group}:repack-resteasy:${version}</bundle>
+  <bundle level="20">${group}:repack-attoparser:${version}</bundle>
 
   <!-- Core app bundles -->
   <bundle level="22">${group}:core-api:${version}</bundle>

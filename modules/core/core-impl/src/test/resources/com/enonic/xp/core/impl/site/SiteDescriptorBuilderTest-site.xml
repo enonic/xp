@@ -12,4 +12,8 @@
       <occurrences minimum="0" maximum="1"/>
     </input>
   </config>
+  <filters>
+    <response-filter name="filter1" order="10"/>
+    <response-filter name="filter2" order="20"/>
+  </filters>
 </site>

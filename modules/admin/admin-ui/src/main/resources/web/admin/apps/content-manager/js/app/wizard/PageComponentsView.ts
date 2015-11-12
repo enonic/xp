@@ -27,6 +27,8 @@ module app.wizard {
         private liveEditPage: LiveEditPageProxy;
         private contextMenu: api.liveedit.ItemViewContextMenu;
 
+        private responsiveItem: ResponsiveItem;
+
         private tree: PageComponentsTreeGrid;
         private header: api.dom.H3El;
         private modal: boolean;
@@ -45,11 +47,10 @@ module app.wizard {
 
             this.liveEditPage = liveEditPage;
 
+            this.onHidden((event) => this.hideContextMenu());
+
             var closeButton = new api.ui.button.CloseButton();
-            closeButton.onClicked((event: MouseEvent) => {
-                this.hideContextMenu();
-                this.hide()
-            });
+            closeButton.onClicked((event: MouseEvent) => this.hide());
 
             this.onRemoved(() => {
                 if (this.contextMenu) {
@@ -68,7 +69,7 @@ module app.wizard {
                 this.constrainToParent();
             });
 
-            ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get(), (item: ResponsiveItem) => {
+            this.responsiveItem = ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get(), (item: ResponsiveItem) => {
                 var smallSize = item.isInRangeOrSmaller(ResponsiveRanges._360_540);
                 if (!smallSize && this.isVisible()) {
                     this.constrainToParent();
@@ -86,6 +87,10 @@ module app.wizard {
             } else if (this.tree) {
                 this.tree.setPageView(pageView);
             }
+
+            this.pageView.onRemoved(() => {
+                ResponsiveManager.unAvailableSizeChangedByItem(this.responsiveItem);
+            })
         }
 
         setContent(content: Content) {
@@ -381,12 +386,19 @@ module app.wizard {
         }
 
         private showContextMenu(row: number, clickPosition: api.liveedit.Position) {
-            var contextMenuActions: api.ui.Action[] = this.tree.getGrid().getDataView().getItem(row).getData().getContextMenuActions();
+            var itemView: ItemView = this.tree.getGrid().getDataView().getItem(row).getData();
+            var pageView: api.liveedit.PageView = itemView.getPageView();
+            var contextMenuActions: api.ui.Action[];
+
+            if (pageView.isLocked()) {
+                contextMenuActions = pageView.getLockedMenuActions();
+            } else {
+                contextMenuActions = itemView.getContextMenuActions();
+            }
 
             if (!this.contextMenu) {
                 this.contextMenu = new api.liveedit.ItemViewContextMenu(null, contextMenuActions);
-                this.contextMenu.onShown((event) => this.setMenuOpenStyleOnMenuIcon(row));
-                this.contextMenu.onHidden((event) => this.removeMenuOpenStyleFromMenuIcon());
+                this.contextMenu.onHidden(this.removeMenuOpenStyleFromMenuIcon.bind(this));
             } else {
                 this.contextMenu.setActions(contextMenuActions);
             }
@@ -401,6 +413,8 @@ module app.wizard {
                     this.contextMenu.getMenu().clearActionListeners();
                 }, 500);
             });
+
+            this.setMenuOpenStyleOnMenuIcon(row);
 
             // show menu at position
             var x = clickPosition.x;

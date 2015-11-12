@@ -1,12 +1,11 @@
 package com.enonic.xp.elasticsearch.impl;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.cluster.ClusterService;
-import org.elasticsearch.transport.TransportRequestHandler;
+import org.elasticsearch.node.Node;
 import org.elasticsearch.transport.TransportService;
 import org.junit.Before;
 import org.junit.Rule;
@@ -27,15 +26,13 @@ public class ElasticsearchActivatorTest
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    private ServiceRegistration<Client> clientReg;
+    private ServiceRegistration<Node> nodeReg;
+
+    private ServiceRegistration<AdminClient> adminClientReg;
 
     private ServiceRegistration<ClusterService> clusterServiceReg;
 
     private ServiceRegistration<TransportService> transportServiceReg;
-
-    private TransportRequestHandler transportRequestHandler;
-
-    private Map<String, String> transportRequestHandlerProperties;
 
     @Before
     public void setup()
@@ -47,12 +44,10 @@ public class ElasticsearchActivatorTest
         final File homeDir = this.temporaryFolder.newFolder( "home" );
         System.setProperty( "xp.home", homeDir.getAbsolutePath() );
 
-        this.clientReg = mockRegisterService( Client.class );
+        this.nodeReg = mockRegisterService( Node.class );
+        this.adminClientReg = mockRegisterService( AdminClient.class );
         this.clusterServiceReg = mockRegisterService( ClusterService.class );
         this.transportServiceReg = mockRegisterService( TransportService.class );
-        this.transportRequestHandler = Mockito.mock( TransportRequestHandler.class );
-        this.transportRequestHandlerProperties = new HashMap<>();
-        this.transportRequestHandlerProperties.put( "action", "cms/cluster/send" );
     }
 
     @Test
@@ -62,15 +57,14 @@ public class ElasticsearchActivatorTest
         final Map<String, String> map = Maps.newHashMap();
 
         this.activator.activate( this.context, map );
-        verifyRegisterService( Client.class );
+        verifyRegisterService( Node.class );
+        verifyRegisterService( AdminClient.class );
         verifyRegisterService( ClusterService.class );
         verifyRegisterService( TransportService.class );
 
-        this.activator.addTransportRequestHandler( this.transportRequestHandler, this.transportRequestHandlerProperties );
-        this.activator.removeTransportRequestHandler( this.transportRequestHandler, this.transportRequestHandlerProperties );
-
         this.activator.deactivate();
-        verifyUnregisterService( this.clientReg );
+        verifyUnregisterService( this.nodeReg );
+        verifyUnregisterService( this.adminClientReg );
         verifyUnregisterService( this.clusterServiceReg );
         verifyUnregisterService( this.transportServiceReg );
     }
@@ -92,6 +86,4 @@ public class ElasticsearchActivatorTest
         Mockito.when( this.context.registerService( Mockito.eq( type ), Mockito.any( type ), Mockito.any() ) ).thenReturn( reg );
         return reg;
     }
-
-
 }

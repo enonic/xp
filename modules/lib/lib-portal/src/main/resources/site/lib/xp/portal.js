@@ -1,3 +1,12 @@
+/**
+ * Functions to access portal functionality.
+ *
+ * @example
+ * var authLib = require('/lib/xp/portal');
+ *
+ * @module lib/xp/portal
+ */
+
 exports.assetUrl = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.portal.url.AssetUrlHandler');
     return bean.createUrl(__.toScriptValue(params));

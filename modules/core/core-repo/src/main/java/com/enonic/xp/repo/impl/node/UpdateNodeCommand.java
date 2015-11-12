@@ -89,13 +89,9 @@ public final class UpdateNodeCommand
                 node( updatedNode ).
                 build().
                 execute();
+        }
 
-            return updatedNode;
-        }
-        else
-        {
-            return updatedNode;
-        }
+        return updatedNode;
     }
 
     private Node createUpdatedNode( final Node editedNode )

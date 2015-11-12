@@ -79,7 +79,6 @@
 
   .selected-options {
     .clearfix();
-    margin-right: -6%;
 
     .selected-option {
       position: relative;
@@ -87,9 +86,19 @@
       width: 28.3018867924%;
       padding: 0;
       margin: 10px 4.5% 20px 0;
-      cursor: pointer;
-      border: 1px solid #d3d3d3;
-      background-color: #ffffff;
+
+      &:not(.placeholder) {
+        background-color: #ffffff;
+        border: 1px solid #d3d3d3;
+      }
+
+      &.placeholder:before {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        top: 50%;
+        margin-top: -22px;
+      }
 
       &.editing {
         border: 1px solid @admin-input-blue;
@@ -97,40 +106,7 @@
         z-index: @z-index-wizard-option;
       }
 
-      > img {
-        display: block;
-        max-height: 100%;
-        max-width: 100%;
-        margin: auto;
-      }
-
-      > .label {
-        display: none;
-      }
-
-      > .checkbox {
-        position: absolute;
-        top: 3px;
-        left: 3px;
-      }
-
-      > .progress-bar,
-      > .error {
-        position: absolute;
-        width: 100%;
-        top: 0;
-        left: 0;
-      }
-
-      > .error {
-        margin-left: 0px;
-        text-align: center;
-        color: @admin-white;
-        font-weight: bold;
-        background-color: @admin-input-red;
-      }
-
-      &:hover > .label {
+      &:hover .squared-content > .label {
         display: block;
         position: absolute;
         width: 100%;
@@ -140,6 +116,53 @@
         text-align: center;
         overflow: hidden;
         background-color: #fff;
+      }
+
+      // make selected-option square sized
+      // http://spin.atomicobject.com/2015/07/14/css-responsive-square/
+      &:after {
+        content: "";
+        display: block;
+        padding-bottom: 100%;
+      }
+
+      .squared-content {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+
+        > img {
+          display: block;
+          max-height: 100%;
+          max-width: 100%;
+          margin: auto;
+        }
+
+        > .label {
+          display: none;
+        }
+
+        > .checkbox {
+          position: absolute;
+          top: 3px;
+          left: 3px;
+        }
+
+        > .progress-bar,
+        > .error {
+          position: absolute;
+          width: 100%;
+          top: 0;
+          left: 0;
+        }
+
+        > .error {
+          margin-left: 0;
+          text-align: center;
+          color: @admin-white;
+          font-weight: bold;
+          background-color: @admin-input-red;
+        }
       }
 
     }

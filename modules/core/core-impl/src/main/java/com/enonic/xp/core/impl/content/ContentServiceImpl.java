@@ -24,7 +24,6 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
-import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
@@ -62,6 +61,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.index.IndexService;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
@@ -88,8 +88,6 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.util.BinaryReference;
-
-import static com.enonic.xp.core.impl.content.ContentNodeHelper.translateNodePathToContentPath;
 
 @Component(immediate = true)
 public class ContentServiceImpl
@@ -119,6 +117,8 @@ public class ContentServiceImpl
 
     private ContentNodeTranslator translator;
 
+    private IndexService indexService;
+
     public ContentServiceImpl()
     {
         final ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().
@@ -131,7 +131,10 @@ public class ContentServiceImpl
     @Activate
     public void initialize()
     {
-        new ContentInitializer( this.nodeService ).initialize();
+        if ( this.indexService.isMaster() )
+        {
+            new ContentInitializer( this.nodeService ).initialize();
+        }
     }
 
     @Override
@@ -390,10 +393,6 @@ public class ContentServiceImpl
     public Content duplicate( final DuplicateContentParams params )
     {
         final Node createdNode = nodeService.duplicate( NodeId.from( params.getContentId() ) );
-
-        final ContentPath targetPath = translateNodePathToContentPath( createdNode.path() );
-        eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DUPLICATE, targetPath ) );
-
         return translator.fromNode( createdNode, true );
     }
 
@@ -429,14 +428,6 @@ public class ContentServiceImpl
 
             final Node movedNode = nodeService.move( sourceNodeId, NodePath.create( ContentConstants.CONTENT_ROOT_PATH ).elements(
                 params.getParentContentPath().toString() ).build() );
-
-            final ContentChangeEvent.Builder builder = ContentChangeEvent.create();
-
-            builder.change( ContentChangeEvent.ContentChangeType.DELETE, translateNodePathToContentPath( sourceNode.path() ) );
-            builder.change( ContentChangeEvent.ContentChangeType.CREATE, translateNodePathToContentPath( movedNode.path() ) );
-
-            eventPublisher.publish( builder.build() );
-
             return translator.fromNode( movedNode, true );
         }
         catch ( MoveNodeException e )
@@ -540,17 +531,7 @@ public class ContentServiceImpl
                 childOrder( params.getChildOrder() ).
                 build() );
 
-            final Content content = translator.fromNode( node, true );
-
-            if ( !params.isSilent() )
-            {
-                final ContentChangeEvent event = ContentChangeEvent.create().
-                    change( ContentChangeEvent.ContentChangeType.SORT, content.getPath() ).
-                    build();
-
-                eventPublisher.publish( event );
-            }
-            return content;
+            return translator.fromNode( node, true );
         }
         catch ( NodeAccessException e )
         {
@@ -574,18 +555,6 @@ public class ContentServiceImpl
 
         final ReorderChildNodesResult reorderChildNodesResult = this.nodeService.reorderChildren( builder.build() );
         this.nodeService.refresh( RefreshMode.SEARCH );
-
-        if ( !params.isSilent() )
-        {
-            final Node node = nodeService.getById( NodeId.from( params.getContentId() ) );
-
-            final ContentChangeEvent event = ContentChangeEvent.create().
-                change( ContentChangeEvent.ContentChangeType.SORT, translateNodePathToContentPath( node.path() ) ).
-                build();
-
-            eventPublisher.publish( event );
-        }
-
         return new ReorderChildContentsResult( reorderChildNodesResult.getSize() );
     }
 
@@ -733,5 +702,11 @@ public class ContentServiceImpl
     public void setTranslator( final ContentNodeTranslator translator )
     {
         this.translator = translator;
+    }
+
+    @Reference
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
     }
 }

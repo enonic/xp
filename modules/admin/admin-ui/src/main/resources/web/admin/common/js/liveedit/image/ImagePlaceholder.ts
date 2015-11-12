@@ -52,10 +52,10 @@ module api.liveedit.image {
             this.comboboxWrapper.appendChildren(this.comboBox, this.uploadButton);
             this.appendChild(this.comboboxWrapper);
 
-            this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
+            this.comboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
 
                 var component: ImageComponent = this.imageComponentView.getComponent();
-                var imageContent = event.getOption().displayValue;
+                var imageContent = selectedOption.getOption().displayValue;
 
                 component.setImage(imageContent.getContentId(), imageContent.getDisplayName());
                 

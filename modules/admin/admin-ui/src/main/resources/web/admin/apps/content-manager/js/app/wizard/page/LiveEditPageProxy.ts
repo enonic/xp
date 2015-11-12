@@ -47,8 +47,6 @@ module app.wizard.page {
 
         private loadMask: api.ui.mask.LoadMask;
 
-        private loadMaskCanBeShown: boolean = false; //can't be shown correctly until iFrame has height and width
-
         private liveEditWindow: any;
 
         private livejq: JQueryStatic;
@@ -101,28 +99,45 @@ module app.wizard.page {
 
         private LIVE_EDIT_ERROR_PAGE_BODY_ID = "wem-error-page";
 
+        private showLoadMaskHandler: () => void;
+
+        private hideLoadMaskHandler: () => void;
+
+        private liveEditPageViewReady: boolean;
+
         private static debug: boolean = false;
+
+        private regionsCopyForIE;
+
+        private controllerCopyForIE;
 
         constructor() {
 
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
             this.liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
-            this.liveEditIFrame.onShown(() => {
-                if (!this.loadMaskCanBeShown && this.liveEditFrameIsVisible()) {
-                    this.loadMask.show();
-                    this.loadMaskCanBeShown = true;
-                }
-
-            });
-
             this.loadMask = new api.ui.mask.LoadMask(this.liveEditIFrame);
             this.dragMask = new api.ui.mask.DragMask(this.liveEditIFrame);
 
-            ShowContentFormEvent.on(() => {
+            this.hideLoadMaskHandler = () => {
                 if (this.loadMask.isVisible()) {
                     this.loadMask.hide();
                 }
+            };
+            this.onLiveEditPageViewReady(() => {
+                this.liveEditPageViewReady = true;
+                this.hideLoadMaskHandler();
             });
+            ShowContentFormEvent.on(this.hideLoadMaskHandler);
+
+            this.showLoadMaskHandler = () => {
+                // in case someone tries to open live edit while it's still not loaded
+                if (!this.liveEditPageViewReady && this.liveEditIFrame.isVisible()) {
+                    this.loadMask.show();
+                }
+            };
+
+            ShowLiveEditEvent.on(this.showLoadMaskHandler);
+            ShowSplitEditEvent.on(this.showLoadMaskHandler);
         }
 
         public setModel(liveEditModel: LiveEditModel) {
@@ -178,20 +193,28 @@ module app.wizard.page {
         }
 
         public remove() {
+            ShowLiveEditEvent.un(this.showLoadMaskHandler);
+            ShowSplitEditEvent.un(this.showLoadMaskHandler);
+            ShowContentFormEvent.un(this.hideLoadMaskHandler);
+            LiveEditPageViewReadyEvent.un(this.hideLoadMaskHandler);
             this.dragMask.remove();
             this.loadMask.remove();
         }
 
         public load() {
-            if (this.loadMaskCanBeShown) {
-                this.loadMask.show();
-            }
+            this.liveEditPageViewReady = false;
+            this.showLoadMaskHandler();
 
             var contentId = this.liveEditModel.getContent().getContentId().toString();
             var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
             if (LiveEditPageProxy.debug) {
                 console.log("LiveEditPageProxy.load pageUrl: " + pageUrl);
             }
+
+            if (api.BrowserHelper.isIE()) {
+                this.copyObjectsBeforeFrameReloadForIE();
+            }
+
             this.liveEditIFrame.setSrc(pageUrl);
         }
 
@@ -200,30 +223,33 @@ module app.wizard.page {
         }
 
         private handleIFrameLoadedEvent() {
-
             var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
-            if (liveEditWindow && liveEditWindow.wemjq) {
-                // Give loaded page same CONFIG.baseUri as in admin
-                liveEditWindow.CONFIG = {baseUri: CONFIG.baseUri};
 
-                this.livejq = <JQueryStatic>liveEditWindow.wemjq;
+            if (liveEditWindow) {
+                if (liveEditWindow.wemjq) {
+                    // Give loaded page same CONFIG.baseUri as in admin
+                    liveEditWindow.CONFIG = {baseUri: CONFIG.baseUri};
 
-                if (this.liveEditWindow) {
-                    this.stopListening(this.liveEditWindow);
+                    this.livejq = <JQueryStatic>liveEditWindow.wemjq;
+
+                    if (this.liveEditWindow) {
+                        this.stopListening(this.liveEditWindow);
+                    }
+
+                    this.liveEditWindow = liveEditWindow;
+
+                    this.listenToPage(this.liveEditWindow);
+
+                    if (api.BrowserHelper.isIE()) {
+                        this.resetObjectsAfterFrameReloadForIE();
+                        this.disableLinksInLiveEditForIE();
+                    }
+                    new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
                 }
-
-                this.liveEditWindow = liveEditWindow;
-
-                this.listenToPage(this.liveEditWindow);
-
-                this.loadMask.hide();
-                new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
-
-            } else if (!liveEditWindow.document.body || (liveEditWindow.document.body.id == this.LIVE_EDIT_ERROR_PAGE_BODY_ID)) {
-                this.loadMask.hide();
+                else {
+                    this.notifyLiveEditPageViewReady(new api.liveedit.LiveEditPageViewReadyEvent());
+                }
             }
-
-            this.loadMaskCanBeShown = true;
 
             // Notify loaded no matter the result
             this.notifyLoaded();
@@ -647,8 +673,49 @@ module app.wizard.page {
             this.liveEditPageInitErrorListeners.forEach((listener) => listener(event));
         }
 
-        private liveEditFrameIsVisible(): boolean {
-            return this.liveEditIFrame.getEl().getWidthWithBorder() > 0 && this.liveEditIFrame.getEl().getHeightWithBorder() > 0;
+        private copyObjectsBeforeFrameReloadForIE() {
+            this.copyControllerForIE();
+            this.copyRegionsForIE();
+        }
+
+        private copyControllerForIE() {
+            var controller = this.liveEditModel.getPageModel().getController();
+            if (controller) {
+                this.controllerCopyForIE = JSON.parse(JSON.stringify(controller));
+                this.controllerCopyForIE.key = controller.getKey().toString();
+            }
+        }
+
+        private copyRegionsForIE() {
+            var regions = this.liveEditModel.getPageModel().getRegions();
+            if (regions) {
+                this.regionsCopyForIE = JSON.parse(JSON.stringify(regions.toJson()));
+            }
+        }
+
+        private resetObjectsAfterFrameReloadForIE() {
+            this.resetControllerForIE();
+            this.resetRegionsForIE();
+        }
+
+        private resetControllerForIE() {
+            if (this.controllerCopyForIE) {
+                var controller = new api.content.page.PageDescriptorBuilder().fromJson(this.controllerCopyForIE).build();
+                this.liveEditModel.getPageModel().setControllerDescriptor(controller);
+            }
+        }
+
+        private resetRegionsForIE() {
+            if (this.regionsCopyForIE) {
+                var regions = api.content.page.region.Regions.create().fromJson(this.regionsCopyForIE, null).build();
+                this.liveEditModel.getPageModel().setRegions(regions);
+            }
+        }
+
+        private disableLinksInLiveEditForIE() {
+            if (this.livejq) {
+                this.livejq("a").attr("disabled", "disabled"); // this works only in IE
+            }
         }
 
     }

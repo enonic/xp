@@ -369,6 +369,7 @@ public class SecurityResourceTest
         assertJson( "getPrincipalRoleById.json", jsonString );
     }
 
+
     @Test
     public void isEmailAvailableNegative()
         throws Exception

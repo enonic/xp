@@ -23,6 +23,7 @@
 ///<reference path='TreeNodesOfContentPath.ts' />
 ///<reference path='TreeNodeParentOfContent.ts' />
 
+///<reference path='OpenEditPermissionsDialogEvent.ts' />
 ///<reference path='ContentServerEvent.ts' />
 ///<reference path='ContentChangeResult.ts' />
 ///<reference path='ContentResourceRequest.ts' />
@@ -33,6 +34,7 @@
 ///<reference path='GetContentByPathRequest.ts' />
 ///<reference path='GetContentPermissionsByIdRequest.ts' />
 ///<reference path='GetContentRootPermissionsRequest.ts' />
+///<reference path='GetContentAttachmentsRequest.ts' />
 ///<reference path='CreateContentRequest.ts' />
 ///<reference path='OrderContentRequest.ts' />
 ///<reference path='OrderChildContentRequest.ts' />
@@ -101,3 +103,4 @@
 ///<reference path='Widget.ts' />
 ///<reference path='WidgetDescriptorResourceRequest.ts' />
 ///<reference path='GetWidgetsByInterfaceRequest.ts' />
+///<reference path='GetEffectivePermissions.ts' />

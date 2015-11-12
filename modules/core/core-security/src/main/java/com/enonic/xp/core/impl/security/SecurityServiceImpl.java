@@ -24,6 +24,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -91,6 +92,8 @@ public final class SecurityServiceImpl
 
     private NodeService nodeService;
 
+    private IndexService indexService;
+
     private final Clock clock;
 
     public SecurityServiceImpl()
@@ -103,7 +106,10 @@ public final class SecurityServiceImpl
     @Activate
     public void initialize()
     {
-        new SecurityInitializer( this, this.nodeService ).initialize();
+        if ( indexService.isMaster() )
+        {
+            new SecurityInitializer( this, this.nodeService ).initialize();
+        }
     }
 
     @Override
@@ -285,18 +291,42 @@ public final class SecurityServiceImpl
     @Override
     public AuthenticationInfo authenticate( final AuthenticationToken token )
     {
-        if ( token instanceof UsernamePasswordAuthToken )
+        if ( token.getUserStore() != null )
         {
-            return authenticateUsernamePassword( (UsernamePasswordAuthToken) token );
-        }
-        else if ( token instanceof EmailPasswordAuthToken )
-        {
-            return authenticateEmailPassword( (EmailPasswordAuthToken) token );
+            return doAuthenticate( token );
         }
         else
         {
-            throw new AuthenticationException( "Authentication token not supported: " + token.getClass().getSimpleName() );
+            final UserStores userStores = callAsAuthenticated( this::getUserStores );
+            for ( UserStore userStore : userStores )
+            {
+                token.setUserStore( userStore.getKey() );
+                final AuthenticationInfo authInfo = doAuthenticate( token );
+                if ( authInfo.isAuthenticated() )
+                {
+                    return authInfo;
+                }
+            }
+            return AuthenticationInfo.unAuthenticated();
         }
+    }
+
+    private AuthenticationInfo doAuthenticate( final AuthenticationToken token )
+    {
+        return callAsAuthenticated( () -> {
+            if ( token instanceof UsernamePasswordAuthToken )
+            {
+                return authenticateUsernamePassword( (UsernamePasswordAuthToken) token );
+            }
+            else if ( token instanceof EmailPasswordAuthToken )
+            {
+                return authenticateEmailPassword( (EmailPasswordAuthToken) token );
+            }
+            else
+            {
+                throw new AuthenticationException( "Authentication token not supported: " + token.getClass().getSimpleName() );
+            }
+        } );
     }
 
     private AuthenticationInfo authenticateEmailPassword( final EmailPasswordAuthToken token )
@@ -868,9 +898,26 @@ public final class SecurityServiceImpl
         return ContextBuilder.from( CONTEXT_SECURITY ).authInfo( authInfo ).build();
     }
 
+    private <T> T callAsAuthenticated( Callable<T> runnable )
+    {
+        return this.getAuthenticatedContext().callWith( runnable );
+    }
+
+    private Context getAuthenticatedContext()
+    {
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
+        return ContextBuilder.from( CONTEXT_SECURITY ).authInfo( authInfo ).build();
+    }
+
     @Reference
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
+    }
+
+    @Reference
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
     }
 }

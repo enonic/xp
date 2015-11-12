@@ -127,7 +127,11 @@ module app.wizard.page.contextwindow.inspect.page {
         }
 
         private createCustomizedOption(): Option<PageTemplateOption> {
-            var pageTemplate:PageTemplate = (<PageTemplateBuilder> new PageTemplateBuilder().setData(new api.data.PropertyTree()).setDisplayName(PageTemplateOption.displayNameCustom)).build();
+            var pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
+            var pageTemplate: PageTemplate = (<PageTemplateBuilder> new PageTemplateBuilder()
+                .setData(new api.data.PropertyTree())
+                .setDisplayName(pageTemplateDisplayName[pageTemplateDisplayName.Custom]))
+                .build();
             var option = {
                 value: "Customized",
                 displayValue: new PageTemplateOption(pageTemplate, this.pageModel)

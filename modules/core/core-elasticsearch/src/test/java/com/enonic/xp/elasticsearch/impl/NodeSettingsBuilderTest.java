@@ -41,7 +41,7 @@ public class NodeSettingsBuilderTest
 
         assertNotNull( settings );
         assertEquals( 15, settings.getAsMap().size() );
-        assertSettings( System.getProperty( "xp.home" ) + "/index", settings );
+        assertSettings( System.getProperty( "xp.home" ) + "/repo/index", settings );
     }
 
     @Test

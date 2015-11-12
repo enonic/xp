@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -114,7 +115,8 @@ public abstract class AbstractNodeTest
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
-        this.binaryBlobStore = new FileBlobStore( "test" );
+        final File blobStoreDir = new File( xpHome.getRoot(), "repo/blob/test" );
+        this.binaryBlobStore = new FileBlobStore( blobStoreDir );
 
         final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
         storageDao.setClient( this.client );
@@ -165,7 +167,7 @@ public abstract class AbstractNodeTest
         nodeService.setStorageService( this.storageService );
 
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexServiceInternal );
-        repositoryInitializer.initializeRepository( repository.getId() );
+        repositoryInitializer.initializeRepositories( repository.getId() );
 
         refresh();
     }

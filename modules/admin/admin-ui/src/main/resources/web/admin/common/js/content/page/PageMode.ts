@@ -7,4 +7,9 @@ module api.content.page {
         FORCED_CONTROLLER,      // PageTemplate: when page.descriptor is not null
         NO_CONTROLLER,           // PageTemplate: when page.descriptor is null
     }
+
+    export enum PageTemplateDisplayName {
+        Automatic,
+        Custom
+    }
 }

@@ -1,5 +1,6 @@
 package com.enonic.xp.core.content;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
@@ -140,11 +141,14 @@ public class AbstractContentServiceTest
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
-        this.binaryBlobStore = new FileBlobStore( "test" );
+        final File blobStoreDir = new File( xpHome.getRoot(), "repo/blob/test" );
+        this.binaryBlobStore = new FileBlobStore( blobStoreDir );
 
         final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
         storageDao.setClient( this.client );
         storageDao.setElasticsearchDao( this.elasticsearchDao );
+
+        final EventPublisherImpl eventPublisher = new EventPublisherImpl();
 
         this.branchService = new BranchServiceImpl();
         this.branchService.setStorageDao( storageDao );
@@ -176,11 +180,10 @@ public class AbstractContentServiceTest
         this.nodeService.setIndexServiceInternal( indexService );
         this.nodeService.setStorageService( storageService );
         this.nodeService.setSearchService( searchService );
+        this.nodeService.setEventPublisher( eventPublisher );
 
         this.mixinService = Mockito.mock( MixinService.class );
         this.contentTypeRegistry = Mockito.mock( ContentTypeRegistry.class );
-
-        final EventPublisherImpl eventPublisher = new EventPublisherImpl();
 
         final MediaInfoServiceImpl mediaInfoService = new MediaInfoServiceImpl();
         mediaInfoService.setDetector( new DefaultDetector() );
@@ -225,7 +228,7 @@ public class AbstractContentServiceTest
         nodeService.setStorageService( storageService );
 
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
-        repositoryInitializer.initializeRepository( repository.getId() );
+        repositoryInitializer.initializeRepositories( repository.getId() );
 
         refresh();
     }

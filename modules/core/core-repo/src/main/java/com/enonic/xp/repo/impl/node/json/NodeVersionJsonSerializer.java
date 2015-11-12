@@ -1,15 +1,12 @@
 package com.enonic.xp.repo.impl.node.json;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 
+import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.util.Exceptions;
 
@@ -51,15 +48,7 @@ public final class NodeVersionJsonSerializer
 
     public static NodeVersionJsonSerializer create( final boolean indent )
     {
-        final ObjectMapper mapper = new ObjectMapper();
-        mapper.setDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) );
-        mapper.disable( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS );
-        mapper.disable( SerializationFeature.FAIL_ON_EMPTY_BEANS );
-        mapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
-        mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
-        mapper.setSerializationInclusion( JsonInclude.Include.ALWAYS );
-        mapper.registerModule( new JSR310Module() );
-
+        final ObjectMapper mapper = ObjectMapperHelper.create();
         if ( indent )
         {
             mapper.enable( SerializationFeature.INDENT_OUTPUT );

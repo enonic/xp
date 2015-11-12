@@ -8,7 +8,7 @@ module api.ui.selector.combobox {
 
         createSelectedOption(option: api.ui.selector.Option<T>): SelectedOption<T>;
 
-        addOption(option: api.ui.selector.Option<T>): boolean;
+        addOption(option: api.ui.selector.Option<T>, silent: boolean): boolean;
 
         removeOption(optionToRemove: api.ui.selector.Option<T>, silent: boolean);
 
@@ -28,8 +28,16 @@ module api.ui.selector.combobox {
 
         moveOccurrence(formIndex: number, toIndex: number);
 
+        onOptionSelected(listener: {(added: SelectedOption<T>): void;});
+
+        unOptionSelected(listener: {(added: SelectedOption<T>): void;});
+
         onOptionDeselected(listener: {(removed: SelectedOption<T>): void;});
 
         unOptionDeselected(listener: {(removed: SelectedOption<T>): void;});
+
+        onOptionMoved(listener: (moved: SelectedOption<T>) => void);
+
+        unOptionMoved(listener: (moved: SelectedOption<T>) => void);
     }
 }

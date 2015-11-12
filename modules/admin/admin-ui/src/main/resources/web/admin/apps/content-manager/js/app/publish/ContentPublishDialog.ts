@@ -3,7 +3,7 @@ module app.publish {
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
     import BrowseItem = api.app.browse.BrowseItem;
     import ContentPath = api.content.ContentPath;
-    import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import DialogButton = api.ui.dialog.DialogButton;
     import PublishContentRequest = api.content.PublishContentRequest;
     import ResolvePublishContentResultJson = api.content.json.ResolvePublishContentResultJson;
@@ -35,7 +35,7 @@ module app.publish {
 
         private subheaderMessage: api.dom.H6El = new api.dom.H6El("publish-dialog-subheader");
 
-        private selectedContents: ContentSummary[];
+        private selectedContents: ContentSummaryAndCompareStatus[];
 
         private initialContentsResolvedWithChildren: ContentsResolved<ContentPublishItem> = new ContentsResolved<ContentPublishItem>();
 
@@ -82,9 +82,7 @@ module app.publish {
                 this.getButtonRow().addClass("no-checkbox");
             }
 
-            this.runResolveTasks(this.getResolveTasks(), () => {
-                this.centerMyself();
-            })
+            this.runResolveTasks(this.getResolveTasks(), () => this.centerMyself());
             this.open();
         }
 
@@ -125,13 +123,13 @@ module app.publish {
             return this.publishAction;
         }
 
-        setSelectedContents(contents: ContentSummary[]) {
+        setSelectedContents(contents: ContentSummaryAndCompareStatus[]) {
             this.selectedContents = contents;
         }
 
         private renderSelectedContentsWhileItemsGettingResolved() {
 
-            var initiallySelectedContents: ContentPublishItem[] = ContentPublishItem.buildPublishItemsFromContentSummaries(
+            var initiallySelectedContents: ContentPublishItem[] = ContentPublishItem.buildPublishItemsFromContentSummaryAndCompareStatuses(
                 this.sortContentSummariesArrayByPath(this.selectedContents).slice(0, 15));
 
             initiallySelectedContents.forEach((content: ContentPublishItem) => {
@@ -145,7 +143,7 @@ module app.publish {
             });
         }
 
-        private sortContentSummariesArrayByPath(arrayToSort: ContentSummary[]): ContentSummary[] {
+        private sortContentSummariesArrayByPath(arrayToSort: ContentSummaryAndCompareStatus[]): ContentSummaryAndCompareStatus[] {
             arrayToSort.sort((contentA, contentB) => {
                 var pathA = contentA.getPath().toString(),
                     pathB = contentB.getPath().toString();
@@ -436,22 +434,16 @@ module app.publish {
         }
 
         private contentItemsAreValid(contentPublishItems: ContentsResolved<ContentPublishItem>): boolean {
-            var result = true;
 
-            contentPublishItems.getContentsResolved().forEach((content: ContentPublishItem) => {
-                var contentName = content.getName(),
-                    invalid = !content.isValid() || !content.getDisplayName() || contentName.isUnnamed();
-                if (invalid) {
-                    result = false;
-                    return;
-                }
+            return contentPublishItems.getContentsResolved().every((content: ContentPublishItem) => {
+                return content.getCompareStatus() == CompareStatus.PENDING_DELETE ||
+                       (content.isValid() && !api.util.StringHelper.isBlank(content.getDisplayName()) && !content.getName().isUnnamed());
             });
 
-            return result;
         }
 
         private atLeastOneInitialItemHasChild(): boolean {
-            return this.selectedContents.some((obj: ContentSummary) => {
+            return this.selectedContents.some((obj: ContentSummaryAndCompareStatus) => {
                 return obj.hasChildren();
             });
         }
@@ -459,19 +451,15 @@ module app.publish {
         private allResolvedItemsAreValid(): boolean {
             var includeChildItems = this.includeChildItemsCheck.isChecked();
 
-            if (!this.contentItemsAreValid(includeChildItems
-                    ? this.initialContentsResolvedWithChildren
-                    : this.initialContentsResolvedWithoutChildren)) {
-                return false;
-            }
+            var initialValid = this.contentItemsAreValid(includeChildItems
+                ? this.initialContentsResolvedWithChildren
+                : this.initialContentsResolvedWithoutChildren);
 
-            if (!this.contentItemsAreValid(includeChildItems
-                    ? this.dependenciesContentsResolvedWithChildren
-                    : this.dependenciesContentsResolvedWithoutChildren)) {
-                return false;
-            }
+            var dependenciesValid = this.contentItemsAreValid(includeChildItems
+                ? this.dependenciesContentsResolvedWithChildren
+                : this.dependenciesContentsResolvedWithoutChildren);
 
-            return true;
+            return initialValid && dependenciesValid;
         }
 
         private showLoadingSpinnerAtButton() {

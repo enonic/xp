@@ -55,5 +55,9 @@ module api.app.browse {
         getStatisticsItem(): api.app.view.ViewItem<M> {
             return this.itemStatisticsPanel.getItem();
         }
+
+        onDeselected(listener: (event: ItemDeselectedEvent<M>)=>void) {
+            this.itemsSelectionPanel.onDeselected(listener);
+        }
     }
 }

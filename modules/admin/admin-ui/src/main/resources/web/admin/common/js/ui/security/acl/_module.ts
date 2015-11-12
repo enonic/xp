@@ -1,3 +1,4 @@
+///<reference path='Access.ts' />
 ///<reference path='AccessSelector.ts' />
 ///<reference path='PermissionSelector.ts' />
 ///<reference path='AccessControlEntryView.ts' />
@@ -9,3 +10,8 @@
 ///<reference path='UserStoreAccessControlListView.ts' />
 ///<reference path='UserStoreAccessControlEntryViewer.ts' />
 ///<reference path='UserStoreAccessControlComboBox.ts' />
+///<reference path='UserAccessListView.ts' />
+///<reference path='UserAccessListItemView.ts' />
+///<reference path='EffectivePermission.ts' />
+///<reference path='EffectivePermissionAccess.ts' />
+///<reference path='EffectivePermissionMember.ts' />

@@ -1,0 +1,52 @@
+apply plugin: 'java-base'
+apply plugin: 'com.moowork.grunt'
+
+node {
+    download = true
+    version = '4.2.1'
+}
+
+ext {
+    leafProjects = rootProject.subprojects.findAll { p -> p.subprojects.empty }
+    jsDocOutput = "${buildDir}/jsdoc"
+}
+
+def javadocProjects = leafProjects.findAll { project -> project.name.endsWith( '-api' ) }
+
+task javadoc( type: Javadoc ) {
+    source javadocProjects.collect { project -> project.sourceSets.main.allJava }
+    classpath = files( javadocProjects.collect { project -> project.sourceSets.main.compileClasspath } )
+    failOnError = false
+    title = "Enonic XP API ${version}"
+    verbose = false
+
+    options {
+        links 'http://docs.oracle.com/javase/8/docs/api'
+        links 'http://docs.guava-libraries.googlecode.com/git-history/v18.0/javadoc'
+        quiet()
+        encoding( 'UTF-8' )
+    }
+}
+
+task javadocZip( type: Zip ) {
+    from javadoc
+    classifier = 'javadoc'
+}
+
+task gruntAll( type: GruntTask, dependsOn: npmInstall ) {
+    description = 'Build JSDoc for libraries.'
+    inputs.files fileTree( dir: "${projectDir}/../lib", include: '**/site/lib/xp/*.js' )
+    inputs.dir "${projectDir}/src/jsdoc"
+    outputs.dir jsDocOutput
+    args = ['all']
+}
+
+task libdocZip( type: Zip ) {
+    from gruntAll
+    classifier = 'libdoc'
+}
+
+artifacts {
+    archives javadocZip
+    archives libdocZip
+}

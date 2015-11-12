@@ -27,4 +27,9 @@ public abstract class BaseException
     {
         super( message == null ? "" : MessageFormat.format( message, args ), cause );
     }
+
+    public String getCode()
+    {
+        return "unknown";
+    }
 }

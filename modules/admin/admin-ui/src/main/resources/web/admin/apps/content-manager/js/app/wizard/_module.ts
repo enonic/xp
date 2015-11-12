@@ -13,9 +13,7 @@
 ///<reference path='ShowLiveEditEvent.ts' />
 ///<reference path='ShowSplitEditEvent.ts' />
 ///<reference path='CompareContentGrid.ts' />
-///<reference path='PublishAction.ts' />
 ///<reference path='ScheduleAction.ts' />
-///<reference path='OpenEditPermissionsDialogEvent.ts' />
 ///<reference path='ContentPermissionsAppliedEvent.ts' />
 ///<reference path='EditPermissionsDialog.ts' />
 ///<reference path='ContentWizardToolbarPublishControls.ts' />

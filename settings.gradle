@@ -36,9 +36,6 @@ include 'tools:toolbox'
 include 'tools:testing'
 include 'tools:gradle-plugin'
 
-include 'launcher'
-include 'distro'
-
 include 'lib:lib-content'
 include 'lib:lib-i18n'
 include 'lib:lib-portal'
@@ -49,8 +46,13 @@ include 'lib:lib-mail'
 include 'lib:lib-auth'
 
 include 'repack:repack-jparsec'
+include 'repack:repack-attoparser'
 include 'repack:repack-resteasy'
 include 'repack:repack-elasticsearch'
+
+include 'launcher'
+include 'distro'
+include 'docs'
 
 rootProject.name = 'xp'
 

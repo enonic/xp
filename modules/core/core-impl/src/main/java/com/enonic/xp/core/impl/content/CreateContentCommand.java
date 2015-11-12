@@ -11,12 +11,9 @@ import com.google.common.base.Strings;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
-import com.enonic.xp.content.ContentAlreadyExistException;
-import com.enonic.xp.content.ContentChangeEvent;
+import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentCreatedEvent;
 import com.enonic.xp.content.ContentDataValidationException;
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
@@ -34,6 +31,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
@@ -74,16 +72,12 @@ final class CreateContentCommand
         try
         {
             final Node createdNode = nodeService.create( createNodeParams );
-            final Content createdContent = translator.fromNode( createdNode, false );
-
-            eventPublisher.publish( new ContentCreatedEvent( ContentId.from( createdNode.id().toString() ) ) );
-            eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.CREATE, createdContent.getPath() ) );
-
-            return createdContent;
+            nodeService.refresh( RefreshMode.SEARCH );
+            return translator.fromNode( createdNode, false );
         }
         catch ( NodeAlreadyExistAtPathException e )
         {
-            throw new ContentAlreadyExistException(
+            throw new ContentAlreadyExistsException(
                 ContentPath.from( createContentTranslatorParams.getParent(), createContentTranslatorParams.getName().toString() ) );
         }
         catch ( NodeAccessException e )

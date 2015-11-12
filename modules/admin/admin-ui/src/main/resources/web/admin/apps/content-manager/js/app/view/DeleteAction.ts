@@ -2,12 +2,12 @@ module app.view {
 
     export class DeleteAction extends api.ui.Action {
 
-        constructor(itemViewPanel: api.app.view.ItemViewPanel<api.content.ContentSummary>) {
+        constructor(itemViewPanel: api.app.view.ItemViewPanel<api.content.ContentSummaryAndCompareStatus>) {
             super("Delete", "mod+del");
 
             this.onExecuted(() => {
 
-                var contentToDelete = itemViewPanel.getItem().getModel();
+                var contentToDelete = itemViewPanel.getItem().getModel().getContentSummary();
 
                 api.ui.dialog.ConfirmationDialog.get()
                     .setQuestion("Are you sure you want to delete this content?")
@@ -32,19 +32,22 @@ module app.view {
 
         public static showDeleteResult(result: api.content.DeleteContentResult) {
             if (result.getPendings().length == 1) {
-                api.notify.showFeedback('\"' + result.getPendings()[0] + '\" marked for deletion');
+                api.notify.showFeedback(`"${result.getPendings()[0].getName()}" marked for deletion`);
             } else if (result.getPendings().length > 1) {
-                api.notify.showFeedback(result.getPendings().length + ' items marked for deletion');
+                api.notify.showFeedback(`${result.getPendings().length} items marked for deletion`);
             }
 
             if (result.getDeleted().length == 1) {
-                api.notify.showFeedback('\"' + result.getDeleted()[0].getName() + '\" deleted');
+                let deleted = result.getDeleted()[0];
+                let name = deleted.getName() ||
+                           `Unnamed ${api.util.StringHelper.capitalizeAll(deleted.getType().replace(/-/g, " ").trim())}`;
+                api.notify.showFeedback(`"${name}" deleted`);
             } else if (result.getDeleted().length > 1) {
                 api.notify.showFeedback(result.getDeleted().length + ' items deleted');
             }
 
             if (result.getDeleteFailures().length > 0) {
-                api.notify.showWarning('Content could not be deleted. ' + result.getDeleteFailures()[0].getReason());
+                api.notify.showWarning(`Content could not be deleted. ${result.getDeleteFailures()[0].getReason()}`);
             }
         }
 

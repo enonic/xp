@@ -1,7 +1,7 @@
 module app.view.detail {
 
     import ViewItem = api.app.view.ViewItem;
-    import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
     export class ActiveDetailsPanelManager {
 
@@ -23,9 +23,12 @@ module app.view.detail {
         }
 
         private static doSetActiveDetailsPanel(detailsPanelToMakeActive: DetailsPanel) {
-            var activeItem: ViewItem<ContentSummary> = null,
+            var activeItem: ContentSummaryAndCompareStatus = null,
                 currentlyActivePanel = ActiveDetailsPanelManager.getActiveDetailsPanel();
-            if (currentlyActivePanel) {
+
+            if (currentlyActivePanel == detailsPanelToMakeActive || !detailsPanelToMakeActive) {
+                return;
+            } else if (currentlyActivePanel) {
                 activeItem = currentlyActivePanel.getItem();
                 var currentlyActiveWidget: WidgetView = currentlyActivePanel.getActiveWidget();
                 if (currentlyActiveWidget) {
@@ -33,6 +36,7 @@ module app.view.detail {
                 }
             }
             ActiveDetailsPanelManager.activeDetailsPanel = detailsPanelToMakeActive;
+            detailsPanelToMakeActive.getCustomWidgetViewsAndUpdateDropdown();
             detailsPanelToMakeActive.setItem(activeItem);
         }
 

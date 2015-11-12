@@ -18,9 +18,11 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
+import com.enonic.xp.media.ImageOrientation;
+import com.enonic.xp.media.MediaInfoService;
+import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.PortalException;
-import com.enonic.xp.portal.impl.handler.BaseHandlerTest;
+import com.enonic.xp.portal.handler.BaseHandlerTest;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
@@ -38,16 +40,20 @@ public class ImageHandlerTest
 
     private ImageService imageService;
 
+    private MediaInfoService mediaInfoService;
+
     @Override
     protected void configure()
         throws Exception
     {
         this.contentService = Mockito.mock( ContentService.class );
         this.imageService = Mockito.mock( ImageService.class );
+        this.mediaInfoService = Mockito.mock( MediaInfoService.class );
 
         this.handler = new ImageHandler();
         this.handler.setContentService( this.contentService );
         this.handler.setImageService( this.imageService );
+        this.handler.setMediaInfoService( this.mediaInfoService );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/path/to/content" ) );
@@ -207,5 +213,25 @@ public class ImageHandlerTest
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
             assertEquals( "Content with id [123456] not found", e.getMessage() );
         }
+    }
+
+    @Test
+    public void testImageWithOrientation()
+        throws Exception
+    {
+        setupContent();
+        Mockito.when( this.mediaInfoService.getImageOrientation( Mockito.any( ByteSource.class ) ) ).thenReturn(
+            ImageOrientation.LeftBottom );
+
+        this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        this.request.getParams().put( "filter", "sepia()" );
+        this.request.getParams().put( "quality", "75" );
+        this.request.getParams().put( "background", "0x0" );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.PNG, res.getContentType() );
+        assertTrue( res.getBody() instanceof ByteSource );
     }
 }

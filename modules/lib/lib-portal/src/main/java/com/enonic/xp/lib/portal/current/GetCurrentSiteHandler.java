@@ -2,7 +2,6 @@ package com.enonic.xp.lib.portal.current;
 
 import com.enonic.xp.lib.content.mapper.SiteMapper;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.site.Site;
@@ -26,6 +25,6 @@ public final class GetCurrentSiteHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.request = PortalRequestAccessor.get();
+        this.request = context.getBinding( PortalRequest.class ).get();
     }
 }

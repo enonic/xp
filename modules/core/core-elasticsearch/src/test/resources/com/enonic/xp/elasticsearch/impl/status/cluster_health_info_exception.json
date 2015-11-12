@@ -1,0 +1,19 @@
+{
+  "name": "clusterName",
+  "localNode": {
+    "hostName": "hostName",
+    "id": "nodeId",
+    "isMaster": false,
+    "numberOfNodesSeen": 1
+  },
+  "members": [
+    {
+      "hostName": "hostName",
+      "id": "nodeId",
+      "isMaster": false,
+      "address": "local[10.10.10.1]",
+      "version": "1.0.0"
+    }
+  ],
+  "errorMessages": ["cluster health info exception"]
+}

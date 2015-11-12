@@ -425,17 +425,20 @@ module api.liveedit {
         }
 
         getName(): string {
+            var pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
             if (this.pageModel.hasTemplate()) {
                 return this.pageModel.getTemplate().getDisplayName();
             }
             if (this.pageModel.isCustomized()) {
-                return this.pageModel.hasController() ? this.pageModel.getController().getDisplayName() : "Custom";
+                return this.pageModel.hasController()
+                    ? this.pageModel.getController().getDisplayName()
+                    : pageTemplateDisplayName[pageTemplateDisplayName.Custom];
             }
             if (this.pageModel.getMode() == PageMode.AUTOMATIC) {
                 return this.pageModel.getDefaultPageTemplate().getDisplayName();
             }
 
-            return "[No name]";
+            return pageTemplateDisplayName[pageTemplateDisplayName.Automatic];
         }
 
         getIconUrl(content: api.content.Content): string {
@@ -451,11 +454,8 @@ module api.liveedit {
             if (this.pageModel.isCustomized()) {
                 return "icon-cog" + largeIconCls;
             }
-            if (this.pageModel.getMode() == PageMode.AUTOMATIC) {
-                return "icon-wand" + largeIconCls;
-            }
 
-            return super.getIconClass();
+            return "icon-wand" + largeIconCls;
         }
 
         getParentItemView(): ItemView {

@@ -27,9 +27,9 @@ module api.liveedit.layout {
 
             this.appendChild(this.comboBox);
 
-            this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<LayoutDescriptor>) => {
+            this.comboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<LayoutDescriptor>) => {
                 this.layoutComponentView.showLoadingSpinner();
-                var descriptor = event.getOption().displayValue;
+                var descriptor = selectedOption.getOption().displayValue;
 
                 var layoutComponent: LayoutComponent = this.layoutComponentView.getComponent();
                 layoutComponent.setDescriptor(descriptor.getKey(), descriptor);

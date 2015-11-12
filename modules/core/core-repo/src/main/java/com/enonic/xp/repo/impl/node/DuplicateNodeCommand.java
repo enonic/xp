@@ -109,7 +109,7 @@ public final class DuplicateNodeCommand
         for ( final AttachedBinary attachedBinary : node.getAttachedBinaries() )
         {
             paramsBuilder.attachBinary( attachedBinary.getBinaryReference(),
-                                        binaryBlobStore.getByteSource( new BlobKey( attachedBinary.getBlobKey() ) ) );
+                                        binaryBlobStore.getRecord( new BlobKey( attachedBinary.getBlobKey() ) ).getBytes() );
         }
     }
 

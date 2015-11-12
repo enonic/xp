@@ -5,20 +5,17 @@ module app.view.detail {
 
     export class WidgetItemView extends api.dom.DivEl {
 
-        protected item: Element;
+        public static debug = false;
 
         constructor(className?: string) {
             super("widget-item-view" + (className ? " " + className : ""));
         }
 
-        public setItem(item: Element) {
-            this.item = item;
-        }
-
-        public layout() {
-            if (this.item) {
-                this.appendChild(this.item);
+        public layout(): wemQ.Promise<any> {
+            if (WidgetItemView.debug) {
+                console.debug('WidgetItemView.layout: ', this);
             }
+            return wemQ<any>(null);
         }
 
     }
