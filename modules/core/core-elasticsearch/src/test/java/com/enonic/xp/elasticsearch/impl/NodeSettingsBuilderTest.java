@@ -59,9 +59,10 @@ public class NodeSettingsBuilderTest
 
     private void assertSettings( String pathValue, final Settings settings )
     {
-        assertEquals( "local-node", settings.get( "name" ) );
-        assertEquals( "false", settings.get( "client" ) );
-        assertEquals( "true", settings.get( "data" ) );
+        assertEquals( "local-node", settings.get( "node.name" ) );
+        assertEquals( "false", settings.get( "node.client" ) );
+        assertEquals( "true", settings.get( "node.data" ) );
+        assertEquals( "true", settings.get( "node.master" ) );
         assertEquals( "false", settings.get( "http.enabled" ) );
         assertEquals( "mycluster", settings.get( "cluster.name" ) );
         assertEquals( "127.0.0.1", settings.get( "network.host" ) );
