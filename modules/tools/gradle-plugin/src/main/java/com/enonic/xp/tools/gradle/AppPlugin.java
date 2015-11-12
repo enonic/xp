@@ -29,7 +29,6 @@ public class AppPlugin
         addWebJarConfig();
         applyDeployTask();
         applyUnpackWebJarTask();
-        applyUnpackWebJarTask();
     }
 
     private void configure( final BundleExtension bundle )
