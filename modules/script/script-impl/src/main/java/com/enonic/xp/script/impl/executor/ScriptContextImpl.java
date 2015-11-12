@@ -4,16 +4,21 @@ import javax.script.Bindings;
 import javax.script.ScriptEngine;
 import javax.script.SimpleScriptContext;
 
-import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.script.runtime.DebugSettings;
+import com.enonic.xp.script.runtime.ScriptSettings;
 
 final class ScriptContextImpl
     extends SimpleScriptContext
 {
-    private final ResourceKey key;
+    private final Resource resource;
 
-    public ScriptContextImpl( final ResourceKey key )
+    private final DebugSettings debugSettings;
+
+    public ScriptContextImpl( final Resource resource, final ScriptSettings settings )
     {
-        this.key = key;
+        this.resource = resource;
+        this.debugSettings = settings.getDebug();
     }
 
     public void setEngineScope( final Bindings scope )
@@ -31,9 +36,19 @@ final class ScriptContextImpl
     {
         if ( name.equals( ScriptEngine.FILENAME ) )
         {
-            return this.key.toString();
+            return getFileName();
         }
 
         return super.getAttribute( name );
+    }
+
+    private String getFileName()
+    {
+        if ( this.debugSettings != null )
+        {
+            return this.debugSettings.scriptName( this.resource );
+        }
+
+        return this.resource.getKey().toString();
     }
 }

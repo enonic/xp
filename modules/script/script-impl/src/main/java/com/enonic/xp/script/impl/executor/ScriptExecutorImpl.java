@@ -85,28 +85,29 @@ final class ScriptExecutorImpl
     }
 
     @Override
-    public Object executeRequire( final ResourceKey script )
+    public Object executeRequire( final ResourceKey key )
     {
-        final Object mock = this.mocks.get( script.getPath() );
+        final Object mock = this.mocks.get( key.getPath() );
         if ( mock != null )
         {
             return mock;
         }
 
-        final Object cached = this.exportsCache.get( script );
+        final Object cached = this.exportsCache.get( key );
         if ( cached != null )
         {
             return cached;
         }
 
-        final ScriptContextImpl context = new ScriptContextImpl( script );
+        final Resource resource = loadResource( key );
+        final ScriptContextImpl context = new ScriptContextImpl( resource, this.scriptSettings );
         context.setEngineScope( this.global );
         context.setGlobalScope( new SimpleBindings() );
 
-        final ScriptObjectMirror func = (ScriptObjectMirror) doExecute( context, script );
-        final Object result = executeRequire( script, func );
+        final ScriptObjectMirror func = (ScriptObjectMirror) doExecute( context, resource );
+        final Object result = executeRequire( key, func );
 
-        this.exportsCache.put( script, result );
+        this.exportsCache.put( key, result );
         return result;
     }
 
@@ -131,13 +132,11 @@ final class ScriptExecutorImpl
         return new ScriptValueFactoryImpl( this::invokeMethod ).newValue( value );
     }
 
-    private Object doExecute( final ScriptContext context, final ResourceKey script )
+    private Object doExecute( final ScriptContext context, final Resource script )
     {
         try
         {
-            final Resource resource = loadResource( script );
-            final String source = InitScriptReader.getScript( resource.readString() );
-
+            final String source = InitScriptReader.getScript( script.readString() );
             return this.engine.eval( source, context );
         }
         catch ( final Exception e )

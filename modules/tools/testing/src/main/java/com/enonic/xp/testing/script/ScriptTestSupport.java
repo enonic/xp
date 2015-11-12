@@ -39,6 +39,7 @@ public abstract class ScriptTestSupport
         this.scriptSettings.basePath( "/site" );
         this.scriptSettings.binding( Context.class, ContextAccessor::current );
         this.scriptSettings.binding( PortalRequest.class, () -> this.portalRequest );
+        this.scriptSettings.debug( new ScriptDebugSettings() );
     }
 
     protected final ScriptExports runScript( final String path )
