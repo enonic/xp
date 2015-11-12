@@ -94,7 +94,7 @@ module app.browse {
                     prependClasses("content-tree-grid")
             );
 
-            let updateColumns = api.util.AppHelper.debounce((item: api.ui.responsive.ResponsiveItem) => {
+            let updateColumns = (item: api.ui.responsive.ResponsiveItem) => {
                 if (item.isRangeSizeChanged()) {
 
                     if (item.isInRangeOrSmaller(ResponsiveRanges._240_360)) {
@@ -115,8 +115,7 @@ module app.browse {
                 } else {
                     this.getGrid().resizeCanvas();
                 }
-
-            }, 100, true);
+            };
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 if (this.isInRenderingView()) {
