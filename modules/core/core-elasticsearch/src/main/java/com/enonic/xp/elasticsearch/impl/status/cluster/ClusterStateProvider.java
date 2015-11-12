@@ -1,4 +1,4 @@
-package com.enonic.xp.elasticsearch.impl.status;
+package com.enonic.xp.elasticsearch.impl.status.cluster;
 
 import java.util.List;
 

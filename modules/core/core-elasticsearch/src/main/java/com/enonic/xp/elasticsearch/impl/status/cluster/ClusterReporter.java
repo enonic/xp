@@ -1,4 +1,4 @@
-package com.enonic.xp.elasticsearch.impl.status;
+package com.enonic.xp.elasticsearch.impl.status.cluster;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

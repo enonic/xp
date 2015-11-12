@@ -1,4 +1,4 @@
-package com.enonic.xp.elasticsearch.impl.status;
+package com.enonic.xp.elasticsearch.impl.status.cluster;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
