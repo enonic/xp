@@ -853,7 +853,7 @@ module api.liveedit {
                 this.addComponentView(<ComponentView<Component>>componentView, this.getNewItemIndex(), true);
             });
 
-            action.setIconClass("font-icon " + api.StyleHelper.getIconCls(type.toLowerCase()));
+            action.setIconClass(api.StyleHelper.getCommonIconCls(type.toLowerCase()));
 
             return action;
         }

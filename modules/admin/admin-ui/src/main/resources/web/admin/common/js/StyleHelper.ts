@@ -21,6 +21,10 @@ module api {
             return clsArr.join(" ");
         }
 
+        static getCommonCls(cls: string): string {
+            return api.StyleHelper.getCls(cls, StyleHelper.COMMON_PREFIX);
+        }
+
         static getIconCls(iconCls: string): string {
             return api.StyleHelper.getCls(StyleHelper.ICON_PREFIX + iconCls);
         }

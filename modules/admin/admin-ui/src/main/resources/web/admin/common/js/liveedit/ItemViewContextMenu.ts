@@ -7,7 +7,7 @@ module api.liveedit {
         private arrow: ItemViewContextMenuArrow;
 
         constructor(menuTitle: ItemViewContextMenuTitle, actions: api.ui.Action[]) {
-            super('item-view-context-menu', true);
+            super('item-view-context-menu');
 
             this.arrow = new ItemViewContextMenuArrow(this);
             this.appendChild(this.arrow);
@@ -153,14 +153,14 @@ module api.liveedit {
         private contextMenu: ItemViewContextMenu;
 
         constructor(contextMenu: ItemViewContextMenu) {
-            super("item-view-context-menu-arrow bottom", true);
+            super("item-view-context-menu-arrow-bottom");
 
             this.contextMenu = contextMenu;
         }
 
         toggleVerticalPosition(bottom: boolean) {
-            this.toggleClassEx("bottom", bottom);
-            this.toggleClassEx("top", !bottom);
+            this.toggleClassEx("item-view-context-menu-arrow-bottom", bottom);
+            this.toggleClassEx("item-view-context-menu-arrow-top", !bottom);
         }
 
         updateArrowXPosition(x:number) {

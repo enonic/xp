@@ -1,4 +1,4 @@
-.@{_CLS_PREFIX}item-view-context-menu {
+.item-view-context-menu {
   .reset(); // both context menu and names and icon view have their own resets
   .material-layer-shadow();
 
@@ -9,20 +9,21 @@
   width: 160px;
   padding: 4px;
 
-  .@{_CLS_PREFIX}item-view-context-menu-arrow {
+  .item-view-context-menu-arrow {
     .arrow(#fff, 7px);
 
     position: absolute;
-
     left: 50%;
+  }
 
-    &.@{_CLS_PREFIX}bottom {
-      top: -7px;
-    }
+  .item-view-context-menu-arrow-bottom {
+    &:extend(.item-view-context-menu-arrow);
+    top: -7px;
+  }
 
-    &.@{_CLS_PREFIX}top {
-      bottom: -7px;
-    }
+  .item-view-context-menu-arrow-top {
+    &:extend(.item-view-context-menu-arrow);
+    bottom: -7px;
   }
 
   .names-and-icon-view {
@@ -35,7 +36,7 @@
       height: 20px;
       line-height: 20px;
 
-      .font-icon {
+      .font-icon-default {
         color: #fff;
         font-size: 20px;
         line-height: 20px;
