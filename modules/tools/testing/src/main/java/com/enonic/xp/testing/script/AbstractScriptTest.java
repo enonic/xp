@@ -16,6 +16,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.view.ViewFunctionService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -63,6 +64,9 @@ public abstract class AbstractScriptTest
     {
         this.resourceService = createResourceService();
         addService( ResourceService.class, this.resourceService );
+
+        final ViewFunctionService viewFunctionService = new ViewFunctionsMockFactory().newService();
+        addService( ViewFunctionService.class, viewFunctionService );
     }
 
     protected final <T> void addService( final Class<T> type, final T instance )

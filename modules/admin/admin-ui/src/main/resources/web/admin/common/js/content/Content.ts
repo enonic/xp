@@ -64,7 +64,6 @@ module api.content {
             return this.inheritPermissions;
         }
 
-        //api.security.acl.Permission.WRITE_PERMISSIONS
         isAnyPrincipalAllowed(principalKeys: api.security.PrincipalKey[], permission: api.security.acl.Permission): boolean {
 
             if (principalKeys.map(key => key.toString()).indexOf(api.security.RoleKeys.ADMIN.toString()) > -1) {
@@ -72,14 +71,17 @@ module api.content {
             }
 
             for (var i = 0; i < this.permissions.getEntries().length; i++) {
-                var item = this.permissions.getEntries()[i];
+                var entry = this.permissions.getEntries()[i];
 
-                if (item.isAllowed(permission)) {
-                    return principalKeys.some((principalKey: api.security.PrincipalKey) => {
-                        if (principalKey.equals(item.getPrincipalKey())) {
+                if (entry.isAllowed(permission)) {
+                    var principalInEntry = principalKeys.some((principalKey: api.security.PrincipalKey) => {
+                        if (principalKey.equals(entry.getPrincipalKey())) {
                             return true;
                         }
                     });
+                    if (principalInEntry) {
+                        return true;
+                    }
                 }
             }
             return false;

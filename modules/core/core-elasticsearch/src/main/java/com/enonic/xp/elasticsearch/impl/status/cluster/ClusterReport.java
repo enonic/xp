@@ -33,17 +33,18 @@ public final class ClusterReport
             {
                 json.set( "localNode", clusterState.getLocalNodeState().toJson() );
             }
-            final ArrayNode nodesJson = json.putArray( "members" );
-            for ( final MemberNodeState node : clusterState.getMemberNodeStateList() )
+            if ( clusterState.getMemberNodeStateList() != null && !clusterState.getMemberNodeStateList().isEmpty() )
             {
-                nodesJson.add( node.toJson() );
+                final ArrayNode nodesJson = json.putArray( "members" );
+                for ( final MemberNodeState node : clusterState.getMemberNodeStateList() )
+                {
+                    nodesJson.add( node.toJson() );
+                }
             }
-
             if ( StringUtils.isNotEmpty( clusterState.getErrorMessage() ) )
             {
                 errorMessages.add( clusterState.getErrorMessage() );
             }
-
         }
         else
         {
@@ -66,7 +67,10 @@ public final class ClusterReport
             errorMessages.add( "not able to get cluster health info" );
         }
 
-        json.set( "errorMessages", errorMessages );
+        if ( errorMessages.size() > 0 )
+        {
+            json.set( "errorMessages", errorMessages );
+        }
         return json;
     }
 

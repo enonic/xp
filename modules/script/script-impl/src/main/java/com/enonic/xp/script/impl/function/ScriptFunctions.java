@@ -78,4 +78,9 @@ public final class ScriptFunctions
     {
         return NashornHelper.isUndefined( value ) ? null : value;
     }
+
+    public void registerMock( final String name, final Object value )
+    {
+        this.executor.registerMock( name, value );
+    }
 }

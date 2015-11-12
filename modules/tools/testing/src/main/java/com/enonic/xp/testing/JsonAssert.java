@@ -1,4 +1,4 @@
-package com.enonic.xp.testing.json;
+package com.enonic.xp.testing;
 
 import java.net.URL;
 
