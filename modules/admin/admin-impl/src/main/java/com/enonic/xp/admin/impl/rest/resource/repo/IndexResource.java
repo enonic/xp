@@ -24,6 +24,8 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
+import com.enonic.xp.index.UpdateIndexSettingsParams;
+import com.enonic.xp.index.UpdateIndexSettingsResult;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
@@ -51,6 +53,21 @@ public final class IndexResource
             build() );
 
         return ReindexResultJson.create( result );
+    }
+
+    @POST
+    @Path("updateIndexSettings")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @ApiOperation("Update index settings")
+    public UpdateIndexSettingsResultJson updateIndexSettings( final UpdateIndexSettingsRequestJson request )
+    {
+        final UpdateIndexSettingsResult result = this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().
+            indexName( request.indexName ).
+            settings( request.settings.toString() ).
+            build() );
+
+        return UpdateIndexSettingsResultJson.create( result );
     }
 
     @Reference

@@ -4,51 +4,48 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequestBuilder;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.ClusterAdminClient;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
-
+@Component(service = ClusterHealthProvider.class)
 public final class ClusterHealthProvider
-    extends ClusterInfoProvider<ClusterHealth>
+    implements ClusterInfoProvider<ClusterHealth>
 {
-
-    public ClusterHealthProvider( final Client client )
-    {
-        super( client );
-    }
+    private ClusterAdminClient clusterAdminClient;
 
     @Override
     public ClusterHealth getInfo()
     {
         final ClusterHealth.Builder builder = ClusterHealth.create();
-        ClusterHealthResponse clusterHealthResponse = null;
         try
         {
-            clusterHealthResponse = this.getClusterHealthResponse();
+            ClusterHealthResponse clusterHealthResponse = this.getClusterHealthResponse();
+            builder.clusterHealthStatus( clusterHealthResponse.getStatus().toString() );
         }
         catch ( ElasticsearchException ex )
         {
-            builder.errorMessage( ex.getMessage() );
-            return builder.build();
+            builder.errorMessage( ex.getClass().getSimpleName() + "[" + ex.getMessage() + "]" );
         }
 
-        if ( clusterHealthResponse == null )
-        {
-            return null;
-        }
-
-        return builder.clusterHealthStatus( clusterHealthResponse.getStatus().toString() ).
-            build();
+        return builder.build();
     }
 
     private ClusterHealthResponse getClusterHealthResponse()
     {
         String[] indices = new String[]{};
 
-        final ClusterHealthRequest request = new ClusterHealthRequestBuilder( this.client.admin().cluster() ).
+        final ClusterHealthRequest request = new ClusterHealthRequestBuilder( clusterAdminClient ).
             setTimeout( CLUSTER_HEALTH_TIMEOUT ).
             setIndices( indices ).
             request();
 
-        return client.admin().cluster().health( request ).actionGet();
+        return clusterAdminClient.health( request ).actionGet();
+    }
+
+    @Reference
+    public void setClusterAdminClient( ClusterAdminClient clusterAdminClient )
+    {
+        this.clusterAdminClient = clusterAdminClient;
     }
 }

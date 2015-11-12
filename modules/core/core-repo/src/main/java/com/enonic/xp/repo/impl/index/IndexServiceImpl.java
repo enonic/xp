@@ -7,12 +7,15 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PurgeIndexParams;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
+import com.enonic.xp.index.UpdateIndexSettingsParams;
+import com.enonic.xp.index.UpdateIndexSettingsResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.query.expr.CompareExpr;
@@ -31,6 +34,7 @@ import com.enonic.xp.repo.impl.repository.RepositoryIndexMappingProvider;
 import com.enonic.xp.repo.impl.repository.RepositorySearchIndexSettingsProvider;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.SystemConstants;
 
 @Component
 public class IndexServiceImpl
@@ -92,6 +96,43 @@ public class IndexServiceImpl
         builder.duration( Duration.ofMillis( start - stop ) );
 
         return builder.build();
+    }
+
+    @Override
+    public UpdateIndexSettingsResult updateIndexSettings( final UpdateIndexSettingsParams params )
+    {
+        final UpdateIndexSettingsResult.Builder result = UpdateIndexSettingsResult.create();
+
+        final String indexName = params.getIndexName();
+        final IndexSettings indexSettings = IndexSettings.from( params.getSettings() );
+
+        if ( indexName != null )
+        {
+            updateIndexSettings( indexName, indexSettings, result );
+        }
+        else
+        {
+            updateIndexSettings( ContentConstants.CONTENT_REPO.getId(), indexSettings, result );
+            updateIndexSettings( SystemConstants.SYSTEM_REPO.getId(), indexSettings, result );
+        }
+
+        return result.build();
+    }
+
+    private void updateIndexSettings( final RepositoryId repositoryId, final IndexSettings indexSettings,
+                                      final UpdateIndexSettingsResult.Builder result )
+    {
+        final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
+        final String storageIndexName = IndexNameResolver.resolveStorageIndexName( repositoryId );
+        updateIndexSettings( searchIndexName, indexSettings, result );
+        updateIndexSettings( storageIndexName, indexSettings, result );
+    }
+
+    private void updateIndexSettings( final String indexName, final IndexSettings indexSettings,
+                                      final UpdateIndexSettingsResult.Builder result )
+    {
+        indexServiceInternal.updateIndex( indexName, indexSettings );
+        result.addUpdatedIndex( indexName );
     }
 
     @Override

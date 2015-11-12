@@ -15,5 +15,5 @@
       "version": "1.0.0"
     }
   ],
-  "errorMessages": ["cluster health info exception"]
+  "errorMessages": ["ElasticsearchException[cluster health info exception]"]
 }

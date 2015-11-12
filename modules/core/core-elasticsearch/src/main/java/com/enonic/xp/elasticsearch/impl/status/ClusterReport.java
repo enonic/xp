@@ -25,7 +25,10 @@ public final class ClusterReport
 
         if ( clusterState != null )
         {
-            json.put( "name", clusterState.getClusterName() );
+            if ( clusterState.getClusterName() != null )
+            {
+                json.put( "name", clusterState.getClusterName() );
+            }
             if ( clusterState.getLocalNodeState() != null )
             {
                 json.set( "localNode", clusterState.getLocalNodeState().toJson() );
@@ -63,10 +66,7 @@ public final class ClusterReport
             errorMessages.add( "not able to get cluster health info" );
         }
 
-        if ( errorMessages.size() > 0 )
-        {
-            json.set( "errorMessages", errorMessages );
-        }
+        json.set( "errorMessages", errorMessages );
         return json;
     }
 
