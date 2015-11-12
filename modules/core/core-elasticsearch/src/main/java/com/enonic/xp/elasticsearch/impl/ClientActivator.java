@@ -97,7 +97,7 @@ public final class ClientActivator
 
         try
         {
-            LOG.error( "Cluster not operational , unregister elasticsearch-client" );
+            LOG.error( "Cluster not operational, unregister elasticsearch-client" );
             this.reg.unregister();
         }
         finally

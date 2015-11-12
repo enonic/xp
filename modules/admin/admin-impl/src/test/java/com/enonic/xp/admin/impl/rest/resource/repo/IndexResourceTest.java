@@ -14,6 +14,8 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
+import com.enonic.xp.index.UpdateIndexSettingsParams;
+import com.enonic.xp.index.UpdateIndexSettingsResult;
 import com.enonic.xp.repository.RepositoryId;
 
 import static org.mockito.Matchers.isA;
@@ -42,6 +44,26 @@ public class IndexResourceTest
             post().getAsString();
 
         assertJson( "reindex.json", result );
+    }
+
+    @Test
+    public void updateIndexSettings()
+        throws Exception
+    {
+        final UpdateIndexSettingsResult indexSettingsResult = UpdateIndexSettingsResult.create().
+            addUpdatedIndex( "index1" ).
+            addUpdatedIndex( "index2" ).
+            build();
+
+        Mockito.when( this.indexService.updateIndexSettings( isA( UpdateIndexSettingsParams.class ) ) ).
+            thenReturn( indexSettingsResult );
+
+        final String result = request().
+            path( "repo/updateIndexSettings" ).
+            entity( readFromFile( "update_index_settings_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "update_index_settings.json", result );
     }
 
 

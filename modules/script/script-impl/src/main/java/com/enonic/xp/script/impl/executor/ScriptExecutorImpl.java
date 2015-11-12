@@ -44,6 +44,8 @@ final class ScriptExecutorImpl
 
     private Application application;
 
+    private Map<String, Object> mocks;
+
     public void setEngine( final ScriptEngine engine )
     {
         this.engine = engine;
@@ -76,6 +78,7 @@ final class ScriptExecutorImpl
 
     public void initialize()
     {
+        this.mocks = Maps.newHashMap();
         this.exportsCache = Maps.newHashMap();
         this.global = this.engine.createBindings();
         new CallFunction().register( this.global );
@@ -84,6 +87,12 @@ final class ScriptExecutorImpl
     @Override
     public Object executeRequire( final ResourceKey script )
     {
+        final Object mock = this.mocks.get( script.getPath() );
+        if ( mock != null )
+        {
+            return mock;
+        }
+
         final Object cached = this.exportsCache.get( script );
         if ( cached != null )
         {
@@ -126,7 +135,7 @@ final class ScriptExecutorImpl
     {
         try
         {
-            final Resource resource = this.resourceService.getResource( script );
+            final Resource resource = loadResource( script );
             final String source = InitScriptReader.getScript( resource.readString() );
 
             return this.engine.eval( source, context );
@@ -135,6 +144,11 @@ final class ScriptExecutorImpl
         {
             throw ErrorHelper.handleError( e );
         }
+    }
+
+    private Resource loadResource( final ResourceKey key )
+    {
+        return this.resourceService.getResource( key );
     }
 
     private Object invokeMethod( final Object func, final Object... args )
@@ -177,5 +191,11 @@ final class ScriptExecutorImpl
     public ScriptSettings getScriptSettings()
     {
         return this.scriptSettings;
+    }
+
+    @Override
+    public void registerMock( final String name, final Object value )
+    {
+        this.mocks.put( name, value );
     }
 }

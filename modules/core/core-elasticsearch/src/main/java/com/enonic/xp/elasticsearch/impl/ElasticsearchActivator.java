@@ -4,6 +4,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.elasticsearch.client.AdminClient;
+import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.common.inject.Injector;
 import org.elasticsearch.common.logging.ESLoggerFactory;
@@ -27,6 +28,8 @@ public final class ElasticsearchActivator
     private ServiceRegistration<Node> nodeReg;
 
     private ServiceRegistration<AdminClient> adminClientReg;
+
+    private ServiceRegistration<ClusterAdminClient> clusterAdminClientReg;
 
     private ServiceRegistration<ClusterService> clusterServiceReg;
 
@@ -54,6 +57,8 @@ public final class ElasticsearchActivator
         this.clusterServiceReg = context.registerService( ClusterService.class, clusterService, new Hashtable<>() );
         this.transportServiceReg = context.registerService( TransportService.class, transportService, new Hashtable<>() );
         this.adminClientReg = context.registerService( AdminClient.class, this.node.client().admin(), new Hashtable<>() );
+        this.clusterAdminClientReg =
+            context.registerService( ClusterAdminClient.class, this.node.client().admin().cluster(), new Hashtable<>() );
     }
 
     @Deactivate
@@ -63,6 +68,7 @@ public final class ElasticsearchActivator
         this.transportServiceReg.unregister();
         this.clusterServiceReg.unregister();
         this.adminClientReg.unregister();
+        this.clusterAdminClientReg.unregister();
         this.node.stop();
     }
 }

@@ -11,8 +11,6 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
-import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.cluster.ClusterName;
 import org.elasticsearch.cluster.ClusterState;
@@ -52,15 +50,11 @@ public class ClusterReporterTest
     public void setup()
         throws Exception
     {
-        final Client client = Mockito.mock( Client.class );
-        final AdminClient adminClient = Mockito.mock( AdminClient.class );
         final ClusterAdminClient clusterAdminClient = Mockito.mock( ClusterAdminClient.class );
         this.clusterStateInfo = Mockito.mock( ActionFuture.class );
         this.nodesInfo = Mockito.mock( ActionFuture.class );
         this.clusterHealthInfo = Mockito.mock( ActionFuture.class );
 
-        Mockito.when( client.admin() ).thenReturn( adminClient );
-        Mockito.when( adminClient.cluster() ).thenReturn( clusterAdminClient );
         Mockito.when( clusterAdminClient.state( Mockito.any() ) ).thenReturn( clusterStateInfo );
         Mockito.when( clusterAdminClient.nodesInfo( Mockito.any() ) ).thenReturn( nodesInfo );
         Mockito.when( clusterAdminClient.health( Mockito.any() ) ).thenReturn( clusterHealthInfo );
@@ -83,7 +77,13 @@ public class ClusterReporterTest
         Mockito.when( nodesInfoResponse.getAt( 0 ) ).thenReturn( localNodeInfo );
         Mockito.when( clusterHealthResponse.getStatus() ).thenReturn( ClusterHealthStatus.GREEN );
 
-        clusterReporter.setClient( client );
+        final ClusterHealthProvider clusterHealthProvider = new ClusterHealthProvider();
+        clusterHealthProvider.setClusterAdminClient( clusterAdminClient );
+        final ClusterStateProvider clusterStateProvider = new ClusterStateProvider();
+        clusterStateProvider.setClusterAdminClient( clusterAdminClient );
+
+        clusterReporter.setClusterHealthProvider( clusterHealthProvider );
+        clusterReporter.setClusterStateProvider( clusterStateProvider );
     }
 
     @Test

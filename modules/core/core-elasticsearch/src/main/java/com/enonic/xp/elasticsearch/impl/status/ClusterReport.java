@@ -25,22 +25,26 @@ public final class ClusterReport
 
         if ( clusterState != null )
         {
-            json.put( "name", clusterState.getClusterName() );
+            if ( clusterState.getClusterName() != null )
+            {
+                json.put( "name", clusterState.getClusterName() );
+            }
             if ( clusterState.getLocalNodeState() != null )
             {
                 json.set( "localNode", clusterState.getLocalNodeState().toJson() );
             }
-            final ArrayNode nodesJson = json.putArray( "members" );
-            for ( final MemberNodeState node : clusterState.getMemberNodeStateList() )
+            if ( clusterState.getMemberNodeStateList() != null && !clusterState.getMemberNodeStateList().isEmpty() )
             {
-                nodesJson.add( node.toJson() );
+                final ArrayNode nodesJson = json.putArray( "members" );
+                for ( final MemberNodeState node : clusterState.getMemberNodeStateList() )
+                {
+                    nodesJson.add( node.toJson() );
+                }
             }
-
             if ( StringUtils.isNotEmpty( clusterState.getErrorMessage() ) )
             {
                 errorMessages.add( clusterState.getErrorMessage() );
             }
-
         }
         else
         {
