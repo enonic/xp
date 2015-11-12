@@ -373,6 +373,9 @@ module app.publish {
 
         private doPublish() {
 
+            this.showLoadingSpinnerAtButton();
+            this.publishButton.setEnabled(false);
+
             var selectedIds = this.getSelectedContentsIds();
             new PublishContentRequest().
                 setIncludeChildren(this.includeChildItemsCheck.isChecked()).

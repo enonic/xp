@@ -19,19 +19,7 @@ module app.remove {
 
             this.deleteButton = this.setDeleteAction(new ContentDeleteDialogAction());
 
-            this.getDeleteAction().onExecuted(() => {
-
-                this.createDeleteRequest().sendAndParse().then((result: api.content.DeleteContentResult) => {
-                    this.close();
-                    app.view.DeleteAction.showDeleteResult(result);
-                }).catch((reason: any) => {
-                    if (reason && reason.message) {
-                        api.notify.showError(reason.message);
-                    } else {
-                        api.notify.showError('Content could not be deleted.');
-                    }
-                }).done();
-            });
+            this.addDeleteActionHandler();
 
             this.addCancelButtonToBottom();
         }
@@ -56,6 +44,27 @@ module app.remove {
                 }
             }
             return -1;
+        }
+
+        private addDeleteActionHandler() {
+            this.getDeleteAction().onExecuted(() => {
+
+                this.deleteButton.setEnabled(false);
+                this.showLoadingSpinner();
+                this.createDeleteRequest().sendAndParse().then((result: api.content.DeleteContentResult) => {
+                    this.close();
+                    app.view.DeleteAction.showDeleteResult(result);
+                }).catch((reason: any) => {
+                    if (reason && reason.message) {
+                        api.notify.showError(reason.message);
+                    } else {
+                        api.notify.showError('Content could not be deleted.');
+                    }
+                }).finally(() => {
+                    this.deleteButton.setEnabled(true);
+                    this.hideLoadingSpinner();
+                }).done();
+            });
         }
 
         private createSelectionItemForDelete(content: ContentSummaryAndCompareStatus): SelectionItem<ContentSummaryAndCompareStatus> {
