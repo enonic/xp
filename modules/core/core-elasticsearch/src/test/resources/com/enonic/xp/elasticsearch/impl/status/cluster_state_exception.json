@@ -1,5 +1,4 @@
 {
-  "members": [],
   "state": "GREEN",
   "errorMessages": ["ElasticsearchException[cluster state exception]"]
 }
