@@ -25,6 +25,7 @@
 
 ///<reference path='OpenEditPermissionsDialogEvent.ts' />
 ///<reference path='ContentServerEvent.ts' />
+///<reference path='ContentServerChange.ts' />
 ///<reference path='ContentChangeResult.ts' />
 ///<reference path='ContentResourceRequest.ts' />
 ///<reference path='ApplyContentPermissionsRequest.ts' />
