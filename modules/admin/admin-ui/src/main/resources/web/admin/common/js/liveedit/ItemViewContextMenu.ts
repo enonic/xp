@@ -158,8 +158,8 @@ module api.liveedit {
         }
 
         toggleVerticalPosition(bottom: boolean) {
-            this.toggleClassEx(ItemViewContextMenuArrow.clsBottom, bottom);
-            this.toggleClassEx(ItemViewContextMenuArrow.clsTop, !bottom);
+            this.toggleClass(ItemViewContextMenuArrow.clsBottom, bottom);
+            this.toggleClass(ItemViewContextMenuArrow.clsTop, !bottom);
         }
 
         getWidth(): number {
