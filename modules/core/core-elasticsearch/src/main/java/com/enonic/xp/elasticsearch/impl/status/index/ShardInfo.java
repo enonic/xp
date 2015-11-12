@@ -8,32 +8,23 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ShardInfo
 {
-    final String id;
+    final String index;
+
+    final int id;
 
     final boolean primary;
 
-    final String shardState;
+    final String state;
+
+    final String node;
 
     private ShardInfo( final Builder builder )
     {
+        index = builder.index;
         id = builder.id;
         primary = builder.primary;
-        shardState = builder.shardState;
-    }
-
-    public ObjectNode toJson()
-    {
-        final ObjectNode json = JsonNodeFactory.instance.objectNode();
-        if ( !StringUtils.isEmpty( id ) )
-        {
-            json.put( "id", id );
-        }
-        json.put( "primary", primary );
-        if ( !StringUtils.isEmpty( shardState ) )
-        {
-            json.put( "state", shardState );
-        }
-        return json;
+        state = builder.state;
+        node = builder.node;
     }
 
     public static Builder create()
@@ -41,20 +32,54 @@ public class ShardInfo
         return new Builder();
     }
 
+    public ObjectNode toJson()
+    {
+        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+
+        final ObjectNode shardId = JsonNodeFactory.instance.objectNode();
+        if ( !StringUtils.isEmpty( index ) )
+        {
+            shardId.put( "index", index );
+        }
+        shardId.put( "id", this.id );
+        json.set( "id", shardId );
+
+        json.put( "primary", primary );
+        if ( !StringUtils.isEmpty( state ) )
+        {
+            json.put( "state", state );
+        }
+        if ( !StringUtils.isEmpty( node ) )
+        {
+            json.put( "node", node );
+        }
+        return json;
+    }
+
 
     public static final class Builder
     {
-        private String id;
+        private String index;
+
+        private int id;
 
         private boolean primary;
 
-        private String shardState;
+        private String state;
+
+        private String node;
 
         private Builder()
         {
         }
 
-        public Builder id( final String id )
+        public Builder index( final String index )
+        {
+            this.index = index;
+            return this;
+        }
+
+        public Builder id( final int id )
         {
             this.id = id;
             return this;
@@ -66,9 +91,15 @@ public class ShardInfo
             return this;
         }
 
-        public Builder shardState( final String shardState )
+        public Builder state( final String state )
         {
-            this.shardState = shardState;
+            this.state = state;
+            return this;
+        }
+
+        public Builder node( final String node )
+        {
+            this.node = node;
             return this;
         }
 

@@ -30,9 +30,11 @@ public class IndexReportProvider
                 final ShardRouting shardRouting = shardStats.getShardRouting();
 
                 final ShardInfo shardInfo = ShardInfo.create().
-                    id( shardRouting.shardId().toString() ).
+                    index( shardRouting.index() ).
+                    id( shardRouting.id() ).
                     primary( shardRouting.primary() ).
-                    shardState( shardRouting.state().name() ).
+                    state( shardRouting.state().name() ).
+                    node( shardRouting.currentNodeId() ).
                     build();
 
                 builder.addShardInfo( shardInfo );

@@ -30,7 +30,10 @@ public class IndexReport
     public ObjectNode toJson()
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
-        json.set( "shards", toJson( shardInfos ) );
+        if ( shardInfos != null && !shardInfos.isEmpty() )
+        {
+            json.set( "shards", toJson( shardInfos ) );
+        }
         if ( StringUtils.isNotEmpty( errorMessage ) )
         {
             json.put( "errorMessage", errorMessage );
