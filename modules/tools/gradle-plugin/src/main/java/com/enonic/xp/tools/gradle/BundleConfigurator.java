@@ -123,6 +123,9 @@ final class BundleConfigurator
     private void includeWebJars()
     {
         final File webjarsDir = new File( this.project.getBuildDir(), "webjars/META-INF/resources/webjars" );
-        instruction( "Include-Resource", "/site/assets=" + webjarsDir.getAbsolutePath() );
+        if ( webjarsDir.exists() )
+        {
+            instruction( "Include-Resource", "/site/assets=" + webjarsDir.getAbsolutePath() );
+        }
     }
 }
