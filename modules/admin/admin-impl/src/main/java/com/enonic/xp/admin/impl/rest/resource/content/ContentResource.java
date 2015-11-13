@@ -76,7 +76,6 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishContent
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
-import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.CreateAttachment;
@@ -488,23 +487,10 @@ public final class ContentResource
                 return ContentPublishItemJson.create().
                     content( content ).
                     compareStatus( compareContentResult.getCompareStatus().name() ).
-                    iconUrl( getIconUrl( contentIconUrlResolver, content ) ).
+                    iconUrl( contentIconUrlResolver.resolve( content ) ).
                     build();
             } ).
             collect( Collectors.toList() );
-    }
-
-    private String getIconUrl( final ContentIconUrlResolver contentIconUrlResolver, final Content content )
-    {
-        try
-        {
-            return contentIconUrlResolver.resolve( content );
-        }
-        catch ( final ApplicationNotFoundException exception )
-        {
-            // do nothing - we resolve content of an application that was removed
-        }
-        return null;
     }
 
     @POST
