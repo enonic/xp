@@ -2,8 +2,6 @@ package com.enonic.xp.admin.impl.rest.resource.repo;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.repository.RepositoryId;
 
@@ -20,9 +18,7 @@ public class RestoreRequestJson
                                @JsonProperty("skipIndexedData") final boolean skipIndexedData,
                                @JsonProperty("snapshotName") final String snapshotName )
     {
-        Preconditions.checkArgument( !Strings.isNullOrEmpty( repository ), "Repository name has to be given" );
-
-        this.repositoryId = RepositoryId.from( repository );
+        this.repositoryId = repository == null ? null : RepositoryId.from( repository );
         this.skipIndexedData = skipIndexedData;
         this.snapshotName = snapshotName;
     }

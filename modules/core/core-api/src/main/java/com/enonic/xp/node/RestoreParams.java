@@ -75,7 +75,6 @@ public class RestoreParams
         private void validate()
         {
             Preconditions.checkArgument( !Strings.isNullOrEmpty( snapshotName ), "Snapshot name has to be given" );
-            Preconditions.checkArgument( this.repositoryId != null, "Repository must be given" );
         }
 
         public RestoreParams build()

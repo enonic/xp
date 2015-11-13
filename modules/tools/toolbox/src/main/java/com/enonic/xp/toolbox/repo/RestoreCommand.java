@@ -13,7 +13,7 @@ public final class RestoreCommand
 {
     public static final String RESTORE_SNAPSHOT_REST_PATH = "/admin/rest/repo/restore";
 
-    @Option(name = "-r", description = "The name of the repository to restore.", required = true)
+    @Option(name = "-r", description = "The name of the repository to restore.")
     public String repository;
 
     @Option(name = "-s", description = "The name of the snapshot to restore.", required = true)
@@ -30,7 +30,10 @@ public final class RestoreCommand
     private ObjectNode createJsonRequest()
     {
         final ObjectNode json = JsonHelper.newObjectNode();
-        json.put( "repository", this.repository );
+        if ( repository != null )
+        {
+            json.put( "repository", this.repository );
+        }
         json.put( "snapshotName", this.snapshotName );
         return json;
     }
