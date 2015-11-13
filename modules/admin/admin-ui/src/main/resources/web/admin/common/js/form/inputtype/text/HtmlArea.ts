@@ -225,7 +225,8 @@ module api.form.inputtype.text {
         private getToolbarOffsetTop(delta: number = 0): number {
             var toolbar = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar"),
                 stickyToolbarHeight = toolbar.outerHeight(true),
-                stickyToolbarOffset = toolbar.offset().top;
+                offset = toolbar.offset(),
+                stickyToolbarOffset = offset ? offset.top : 0;
 
             return stickyToolbarOffset + stickyToolbarHeight + delta;
         }
