@@ -1,12 +1,14 @@
 package com.enonic.xp.elasticsearch.impl.status.index;
 
 import java.net.URL;
+import java.util.Arrays;
 
 import org.elasticsearch.action.ActionListener;
-import org.elasticsearch.action.admin.indices.stats.IndicesStatsResponse;
-import org.elasticsearch.action.admin.indices.stats.ShardStats;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.client.ClusterAdminClient;
+import org.elasticsearch.cluster.ClusterState;
+import org.elasticsearch.cluster.routing.RoutingTable;
 import org.elasticsearch.cluster.routing.ShardRouting;
 import org.elasticsearch.cluster.routing.ShardRoutingState;
 import org.junit.Assert;
@@ -26,7 +28,7 @@ import com.google.common.io.Resources;
 
 public class IndexReporterTest
 {
-    private IndicesAdminClient indicesAdminClient;
+    private ClusterAdminClient clusterAdminClient;
 
     private IndexReporter indexReporter;
 
@@ -34,7 +36,7 @@ public class IndexReporterTest
     public void setUp()
     {
 
-        indicesAdminClient = Mockito.mock( IndicesAdminClient.class );
+        clusterAdminClient = Mockito.mock( ClusterAdminClient.class );
         Mockito.doAnswer( invocation -> {
             final ShardRouting shardRouting = Mockito.mock( ShardRouting.class );
             Mockito.when( shardRouting.index() ).thenReturn( "myindex" );
@@ -44,20 +46,22 @@ public class IndexReporterTest
             Mockito.when( shardRouting.state() ).thenReturn( ShardRoutingState.STARTED );
             Mockito.when( shardRouting.currentNodeId() ).thenReturn( "nodeId" );
 
-            final ShardStats shardStats = Mockito.mock( ShardStats.class );
-            Mockito.when( shardStats.getShardRouting() ).thenReturn( shardRouting );
-            final ShardStats[] shardStatsArray = new ShardStats[]{shardStats};
+            final RoutingTable routingTable = Mockito.mock( RoutingTable.class );
+            Mockito.when( routingTable.allShards() ).thenReturn( Arrays.asList( shardRouting ) );
 
-            final IndicesStatsResponse indicesStatsResponse = Mockito.mock( IndicesStatsResponse.class );
-            Mockito.when( indicesStatsResponse.getShards() ).thenReturn( shardStatsArray );
-            ActionListener<IndicesStatsResponse> listener = (ActionListener<IndicesStatsResponse>) invocation.getArguments()[1];
-            listener.onResponse( indicesStatsResponse );
+            final ClusterState clusterState = Mockito.mock( ClusterState.class );
+            Mockito.when( clusterState.getRoutingTable() ).thenReturn( routingTable );
+
+            final ClusterStateResponse clusterStateResponse = Mockito.mock( ClusterStateResponse.class );
+            Mockito.when( clusterStateResponse.getState() ).thenReturn( clusterState );
+            ActionListener<ClusterStateResponse> listener = (ActionListener<ClusterStateResponse>) invocation.getArguments()[1];
+            listener.onResponse( clusterStateResponse );
             return null;
-        } ).when( indicesAdminClient ).
-            stats( Mockito.any(), Mockito.any() );
+        } ).when( clusterAdminClient ).
+            state( Mockito.any(), Mockito.any() );
 
         final AdminClient adminClient = Mockito.mock( AdminClient.class );
-        Mockito.when( adminClient.indices() ).thenReturn( indicesAdminClient );
+        Mockito.when( adminClient.cluster() ).thenReturn( clusterAdminClient );
 
         final IndexReportProvider indexReportProvider = new IndexReportProvider();
         indexReportProvider.setAdminClient( adminClient );
@@ -80,8 +84,8 @@ public class IndexReporterTest
         throws Exception
     {
         Mockito.doAnswer( invocation -> null ).
-            when( indicesAdminClient ).
-            stats( Mockito.any(), Mockito.any() );
+            when( clusterAdminClient ).
+            state( Mockito.any(), Mockito.any() );
         Assert.assertEquals( "index", indexReporter.getName() );
         final ObjectNode report = indexReporter.getReport();
         Assert.assertEquals( parseJson( readFromFile( "index_report_failed.json" ) ), report );
