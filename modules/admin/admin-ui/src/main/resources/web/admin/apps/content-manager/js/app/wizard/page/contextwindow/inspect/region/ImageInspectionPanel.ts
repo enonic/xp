@@ -23,6 +23,8 @@ module app.wizard.page.contextwindow.inspect.region {
 
         private imageSelector: ContentComboBox;
 
+        private imageSelectorForm: ImageSelectorForm;
+
         private handleSelectorEvents: boolean = true;
 
         private componentPropertyChangedEventHandler: (event: ComponentPropertyChangedEvent) => void;
@@ -37,6 +39,8 @@ module app.wizard.page.contextwindow.inspect.region {
                 setLoader(new api.content.ContentSummaryLoader()).
                 build();
 
+            this.imageSelectorForm = new ImageSelectorForm(this.imageSelector, "Image");
+
             this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
                 // Ensure displayed config form and selector option are removed when image is removed
                 if (event.getPropertyName() == ImageComponent.PROPERTY_IMAGE) {
@@ -48,7 +52,7 @@ module app.wizard.page.contextwindow.inspect.region {
             };
 
             this.initSelectorListeners();
-            this.appendChild(this.imageSelector);
+            this.appendChild(this.imageSelectorForm);
         }
 
         setComponent(component: ImageComponent) {

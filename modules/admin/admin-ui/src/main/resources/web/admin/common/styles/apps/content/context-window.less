@@ -157,7 +157,7 @@
     .form-view {
       .form-element-spacing(@form-field-spacing);
 
-      &.page-controller-form, &.descriptor-based-dropdown-form, &.page-template-form {
+      &.page-controller-form, &.descriptor-based-dropdown-form, &.page-template-form, &.image-combobox-form {
         margin-top: 0px;
 
         label {
@@ -190,6 +190,12 @@
         height: 24px;
         color: @admin-font-gray3;
       }
+
+      .wrapper {
+        .font-icon-default {
+          font-size: 40px;
+        }
+      }
     }
 
     .descriptor-header, .component-name-header {
@@ -210,7 +216,6 @@
     }
 
     .rich-combobox {
-      border: 1px #ffffff solid;
 
       .selected-option {
         border: 1px transparent solid;
@@ -235,7 +240,7 @@
           .names-view {
             .main-name {
               height: auto;
-              font-size: 24px;
+              font-size: 18px;
               line-height: 30px;
             }
             .ellipsis();
@@ -248,10 +253,6 @@
         .input-glow();
       }
     }
-  }
-
-  .page-controller-form, .descriptor-based-dropdown-form, .page-template-form {
-    background-color: @admin-context-bg-grey-opal;
   }
 
   .field-set-view {
