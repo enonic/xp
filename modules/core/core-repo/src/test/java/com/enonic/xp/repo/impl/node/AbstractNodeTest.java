@@ -7,6 +7,7 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
@@ -31,6 +32,7 @@ import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.repo.impl.blob.file.FileBlobStore;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
+import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.xp.repo.impl.elasticsearch.search.ElasticsearchSearchDao;
@@ -111,7 +113,10 @@ public abstract class AbstractNodeTest
     {
         super.setUp();
 
-        System.setProperty( "xp.home", xpHome.getRoot().getPath() );
+        final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
+        Mockito.when( repoConfig.getBlobStoreDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/blob" ) );
+
+        // System.setProperty( "xp.home", xpHome.getRoot().getPath() );
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
@@ -140,6 +145,8 @@ public abstract class AbstractNodeTest
         // Storage-service
 
         this.nodeDao = new NodeVersionDaoImpl();
+        this.nodeDao.setConfiguration( repoConfig );
+        this.nodeDao.initialize();
 
         this.storageService = new StorageServiceImpl();
         this.storageService.setVersionService( this.versionService );

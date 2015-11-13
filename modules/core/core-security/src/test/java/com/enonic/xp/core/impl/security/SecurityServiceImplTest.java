@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.security;
 
+import java.io.File;
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
@@ -15,6 +16,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
+import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.xp.repo.impl.elasticsearch.search.ElasticsearchSearchDao;
@@ -76,19 +78,7 @@ public class SecurityServiceImplTest
 
     private NodeServiceImpl nodeService;
 
-    private NodeVersionDaoImpl nodeDao;
-
-    private VersionServiceImpl versionService;
-
-    private BranchServiceImpl branchService;
-
     private ElasticsearchIndexServiceInternal indexServiceInternal;
-
-    private SearchServiceImpl searchService;
-
-    private StorageServiceImpl storageService;
-
-    private ElasticsearchSearchDao searchDao;
 
     protected EventPublisher eventPublisher;
 
@@ -99,46 +89,51 @@ public class SecurityServiceImplTest
     {
         super.setUp();
 
-        System.setProperty( "xp.home", xpHome.getRoot().getPath() );
+        final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
+        Mockito.when( repoConfig.getBlobStoreDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/blob" ) );
 
         final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
         storageDao.setClient( this.client );
         storageDao.setElasticsearchDao( this.elasticsearchDao );
 
-        this.branchService = new BranchServiceImpl();
-        this.branchService.setStorageDao( storageDao );
+        final BranchServiceImpl branchService = new BranchServiceImpl();
+        branchService.setStorageDao( storageDao );
 
-        this.versionService = new VersionServiceImpl();
-        this.versionService.setStorageDao( storageDao );
+        final VersionServiceImpl versionService = new VersionServiceImpl();
+        versionService.setStorageDao( storageDao );
 
-        this.nodeDao = new NodeVersionDaoImpl();
+        final NodeVersionDaoImpl nodeDao = new NodeVersionDaoImpl();
+        nodeDao.setConfiguration( repoConfig );
+        nodeDao.initialize();
 
         this.indexServiceInternal = new ElasticsearchIndexServiceInternal();
         this.indexServiceInternal.setClient( client );
         this.indexServiceInternal.setElasticsearchDao( elasticsearchDao );
 
-        this.searchDao = new ElasticsearchSearchDao();
-        this.searchDao.setElasticsearchDao( this.elasticsearchDao );
+        final ElasticsearchSearchDao searchDao = new ElasticsearchSearchDao();
+        searchDao.setElasticsearchDao( this.elasticsearchDao );
 
-        this.searchService = new SearchServiceImpl();
-        this.searchService.setSearchDao( this.searchDao );
+        final SearchServiceImpl searchService = new SearchServiceImpl();
+        searchService.setSearchDao( searchDao );
 
-        this.storageService = new StorageServiceImpl();
-        this.storageService.setBranchService( this.branchService );
-        this.storageService.setVersionService( this.versionService );
-        this.storageService.setNodeVersionDao( this.nodeDao );
-        this.storageService.setIndexServiceInternal( this.indexServiceInternal );
+        final StorageServiceImpl storageService = new StorageServiceImpl();
+        storageService.setBranchService( branchService );
+        storageService.setVersionService( versionService );
+        storageService.setNodeVersionDao( nodeDao );
+        storageService.setIndexServiceInternal( this.indexServiceInternal );
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setSearchService( searchService );
         this.nodeService.setStorageService( storageService );
+        this.nodeService.setConfiguration( repoConfig );
+        this.nodeService.initialize();
 
         this.eventPublisher = Mockito.mock( EventPublisher.class );
         this.nodeService.setEventPublisher( this.eventPublisher );
 
         IndexServiceImpl indexService = new IndexServiceImpl();
-        indexService.setSearchService( this.searchService );
+        indexService.setSearchService( searchService );
         indexService.setIndexServiceInternal( this.indexServiceInternal );
 
         securityService = new SecurityServiceImpl();

@@ -46,6 +46,7 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.repo.impl.blob.file.FileBlobStore;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
+import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.xp.repo.impl.elasticsearch.search.ElasticsearchSearchDao;
@@ -137,7 +138,8 @@ public class AbstractContentServiceTest
     {
         super.setUp();
 
-        System.setProperty( "xp.home", xpHome.getRoot().getPath() );
+        final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
+        Mockito.when( repoConfig.getBlobStoreDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/blob" ) );
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
@@ -161,6 +163,8 @@ public class AbstractContentServiceTest
         this.indexService.setElasticsearchDao( elasticsearchDao );
 
         this.nodeDao = new NodeVersionDaoImpl();
+        this.nodeDao.setConfiguration( repoConfig );
+        this.nodeDao.initialize();
 
         this.contentService = new ContentServiceImpl();
 
@@ -181,6 +185,8 @@ public class AbstractContentServiceTest
         this.nodeService.setStorageService( storageService );
         this.nodeService.setSearchService( searchService );
         this.nodeService.setEventPublisher( eventPublisher );
+        this.nodeService.setConfiguration( repoConfig );
+        this.nodeService.initialize();
 
         this.mixinService = Mockito.mock( MixinService.class );
         this.contentTypeRegistry = Mockito.mock( ContentTypeRegistry.class );
