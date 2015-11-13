@@ -1,8 +1,9 @@
 package com.enonic.xp.elasticsearch.impl.status.index;
 
-import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequestBuilder;
-import org.elasticsearch.action.admin.indices.stats.IndicesStatsResponse;
-import org.elasticsearch.action.admin.indices.stats.ShardStats;
+import java.util.List;
+
+import org.elasticsearch.action.admin.cluster.state.ClusterStateRequestBuilder;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.cluster.routing.ShardRouting;
 import org.osgi.service.component.annotations.Component;
@@ -20,14 +21,17 @@ public class IndexReportProvider
         final IndexReport.Builder builder = IndexReport.create();
         try
         {
-            final IndicesStatsResponse indicesStatsResponse = new IndicesStatsRequestBuilder( adminClient.indices() ).
-                all().
+            final ClusterStateResponse clusterStateResponse = new ClusterStateRequestBuilder( adminClient.cluster() ).
+                clear().
+                setRoutingTable( true ).
                 get( TIMEOUT );
 
-            final ShardStats[] shards = indicesStatsResponse.getShards();
-            for ( ShardStats shardStats : shards )
+            final List<ShardRouting> shardRoutings = clusterStateResponse.getState().
+                getRoutingTable().
+                allShards();
+
+            for ( ShardRouting shardRouting : shardRoutings )
             {
-                final ShardRouting shardRouting = shardStats.getShardRouting();
 
                 final ShardInfo shardInfo = ShardInfo.create().
                     index( shardRouting.index() ).
