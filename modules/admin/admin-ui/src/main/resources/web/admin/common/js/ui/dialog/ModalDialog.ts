@@ -24,6 +24,8 @@ module api.ui.dialog {
 
         private cancelButton: api.ui.button.ActionButton;
 
+        private static openDialogsCounter: number = 0;
+
         constructor(config: ModalDialogConfig) {
             super("modal-dialog");
 
@@ -55,7 +57,7 @@ module api.ui.dialog {
             this.mouseClickListener = (event: MouseEvent) => {
                 if (this.isVisible()) {
                     for (var element = event.target; element; element = (<any>element).parentNode) {
-                        if (element == this.getHTMLElement()) {
+                        if (element == this.getHTMLElement() || this.clickedTinyMceElementThatCanBeIgnored(<any>element)) {
                             return;
                         }
                     }
@@ -77,6 +79,13 @@ module api.ui.dialog {
                     this.centerMyself();
                 }
             });
+        }
+
+        private clickedTinyMceElementThatCanBeIgnored(element: HTMLElement): boolean {
+            if (!!element && !!element.className) {
+                return element.className.indexOf("mce-") > -1 || element.className.indexOf("html-area-modal-dialog") > -1;
+            }
+            return false;
         }
 
         private createDefaultCancelAction() {
@@ -165,11 +174,15 @@ module api.ui.dialog {
 
         close() {
 
-            api.ui.mask.BodyMask.get().hide();
+            if (ModalDialog.openDialogsCounter == 1) {
+                api.ui.mask.BodyMask.get().hide();
+            }
 
             this.hide();
 
             api.ui.KeyBindings.get().unshelveBindings();
+
+            ModalDialog.openDialogsCounter--;
         }
 
         open() {
@@ -181,6 +194,8 @@ module api.ui.dialog {
             this.show();
 
             api.ui.KeyBindings.get().bindKeys(api.ui.Action.getKeyBindings(this.actions));
+
+            ModalDialog.openDialogsCounter++;
         }
     }
 

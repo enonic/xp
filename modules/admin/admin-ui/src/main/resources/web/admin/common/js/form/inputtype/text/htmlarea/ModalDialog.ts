@@ -191,6 +191,7 @@ module api.form.inputtype.text.htmlarea {
             super.close();
             api.dom.Body.get().unKeyDown(this.keyDownListener);
             this.editor.focus();
+            this.remove();
         }
     }
 }
