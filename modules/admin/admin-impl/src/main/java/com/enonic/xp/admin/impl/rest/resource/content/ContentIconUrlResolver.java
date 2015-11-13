@@ -40,4 +40,35 @@ public final class ContentIconUrlResolver
         }
         return this.contentTypeIconUrlResolver.resolve( content.getType() );
     }
+
+    public String resolveOrReturnNull( final Content content )
+    {
+        try
+        {
+            if ( content.hasThumbnail() )
+            {
+                return ServletRequestUrlHelper.createUri(
+                    "/admin/rest/content/icon/" + content.getId() + "?ts=" + content.getModifiedTime().toEpochMilli() );
+            }
+            else if ( content instanceof Media )
+            {
+                final Media media = (Media) content;
+                if ( media.isImage() )
+                {
+                    final Attachment attachment = ( (Media) content ).getMediaAttachment();
+                    if ( attachment != null )
+                    {
+                        return ServletRequestUrlHelper.createUri(
+                            "/admin/rest/content/icon/" + content.getId() + "?ts=" + content.getModifiedTime().toEpochMilli() );
+                    }
+                }
+            }
+            return this.contentTypeIconUrlResolver.resolve( content.getType() );
+        }
+        catch ( final Exception e )
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

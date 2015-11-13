@@ -487,7 +487,7 @@ public final class ContentResource
                 return ContentPublishItemJson.create().
                     content( content ).
                     compareStatus( compareContentResult.getCompareStatus().name() ).
-                    iconUrl( contentIconUrlResolver.resolve( content ) ).
+                    iconUrl( contentIconUrlResolver.resolveOrReturnNull( content ) ).
                     build();
             } ).
             collect( Collectors.toList() );
