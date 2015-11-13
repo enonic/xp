@@ -13,7 +13,7 @@ module app.wizard.page.contextwindow.inspect.region {
 
             this.namesAndIcon = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
                 setSize(api.app.NamesAndIconViewSize.medium)).
-                setIconClass(api.liveedit.ItemViewIconClassResolver.resolveByType("region", "icon-xlarge"));
+                setIconClass(api.liveedit.ItemViewIconClassResolver.resolveByType("region"));
 
             this.appendChild(this.namesAndIcon);
         }
