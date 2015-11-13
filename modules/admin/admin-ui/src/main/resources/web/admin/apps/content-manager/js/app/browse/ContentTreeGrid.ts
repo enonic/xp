@@ -76,7 +76,7 @@ module app.browse {
                 setId("modifiedTime").
                 setField("contentSummary.modifiedTime").
                 setCssClass("modified").
-                setMinWidth(90).
+                setMinWidth(135).
                 setMaxWidth(135).
                 setFormatter(DateTimeFormatter.format).
                 build();
@@ -94,7 +94,10 @@ module app.browse {
                     prependClasses("content-tree-grid")
             );
 
-            let updateColumns = (item: api.ui.responsive.ResponsiveItem) => {
+            // Debouncing columns update will prevent from too often calls,
+            // also setTimeout usage in `debounce` will make this method to
+            // be called after block it was called from and not earlier, than in 10ms.
+            let updateColumns = api.util.AppHelper.debounce((item: api.ui.responsive.ResponsiveItem) => {
                 if (item.isRangeSizeChanged()) {
 
                     if (item.isInRangeOrSmaller(ResponsiveRanges._240_360)) {
@@ -115,7 +118,7 @@ module app.browse {
                 } else {
                     this.getGrid().resizeCanvas();
                 }
-            };
+            }, 10, false);
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 if (this.isInRenderingView()) {

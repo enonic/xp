@@ -214,8 +214,6 @@ module api.ui.panel {
 
         private animationDelay: number;
 
-        public static debug: boolean = false;
-
         private secondPanelShouldSlideRight: boolean;
 
         constructor(builder: SplitPanelBuilder) {
@@ -240,6 +238,7 @@ module api.ui.panel {
             } else {
                 this.setSecondPanelSize(builder.getSecondPanelSize(), this.secondPanelUnit);
             }
+
             this.alignment = builder.getAlignment();
             this.alignmentTreshold = builder.getAlignmentTreshold();
             this.splitterThickness = builder.getSplitterThickness();
@@ -257,17 +256,16 @@ module api.ui.panel {
             this.onRendered(() => this.onRenderedDragHandler());
 
             if (this.alignmentTreshold) {
-                ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-                    this.runWithAnimationDelayIfPresent(() => {
-                        if (this.requiresAlignment()) {
-                            this.updateAlignment();
-                        }
-                    });
-                });
+                let debounced = api.util.AppHelper.debounce(() => {
+                    if (this.requiresAlignment() && this.isVisible()) {
+                        this.updateAlignment();
+                    }
+                }, Math.max(10, this.animationDelay), false);
+                ResponsiveManager.onAvailableSizeChanged(this, debounced);
             }
 
             this.onShown((event: api.dom.ElementShownEvent) => {
-                var splitPanelSize = this.isHorizontal() ? this.getEl().getHeight() : this.getEl().getWidth();
+                let splitPanelSize = this.isHorizontal() ? this.getEl().getHeight() : this.getEl().getWidth();
                 api.util.assert(this.firstPanelMinSize + this.secondPanelMinSize <= splitPanelSize,
                     "warning: total sum of first and second panel minimum sizes exceed total split panel size");
                 this.updateAlignment();
@@ -460,12 +458,18 @@ module api.ui.panel {
                 this.firstPanel.getEl().setHeight(this.getPanelSizeString(1)).setWidth(null);
                 this.secondPanel.getEl().setHeight(this.getPanelSizeString(2)).setWidth(null);
                 this.splitter.getEl().setHeightPx(this.getSplitterThickness()).setWidth(null).setLeft(null);
-                this.runWithAnimationDelayIfPresent(ResponsiveManager.fireResizeEvent);
+                if (this.isVisible()) {
+                    // Do not need animation delay, because resize event handler is called using `debounce`...
+                    ResponsiveManager.fireResizeEvent();
+                }
             } else {
                 this.firstPanel.getEl().setWidth(this.getPanelSizeString(1)).setHeight(null);
                 this.secondPanel.getEl().setWidth(this.getPanelSizeString(2)).setHeight(null);
                 this.splitter.getEl().setWidthPx(this.getSplitterThickness()).setHeight(null);
-                this.runWithAnimationDelayIfPresent(ResponsiveManager.fireResizeEvent);
+                if (this.isVisible()) {
+                    // ... and the same for this case.
+                    ResponsiveManager.fireResizeEvent();
+                }
                 if (this.firstPanelUnit == SplitPanelUnit.PERCENT && this.secondPanelUnit == SplitPanelUnit.PERCENT) {
                     var positionInPercentage = (this.firstPanelSize != -1) ? this.firstPanelSize : 100 - this.secondPanelSize;
                     this.splitter.getEl().setLeft("calc(" + positionInPercentage + "% - " + (this.getSplitterThickness() / 2) + "px)");
@@ -473,29 +477,6 @@ module api.ui.panel {
                     this.splitter.getEl().setLeft(this.getPanelSizeString(1));
                 }
             }
-        }
-
-        runWithAnimationDelayIfPresent(callee: () => void) {
-            if (this.animationDelay) {
-                if (SplitPanel.debug) {
-                    console.debug(this.toString() + '.runWithAnimationDelayIfPresent: delaying for ' + this.animationDelay, callee);
-                }
-                setTimeout(() => {
-                    if (SplitPanel.debug) {
-                        console.debug(this.toString() + '.runWithAnimationDelayIfPresent: running delayed', callee);
-                    }
-                    callee();
-                }, this.animationDelay);
-            } else {
-                if (SplitPanel.debug) {
-                    console.debug(this.toString() + '.runWithAnimationDelayIfPresent: no delay, running now', callee);
-                }
-                callee();
-            }
-        }
-
-        toString(): string {
-            return api.ClassHelper.getClassName(this) + '[' + this.getId() + ']';
         }
 
         isHorizontal() {
@@ -666,6 +647,10 @@ module api.ui.panel {
 
         private getSplitterThickness(): number {
             return this.splitterIsHidden ? 0 : this.splitterThickness;
+        }
+
+        toString(): string {
+            return api.ClassHelper.getClassName(this) + '[' + this.getId() + ']';
         }
     }
 }
