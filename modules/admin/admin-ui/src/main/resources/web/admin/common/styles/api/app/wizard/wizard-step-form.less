@@ -12,6 +12,20 @@
     color: darkred;
   }
 
+  .content-combo-box {
+    .selected-option {
+      .edit {
+        &:extend(.icon);
+        .icon-pencil2;
+
+        float: right;
+        margin: 0 20px;
+        font-size: 12px;
+        text-decoration: none;
+        cursor: pointer;
+      }
+    }
+  }
 }
 
 ._0-240, ._240-360, ._360-540, ._540-720 {
