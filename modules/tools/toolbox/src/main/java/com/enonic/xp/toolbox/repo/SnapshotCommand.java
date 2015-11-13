@@ -13,7 +13,7 @@ public final class SnapshotCommand
 {
     public static final String SNAPSHOT_REST_PATH = "/admin/rest/repo/snapshot";
 
-    @Option(name = "-r", description = "the name of the repository to snapshot.", required = true)
+    @Option(name = "-r", description = "the name of the repository to snapshot.")
     public String repository;
 
     @Override
@@ -27,7 +27,18 @@ public final class SnapshotCommand
     private ObjectNode createJsonRequest()
     {
         final ObjectNode json = JsonHelper.newObjectNode();
-        json.put( "repositoryId", this.repository );
+        if ( repository != null )
+        {
+            json.put( "repositoryId", this.repository );
+        }
         return json;
+    }
+
+    public static void main( String[] args )
+        throws Exception
+    {
+        final SnapshotCommand snapshotCommand = new SnapshotCommand();
+        snapshotCommand.auth = "su:password";
+        snapshotCommand.execute();
     }
 }
