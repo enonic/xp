@@ -273,7 +273,7 @@ exports.createGroup = function (params) {
  * });
  *
  * @param {object} params JSON parameters.
- * @param {string} key Principal key of the group to modify.
+ * @param {string} params.key Principal key of the group to modify.
  * @param {string} params.editor Group editor function to apply to group.
  */
 exports.modifyGroup = function (params) {
@@ -326,7 +326,7 @@ exports.removeMembers = function (principalKey, members) {
  *
  * @example
  * authLib.findPrincipals({
- *   type: 'user'
+ *   type: 'user',
  *   userStore: 'user-store',
  *   start: 0,
  *   count: 10,
@@ -343,6 +343,7 @@ exports.removeMembers = function (principalKey, members) {
  * @param {string} params.name Name of the principal to look for.
  * @param {string} params.email Email of the user to look for.
  * @param {string} params.displayName Display name of the principal to look for.
+ * @param {string} params.searchText Text to look for in any principal field.
  */
 exports.findPrincipals = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.FindPrincipalsHandler');
@@ -354,6 +355,7 @@ exports.findPrincipals = function (params) {
     bean.name = __.nullOrValue(params.name);
     bean.email = __.nullOrValue(params.email);
     bean.displayName = __.nullOrValue(params.displayName);
+    bean.searchText = __.nullOrValue(params.searchText);
 
     return __.toNativeObject(bean.findPrincipals());
 };

@@ -145,4 +145,20 @@ public class FindPrincipalsHandlerTest
 
         runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsByDisplayName" );
     }
+
+    @Test
+    public void testFindPrincipalsBySearchText()
+    {
+        final PrincipalQuery expectedQuery = PrincipalQuery.create().
+            searchText( "enonic" ).
+            build();
+
+        final PrincipalQueryResult result = PrincipalQueryResult.create().
+            addPrincipal( TestDataFixtures.getTestUser() ).
+            totalSize( 1 ).
+            build();
+        Mockito.when( securityService.query( Mockito.eq( expectedQuery ) ) ).thenReturn( result );
+
+        runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsBySearchText" );
+    }
 }

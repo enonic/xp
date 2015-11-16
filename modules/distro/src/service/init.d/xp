@@ -1,0 +1,76 @@
+#! /bin/sh
+
+#!/bin/sh
+#
+# /etc/init.d/enonicxp
+# Subsystem file for "Enonic XP" server
+#
+# chkconfig: 2345 95 05
+# description: Enonic XP server daemon
+#
+# processname: enonicxp
+
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
+. /lib/lsb/init-functions
+
+# Set according to environment
+XP_INSTALL="/home/xp/distro"
+XP_HOME="/home/xp/xp_home"
+RUNUSER=xp
+XP_LOG=$XP_HOME/logs/xp.out
+
+
+DESC="Enonic XP"
+NAME=xp
+PIDFILE=$XP_INSTALL/work/xp.pid
+SCRIPTNAME=/etc/init.d/$NAME
+XP_CONFIG="/etc/xp.conf"
+
+SCRIPT="service.sh"
+
+do_start()
+{
+    su - "$RUNUSER" -c "export XP_HOME=${XP_HOME};export XP_INSTALL=${XP_INSTALL};${XP_INSTALL}/bin/$SCRIPT $PIDFILE $XP_CONFIG" > ${XP_LOG} 2>&1
+    RETVAL=$?
+	echo  -n "( with pid $(cat $PIDFILE) and exit code $RETVAL )"
+	echo
+}
+
+do_stop()
+{
+    if [ -e $PIDFILE ]; then
+     	echo -n "Stopping $NAME:"
+	kill $(cat $PIDFILE)
+	RETVAL=$?
+	[ "$RETVAL" = 0 ] && rm -f $PIDFILE
+	echo
+    else
+      log_failure_msg "$NAME is not running."
+    fi
+}
+
+status()
+{
+    if [ ! -e $PIDFILE ]; then
+         log_failure_msg "$NAME is not running."
+         return 1
+       fi
+       status_of_proc -p $PIDFILE "" $NAME && exit 0 || exit $?
+}
+
+case "$1" in
+  start)
+    do_start
+    ;;
+  stop)
+    do_stop
+    ;;
+  status)
+    status
+    ;;
+  *)
+    echo "Usage: $SCRIPTNAME {start|stop|status}" >&2
+    exit 3
+    ;;
+esac
