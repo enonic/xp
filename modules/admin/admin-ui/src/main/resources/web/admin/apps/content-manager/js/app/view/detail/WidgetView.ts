@@ -3,6 +3,7 @@ module app.view.detail {
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
     import RenderingMode = api.rendering.RenderingMode;
+    import Widget = api.content.Widget;
 
     export class WidgetView extends api.dom.DivEl {
 
@@ -12,6 +13,8 @@ module app.view.detail {
 
         private detailsPanel: DetailsPanel;
 
+        private widget: Widget;
+
         public static debug = false;
 
         constructor(builder: WidgetViewBuilder) {
@@ -20,6 +23,7 @@ module app.view.detail {
             this.detailsPanel = builder.detailsPanel;
             this.widgetName = builder.name;
             this.widgetItemViews = builder.widgetItemViews;
+            this.widget = builder.widget;
 
             this.layout();
         }
@@ -32,6 +36,10 @@ module app.view.detail {
 
             if (this.widgetItemViews) {
                 this.widgetItemViews.forEach((itemView: WidgetItemView) => {
+                    debugger;
+                    if (this.isUrlBased()) {
+                        itemView.setUrl(this.widget.getUrl(), this.detailsPanel.getItem().getPath().getFirstElement());
+                    }
                     this.appendChild(itemView);
                     layoutTasks.push(itemView.layout());
                 })
@@ -86,6 +94,10 @@ module app.view.detail {
             this.slideOut();
         }
 
+        private isUrlBased(): boolean {
+            return !!this.widget && !!this.widget.getUrl();
+        }
+
         public static create(): WidgetViewBuilder {
             return new WidgetViewBuilder();
         }
@@ -99,6 +111,8 @@ module app.view.detail {
 
         widgetItemViews: WidgetItemView[] = [];
 
+        widget: Widget;
+
         public setName(name: string): WidgetViewBuilder {
             this.name = name;
             return this;
@@ -111,6 +125,11 @@ module app.view.detail {
 
         public addWidgetItemView(widgetItemView: WidgetItemView): WidgetViewBuilder {
             this.widgetItemViews.push(widgetItemView);
+            return this;
+        }
+
+        public setWidget(widget: Widget): WidgetViewBuilder {
+            this.widget = widget;
             return this;
         }
 

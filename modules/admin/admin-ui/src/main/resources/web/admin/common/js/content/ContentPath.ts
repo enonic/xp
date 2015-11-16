@@ -58,8 +58,8 @@ module api.content {
             return this.elements.length > 1;
         }
 
-        getLastElement(): string {
-            return (this.elements[this.elements.length - 1] || "");
+        getFirstElement(): string {
+            return (this.elements[0] || "");
         }
 
         getParentPath(): ContentPath {

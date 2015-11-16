@@ -295,10 +295,12 @@ module app.view.detail {
             var getWidgetsByInterfaceRequest = new api.content.GetWidgetsByInterfaceRequest(this.getWidgetsInterfaceName());
 
             return getWidgetsByInterfaceRequest.sendAndParse().then((widgets: Widget[]) => {
+                debugger;
                 widgets.forEach((widget) => {
                     var widgetView = WidgetView.create().
                         setName(widget.getDisplayName()).
                         setDetailsPanel(this).
+                        setWidget(widget).
                         build();
                     this.addWidget(widgetView);
                 })
