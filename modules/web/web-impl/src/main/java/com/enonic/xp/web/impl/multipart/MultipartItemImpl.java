@@ -22,13 +22,13 @@ final class MultipartItemImpl
     }
 
     @Override
-    public String getName()
+    public String getFileName()
     {
         return this.item.getName();
     }
 
     @Override
-    public String getFieldName()
+    public String getName()
     {
         return this.item.getFieldName();
     }

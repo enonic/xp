@@ -29,8 +29,8 @@ public class MultipartItemImplTest
 
         final MultipartItem item = new MultipartItemImpl( fileItem );
 
-        assertEquals( "image.png", item.getName() );
-        assertEquals( "upload", item.getFieldName() );
+        assertEquals( "image.png", item.getFileName() );
+        assertEquals( "upload", item.getName() );
         assertEquals( "image/png", item.getContentType().toString() );
         assertEquals( 10, item.getSize() );
         assertNotNull( item.getBytes() );
@@ -51,8 +51,8 @@ public class MultipartItemImplTest
 
         final MultipartItem item = new MultipartItemImpl( fileItem );
 
-        assertEquals( "image.png", item.getName() );
-        assertEquals( "upload", item.getFieldName() );
+        assertEquals( "image.png", item.getFileName() );
+        assertEquals( "upload", item.getName() );
         assertEquals( "image/png", item.getContentType().toString() );
         assertEquals( 10, item.getSize() );
         assertNotNull( item.getBytes() );

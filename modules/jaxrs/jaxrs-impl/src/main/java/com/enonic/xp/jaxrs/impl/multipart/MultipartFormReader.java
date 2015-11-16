@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -14,6 +15,7 @@ import javax.ws.rs.ext.Provider;
 
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartService;
+import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 @Provider
 @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -39,6 +41,7 @@ public final class MultipartFormReader
                                    final InputStream entityStream )
         throws IOException, WebApplicationException
     {
-        return this.multipartService.parse( entityStream, mediaType.toString() );
+        final HttpServletRequest req = ServletRequestHolder.getRequest();
+        return this.multipartService.parse( req );
     }
 }

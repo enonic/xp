@@ -49,11 +49,11 @@ public class MultipartFormImplTest
     {
         final MultipartItem item1 = this.form.get( "upload1" );
         assertNotNull( item1 );
-        assertEquals( "upload1", item1.getFieldName() );
+        assertEquals( "upload1", item1.getName() );
 
         final MultipartItem item2 = this.form.get( "upload2" );
         assertNotNull( item2 );
-        assertEquals( "upload2", item2.getFieldName() );
+        assertEquals( "upload2", item2.getName() );
 
         final MultipartItem item3 = this.form.get( "upload3" );
         assertNull( item3 );
