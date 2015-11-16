@@ -41,8 +41,12 @@ module api.content {
             var contentEventType;
 
             var contentPaths = event2Json.data.nodes.
-                filter((node) => node.path.indexOf("/content") === 0).
-                map((node) => api.content.ContentPath.fromString(node.path.substr("/content".length)));
+            filter((node) => node.path.indexOf("/content") === 0).
+            map((node) => api.content.ContentPath.fromString(node.path.substr("/content".length)));
+
+            if (contentPaths.length === 0) {
+                return [];
+            }
 
             switch (event2Json.type) {
             case 'node.pushed':
@@ -65,15 +69,15 @@ module api.content {
                 break;
             case 'node.moved':
                 var newContentPaths = event2Json.data.nodes.
-                    filter((node) => node.newPath.indexOf("/content") === 0).
-                    map((node) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
+                filter((node) => node.newPath.indexOf("/content") === 0).
+                map((node) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
                 var deletedContentServerChange = new ContentServerChange(contentPaths, ContentServerChangeType.DELETE);
                 var createdContentServerChange = new ContentServerChange(newContentPaths, ContentServerChangeType.CREATE);
                 return [deletedContentServerChange, createdContentServerChange];
             case 'node.renamed':
                 var newContentPaths = event2Json.data.nodes.
-                    filter((node) => node.newPath.indexOf("/content") === 0).
-                    map((node) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
+                filter((node) => node.newPath.indexOf("/content") === 0).
+                map((node) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
                 var renamedContentServerChange = new ContentServerChange(contentPaths, ContentServerChangeType.RENAME);
                 var deletedContentServerChange = new ContentServerChange(contentPaths, ContentServerChangeType.DELETE);
                 var createdContentServerChange = new ContentServerChange(newContentPaths, ContentServerChangeType.CREATE);
