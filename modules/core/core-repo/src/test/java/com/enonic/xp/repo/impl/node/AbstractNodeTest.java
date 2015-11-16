@@ -116,7 +116,7 @@ public abstract class AbstractNodeTest
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
         Mockito.when( repoConfig.getBlobStoreDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/blob" ) );
 
-        // System.setProperty( "xp.home", xpHome.getRoot().getPath() );
+        System.setProperty( "xp.home", xpHome.getRoot().getPath() );
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
