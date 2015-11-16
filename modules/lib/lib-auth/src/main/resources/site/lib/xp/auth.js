@@ -326,7 +326,7 @@ exports.removeMembers = function (principalKey, members) {
  *
  * @example
  * authLib.findPrincipals({
- *   type: 'user'
+ *   type: 'user',
  *   userStore: 'user-store',
  *   start: 0,
  *   count: 10,

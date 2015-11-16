@@ -31,12 +31,12 @@ public final class FindPrincipalsHandler
 
     public void setType( final String type )
     {
-        if ( type == null )
+        if ( type == null || type.trim().isEmpty() )
         {
             this.type = null;
             return;
         }
-        switch ( type )
+        switch ( type.trim().toLowerCase() )
         {
             case "group":
                 this.type = PrincipalType.GROUP;
@@ -54,10 +54,12 @@ public final class FindPrincipalsHandler
 
     public void setUserStore( final String userStore )
     {
-        if ( userStore != null )
+        if ( userStore == null || userStore.trim().isEmpty() )
         {
-            this.userStore = UserStoreKey.from( userStore );
+            this.userStore = null;
+            return;
         }
+        this.userStore = UserStoreKey.from( userStore );
     }
 
     public void setStart( final Integer start )
