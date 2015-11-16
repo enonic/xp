@@ -29,6 +29,13 @@ public final class FindPrincipalsHandler
 
     private String displayName;
 
+    private String searchText;
+
+    public void setSearchText( final String value )
+    {
+        this.searchText = value;
+    }
+
     public void setType( final String type )
     {
         if ( type == null || type.trim().isEmpty() )
@@ -109,6 +116,7 @@ public final class FindPrincipalsHandler
         query.displayName( this.displayName );
         query.from( this.start );
         query.size( this.count );
+        query.searchText( this.searchText );
 
         final PrincipalQueryResult result = this.securityService.get().query( query.build() );
 
