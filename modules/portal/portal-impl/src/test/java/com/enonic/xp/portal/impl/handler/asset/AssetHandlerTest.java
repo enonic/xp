@@ -11,7 +11,6 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.handler.BaseHandlerTest;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -164,11 +163,12 @@ public class AssetHandlerTest
         throws Exception
     {
         addResource( "demo:/site/assets/css/main.css" );
+        this.request.setEndpointPath( "/_/asset/demo:123/css/main.css" );
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( "no-transform, max-age=600", res.getHeaders().get( "Cache-Control" ) );
+        assertEquals( "public, no-transform, max-age=31536000", res.getHeaders().get( "Cache-Control" ) );
     }
 
     @Test
@@ -176,8 +176,6 @@ public class AssetHandlerTest
         throws Exception
     {
         addResource( "demo:/site/assets/css/main.css" );
-
-        this.request.setMode( RenderMode.EDIT );
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
