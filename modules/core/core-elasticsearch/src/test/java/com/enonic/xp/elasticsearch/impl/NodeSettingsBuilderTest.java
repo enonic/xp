@@ -40,7 +40,7 @@ public class NodeSettingsBuilderTest
         final Settings settings = this.builder.buildSettings( map );
 
         assertNotNull( settings );
-        assertEquals( 19, settings.getAsMap().size() );
+        assertEquals( 21, settings.getAsMap().size() );
         assertSettings( System.getProperty( "xp.home" ) + "/repo/index", settings );
     }
 
@@ -53,7 +53,7 @@ public class NodeSettingsBuilderTest
         final Settings settings = this.builder.buildSettings( map );
 
         assertNotNull( settings );
-        assertEquals( 19, settings.getAsMap().size() );
+        assertEquals( 21, settings.getAsMap().size() );
         assertSettings( "/to/some/other/path", settings );
     }
 
@@ -68,6 +68,8 @@ public class NodeSettingsBuilderTest
         assertEquals( "127.0.0.1", settings.get( "network.host" ) );
         assertEquals( "false", settings.get( "discovery.zen.ping.multicast.enabled" ) );
         assertEquals( "127.0.0.1", settings.get( "discovery.zen.ping.unicast.hosts" ) );
+        assertEquals( "1", settings.get( "gateway.expected_nodes" ) );
+        assertEquals( "1", settings.get( "gateway.recover_after_nodes" ) );
         assertEquals( "1", settings.get( "discovery.zen.minimum_master_nodes" ) );
         assertEquals( "false", settings.get( "cluster.routing.allocation.disk.threshold_enabled" ) );
         assertEquals( "quorum", settings.get( "index.recovery.initial_shards" ) );
