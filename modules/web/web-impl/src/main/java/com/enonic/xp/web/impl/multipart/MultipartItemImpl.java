@@ -1,36 +1,38 @@
 package com.enonic.xp.web.impl.multipart;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItem;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.servlet.http.Part;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.util.UnicodeFormNormalizer;
+import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.web.multipart.MultipartItem;
 
 final class MultipartItemImpl
+    extends ByteSource
     implements MultipartItem
 {
-    private final FileItem item;
+    private final Part item;
 
-    public MultipartItemImpl( final FileItem item )
+    public MultipartItemImpl( final Part item )
     {
         this.item = item;
     }
 
     @Override
-    public String getFileName()
+    public String getName()
     {
         return this.item.getName();
     }
 
     @Override
-    public String getName()
+    public String getFileName()
     {
-        return this.item.getFieldName();
+        return this.item.getSubmittedFileName();
     }
 
     @Override
@@ -42,24 +44,56 @@ final class MultipartItemImpl
     @Override
     public ByteSource getBytes()
     {
-        if ( this.item.isInMemory() )
-        {
-            return ByteSource.wrap( this.item.get() );
-        }
-
-        return Files.asByteSource( ( (DiskFileItem) this.item ).getStoreLocation() );
+        return this;
     }
 
     @Override
     public String getAsString()
     {
-        final String rawString = new String( this.item.get(), Charsets.UTF_8 );
-        return UnicodeFormNormalizer.normalize( rawString );
+        try
+        {
+            return asCharSource( Charsets.UTF_8 ).read();
+        }
+        catch ( final Exception e )
+        {
+            throw Exceptions.unchecked( e );
+        }
     }
 
     @Override
     public long getSize()
     {
         return this.item.getSize();
+    }
+
+    @Override
+    public InputStream openStream()
+        throws IOException
+    {
+        return this.item.getInputStream();
+    }
+
+    @Override
+    public long size()
+    {
+        return getSize();
+    }
+
+    @Override
+    public boolean isEmpty()
+    {
+        return getSize() == 0;
+    }
+
+    public void delete()
+    {
+        try
+        {
+            this.item.delete();
+        }
+        catch ( final Exception e )
+        {
+            // Do nothing
+        }
     }
 }

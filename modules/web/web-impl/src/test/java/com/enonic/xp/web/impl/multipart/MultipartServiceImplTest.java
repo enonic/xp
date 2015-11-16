@@ -1,19 +1,13 @@
 package com.enonic.xp.web.impl.multipart;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartService;
@@ -30,64 +24,34 @@ public class MultipartServiceImplTest
     public void setup()
         throws Exception
     {
-        this.service = new MultipartServiceImpl();
         this.req = Mockito.mock( HttpServletRequest.class );
-
-        final MimeBodyPart part = new MimeBodyPart();
-        part.setFileName( "test.txt" );
-        part.setText( "hello", "UTF-8" );
-
-        final MimeMultipart multipart = new MimeMultipart( "form-data" );
-        multipart.addBodyPart( part );
-
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        multipart.writeTo( out );
-
-        Mockito.when( this.req.getContentType() ).thenReturn( multipart.getContentType() );
-        final InputStream in = new ByteArrayInputStream( out.toByteArray() );
-
-        Mockito.when( this.req.getInputStream() ).thenReturn( new ServletInputStream()
-        {
-            @Override
-            public int read()
-                throws IOException
-            {
-                return in.read();
-            }
-
-            @Override
-            public boolean isFinished()
-            {
-                return false;
-            }
-
-            @Override
-            public boolean isReady()
-            {
-                return false;
-            }
-
-            @Override
-            public void setReadListener( final ReadListener readListener )
-            {
-
-            }
-        } );
+        this.service = new MultipartServiceImpl();
     }
 
     @Test
-    public void testParseStream()
+    public void testParse_multipart()
         throws Exception
     {
-        final MultipartForm form = this.service.parse( this.req.getInputStream(), this.req.getContentType() );
+        Mockito.when( this.req.getContentType() ).thenReturn( "text/plain" );
+
+        final MultipartForm form = this.service.parse( this.req );
         assertNotNull( form );
+        assertEquals( true, form.isEmpty() );
+        assertEquals( 0, form.getSize() );
     }
 
     @Test
-    public void testParseRequest()
+    public void testParse_noMultipart()
         throws Exception
     {
-        final MultipartForm form = this.service.parse( req );
+        final Part part = Mockito.mock( Part.class );
+        Mockito.when( part.getName() ).thenReturn( "part" );
+        Mockito.when( this.req.getParts() ).thenReturn( Lists.newArrayList( part ) );
+        Mockito.when( this.req.getContentType() ).thenReturn( "multipart/form-data" );
+
+        final MultipartForm form = this.service.parse( this.req );
         assertNotNull( form );
+        assertEquals( false, form.isEmpty() );
+        assertEquals( 1, form.getSize() );
     }
 }
