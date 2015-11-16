@@ -8,12 +8,6 @@
   <bundle level="5">org.apache.felix:org.apache.felix.scr:2.0.2</bundle>
   <bundle level="5">org.apache.felix:org.apache.felix.fileinstall:3.5.0</bundle>
 
-  <!-- Shell bundles -->
-  <bundle level="10">org.apache.felix:org.apache.felix.gogo.runtime:0.16.2</bundle>
-  <bundle level="10">org.apache.felix:org.apache.felix.gogo.command:0.16.0</bundle>
-  <bundle level="10">org.apache.felix:org.apache.felix.gogo.shell:0.12.0</bundle>
-  <bundle level="11">org.apache.felix:org.apache.felix.shell.remote:1.1.2</bundle>
-
   <!-- Library dependencies -->
   <bundle level="20">com.google.guava:guava:18.0</bundle>
   <bundle level="20">commons-lang:commons-lang:2.4</bundle>
@@ -35,6 +29,7 @@
 
   <!-- Core app bundles -->
   <bundle level="22">${group}:core-api:${version}</bundle>
+  <bundle level="22">${group}:core-shell:${version}</bundle>
   <bundle level="22">${group}:core-event:${version}</bundle>
   <bundle level="22">${group}:core-schema:${version}</bundle>
   <bundle level="22">${group}:core-repo:${version}</bundle>
