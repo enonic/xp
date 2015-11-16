@@ -17,35 +17,46 @@ public final class ShellActivator
 {
     private final static Logger LOG = LoggerFactory.getLogger( ShellActivator.class );
 
-    private BundleContext context;
+    private ShellConfig config;
 
-    private List<BundleActivator> activators;
+    protected BundleContext context;
+
+    protected final List<BundleActivator> activators;
+
+    public ShellActivator()
+    {
+        this.activators = Lists.newArrayList();
+        this.activators.add( new org.apache.felix.shell.impl.Activator() );
+        this.activators.add( new org.apache.felix.gogo.command.Activator() );
+        this.activators.add( new org.apache.felix.gogo.runtime.activator.Activator() );
+        this.activators.add( new org.apache.felix.shell.remote.Activator() );
+        this.activators.add( new org.apache.felix.gogo.shell.Activator() );
+    }
 
     @Activate
     public void activate( final BundleContext context, final ShellConfig config )
         throws Exception
     {
-        this.activators = Lists.newArrayList();
+        this.config = config;
 
-        if ( !config.enabled() )
+        final ShellContextProxy builder = new ShellContextProxy( context );
+        builder.property( "gosh.args", "--nointeractive" );
+        builder.property( "osgi.shell.telnet.ip", this.config.telnet_ip() );
+        builder.property( "osgi.shell.telnet.port", String.valueOf( this.config.telnet_port() ) );
+        builder.property( "osgi.shell.telnet.maxconn", String.valueOf( this.config.telnet_maxConnect() ) );
+        builder.property( "osgi.shell.telnet.socketTimeout", String.valueOf( this.config.telnet_socketTimeout() ) );
+        this.context = builder.build();
+
+        if ( !this.config.enabled() )
         {
             LOG.info( "Remote shell access is disabled" );
             return;
         }
 
-        final ShellContextProxy builder = new ShellContextProxy( context );
-        builder.property( "gosh.args", "--nointeractive" );
-        builder.property( "osgi.shell.telnet.ip", config.telnet_ip() );
-        builder.property( "osgi.shell.telnet.port", String.valueOf( config.telnet_port() ) );
-        builder.property( "osgi.shell.telnet.maxconn", String.valueOf( config.telnet_maxConnect() ) );
-        builder.property( "osgi.shell.telnet.socketTimeout", String.valueOf( config.telnet_socketTimeout() ) );
-        this.context = builder.build();
-
-        startActivator( new org.apache.felix.shell.impl.Activator() );
-        startActivator( new org.apache.felix.gogo.command.Activator() );
-        startActivator( new org.apache.felix.gogo.runtime.activator.Activator() );
-        startActivator( new org.apache.felix.shell.remote.Activator() );
-        startActivator( new org.apache.felix.gogo.shell.Activator() );
+        for ( final BundleActivator activator : this.activators )
+        {
+            activator.start( this.context );
+        }
 
         LOG.info( "Remote shell access is enabled (port = {})", config.telnet_port() );
     }
@@ -54,16 +65,14 @@ public final class ShellActivator
     public void deactivate()
         throws Exception
     {
+        if ( !this.config.enabled() )
+        {
+            return;
+        }
+
         for ( final BundleActivator activator : this.activators )
         {
             activator.stop( this.context );
         }
-    }
-
-    private void startActivator( final BundleActivator activator )
-        throws Exception
-    {
-        this.activators.add( activator );
-        activator.start( this.context );
     }
 }
