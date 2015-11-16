@@ -1,4 +1,4 @@
-package com.enonic.xp.shell.impl;
+package com.enonic.xp.server.shell.impl;
 
 import org.junit.Before;
 import org.junit.Test;

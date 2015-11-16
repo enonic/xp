@@ -9,26 +9,25 @@
   <bundle level="5">org.apache.felix:org.apache.felix.fileinstall:3.5.0</bundle>
 
   <!-- Library dependencies -->
-  <bundle level="20">com.google.guava:guava:18.0</bundle>
-  <bundle level="20">commons-lang:commons-lang:2.4</bundle>
-  <bundle level="20">commons-io:commons-io:2.4</bundle>
-  <bundle level="20">commons-codec:commons-codec:1.10</bundle>
-  <bundle level="20">com.fasterxml.jackson.core:jackson-core:2.6.2</bundle>
-  <bundle level="20">com.fasterxml.jackson.core:jackson-annotations:2.6.2</bundle>
-  <bundle level="20">com.fasterxml.jackson.core:jackson-databind:2.6.2</bundle>
-  <bundle level="20">com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.6.2</bundle>
-  <bundle level="20">com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.6.2</bundle>
-  <bundle level="20">com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.6.2</bundle>
-  <bundle level="20">org.apache.tika:tika-core:1.6</bundle>
-  <bundle level="20">org.apache.tika:tika-bundle:1.6</bundle>
-  <bundle level="20">${group}:repack-jparsec:${version}</bundle>
-  <bundle level="20">${group}:repack-elasticsearch:${version}</bundle>
-  <bundle level="20">${group}:repack-resteasy:${version}</bundle>
-  <bundle level="20">${group}:repack-attoparser:${version}</bundle>
+  <bundle level="10">com.google.guava:guava:18.0</bundle>
+  <bundle level="10">commons-lang:commons-lang:2.4</bundle>
+  <bundle level="10">commons-io:commons-io:2.4</bundle>
+  <bundle level="10">commons-codec:commons-codec:1.10</bundle>
+  <bundle level="10">com.fasterxml.jackson.core:jackson-core:2.6.2</bundle>
+  <bundle level="10">com.fasterxml.jackson.core:jackson-annotations:2.6.2</bundle>
+  <bundle level="10">com.fasterxml.jackson.core:jackson-databind:2.6.2</bundle>
+  <bundle level="10">com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.6.2</bundle>
+  <bundle level="10">com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.6.2</bundle>
+  <bundle level="10">com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.6.2</bundle>
+  <bundle level="10">org.apache.tika:tika-core:1.6</bundle>
+  <bundle level="10">org.apache.tika:tika-bundle:1.6</bundle>
+  <bundle level="10">${group}:repack-jparsec:${version}</bundle>
+  <bundle level="10">${group}:repack-elasticsearch:${version}</bundle>
+  <bundle level="10">${group}:repack-resteasy:${version}</bundle>
+  <bundle level="10">${group}:repack-attoparser:${version}</bundle>
 
   <!-- Core app bundles -->
-  <bundle level="22">${group}:core-api:${version}</bundle>
-  <bundle level="22">${group}:core-shell:${version}</bundle>
+  <bundle level="15">${group}:core-api:${version}</bundle>
   <bundle level="22">${group}:core-event:${version}</bundle>
   <bundle level="22">${group}:core-schema:${version}</bundle>
   <bundle level="22">${group}:core-repo:${version}</bundle>
@@ -38,6 +37,9 @@
   <bundle level="22">${group}:core-impl:${version}</bundle>
   <bundle level="22">${group}:core-mail:${version}</bundle>
   <bundle level="22">${group}:core-elasticsearch:${version}</bundle>
+
+  <!-- Server bundles -->
+  <bundle level="15">${group}:server-shell:${version}</bundle>
 
   <!-- Script app -->
   <bundle level="24">${group}:script-api:${version}</bundle>

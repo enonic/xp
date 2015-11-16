@@ -1,4 +1,4 @@
-package com.enonic.xp.shell.impl;
+package com.enonic.xp.server.shell.impl;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-@Component(immediate = true, configurationPid = "com.enonic.xp.shell")
+@Component(immediate = true, configurationPid = "com.enonic.xp.server.shell")
 public final class ShellActivator
 {
     private final static Logger LOG = LoggerFactory.getLogger( ShellActivator.class );

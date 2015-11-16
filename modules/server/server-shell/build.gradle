@@ -9,7 +9,7 @@ dependencies {
 }
 
 bundle {
-    instruction 'Bundle-Name', 'Enonic XP Core - Shell'
+    instruction 'Bundle-Name', 'Enonic XP Server - Shell'
     instruction 'Export-Package', 'org.apache.felix.service.command'
     instruction 'Export-Package', 'org.apache.felix.service.threadio'
     instruction 'Export-Package', 'org.apache.felix.gogo.api'

@@ -1,4 +1,4 @@
-package com.enonic.xp.shell.impl;
+package com.enonic.xp.server.shell.impl;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
