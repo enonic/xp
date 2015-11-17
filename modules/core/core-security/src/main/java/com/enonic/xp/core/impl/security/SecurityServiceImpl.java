@@ -80,6 +80,8 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
+import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
+import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 
 import static com.enonic.xp.core.impl.security.PrincipalKeyNodeTranslator.toNodeId;
 import static com.enonic.xp.security.SystemConstants.CONTEXT_SECURITY;
@@ -322,6 +324,14 @@ public final class SecurityServiceImpl
             {
                 return authenticateEmailPassword( (EmailPasswordAuthToken) token );
             }
+            else if ( token instanceof VerifiedUsernameAuthToken )
+            {
+                return authenticateVerifiedUsername( (VerifiedUsernameAuthToken) token );
+            }
+            else if ( token instanceof VerifiedEmailAuthToken )
+            {
+                return authenticateVerifiedEmail( (VerifiedEmailAuthToken) token );
+            }
             else
             {
                 throw new AuthenticationException( "Authentication token not supported: " + token.getClass().getSimpleName() );
@@ -346,6 +356,32 @@ public final class SecurityServiceImpl
     {
         final User user = findByUsername( token.getUserStore(), token.getUsername() );
         if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
+        {
+            return createAuthInfo( user );
+        }
+        else
+        {
+            return AuthenticationInfo.unAuthenticated();
+        }
+    }
+
+    private AuthenticationInfo authenticateVerifiedEmail( final VerifiedEmailAuthToken token )
+    {
+        final User user = findByEmail( token.getUserStore(), token.getEmail() );
+        if ( user != null && !user.isDisabled() )
+        {
+            return createAuthInfo( user );
+        }
+        else
+        {
+            return AuthenticationInfo.unAuthenticated();
+        }
+    }
+
+    private AuthenticationInfo authenticateVerifiedUsername( final VerifiedUsernameAuthToken token )
+    {
+        final User user = findByUsername( token.getUserStore(), token.getUsername() );
+        if ( user != null && !user.isDisabled() )
         {
             return createAuthInfo( user );
         }
