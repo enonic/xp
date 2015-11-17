@@ -8,6 +8,8 @@ include 'core:core-export'
 include 'core:core-mail'
 include 'core:core-elasticsearch'
 include 'core:core-impl'
+include 'core:core-content'
+include 'core:core-site'
 
 include 'server:server-shell'
 include 'server:server-status'

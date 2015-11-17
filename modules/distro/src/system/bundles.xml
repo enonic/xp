@@ -37,6 +37,8 @@
   <bundle level="22">${group}:core-impl:${version}</bundle>
   <bundle level="22">${group}:core-mail:${version}</bundle>
   <bundle level="22">${group}:core-elasticsearch:${version}</bundle>
+  <bundle level="22">${group}:core-content:${version}</bundle>
+  <bundle level="22">${group}:core-site:${version}</bundle>
 
   <!-- Server bundles -->
   <bundle level="15">${group}:server-shell:${version}</bundle>
