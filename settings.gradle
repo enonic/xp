@@ -10,6 +10,7 @@ include 'core:core-elasticsearch'
 include 'core:core-impl'
 
 include 'server:server-shell'
+include 'server:server-status'
 
 include 'script:script-api'
 include 'script:script-impl'

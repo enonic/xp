@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.status;
+package com.enonic.xp.server.impl.status;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;

@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.status;
+package com.enonic.xp.server.impl.status;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

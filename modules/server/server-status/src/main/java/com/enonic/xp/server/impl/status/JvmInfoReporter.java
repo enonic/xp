@@ -1,7 +1,7 @@
-package com.enonic.xp.core.impl.status;
+package com.enonic.xp.server.impl.status;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
+import java.lang.management.RuntimeMXBean;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -11,13 +11,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.enonic.xp.status.StatusReporter;
 
 @Component(immediate = true)
-public final class JvmOsReporter
+public final class JvmInfoReporter
     implements StatusReporter
 {
     @Override
     public String getName()
     {
-        return "jvm.os";
+        return "jvm.info";
     }
 
     @Override
@@ -25,12 +25,12 @@ public final class JvmOsReporter
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
 
-        final OperatingSystemMXBean bean = ManagementFactory.getOperatingSystemMXBean();
-        json.put( "name", bean.getName() );
-        json.put( "version", bean.getVersion() );
-        json.put( "arch", bean.getArch() );
-        json.put( "cores", bean.getAvailableProcessors() );
-        json.put( "loadAverage", bean.getSystemLoadAverage() );
+        final RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
+        json.put( "name", bean.getVmName() );
+        json.put( "vendor", bean.getVmVendor() );
+        json.put( "version", bean.getVmVersion() );
+        json.put( "startTime", bean.getStartTime() );
+        json.put( "upTime", bean.getUptime() );
 
         return json;
     }
