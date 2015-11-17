@@ -19,20 +19,28 @@ module app.view.detail {
             return wemQ<any>(null);
         }
 
-        public setUrl(baseUrl: string, contentPath: string): WidgetItemView {
-            debugger;
-            var resolvedUrl = api.rendering.UriHelper.getAdminUri(baseUrl, contentPath),
-                linkEl = new LinkEl(resolvedUrl),
-                el = this.getEl();
+        private getFullWidgetUrl(baseUrl: string, contentPath: string, uid: string) {
+            return api.rendering.UriHelper.getAdminUri(baseUrl, contentPath) + "?uid=" + uid;
+        }
 
+        public setUrl(baseUrl: string, contentPath: string): wemQ.Promise<void> {
+            var deferred = wemQ.defer<void>(),
+                uid = Date.now().toString(),
+                linkEl = new LinkEl(this.getFullWidgetUrl(baseUrl, contentPath, uid)),
+                el = this.getEl(),
+                onImportReady = function(e: CustomEvent) {
+                    el.appendChild(document.importNode(<Node>e.detail, true));
+                    document.removeEventListener("importready" + uid, onImportReady);
+                    
+                    deferred.resolve(null);
+                };
+
+            document.addEventListener("importready" + uid, onImportReady);
+
+            this.removeChildren();
             this.appendChild(linkEl);
 
-            document.addEventListener("importready", function(e: CustomEvent) {
-                console.log("adding import to the dom");
-                el.appendChild(document.importNode(<Node>e.detail, true));
-            });
-
-            return this;
+            return deferred.promise;
         }
     }
 }

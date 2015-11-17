@@ -1,7 +1,7 @@
 module app.view.detail {
 
     import ViewItem = api.app.view.ViewItem;
-    import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import RenderingMode = api.rendering.RenderingMode;
     import Widget = api.content.Widget;
 
@@ -18,14 +18,42 @@ module app.view.detail {
         public static debug = false;
 
         constructor(builder: WidgetViewBuilder) {
-            super("widget-view");
+            super("widget-view " + (builder.widget ? "external-widget" : "internal-widget"));
 
             this.detailsPanel = builder.detailsPanel;
             this.widgetName = builder.name;
             this.widgetItemViews = builder.widgetItemViews;
             this.widget = builder.widget;
+            if (!this.widgetItemViews.length) {
+                this.createWidgetItemView();
+            }
 
             this.layout();
+        }
+
+        private setContentForWidgetItemView(widgetItemView: WidgetItemView, content: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
+            if (!this.isUrlBased()) {
+                return wemQ.resolve(null);
+            }
+            var path = content.getPath().getFirstElement();
+            return widgetItemView.setUrl(this.widget.getUrl(), path);
+        }
+
+        public setContent(content: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
+            var promises = [];
+            this.widgetItemViews.forEach((widgetItemView: WidgetItemView) => {
+                promises.push(this.setContentForWidgetItemView(widgetItemView, content));
+            });
+            return wemQ.all(promises);
+        }
+
+        private createWidgetItemView() {
+            var widgetItemView = new WidgetItemView("external-widget");
+            if (this.detailsPanel.getItem()) {
+                this.setContentForWidgetItemView(widgetItemView, this.detailsPanel.getItem());
+            }
+
+            this.widgetItemViews.push(widgetItemView);
         }
 
         public layout(): wemQ.Promise<any> {
@@ -34,16 +62,10 @@ module app.view.detail {
 
             var layoutTasks: wemQ.Promise<any>[] = [];
 
-            if (this.widgetItemViews) {
-                this.widgetItemViews.forEach((itemView: WidgetItemView) => {
-                    debugger;
-                    if (this.isUrlBased()) {
-                        itemView.setUrl(this.widget.getUrl(), this.detailsPanel.getItem().getPath().getFirstElement());
-                    }
-                    this.appendChild(itemView);
-                    layoutTasks.push(itemView.layout());
-                })
-            }
+            this.widgetItemViews.forEach((itemView: WidgetItemView) => {
+                this.appendChild(itemView);
+                layoutTasks.push(itemView.layout());
+            })
 
             return wemQ.all(layoutTasks);
         }
@@ -94,7 +116,7 @@ module app.view.detail {
             this.slideOut();
         }
 
-        private isUrlBased(): boolean {
+        public isUrlBased(): boolean {
             return !!this.widget && !!this.widget.getUrl();
         }
 
