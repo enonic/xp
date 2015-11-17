@@ -11,6 +11,7 @@ include 'core:core-impl'
 include 'core:core-content'
 include 'core:core-site'
 include 'core:core-i18n'
+include 'core:core-media'
 
 include 'server:server-shell'
 include 'server:server-status'

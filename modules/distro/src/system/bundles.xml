@@ -40,6 +40,7 @@
   <bundle level="22">${group}:core-content:${version}</bundle>
   <bundle level="22">${group}:core-site:${version}</bundle>
   <bundle level="22">${group}:core-i18n:${version}</bundle>
+  <bundle level="22">${group}:core-media:${version}</bundle>
 
   <!-- Server bundles -->
   <bundle level="15">${group}:server-shell:${version}</bundle>
