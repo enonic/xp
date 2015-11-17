@@ -34,17 +34,19 @@
   <bundle level="22">${group}:core-security:${version}</bundle>
   <bundle level="22">${group}:core-image:${version}</bundle>
   <bundle level="22">${group}:core-export:${version}</bundle>
-  <bundle level="22">${group}:core-impl:${version}</bundle>
   <bundle level="22">${group}:core-mail:${version}</bundle>
   <bundle level="22">${group}:core-elasticsearch:${version}</bundle>
   <bundle level="22">${group}:core-content:${version}</bundle>
   <bundle level="22">${group}:core-site:${version}</bundle>
   <bundle level="22">${group}:core-i18n:${version}</bundle>
   <bundle level="22">${group}:core-media:${version}</bundle>
+  <bundle level="22">${group}:core-resource:${version}</bundle>
+  <bundle level="22">${group}:core-app:${version}</bundle>
 
   <!-- Server bundles -->
   <bundle level="15">${group}:server-shell:${version}</bundle>
   <bundle level="15">${group}:server-status:${version}</bundle>
+  <bundle level="15">${group}:server-info:${version}</bundle>
 
   <!-- Script app -->
   <bundle level="24">${group}:script-api:${version}</bundle>

@@ -1,7 +1,9 @@
 dependencies {
-    compile project( ':core:core-impl' )
+    compile project( ':core:core-content' )
     compile project( ':core:core-repo' )
     compile project( ':core:core-schema' )
     compile project( ':core:core-event' )
+    compile project( ':core:core-media' )
+    compile project( ':core:core-site' )
     testCompile project( path: ':core:core-repo', configuration: 'testOutput' )
 }
