@@ -8,9 +8,25 @@
     position: relative;
   }
 
-  &.external-widget .widget-item-view {
-    background-color: @admin-bg-almost-white;
-    box-shadow: none;
+  &.external-widget {
+
+    &[style*="height: 0px"] .error {
+      display: none;
+    }
+
+    .widget-item-view {
+      height: auto;
+      background-color: @admin-bg-almost-white;
+      box-shadow: none;
+
+      .no-error {
+        width: calc(~'100% - 12px');
+      }
+
+      .error {
+        .watermark-text();
+      }
+    }
   }
 
   &.internal-widget {

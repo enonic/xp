@@ -44,11 +44,14 @@ module app.view.detail {
             this.widgetItemViews.forEach((widgetItemView: WidgetItemView) => {
                 promises.push(this.setContentForWidgetItemView(widgetItemView, content));
             });
-            return wemQ.all(promises);
+            return wemQ.all(promises).then(() => {
+                debugger;
+                this.slideIn();
+            });
         }
 
         private createWidgetItemView() {
-            var widgetItemView = new WidgetItemView("external-widget");
+            var widgetItemView = new WidgetItemView();
             if (this.detailsPanel.getItem()) {
                 this.setContentForWidgetItemView(widgetItemView, this.detailsPanel.getItem());
             }
@@ -101,6 +104,7 @@ module app.view.detail {
         }
 
         setActive() {
+            debugger;
             if (WidgetView.debug) {
                 console.debug('WidgetView.setActive: ', this);
             }
