@@ -20,7 +20,7 @@ public final class MultipartHandler
         return new MultipartFormMapper( this.form );
     }
 
-    public ByteSource getBytes( final String name )
+    public ByteSource getData( final String name )
     {
         if ( this.form == null )
         {

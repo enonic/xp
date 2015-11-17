@@ -26,12 +26,12 @@ exports.getForm_empty = function () {
     assert.assertJsonEquals({}, result);
 };
 
-exports.getBytes = function () {
-    var result = portal.getMultipartBytes("item1");
+exports.getData = function () {
+    var result = portal.getMultipartData("item1");
     assert.assertNotNull(result);
 };
 
-exports.getBytes_notFound = function () {
-    var result = portal.getMultipartBytes("item1");
+exports.getData_notFound = function () {
+    var result = portal.getMultipartData("item1");
     assert.assertNull(result);
 };

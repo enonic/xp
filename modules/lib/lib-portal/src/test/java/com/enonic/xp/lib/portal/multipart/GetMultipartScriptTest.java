@@ -57,10 +57,10 @@ public class GetMultipartScriptTest
     }
 
     @Test
-    public void getBytes()
+    public void getData()
     {
         createForm();
-        runFunction( "/site/test/multipart-test.js", "getBytes" );
+        runFunction( "/site/test/multipart-test.js", "getData" );
     }
 
     @Test
@@ -70,8 +70,8 @@ public class GetMultipartScriptTest
     }
 
     @Test
-    public void getBytes_notFound()
+    public void getData_notFound()
     {
-        runFunction( "/site/test/multipart-test.js", "getBytes_notFound" );
+        runFunction( "/site/test/multipart-test.js", "getData_notFound" );
     }
 }
