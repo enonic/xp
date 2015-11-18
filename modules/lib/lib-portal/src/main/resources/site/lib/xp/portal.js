@@ -67,6 +67,11 @@ exports.getMultipartForm = function () {
     return __.toNativeObject(bean.getForm());
 };
 
+exports.getMultipartItem = function (name) {
+    var bean = __.newBean('com.enonic.xp.lib.portal.multipart.MultipartHandler');
+    return __.toNativeObject(bean.getItem(name));
+};
+
 exports.getMultipartData = function (name) {
     var bean = __.newBean('com.enonic.xp.lib.portal.multipart.MultipartHandler');
     return bean.getData(name);

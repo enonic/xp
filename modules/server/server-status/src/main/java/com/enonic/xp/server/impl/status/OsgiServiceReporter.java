@@ -54,7 +54,8 @@ public final class OsgiServiceReporter
     private ObjectNode buildInfo( final ServiceReference ref )
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
-        json.set( "class", toArray( (String[]) ref.getProperty( Constants.OBJECTCLASS ) ) );
+        json.put( "id", ref.getProperty( Constants.SERVICE_ID ).toString() );
+        json.set( "iface", toArray( (String[]) ref.getProperty( Constants.OBJECTCLASS ) ) );
         json.put( "bundle", ref.getBundle().getSymbolicName() );
         return json;
     }

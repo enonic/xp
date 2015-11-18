@@ -57,6 +57,12 @@ public class GetMultipartScriptTest
     }
 
     @Test
+    public void getForm_empty()
+    {
+        runFunction( "/site/test/multipart-test.js", "getForm_empty" );
+    }
+
+    @Test
     public void getData()
     {
         createForm();
@@ -64,14 +70,21 @@ public class GetMultipartScriptTest
     }
 
     @Test
-    public void getForm_empty()
-    {
-        runFunction( "/site/test/multipart-test.js", "getForm_empty" );
-    }
-
-    @Test
     public void getData_notFound()
     {
         runFunction( "/site/test/multipart-test.js", "getData_notFound" );
+    }
+
+    @Test
+    public void getItem()
+    {
+        createForm();
+        runFunction( "/site/test/multipart-test.js", "getItem" );
+    }
+
+    @Test
+    public void getItem_notFound()
+    {
+        runFunction( "/site/test/multipart-test.js", "getItem_notFound" );
     }
 }

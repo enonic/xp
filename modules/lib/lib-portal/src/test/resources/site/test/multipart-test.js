@@ -35,3 +35,13 @@ exports.getData_notFound = function () {
     var result = portal.getMultipartData("item1");
     assert.assertNull(result);
 };
+
+exports.getItem = function () {
+    var result = portal.getMultipartItem("item1");
+    assert.assertNotNull(result);
+};
+
+exports.getItem_notFound = function () {
+    var result = portal.getMultipartItem("item1");
+    assert.assertNull(result);
+};

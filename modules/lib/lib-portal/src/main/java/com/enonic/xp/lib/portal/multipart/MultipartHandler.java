@@ -20,6 +20,17 @@ public final class MultipartHandler
         return new MultipartFormMapper( this.form );
     }
 
+    public MultipartItemMapper getItem( final String name )
+    {
+        if ( this.form == null )
+        {
+            return null;
+        }
+
+        final MultipartItem item = this.form.get( name );
+        return item != null ? new MultipartItemMapper( item ) : null;
+    }
+
     public ByteSource getData( final String name )
     {
         if ( this.form == null )

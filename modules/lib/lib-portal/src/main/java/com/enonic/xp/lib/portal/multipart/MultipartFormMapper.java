@@ -27,17 +27,7 @@ public final class MultipartFormMapper
     {
         for ( final MultipartItem item : getItems() )
         {
-            serialize( gen, item );
+            MultipartItemMapper.serialize( gen, item );
         }
-    }
-
-    private void serialize( final MapGenerator gen, final MultipartItem item )
-    {
-        gen.map( item.getName() );
-        gen.value( "name", item.getName() );
-        gen.value( "fileName", item.getFileName() );
-        gen.value( "contentType", item.getContentType() );
-        gen.value( "size", item.getSize() );
-        gen.end();
     }
 }
