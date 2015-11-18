@@ -29,6 +29,13 @@ module app.view.detail {
             }
 
             this.layout();
+            if (this.isUrlBased()) {
+                this.detailsPanel.onPanelSizeChanged(() => {
+                    if (this.detailsPanel.getItem()) {
+                        this.setContent(this.detailsPanel.getItem());
+                    }
+                })
+            };
         }
 
         private setContentForWidgetItemView(widgetItemView: WidgetItemView, content: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
