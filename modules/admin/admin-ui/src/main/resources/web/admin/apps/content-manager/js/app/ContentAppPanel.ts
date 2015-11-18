@@ -16,6 +16,9 @@ module app {
 
         private mask: api.ui.mask.LoadMask;
 
+        private closeRedundantTabsHandler: () => void = api.util.AppHelper.debounce(this.closeTabsWithNonExistentContents.bind(this), 500,
+            false);
+
         constructor(appBar: api.app.bar.AppBar, path?: api.rest.Path) {
 
             super({
@@ -110,8 +113,40 @@ module app {
                     if (item) {
                         item.getCloseAction().execute(true);
                     }
+                    setTimeout(() => {
+                        this.closeRedundantTabsHandler();
+                    }, 500);
                 }
             });
+        }
+
+        private closeTabsWithNonExistentContents() {
+            var ids: ContentId[] = this.getOpenEditingTabIds();
+
+            new api.content.GetContentSummaryByIds(ids).get().then((contentSummaries: ContentSummary[]) => {
+                ids.forEach((id: ContentId) => {
+                    if (!contentSummaries.some((contentSummary: ContentSummary) => {
+                            return contentSummary.getId() == id.toString();
+                        })) {
+                        var item = this.getNavigator().getNavigationItemByIdValue(id.toString());
+                        if (!!item && item.getCloseAction()) {
+                            item.getCloseAction().execute(true);
+                        }
+                    }
+                })
+            }).catch((reason: any) => {
+            });
+        }
+
+        private getOpenEditingTabIds(): ContentId[] {
+            var ids: ContentId[] = [];
+            this.getNavigator().getNavigationItems().forEach((tabMenuItem: api.ui.tab.TabMenuItem) => {
+                var appBarTabMenuItem: AppBarTabMenuItem = <AppBarTabMenuItem>tabMenuItem;
+                if (!!appBarTabMenuItem && appBarTabMenuItem.isEditing()) {
+                    ids.push(new ContentId(appBarTabMenuItem.getTabId().getId()));
+                }
+            });
+            return ids;
         }
 
         private handleUpdated(event: ContentUpdatedEvent) {
