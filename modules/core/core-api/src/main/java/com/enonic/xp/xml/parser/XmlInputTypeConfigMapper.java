@@ -8,16 +8,21 @@ import com.google.common.base.Strings;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.xml.DomElement;
+import com.enonic.xp.xml.alias.XmlAliasConverters;
 
 final class XmlInputTypeConfigMapper
 {
     private final ApplicationRelativeResolver relativeResolver;
 
-    public XmlInputTypeConfigMapper( final ApplicationKey currentApplication )
+    private final InputTypeName inputTypeName;
+
+    public XmlInputTypeConfigMapper( final ApplicationKey currentApplication, final InputTypeName inputTypeName )
     {
         this.relativeResolver = new ApplicationRelativeResolver( currentApplication );
+        this.inputTypeName = inputTypeName;
     }
 
     public InputTypeConfig build( final DomElement root )
@@ -63,12 +68,14 @@ final class XmlInputTypeConfigMapper
 
     private String resolveName( final String name )
     {
-        if ( name.contains( "-" ) )
+        final String result = XmlAliasConverters.convert( this.inputTypeName, name );
+
+        if ( result.contains( "-" ) )
         {
-            return CaseFormat.LOWER_HYPHEN.to( CaseFormat.LOWER_CAMEL, name );
+            return CaseFormat.LOWER_HYPHEN.to( CaseFormat.LOWER_CAMEL, result );
         }
 
-        return name;
+        return result;
     }
 
     private String resolveValue( final String name, final String value )

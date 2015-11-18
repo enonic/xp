@@ -84,8 +84,9 @@ public final class XmlFormMapper
     private Input buildInputItem( final DomElement root )
     {
         final Input.Builder builder = Input.create();
+        final InputTypeName inputTypeName = InputTypeName.from( root.getAttribute( "type" ) );
 
-        builder.inputType( InputTypeName.from( root.getAttribute( "type" ) ) );
+        builder.inputType( inputTypeName );
         builder.name( root.getAttribute( "name" ) );
         builder.label( root.getChildValue( "label" ) );
         builder.customText( root.getChildValue( "custom-text" ) );
@@ -96,7 +97,7 @@ public final class XmlFormMapper
         builder.validationRegexp( root.getChildValue( "validation-regexp" ) );
         builder.maximizeUIInputWidth( root.getChildValueAs( "maximize", Boolean.class, false ) );
 
-        buildConfig( builder, root.getChild( "config" ) );
+        buildConfig( builder, root.getChild( "config" ), inputTypeName );
 
         return builder.build();
     }
@@ -137,8 +138,11 @@ public final class XmlFormMapper
         return Occurrences.create( min, max );
     }
 
-    private void buildConfig( final Input.Builder builder, final DomElement root )
+    private void buildConfig( final Input.Builder builder, final DomElement root, final InputTypeName inputTypeName )
     {
-        builder.inputTypeConfig( new XmlInputTypeConfigMapper( this.currentApplication ).build( root ) );
+        if ( inputTypeName.equals( InputTypeName.CONTENT_SELECTOR ) || inputTypeName.equals( InputTypeName.IMAGE_SELECTOR ) )
+        {
+            builder.inputTypeConfig( new XmlInputTypeConfigMapper( this.currentApplication, inputTypeName ).build( root ) );
+        }
     }
 }
