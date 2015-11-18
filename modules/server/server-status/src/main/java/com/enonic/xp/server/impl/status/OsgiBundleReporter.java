@@ -55,7 +55,7 @@ public final class OsgiBundleReporter
         return json;
     }
 
-    private String stateAsString( final int state )
+    protected String stateAsString( final int state )
     {
         if ( state == Bundle.ACTIVE )
         {

@@ -1,0 +1,15 @@
+{
+  "count": 2,
+  "components": [
+    {
+      "name": "comp1",
+      "enabled": true,
+      "bundle": "foo.bar"
+    },
+    {
+      "name": "comp2",
+      "enabled": true,
+      "bundle": "foo.bar"
+    }
+  ]
+}

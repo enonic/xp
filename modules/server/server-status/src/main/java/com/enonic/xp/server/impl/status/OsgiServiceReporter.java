@@ -9,7 +9,6 @@ import org.osgi.service.component.annotations.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
@@ -74,11 +73,6 @@ public final class OsgiServiceReporter
 
     private JsonNode toArray( final String[] values )
     {
-        if ( ( values == null ) || ( values.length == 0 ) )
-        {
-            return NullNode.instance;
-        }
-
         if ( values.length == 1 )
         {
             return TextNode.valueOf( values[0] );
