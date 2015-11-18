@@ -11,6 +11,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+import com.squareup.okhttp.internal.http.HttpMethod;
 
 public final class HttpRequestHandler
 {
@@ -107,21 +108,33 @@ public final class HttpRequestHandler
             addParams( formBody, this.params );
             requestBody = formBody.build();
         }
-        else if ( this.body != null )
+        else if ( this.body != null && !this.body.isEmpty() )
         {
             final MediaType mediaType = this.contentType != null ? MediaType.parse( this.contentType ) : null;
             requestBody = RequestBody.create( mediaType, this.body );
         }
 
-        if ( "GET".equals( this.method ) && this.params != null )
+        if ( "GET".equals( this.method ) )
         {
             HttpUrl url = HttpUrl.parse( this.url );
-            url = addParams( url, this.params );
+            if ( this.params != null )
+            {
+                url = addParams( url, this.params );
+            }
             request.url( url );
+            if ( this.contentType != null )
+            {
+                request.header( "Content-Type", this.contentType );
+            }
             request.get();
         }
         else
         {
+            if ( requestBody == null && HttpMethod.requiresRequestBody( this.method ) )
+            {
+                final MediaType mediaType = this.contentType != null ? MediaType.parse( this.contentType ) : null;
+                requestBody = RequestBody.create( mediaType, "" );
+            }
             request.method( this.method, requestBody );
         }
 
