@@ -53,6 +53,7 @@ include 'lib:lib-xslt'
 include 'lib:lib-thymeleaf'
 include 'lib:lib-mail'
 include 'lib:lib-auth'
+include 'lib:lib-http'
 
 include 'repack:repack-jparsec'
 include 'repack:repack-attoparser'

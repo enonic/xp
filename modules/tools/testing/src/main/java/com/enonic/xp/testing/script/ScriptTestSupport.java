@@ -53,13 +53,13 @@ public abstract class ScriptTestSupport
         return createRuntime().execute( key );
     }
 
-    protected final ScriptValue runFunction( final String path, final String funcName )
+    protected final ScriptValue runFunction( final String path, final String funcName, final Object... funcParams )
     {
         final ScriptExports exports = runScript( path );
 
         Assert.assertNotNull( "No exports in [" + path + "]", exports );
         Assert.assertTrue( "No functions exported named [" + funcName + "] in [" + path + "]", exports.hasMethod( funcName ) );
-        return exports.executeMethod( funcName );
+        return exports.executeMethod( funcName, funcParams );
     }
 
     private ScriptRuntime createRuntime()
