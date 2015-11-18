@@ -79,4 +79,36 @@
   .filter-panel ~ .splitter {
     .transition(all 0.1s ease-in-out);
   }
+
+  &.split-panel-with-details {
+
+    > .split-panel {
+      right: auto; //ie fix - 'auto' will be used for ie as 'initial' not supported; last value mentioned will be used
+      right: initial;
+      .transition(all 0.5s ease-in-out);
+    }
+
+    > .splitter {
+      z-index: 1;
+    }
+
+    > .details-panel {
+      box-shadow: none;
+      z-index: auto;
+      display: inherit;
+
+      &.left-bordered {
+        border-left: 5px #eeeeee solid;
+        box-sizing: content-box;
+      }
+
+      > .details-container {
+        left: 0px;
+      }
+
+      .widget-toggle-button {
+        border-left: 1px #d3d3d3 solid;
+      }
+    }
+  }
 }

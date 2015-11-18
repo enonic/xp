@@ -252,7 +252,14 @@ module app.view.detail {
         }
 
         private updateCustomWidgetViews(): wemQ.Promise<any> {
-            return wemQ<any>(null);
+            var promises = [];
+            this.widgetViews.forEach((widgetView: WidgetView) => {
+                if (widgetView.isUrlBased()) {
+                    promises.push(widgetView.setContent(this.item));
+                }
+            })
+
+            return wemQ.all(promises);
         }
 
         private initWidgetsDropdownForSelectedItem() {
@@ -299,7 +306,9 @@ module app.view.detail {
                     var widgetView = WidgetView.create().
                         setName(widget.getDisplayName()).
                         setDetailsPanel(this).
+                        setWidget(widget).
                         build();
+
                     this.addWidget(widgetView);
                 })
             }).catch((reason: any) => {
