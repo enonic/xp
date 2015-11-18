@@ -97,13 +97,8 @@ module app.view.detail {
         }
 
         slideIn() {
-            var height = this.getEl().getHeight();
-            if (height == 0 && this.isUrlBased() && this.isActive()) {
-                this.getEl().setHeight("");
-                this.widgetItemViews[0].hide();
-                setTimeout(() => {
-                    this.widgetItemViews[0].show();
-                }, 200);
+            if (this.hasDynamicHeight()) {
+                this.redoLayout();
             }
             else {
                 this.getEl().setHeightPx(this.calcHeight());
@@ -128,6 +123,22 @@ module app.view.detail {
 
         private isActive() {
             return this.detailsPanel.getActiveWidget() == this;
+        }
+
+        private hasDynamicHeight(): boolean {
+            return (this.getEl().getHeight() == 0 && this.isUrlBased() && this.isActive());
+        }
+
+        private redoLayout() {
+            var firstItemView = this.widgetItemViews[0];
+            if (!firstItemView) {
+                return;
+            }
+            this.getEl().setHeight("");
+            firstItemView.hide();
+            setTimeout(() => {
+                firstItemView.show();
+            }, 200);
         }
 
         public isUrlBased(): boolean {
