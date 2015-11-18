@@ -44,10 +44,7 @@ module app.view.detail {
             this.widgetItemViews.forEach((widgetItemView: WidgetItemView) => {
                 promises.push(this.setContentForWidgetItemView(widgetItemView, content));
             });
-            return wemQ.all(promises).then(() => {
-                debugger;
-                this.slideIn();
-            });
+            return wemQ.all(promises);
         }
 
         private createWidgetItemView() {
@@ -100,11 +97,20 @@ module app.view.detail {
         }
 
         slideIn() {
-            this.getEl().setHeightPx(this.calcHeight());
+            var height = this.getEl().getHeight();
+            if (height == 0 && this.isUrlBased() && this.isActive()) {
+                this.getEl().setHeight("");
+                this.widgetItemViews[0].hide();
+                setTimeout(() => {
+                    this.widgetItemViews[0].show();
+                }, 200);
+            }
+            else {
+                this.getEl().setHeightPx(this.calcHeight());
+            }
         }
 
         setActive() {
-            debugger;
             if (WidgetView.debug) {
                 console.debug('WidgetView.setActive: ', this);
             }
@@ -118,6 +124,10 @@ module app.view.detail {
             }
             this.detailsPanel.resetActiveWidget();
             this.slideOut();
+        }
+
+        private isActive() {
+            return this.detailsPanel.getActiveWidget() == this;
         }
 
         public isUrlBased(): boolean {
