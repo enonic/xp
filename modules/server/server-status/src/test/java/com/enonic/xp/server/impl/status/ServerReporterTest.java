@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.xp.server.BuildInfo;
 import com.enonic.xp.server.ServerInfo;
+import com.enonic.xp.server.VersionInfo;
 
 import static org.junit.Assert.*;
 
@@ -18,6 +19,7 @@ public class ServerReporterTest
     @Override
     protected void initialize()
     {
+        VersionInfo.set( "0.0.0" );
         final BuildInfo build = Mockito.mock( BuildInfo.class );
         Mockito.when( build.getBranch() ).thenReturn( "master" );
         Mockito.when( build.getHash() ).thenReturn( "12345678" );
