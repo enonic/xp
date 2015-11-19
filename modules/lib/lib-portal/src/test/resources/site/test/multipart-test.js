@@ -26,13 +26,13 @@ exports.getForm_empty = function () {
     assert.assertJsonEquals({}, result);
 };
 
-exports.getData = function () {
-    var result = portal.getMultipartData("item1");
+exports.getBytes = function () {
+    var result = portal.getMultipartBytes("item1");
     assert.assertNotNull(result);
 };
 
-exports.getData_notFound = function () {
-    var result = portal.getMultipartData("item1");
+exports.getBytes_notFound = function () {
+    var result = portal.getMultipartBytes("item1");
     assert.assertNull(result);
 };
 
@@ -43,5 +43,15 @@ exports.getItem = function () {
 
 exports.getItem_notFound = function () {
     var result = portal.getMultipartItem("item1");
+    assert.assertNull(result);
+};
+
+exports.getText = function () {
+    var result = portal.getMultipartText("item1");
+    assert.assertEquals('Some text', result);
+};
+
+exports.getText_notFound = function () {
+    var result = portal.getMultipartText("item1");
     assert.assertNull(result);
 };
