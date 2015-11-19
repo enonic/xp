@@ -14,6 +14,22 @@
     -moz-margin-end: 0;
 }
 
+.mce-content-body img[halign=centered]:not([keepsize=true]) {
+    width: 60%;
+}
+
+.mce-content-body img[halign=justified]:not([keepsize=true]) {
+    width: 100%;
+}
+
+.mce-content-body img[halign=leftaligned]:not([keepsize=true]) {
+    width: 40%;
+}
+
+.mce-content-body img[halign=rightaligned]:not([keepsize=true]) {
+    width: 40%;
+}
+
 .mce-content-body figcaption:empty:before {
     content: "Image caption goes here";
     color: lightgray;

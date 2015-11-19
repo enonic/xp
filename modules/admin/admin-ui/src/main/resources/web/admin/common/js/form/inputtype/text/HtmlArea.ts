@@ -77,10 +77,32 @@ module api.form.inputtype.text {
                 skin_url: baseUrl + '/common/lib/tinymce/skins/lightgray',
                 content_css: baseUrl + '/common/styles/api/form/inputtype/text/tinymce-editor.css',
                 theme_url: 'modern',
+                extended_valid_elements: "img[class|src|border=0|alt|title|hspace|vspace|width|height|align|onmouseover|onmouseout|name|halign|keepsize]",
 
                 toolbar: [
                     "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor image link unlink | table | code"
                 ],
+                formats: {
+                    alignleft: [
+                        {selector: 'img', collapsed: false, attributes: {halign: "leftaligned"}},
+                        {selector: 'figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li', styles: {textAlign: 'left'}, defaultBlock: 'div'},
+                        {selector: 'table', collapsed: false, styles: {'float': 'left'}}
+                    ],
+                    aligncenter: [
+                        {selector: 'img', collapsed: false, attributes: {halign: "centered"}},
+                        {selector: 'figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li', styles: {textAlign: 'center'}, defaultBlock: 'div'},
+                        {selector: 'table', collapsed: false, styles: {marginLeft: 'auto', marginRight: 'auto'}}
+                    ],
+                    alignright: [
+                        {selector: 'img', collapsed: false, attributes: {halign: "rightaligned"}},
+                        {selector: 'figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li', styles: {textAlign: 'right'}, defaultBlock: 'div'},
+                        {selector: 'table', collapsed: false, styles: {'float': 'right'}}
+                    ],
+                    alignjustify: [
+                        {selector: 'img', collapsed: false, attributes: {halign: "justified"}},
+                        {selector: 'figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li', styles: {textAlign: 'justify'}, defaultBlock: 'div'}
+                    ]
+                },
                 menubar: false,
                 statusbar: false,
                 paste_as_text: true,

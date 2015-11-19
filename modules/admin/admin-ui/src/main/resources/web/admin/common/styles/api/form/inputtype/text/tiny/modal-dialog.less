@@ -197,4 +197,79 @@
     }
 
   }
+
+  .toolbar {
+    &.image-toolbar {
+      position: relative;
+
+      .button {
+
+        padding: 7px 7px;
+
+        &[class*="icon-"] {
+          font-size: 24px;
+          line-height: 24px;
+        }
+
+      }
+
+      .keep-size-check {
+        display: inline-block;
+        line-height: 25px;
+        margin: 0;
+
+        input {
+          width: 0;
+          height: 0;
+          margin: 0;
+        }
+
+        label {
+          vertical-align: top;
+          display: inherit;
+          float: none;
+        }
+      }
+
+    }
+  }
+
+  img {
+
+    &[halign=justified] {
+      &:not([keepsize=true]) {
+        width: 100%;
+      }
+    }
+
+    &[halign=leftaligned] {
+
+      margin: 0;
+      float: left;
+
+      &:not([keepsize=true]) {
+        width: 40%;
+      }
+    }
+
+    &[halign=centered] {
+
+      margin: auto;
+
+      &:not([keepsize=true]) {
+        width: 60%;
+      }
+    }
+
+    &[halign=rightaligned] {
+
+      margin: 0;
+      float: right;
+
+      &:not([keepsize=true]) {
+        width: 40%;
+      }
+    }
+  }
+
 }

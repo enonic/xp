@@ -9,6 +9,7 @@ module api.form.inputtype.text.htmlarea {
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
     import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
     import Content = api.content.Content;
+    import Action = api.ui.Action;
 
     export class ImageModalDialog extends ModalDialog {
 
@@ -22,6 +23,7 @@ module api.form.inputtype.text.htmlarea {
         private image: api.dom.ImgEl;
         private elementContainer: HTMLElement;
         private callback: Function;
+        private imageToolbar: ImageToolbar;
 
         constructor(config: api.form.inputtype.text.HtmlAreaImage, contentId: api.content.ContentId) {
             this.imageElement = <HTMLImageElement>config.element;
@@ -85,6 +87,7 @@ module api.form.inputtype.text.htmlarea {
             imageSelectorComboBox.onOptionDeselected(() => {
                 formItem.removeClass("image-preview");
                 this.removePreview();
+                this.imageToolbar.remove();
                 this.uploader.show();
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
@@ -111,7 +114,6 @@ module api.form.inputtype.text.htmlarea {
         private createImgEl(src: string, alt: string, contentId: string): api.dom.ImgEl {
             var imageEl = new api.dom.ImgEl(src);
             imageEl.getEl().setAttribute("alt", alt);
-            imageEl.getEl().setAttribute("style", "width: 100%;");
             imageEl.getEl().setAttribute("data-src", HtmlArea.imagePrefix + contentId);
 
             return imageEl;
@@ -126,9 +128,22 @@ module api.form.inputtype.text.htmlarea {
                     resolve();
 
             this.image = this.createImgEl(imgUrl, imageContent.getDisplayName(), contentId);
+            if (this.imageElement) {
+                var alignment = this.imageElement.getAttribute("halign");
+                var keepSize = this.imageElement.getAttribute("keepsize") === "true";
+                this.image.getEl().setAttribute("halign", alignment);
+                this.image.getEl().setAttribute("keepsize", keepSize.toString())
+                this.imageToolbar = new ImageToolbar(this.image);
+            }
+            else {
+                this.imageToolbar = new ImageToolbar(this.image);
+                this.image.getEl().setAttribute("halign", "justified");
+            }
+
 
             this.image.onLoaded(() => {
                 this.imagePreviewContainer.removeClass("upload");
+                wemjq(this.imageToolbar.getHTMLElement()).insertBefore(this.imagePreviewContainer.getHTMLElement());
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
 
@@ -278,6 +293,30 @@ module api.form.inputtype.text.htmlarea {
             return figure;
         }
 
+        private updateImageParentAlignment(element: HTMLElement) {
+            var alignment: string = this.image.getEl().getAttribute("halign");
+
+            switch (alignment) {
+            case('justified'):
+                element.style["text-align"] = "justify";
+                element.setAttribute("data-mce-style", "text-align: justify;");
+                break;
+            case('leftaligned'):
+                element.style["text-align"] = "left";
+                element.setAttribute("data-mce-style", "text-align: left;");
+                break;
+            case('centered'):
+                element.style["text-align"] = "center";
+                element.setAttribute("data-mce-style", "text-align: center;");
+                break;
+            case('rightaligned'):
+                element.style["text-align"] = "right";
+                element.setAttribute("data-mce-style", "text-align: right;");
+                break;
+            }
+
+        }
+
         private createImageTag(): void {
             var container = this.elementContainer,
                 isProperContainer = function () {
@@ -285,6 +324,7 @@ module api.form.inputtype.text.htmlarea {
                 };
 
             if (this.imageElement) {
+                this.updateImageParentAlignment(this.imageElement.parentElement);
                 this.imageElement.parentElement.replaceChild((<api.dom.ImgEl>this.image).getEl().getHTMLElement(), this.imageElement);
                 setTimeout(() => {
                     this.getEditor().nodeChanged({selectionChange: true})
@@ -293,6 +333,8 @@ module api.form.inputtype.text.htmlarea {
             else {
                 var figCaptionId = this.generateUUID(),
                     figure = this.createFigureElement(figCaptionId);
+
+                this.updateImageParentAlignment(figure.getHTMLElement());
 
                 if (!isProperContainer() || container.nodeName === "FIGURE") {
                     while (!isProperContainer()) {
@@ -308,6 +350,133 @@ module api.form.inputtype.text.htmlarea {
 
                 this.callback(figCaptionId);
             }
+        }
+
+    }
+
+    export class ImageToolbar extends api.ui.toolbar.Toolbar {
+
+        private image: api.dom.ImgEl;
+
+        private justifyButton: api.ui.button.ActionButton;
+
+        private alignLeftButton: api.ui.button.ActionButton;
+
+        private centerButton: api.ui.button.ActionButton;
+
+        private alignRightButton: api.ui.button.ActionButton;
+
+        private keepOriginalSizeCheckbox: api.ui.Checkbox;
+
+        constructor(image: api.dom.ImgEl) {
+            super("image-toolbar");
+
+            this.image = image;
+
+            super.addElement(this.justifyButton = this.createJustifiedButton());
+            super.addElement(this.alignLeftButton = this.createLeftAlignedButton());
+            super.addElement(this.centerButton = this.createCenteredButton());
+            super.addElement(this.alignRightButton = this.createRightAlignedButton());
+            super.addElement(this.keepOriginalSizeCheckbox = this.createKeepOriginalSizeCheckbox());
+
+            this.initActiveButton();
+        }
+
+        private createJustifiedButton(): api.ui.button.ActionButton {
+            return this.createAlignmentButton("icon-paragraph-justify");
+        }
+
+        private createLeftAlignedButton(): api.ui.button.ActionButton {
+            return this.createAlignmentButton("icon-paragraph-left");
+        }
+
+        private createCenteredButton(): api.ui.button.ActionButton {
+            return this.createAlignmentButton("icon-paragraph-center");
+        }
+
+        private createRightAlignedButton(): api.ui.button.ActionButton {
+            return this.createAlignmentButton("icon-paragraph-right");
+        }
+
+        private createAlignmentButton(iconClass: string): api.ui.button.ActionButton {
+            var action: Action = new Action("");
+
+            action.setIconClass(iconClass);
+
+            var button = new api.ui.button.ActionButton(action);
+
+            action.onExecuted(() => {
+                this.resetActiveButton();
+                button.addClass("active");
+                this.image.getEl().setAttribute("halign", this.getImageAlignment());
+            });
+
+            return button;
+        }
+
+        private createKeepOriginalSizeCheckbox(): api.ui.Checkbox {
+            var keepOriginalSizeCheckbox = new api.ui.Checkbox();
+            keepOriginalSizeCheckbox.setChecked(this.image.getEl().getAttribute("keepsize") === "true");
+            keepOriginalSizeCheckbox.addClass('keep-size-check');
+            keepOriginalSizeCheckbox.onValueChanged(()=> {
+                this.keepOriginalSizeCheckbox.isChecked()
+                    ? this.image.getEl().setAttribute("keepsize", "true")
+                    : this.image.getEl().removeAttribute("keepsize");
+            });
+            keepOriginalSizeCheckbox.setLabel('Keep original size');
+
+            return keepOriginalSizeCheckbox;
+        }
+
+        private initActiveButton() {
+            var alignment = this.image.getEl().getAttribute("halign");
+
+            if (alignment) {
+                switch (alignment) {
+                case 'justified':
+                    this.justifyButton.addClass("active");
+                    break;
+                case 'leftaligned':
+                    this.alignLeftButton.addClass("active");
+                    break;
+                case 'centered':
+                    this.centerButton.addClass("active");
+                    break;
+                case 'rightaligned':
+                    this.alignRightButton.addClass("active");
+                    break;
+                default:
+                    this.justifyButton.addClass("active");
+                    break;
+                }
+            }
+            else {
+                this.justifyButton.addClass("active");
+            }
+        }
+
+        private resetActiveButton() {
+            this.justifyButton.removeClass("active");
+            this.alignLeftButton.removeClass("active");
+            this.centerButton.removeClass("active");
+            this.alignRightButton.removeClass("active");
+        }
+
+        private getImageAlignment(): string {
+            if (this.justifyButton.hasClass("active")) {
+                return "justified";
+            }
+            else if (this.alignLeftButton.hasClass("active")) {
+                return "leftaligned";
+            }
+            else if (this.centerButton.hasClass("active")) {
+                return "centered";
+            }
+            else if (this.alignRightButton.hasClass("active")) {
+                return "rightaligned";
+            }
+
+            return "justified";
         }
 
     }
