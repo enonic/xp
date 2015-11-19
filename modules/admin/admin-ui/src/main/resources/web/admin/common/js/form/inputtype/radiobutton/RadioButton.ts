@@ -11,7 +11,7 @@ module api.form.inputtype.radiobutton {
 
     export class RadioButton extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
 
-        private selector: api.dom.Element;
+        private selector: api.ui.RadioGroup;
         private property: Property;
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
         private radioButtonOptions: {label: string; value: string;}[];
@@ -53,6 +53,13 @@ module api.form.inputtype.radiobutton {
             return wemQ<void>(null);
         }
 
+        updateProperty(property: api.data.Property, unchangedOnly: boolean): Q.Promise<void> {
+            if (!unchangedOnly || !this.selector.isDirty()) {
+                this.selector.setValue(property.getString());
+            }
+            return wemQ<any>(null);
+        }
+
         giveFocus(): boolean {
             return this.selector.giveFocus();
         }
@@ -88,7 +95,7 @@ module api.form.inputtype.radiobutton {
             this.selector.unBlur(listener);
         }
 
-        private createRadioElement(name: string, property: Property): api.dom.Element {
+        private createRadioElement(name: string, property: Property): api.ui.RadioGroup {
 
             var radioGroup = new api.ui.RadioGroup(name);
 
@@ -106,6 +113,10 @@ module api.form.inputtype.radiobutton {
             radioGroup.onValueChanged((event: api.ui.ValueChangedEvent)=> {
                 property.setValue(this.newValue(event.getNewValue()));
                 this.validate(false);
+            });
+
+            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
+                this.updateProperty(property, true);
             });
 
             return radioGroup;

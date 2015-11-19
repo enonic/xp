@@ -1,6 +1,7 @@
 module api.form {
 
     import PropertySet = api.data.PropertySet;
+    import PropertyArray = api.data.PropertyArray;
     import PropertyPath = api.data.PropertyPath;
     import Property = api.data.Property;
     import Value = api.data.Value;
@@ -39,6 +40,8 @@ module api.form {
 
         private propertySet: PropertySet;
 
+        private formItemLayer: FormItemLayer;
+
         private formItemViews: FormItemView[] = [];
 
         private formItemSetOccurrencesContainer: api.dom.DivEl;
@@ -55,6 +58,8 @@ module api.form {
             this.parent = config.parent;
             this.constructedWithData = config.dataSet != null;
             this.propertySet = config.dataSet;
+
+            this.formItemLayer = new FormItemLayer(config.context);
         }
 
         getDataPath(): PropertyPath {
@@ -79,8 +84,7 @@ module api.form {
             this.appendChild(this.formItemSetOccurrencesContainer);
 
 
-            var layoutPromise: wemQ.Promise<FormItemView[]> = new FormItemLayer().
-                setFormContext(this.context).
+            var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.
                 setFormItems(this.formItemSet.getFormItems()).
                 setParentElement(this.formItemSetOccurrencesContainer).
                 setParent(this).
@@ -116,6 +120,15 @@ module api.form {
             }).done();
 
             return deferred.promise;
+        }
+
+        public update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
+            var set = propertyArray.getSet(this.formItemSetOccurrence.getIndex());
+            if (!set) {
+                set = propertyArray.addSet();
+            }
+            this.propertySet = set;
+            return this.formItemLayer.update(this.propertySet, unchangedOnly);
         }
 
         getFormItemViews(): FormItemView[] {

@@ -39,10 +39,21 @@ module api.content.form.inputtype.time {
             datePicker.onSelectedDateChanged((event: api.ui.time.SelectedDateChangedEvent) => {
                 this.onValueChanged(property, event.getDate(), ValueTypes.LOCAL_DATE);
             });
+
+            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
+                this.updateInputOccurrenceElement(datePicker, property, true);
+            });
             return datePicker;
         }
 
         availableSizeChanged() {
+        }
+
+
+        updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly?: boolean) {
+            var datePicker = <api.ui.time.DatePicker> occurrence;
+            //TODO: add method to date picker
+            //datePicker.setSelectedDate(property.getLocalDate());
         }
 
         valueBreaksRequiredContract(value: Value): boolean {

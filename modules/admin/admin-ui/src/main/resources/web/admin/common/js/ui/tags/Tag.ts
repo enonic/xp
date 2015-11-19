@@ -31,7 +31,7 @@ module api.ui.tags {
 
         private removable: boolean;
 
-        private tagRemoveListeners: {() : void}[] = [];
+        private removeClickListeners: {() : void}[] = [];
 
         constructor(builder: TagBuilder) {
             super("tag");
@@ -45,9 +45,7 @@ module api.ui.tags {
             if (this.removable) {
                 this.removeButtonEl = new api.dom.AEl("remove-button");
                 this.appendChild(this.removeButtonEl);
-                this.removeButtonEl.onClicked(() => {
-                    this.notifyTagRemoved();
-                })
+                this.removeButtonEl.onClicked(() => this.notifyRemoveClicked());
             }
 
             // TODO: Display value and remove icon if removable
@@ -58,16 +56,16 @@ module api.ui.tags {
             return this.value;
         }
 
-        onTagRemove(listener: () => void) {
-            this.tagRemoveListeners.push(listener);
+        onRemoveClicked(listener: () => void) {
+            this.removeClickListeners.push(listener);
         }
 
-        unTagRemoved(listener: () => void) {
-            this.tagRemoveListeners.push(listener);
+        unRemoveClicked(listener: () => void) {
+            this.removeClickListeners.push(listener);
         }
 
-        private notifyTagRemoved() {
-            this.tagRemoveListeners.forEach((listener: ()=>void) => {
+        private notifyRemoveClicked() {
+            this.removeClickListeners.forEach((listener: ()=>void) => {
                 listener();
             });
         }

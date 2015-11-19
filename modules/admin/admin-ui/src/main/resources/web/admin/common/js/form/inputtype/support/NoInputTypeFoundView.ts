@@ -38,7 +38,18 @@ module api.form.inputtype.support {
             inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 property.setValue(ValueTypes.STRING.newValue(event.getNewValue()));
             });
+            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
+                this.updateInputOccurrenceElement(inputEl, property, true);
+            });
             return inputEl;
+        }
+
+        updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
+            var input = <api.ui.text.TextInput> occurrence;
+
+            if ((!unchangedOnly || !input.isDirty()) && property != null) {
+                input.setValue(property.getString());
+            }
         }
 
         valueBreaksRequiredContract(value: Value): boolean {

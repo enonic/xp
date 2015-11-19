@@ -13,6 +13,8 @@ module api.form.inputtype {
 
         layout(input: api.form.Input, propertyArray: PropertyArray) : wemQ.Promise<void>;
 
+        update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void>;
+
         newInitialValue(): Value;
 
         /*

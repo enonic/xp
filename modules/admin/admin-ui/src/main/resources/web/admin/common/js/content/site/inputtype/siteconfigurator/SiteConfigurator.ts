@@ -31,6 +31,10 @@ module api.content.site.inputtype.siteconfigurator {
 
         private formContext: api.content.form.ContentFormContext;
 
+        private siteConfigFormsToDisplay: string[] = [];
+
+        private ignorePropertyChange = false;
+
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("site-configurator");
             this._displayValidationErrors = false;
@@ -60,34 +64,80 @@ module api.content.site.inputtype.siteconfigurator {
                 this.setLayoutInProgress(false);
 
                 this.comboBox.onOptionDeselected((removed: SelectedOption<Application>) => {
+                    this.ignorePropertyChange = true;
+
                     this.getPropertyArray().remove(removed.getIndex());
+
+                    this.ignorePropertyChange = false;
                     this.validate(false);
                 });
 
                 this.comboBox.onOptionSelected((selectedOption: SelectedOption<Application>) => {
+                    this.ignorePropertyChange = true;
 
                     var key = selectedOption.getOption().displayValue.getApplicationKey();
                     if (!key) {
                         return;
                     }
-
                     var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView>selectedOption.getOptionView();
-
                     this.saveToSet(selectedOptionView.getSiteConfig(), selectedOption.getIndex());
 
+                    this.ignorePropertyChange = false;
                     this.validate(false);
                 });
 
                 this.comboBox.onOptionMoved((selectedOption: SelectedOption<Application>) => {
+                    this.ignorePropertyChange = true;
 
                     var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView> selectedOption.getOptionView();
-
                     this.saveToSet(selectedOptionView.getSiteConfig(), selectedOption.getIndex());
 
+                    this.ignorePropertyChange = false;
                     this.validate(false);
-                })
+                });
+
+                this.comboBox.onSiteConfigFormDisplayed((applicationKey: ApplicationKey, formView: FormView) => {
+                    var indexToRemove = this.siteConfigFormsToDisplay.indexOf(applicationKey.toString());
+                    if (indexToRemove != -1) {
+                        this.siteConfigFormsToDisplay.splice(indexToRemove, 1);
+                    }
+
+                    formView.onValidityChanged((event: FormValidityChangedEvent) => {
+                        this.validate(false);
+                    });
+
+                    this.validate(false);
+                });
+
+                // 2-way data binding
+                var changeHandler = () => {
+                    // don't update when property is changed by myself
+                    if (!this.ignorePropertyChange) {
+                        this.update(propertyArray, true);
+                    }
+                };
+                propertyArray.onPropertyValueChanged(changeHandler);
+                propertyArray.onPropertyAdded(changeHandler);
+                propertyArray.onPropertyRemoved(changeHandler);
+                propertyArray.onPropertyIndexChanged(changeHandler);
             });
         }
+
+
+        update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
+
+            if (!unchangedOnly || !this.comboBox.isDirty()) {
+                return super.update(propertyArray, unchangedOnly).then(() => {
+
+                    this.comboBox.clearSelection(true);
+
+                    return this.doLoadApplications(propertyArray);
+                });
+            }
+
+            return wemQ<void>(null);
+        }
+
 
         private saveToSet(siteConfig: SiteConfig, index) {
 
@@ -104,43 +154,31 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private doLoadApplications(propertyArray: PropertyArray): wemQ.Promise<void> {
-            var deferred = wemQ.defer<void>();
-
-            var siteConfigFormsToDisplay: string[] = [];
+            this.siteConfigFormsToDisplay.length = 0;
 
             if (propertyArray.getSize() == 0) {
-                deferred.resolve(null);
+                return wemQ<void>(null);
             } else {
+                var appPromises = [];
                 propertyArray.forEach((property: Property) => {
 
                     if (property.hasNonNullValue()) {
                         var siteConfig = SiteConfig.create().fromData(property.getPropertySet()).build();
-                        siteConfigFormsToDisplay.push(siteConfig.getApplicationKey().toString());
+                        this.siteConfigFormsToDisplay.push(siteConfig.getApplicationKey().toString());
 
-                        new GetApplicationRequest(siteConfig.getApplicationKey()).sendAndParse().
+                        var appPromise = new GetApplicationRequest(siteConfig.getApplicationKey()).sendAndParse().
                             then((requestedApplication: Application) => {
-
-                                this.comboBox.onSiteConfigFormDisplayed((applicationKey: ApplicationKey, formView: FormView) => {
-                                    var indexToRemove = siteConfigFormsToDisplay.indexOf(applicationKey.toString());
-                                    if (indexToRemove != -1) {
-                                        siteConfigFormsToDisplay.splice(indexToRemove, 1);
-                                    }
-                                    if (siteConfigFormsToDisplay.length == 0) {
-                                        deferred.resolve(null);
-                                    }
-
-                                    formView.onValidityChanged((event: FormValidityChangedEvent) => {
-                                        this.validate(false);
-                                    });
-
-                                    this.validate(false);
-                                });
                                 this.comboBox.select(requestedApplication);
                             });
+
+                        appPromises.push(appPromise);
                     }
                 });
+
+                return wemQ.all(appPromises).spread<void>(() => {
+                    return wemQ<void>(null);
+                });
             }
-            return deferred.promise;
         }
 
         private createComboBox(input: api.form.Input, siteConfigProvider: SiteConfigProvider): SiteConfiguratorComboBox {

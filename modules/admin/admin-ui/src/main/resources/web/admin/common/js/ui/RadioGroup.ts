@@ -32,6 +32,7 @@ module api.ui {
         }
 
         setValue(value: string): RadioGroup {
+            super.setValue(value);
             var option;
             for (var i = 0; i < this.options.length; i++) {
                 option = this.options[i];

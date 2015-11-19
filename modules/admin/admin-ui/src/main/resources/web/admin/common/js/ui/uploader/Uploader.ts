@@ -141,7 +141,14 @@ module api.ui.uploader {
 
 
             if (this.config.deferred) {
-                this.onShown((event) => this.initHandler.call(this, event));
+                // fire when shown, but make sure it's rendered,
+                // because show() can be called on a not rendered element,
+                // shown will be called on render otherwise so it's safe to listen just to it
+                this.onShown((event) => {
+                    if (this.isRendered()) {
+                        this.initHandler();
+                    }
+                });
             } else {
                 this.onRendered((event) => this.initHandler.call(this, event));
             }
@@ -207,6 +214,11 @@ module api.ui.uploader {
         }
 
         private initHandler() {
+            if (this.uploader) {
+                if (Uploader.debug) {
+                    console.log('Skipping init, because already inited', this);
+                }
+            }
             if (this.config.disabled) {
                 if (Uploader.debug) {
                     console.log('Skipping init, because of config.disabled = true', this);
@@ -298,6 +310,8 @@ module api.ui.uploader {
             if (Uploader.debug) {
                 console.log('Setting uploader value', value, this);
             }
+            super.setValue(value);
+
             this.value = value;
 
             if (value && this.config.showResult) {

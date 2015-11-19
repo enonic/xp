@@ -112,6 +112,11 @@ module app.wizard {
             this.content = content;
         }
 
+        update(content: api.content.Content) {
+            //TODO: preserve changes
+            this.layout(content);
+        }
+
         giveFocus(): boolean {
             return this.accessListView.giveFocus();
         }

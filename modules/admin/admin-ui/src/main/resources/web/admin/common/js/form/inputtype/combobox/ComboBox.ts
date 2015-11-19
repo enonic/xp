@@ -17,6 +17,8 @@ module api.form.inputtype.combobox {
 
         private selectedOptionsView: api.ui.selector.combobox.SelectedOptionsView<string>;
 
+        private ignorePropertyChange: boolean;
+
         constructor(context: api.form.inputtype.InputTypeViewContext) {
             super("combo-box");
             this.addClass("input-type-view");
@@ -58,16 +60,38 @@ module api.form.inputtype.combobox {
                 this.comboBox.addOption({value: option.value, displayValue: option.label})
             });
 
-            var valueArray: string[] = [];
-            this.getPropertyArray().forEach((property: Property) => {
-                valueArray.push(property.getString());
-            });
-            this.comboBox.setValues(valueArray, true);
+            var changeHandler = () => {
+                // don't update when property is changed by myself
+                if (!this.ignorePropertyChange) {
+                    this.update(propertyArray, true);
+                }
+            };
+            propertyArray.onPropertyValueChanged(changeHandler);
+            propertyArray.onPropertyAdded(changeHandler);
+            propertyArray.onPropertyRemoved(changeHandler);
+            propertyArray.onPropertyIndexChanged(changeHandler);
+
+            this.update(propertyArray);
 
             this.appendChild(this.comboBox);
             this.appendChild(this.selectedOptionsView);
 
             this.setLayoutInProgress(false);
+
+            return wemQ<void>(null);
+        }
+
+        update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
+            if (!unchangedOnly || !this.comboBox.isDirty()) {
+                return super.update(propertyArray, unchangedOnly).then(() => {
+                    this.comboBox.clearSelection(false, false, true);
+
+                    var valueArray = this.getPropertyArray().getProperties().map((property: Property) => {
+                        return property.getString();
+                    });
+                    this.comboBox.setValues(valueArray, true);
+                });
+            }
 
             return wemQ<void>(null);
         }
@@ -85,6 +109,7 @@ module api.form.inputtype.combobox {
                 this.comboBox.setFilterArgs({searchString: event.getNewValue()});
             });
             comboBox.onOptionSelected((selectedOption: SelectedOption<string>) => {
+                this.ignorePropertyChange = true;
 
                 var value = new Value(selectedOption.getOption().value, ValueTypes.STRING);
                 if (selectedOption.getIndex() >= 0) {
@@ -93,14 +118,15 @@ module api.form.inputtype.combobox {
                     this.getPropertyArray().add(value);
                 }
 
-
+                this.ignorePropertyChange = false;
                 this.validate(false);
             });
             comboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<string>) => {
+                this.ignorePropertyChange = true;
 
                 this.getPropertyArray().remove(removed.getIndex());
-                //this.notifyValueRemoved(removed.getIndex());
 
+                this.ignorePropertyChange = false;
                 this.validate(false);
             });
 

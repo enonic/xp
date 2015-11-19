@@ -38,7 +38,19 @@ module api.content.form.inputtype.geo {
                 this.onValueChanged(property, value, ValueTypes.GEO_POINT);
             });
 
+            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
+                this.updateInputOccurrenceElement(geoPoint, property, true);
+            });
+
             return geoPoint;
+        }
+
+        updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
+            var geoPoint = <api.ui.geo.GeoPoint> occurrence;
+
+            if (!unchangedOnly || !geoPoint.isDirty()) {
+                geoPoint.setGeoPoint(property.getGeoPoint());
+            }
         }
 
         availableSizeChanged() {

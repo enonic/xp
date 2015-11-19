@@ -7,11 +7,15 @@ module api.ui {
          */
         private oldValue: boolean = false;
 
+        private originalChecked: boolean;
+
         private valueChangedListeners: {(event: ValueChangedEvent):void}[] = [];
 
         private checkbox: api.dom.InputEl;
 
         private label: api.dom.LabelEl;
+
+        public static debug = true;
 
         constructor(text?: string) {
             super("div", "checkbox");
@@ -29,10 +33,15 @@ module api.ui {
                 var newValue = this.isChecked();
                 this.notifyValueChanged(this.oldValue, newValue);
                 this.oldValue = newValue;
+
+                this.updateDirtyState();
             });
         }
 
         setChecked(newValue: boolean, suppressEvent?: boolean): Checkbox {
+            if (!this.originalChecked) {
+                this.originalChecked = newValue;
+            }
             this.checkbox.getHTMLElement()["checked"] = newValue;
 
             if (!suppressEvent) {
@@ -96,6 +105,12 @@ module api.ui {
             return this.checkbox.getEl().getAttribute('placeholder');
         }
 
+        protected  updateDirtyState() {
+            if (Checkbox.debug) {
+                console.debug('Checkbox.updateDirtyState()');
+            }
+            this.setDirty(this.originalChecked != this.isChecked());
+        }
 
         onValueChanged(listener: (event: ValueChangedEvent)=>void) {
             this.valueChangedListeners.push(listener);

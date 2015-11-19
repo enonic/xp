@@ -37,7 +37,19 @@ module api.content.form.inputtype.time {
                 this.validate(false);
             });
 
+            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
+                this.updateInputOccurrenceElement(localTimeEl, property, true);
+            });
+
             return localTimeEl;
+        }
+
+        updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
+            var localTime = <api.ui.time.LocalTime> occurrence;
+
+            if (!unchangedOnly || !localTime.isDirty()) {
+                localTime.setTime(property.getLocalTime());
+            }
         }
 
         availableSizeChanged() {

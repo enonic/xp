@@ -65,6 +65,15 @@ module api.form.inputtype.text {
             return textAreaWrapper;
         }
 
+        updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
+            var textArea = <api.ui.text.TextArea> occurrence.getFirstChild();
+            var id = textArea.getId();
+
+            if (!unchangedOnly || !textArea.isDirty()) {
+                this.setEditorContent(id, property);
+            }
+        }
+
         private initEditor(id: string, property: Property, textAreaWrapper: Element): void {
             this.previousScrollPos = wemjq(this.getHTMLElement()).closest(".form-panel").scrollTop(); // XP-736
 
@@ -100,6 +109,9 @@ module api.form.inputtype.text {
                     editor.addCommand("openAnchorDialog", this.openAnchorDialog, this);
                     editor.on('change', (e) => {
                         this.setPropertyValue(id, property);
+                    });
+                    property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
+                        this.updateInputOccurrenceElement(textAreaWrapper, property, true);
                     });
                     editor.on('focus', (e) => {
                         this.resetInputHeight();

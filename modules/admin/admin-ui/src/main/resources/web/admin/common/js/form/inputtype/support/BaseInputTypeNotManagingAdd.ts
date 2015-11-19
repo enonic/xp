@@ -5,7 +5,7 @@ module api.form.inputtype.support {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
 
-    export class BaseInputTypeNotManagingAdd<RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeViewNotManagingAdd<RAW_VALUE_TYPE> {
+    export class BaseInputTypeNotManagingAdd<RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeView<RAW_VALUE_TYPE> {
 
         private context: api.form.inputtype.InputTypeViewContext;
 
@@ -140,6 +140,12 @@ module api.form.inputtype.support {
             });
         }
 
+        update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
+            this.propertyArray = propertyArray;
+
+            return this.inputOccurrences.update(propertyArray, unchangedOnly);
+        }
+
         hasValidUserInput(): boolean {
             return this.inputOccurrences.hasValidUserInput();
         }
@@ -255,6 +261,10 @@ module api.form.inputtype.support {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
+            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+        }
+
+        updateInputOccurrenceElement(occurrence: api.dom.Element, property: Property, unchangedOnly?: boolean) {
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 

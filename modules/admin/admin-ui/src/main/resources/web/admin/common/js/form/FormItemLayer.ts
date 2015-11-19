@@ -15,9 +15,10 @@ module api.form {
 
         private parent: FormItemSetOccurrenceView;
 
-        setFormContext(context: FormContext): FormItemLayer {
+        public static debug = true;
+
+        constructor(context: FormContext) {
             this.context = context;
-            return this;
         }
 
         setFormItems(formItems: FormItem[]): FormItemLayer {
@@ -102,6 +103,21 @@ module api.form {
             });
 
             return wemQ.all(layoutPromises).spread<void>(() => {
+                return wemQ<void>(null);
+            });
+        }
+
+        update(propertySet: PropertySet, unchangedOnly?: boolean): wemQ.Promise<void> {
+            if (FormItemLayer.debug) {
+                console.debug('FormItemLayer.update' + (unchangedOnly ? ' (unchanged only)' : ''), this, propertySet);
+            }
+            var updatePromises = [];
+
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                updatePromises.push(formItemView.update(propertySet, unchangedOnly));
+            });
+
+            return wemQ.all(updatePromises).spread<void>(() => {
                 return wemQ<void>(null);
             });
         }

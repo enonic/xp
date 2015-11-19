@@ -6,6 +6,7 @@ module api.form {
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
     import PropertyTree = api.data.PropertyTree;
+    import PropertySet = api.data.PropertySet;
 
     export interface FormItemViewConfig {
 
@@ -39,6 +40,14 @@ module api.form {
         }
 
         broadcastFormSizeChanged() {
+            throw new Error("Must be implemented by inheritors");
+        }
+
+        layout(): wemQ.Promise<void> {
+            throw new Error("Must be implemented by inheritors");
+        }
+
+        update(propertyArray: PropertySet, unchangedOnly?: boolean): wemQ.Promise<void> {
             throw new Error("Must be implemented by inheritors");
         }
 

@@ -6,6 +6,7 @@ module api.form {
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
     import PropertySet = api.data.PropertySet;
+    import BaseInputTypeNotManagingAdd = api.form.inputtype.support.BaseInputTypeNotManagingAdd;
 
     export interface InputViewConfig {
 
@@ -74,19 +75,7 @@ module api.form {
                 this.notifyEditContentRequested(content);
             });
 
-            this.propertyArray = this.parentPropertySet.getPropertyArray(this.input.getName());
-            if (!this.propertyArray) {
-                this.propertyArray = PropertyArray.create().
-                    setType(this.inputTypeView.getValueType()).
-                    setName(this.input.getName()).
-                    setParent(this.parentPropertySet).
-                    build();
-                this.parentPropertySet.addPropertyArray(this.propertyArray);
-                var initialValue = this.inputTypeView.newInitialValue();
-                if (initialValue) {
-                    this.propertyArray.add(initialValue);
-                }
-            }
+            this.propertyArray = this.getPropertyArray(this.parentPropertySet);
 
             var inputTypeViewLayoutPromise = this.inputTypeView.layout(this.input, this.propertyArray);
             inputTypeViewLayoutPromise.then(() => {
@@ -94,7 +83,7 @@ module api.form {
 
                 if (!this.inputTypeView.isManagingAdd()) {
 
-                    var inputTypeViewNotManagingAdd = <api.form.inputtype.InputTypeViewNotManagingAdd<any>>this.inputTypeView;
+                    var inputTypeViewNotManagingAdd = <BaseInputTypeNotManagingAdd<any>>this.inputTypeView;
                     inputTypeViewNotManagingAdd.onOccurrenceAdded(() => {
                         this.refresh();
                     });
@@ -132,6 +121,34 @@ module api.form {
             return inputTypeViewLayoutPromise;
         }
 
+        private getPropertyArray(propertySet: PropertySet): PropertyArray {
+            var array = propertySet.getPropertyArray(this.input.getName());
+            if (!array) {
+                array = PropertyArray.create().
+                    setType(this.inputTypeView.getValueType()).
+                    setName(this.input.getName()).
+                    setParent(this.parentPropertySet).
+                    build();
+
+                propertySet.addPropertyArray(array);
+
+                var initialValue = this.inputTypeView.newInitialValue();
+                if (initialValue) {
+                    array.add(initialValue);
+                }
+            }
+            return array;
+        }
+
+        public update(propertySet: PropertySet, unchangedOnly?: boolean): wemQ.Promise<void> {
+            if (InputView.debug) {
+                console.debug('InputView.update' + (unchangedOnly ? ' ( unchanged only)' : ''), this, propertySet);
+            }
+            this.propertyArray = this.getPropertyArray(propertySet);
+
+            return this.inputTypeView.update(this.propertyArray, unchangedOnly);
+        }
+
         private createInputTypeView(): api.form.inputtype.InputTypeView<any> {
             var inputType: api.form.InputTypeName = this.input.getInputType();
             var inputTypeViewContext = this.getContext().createInputTypeViewContext(this.input.getInputTypeConfig(),
@@ -154,7 +171,7 @@ module api.form {
 
         refresh() {
             if (!this.inputTypeView.isManagingAdd()) {
-                var inputTypeViewNotManagingAdd = <api.form.inputtype.InputTypeViewNotManagingAdd<any>>this.inputTypeView;
+                var inputTypeViewNotManagingAdd = <BaseInputTypeNotManagingAdd<any>>this.inputTypeView;
                 this.addButton.setVisible(!inputTypeViewNotManagingAdd.maximumOccurrencesReached());
             }
             this.validate(false);

@@ -58,6 +58,19 @@ module api.form {
             this.addClass(this.formItemSet.getPath().getElements().length % 2 ? "even" : "odd");
         }
 
+        private getPropertyArray(propertySet: PropertySet): PropertyArray {
+            var propertyArray = propertySet.getPropertyArray(this.formItemSet.getName());
+            if (!propertyArray) {
+                propertyArray = PropertyArray.create().
+                    setType(ValueTypes.DATA).
+                    setName(this.formItemSet.getName()).
+                    setParent(this.parentDataSet).
+                    build();
+                propertySet.addPropertyArray(propertyArray);
+            }
+            return propertyArray;
+        }
+
         public layout(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
@@ -80,15 +93,7 @@ module api.form {
 
             this.appendChild(this.occurrenceViewsContainer);
 
-            var propertyArray = this.parentDataSet.getPropertyArray(this.formItemSet.getName());
-            if (!propertyArray) {
-                propertyArray = PropertyArray.create().
-                    setType(ValueTypes.DATA).
-                    setName(this.formItemSet.getName()).
-                    setParent(this.parentDataSet).
-                    build();
-                this.parentDataSet.addPropertyArray(propertyArray);
-            }
+            var propertyArray = this.getPropertyArray(this.parentDataSet);
 
             this.formItemSetOccurrences = new FormItemSetOccurrences(<FormItemSetOccurrencesConfig>{
                 context: this.getContext(),
@@ -169,6 +174,13 @@ module api.form {
             });
 
             return deferred.promise;
+        }
+
+
+        update(propertySet: api.data.PropertySet, unchangedOnly?: boolean): Q.Promise<void> {
+            this.parentDataSet = propertySet;
+            var propertyArray = this.getPropertyArray(propertySet);
+            return this.formItemSetOccurrences.update(propertyArray, unchangedOnly);
         }
 
         private handleFormItemSetOccurrenceViewValidityChanged(event: RecordingValidityChangedEvent) {

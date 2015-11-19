@@ -106,13 +106,7 @@ module api.form.inputtype.support {
 
         createNewOccurrenceView(occurrence: InputOccurrence): InputOccurrenceView {
 
-            var newInitialValue = this.baseInputTypeView.newInitialValue();
-            api.util.assertNotNull(newInitialValue,
-                "InputTypeView-s extending BaseInputTypeNotManagingAdd must must return a Value from newInitialValue");
-            var property = this.propertyArray.get(occurrence.getIndex());
-            if (!property) {
-                property = this.propertyArray.add(newInitialValue);
-            }
+            var property = this.getPropertyFromArray(occurrence.getIndex());
             var inputOccurrenceView: InputOccurrenceView = new InputOccurrenceView(occurrence, this.baseInputTypeView, property);
 
             var inputOccurrences: InputOccurrences = this;
@@ -121,6 +115,24 @@ module api.form.inputtype.support {
             });
 
             return inputOccurrenceView;
+        }
+
+        updateOccurrenceView(occurrenceView: InputOccurrenceView, propertyArray: PropertyArray,
+                             unchangedOnly?: boolean): wemQ.Promise<void> {
+            this.propertyArray = propertyArray;
+
+            return occurrenceView.update(propertyArray, unchangedOnly);
+        }
+
+        private getPropertyFromArray(index: number): Property {
+            var property = this.propertyArray.get(index);
+            if (!property) {
+                var newInitialValue = this.baseInputTypeView.newInitialValue();
+                api.util.assertNotNull(newInitialValue,
+                    "InputTypeView-s extending BaseInputTypeNotManagingAdd must must return a Value from newInitialValue");
+                property = this.propertyArray.add(newInitialValue);
+            }
+            return property;
         }
 
         giveFocus(): boolean {

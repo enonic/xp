@@ -213,7 +213,7 @@ module api.form.inputtype.text.htmlarea {
                 var item = event.getUploadItem();
                 var createdContent = item.getModel();
 
-                new api.content.ContentUpdatedEvent(this.contentId).fire();
+                //new api.content.ContentUpdatedEvent(this.contentId).fire();
                 this.imageSelector.setContent(createdContent);
             });
 

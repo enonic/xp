@@ -134,7 +134,7 @@ module api.content.form.inputtype.image {
 
             optionView.getIcon().onLoaded((event: UIEvent) => {
                 optionView.updateProportions();
-                wemjq(this.getHTMLElement()).sortable("refresh");
+                this.refreshSortable();
             });
 
             optionView.insertBeforeEl(this.toolbar);
@@ -200,11 +200,6 @@ module api.content.form.inputtype.image {
             if (showToolbar) {
                 this.toolbar.setSelectionCount(this.selection.length);
             }
-        }
-
-        private calculateOptionHeight(): number {
-            var availableWidth = this.getEl().getWidthWithMargin();
-            return Math.floor(0.3 * availableWidth);
         }
 
         private hideImageSelectorDialog() {

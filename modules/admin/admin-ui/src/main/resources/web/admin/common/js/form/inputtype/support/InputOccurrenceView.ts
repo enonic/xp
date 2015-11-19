@@ -1,6 +1,7 @@
 module api.form.inputtype.support {
 
     import Property = api.data.Property;
+    import PropertyArray = api.data.PropertyArray;
     import Value = api.data.Value;
     import PropertyValueChangedEvent = api.data.PropertyValueChangedEvent;
 
@@ -58,6 +59,12 @@ module api.form.inputtype.support {
             inputWrapper.appendChild(this.inputElement);
 
             this.refresh();
+        }
+
+        update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
+            var property = propertyArray.get(this.inputOccurrence.getIndex());
+            this.inputTypeView.updateInputOccurrenceElement(this.inputElement, property, unchangedOnly);
+            return wemQ<void>(null);
         }
 
         refresh() {

@@ -410,6 +410,7 @@ module app.browse {
                                         this.updateStatisticsPreview(el); // update preview item
 
                                         this.updateItemInDetailsPanelIfNeeded(el);
+                                        new api.content.ContentUpdatedEvent(el.getContentId()).fire();
 
                                         results.push(updateResult[i]);
                                         break;

@@ -13,6 +13,8 @@ module app.wizard {
 
         private content: Content;
         private model: ContentSettingsModel;
+        private modelChangeListener: (event: api.PropertyChangedEvent) => void;
+        private updateUnchangedOnly: boolean = false;
 
         private localeCombo: LocaleComboBox;
         private ownerCombo: PrincipalComboBox;
@@ -45,21 +47,51 @@ module app.wizard {
             form.onBlur((event) => {
                 this.notifyBlurred(event);
             });
+
+            this.modelChangeListener = (event: api.PropertyChangedEvent) => {
+                switch (event.getPropertyName()) {
+                case ContentSettingsModel.PROPERTY_LANG:
+                    if (!this.updateUnchangedOnly || !this.localeCombo.isDirty()) {
+                        if (this.localeCombo.maximumOccurrencesReached()) {
+                            this.localeCombo.clearSelection(true);
+                        }
+                        this.localeCombo.setValue(event.getNewValue());
+                    }
+                    break;
+                case ContentSettingsModel.PROPERTY_OWNER:
+                    if (!this.updateUnchangedOnly || !this.localeCombo.isDirty()) {
+                        if (this.ownerCombo.maximumOccurrencesReached()) {
+                            this.ownerCombo.clearSelection(true);
+                        }
+                        this.ownerCombo.setValue(event.getNewValue());
+                    }
+                    break;
+                }
+            }
         }
 
         layout(content: api.content.Content) {
-
             this.content = content;
+            this.setModel(new ContentSettingsModel(content));
         }
 
-        setModel(model: ContentSettingsModel) {
+        update(content: api.content.Content, unchangedOnly?: boolean) {
+            this.updateUnchangedOnly = unchangedOnly;
+            this.getModel().setOwner(content.getOwner()).setLanguage(content.getLanguage());
+        }
+
+        private setModel(model: ContentSettingsModel) {
             api.util.assertNotNull(model, "Model can't be null");
+
+            if (this.model) {
+                model.unPropertyChanged(this.modelChangeListener);
+            }
 
             if (model.getOwner()) {
                 this.ownerCombo.setIgnoreNextFocus().setValue(model.getOwner().toString());
             }
             if (model.getLanguage()) {
-                this.localeCombo.setIgnoreNextFocus().setValue(model.getLanguage())
+                this.localeCombo.setIgnoreNextFocus().setValue(model.getLanguage());
             }
 
             // 2-way data binding
@@ -76,16 +108,7 @@ module app.wizard {
             this.localeCombo.onOptionSelected((event) => localeListener());
             this.localeCombo.onOptionDeselected((option) => localeListener());
 
-            model.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                switch (event.getPropertyName()) {
-                case ContentSettingsModel.PROPERTY_LANG:
-                    this.localeCombo.setValue(event.getNewValue());
-                    break;
-                case ContentSettingsModel.PROPERTY_OWNER:
-                    this.ownerCombo.setValue(event.getNewValue());
-                    break;
-                }
-            });
+            model.onPropertyChanged(this.modelChangeListener);
 
             this.model = model;
         }

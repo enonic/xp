@@ -21,6 +21,8 @@ module api.form {
 
         private formItemViews: FormItemView[] = [];
 
+        private formItemLayer: FormItemLayer;
+
         constructor(config: FieldSetViewConfig) {
             super(<LayoutViewConfig>{
                 context: config.context,
@@ -28,6 +30,8 @@ module api.form {
                 parent: config.parent,
                 className: "field-set-view"
             });
+
+            this.formItemLayer = new FormItemLayer(config.context);
 
             this.fieldSet = config.fieldSet;
             this.propertySet = config.dataSet;
@@ -54,8 +58,7 @@ module api.form {
             var wrappingDiv = new api.dom.DivEl("field-set-container");
             this.appendChild(wrappingDiv);
 
-            var layoutPromise: wemQ.Promise<FormItemView[]> = new FormItemLayer().
-                setFormContext(this.getContext()).
+            var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.
                 setFormItems(this.fieldSet.getFormItems()).
                 setParentElement(wrappingDiv).
                 setParent(this.getParent()).
@@ -71,6 +74,15 @@ module api.form {
             }).done();
 
             return deferred.promise;
+        }
+
+        public update(propertySet: PropertySet, unchangedOnly?: boolean): wemQ.Promise<void> {
+            if (InputView.debug) {
+                console.debug('FieldSetView.update' + (unchangedOnly ? ' ( unchanged only)' : ''), propertySet);
+            }
+            this.propertySet = propertySet;
+
+            return this.formItemLayer.update(propertySet, unchangedOnly);
         }
 
         onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {

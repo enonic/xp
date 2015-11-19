@@ -51,19 +51,12 @@ module api.content.form.inputtype.upload {
             this.property = property;
 
             if (property.hasNonNullValue()) {
-                //TODO: should we pass Content.getId() instead of ContentId in property to spare this request ?
-                new api.content.GetContentByIdRequest(this.getContext().contentId).
-                    sendAndParse().
-                    then((content: api.content.Content) => {
-                        this.imageUploader.setOriginalDimensions(content);
-                        this.imageUploader.setValue(content.getId());
-
-                        this.configEditorsProperties(content);
-
-                    }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason);
-                    }).done();
+                this.updateProperty(property);
             }
+
+            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
+                this.updateProperty(property, true);
+            });
 
             this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
                 var content = event.getUploadItem().getModel(),
@@ -121,6 +114,27 @@ module api.content.form.inputtype.upload {
                 }
             });
 
+            return wemQ<void>(null);
+        }
+
+        updateProperty(property: api.data.Property, unchangedOnly?: boolean): Q.Promise<void> {
+            if ((!unchangedOnly || !this.imageUploader.isDirty()) && this.getContext().contentId) {
+
+                this.imageUploader.setValue(this.getContext().contentId.toString());
+                //TODO: should we pass Content.getId() instead of ContentId in property to spare this request ?
+                return new api.content.GetContentByIdRequest(this.getContext().contentId).
+                    sendAndParse().
+                    then((content: api.content.Content) => {
+
+                        this.imageUploader.setOriginalDimensions(content);
+                        this.imageUploader.setValue(content.getId());
+
+                        this.configEditorsProperties(content);
+
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    });
+            }
             return wemQ<void>(null);
         }
 

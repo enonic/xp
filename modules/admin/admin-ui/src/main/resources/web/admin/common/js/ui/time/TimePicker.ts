@@ -150,6 +150,10 @@ module api.ui.time {
 
         }
 
+        isDirty(): boolean {
+            return this.input.isDirty();
+        }
+
         // as popup blur and focus events behave incorrectly - we manually catch tab navigation event in popup below
         private popupTabListener(e: KeyboardEvent) {
             if (api.ui.KeyHelper.isTabKey(e) && !this.getEl().contains(<HTMLElement> e.target)) {
