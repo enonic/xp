@@ -14,6 +14,38 @@
     -moz-margin-end: 0;
 }
 
+.mce-content-body figure.centered {
+    text-align: center;
+}
+
+.mce-content-body figure.centered img {
+    width: 60%;
+}
+
+.mce-content-body figure.justified {
+    text-align: justify;
+}
+
+.mce-content-body figure.justified img {
+    width: 100%;
+}
+
+.mce-content-body figure.leftaligned {
+    text-align: left;
+}
+
+.mce-content-body figure.leftaligned img {
+    width: 40%;
+}
+
+.mce-content-body figure.rightaligned {
+    text-align: right;
+}
+
+.mce-content-body figure.rightaligned img {
+    width: 40%;
+}
+
 .mce-content-body figcaption:empty:before {
     content: "Image caption goes here";
     color: lightgray;
