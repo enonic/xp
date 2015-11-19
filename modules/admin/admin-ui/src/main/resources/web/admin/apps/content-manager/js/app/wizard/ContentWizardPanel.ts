@@ -14,6 +14,7 @@ module app.wizard {
     import ContentUnnamed = api.content.ContentUnnamed;
     import CreateContentRequest = api.content.CreateContentRequest;
     import UpdateContentRequest = api.content.UpdateContentRequest;
+    import GetContentByIdRequest = api.content.GetContentByIdRequest;
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
     import ExtraData = api.content.ExtraData;
     import Page = api.content.page.Page;
@@ -290,7 +291,7 @@ module app.wizard {
                     this.thumbnailUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
                         var newPersistedContent: Content = event.getUploadItem().getModel();
                         this.setPersistedItem(newPersistedContent);
-                        this.updateMetadataAndMetadataForms(newPersistedContent);
+                        this.updateMetadataAndMetadataStepForms(newPersistedContent);
                         this.updateThumbnailWithContent(newPersistedContent);
                         var contentToDisplay = (newPersistedContent.getDisplayName() && newPersistedContent.getDisplayName().length > 0) ?
                                                '\"' + newPersistedContent.getDisplayName() + '\"' : "Content";
@@ -469,14 +470,11 @@ module app.wizard {
             return this.getPersistedItem().getPath().isDescendantOf(path) || this.getPersistedItem().getPath().equals(path);
         }
 
-        layoutPersistedItem(persistedContent: Content): wemQ.Promise<void> {
-            this.updateThumbnailWithContent(persistedContent);
-            this.notifyValidityChanged(persistedContent.isValid());
+        private isCurrentContentId(id: api.content.ContentId): boolean {
+            return this.getPersistedItem() && id && this.getPersistedItem().getContentId().equals(id);
+        }
 
-            api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).
-                then((contentSummaryAndCompareStatus: ContentSummaryAndCompareStatus) => {
-                    var ignore = contentSummaryAndCompareStatus.getCompareStatus() !== CompareStatus.NEW;
-                    this.contentWizardHeader.disableNameGeneration(ignore);
+        private listenToContentEvents(ignore: boolean) {
 
                     var deleteHandler = (event: api.content.ContentDeletedEvent) => {
                         if (this.getPersistedItem()) {
@@ -506,6 +504,20 @@ module app.wizard {
                             }
                         }
                     };
+
+            var updateHandler = (event: api.content.ContentUpdatedEvent) => {
+
+                if (this.isCurrentContentId(event.getContentId())) {
+
+                    new GetContentByIdRequest(event.getContentId()).sendAndParse().done((content: Content) => {
+
+                        this.setPersistedItem(content);
+                        this.updateWizardHeader(content);
+                        this.updateWizardStepForms(content);
+                        this.updateMetadataAndMetadataStepForms(content.clone());
+                    });
+                }
+            };
                     api.content.ContentPublishedEvent.on(publishHandler);
                     api.content.ContentDeletedEvent.on(deleteHandler);
 
@@ -513,9 +525,34 @@ module app.wizard {
                         api.content.ContentPublishedEvent.un(publishHandler);
                         api.content.ContentDeletedEvent.un(deleteHandler);
                     });
+                }
+            };
+
+            api.content.ContentUpdatedEvent.on(updateHandler);
+            api.content.ContentPublishedEvent.on(publishHandler);
+            api.content.ContentDeletedEvent.on(deleteHandler);
+
+            this.onClosed(() => {
+                api.content.ContentUpdatedEvent.un(updateHandler);
+                api.content.ContentPublishedEvent.un(publishHandler);
+                api.content.ContentDeletedEvent.un(deleteHandler);
+            });
+        }
+
+        layoutPersistedItem(persistedContent: Content): wemQ.Promise<void> {
+            this.updateThumbnailWithContent(persistedContent);
+            this.notifyValidityChanged(persistedContent.isValid());
+
+            api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).
+                done((contentSummaryAndCompareStatus: ContentSummaryAndCompareStatus) => {
+                    var ignore = contentSummaryAndCompareStatus.getCompareStatus() !== CompareStatus.NEW;
+                    this.contentWizardHeader.disableNameGeneration(ignore);
+
+                    this.listenToContentEvents(ignore);
+
                     this.contentWizardToolbarPublishControls.setCompareStatus(contentSummaryAndCompareStatus.getCompareStatus());
                     this.managePublishButtonStateForMobile(contentSummaryAndCompareStatus.getCompareStatus());
-                }).done();
+                });
 
             var viewedContent;
             var deferred = wemQ.defer<void>();
@@ -558,7 +595,7 @@ module app.wizard {
                     console.warn(" persistedContent: ", persistedContent);
 
                     if (persistedContent.getType().isDescendantOfMedia()) {
-                        this.updateMetadataAndMetadataForms(persistedContent.clone());
+                        this.updateMetadataAndMetadataStepForms(persistedContent.clone());
                     } else {
                         ConfirmationDialog.get().
                             setQuestion("Received Content from server differs from what you have. Would you like to load changes from server?").
@@ -636,7 +673,6 @@ module app.wizard {
                 // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
                 this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
                 this.settingsWizardStepForm.layout(content);
-                this.settingsWizardStepForm.setModel(new ContentSettingsModel(content));
 
                 if (this.isSecurityWizardStepFormAllowed) {
                     this.securityWizardStepForm.layout(content);
@@ -859,7 +895,7 @@ module app.wizard {
                     var contentToDisplay = (content.getDisplayName() && content.getDisplayName().length > 0) ?
                                            '\"' + content.getDisplayName() + '\"' : "Content";
                     api.notify.showFeedback(contentToDisplay + ' saved');
-                    new api.content.ContentUpdatedEvent(content.getContentId()).fire();
+                    //new api.content.ContentUpdatedEvent(content.getContentId()).fire();
 
                     return content;
                 });
@@ -1116,20 +1152,38 @@ module app.wizard {
          * Synchronizes wizard's extraData step forms with passed content - erases steps forms (meta)data and populates it with content's (meta)data.
          * @param content
          */
-        private updateMetadataAndMetadataForms(content: Content) {
-            var formContext = this.createFormContext(content);
+        private updateMetadataAndMetadataStepForms(content: Content) {
+
             for (var key in this.metadataStepFormByName) {
                 if (this.metadataStepFormByName.hasOwnProperty(key)) {
-                    this.metadataStepFormByName[key].removeChildren();
+
                     var mixinName = new MixinName(key);
                     var extraData = content.getExtraData(mixinName);
                     if (!extraData) { // ensure ExtraData object corresponds to each step form
                         extraData = new ExtraData(mixinName, new PropertyTree());
                         content.getAllExtraData().push(extraData);
                     }
-                    this.metadataStepFormByName[key].layout(formContext, extraData.getData(), this.metadataStepFormByName[key].getForm());
+                    this.metadataStepFormByName[key].update(extraData.getData());
                 }
             }
+        }
+
+        private updateWizardStepForms(content: Content) {
+
+            this.contentWizardStepForm.update(content.getContentData());
+
+            this.settingsWizardStepForm.update(content);
+
+            if (this.isSecurityWizardStepFormAllowed) {
+                this.securityWizardStepForm.update(content);
+            }
+        }
+
+        private updateWizardHeader(content: Content) {
+
+            this.updateThumbnailWithContent(content);
+
+            this.contentWizardHeader.initNames(content.getDisplayName(), content.getName().toString(), true);
         }
 
         private initPublishButtonForMobile() {

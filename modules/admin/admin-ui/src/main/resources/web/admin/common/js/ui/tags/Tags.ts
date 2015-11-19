@@ -28,7 +28,7 @@ module api.ui.tags {
         }
     }
 
-    export class Tags extends api.dom.UlEl {
+    export class Tags extends api.dom.FormInputEl {
 
         private tagSuggester: TagSuggester;
 
@@ -49,7 +49,7 @@ module api.ui.tags {
         private tagRemovedListeners: {(event: TagRemovedEvent) : void}[] = [];
 
         constructor(builder: TagsBuilder) {
-            super("tags");
+            super("ul", "tags");
             this.tagSuggester = builder.tagSuggester;
 
             builder.tags.forEach((value: string) => {
@@ -71,7 +71,7 @@ module api.ui.tags {
                     event.preventDefault();
                 } else if (event.keyCode == 8) {
                     if (!this.textInput.getValue() && this.countTags() > 0) {
-                        this.removeTag(this.tags[this.countTags() - 1]);
+                        this.doRemoveTag(this.tags[this.countTags() - 1]);
                     }
                 } else if (event.keyCode == 38) {
                     if (this.tagSuggestions.isVisible()) {
@@ -171,9 +171,9 @@ module api.ui.tags {
             }
         }
 
-        clearTags() {
-            this.tags.forEach((tag) => tag.remove());
-            this.tags = [];
+        clearTags(silent?: boolean) {
+            // use tags copy because doRemoveTag modifies tags array
+            this.tags.slice().forEach((tag) => this.doRemoveTag(tag, silent));
         }
 
         addTag(value: string) {
@@ -187,7 +187,7 @@ module api.ui.tags {
         }
 
         private doAddTag(value: string): Tag {
-            if (this.hasTag(value) || !value) {
+            if (this.indexOf(value) > -1 || !value) {
                 return null;
             }
 
@@ -195,13 +195,13 @@ module api.ui.tags {
             this.tags.push(tag);
             tag.insertBeforeEl(this.textInput);
 
-            tag.onTagRemove(() => this.removeTag(tag));
+            tag.onRemoveClicked(() => this.doRemoveTag(tag));
 
             return tag;
         }
 
-        private removeTag(tag: Tag) {
-            var index = this.tags.indexOf(tag);
+        private doRemoveTag(tag: Tag, silent?: boolean) {
+            var index = this.indexOf(tag.getValue());
             if (index >= 0) {
                 tag.remove();
                 this.tags.splice(index, 1);
@@ -209,18 +209,22 @@ module api.ui.tags {
                     this.textInput.setVisible(true);
                 }
                 this.textInput.giveFocus();
-                this.notifyTagRemoved(new TagRemovedEvent(tag.getValue(), index));
+                if (!silent) {
+                    this.notifyTagRemoved(new TagRemovedEvent(tag.getValue(), index));
+                }
             }
         }
 
-        hasTag(value: string) {
-            var match = false;
-            this.tags.forEach((tag) => {
-                if (value == tag.getValue()) {
-                    match = true;
+        private indexOf(value: string): number {
+            if (!api.util.StringHelper.isEmpty(value)) {
+                for (var i = 0; i < this.tags.length; i++) {
+                    if (value == this.tags[i].getValue()) {
+                        return i;
+                    }
+
                 }
-            });
-            return match;
+            }
+            return -1;
         }
 
         countTags(): number {

@@ -55,9 +55,9 @@ module api.form {
 
         unOccurrenceRendered(listener: (event: OccurrenceRenderedEvent)=>void) {
             this.occurrenceRenderedListeners =
-            this.occurrenceRenderedListeners.filter((currentListener: (event: OccurrenceRenderedEvent)=>void)=> {
-                return listener != currentListener;
-            });
+                this.occurrenceRenderedListeners.filter((currentListener: (event: OccurrenceRenderedEvent)=>void)=> {
+                    return listener != currentListener;
+                });
         }
 
         private notifyOccurrenceRendered(occurrence: FormItemOccurrence<V>, occurrenceView: V) {
@@ -88,9 +88,9 @@ module api.form {
 
         unOccurrenceRemoved(listener: (event: OccurrenceRemovedEvent)=>void) {
             this.occurrenceRemovedListeners =
-            this.occurrenceRemovedListeners.filter((currentListener: (event: OccurrenceRemovedEvent)=>void)=> {
-                return listener != currentListener;
-            });
+                this.occurrenceRemovedListeners.filter((currentListener: (event: OccurrenceRemovedEvent)=>void)=> {
+                    return listener != currentListener;
+                });
         }
 
         private notifyOccurrenceRemoved(occurrence: FormItemOccurrence<V>, occurrenceView: V) {
@@ -142,7 +142,25 @@ module api.form {
             return wemQ.all(layoutPromises).spread<void>(() => wemQ<void>(null));
         }
 
+        update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
+            this.propertyArray = propertyArray;
+
+            var promises = [];
+
+            this.occurrenceViews.forEach((occurrenceView: V) => {
+                promises.push(this.updateOccurrenceView(occurrenceView, propertyArray, unchangedOnly));
+            });
+
+            return wemQ.all(promises).spread<void>(() => {
+                return wemQ<void>(null);
+            });
+        }
+
         createNewOccurrenceView(occurrence: FormItemOccurrence<V>): V {
+            throw new Error("Must be implemented by inheritor");
+        }
+
+        updateOccurrenceView(occurrenceView: V, propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
             throw new Error("Must be implemented by inheritor");
         }
 

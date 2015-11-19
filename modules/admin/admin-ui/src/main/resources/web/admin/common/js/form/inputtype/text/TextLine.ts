@@ -52,6 +52,15 @@ module api.form.inputtype.text {
             return inputEl;
         }
 
+
+        updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
+            var input = <api.ui.text.TextInput> occurrence;
+
+            if (!unchangedOnly || !input.isDirty()) {
+                input.setValue(property.getString());
+            }
+        }
+
         availableSizeChanged() {
         }
 
@@ -80,7 +89,7 @@ module api.form.inputtype.text {
             }
             var valid = this.regexp.test(value);
             if (!silent) {
-                parent.toggleClass('valid-regexp', valid)
+                parent.toggleClass('valid-regexp', valid);
                 parent.toggleClass('invalid-regexp', !valid);
             }
             return valid;

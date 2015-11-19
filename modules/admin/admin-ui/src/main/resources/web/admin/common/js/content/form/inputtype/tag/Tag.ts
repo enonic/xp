@@ -54,12 +54,7 @@ module api.content.form.inputtype.tag {
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
             super.layout(input, propertyArray);
 
-            this.tags.clearTags();
-            propertyArray.forEach((property) => {
-                if (property.hasNonNullValue()) {
-                    this.tags.addTag(property.getString());
-                }
-            });
+            this.update(propertyArray);
 
             this.tags.onTagAdded((event) => {
                 var value = new Value(event.getValue(), ValueTypes.STRING);
@@ -78,6 +73,23 @@ module api.content.form.inputtype.tag {
             });
 
             this.setLayoutInProgress(false);
+
+            return wemQ<void>(null);
+        }
+
+
+        update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
+            if (!unchangedOnly || !this.tags.isDirty()) {
+                super.update(propertyArray, unchangedOnly).then(() => {
+                    this.tags.clearTags(true);
+
+                    propertyArray.forEach((property) => {
+                        if (property.hasNonNullValue()) {
+                            this.tags.addTag(property.getString());
+                        }
+                    });
+                });
+            }
 
             return wemQ<void>(null);
         }

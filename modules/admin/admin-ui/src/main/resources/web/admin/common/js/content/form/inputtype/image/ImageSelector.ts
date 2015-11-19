@@ -215,6 +215,7 @@ module api.content.form.inputtype.image {
 
             return new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(this.relationshipTypeName).sendAndParse()
                 .then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
+
                     this.contentComboBox = this.createContentComboBox(
                         input.getOccurrences().getMaximum(), relationshipType.getIconUrl(), relationshipType.getAllowedToTypes() || [],
                         input.getName()
@@ -233,17 +234,30 @@ module api.content.form.inputtype.image {
                     this.appendChild(comboBoxWrapper);
                     this.appendChild(this.selectedOptionsView);
 
-                    return this.doLoadContent(this.getPropertyArray()).then((contents: ContentSummary[]) => {
+                    return this.update(propertyArray).then(() => {
+                        this.setLayoutInProgress(false);
+                    });
+                });
+        }
+
+        update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
+            if (!unchangedOnly || !this.contentComboBox.isDirty()) {
+                return super.update(propertyArray, unchangedOnly).then(() => {
+                    this.contentComboBox.clearSelection(true);
+
+                    return this.doLoadContent(propertyArray).then((contents: ContentSummary[]) => {
+                        debugger;
                         contents.forEach((content: ContentSummary) => {
                             this.contentComboBox.selectOption(<Option<ImageSelectorDisplayValue>>{
                                 value: content.getId(),
                                 displayValue: ImageSelectorDisplayValue.fromContentSummary(content)
                             });
                         });
-
-                        this.setLayoutInProgress(false);
                     });
-                });
+                })
+            }
+
+            return wemQ<void>(null);
         }
 
         private createUploader(): ImageUploader {
@@ -291,7 +305,7 @@ module api.content.form.inputtype.image {
                 var item = event.getUploadItem();
                 var createdContent = item.getModel();
 
-                new api.content.ContentUpdatedEvent(this.config.contentId).fire();
+                //new api.content.ContentUpdatedEvent(this.config.contentId).fire();
 
                 var selectedOption = this.selectedOptionsView.getById(item.getId());
                 var option = selectedOption.getOption();

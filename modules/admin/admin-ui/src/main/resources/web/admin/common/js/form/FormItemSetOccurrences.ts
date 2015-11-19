@@ -98,10 +98,8 @@ module api.form {
 
         createNewOccurrenceView(occurrence: FormItemSetOccurrence): FormItemSetOccurrenceView {
 
-            var dataSet = this.propertyArray.getSet(occurrence.getIndex());
-            if (!dataSet) {
-                dataSet = this.propertyArray.addSet();
-            }
+            var dataSet = this.getSetFromArray(occurrence);
+
             var newOccurrenceView = new FormItemSetOccurrenceView(<FormItemSetOccurrenceViewConfig>{
                 context: this.context,
                 formItemSetOccurrence: occurrence,
@@ -114,6 +112,21 @@ module api.form {
                 this.doRemoveOccurrence(event.getView(), event.getIndex());
             });
             return newOccurrenceView;
+        }
+
+        updateOccurrenceView(occurrenceView: FormItemSetOccurrenceView, propertyArray: PropertyArray,
+                             unchangedOnly?: boolean): wemQ.Promise<void> {
+            this.propertyArray = propertyArray;
+
+            return occurrenceView.update(propertyArray);
+        }
+
+        private getSetFromArray(occurrence): PropertySet {
+            var dataSet = this.propertyArray.getSet(occurrence.getIndex());
+            if (!dataSet) {
+                dataSet = this.propertyArray.addSet();
+            }
+            return dataSet;
         }
 
         showOccurrences(show: boolean) {

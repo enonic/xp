@@ -41,12 +41,11 @@ module api.content.form.inputtype.upload {
 
             this.uploaderWrapper = this.createUploaderWrapper(property);
 
-            if (this.getContext().contentId) {
-                this.uploader.setValue(this.getContext().contentId.toString());
-                if (property.getValue() != null) {
-                    this.uploader.setFileName(this.getFileNameFromProperty(property));
-                }
-            }
+            this.updateProperty(property);
+
+            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
+                this.updateProperty(event.getProperty(), true);
+            });
 
             this.uploader.onUploadStarted(() => {
                 this.uploaderWrapper.removeClass("empty");
@@ -101,6 +100,19 @@ module api.content.form.inputtype.upload {
             return new api.form.inputtype.InputValidationRecording();
         }
 
+
+        updateProperty(property: Property, unchangedOnly?: boolean): wemQ.Promise<void> {
+            if ((!unchangedOnly || !this.uploader.isDirty()) && this.getContext().contentId) {
+
+                this.uploader.setValue(this.getContext().contentId.toString());
+
+                if (property.hasNonNullValue()) {
+                    this.uploader.setFileName(this.getFileNameFromProperty(property));
+                }
+            }
+            return wemQ<void>(null);
+        }
+
         private deleteContent(property: Property) {
             var contentId = this.getContext().contentId;
 
@@ -125,7 +137,7 @@ module api.content.form.inputtype.upload {
                     }).done();
                 });
         }
-        
+
         private getFileNameFromProperty(property: Property): string {
             if (property.getValue() != null) {
                 switch (property.getType()) {

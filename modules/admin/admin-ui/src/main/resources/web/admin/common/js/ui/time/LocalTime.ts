@@ -25,6 +25,9 @@ module api.ui.time {
             return this;
         }
 
+        isDirty(): boolean {
+            return this.timePicker.isDirty();
+        }
 
         onTimeChanged(listener: (hours: number, minutes: number)=>void) {
             this.timePicker.onSelectedTimeChanged(listener);

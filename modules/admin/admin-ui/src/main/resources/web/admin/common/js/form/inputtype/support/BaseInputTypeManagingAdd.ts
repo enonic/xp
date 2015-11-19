@@ -57,6 +57,15 @@ module api.form.inputtype.support {
             return wemQ<void>(null);
         }
 
+        /**
+         * Must be resolved by inheritors.
+         */
+        update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
+            this.propertyArray = propertyArray;
+
+            return wemQ<void>(null);
+        }
+
         hasValidUserInput(): boolean {
             return true;
         }

@@ -158,16 +158,8 @@ module api.ui.selector.combobox {
             return this.comboBox.countSelectedOptions();
         }
 
-        select(value: OPTION_DISPLAY_VALUE) {
-            this.comboBox.selectOption(this.createOption(value));
-        }
-
-        selectReadOnly(value: OPTION_DISPLAY_VALUE) {
-            this.comboBox.selectOption(this.createOptionReadOnly(value));
-        }
-
-        selectByOption(option: Option<OPTION_DISPLAY_VALUE>) {
-            this.comboBox.selectOption(option);
+        select(value: OPTION_DISPLAY_VALUE, readOnly?: boolean) {
+            this.comboBox.selectOption(this.createOption(value, readOnly));
         }
 
         deselect(value: OPTION_DISPLAY_VALUE) {
@@ -199,18 +191,11 @@ module api.ui.selector.combobox {
             return typeof val == 'object' && val['toString'] ? val.toString() : val;
         }
 
-        protected createOption(value: Object): Option<OPTION_DISPLAY_VALUE> {
+        protected createOption(value: Object, readOnly?: boolean): Option<OPTION_DISPLAY_VALUE> {
             return {
                 value: this.getDisplayValueId(value),
-                displayValue: <OPTION_DISPLAY_VALUE>value
-            }
-        }
-
-        private createOptionReadOnly(value: OPTION_DISPLAY_VALUE): Option<OPTION_DISPLAY_VALUE> {
-            return {
-                value: this.getDisplayValueId(value),
-                displayValue: value,
-                readOnly: true
+                displayValue: <OPTION_DISPLAY_VALUE>value,
+                readOnly: readOnly
             }
         }
 
