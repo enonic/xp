@@ -36,6 +36,10 @@ module api.ui.geo {
             return this;
         }
 
+        isDirty(): boolean {
+            return this.geoLocationInput.isDirty();
+        }
+
         onValueChanged(listener: (event: api.ui.ValueChangedEvent)=>void) {
             this.valueChangedListeners.push(listener);
         }

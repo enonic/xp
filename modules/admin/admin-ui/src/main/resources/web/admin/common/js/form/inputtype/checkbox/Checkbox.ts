@@ -40,7 +40,20 @@ module api.content.form.inputtype.checkbox {
                     property.setValue(newValue);
                 }
             });
+            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
+                this.updateProperty(event.getProperty(), true);
+            });
 
+            return wemQ<void>(null);
+        }
+
+        updateProperty(property: Property, unchangedOnly?: boolean): wemQ.Promise<void> {
+            if (Checkbox.debug) {
+                console.debug('Checkbox.updateProperty' + (unchangedOnly ? ' (unchanged only)' : ''), property);
+            }
+            if ((!unchangedOnly || !this.checkbox.isDirty()) && property.hasNonNullValue()) {
+                this.checkbox.setChecked(property.getBoolean());
+            }
             return wemQ<void>(null);
         }
 

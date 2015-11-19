@@ -230,6 +230,10 @@ module api.ui.time {
             }
         }
 
+        isDirty(): boolean {
+            return this.input.isDirty();
+        }
+
         hasValidUserInput(): boolean {
             return this.validUserInput;
         }

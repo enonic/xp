@@ -17,12 +17,6 @@ module api.ui.text {
         private mediaUploader: MediaUploader;
 
         constructor(className?: string) {
-            super("div", "file-input");
-
-            if (className) {
-                this.addClass(className);
-            }
-
             this.textInput = new InputEl("text");
 
             this.mediaUploader = new api.content.MediaUploader({
@@ -33,6 +27,12 @@ module api.ui.text {
                 allowMultiSelection: true,
                 deferred: true  // wait till it's shown
             });
+
+            super("div", "file-input");
+
+            if (className) {
+                this.addClass(className);
+            }
 
             this.mediaUploader.onUploadStarted((event: api.ui.uploader.FileUploadStartedEvent<api.content.Content>) => {
                 var names = event.getUploadItems().map((uploadItem: api.ui.uploader.UploadItem<api.content.Content>) => {

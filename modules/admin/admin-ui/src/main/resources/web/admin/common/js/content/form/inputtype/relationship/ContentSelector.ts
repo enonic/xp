@@ -122,6 +122,21 @@ module api.content.form.inputtype.relationship {
                 });
         }
 
+
+        update(propertyArray: api.data.PropertyArray, unchangedOnly: boolean): Q.Promise<void> {
+            if (!unchangedOnly || !this.contentComboBox.isDirty()) {
+                return super.update(propertyArray, unchangedOnly).then(() => {
+                    this.contentComboBox.clearSelection(true);
+
+                    return this.doLoadContent(propertyArray).then<void>(() => {
+                        return wemQ<void>(null);
+                    });
+                });
+            }
+
+            return wemQ<void>(null);
+        }
+
         private doLoadContent(propertyArray: PropertyArray): wemQ.Promise<api.content.ContentSummary[]> {
 
             var contentIds: ContentId[] = [];

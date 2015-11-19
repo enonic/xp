@@ -97,6 +97,19 @@ module api.schema.content.inputtype {
             return wemQ<void>(null);
         }
 
+
+        update(propertyArray: api.data.PropertyArray, unchangedOnly: boolean): Q.Promise<void> {
+            if (!unchangedOnly || !this.combobox.isDirty()) {
+                return super.update(propertyArray, unchangedOnly).then(() => {
+                    this.combobox.clearSelection(true);
+
+                    return this.combobox.getLoader().load().then(this.onContentTypesLoaded);
+                });
+            }
+
+            return wemQ<void>(null);
+        }
+
         private getValues(): Value[] {
             return this.combobox.getSelectedDisplayValues().map((contentType: ContentTypeSummary) => {
                 return new Value(contentType.getContentTypeName().toString(), ValueTypes.STRING);
