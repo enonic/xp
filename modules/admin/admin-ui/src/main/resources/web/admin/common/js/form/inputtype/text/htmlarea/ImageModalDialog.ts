@@ -9,6 +9,7 @@ module api.form.inputtype.text.htmlarea {
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
     import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
     import Content = api.content.Content;
+    import Action = api.ui.Action;
 
     export class ImageModalDialog extends ModalDialog {
 
@@ -22,6 +23,7 @@ module api.form.inputtype.text.htmlarea {
         private image: api.dom.ImgEl;
         private elementContainer: HTMLElement;
         private callback: Function;
+        private imageToolbar: ImageToolbar;
 
         constructor(config: api.form.inputtype.text.HtmlAreaImage, contentId: api.content.ContentId) {
             this.imageElement = <HTMLImageElement>config.element;
@@ -85,6 +87,7 @@ module api.form.inputtype.text.htmlarea {
             imageSelectorComboBox.onOptionDeselected(() => {
                 formItem.removeClass("image-preview");
                 this.removePreview();
+                this.imageToolbar.remove();
                 this.uploader.show();
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
@@ -129,6 +132,11 @@ module api.form.inputtype.text.htmlarea {
 
             this.image.onLoaded(() => {
                 this.imagePreviewContainer.removeClass("upload");
+                this.imageToolbar = new ImageToolbar(this.image);
+                this.imageToolbar.onClicked(() => {
+                    console.log("clicked");
+                })
+                wemjq(this.imageToolbar.getHTMLElement()).insertBefore(this.imagePreviewContainer.getHTMLElement());
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
 
@@ -278,6 +286,20 @@ module api.form.inputtype.text.htmlarea {
             return figure;
         }
 
+        private updateImageAlignmentForCreate(figure: api.dom.ElementHelper) {
+            this.image.getEl().removeAttribute("style");
+
+            var alignment: ImageAlignment = this.imageToolbar.getImageAlignment();
+            figure.addClass(ImageAlignment[alignment].toLowerCase());
+        }
+
+        private updateImageAlignmentForUpdate(element: HTMLElement) {
+            this.image.getEl().removeAttribute("style");
+
+            var alignment: ImageAlignment = this.imageToolbar.getImageAlignment();
+            wemjq(element).removeClass().addClass(ImageAlignment[alignment].toLowerCase());
+        }
+
         private createImageTag(): void {
             var container = this.elementContainer,
                 isProperContainer = function () {
@@ -285,6 +307,7 @@ module api.form.inputtype.text.htmlarea {
                 };
 
             if (this.imageElement) {
+                this.updateImageAlignmentForUpdate(this.imageElement.parentElement);
                 this.imageElement.parentElement.replaceChild((<api.dom.ImgEl>this.image).getEl().getHTMLElement(), this.imageElement);
                 setTimeout(() => {
                     this.getEditor().nodeChanged({selectionChange: true})
@@ -293,6 +316,8 @@ module api.form.inputtype.text.htmlarea {
             else {
                 var figCaptionId = this.generateUUID(),
                     figure = this.createFigureElement(figCaptionId);
+
+                this.updateImageAlignmentForCreate(figure);
 
                 if (!isProperContainer() || container.nodeName === "FIGURE") {
                     while (!isProperContainer()) {
@@ -310,5 +335,94 @@ module api.form.inputtype.text.htmlarea {
             }
         }
 
+    }
+
+    export class ImageToolbar extends api.ui.toolbar.Toolbar {
+
+        private image: api.dom.ImgEl;
+
+        private justifyButton: api.ui.button.ActionButton;
+
+        private alignLeftButton: api.ui.button.ActionButton;
+
+        private centerButton: api.ui.button.ActionButton;
+
+        private alignRightButton: api.ui.button.ActionButton;
+
+
+        constructor(image: api.dom.ImgEl) {
+            super("image-toolbar");
+
+            this.image = image;
+
+            super.addElement(this.justifyButton = this.createJustifiedButton());
+            super.addElement(this.alignLeftButton = this.createLeftAlignedButton());
+            super.addElement(this.centerButton = this.createCenteredButton());
+            super.addElement(this.alignRightButton = this.createRightAlignedButton());
+
+        }
+
+        private createJustifiedButton(): api.ui.button.ActionButton {
+            return this.createAlignmentButton("icon-paragraph-justify active", "width: 100%;");
+        }
+
+        private createLeftAlignedButton(): api.ui.button.ActionButton {
+            return this.createAlignmentButton("icon-paragraph-left", "width: 40%; margin: 0; float: left;");
+        }
+
+        private createCenteredButton(): api.ui.button.ActionButton {
+            return this.createAlignmentButton("icon-paragraph-center", "width: 60%; margin: auto");
+        }
+
+        private createRightAlignedButton(): api.ui.button.ActionButton {
+            return this.createAlignmentButton("icon-paragraph-right", "width: 40%; margin: 0; float: right");
+        }
+
+        private createAlignmentButton(iconClass: string, styleForAlignment: string): api.ui.button.ActionButton {
+            var action: Action = new Action("");
+
+            action.setIconClass(iconClass);
+
+            var button = new api.ui.button.ActionButton(action);
+
+            action.onExecuted(() => {
+                this.resetActiveButton();
+                button.addClass("active");
+                this.image.getEl().removeAttribute("style");
+                this.image.getEl().setAttribute("style", styleForAlignment);
+            });
+
+            return button;
+        }
+
+        private resetActiveButton() {
+            this.justifyButton.removeClass("active");
+            this.alignLeftButton.removeClass("active");
+            this.centerButton.removeClass("active");
+            this.alignRightButton.removeClass("active");
+        }
+
+        getImageAlignment(): ImageAlignment {
+            if (this.justifyButton.hasClass("active")) {
+                return ImageAlignment.JUSTIFIED;
+            }
+            else if (this.alignLeftButton.hasClass("active")) {
+                return ImageAlignment.LEFTALIGNED;
+            }
+            else if (this.centerButton.hasClass("active")) {
+                return ImageAlignment.CENTERED;
+            }
+            else if (this.alignRightButton.hasClass("active")) {
+                return ImageAlignment.RIGHTALIGNED;
+            }
+
+            return ImageAlignment.JUSTIFIED;
+        }
+
+
+    }
+
+    export enum ImageAlignment{
+        JUSTIFIED, LEFTALIGNED, CENTERED, RIGHTALIGNED
     }
 }
