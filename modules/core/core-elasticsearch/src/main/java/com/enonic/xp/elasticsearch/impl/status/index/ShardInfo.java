@@ -1,30 +1,30 @@
 package com.enonic.xp.elasticsearch.impl.status.index;
 
 
-import org.apache.commons.lang.StringUtils;
+import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Lists;
 
 public class ShardInfo
 {
-    final String index;
+    private final List<ShardDetails> unassigned;
 
-    final int id;
+    private final List<ShardDetails> relocating;
 
-    final boolean primary;
+    private final List<ShardDetails> initializing;
 
-    final String state;
+    private final List<ShardDetails> started;
 
-    final String node;
-
-    private ShardInfo( final Builder builder )
+    private ShardInfo( Builder builder )
     {
-        index = builder.index;
-        id = builder.id;
-        primary = builder.primary;
-        state = builder.state;
-        node = builder.node;
+        unassigned = builder.unassigned;
+        relocating = builder.relocating;
+        initializing = builder.initializing;
+        started = builder.started;
     }
 
     public static Builder create()
@@ -32,74 +32,64 @@ public class ShardInfo
         return new Builder();
     }
 
-    public ObjectNode toJson()
+    public JsonNode toJson()
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
 
-        final ObjectNode shardId = JsonNodeFactory.instance.objectNode();
-        if ( !StringUtils.isEmpty( index ) )
-        {
-            shardId.put( "index", index );
-        }
-        shardId.put( "id", this.id );
-        json.set( "id", shardId );
+        json.set( "started", toJson( started ) );
+        json.set( "unassigned", toJson( unassigned ) );
+        json.set( "relocating", toJson( relocating ) );
+        json.set( "initializing", toJson( initializing ) );
 
-        json.put( "primary", primary );
-        if ( !StringUtils.isEmpty( state ) )
-        {
-            json.put( "state", state );
-        }
-        if ( !StringUtils.isEmpty( node ) )
-        {
-            json.put( "node", node );
-        }
         return json;
     }
 
+    private JsonNode toJson( final List<ShardDetails> shardInfoList )
+    {
+
+        final ArrayNode arrayNode = JsonNodeFactory.instance.arrayNode();
+        shardInfoList.stream().
+            map( ShardDetails::toJson ).
+            forEach( arrayNode::add );
+
+        return arrayNode;
+    }
 
     public static final class Builder
     {
-        private String index;
+        private List<ShardDetails> unassigned = Lists.newArrayList();
 
-        private int id;
+        private List<ShardDetails> relocating = Lists.newArrayList();
 
-        private boolean primary;
+        private List<ShardDetails> initializing = Lists.newArrayList();
 
-        private String state;
-
-        private String node;
+        private List<ShardDetails> started = Lists.newArrayList();
 
         private Builder()
         {
         }
 
-        public Builder index( final String index )
+        public Builder unassigned( List<ShardDetails> unassigned )
         {
-            this.index = index;
+            this.unassigned = unassigned;
             return this;
         }
 
-        public Builder id( final int id )
+        public Builder relocating( List<ShardDetails> relocating )
         {
-            this.id = id;
+            this.relocating = relocating;
             return this;
         }
 
-        public Builder primary( final boolean primary )
+        public Builder initializing( List<ShardDetails> initializing )
         {
-            this.primary = primary;
+            this.initializing = initializing;
             return this;
         }
 
-        public Builder state( final String state )
+        public Builder started( List<ShardDetails> started )
         {
-            this.state = state;
-            return this;
-        }
-
-        public Builder node( final String node )
-        {
-            this.node = node;
+            this.started = started;
             return this;
         }
 

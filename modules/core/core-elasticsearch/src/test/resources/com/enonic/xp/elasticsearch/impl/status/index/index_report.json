@@ -1,13 +1,21 @@
 {
-  "shards": [
-    {
-      "id": {
-        "index": "myindex",
-        "id": 0
-      },
-      "primary": true,
-      "state": "STARTED",
-      "node": "nodeId"
-    }
-  ]
+  "summary": {
+    "total": 1,
+    "started": 1,
+    "unassigned": 0,
+    "relocating": 0,
+    "initializing": 0
+  },
+  "shards": {
+    "started": [
+      {
+        "id": "myindex(0)",
+        "node": "hostId (hostAddress)",
+        "type": "PRIMARY"
+      }
+    ],
+    "unassigned": [],
+    "relocating": [],
+    "initializing": []
+  }
 }
