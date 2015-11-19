@@ -16,6 +16,9 @@ module app {
 
         private mask: api.ui.mask.LoadMask;
 
+        private closeObsoleteTabsHandler: () => void = api.util.AppHelper.debounce(this.closeObsoleteTabs.bind(this), 500,
+            false);
+
         constructor(appBar: api.app.bar.AppBar, path?: api.rest.Path) {
 
             super({
@@ -110,7 +113,41 @@ module app {
                     if (item) {
                         item.getCloseAction().execute(true);
                     }
+                    setTimeout(() => {
+                        this.closeObsoleteTabsHandler();
+                    }, 500);
                 }
+            });
+        }
+
+        private closeObsoleteTabs() {
+            var ids: ContentId[] = this.getOpenEditingTabIds();
+
+            if (ids.length == 0) {
+                return;
+            }
+
+            new api.content.GetContentSummaryByIds(ids).get().then((contentSummaries: ContentSummary[]) => {
+                var existingIds: string[] = contentSummaries.map((content: ContentSummary) => {
+                    return content.getId();
+                });
+                ids.filter((id: ContentId) => {
+                    return existingIds.indexOf(id.toString()) == -1;
+                }).forEach((id: ContentId) => {
+                    var item = this.getNavigator().getNavigationItemByIdValue(id.toString());
+                    if (!!item && item.getCloseAction()) {
+                        item.getCloseAction().execute(true);
+                    }
+                });
+            }).catch((reason: any) => {
+            });
+        }
+
+        private getOpenEditingTabIds(): ContentId[] {
+            return this.getNavigator().getNavigationItems().filter((tabMenuItem: api.ui.tab.TabMenuItem) => {
+                return !!tabMenuItem && (<AppBarTabMenuItem>tabMenuItem).isEditing();
+            }).map((tabMenuItem: api.ui.tab.TabMenuItem) => {
+                return new ContentId((<AppBarTabMenuItem>tabMenuItem).getTabId().getId());
             });
         }
 

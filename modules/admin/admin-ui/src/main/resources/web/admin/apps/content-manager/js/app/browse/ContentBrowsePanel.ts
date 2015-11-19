@@ -459,6 +459,7 @@ module app.browse {
 
                         this.updateDetailsPanel(null);
                         new api.content.ContentDeletedEvent(node.getData().getContentSummary().getContentId()).fire();
+                        this.notifyChildrenDeleted(node);
                     }
                 });
 
@@ -476,6 +477,18 @@ module app.browse {
                 return new ContentChangeResult(ContentServerChangeType.DELETE, deleteResult);
             });
             return promise;
+        }
+
+        // this will fire ContentDeletedEvent for children of passed node that were loaded in the grid.
+        private notifyChildrenDeleted(node: TreeNode<ContentSummaryAndCompareStatus>) {
+            var nodeChildren: TreeNode<ContentSummaryAndCompareStatus>[] = node.getChildren();
+            for (var j = 0; j < nodeChildren.length; j++) {
+                var childNode: TreeNode<ContentSummaryAndCompareStatus> = nodeChildren[j];
+                if (childNode.getData() && childNode.getData().getContentSummary()) {
+                    new api.content.ContentDeletedEvent(childNode.getData().getContentSummary().getContentId()).fire();
+                }
+                this.notifyChildrenDeleted(childNode);
+            }
         }
 
         private handleContentPending(change: ContentServerChange, promise: wemQ.Promise<any>,
