@@ -80,7 +80,7 @@ module api.ui.menu {
             ContextMenu.prototype.doMoveTo(this, offset.left + dx, offset.top + dy);
         }
 
-        private doMoveTo(menu: ContextMenu, x: number, y: number) {
+        doMoveTo(menu: ContextMenu, x: number, y: number) {
             menu.getEl().setLeftPx(x).setTopPx(y);
         }
 
