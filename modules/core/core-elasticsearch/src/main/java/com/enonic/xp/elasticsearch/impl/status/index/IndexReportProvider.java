@@ -77,7 +77,8 @@ public class IndexReportProvider
 
         shardRoutingList.forEach( ( routing ) -> list.add( ShardDetails.create().
             id( routing.index() + "(" + routing.getId() + ")" ).
-            node( createNodeId( discoveryNodes, routing ) ).
+            nodeId( routing.currentNodeId() ).
+            nodeAddress( getAddress( discoveryNodes, routing ) ).
             primary( routing.primary() ).
             relocatingNode( routing.relocatingNodeId() ).
             build() ) );
@@ -85,11 +86,11 @@ public class IndexReportProvider
         return list;
     }
 
-    private String createNodeId( final DiscoveryNodes discoveryNodes, final ShardRouting routing )
+    private String getAddress( final DiscoveryNodes discoveryNodes, final ShardRouting routing )
     {
         final DiscoveryNode node = discoveryNodes.get( routing.currentNodeId() );
 
-        return node != null ? node.getId() + " (" + node.address() + ")" : "UNKNOWN";
+        return node != null ? node.getHostAddress() : "UNKNOWN";
     }
 
     private ClusterStateResponse getClusterState()

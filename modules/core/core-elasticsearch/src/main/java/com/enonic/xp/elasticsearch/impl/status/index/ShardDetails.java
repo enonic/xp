@@ -7,7 +7,9 @@ public class ShardDetails
 {
     private final String id;
 
-    private final String node;
+    private final String nodeAddress;
+
+    private final String nodeId;
 
     private final boolean primary;
 
@@ -16,8 +18,9 @@ public class ShardDetails
     private ShardDetails( Builder builder )
     {
         id = builder.id;
-        node = builder.node;
+        nodeId = builder.nodeId;
         primary = builder.primary;
+        this.nodeAddress = builder.nodeAddress;
         relocatingNode = builder.relocatingNode;
     }
 
@@ -32,9 +35,14 @@ public class ShardDetails
 
         json.put( "id", id );
 
-        if ( node != null )
+        if ( nodeId != null )
         {
-            json.put( "node", node );
+            json.put( "nodeId", nodeId );
+        }
+
+        if ( nodeAddress != null )
+        {
+            json.put( "nodeAddress", nodeAddress );
         }
 
         json.put( "type", primary ? "PRIMARY" : "REPLICA" );
@@ -51,11 +59,13 @@ public class ShardDetails
     {
         private String id;
 
-        private String node;
+        private String nodeId;
 
         private boolean primary;
 
         private String relocatingNode;
+
+        private String nodeAddress;
 
         private Builder()
         {
@@ -67,9 +77,15 @@ public class ShardDetails
             return this;
         }
 
-        public Builder node( String node )
+        public Builder nodeId( String node )
         {
-            this.node = node;
+            this.nodeId = node;
+            return this;
+        }
+
+        public Builder nodeAddress( final String nodeAddress )
+        {
+            this.nodeAddress = nodeAddress;
             return this;
         }
 
