@@ -3,6 +3,7 @@ package com.enonic.xp.jaxrs.impl.multipart;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 
 import org.junit.Before;
@@ -11,6 +12,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartService;
+import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 
@@ -20,9 +22,14 @@ public class MultipartFormReaderTest
 
     private MultipartFormReader reader;
 
+    private HttpServletRequest request;
+
     @Before
     public void setup()
     {
+        this.request = Mockito.mock( HttpServletRequest.class );
+        ServletRequestHolder.setRequest( this.request );
+
         this.service = Mockito.mock( MultipartService.class );
         this.reader = new MultipartFormReader( this.service );
     }
@@ -43,9 +50,9 @@ public class MultipartFormReaderTest
         final InputStream in = Mockito.mock( InputStream.class );
 
         final MultipartForm form = Mockito.mock( MultipartForm.class );
-        Mockito.when( this.service.parse( in, MediaType.MULTIPART_FORM_DATA_TYPE.toString() ) ).thenReturn( form );
+        Mockito.when( this.service.parse( this.request ) ).thenReturn( form );
 
-        final MultipartForm result = readFrom( in, MediaType.MULTIPART_FORM_DATA_TYPE );
+        final MultipartForm result = readFrom( MediaType.MULTIPART_FORM_DATA_TYPE );
         assertSame( form, result );
     }
 
@@ -54,9 +61,9 @@ public class MultipartFormReaderTest
         return this.reader.isReadable( type, type, new Annotation[0], mediaType );
     }
 
-    private MultipartForm readFrom( final InputStream in, final MediaType type )
+    private MultipartForm readFrom( final MediaType type )
         throws Exception
     {
-        return this.reader.readFrom( MultipartForm.class, MultipartForm.class, new Annotation[0], type, null, in );
+        return this.reader.readFrom( MultipartForm.class, MultipartForm.class, new Annotation[0], type, null, null );
     }
 }

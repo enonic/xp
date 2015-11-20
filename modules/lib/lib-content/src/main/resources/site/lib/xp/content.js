@@ -85,3 +85,14 @@ exports.modify = function (params) {
     bean.editor = __.toScriptValue(params.editor);
     return __.toNativeObject(bean.execute());
 };
+
+exports.createMedia = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.CreateMediaHandler');
+    bean.name = required(params, 'name');
+    bean.parentPath = nullOrValue(params.parentPath);
+    bean.mimeType = nullOrValue(params.mimeType);
+    bean.focalX = nullOrValue(params.focalX);
+    bean.focalY = nullOrValue(params.focalY);
+    bean.data = nullOrValue(params.data);
+    return __.toNativeObject(bean.execute());
+};

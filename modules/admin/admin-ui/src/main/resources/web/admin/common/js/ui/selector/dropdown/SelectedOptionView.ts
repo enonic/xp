@@ -2,7 +2,7 @@ module api.ui.selector.dropdown {
 
     import DropdownHandle = api.ui.selector.DropdownHandle;
 
-    export class SelectedOptionView<T> extends api.dom.ButtonEl {
+    export class SelectedOptionView<T> extends api.dom.FormItemEl {
 
         private objectViewer:Viewer<T>;
 
@@ -15,7 +15,7 @@ module api.ui.selector.dropdown {
         private openDropdownListeners: {(): void;}[] = [];
 
         constructor(objectViewer:Viewer<T>) {
-            super("selected-option");
+            super("div", "selected-option");
             this.objectViewer = objectViewer;
             this.dropdownHandle = new DropdownHandle();
             this.optionValueEl = new api.dom.DivEl('option-value');

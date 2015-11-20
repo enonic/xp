@@ -39,25 +39,25 @@ public class MultipartConfiguratorTest
 
         final MultipartConfigElement multipartConfig = getMultipartConfig();
         assertEquals( FileUtils.getTempDirectoryPath(), multipartConfig.getLocation() );
-        assertEquals( 1048576, multipartConfig.getMaxFileSize() );
-        assertEquals( 10485760, multipartConfig.getMaxRequestSize() );
-        assertEquals( 0, multipartConfig.getFileSizeThreshold() );
+        assertEquals( -1, multipartConfig.getMaxFileSize() );
+        assertEquals( -1, multipartConfig.getMaxRequestSize() );
+        assertEquals( 1000, multipartConfig.getFileSizeThreshold() );
     }
 
     @Test
     public void overrideConfig()
     {
         Mockito.when( this.config.multipart_store() ).thenReturn( FileUtils.getTempDirectoryPath() + "/other" );
-        Mockito.when( this.config.multipart_maxFileSize() ).thenReturn( 2 );
-        Mockito.when( this.config.multipart_maxRequestSize() ).thenReturn( 20 );
-        Mockito.when( this.config.multipart_fileSizeThreshold() ).thenReturn( 1000 );
+        Mockito.when( this.config.multipart_maxFileSize() ).thenReturn( 2000L );
+        Mockito.when( this.config.multipart_maxRequestSize() ).thenReturn( 20000L );
+        Mockito.when( this.config.multipart_fileSizeThreshold() ).thenReturn( 2000 );
 
         configure();
 
         final MultipartConfigElement multipartConfig = getMultipartConfig();
         assertEquals( FileUtils.getTempDirectoryPath() + "/other", multipartConfig.getLocation() );
-        assertEquals( 2097152, multipartConfig.getMaxFileSize() );
-        assertEquals( 20971520, multipartConfig.getMaxRequestSize() );
-        assertEquals( 1000, multipartConfig.getFileSizeThreshold() );
+        assertEquals( 2000L, multipartConfig.getMaxFileSize() );
+        assertEquals( 20000L, multipartConfig.getMaxRequestSize() );
+        assertEquals( 2000, multipartConfig.getFileSizeThreshold() );
     }
 }

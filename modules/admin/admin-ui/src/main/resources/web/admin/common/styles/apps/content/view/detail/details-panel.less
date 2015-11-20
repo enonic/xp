@@ -102,17 +102,7 @@
   .no-selection-message {
     display: none;
 
-    font-size: 16px;
-    font-family: "Open Sans", sans-serif;
-    color: lightgray;
-    top: 50%;
-    text-align: center;
-    line-height: 30px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
-    width: 100%;
-    position: absolute;
+    .watermark-text();
   }
 
   .details-container {
@@ -443,6 +433,14 @@
         max-height: 35px;
         display: inline-block;
         border: 0px;
+
+        .option-value {
+          margin: 0px 37px 0px 0px;
+
+          .viewer {
+            line-height: 35px;
+          }
+        }
       }
 
       .viewer {
@@ -487,51 +485,6 @@
       }
       .grid {
         width: calc(~'100% - 6px') !important;
-      }
-    }
-  }
-}
-
-.split-panel {
-  // styles for large screens
-
-  &.content-grid-and-browse-split-panel {
-
-    &.vertical {
-      > .panel, .splitter {
-        top: 41px;
-      }
-    }
-  }
-
-  &.split-panel-with-details {
-
-    > .split-panel {
-      right: auto; //ie fix - 'auto' will be used for ie as 'initial' not supported; last value mentioned will be used
-      right: initial;
-      .transition(all 0.5s ease-in-out);
-    }
-
-    > .splitter {
-      z-index: 1;
-    }
-
-    > .details-panel {
-      box-shadow: none;
-      z-index: auto;
-      display: inherit;
-
-      &.left-bordered {
-        border-left: 5px #eeeeee solid;
-        box-sizing: content-box;
-      }
-
-      > .details-container {
-        left: 0px;
-      }
-
-      .widget-toggle-button {
-        border-left: 1px #d3d3d3 solid;
       }
     }
   }

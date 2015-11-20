@@ -7,7 +7,7 @@ public interface MultipartItem
 {
     String getName();
 
-    String getFieldName();
+    String getFileName();
 
     MediaType getContentType();
 

@@ -1,0 +1,28 @@
+{
+  "count": 2,
+  "components": [
+    {
+      "name": "comp1",
+      "enabled": false,
+      "bundle": 0,
+      "instances": [
+        {
+          "id": 1,
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "name": "comp2",
+      "enabled": false,
+      "bundle": 0,
+      "instances": [
+        {
+          "id": 2,
+          "state": "ACTIVE",
+          "pid": "mypid"
+        }
+      ]
+    }
+  ]
+}

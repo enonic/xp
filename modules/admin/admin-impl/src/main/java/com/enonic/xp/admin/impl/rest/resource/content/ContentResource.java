@@ -862,7 +862,15 @@ public final class ContentResource
                     containsIgnoreCase( locale.getDisplayVariant( locale ), trimmedQuery ) ||
                     containsIgnoreCase( locale.getCountry(), trimmedQuery ) ||
                     containsIgnoreCase( locale.getDisplayCountry( locale ), trimmedQuery ) ||
-                    containsIgnoreCase( getFormattedDisplayName( locale ), trimmedQuery ) ).
+                    containsIgnoreCase( getFormattedDisplayName( locale ), trimmedQuery ) &&
+                        StringUtils.isNotEmpty( locale.toLanguageTag() ) && StringUtils.isNotEmpty( locale.getDisplayName() ) ).
+                toArray( Locale[]::new );
+        }
+        else
+        {
+            locales = Arrays.stream( locales ).
+                filter(
+                    ( locale ) -> StringUtils.isNotEmpty( locale.toLanguageTag() ) && StringUtils.isNotEmpty( locale.getDisplayName() ) ).
                 toArray( Locale[]::new );
         }
         return new LocaleListJson( locales );

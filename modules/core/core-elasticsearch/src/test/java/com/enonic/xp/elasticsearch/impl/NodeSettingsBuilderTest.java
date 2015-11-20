@@ -73,7 +73,7 @@ public class NodeSettingsBuilderTest
         assertEquals( "1", settings.get( "gateway.recover_after_nodes" ) );
         assertEquals( "1", settings.get( "discovery.zen.minimum_master_nodes" ) );
         assertEquals( "false", settings.get( "cluster.routing.allocation.disk.threshold_enabled" ) );
-        assertEquals( "quorum", settings.get( "index.recovery.initial_shards" ) );
+        assertEquals( "1", settings.get( "index.recovery.initial_shards" ) );
         assertEquals( pathValue, settings.get( "path" ) );
         assertEquals( pathValue + "/data", settings.get( "path.data" ) );
         assertEquals( pathValue + "/work", settings.get( "path.work" ) );

@@ -8,9 +8,12 @@ import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.cluster.ClusterState;
+import org.elasticsearch.cluster.node.DiscoveryNode;
+import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.elasticsearch.cluster.routing.RoutingTable;
 import org.elasticsearch.cluster.routing.ShardRouting;
 import org.elasticsearch.cluster.routing.ShardRoutingState;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,13 +50,31 @@ public class IndexReporterTest
             Mockito.when( shardRouting.currentNodeId() ).thenReturn( "nodeId" );
 
             final RoutingTable routingTable = Mockito.mock( RoutingTable.class );
-            Mockito.when( routingTable.allShards() ).thenReturn( Arrays.asList( shardRouting ) );
+            Mockito.when( routingTable.shardsWithState( ShardRoutingState.STARTED ) ).thenReturn( Arrays.asList( shardRouting ) );
 
             final ClusterState clusterState = Mockito.mock( ClusterState.class );
             Mockito.when( clusterState.getRoutingTable() ).thenReturn( routingTable );
 
+            // Mock discoveryNode
+            DiscoveryNode discoveryNode = Mockito.mock( DiscoveryNode.class );
+
+            final TransportAddress transportAddress = Mockito.mock( TransportAddress.class );
+            Mockito.when( transportAddress.toString() ).thenReturn( "hostAddress" );
+
+            Mockito.when( discoveryNode.address() ).thenReturn( transportAddress );
+            Mockito.when( discoveryNode.getId() ).thenReturn( "hostId" );
+
+            // Mock discoveryNodes
+            DiscoveryNodes discoveryNodes = Mockito.mock( DiscoveryNodes.class );
+            Mockito.when( discoveryNodes.get( Mockito.any() ) ).thenReturn( discoveryNode );
+
+            // Mock clusterState.getNodes()
+            Mockito.when( clusterState.getNodes() ).thenReturn( discoveryNodes );
+
+            // Mock getState()
             final ClusterStateResponse clusterStateResponse = Mockito.mock( ClusterStateResponse.class );
             Mockito.when( clusterStateResponse.getState() ).thenReturn( clusterState );
+
             ActionListener<ClusterStateResponse> listener = (ActionListener<ClusterStateResponse>) invocation.getArguments()[1];
             listener.onResponse( clusterStateResponse );
             return null;

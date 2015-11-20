@@ -1,0 +1,15 @@
+{
+  "count": 2,
+  "bundles": [
+    {
+      "id": 0,
+      "name": "foo.bar1",
+      "state": "ACTIVE"
+    },
+    {
+      "id": 1,
+      "name": "foo.bar2",
+      "state": "ACTIVE"
+    }
+  ]
+}

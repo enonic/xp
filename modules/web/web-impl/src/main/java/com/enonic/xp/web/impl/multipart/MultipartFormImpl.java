@@ -1,10 +1,8 @@
 package com.enonic.xp.web.impl.multipart;
 
 import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Stream;
 
-import org.apache.commons.fileupload.FileItem;
+import javax.servlet.http.Part;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -14,24 +12,36 @@ import com.enonic.xp.web.multipart.MultipartItem;
 final class MultipartFormImpl
     implements MultipartForm
 {
-    private final ImmutableMap<String, FileItem> map;
+    private final ImmutableMap<String, MultipartItem> map;
 
-    public MultipartFormImpl( final List<FileItem> items )
+    public MultipartFormImpl( final Iterable<Part> parts )
     {
-        final ImmutableMap.Builder<String, FileItem> builder = ImmutableMap.builder();
-        for ( final FileItem item : items )
+        final ImmutableMap.Builder<String, MultipartItem> builder = ImmutableMap.builder();
+        for ( final Part part : parts )
         {
-            builder.put( item.getFieldName(), item );
+            final MultipartItemImpl item = new MultipartItemImpl( part );
+            builder.put( item.getName(), item );
         }
 
         this.map = builder.build();
     }
 
     @Override
+    public boolean isEmpty()
+    {
+        return this.map.isEmpty();
+    }
+
+    @Override
+    public int getSize()
+    {
+        return this.map.size();
+    }
+
+    @Override
     public MultipartItem get( final String name )
     {
-        final FileItem item = this.map.get( name );
-        return item != null ? new MultipartItemImpl( item ) : null;
+        return this.map.get( name );
     }
 
     @Override
@@ -49,13 +59,17 @@ final class MultipartFormImpl
     @Override
     public void delete()
     {
-        this.map.values().forEach( FileItem::delete );
+        this.map.values().forEach( this::delete );
+    }
+
+    private void delete( final MultipartItem item )
+    {
+        ( (MultipartItemImpl) item ).delete();
     }
 
     @Override
     public Iterator<MultipartItem> iterator()
     {
-        final Stream<MultipartItem> items = this.map.values().stream().map( MultipartItemImpl::new );
-        return items.iterator();
+        return this.map.values().iterator();
     }
 }

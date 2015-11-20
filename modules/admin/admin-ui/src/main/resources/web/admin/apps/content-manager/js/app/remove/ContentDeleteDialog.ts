@@ -14,6 +14,10 @@ module app.remove {
 
         private deleteButton: DialogButton;
 
+        private yesCallback: () => void;
+
+        private noCallback: () => void;
+
         constructor() {
             super("item");
 
@@ -37,6 +41,14 @@ module app.remove {
             this.countItemsToDeleteAndUpdateButtonCounter();
         }
 
+        setYesCallback(callback: () => void) {
+            this.yesCallback = callback;
+        }
+
+        setNoCallback(callback: () => void) {
+            this.noCallback = callback;
+        }
+
         private indexOf(item: SelectionItem<ContentSummaryAndCompareStatus>): number {
             for (var i = 0; i < this.selectedItems.length; i++) {
                 if (item.getBrowseItem().getPath() == this.selectedItems[i].getBrowseItem().getPath()) {
@@ -49,8 +61,10 @@ module app.remove {
         private addDeleteActionHandler() {
             this.getDeleteAction().onExecuted(() => {
 
+                this.yesCallback();
                 this.deleteButton.setEnabled(false);
                 this.showLoadingSpinner();
+
                 this.createDeleteRequest().sendAndParse().then((result: api.content.DeleteContentResult) => {
                     this.close();
                     app.view.DeleteAction.showDeleteResult(result);
