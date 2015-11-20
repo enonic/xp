@@ -15,6 +15,8 @@ module app.view.detail {
 
         private widget: Widget;
 
+        private containerWidth: number = 0;
+
         public static debug = false;
 
         constructor(builder: WidgetViewBuilder) {
@@ -31,7 +33,8 @@ module app.view.detail {
             this.layout();
             if (this.isUrlBased()) {
                 this.detailsPanel.onPanelSizeChanged(() => {
-                    if (this.detailsPanel.getItem()) {
+                    var containerWidth = this.detailsPanel.getEl().getWidth();
+                    if (this.detailsPanel.getItem() && containerWidth !== this.containerWidth) {
                         this.setContent(this.detailsPanel.getItem());
                     }
                 })
@@ -51,6 +54,7 @@ module app.view.detail {
             this.widgetItemViews.forEach((widgetItemView: WidgetItemView) => {
                 promises.push(this.setContentForWidgetItemView(widgetItemView, content));
             });
+            this.containerWidth = this.detailsPanel.getEl().getWidth();
             return wemQ.all(promises);
         }
 
