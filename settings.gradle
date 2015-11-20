@@ -54,6 +54,8 @@ include 'lib:lib-thymeleaf'
 include 'lib:lib-mail'
 include 'lib:lib-auth'
 include 'lib:lib-http'
+include 'lib:lib-io'
+include 'lib:lib-cache'
 
 include 'repack:repack-jparsec'
 include 'repack:repack-attoparser'
