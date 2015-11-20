@@ -559,12 +559,6 @@ public class ContentServiceImpl
     }
 
     @Override
-    public String generateContentName( final String displayName )
-    {
-        return new ContentPathNameGenerator().generatePathName( displayName );
-    }
-
-    @Override
     public CompletableFuture<Integer> applyPermissions( final ApplyContentPermissionsParams params )
     {
         final ApplyContentPermissionsCommand applyPermissionsCommand = ApplyContentPermissionsCommand.create( params ).

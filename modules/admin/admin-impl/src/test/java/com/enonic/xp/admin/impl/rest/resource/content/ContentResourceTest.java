@@ -528,18 +528,6 @@ public class ContentResourceTest
     }
 
     @Test
-    public void generate_name()
-        throws Exception
-    {
-        Mockito.when( contentService.generateContentName( "Some rea11y we!rd name..." ) ).thenReturn( "some-rea11y-werd-name" );
-
-        String jsonString =
-            request().path( "content/generateName" ).queryParam( "displayName", "Some rea11y we!rd name..." ).get().getAsString();
-
-        assertJson( "generate_content_name.json", jsonString );
-    }
-
-    @Test
     public void delete_content_success()
         throws Exception
     {

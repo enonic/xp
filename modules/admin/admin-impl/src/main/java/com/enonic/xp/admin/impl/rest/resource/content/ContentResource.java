@@ -53,7 +53,6 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryR
 import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.BatchContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CompareContentsJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ContentNameJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentPublishItemJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CountItemsWithChildrenJson;
@@ -785,15 +784,6 @@ public final class ContentResource
             build() );
 
         return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver, principalsResolver );
-    }
-
-    @GET
-    @Path("generateName")
-    public ContentNameJson generateName( @QueryParam("displayName") final String displayNameParam )
-    {
-        final String generatedContentName = contentService.generateContentName( displayNameParam );
-
-        return new ContentNameJson( generatedContentName );
     }
 
     @POST

@@ -36,17 +36,7 @@ public final class NamePrettyfier
 
     private static final Map<Character, String> NON_DIACRITICS = buildNonDiacriticsMap();
 
-    public static String create( final String str )
-    {
-        return create( str, true );
-    }
-
-    public static String create( final String originalName, final boolean transliterate )
-    {
-        return doCreate( originalName, transliterate );
-    }
-
-    private static String doCreate( final String originalName, final boolean transliterate )
+    public static String create( final String originalName )
     {
         if ( StringUtils.isBlank( originalName ) )
         {
@@ -63,10 +53,7 @@ public final class NamePrettyfier
         prettifiedPathName = replaceHyphensAroundDot( prettifiedPathName );
         prettifiedPathName = ensureNiceBeginningAndEnding( prettifiedPathName );
 
-        if ( transliterate )
-        {
-            prettifiedPathName = transcribe( prettifiedPathName );
-        }
+        prettifiedPathName = transcribe( prettifiedPathName );
 
         if ( StringUtils.isBlank( prettifiedPathName ) )
         {
@@ -213,7 +200,6 @@ public final class NamePrettyfier
 
         return false;
     }
-
 
     private static String transcribe( final String string )
     {
