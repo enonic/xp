@@ -3,6 +3,7 @@
     {
       "id": "aaa",
       "name": "My Content",
+      "path": "/my_a_content2",
       "reason": "Not able to delete content with path [/two]: Some reason",
       "type": "my_type"
     }
@@ -12,6 +13,7 @@
     {
       "id": "123",
       "name": "one",
+      "path": "/one",
       "type": "unstructured"
     }
   ]

@@ -1,6 +1,7 @@
 module app.wizard.action {
 
     import ContentId = api.content.ContentId;
+    import ContentPath = api.content.ContentPath;
 
     export class DeleteContentAction extends api.ui.Action {
 
@@ -15,13 +16,16 @@ module app.wizard.action {
                             .addContentPath(wizardPanel.getPersistedItem().getPath())
                             .sendAndParse()
                             .then((result: api.content.DeleteContentResult) => {
+                                var contentDeletedEvent = new api.content.ContentDeletedEvent();
                                 app.view.DeleteAction.showDeleteResult(result);
                                 result.getDeleted().forEach((deleted) => {
-                                    new api.content.ContentDeletedEvent(new ContentId(deleted.getId())).fire();
+                                    contentDeletedEvent.addItem(new ContentId(deleted.getId()), ContentPath.fromString(deleted.getPath()));
                                 });
                                 result.getPendings().forEach((pending) => {
-                                    new api.content.ContentDeletedEvent(new ContentId(pending.getId()), true).fire();
+                                    contentDeletedEvent.addPendingItem(new ContentId(pending.getId()),
+                                        ContentPath.fromString(pending.getPath()));
                                 });
+                                contentDeletedEvent.fireIfNotEmpty();
                             }).catch((reason: any) => {
                                 if (reason && reason.message) {
                                     api.notify.showError(reason.message);

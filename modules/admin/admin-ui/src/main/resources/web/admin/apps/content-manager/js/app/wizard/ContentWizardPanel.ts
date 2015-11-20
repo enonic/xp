@@ -5,6 +5,7 @@ module app.wizard {
     import FormContextBuilder = api.form.FormContextBuilder;
     import ContentFormContext = api.content.form.ContentFormContext;
     import Content = api.content.Content;
+    import ContentPath = api.content.ContentPath;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import CompareStatus = api.content.CompareStatus;
     import ContentBuilder = api.content.ContentBuilder;
@@ -464,6 +465,10 @@ module app.wizard {
             return deferred.promise;
         }
 
+        private persistedItemPathIsDescendantOrEqual(path: ContentPath): boolean {
+            return this.getPersistedItem().getPath().isDescendantOf(path) || this.getPersistedItem().getPath().equals(path);
+        }
+
         layoutPersistedItem(persistedContent: Content): wemQ.Promise<void> {
             this.updateThumbnailWithContent(persistedContent);
             this.notifyValidityChanged(persistedContent.isValid());
@@ -474,10 +479,18 @@ module app.wizard {
                     this.contentWizardHeader.disableNameGeneration(ignore);
 
                     var deleteHandler = (event: api.content.ContentDeletedEvent) => {
-                        if (event.isPending() && this.getPersistedItem() && event.getContentId() &&
-                            this.getPersistedItem().getId() === event.getContentId().toString()) {
-
-                            this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.PENDING_DELETE);
+                        if (this.getPersistedItem()) {
+                            event.getDeleteditems().filter((deletedItem) => {
+                                return !!deletedItem;
+                            }).forEach((deletedItem) => {
+                                if (deletedItem.isPending()) {
+                                    if (this.getPersistedItem().getPath().equals(deletedItem.getContentPath())) {
+                                        this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.PENDING_DELETE);
+                                    }
+                                } else if (this.persistedItemPathIsDescendantOrEqual(deletedItem.getContentPath())) {
+                                    this.close();
+                                }
+                            });
                         }
                     }
 

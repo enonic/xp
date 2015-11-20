@@ -1,27 +1,35 @@
 module api.content {
 
-    export interface ContentDeletedEventJson {
-        contentId: string;
-    }
-
     export class ContentDeletedEvent extends api.event.Event {
 
-        private contentId: api.content.ContentId;
+        private contentDeletedItems: ContentDeletedItem[] = [];
 
-        private pending: boolean;
-
-        constructor(contentId: api.content.ContentId, pending: boolean = false) {
+        constructor() {
             super();
-            this.contentId = contentId;
-            this.pending = pending;
         }
 
-        public getContentId(): api.content.ContentId {
-            return this.contentId;
+        addItem(contentId: ContentId, contentPath: api.content.ContentPath): ContentDeletedEvent {
+            this.contentDeletedItems.push(new ContentDeletedItem(contentId, contentPath, false));
+            return this;
         }
 
-        public isPending(): boolean {
-            return this.pending;
+        addPendingItem(contentId: ContentId, contentPath: api.content.ContentPath): ContentDeletedEvent {
+            this.contentDeletedItems.push(new ContentDeletedItem(contentId, contentPath, true));
+            return this;
+        }
+
+        getDeleteditems(): ContentDeletedItem[] {
+            return this.contentDeletedItems;
+        }
+
+        isEmpty(): boolean {
+            return this.contentDeletedItems.length == 0;
+        }
+
+        fireIfNotEmpty() {
+            if (!this.isEmpty()) {
+                this.fire();
+            }
         }
 
         static on(handler: (event: ContentDeletedEvent) => void) {
@@ -31,9 +39,32 @@ module api.content {
         static un(handler?: (event: ContentDeletedEvent) => void) {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
+    }
 
-        static fromJson(json: ContentDeletedEventJson): ContentDeletedEvent {
-            return new ContentDeletedEvent(new ContentId(json.contentId));
+    export class ContentDeletedItem {
+
+        private contentPath: api.content.ContentPath;
+
+        private pending: boolean;
+
+        private contentId: ContentId
+
+        constructor(contentId: ContentId, contentPath: api.content.ContentPath, pending: boolean = false) {
+            this.contentPath = contentPath;
+            this.pending = pending;
+            this.contentId = contentId;
+        }
+
+        public getContentPath(): ContentPath {
+            return this.contentPath;
+        }
+
+        public getContentId(): ContentId {
+            return this.contentId;
+        }
+
+        public isPending(): boolean {
+            return this.pending;
         }
     }
 }

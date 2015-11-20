@@ -11,6 +11,7 @@ module app {
     import AppBarTabMenuItem = api.app.bar.AppBarTabMenuItem;
     import AppBarTabMenuItemBuilder = api.app.bar.AppBarTabMenuItemBuilder;
     import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
+    import ContentDeletedEvent = api.content.ContentDeletedEvent;
 
     export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<ContentSummaryAndCompareStatus> {
 
@@ -104,14 +105,13 @@ module app {
                 this.handleMove(event);
             });
 
-            api.content.ContentDeletedEvent.on((event: api.content.ContentDeletedEvent) => {
-                if (!event.isPending()) {
-                    var item = this.getNavigator().getNavigationItemByIdValue(event.getContentId().toString());
-                    if (item) {
-                        item.getCloseAction().execute(true);
-                    }
-                }
+            ContentDeletedEvent.on((event: ContentDeletedEvent) => {
+
             });
+        }
+
+        private handleDeleted(event: ContentDeletedEvent) {
+            // do something when content is deleted
         }
 
         private handleUpdated(event: ContentUpdatedEvent) {

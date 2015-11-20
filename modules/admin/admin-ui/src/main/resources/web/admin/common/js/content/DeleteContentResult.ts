@@ -28,15 +28,15 @@ module api.content {
         static fromJson(json: DeleteContentResultJson): DeleteContentResult {
             if (json.successes) {
                 var success: DeleteContentResultSuccess[] = json.successes.
-                    map((success) => new DeleteContentResultSuccess(success.id, success.name, success.type));
+                    map((success) => new DeleteContentResultSuccess(success.id, success.path, success.name, success.type));
             }
             if (json.pendings) {
                 var pending: DeleteContentResultPending[] = json.pendings.
-                    map((pending) => new DeleteContentResultPending(pending.id, pending.name));
+                    map((pending) => new DeleteContentResultPending(pending.id, pending.path, pending.name));
             }
             if (json.failures) {
                 var failure: DeleteContentResultFailure[] = json.failures.
-                    map((failure) => new DeleteContentResultFailure(failure.id, failure.name, failure.type, failure.reason));
+                    map((failure) => new DeleteContentResultFailure(failure.id, failure.path, failure.name, failure.type, failure.reason));
             }
             return new DeleteContentResult(success, pending, failure);
         }
@@ -46,17 +46,23 @@ module api.content {
     export class DeleteContentResultSuccess {
 
         private id: string;
+        private path: string;
         private name: string;
         private type: string;
 
-        constructor(id: string, name: string, type: string) {
+        constructor(id: string, path: string, name: string, type: string) {
             this.id = id;
             this.name = name;
             this.type = type;
+            this.path = path;
         }
 
         getId(): string {
             return this.id;
+        }
+
+        getPath(): string {
+            return this.path;
         }
 
         getName(): string {
@@ -71,15 +77,21 @@ module api.content {
     export class DeleteContentResultPending {
 
         private id: string;
+        private path: string;
         private name: string;
 
-        constructor(id: string, name: string) {
+        constructor(id: string, path: string, name: string) {
             this.id = id;
             this.name = name;
+            this.path = path;
         }
 
         getId(): string {
             return this.id;
+        }
+
+        getPath(): string {
+            return this.path;
         }
 
         getName(): string {
@@ -91,8 +103,8 @@ module api.content {
 
         private reason: string;
 
-        constructor(id: string, name: string, type: string, reason: string) {
-            super(id, name, type);
+        constructor(id: string, path: string, name: string, type: string, reason: string) {
+            super(id, path, name, type);
             this.reason = reason;
         }
 

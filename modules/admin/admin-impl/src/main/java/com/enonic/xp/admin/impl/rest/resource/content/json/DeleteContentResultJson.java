@@ -27,19 +27,19 @@ public class DeleteContentResultJson
         return failures;
     }
 
-    public void addSuccess( final String id, final String contentName, final String type )
+    public void addSuccess( final String id, final String path, final String contentName, final String type )
     {
-        successes.add( new Success( id, contentName, type ) );
+        successes.add( new Success( id, path, contentName, type ) );
     }
 
-    public void addPending( final String id, final String contentName )
+    public void addPending( final String id, final String path, final String contentName )
     {
-        pendings.add( new Pending( id, contentName ) );
+        pendings.add( new Pending( id, path, contentName ) );
     }
 
-    public void addFailure( final String id, final String contentName, final String type, final String reason )
+    public void addFailure( final String id, final String path, final String contentName, final String type, final String reason )
     {
-        failures.add( new Failure( id, contentName, type, reason ) );
+        failures.add( new Failure( id, path, contentName, type, reason ) );
     }
 
     public class Success
@@ -47,15 +47,18 @@ public class DeleteContentResultJson
 
         private String id;
 
+        private String path;
+
         private String name;
 
         private String type;
 
-        public Success( final String id, final String contentName, final String type )
+        public Success( final String id, final String path, final String contentName, final String type )
         {
             this.id = id;
             this.name = contentName;
             this.type = type;
+            this.path = path;
         }
 
         public String getId()
@@ -72,6 +75,11 @@ public class DeleteContentResultJson
         {
             return type;
         }
+
+        public String getPath()
+        {
+            return path;
+        }
     }
 
     public class Pending
@@ -80,10 +88,13 @@ public class DeleteContentResultJson
 
         private String name;
 
-        public Pending( final String id, final String contentName )
+        private String path;
+
+        public Pending( final String id, final String path, final String contentName )
         {
             this.id = id;
             this.name = contentName;
+            this.path = path;
         }
 
         public String getId()
@@ -95,6 +106,11 @@ public class DeleteContentResultJson
         {
             return name;
         }
+
+        public String getPath()
+        {
+            return path;
+        }
     }
 
     public class Failure
@@ -103,9 +119,9 @@ public class DeleteContentResultJson
 
         private String reason;
 
-        public Failure( final String id, final String contentName, final String type, final String reason )
+        public Failure( final String id, final String path, final String contentName, final String type, final String reason )
         {
-            super( id, contentName, type );
+            super( id, path, contentName, type );
             this.reason = reason;
         }
 

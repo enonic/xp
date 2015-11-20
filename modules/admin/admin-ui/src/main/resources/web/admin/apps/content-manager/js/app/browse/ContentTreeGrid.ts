@@ -465,11 +465,12 @@ module app.browse {
                     }
                 } else {
                     for (var j = 0; j < all.length; j++) {
-                        var path = (all[j].getData() && all[j].getData().getContentSummary())
-                            ? all[j].getData().getContentSummary().getPath()
+                        var treeNode = all[j],
+                            path = (treeNode.getData() && treeNode.getData().getContentSummary())
+                                ? treeNode.getData().getContentSummary().getPath()
                             : null;
                         if (path && path.equals(node.getPath())) {
-                            node.getNodes().push(all[j]);
+                            node.getNodes().push(treeNode);
                         }
                     }
                 }
@@ -480,7 +481,6 @@ module app.browse {
 
             return result;
         }
-
 
         xAppendContentNode(relationship: TreeNodeParentOfContent,
                            update: boolean = true): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>> {
