@@ -76,7 +76,7 @@ module app.browse {
                 setId("modifiedTime").
                 setField("contentSummary.modifiedTime").
                 setCssClass("modified").
-                setMinWidth(90).
+                setMinWidth(135).
                 setMaxWidth(135).
                 setFormatter(DateTimeFormatter.format).
                 build();
