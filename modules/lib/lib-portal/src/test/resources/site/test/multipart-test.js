@@ -27,12 +27,12 @@ exports.getForm_empty = function () {
 };
 
 exports.getBytes = function () {
-    var result = portal.getMultipartBytes("item1");
+    var result = portal.getMultipartStream("item1");
     assert.assertNotNull(result);
 };
 
 exports.getBytes_notFound = function () {
-    var result = portal.getMultipartBytes("item1");
+    var result = portal.getMultipartStream("item1");
     assert.assertNull(result);
 };
 
