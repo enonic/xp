@@ -10,7 +10,7 @@
     "started": [
       {
         "id": "myindex(0)",
-        "node": "hostId (hostAddress)",
+        "nodeId": "nodeId",
         "type": "PRIMARY"
       }
     ],
