@@ -9,7 +9,8 @@ module.exports = function (grunt) {
                 options: {
                     destination: 'target/jsdoc',
                     readme: 'src/jsdoc/index.md',
-                    template: 'src/jsdoc/template'
+                    template: 'src/jsdoc/template',
+                    configure: 'src/jsdoc/conf.json'
                 }
             }
         }
