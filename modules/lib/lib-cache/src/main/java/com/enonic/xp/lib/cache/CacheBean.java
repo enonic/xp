@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.cache;
 
-import java.util.function.Function;
+import java.util.concurrent.Callable;
 
 import com.google.common.cache.Cache;
 
@@ -13,10 +13,10 @@ public final class CacheBean
         this.cache = cache;
     }
 
-    public Object get( final String key, final Function<Object, Object> callback )
+    public Object get( final String key, final Callable<Object> callback )
         throws Exception
     {
-        return this.cache.get( key, () -> callback.apply( key ) );
+        return this.cache.get( key, callback );
     }
 
     public void clear()
