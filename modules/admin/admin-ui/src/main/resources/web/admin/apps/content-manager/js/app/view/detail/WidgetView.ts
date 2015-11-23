@@ -118,7 +118,10 @@ module app.view.detail {
 
         setActive() {
             if (WidgetView.debug) {
-                console.debug('WidgetView.setActive: ', this);
+                console.debug('WidgetView.setActive: ', this.getWidgetName());
+            }
+            if (this.isActive()) {
+                return;
             }
             this.detailsPanel.setActiveWidget(this);
             this.slideIn();
@@ -126,7 +129,7 @@ module app.view.detail {
 
         setInactive() {
             if (WidgetView.debug) {
-                console.debug('WidgetView.setInactive: ', this);
+                console.debug('WidgetView.setInactive: ', this.getWidgetName());
             }
             this.detailsPanel.resetActiveWidget();
             this.slideOut();
