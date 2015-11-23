@@ -42,5 +42,5 @@ exports.runWith = function (context, callback) {
     if (context.user) {
         bean.setUser(context.user);
     }
-    bean.run(callback);
+    return bean.run(callback);
 };

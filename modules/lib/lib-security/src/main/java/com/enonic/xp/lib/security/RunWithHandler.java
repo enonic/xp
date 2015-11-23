@@ -5,6 +5,8 @@ import java.util.function.Supplier;
 
 import org.apache.commons.lang.StringUtils;
 
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
+
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.script.bean.BeanContext;
@@ -41,18 +43,19 @@ public class RunWithHandler
         this.user = user;
     }
 
-    public void run( Runnable runnable )
+    public ScriptObjectMirror run( Callable<ScriptObjectMirror> runnable )
     {
         final ContextBuilder contextBuilder = ContextBuilder.from( context.get() );
         if ( user != null )
         {
             final AuthenticationInfo authInfo = getAuthenticationInfo();
-            ContextBuilder.from( context.get() ).
+            return ContextBuilder.from( context.get() ).
                 authInfo( authInfo ).
                 build().
-                runWith( runnable );
+                callWith( runnable );
         }
 
+        return null;
     }
 
     private AuthenticationInfo getAuthenticationInfo()
