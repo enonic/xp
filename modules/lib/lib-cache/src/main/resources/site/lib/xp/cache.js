@@ -10,22 +10,12 @@
 /**
  * Creates a new cache with options.
  *
- * @param {object} options Cache options as JSON.
+ * @param {*} native Native cache object.
  * @constructor
  * @private
  */
-function Cache(options) {
-    var builder = __.newBean('com.enonic.xp.lib.cache.CacheBeanBuilder');
-
-    if (options.size) {
-        builder.size = options.size;
-    }
-
-    if (options.expire) {
-        builder.expire = options.expire;
-    }
-
-    this.cache = builder.build();
+function Cache(native) {
+    this.cache = native;
 }
 
 /**
@@ -87,5 +77,16 @@ Cache.prototype.getSize = function () {
  * @returns {Cache} Returns a new cache instance.
  */
 exports.newCache = function (options) {
-    return new Cache(options);
+    var builder = __.newBean('com.enonic.xp.lib.cache.CacheBeanBuilder');
+
+    if (options.size) {
+        builder.size = options.size;
+    }
+
+    if (options.expire) {
+        builder.expire = options.expire;
+    }
+
+    var cache = builder.build();
+    return new Cache(cache);
 };

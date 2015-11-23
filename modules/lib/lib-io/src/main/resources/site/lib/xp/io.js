@@ -11,7 +11,7 @@ var bean = __.newBean('com.enonic.xp.lib.io.IOHandlerBean');
 
 
 /**
- * Read text from a stream or string.
+ * Read text from a stream.
  *
  * @example
  * var text = ioLib.readText(stream);
@@ -24,12 +24,12 @@ exports.readText = function (val) {
 };
 
 /**
- * Read lines from a stream or string.
+ * Read lines from a stream.
  *
  * @example
  * var lines = ioLib.readLines(stream);
  *
- * @param {*} val Stream or string to read from.
+ * @param {*} val Stream to read from.
  * @returns {string} Returns lines as an array.
  */
 exports.readLines = function (val) {
@@ -37,14 +37,14 @@ exports.readLines = function (val) {
 };
 
 /**
- * Process lines from a stream or string.
+ * Process lines from a stream.
  *
  * @example
  * ioLib.processLines(stream, function(line) {
  *   log.info(line);
  * });
  *
- * @param {*} val Stream or string to read from.
+ * @param {*} val Stream to read from.
  * @param {function} func Callback function to be called for each line.
  */
 exports.processLines = function (val, func) {
@@ -52,14 +52,51 @@ exports.processLines = function (val, func) {
 };
 
 /**
+ * Returns the size of a stream.
+ *
+ * @example
+ * var size = ioLib.getSize(stream);
+ *
+ * @returns {number} Returns the size of a stream.
+ */
+exports.getSize = function (val) {
+    return bean.getSize(val);
+};
+
+/**
+ * Returns the mime-type from a name or extension.
+ *
+ * @example
+ * var mimeType = ioLib.getMimeType('myfile.txt');
+ *
+ * @returns {string} Mime-type of name or extension.
+ */
+exports.getMimeType = function (name) {
+    return bean.getMimeType(name);
+};
+
+/**
+ * Returns a new stream from a string.
+ *
+ * @example
+ * var stream = ioLib.newStream('my text string');
+ *
+ * @param {string} val String to create a stream of.
+ * @returns {*} A new stream.
+ */
+exports.newStream = function (val) {
+    return bean.newStream(val);
+};
+
+/**
  * Looks up a resource.
  *
- * @param {*} key Resource key to look up.
+ * @param {*} native Native resource object.
  * @constructor
  * @private
  */
-function Resource(key) {
-    this.res = bean.getResource(key);
+function Resource(native) {
+    this.res = native;
 }
 
 /**
@@ -117,29 +154,6 @@ Resource.prototype.exists = function () {
  * @returns {Resource} Resource reference.
  */
 exports.getResource = function (key) {
-    return new Resource(key);
-};
-
-/**
- * Returns the size of a stream or a string.
- *
- * @example
- * var size = ioLib.getSize(stream);
- *
- * @returns {number} Returns the size of a stream or string.
- */
-exports.getSize = function (val) {
-    return bean.getSize(val);
-};
-
-/**
- * Returns the mime-type from a name or extension.
- *
- * @example
- * var mimeType = ioLib.getMimeType('myfile.txt');
- *
- * @returns {string} Mime-type of name or extension.
- */
-exports.getMimeType = function (name) {
-    return bean.getMimeType(name);
+    var res = bean.getResource(key);
+    return new Resource(res);
 };

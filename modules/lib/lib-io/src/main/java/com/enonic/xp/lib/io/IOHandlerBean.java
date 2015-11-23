@@ -64,6 +64,11 @@ public final class IOHandlerBean
         return toByteSource( value ).size();
     }
 
+    public ByteSource newStream( final String value )
+    {
+        return ByteSource.wrap( value.getBytes( Charsets.UTF_8 ) );
+    }
+
     public String getMimeType( final Object key )
     {
         if ( key == null )
@@ -89,17 +94,12 @@ public final class IOHandlerBean
 
     private ByteSource toByteSource( final Object value )
     {
-        if ( value == null )
-        {
-            return ByteSource.empty();
-        }
-
         if ( value instanceof ByteSource )
         {
             return (ByteSource) value;
         }
 
-        return ByteSource.wrap( value.toString().getBytes() );
+        return ByteSource.empty();
     }
 
     private ResourceKey toResourceKey( final Object value )

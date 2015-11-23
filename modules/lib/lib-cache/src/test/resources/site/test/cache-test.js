@@ -6,7 +6,7 @@ var cache = cacheLib.newCache({
     expire: 10
 });
 
-assert.assertEquals(0, cache.size());
+assert.assertEquals(0, cache.getSize());
 
 var numCalled = 0;
 var calcFunction = function () {
