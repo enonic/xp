@@ -54,7 +54,6 @@ public final class BuiltinContentTypeLoader
             inputType( InputTypeName.SITE_CONFIGURATOR ).
             required( false ).
             multiple( true ).
-            maximizeUIInputWidth( true ).
             build() ).
         build();
 
@@ -72,7 +71,6 @@ public final class BuiltinContentTypeLoader
     public static final Form MEDIA_IMAGE_FORM = Form.create().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Image" ).
-            maximizeUIInputWidth( true ).
             inputType( InputTypeName.IMAGE_UPLOADER ).build() ).
         addFormItem( Input.create().name( "caption" ).
             inputType( InputTypeName.TEXT_AREA ).

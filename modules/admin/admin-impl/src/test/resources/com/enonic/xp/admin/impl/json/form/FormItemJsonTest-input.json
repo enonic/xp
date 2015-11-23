@@ -7,7 +7,7 @@
     "indexed": true,
     "inputType": "TextLine",
     "label": "My TextLine",
-    "maximizeUIInputWidth": true,
+    "maximizeUIInputWidth": false,
     "name": "myTextLine",
     "occurrences": {
       "maximum": 3,
