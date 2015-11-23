@@ -128,6 +128,22 @@ module api.form.inputtype.text {
                             });
                         }
                     });
+
+                    var dragParentElement;
+                    editor.on('dragstart', (e) => {
+                        dragParentElement = e.target.parentElement || e.target.parentNode;
+                    });
+
+                    editor.on('drop', (e) => {
+                        if (dragParentElement) {
+                            // prevent browser from handling the drop
+                            e.preventDefault();
+
+                            e.target.appendChild(dragParentElement);
+                            dragParentElement = undefined;
+                        }
+                    });
+
                 },
                 init_instance_callback: (editor) => {
                     this.setEditorContent(id, property);
