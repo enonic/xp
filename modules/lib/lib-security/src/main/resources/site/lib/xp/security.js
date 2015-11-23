@@ -34,7 +34,7 @@ function nullOrValue(value) {
  * @returns {object} Result of the function execution.
  */
 exports.runWith = function (context, callback) {
-    var bean = __.newBean('com.enonic.xp.lib.auth.RunWithHandler');
+    var bean = __.newBean('com.enonic.xp.lib.security.RunWithHandler');
 
     if (context.branch) {
         bean.setBranch(context.branch);
