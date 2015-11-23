@@ -30,20 +30,32 @@ public class GetMultipartScriptTest
     {
         final MultipartForm form = Mockito.mock( MultipartForm.class );
 
-        final MultipartItem item1 = createItem( "item1", 10 );
-        final MultipartItem item2 = createItem( "item2", 20 );
+        final MultipartItem item1 = createItem( "item1", 10, "jpg", "image/png" );
+        final MultipartItem item2 = createItem( "item2", 20, "jpg", "image/png" );
 
         Mockito.when( form.iterator() ).thenReturn( Lists.newArrayList( item1, item2 ).iterator() );
         Mockito.when( form.get( "item1" ) ).thenReturn( item1 );
         Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
     }
 
-    private MultipartItem createItem( final String name, final long size )
+    private void createTextForm()
+    {
+        final MultipartForm form = Mockito.mock( MultipartForm.class );
+
+        final MultipartItem item1 = createItem( "item1", 10, "txt", "text/plain" );
+        Mockito.when( item1.getAsString() ).thenReturn( "Some text" );
+
+        Mockito.when( form.iterator() ).thenReturn( Lists.newArrayList( item1 ).iterator() );
+        Mockito.when( form.get( "item1" ) ).thenReturn( item1 );
+        Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
+    }
+
+    private MultipartItem createItem( final String name, final long size, final String ext, final String type )
     {
         final MultipartItem item = Mockito.mock( MultipartItem.class );
         Mockito.when( item.getName() ).thenReturn( name );
-        Mockito.when( item.getFileName() ).thenReturn( name + ".jpg" );
-        Mockito.when( item.getContentType() ).thenReturn( MediaType.parse( "image/png" ) );
+        Mockito.when( item.getFileName() ).thenReturn( name + "." + ext );
+        Mockito.when( item.getContentType() ).thenReturn( MediaType.parse( type ) );
         Mockito.when( item.getSize() ).thenReturn( size );
         Mockito.when( item.getBytes() ).thenReturn( ByteSource.wrap( name.getBytes() ) );
         return item;
@@ -57,6 +69,12 @@ public class GetMultipartScriptTest
     }
 
     @Test
+    public void getForm_empty()
+    {
+        runFunction( "/site/test/multipart-test.js", "getForm_empty" );
+    }
+
+    @Test
     public void getBytes()
     {
         createForm();
@@ -64,14 +82,36 @@ public class GetMultipartScriptTest
     }
 
     @Test
-    public void getForm_empty()
-    {
-        runFunction( "/site/test/multipart-test.js", "getForm_empty" );
-    }
-
-    @Test
     public void getBytes_notFound()
     {
         runFunction( "/site/test/multipart-test.js", "getBytes_notFound" );
     }
+
+    @Test
+    public void getItem()
+    {
+        createForm();
+        runFunction( "/site/test/multipart-test.js", "getItem" );
+    }
+
+    @Test
+    public void getItem_notFound()
+    {
+        runFunction( "/site/test/multipart-test.js", "getItem_notFound" );
+    }
+
+    @Test
+    public void getText()
+    {
+        createTextForm();
+        runFunction( "/site/test/multipart-test.js", "getText" );
+    }
+
+    @Test
+    public void getText_notFound()
+    {
+        createForm();
+        runFunction( "/site/test/multipart-test.js", "getText_notFound" );
+    }
+
 }

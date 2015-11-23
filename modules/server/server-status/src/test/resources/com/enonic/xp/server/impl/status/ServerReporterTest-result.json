@@ -1,0 +1,10 @@
+{
+  "version": "0.0.0",
+  "installation": "demo",
+  "build": {
+    "hash": "12345678",
+    "shortHash": "1234",
+    "branch": "master",
+    "timestamp": "2012-11-10T20:21:22"
+  }
+}

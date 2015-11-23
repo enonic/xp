@@ -34,6 +34,10 @@ module app.wizard {
         private modal: boolean;
         private floating: boolean;
         private draggable: boolean;
+        private clicked: boolean;
+
+        private selectionChangedHandler: (treeNode: TreeNode<ItemView>) =>
+            void = api.util.AppHelper.debounce(this.selectItem, 500, this.clicked);
 
         private mouseDownListener: (event: MouseEvent) => void;
         private mouseUpListener: (event?: MouseEvent) => void;
@@ -192,17 +196,15 @@ module app.wizard {
 
                 if (this.sameRowClicked(data.row)) {
                     this.hideContextMenu();
+                } else {
+                    this.clicked = true;
                 }
 
                 if (elem.hasClass('toggle')) {
                     // do nothing if expand toggle is clicked
                     return;
                 }
-                var treeNode = this.tree.getGrid().getDataView().getItem(data.row);
-                if (treeNode) {
-                    // do it on click only, not on selection change
-                    treeNode.getData().selectWithoutMenu();
-                }
+
                 this.tree.getGrid().selectRow(data.row);
 
                 if (this.isMenuIconClicked(data.cell)) {
@@ -217,6 +219,14 @@ module app.wizard {
             this.tree.onSelectionChanged((data, nodes) => {
                 if (nodes.length > 0 && this.isModal()) {
                     this.hide();
+                }
+
+                var treeNode = data[0];
+
+                if (treeNode) {
+                    this.clicked ? treeNode.getData().selectWithoutMenu() : //immediate
+                    this.selectionChangedHandler(treeNode); // with timeout
+                    this.clicked = false;
                 }
 
                 this.hideContextMenu();
@@ -234,6 +244,10 @@ module app.wizard {
             this.appendChild(this.tree);
 
             this.tree.onRemoved((event) => this.tree.getGrid().unsubscribeOnClick(this.clickListener));
+        }
+
+        private selectItem(treeNode: TreeNode<ItemView>) {
+            treeNode.getData().selectWithoutMenu();
         }
 
         isDraggable(): boolean {

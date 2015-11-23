@@ -17,6 +17,7 @@ import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
+import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.script.ScriptValue;
@@ -157,13 +158,13 @@ public final class CreateContentHandler
 
     private String generateUniqueContentName( final ContentPath parent, final String displayName )
     {
-        final String baseName = this.contentService.generateContentName( displayName );
+        final String baseName = NamePrettyfier.create( displayName );
 
         String name = baseName;
         while ( this.contentService.contentExists( ContentPath.from( parent, name ) ) )
         {
             final String randomId = this.idGenerator.get();
-            name = this.contentService.generateContentName( baseName + "-" + randomId );
+            name = NamePrettyfier.create( baseName + "-" + randomId );
         }
 
         return name;

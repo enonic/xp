@@ -93,8 +93,9 @@ module app.view.detail {
         }
 
         private isDefaultOptionDisplayValueViewer(object: Object) {
-            if (object && object["id"] && object["id"].toString().indexOf("DefaultOptionDisplayValueViewer") > 0) {
-                return true;
+            if (object && object["id"]) {
+                var id = object["id"].toString();
+                return id.indexOf("DropdownHandle") < 0 && id.indexOf("InfoWidgetToggleButton") < 0;
             }
             return false;
         }

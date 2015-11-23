@@ -1,18 +1,19 @@
 {
   "name": "clusterName",
   "localNode": {
-    "hostName": "hostName",
-    "id": "nodeId",
     "isMaster": false,
+    "id": "nodeId",
+    "hostName": "hostName",
+    "version": "1.0.0",
     "numberOfNodesSeen": 1
   },
   "members": [
     {
-      "hostName": "hostName",
-      "id": "nodeId",
       "isMaster": false,
-      "address": "local[10.10.10.1]",
-      "version": "1.0.0"
+      "id": "nodeId",
+      "hostName": "hostName",
+      "version": "1.0.0",
+      "address": "local[10.10.10.1]"
     }
   ],
   "errorMessages": ["ElasticsearchException[cluster health info exception]"]

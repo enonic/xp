@@ -21,12 +21,13 @@ public final class MediaTypes
         put( "jpeg", MediaType.JPEG );
         put( "jpg", MediaType.JPEG );
         put( "pdf", MediaType.PDF );
-        put( "json", MediaType.JSON_UTF_8 );
-        put( "js", MediaType.JAVASCRIPT_UTF_8 );
-        put( "css", MediaType.CSS_UTF_8 );
-        put( "html", MediaType.HTML_UTF_8 );
-        put( "xml", MediaType.XML_UTF_8 );
-        put( "svg", MediaType.SVG_UTF_8 );
+        put( "json", MediaType.JSON_UTF_8.withoutParameters() );
+        put( "js", MediaType.JAVASCRIPT_UTF_8.withoutParameters() );
+        put( "css", MediaType.CSS_UTF_8.withoutParameters() );
+        put( "html", MediaType.HTML_UTF_8.withoutParameters() );
+        put( "xml", MediaType.XML_UTF_8.withoutParameters() );
+        put( "svg", MediaType.SVG_UTF_8.withoutParameters() );
+        put( "txt", MediaType.PLAIN_TEXT_UTF_8.withoutParameters() );
     }
 
     public MediaType fromExt( final String ext )

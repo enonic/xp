@@ -1,25 +1,26 @@
 {
   "name": "clusterName",
   "localNode": {
-    "hostName": "hostName1",
-    "id": "nodeId1",
     "isMaster": false,
+    "id": "nodeId1",
+    "hostName": "hostName1",
+    "version": "1.0.0",
     "numberOfNodesSeen": 2
   },
   "members": [
     {
-      "hostName": "hostName2",
-      "id": "nodeId2",
       "isMaster": true,
-      "address": "local[10.10.10.2]",
-      "version": "1.0.0"
+      "id": "nodeId2",
+      "hostName": "hostName2",
+      "version": "1.0.0",
+      "address": "local[10.10.10.2]"
     },
     {
-      "hostName": "hostName1",
-      "id": "nodeId1",
       "isMaster": false,
-      "address": "local[10.10.10.1]",
-      "version": "1.0.0"
+      "id": "nodeId1",
+      "hostName": "hostName1",
+      "version": "1.0.0",
+      "address": "local[10.10.10.1]"
     }
   ],
   "state": "GREEN"

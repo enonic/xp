@@ -27,7 +27,7 @@ public final class LocalNodeState
 
 
     public static class Builder
-        extends NodeState.Builder
+        extends NodeState.Builder<Builder>
     {
         private Integer numberOfNodesSeen;
 

@@ -5,6 +5,7 @@
     "grunt": "~0.4.5",
     "grunt-cli": "0.x.x",
     "grunt-ts": "5.1.0",
-    "grunt-jsdoc": "1.0.0"
+    "grunt-jsdoc": "1.0.0",
+    "ink-docstrap": "0.5.2"
   }
 }

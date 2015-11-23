@@ -4,12 +4,14 @@ module.exports = function (grunt) {
         jsdoc: {
             dist: {
                 src: [
+                    'src/jsdoc/global.js',
                     '../lib/lib-*/src/main/resources/site/lib/xp/*.js'
                 ],
                 options: {
                     destination: 'target/jsdoc',
                     readme: 'src/jsdoc/index.md',
-                    template: 'src/jsdoc/template'
+                    template: 'src/jsdoc/template',
+                    configure: 'src/jsdoc/conf.json'
                 }
             }
         }

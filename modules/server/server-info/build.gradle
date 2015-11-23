@@ -1,0 +1,9 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile project( ':core:core-api' )
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP Server - Info'
+}
