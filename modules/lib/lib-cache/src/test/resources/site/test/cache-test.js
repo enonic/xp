@@ -21,17 +21,17 @@ var calcFunction = function () {
 var result = cache.get('key1', calcFunction);
 assert.assertEquals(1, result.num);
 assert.assertEquals('value1', result.name);
-assert.assertEquals(1, cache.size());
+assert.assertEquals(1, cache.getSize());
 
 result = cache.get('key1', calcFunction);
 assert.assertEquals(1, result.num);
 assert.assertEquals('value1', result.name);
-assert.assertEquals(1, cache.size());
+assert.assertEquals(1, cache.getSize());
 
 result = cache.get('key2', calcFunction);
 assert.assertEquals(2, result.num);
 assert.assertEquals('value2', result.name);
-assert.assertEquals(2, cache.size());
+assert.assertEquals(2, cache.getSize());
 
 cache.clear();
-assert.assertEquals(0, cache.size());
+assert.assertEquals(0, cache.getSize());

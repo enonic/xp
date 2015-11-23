@@ -1,51 +1,28 @@
 package com.enonic.xp.resource;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.List;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Throwables;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.CharStreams;
+import com.google.common.io.ByteSource;
 
 @Beta
 public final class UrlResource
-    implements Resource
+    extends ResourceBase
 {
-    private final ResourceKey key;
-
     private final URL url;
 
     public UrlResource( final ResourceKey key, final URL url )
     {
-        this.key = key;
+        super( key );
         this.url = url;
-    }
-
-    @Override
-    public ResourceKey getKey()
-    {
-        return this.key;
     }
 
     @Override
     public URL getUrl()
     {
         return this.url;
-    }
-
-    @Override
-    public void requireExists()
-    {
-        if ( !exists() )
-        {
-            throw new ResourceNotFoundException( this.key );
-        }
     }
 
     @Override
@@ -92,7 +69,7 @@ public final class UrlResource
     {
         if ( this.url == null )
         {
-            throw new ResourceNotFoundException( this.key );
+            throw new ResourceNotFoundException( getKey() );
         }
 
         try
@@ -100,7 +77,7 @@ public final class UrlResource
             final URLConnection connection = this.url.openConnection();
             if ( connection == null )
             {
-                throw new ResourceNotFoundException( this.key );
+                throw new ResourceNotFoundException( getKey() );
             }
 
             connection.connect();
@@ -112,74 +89,10 @@ public final class UrlResource
         }
     }
 
-    private RuntimeException handleError( final IOException e )
-    {
-        if ( e instanceof FileNotFoundException )
-        {
-            throw new ResourceNotFoundException( this.key );
-        }
-
-        throw Throwables.propagate( e );
-    }
-
     @Override
-    public InputStream openStream()
+    public ByteSource getBytes()
     {
-        try
-        {
-            return openConnection().getInputStream();
-        }
-        catch ( final IOException e )
-        {
-            throw handleError( e );
-        }
-    }
-
-    @Override
-    public Readable openReader()
-    {
-        return new InputStreamReader( openStream() );
-    }
-
-    @Override
-    public String readString()
-    {
-        try
-        {
-            return CharStreams.toString( openReader() );
-        }
-        catch ( final IOException e )
-        {
-            throw handleError( e );
-        }
-    }
-
-    @Override
-    public byte[] readBytes()
-    {
-        try
-        {
-            try (final InputStream stream = openStream())
-            {
-                return ByteStreams.toByteArray( stream );
-            }
-        }
-        catch ( final IOException e )
-        {
-            throw handleError( e );
-        }
-    }
-
-    @Override
-    public List<String> readLines()
-    {
-        try
-        {
-            return CharStreams.readLines( openReader() );
-        }
-        catch ( final IOException e )
-        {
-            throw handleError( e );
-        }
+        requireExists();
+        return com.google.common.io.Resources.asByteSource( this.url );
     }
 }

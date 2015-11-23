@@ -10,6 +10,6 @@ public class CacheLibTest
     @Test
     public void testCache()
     {
-        runScript( "/site/test/cache.js" );
+        runScript( "/site/test/cache-test.js" );
     }
 }

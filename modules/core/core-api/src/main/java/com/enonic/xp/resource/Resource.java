@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
+import com.google.common.io.ByteSource;
+
 public interface Resource
 {
     ResourceKey getKey();
@@ -27,4 +29,9 @@ public interface Resource
     byte[] readBytes();
 
     List<String> readLines();
+
+    ByteSource getBytes();
+
+    // TODO: Implement getBytes() -> ByteSource
+    // TODO: Remove openReader
 }
