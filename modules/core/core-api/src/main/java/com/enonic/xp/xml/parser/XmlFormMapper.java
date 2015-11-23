@@ -94,7 +94,7 @@ public final class XmlFormMapper
         builder.immutable( root.getChildValueAs( "immutable", Boolean.class, false ) );
         builder.indexed( root.getChildValueAs( "indexed", Boolean.class, false ) );
         builder.validationRegexp( root.getChildValue( "validation-regexp" ) );
-        builder.maximizeUIInputWidth( root.getChildValueAs( "maximize", Boolean.class, false ) );
+        builder.maximizeUIInputWidth( root.getChildValueAs( "maximize", Boolean.class, true ) );
 
         buildConfig( builder, root.getChild( "config" ) );
 
