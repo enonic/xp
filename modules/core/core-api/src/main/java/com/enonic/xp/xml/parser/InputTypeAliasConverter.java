@@ -1,9 +1,9 @@
-package com.enonic.xp.xml.alias;
+package com.enonic.xp.xml.parser;
 
 import com.google.common.annotations.Beta;
 
 @Beta
-public interface XmlAliasConverter
+interface InputTypeAliasConverter
 {
     String convert( final String alias );
 }

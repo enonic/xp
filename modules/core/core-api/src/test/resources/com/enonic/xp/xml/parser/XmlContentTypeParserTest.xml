@@ -21,6 +21,9 @@
       <config>
         <relationship>system:reference</relationship>
         <allowType>mytype</allowType>
+        <allowType>mytype2</allowType>
+        <allowPath>path1</allowPath>
+        <allowPath>path2</allowPath>
       </config>
     </input>
     <item-set name="mySet">

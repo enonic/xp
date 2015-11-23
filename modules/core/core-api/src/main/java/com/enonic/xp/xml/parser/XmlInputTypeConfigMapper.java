@@ -11,7 +11,6 @@ import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.xml.DomElement;
-import com.enonic.xp.xml.alias.XmlAliasConverters;
 
 final class XmlInputTypeConfigMapper
 {
@@ -68,7 +67,7 @@ final class XmlInputTypeConfigMapper
 
     private String resolveName( final String name )
     {
-        final String result = XmlAliasConverters.convert( this.inputTypeName, name );
+        final String result = InputTypeAliasConverters.convert( this.inputTypeName, name );
 
         if ( result.contains( "-" ) )
         {
