@@ -49,13 +49,15 @@ public class RunWithHandler
         if ( user != null )
         {
             final AuthenticationInfo authInfo = getAuthenticationInfo();
-            return ContextBuilder.from( context.get() ).
-                authInfo( authInfo ).
-                build().
-                callWith( runnable );
+            contextBuilder.authInfo( authInfo );
+        }
+        if ( branch != null )
+        {
+            contextBuilder.branch( branch );
         }
 
-        return null;
+        return contextBuilder.build().
+            callWith( runnable );
     }
 
     private AuthenticationInfo getAuthenticationInfo()

@@ -20,11 +20,10 @@ function nullOrValue(value) {
  *
  * @example
  * var user = securityLib.runWith({
- *   context : {
  *     branch: 'draft',
  *     user: 'su'
  *   },
- *   callback: myFunction
+ *   callback
  * });
  *
  * @param {object} context JSON parameters.
