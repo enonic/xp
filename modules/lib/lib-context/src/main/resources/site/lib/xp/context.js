@@ -1,4 +1,13 @@
 /**
+ * Built-in context functions.
+ *
+ * @example
+ * var contextLib = require('/lib/xp/context');
+ *
+ * @module lib/xp/context
+ */
+
+/**
  * Run a function received as parameter in a specified context.
  *
  * @example
