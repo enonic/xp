@@ -75,5 +75,5 @@ exports.setPermissions = function (params) {
     if (params.permissions) {
         bean.permissions = __.toScriptValue(params.permissions);
     }
-    return bean.execute();
+    return __.toNativeObject(bean.execute());
 };
