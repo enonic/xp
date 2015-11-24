@@ -156,8 +156,7 @@ module api.ui.time {
             });
 
             if (builder.selectedDate) {
-                this.input.setValue(this.formatDate(builder.selectedDate));
-                this.selectedDate = builder.selectedDate;
+                this.setSelectedDate(builder.selectedDate);
             }
 
             if (builder.hours || builder.minutes) {
@@ -277,6 +276,13 @@ module api.ui.time {
             if (event.getDateTimePicker() !== this) {
                 this.popup.hide();
             }
+        }
+
+        public setSelectedDate(date: Date) {
+            this.input.setValue(this.formatDate(date));
+            this.calendar.selectDate(date);
+            this.popup.setSelectedTime(date.getHours(), date.getMinutes());
+            this.selectedDate = date;
         }
 
         private setTime(hours: number, minutes: number) {

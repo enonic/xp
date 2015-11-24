@@ -53,9 +53,8 @@ module api.content.form.inputtype.time {
             var dateTimePicker = <DateTimePicker> occurrence;
 
             if (!unchangedOnly || !dateTimePicker.isDirty()) {
-                var dateTime = this.valueType == ValueTypes.DATE_TIME ? property.getDateTime() : property.getLocalDateTime();
-                //TODO: add method to date time picker
-                //dateTimePicker.setSelectedDateTime(dateTime);
+                var date = this.valueType == ValueTypes.DATE_TIME ? property.getDateTime().toDate() : property.getLocalDateTime();
+                dateTimePicker.setSelectedDate(date);
             }
         }
 
