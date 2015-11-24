@@ -369,5 +369,6 @@ exports.createMedia = function (params) {
     bean.focalX = nullOrValue(params.focalX);
     bean.focalY = nullOrValue(params.focalY);
     bean.data = nullOrValue(params.data);
+    bean.idGenerator = nullOrValue(params.idGenerator);
     return __.toNativeObject(bean.execute());
 };
