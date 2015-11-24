@@ -33,5 +33,5 @@ exports.runWith = function (context, callback) {
     if (context.user) {
         bean.setUser(context.user);
     }
-    return bean.run(callback);
+    return __.toNativeObject(bean.run(callback));
 };
