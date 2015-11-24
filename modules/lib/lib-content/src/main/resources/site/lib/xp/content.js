@@ -374,7 +374,7 @@ exports.createMedia = function (params) {
 };
 
 /**
- * Set permissions on a specified content.
+ * Sets permissions on a content.
  *
  * @example
  * var updatedContent = securityLib.setPermissions({

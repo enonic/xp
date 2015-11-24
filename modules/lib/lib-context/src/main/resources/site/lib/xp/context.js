@@ -8,7 +8,7 @@
  */
 
 /**
- * Runs a function received as parameter within a specific context.
+ * Runs a function within a specified context.
  *
  * @example
  * var result = contextLib.runWith({
