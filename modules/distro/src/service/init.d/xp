@@ -1,5 +1,3 @@
-#! /bin/sh
-
 #!/bin/sh
 #
 # /etc/init.d/enonicxp
@@ -8,7 +6,7 @@
 # chkconfig: 2345 95 05
 # description: Enonic XP server daemon
 #
-# processname: enonicxp
+# processname: xp
 
 # Define LSB log_* functions.
 # Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
@@ -17,7 +15,7 @@
 # Set according to environment
 ###############################
 
-XP_INSTALL="/opt/xp"
+XP_INSTALL="/opt/enonic/xp"
 RUNUSER="xp"
 
 OUT_LOG="/dev/null"
