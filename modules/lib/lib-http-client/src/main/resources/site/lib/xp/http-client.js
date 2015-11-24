@@ -1,8 +1,8 @@
 /**
- * HTTP related functions.
+ * HTTP Client related functions.
  *
  * @example
- * var httpLib = require('/lib/xp/http');
+ * var httpClientLib = require('/lib/xp/http-client');
  *
  * @module lib/xp/http
  */
@@ -28,7 +28,7 @@ function checkRequired(params, name) {
  * The request is sent synchronously, the execution blocks until the response is received.
  *
  * @example
- * var response = httpLib.request({
+ * var response = httpClientLib.request({
  *   url: 'http://my-server/some/path',
  *   method: 'post',
  *   headers: {
