@@ -19,7 +19,7 @@ function nullOrValue(value) {
  * Run a function received as parameter in a specified context.
  *
  * @example
- * var user = securityLib.runWith({
+ * var result = securityLib.runWith({
  *     branch: 'draft',
  *     user: 'su'
  *   },
