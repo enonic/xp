@@ -60,10 +60,10 @@ module api.ui.image {
         private zoomData: ZoomData = {x: 0, y: 0, w: 0, h: 0};
         private revertZoomData: ZoomData;
 
-        private imgW: number;
-        private imgH: number;
-        private frameW: number;
-        private frameH: number;
+        private imgW: number = 1;
+        private imgH: number = 1;
+        private frameW: number = 1;
+        private frameH: number = 1;
         private maxZoom = 5;
 
         private mouseUpListener;
@@ -104,13 +104,38 @@ module api.ui.image {
             this.canvas = new DivEl('image-canvas');
 
             this.image = new ImgEl(null, 'image-bg');
-            this.image.onLoaded((event: UIEvent) => {
-                if (this.isImageLoaded()) {
-                    // check that real image has been loaded
-                    this.updateImageDimensions(true);
+
+            let resizeListener = (item) => {
+                if (this.isVisible()) {
+                    this.updateImageDimensions(false, true);
                     this.updateStickyToolbar();
                 }
-            });
+            };
+
+            let isFirstLoad = true;
+
+            let updateImageOnShown: () => void = () => {
+                this.updateImageDimensions(true);
+                this.updateStickyToolbar();
+                this.unShown(updateImageOnShown);
+                if (isFirstLoad) {
+                    api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, resizeListener);
+                    isFirstLoad = false;
+                }
+            };
+
+            let onLoaded = (event: UIEvent) => {
+                // check that real image has been loaded
+                if (this.isImageLoaded()) {
+                    if (this.isVisible()) {
+                        updateImageOnShown();
+                    } else {
+                        this.onShown(updateImageOnShown);
+                    }
+                }
+            };
+
+            this.image.onLoaded(onLoaded);
 
             var myId = this.getId();
 
@@ -160,16 +185,10 @@ module api.ui.image {
             this.appendChildren(this.stickyToolbar, this.frame);
 
             var scrollListener = (event) => this.updateStickyToolbar();
-            var resizeListener = (item) => {
-                if (this.isVisible()) {
-                    this.updateImageDimensions(false, true);
-                    this.updateStickyToolbar();
-                }
-            };
+
             this.onAdded((event: api.dom.ElementAddedEvent) => {
                 // sticky toolbar needs to have access to parent elements
                 wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).bind("scroll", scrollListener);
-                api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, resizeListener);
             });
             this.onRemoved((event: api.dom.ElementRemovedEvent) => {
                 // element has already been removed so use parent
