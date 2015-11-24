@@ -119,7 +119,7 @@ exports.createMedia = function (params) {
  * @returns {object} Updated content.
  */
 exports.setPermissions = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.security.SetPermissionsHandler');
+    var bean = __.newBean('com.enonic.xp.lib.content.SetPermissionsHandler');
 
     if (params.key) {
         bean.setKey(params.key);
