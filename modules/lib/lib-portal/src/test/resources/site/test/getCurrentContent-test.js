@@ -116,7 +116,8 @@ var expectedJson = {
                 "name": "top"
             }
         }
-    }
+    },
+    "attachments": {}
 };
 
 exports.currentContent = function () {

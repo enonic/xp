@@ -17,7 +17,8 @@ var expectedJson = {
         }
     },
     "x": {},
-    "page": {}
+    "page": {},
+    "attachments": {}
 };
 
 exports.currentSite = function () {
