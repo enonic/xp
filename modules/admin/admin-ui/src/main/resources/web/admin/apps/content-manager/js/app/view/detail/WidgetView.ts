@@ -41,6 +41,10 @@ module app.view.detail {
             };
         }
 
+        resetContainerWidth() {
+            this.containerWidth = 0;
+        }
+
         private setContentForWidgetItemView(widgetItemView: WidgetItemView, content: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
             if (!this.isUrlBased()) {
                 return wemQ.resolve(null);

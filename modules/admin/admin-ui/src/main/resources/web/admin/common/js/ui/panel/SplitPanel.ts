@@ -35,7 +35,7 @@ module api.ui.panel {
 
         private alignmentTreshold: number;
 
-        private animationDelay: number;
+        private animationDelay: number = 0;
 
         private splitterThickness: number = 5;
 
@@ -260,7 +260,7 @@ module api.ui.panel {
                     if (this.requiresAlignment() && this.isVisible()) {
                         this.updateAlignment();
                     }
-                }, Math.max(10, this.animationDelay), false);
+                }, Math.max(100, this.animationDelay), false);
                 ResponsiveManager.onAvailableSizeChanged(this, debounced);
             }
 
