@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.security;
+package com.enonic.xp.lib.content;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,13 +6,12 @@ import java.util.stream.Collectors;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.script.bean.BeanContext;
-import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -20,7 +19,7 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class SetPermissionsHandler
-    implements ScriptBean
+    extends BaseContextHandler
 {
     private String key;
 
@@ -29,8 +28,6 @@ public class SetPermissionsHandler
     private boolean overwriteChildPermissions;
 
     private AccessControlList permissions;
-
-    private ContentService contentService;
 
 
     public void setKey( final String key )
@@ -52,7 +49,8 @@ public class SetPermissionsHandler
     {
         if ( permissions != null )
         {
-            final List<AccessControlEntry> accessControlEntries = permissions.getArray().stream().
+            final List<AccessControlEntry> accessControlEntries = permissions.getArray().
+                stream().
                 map( permission -> {
                     final String principal = permission.getMember( "principal" ).
                         getValue( String.class );
@@ -72,7 +70,8 @@ public class SetPermissionsHandler
                         allow( allowedPermissions ).
                         deny( deniedPermissions ).
                         build();
-                } ).collect( Collectors.toList() );
+                } ).
+                collect( Collectors.toList() );
 
             this.permissions = AccessControlList.
                 create().
@@ -81,32 +80,57 @@ public class SetPermissionsHandler
         }
     }
 
-    public final Object execute()
+    @Override
+    protected Object doExecute()
     {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        final PrincipalKey modifier =
-            authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
+        ContentId contentId = getContentId();
 
-        //TODO case of path
-        final UpdateContentParams updatePermissionsParams = new UpdateContentParams().contentId( ContentId.from( key ) ).
-            modifier( modifier ).
-            editor( edit -> {
-                edit.inheritPermissions = inheritPermissions;
-                edit.permissions = permissions;
-            } );
-        final Content updatedContent = contentService.update( updatePermissionsParams );
+        if ( contentId != null )
+        {
+            final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+            final PrincipalKey modifier =
+                authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
 
-        contentService.applyPermissions( ApplyContentPermissionsParams.create().
-            contentId( updatedContent.getId() ).
-            overwriteChildPermissions( overwriteChildPermissions ).
-            build() );
+            final UpdateContentParams updatePermissionsParams = new UpdateContentParams().
+                contentId( contentId ).
+                modifier( modifier ).
+                editor( edit -> {
+                    edit.inheritPermissions = inheritPermissions;
+                    edit.permissions = permissions;
+                } );
+            final Content updatedContent = contentService.update( updatePermissionsParams );
 
-        return new ContentMapper( updatedContent );
+            contentService.applyPermissions( ApplyContentPermissionsParams.create().
+                contentId( updatedContent.getId() ).
+                overwriteChildPermissions( overwriteChildPermissions ).
+                build() );
+
+            return new ContentMapper( updatedContent );
+        }
+
+        return null;
     }
 
-    @Override
-    public void initialize( final BeanContext context )
+    private ContentId getContentId()
     {
-        this.contentService = context.getService( ContentService.class ).get();
+        try
+        {
+            if ( this.key.startsWith( "/" ) )
+            {
+                final Content content = this.contentService.getByPath( ContentPath.from( key ) );
+                if ( content != null )
+                {
+                    return content.getId();
+                }
+            }
+            else
+            {
+                return ContentId.from( key );
+            }
+        }
+        catch ( final ContentNotFoundException e )
+        {
+        }
+        return null;
     }
 }
