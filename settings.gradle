@@ -56,6 +56,7 @@ include 'lib:lib-auth'
 include 'lib:lib-http-client'
 include 'lib:lib-io'
 include 'lib:lib-cache'
+include 'lib:lib-context'
 
 include 'repack:repack-jparsec'
 include 'repack:repack-attoparser'
