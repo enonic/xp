@@ -110,7 +110,7 @@ module api.form.inputtype.text {
                         textAreaWrapper.removeClass(focusedEditorCls);
                     });
                     editor.on('keydown', (e) => {
-                        if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
+                        if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {  // Cmd-S or Ctrl-S
                             e.preventDefault();
 
                             this.setPropertyValue(id, property);
@@ -126,6 +126,14 @@ module api.form.inputtype.text {
                                 keyCode: e.keyCode,
                                 charCode: e.charCode
                             });
+                        }
+
+                        if (e.keyCode == 46) { // DELETE
+                            var selectedNode = editor.selection.getRng().startContainer;
+                            if (/^(FIGURE)$/.test(selectedNode.nodeName)) {
+                                editor.execCommand('mceRemoveNode', false, selectedNode);
+                                editor.focus();
+                            }
                         }
                     });
 
