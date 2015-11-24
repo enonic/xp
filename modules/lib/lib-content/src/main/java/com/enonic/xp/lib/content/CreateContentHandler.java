@@ -46,7 +46,7 @@ public final class CreateContentHandler
 
     private String language;
 
-    private Supplier<String> idGenerator = () -> Long.toString( RANDOM.nextLong() );
+    private Supplier<String> idGenerator = () -> Long.toString( Math.abs( RANDOM.nextLong() ) );
 
     @Override
     protected Object doExecute()

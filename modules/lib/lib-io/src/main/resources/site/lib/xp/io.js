@@ -16,11 +16,11 @@ var bean = __.newBean('com.enonic.xp.lib.io.IOHandlerBean');
  * @example
  * var text = ioLib.readText(stream);
  *
- * @param {*} val Stream to read from.
+ * @param stream Stream to read text from.
  * @returns {string} Returns the text read from stream or string.
  */
-exports.readText = function (val) {
-    return bean.readText(val);
+exports.readText = function (stream) {
+    return bean.readText(stream);
 };
 
 /**
@@ -29,11 +29,11 @@ exports.readText = function (val) {
  * @example
  * var lines = ioLib.readLines(stream);
  *
- * @param {*} val Stream to read from.
+ * @param stream Stream to read lines from.
  * @returns {string} Returns lines as an array.
  */
-exports.readLines = function (val) {
-    return __.toNativeObject(bean.readLines(val));
+exports.readLines = function (stream) {
+    return __.toNativeObject(bean.readLines(stream));
 };
 
 /**
@@ -44,11 +44,11 @@ exports.readLines = function (val) {
  *   log.info(line);
  * });
  *
- * @param {*} val Stream to read from.
+ * @param stream Stream to read lines from.
  * @param {function} func Callback function to be called for each line.
  */
-exports.processLines = function (val, func) {
-    return bean.processLines(val, func);
+exports.processLines = function (stream, func) {
+    return bean.processLines(stream, func);
 };
 
 /**
@@ -57,10 +57,11 @@ exports.processLines = function (val, func) {
  * @example
  * var size = ioLib.getSize(stream);
  *
+ * @param stream Stream to get size of.
  * @returns {number} Returns the size of a stream.
  */
-exports.getSize = function (val) {
-    return bean.getSize(val);
+exports.getSize = function (stream) {
+    return bean.getSize(stream);
 };
 
 /**
@@ -69,6 +70,7 @@ exports.getSize = function (val) {
  * @example
  * var mimeType = ioLib.getMimeType('myfile.txt');
  *
+ * @param {string} name Name of file or extension.
  * @returns {string} Mime-type of name or extension.
  */
 exports.getMimeType = function (name) {
@@ -81,11 +83,11 @@ exports.getMimeType = function (name) {
  * @example
  * var stream = ioLib.newStream('my text string');
  *
- * @param {string} val String to create a stream of.
+ * @param {string} text String to create a stream of.
  * @returns {*} A new stream.
  */
-exports.newStream = function (val) {
-    return bean.newStream(val);
+exports.newStream = function (text) {
+    return bean.newStream(text);
 };
 
 /**
@@ -150,7 +152,7 @@ Resource.prototype.exists = function () {
  * var size = res.getSize();
  * var stream = res.getStream();
  *
- * @param {*} key Resource key to look up.
+ * @param {string} key Resource key to look up.
  * @returns {Resource} Resource reference.
  */
 exports.getResource = function (key) {

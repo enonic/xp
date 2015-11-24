@@ -8,7 +8,7 @@ if [ -z $PIDFILE ]; then
   exit 1
 fi
 
-if [ -n $CONFIG ]; then
+if [ -f $CONFIG ]; then
   . $CONFIG 
 else
   echo "No config exist at $CONFIG"

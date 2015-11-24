@@ -252,6 +252,10 @@ module api.ui.selector.dropdown {
             return this.selectedOptionView.getOption();
         }
 
+        getSelectedOptionView(): SelectedOptionView<OPTION_DISPLAY_VALUE> {
+            return this.selectedOptionView;
+        }
+
         getValue(): string {
             var selectedOption = this.getSelectedOption();
             if (!selectedOption) {

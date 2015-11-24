@@ -411,6 +411,12 @@ module app.view.detail {
             this.slideOutFunction();
         }
 
+        public resetWidgetsWidth() {
+            this.widgetViews.forEach((widgetView: WidgetView) => {
+                widgetView.resetContainerWidth();
+            })
+        }
+
         private layout(empty: boolean = true) {
             if (this.widgetsSelectionRow) {
                 this.widgetsSelectionRow.setVisible(!empty);

@@ -1,8 +1,15 @@
 package com.enonic.xp.lib.content;
 
+import java.security.SecureRandom;
+import java.util.Random;
+import java.util.function.Supplier;
+
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
@@ -10,6 +17,8 @@ import com.enonic.xp.lib.content.mapper.ContentMapper;
 public final class CreateMediaHandler
     extends BaseContextHandler
 {
+    private final static Random RANDOM = new SecureRandom();
+
     private String name;
 
     private String parentPath;
@@ -22,11 +31,27 @@ public final class CreateMediaHandler
 
     private double focalY = 0.5;
 
+    private Supplier<String> idGenerator = () -> Long.toString( Math.abs( RANDOM.nextLong() ) );
+
     @Override
     protected Object doExecute()
     {
-        final CreateMediaParams params = createParams();
-        final Content result = this.contentService.create( params );
+        String name = this.name;
+        Content result = null;
+        final ContentPath parent = this.parentPath != null ? ContentPath.from( this.parentPath ) : ContentPath.ROOT;
+
+        while ( result == null )
+        {
+            final CreateMediaParams params = createParams( name );
+            try
+            {
+                result = this.contentService.create( params );
+            }
+            catch ( ContentAlreadyExistsException e )
+            {
+                name = generateUniqueContentName( this.idGenerator, parent, this.name );
+            }
+        }
         return new ContentMapper( result );
     }
 
@@ -60,10 +85,18 @@ public final class CreateMediaHandler
         this.focalY = focalY;
     }
 
-    private CreateMediaParams createParams()
+    public void setIdGenerator( final Supplier<String> idGenerator )
+    {
+        if ( idGenerator != null )
+        {
+            this.idGenerator = idGenerator;
+        }
+    }
+
+    private CreateMediaParams createParams( final String name )
     {
         final CreateMediaParams params = new CreateMediaParams();
-        params.name( this.name );
+        params.name( name );
         params.parent( this.parentPath != null ? ContentPath.from( this.parentPath ) : null );
         params.mimeType( this.mimeType );
         params.byteSource( this.data );
@@ -71,4 +104,26 @@ public final class CreateMediaHandler
         params.focalY( this.focalY );
         return params;
     }
+
+    protected String generateUniqueContentName( final Supplier<String> idGenerator, final ContentPath parent, final String baseName )
+    {
+        String name = baseName;
+        while ( this.contentService.contentExists( ContentPath.from( parent, name ) ) )
+        {
+            final String randomId = idGenerator.get();
+            if ( baseName.contains( "." ) )
+            {
+                final String fileName = StringUtils.substringBeforeLast( baseName, "." );
+                final String ext = StringUtils.substringAfterLast( baseName, "." );
+                name = fileName + "-" + randomId + "." + ext;
+            }
+            else
+            {
+                name = baseName + "-" + randomId;
+            }
+
+        }
+        return name;
+    }
+
 }

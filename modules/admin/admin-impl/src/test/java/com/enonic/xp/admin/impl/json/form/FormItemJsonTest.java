@@ -33,7 +33,7 @@ public class FormItemJsonTest
             label( "My TextLine" ).
             immutable( true ).
             indexed( true ).
-            maximizeUIInputWidth( true ).
+            maximizeUIInputWidth( false ).
             validationRegexp( "script" ).
             customText( "Custom text" ).
             helpText( "Help text" ).

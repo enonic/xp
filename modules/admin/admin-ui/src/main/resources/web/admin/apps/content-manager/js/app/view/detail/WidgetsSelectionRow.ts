@@ -42,6 +42,12 @@ module app.view.detail {
             } else {
                 this.widgetSelectorDropdown.addClass("non-default-selected");
                 this.infoWidgetToggleButton.setInactive();
+                if (this.widgetSelectorDropdown.getValue() != widgetView.getWidgetName()) {
+                    this.widgetSelectorDropdown.setValue(widgetView.getWidgetName());
+                }
+            }
+            if (this.widgetSelectorDropdown.getSelectedOption()) {
+                this.widgetSelectorDropdown.getSelectedOptionView().getEl().setDisplay("inline-block");
             }
         }
 

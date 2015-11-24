@@ -10,13 +10,13 @@
             "description": null,
             "displayName": null,
             "editable": false,
-          "final": true,
-          "iconUrl": "/admin/rest/schema/content/icon/myapplication:my_cty?hash=f95b70fdc3088560732a5ac135644506",
+            "final": true,
+            "iconUrl": "/admin/rest/schema/content/icon/myapplication:my_cty?hash=f95b70fdc3088560732a5ac135644506",
             "metadata" : [ ],
             "modifiedTime": null,
             "modifier": null,
-          "name": "myapplication:my_cty",
-          "superType": "base:unstructured"
+            "name": "myapplication:my_cty",
+            "superType": "base:unstructured"
         }
     ],
     "total": 1
