@@ -377,7 +377,7 @@ exports.createMedia = function (params) {
  * Sets permissions on a content.
  *
  * @example
- * var updatedContent = securityLib.setPermissions({
+ * var updatedContent = contentLib.setPermissions({
  *   key: '03c6ae7b-7f48-45f5-973d-1f03606ab928',
  *   permissions: [{
  *     principal: 'user:system:anonymous',
