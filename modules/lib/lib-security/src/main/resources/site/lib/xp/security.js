@@ -19,7 +19,7 @@ function nullOrValue(value) {
  * Run a function received as parameter in a specified context.
  *
  * @example
- * var user = securityLib.runWith({
+ * var result = securityLib.runWith({
  *     branch: 'draft',
  *     user: 'su'
  *   },
@@ -42,4 +42,38 @@ exports.runWith = function (context, callback) {
         bean.setUser(context.user);
     }
     return bean.run(callback);
+};
+
+
+/**
+ * Set permissions on a specified content.
+ *
+ * @example
+ * securityLib.setPermissions({
+ *   key: '03c6ae7b-7f48-45f5-973d-1f03606ab928',
+ *   permissions: [{
+ *     principal: 'user:system:anonymous',
+ *     allow: ['READ'],
+ *     deny: []
+ *   }]
+ * });
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Path or ID of the content.
+ * @param {array} params.permissions Array of permissions.
+ * @param {string} params.permissions.principal Principal key.
+ * @param {array} params.permissions.allow Allowed permissions.
+ * @param {array} params.permissions.deny Denied permissions.
+ * @returns {object} Updated content.
+ */
+exports.setPermissions = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.security.SetPermissionsHandler');
+
+    if (params.key) {
+        bean.setKey(params.key);
+    }
+    if (params.permissions) {
+        bean.permissions = __.toScriptValue(params.permissions);
+    }
+    return bean.execute();
 };
