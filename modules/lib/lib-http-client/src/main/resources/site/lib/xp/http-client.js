@@ -4,7 +4,7 @@
  * @example
  * var httpClientLib = require('/lib/xp/http-client');
  *
- * @module lib/xp/http
+ * @module lib/xp/http-client
  */
 
 function checkRequired(params, name) {
