@@ -1,6 +1,5 @@
 dependencies {
     provided project( ':core:core-api' )
     provided project( ':script:script-api' )
-    provided project( ':lib:lib-content' )
     testCompile project( ':tools:testing' )
 }

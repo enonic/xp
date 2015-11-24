@@ -1,25 +1,8 @@
 /**
- * Built-in authentication functions.
- *
- * @example
- * var authLib = require('/lib/xp/auth');
- *
- * @module lib/xp/auth
- */
-
-function nullOrValue(value) {
-    if (value === undefined) {
-        return null;
-    }
-
-    return value;
-}
-
-/**
  * Run a function received as parameter in a specified context.
  *
  * @example
- * var result = securityLib.runWith({
+ * var result = contextLib.runWith({
  *     branch: 'draft',
  *     user: 'su'
  *   },
@@ -33,7 +16,7 @@ function nullOrValue(value) {
  * @returns {object} Result of the function execution.
  */
 exports.runWith = function (context, callback) {
-    var bean = __.newBean('com.enonic.xp.lib.security.RunWithHandler');
+    var bean = __.newBean('com.enonic.xp.lib.context.RunWithHandler');
 
     if (context.branch) {
         bean.setBranch(context.branch);

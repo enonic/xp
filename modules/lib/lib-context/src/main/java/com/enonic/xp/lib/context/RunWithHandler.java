@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.security;
+package com.enonic.xp.lib.context;
 
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
