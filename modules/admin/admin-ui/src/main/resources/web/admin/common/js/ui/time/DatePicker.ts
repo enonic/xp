@@ -126,8 +126,7 @@ module api.ui.time {
             });
 
             if (builder.selectedDate) {
-                this.input.setValue(this.formatDate(builder.selectedDate));
-                this.selectedDate = builder.selectedDate;
+                this.setSelectedDate(builder.selectedDate);
             }
 
             this.popup.onSelectedDateChanged((e: SelectedDateChangedEvent) => {
@@ -236,6 +235,12 @@ module api.ui.time {
 
         hasValidUserInput(): boolean {
             return this.validUserInput;
+        }
+
+        setSelectedDate(date: Date) {
+            this.input.setValue(this.formatDate(date));
+            this.popup.setSelectedDate(date);
+            this.selectedDate = date;
         }
 
         getSelectedDate(): Date {
