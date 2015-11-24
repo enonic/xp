@@ -14,7 +14,8 @@ var expectedJson = {
     "valid": false,
     "data": {},
     "x": {},
-    "page": {}
+    "page": {},
+    "attachments": {}
 };
 
 exports.createMedia = function () {
@@ -39,7 +40,8 @@ var expectedJsonAutoGenerateName = {
     "valid": false,
     "data": {},
     "x": {},
-    "page": {}
+    "page": {},
+    "attachments": {}
 };
 
 exports.createMediaAutoGenerateName = function () {

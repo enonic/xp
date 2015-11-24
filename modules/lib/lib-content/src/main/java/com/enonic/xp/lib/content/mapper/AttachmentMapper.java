@@ -22,7 +22,8 @@ public final class AttachmentMapper
 
     private static void serialize( final MapGenerator gen, final Attachment value )
     {
-        gen.value( "binaryReference", value.getBinaryReference().toString() );
+        gen.value( "name", value.getName() );
+        gen.value( "label", value.getLabel() );
         gen.value( "size", value.getSize() );
         gen.value( "mimeType", value.getMimeType() );
     }

@@ -89,7 +89,8 @@ var expectedJson = {
                 "name": "top"
             }
         }
-    }
+    },
+    "attachments": {}
 };
 
 function editor(c) {

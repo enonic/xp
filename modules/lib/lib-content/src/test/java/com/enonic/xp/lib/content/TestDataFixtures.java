@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Locale;
 
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
@@ -45,6 +47,7 @@ public final class TestDataFixtures
 
         builder.addExtraData( new ExtraData( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );
+        builder.attachments( newAttachments() );
 
         return builder.build();
     }
@@ -221,5 +224,21 @@ public final class TestDataFixtures
         final LayoutRegions.Builder builder = LayoutRegions.create();
         builder.add( newBottomRegion() );
         return builder.build();
+    }
+
+    public static Attachments newAttachments()
+    {
+        final Attachment a1 = Attachment.create().
+            name( "logo.png" ).
+            mimeType( "image/png" ).
+            label( "small" ).
+            size( 6789 ).
+            build();
+        final Attachment a2 = Attachment.create().
+            name( "document.pdf" ).
+            mimeType( "application/pdf" ).
+            size( 12345 ).
+            build();
+        return Attachments.from( a1, a2 );
     }
 }
