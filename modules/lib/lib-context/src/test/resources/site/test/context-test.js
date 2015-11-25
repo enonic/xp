@@ -21,7 +21,10 @@ exports.noChange = function () {
 exports.change = function () {
     var result = context.run({
         branch: 'mybranch',
-        user: 'su'
+        user: {
+            login: 'su',
+            userStore: 'system'
+        }
     }, function () {
         return context.get();
     });
