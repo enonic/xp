@@ -90,25 +90,32 @@ public class SetPermissionsHandler
 
         if ( contentId != null )
         {
-            final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-            final PrincipalKey modifier =
-                authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
+            try
+            {
+                final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+                final PrincipalKey modifier =
+                    authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
 
-            final UpdateContentParams updatePermissionsParams = new UpdateContentParams().
-                contentId( contentId ).
-                modifier( modifier ).
-                editor( edit -> {
-                    edit.inheritPermissions = inheritPermissions;
-                    edit.permissions = permissions;
-                } );
-            final Content updatedContent = contentService.update( updatePermissionsParams );
+                final UpdateContentParams updatePermissionsParams = new UpdateContentParams().
+                    contentId( contentId ).
+                    modifier( modifier ).
+                    editor( edit -> {
+                        edit.inheritPermissions = inheritPermissions;
+                        edit.permissions = permissions;
+                    } );
+                final Content updatedContent = contentService.update( updatePermissionsParams );
 
-            contentService.applyPermissions( ApplyContentPermissionsParams.create().
-                contentId( updatedContent.getId() ).
-                overwriteChildPermissions( overwriteChildPermissions ).
-                build() );
+                contentService.applyPermissions( ApplyContentPermissionsParams.create().
+                    contentId( updatedContent.getId() ).
+                    overwriteChildPermissions( overwriteChildPermissions ).
+                    build() ).
+                    get();
 
-            return new ContentMapper( updatedContent );
+                return new ContentMapper( updatedContent );
+            }
+            catch ( Exception e )
+            {
+            }
         }
 
         return null;
