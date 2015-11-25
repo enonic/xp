@@ -11,6 +11,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 
@@ -24,7 +25,7 @@ public final class ContextHandlerBean
     public Object run( final ContextRunParams params )
     {
         final ContextBuilder builder = ContextBuilder.from( this.context.get() );
-        applyUser( builder, params.user );
+        applyUser( builder, params.username, params.userStore );
         applyBranch( builder, params.branch );
 
         return builder.build().
@@ -41,14 +42,14 @@ public final class ContextHandlerBean
         return new ContextRunParams();
     }
 
-    private void applyUser( final ContextBuilder builder, final String user )
+    private void applyUser( final ContextBuilder builder, final String username, final String userStore )
     {
-        if ( user == null )
+        if ( username == null )
         {
             return;
         }
 
-        final AuthenticationInfo authInfo = runAsAuthenticated( () -> getAuthenticationInfo( user ) );
+        final AuthenticationInfo authInfo = runAsAuthenticated( () -> getAuthenticationInfo( username, userStore ) );
         builder.authInfo( authInfo );
     }
 
@@ -62,11 +63,11 @@ public final class ContextHandlerBean
         builder.branch( branch );
     }
 
-    private AuthenticationInfo getAuthenticationInfo( final String user )
+    private AuthenticationInfo getAuthenticationInfo( final String username, final String userStore )
     {
         final VerifiedUsernameAuthToken token = new VerifiedUsernameAuthToken();
-        token.setUsername( user );
-        token.setUserStore( null );
+        token.setUsername( username );
+        token.setUserStore( userStore == null ? null : UserStoreKey.from( userStore ) );
         return this.securityService.get().authenticate( token );
     }
 
