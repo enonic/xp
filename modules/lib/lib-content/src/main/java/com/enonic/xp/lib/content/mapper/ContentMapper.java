@@ -6,7 +6,6 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ExtraData;
@@ -97,12 +96,7 @@ public final class ContentMapper
         gen.map( "attachments" );
         if ( value != null )
         {
-            for ( Attachment attachment : value )
-            {
-                gen.map( attachment.getName() );
-                new AttachmentMapper( attachment ).serialize( gen );
-                gen.end();
-            }
+            new AttachmentsMapper( value ).serialize( gen );
         }
         gen.end();
     }

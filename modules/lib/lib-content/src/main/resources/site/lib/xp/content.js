@@ -53,6 +53,31 @@ exports.get = function (params) {
 };
 
 /**
+ * This function returns a content attachments.
+ *
+ * @example
+ * var attachments = contentLib.getAttachments('/features/js-libraries/mycontent');
+ *
+ * if (attachments) {
+ *   var attachment = attachments['thumbnail.png'];
+ *   if (attachment) {
+ *     log.info('Attachment: name = %s, size = %s, label = %s, mimeType = %s', attachment.name, attachment.size, attachment.label, attachment.mimeType);
+ *   }
+ * } else {
+ *   log.info('Content was not found');
+ * }
+ *
+ * @param {string} key Path or id to the content.
+ *
+ * @returns {object} An object with all the attachments that belong to the content, where the key is the attachment name. Or null if the content cannot be found.
+ */
+exports.getAttachments = function (key) {
+    var bean = __.newBean('com.enonic.xp.lib.content.GetAttachmentsHandler');
+    bean.key = nullOrValue(key);
+    return __.toNativeObject(bean.execute());
+};
+
+/**
  * This function deletes a content.
  *
  * @example
