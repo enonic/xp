@@ -16,7 +16,7 @@ var bean = __.newBean('com.enonic.xp.lib.context.ContextHandlerBean');
  * var result = contextLib.run({
  *     branch: 'draft',
  *     user: {
- *       id: 'su',
+ *       login: 'su',
  *       userStore: 'system'
  *   },
  *   callback
