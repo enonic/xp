@@ -78,6 +78,28 @@ exports.getAttachments = function (key) {
 };
 
 /**
+ * This function returns a data-stream for the specified content attachment.
+ *
+ * @example
+ * var result = contentLib.getAttachmentStream({
+ *   key: '/features/js-libraries/mycontent',
+ *   name: 'attachment-name'
+ * });
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the content.
+ * @param {string} params.name Attachment name.
+ *
+ * @returns {*} Stream of the attachment data.
+ */
+exports.getAttachmentStream = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.GetAttachmentStreamHandler');
+    bean.key = required(params, 'key');
+    bean.name = required(params, 'name');
+    return bean.getStream();
+};
+
+/**
  * This function deletes a content.
  *
  * @example
