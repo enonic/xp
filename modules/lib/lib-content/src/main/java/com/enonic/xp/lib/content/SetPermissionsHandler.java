@@ -51,26 +51,7 @@ public class SetPermissionsHandler
         {
             final List<AccessControlEntry> accessControlEntries = permissions.getArray().
                 stream().
-                map( permission -> {
-                    final String principal = permission.getMember( "principal" ).
-                        getValue( String.class );
-                    final List<Permission> allowedPermissions = permission.getMember( "allow" ).
-                        getArray( String.class ).
-                        stream().
-                        map( Permission::valueOf ).
-                        collect( Collectors.toList() );
-                    final List<Permission> deniedPermissions = permission.getMember( "deny" ).
-                        getArray( String.class ).
-                        stream().
-                        map( Permission::valueOf ).
-                        collect( Collectors.toList() );
-
-                    return AccessControlEntry.create().
-                        principal( PrincipalKey.from( principal ) ).
-                        allow( allowedPermissions ).
-                        deny( deniedPermissions ).
-                        build();
-                } ).
+                map( this::convertToAccessControlEntry ).
                 collect( Collectors.toList() );
 
             this.permissions = AccessControlList.
@@ -78,6 +59,28 @@ public class SetPermissionsHandler
                 addAll( accessControlEntries ).
                 build();
         }
+    }
+
+    private AccessControlEntry convertToAccessControlEntry( ScriptValue permission )
+    {
+        final String principal = permission.getMember( "principal" ).
+            getValue( String.class );
+        final List<Permission> allowedPermissions = permission.getMember( "allow" ).
+            getArray( String.class ).
+            stream().
+            map( Permission::valueOf ).
+            collect( Collectors.toList() );
+        final List<Permission> deniedPermissions = permission.getMember( "deny" ).
+            getArray( String.class ).
+            stream().
+            map( Permission::valueOf ).
+            collect( Collectors.toList() );
+
+        return AccessControlEntry.create().
+            principal( PrincipalKey.from( principal ) ).
+            allow( allowedPermissions ).
+            deny( deniedPermissions ).
+            build();
     }
 
     @Override
