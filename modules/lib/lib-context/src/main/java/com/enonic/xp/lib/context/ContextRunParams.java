@@ -6,7 +6,9 @@ public final class ContextRunParams
 {
     protected String branch;
 
-    protected String user;
+    protected String username;
+
+    protected String userStore;
 
     protected Callable<Object> callback;
 
@@ -15,9 +17,14 @@ public final class ContextRunParams
         this.branch = branch;
     }
 
-    public void setUser( final String user )
+    public void setUsername( final String username )
     {
-        this.user = user;
+        this.username = username;
+    }
+
+    public void setUserStore( final String userStore )
+    {
+        this.userStore = userStore;
     }
 
     public void setCallback( final Callable<Object> callback )

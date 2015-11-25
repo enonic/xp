@@ -15,14 +15,18 @@ var bean = __.newBean('com.enonic.xp.lib.context.ContextHandlerBean');
  * @example
  * var result = contextLib.run({
  *     branch: 'draft',
- *     user: 'su'
+ *     user: {
+ *       id: 'su',
+ *       userStore: 'system'
  *   },
  *   callback
  * });
  *
  * @param {object} context JSON parameters.
- * @param {string} [context.branch] Name of the branch to execute the callback in.
- * @param {string} [context.user] Name of user to execute the callback with.
+ * @param {string} [context.branch] Name of the branch to execute the callback in. Default is the current branch set in portal.
+ * @param {object} [context.user] User to execute the callback with. Default is the current user.
+ * @param {string} context.user.login Login of the user.
+ * @param {string} [context.user.userStore] User store containing the user. By default, all the user stores will be used.
  * @param {function} callback Function to execute.
  * @returns {object} Result of the function execution.
  */
@@ -35,7 +39,12 @@ exports.run = function (context, callback) {
     }
 
     if (context.user) {
-        params.user = context.user;
+        if (context.user.login) {
+            params.username = context.user.login;
+        }
+        if (context.user.userStore) {
+            params.userStore = context.user.userStore;
+        }
     }
 
     var result = bean.run(params);
