@@ -1,6 +1,7 @@
 package com.enonic.xp.app;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
@@ -31,6 +32,8 @@ public interface Application
     Bundle getBundle();
 
     Instant getModifiedTime();
+
+    List<String> getSourcePaths();
 
     boolean isStarted();
 

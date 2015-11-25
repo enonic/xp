@@ -48,6 +48,7 @@ public class ApplicationImplTest
         assertTrue( application.isApplication() );
         assertFalse( application.isSystem() );
         assertTrue( ApplicationImpl.isApplication( bundle ) );
+        assertEquals( "[/a/b, /c/d]", application.getSourcePaths().toString() );
 
         assertEquals(
             "ApplicationImpl{applicationKey=myapplication, displayName=myapplication, url=http://enonic.com/path/to/application, " +
@@ -74,7 +75,7 @@ public class ApplicationImplTest
     {
         final Bundle bundle = Mockito.mock( Bundle.class );
         final List<URL> urlList = Lists.newArrayList();
-        for ( String resourcePath : resourcePaths )
+        for ( final String resourcePath : resourcePaths )
         {
             try
             {
@@ -106,6 +107,7 @@ public class ApplicationImplTest
         headers.put( ApplicationImpl.X_SYSTEM_VERSION, "[1.2,2)" );
         headers.put( ApplicationImpl.X_VENDOR_NAME, "Enonic AS" );
         headers.put( ApplicationImpl.X_VENDOR_URL, "http://enonic.com" );
+        headers.put( ApplicationImpl.X_SOURCE_PATHS, "/a/b,/c/d" );
 
         return headers;
     }
