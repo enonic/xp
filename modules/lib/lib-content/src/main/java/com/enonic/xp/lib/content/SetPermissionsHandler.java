@@ -51,26 +51,7 @@ public class SetPermissionsHandler
         {
             final List<AccessControlEntry> accessControlEntries = permissions.getArray().
                 stream().
-                map( permission -> {
-                    final String principal = permission.getMember( "principal" ).
-                        getValue( String.class );
-                    final List<Permission> allowedPermissions = permission.getMember( "allow" ).
-                        getArray( String.class ).
-                        stream().
-                        map( Permission::valueOf ).
-                        collect( Collectors.toList() );
-                    final List<Permission> deniedPermissions = permission.getMember( "deny" ).
-                        getArray( String.class ).
-                        stream().
-                        map( Permission::valueOf ).
-                        collect( Collectors.toList() );
-
-                    return AccessControlEntry.create().
-                        principal( PrincipalKey.from( principal ) ).
-                        allow( allowedPermissions ).
-                        deny( deniedPermissions ).
-                        build();
-                } ).
+                map( this::convertToAccessControlEntry ).
                 collect( Collectors.toList() );
 
             this.permissions = AccessControlList.
@@ -80,6 +61,28 @@ public class SetPermissionsHandler
         }
     }
 
+    private AccessControlEntry convertToAccessControlEntry( ScriptValue permission )
+    {
+        final String principal = permission.getMember( "principal" ).
+            getValue( String.class );
+        final List<Permission> allowedPermissions = permission.getMember( "allow" ).
+            getArray( String.class ).
+            stream().
+            map( Permission::valueOf ).
+            collect( Collectors.toList() );
+        final List<Permission> deniedPermissions = permission.getMember( "deny" ).
+            getArray( String.class ).
+            stream().
+            map( Permission::valueOf ).
+            collect( Collectors.toList() );
+
+        return AccessControlEntry.create().
+            principal( PrincipalKey.from( principal ) ).
+            allow( allowedPermissions ).
+            deny( deniedPermissions ).
+            build();
+    }
+
     @Override
     protected Object doExecute()
     {
@@ -87,25 +90,32 @@ public class SetPermissionsHandler
 
         if ( contentId != null )
         {
-            final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-            final PrincipalKey modifier =
-                authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
+            try
+            {
+                final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+                final PrincipalKey modifier =
+                    authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
 
-            final UpdateContentParams updatePermissionsParams = new UpdateContentParams().
-                contentId( contentId ).
-                modifier( modifier ).
-                editor( edit -> {
-                    edit.inheritPermissions = inheritPermissions;
-                    edit.permissions = permissions;
-                } );
-            final Content updatedContent = contentService.update( updatePermissionsParams );
+                final UpdateContentParams updatePermissionsParams = new UpdateContentParams().
+                    contentId( contentId ).
+                    modifier( modifier ).
+                    editor( edit -> {
+                        edit.inheritPermissions = inheritPermissions;
+                        edit.permissions = permissions;
+                    } );
+                final Content updatedContent = contentService.update( updatePermissionsParams );
 
-            contentService.applyPermissions( ApplyContentPermissionsParams.create().
-                contentId( updatedContent.getId() ).
-                overwriteChildPermissions( overwriteChildPermissions ).
-                build() );
+                contentService.applyPermissions( ApplyContentPermissionsParams.create().
+                    contentId( updatedContent.getId() ).
+                    overwriteChildPermissions( overwriteChildPermissions ).
+                    build() ).
+                    get();
 
-            return new ContentMapper( updatedContent );
+                return new ContentMapper( updatedContent );
+            }
+            catch ( Exception e )
+            {
+            }
         }
 
         return null;

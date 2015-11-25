@@ -435,7 +435,9 @@ exports.createMedia = function (params) {
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Path or ID of the content.
- * @param {array} params.permissions Array of permissions.
+ * @param {boolean} [params.inheritPermissions] Set to true if the content must inherit permissions. Default to false.
+ * @param {boolean} [params.overwriteChildPermissions] Set to true to overwrite child permissions. Default to false.
+ * @param {array} [params.permissions] Array of permissions.
  * @param {string} params.permissions.principal Principal key.
  * @param {array} params.permissions.allow Allowed permissions.
  * @param {array} params.permissions.deny Denied permissions.
@@ -445,7 +447,13 @@ exports.setPermissions = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.SetPermissionsHandler');
 
     if (params.key) {
-        bean.setKey(params.key);
+        bean.key = params.key;
+    }
+    if (params.inheritPermissions) {
+        bean.inheritPermissions = params.inheritPermissions;
+    }
+    if (params.overwriteChildPermissions) {
+        bean.overwriteChildPermissions = params.overwriteChildPermissions;
     }
     if (params.permissions) {
         bean.permissions = __.toScriptValue(params.permissions);
