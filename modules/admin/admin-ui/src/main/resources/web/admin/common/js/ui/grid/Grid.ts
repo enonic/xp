@@ -272,14 +272,6 @@ module api.ui.grid {
             return index >= 0;
         }
 
-        selectAll() {
-            var rows = [];
-            for (var i = 0; i < this.slickGrid.getDataLength(); i++) {
-                rows.push(i);
-            }
-            this.setSelectedRows(rows);
-        }
-
         clearSelection() {
             this.setSelectedRows([]);
         }
