@@ -14,7 +14,6 @@ include 'core:core-media'
 include 'core:core-resource'
 include 'core:core-app'
 
-include 'server:server-info'
 include 'server:server-shell'
 include 'server:server-status'
 

@@ -1,7 +1,6 @@
 package com.enonic.xp.server.impl.status;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -15,7 +14,12 @@ import com.enonic.xp.status.StatusReporter;
 public final class ServerReporter
     implements StatusReporter
 {
-    private ServerInfo serverInfo;
+    protected ServerInfo serverInfo;
+
+    public ServerReporter()
+    {
+        this.serverInfo = ServerInfo.get();
+    }
 
     @Override
     public String getName()
@@ -29,6 +33,7 @@ public final class ServerReporter
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
         json.put( "version", VersionInfo.get().getVersion() );
         json.put( "installation", this.serverInfo.getName() );
+        json.put( "runMode", this.serverInfo.getRunMode().toString() );
         json.set( "build", buildBuildInfo() );
         return json;
     }
@@ -44,11 +49,5 @@ public final class ServerReporter
         node.put( "timestamp", info.getTimestamp() );
 
         return node;
-    }
-
-    @Reference
-    public void setServerInfo( final ServerInfo serverInfo )
-    {
-        this.serverInfo = serverInfo;
     }
 }

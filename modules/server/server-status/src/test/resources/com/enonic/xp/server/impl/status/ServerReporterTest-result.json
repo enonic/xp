@@ -1,6 +1,7 @@
 {
   "version": "0.0.0",
   "installation": "demo",
+  "runMode": "PROD",
   "build": {
     "hash": "12345678",
     "shortHash": "1234",
