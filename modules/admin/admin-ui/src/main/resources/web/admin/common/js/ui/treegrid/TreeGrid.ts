@@ -583,16 +583,16 @@ module api.ui.treegrid {
             this.grid.clearSelection();
         }
 
-        deselectNode(dataId: string) {
+        deselectNodes(dataIds: string[]) {
             var oldSelected = this.grid.getSelectedRows(),
                 newSelected = [];
             for (var i = 0; i < oldSelected.length; i++) {
-                if (dataId !== this.gridData.getItem(oldSelected[i]).getDataId()) {
+                if (dataIds.indexOf(this.gridData.getItem(oldSelected[i]).getDataId()) < 0) {
                     newSelected.push(oldSelected[i]);
                 }
             }
 
-            this.root.removeSelection(dataId);
+            this.root.removeSelections(dataIds);
 
             if (oldSelected.length !== newSelected.length) {
                 this.grid.setSelectedRows(newSelected);
@@ -790,7 +790,7 @@ module api.ui.treegrid {
                 }
             }
 
-            this.root.removeSelection(dataId);
+            this.root.removeSelections([dataId]);
         }
 
         /**

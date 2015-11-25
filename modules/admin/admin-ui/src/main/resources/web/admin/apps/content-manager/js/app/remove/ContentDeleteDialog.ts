@@ -33,7 +33,9 @@ module app.remove {
             this.selectedItems = [];
 
             contents.forEach((content: ContentSummaryAndCompareStatus) => {
-                this.selectedItems.push(this.createSelectionItemForDelete(content));
+                if (content.getContentSummary()) {
+                    this.selectedItems.push(this.createSelectionItemForDelete(content));
+                }
             });
 
             this.renderSelectedItems(this.selectedItems);

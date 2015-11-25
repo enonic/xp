@@ -119,7 +119,7 @@ module app.wizard {
             });
 
             this.liveEditPage.onItemViewDeselected((event: ItemViewDeselectedEvent) => {
-                this.tree.deselectNode(this.tree.getDataId(event.getItemView()));
+                this.tree.deselectNodes([this.tree.getDataId(event.getItemView())]);
             });
 
             this.liveEditPage.onComponentAdded((event: ComponentAddedEvent) => {
