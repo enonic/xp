@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<admin-application xmlns="urn:enonic:xp:model:1.0">
+  <name>My admin application</name>
+  <short-name>MyAdminApp</short-name>
+  <icon>newspaper</icon>
+  <allow>
+    <principal>role:system.admin</principal>
+    <principal>role:system.everyone</principal>
+  </allow>
+</admin-application>
