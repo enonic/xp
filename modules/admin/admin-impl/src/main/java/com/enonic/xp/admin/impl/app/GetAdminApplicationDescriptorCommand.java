@@ -23,6 +23,9 @@ public class GetAdminApplicationDescriptorCommand
 
     private static final AdminApplicationDescriptor CONTENT_MANAGER_APP = AdminApplicationDescriptor.create().
         key( DescriptorKey.from( ApplicationKey.SYSTEM, "content-manager" ) ).
+        name( "Content Manager" ).
+        shortName( "CM" ).
+        iconUrl( "database" ).
         addAllowedPrincipal( RoleKeys.ADMIN ).
         addAllowedPrincipal( RoleKeys.CONTENT_MANAGER_ADMIN ).
         addAllowedPrincipal( RoleKeys.CONTENT_MANAGER_APP ).
@@ -30,6 +33,9 @@ public class GetAdminApplicationDescriptorCommand
 
     private static final AdminApplicationDescriptor USER_MANAGER_APP = AdminApplicationDescriptor.create().
         key( DescriptorKey.from( ApplicationKey.SYSTEM, "user-manager" ) ).
+        name( "Users" ).
+        shortName( "UM" ).
+        iconUrl( "users" ).
         addAllowedPrincipal( RoleKeys.ADMIN ).
         addAllowedPrincipal( RoleKeys.USER_MANAGER_ADMIN ).
         addAllowedPrincipal( RoleKeys.USER_MANAGER_APP ).
@@ -37,6 +43,9 @@ public class GetAdminApplicationDescriptorCommand
 
     private static final AdminApplicationDescriptor APPLICATIONS_APP = AdminApplicationDescriptor.create().
         key( DescriptorKey.from( ApplicationKey.SYSTEM, "applications" ) ).
+        name( "Applications" ).
+        shortName( "AM" ).
+        iconUrl( "puzzle" ).
         addAllowedPrincipal( RoleKeys.ADMIN ).
         build();
 
