@@ -1,5 +1,6 @@
 package com.enonic.xp.export;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.annotations.Beta;
@@ -134,6 +135,16 @@ public class ImportNodesParams
         public Builder xsltParams( final Map<String, Object> xsltParams )
         {
             this.xsltParams = xsltParams;
+            return this;
+        }
+
+        public Builder xsltParam( final String paramName, final Object paramValue )
+        {
+            if ( this.xsltParams == null )
+            {
+                this.xsltParams = new HashMap<>();
+            }
+            this.xsltParams.put( paramName, paramValue );
             return this;
         }
 
