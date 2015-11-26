@@ -9,6 +9,8 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.admin.app.AdminApplicationDescriptorService;
+import com.enonic.xp.admin.app.AdminApplicationDescriptors;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.LocalScope;
@@ -33,11 +35,11 @@ public class AuthResourceTest
 
     private SecurityService securityService;
 
+    private AdminApplicationDescriptorService adminApplicationDescriptorService;
+
     @Override
     protected Object getResourceInstance()
     {
-        securityService = Mockito.mock( SecurityService.class );
-
         final AuthResource resource = new AuthResource();
 
         securityService = Mockito.mock( SecurityService.class );
@@ -46,6 +48,11 @@ public class AuthResourceTest
         final UserStore us2 = UserStore.create().key( UserStoreKey.system() ).displayName( "System" ).build();
         final UserStores userStores = UserStores.from( us1, us2 );
         Mockito.when( securityService.getUserStores() ).thenReturn( userStores );
+
+        adminApplicationDescriptorService = Mockito.mock( AdminApplicationDescriptorService.class );
+        resource.setAdminApplicationDescriptorService( adminApplicationDescriptorService );
+        Mockito.when( adminApplicationDescriptorService.getAllowedApplications( Mockito.any() ) ).
+            thenReturn( AdminApplicationDescriptors.empty() );
 
         return resource;
     }

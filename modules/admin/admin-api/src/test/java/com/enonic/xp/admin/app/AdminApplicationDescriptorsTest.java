@@ -4,8 +4,6 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.enonic.xp.admin.app.AdminApplicationDescriptor;
-import com.enonic.xp.admin.app.AdminApplicationDescriptors;
 import com.enonic.xp.page.DescriptorKey;
 
 import static org.junit.Assert.*;

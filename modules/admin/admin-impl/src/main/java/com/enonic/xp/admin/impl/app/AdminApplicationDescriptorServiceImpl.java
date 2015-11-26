@@ -7,6 +7,7 @@ import com.enonic.xp.admin.app.AdminApplicationDescriptorService;
 import com.enonic.xp.admin.app.AdminApplicationDescriptors;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.security.PrincipalKeys;
 
 @Component(immediate = true)
 public final class AdminApplicationDescriptorServiceImpl
@@ -19,10 +20,22 @@ public final class AdminApplicationDescriptorServiceImpl
     @Override
     public AdminApplicationDescriptors getAll()
     {
-        return GetAllAdminApplicationDescriptorCommand.
+        return GetAdminApplicationDescriptorCommand.
             create().
             applicationService( this.applicationService ).
             resourceService( this.resourceService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public AdminApplicationDescriptors getAllowedApplications( final PrincipalKeys principalKeys )
+    {
+        return GetAdminApplicationDescriptorCommand.
+            create().
+            applicationService( this.applicationService ).
+            resourceService( this.resourceService ).
+            filter( adminApplicationDescriptor -> adminApplicationDescriptor.isAccessAllowed( principalKeys ) ).
             build().
             execute();
     }

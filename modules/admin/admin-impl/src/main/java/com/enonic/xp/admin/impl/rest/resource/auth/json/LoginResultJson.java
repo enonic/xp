@@ -1,10 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.auth.json;
 
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
-import com.enonic.xp.admin.impl.app.AdminApplication;
+import com.enonic.xp.admin.app.AdminApplicationDescriptors;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.User;
@@ -14,11 +10,11 @@ public final class LoginResultJson
 {
     private final AuthenticationInfo authenticationInfo;
 
-    private final List<AdminApplication> applications;
+    private final AdminApplicationDescriptors applications;
 
     private final String message;
 
-    public LoginResultJson( final AuthenticationInfo authenticationInfo, final List<AdminApplication> applications )
+    public LoginResultJson( final AuthenticationInfo authenticationInfo, final AdminApplicationDescriptors applications )
     {
         this.authenticationInfo = authenticationInfo;
         this.applications = applications;
@@ -28,14 +24,14 @@ public final class LoginResultJson
     public LoginResultJson( final AuthenticationInfo authenticationInfo )
     {
         this.authenticationInfo = authenticationInfo;
-        this.applications = ImmutableList.of();
+        this.applications = AdminApplicationDescriptors.empty();
         this.message = null;
     }
 
     public LoginResultJson( final AuthenticationInfo authenticationInfo, final String message )
     {
         this.authenticationInfo = authenticationInfo;
-        this.applications = ImmutableList.of();
+        this.applications = AdminApplicationDescriptors.empty();
         this.message = message;
     }
 
@@ -62,7 +58,7 @@ public final class LoginResultJson
 
     public String[] getApplications()
     {
-        return applications.stream().map( AdminApplication::getId ).toArray( String[]::new );
+        return applications.stream().map( application -> application.getKey().getName() ).toArray( String[]::new );
     }
 
     public String getMessage()

@@ -1,31 +1,56 @@
 package com.enonic.xp.admin.impl.app;
 
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.enonic.xp.admin.app.AdminApplicationDescriptor;
 import com.enonic.xp.admin.app.AdminApplicationDescriptors;
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.xml.XmlException;
 
-public class GetAllAdminApplicationDescriptorCommand
+public class GetAdminApplicationDescriptorCommand
 {
     private static final String PATH = "/admin/app/";
+
+    private static final AdminApplicationDescriptor CONTENT_MANAGER_APP = AdminApplicationDescriptor.create().
+        key( DescriptorKey.from( ApplicationKey.SYSTEM, "content-manager" ) ).
+        addAllowedPrincipal( RoleKeys.ADMIN ).
+        addAllowedPrincipal( RoleKeys.CONTENT_MANAGER_ADMIN ).
+        addAllowedPrincipal( RoleKeys.CONTENT_MANAGER_APP ).
+        build();
+
+    private static final AdminApplicationDescriptor USER_MANAGER_APP = AdminApplicationDescriptor.create().
+        key( DescriptorKey.from( ApplicationKey.SYSTEM, "user-manager" ) ).
+        addAllowedPrincipal( RoleKeys.ADMIN ).
+        addAllowedPrincipal( RoleKeys.USER_MANAGER_ADMIN ).
+        addAllowedPrincipal( RoleKeys.USER_MANAGER_APP ).
+        build();
+
+    private static final AdminApplicationDescriptor APPLICATIONS_APP = AdminApplicationDescriptor.create().
+        key( DescriptorKey.from( ApplicationKey.SYSTEM, "applications" ) ).
+        addAllowedPrincipal( RoleKeys.ADMIN ).
+        build();
 
     private final ApplicationService applicationService;
 
     private final ResourceService resourceService;
 
-    private GetAllAdminApplicationDescriptorCommand( final Builder builder )
+    private final Predicate<AdminApplicationDescriptor> filter;
+
+    private GetAdminApplicationDescriptorCommand( final Builder builder )
     {
         applicationService = builder.applicationService;
         resourceService = builder.resourceService;
+        filter = builder.filter;
     }
 
     public static Builder create()
@@ -36,12 +61,23 @@ public class GetAllAdminApplicationDescriptorCommand
 
     public AdminApplicationDescriptors execute()
     {
-        final List<AdminApplicationDescriptor> adminApplicationDescriptors = applicationService.getAllApplications().
+        final Stream<AdminApplicationDescriptor> systemAdminApplicationDescriptors = getSystemAdminApplicationDescriptors();
+
+        final Stream<AdminApplicationDescriptor> dynamicAdminApplicationDescriptors = applicationService.getAllApplications().
             stream().
-            flatMap( this::getAdminApplicationDescriptors ).
-            collect( Collectors.toList() );
+            flatMap( this::getAdminApplicationDescriptors );
+
+        final List<AdminApplicationDescriptor> adminApplicationDescriptors =
+            Stream.concat( systemAdminApplicationDescriptors, dynamicAdminApplicationDescriptors ).
+                filter( adminApplicationDescriptor -> filter == null || filter.test( adminApplicationDescriptor ) ).
+                collect( Collectors.toList() );
 
         return AdminApplicationDescriptors.from( adminApplicationDescriptors );
+    }
+
+    private Stream<AdminApplicationDescriptor> getSystemAdminApplicationDescriptors()
+    {
+        return Stream.of( CONTENT_MANAGER_APP, USER_MANAGER_APP, APPLICATIONS_APP );
     }
 
     private Stream<AdminApplicationDescriptor> getAdminApplicationDescriptors( Application application )
@@ -94,6 +130,8 @@ public class GetAllAdminApplicationDescriptorCommand
 
         private ResourceService resourceService;
 
+        public Predicate<AdminApplicationDescriptor> filter;
+
         private Builder()
         {
         }
@@ -110,9 +148,15 @@ public class GetAllAdminApplicationDescriptorCommand
             return this;
         }
 
-        public GetAllAdminApplicationDescriptorCommand build()
+        public Builder filter( final Predicate<AdminApplicationDescriptor> filter )
         {
-            return new GetAllAdminApplicationDescriptorCommand( this );
+            this.filter = filter;
+            return this;
+        }
+
+        public GetAdminApplicationDescriptorCommand build()
+        {
+            return new GetAdminApplicationDescriptorCommand( this );
         }
     }
 }

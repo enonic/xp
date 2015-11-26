@@ -9,16 +9,16 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.impl.app.AdminApplicationsRegistry;
+import com.enonic.xp.admin.app.AdminApplicationDescriptorService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.auth.json.LoginResultJson;
 import com.enonic.xp.admin.impl.security.AuthHelper;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.Session;
-import com.enonic.xp.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "auth")
 @Produces(MediaType.APPLICATION_JSON)
@@ -26,14 +26,9 @@ import com.enonic.xp.jaxrs.JaxRsComponent;
 public final class AuthResource
     implements JaxRsComponent
 {
-    private final AdminApplicationsRegistry appRegistry;
-
     private SecurityService securityService;
 
-    public AuthResource()
-    {
-        this.appRegistry = new AdminApplicationsRegistry();
-    }
+    private AdminApplicationDescriptorService adminApplicationDescriptorService;
 
     @POST
     @Path("login")
@@ -52,7 +47,7 @@ public final class AuthResource
             return new LoginResultJson( AuthenticationInfo.unAuthenticated() );
         }
 
-        return new LoginResultJson( authInfo, this.appRegistry.getAllowedApplications( authInfo.getPrincipals() ) );
+        return new LoginResultJson( authInfo, this.adminApplicationDescriptorService.getAllowedApplications( authInfo.getPrincipals() ) );
     }
 
     @POST
@@ -73,12 +68,18 @@ public final class AuthResource
         }
 
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        return new LoginResultJson( authInfo, appRegistry.getAllowedApplications( authInfo.getPrincipals() ) );
+        return new LoginResultJson( authInfo, adminApplicationDescriptorService.getAllowedApplications( authInfo.getPrincipals() ) );
     }
 
     @Reference
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;
+    }
+
+    @Reference
+    public void setAdminApplicationDescriptorService( final AdminApplicationDescriptorService adminApplicationDescriptorService )
+    {
+        this.adminApplicationDescriptorService = adminApplicationDescriptorService;
     }
 }

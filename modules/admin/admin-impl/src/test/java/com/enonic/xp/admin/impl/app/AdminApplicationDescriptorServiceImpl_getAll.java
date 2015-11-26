@@ -38,7 +38,7 @@ public class AdminApplicationDescriptorServiceImpl_getAll
 
         AdminApplicationDescriptors result = this.service.getAll();
         Assert.assertNotNull( result );
-        Assert.assertEquals( 2, result.getSize() );
+        Assert.assertEquals( 5, result.getSize() );
     }
 
     @Override

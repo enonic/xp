@@ -53,6 +53,11 @@ public class AdminApplicationDescriptor
         return allowedPrincipals;
     }
 
+    public boolean isAccessAllowed( final PrincipalKeys principalKeys )
+    {
+        return principalKeys.stream().anyMatch( allowedPrincipals::contains );
+    }
+
     public static Builder create()
     {
         return new Builder();
