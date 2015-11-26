@@ -797,7 +797,6 @@ public final class ContentResource
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentQueryResultJson selectorQuery( final ContentSelectorQueryJson contentQueryJson )
     {
-
         final ContentIconUrlResolver iconUrlResolver = newContentIconUrlResolver();
 
         final ContentSelectorQueryJsonToContentQueryConverter selectorQueryProcessor =
@@ -809,7 +808,7 @@ public final class ContentResource
                 build();
 
         final FindContentByQueryResult findResult = contentService.find( FindContentByQueryParams.create().
-            contentQuery( selectorQueryProcessor.makeContentQuery() ).
+            contentQuery( selectorQueryProcessor.createQuery() ).
             build() );
 
         return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver, principalsResolver );

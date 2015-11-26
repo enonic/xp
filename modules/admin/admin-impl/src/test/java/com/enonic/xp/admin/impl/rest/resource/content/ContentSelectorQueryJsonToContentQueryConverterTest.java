@@ -46,17 +46,14 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
     @Before
     public void setUp()
     {
-
         contentTypeService = Mockito.mock( ContentTypeService.class );
         contentService = Mockito.mock( ContentService.class );
         relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
-
     }
 
     @Test
     public void testSelectorQuery()
     {
-
         final InputTypeConfig config = InputTypeConfig.create().
             property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
             property( InputTypeProperty.create( "allowContentType", "myApplication:comment" ).build() ).
@@ -82,7 +79,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             relationshipTypeService( relationshipTypeService ).
             build();
 
-        final ContentQuery contentQuery = processor.makeContentQuery();
+        final ContentQuery contentQuery = processor.createQuery();
 
         assertEquals( 0, contentQuery.getFrom() );
         assertEquals( 100, contentQuery.getSize() );
@@ -93,7 +90,6 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
     @Test
     public void testQueryWithSearchInQuery()
     {
-
         final InputTypeConfig config = InputTypeConfig.create().
             property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
             property( InputTypeProperty.create( "allowContentType", "myApplication:comment" ).build() ).
@@ -115,7 +111,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
                 "ORDER BY _modifiedTime DESC", 0, 100, "summary", "contentId", "inputName" );
         ContentSelectorQueryJsonToContentQueryConverter processor = getProcessor( contentQueryJson );
 
-        final ContentQuery contentQuery = processor.makeContentQuery();
+        final ContentQuery contentQuery = processor.createQuery();
 
         assertEquals( 0, contentQuery.getFrom() );
         assertEquals( 100, contentQuery.getSize() );
@@ -147,7 +143,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
         ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName" );
         ContentSelectorQueryJsonToContentQueryConverter processor = getProcessor( contentQueryJson );
 
-        final ContentQuery contentQuery = processor.makeContentQuery();
+        final ContentQuery contentQuery = processor.createQuery();
 
         assertEquals( 0, contentQuery.getFrom() );
         assertEquals( 100, contentQuery.getSize() );
@@ -177,7 +173,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
         ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName" );
         ContentSelectorQueryJsonToContentQueryConverter processor = getProcessor( contentQueryJson );
 
-        final ContentQuery contentQuery = processor.makeContentQuery();
+        final ContentQuery contentQuery = processor.createQuery();
 
         assertEquals( 0, contentQuery.getFrom() );
         assertEquals( 100, contentQuery.getSize() );
@@ -207,7 +203,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
         ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName" );
         ContentSelectorQueryJsonToContentQueryConverter processor = getProcessor( contentQueryJson );
 
-        final ContentQuery contentQuery = processor.makeContentQuery();
+        final ContentQuery contentQuery = processor.createQuery();
 
         assertEquals( 0, contentQuery.getFrom() );
         assertEquals( 100, contentQuery.getSize() );
@@ -237,7 +233,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
         ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName" );
         ContentSelectorQueryJsonToContentQueryConverter processor = getProcessor( contentQueryJson );
 
-        final ContentQuery contentQuery = processor.makeContentQuery();
+        final ContentQuery contentQuery = processor.createQuery();
 
         assertEquals( 0, contentQuery.getFrom() );
         assertEquals( 100, contentQuery.getSize() );

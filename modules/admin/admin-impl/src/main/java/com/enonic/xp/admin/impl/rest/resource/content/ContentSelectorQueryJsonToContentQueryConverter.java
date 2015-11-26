@@ -3,20 +3,21 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentQuery;
+import com.enonic.xp.content.ContentRelativePathResolver;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemType;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -45,6 +46,8 @@ public class ContentSelectorQueryJsonToContentQueryConverter
 
     final private Content content;
 
+    private final static FieldExpr PATH_FIELD_EXPR = FieldExpr.from( NodeIndexPath.PATH );
+
     private ContentSelectorQueryJsonToContentQueryConverter( final Builder builder )
     {
         this.contentQueryJson = builder.contentQueryJson;
@@ -54,24 +57,24 @@ public class ContentSelectorQueryJsonToContentQueryConverter
         this.content = contentService.getById( contentQueryJson.getContentId() );
     }
 
-    public ContentQuery makeContentQuery()
+    public ContentQuery createQuery()
     {
-
         final Input contentSelectorInput =
             this.getContentSelectorInputFromContentType( this.getContentType( content.getType() ), contentQueryJson.getInputName() );
 
         final ContentQuery.Builder builder = ContentQuery.create().
             from( this.contentQueryJson.getFrom() ).
             size( this.contentQueryJson.getSize() ).
-            queryExpr( this.makeQueryExpr( contentSelectorInput ) ).
+            queryExpr( this.createQueryExpr( contentSelectorInput ) ).
             addContentTypeNames( this.getContentTypeNames( contentSelectorInput ) );
 
         return builder.build();
     }
 
-    private QueryExpr makeQueryExpr( final Input contentSelectorInput )
+    private QueryExpr createQueryExpr( final Input contentSelectorInput )
     {
         final List<String> allowedPaths = this.getAllowedPaths( contentSelectorInput );
+
         if ( allowedPaths.size() > 0 )
         {
             return this.constructExprWithAllowedPaths( allowedPaths );
@@ -86,20 +89,19 @@ public class ContentSelectorQueryJsonToContentQueryConverter
     {
         final String firstPath = allowedPaths.get( 0 );
 
-        ConstraintExpr expr =
-            CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( "/content" + makePathFromAllowedPathEntry( firstPath ) ) );
+        ConstraintExpr expr = createCompareExp( firstPath );
 
         for ( String allowedPath : allowedPaths )
         {
             if ( !allowedPath.equals( firstPath ) )
             {
-                ConstraintExpr likeExpr = CompareExpr.like( FieldExpr.from( "_path" ),
-                                                            ValueExpr.string( "/content" + makePathFromAllowedPathEntry( allowedPath ) ) );
+                ConstraintExpr likeExpr = createCompareExp( allowedPath );
+
                 expr = LogicalExpr.or( expr, likeExpr );
             }
         }
 
-        if ( StringUtils.isNotEmpty( this.contentQueryJson.getQueryExprString() ) )
+        if ( !Strings.isNullOrEmpty( this.contentQueryJson.getQueryExprString() ) )
         {
             final QueryExpr searchQueryExpr = QueryParser.parse( this.contentQueryJson.getQueryExprString() );
             expr = LogicalExpr.and( expr, searchQueryExpr.getConstraint() );
@@ -109,78 +111,15 @@ public class ContentSelectorQueryJsonToContentQueryConverter
         return QueryExpr.from( expr );
     }
 
-    private String makePathFromAllowedPathEntry( final String path )
+    private CompareExpr createCompareExp( final String allowedPath )
     {
-        if ( "*".equals( path ) || "/".equals( path ) || "/*".equals( path ) )
-        {
-            return "/*"; // any path
-        }
-        else if ( "./".equals( path ) || "./*".equals( path ) )
-        {
-            return this.content.getPath() + "/*"; // all children of current item
-        }
-        else if ( "../".equals( path ) || "../*".equals( path ) )
-        {
-            return this.content.getParentPath().isRoot()
-                ? this.content.getParentPath() + "*"
-                : this.content.getParentPath() + "/*"; // siblings and children of current item
-        }
-        else if ( path.startsWith( "../" ) )
-        {
-            return makeEndWithStar( getPathStartedSomeLevelsHigher( path ) ); // path starting x levels higher
-        }
-        else
-        {
-            return makeEndWithStar( makeStartWithSlash( path ) );
-        }
+        return CompareExpr.like( PATH_FIELD_EXPR, createValueExpr( allowedPath ) );
     }
 
-    private String getPathStartedSomeLevelsHigher( final String path )
+    private ValueExpr createValueExpr( final String allowedPath )
     {
-        int levels = getNumberOfLevelsToAscend( path );
-        ContentPath contentPath = this.content.getPath();
-        for ( int level = 1; level <= levels; level++ )
-        {
-            contentPath = contentPath.getParentPath();
-            if ( contentPath.isRoot() )
-            {
-                return path.substring( levels * 3 );
-            }
-        }
-        return contentPath.toString() + "/" + path.substring( levels * 3 );
-    }
-
-    private int getNumberOfLevelsToAscend( final String path )
-    {
-        if ( path.startsWith( "../" ) )
-        {
-            return getNumberOfLevelsToAscend( path.substring( 3, path.length() ) ) + 1;
-        }
-        return 0;
-    }
-
-    private String makeStartWithSlash( final String str )
-    {
-        if ( str.startsWith( "/" ) )
-        {
-            return str;
-        }
-        else
-        {
-            return "/" + str;
-        }
-    }
-
-    private String makeEndWithStar( final String str )
-    {
-        if ( str.endsWith( "*" ) )
-        {
-            return str;
-        }
-        else
-        {
-            return str + "*";
-        }
+        return ValueExpr.string(
+            "/" + ContentConstants.CONTENT_ROOT_NAME + ContentRelativePathResolver.create( this.content, allowedPath ) );
     }
 
     private ContentTypeNames getContentTypeNames( final Input contentSelectorInput )
