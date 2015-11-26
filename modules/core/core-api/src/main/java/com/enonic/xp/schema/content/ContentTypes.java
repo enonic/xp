@@ -1,7 +1,9 @@
 package com.enonic.xp.schema.content;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -56,6 +58,11 @@ public final class ContentTypes
         return map.get( contentTypeName );
     }
 
+    public ContentTypes filter( final Predicate<ContentType> filter )
+    {
+        return from( this.map.values().stream().filter( filter ).iterator() );
+    }
+
     public static ContentTypes empty()
     {
         final ImmutableList<ContentType> list = ImmutableList.of();
@@ -68,6 +75,11 @@ public final class ContentTypes
     }
 
     public static ContentTypes from( final Iterable<? extends ContentType> contentTypes )
+    {
+        return new ContentTypes( ImmutableList.copyOf( contentTypes ) );
+    }
+
+    public static ContentTypes from( final Iterator<? extends ContentType> contentTypes )
     {
         return new ContentTypes( ImmutableList.copyOf( contentTypes ) );
     }

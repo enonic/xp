@@ -3,10 +3,8 @@ package com.enonic.xp.core.impl.schema.content;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.WordUtils;
-import org.osgi.service.component.annotations.Component;
 
 import com.google.common.collect.Lists;
 
@@ -24,8 +22,7 @@ import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
-@Component(immediate = true)
-public final class BuiltinContentTypeLoader
+final class BuiltinContentTypes
 {
     private static final String CONTENT_TYPES_FOLDER = "content-types";
 
@@ -36,10 +33,10 @@ public final class BuiltinContentTypeLoader
     private static final ContentType UNSTRUCTURED = createSystemType( ContentTypeName.unstructured() ).
         setFinal( false ).setAbstract( false ).build();
 
-    public static final ContentType FOLDER = createSystemType( ContentTypeName.folder() ).
+    private static final ContentType FOLDER = createSystemType( ContentTypeName.folder() ).
         setFinal( false ).setAbstract( false ).build();
 
-    public static final Form SITE_FORM = Form.create().
+    private static final Form SITE_FORM = Form.create().
         addFormItem( Input.create().
             name( "description" ).
             label( "Description" ).
@@ -57,7 +54,7 @@ public final class BuiltinContentTypeLoader
             build() ).
         build();
 
-    public static final Form SHORTCUT_FORM = Form.create().
+    private static final Form SHORTCUT_FORM = Form.create().
         addFormItem( Input.create().
             name( "target" ).
             label( "Target" ).
@@ -68,7 +65,7 @@ public final class BuiltinContentTypeLoader
             build() ).
         build();
 
-    public static final Form MEDIA_IMAGE_FORM = Form.create().
+    private static final Form MEDIA_IMAGE_FORM = Form.create().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Image" ).
             inputType( InputTypeName.IMAGE_UPLOADER ).build() ).
@@ -94,7 +91,7 @@ public final class BuiltinContentTypeLoader
             build() ).
         build();
 
-    public static final Form MEDIA_DEFAULT_FORM = Form.create().
+    private static final Form MEDIA_DEFAULT_FORM = Form.create().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Media" ).
             inputType( InputTypeName.FILE_UPLOADER ).build() ).
@@ -114,7 +111,7 @@ public final class BuiltinContentTypeLoader
         superType( ContentTypeName.folder() ).
         build();
 
-    public static final Form PAGE_TEMPLATE_FORM = Form.create().
+    private static final Form PAGE_TEMPLATE_FORM = Form.create().
         addFormItem( Input.create().
             name( "supports" ).
             label( "Supports" ).
@@ -204,37 +201,39 @@ public final class BuiltinContentTypeLoader
             setBuiltIn();
     }
 
-    private List<ContentType> generateSystemContentTypes()
+    private final ContentTypes contentTypes;
+
+    public BuiltinContentTypes()
     {
-        return generateSystemContentTypes( CONTENT_TYPES );
+        this.contentTypes = processTypes( CONTENT_TYPES );
     }
 
-    private List<ContentType> generateSystemContentTypes( Iterable<ContentType> contentTypes )
+    private ContentType processType( final ContentType type )
     {
-        final List<ContentType> generatedSystemContentTypes = Lists.newArrayList();
-        for ( ContentType contentType : contentTypes )
+        return ContentType.create( type ).
+            icon( loadSchemaIcon( CONTENT_TYPES_FOLDER, type.getName().getLocalName() ) ).
+            build();
+    }
+
+    private ContentTypes processTypes( final ContentTypes types )
+    {
+        final List<ContentType> result = Lists.newArrayList();
+        for ( final ContentType type : types )
         {
-            contentType = ContentType.create( contentType ).
-                icon( loadSchemaIcon( CONTENT_TYPES_FOLDER, contentType.getName().getLocalName() ) ).
-                build();
-            generatedSystemContentTypes.add( contentType );
+            result.add( processType( type ) );
         }
-        return generatedSystemContentTypes;
+
+        return ContentTypes.from( result );
     }
 
-    public ContentTypes load()
+    public ContentTypes getAll()
     {
-        final List<ContentType> generatedSystemContentTypes = generateSystemContentTypes();
-        return ContentTypes.from( generatedSystemContentTypes );
+        return this.contentTypes;
     }
 
-    public ContentTypes loadByApplication( final ApplicationKey applicationKey )
+    public ContentTypes getByApplication( final ApplicationKey key )
     {
-        final List<ContentType> systemContentTypesByApplicationKey = CONTENT_TYPES.stream().
-            filter( contentType -> contentType.getName().getApplicationKey().equals( applicationKey ) ).
-            collect( Collectors.toList() );
-        final List<ContentType> generatedSystemContentTypes = generateSystemContentTypes( systemContentTypesByApplicationKey );
-        return ContentTypes.from( generatedSystemContentTypes );
+        return this.contentTypes.filter( ( type ) -> type.getName().getApplicationKey().equals( key ) );
     }
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )
