@@ -93,13 +93,14 @@ public class GetAdminApplicationDescriptorCommand
     {
         return resourceService.findFolders( application.getKey(), PATH ).
             stream().
-            map( folderResourceKey -> ResourceKey.from( application.getKey(),
-                                                        folderResourceKey.getPath() + "/" + folderResourceKey.getName() + ".xml" ) ).
             map( this::getAdminApplicationDescriptor );
     }
 
-    private AdminApplicationDescriptor getAdminApplicationDescriptor( ResourceKey resourceKey )
+    private AdminApplicationDescriptor getAdminApplicationDescriptor( ResourceKey parentResourceKey )
     {
+        final ApplicationKey applicationKey = parentResourceKey.getApplicationKey();
+        final ResourceKey resourceKey =
+            ResourceKey.from( applicationKey, parentResourceKey.getPath() + "/" + parentResourceKey.getName() + ".xml" );
         final Resource resource = resourceService.getResource( resourceKey );
 
         final AdminApplicationDescriptor.Builder builder = AdminApplicationDescriptor.create();
@@ -111,7 +112,7 @@ public class GetAdminApplicationDescriptorCommand
             {
                 final XmlAdminApplicationDescriptorParser parser = new XmlAdminApplicationDescriptorParser();
                 parser.builder( builder );
-                parser.currentApplication( resourceKey.getApplicationKey() );
+                parser.currentApplication( applicationKey );
                 parser.source( descriptorXml );
                 parser.parse();
             }
@@ -122,12 +123,12 @@ public class GetAdminApplicationDescriptorCommand
         }
         else
         {
-            builder.name( resourceKey.getName() ).
-                shortName( resourceKey.getName() ).
+            builder.name( parentResourceKey.getName() ).
+                shortName( parentResourceKey.getName() ).
                 iconUrl( "default" );
         }
 
-        builder.key( DescriptorKey.from( resourceKey.getApplicationKey(), resourceKey.getName() ) );
+        builder.key( DescriptorKey.from( applicationKey, parentResourceKey.getName() ) );
 
         return builder.build();
     }
