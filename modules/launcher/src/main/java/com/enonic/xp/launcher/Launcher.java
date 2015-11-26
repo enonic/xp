@@ -71,15 +71,11 @@ public final class Launcher
         this.config.interpolate();
     }
 
-    private void applyConfigToSystemProperties( final String prefix )
+    private void applyConfigToSystemProperties()
     {
         for ( final Map.Entry<String, String> entry : this.config.entrySet() )
         {
-            final String key = entry.getKey();
-            if ( key.startsWith( prefix ) )
-            {
-                System.setProperty( key, entry.getValue() );
-            }
+            System.setProperty( entry.getKey(), entry.getValue() );
         }
     }
 
@@ -126,7 +122,7 @@ public final class Launcher
         printBanner();
         setupLogging();
         loadConfiguration();
-        applyConfigToSystemProperties( "xp." );
+        applyConfigToSystemProperties();
         createFramework();
 
         this.framework.start();

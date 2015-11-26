@@ -25,13 +25,11 @@ public class ServerInfoTest
         props.put( "xp.home", homeDir.getAbsolutePath() );
         props.put( "xp.install", installDir.getAbsolutePath() );
         props.put( "xp.name", "demo" );
-        props.put( "xp.mode", "prod" );
 
         final ServerInfo info = new ServerInfo( props );
         assertEquals( "demo", info.getName() );
         assertEquals( homeDir, info.getHomeDir() );
         assertEquals( installDir, info.getInstallDir() );
-        assertEquals( RunMode.PROD, info.getRunMode() );
         assertNotNull( info.getBuildInfo() );
     }
 }

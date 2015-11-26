@@ -14,7 +14,6 @@ import com.enonic.xp.script.impl.service.ServiceRegistryImpl;
 import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.server.RunMode;
-import com.enonic.xp.server.ServerInfo;
 
 public final class ScriptExecutorManager
 {
@@ -49,7 +48,7 @@ public final class ScriptExecutorManager
         executor.setServiceRegistry( new ServiceRegistryImpl( application.getBundle().getBundleContext() ) );
         executor.setResourceService( this.resourceService );
         executor.setApplication( application );
-        executor.setRunMode( getRunMode() );
+        executor.setRunMode( RunMode.get() );
         executor.initialize();
         return executor;
     }
@@ -72,10 +71,5 @@ public final class ScriptExecutorManager
     public void setScriptSettings( final ScriptSettings scriptSettings )
     {
         this.scriptSettings = scriptSettings;
-    }
-
-    private RunMode getRunMode()
-    {
-        return ServerInfo.get().getRunMode();
     }
 }

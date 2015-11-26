@@ -35,19 +35,6 @@ public final class ServerInfo
         return new BuildInfo( this.props );
     }
 
-    public RunMode getRunMode()
-    {
-        try
-        {
-            final String value = this.props.getProperty( "xp.runMode", RunMode.PROD.toString() );
-            return RunMode.valueOf( value.toUpperCase() );
-        }
-        catch ( final Exception e )
-        {
-            return RunMode.PROD;
-        }
-    }
-
     public static ServerInfo get()
     {
         return new ServerInfo( System.getProperties() );

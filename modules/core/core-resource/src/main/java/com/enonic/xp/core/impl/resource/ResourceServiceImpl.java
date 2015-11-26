@@ -34,7 +34,7 @@ public class ResourceServiceImpl
 
     public ResourceServiceImpl()
     {
-        this.runMode = ServerInfo.get().getRunMode();
+        this.runMode = RunMode.get();
     }
 
     @Override

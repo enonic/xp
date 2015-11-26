@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.server.BuildInfo;
+import com.enonic.xp.server.RunMode;
 import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.status.StatusReporter;
@@ -33,7 +34,7 @@ public final class ServerReporter
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
         json.put( "version", VersionInfo.get().getVersion() );
         json.put( "installation", this.serverInfo.getName() );
-        json.put( "runMode", this.serverInfo.getRunMode().toString() );
+        json.put( "runMode", RunMode.get().toString() );
         json.set( "build", buildBuildInfo() );
         return json;
     }
