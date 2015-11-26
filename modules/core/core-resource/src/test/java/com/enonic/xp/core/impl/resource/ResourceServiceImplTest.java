@@ -110,34 +110,6 @@ public class ResourceServiceImplTest
     }
 
     @Test
-    public void find_resource_keys()
-    {
-        ResourceKeys resourceKeys;
-
-        Mockito.when( bundle.findEntries( "/", RESOURCE_FILE_NAME, true ) ).thenReturn(
-            Collections.enumeration( Collections.singleton( resourceUrl ) ) );
-        Mockito.when( bundle.findEntries( "/a", "*", true ) ).thenReturn(
-            Collections.enumeration( Arrays.asList( resourceUrl, resource2Url ) ) );
-
-        //Finds resources for a specific path
-        resourceKeys = resourceService.findResourceKeys( applicationKey, "/", RESOURCE_FILE_NAME, true );
-        assertEquals( 1, resourceKeys.getSize() );
-
-        //Finds all text resources in a specific folder
-        resourceKeys = resourceService.findResourceKeys( applicationKey, "/a", "*", true );
-        assertEquals( 2, resourceKeys.getSize() );
-
-        //Finds all resources in an non existing folder
-        resourceKeys = resourceService.findResourceKeys( applicationKey, "/b", "*", true );
-        assertEquals( 0, resourceKeys.getSize() );
-
-        //Finds all resources for an incorrect application key
-        ApplicationKey incorrectApplicationKey = ApplicationKey.from( "otherapplication" );
-        resourceKeys = resourceService.findResourceKeys( incorrectApplicationKey, "/", RESOURCE_FILE_NAME, true );
-        assertEquals( 0, resourceKeys.getSize() );
-    }
-
-    @Test
     public void find_folders()
     {
         ResourceKeys resourceKeys;

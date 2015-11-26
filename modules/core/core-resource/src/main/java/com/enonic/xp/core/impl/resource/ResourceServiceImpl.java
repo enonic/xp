@@ -99,31 +99,6 @@ public class ResourceServiceImpl
     }
 
     @Override
-    public ResourceKeys findResourceKeys( final ApplicationKey applicationKey, final String path, final String filePattern,
-                                          boolean recurse )
-    {
-        final Application application = getActiveApplication( applicationKey );
-        if ( application == null )
-        {
-            return ResourceKeys.empty();
-        }
-
-        final Bundle bundle = application.getBundle();
-        final Enumeration<URL> entries = bundle.findEntries( path, filePattern, recurse );
-        if ( entries == null )
-        {
-            return ResourceKeys.empty();
-        }
-
-        final List<ResourceKey> resourceKeyList = Collections.list( entries ).
-            stream().
-            map( resourceUrl -> ResourceKey.from( applicationKey, resourceUrl.getPath() ) ).
-            collect( Collectors.toList() );
-
-        return ResourceKeys.from( resourceKeyList );
-    }
-
-    @Override
     public ResourceKeys findFolders( final ApplicationKey applicationKey, final String path )
     {
         final Application application = getActiveApplication( applicationKey );
