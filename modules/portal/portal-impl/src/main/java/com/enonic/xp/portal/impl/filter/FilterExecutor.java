@@ -3,6 +3,8 @@ package com.enonic.xp.portal.impl.filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -64,7 +66,13 @@ public final class FilterExecutor
             final PortalResponseMapper responseMapper = new PortalResponseMapper( response );
 
             final ScriptValue result = filterExports.executeMethod( RESPONSE_FILTER_METHOD, requestMapper, responseMapper );
-            return new PortalResponseSerializer( result ).serialize();
+            final PortalResponseSerializer portalResponseSerializer = new PortalResponseSerializer( result );
+
+            if ( unmodifiedByteSourceBody( response, result ) )
+            {
+                portalResponseSerializer.body( response.getBody() );
+            }
+            return portalResponseSerializer.serialize();
         }
         finally
         {
@@ -73,4 +81,16 @@ public final class FilterExecutor
         }
     }
 
+    private boolean unmodifiedByteSourceBody( final PortalResponse response, final ScriptValue scriptResult )
+    {
+        final boolean isByteSourceBody = response.getBody() instanceof ByteSource;
+        if ( !isByteSourceBody || scriptResult == null )
+        {
+            return false;
+        }
+
+        final ScriptValue scriptBody = scriptResult.getMember( "body" );
+        final String body = scriptBody != null && scriptBody.getValue() != null ? scriptBody.getValue().toString() : null;
+        return response.getBody().toString().equals( body );
+    }
 }
