@@ -6,24 +6,28 @@ module api.content.form.inputtype.relationship {
      * then search string is preserved and request postponed.
      * After content types are set, search request is made with latest preserved search string.
      */
-    export class ContentSelectorLoader extends api.content.ContentSummaryLoader {
+    export class ContentSelectorLoader extends api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary> {
 
-        private allowedContentTypes:string[];
+        private postponedSearchString: string;
 
-        private postponedSearchString:string = null;
+        private contentSelectorQueryRequest: ContentSelectorQueryRequest;
 
-        setAllowedContentTypes(contentTypes:string[]) {
-            this.allowedContentTypes = contentTypes;
-            super.setAllowedContentTypes(contentTypes);
-
-            if (this.postponedSearchString != null) {
-                this.search(this.postponedSearchString);
-            }
+        constructor(contentId: api.content.ContentId, inputName: string) {
+            this.contentSelectorQueryRequest = new ContentSelectorQueryRequest();
+            super(this.contentSelectorQueryRequest);
+            this.contentSelectorQueryRequest.setId(contentId);
+            this.contentSelectorQueryRequest.setInputName(inputName);
         }
 
         search(searchString: string): wemQ.Promise<ContentSummary[]> {
 
-            return super.search(searchString);
+            this.contentSelectorQueryRequest.setQueryExpr(searchString);
+
+            return this.load();
+        }
+
+        sendRequest(): wemQ.Promise<ContentSummary[]> {
+            return this.contentSelectorQueryRequest.sendAndParse();
         }
 
     }

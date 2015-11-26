@@ -27,10 +27,6 @@ module api.content.form.inputtype.image {
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
     import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
 
-    export interface ImageSelectorConfig {
-        relationshipType: string
-    }
-
     export class ImageSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<ContentId> {
 
         private config: api.content.form.inputtype.ContentInputTypeViewContext;

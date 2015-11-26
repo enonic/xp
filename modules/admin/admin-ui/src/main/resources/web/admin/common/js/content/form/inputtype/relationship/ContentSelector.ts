@@ -8,11 +8,6 @@ module api.content.form.inputtype.relationship {
     import GetRelationshipTypeByNameRequest = api.schema.relationshiptype.GetRelationshipTypeByNameRequest;
     import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
 
-    export interface ContentSelectorConfig {
-        relationshipType: string;
-        allowedContentTypes: string[];
-    }
-
     export class ContentSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<api.content.ContentId> {
 
         private config: api.content.form.inputtype.ContentInputTypeViewContext;
@@ -64,7 +59,7 @@ module api.content.form.inputtype.relationship {
 
             super.layout(input, propertyArray);
 
-            var relationshipLoader = new ContentSelectorLoader();
+            var relationshipLoader = new ContentSelectorLoader(this.config.contentId, input.getName());
 
             this.contentComboBox = api.content.ContentComboBox.create()
                 .setName(input.getName())
@@ -77,10 +72,6 @@ module api.content.form.inputtype.relationship {
                 then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
 
                     this.contentComboBox.setInputIconUrl(relationshipType.getIconUrl());
-                    var inputAllowedContentTypes = this.allowedContentTypes || [];
-                    var relationshipAllowedContentTypes = relationshipType.getAllowedToTypes() || [];
-                    var allowedContentTypes = inputAllowedContentTypes.length ? inputAllowedContentTypes : relationshipAllowedContentTypes;
-                    relationshipLoader.setAllowedContentTypes(allowedContentTypes);
 
                     this.appendChild(this.contentComboBox);
 
