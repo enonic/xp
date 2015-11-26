@@ -22,7 +22,6 @@ import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.server.RunMode;
-import com.enonic.xp.server.ServerInfo;
 
 @Component(immediate = true)
 public class ResourceServiceImpl
