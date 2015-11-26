@@ -102,12 +102,12 @@ final class ScriptExecutorImpl
         }
 
         final Object cached = this.exportsCache.get( key );
-        if ( ( cached != null ) && !isModified( key ) )
+        final Resource resource = loadIfNeeded( key, cached );
+        if ( resource == null )
         {
             return cached;
         }
 
-        final Resource resource = loadResource( key );
         final ScriptContextImpl context = new ScriptContextImpl( resource, this.scriptSettings );
         context.setEngineScope( this.global );
         context.setGlobalScope( new SimpleBindings() );
@@ -170,15 +170,25 @@ final class ScriptExecutorImpl
         }
     }
 
-    private boolean isModified( final ResourceKey key )
+    private Resource loadIfNeeded( final ResourceKey key, final Object cached )
     {
-        if ( this.runMode == RunMode.DEV )
+        if ( cached == null )
         {
-            final Resource resource = loadResource( key );
-            return this.exportsCache.isModified( resource );
+            return loadResource( key );
         }
 
-        return false;
+        if ( this.runMode != RunMode.DEV )
+        {
+            return null;
+        }
+
+        final Resource resource = loadResource( key );
+        if ( this.exportsCache.isModified( resource ) )
+        {
+            return resource;
+        }
+
+        return null;
     }
 
     @Override

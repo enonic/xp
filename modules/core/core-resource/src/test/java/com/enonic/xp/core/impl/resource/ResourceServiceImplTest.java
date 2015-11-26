@@ -1,13 +1,19 @@
 package com.enonic.xp.core.impl.resource;
 
+import java.io.File;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -16,6 +22,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
+import com.enonic.xp.server.RunMode;
 import com.enonic.xp.support.ResourceTestHelper;
 
 import static org.junit.Assert.*;
@@ -32,6 +39,8 @@ public class ResourceServiceImplTest
 
     private static final String RESOURCE_2_PATH = "/a/" + RESOURCE_2_FILE_NAME;
 
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     private ApplicationKey applicationKey;
 
@@ -42,6 +51,8 @@ public class ResourceServiceImplTest
     private Bundle bundle;
 
     private ResourceServiceImpl resourceService;
+
+    private Application application;
 
     @Before
     public void before()
@@ -57,7 +68,7 @@ public class ResourceServiceImplTest
         Mockito.when( bundle.getResource( RESOURCE_2_PATH ) ).thenReturn( resource2Url );
         Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
 
-        Application application = Mockito.mock( Application.class );
+        this.application = Mockito.mock( Application.class );
         Mockito.when( application.getKey() ).thenReturn( applicationKey );
         Mockito.when( application.getBundle() ).thenReturn( bundle );
 
@@ -137,6 +148,29 @@ public class ResourceServiceImplTest
         //Finds folders for a specific path
         resourceKeys = resourceService.findFolders( applicationKey, "/site/pages" );
         assertEquals( 2, resourceKeys.getSize() );
+    }
 
+    @Test
+    public void getResource_devMode()
+        throws Exception
+    {
+        this.resourceService.runMode = RunMode.DEV;
+
+        Mockito.when( this.application.getSourcePaths() ).thenReturn(
+            Lists.newArrayList( this.temporaryFolder.getRoot().getAbsolutePath() ) );
+
+        final ResourceKey key = ResourceKey.from( this.applicationKey, RESOURCE_PATH );
+        final Resource resource1 = this.resourceService.getResource( key );
+        assertNotNull( resource1 );
+        assertTrue( resource1.exists() );
+
+        final File folder = this.temporaryFolder.newFolder( "a", "b" );
+        final File file = new File( folder, RESOURCE_FILE_NAME );
+        Files.write( file.toPath(), "hello".getBytes() );
+
+        final Resource resource2 = this.resourceService.getResource( key );
+        assertNotNull( resource2 );
+        assertTrue( resource2.exists() );
+        assertEquals( file.toURI().toURL(), resource2.getUrl() );
     }
 }
