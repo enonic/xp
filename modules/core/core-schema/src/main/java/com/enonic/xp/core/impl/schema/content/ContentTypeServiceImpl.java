@@ -9,9 +9,7 @@ import com.enonic.xp.schema.content.ContentTypeRegistry;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetAllContentTypesParams;
-import com.enonic.xp.schema.content.GetChildContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.content.GetContentTypesParams;
 import com.enonic.xp.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.xp.schema.mixin.MixinService;
 
@@ -23,24 +21,10 @@ public final class ContentTypeServiceImpl
 
     private MixinService mixinService;
 
-    public ContentTypeServiceImpl()
-    {
-    }
-
     @Override
     public ContentType getByName( final GetContentTypeParams params )
     {
         final GetContentTypeCommand command = new GetContentTypeCommand();
-        command.registry = this.registry;
-        command.mixinService = this.mixinService;
-        command.params = params;
-        return command.execute();
-    }
-
-    @Override
-    public ContentTypes getByNames( final GetContentTypesParams params )
-    {
-        final GetContentTypesCommand command = new GetContentTypesCommand();
         command.registry = this.registry;
         command.mixinService = this.mixinService;
         command.params = params;
@@ -57,16 +41,6 @@ public final class ContentTypeServiceImpl
     public ContentTypes getAll( final GetAllContentTypesParams params )
     {
         final GetAllContentTypesCommand command = new GetAllContentTypesCommand();
-        command.registry = this.registry;
-        command.mixinService = this.mixinService;
-        command.params = params;
-        return command.execute();
-    }
-
-    @Override
-    public ContentTypes getChildren( final GetChildContentTypesParams params )
-    {
-        final GetChildContentTypesCommand command = new GetChildContentTypesCommand();
         command.registry = this.registry;
         command.mixinService = this.mixinService;
         command.params = params;

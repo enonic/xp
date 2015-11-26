@@ -18,7 +18,7 @@
 XP_INSTALL="/opt/enonic/xp"
 RUNUSER="xp"
 
-OUT_LOG="/dev/null"
+OUT_LOG="/var/log/xp/xp.log"
 
 PIDFILE_DIR="/home/$RUNUSER/.$NAME"
 PIDFILE="$PIDFILE_DIR/$NAME.pid"

@@ -22,6 +22,8 @@ public final class PortalResponseSerializer
 
     private Boolean forceApplyFilters;
 
+    private Object overrideBody;
+
     public PortalResponseSerializer( final ScriptValue value )
     {
         this( value, HttpStatus.OK );
@@ -48,6 +50,12 @@ public final class PortalResponseSerializer
     public PortalResponseSerializer applyFilters( final boolean value )
     {
         this.forceApplyFilters = value;
+        return this;
+    }
+
+    public PortalResponseSerializer body( final Object value )
+    {
+        this.overrideBody = value;
         return this;
     }
 
@@ -119,6 +127,12 @@ public final class PortalResponseSerializer
 
     private void populateBody( final PortalResponse.Builder builder, final ScriptValue value )
     {
+        if ( this.overrideBody != null )
+        {
+            builder.body( this.overrideBody );
+            return;
+        }
+
         if ( ( value == null ) || value.isFunction() )
         {
             return;
