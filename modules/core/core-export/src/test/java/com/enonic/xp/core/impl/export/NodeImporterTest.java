@@ -397,6 +397,34 @@ public class NodeImporterTest
         assertEquals( myChildChildChildName, myChildChildChild.name().toString() );
     }
 
+    @Test
+    public void import_node_with_xslt()
+        throws Exception
+    {
+        final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.getRoot().getPath(), "myExport", "mynode", "_" ) );
+        final Path xsltFilePath = nodeFileDir.resolve( "transform.xsl" );
+
+        final byte[] nodeXmlFile = readFromFile( "node_with_appref.xml" ).getBytes();
+        final byte[] xsltFile = readFromFile( "transform.xsl" ).getBytes();
+
+        Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
+        Files.write( xsltFilePath, xsltFile );
+
+        final NodeImportResult result = NodeImporter.create().
+            nodeService( importNodeService ).
+            targetNodePath( NodePath.ROOT ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            xslt( VirtualFiles.from( xsltFilePath ) ).
+            xsltParam( "applicationId", "com.enonic.starter.bootstrap" ).
+            build().
+            execute();
+
+        assertEquals( 0, result.getImportErrors().size() );
+        assertEquals( 1, result.addedNodes.getSize() );
+        final Node importedNode = this.importNodeService.getByPath( result.getAddedNodes().first() );
+        assertNotNull( importedNode );
+    }
+
     private void createOrderFile( final Path exportPath, final String... childNodeNames )
         throws Exception
     {
