@@ -330,9 +330,7 @@ exports.removeMembers = function (principalKey, members) {
  *   userStore: 'user-store',
  *   start: 0,
  *   count: 10,
- *   name: 'user1',
- *   email: 'user1@enonic.com',
- *   displayName: 'User 1',
+ *   name: 'user1'
  * });
  *
  * @param {object} params JSON parameters.
@@ -341,8 +339,6 @@ exports.removeMembers = function (principalKey, members) {
  * @param {string} params.start First principal to return from the search results. It can be used for pagination.
  * @param {string} params.count A limit on the number of principals to be returned.
  * @param {string} params.name Name of the principal to look for.
- * @param {string} params.email Email of the user to look for.
- * @param {string} params.displayName Display name of the principal to look for.
  * @param {string} params.searchText Text to look for in any principal field.
  */
 exports.findPrincipals = function (params) {
@@ -353,8 +349,6 @@ exports.findPrincipals = function (params) {
     bean.start = __.nullOrValue(params.start);
     bean.count = __.nullOrValue(params.count);
     bean.name = __.nullOrValue(params.name);
-    bean.email = __.nullOrValue(params.email);
-    bean.displayName = __.nullOrValue(params.displayName);
     bean.searchText = __.nullOrValue(params.searchText);
 
     return __.toNativeObject(bean.findPrincipals());
