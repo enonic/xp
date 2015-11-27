@@ -353,8 +353,6 @@ exports.findPrincipals = function (params) {
     bean.start = __.nullOrValue(params.start);
     bean.count = __.nullOrValue(params.count);
     bean.name = __.nullOrValue(params.name);
-    bean.email = __.nullOrValue(params.email);
-    bean.displayName = __.nullOrValue(params.displayName);
     bean.searchText = __.nullOrValue(params.searchText);
 
     return __.toNativeObject(bean.findPrincipals());
