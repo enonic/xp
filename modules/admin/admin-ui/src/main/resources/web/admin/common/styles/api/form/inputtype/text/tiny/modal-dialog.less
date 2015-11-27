@@ -199,4 +199,80 @@
     }
 
   }
+
+  .toolbar {
+    &.image-toolbar {
+      position: relative;
+      border-bottom-width: 0px;
+
+      .button {
+
+        padding: 7px 7px;
+
+        &[class*="icon-"] {
+          font-size: 24px;
+          line-height: 24px;
+        }
+
+      }
+
+      .keep-size-check {
+        display: inline-block;
+        line-height: 25px;
+        margin: 0;
+
+        input {
+          width: 0;
+          height: 0;
+          margin: 0;
+        }
+
+        label {
+          vertical-align: top;
+          display: inherit;
+          float: none;
+        }
+      }
+
+    }
+  }
+
+  img {
+
+    &[style*="text-align: justify"] {
+      &:not([data-src*="keepSize=true"]) {
+        width: 100%;
+      }
+    }
+
+    &[style*="text-align: left"] {
+
+      margin: 0;
+      float: left;
+
+      &:not([data-src*="keepSize=true"]) {
+        width: 40%;
+      }
+    }
+
+    &[style*="text-align: center"] {
+
+      margin: auto;
+
+      &:not([data-src*="keepSize=true"]) {
+        width: 60%;
+      }
+    }
+
+    &[style*="text-align: right"] {
+
+      margin: 0;
+      float: right;
+
+      &:not([data-src*="keepSize=true"]) {
+        width: 40%;
+      }
+    }
+  }
+
 }
