@@ -103,6 +103,7 @@ module api.ui.selector {
                 this.dropdownGrid.adjustGridHeight();
                 if (!!selectedOptions) {
                     this.dropdownGrid.markSelections(selectedOptions.splice(1));
+                    this.navigateToRowIfNotActive(selectedOptions[0]);
                 }
             } else {
                 this.dropdownGrid.hide();
@@ -144,11 +145,20 @@ module api.ui.selector {
         }
 
         nagivateToFirstRow() {
-            this.dropdownGrid.nagivateToFirstRow();
+            this.dropdownGrid.navigateToFirstRow();
         }
 
-        navigateToFirstRowIfNotActive() {
-            this.dropdownGrid.navigateToFirstRowIfNotActive();
+        navigateToRowIfNotActive(selectedOption?: Option<OPTION_DISPLAY_VALUE>) {
+            if (this.getActiveRow() > -1) {
+                return;
+            }
+            if (selectedOption) {
+                var row = this.dropdownGrid.getRowByValue(selectedOption.value);
+                this.dropdownGrid.navigateToRow(row);
+            }
+            else {
+                this.dropdownGrid.navigateToFirstRow();
+            }
         }
 
         navigateToNextRow() {

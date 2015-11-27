@@ -86,7 +86,6 @@ h6 {
 
 tt, code, kbd, samp {
   font-family: Consolas, Monaco, 'Andale Mono', monospace;
-  background: #f4f4f4;
   padding: 1px 5px;
   border-radius: 5px;
 }
@@ -297,10 +296,8 @@ footer {
 
 .prettyprint {
   font-size: 13px;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  box-shadow: 0 1px 3px hsla(0, 0%, 0%, 0.05);
   overflow: auto;
+  border-left: 3px solid #ddd;
 }
 
 .prettyprint.source {
@@ -311,7 +308,7 @@ footer {
   font-size: 100%;
   line-height: 18px;
   display: block;
-  margin: 0 30px;
+  margin: 0 10px;
   background-color: #fff;
   color: #4D4E53;
 }

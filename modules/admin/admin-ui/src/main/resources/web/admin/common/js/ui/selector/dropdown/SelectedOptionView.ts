@@ -6,38 +6,32 @@ module api.ui.selector.dropdown {
 
         private objectViewer:Viewer<T>;
 
-        private dropdownHandle: DropdownHandle;
-
         private optionValueEl: api.dom.DivEl;
 
         private option: api.ui.selector.Option<T>;
 
         private openDropdownListeners: {(): void;}[] = [];
 
-        constructor(objectViewer:Viewer<T>) {
+        constructor(objectViewer:Viewer<T>, skipExpandOnClick: boolean = false) {
             super("div", "selected-option");
             this.objectViewer = objectViewer;
-            this.dropdownHandle = new DropdownHandle();
             this.optionValueEl = new api.dom.DivEl('option-value');
             this.appendChild(this.optionValueEl);
             this.optionValueEl.appendChild(this.objectViewer);
-            this.appendChild(this.dropdownHandle);
 
-            this.dropdownHandle.onClicked(() => {
-                this.notifyOpenDropdown();
-            } );
+            if (!skipExpandOnClick) {
+                this.onClicked((event: MouseEvent)=> {
 
-            this.onClicked((event: MouseEvent)=> {
+                    if (document["selection"] && document["selection"].empty) {
+                        document["selection"].empty();
+                    } else if (window.getSelection) {
+                        var sel = window.getSelection();
+                        sel.removeAllRanges();
+                    }
 
-                if (document["selection"] && document["selection"].empty) {
-                    document["selection"].empty();
-                } else if(window.getSelection) {
-                    var sel = window.getSelection();
-                    sel.removeAllRanges();
-                }
-
-                this.notifyOpenDropdown();
-            });
+                    this.notifyOpenDropdown();
+                });
+            }
 
             this.onKeyPressed((event:KeyboardEvent) => {
                 if (event.which == 32 || event.which == 13) { // space or enter
