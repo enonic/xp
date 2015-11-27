@@ -53,7 +53,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
     }
 
     @Test
-    public void testSelectorQuery()
+    public void testSelectorQueryWithFewAllowPaths()
     {
         final InputTypeConfig config = InputTypeConfig.create().
             property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
@@ -89,7 +89,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
     }
 
     @Test
-    public void testQueryWithSearchInQuery()
+    public void testQueryWithSearch()
     {
         final InputTypeConfig config = InputTypeConfig.create().
             property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
@@ -123,15 +123,15 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
     }
 
     @Test
-    public void testAllowChildrenPathInQuery()
+    public void testQueryForImageSelectorInput()
     {
         final InputTypeConfig config = InputTypeConfig.create().
             property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
             property( InputTypeProperty.create( "allowContentType", "myApplication:comment" ).build() ).
-            property( InputTypeProperty.create( "allowPath", "./*" ).build() ).
+            property( InputTypeProperty.create( "allowPath", "/*" ).build() ).
             build();
 
-        ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
+        ContentType contentType = createContentTypeWithImageSelectorInput( "inputName", config );
 
         Content content = createContent( "content-id", "my-content", contentType.getName() );
 
@@ -141,7 +141,9 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
         Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).
             thenReturn( content );
 
-        ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName" );
+        ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson(
+            "(fulltext('displayName^5,_name^3,_alltext', 'check', 'AND') OR ngram('displayName^5,_name^3,_alltext', 'check', 'AND')) " +
+                "ORDER BY _modifiedTime DESC", 0, 100, "summary", "contentId", "inputName" );
         ContentSelectorQueryJsonToContentQueryConverter processor = getProcessor( contentQueryJson );
 
         final ContentQuery contentQuery = processor.createQuery();
@@ -149,97 +151,9 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
         assertEquals( 0, contentQuery.getFrom() );
         assertEquals( 100, contentQuery.getSize() );
         assertEquals( ContentTypeNames.from( "myApplication:comment" ), contentQuery.getContentTypes() );
-        assertEquals( "_path LIKE '/content/parent-content-1/parent-content-2/my-content/*'", contentQuery.getQueryExpr().toString() );
-    }
-
-    @Test
-    public void testAllowChildrenAndSiblingsPathInQuery()
-    {
-        final InputTypeConfig config = InputTypeConfig.create().
-            property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
-            property( InputTypeProperty.create( "allowContentType", "myApplication:comment" ).build() ).
-            property( InputTypeProperty.create( "allowPath", "../*" ).build() ).
-            build();
-
-        ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
-
-        Content content = createContent( "content-id", "my-content", contentType.getName() );
-
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
-            thenReturn( contentType );
-
-        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( content );
-
-        ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName" );
-        ContentSelectorQueryJsonToContentQueryConverter processor = getProcessor( contentQueryJson );
-
-        final ContentQuery contentQuery = processor.createQuery();
-
-        assertEquals( 0, contentQuery.getFrom() );
-        assertEquals( 100, contentQuery.getSize() );
-        assertEquals( ContentTypeNames.from( "myApplication:comment" ), contentQuery.getContentTypes() );
-        assertEquals( "_path LIKE '/content/parent-content-1/parent-content-2/*'", contentQuery.getQueryExpr().toString() );
-    }
-
-    @Test
-    public void testOneLevelUpPathInQuery()
-    {
-        final InputTypeConfig config = InputTypeConfig.create().
-            property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
-            property( InputTypeProperty.create( "allowContentType", "myApplication:comment" ).build() ).
-            property( InputTypeProperty.create( "allowPath", "../images" ).build() ).
-            build();
-
-        ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
-
-        Content content = createContent( "content-id", "my-content", contentType.getName() );
-
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
-            thenReturn( contentType );
-
-        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( content );
-
-        ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName" );
-        ContentSelectorQueryJsonToContentQueryConverter processor = getProcessor( contentQueryJson );
-
-        final ContentQuery contentQuery = processor.createQuery();
-
-        assertEquals( 0, contentQuery.getFrom() );
-        assertEquals( 100, contentQuery.getSize() );
-        assertEquals( ContentTypeNames.from( "myApplication:comment" ), contentQuery.getContentTypes() );
-        assertEquals( "_path LIKE '/content/parent-content-1/parent-content-2/images*'", contentQuery.getQueryExpr().toString() );
-    }
-
-    @Test
-    public void testTwoLevelsUpPathInQuery()
-    {
-        final InputTypeConfig config = InputTypeConfig.create().
-            property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
-            property( InputTypeProperty.create( "allowContentType", "myApplication:comment" ).build() ).
-            property( InputTypeProperty.create( "allowPath", "../../images" ).build() ).
-            build();
-
-        ContentType contentType = this.createContentTypeWithSelectorInput( "inputName", config, false, true );
-
-        Content content = createContent( "content-id", "my-content", contentType.getName() );
-
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
-            thenReturn( contentType );
-
-        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( content );
-
-        ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName" );
-        ContentSelectorQueryJsonToContentQueryConverter processor = getProcessor( contentQueryJson );
-
-        final ContentQuery contentQuery = processor.createQuery();
-
-        assertEquals( 0, contentQuery.getFrom() );
-        assertEquals( 100, contentQuery.getSize() );
-        assertEquals( ContentTypeNames.from( "myApplication:comment" ), contentQuery.getContentTypes() );
-        assertEquals( "_path LIKE '/content/parent-content-1/images*'", contentQuery.getQueryExpr().toString() );
+        assertEquals( "(_path LIKE '/content/*' AND (fulltext('displayName^5,_name^3,_alltext', 'check', 'AND') " +
+                          "OR ngram('displayName^5,_name^3,_alltext', 'check', 'AND'))) ORDER BY _modifiedtime DESC",
+                      contentQuery.getQueryExpr().toString() );
     }
 
     private ContentSelectorQueryJsonToContentQueryConverter getProcessor( final ContentSelectorQueryJson json )
@@ -271,6 +185,11 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
     private ContentType createContentTypeWithSelectorInput( final String inputName, final InputTypeConfig inputTypeConfig )
     {
         return this.createContentTypeWithSelectorInput( inputName, inputTypeConfig, true, false );
+    }
+
+    private ContentType createContentTypeWithImageSelectorInput( final String inputName, final InputTypeConfig inputTypeConfig )
+    {
+        return this.createContentTypeWithSelectorInput( inputName, inputTypeConfig, false, true );
     }
 
     private FormItem createBasicFieldSetWithSelectorInput( final String inputName, final InputTypeConfig inputTypeConfig,

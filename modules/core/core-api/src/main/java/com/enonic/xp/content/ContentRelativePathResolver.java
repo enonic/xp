@@ -30,12 +30,22 @@ public class ContentRelativePathResolver
         }
         else if ( path.startsWith( "../" ) )
         {
-            return makeEndWithStar( getPathStartedSomeLevelsHigher( content, path ) ); // path starting x levels higher
+            return makeEndWithStar(
+                makeStartWithSlash( getPathStartedSomeLevelsHigher( content, path ) ) ); // path starting x levels higher
+        }
+        else if ( path.startsWith( "./" ) )
+        {
+            return makeEndWithStar( makeStartWithSlash( getChildPath( content, path ) ) ); // child path for current item
         }
         else
         {
             return makeEndWithStar( makeStartWithSlash( path ) );
         }
+    }
+
+    private static String getChildPath( final Content content, final String path )
+    {
+        return content.getPath() + path.substring( 1 );
     }
 
     private static String getPathStartedSomeLevelsHigher( final Content content, final String path )
