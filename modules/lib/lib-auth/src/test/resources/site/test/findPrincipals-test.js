@@ -148,62 +148,6 @@ exports.findPrincipalsByName = function () {
 
 };
 
-exports.findPrincipalsByEmail = function () {
-
-    var result = auth.findPrincipals({
-        "userStore": "enonic",
-        "email": "user1@enonic.com"
-    });
-
-    var expectedJson = {
-        "total": 1,
-        "count": 1,
-        "hits": [
-            {
-                "type": "user",
-                "key": "user:enonic:user1",
-                "displayName": "User 1",
-                "modifiedTime": "1970-01-01T00:00:00Z",
-                "disabled": false,
-                "email": "user1@enonic.com",
-                "login": "user1",
-                "userStore": "enonic"
-            }
-        ]
-    };
-
-    assert.assertJsonEquals('findPrincipals result not equals', expectedJson, result);
-
-};
-
-exports.findPrincipalsByDisplayName = function () {
-
-    var result = auth.findPrincipals({
-        "userStore": "enonic",
-        "displayName": "User 1"
-    });
-
-    var expectedJson = {
-        "total": 1,
-        "count": 1,
-        "hits": [
-            {
-                "type": "user",
-                "key": "user:enonic:user1",
-                "displayName": "User 1",
-                "modifiedTime": "1970-01-01T00:00:00Z",
-                "disabled": false,
-                "email": "user1@enonic.com",
-                "login": "user1",
-                "userStore": "enonic"
-            }
-        ]
-    };
-
-    assert.assertJsonEquals('findPrincipals result not equals', expectedJson, result);
-
-};
-
 exports.findPrincipalsBySearchText = function () {
 
     var result = auth.findPrincipals({

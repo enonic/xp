@@ -25,10 +25,6 @@ public final class FindPrincipalsHandler
 
     private String name;
 
-    private String email;
-
-    private String displayName;
-
     private String searchText;
 
     public void setSearchText( final String value )
@@ -90,16 +86,6 @@ public final class FindPrincipalsHandler
         this.name = name;
     }
 
-    public void setEmail( final String email )
-    {
-        this.email = email;
-    }
-
-    public void setDisplayName( final String displayName )
-    {
-        this.displayName = displayName;
-    }
-
     public PrincipalsResultMapper findPrincipals()
     {
         final PrincipalQuery.Builder query = PrincipalQuery.create();
@@ -111,9 +97,7 @@ public final class FindPrincipalsHandler
         {
             query.userStore( this.userStore );
         }
-        query.email( this.email );
         query.name( this.name );
-        query.displayName( this.displayName );
         query.from( this.start );
         query.size( this.count );
         query.searchText( this.searchText );
