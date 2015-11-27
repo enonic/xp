@@ -51,6 +51,7 @@ module app.browse.action {
         }
 
         updateActionsEnabledState(contentBrowseItems: BrowseItem<ContentSummaryAndCompareStatus>[]): wemQ.Promise<BrowseItem<ContentSummaryAndCompareStatus>[]> {
+
             this.TOGGLE_SEARCH_PANEL.setVisible(false);
 
             var contentSummaries: ContentSummary[] = contentBrowseItems.map((elem: BrowseItem<ContentSummaryAndCompareStatus>) => {

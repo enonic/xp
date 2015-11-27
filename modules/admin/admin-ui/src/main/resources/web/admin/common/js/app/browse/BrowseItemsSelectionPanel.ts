@@ -59,21 +59,23 @@ module api.app.browse {
             return this.items;
         }
 
-        setItems(items: BrowseItem<M>[]) {
-            var itemsToRemove = this.items.filter((item: BrowseItem<M>) => {
-                for (var i = 0; i < items.length; i++) {
-                    if (item.getPath()) {
-                        if (item.getPath() == items[i].getPath()) {
-                            return false;
-                        }
-                    } else {
-                        if (item.getId() == items[i].getId()) {
-                            return false;
-                        }
-                    }
+        setItems(items: BrowseItem<M>[]): BrowseItemsChanges {
+            let changes = new BrowseItemsChanges();
+
+            let doFilter = (valueLeft: BrowseItem<M>, valueRight: BrowseItem<M>) => {
+                if (valueLeft.getPath() && valueLeft.getPath() === valueRight.getPath()) {
+                    return true;
+                } else if (valueLeft.getId() === valueRight.getId()) {
+                    return true;
                 }
-                return true;
-            });
+
+                return false;
+            };
+
+            let itemsToRemove = api.util.ArrayHelper.difference(this.items, items, doFilter);
+
+            let itemsToAdd = api.util.ArrayHelper.difference(items, this.items, doFilter);
+
             itemsToRemove.forEach((item: BrowseItem<M>) => {
                 this.removeItem(item);
             });
@@ -81,6 +83,11 @@ module api.app.browse {
             items.forEach((item: BrowseItem<M>) => {
                 this.addItem(item);
             });
+
+            changes.setAdded(itemsToAdd);
+            changes.setRemoved(itemsToRemove);
+
+            return changes;
         }
 
         createItemViewer(item: BrowseItem<M>): api.ui.Viewer<M>  {

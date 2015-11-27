@@ -37,6 +37,17 @@ module api.util {
                 return false;
             });
         }
+
+        static difference(left: any[], right: any[], callback: (valueLeft: any, valueRight: any) => boolean) {
+            return left.filter((value) => {
+                for (let i = 0; i < right.length; i++) {
+                    if (callback(value, right[i])) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        }
     }
 
 }

@@ -426,7 +426,8 @@ module app.browse {
                                 }
                             }
                         });
-                        this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems()); // update actions state in case of permission changes
+                        // update actions state in case of permission changes
+                        this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
                         this.mobileBrowseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
 
                         return this.contentTreeGrid.xPlaceContentNodes(results);
