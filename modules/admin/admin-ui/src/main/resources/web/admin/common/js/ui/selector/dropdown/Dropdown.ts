@@ -226,7 +226,6 @@ module api.ui.selector.dropdown {
         }
 
         setValue(value: string): Dropdown<OPTION_DISPLAY_VALUE> {
-            debugger;
             var option = this.getOptionByValue(value);
             if (option != null) {
                 this.selectOption(option);
