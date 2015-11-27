@@ -15,6 +15,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemType;
+import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.node.NodeIndexPath;
@@ -179,13 +180,23 @@ public class ContentSelectorQueryJsonToContentQueryConverter
     {
         if ( contentType != null )
         {
-            final FormItem basicFormItem = contentType.getForm().getFormItems().getItemByName( "basic" );
-            if ( basicFormItem != null && basicFormItem instanceof FieldSet )
+            final FormItems inputFormItems = getInputFormItemsOrBasicFormItemsIfPresent( contentType );
+            if ( inputFormItems != null )
             {
-                return ( (FieldSet) basicFormItem ).getFormItems().getItemByName( inputName );
+                return inputFormItems.getItemByName( inputName );
             }
         }
         return null;
+    }
+
+    private FormItems getInputFormItemsOrBasicFormItemsIfPresent( final ContentType contentType )
+    {
+        final FormItem basicFormItem = contentType.getForm().getFormItems().getItemByName( "basic" );
+        if ( basicFormItem != null && basicFormItem instanceof FieldSet )
+        {
+            return ( (FieldSet) basicFormItem ).getFormItems();
+        }
+        return contentType.getForm().getFormItems();
     }
 
     private Input getContentSelectorInputFromFormItem( final FormItem formItem )
@@ -193,7 +204,8 @@ public class ContentSelectorQueryJsonToContentQueryConverter
         if ( formItem != null && FormItemType.INPUT.equals( formItem.getType() ) )
         {
             Input input = (Input) formItem;
-            if ( InputTypeName.CONTENT_SELECTOR.equals( input.getInputType() ) )
+            if ( InputTypeName.CONTENT_SELECTOR.equals( input.getInputType() ) ||
+                InputTypeName.IMAGE_SELECTOR.equals( input.getInputType() ) )
             {
                 return input;
             }

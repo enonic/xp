@@ -1,4 +1,4 @@
-module api.content.form.inputtype.relationship {
+module api.content.form.inputtype.contentselector {
 
     import Property = api.data.Property;
     import PropertyArray = api.data.PropertyArray;
@@ -20,8 +20,6 @@ module api.content.form.inputtype.relationship {
 
         private relationshipType: string;
 
-        private allowedContentTypes: string[];
-
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("relationship");
             this.addClass("input-type-view");
@@ -38,9 +36,6 @@ module api.content.form.inputtype.relationship {
             } else {
                 this.relationshipTypeName = RelationshipTypeName.REFERENCE;
             }
-
-            var allowContentTypeConfig = inputConfig['allowContentType'] || [];
-            this.allowedContentTypes = allowContentTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val);
         }
 
         availableSizeChanged() {
@@ -59,12 +54,12 @@ module api.content.form.inputtype.relationship {
 
             super.layout(input, propertyArray);
 
-            var relationshipLoader = new ContentSelectorLoader(this.config.contentId, input.getName());
+            var contentSelectorLoader = new ContentSelectorLoader(this.config.contentId, input.getName());
 
             this.contentComboBox = api.content.ContentComboBox.create()
                 .setName(input.getName())
                 .setMaximumOccurrences(input.getOccurrences().getMaximum())
-                .setLoader(relationshipLoader)
+                .setLoader(contentSelectorLoader)
                 .build();
 
             return new GetRelationshipTypeByNameRequest(this.relationshipTypeName).

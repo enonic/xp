@@ -16,6 +16,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FieldSet;
+import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeConfig;
@@ -220,7 +221,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             property( InputTypeProperty.create( "allowPath", "../../images" ).build() ).
             build();
 
-        ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
+        ContentType contentType = this.createContentTypeWithSelectorInput( "inputName", config, false, true );
 
         Content content = createContent( "content-id", "my-content", contentType.getName() );
 
@@ -251,29 +252,48 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             build();
     }
 
-    private ContentType createContentTypeWithSelectorInput( final String inputName, final InputTypeConfig inputTypeConfig )
+    private ContentType createContentTypeWithSelectorInput( final String inputName, final InputTypeConfig inputTypeConfig,
+                                                            boolean addBasicFieldSet, boolean useImageSelectorInput )
     {
+
+        final FormItem formItem =
+            createBasicFieldSetWithSelectorInput( inputName, inputTypeConfig, addBasicFieldSet, useImageSelectorInput );
+
         return ContentType.create().
             superType( ContentTypeName.structured() ).
             displayName( "My type" ).
             name( "myApplication:my-content-type" ).
             icon( Icon.from( new byte[]{123}, "image/gif", Instant.now() ) ).
-            addFormItem( createBasicFieldSetWithSelectorInput( inputName, inputTypeConfig ) ).
+            addFormItem( formItem ).
             build();
     }
 
-    private FieldSet createBasicFieldSetWithSelectorInput( final String inputName, final InputTypeConfig inputTypeConfig )
+    private ContentType createContentTypeWithSelectorInput( final String inputName, final InputTypeConfig inputTypeConfig )
     {
-        return FieldSet.create().
-            label( "basic fieldSet" ).
-            name( "basic" ).
-            addFormItem( Input.create().
-                name( inputName ).
-                label( "input" ).
-                inputType( InputTypeName.CONTENT_SELECTOR ).
-                inputTypeConfig( inputTypeConfig ).
-                build() ).
+        return this.createContentTypeWithSelectorInput( inputName, inputTypeConfig, true, false );
+    }
+
+    private FormItem createBasicFieldSetWithSelectorInput( final String inputName, final InputTypeConfig inputTypeConfig,
+                                                           boolean addBasicFieldSet, boolean useImageSelectorInput )
+    {
+
+        final FormItem inputFormItem = Input.create().
+            name( inputName ).
+            label( "input" ).
+            inputType( useImageSelectorInput ? InputTypeName.IMAGE_SELECTOR : InputTypeName.CONTENT_SELECTOR ).
+            inputTypeConfig( inputTypeConfig ).
             build();
+
+        if ( addBasicFieldSet )
+        {
+            return FieldSet.create().
+                label( "basic fieldSet" ).
+                name( "basic" ).
+                addFormItem( inputFormItem ).
+                build();
+        }
+
+        return inputFormItem;
     }
 
     private Content createContent( final String id, final String name, final ContentTypeName contentTypeName )

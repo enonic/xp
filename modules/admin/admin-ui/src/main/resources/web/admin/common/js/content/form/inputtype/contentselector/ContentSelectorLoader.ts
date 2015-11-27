@@ -1,4 +1,4 @@
-module api.content.form.inputtype.relationship {
+module api.content.form.inputtype.contentselector {
 
     /**
      * Extends ContentSummaryLoader to restrict requests before allowed content types are set.
