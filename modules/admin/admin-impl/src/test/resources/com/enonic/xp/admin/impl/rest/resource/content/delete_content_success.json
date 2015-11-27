@@ -5,11 +5,13 @@
     {
       "id": "123",
       "name": "one",
+      "path": "/one",
       "type": "folder"
     },
     {
       "id": "123",
       "name": "one",
+      "path": "/one",
       "type": "folder"
     }
   ]
