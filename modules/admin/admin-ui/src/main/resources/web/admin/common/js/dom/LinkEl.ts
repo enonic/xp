@@ -19,5 +19,13 @@ module api.dom {
             this.getEl().setAttribute("rel", rel);
             return this;
         }
+
+        onLoaded(listener: (event: UIEvent) => void) {
+            this.getEl().addEventListener("load", listener);
+        }
+
+        unLoaded(listener: (event: UIEvent) => void) {
+            this.getEl().removeEventListener("load", listener);
+        }
     }
 }
