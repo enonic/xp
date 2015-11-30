@@ -144,7 +144,7 @@ module app.view.detail {
         }
 
         private hasDynamicHeight(): boolean {
-            return (this.getEl().getHeight() == 0 && this.isUrlBased() && this.isActive());
+            return this.isUrlBased() && this.isActive();
         }
 
         private redoLayout() {
