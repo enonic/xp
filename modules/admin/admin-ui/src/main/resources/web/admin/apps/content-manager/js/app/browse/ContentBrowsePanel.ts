@@ -467,13 +467,16 @@ module app.browse {
                 // merge array of nodes arrays
                 merged = merged.concat.apply(merged, nodes);
 
+                var contentDeletedEvent = new api.content.ContentDeletedEvent();
                 merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
-                    if (node.getData() && node.getData().getContentSummary()) {
+                    var contentSummary = node.getData().getContentSummary();
+                    if (node.getData() && !!contentSummary) {
 
                         this.updateDetailsPanel(null);
-                        new api.content.ContentDeletedEvent(node.getData().getContentSummary().getContentId()).fire();
+                        contentDeletedEvent.addItem(contentSummary.getContentId(), contentSummary.getPath());
                     }
                 });
+                contentDeletedEvent.fireIfNotEmpty();
 
                 this.contentTreeGrid.xDeleteContentNodes(merged);
 
@@ -508,6 +511,7 @@ module app.browse {
                             return el !== null;
                         })
                 ).then((data: ContentSummaryAndCompareStatus[]) => {
+                        var contentDeletedEvent = new api.content.ContentDeletedEvent();
                         data.forEach((el) => {
                             for (var i = 0; i < pendingResult.length; i++) {
                                 if (pendingResult[i].getId() === el.getId()) {
@@ -515,11 +519,12 @@ module app.browse {
 
                                     this.updateItemInDetailsPanelIfNeeded(el);
 
-                                    new api.content.ContentDeletedEvent(el.getContentId(), true).fire();
+                                    contentDeletedEvent.addPendingItem(el.getContentId(), el.getPath());
                                     break;
                                 }
                             }
                         });
+                        contentDeletedEvent.fireIfNotEmpty();
                         this.contentTreeGrid.invalidate();
                     });
             });

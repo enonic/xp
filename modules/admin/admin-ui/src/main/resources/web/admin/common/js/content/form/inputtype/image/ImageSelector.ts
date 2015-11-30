@@ -27,10 +27,6 @@ module api.content.form.inputtype.image {
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
     import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
 
-    export interface ImageSelectorConfig {
-        relationshipType: string
-    }
-
     export class ImageSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<ContentId> {
 
         private config: api.content.form.inputtype.ContentInputTypeViewContext;
@@ -76,11 +72,15 @@ module api.content.form.inputtype.image {
             });
 
             api.content.ContentDeletedEvent.on((event) => {
-                var deleted = event.getContentId();
-                var option = this.selectedOptionsView.getById(deleted.toString());
-                if (option != null) {
-                    this.selectedOptionsView.removeSelectedOptions([option]);
-                }
+                event.getDeleteditems().filter((deletedItem) => {
+                    return !!deletedItem;
+                }).forEach((deletedItem) => {
+
+                    var option = this.selectedOptionsView.getById(deletedItem.getContentId().toString());
+                    if (option != null) {
+                        this.selectedOptionsView.removeSelectedOptions([option]);
+                    }
+                });
             });
 
         }
