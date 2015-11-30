@@ -20,18 +20,7 @@ module app.launcher {
         }
 
         static getAllApps(): api.app.Application[] {
-            if (!Applications.apps) {
-                Applications.initApps();
-            }
             return Applications.apps;
-        }
-
-        static initApps() {
-            Applications.apps = Applications.createApps();
-            Applications.appIndex = {};
-            Applications.apps.forEach((currentApp: api.app.Application) => {
-                Applications.appIndex[currentApp.getId()] = currentApp;
-            });
         }
 
         static getAppById(id: string): api.app.Application {
@@ -47,14 +36,6 @@ module app.launcher {
                 }
             });
             return apps;
-        }
-
-        private static createApps(): api.app.Application[] {
-            return [
-                new api.app.Application('content-manager', 'Content Manager', 'CM', 'database'),
-                new api.app.Application('user-manager', 'Users', 'UM', 'users'),
-                new api.app.Application('applications', 'Applications', 'AM', 'puzzle')
-            ];
         }
     }
 }
