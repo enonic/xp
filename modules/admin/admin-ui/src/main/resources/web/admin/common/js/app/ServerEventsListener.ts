@@ -4,11 +4,26 @@ module api.app {
 
         private serverEventsConnection: api.app.ServerEventsConnection;
         private applications: api.app.Application[];
+        private aggregator: ServerEventAggregator;
 
         constructor(applications: api.app.Application[]) {
             this.applications = applications;
             this.serverEventsConnection = new api.app.ServerEventsConnection();
-            this.serverEventsConnection.onServerEvent((event: api.event.Event) => this.onServerEvent(event));
+            this.serverEventsConnection.onServerEvent((event: api.content.ContentServerEvent) => this.onServerEvent(event));
+            this.aggregator = new ServerEventAggregator();
+
+            this.aggregator.onBatchIsReady(() => {
+
+                this.applications.forEach((application)=> {
+                    var event = new api.content.BatchContentServerEvent(this.aggregator.getEvents(), this.aggregator.getType());
+
+                    var appWindow = application.getWindow();
+                    if (appWindow) {
+                        event.fire(appWindow);
+                    }
+                });
+                this.aggregator.resetEvents();
+            });
         }
 
         start() {
@@ -35,13 +50,8 @@ module api.app {
             this.serverEventsConnection.unConnectionRestored(listener);
         }
 
-        private onServerEvent(event: api.event.Event) {
-            this.applications.forEach((application)=> {
-                var appWindow = application.getWindow();
-                if (appWindow) {
-                    event.fire(appWindow);
-                }
-            });
+        private onServerEvent(event: api.content.ContentServerEvent) {
+            this.aggregator.appendEvent(event);
         }
 
     }
