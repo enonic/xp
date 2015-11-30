@@ -73,6 +73,28 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
+    public void process_image_with_keepsize()
+    {
+        //Creates a content
+        final Media media = ContentFixtures.newMedia();
+        Mockito.when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+        Mockito.when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(
+            "binaryHash" );
+
+        //Process an html text containing a link to this content
+        final ProcessHtmlParams params = new ProcessHtmlParams().
+            portalRequest( this.portalRequest ).
+            value( "<a href=\"image://" + media.getId() + "?keepsize=true\">Image</a>" );
+
+        //Checks that the page URL of the content is returned
+        final String processedHtml = this.service.processHtml( params );
+        assertEquals(
+            "<a href=\"/portal/draft/context/path/_/image/" + media.getId() + ":992a0004e50e58383fb909fea2b588dc714a7115/" + "full" +
+                "/" + media.getName() +
+                ".jpeg\">Image</a>", processedHtml );
+    }
+
+    @Test
     public void process_single_media()
     {
         //Creates a content with attachments
