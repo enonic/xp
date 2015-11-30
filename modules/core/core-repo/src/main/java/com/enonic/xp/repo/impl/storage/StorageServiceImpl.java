@@ -261,7 +261,9 @@ public class StorageServiceImpl
             nodePath( node.path() ).
             build(), context );
 
-        this.indexServiceInternal.store( node, context );
+        this.indexServiceInternal.store( Node.create( node ).
+            nodeVersionId( nodeVersionId ).
+            build(), context );
     }
 
     private Node moveInBranchAndIndex( final Node node, final NodeVersionId nodeVersionId, final NodePath previousPath,
