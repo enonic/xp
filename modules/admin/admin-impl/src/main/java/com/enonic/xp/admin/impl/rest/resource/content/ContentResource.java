@@ -56,6 +56,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.CompareContentsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentNameJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentPublishItemJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CountItemsWithChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CreateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentJson;
@@ -134,6 +135,7 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -180,6 +182,8 @@ public final class ContentResource
     private ContentPrincipalsResolver principalsResolver;
 
     private SecurityService securityService;
+
+    private RelationshipTypeService relationshipTypeService;
 
     @POST
     @Path("create")
@@ -776,12 +780,35 @@ public final class ContentResource
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentQueryResultJson query( final ContentQueryJson contentQueryJson )
     {
+        //TODO: do we need this param? it does not seem to be checked at all
         final boolean getChildrenIds = !Expand.NONE.matches( contentQueryJson.getExpand() );
 
         final ContentIconUrlResolver iconUrlResolver = newContentIconUrlResolver();
         final FindContentByQueryResult findResult = contentService.find( FindContentByQueryParams.create().
             populateChildren( getChildrenIds ).
             contentQuery( contentQueryJson.getContentQuery() ).
+            build() );
+
+        return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver, principalsResolver );
+    }
+
+    @POST
+    @Path("selectorQuery")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public AbstractContentQueryResultJson selectorQuery( final ContentSelectorQueryJson contentQueryJson )
+    {
+        final ContentIconUrlResolver iconUrlResolver = newContentIconUrlResolver();
+
+        final ContentSelectorQueryJsonToContentQueryConverter selectorQueryProcessor =
+            ContentSelectorQueryJsonToContentQueryConverter.create().
+                contentQueryJson( contentQueryJson ).
+                contentService( this.contentService ).
+                contentTypeService( this.contentTypeService ).
+                relationshipTypeService( this.relationshipTypeService ).
+                build();
+
+        final FindContentByQueryResult findResult = contentService.find( FindContentByQueryParams.create().
+            contentQuery( selectorQueryProcessor.createQuery() ).
             build() );
 
         return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver, principalsResolver );
@@ -966,7 +993,7 @@ public final class ContentResource
         return new ContentIconUrlResolver( this.contentTypeService );
     }
 
-    private ContentPaths filterChildrenIfParentPresents( ContentPaths sourceContentPaths )
+    private ContentPaths filterChildrenIfParentPresents( final ContentPaths sourceContentPaths )
     {
         ContentPaths filteredContentPaths = ContentPaths.empty();
 
@@ -982,12 +1009,12 @@ public final class ContentResource
         return filteredContentPaths;
     }
 
-    private long countContentsAndTheirChildren( ContentPaths contentsPaths )
+    private long countContentsAndTheirChildren( final ContentPaths contentsPaths )
     {
         return contentsPaths.getSize() + ( contentsPaths.isEmpty() ? 0 : countChildren( contentsPaths ) );
     }
 
-    private long countChildren( ContentPaths contentsPaths )
+    private long countChildren( final ContentPaths contentsPaths )
     {
         FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
             contentQuery( ContentQuery.create().size( 0 ).queryExpr( constructExprToCountChildren( contentsPaths ) ).build() ).
@@ -996,7 +1023,7 @@ public final class ContentResource
         return result.getTotalHits();
     }
 
-    private QueryExpr constructExprToCountChildren( ContentPaths contentsPaths )
+    private QueryExpr constructExprToCountChildren( final ContentPaths contentsPaths )
     {
         ConstraintExpr expr = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( "/content" + contentsPaths.first() + "/*" ) );
 
@@ -1051,5 +1078,11 @@ public final class ContentResource
     {
         this.principalsResolver = new ContentPrincipalsResolver( securityService );
         this.securityService = securityService;
+    }
+
+    @Reference
+    public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
+    {
+        this.relationshipTypeService = relationshipTypeService;
     }
 }

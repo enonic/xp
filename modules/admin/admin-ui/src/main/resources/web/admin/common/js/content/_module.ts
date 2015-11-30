@@ -63,6 +63,7 @@
 ///<reference path='ContentMoveComboBox.ts' />
 ///<reference path='ContentQueryRequest.ts' />
 ///<reference path='ContentQueryResult.ts' />
+///<reference path='ContentSelectorQueryRequest.ts' />
 ///<reference path='UpdateContentRequest.ts' />
 ///<reference path='PublishContentRequest.ts' />
 ///<reference path='PublishContentResult.ts' />

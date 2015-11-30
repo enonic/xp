@@ -27,9 +27,7 @@ module api.content.form.inputtype.image {
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
     import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
 
-    export interface ImageSelectorConfig {
-        relationshipType: string
-    }
+    import ContentSelectorLoader = api.content.form.inputtype.contentselector.ContentSelectorLoader;
 
     export class ImageSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<ContentId> {
 
@@ -40,8 +38,6 @@ module api.content.form.inputtype.image {
         private contentComboBox: ImageContentComboBox;
 
         private selectedOptionsView: ImageSelectorSelectedOptionsView;
-
-        private contentSummaryLoader: ContentSummaryLoader;
 
         private contentRequestsAllowed: boolean;
 
@@ -156,12 +152,13 @@ module api.content.form.inputtype.image {
             return selectedOptionsView;
         }
 
-        createContentComboBox(maximumOccurrences: number, inputIconUrl: string, allowedContentTypes: string[]): ContentComboBox {
+        createContentComboBox(maximumOccurrences: number, inputIconUrl: string, allowedContentTypes: string[],
+                              inputName: string): ContentComboBox {
             var contentComboBox: ImageContentComboBox
                     = ImageContentComboBox.create().
                     setMaximumOccurrences(maximumOccurrences).
                     setAllowedContentTypes(allowedContentTypes.length ? allowedContentTypes : [ContentTypeName.IMAGE.toString()]).
-                    setLoader(this.contentSummaryLoader = new ContentSummaryLoader()).
+                    setLoader(new ContentSelectorLoader(this.config.contentId, inputName)).
                     setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).
                     build(),
                 comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();
@@ -215,7 +212,8 @@ module api.content.form.inputtype.image {
             return new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(this.relationshipTypeName).sendAndParse()
                 .then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
                     this.contentComboBox = this.createContentComboBox(
-                        input.getOccurrences().getMaximum(), relationshipType.getIconUrl(), relationshipType.getAllowedToTypes() || []
+                        input.getOccurrences().getMaximum(), relationshipType.getIconUrl(), relationshipType.getAllowedToTypes() || [],
+                        input.getName()
                     );
 
                     var comboBoxWrapper = new api.dom.DivEl("combobox-wrapper");

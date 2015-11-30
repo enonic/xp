@@ -1,10 +1,10 @@
-package com.enonic.xp.xml.alias;
+package com.enonic.xp.xml.parser;
 
 import com.google.common.annotations.Beta;
 
 @Beta
-public final class ContentSelectorAliasConverter
-    implements XmlAliasConverter
+final class ContentSelectorAliasConverter
+    implements InputTypeAliasConverter
 {
 
     public final static ContentSelectorAliasConverter INSTANCE = new ContentSelectorAliasConverter();
