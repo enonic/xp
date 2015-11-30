@@ -31,7 +31,6 @@ module api.app {
         }
 
         static getApplication(): api.app.Application {
-            console.log("getApplication()");
             return window.parent['getApplication'] ? window.parent['getApplication'](Application.getAppId()) : null;
         }
 
