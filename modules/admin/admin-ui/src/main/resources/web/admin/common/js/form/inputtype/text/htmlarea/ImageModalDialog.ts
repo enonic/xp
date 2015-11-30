@@ -1,5 +1,6 @@
 module api.form.inputtype.text.htmlarea {
 
+    import FormItemBuilder = api.ui.form.FormItemBuilder;
     import FormItem = api.ui.form.FormItem;
     import Validators = api.ui.form.Validators;
     import UploadItem = api.ui.uploader.UploadItem;
@@ -13,6 +14,7 @@ module api.form.inputtype.text.htmlarea {
     export class ImageModalDialog extends ModalDialog {
 
         private imagePreviewContainer: api.dom.DivEl;
+        private imageCaptionField: FormItem;
         private uploader: api.content.ImageUploader;
         private imageElement: HTMLImageElement;
         private contentId: api.content.ContentId;
@@ -130,6 +132,10 @@ module api.form.inputtype.text.htmlarea {
             this.image.onLoaded(() => {
                 this.imagePreviewContainer.removeClass("upload");
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
+                if (this.getCaptionFieldValue() == "") {
+                    this.imageCaptionField.getEl().scrollIntoView();
+                    this.imageCaptionField.getInput().giveFocus();
+                }
             });
 
             this.hideUploadMasks();
@@ -153,11 +159,12 @@ module api.form.inputtype.text.htmlarea {
             this.setFirstFocusField(imageSelector.getInput());
 
             return [
-                imageSelector
+                imageSelector,
+                this.imageCaptionField = this.createFormItem("caption", "Caption", null, this.getCaption())
             ];
         }
 
-        private getImagePreviewContainer() {
+        private createImagePreviewContainer() {
             var imagePreviewContainer = new api.dom.DivEl("content-item-preview-panel");
 
             this.progress = new api.ui.ProgressBar();
@@ -166,7 +173,16 @@ module api.form.inputtype.text.htmlarea {
             this.error = new api.dom.DivEl("error");
             imagePreviewContainer.appendChild(this.error);
 
-            return imagePreviewContainer;
+            this.imagePreviewContainer = imagePreviewContainer;
+        }
+
+        private getCaption(): string {
+            if (this.imageElement) {
+                return wemjq(this.imageElement.parentElement).children("figcaption").text();
+            }
+            else {
+                return api.util.StringHelper.EMPTY_STRING;
+            }
         }
 
         private addUploaderAndPreviewControls(imageSelector: FormItem) {
@@ -174,7 +190,7 @@ module api.form.inputtype.text.htmlarea {
 
             imageSelectorContainer.appendChild(this.uploader = this.createImageUploader());
 
-            this.imagePreviewContainer = this.getImagePreviewContainer();
+            this.createImagePreviewContainer();
 
             wemjq(this.imagePreviewContainer.getHTMLElement()).insertAfter(imageSelectorContainer.getHTMLElement());
         }
@@ -267,11 +283,15 @@ module api.form.inputtype.text.htmlarea {
             return uuid;
         }
 
+        private getCaptionFieldValue() {
+            return (<api.dom.InputEl>this.imageCaptionField.getInput()).getValue().trim();
+        }
+
         private createFigureElement(figCaptionId: string) {
             var figure = api.dom.ElementHelper.fromName("figure");
             var figCaption = api.dom.ElementHelper.fromName("figcaption");
             figCaption.setId(figCaptionId);
-            figCaption.setInnerHtml("caption");
+            figCaption.setText(this.getCaptionFieldValue());
 
             figure.appendChildren([(<api.dom.ImgEl>this.image).getEl().getHTMLElement(), figCaption.getHTMLElement()]);
 
@@ -285,6 +305,7 @@ module api.form.inputtype.text.htmlarea {
                 };
 
             if (this.imageElement) {
+                wemjq(this.imageElement.parentElement).children("figcaption").text(this.getCaptionFieldValue());
                 this.imageElement.parentElement.replaceChild((<api.dom.ImgEl>this.image).getEl().getHTMLElement(), this.imageElement);
                 setTimeout(() => {
                     this.getEditor().nodeChanged({selectionChange: true})
