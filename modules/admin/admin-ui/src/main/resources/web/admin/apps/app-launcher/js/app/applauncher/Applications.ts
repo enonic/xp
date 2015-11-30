@@ -6,6 +6,19 @@ module app.launcher {
 
         private static appIndex: {[id:string]:api.app.Application};
 
+        static init(): wemQ.Promise<api.app.Application[]> {
+            return new app.launcher.LauncherApplicationsRequest().
+                sendAndParse().
+                then((applications: api.app.Application[]) => {
+                    Applications.apps = applications;
+                    Applications.appIndex = {};
+                    Applications.apps.forEach((currentApp: api.app.Application) => {
+                        Applications.appIndex[currentApp.getId()] = currentApp;
+                    });
+                    return Applications.apps;
+                });
+        }
+
         static getAllApps(): api.app.Application[] {
             if (!Applications.apps) {
                 Applications.initApps();

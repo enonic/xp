@@ -17,7 +17,16 @@ module app {
         }
 
         start() {
-            var allApplications: api.app.Application[] = app.launcher.Applications.getAllApps();
+            app.launcher.Applications.init().
+                then((applications: api.app.Application[]) => {
+                    this.doStart(applications);
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).finally(() => {
+                }).done();
+        }
+
+        private doStart(allApplications: api.app.Application[]) {
             this.serverEventsListener = new api.app.ServerEventsListener(allApplications);
 
             this.appSelector = new app.launcher.AppSelector(allApplications);
@@ -43,6 +52,7 @@ module app {
 
             this.initialIsAuthenticatedCheck();
         }
+
 
         private initialIsAuthenticatedCheck() {
             new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
