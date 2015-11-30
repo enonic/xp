@@ -16,13 +16,13 @@ module api.app {
 
                 this.applications.forEach((application)=> {
                     var event = new api.content.BatchContentServerEvent(this.aggregator.getEvents(), this.aggregator.getType());
-                    this.aggregator.resetEvents();
 
                     var appWindow = application.getWindow();
                     if (appWindow) {
                         event.fire(appWindow);
                     }
                 });
+                this.aggregator.resetEvents();
             });
         }
 
