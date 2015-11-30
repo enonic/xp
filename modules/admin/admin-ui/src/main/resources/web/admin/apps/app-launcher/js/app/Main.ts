@@ -9,6 +9,7 @@ module app {
         private serverEventsListener: api.app.ServerEventsListener;
         private lostConnectionDetector: app.launcher.LostConnectionDetector;
         private appManager: api.app.AppManager;
+        private applications: app.launcher.Applications;
         private authenticated: boolean = false;
         private connectionLost: boolean = false;
 
@@ -18,7 +19,7 @@ module app {
 
         start() {
             app.launcher.Applications.init().
-                then((applications: api.app.Application[]) => {
+                then((applications: app.launcher.Applications) => {
                     this.doStart(applications);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
@@ -26,20 +27,21 @@ module app {
                 }).done();
         }
 
-        private doStart(allApplications: api.app.Application[]) {
-            this.serverEventsListener = new api.app.ServerEventsListener(allApplications);
+        private doStart(applications: app.launcher.Applications) {
+            this.applications = applications;
+            this.serverEventsListener = new api.app.ServerEventsListener(this.applications.getAllApps());
 
-            this.appSelector = new app.launcher.AppSelector(allApplications);
+            this.appSelector = new app.launcher.AppSelector(applications.getAllApps());
             this.appSelector.onAppSelected((event: app.launcher.AppSelectedEvent) => {
                 this.appLauncher.showApplication(event.getApplication());
             });
 
             this.homeMainContainer = this.createHomeMainContainer();
-            this.appLauncher = new app.launcher.AppLauncher(this.homeMainContainer);
+            this.appLauncher = new app.launcher.AppLauncher(this.homeMainContainer, this.applications);
             this.homeMainContainer.hide();
             api.dom.Body.get().appendChild(this.homeMainContainer);
 
-            var router = new app.launcher.AppRouter(allApplications, this.appLauncher);
+            var router = new app.launcher.AppRouter(this.applications.getAllApps(), this.appLauncher);
 
             this.appManager = api.app.AppManager.instance();
             this.serverEventsListener.onConnectionLost(this.onConnectionLost.bind(this));
@@ -93,7 +95,7 @@ module app {
             this.appLauncher.setAllowedApps([]);
             this.appManager.notifyConnectionRestored();
 
-            app.launcher.Applications.getAllApps().forEach((app: api.app.Application) => {
+            this.applications.getAllApps().forEach((app: api.app.Application) => {
                 app.getAppFrame().remove();
                 app.setOpenTabs(0);
             });
@@ -105,7 +107,7 @@ module app {
             }
             this.authenticated = true;
             this.lostConnectionDetector.setAuthenticated(loginResult.isAuthenticated());
-            var allowedApps = app.launcher.Applications.getAppsByIds(loginResult.getApplications());
+            var allowedApps = this.applications.getAppsByIds(loginResult.getApplications());
             this.appSelector.setAllowedApps(allowedApps);
             this.appLauncher.setAllowedApps(allowedApps);
             new app.home.LogInEvent(loginResult.getUser()).fire();
