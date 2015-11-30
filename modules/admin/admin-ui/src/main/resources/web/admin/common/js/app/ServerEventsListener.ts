@@ -9,19 +9,14 @@ module api.app {
         constructor(applications: api.app.Application[]) {
             this.applications = applications;
             this.serverEventsConnection = new api.app.ServerEventsConnection();
-            this.serverEventsConnection.onServerEvent((event: api.content.ContentServerEvent) => this.onServerEvent(event));
+            this.serverEventsConnection.onServerEvent((event: api.event.Event) => this.onServerEvent(event));
             this.aggregator = new ServerEventAggregator();
 
             this.aggregator.onBatchIsReady(() => {
 
-                this.applications.forEach((application)=> {
-                    var event = new api.content.BatchContentServerEvent(this.aggregator.getEvents(), this.aggregator.getType());
+                var event = new api.content.BatchContentServerEvent(this.aggregator.getEvents(), this.aggregator.getType());
+                this.fireEvent(event);
 
-                    var appWindow = application.getWindow();
-                    if (appWindow) {
-                        event.fire(appWindow);
-                    }
-                });
                 this.aggregator.resetEvents();
             });
         }
@@ -50,9 +45,23 @@ module api.app {
             this.serverEventsConnection.unConnectionRestored(listener);
         }
 
-        private onServerEvent(event: api.content.ContentServerEvent) {
-            this.aggregator.appendEvent(event);
+        private onServerEvent(event: api.event.Event) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(event, api.content.ContentServerEvent)) {
+                this.fireEvent(event)
+            } else {
+                this.aggregator.appendEvent(<api.content.ContentServerEvent>event);
+            }
         }
+
+        private fireEvent(event: api.event.Event) {
+            this.applications.forEach((application)=> {
+                var appWindow = application.getWindow();
+                if (appWindow) {
+                    event.fire(appWindow);
+                }
+            });
+        }
+
 
     }
 
