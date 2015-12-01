@@ -1,5 +1,6 @@
 module api.form.inputtype.text.htmlarea {
 
+    import FormItemBuilder = api.ui.form.FormItemBuilder;
     import FormItem = api.ui.form.FormItem;
     import Validators = api.ui.form.Validators;
     import UploadItem = api.ui.uploader.UploadItem;
@@ -9,10 +10,12 @@ module api.form.inputtype.text.htmlarea {
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
     import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
     import Content = api.content.Content;
+    import Action = api.ui.Action;
 
     export class ImageModalDialog extends ModalDialog {
 
         private imagePreviewContainer: api.dom.DivEl;
+        private imageCaptionField: FormItem;
         private uploader: api.content.ImageUploader;
         private imageElement: HTMLImageElement;
         private contentId: api.content.ContentId;
@@ -22,6 +25,7 @@ module api.form.inputtype.text.htmlarea {
         private image: api.dom.ImgEl;
         private elementContainer: HTMLElement;
         private callback: Function;
+        private imageToolbar: ImageToolbar;
 
         constructor(config: api.form.inputtype.text.HtmlAreaImage, contentId: api.content.ContentId) {
             this.imageElement = <HTMLImageElement>config.element;
@@ -85,6 +89,7 @@ module api.form.inputtype.text.htmlarea {
             imageSelectorComboBox.onOptionDeselected(() => {
                 formItem.removeClass("image-preview");
                 this.removePreview();
+                this.imageToolbar.remove();
                 this.uploader.show();
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
@@ -111,7 +116,6 @@ module api.form.inputtype.text.htmlarea {
         private createImgEl(src: string, alt: string, contentId: string): api.dom.ImgEl {
             var imageEl = new api.dom.ImgEl(src);
             imageEl.getEl().setAttribute("alt", alt);
-            imageEl.getEl().setAttribute("style", "width: 100%;");
             imageEl.getEl().setAttribute("data-src", HtmlArea.imagePrefix + contentId);
 
             return imageEl;
@@ -126,10 +130,30 @@ module api.form.inputtype.text.htmlarea {
                     resolve();
 
             this.image = this.createImgEl(imgUrl, imageContent.getDisplayName(), contentId);
+            if (this.imageElement) {
+                this.image.getHTMLElement().style["text-align"] = this.imageElement.parentElement.style.textAlign;
+
+                var keepSize = this.imageElement.getAttribute("data-src").indexOf("keepSize=true") > 0;
+                if (keepSize) {
+                    var pathAttr = this.imageElement.getAttribute("data-src");
+                    this.image.getEl().setAttribute("data-src", pathAttr + "?keepSize=true");
+                }
+                this.imageToolbar = new ImageToolbar(this.image);
+            }
+            else {
+                this.imageToolbar = new ImageToolbar(this.image);
+                this.image.getHTMLElement().style["text-align"] = "justify";
+            }
+
 
             this.image.onLoaded(() => {
                 this.imagePreviewContainer.removeClass("upload");
+                wemjq(this.imageToolbar.getHTMLElement()).insertBefore(this.imagePreviewContainer.getHTMLElement());
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
+                if (this.getCaptionFieldValue() == "") {
+                    this.imageCaptionField.getEl().scrollIntoView();
+                    this.imageCaptionField.getInput().giveFocus();
+                }
             });
 
             this.hideUploadMasks();
@@ -153,11 +177,12 @@ module api.form.inputtype.text.htmlarea {
             this.setFirstFocusField(imageSelector.getInput());
 
             return [
-                imageSelector
+                imageSelector,
+                this.imageCaptionField = this.createFormItem("caption", "Caption", null, this.getCaption())
             ];
         }
 
-        private getImagePreviewContainer() {
+        private createImagePreviewContainer() {
             var imagePreviewContainer = new api.dom.DivEl("content-item-preview-panel");
 
             this.progress = new api.ui.ProgressBar();
@@ -166,7 +191,16 @@ module api.form.inputtype.text.htmlarea {
             this.error = new api.dom.DivEl("error");
             imagePreviewContainer.appendChild(this.error);
 
-            return imagePreviewContainer;
+            this.imagePreviewContainer = imagePreviewContainer;
+        }
+
+        private getCaption(): string {
+            if (this.imageElement) {
+                return wemjq(this.imageElement.parentElement).children("figcaption").text();
+            }
+            else {
+                return api.util.StringHelper.EMPTY_STRING;
+            }
         }
 
         private addUploaderAndPreviewControls(imageSelector: FormItem) {
@@ -174,7 +208,7 @@ module api.form.inputtype.text.htmlarea {
 
             imageSelectorContainer.appendChild(this.uploader = this.createImageUploader());
 
-            this.imagePreviewContainer = this.getImagePreviewContainer();
+            this.createImagePreviewContainer();
 
             wemjq(this.imagePreviewContainer.getHTMLElement()).insertAfter(imageSelectorContainer.getHTMLElement());
         }
@@ -267,15 +301,28 @@ module api.form.inputtype.text.htmlarea {
             return uuid;
         }
 
+        private getCaptionFieldValue() {
+            return (<api.dom.InputEl>this.imageCaptionField.getInput()).getValue().trim();
+        }
+
         private createFigureElement(figCaptionId: string) {
             var figure = api.dom.ElementHelper.fromName("figure");
             var figCaption = api.dom.ElementHelper.fromName("figcaption");
             figCaption.setId(figCaptionId);
-            figCaption.setInnerHtml("caption");
+            figCaption.setText(this.getCaptionFieldValue());
 
             figure.appendChildren([(<api.dom.ImgEl>this.image).getEl().getHTMLElement(), figCaption.getHTMLElement()]);
 
             return figure;
+        }
+
+        private updateImageParentAlignment(element: HTMLElement, alignment?: string) {
+            if (!alignment) {
+                alignment = this.image.getHTMLElement().style["text-align"];
+            }
+
+            element.style["text-align"] = alignment;
+            element.setAttribute("data-mce-style", "text-align: " + alignment);
         }
 
         private createImageTag(): void {
@@ -285,7 +332,12 @@ module api.form.inputtype.text.htmlarea {
                 };
 
             if (this.imageElement) {
+                this.updateImageParentAlignment(this.imageElement.parentElement);
+                this.changeImageParentAlignmentOnImageAlignmentChange(this.imageElement.parentElement);
+
+                wemjq(this.imageElement.parentElement).children("figcaption").text(this.getCaptionFieldValue());
                 this.imageElement.parentElement.replaceChild((<api.dom.ImgEl>this.image).getEl().getHTMLElement(), this.imageElement);
+
                 setTimeout(() => {
                     this.getEditor().nodeChanged({selectionChange: true})
                 }, 50);
@@ -294,20 +346,168 @@ module api.form.inputtype.text.htmlarea {
                 var figCaptionId = this.generateUUID(),
                     figure = this.createFigureElement(figCaptionId);
 
+                this.updateImageParentAlignment(figure.getHTMLElement());
+                this.changeImageParentAlignmentOnImageAlignmentChange(figure.getHTMLElement());
+
                 if (!isProperContainer() || container.nodeName === "FIGURE") {
                     while (!isProperContainer()) {
                         container = container.parentElement;
                     }
+                }
 
-                    figure.insertAfterEl(new api.dom.ElementHelper(container));
-                    this.getEditor().nodeChanged();
-                }
-                else {
-                    this.getEditor().insertContent(figure.getHTMLElement().outerHTML);
-                }
+                new api.dom.ElementHelper(container).appendChild(figure.getHTMLElement());
+                this.getEditor().nodeChanged();
 
                 this.callback(figCaptionId);
             }
+        }
+
+        private changeImageParentAlignmentOnImageAlignmentChange(parent: HTMLElement) {
+            var observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    var alignment = (<HTMLElement>mutation.target).style["text-align"];
+                    this.updateImageParentAlignment(parent, alignment);
+                });
+            });
+
+            var config = {attributes: true, childList: false, characterData: false, attributeFilter: ["style"]};
+
+            observer.observe((<api.dom.ImgEl>this.image).getEl().getHTMLElement(), config);
+        }
+    }
+
+    export class ImageToolbar extends api.ui.toolbar.Toolbar {
+
+        private image: api.dom.ImgEl;
+
+        private justifyButton: api.ui.button.ActionButton;
+
+        private alignLeftButton: api.ui.button.ActionButton;
+
+        private centerButton: api.ui.button.ActionButton;
+
+        private alignRightButton: api.ui.button.ActionButton;
+
+        private keepOriginalSizeCheckbox: api.ui.Checkbox;
+
+        constructor(image: api.dom.ImgEl) {
+            super("image-toolbar");
+
+            this.image = image;
+
+            super.addElement(this.justifyButton = this.createJustifiedButton());
+            super.addElement(this.alignLeftButton = this.createLeftAlignedButton());
+            super.addElement(this.centerButton = this.createCenteredButton());
+            super.addElement(this.alignRightButton = this.createRightAlignedButton());
+            super.addElement(this.keepOriginalSizeCheckbox = this.createKeepOriginalSizeCheckbox());
+
+            this.initActiveButton();
+        }
+
+        private createJustifiedButton(): api.ui.button.ActionButton {
+            return this.createAlignmentButton("icon-paragraph-justify");
+        }
+
+        private createLeftAlignedButton(): api.ui.button.ActionButton {
+            return this.createAlignmentButton("icon-paragraph-left");
+        }
+
+        private createCenteredButton(): api.ui.button.ActionButton {
+            return this.createAlignmentButton("icon-paragraph-center");
+        }
+
+        private createRightAlignedButton(): api.ui.button.ActionButton {
+            return this.createAlignmentButton("icon-paragraph-right");
+        }
+
+        private createAlignmentButton(iconClass: string): api.ui.button.ActionButton {
+            var action: Action = new Action("");
+
+            action.setIconClass(iconClass);
+
+            var button = new api.ui.button.ActionButton(action);
+
+            action.onExecuted(() => {
+                this.resetActiveButton();
+                button.addClass("active");
+                this.image.getHTMLElement().style["text-align"] = this.getImageAlignment();
+            });
+
+            return button;
+        }
+
+        private createKeepOriginalSizeCheckbox(): api.ui.Checkbox {
+            var keepOriginalSizeCheckbox = new api.ui.Checkbox();
+            keepOriginalSizeCheckbox.setChecked(this.image.getEl().getAttribute("data-src").indexOf("keepSize=true") > 0);
+            keepOriginalSizeCheckbox.addClass('keep-size-check');
+            keepOriginalSizeCheckbox.onValueChanged(()=> {
+                this.keepOriginalSizeCheckbox.isChecked()
+                    ? this.appendKeepSizeParamToImagePath()
+                    : this.removeKeepSizeParamFromImagePath();
+            });
+            keepOriginalSizeCheckbox.setLabel('Keep original size');
+
+            return keepOriginalSizeCheckbox;
+        }
+
+        private appendKeepSizeParamToImagePath() {
+            var pathAttr = this.image.getEl().getAttribute("data-src");
+            this.image.getEl().setAttribute("data-src", pathAttr + "?keepSize=true");
+        }
+
+        private removeKeepSizeParamFromImagePath() {
+            var pathAttr = this.image.getEl().getAttribute("data-src");
+            var paramToRemoveIndex = this.image.getEl().getAttribute("data-src").indexOf("?keepSize=true");
+            this.image.getEl().setAttribute("data-src", pathAttr.substring(0, paramToRemoveIndex));
+        }
+
+        private initActiveButton() {
+            var alignment = this.image.getHTMLElement().style["text-align"];
+
+            switch (alignment) {
+            case 'justify':
+                this.justifyButton.addClass("active");
+                break;
+            case 'left':
+                this.alignLeftButton.addClass("active");
+                break;
+            case 'center':
+                this.centerButton.addClass("active");
+                break;
+            case 'right':
+                this.alignRightButton.addClass("active");
+                break;
+            default:
+                this.justifyButton.addClass("active");
+                break;
+            }
+        }
+
+        private resetActiveButton() {
+            this.justifyButton.removeClass("active");
+            this.alignLeftButton.removeClass("active");
+            this.centerButton.removeClass("active");
+            this.alignRightButton.removeClass("active");
+        }
+
+        private getImageAlignment(): string {
+            if (this.justifyButton.hasClass("active")) {
+                return "justify";
+            }
+
+            if (this.alignLeftButton.hasClass("active")) {
+                return "left";
+            }
+
+            if (this.centerButton.hasClass("active")) {
+                return "center";
+            }
+
+            if (this.alignRightButton.hasClass("active")) {
+                return "right";
+            }
+
+            return "justify";
         }
 
     }
