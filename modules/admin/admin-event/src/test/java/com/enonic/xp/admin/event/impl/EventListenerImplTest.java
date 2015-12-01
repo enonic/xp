@@ -3,11 +3,10 @@ package com.enonic.xp.admin.event.impl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
 
-import com.enonic.xp.app.ApplicationEvent;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.Event2;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
@@ -21,21 +20,10 @@ public class EventListenerImplTest
 
     private WebSocketManager webSocketManager;
 
-    private BundleEvent bundleEvent;
-
-    private Bundle myBundle;
-
     @Before
     public final void setUp()
         throws Exception
     {
-        bundleEvent = Mockito.mock( BundleEvent.class );
-        myBundle = Mockito.mock( Bundle.class );
-
-        Mockito.when( bundleEvent.getType() ).thenReturn( 0x00000001 );
-        Mockito.when( myBundle.getSymbolicName() ).thenReturn( "module" );
-        Mockito.when( bundleEvent.getBundle() ).thenReturn( myBundle );
-
         this.webSocketManager = mock( WebSocketManager.class );
 
         this.eventListener = new EventListenerImpl();
@@ -46,8 +34,12 @@ public class EventListenerImplTest
     public void testEvent()
         throws Exception
     {
-        final ApplicationEvent event = new ApplicationEvent( bundleEvent );
-        eventListener.onEvent( event );
+        final Event2 event2 = Event2.create( "application" ).
+            distributed( false ).
+            value( "applicationKey", "module" ).
+            value( "eventType", BundleEvent.INSTALLED ).
+            build();
+        eventListener.onEvent( event2 );
 
         verify( this.webSocketManager, atLeastOnce() ).sendToAll( anyString() );
     }

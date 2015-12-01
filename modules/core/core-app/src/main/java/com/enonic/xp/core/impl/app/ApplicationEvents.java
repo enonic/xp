@@ -10,7 +10,11 @@ import com.enonic.xp.event.Event2;
 
 public class ApplicationEvents
 {
-    private static final Map<Integer, String> STATE_LOOKUP_TABLE = new HashMap<>();
+    public static final String EVENT_TYPE = "application";
+
+    public static final String APPLICATION_KEY_KEY = "applicationKey";
+
+    public static final String EVENT_TYPE_KEY = "eventType";
 
     public static final String INSTALLED = "INSTALLED";
 
@@ -32,6 +36,8 @@ public class ApplicationEvents
 
     public static final String UNINSTALLED = "UNINSTALLED";
 
+    private static final Map<Integer, String> STATE_LOOKUP_TABLE = new HashMap<>();
+
     static
     {
         STATE_LOOKUP_TABLE.put( BundleEvent.INSTALLED, INSTALLED );
@@ -48,10 +54,10 @@ public class ApplicationEvents
 
     public static Event2 event( BundleEvent bundleEvent )
     {
-        return Event2.create( "application" ).
+        return Event2.create( EVENT_TYPE ).
             distributed( false ).
-            value( "applicationKey", ApplicationKey.from( bundleEvent.getBundle() ) ).
-            value( "eventType", STATE_LOOKUP_TABLE.get( bundleEvent.getType() ) ).
+            value( APPLICATION_KEY_KEY, ApplicationKey.from( bundleEvent.getBundle() ) ).
+            value( EVENT_TYPE_KEY, STATE_LOOKUP_TABLE.get( bundleEvent.getType() ) ).
             build();
     }
 

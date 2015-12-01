@@ -14,7 +14,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.app.ApplicationEvent;
 import com.enonic.xp.event.Event2;
 import com.enonic.xp.json.ObjectMapperHelper;
 
@@ -37,17 +36,6 @@ public class EventJsonSerializerTest
         Mockito.when( bundleEvent.getType() ).thenReturn( 0x00000001 );
         Mockito.when( myBundle.getSymbolicName() ).thenReturn( "myapp" );
         Mockito.when( bundleEvent.getBundle() ).thenReturn( myBundle );
-    }
-
-    @Test
-    public void ApplicationEvent()
-        throws Exception
-    {
-        final ApplicationEvent event = new ApplicationEvent( bundleEvent );
-        final ObjectNode json = this.serializer.toJson( event );
-
-        assertNotNull( json );
-        assertJson( "applicationEvent.json", json );
     }
 
     @Test

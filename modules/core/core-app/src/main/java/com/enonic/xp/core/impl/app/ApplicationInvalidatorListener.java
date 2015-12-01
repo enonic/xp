@@ -9,10 +9,10 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.app.ApplicationEvent;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.Event2;
 import com.enonic.xp.event.EventListener;
 
 @Component(immediate = true)
@@ -29,15 +29,21 @@ public final class ApplicationInvalidatorListener
     @Override
     public void onEvent( final Event event )
     {
-        if ( event instanceof ApplicationEvent )
+        if ( event instanceof Event2 )
         {
-            onEvent( (ApplicationEvent) event );
+            Event2 event2 = (Event2) event;
+            if ( ApplicationEvents.EVENT_TYPE.equals( event2.getType() ) )
+            {
+                onApplicationEvent( event2 );
+            }
         }
     }
 
-    private void onEvent( final ApplicationEvent event )
+    private void onApplicationEvent( final Event2 event2 )
     {
-        invalidate( event.getKey() );
+        final String applicationKey = (String) event2.getValue( ApplicationEvents.APPLICATION_KEY_KEY ).
+            get();
+        invalidate( ApplicationKey.from( applicationKey ) );
     }
 
     private void invalidate( final ApplicationKey key )
