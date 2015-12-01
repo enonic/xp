@@ -6,6 +6,8 @@ module app.launcher {
 
         private homeMainContainer:app.home.HomeMainContainer;
 
+        private applications: app.launcher.Applications;
+
         private adminApplicationFrames:api.dom.DivEl;
 
         private loadMask:api.ui.mask.LoadMask;
@@ -16,8 +18,9 @@ module app.launcher {
 
         private allowedApplications:{[id:string]:api.app.Application};
 
-        constructor(mainContainer:app.home.HomeMainContainer) {
+        constructor(mainContainer:app.home.HomeMainContainer, applications: app.launcher.Applications) {
             this.homeMainContainer = mainContainer;
+            this.applications = applications;
             this.allowedApplications = {};
 
             var returnToAppAction = new api.ui.Action("Return");
@@ -52,7 +55,7 @@ module app.launcher {
                 this.homeMainContainer.disableBranding();
                 this.homeMainContainer.giveFocus();
 
-                Applications.getAllApps().forEach((app:api.app.Application) => {
+                this.applications.getAllApps().forEach((app:api.app.Application) => {
                     if (app != event.getApplication()) {
                         app.hide();
                     }
@@ -89,7 +92,7 @@ module app.launcher {
             if (!this.isAllowedApp(application)) {
 
                 new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
-                    var allowedApps = app.launcher.Applications.getAppsByIds(loginResult.getApplications());
+                    var allowedApps = this.applications.getAppsByIds(loginResult.getApplications());
                     this.setAllowedApps(allowedApps);
 
                     if (loginResult.isAuthenticated() && this.isAllowedApp(application)) {
@@ -114,7 +117,7 @@ module app.launcher {
 
         private doLoadApplication(application:api.app.Application):wemQ.Promise<boolean> {
             var deferred = wemQ.defer<boolean>();
-            Applications.getAllApps().forEach((app:api.app.Application) => {
+            this.applications.getAllApps().forEach((app:api.app.Application) => {
                 if (app == application) {
                     app.show();
                 } else {

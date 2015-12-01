@@ -2,46 +2,50 @@ module app.launcher {
 
     export class Applications {
 
-        private static apps: api.app.Application[];
+        private static _instance: Applications = null;
 
-        private static appIndex: {[id:string]:api.app.Application};
+        private apps: api.app.Application[];
 
-        static getAllApps(): api.app.Application[] {
-            if (!Applications.apps) {
-                Applications.initApps();
-            }
-            return Applications.apps;
-        }
+        private appIndex: {[id:string]:api.app.Application};
 
-        static initApps() {
-            Applications.apps = Applications.createApps();
-            Applications.appIndex = {};
-            Applications.apps.forEach((currentApp: api.app.Application) => {
-                Applications.appIndex[currentApp.getId()] = currentApp;
+        constructor(applications: api.app.Application[]) {
+            this.apps = applications;
+            this.appIndex = {};
+            this.apps.forEach((currentApp: api.app.Application) => {
+                this.appIndex[currentApp.getId()] = currentApp;
             });
         }
 
-        static getAppById(id: string): api.app.Application {
-            return Applications.appIndex[id];
+        static init(): wemQ.Promise<Applications> {
+            return new app.launcher.LauncherApplicationsRequest().
+                sendAndParse().
+                then((applications: api.app.Application[]) => {
+                    Applications._instance = new Applications(applications);
+                    return Applications._instance;
+                });
         }
 
-        static getAppsByIds(ids: string[]): api.app.Application[] {
+        static instance(): Applications {
+            return Applications._instance;
+        }
+
+        getAllApps(): api.app.Application[] {
+            return this.apps;
+        }
+
+        getAppById(id: string): api.app.Application {
+            return this.appIndex[id];
+        }
+
+        getAppsByIds(ids: string[]): api.app.Application[] {
             var apps: api.app.Application[] = [];
             ids.forEach((appId: string) => {
-                var app = Applications.getAppById(appId);
+                var app = this.getAppById(appId);
                 if (app) {
                     apps.push(app);
                 }
             });
             return apps;
-        }
-
-        private static createApps(): api.app.Application[] {
-            return [
-                new api.app.Application('content-manager', 'Content Manager', 'CM', 'database'),
-                new api.app.Application('user-manager', 'Users', 'UM', 'users'),
-                new api.app.Application('applications', 'Applications', 'AM', 'puzzle')
-            ];
         }
     }
 }
