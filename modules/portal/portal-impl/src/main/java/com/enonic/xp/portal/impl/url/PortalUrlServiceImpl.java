@@ -136,7 +136,7 @@ public final class PortalUrlServiceImpl
                 }
                 else if ( IMAGE_TYPE.equals( type ) )
                 {
-                    final boolean keepSize = KEEP_SIZE_TRUE.equals( urlParams );
+                    final boolean keepSize = KEEP_SIZE_TRUE.equalsIgnoreCase( urlParams );
                     final String imageScale = keepSize ? IMAGE_NO_SCALING : IMAGE_SCALE;
 
                     ImageUrlParams imageUrlParams = new ImageUrlParams().
