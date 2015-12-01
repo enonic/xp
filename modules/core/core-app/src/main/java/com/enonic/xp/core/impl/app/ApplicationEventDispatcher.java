@@ -8,7 +8,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.app.ApplicationEvent;
 import com.enonic.xp.event.EventPublisher;
 
 @Component(immediate = true)
@@ -62,7 +61,7 @@ public final class ApplicationEventDispatcher
 
     private void publishApplicationChangeEvent( final BundleEvent event )
     {
-        this.eventPublisher.publish( new ApplicationEvent( event ) );
+        this.eventPublisher.publish( ApplicationEvents.event( event ) );
     }
 
     @Reference
