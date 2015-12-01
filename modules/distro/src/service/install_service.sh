@@ -46,9 +46,9 @@ checkDistro()
 doCreateUser() 
 {
 
-	if [ ${LINUX_DISTRO} = "Ubuntu" ]; then
+	if [ "$LINUX_DISTRO" = "Ubuntu" ]; then
 		sudo adduser --home ${USER_HOME} --gecos "" --UID ${USER_ID} --disabled-password ${USER}
-	elif [ ${LINUX_DISTRO} = "RedHat" ]; then
+	elif [ "$LINUX_DISTRO" = "RedHat" ]; then
 		sudo adduser -d ${USER_HOME} -m -r -u ${USER_ID} ${USER}
 	else
 		sudo adduser --home ${USER_HOME} --gecos "" --UID ${USER_ID} --disabled-password ${USER}

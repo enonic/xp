@@ -76,10 +76,10 @@ status() {
 
     STATUS=$(ps -p $(cat ${PIDFILE}) -o comm= )
 
-	if [ ${STATUS} = "x" ]; then
+	if [ "$STATUS" = "x" ]; then
         echo "Installation is not running"
         exit 1
-	elif [ ${STATUS} = "java" ]; then
+	elif [ "$STATUS" = "java" ]; then
 	    echo "Installations is running with PID: $(cat ${PIDFILE})"
 	    exit 0
 	else
