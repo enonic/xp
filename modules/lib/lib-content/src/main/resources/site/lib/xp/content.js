@@ -465,7 +465,7 @@ exports.setPermissions = function (params) {
  * Gets permissions on a content.
  *
  * @example
- * var updatedContent = contentLib.setPermissions({
+ * var updatedContent = contentLib.getPermissions({
  *   key: '03c6ae7b-7f48-45f5-973d-1f03606ab928'
  * });
  *
