@@ -10,7 +10,13 @@
 
 # Define LSB log_* functions.
 # Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
-. /lib/lsb/init-functions
+
+if [ -f /lib/lsb/init-functions ]; then
+    . /lib/lsb/init-functions
+else
+    echo "Missing required library '/lib/lsb/init-functions'"
+    exit 1
+fi
 
 # Set according to environment
 ###############################
@@ -31,6 +37,7 @@ SCRIPTNAME="/etc/init.d/$NAME"
 DESC="Enonic XP"
 NAME="xp"
 SCRIPT="service.sh"
+
 
 do_start()
 {
@@ -60,13 +67,25 @@ do_stop()
     fi
 }
 
-status()
-{
-    if [ ! -e $PIDFILE ]; then
-         log_failure_msg "$NAME is not running."
-         return 1
-       fi
-       status_of_proc -p $PIDFILE "" $NAME && exit 0 || exit $?
+status() {
+
+    if [ ! -f ${PIDFILE} ]; then
+        echo "Installation is not running"
+        exit 1
+    fi
+
+    STATUS=$(ps -p $(cat ${PIDFILE}) -o comm= )
+
+	if [ ${STATUS} = "x" ]; then
+        echo "Installation is not running"
+        exit 1
+	elif [ ${STATUS} = "java" ]; then
+	    echo "Installations is running with PID: $(cat ${PIDFILE})"
+	    exit 0
+	else
+	    echo "Hmmm... not shure, got this output: $STATUS"
+	    exit 255
+	fi
 }
 
 case "$1" in
