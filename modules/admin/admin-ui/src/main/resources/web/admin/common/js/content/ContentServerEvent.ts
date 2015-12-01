@@ -1,5 +1,19 @@
 module api.content {
 
+    export interface NodeEventJson extends api.app.EventJson {
+        data: NodeEventDataJson;
+    }
+
+    export interface NodeEventDataJson {
+        nodes: Event2NodeJson[];
+    }
+
+    export interface Event2NodeJson {
+        id: string;
+        path: string;
+        newPath: string;
+    }
+
     export class ContentServerEvent extends api.event.Event {
 
         private changes: ContentServerChange[];
@@ -27,8 +41,8 @@ module api.content {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
 
-        static fromJson(json: api.app.Event2Json): ContentServerEvent {
-            var changes = ContentServerChange.fromJson(json);
+        static fromJson(nodeEventJson: NodeEventJson): ContentServerEvent {
+            var changes = ContentServerChange.fromJson(nodeEventJson);
             return new ContentServerEvent(changes);
         }
     }

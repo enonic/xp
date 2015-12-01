@@ -37,18 +37,18 @@ module api.content {
                    ">";
         }
 
-        static fromJson(event2Json: api.app.Event2Json): ContentServerChange[] {
+        static fromJson(nodeEventJson: NodeEventJson): ContentServerChange[] {
             var contentEventType;
 
-            var contentPaths = event2Json.data.nodes.
-            filter((node) => node.path.indexOf("/content") === 0).
-            map((node) => api.content.ContentPath.fromString(node.path.substr("/content".length)));
+            var contentPaths = nodeEventJson.data.nodes.
+                filter((node) => node.path.indexOf("/content") === 0).
+                map((node) => api.content.ContentPath.fromString(node.path.substr("/content".length)));
 
             if (contentPaths.length === 0) {
                 return [];
             }
 
-            switch (event2Json.type) {
+            switch (nodeEventJson.type) {
             case 'node.pushed':
                 contentEventType = ContentServerChangeType.PUBLISH;
                 break;
@@ -68,16 +68,16 @@ module api.content {
                 contentEventType = ContentServerChangeType.PENDING;
                 break;
             case 'node.moved':
-                var newContentPaths = event2Json.data.nodes.
-                filter((node) => node.newPath.indexOf("/content") === 0).
-                map((node) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
+                var newContentPaths = nodeEventJson.data.nodes.
+                    filter((node) => node.newPath.indexOf("/content") === 0).
+                    map((node) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
                 var deletedContentServerChange = new ContentServerChange(contentPaths, ContentServerChangeType.DELETE);
                 var createdContentServerChange = new ContentServerChange(newContentPaths, ContentServerChangeType.CREATE);
                 return [deletedContentServerChange, createdContentServerChange];
             case 'node.renamed':
-                var newContentPaths = event2Json.data.nodes.
-                filter((node) => node.newPath.indexOf("/content") === 0).
-                map((node) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
+                var newContentPaths = nodeEventJson.data.nodes.
+                    filter((node) => node.newPath.indexOf("/content") === 0).
+                    map((node) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
                 var renamedContentServerChange = new ContentServerChange(contentPaths, ContentServerChangeType.RENAME);
                 var deletedContentServerChange = new ContentServerChange(contentPaths, ContentServerChangeType.DELETE);
                 var createdContentServerChange = new ContentServerChange(newContentPaths, ContentServerChangeType.CREATE);
