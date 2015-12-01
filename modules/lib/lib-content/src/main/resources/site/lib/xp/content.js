@@ -460,3 +460,24 @@ exports.setPermissions = function (params) {
     }
     return __.toNativeObject(bean.execute());
 };
+
+/**
+ * Gets permissions on a content.
+ *
+ * @example
+ * var updatedContent = contentLib.setPermissions({
+ *   key: '03c6ae7b-7f48-45f5-973d-1f03606ab928'
+ * });
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Path or ID of the content.
+ * @returns {object} Content permissions.
+ */
+exports.getPermissions = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.GetPermissionsHandler');
+
+    if (params.key) {
+        bean.key = params.key;
+    }
+    return __.toNativeObject(bean.execute());
+};
