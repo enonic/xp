@@ -5,10 +5,10 @@ module api.content {
     }
 
     export interface NodeEventDataJson {
-        nodes: Event2NodeJson[];
+        nodes: NodeEventNodeJson[];
     }
 
-    export interface Event2NodeJson {
+    export interface NodeEventNodeJson {
         id: string;
         path: string;
         newPath: string;

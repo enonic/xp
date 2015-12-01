@@ -42,7 +42,7 @@ module api.content {
 
             var contentPaths = nodeEventJson.data.nodes.
                 filter((node) => node.path.indexOf("/content") === 0).
-                map((node) => api.content.ContentPath.fromString(node.path.substr("/content".length)));
+                map((node: NodeEventNodeJson) => api.content.ContentPath.fromString(node.path.substr("/content".length)));
 
             if (contentPaths.length === 0) {
                 return [];
@@ -70,14 +70,14 @@ module api.content {
             case 'node.moved':
                 var newContentPaths = nodeEventJson.data.nodes.
                     filter((node) => node.newPath.indexOf("/content") === 0).
-                    map((node) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
+                    map((node: NodeEventNodeJson) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
                 var deletedContentServerChange = new ContentServerChange(contentPaths, ContentServerChangeType.DELETE);
                 var createdContentServerChange = new ContentServerChange(newContentPaths, ContentServerChangeType.CREATE);
                 return [deletedContentServerChange, createdContentServerChange];
             case 'node.renamed':
                 var newContentPaths = nodeEventJson.data.nodes.
                     filter((node) => node.newPath.indexOf("/content") === 0).
-                    map((node) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
+                    map((node: NodeEventNodeJson) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
                 var renamedContentServerChange = new ContentServerChange(contentPaths, ContentServerChangeType.RENAME);
                 var deletedContentServerChange = new ContentServerChange(contentPaths, ContentServerChangeType.DELETE);
                 var createdContentServerChange = new ContentServerChange(newContentPaths, ContentServerChangeType.CREATE);
