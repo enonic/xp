@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content.page;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,7 +116,6 @@ public abstract class AbstractDescriptorServiceTest
     }
 
     protected final void mockFindFiles( final Application application, final String rootPath, final String... paths )
-        throws MalformedURLException
     {
         final List<ResourceKey> resourceKeyList = new ArrayList<>();
         for ( final String path : paths )

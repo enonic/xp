@@ -1,23 +1,21 @@
 package com.enonic.xp.core.impl.schema.content;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
-import org.osgi.service.component.ComponentContext;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeRegistry;
@@ -25,15 +23,15 @@ import com.enonic.xp.schema.content.ContentTypes;
 
 @Component(immediate = true)
 public final class ContentTypeRegistryImpl
-    implements ContentTypeRegistry, BundleListener
+    implements ContentTypeRegistry, ApplicationInvalidator
 {
     private final BuiltinContentTypes builtInTypes;
 
     private ApplicationService applicationService;
 
-    private BundleContext context;
+    private ResourceService resourceService;
 
-    private final Map<ApplicationKey, ContentTypes> map;
+    private final Map<ContentTypeName, ContentType> map;
 
     public ContentTypeRegistryImpl()
     {
@@ -41,55 +39,57 @@ public final class ContentTypeRegistryImpl
         this.builtInTypes = new BuiltinContentTypes();
     }
 
-    @Activate
-    public void start( final ComponentContext context )
+    private boolean isSystem( final ContentTypeName name )
     {
-        this.context = context.getBundleContext();
-        this.context.addBundleListener( this );
+        return isSystem( name.getApplicationKey() );
     }
 
-    @Deactivate
-    public void stop()
+    private boolean isSystem( final ApplicationKey key )
     {
-        this.context.removeBundleListener( this );
+        return ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( key );
     }
 
     @Override
     public ContentType get( final ContentTypeName name )
     {
-        return getByApplication( name.getApplicationKey() ).getContentType( name );
+        return this.map.computeIfAbsent( name, this::load );
+    }
+
+    private ContentType load( final ContentTypeName name )
+    {
+        if ( isSystem( name ) )
+        {
+            return this.builtInTypes.getAll().getContentType( name );
+        }
+
+        return new ContentTypeLoader( this.resourceService ).load( name );
     }
 
     @Override
-    public ContentTypes getByApplication( final ApplicationKey applicationKey )
+    public ContentTypes getByApplication( final ApplicationKey key )
     {
-        return this.map.computeIfAbsent( applicationKey, this::loadByApplication );
+        if ( isSystem( key ) )
+        {
+            return this.builtInTypes.getByApplication( key );
+        }
+
+        final List<ContentType> list = Lists.newArrayList();
+        for ( final ContentTypeName name : findNames( key ) )
+        {
+            final ContentType type = get( name );
+            if ( type != null )
+            {
+                list.add( type );
+            }
+
+        }
+
+        return ContentTypes.from( list );
     }
 
-    private ContentTypes loadByApplication( final ApplicationKey applicationKey )
+    private List<ContentTypeName> findNames( final ApplicationKey key )
     {
-        ContentTypes contentTypes = null;
-
-        if ( ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( applicationKey ) )
-        {
-            contentTypes = this.builtInTypes.getByApplication( applicationKey );
-        }
-        else
-        {
-            final Application application = this.applicationService.getApplication( applicationKey );
-            if ( application != null && application.isStarted() )
-            {
-                final ContentTypeLoader mixinLoader = new ContentTypeLoader( application.getBundle() );
-                contentTypes = mixinLoader.load();
-            }
-        }
-
-        if ( contentTypes == null )
-        {
-            contentTypes = ContentTypes.empty();
-        }
-
-        return contentTypes;
+        return new ContentTypeLoader( this.resourceService ).findNames( key );
     }
 
     @Override
@@ -98,14 +98,14 @@ public final class ContentTypeRegistryImpl
         final Set<ContentType> contentTypeList = Sets.newLinkedHashSet();
 
         //Gets builtin content types
-        for ( ApplicationKey systemReservedApplicationKey : ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS )
+        for ( final ApplicationKey systemReservedApplicationKey : ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS )
         {
             final ContentTypes contentTypes = getByApplication( systemReservedApplicationKey );
             contentTypeList.addAll( contentTypes.getList() );
         }
 
         //Gets application content types
-        for ( Application application : this.applicationService.getAllApplications() )
+        for ( final Application application : this.applicationService.getAllApplications() )
         {
             final ContentTypes contentTypes = getByApplication( application.getKey() );
             contentTypeList.addAll( contentTypes.getList() );
@@ -120,12 +120,15 @@ public final class ContentTypeRegistryImpl
         this.applicationService = applicationService;
     }
 
-    @Override
-    public void bundleChanged( final BundleEvent event )
+    @Reference
+    public void setResourceService( final ResourceService resourceService )
     {
-        if ( BundleEvent.STARTED == event.getType() || BundleEvent.STOPPED == event.getType() )
-        {
-            this.map.remove( ApplicationKey.from( event.getBundle() ) );
-        }
+        this.resourceService = resourceService;
+    }
+
+    @Override
+    public void invalidate( final ApplicationKey key )
+    {
+        this.map.clear();
     }
 }

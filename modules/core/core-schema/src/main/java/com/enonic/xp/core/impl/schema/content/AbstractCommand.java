@@ -23,7 +23,7 @@ abstract class AbstractCommand
         return doTransformInlineMixins( contentTypes );
     }
 
-    private final ContentTypes doTransformInlineMixins( final ContentTypes contentTypes )
+    private ContentTypes doTransformInlineMixins( final ContentTypes contentTypes )
     {
         final ContentTypes.Builder transformedContentTypes = ContentTypes.create();
         for ( final ContentType contentType : contentTypes )
