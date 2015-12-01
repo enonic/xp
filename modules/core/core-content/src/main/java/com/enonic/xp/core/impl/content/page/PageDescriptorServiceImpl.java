@@ -3,8 +3,6 @@ package com.enonic.xp.core.impl.content.page;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -31,8 +29,6 @@ public final class PageDescriptorServiceImpl
     implements PageDescriptorService, ApplicationInvalidator
 {
     private final static String PATH = "/site/pages";
-
-    private final static Pattern PATTERN = Pattern.compile( PATH + "/([^/]+)/([^/]+)\\.xml" );
 
     private MixinService mixinService;
 
@@ -71,13 +67,13 @@ public final class PageDescriptorServiceImpl
     @Override
     public PageDescriptors getByApplications( final ApplicationKeys keys )
     {
-        final List<PageDescriptor> pageDescriptors = new ArrayList<>();
+        final List<PageDescriptor> list = new ArrayList<>();
         for ( final ApplicationKey key : keys )
         {
-            pageDescriptors.addAll( getByApplication( key ).getList() );
+            list.addAll( getByApplication( key ).getList() );
         }
 
-        return PageDescriptors.from( pageDescriptors );
+        return PageDescriptors.from( list );
     }
 
     @Reference
@@ -110,21 +106,7 @@ public final class PageDescriptorServiceImpl
 
     private List<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
     {
-        final List<DescriptorKey> keys = Lists.newArrayList();
-        for ( final ResourceKey resource : this.resourceService.findFiles( key, PATH, "xml", true ) )
-        {
-            final Matcher matcher = PATTERN.matcher( resource.getPath() );
-            if ( matcher.matches() )
-            {
-                final String name = matcher.group( 2 );
-                if ( name.equals( matcher.group( 1 ) ) )
-                {
-                    keys.add( DescriptorKey.from( key, name ) );
-                }
-            }
-        }
-
-        return keys;
+        return new DescriptorKeyLocator( this.resourceService, PATH ).findKeys( key );
     }
 
     protected final PageDescriptor loadDescriptor( final DescriptorKey key )

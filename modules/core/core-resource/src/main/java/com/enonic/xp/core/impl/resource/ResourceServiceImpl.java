@@ -1,9 +1,12 @@
 package com.enonic.xp.core.impl.resource;
 
+import java.util.function.Function;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
@@ -16,15 +19,18 @@ import com.enonic.xp.server.RunMode;
 
 @Component(immediate = true)
 public final class ResourceServiceImpl
-    implements ResourceService
+    implements ResourceService, ApplicationInvalidator
 {
     private ApplicationService applicationService;
 
     protected ResourceLoader resourceLoader;
 
+    private final ResourceProcessorCache processorCache;
+
     public ResourceServiceImpl()
     {
         this.resourceLoader = createResourceLoader();
+        this.processorCache = new ResourceProcessorCache( RunMode.get() != RunMode.DEV );
     }
 
     private ResourceLoader createResourceLoader()
@@ -86,9 +92,21 @@ public final class ResourceServiceImpl
         }
     }
 
+    @Override
+    public <T> T processResource( final Class<T> type, final ResourceKey key, final Function<Resource, T> processor )
+    {
+        return this.processorCache.process( type, key, resourceKey -> processor.apply( getResource( resourceKey ) ) );
+    }
+
     @Reference
     public void setApplicationService( final ApplicationService applicationService )
     {
         this.applicationService = applicationService;
+    }
+
+    @Override
+    public void invalidate( final ApplicationKey key )
+    {
+        this.processorCache.invalidate();
     }
 }
