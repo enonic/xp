@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.xp.convert.Converters;
 
 public final class Event2
-    implements Event
 {
     private final String type;
 

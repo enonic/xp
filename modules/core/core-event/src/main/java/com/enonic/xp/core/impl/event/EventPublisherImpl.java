@@ -11,7 +11,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Queues;
 
-import com.enonic.xp.event.Event;
+import com.enonic.xp.event.Event2;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.event.EventPublisher;
 
@@ -19,7 +19,7 @@ import com.enonic.xp.event.EventPublisher;
 public final class EventPublisherImpl
     implements EventPublisher
 {
-    private final Queue<Event> queue;
+    private final Queue<Event2> queue;
 
     private final EventMulticaster multicaster;
 
@@ -33,7 +33,7 @@ public final class EventPublisherImpl
     }
 
     @Override
-    public void publish( final Event event )
+    public void publish( final Event2 event )
     {
         if ( event != null )
         {
@@ -46,7 +46,7 @@ public final class EventPublisherImpl
     {
         while ( true )
         {
-            final Event event = this.queue.poll();
+            final Event2 event = this.queue.poll();
             if ( event == null )
             {
                 return;
@@ -56,7 +56,7 @@ public final class EventPublisherImpl
         }
     }
 
-    private void dispatchEvent( final Event event )
+    private void dispatchEvent( final Event2 event )
     {
         this.executor.execute( () -> this.multicaster.publish( event ) );
     }

@@ -10,28 +10,21 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.xp.event.Event;
 import com.enonic.xp.event.Event2;
 
 public final class EventJsonSerializer
 {
-    public ObjectNode toJson( final Event event )
+    public ObjectNode toJson( final Event2 event )
     {
-        if ( event instanceof Event2 )
+        if ( event != null )
         {
-            return toJson( (Event2) event );
+            final ObjectNode json = JsonNodeFactory.instance.objectNode();
+            json.put( "type", event.getType() );
+            json.put( "timestamp", event.getTimestamp() );
+            json.set( "data", toJsonNode( event.getData() ) );
+            return json;
         }
-
         return null;
-    }
-
-    private ObjectNode toJson( final Event2 event )
-    {
-        final ObjectNode json = JsonNodeFactory.instance.objectNode();
-        json.put( "type", event.getType() );
-        json.put( "timestamp", event.getTimestamp() );
-        json.set( "data", toJsonNode( event.getData() ) );
-        return json;
     }
 
     private JsonNode toJsonNode( Object value )

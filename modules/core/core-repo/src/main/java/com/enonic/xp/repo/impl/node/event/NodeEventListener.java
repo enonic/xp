@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.event.Event;
 import com.enonic.xp.event.Event2;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -34,17 +33,18 @@ public class NodeEventListener
     }
 
     @Override
-    public void onEvent( final Event event )
+    public void onEvent( final Event2 event )
     {
-        if ( event instanceof Event2 )
+        if ( event != null )
         {
-            if ( ( (Event2) event ).isLocalOrigin() )
+            if ( event.isLocalOrigin() )
             {
                 return;
             }
 
-            doHandleEvent( (Event2) event );
+            doHandleEvent( event );
         }
+
     }
 
     private void doHandleEvent( final Event2 event )

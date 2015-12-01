@@ -10,7 +10,6 @@ import org.osgi.framework.BundleEvent;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.event.Event;
 import com.enonic.xp.event.Event2;
 
 import static org.junit.Assert.*;
@@ -20,7 +19,7 @@ public class ApplicationEventDispatcherTest
 {
     private ApplicationEventDispatcher dispatcher;
 
-    private List<Event> events;
+    private List<Event2> events;
 
     @Override
     protected void initialize()
@@ -48,7 +47,7 @@ public class ApplicationEventDispatcherTest
 
     private void assertEvent( final int index, final String type, final ApplicationKey key )
     {
-        final Event2 event = (Event2) this.events.get( index );
+        final Event2 event = this.events.get( index );
         assertEquals( type, event.getValue( ApplicationEvents.EVENT_TYPE_KEY ).get() );
         assertEquals( key.toString(), event.getValue( ApplicationEvents.APPLICATION_KEY_KEY ).get() );
     }

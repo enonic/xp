@@ -9,7 +9,6 @@ import org.elasticsearch.transport.TransportService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.event.Event;
 import com.enonic.xp.event.Event2;
 import com.enonic.xp.event.EventListener;
 
@@ -24,16 +23,12 @@ public final class ClusterEventSender
     private TransportService transportService;
 
     @Override
-    public void onEvent( final Event event )
+    public void onEvent( final Event2 event )
     {
-        if ( event instanceof Event2 )
+        if ( event != null && event.isDistributed() )
         {
-            Event2 event2 = (Event2) event;
-            if ( event2.isDistributed() )
-            {
-                final TransportRequest transportRequest = new SendEventRequest( event2 );
-                send( transportRequest );
-            }
+            final TransportRequest transportRequest = new SendEventRequest( event );
+            send( transportRequest );
         }
     }
 

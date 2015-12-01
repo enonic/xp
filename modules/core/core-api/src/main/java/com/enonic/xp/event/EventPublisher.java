@@ -5,5 +5,5 @@ import com.google.common.annotations.Beta;
 @Beta
 public interface EventPublisher
 {
-    void publish( Event event );
+    void publish( Event2 event );
 }

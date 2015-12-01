@@ -10,5 +10,5 @@ public interface EventListener
         return Integer.MAX_VALUE;
     }
 
-    void onEvent( Event event );
+    void onEvent( Event2 event );
 }
