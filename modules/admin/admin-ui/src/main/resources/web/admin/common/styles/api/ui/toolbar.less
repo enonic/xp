@@ -60,7 +60,7 @@
       border-top: 6px solid @admin-dark-gray;
     }
 
-    .dropdown {
+    .@{_COMMON_PREFIX}dropdown {
       display: none;
       position: absolute;
       margin: -1px 0px 0px 8px;
@@ -86,10 +86,10 @@
       }
     }
 
-    &:hover .dropdown,
-    &:focus .dropdown,
-    .dropdown:hover,
-    .dropdown:focus {
+    &:hover .@{_COMMON_PREFIX}dropdown,
+    &:focus .@{_COMMON_PREFIX}dropdown,
+    .@{_COMMON_PREFIX}dropdown:hover,
+    .@{_COMMON_PREFIX}dropdown:focus {
       display: block;
     }
   }

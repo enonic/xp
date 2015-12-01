@@ -13,7 +13,7 @@ module api.ui.toolbar {
             this.span.setHtml("More");
             this.appendChild(this.span);
 
-            this.dropdown = new api.dom.DivEl('dropdown');
+            this.dropdown = new api.dom.DivEl("dropdown", api.StyleHelper.COMMON_PREFIX);
             this.appendChild(this.dropdown);
         }
 

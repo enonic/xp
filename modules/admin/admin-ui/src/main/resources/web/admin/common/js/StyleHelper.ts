@@ -2,13 +2,25 @@ module api {
 
     export class StyleHelper {
 
-        static COMMON_PREFIX = "xp-admin-";
+        static COMMON_PREFIX = "xp-admin-common-";
+
+        static ADMIN_PREFIX = "xp-admin-";
 
         static PAGE_EDITOR_PREFIX = "xp-page-editor-";
 
         static ICON_PREFIX = "icon-";
 
-        static getCls(cls: string, prefix: string = clsPrefix): string {
+        static currentPrefix = "";
+
+        static setCurrentPrefix(prefix: string) {
+            api.StyleHelper.currentPrefix = prefix;
+        }
+
+        static getCurrentPrefix(): string {
+            return api.StyleHelper.currentPrefix;
+        }
+
+        static getCls(cls: string, prefix: string = api.StyleHelper.currentPrefix): string {
             if (!prefix) {
                 return cls;
             }
@@ -19,10 +31,6 @@ module api {
                 }
             });
             return clsArr.join(" ");
-        }
-
-        static getCommonCls(cls: string): string {
-            return api.StyleHelper.getCls(cls, StyleHelper.COMMON_PREFIX);
         }
 
         static getIconCls(iconCls: string): string {
