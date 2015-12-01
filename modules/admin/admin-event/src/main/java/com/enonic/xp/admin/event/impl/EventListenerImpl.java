@@ -6,7 +6,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.admin.event.impl.json.EventJsonSerializer;
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 
 @Component(immediate = true)
@@ -23,7 +23,7 @@ public final class EventListenerImpl
     }
 
     @Override
-    public void onEvent( final Event2 event )
+    public void onEvent( final Event event )
     {
         final ObjectNode json = this.serializer.toJson( event );
         if ( json == null )

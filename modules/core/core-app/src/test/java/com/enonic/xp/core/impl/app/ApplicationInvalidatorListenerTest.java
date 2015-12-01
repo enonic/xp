@@ -8,7 +8,7 @@ import org.osgi.framework.BundleEvent;
 
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 
 public class ApplicationInvalidatorListenerTest
 {
@@ -20,7 +20,7 @@ public class ApplicationInvalidatorListenerTest
 
     private ApplicationKey appKey;
 
-    private Event2 event;
+    private Event event;
 
     @Before
     public void setup()

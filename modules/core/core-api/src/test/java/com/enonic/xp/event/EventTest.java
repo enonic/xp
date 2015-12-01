@@ -6,12 +6,12 @@ import com.enonic.xp.content.ContentId;
 
 import static org.junit.Assert.*;
 
-public class Event2Test
+public class EventTest
 {
     @Test
     public void testBuilder()
     {
-        final Event2 event = this.createTestEvent();
+        final Event event = this.createTestEvent();
 
         assertEquals( "type", event.getType() );
         assertEquals( true, event.isDistributed() );
@@ -25,7 +25,7 @@ public class Event2Test
     @Test
     public void testToString()
     {
-        final Event2 event = this.createTestEvent();
+        final Event event = this.createTestEvent();
 
         final String result = event.toString();
 
@@ -37,8 +37,8 @@ public class Event2Test
     @Test
     public void testClone()
     {
-        final Event2 event = this.createTestEvent();
-        final Event2 clonedEvent = Event2.create( event ).build();
+        final Event event = this.createTestEvent();
+        final Event clonedEvent = Event.create( event ).build();
 
         assertEquals( event.getType(), clonedEvent.getType() );
         assertEquals( event.isDistributed(), clonedEvent.isDistributed() );
@@ -49,7 +49,7 @@ public class Event2Test
     @Test
     public void testDataValues()
     {
-        final Event2 testEvent = Event2.create( "type" ).
+        final Event testEvent = Event.create( "type" ).
             distributed( true ).
             value( "int1", 1 ).
             value( "long1", 10L ).
@@ -70,7 +70,7 @@ public class Event2Test
     @Test
     public void testGetValueAs()
     {
-        final Event2 testEvent = Event2.create( "type" ).
+        final Event testEvent = Event.create( "type" ).
             value( "int1", 1 ).
             value( "long1", 10L ).
             value( "obj1", ContentId.from( "testId" ) ).
@@ -85,7 +85,7 @@ public class Event2Test
     @Test
     public void testGetNullValues()
     {
-        final Event2 testEvent = Event2.create( "type" ).
+        final Event testEvent = Event.create( "type" ).
             value( "key1", "val1" ).
             build();
 
@@ -96,7 +96,7 @@ public class Event2Test
     @Test
     public void testSubTypes()
     {
-        final Event2 testEvent = Event2.create( "type1.type2.type3.type4" ).build();
+        final Event testEvent = Event.create( "type1.type2.type3.type4" ).build();
 
         assertTrue( testEvent.isSubType( "type1" ) );
         assertTrue( testEvent.isSubType( "type1.type2" ) );
@@ -112,9 +112,9 @@ public class Event2Test
         assertFalse( testEvent.isType( "type1.type2.type3" ) );
     }
 
-    private Event2 createTestEvent()
+    private Event createTestEvent()
     {
-        return Event2.create( "type" ).
+        return Event.create( "type" ).
             distributed( true ).
             value( "key1", "val1" ).
             value( "key2", "val2" ).

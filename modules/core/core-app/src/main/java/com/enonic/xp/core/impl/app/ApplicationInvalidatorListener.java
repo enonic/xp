@@ -11,7 +11,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 
 @Component(immediate = true)
@@ -26,7 +26,7 @@ public final class ApplicationInvalidatorListener
     }
 
     @Override
-    public void onEvent( final Event2 event )
+    public void onEvent( final Event event )
     {
         if ( event != null && ApplicationEvents.EVENT_TYPE.equals( event.getType() ) )
         {
@@ -34,7 +34,7 @@ public final class ApplicationInvalidatorListener
         }
     }
 
-    private void onApplicationEvent( final Event2 event )
+    private void onApplicationEvent( final Event event )
     {
         final String applicationKey = (String) event.getValue( ApplicationEvents.APPLICATION_KEY_KEY ).
             get();

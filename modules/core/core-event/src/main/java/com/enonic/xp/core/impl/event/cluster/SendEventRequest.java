@@ -8,25 +8,25 @@ import org.elasticsearch.common.io.stream.StreamOutput;
 import org.elasticsearch.common.io.stream.Streamable;
 import org.elasticsearch.transport.TransportRequest;
 
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 
 public final class SendEventRequest
     extends TransportRequest
     implements Streamable
 {
-    private Event2 event;
+    private Event event;
 
     public SendEventRequest()
     {
         this( null );
     }
 
-    public SendEventRequest( final Event2 event )
+    public SendEventRequest( final Event event )
     {
         this.event = event;
     }
 
-    public Event2 getEvent()
+    public Event getEvent()
     {
         return this.event;
     }
@@ -40,7 +40,7 @@ public final class SendEventRequest
         final boolean distributed = streamInput.readBoolean();
         final Map<String, Object> data = streamInput.readMap();
 
-        final Event2.Builder eventBuilder = Event2.create( type ).
+        final Event.Builder eventBuilder = Event.create( type ).
             timestamp( timestamp ).
             distributed( distributed );
         for ( Map.Entry<String, Object> dataEntry : data.entrySet() )

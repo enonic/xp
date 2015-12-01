@@ -10,11 +10,11 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 
 public final class EventJsonSerializer
 {
-    public ObjectNode toJson( final Event2 event )
+    public ObjectNode toJson( final Event event )
     {
         if ( event != null )
         {

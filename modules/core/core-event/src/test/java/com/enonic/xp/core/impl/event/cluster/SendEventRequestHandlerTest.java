@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
 
 public class SendEventRequestHandlerTest
@@ -51,7 +51,7 @@ public class SendEventRequestHandlerTest
     {
 
         //Creates an event
-        Event2 event = Event2.create( "eventType" ).
+        Event event = Event.create( "eventType" ).
             timestamp( 123l ).
             distributed( true ).
             value( "key1", "value1" ).
@@ -71,9 +71,9 @@ public class SendEventRequestHandlerTest
         this.sendEventRequestHandler.messageReceived( sendEventRequestIn, Mockito.mock( TransportChannel.class ) );
 
         //Checks that the event was correctly published
-        ArgumentCaptor<Event2> argumentCaptor = ArgumentCaptor.forClass( Event2.class );
+        ArgumentCaptor<Event> argumentCaptor = ArgumentCaptor.forClass( Event.class );
         Mockito.verify( this.eventPublisher ).publish( argumentCaptor.capture() );
-        final Event2 eventForwarded = argumentCaptor.getValue();
+        final Event eventForwarded = argumentCaptor.getValue();
         Assert.assertEquals( eventForwarded.getType(), event.getType() );
         Assert.assertEquals( eventForwarded.getTimestamp(), event.getTimestamp() );
         Assert.assertEquals( eventForwarded.isDistributed(), false );

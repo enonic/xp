@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.convert.Converters;
 
-public final class Event2
+public final class Event
 {
     private final String type;
 
@@ -22,7 +22,7 @@ public final class Event2
 
     private final ImmutableMap<String, Object> data;
 
-    private Event2( final Builder builder )
+    private Event( final Builder builder )
     {
         this.type = builder.type;
         this.timestamp = builder.timestamp;
@@ -111,21 +111,21 @@ public final class Event2
             return false;
         }
 
-        final Event2 event2 = (Event2) o;
+        final Event event = (Event) o;
 
-        if ( timestamp != event2.timestamp )
+        if ( timestamp != event.timestamp )
         {
             return false;
         }
-        if ( distributed != event2.distributed )
+        if ( distributed != event.distributed )
         {
             return false;
         }
-        if ( !type.equals( event2.type ) )
+        if ( !type.equals( event.type ) )
         {
             return false;
         }
-        return data.equals( event2.data );
+        return data.equals( event.data );
     }
 
     @Override
@@ -143,7 +143,7 @@ public final class Event2
         return new Builder( type );
     }
 
-    public static Builder create( final Event2 event )
+    public static Builder create( final Event event )
     {
         return new Builder( event );
     }
@@ -166,7 +166,7 @@ public final class Event2
             this.timestamp = System.currentTimeMillis();
         }
 
-        private Builder( final Event2 event )
+        private Builder( final Event event )
         {
             this( event.type );
             this.distributed = event.distributed;
@@ -221,10 +221,10 @@ public final class Event2
         }
 
 
-        public Event2 build()
+        public Event build()
         {
             this.validate();
-            return new Event2( this );
+            return new Event( this );
         }
     }
 }

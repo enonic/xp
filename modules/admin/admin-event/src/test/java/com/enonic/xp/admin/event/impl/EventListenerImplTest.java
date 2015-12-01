@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.BundleEvent;
 
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
@@ -31,7 +31,7 @@ public class EventListenerImplTest
     public void testEvent()
         throws Exception
     {
-        final Event2 event = Event2.create( "application" ).
+        final Event event = Event.create( "application" ).
             distributed( false ).
             value( "applicationKey", "module" ).
             value( "eventType", BundleEvent.INSTALLED ).

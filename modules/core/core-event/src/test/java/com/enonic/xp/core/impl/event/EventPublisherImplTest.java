@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 
 import static org.mockito.Mockito.mock;
@@ -24,7 +24,7 @@ public class EventPublisherImplTest
     @Test
     public void testPublish_noListener()
     {
-        final Event2 event = Event2.create( "test" ).build();
+        final Event event = Event.create( "test" ).build();
         this.publisher.publish( event );
     }
 
@@ -35,7 +35,7 @@ public class EventPublisherImplTest
         final EventListener listener = mock( EventListener.class );
         this.publisher.addListener( listener );
 
-        final Event2 event = Event2.create( "test" ).build();
+        final Event event = Event.create( "test" ).build();
         for ( int i = 0; i < 100; i++ )
         {
             this.publisher.publish( event );

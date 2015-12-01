@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 
 import static org.junit.Assert.*;
@@ -26,7 +26,7 @@ public class EventMulticasterTest
     @Test
     public void testEventWithoutListeners()
     {
-        final Event2 event = Event2.create( "test" ).build();
+        final Event event = Event.create( "test" ).build();
         this.multicaster.publish( event );
     }
 
@@ -36,7 +36,7 @@ public class EventMulticasterTest
         final EventListener listener = mock( EventListener.class );
         this.multicaster.add( listener );
 
-        final Event2 event = Event2.create( "test" ).build();
+        final Event event = Event.create( "test" ).build();
         this.multicaster.publish( event );
 
         this.multicaster.remove( listener );
@@ -57,7 +57,7 @@ public class EventMulticasterTest
         final EventListener listener3 = mock( EventListener.class );
         this.multicaster.add( listener3 );
 
-        final Event2 event = Event2.create( "test" ).build();
+        final Event event = Event.create( "test" ).build();
         this.multicaster.publish( event );
 
         verify( listener1, times( 1 ) ).onEvent( event );
@@ -79,7 +79,7 @@ public class EventMulticasterTest
 
         doThrow( new RuntimeException( "Error" ) ).when( listener2 ).onEvent( Mockito.any() );
 
-        final Event2 event = Event2.create( "test" ).build();
+        final Event event = Event.create( "test" ).build();
         this.multicaster.publish( event );
 
         verify( listener1, times( 1 ) ).onEvent( event );

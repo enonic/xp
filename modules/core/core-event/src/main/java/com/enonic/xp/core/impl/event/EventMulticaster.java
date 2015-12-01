@@ -6,7 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 
 final class EventMulticaster
@@ -36,7 +36,7 @@ final class EventMulticaster
         Collections.sort( this.listeners, ( o1, o2 ) -> o1.getOrder() - o2.getOrder() );
     }
 
-    public void publish( final Event2 event )
+    public void publish( final Event event )
     {
         for ( final EventListener eventListener : this.listeners )
         {
@@ -44,7 +44,7 @@ final class EventMulticaster
         }
     }
 
-    private void publish( final EventListener listener, final Event2 event )
+    private void publish( final EventListener listener, final Event event )
     {
         try
         {

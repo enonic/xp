@@ -6,7 +6,7 @@ import java.util.Map;
 import org.osgi.framework.BundleEvent;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 
 public class ApplicationEvents
 {
@@ -52,9 +52,9 @@ public class ApplicationEvents
         STATE_LOOKUP_TABLE.put( BundleEvent.UNINSTALLED, UNINSTALLED );
     }
 
-    public static Event2 event( BundleEvent bundleEvent )
+    public static Event event( BundleEvent bundleEvent )
     {
-        return Event2.create( EVENT_TYPE ).
+        return Event.create( EVENT_TYPE ).
             distributed( false ).
             value( APPLICATION_KEY_KEY, ApplicationKey.from( bundleEvent.getBundle() ) ).
             value( EVENT_TYPE_KEY, STATE_LOOKUP_TABLE.get( bundleEvent.getType() ) ).

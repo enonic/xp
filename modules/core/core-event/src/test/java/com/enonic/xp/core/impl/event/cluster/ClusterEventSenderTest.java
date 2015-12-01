@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 
 
 public class ClusterEventSenderTest
@@ -58,10 +58,10 @@ public class ClusterEventSenderTest
     }
 
     @Test
-    public void onEvent2()
+    public void onEvent()
     {
-        final Event2 event2 = Event2.create( "aaa" ).distributed( true ).build();
-        this.clusterEventSender.onEvent( event2 );
+        final Event event = Event.create( "aaa" ).distributed( true ).build();
+        this.clusterEventSender.onEvent( event );
 
         Mockito.verify( this.transportService, Mockito.times( 0 ) ).
             sendRequest( Mockito.eq( this.localNode ), Mockito.eq( "xp/event" ), Mockito.any( TransportRequest.class ),
@@ -81,8 +81,8 @@ public class ClusterEventSenderTest
     @Test
     public void onNonDistributableEvent()
     {
-        final Event2 event2 = Event2.create( "aaa" ).build();
-        this.clusterEventSender.onEvent( event2 );
+        final Event event = Event.create( "aaa" ).build();
+        this.clusterEventSender.onEvent( event );
 
         Mockito.verify( this.transportService, Mockito.times( 0 ) ).
             sendRequest( Mockito.any( DiscoveryNode.class ), Mockito.anyString(), Mockito.any( TransportRequest.class ),

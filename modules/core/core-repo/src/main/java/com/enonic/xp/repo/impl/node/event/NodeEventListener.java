@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
@@ -33,7 +33,7 @@ public class NodeEventListener
     }
 
     @Override
-    public void onEvent( final Event2 event )
+    public void onEvent( final Event event )
     {
         if ( event != null )
         {
@@ -47,7 +47,7 @@ public class NodeEventListener
 
     }
 
-    private void doHandleEvent( final Event2 event )
+    private void doHandleEvent( final Event event )
     {
         final String type = event.getType();
 
@@ -71,7 +71,7 @@ public class NodeEventListener
         }
     }
 
-    private void handleEventType( final Event2 event, final NodeEventHandler nodeEventHandler )
+    private void handleEventType( final Event event, final NodeEventHandler nodeEventHandler )
     {
         try
         {
