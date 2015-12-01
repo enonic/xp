@@ -38,7 +38,18 @@ function checkRequired(params, name) {
  *   body: 'Welcome to Enonic XP!' + '\r\n\r\n' + '- The Dev Team',
  *   headers: {
  *     'Disposition-Notification-To': 'me@enonic.com'
- *   }
+ *   },
+ *   attachments: [
+ *      {
+ *          fileName: 'logo.png',
+ *          mimeType: 'image/png',
+ *          data: imageStream
+ *      },
+ *      {
+ *          fileName: 'image.pdf',
+ *          data: uploadStream
+ *      }
+ *   ]
  * });
  *
  * var sendResultHtml = mail.send({
@@ -59,6 +70,10 @@ function checkRequired(params, name) {
  * @param {string} message.body The text content of the message.
  * @param {string} [message.contentType] Content type of the message body.
  * @param {object} [message.headers] Custom headers in the form of name-value pairs.
+ * @param {object[]} [message.attachments] Attachments to include in the email.
+ * @param {string} message.attachments.fileName Attachment file name.
+ * @param {*} message.attachments.data Attachment stream.
+ * @param {string} [message.attachments.mimeType] Attachment content type. If not specified will be inferred from the file extension.
  *
  * @returns {boolean} True if the message was sent successfully, false otherwise.
  */
@@ -78,6 +93,7 @@ exports.send = function (message) {
     bean.body = __.nullOrValue(message.body);
     bean.contentType = __.nullOrValue(message.contentType);
     bean.headers = __.nullOrValue(message.headers);
+    bean.attachments = __.nullOrValue(message.attachments);
 
     return bean.send();
 
