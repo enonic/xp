@@ -7,17 +7,12 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptors;
-import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceKeys;
 
 final class GetPageDescriptorsByApplicationsCommand
     extends AbstractGetPageDescriptorCommand<GetPageDescriptorsByApplicationsCommand>
 {
-    private final static String PATH = "/site/pages";
-
     private ApplicationKeys applicationKeys;
 
     private ApplicationService applicationService;
@@ -45,21 +40,9 @@ final class GetPageDescriptorsByApplicationsCommand
         final List<PageDescriptor> pageDescriptors = new ArrayList<>();
         for ( final Application application : applications )
         {
-            final ResourceKeys resourceKeys = this.resourceService.findFolders( application.getKey(), PATH );
-
-            for ( final ResourceKey resourceKey : resourceKeys )
-            {
-                final String descriptorName = resourceKey.getName();
-                final DescriptorKey key = DescriptorKey.from( application.getKey(), descriptorName );
-                final PageDescriptor pageDescriptor = getDescriptor( key );
-                if ( pageDescriptor != null )
-                {
-                    pageDescriptors.add( pageDescriptor );
-                }
-            }
+            pageDescriptors.addAll( getDescriptorsFromApplication( application ).getList() );
         }
 
         return PageDescriptors.from( pageDescriptors );
     }
-
 }
