@@ -22,18 +22,18 @@ public final class PartDescriptors
         return new PartDescriptors( list );
     }
 
-    public static PartDescriptors from( final PartDescriptor... pageDescriptors )
+    public static PartDescriptors from( final PartDescriptor... descriptors )
     {
-        return new PartDescriptors( ImmutableList.copyOf( pageDescriptors ) );
+        return new PartDescriptors( ImmutableList.copyOf( descriptors ) );
     }
 
-    public static PartDescriptors from( final Iterable<? extends PartDescriptor> pageDescriptors )
+    public static PartDescriptors from( final Iterable<? extends PartDescriptor> descriptors )
     {
-        return new PartDescriptors( ImmutableList.copyOf( pageDescriptors ) );
+        return new PartDescriptors( ImmutableList.copyOf( descriptors ) );
     }
 
-    public static PartDescriptors from( final Collection<? extends PartDescriptor> pageDescriptors )
+    public static PartDescriptors from( final Collection<? extends PartDescriptor> descriptors )
     {
-        return new PartDescriptors( ImmutableList.copyOf( pageDescriptors ) );
+        return new PartDescriptors( ImmutableList.copyOf( descriptors ) );
     }
 }

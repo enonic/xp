@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.resource;
 
-import java.util.function.Function;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -90,12 +88,6 @@ public final class ResourceServiceImpl
         {
             return null;
         }
-    }
-
-    @Override
-    public <T> T processResource( final Class<T> type, final ResourceKey key, final Function<Resource, T> processor )
-    {
-        return this.processorCache.process( type, key, resourceKey -> processor.apply( getResource( resourceKey ) ) );
     }
 
     @Reference

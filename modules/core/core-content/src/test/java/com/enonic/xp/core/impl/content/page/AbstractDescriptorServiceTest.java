@@ -116,20 +116,6 @@ public abstract class AbstractDescriptorServiceTest
         return applications;
     }
 
-    protected final void mockResources( final Application application, final String rootPath, final String... paths )
-        throws MalformedURLException
-    {
-        List<ResourceKey> resourceKeyList = new ArrayList<ResourceKey>();
-        for ( final String path : paths )
-        {
-            final ResourceKey resourceKey = ResourceKey.from( application.getKey(), path );
-            resourceKeyList.add( resourceKey );
-        }
-        ResourceKeys resourceKeys = ResourceKeys.from( resourceKeyList );
-
-        Mockito.when( this.resourceService.findFolders( application.getKey(), rootPath ) ).thenReturn( resourceKeys );
-    }
-
     protected final void mockFindFiles( final Application application, final String rootPath, final String... paths )
         throws MalformedURLException
     {
