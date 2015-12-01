@@ -50,6 +50,18 @@ public final class ResourceServiceImpl
     }
 
     @Override
+    public ResourceKeys findFiles( final ApplicationKey key, final String path, final String ext, final boolean recursive )
+    {
+        final Application app = findApplication( key );
+        if ( app == null )
+        {
+            return ResourceKeys.empty();
+        }
+
+        return this.resourceLoader.findFiles( app, path, ext, recursive );
+    }
+
+    @Override
     public ResourceKeys findFolders( final ApplicationKey key, final String path )
     {
         final Application app = findApplication( key );

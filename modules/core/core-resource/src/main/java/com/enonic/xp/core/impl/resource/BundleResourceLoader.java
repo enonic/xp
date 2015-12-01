@@ -27,6 +27,25 @@ final class BundleResourceLoader
     }
 
     @Override
+    public ResourceKeys findFiles( final Application app, final String path, final String ext, final boolean recursive )
+    {
+        final Bundle bundle = app.getBundle();
+        final Enumeration<URL> entries = bundle.findEntries( path, "*." + ext, recursive );
+
+        if ( entries != null )
+        {
+            final List<ResourceKey> resourceKeyList = Collections.list( entries ).
+                stream().
+                map( resourceUrl -> ResourceKey.from( app.getKey(), resourceUrl.getPath() ) ).
+                collect( Collectors.toList() );
+
+            return ResourceKeys.from( resourceKeyList );
+        }
+
+        return ResourceKeys.empty();
+    }
+
+    @Override
     public ResourceKeys findFolders( final Application app, final String path )
     {
         final Bundle bundle = app.getBundle();

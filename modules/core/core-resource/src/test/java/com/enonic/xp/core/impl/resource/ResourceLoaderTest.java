@@ -60,4 +60,12 @@ public abstract class ResourceLoaderTest
         assertNotNull( keys );
         assertTrue( keys.isEmpty() );
     }
+
+    @Test
+    public void findFiles_notFound()
+    {
+        final ResourceKeys keys = this.loader.findFiles( this.app, "/a", "xml", true );
+        assertNotNull( keys );
+        assertTrue( keys.isEmpty() );
+    }
 }

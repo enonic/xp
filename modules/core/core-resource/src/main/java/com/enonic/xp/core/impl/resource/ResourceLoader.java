@@ -9,5 +9,7 @@ public interface ResourceLoader
 {
     Resource getResource( Application app, ResourceKey key );
 
+    ResourceKeys findFiles( Application app, String path, String ext, boolean recursive );
+
     ResourceKeys findFolders( Application app, String path );
 }
