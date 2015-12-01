@@ -16,7 +16,7 @@ module api.liveedit {
 
         constructor(pageView: PageView) {
             super();
-            this.addClass("page-placeholder");
+            this.addClassEx("page-placeholder");
             this.pageView = pageView;
 
             this.controllerDropdown = new PageDescriptorDropdown(pageView.liveEditModel);

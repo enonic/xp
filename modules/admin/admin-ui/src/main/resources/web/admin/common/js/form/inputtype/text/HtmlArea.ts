@@ -144,7 +144,7 @@ module api.form.inputtype.text {
                         textAreaWrapper.removeClass(focusedEditorCls);
                     });
                     editor.on('keydown', (e) => {
-                        if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
+                        if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {  // Cmd-S or Ctrl-S
                             e.preventDefault();
 
                             this.setPropertyValue(id, property);
@@ -161,7 +161,31 @@ module api.form.inputtype.text {
                                 charCode: e.charCode
                             });
                         }
+
+                        if (e.keyCode == 46) { // DELETE
+                            var selectedNode = editor.selection.getRng().startContainer;
+                            if (/^(FIGURE)$/.test(selectedNode.nodeName)) {
+                                editor.execCommand('mceRemoveNode', false, selectedNode);
+                                editor.focus();
+                            }
+                        }
                     });
+
+                    var dragParentElement;
+                    editor.on('dragstart', (e) => {
+                        dragParentElement = e.target.parentElement || e.target.parentNode;
+                    });
+
+                    editor.on('drop', (e) => {
+                        if (dragParentElement) {
+                            // prevent browser from handling the drop
+                            e.preventDefault();
+
+                            e.target.appendChild(dragParentElement);
+                            dragParentElement = undefined;
+                        }
+                    });
+
                 },
                 init_instance_callback: (editor) => {
                     this.setEditorContent(id, property);
@@ -281,7 +305,8 @@ module api.form.inputtype.text {
         private getToolbarOffsetTop(delta: number = 0): number {
             var toolbar = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar"),
                 stickyToolbarHeight = toolbar.outerHeight(true),
-                stickyToolbarOffset = toolbar.offset().top;
+                offset = toolbar.offset(),
+                stickyToolbarOffset = offset ? offset.top : 0;
 
             return stickyToolbarOffset + stickyToolbarHeight + delta;
         }

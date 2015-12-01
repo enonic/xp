@@ -2,6 +2,8 @@ package com.enonic.xp.tools.gradle;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.dm.gradle.plugins.bundle.BundleExtension;
@@ -9,6 +11,8 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ModuleVersionIdentifier;
 import org.gradle.api.artifacts.ResolvedArtifact;
+
+import com.google.common.base.Joiner;
 
 final class BundleConfigurator
 {
@@ -66,6 +70,8 @@ final class BundleConfigurator
         {
             instruction( entry.getKey(), entry.getValue() );
         }
+
+        addDevSourcePaths( application.getDevSourcePaths() );
     }
 
     private void instruction( final String name, final Object value )
@@ -123,6 +129,15 @@ final class BundleConfigurator
     private void includeWebJars()
     {
         final File webjarsDir = new File( this.project.getBuildDir(), "webjars/META-INF/resources/webjars" );
-        instruction( "Include-Resource", "/site/assets=" + webjarsDir.getAbsolutePath() );
+        if ( webjarsDir.exists() )
+        {
+            instruction( "Include-Resource", "/site/assets=" + webjarsDir.getAbsolutePath() );
+        }
+    }
+
+    private void addDevSourcePaths( final List<File> paths )
+    {
+        final Iterator<String> it = paths.stream().map( File::getAbsolutePath ).iterator();
+        instruction( "X-Source-Paths", Joiner.on( ',' ).join( it ) );
     }
 }

@@ -146,7 +146,7 @@ module api.liveedit {
                 props = newElementBuilder;
             }
             super(props);
-            this.addClass("item-view");
+            this.addClassEx("item-view");
 
             this.setDraggable(true);
 
@@ -695,7 +695,7 @@ module api.liveedit {
         }
 
         getIconClass() {
-            return api.liveedit.ItemViewIconClassResolver.resolve(this);
+            return api.liveedit.ItemViewIconClassResolver.resolveByView(this);
         }
 
         showLoadingSpinner() {
@@ -811,14 +811,14 @@ module api.liveedit {
         }
 
         getInsertActions(): api.ui.Action[] {
-            var actions = [this.createInsertSubAction("image", "Image", "live-edit-font-icon-image icon"),
-                this.createInsertSubAction("part", "Part", "live-edit-font-icon-part icon")];
+            var actions = [this.createInsertSubAction("Image"),
+                this.createInsertSubAction("Part")];
 
             if (!this.getRegionView().hasParentLayoutComponentView()) {
-                actions.push(this.createInsertSubAction("layout", "Layout", "live-edit-font-icon-layout icon"));
+                actions.push(this.createInsertSubAction("Layout"));
             }
 
-            actions.push(this.createInsertSubAction("text", "Text", "live-edit-font-icon-text icon"));
+            actions.push(this.createInsertSubAction("Text"));
 
             return actions;
         }
@@ -847,13 +847,13 @@ module api.liveedit {
             return action;
         }
 
-        protected createInsertSubAction(typeAsString: string, label: string, cls: string): api.ui.Action {
-            var action = new api.ui.Action(label).onExecuted(() => {
-                var componentView = this.createComponentView(typeAsString);
+        private createInsertSubAction(type: string): api.ui.Action {
+            var action = new api.ui.Action(type).onExecuted(() => {
+                var componentView = this.createComponentView(type.toLowerCase());
                 this.addComponentView(<ComponentView<Component>>componentView, this.getNewItemIndex(), true);
             });
 
-            action.setIconClass(cls);
+            action.setIconClass(api.StyleHelper.getCommonIconCls(type.toLowerCase()));
 
             return action;
         }

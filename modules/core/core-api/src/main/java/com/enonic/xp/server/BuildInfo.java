@@ -1,15 +1,36 @@
 package com.enonic.xp.server;
 
+import java.util.Properties;
+
 import com.google.common.annotations.Beta;
 
 @Beta
-public interface BuildInfo
+public final class BuildInfo
 {
-    String getHash();
+    private final Properties props;
 
-    String getShortHash();
+    public BuildInfo( final Properties props )
+    {
+        this.props = props;
+    }
 
-    String getTimestamp();
+    public String getHash()
+    {
+        return this.props.getProperty( "xp.build.hash" );
+    }
 
-    String getBranch();
+    public String getShortHash()
+    {
+        return this.props.getProperty( "xp.build.shortHash" );
+    }
+
+    public String getTimestamp()
+    {
+        return this.props.getProperty( "xp.build.timestamp" );
+    }
+
+    public String getBranch()
+    {
+        return this.props.getProperty( "xp.build.branch" );
+    }
 }

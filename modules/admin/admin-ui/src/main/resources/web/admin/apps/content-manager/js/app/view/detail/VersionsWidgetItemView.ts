@@ -12,7 +12,7 @@ module app.view.detail {
         public static debug = false;
 
         constructor() {
-            super("content-item-versions-panel version-history");
+            super("version-widget-item-view");
         }
 
         public layout(): wemQ.Promise<any> {

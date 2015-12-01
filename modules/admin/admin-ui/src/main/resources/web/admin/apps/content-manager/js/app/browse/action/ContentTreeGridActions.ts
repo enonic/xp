@@ -142,24 +142,28 @@ module app.browse.action {
                         var hasCreatePermission = true;
                         var hasDeletePermission = true;
                         var hasPublishPermission = true;
-                        var hasParentCreatePermission = true;
 
                         var parallelPromises: wemQ.Promise<any>[] = [];
-                        var nestedParallelPromises: wemQ.Promise<any>[] = [];
+
+                        if (contentSummaries.length == 1) { // Unnecessary requests for multiple selection
+
+                            var contentSummary = contentSummaries[0];
+
+                            this.checkIsChildrenAllowedByPermissions(contentSummary).then((result: boolean) => {
+                                contentTypesAllowChildren = result;
+                            });
+
+                            this.checkIsDuplicateAllowedByPermissions(contentSummary, loginResult).then((result: boolean) => {
+                                if (!result) {
+                                    this.DUPLICATE_CONTENT.setEnabled(false);
+                                }
+                            });
+                        }
 
                         for (var i = 0; i < contentSummaries.length; i++) {
 
                             var contentSummary = contentSummaries[i];
 
-                            if (contentSummaries.length == 1) { // Unnecessary request for multiple selection
-                                parallelPromises.push(
-                                    new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).
-                                        sendAndParse().
-                                        then((contentType: api.schema.content.ContentType) => {
-                                            contentTypesAllowChildren =
-                                                contentTypesAllowChildren && (contentType && contentType.isAllowChildContent());
-                                        }))
-                            }
                             parallelPromises.push(
                                 new api.content.GetContentPermissionsByIdRequest(contentSummary.getContentId()).
                                     sendAndParse().
@@ -176,34 +180,9 @@ module app.browse.action {
                                                                PermissionHelper.hasPermission(api.security.acl.Permission.PUBLISH,
                                                                    loginResult,
                                                                    accessControlList);
-                                    }))
+                                    }));
                             if (contentSummaries.length == 1) { // Unnecessary request for multiple selection
-                                if (contentSummary.hasParent()) {
-                                    parallelPromises.push(
-                                        new api.content.GetContentByPathRequest(contentSummary.getPath().getParentPath()).
-                                            sendAndParse().
-                                            then((parent: api.content.Content) => {
-                                                nestedParallelPromises.push(
-                                                    new api.content.GetContentPermissionsByIdRequest(parent.getContentId()).
-                                                        sendAndParse().
-                                                        then((accessControlList: AccessControlList) => {
-                                                            hasParentCreatePermission = hasParentCreatePermission &&
-                                                                                        PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
-                                                                                            loginResult,
-                                                                                            accessControlList);
-                                                        }))
-                                            }))
-                                } else {
-                                    parallelPromises.push(
-                                        new api.content.GetContentRootPermissionsRequest().
-                                            sendAndParse().
-                                            then((accessControlList: AccessControlList) => {
-                                                hasParentCreatePermission = hasParentCreatePermission &&
-                                                                            PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
-                                                                                loginResult,
-                                                                                accessControlList);
-                                            }))
-                                }
+
                             }
                         }
 
@@ -219,18 +198,51 @@ module app.browse.action {
                             if (!hasPublishPermission) {
                                 this.PUBLISH_CONTENT.setEnabled(false);
                             }
-                            wemQ.all(nestedParallelPromises).spread(() => {
-                                if (!hasParentCreatePermission) {
-                                    this.DUPLICATE_CONTENT.setEnabled(false);
-                                }
-                                return wemQ(null);
-                            }).done();
                             return wemQ(null);
                         }).done();
                     }
 
 
                 });
+        }
+
+        private checkIsChildrenAllowedByPermissions(contentSummary: ContentSummary): wemQ.Promise<Boolean> {
+            var deferred = wemQ.defer<boolean>();
+
+            new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).
+                sendAndParse().
+                then((contentType: api.schema.content.ContentType) => {
+                    return deferred.resolve(contentType && contentType.isAllowChildContent());
+                });
+
+            return deferred.promise;
+        }
+
+        private checkIsDuplicateAllowedByPermissions(contentSummary: ContentSummary,
+                                                     loginResult: api.security.auth.LoginResult): wemQ.Promise<Boolean> {
+            var deferred = wemQ.defer<boolean>();
+
+            if (contentSummary.hasParent()) {
+                new api.content.GetContentByPathRequest(contentSummary.getPath().getParentPath()).
+                    sendAndParse().
+                    then((parent: api.content.Content) => {
+
+                        deferred.resolve(PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
+                            loginResult,
+                            parent.getPermissions()));
+                    })
+            } else {
+                new api.content.GetContentRootPermissionsRequest().
+                    sendAndParse().
+                    then((accessControlList: AccessControlList) => {
+
+                        deferred.resolve(PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
+                            loginResult,
+                            accessControlList));
+                    })
+            }
+
+            return deferred.promise;
         }
 
         private anyEditable(contentSummaries: api.content.ContentSummary[]): boolean {

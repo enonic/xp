@@ -76,7 +76,7 @@ module app.browse {
                 setId("modifiedTime").
                 setField("contentSummary.modifiedTime").
                 setCssClass("modified").
-                setMinWidth(90).
+                setMinWidth(135).
                 setMaxWidth(135).
                 setFormatter(DateTimeFormatter.format).
                 build();
@@ -94,7 +94,7 @@ module app.browse {
                     prependClasses("content-tree-grid")
             );
 
-            let updateColumns = api.util.AppHelper.debounce((item: api.ui.responsive.ResponsiveItem) => {
+            let updateColumns = (item: api.ui.responsive.ResponsiveItem) => {
                 if (item.isRangeSizeChanged()) {
 
                     if (item.isInRangeOrSmaller(ResponsiveRanges._240_360)) {
@@ -115,8 +115,7 @@ module app.browse {
                 } else {
                     this.getGrid().resizeCanvas();
                 }
-
-            }, 100, true);
+            };
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 if (this.isInRenderingView()) {
@@ -466,11 +465,12 @@ module app.browse {
                     }
                 } else {
                     for (var j = 0; j < all.length; j++) {
-                        var path = (all[j].getData() && all[j].getData().getContentSummary())
-                            ? all[j].getData().getContentSummary().getPath()
+                        var treeNode = all[j],
+                            path = (treeNode.getData() && treeNode.getData().getContentSummary())
+                                ? treeNode.getData().getContentSummary().getPath()
                             : null;
                         if (path && path.equals(node.getPath())) {
-                            node.getNodes().push(all[j]);
+                            node.getNodes().push(treeNode);
                         }
                     }
                 }
@@ -481,7 +481,6 @@ module app.browse {
 
             return result;
         }
-
 
         xAppendContentNode(relationship: TreeNodeParentOfContent,
                            update: boolean = true): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>> {

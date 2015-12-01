@@ -575,24 +575,39 @@ module api.ui.treegrid {
             }
         }
 
+        refreshNodeById(dataId: string) {
+            var root = this.root.getCurrentRoot(),
+                node = root.findNode(dataId);
+
+            if (node) {
+                this.refreshNode(node);
+            }
+        }
+
         selectAll() {
-            this.grid.selectAll();
+            var rows = [];
+            for (var i = 0; i < this.gridData.getLength(); i++) {
+                if (!api.util.StringHelper.isEmpty(this.gridData.getItem(i).getDataId())) {
+                    rows.push(i);
+                }
+            }
+            this.grid.setSelectedRows(rows);
         }
 
         deselectAll() {
             this.grid.clearSelection();
         }
 
-        deselectNode(dataId: string) {
+        deselectNodes(dataIds: string[]) {
             var oldSelected = this.grid.getSelectedRows(),
                 newSelected = [];
             for (var i = 0; i < oldSelected.length; i++) {
-                if (dataId !== this.gridData.getItem(oldSelected[i]).getDataId()) {
+                if (dataIds.indexOf(this.gridData.getItem(oldSelected[i]).getDataId()) < 0) {
                     newSelected.push(oldSelected[i]);
                 }
             }
 
-            this.root.removeSelection(dataId);
+            this.root.removeSelections(dataIds);
 
             if (oldSelected.length !== newSelected.length) {
                 this.grid.setSelectedRows(newSelected);
@@ -790,7 +805,7 @@ module api.ui.treegrid {
                 }
             }
 
-            this.root.removeSelection(dataId);
+            this.root.removeSelections([dataId]);
         }
 
         /**

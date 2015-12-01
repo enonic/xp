@@ -1,0 +1,6 @@
+dependencies {
+    provided project( ':script:script-api' )
+    compile 'com.squareup.okhttp:okhttp:2.5.0'
+    testCompile project( ':tools:testing' )
+    testCompile 'com.squareup.okhttp:mockwebserver:2.5.0'
+}

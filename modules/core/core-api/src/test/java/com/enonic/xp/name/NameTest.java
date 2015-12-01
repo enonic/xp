@@ -55,6 +55,13 @@ public class NameTest
         create( "test åæø" );
     }
 
+    @Test
+    public void valid_spanish_chars()
+        throws Exception
+    {
+        create( "test ÑñçÇàèìòùáéíóú" );
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void linebreak()
         throws Exception
@@ -128,9 +135,8 @@ public class NameTest
     public void additional_allowed_is_valid()
         throws Exception
     {
-        create( "^:;#$%&()," );
+        create( "^:;#$%&(),@[]!{}=_.-" );
     }
-
 
     @Test(expected = IllegalArgumentException.class)
     public void slash_not_valid()

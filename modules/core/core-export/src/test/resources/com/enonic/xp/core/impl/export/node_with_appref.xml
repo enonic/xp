@@ -1,0 +1,63 @@
+<node>
+  <childOrder>_name DESC</childOrder>
+  <nodeType>content</nodeType>
+  <permissions/>
+  <data>
+    <property-set name="data">
+      <string name="supports">portal:site</string>
+      <string name="supports">com.enonic.apps.genericapp:landing-page</string>
+    </property-set>
+    <property-set name="x">
+      <property-set name="com-enonic-starter-bootstrap">
+        <property-set name="menu-item">
+          <boolean name="menuItem">false</boolean>
+          <string isNull="true" name="menuName"/>
+        </property-set>
+        <property-set name="html-meta">
+          <string isNull="true" name="htmlMetaDescription"/>
+        </property-set>
+      </property-set>
+    </property-set>
+    <property-set name="page">
+      <string name="controller">com.enonic.apps.genericapp:default</string>
+      <reference isNull="true" name="template"/>
+      <property-set name="region">
+        <string name="name">main</string>
+      </property-set>
+      <property-set name="config"/>
+      <boolean name="customized">false</boolean>
+    </property-set>
+  </data>
+  <indexConfigs>
+    <analyzer>myAnalyzer</analyzer>
+    <defaultConfig>
+      <decideByType>false</decideByType>
+      <enabled>true</enabled>
+      <nGram>true</nGram>
+      <fulltext>true</fulltext>
+      <includeInAllText>true</includeInAllText>
+    </defaultConfig>
+    <pathIndexConfigs>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>true</decideByType>
+          <enabled>true</enabled>
+          <nGram>true</nGram>
+          <fulltext>true</fulltext>
+          <includeInAllText>true</includeInAllText>
+        </indexConfig>
+        <path>myProperty</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>true</decideByType>
+          <enabled>false</enabled>
+          <nGram>false</nGram>
+          <fulltext>true</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>myOtherProperty</path>
+      </pathIndexConfig>
+    </pathIndexConfigs>
+  </indexConfigs>
+</node>

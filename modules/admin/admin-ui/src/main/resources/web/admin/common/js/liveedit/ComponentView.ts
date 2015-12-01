@@ -25,7 +25,7 @@ module api.liveedit {
 
         contextMenuActions: api.ui.Action[];
 
-        placeholder: ComponentPlaceholder;
+        placeholder: ItemViewPlaceholder;
 
         tooltipViewer: api.ui.Viewer<any>;
 
@@ -74,7 +74,7 @@ module api.liveedit {
             return this;
         }
 
-        setPlaceholder(value: ComponentPlaceholder): ComponentViewBuilder<COMPONENT> {
+        setPlaceholder(value: ItemViewPlaceholder): ComponentViewBuilder<COMPONENT> {
             this.placeholder = value;
             return this;
         }

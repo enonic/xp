@@ -6,6 +6,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertyTree;
@@ -41,6 +42,7 @@ public final class ContentMapper
         serializeData( gen, value.getData() );
         serializeExtraData( gen, value.getAllExtraData() );
         serializePage( gen, value.getPage() );
+        serializeAttachments( gen, value.getAttachments() );
     }
 
     private static void serializeData( final MapGenerator gen, final PropertyTree value )
@@ -85,6 +87,16 @@ public final class ContentMapper
         if ( value != null )
         {
             new PageMapper( value ).serialize( gen );
+        }
+        gen.end();
+    }
+
+    private static void serializeAttachments( final MapGenerator gen, final Attachments value )
+    {
+        gen.map( "attachments" );
+        if ( value != null )
+        {
+            new AttachmentsMapper( value ).serialize( gen );
         }
         gen.end();
     }

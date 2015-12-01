@@ -27,11 +27,19 @@ import com.enonic.xp.schema.content.ContentTypes;
 public final class ContentTypeRegistryImpl
     implements ContentTypeRegistry, BundleListener
 {
+    private final BuiltinContentTypes builtInTypes;
+
     private ApplicationService applicationService;
 
     private BundleContext context;
 
     private final Map<ApplicationKey, ContentTypes> map;
+
+    public ContentTypeRegistryImpl()
+    {
+        this.map = Maps.newConcurrentMap();
+        this.builtInTypes = new BuiltinContentTypes();
+    }
 
     @Activate
     public void start( final ComponentContext context )
@@ -44,11 +52,6 @@ public final class ContentTypeRegistryImpl
     public void stop()
     {
         this.context.removeBundleListener( this );
-    }
-
-    public ContentTypeRegistryImpl()
-    {
-        this.map = Maps.newConcurrentMap();
     }
 
     @Override
@@ -69,7 +72,7 @@ public final class ContentTypeRegistryImpl
 
         if ( ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( applicationKey ) )
         {
-            contentTypes = new BuiltinContentTypeLoader().loadByApplication( applicationKey );
+            contentTypes = this.builtInTypes.getByApplication( applicationKey );
         }
         else
         {

@@ -35,9 +35,7 @@ module app.wizard.page.contextwindow {
             rowEl.getEl().setData('height', data.height);
             rowEl.getEl().setData('units', data.units);
 
-            var icon = new api.dom.DivEl();
-            icon.setClass('icon-' + data.device_type);
-            icon.addClass('icon');
+            var icon = new api.ui.FontIcon("icon-" + data.device_type);
 
             var title = new api.dom.H5El();
             title.getEl().setInnerHtml(data.name);
@@ -52,7 +50,7 @@ module app.wizard.page.contextwindow {
             if (data.rotatable == true) {
                 var rotator = new api.dom.DivEl();
                 rotator.addClass('rotate');
-                rotator.addClass('icon-loop');
+                rotator.addClassEx('icon-loop');
                 rowEl.appendChild(rotator);
             }
 

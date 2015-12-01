@@ -24,6 +24,7 @@ import com.enonic.xp.script.impl.util.ErrorHelper;
 import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
+import com.enonic.xp.server.RunMode;
 
 final class ScriptExecutorImpl
     implements ScriptExecutor
@@ -34,7 +35,7 @@ final class ScriptExecutorImpl
 
     private Bindings global;
 
-    private Map<ResourceKey, Object> exportsCache;
+    private ScriptExportsCache exportsCache;
 
     private ClassLoader classLoader;
 
@@ -43,6 +44,10 @@ final class ScriptExecutorImpl
     private ResourceService resourceService;
 
     private Application application;
+
+    private Map<String, Object> mocks;
+
+    private RunMode runMode;
 
     public void setEngine( final ScriptEngine engine )
     {
@@ -74,30 +79,43 @@ final class ScriptExecutorImpl
         this.application = application;
     }
 
+    public void setRunMode( final RunMode runMode )
+    {
+        this.runMode = runMode;
+    }
+
     public void initialize()
     {
-        this.exportsCache = Maps.newHashMap();
+        this.mocks = Maps.newHashMap();
+        this.exportsCache = new ScriptExportsCache();
         this.global = this.engine.createBindings();
         new CallFunction().register( this.global );
     }
 
     @Override
-    public Object executeRequire( final ResourceKey script )
+    public Object executeRequire( final ResourceKey key )
     {
-        final Object cached = this.exportsCache.get( script );
-        if ( cached != null )
+        final Object mock = this.mocks.get( key.getPath() );
+        if ( mock != null )
+        {
+            return mock;
+        }
+
+        final Object cached = this.exportsCache.get( key );
+        final Resource resource = loadIfNeeded( key, cached );
+        if ( resource == null )
         {
             return cached;
         }
 
-        final ScriptContextImpl context = new ScriptContextImpl( script );
+        final ScriptContextImpl context = new ScriptContextImpl( resource, this.scriptSettings );
         context.setEngineScope( this.global );
         context.setGlobalScope( new SimpleBindings() );
 
-        final ScriptObjectMirror func = (ScriptObjectMirror) doExecute( context, script );
-        final Object result = executeRequire( script, func );
+        final ScriptObjectMirror func = (ScriptObjectMirror) doExecute( context, resource );
+        final Object result = executeRequire( key, func );
 
-        this.exportsCache.put( script, result );
+        this.exportsCache.put( resource, result );
         return result;
     }
 
@@ -122,19 +140,22 @@ final class ScriptExecutorImpl
         return new ScriptValueFactoryImpl( this::invokeMethod ).newValue( value );
     }
 
-    private Object doExecute( final ScriptContext context, final ResourceKey script )
+    private Object doExecute( final ScriptContext context, final Resource script )
     {
         try
         {
-            final Resource resource = this.resourceService.getResource( script );
-            final String source = InitScriptReader.getScript( resource.readString() );
-
+            final String source = InitScriptReader.getScript( script.readString() );
             return this.engine.eval( source, context );
         }
         catch ( final Exception e )
         {
             throw ErrorHelper.handleError( e );
         }
+    }
+
+    private Resource loadResource( final ResourceKey key )
+    {
+        return this.resourceService.getResource( key );
     }
 
     private Object invokeMethod( final Object func, final Object... args )
@@ -147,6 +168,27 @@ final class ScriptExecutorImpl
         {
             throw ErrorHelper.handleError( e );
         }
+    }
+
+    private Resource loadIfNeeded( final ResourceKey key, final Object cached )
+    {
+        if ( cached == null )
+        {
+            return loadResource( key );
+        }
+
+        if ( this.runMode != RunMode.DEV )
+        {
+            return null;
+        }
+
+        final Resource resource = loadResource( key );
+        if ( this.exportsCache.isModified( resource ) )
+        {
+            return resource;
+        }
+
+        return null;
     }
 
     @Override
@@ -177,5 +219,11 @@ final class ScriptExecutorImpl
     public ScriptSettings getScriptSettings()
     {
         return this.scriptSettings;
+    }
+
+    @Override
+    public void registerMock( final String name, final Object value )
+    {
+        this.mocks.put( name, value );
     }
 }

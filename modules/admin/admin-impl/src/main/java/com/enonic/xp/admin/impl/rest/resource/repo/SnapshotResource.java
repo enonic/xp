@@ -15,6 +15,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
 import com.enonic.xp.node.NodeService;
@@ -25,7 +26,6 @@ import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "repo")
 @Produces(MediaType.APPLICATION_JSON)
@@ -38,7 +38,7 @@ public class SnapshotResource
 
     private static String createSnapshotName( final RepositoryId repositoryId )
     {
-        return ( repositoryId + getDateTimeFormatter().format( Instant.now() ) ).toLowerCase();
+        return ( ( repositoryId == null ? "" : repositoryId ) + getDateTimeFormatter().format( Instant.now() ) ).toLowerCase();
     }
 
     private static DateTimeFormatter getDateTimeFormatter()

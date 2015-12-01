@@ -1,8 +1,4 @@
-.image-view {
-
-}
-
-.image-placeholder {
+.@{_CLS_PREFIX}image-placeholder {
 
   &:before {
     content: "\e005";
@@ -33,7 +29,7 @@
       top: 0;
       height: 35px;
       width: 35px;
-      border-color: #d3d3d3;
+      border-color: @admin-medium-gray-border;
       background-image: url("../../common/images/upload.png"); // don't optimize because bg color is set via .button() mixin
       background-repeat: no-repeat;
       background-position: center;

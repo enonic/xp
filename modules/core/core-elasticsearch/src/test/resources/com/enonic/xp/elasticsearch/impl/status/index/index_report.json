@@ -1,0 +1,21 @@
+{
+  "summary": {
+    "total": 1,
+    "started": 1,
+    "unassigned": 0,
+    "relocating": 0,
+    "initializing": 0
+  },
+  "shards": {
+    "started": [
+      {
+        "id": "myindex(0)",
+        "nodeId": "nodeId",
+        "type": "PRIMARY"
+      }
+    ],
+    "unassigned": [],
+    "relocating": [],
+    "initializing": []
+  }
+}

@@ -3,15 +3,11 @@ module api.liveedit.text {
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
     import PageItemType = api.liveedit.PageItemType;
 
-    export class TextPlaceholder extends ComponentPlaceholder {
+    export class TextPlaceholder extends ItemViewPlaceholder {
 
-        private textView: TextComponentView;
-
-        constructor(componentView: TextComponentView) {
-            this.textView = componentView;
-
+        constructor() {
             super();
-            this.addClass("text-placeholder");
+            this.addClassEx("text-placeholder");
         }
 
     }

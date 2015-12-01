@@ -19,7 +19,7 @@ module api.liveedit.image {
                 cssSelector: '[data-portal-component-type=image]',
                 draggable: true,
                 cursor: 'move',
-                iconCls: 'live-edit-font-icon-image',
+                iconCls: api.StyleHelper.COMMON_PREFIX + 'icon-image',
                 highlighterStyle: {
                     stroke: 'rgba(68, 68, 68, 1)',
                     strokeDasharray: '5 5',

@@ -10,13 +10,9 @@ public interface ContentTypeService
 {
     ContentType getByName( GetContentTypeParams params );
 
-    ContentTypes getByNames( GetContentTypesParams params );
-
     ContentTypes getByApplication( ApplicationKey applicationKey );
 
     ContentTypes getAll( GetAllContentTypesParams params );
-
-    ContentTypes getChildren( GetChildContentTypesParams params );
 
     ContentTypeValidationResult validate( ContentType type );
 }

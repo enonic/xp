@@ -37,7 +37,10 @@
 .input-view {
 
   .clearfix();
-  .form-element-spacing(@form-field-spacing);
+
+  &:not(:last-child) {
+    margin-bottom: @form-field-spacing;
+  }
 
   //  padding: 10px 10px 0;
   border-bottom-width: 0;
@@ -62,7 +65,7 @@
 
   &.label-over-input {
 
-    > .input-label {
+    > .input-label, label {
       float: none;
     }
 
@@ -88,7 +91,9 @@
     > select, > input, > textarea {
       .input-error();
     }
+  }
 
+  &.no-label, &.label-over-input {
     > .input-type-view,
     > .bottom-button-row,
     > .validation-viewer {
@@ -108,7 +113,7 @@
     margin-left: @form-label-width;
   }
 
-  .input-label, label {
+  &:not(.label-over-input) .input-label, label {
     float: left;
     max-width: @form-label-width - 10px;
     overflow: hidden;
@@ -166,7 +171,6 @@
     .input-label {
       float: none;
       max-width: 100%;
-      margin: 0 0 3px 0;
     }
 
     .input-type-view,

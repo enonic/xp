@@ -6,7 +6,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -15,24 +14,29 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.ServerInfo;
-import com.enonic.xp.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "status")
 @Component(immediate = true)
 public final class StatusResource
     implements JaxRsComponent
 {
-    private ServerInfo serverInfo;
+    protected ServerInfo info;
+
+    public StatusResource()
+    {
+        this.info = ServerInfo.get();
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public ObjectNode getStatus()
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
-        new ProductInfoBuilder( this.serverInfo ).build( json );
+        new ProductInfoBuilder( this.info ).build( json );
         json.set( "context", createContextJson() );
         return json;
     }
@@ -55,11 +59,5 @@ public final class StatusResource
         }
 
         return node;
-    }
-
-    @Reference
-    public void setServerInfo( final ServerInfo serverInfo )
-    {
-        this.serverInfo = serverInfo;
     }
 }

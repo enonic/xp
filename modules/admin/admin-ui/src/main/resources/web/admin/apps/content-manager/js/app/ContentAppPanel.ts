@@ -103,15 +103,6 @@ module app {
             app.browse.MoveContentEvent.on((event) => {
                 this.handleMove(event);
             });
-
-            api.content.ContentDeletedEvent.on((event: api.content.ContentDeletedEvent) => {
-                if (!event.isPending()) {
-                    var item = this.getNavigator().getNavigationItemByIdValue(event.getContentId().toString());
-                    if (item) {
-                        item.getCloseAction().execute(true);
-                    }
-                }
-            });
         }
 
         private handleUpdated(event: ContentUpdatedEvent) {
@@ -166,7 +157,10 @@ module app {
                     this.addWizardPanel(tabMenuItem, wizard);
 
                     if (newContentEvent.getContentType().isSite() && this.getBrowsePanel()) {
-                        this.getBrowsePanel().getTreeGrid().reload(); // reload content grid to show that site has underlying folders
+                        var content: Content = newContentEvent.getParentContent();
+                        if (!!content) { // refresh site's node
+                            this.getBrowsePanel().getTreeGrid().refreshNodeById(content.getId());
+                        }
                     }
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);

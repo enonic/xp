@@ -31,7 +31,6 @@
 ///<reference path='ItemViewPlaceholder.ts' />
 ///<reference path='DragPlaceholder.ts' />
 ///<reference path='RegionPlaceholder.ts' />
-///<reference path='ComponentPlaceholder.ts' />
 ///<reference path='ComponentView.ts' />
 ///<reference path='PagePlaceholder.ts' />
 ///<reference path='PagePlaceholderInfoBlock.ts' />

@@ -53,12 +53,17 @@ module api.content {
 
             var deferred = wemQ.defer<ContentSummaryAndCompareStatus[]>();
 
-            new BatchContentRequest().setContentPaths(paths).sendAndParse().then((response: ContentResponse<ContentSummary>) => {
-                var contentSummaries: ContentSummary[] = response.getContents();
-                CompareContentRequest.fromContentSummaries(contentSummaries).sendAndParse().then((compareResults: CompareContentResults) => {
-                    deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries, compareResults));
+            if (paths.length > 0) {
+                new BatchContentRequest().setContentPaths(paths).sendAndParse().then((response: ContentResponse<ContentSummary>) => {
+                    var contentSummaries: ContentSummary[] = response.getContents();
+                    CompareContentRequest.fromContentSummaries(contentSummaries).sendAndParse().then(
+                        (compareResults: CompareContentResults) => {
+                            deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries, compareResults));
+                        });
                 });
-            });
+            } else {
+                deferred.resolve([]);
+            }
 
             return deferred.promise;
         }
@@ -67,11 +72,16 @@ module api.content {
 
             var deferred = wemQ.defer<ContentSummaryAndCompareStatus[]>();
 
-            new GetContentSummaryByIds(ids).get().then((contentSummaries: ContentSummary[]) => {
-                CompareContentRequest.fromContentSummaries(contentSummaries).sendAndParse().then((compareResults: CompareContentResults) => {
-                    deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries, compareResults));
+            if (ids.length > 0) {
+                new GetContentSummaryByIds(ids).get().then((contentSummaries: ContentSummary[]) => {
+                    CompareContentRequest.fromContentSummaries(contentSummaries).sendAndParse().then(
+                        (compareResults: CompareContentResults) => {
+                            deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries, compareResults));
+                        });
                 });
-            });
+            } else {
+                deferred.resolve([]);
+            }
 
             return deferred.promise;
         }

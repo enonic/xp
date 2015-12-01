@@ -23,19 +23,23 @@ module app.wizard.page.contextwindow.inspect.region {
 
         private imageSelector: ContentComboBox;
 
+        private imageSelectorForm: ImageSelectorForm;
+
         private handleSelectorEvents: boolean = true;
 
         private componentPropertyChangedEventHandler: (event: ComponentPropertyChangedEvent) => void;
 
         constructor() {
             super(<ComponentInspectionPanelConfig>{
-                iconClass: "live-edit-font-icon-image icon-xlarge"
+                iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("image", "icon-xlarge")
             });
             this.imageSelector = ContentComboBox.create().
                 setMaximumOccurrences(1).
                 setAllowedContentTypes([ContentTypeName.IMAGE.toString()]).
                 setLoader(new api.content.ContentSummaryLoader()).
                 build();
+
+            this.imageSelectorForm = new ImageSelectorForm(this.imageSelector, "Image");
 
             this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
                 // Ensure displayed config form and selector option are removed when image is removed
@@ -48,7 +52,7 @@ module app.wizard.page.contextwindow.inspect.region {
             };
 
             this.initSelectorListeners();
-            this.appendChild(this.imageSelector);
+            this.appendChild(this.imageSelectorForm);
         }
 
         setComponent(component: ImageComponent) {

@@ -113,11 +113,10 @@ public class FindPrincipalsHandlerTest
     }
 
     @Test
-    public void testFindPrincipalsByEmail()
+    public void testFindPrincipalsBySearchText()
     {
         final PrincipalQuery expectedQuery = PrincipalQuery.create().
-            userStore( UserStoreKey.from( "enonic" ) ).
-            email( "user1@enonic.com" ).
+            searchText( "enonic" ).
             build();
 
         final PrincipalQueryResult result = PrincipalQueryResult.create().
@@ -126,23 +125,6 @@ public class FindPrincipalsHandlerTest
             build();
         Mockito.when( securityService.query( Mockito.eq( expectedQuery ) ) ).thenReturn( result );
 
-        runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsByEmail" );
-    }
-
-    @Test
-    public void testFindPrincipalsByDisplayName()
-    {
-        final PrincipalQuery expectedQuery = PrincipalQuery.create().
-            userStore( UserStoreKey.from( "enonic" ) ).
-            displayName( "User 1" ).
-            build();
-
-        final PrincipalQueryResult result = PrincipalQueryResult.create().
-            addPrincipal( TestDataFixtures.getTestUser() ).
-            totalSize( 1 ).
-            build();
-        Mockito.when( securityService.query( Mockito.eq( expectedQuery ) ) ).thenReturn( result );
-
-        runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsByDisplayName" );
+        runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsBySearchText" );
     }
 }

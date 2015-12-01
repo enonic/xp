@@ -13,7 +13,7 @@ import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.Role;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.testing.json.JsonAssert;
+import com.enonic.xp.testing.JsonAssert;
 
 public class PrincipalsResultMapperTest
 {

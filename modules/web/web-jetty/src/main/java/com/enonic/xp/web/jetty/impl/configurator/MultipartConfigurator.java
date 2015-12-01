@@ -10,8 +10,6 @@ import com.google.common.base.Strings;
 public final class MultipartConfigurator
     extends JettyConfigurator<ServletHolder>
 {
-    private final static long MB = 1024 * 1024;
-
     @Override
     protected void doConfigure()
     {
@@ -32,12 +30,12 @@ public final class MultipartConfigurator
 
     private long getMaxFileSize()
     {
-        return this.config.multipart_maxFileSize() * MB;
+        return this.config.multipart_maxFileSize();
     }
 
     private long getMaxRequestSize()
     {
-        return this.config.multipart_maxRequestSize() * MB;
+        return this.config.multipart_maxRequestSize();
     }
 
     private int getFileSizeThreshold()

@@ -1,0 +1,14 @@
+{
+  "name": "clusterName",
+  "members": [
+    {
+      "isMaster": false,
+      "id": "nodeId",
+      "hostName": "hostName",
+      "version": "1.0.0",
+      "address": "local[10.10.10.1]"
+    }
+  ],
+  "state": "GREEN",
+  "errorMessages": ["ElasticsearchException[local node info exception]"]
+}

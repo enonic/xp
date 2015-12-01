@@ -5,3 +5,4 @@
 ///<reference path='LayoutInspectionPanel.ts' />
 ///<reference path='RegionInspectionPanel.ts' />
 ///<reference path='DescriptorBasedDropdownForm.ts' />
+///<reference path='ImageSelectorForm.ts' />

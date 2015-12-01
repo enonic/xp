@@ -40,7 +40,7 @@ public class NodeSettingsBuilderTest
         final Settings settings = this.builder.buildSettings( map );
 
         assertNotNull( settings );
-        assertEquals( 15, settings.getAsMap().size() );
+        assertEquals( 22, settings.getAsMap().size() );
         assertSettings( System.getProperty( "xp.home" ) + "/repo/index", settings );
     }
 
@@ -53,20 +53,27 @@ public class NodeSettingsBuilderTest
         final Settings settings = this.builder.buildSettings( map );
 
         assertNotNull( settings );
-        assertEquals( 15, settings.getAsMap().size() );
+        assertEquals( 22, settings.getAsMap().size() );
         assertSettings( "/to/some/other/path", settings );
     }
 
     private void assertSettings( String pathValue, final Settings settings )
     {
-        assertEquals( "local-node", settings.get( "name" ) );
-        assertEquals( "false", settings.get( "client" ) );
-        assertEquals( "true", settings.get( "data" ) );
+        assertEquals( "local-node", settings.get( "node.name" ) );
+        assertEquals( "false", settings.get( "node.client" ) );
+        assertEquals( "true", settings.get( "node.data" ) );
+        assertEquals( "true", settings.get( "node.master" ) );
         assertEquals( "false", settings.get( "http.enabled" ) );
         assertEquals( "mycluster", settings.get( "cluster.name" ) );
         assertEquals( "127.0.0.1", settings.get( "network.host" ) );
         assertEquals( "false", settings.get( "discovery.zen.ping.multicast.enabled" ) );
+        assertEquals( "127.0.0.1", settings.get( "discovery.zen.ping.unicast.hosts" ) );
+        assertEquals( "1", settings.get( "gateway.expected_nodes" ) );
+        assertEquals( "5m", settings.get( "gateway.recover_after_time" ) );
+        assertEquals( "1", settings.get( "gateway.recover_after_nodes" ) );
+        assertEquals( "1", settings.get( "discovery.zen.minimum_master_nodes" ) );
         assertEquals( "false", settings.get( "cluster.routing.allocation.disk.threshold_enabled" ) );
+        assertEquals( "1", settings.get( "index.recovery.initial_shards" ) );
         assertEquals( pathValue, settings.get( "path" ) );
         assertEquals( pathValue + "/data", settings.get( "path.data" ) );
         assertEquals( pathValue + "/work", settings.get( "path.work" ) );

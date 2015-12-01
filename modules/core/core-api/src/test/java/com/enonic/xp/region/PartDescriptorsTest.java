@@ -46,20 +46,6 @@ public class PartDescriptorsTest
     }
 
     @Test
-    public void testBuilder()
-    {
-        final PartDescriptors partDescriptors = PartDescriptors.create().
-            add( partDescriptorsList.get( 0 ) ).
-            add( partDescriptorsList.get( 1 ) ).
-            build();
-
-        assertEquals( 2, partDescriptors.getSize() );
-        assertNotNull( partDescriptors.getDescriptor( partDescriptorsList.get( 0 ).getKey() ) );
-        assertNotNull( partDescriptors.getDescriptor( "news-part2" ) );
-        assertNull( partDescriptors.getDescriptor( DescriptorKey.from( "module:new-par" ) ) );
-    }
-
-    @Test
     public void fromArray()
     {
         final PartDescriptors partDescriptors =

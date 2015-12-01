@@ -34,10 +34,10 @@ module api.liveedit.text {
 
             super(builder.
                 setContextMenuActions(this.createTextContextMenuActions()).
-                setPlaceholder(new TextPlaceholder(this)).
+                setPlaceholder(new TextPlaceholder()).
                 setTooltipViewer(new TextComponentViewer()));
 
-            this.addClass('text-view');
+            this.addClassEx('text-view');
 
             this.initializeRootElement();
 

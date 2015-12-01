@@ -1,0 +1,18 @@
+{
+  "count": 2,
+  "services": [
+    {
+      "id": "0",
+      "iface": "foo.bar.iface1",
+      "bundle": "foo.bar"
+    },
+    {
+      "id": "0",
+      "iface": [
+        "foo.bar.iface2",
+        "foo.bar.iface3"
+      ],
+      "bundle": "foo.bar"
+    }
+  ]
+}

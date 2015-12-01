@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.time.Instant;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -29,6 +31,7 @@ import com.enonic.xp.node.SnapshotParams;
 import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
@@ -44,6 +47,9 @@ import static org.junit.Assert.*;
 public class NodeServiceImplTest
     extends AbstractNodeTest
 {
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     private NodeServiceImpl nodeService;
 
     @Before
@@ -58,6 +64,11 @@ public class NodeServiceImplTest
         this.nodeService.setSearchService( this.searchService );
         this.nodeService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
+        final RepoConfiguration config = Mockito.mock( RepoConfiguration.class );
+        Mockito.when( config.getBlobStoreDir() ).thenReturn( this.temporaryFolder.getRoot() );
+        this.nodeService.setConfiguration( config );
+
+        this.nodeService.initialize();
         this.createDefaultRootNode();
     }
 

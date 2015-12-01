@@ -16,7 +16,7 @@ module api.liveedit {
                 cssSelector: '[data-portal-component-type=page]',
                 draggable: false,
                 cursor: 'pointer',
-                iconCls: 'live-edit-font-icon-page',
+                iconCls: api.StyleHelper.COMMON_PREFIX + 'icon-page',
                 highlighterStyle: {
                     stroke: 'rgba(20, 20, 20, 1)',
                     strokeDasharray: '',

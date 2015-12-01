@@ -31,6 +31,12 @@ module app.view.detail {
                 widgetView.setActive();
             });
 
+            this.infoWidgetToggleButton.onClicked(() => {
+                if (this.widgetSelectorDropdown.isDropdownShown()) {
+                    this.widgetSelectorDropdown.hideDropdown();
+                }
+            });
+
             this.widgetSelectorDropdown.prependChild(this.infoWidgetToggleButton);
             this.appendChild(this.widgetSelectorDropdown);
         }
@@ -42,6 +48,12 @@ module app.view.detail {
             } else {
                 this.widgetSelectorDropdown.addClass("non-default-selected");
                 this.infoWidgetToggleButton.setInactive();
+                if (this.widgetSelectorDropdown.getValue() != widgetView.getWidgetName()) {
+                    this.widgetSelectorDropdown.setValue(widgetView.getWidgetName());
+                }
+            }
+            if (this.widgetSelectorDropdown.getSelectedOption()) {
+                this.widgetSelectorDropdown.getSelectedOptionView().getEl().setDisplay("inline-block");
             }
         }
 
@@ -77,7 +89,7 @@ module app.view.detail {
     export class WidgetSelectorDropdown extends Dropdown<WidgetViewOption> {
 
         constructor(detailsPanel: DetailsPanel) {
-            super("widgetSelector", <DropdownConfig<WidgetViewOption>>{});
+            super("widgetSelector", <DropdownConfig<WidgetViewOption>>{disableFilter: true, skipExpandOnClick: true});
 
             this.onClicked((event) => {
                 if (this.isDefaultOptionDisplayValueViewer(event.target)) {
@@ -93,8 +105,9 @@ module app.view.detail {
         }
 
         private isDefaultOptionDisplayValueViewer(object: Object) {
-            if (object && object["id"] && object["id"].toString().indexOf("DefaultOptionDisplayValueViewer") > 0) {
-                return true;
+            if (object && object["id"]) {
+                var id = object["id"].toString();
+                return id.indexOf("DropdownHandle") < 0 && id.indexOf("InfoWidgetToggleButton") < 0;
             }
             return false;
         }

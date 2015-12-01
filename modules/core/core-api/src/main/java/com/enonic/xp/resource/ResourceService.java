@@ -6,7 +6,7 @@ public interface ResourceService
 {
     Resource getResource( ResourceKey resourceKey );
 
-    ResourceKeys findResourceKeys( ApplicationKey applicationKey, String path, String filePattern, boolean recurse );
+    ResourceKeys findFiles( ApplicationKey key, String path, String ext, boolean recursive );
 
     ResourceKeys findFolders( ApplicationKey key, String path );
 }

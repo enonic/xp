@@ -125,6 +125,6 @@ public class PortalUrlServiceImpl_assetUrlTest
             path( "css/my other & strange.css" );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "/portal/draft/_/asset/myapplication:31556889864403199/css/my+other+%26+strange.css", url );
+        assertEquals( "/portal/draft/_/asset/myapplication:31556889864403199/css/my%20other%20&%20strange.css", url );
     }
 }

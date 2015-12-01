@@ -1,4 +1,4 @@
-.region-view {
+.@{_CLS_PREFIX}region-view {
 
   &.dragging {
     padding-top: 10px;
@@ -6,11 +6,11 @@
 
     &.dragged-over {
 
-      .drag-placeholder {
+      .@{_CLS_PREFIX}drag-placeholder {
         display: block;
       }
 
-      &.empty > .region-placeholder {
+      &.empty > .@{_CLS_PREFIX}region-placeholder {
         display: none;
       }
     }
@@ -18,7 +18,7 @@
 
 }
 
-.region-placeholder {
+.@{_CLS_PREFIX}region-placeholder {
   background-color: @region-bg;
   border: 2px dashed @region-color;
   color: @region-color;

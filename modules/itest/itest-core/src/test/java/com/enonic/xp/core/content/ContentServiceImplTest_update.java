@@ -20,7 +20,6 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeLoader;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
@@ -121,7 +120,7 @@ public class ContentServiceImplTest_update
             contentData( data ).
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
-            type( BuiltinContentTypeLoader.FOLDER.getName() ).
+            type( ContentTypeName.folder() ).
             build();
 
         final Content content = this.contentService.create( createContentParams );
@@ -309,7 +308,7 @@ public class ContentServiceImplTest_update
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
             permissions( AccessControlList.empty() ).
-            type( BuiltinContentTypeLoader.FOLDER.getName() ).
+            type( ContentTypeName.folder() ).
             extraDatas( extraDatas ).
             build();
 

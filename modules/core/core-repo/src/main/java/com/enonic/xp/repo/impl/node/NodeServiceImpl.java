@@ -13,7 +13,6 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
@@ -61,6 +60,7 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.repo.impl.blob.file.FileBlobStore;
+import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.search.SearchService;
@@ -73,7 +73,7 @@ import com.enonic.xp.util.BinaryReference;
 public class NodeServiceImpl
     implements NodeService
 {
-    private final BlobStore binaryBlobStore;
+    private RepoConfiguration configuration;
 
     private IndexServiceInternal indexServiceInternal;
 
@@ -85,15 +85,14 @@ public class NodeServiceImpl
 
     private EventPublisher eventPublisher;
 
-    public NodeServiceImpl()
-    {
-        final File blobStoreDir = new File( HomeDir.get().toFile(), "repo/blob/" + NodeConstants.BINARY_BLOB_STORE_DIR );
-        this.binaryBlobStore = new FileBlobStore( blobStoreDir );
-    }
+    private BlobStore binaryBlobStore;
 
     @Activate
     public void initialize()
     {
+        final File blobStoreDir = new File( configuration.getBlobStoreDir(), NodeConstants.BINARY_BLOB_STORE_DIR );
+        this.binaryBlobStore = new FileBlobStore( blobStoreDir );
+
         final RepositoryInitializer repoInitializer = new RepositoryInitializer( this.indexServiceInternal );
         repoInitializer.initializeRepositories( ContentConstants.CONTENT_REPO.getId(), SystemConstants.SYSTEM_REPO.getId() );
     }
@@ -681,5 +680,11 @@ public class NodeServiceImpl
     public void setEventPublisher( final EventPublisher eventPublisher )
     {
         this.eventPublisher = eventPublisher;
+    }
+
+    @Reference
+    public void setConfiguration( final RepoConfiguration configuration )
+    {
+        this.configuration = configuration;
     }
 }

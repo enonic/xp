@@ -16,16 +16,19 @@ module app.wizard.action {
                 if (wizard.checkContentCanBePublished(true)) {
                     wizard.setRequireValid(true);
 
-                    this.setEnabled(false);
-
-                    wizard.saveChanges().
-                        then((content) => {
-                            if (content) {
-                                new app.browse.ContentPublishPromptEvent([ContentSummaryAndCompareStatus.fromContentSummary(content)]).fire();
-                            }
-                        }).catch((reason: any) => {
-                            api.DefaultErrorHandler.handle(reason)
-                        }).finally(() => this.setEnabled(true)).done();
+                    if (wizard.hasUnsavedChanges()) {
+                        this.setEnabled(false);
+                        wizard.saveChanges().
+                            then((content) => {
+                                if (content) {
+                                    new app.browse.ContentPublishPromptEvent([ContentSummaryAndCompareStatus.fromContentSummary(content)]).fire();
+                                }
+                            }).catch((reason: any) => {
+                                api.DefaultErrorHandler.handle(reason)
+                            }).finally(() => this.setEnabled(true)).done();
+                    } else {
+                        new app.browse.ContentPublishPromptEvent([ContentSummaryAndCompareStatus.fromContentSummary(wizard.getPersistedItem())]).fire();
+                    }
                 } else {
                     api.notify.showWarning('The content cannot be published yet. One or more form values are not valid.');
                 }

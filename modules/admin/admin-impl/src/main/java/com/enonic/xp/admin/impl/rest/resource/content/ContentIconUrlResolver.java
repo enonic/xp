@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
+import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.Media;
@@ -38,6 +39,13 @@ public final class ContentIconUrlResolver
                 }
             }
         }
-        return this.contentTypeIconUrlResolver.resolve( content.getType() );
+        try
+        {
+            return this.contentTypeIconUrlResolver.resolve( content.getType() );
+        }
+        catch ( final ApplicationNotFoundException exception )
+        {
+            return null;
+        }
     }
 }

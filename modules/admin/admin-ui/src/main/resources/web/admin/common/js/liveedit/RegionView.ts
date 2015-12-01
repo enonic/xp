@@ -109,7 +109,7 @@ module api.liveedit {
                 setContextMenuActions(this.createRegionContextMenuActions()).
                 setContextMenuTitle(new RegionViewContextMenuTitle(builder.region)));
 
-            this.addClass('region-view');
+            this.addClassEx("region-view");
 
             this.componentAddedListener = (event: api.content.page.region.ComponentAddedEvent) => {
                 if (RegionView.debug) {
@@ -129,12 +129,6 @@ module api.liveedit {
             this.setRegion(builder.region);
 
             this.parseComponentViews();
-
-            // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
-            //this.onDragOver(this.handleDragOver.bind(this));
-            //this.onDragEnter(this.handleDragEnter.bind(this));
-            //this.onDragLeave(this.handleDragLeave.bind(this));
-            //this.onDrop(this.handleDrop.bind(this));
 
             this.onMouseDown(this.memorizeLastMouseDownTarget.bind(this));
         }

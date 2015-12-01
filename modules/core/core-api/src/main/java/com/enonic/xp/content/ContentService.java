@@ -27,8 +27,6 @@ public interface ContentService
 
     Content rename( RenameContentParams params );
 
-    String generateContentName( String displayName );
-
     Contents delete( DeleteContentParams params );
 
     PushContentsResult push( PushContentParams params );

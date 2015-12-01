@@ -8,7 +8,7 @@ module api.liveedit {
 
         constructor(region: Region) {
             super();
-            this.addClass("region-placeholder");
+            this.addClassEx("region-placeholder");
 
             this.region = region;
 

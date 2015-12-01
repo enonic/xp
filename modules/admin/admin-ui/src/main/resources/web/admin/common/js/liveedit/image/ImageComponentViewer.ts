@@ -15,7 +15,7 @@ module api.liveedit.image {
         }
 
         resolveIconClass(object: api.content.page.region.ImageComponent): string {
-            return "live-edit-font-icon-image";
+            return api.liveedit.ItemViewIconClassResolver.resolveByType("image");
         }
 
     }

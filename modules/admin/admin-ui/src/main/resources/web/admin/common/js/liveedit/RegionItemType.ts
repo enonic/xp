@@ -15,7 +15,7 @@ module api.liveedit {
                 cssSelector: '[data-portal-region]',
                 draggable: false,
                 cursor: 'pointer',
-                iconCls: 'live-edit-font-icon-region',
+                iconCls: api.StyleHelper.COMMON_PREFIX + 'icon-region',
                 highlighterStyle: {
                     stroke: 'rgba(20, 20, 20, 1)',
                     strokeDasharray: '',

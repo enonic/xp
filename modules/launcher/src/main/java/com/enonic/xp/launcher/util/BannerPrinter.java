@@ -34,13 +34,14 @@ public final class BannerPrinter
     public void printBanner()
     {
         System.out.println( BANNER );
-        System.out.println( " # " + PRODUCT + " " + this.version.getVersion() );
-        System.out.println( " # " + getFormattedBuildInfo() );
-        System.out.println( " # " + getFormattedJvmInfo() );
-        System.out.println( " # " + getFormattedOsInfo() );
-        System.out.println( " # Install directory is " + this.env.getInstallDir() );
-        System.out.println( " # Home directory is " + this.env.getHomeDir() );
+        System.out.println( "# " + PRODUCT + " " + this.version.getVersion() );
+        System.out.println( "# " + getFormattedBuildInfo() );
+        System.out.println( "# " + getFormattedJvmInfo() );
+        System.out.println( "# " + getFormattedOsInfo() );
+        System.out.println( "# Install directory is " + this.env.getInstallDir() );
+        System.out.println( "# Home directory is " + this.env.getHomeDir() );
         System.out.println();
+        printWarnings();
     }
 
     private String getFormattedBuildInfo()
@@ -57,5 +58,22 @@ public final class BannerPrinter
     private String getFormattedOsInfo()
     {
         return String.format( "%s %s (%s)", OS_NAME.value(), OS_VERSION.value(), OS_ARCH.value() );
+    }
+
+    private void printWarnings()
+    {
+        final boolean devMode = "dev".equalsIgnoreCase( System.getProperty( "xp.runMode" ) );
+        if ( devMode )
+        {
+            printDevModeWarning();
+        }
+    }
+
+    private void printDevModeWarning()
+    {
+        System.out.println( "*" );
+        System.out.println( "* DEV mode is ON. This will slow down the system and should NOT BE used in production." );
+        System.out.println( "*" );
+        System.out.println();
     }
 }

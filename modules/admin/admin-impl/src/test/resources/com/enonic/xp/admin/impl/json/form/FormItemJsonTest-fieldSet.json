@@ -10,7 +10,7 @@
           "indexed": false,
           "inputType": "TextLine",
           "label": "myTextLine",
-          "maximizeUIInputWidth": false,
+          "maximizeUIInputWidth": true,
           "name": "myTextLine",
           "occurrences": {
             "maximum": 1,
@@ -34,7 +34,7 @@
           "indexed": false,
           "inputType": "Date",
           "label": "myDate",
-          "maximizeUIInputWidth": false,
+          "maximizeUIInputWidth": true,
           "name": "myDate",
           "occurrences": {
             "maximum": 1,
@@ -63,7 +63,7 @@
           "indexed": false,
           "inputType": "CheckBox",
           "label": "myOptions",
-          "maximizeUIInputWidth": false,
+          "maximizeUIInputWidth": true,
           "name": "myOptions",
           "occurrences": {
             "maximum": 1,

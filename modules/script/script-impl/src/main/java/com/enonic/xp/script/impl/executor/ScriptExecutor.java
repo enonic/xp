@@ -22,4 +22,6 @@ public interface ScriptExecutor
     ResourceService getResourceService();
 
     ScriptSettings getScriptSettings();
+
+    void registerMock( String name, Object value );
 }

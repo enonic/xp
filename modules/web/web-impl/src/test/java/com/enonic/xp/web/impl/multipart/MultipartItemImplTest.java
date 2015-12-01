@@ -1,60 +1,35 @@
 package com.enonic.xp.web.impl.multipart;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItem;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.mockito.Mockito;
+import java.io.ByteArrayInputStream;
 
-import com.enonic.xp.web.multipart.MultipartItem;
+import javax.servlet.http.Part;
+
+import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
 
 public class MultipartItemImplTest
 {
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-
     @Test
-    public void testInMemory()
+    public void testItem()
+        throws Exception
     {
-        final FileItem fileItem = Mockito.mock( FileItem.class );
-        Mockito.when( fileItem.getName() ).thenReturn( "image.png" );
-        Mockito.when( fileItem.getFieldName() ).thenReturn( "upload" );
-        Mockito.when( fileItem.getContentType() ).thenReturn( "image/png" );
-        Mockito.when( fileItem.getSize() ).thenReturn( 10L );
-        Mockito.when( fileItem.get() ).thenReturn( "hello".getBytes() );
-        Mockito.when( fileItem.isInMemory() ).thenReturn( true );
+        final Part part = Mockito.mock( Part.class );
+        Mockito.when( part.getName() ).thenReturn( "upload" );
+        Mockito.when( part.getSubmittedFileName() ).thenReturn( "image.png" );
+        Mockito.when( part.getContentType() ).thenReturn( "image/png" );
+        Mockito.when( part.getSize() ).thenReturn( 10L );
+        Mockito.when( part.getInputStream() ).thenReturn( new ByteArrayInputStream( "hello".getBytes() ) );
 
-        final MultipartItem item = new MultipartItemImpl( fileItem );
+        final MultipartItemImpl item = new MultipartItemImpl( part );
 
-        assertEquals( "image.png", item.getName() );
-        assertEquals( "upload", item.getFieldName() );
+        assertEquals( "upload", item.getName() );
+        assertEquals( "image.png", item.getFileName() );
         assertEquals( "image/png", item.getContentType().toString() );
+        assertEquals( false, item.isEmpty() );
         assertEquals( 10, item.getSize() );
-        assertNotNull( item.getBytes() );
-        assertEquals( "hello", item.getAsString() );
-    }
-
-    @Test
-    public void testOnDisk()
-    {
-        final DiskFileItem fileItem = Mockito.mock( DiskFileItem.class );
-        Mockito.when( fileItem.getName() ).thenReturn( "image.png" );
-        Mockito.when( fileItem.getFieldName() ).thenReturn( "upload" );
-        Mockito.when( fileItem.getContentType() ).thenReturn( "image/png" );
-        Mockito.when( fileItem.getSize() ).thenReturn( 10L );
-        Mockito.when( fileItem.get() ).thenReturn( "hello".getBytes() );
-        Mockito.when( fileItem.isInMemory() ).thenReturn( false );
-        Mockito.when( fileItem.getStoreLocation() ).thenReturn( this.folder.getRoot() );
-
-        final MultipartItem item = new MultipartItemImpl( fileItem );
-
-        assertEquals( "image.png", item.getName() );
-        assertEquals( "upload", item.getFieldName() );
-        assertEquals( "image/png", item.getContentType().toString() );
-        assertEquals( 10, item.getSize() );
+        assertEquals( 10, item.size() );
         assertNotNull( item.getBytes() );
         assertEquals( "hello", item.getAsString() );
     }

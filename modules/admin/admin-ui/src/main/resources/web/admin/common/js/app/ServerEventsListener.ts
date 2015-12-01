@@ -4,11 +4,21 @@ module api.app {
 
         private serverEventsConnection: api.app.ServerEventsConnection;
         private applications: api.app.Application[];
+        private aggregator: ServerEventAggregator;
 
         constructor(applications: api.app.Application[]) {
             this.applications = applications;
             this.serverEventsConnection = new api.app.ServerEventsConnection();
             this.serverEventsConnection.onServerEvent((event: api.event.Event) => this.onServerEvent(event));
+            this.aggregator = new ServerEventAggregator();
+
+            this.aggregator.onBatchIsReady(() => {
+
+                var event = new api.content.BatchContentServerEvent(this.aggregator.getEvents(), this.aggregator.getType());
+                this.fireEvent(event);
+
+                this.aggregator.resetEvents();
+            });
         }
 
         start() {
@@ -36,6 +46,14 @@ module api.app {
         }
 
         private onServerEvent(event: api.event.Event) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(event, api.content.ContentServerEvent)) {
+                this.fireEvent(event)
+            } else {
+                this.aggregator.appendEvent(<api.content.ContentServerEvent>event);
+            }
+        }
+
+        private fireEvent(event: api.event.Event) {
             this.applications.forEach((application)=> {
                 var appWindow = application.getWindow();
                 if (appWindow) {
@@ -43,6 +61,7 @@ module api.app {
                 }
             });
         }
+
 
     }
 

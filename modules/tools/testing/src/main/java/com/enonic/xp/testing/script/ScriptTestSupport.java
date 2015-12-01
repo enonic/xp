@@ -39,6 +39,7 @@ public abstract class ScriptTestSupport
         this.scriptSettings.basePath( "/site" );
         this.scriptSettings.binding( Context.class, ContextAccessor::current );
         this.scriptSettings.binding( PortalRequest.class, () -> this.portalRequest );
+        this.scriptSettings.debug( new ScriptDebugSettings() );
     }
 
     protected final ScriptExports runScript( final String path )
@@ -52,13 +53,13 @@ public abstract class ScriptTestSupport
         return createRuntime().execute( key );
     }
 
-    protected final ScriptValue runFunction( final String path, final String funcName )
+    protected final ScriptValue runFunction( final String path, final String funcName, final Object... funcParams )
     {
         final ScriptExports exports = runScript( path );
 
         Assert.assertNotNull( "No exports in [" + path + "]", exports );
         Assert.assertTrue( "No functions exported named [" + funcName + "] in [" + path + "]", exports.hasMethod( funcName ) );
-        return exports.executeMethod( funcName );
+        return exports.executeMethod( funcName, funcParams );
     }
 
     private ScriptRuntime createRuntime()

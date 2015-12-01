@@ -38,7 +38,7 @@ module app.wizard.page.contextwindow.insert {
         }
 
         public setIconCls(value: string): Insertable {
-            this.iconCls = value;
+            this.iconCls = api.StyleHelper.getIconCls(value);
             return this;
         }
 

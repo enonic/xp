@@ -149,9 +149,13 @@ module api.app {
                 return api.application.ApplicationEvent.fromJson(serverEventJson.event);
             }
             if (eventType.indexOf('node.') === 0) {
-                console.log("Event " + eventType + " received");
                 var event = api.content.ContentServerEvent.fromJson(<Event2Json>serverEventJson);
-                return event;
+                if (event.getContentChanges().length === 0) {
+                    return null;
+                } else {
+                    console.log("Event " + eventType + " received");
+                    return event;
+                }
             }
 
             return null;

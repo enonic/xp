@@ -1,6 +1,7 @@
 package com.enonic.xp.launcher;
 
 import java.io.File;
+import java.util.Map;
 
 import com.enonic.xp.launcher.config.ConfigLoader;
 import com.enonic.xp.launcher.config.ConfigProperties;
@@ -70,6 +71,14 @@ public final class Launcher
         this.config.interpolate();
     }
 
+    private void applyConfigToSystemProperties()
+    {
+        for ( final Map.Entry<String, String> entry : this.config.entrySet() )
+        {
+            System.setProperty( entry.getKey(), entry.getValue() );
+        }
+    }
+
     private void setupLogging()
     {
         final LogConfigurator configurator = new LogConfigurator( this.env );
@@ -113,6 +122,7 @@ public final class Launcher
         printBanner();
         setupLogging();
         loadConfiguration();
+        applyConfigToSystemProperties();
         createFramework();
 
         this.framework.start();
@@ -127,7 +137,11 @@ public final class Launcher
     {
         for ( final String arg : this.args )
         {
-            if ( arg.startsWith( "-D" ) )
+            if ( arg.equalsIgnoreCase( "dev" ) )
+            {
+                setRunMode( "dev" );
+            }
+            else if ( arg.startsWith( "-D" ) )
             {
                 applySystemPropertyArg( arg.substring( 2 ) );
             }
@@ -141,5 +155,10 @@ public final class Launcher
         {
             System.setProperty( arg.substring( 0, pos ).trim(), arg.substring( pos + 1 ).trim() );
         }
+    }
+
+    private void setRunMode( final String mode )
+    {
+        System.setProperty( "xp.runMode", mode );
     }
 }

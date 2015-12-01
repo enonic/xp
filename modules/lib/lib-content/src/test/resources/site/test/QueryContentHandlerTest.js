@@ -19,7 +19,8 @@ var expectedJson = {
             "valid": false,
             "data": {},
             "x": {},
-            "page": {}
+            "page": {},
+            "attachments": {}
         },
         {
             "_id": "222222",
@@ -35,7 +36,8 @@ var expectedJson = {
             "valid": false,
             "data": {},
             "x": {},
-            "page": {}
+            "page": {},
+            "attachments": {}
         },
         {
             "_id": "333333",
@@ -51,7 +53,8 @@ var expectedJson = {
             "valid": false,
             "data": {},
             "x": {},
-            "page": {}
+            "page": {},
+            "attachments": {}
         }
     ],
     "aggregations": {
@@ -201,7 +204,8 @@ exports.query = function () {
                         "field": "item_count"
                     }
                 }
-            }
+            },
+        "attachments": {}
         }
     );
 

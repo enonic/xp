@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;
@@ -56,6 +57,7 @@ import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.SystemConstants;
 
 @Component
 public class ElasticsearchDaoImpl
@@ -303,12 +305,21 @@ public class ElasticsearchDaoImpl
     {
         final Set<String> indices = Sets.newHashSet();
 
-        indices.add( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
+        //If the repository is not specified, select cms-repo and system-repo
+        final RepositoryId[] repositoryIds = repositoryId == null
+            ? new RepositoryId[]{ContentConstants.CONTENT_REPO.getId(), SystemConstants.SYSTEM_REPO.getId()}
+            : new RepositoryId[]{repositoryId};
 
-        if ( includeIndexedData )
+        for ( RepositoryId currentRepositoryId : repositoryIds )
         {
-            indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
+            indices.add( IndexNameResolver.resolveStorageIndexName( currentRepositoryId ) );
+
+            if ( includeIndexedData )
+            {
+                indices.add( IndexNameResolver.resolveSearchIndexName( currentRepositoryId ) );
+            }
         }
+
         return indices;
     }
 

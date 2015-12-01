@@ -10,10 +10,13 @@ public final class ScriptSettings
 
     private final ImmutableMap<Class, Supplier> bindings;
 
+    private DebugSettings debug;
+
     private ScriptSettings( final Builder builder )
     {
         this.basePath = builder.basePath;
         this.bindings = builder.attributes.build();
+        this.debug = builder.debug;
     }
 
     public String getBasePath()
@@ -32,6 +35,11 @@ public final class ScriptSettings
         return (Supplier<T>) value;
     }
 
+    public DebugSettings getDebug()
+    {
+        return this.debug;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -42,6 +50,8 @@ public final class ScriptSettings
         private String basePath;
 
         private final ImmutableMap.Builder<Class, Supplier> attributes;
+
+        private DebugSettings debug;
 
         private Builder()
         {
@@ -57,6 +67,12 @@ public final class ScriptSettings
         public <T> Builder binding( final Class<T> type, final Supplier<T> supplier )
         {
             this.attributes.put( type, supplier );
+            return this;
+        }
+
+        public Builder debug( final DebugSettings debug )
+        {
+            this.debug = debug;
             return this;
         }
 

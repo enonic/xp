@@ -40,8 +40,8 @@ public abstract class Name
         {
             if ( !NameCharacterHelper.isValidCharacter( c ) )
             {
-                throw new IllegalArgumentException(
-                    "Invalid character in name : " + c + " (" + NameCharacterHelper.getUnicodeString( c ) + ")" );
+                final String unicodeChar = c > 255 ? " (" + NameCharacterHelper.getUnicodeString( c ) + ")" : "";
+                throw new IllegalArgumentException( "Invalid character in name: '" + c + "'" + unicodeChar );
             }
         }
     }

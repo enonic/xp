@@ -15,7 +15,7 @@ module api.liveedit {
         }
 
         resolveIconClass(object: api.content.page.region.Region): string {
-            return "live-edit-font-icon-region";
+            return api.liveedit.ItemViewIconClassResolver.resolveByType("region");
         }
     }
 

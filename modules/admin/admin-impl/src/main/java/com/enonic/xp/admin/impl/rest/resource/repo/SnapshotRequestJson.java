@@ -12,10 +12,10 @@ public class SnapshotRequestJson
     private boolean skipIndexedData;
 
     @JsonCreator
-    public SnapshotRequestJson( @JsonProperty("repositoryId") final String repositoryId,
+    public SnapshotRequestJson( @JsonProperty("repositoryId") final String repository,
                                 @JsonProperty("skipIndexedData") final boolean skipIndexedData )
     {
-        this.repositoryId = RepositoryId.from( repositoryId );
+        this.repositoryId = repository == null ? null : RepositoryId.from( repository );
         this.skipIndexedData = skipIndexedData;
     }
 

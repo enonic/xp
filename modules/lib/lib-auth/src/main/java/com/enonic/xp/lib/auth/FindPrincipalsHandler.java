@@ -25,18 +25,21 @@ public final class FindPrincipalsHandler
 
     private String name;
 
-    private String email;
+    private String searchText;
 
-    private String displayName;
+    public void setSearchText( final String value )
+    {
+        this.searchText = value;
+    }
 
     public void setType( final String type )
     {
-        if ( type == null )
+        if ( type == null || type.trim().isEmpty() )
         {
             this.type = null;
             return;
         }
-        switch ( type )
+        switch ( type.trim().toLowerCase() )
         {
             case "group":
                 this.type = PrincipalType.GROUP;
@@ -54,10 +57,12 @@ public final class FindPrincipalsHandler
 
     public void setUserStore( final String userStore )
     {
-        if ( userStore != null )
+        if ( userStore == null || userStore.trim().isEmpty() )
         {
-            this.userStore = UserStoreKey.from( userStore );
+            this.userStore = null;
+            return;
         }
+        this.userStore = UserStoreKey.from( userStore );
     }
 
     public void setStart( final Integer start )
@@ -81,16 +86,6 @@ public final class FindPrincipalsHandler
         this.name = name;
     }
 
-    public void setEmail( final String email )
-    {
-        this.email = email;
-    }
-
-    public void setDisplayName( final String displayName )
-    {
-        this.displayName = displayName;
-    }
-
     public PrincipalsResultMapper findPrincipals()
     {
         final PrincipalQuery.Builder query = PrincipalQuery.create();
@@ -102,11 +97,10 @@ public final class FindPrincipalsHandler
         {
             query.userStore( this.userStore );
         }
-        query.email( this.email );
         query.name( this.name );
-        query.displayName( this.displayName );
         query.from( this.start );
         query.size( this.count );
+        query.searchText( this.searchText );
 
         final PrincipalQueryResult result = this.securityService.get().query( query.build() );
 

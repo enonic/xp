@@ -2,11 +2,9 @@ module api.ui.selector.dropdown {
 
     import DropdownHandle = api.ui.selector.DropdownHandle;
 
-    export class SelectedOptionView<T> extends api.dom.ButtonEl {
+    export class SelectedOptionView<T> extends api.dom.FormItemEl {
 
         private objectViewer:Viewer<T>;
-
-        private dropdownHandle: DropdownHandle;
 
         private optionValueEl: api.dom.DivEl;
 
@@ -14,30 +12,26 @@ module api.ui.selector.dropdown {
 
         private openDropdownListeners: {(): void;}[] = [];
 
-        constructor(objectViewer:Viewer<T>) {
-            super("selected-option");
+        constructor(objectViewer:Viewer<T>, skipExpandOnClick: boolean = false) {
+            super("div", "selected-option");
             this.objectViewer = objectViewer;
-            this.dropdownHandle = new DropdownHandle();
             this.optionValueEl = new api.dom.DivEl('option-value');
             this.appendChild(this.optionValueEl);
             this.optionValueEl.appendChild(this.objectViewer);
-            this.appendChild(this.dropdownHandle);
 
-            this.dropdownHandle.onClicked(() => {
-                this.notifyOpenDropdown();
-            } );
+            if (!skipExpandOnClick) {
+                this.onClicked((event: MouseEvent)=> {
 
-            this.onClicked((event: MouseEvent)=> {
+                    if (document["selection"] && document["selection"].empty) {
+                        document["selection"].empty();
+                    } else if (window.getSelection) {
+                        var sel = window.getSelection();
+                        sel.removeAllRanges();
+                    }
 
-                if (document["selection"] && document["selection"].empty) {
-                    document["selection"].empty();
-                } else if(window.getSelection) {
-                    var sel = window.getSelection();
-                    sel.removeAllRanges();
-                }
-
-                this.notifyOpenDropdown();
-            });
+                    this.notifyOpenDropdown();
+                });
+            }
 
             this.onKeyPressed((event:KeyboardEvent) => {
                 if (event.which == 32 || event.which == 13) { // space or enter

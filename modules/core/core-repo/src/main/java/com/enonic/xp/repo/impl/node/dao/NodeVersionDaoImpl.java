@@ -4,12 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersion;
@@ -21,6 +22,7 @@ import com.enonic.xp.repo.impl.blob.BlobRecord;
 import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.repo.impl.blob.cache.CachedBlobStore;
 import com.enonic.xp.repo.impl.blob.file.FileBlobStore;
+import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
 
@@ -30,11 +32,14 @@ public class NodeVersionDaoImpl
 {
     private final NodeVersionJsonSerializer nodeVersionJsonSerializer = NodeVersionJsonSerializer.create( false );
 
-    private final BlobStore nodeVersionBlobStore;
+    private RepoConfiguration configuration;
 
-    public NodeVersionDaoImpl()
+    private BlobStore nodeVersionBlobStore;
+
+    @Activate
+    public void initialize()
     {
-        final File blobStoreDir = new File( HomeDir.get().toFile(), "repo/blob/" + NodeConstants.NODE_VERSION_BLOB_STORE_DIR );
+        final File blobStoreDir = new File( this.configuration.getBlobStoreDir(), NodeConstants.NODE_VERSION_BLOB_STORE_DIR );
         this.nodeVersionBlobStore = CachedBlobStore.create().
             blobStore( new FileBlobStore( blobStoreDir ) ).
             sizeTreshold( Long.MAX_VALUE ).
@@ -118,5 +123,11 @@ public class NodeVersionDaoImpl
         {
             throw new RuntimeException( "Failed to load blob with key: " + blob.getKey(), e );
         }
+    }
+
+    @Reference
+    public void setConfiguration( final RepoConfiguration configuration )
+    {
+        this.configuration = configuration;
     }
 }

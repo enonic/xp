@@ -10,7 +10,7 @@
           "indexed": false,
           "inputType": "TextLine",
           "label": "some-label",
-          "maximizeUIInputWidth": false,
+          "maximizeUIInputWidth": true,
           "name": "some-name",
           "occurrences": {
             "maximum": 1,

@@ -82,6 +82,12 @@ task copyResources( type: Copy ) {
             fileMode 0755
         }
     }
+    into( 'service/init.d' ) {
+        from( 'src/service/init.d' ) {
+            include 'xp'
+            fileMode 0755
+        }
+    }
     into( 'lib' ) {
         from( configurations.lib )
     }
