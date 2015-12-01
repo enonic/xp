@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.schema.content;
 
-import java.io.InputStream;
-import java.time.Instant;
 import java.util.List;
 
 import org.apache.commons.lang.WordUtils;
@@ -10,6 +8,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.core.impl.schema.SchemaHelper;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
@@ -238,19 +237,6 @@ final class BuiltinContentTypes
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )
     {
-        final String metaInfFolderBasePath = "/" + "META-INF" + "/" + metaInfFolderName;
-        final String filePath = metaInfFolderBasePath + "/" + name.toLowerCase() + ".png";
-        try (final InputStream stream = this.getClass().getResourceAsStream( filePath ))
-        {
-            if ( stream == null )
-            {
-                return null;
-            }
-            return Icon.from( stream, "image/png", Instant.now() );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( "Failed to load icon file: " + filePath, e );
-        }
+        return SchemaHelper.loadIcon( getClass(), metaInfFolderName, name );
     }
 }

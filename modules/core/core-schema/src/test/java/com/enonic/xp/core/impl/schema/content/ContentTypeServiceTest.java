@@ -1,27 +1,35 @@
 package com.enonic.xp.core.impl.schema.content;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.AbstractSchemaTest;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
+import com.enonic.xp.schema.content.GetAllContentTypesParams;
+import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.mixin.MixinService;
 
 import static org.junit.Assert.*;
 
-public class ContentTypeRegistryImplTest
+public class ContentTypeServiceTest
     extends AbstractSchemaTest
 {
-    protected ContentTypeRegistryImpl service;
+    protected ContentTypeServiceImpl service;
+
+    protected MixinService mixinService;
 
     @Override
     protected void initialize()
         throws Exception
     {
-        this.service = new ContentTypeRegistryImpl();
-        this.service.setResourceService( this.resourceService );
+        this.mixinService = Mockito.mock( MixinService.class );
+        this.service = new ContentTypeServiceImpl();
+        this.service.setMixinService( this.mixinService );
         this.service.setApplicationService( this.applicationService );
+        this.service.setResourceService( this.resourceService );
     }
 
     @Test
@@ -29,7 +37,7 @@ public class ContentTypeRegistryImplTest
     {
         addApplications();
 
-        final ContentTypes types1 = this.service.getAll();
+        final ContentTypes types1 = this.service.getAll( new GetAllContentTypesParams() );
         assertNotNull( types1 );
         assertEquals( 21, types1.getSize() );
 
@@ -37,7 +45,7 @@ public class ContentTypeRegistryImplTest
         assertNotNull( types2 );
         assertEquals( 0, types2.getSize() );
 
-        final ContentType contentType = service.get( ContentTypeName.from( "other:mytype" ) );
+        final ContentType contentType = service.getByName( new GetContentTypeParams().contentTypeName( "other:mytype" ) );
         assertEquals( null, contentType );
     }
 
@@ -46,7 +54,7 @@ public class ContentTypeRegistryImplTest
     {
         addApplications( "application1", "application2" );
 
-        final ContentTypes types1 = this.service.getAll();
+        final ContentTypes types1 = this.service.getAll( new GetAllContentTypesParams() );
         assertNotNull( types1 );
         assertEquals( 23, types1.getSize() );
 
@@ -60,7 +68,7 @@ public class ContentTypeRegistryImplTest
         assertNotNull( types3 );
         assertEquals( 1, types3.getSize() );
 
-        final ContentType contentType = service.get( ContentTypeName.from( "application1:tag" ) );
+        final ContentType contentType = service.getByName( new GetContentTypeParams().contentTypeName( "application1:tag" ) );
         assertNotNull( contentType );
     }
 
@@ -69,11 +77,11 @@ public class ContentTypeRegistryImplTest
     {
         addApplications();
 
-        ContentTypes contentTypes = this.service.getAll();
+        ContentTypes contentTypes = this.service.getAll( new GetAllContentTypesParams() );
         assertNotNull( contentTypes );
         assertEquals( 21, contentTypes.getSize() );
 
-        ContentType contentType = service.get( ContentTypeName.folder() );
+        ContentType contentType = service.getByName( new GetContentTypeParams().contentTypeName( ContentTypeName.folder() ) );
         assertNotNull( contentType );
 
         contentTypes = service.getByApplication( ApplicationKey.BASE );
@@ -88,7 +96,7 @@ public class ContentTypeRegistryImplTest
         assertNotNull( contentTypes );
         assertEquals( contentTypes.getSize(), 13 );
 
-        contentType = service.get( ContentTypeName.site() );
+        contentType = service.getByName( new GetContentTypeParams().contentTypeName( ContentTypeName.site() ) );
         assertNotNull( contentType );
     }
 }

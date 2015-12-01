@@ -6,9 +6,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
-import com.google.common.net.MediaType;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.schema.SchemaHelper;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -90,13 +90,6 @@ final class ContentTypeLoader
     {
         final ResourceKey resourceKey = toResourceKey( name, "png" );
         final Resource resource = this.resourceService.getResource( resourceKey );
-
-        if ( !resource.exists() )
-        {
-            return null;
-        }
-
-        final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
-        return Icon.from( resource.readBytes(), MediaType.PNG.toString(), modifiedTime );
+        return SchemaHelper.loadIcon( resource );
     }
 }

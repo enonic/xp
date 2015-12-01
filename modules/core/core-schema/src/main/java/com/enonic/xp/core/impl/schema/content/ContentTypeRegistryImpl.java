@@ -4,32 +4,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.core.impl.schema.SchemaHelper;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.content.ContentTypeRegistry;
 import com.enonic.xp.schema.content.ContentTypes;
 
-@Component(immediate = true)
-public final class ContentTypeRegistryImpl
-    implements ContentTypeRegistry, ApplicationInvalidator
+final class ContentTypeRegistryImpl
+    implements ContentTypeRegistry
 {
     private final BuiltinContentTypes builtInTypes;
 
-    private ApplicationService applicationService;
+    protected ApplicationService applicationService;
 
-    private ResourceService resourceService;
+    protected ResourceService resourceService;
 
     private final Map<ContentTypeName, ContentType> map;
 
@@ -41,12 +36,7 @@ public final class ContentTypeRegistryImpl
 
     private boolean isSystem( final ContentTypeName name )
     {
-        return isSystem( name.getApplicationKey() );
-    }
-
-    private boolean isSystem( final ApplicationKey key )
-    {
-        return ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( key );
+        return SchemaHelper.isSystem( name.getApplicationKey() );
     }
 
     @Override
@@ -68,7 +58,7 @@ public final class ContentTypeRegistryImpl
     @Override
     public ContentTypes getByApplication( final ApplicationKey key )
     {
-        if ( isSystem( key ) )
+        if ( SchemaHelper.isSystem( key ) )
         {
             return this.builtInTypes.getByApplication( key );
         }
@@ -114,20 +104,7 @@ public final class ContentTypeRegistryImpl
         return ContentTypes.from( contentTypeList );
     }
 
-    @Reference
-    public void setApplicationService( final ApplicationService applicationService )
-    {
-        this.applicationService = applicationService;
-    }
-
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
-    }
-
-    @Override
-    public void invalidate( final ApplicationKey key )
+    public void invalidate()
     {
         this.map.clear();
     }
