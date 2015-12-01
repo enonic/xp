@@ -72,7 +72,7 @@ module api.content.form.inputtype.image {
             });
 
             api.content.ContentDeletedEvent.on((event) => {
-                event.getDeleteditems().filter((deletedItem) => {
+                event.getDeletedItems().filter((deletedItem) => {
                     return !!deletedItem;
                 }).forEach((deletedItem) => {
 

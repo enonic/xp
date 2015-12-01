@@ -480,7 +480,7 @@ module app.wizard {
 
                     var deleteHandler = (event: api.content.ContentDeletedEvent) => {
                         if (this.getPersistedItem()) {
-                            event.getDeleteditems().filter((deletedItem) => {
+                            event.getDeletedItems().filter((deletedItem) => {
                                 return !!deletedItem;
                             }).forEach((deletedItem) => {
                                 if (deletedItem.isPending()) {

@@ -18,18 +18,12 @@ module api.content {
             return this;
         }
 
-        getDeleteditems(): ContentDeletedItem[] {
+        getDeletedItems(): ContentDeletedItem[] {
             return this.contentDeletedItems;
         }
 
         isEmpty(): boolean {
             return this.contentDeletedItems.length == 0;
-        }
-
-        fireIfNotEmpty() {
-            if (!this.isEmpty()) {
-                this.fire();
-            }
         }
 
         static on(handler: (event: ContentDeletedEvent) => void) {

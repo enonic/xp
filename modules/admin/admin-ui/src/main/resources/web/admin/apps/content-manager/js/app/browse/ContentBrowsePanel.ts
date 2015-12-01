@@ -153,12 +153,12 @@ module app.browse {
 
             var contentPanelsAndDetailPanel: api.ui.panel.SplitPanel = new api.ui.panel.SplitPanelBuilder(this.getFilterAndContentGridAndBrowseSplitPanel(),
                 this.defaultDockedDetailsPanel).
-                setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).
-                setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
-                setSecondPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
-                setAnimationDelay(600).
-                setSecondPanelShouldSlideRight(true).
-                build();
+            setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).
+            setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
+            setSecondPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
+            setAnimationDelay(600).
+            setSecondPanelShouldSlideRight(true).
+            build();
 
             contentPanelsAndDetailPanel.addClass("split-panel-with-details");
             contentPanelsAndDetailPanel.setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL);
@@ -189,12 +189,12 @@ module app.browse {
                     var browseItems: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus>[] = this.getBrowseItemPanel().getItems();
                     if (browseItems.length == 1) {
                         new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItems[0].getId())).sendAndParse().
-                            then((renderable: boolean) => {
-                                var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItems[0].toViewItem();
-                                item.setRenderable(renderable);
-                                this.mobileContentItemStatisticsPanel.setItem(item);
-                                this.mobileBrowseActions.updateActionsEnabledState(browseItems);
-                            });
+                        then((renderable: boolean) => {
+                            var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItems[0].toViewItem();
+                            item.setRenderable(renderable);
+                            this.mobileContentItemStatisticsPanel.setItem(item);
+                            this.mobileBrowseActions.updateActionsEnabledState(browseItems);
+                        });
                     }
                 }
             });
@@ -224,10 +224,10 @@ module app.browse {
                     var data = node.getData();
                     if (!!data && !!data.getContentSummary()) {
                         var item = new BrowseItem<ContentSummaryAndCompareStatus>(data).
-                            setId(data.getId()).
-                            setDisplayName(data.getContentSummary().getDisplayName()).
-                            setPath(data.getContentSummary().getPath().toString()).
-                            setIconUrl(new ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
+                        setId(data.getId()).
+                        setDisplayName(data.getContentSummary().getDisplayName()).
+                        setPath(data.getContentSummary().getPath().toString()).
+                        setIconUrl(new ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
                         browseItems.push(item);
                     }
                 }
@@ -330,66 +330,66 @@ module app.browse {
                 var createResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths(), true);
 
                 return ContentSummaryAndCompareStatusFetcher.
-                    fetchByPaths(createResult.map((el) => {
-                        return el.getAltPath();
-                    })).
-                    then((data: ContentSummaryAndCompareStatus[]) => {
-                        var isFiltered = this.contentTreeGrid.getRoot().isFiltered(),
-                            nodes: TreeNode<ContentSummaryAndCompareStatus>[] = [];
+                fetchByPaths(createResult.map((el) => {
+                    return el.getAltPath();
+                })).
+                then((data: ContentSummaryAndCompareStatus[]) => {
+                    var isFiltered = this.contentTreeGrid.getRoot().isFiltered(),
+                        nodes: TreeNode<ContentSummaryAndCompareStatus>[] = [];
 
-                        data.forEach((el) => {
-                            for (var i = 0; i < createResult.length; i++) {
-                                if (el.getContentSummary().getPath().isChildOf(createResult[i].getPath())) {
-                                    if (result && result.getChangeType() === ContentServerChangeType.RENAME) {
-                                        var premerged = result.getResult().map((el) => {
-                                            return el.getNodes();
-                                        });
-                                        // merge array of nodes arrays
-                                        nodes = nodes.concat.apply(nodes, premerged);
-                                        nodes.forEach((node) => {
-                                            if (node.getDataId() === el.getId()) {
-                                                node.setData(el);
-                                                node.clearViewers();
-                                                this.contentTreeGrid.xUpdatePathsInChildren(node);
-                                            }
-                                        });
-                                    } else {
-                                        this.contentTreeGrid.xAppendContentNodes(
-                                            createResult[i].getNodes().map((node) => {
-                                                return new api.content.TreeNodeParentOfContent(el, node);
-                                            }),
-                                            !isFiltered
-                                        ).then((results) => {
-                                                nodes = nodes.concat(results);
-                                            });
-                                    }
-                                    break;
+                    data.forEach((el) => {
+                        for (var i = 0; i < createResult.length; i++) {
+                            if (el.getContentSummary().getPath().isChildOf(createResult[i].getPath())) {
+                                if (result && result.getChangeType() === ContentServerChangeType.RENAME) {
+                                    var premerged = result.getResult().map((el) => {
+                                        return el.getNodes();
+                                    });
+                                    // merge array of nodes arrays
+                                    nodes = nodes.concat.apply(nodes, premerged);
+                                    nodes.forEach((node) => {
+                                        if (node.getDataId() === el.getId()) {
+                                            node.setData(el);
+                                            node.clearViewers();
+                                            this.contentTreeGrid.xUpdatePathsInChildren(node);
+                                        }
+                                    });
+                                } else {
+                                    this.contentTreeGrid.xAppendContentNodes(
+                                        createResult[i].getNodes().map((node) => {
+                                            return new api.content.TreeNodeParentOfContent(el, node);
+                                        }),
+                                        !isFiltered
+                                    ).then((results) => {
+                                        nodes = nodes.concat(results);
+                                    });
                                 }
+                                break;
                             }
-                        });
-
-                        // Read the notice in the header of the `contentServerEventHandler()` method
-                        if (result && result.getChangeType() === ContentServerChangeType.DELETE) {
-                            var ids = result.getResult().map((el) => {
-                                return el.getId();
-                            });
-                            nodes.forEach((node) => {
-                                var index = ids.indexOf(node.getDataId());
-                                if (index >= 0) {
-                                    this.contentTreeGrid.xPopulateWithChildren(result.getResult()[index].getNodes()[0], node);
-                                }
-                            });
-                        }
-                        this.contentTreeGrid.initAndRender();
-
-                        isFiltered = true;
-                        if (isFiltered) {
-                            this.setFilterPanelRefreshNeeded(true);
-                            window.setTimeout(() => {
-                                this.refreshFilter();
-                            }, 1000);
                         }
                     });
+
+                    // Read the notice in the header of the `contentServerEventHandler()` method
+                    if (result && result.getChangeType() === ContentServerChangeType.DELETE) {
+                        var ids = result.getResult().map((el) => {
+                            return el.getId();
+                        });
+                        nodes.forEach((node) => {
+                            var index = ids.indexOf(node.getDataId());
+                            if (index >= 0) {
+                                this.contentTreeGrid.xPopulateWithChildren(result.getResult()[index].getNodes()[0], node);
+                            }
+                        });
+                    }
+                    this.contentTreeGrid.initAndRender();
+
+                    isFiltered = true;
+                    if (isFiltered) {
+                        this.setFilterPanelRefreshNeeded(true);
+                        window.setTimeout(() => {
+                            this.refreshFilter();
+                        }, 1000);
+                    }
+                });
             });
             return promise;
         }
@@ -409,28 +409,28 @@ module app.browse {
                         }));
                     });
                     return ContentSummaryAndCompareStatusFetcher.
-                        fetchByIds(ids).
-                        then((data: ContentSummaryAndCompareStatus[]) => {
-                            var results = [];
-                            data.forEach((el) => {
-                                for (var i = 0; i < updateResult.length; i++) {
-                                    if (updateResult[i].getId() === el.getId()) {
-                                        updateResult[i].updateNodeData(el);
+                    fetchByIds(ids).
+                    then((data: ContentSummaryAndCompareStatus[]) => {
+                        var results = [];
+                        data.forEach((el) => {
+                            for (var i = 0; i < updateResult.length; i++) {
+                                if (updateResult[i].getId() === el.getId()) {
+                                    updateResult[i].updateNodeData(el);
 
-                                        this.updateStatisticsPreview(el); // update preview item
+                                    this.updateStatisticsPreview(el); // update preview item
 
-                                        this.updateItemInDetailsPanelIfNeeded(el);
+                                    this.updateItemInDetailsPanelIfNeeded(el);
 
-                                        results.push(updateResult[i]);
-                                        break;
-                                    }
+                                    results.push(updateResult[i]);
+                                    break;
                                 }
-                            });
-                            this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems()); // update actions state in case of permission changes
-                            this.mobileBrowseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
-
-                            return this.contentTreeGrid.xPlaceContentNodes(results);
+                            }
                         });
+                        this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems()); // update actions state in case of permission changes
+                        this.mobileBrowseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
+
+                        return this.contentTreeGrid.xPlaceContentNodes(results);
+                    });
                 });
             }
 
@@ -476,7 +476,9 @@ module app.browse {
                         contentDeletedEvent.addItem(contentSummary.getContentId(), contentSummary.getPath());
                     }
                 });
-                contentDeletedEvent.fireIfNotEmpty();
+                if (!contentDeletedEvent.isEmpty()) {
+                    contentDeletedEvent.fire();
+                }
 
                 this.contentTreeGrid.xDeleteContentNodes(merged);
 
@@ -502,31 +504,33 @@ module app.browse {
                 var pendingResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
                 return ContentSummaryAndCompareStatusFetcher.fetchByPaths(pendingResult.
-                        map((el) => {
-                            return (el.getNodes().length > 0 && el.getNodes()[0].getData())
-                                ? el.getNodes()[0].getData().getContentSummary().getPath()
-                                : null;
-                        }).
-                        filter((el) => {
-                            return el !== null;
-                        })
+                    map((el) => {
+                        return (el.getNodes().length > 0 && el.getNodes()[0].getData())
+                            ? el.getNodes()[0].getData().getContentSummary().getPath()
+                            : null;
+                    }).
+                    filter((el) => {
+                        return el !== null;
+                    })
                 ).then((data: ContentSummaryAndCompareStatus[]) => {
-                        var contentDeletedEvent = new api.content.ContentDeletedEvent();
-                        data.forEach((el) => {
-                            for (var i = 0; i < pendingResult.length; i++) {
-                                if (pendingResult[i].getId() === el.getId()) {
-                                    pendingResult[i].updateNodeData(el);
+                    var contentDeletedEvent = new api.content.ContentDeletedEvent();
+                    data.forEach((el) => {
+                        for (var i = 0; i < pendingResult.length; i++) {
+                            if (pendingResult[i].getId() === el.getId()) {
+                                pendingResult[i].updateNodeData(el);
 
-                                    this.updateItemInDetailsPanelIfNeeded(el);
+                                this.updateItemInDetailsPanelIfNeeded(el);
 
-                                    contentDeletedEvent.addPendingItem(el.getContentId(), el.getPath());
-                                    break;
-                                }
+                                contentDeletedEvent.addPendingItem(el.getContentId(), el.getPath());
+                                break;
                             }
-                        });
-                        contentDeletedEvent.fireIfNotEmpty();
-                        this.contentTreeGrid.invalidate();
+                        }
                     });
+                    if (!contentDeletedEvent.isEmpty()) {
+                        contentDeletedEvent.fire();
+                    }
+                    this.contentTreeGrid.invalidate();
+                });
             });
             return promise;
         }
@@ -537,24 +541,24 @@ module app.browse {
                 var publishResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
                 return ContentSummaryAndCompareStatusFetcher.
-                    fetchByPaths(publishResult.map((el) => {
-                        return el.getPath();
-                    })).
-                    then((data: ContentSummaryAndCompareStatus[]) => {
-                        data.forEach((el) => {
-                            for (var i = 0; i < publishResult.length; i++) {
-                                if (publishResult[i].getId() === el.getId()) {
-                                    publishResult[i].updateNodeData(el);
+                fetchByPaths(publishResult.map((el) => {
+                    return el.getPath();
+                })).
+                then((data: ContentSummaryAndCompareStatus[]) => {
+                    data.forEach((el) => {
+                        for (var i = 0; i < publishResult.length; i++) {
+                            if (publishResult[i].getId() === el.getId()) {
+                                publishResult[i].updateNodeData(el);
 
-                                    this.updateItemInDetailsPanelIfNeeded(el);
+                                this.updateItemInDetailsPanelIfNeeded(el);
 
-                                    new api.content.ContentPublishedEvent(el.getContentId(), el.getCompareStatus()).fire();
-                                    break;
-                                }
+                                new api.content.ContentPublishedEvent(el.getContentId(), el.getCompareStatus()).fire();
+                                break;
                             }
-                        });
-                        this.contentTreeGrid.invalidate();
+                        }
                     });
+                    this.contentTreeGrid.invalidate();
+                });
             });
             return promise;
         }
@@ -588,15 +592,15 @@ module app.browse {
 
             if (!!content && !!previewItem && content.getPath().toString() === previewItem.getPath()) {
                 new api.content.page.IsRenderableRequest(el.getContentId()).sendAndParse().
-                    then((renderable: boolean) => {
-                        var item = new BrowseItem<ContentSummaryAndCompareStatus>(content).
-                            setId(content.getId()).
-                            setDisplayName(content.getDisplayName()).
-                            setPath(content.getPath().toString()).
-                            setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve()).
-                            setRenderable(renderable);
-                        this.getBrowseItemPanel().setStatisticsItem(item);
-                    });
+                then((renderable: boolean) => {
+                    var item = new BrowseItem<ContentSummaryAndCompareStatus>(content).
+                    setId(content.getId()).
+                    setDisplayName(content.getDisplayName()).
+                    setPath(content.getPath().toString()).
+                    setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve()).
+                    setRenderable(renderable);
+                    this.getBrowseItemPanel().setStatisticsItem(item);
+                });
             }
         }
 
