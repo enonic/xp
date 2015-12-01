@@ -10,7 +10,6 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -103,22 +102,22 @@ public class SetPermissionsHandler
                         edit.inheritPermissions = inheritPermissions;
                         edit.permissions = permissions;
                     } );
-                final Content updatedContent = contentService.update( updatePermissionsParams );
+                contentService.update( updatePermissionsParams );
 
                 contentService.applyPermissions( ApplyContentPermissionsParams.create().
-                    contentId( updatedContent.getId() ).
+                    contentId( contentId ).
                     overwriteChildPermissions( overwriteChildPermissions ).
                     build() ).
                     get();
 
-                return new ContentMapper( updatedContent );
+                return true;
             }
             catch ( Exception e )
             {
             }
         }
 
-        return null;
+        return false;
     }
 
     private ContentId getContentId()

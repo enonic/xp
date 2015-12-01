@@ -441,7 +441,7 @@ exports.createMedia = function (params) {
  * @param {string} params.permissions.principal Principal key.
  * @param {array} params.permissions.allow Allowed permissions.
  * @param {array} params.permissions.deny Denied permissions.
- * @returns {object} Updated content.
+ * @returns {boolean} True if successful, false otherwise.
  */
 exports.setPermissions = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.SetPermissionsHandler');
