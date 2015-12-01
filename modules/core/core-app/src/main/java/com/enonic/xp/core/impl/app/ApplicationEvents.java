@@ -1,26 +1,20 @@
-package com.enonic.xp.app;
+package com.enonic.xp.core.impl.app;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.osgi.framework.BundleEvent;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
-
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
 
-@Beta
-public final class ApplicationEvent
-    implements Event
+public class ApplicationEvents
 {
-    private final BundleEvent bundleEvent;
+    public static final String EVENT_TYPE = "application";
 
-    private final String state;
+    public static final String APPLICATION_KEY_KEY = "applicationKey";
 
-    private final ApplicationKey applicationKey;
-
-    private static final Map<Integer, String> STATE_LOOKUP_TABLE = new HashMap<>();
+    public static final String EVENT_TYPE_KEY = "eventType";
 
     public static final String INSTALLED = "INSTALLED";
 
@@ -42,6 +36,8 @@ public final class ApplicationEvent
 
     public static final String UNINSTALLED = "UNINSTALLED";
 
+    private static final Map<Integer, String> STATE_LOOKUP_TABLE = new HashMap<>();
+
     static
     {
         STATE_LOOKUP_TABLE.put( BundleEvent.INSTALLED, INSTALLED );
@@ -56,30 +52,13 @@ public final class ApplicationEvent
         STATE_LOOKUP_TABLE.put( BundleEvent.UNINSTALLED, UNINSTALLED );
     }
 
-    public ApplicationEvent( final BundleEvent bundleEvent )
+    public static Event event( BundleEvent bundleEvent )
     {
-        this.bundleEvent = bundleEvent;
-        this.applicationKey = ApplicationKey.from( bundleEvent.getBundle() );
-        this.state = STATE_LOOKUP_TABLE.get( bundleEvent.getType() );
+        return Event.create( EVENT_TYPE ).
+            distributed( false ).
+            value( APPLICATION_KEY_KEY, ApplicationKey.from( bundleEvent.getBundle() ) ).
+            value( EVENT_TYPE_KEY, STATE_LOOKUP_TABLE.get( bundleEvent.getType() ) ).
+            build();
     }
 
-    public String getState()
-    {
-        return this.state;
-    }
-
-    public ApplicationKey getKey()
-    {
-        return this.applicationKey;
-    }
-
-    @Override
-    public String toString()
-    {
-        return MoreObjects.toStringHelper( this ).
-            add( "state", state ).
-            add( "applicationKey", applicationKey ).
-            omitNullValues().
-            toString();
-    }
 }

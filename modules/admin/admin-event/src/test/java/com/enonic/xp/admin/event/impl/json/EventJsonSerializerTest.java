@@ -14,8 +14,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.app.ApplicationEvent;
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.json.ObjectMapperHelper;
 
 import static org.junit.Assert.*;
@@ -40,21 +39,10 @@ public class EventJsonSerializerTest
     }
 
     @Test
-    public void ApplicationEvent()
-        throws Exception
-    {
-        final ApplicationEvent event = new ApplicationEvent( bundleEvent );
-        final ObjectNode json = this.serializer.toJson( event );
-
-        assertNotNull( json );
-        assertJson( "applicationEvent.json", json );
-    }
-
-    @Test
     public void testEvent()
         throws Exception
     {
-        final Event2 event = Event2.create( "node.created" ).
+        final Event event = Event.create( "node.created" ).
             timestamp( 0 ).
             value( "byte", (byte) 1 ).
             value( "short", (short) 2 ).

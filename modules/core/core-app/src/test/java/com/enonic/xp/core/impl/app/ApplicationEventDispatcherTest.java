@@ -9,7 +9,6 @@ import org.osgi.framework.BundleEvent;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.app.ApplicationEvent;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
 
@@ -48,9 +47,9 @@ public class ApplicationEventDispatcherTest
 
     private void assertEvent( final int index, final String type, final ApplicationKey key )
     {
-        final ApplicationEvent event = (ApplicationEvent) this.events.get( index );
-        assertEquals( type, event.getState() );
-        assertEquals( key, event.getKey() );
+        final Event event = this.events.get( index );
+        assertEquals( type, event.getValue( ApplicationEvents.EVENT_TYPE_KEY ).get() );
+        assertEquals( key.toString(), event.getValue( ApplicationEvents.APPLICATION_KEY_KEY ).get() );
     }
 
     @Test
@@ -61,8 +60,8 @@ public class ApplicationEventDispatcherTest
         startDispatcher();
 
         assertEquals( 2, this.events.size() );
-        assertEvent( 0, ApplicationEvent.STARTED, ApplicationKey.from( "bundle1" ) );
-        assertEvent( 1, ApplicationEvent.STARTED, ApplicationKey.from( "bundle3" ) );
+        assertEvent( 0, ApplicationEvents.STARTED, ApplicationKey.from( "bundle1" ) );
+        assertEvent( 1, ApplicationEvents.STARTED, ApplicationKey.from( "bundle3" ) );
     }
 
     @Test
@@ -73,17 +72,17 @@ public class ApplicationEventDispatcherTest
         startDispatcher();
 
         assertEquals( 1, this.events.size() );
-        assertEvent( 0, ApplicationEvent.STARTED, ApplicationKey.from( "bundle1" ) );
+        assertEvent( 0, ApplicationEvents.STARTED, ApplicationKey.from( "bundle1" ) );
 
         final Bundle bundle = newBundle( "bundle1", "Bundle 1" );
         Mockito.when( bundle.getSymbolicName() ).thenReturn( "bundle1" );
 
         this.dispatcher.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, bundle ) );
         assertEquals( 2, this.events.size() );
-        assertEvent( 1, ApplicationEvent.UNINSTALLED, ApplicationKey.from( "bundle1" ) );
+        assertEvent( 1, ApplicationEvents.UNINSTALLED, ApplicationKey.from( "bundle1" ) );
 
         this.dispatcher.bundleChanged( new BundleEvent( BundleEvent.INSTALLED, bundle ) );
         assertEquals( 3, this.events.size() );
-        assertEvent( 2, ApplicationEvent.INSTALLED, ApplicationKey.from( "bundle1" ) );
+        assertEvent( 2, ApplicationEvents.INSTALLED, ApplicationKey.from( "bundle1" ) );
     }
 }

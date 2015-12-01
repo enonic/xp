@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.Nodes;
 
@@ -31,12 +31,12 @@ public class NodeEvents
 
     public static final String NODE_STATE_UPDATED_EVENT = "node.stateUpdated";
 
-    public static Event2 created( final Node createdNode )
+    public static Event created( final Node createdNode )
     {
         return event( NODE_CREATED_EVENT, createdNode );
     }
 
-    public static Event2 pushed( final Nodes pushedNodes )
+    public static Event pushed( final Nodes pushedNodes )
     {
         if ( pushedNodes != null )
         {
@@ -46,7 +46,7 @@ public class NodeEvents
         return null;
     }
 
-    public static Event2 stateUpdated( final Nodes updatedNodes )
+    public static Event stateUpdated( final Nodes updatedNodes )
     {
         if ( updatedNodes != null )
         {
@@ -57,22 +57,22 @@ public class NodeEvents
         return null;
     }
 
-    public static Event2 deleted( final Node deletedNode )
+    public static Event deleted( final Node deletedNode )
     {
         return event( NODE_DELETED_EVENT, deletedNode );
     }
 
-    public static Event2 duplicated( final Node duplicatedNode )
+    public static Event duplicated( final Node duplicatedNode )
     {
         return event( NODE_DUPLICATED_EVENT, duplicatedNode );
     }
 
-    public static Event2 updated( final Node updatedNode )
+    public static Event updated( final Node updatedNode )
     {
         return event( NODE_UPDATED_EVENT, updatedNode );
     }
 
-    public static Event2 moved( final Node sourceNode, final Node targetNode )
+    public static Event moved( final Node sourceNode, final Node targetNode )
     {
         final ImmutableMap<Object, Object> node = ImmutableMap.builder().
             put( "id", sourceNode.id().toString() ).
@@ -80,13 +80,13 @@ public class NodeEvents
             put( "newPath", targetNode.path().toString() ).
             build();
 
-        return Event2.create( NODE_MOVED_EVENT ).
+        return Event.create( NODE_MOVED_EVENT ).
             distributed( true ).
             value( "nodes", ImmutableList.of( node ) ).
             build();
     }
 
-    public static Event2 renamed( final Node sourceNode, final Node targetNode )
+    public static Event renamed( final Node sourceNode, final Node targetNode )
     {
         final ImmutableMap<Object, Object> node = ImmutableMap.builder().
             put( "id", sourceNode.id().toString() ).
@@ -94,18 +94,18 @@ public class NodeEvents
             put( "newPath", targetNode.path().toString() ).
             build();
 
-        return Event2.create( NODE_RENAMED_EVENT ).
+        return Event.create( NODE_RENAMED_EVENT ).
             distributed( true ).
             value( "nodes", ImmutableList.of( node ) ).
             build();
     }
 
-    public static Event2 sorted( final Node sortedNode )
+    public static Event sorted( final Node sortedNode )
     {
         return event( NODE_SORTED_EVENT, sortedNode );
     }
 
-    private static Event2 event( String type, Node node )
+    private static Event event( String type, Node node )
     {
         if ( node != null )
         {
@@ -114,9 +114,9 @@ public class NodeEvents
         return null;
     }
 
-    private static Event2.Builder event( String type, Nodes nodes )
+    private static Event.Builder event( String type, Nodes nodes )
     {
-        return Event2.create( type ).
+        return Event.create( type ).
             distributed( true ).
             value( "nodes", nodesToList( nodes ) );
     }

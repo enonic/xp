@@ -6,9 +6,9 @@ import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
 
-import com.enonic.xp.app.ApplicationEvent;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.event.Event;
 
 public class ApplicationInvalidatorListenerTest
 {
@@ -20,7 +20,7 @@ public class ApplicationInvalidatorListenerTest
 
     private ApplicationKey appKey;
 
-    private ApplicationEvent event;
+    private Event event;
 
     @Before
     public void setup()
@@ -38,7 +38,7 @@ public class ApplicationInvalidatorListenerTest
         Mockito.when( bundle.getSymbolicName() ).thenReturn( this.appKey.getName() );
 
         final BundleEvent bundleEvent = new BundleEvent( BundleEvent.STARTED, bundle );
-        this.event = new ApplicationEvent( bundleEvent );
+        this.event = ApplicationEvents.event( bundleEvent );
     }
 
     @Test

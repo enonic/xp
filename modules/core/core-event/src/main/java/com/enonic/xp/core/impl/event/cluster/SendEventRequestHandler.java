@@ -10,7 +10,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
 
 @Component(immediate = true, service = TransportRequestHandler.class)
@@ -42,8 +42,8 @@ public final class SendEventRequestHandler
     @Override
     public void messageReceived( final SendEventRequest request, final TransportChannel channel )
     {
-        final Event2 receivedEvent = request.getEvent();
-        final Event2 forwardedEvent = Event2.create( receivedEvent ).distributed( false ).localOrigin( false ).build();
+        final Event receivedEvent = request.getEvent();
+        final Event forwardedEvent = Event.create( receivedEvent ).distributed( false ).localOrigin( false ).build();
         this.eventPublisher.publish( forwardedEvent );
     }
 

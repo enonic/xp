@@ -7,7 +7,7 @@ import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 
 public class SendEventRequestTest
 {
@@ -16,7 +16,7 @@ public class SendEventRequestTest
     public void testWriteRead()
         throws IOException
     {
-        Event2 event = Event2.create( "eventType" ).
+        Event event = Event.create( "eventType" ).
             timestamp( 123l ).
             distributed( true ).
             value( "key1", "value1" ).
