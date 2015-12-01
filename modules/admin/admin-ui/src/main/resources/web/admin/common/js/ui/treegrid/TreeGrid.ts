@@ -575,6 +575,15 @@ module api.ui.treegrid {
             }
         }
 
+        refreshNodeById(dataId: string) {
+            var root = this.root.getCurrentRoot(),
+                node = root.findNode(dataId);
+
+            if (node) {
+                this.refreshNode(node);
+            }
+        }
+
         selectAll() {
             var rows = [];
             for (var i = 0; i < this.gridData.getLength(); i++) {
