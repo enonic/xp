@@ -49,9 +49,16 @@ do_start()
 
     su - "$RUNUSER" -c "export XP_INSTALL=${XP_INSTALL};${XP_INSTALL}/bin/$SCRIPT $PIDFILE $XP_CONFIG" > ${OUT_LOG} 2>&1
     RETVAL=$?
-    echo "$DESC: $NAME started"
-	echo "( with pid $(cat $PIDFILE) and exit code $RETVAL )"
-	echo
+
+    if [ "$RETVAL" = 0 ]; then
+        echo "$DESC: $NAME started"
+        echo "( with pid $(cat $PIDFILE) and exit code $RETVAL )"
+    else
+          echo "$DESC: $NAME not stared, exit code $RETVAL"
+          echo "Check log for details: $OUT_LOG"
+          exit 1;
+    fi
+
 }
 
 do_stop()
