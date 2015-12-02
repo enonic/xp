@@ -17,7 +17,7 @@ module api.app.browse {
             if (index >= 0) {
                 // item already exist
                 var currentItem = this.items[index];
-                if (!currentItem.equals(item)) {
+                if (!item.equals(currentItem)) {
                     // update current item
                     this.items[index] = item;
                 }
@@ -75,12 +75,17 @@ module api.app.browse {
             let itemsToRemove = api.util.ArrayHelper.difference(this.items, items, doFilter);
 
             let itemsToAdd = api.util.ArrayHelper.difference(items, this.items, doFilter);
+            /*
+             let itemsUpdated = api.util.ArrayHelper.difference(items, this.items, (valueLeft: BrowseItem<M>, valueRight: BrowseItem<M>) => {
+             return !doFilter(valueLeft, valueRight);
+             });
+             */
 
             itemsToRemove.forEach((item: BrowseItem<M>) => {
                 this.removeItem(item);
             });
 
-            items.forEach((item: BrowseItem<M>) => {
+            itemsToAdd.forEach((item: BrowseItem<M>) => {
                 this.addItem(item);
             });
 

@@ -10,6 +10,14 @@ module app.browse {
             return new app.view.ContentItemStatisticsPanel();
         }
 
+        setItems(items: ContentBrowseItem[]): api.app.browse.BrowseItemsChanges {
+            return super.setItems(items);
+        }
+
+        getItems(): ContentBrowseItem[] {
+            return <ContentBrowseItem[]>super.getItems();
+        }
+
     }
 
 }

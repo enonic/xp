@@ -28,3 +28,4 @@
 ///<reference path='ContentGridDragHandler.ts' />
 ///<reference path='ContentPublishPromptEvent.ts' />
 ///<reference path='MobileContentBrowseToolbar.ts' />
+///<reference path='ContentBrowseItem.ts' />
