@@ -14,6 +14,8 @@ import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.core.impl.content.page.DescriptorKeyLocator;
+import com.enonic.xp.core.impl.content.page.OptionalDescriptorKeyLocator;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
@@ -45,7 +47,12 @@ public final class PartDescriptorServiceImpl
     @Override
     public PartDescriptor getByKey( final DescriptorKey key )
     {
-        return this.cache.computeIfAbsent( key, this::loadDescriptor );
+        PartDescriptor partDescriptor = this.cache.computeIfAbsent( key, this::loadDescriptor );
+        if ( partDescriptor == null )
+        {
+            partDescriptor = createDefaultDescriptor( key );
+        }
+        return partDescriptor;
     }
 
     @Override
@@ -94,19 +101,29 @@ public final class PartDescriptorServiceImpl
         final ResourceKey resourceKey = PartDescriptor.toResourceKey( key );
         final Resource resource = this.resourceService.getResource( resourceKey );
 
-        final PartDescriptor.Builder builder = PartDescriptor.create();
-
         if ( !resource.exists() )
         {
             return null;
         }
 
+        final PartDescriptor.Builder builder = PartDescriptor.create();
         parseXml( resource, builder );
         builder.name( key.getName() ).key( key );
         final PartDescriptor partDescriptor = builder.build();
 
         return PartDescriptor.copyOf( partDescriptor ).
             config( mixinService.inlineFormItems( partDescriptor.getConfig() ) ).
+            build();
+    }
+
+    private PartDescriptor createDefaultDescriptor( final DescriptorKey key )
+    {
+        return PartDescriptor.
+            create().
+            key( key ).
+            name( key.getName() ).
+            displayName( key.getName() ).
+            config( Form.create().build() ).
             build();
     }
 
@@ -128,7 +145,7 @@ public final class PartDescriptorServiceImpl
 
     private List<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
     {
-        return new DescriptorKeyLocator( this.resourceService, PATH ).findKeys( key );
+        return new OptionalDescriptorKeyLocator( this.resourceService, PATH ).findKeys( key );
     }
 
     @Override
