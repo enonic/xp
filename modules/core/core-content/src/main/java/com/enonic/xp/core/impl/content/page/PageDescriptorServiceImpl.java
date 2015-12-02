@@ -13,10 +13,12 @@ import com.google.common.collect.Maps;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageDescriptors;
+import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -44,7 +46,12 @@ public final class PageDescriptorServiceImpl
     @Override
     public PageDescriptor getByKey( final DescriptorKey key )
     {
-        return this.cache.computeIfAbsent( key, this::loadDescriptor );
+        PageDescriptor pageDescriptor = this.cache.computeIfAbsent( key, this::loadDescriptor );
+        if ( pageDescriptor == null )
+        {
+            pageDescriptor = createDefaultDescriptor( key );
+        }
+        return pageDescriptor;
     }
 
     @Override
@@ -106,21 +113,20 @@ public final class PageDescriptorServiceImpl
 
     private List<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
     {
-        return new DescriptorKeyLocator( this.resourceService, PATH ).findKeys( key );
+        return new OptionalDescriptorKeyLocator( this.resourceService, PATH ).findKeys( key );
     }
 
-    protected final PageDescriptor loadDescriptor( final DescriptorKey key )
+    private final PageDescriptor loadDescriptor( final DescriptorKey key )
     {
         final ResourceKey resourceKey = PageDescriptor.toResourceKey( key );
         final Resource resource = this.resourceService.getResource( resourceKey );
-
-        final PageDescriptor.Builder builder = PageDescriptor.create();
 
         if ( !resource.exists() )
         {
             return null;
         }
 
+        final PageDescriptor.Builder builder = PageDescriptor.create();
         parseXml( resource, builder );
         builder.key( key );
 
@@ -128,6 +134,17 @@ public final class PageDescriptorServiceImpl
 
         return PageDescriptor.copyOf( pageDescriptor ).
             config( mixinService.inlineFormItems( pageDescriptor.getConfig() ) ).
+            build();
+    }
+
+    private final PageDescriptor createDefaultDescriptor( final DescriptorKey key )
+    {
+        return PageDescriptor.
+            create().
+            key( key ).
+            displayName( key.getName() ).
+            config( Form.create().build() ).
+            regions( RegionDescriptors.create().build() ).
             build();
     }
 
