@@ -1,8 +1,10 @@
 package com.enonic.xp.schema.relationship;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -57,6 +59,11 @@ public final class RelationshipTypes
         return map.get( relationshipTypeName );
     }
 
+    public RelationshipTypes filter( final Predicate<RelationshipType> filter )
+    {
+        return from( this.map.values().stream().filter( filter ).iterator() );
+    }
+
     public static RelationshipTypes empty()
     {
         final ImmutableList<RelationshipType> list = ImmutableList.of();
@@ -69,6 +76,11 @@ public final class RelationshipTypes
     }
 
     public static RelationshipTypes from( final Iterable<RelationshipType> relationshipTypes )
+    {
+        return new RelationshipTypes( ImmutableList.copyOf( relationshipTypes ) );
+    }
+
+    public static RelationshipTypes from( final Iterator<RelationshipType> relationshipTypes )
     {
         return new RelationshipTypes( ImmutableList.copyOf( relationshipTypes ) );
     }

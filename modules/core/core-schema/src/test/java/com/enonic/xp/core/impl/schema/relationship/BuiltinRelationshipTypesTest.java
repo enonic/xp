@@ -8,12 +8,12 @@ import com.enonic.xp.schema.relationship.RelationshipTypes;
 
 import static org.junit.Assert.*;
 
-public class BuiltinRelationshipTypeLoaderTest
+public class BuiltinRelationshipTypesTest
 {
     @Test
-    public void testBuiltin()
+    public void testGetAll()
     {
-        final RelationshipTypes types = new BuiltinRelationshipTypeLoader().load();
+        final RelationshipTypes types = new BuiltinRelationshipTypes().getAll();
         assertEquals( 2, types.getSize() );
 
         assertType( types.get( 0 ), RelationshipTypeName.REFERENCE, true );

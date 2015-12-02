@@ -76,7 +76,6 @@ public final class MixinServiceImpl
         final Set<Mixin> list = Sets.newLinkedHashSet();
         list.addAll( this.builtInTypes.getAll().getList() );
 
-        //Gets application content types
         for ( final Application application : this.applicationService.getAllApplications() )
         {
             final Mixins types = getByApplication( application.getKey() );

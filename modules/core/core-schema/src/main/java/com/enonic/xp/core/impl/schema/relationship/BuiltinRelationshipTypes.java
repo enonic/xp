@@ -4,18 +4,19 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.SchemaHelper;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.content.ContentTypeNames;
+import com.enonic.xp.schema.mixin.Mixins;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
 
-final class BuiltinRelationshipTypeLoader
+final class BuiltinRelationshipTypes
 {
     private static final String RELATIONSHIP_TYPES_FOLDER = "relationship-types";
 
-    // System Relationship Types
     private static final RelationshipType REFERENCE =
         createRelationshipType( RelationshipTypeName.REFERENCE, "Reference", "references", "is referenced by" );
 
@@ -24,10 +25,22 @@ final class BuiltinRelationshipTypeLoader
 
     private static final RelationshipType[] RELATIONSHIP_TYPES = {REFERENCE, PARENT};
 
-    public RelationshipTypes load()
+    private final RelationshipTypes types;
+
+    public BuiltinRelationshipTypes()
     {
         final List<RelationshipType> relationshipTypeList = generateSystemRelationshipTypes();
-        return RelationshipTypes.from( relationshipTypeList );
+        this.types = RelationshipTypes.from( relationshipTypeList );
+    }
+
+    public RelationshipTypes getAll()
+    {
+        return this.types;
+    }
+
+    public RelationshipTypes getByApplication( final ApplicationKey key )
+    {
+        return this.types.filter( ( type ) -> type.getName().getApplicationKey().equals( key ) );
     }
 
     private static RelationshipType createRelationshipType( final RelationshipTypeName relationshipTypeName, final String displayName,

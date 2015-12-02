@@ -1,17 +1,9 @@
 package com.enonic.xp.core.impl.schema.relationship;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleEvent;
-import org.osgi.service.component.ComponentContext;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.app.Applications;
-import com.enonic.xp.core.impl.schema.AbstractBundleTest;
+import com.enonic.xp.core.impl.schema.AbstractSchemaTest;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
@@ -19,122 +11,76 @@ import com.enonic.xp.schema.relationship.RelationshipTypes;
 import static org.junit.Assert.*;
 
 public class RelationshipTypeServiceImplTest
-    extends AbstractBundleTest
+    extends AbstractSchemaTest
 {
+    protected RelationshipTypeServiceImpl service;
 
-    private static int DEFAULT_RELATIONSHIP_TYPES_NUMBER = 2;
-
-    private Bundle myBundle;
-
-    private ApplicationKey myApplicationKey;
-
-    private RelationshipType myApplicationType;
-
-    private Application myApplication;
-
-    private ApplicationService applicationService;
-
-    private RelationshipTypeServiceImpl relationshipTypeService;
-
-    @Before
     @Override
-    public void setup()
+    protected void initialize()
         throws Exception
     {
-        super.setup();
-
-        //Mocks an application
-        startBundles( newBundle( "application2" ) );
-        myBundle = findBundle( "application2" );
-        myApplicationKey = ApplicationKey.from( myBundle );
-        myApplicationType = createType( myApplicationKey + ":member" );
-        myApplication = Mockito.mock( Application.class );
-        Mockito.when( myApplication.getKey() ).thenReturn( myApplicationKey );
-        Mockito.when( myApplication.getBundle() ).thenReturn( myBundle );
-        Mockito.when( myApplication.isStarted() ).thenReturn( true );
-
-        //Mocks the application service
-        applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
-
-        //Mocks the ComponentContext
-        final ComponentContext componentContext = Mockito.mock( ComponentContext.class );
-        Mockito.when( componentContext.getBundleContext() ).thenReturn( this.serviceRegistry.getBundleContext() );
-
-        //Creates the service to test
-        relationshipTypeService = new RelationshipTypeServiceImpl();
-        relationshipTypeService.setApplicationService( applicationService );
-
-        //Starts the service
-        relationshipTypeService.start( componentContext );
+        this.service = new RelationshipTypeServiceImpl();
+        this.service.setApplicationService( this.applicationService );
+        this.service.setResourceService( this.resourceService );
     }
 
     @Test
-    public void test_empty()
+    public void testEmpty()
     {
-        RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
-        assertNotNull( relationshipTypes );
-        assertEquals( DEFAULT_RELATIONSHIP_TYPES_NUMBER, relationshipTypes.getSize() );
+        addApplications();
 
-        relationshipTypes = relationshipTypeService.getByApplication( myApplicationKey );
-        assertNotNull( relationshipTypes );
-        assertEquals( 0, relationshipTypes.getSize() );
+        final RelationshipTypes types1 = this.service.getAll();
+        assertNotNull( types1 );
+        assertEquals( 2, types1.getSize() );
 
-        RelationshipType relationshipType = relationshipTypeService.getByName( myApplicationType.getName() );
-        assertEquals( null, relationshipType );
+        final RelationshipTypes types2 = this.service.getByApplication( ApplicationKey.from( "other" ) );
+        assertNotNull( types2 );
+        assertEquals( 0, types2.getSize() );
+
+        final RelationshipType mixin = service.getByName( RelationshipTypeName.from( "other:mytype" ) );
+        assertEquals( null, mixin );
     }
 
     @Test
-    public void test_add_removal_application()
+    public void testSystemTypes()
     {
-        Applications applications = Applications.from( myApplication );
-        Mockito.when( applicationService.getAllApplications() ).thenReturn( applications );
-        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( myApplication );
+        addApplications();
 
-        RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
+        RelationshipTypes relationshipTypes = service.getAll();
         assertNotNull( relationshipTypes );
-        assertEquals( DEFAULT_RELATIONSHIP_TYPES_NUMBER + 1, relationshipTypes.getSize() );
+        assertEquals( 2, relationshipTypes.getSize() );
 
-        relationshipTypes = relationshipTypeService.getByApplication( myApplicationKey );
+        relationshipTypes = service.getByApplication( ApplicationKey.SYSTEM );
         assertNotNull( relationshipTypes );
-        assertEquals( 1, relationshipTypes.getSize() );
+        assertEquals( 2, relationshipTypes.getSize() );
 
-        RelationshipType relationshipType = relationshipTypeService.getByName( myApplicationType.getName() );
+        RelationshipType relationshipType = service.getByName( RelationshipTypeName.PARENT );
         assertNotNull( relationshipType );
 
-        Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
-        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( null );
-        relationshipTypeService.bundleChanged( new BundleEvent( BundleEvent.STOPPED, myBundle ) );
-
-        test_empty();
-    }
-
-    @Test
-    public void test_get_system_application()
-    {
-        RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
-        assertNotNull( relationshipTypes );
-        assertEquals( DEFAULT_RELATIONSHIP_TYPES_NUMBER, relationshipTypes.getSize() );
-
-        relationshipTypes = relationshipTypeService.getByApplication( ApplicationKey.SYSTEM );
-        assertNotNull( relationshipTypes );
-        assertEquals( DEFAULT_RELATIONSHIP_TYPES_NUMBER, relationshipTypes.getSize() );
-
-        RelationshipType relationshipType = relationshipTypeService.getByName( RelationshipTypeName.PARENT );
-        assertNotNull( relationshipType );
-
-        relationshipType = relationshipTypeService.getByName( RelationshipTypeName.REFERENCE );
+        relationshipType = service.getByName( RelationshipTypeName.REFERENCE );
         assertNotNull( relationshipType );
     }
 
     @Test
-    public void test_stop()
+    public void testApplications()
     {
-        relationshipTypeService.stop();
-    }
+        addApplications( "application1", "application2" );
 
-    private RelationshipType createType( final String name )
-    {
-        return RelationshipType.create().name( name ).build();
+        final RelationshipTypes types1 = this.service.getAll();
+        assertNotNull( types1 );
+        assertEquals( 3, types1.getSize() );
+
+        final RelationshipTypes types2 = this.service.getByApplication( ApplicationKey.from( "application1" ) );
+        assertNotNull( types2 );
+        assertEquals( 0, types2.getSize() );
+
+        this.service.invalidate( ApplicationKey.from( "application2" ) );
+
+        final RelationshipTypes types3 = this.service.getByApplication( ApplicationKey.from( "application2" ) );
+        assertNotNull( types3 );
+        assertEquals( 1, types3.getSize() );
+
+        final RelationshipType type = service.getByName( RelationshipTypeName.from( "application2:member" ) );
+        assertNotNull( type );
     }
 }
