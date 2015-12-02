@@ -53,7 +53,7 @@ public class PageDescriptorServiceTest
         final Application application = createApplication( "myapp" );
         createDescriptors( "myapp:mypage" );
 
-        mockFindFiles( application, "/site/pages", "/site/pages/mypage/mypage.xml" );
+        mockFindFolders( application, "/site/pages", "/site/pages/mypage" );
 
         final PageDescriptors result = this.service.getByApplication( application.getKey() );
 
@@ -68,8 +68,8 @@ public class PageDescriptorServiceTest
         final Applications applications = createApplications( "myapp1", "myapp2" );
         createDescriptors( "myapp1:mypage", "myapp2:mypage" );
 
-        mockFindFiles( applications.getApplication( ApplicationKey.from( "myapp1" ) ), "/site/pages", "/site/pages/mypage/mypage.xml" );
-        mockFindFiles( applications.getApplication( ApplicationKey.from( "myapp2" ) ), "/site/pages", "/site/pages/mypage/mypage.xml" );
+        mockFindFolders( applications.getApplication( ApplicationKey.from( "myapp1" ) ), "/site/pages", "/site/pages/mypage" );
+        mockFindFolders( applications.getApplication( ApplicationKey.from( "myapp2" ) ), "/site/pages", "/site/pages/mypage" );
 
         final PageDescriptors result = this.service.getByApplications( applications.getApplicationKeys() );
 

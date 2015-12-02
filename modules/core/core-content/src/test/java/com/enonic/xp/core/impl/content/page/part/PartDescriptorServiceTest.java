@@ -55,7 +55,7 @@ public class PartDescriptorServiceTest
         final Application application = createApplication( "myapp" );
         createDescriptors( "myapp:mypart" );
 
-        mockFindFiles( application, "/site/parts", "/site/parts/mypart/mypart.xml" );
+        mockFindFolders( application, "/site/parts", "/site/parts/mypart" );
 
         final PartDescriptors result = this.service.getByApplication( application.getKey() );
 
@@ -70,8 +70,8 @@ public class PartDescriptorServiceTest
         final Applications applications = createApplications( "myapp1", "myapp2" );
         createDescriptors( "myapp1:mypart", "myapp2:mypart" );
 
-        mockFindFiles( applications.getApplication( ApplicationKey.from( "myapp1" ) ), "/site/parts", "/site/parts/mypart/mypart.xml" );
-        mockFindFiles( applications.getApplication( ApplicationKey.from( "myapp2" ) ), "/site/parts", "/site/parts/mypart/mypart.xml" );
+        mockFindFolders( applications.getApplication( ApplicationKey.from( "myapp1" ) ), "/site/parts", "/site/parts/mypart" );
+        mockFindFolders( applications.getApplication( ApplicationKey.from( "myapp2" ) ), "/site/parts", "/site/parts/mypart" );
 
         final PartDescriptors result = this.service.getByApplications( applications.getApplicationKeys() );
 
