@@ -116,6 +116,19 @@ var expectedJson = {
                 "name": "top"
             }
         }
+    },
+    "attachments": {
+        "logo.png": {
+            "name": "logo.png",
+            "label": "small",
+            "size": 6789,
+            "mimeType": "image/png"
+        },
+        "document.pdf": {
+            "name": "document.pdf",
+            "size": 12345,
+            "mimeType": "application/pdf"
+        }
     }
 };
 

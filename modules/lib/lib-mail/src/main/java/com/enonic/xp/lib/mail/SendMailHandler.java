@@ -1,23 +1,35 @@
 package com.enonic.xp.lib.mail;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.mail.Message;
+import javax.mail.Multipart;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.io.ByteSource;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.mail.MailException;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.util.MediaTypes;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -45,6 +57,8 @@ public final class SendMailHandler
     private Supplier<MailService> mailService;
 
     private Map<String, String> headers;
+
+    private List<Map<String, Object>> attachments;
 
     public void setTo( final String[] to )
     {
@@ -91,6 +105,11 @@ public final class SendMailHandler
         this.headers = headers;
     }
 
+    public void setAttachments( final List<Map<String, Object>> attachments )
+    {
+        this.attachments = attachments;
+    }
+
     public boolean send()
     {
         try
@@ -110,7 +129,6 @@ public final class SendMailHandler
         throws Exception
     {
         message.setSubject( this.subject );
-        message.setText( nullToEmpty( this.body ), "UTF-8" );
 
         message.addFrom( toAddresses( this.from ) );
         message.addRecipients( Message.RecipientType.TO, toAddresses( this.to ) );
@@ -118,17 +136,41 @@ public final class SendMailHandler
         message.addRecipients( Message.RecipientType.BCC, toAddresses( this.bcc ) );
         message.setReplyTo( toAddresses( this.replyTo ) );
 
-        if ( this.contentType != null )
-        {
-            message.addHeader( "Content-Type", this.contentType );
-        }
-
         if ( this.headers != null )
         {
             for ( Map.Entry<String, String> header : this.headers.entrySet() )
             {
                 message.addHeader( header.getKey(), header.getValue() );
             }
+        }
+
+        final List<Attachment> attachmentList = getAttachments();
+        if ( attachmentList.isEmpty() )
+        {
+            message.setText( nullToEmpty( this.body ), "UTF-8" );
+        }
+        else
+        {
+            final Multipart multipart = new MimeMultipart();
+
+            final MimeBodyPart textPart = new MimeBodyPart();
+            textPart.setText( nullToEmpty( this.body ), "UTF-8" );
+            multipart.addBodyPart( textPart );
+
+            for ( Attachment attachment : attachmentList )
+            {
+                final MimeBodyPart messageBodyPart = new MimeBodyPart();
+                DataSource source = new ByteSourceDataSource( attachment.data, attachment.name, attachment.mimeType );
+                messageBodyPart.setDataHandler( new DataHandler( source ) );
+                messageBodyPart.setFileName( attachment.name );
+                multipart.addBodyPart( messageBodyPart );
+            }
+            message.setContent( multipart );
+        }
+
+        if ( this.contentType != null )
+        {
+            message.addHeader( "Content-Type", this.contentType );
         }
     }
 
@@ -151,9 +193,68 @@ public final class SendMailHandler
         return Stream.of( addressList ).filter( StringUtils::isNotBlank ).map( ( this::toAddress ) ).toArray( InternetAddress[]::new );
     }
 
+    private List<Attachment> getAttachments()
+    {
+        if ( this.attachments == null )
+        {
+            return Collections.emptyList();
+        }
+        final List<Attachment> attachments = new ArrayList<>();
+        for ( Map<String, Object> attachmentObject : this.attachments )
+        {
+            final String name = getValue( attachmentObject, "fileName", String.class );
+            final ByteSource data = getValue( attachmentObject, "data", ByteSource.class );
+            String mimeType = getValue( attachmentObject, "mimeType", String.class );
+            if ( name != null && data != null )
+            {
+                mimeType = mimeType == null ? getMimeType( name ) : mimeType;
+                attachments.add( new Attachment( name, data, mimeType ) );
+            }
+        }
+        return attachments;
+    }
+
+    private <T> T getValue( final Map<String, Object> object, final String key, final Class<T> type )
+    {
+        final Object value = object.get( key );
+        if ( value != null && type.isInstance( value ) )
+        {
+            //noinspection unchecked
+            return (T) value;
+        }
+        return null;
+    }
+
+    private String getMimeType( final String fileName )
+    {
+        if ( fileName == null )
+        {
+            return MediaType.OCTET_STREAM.toString();
+        }
+
+        final MediaType type = MediaTypes.instance().fromFile( fileName );
+        return type.toString();
+    }
+
     @Override
     public void initialize( final BeanContext context )
     {
         this.mailService = context.getService( MailService.class );
+    }
+
+    private static class Attachment
+    {
+        public final String name;
+
+        public final ByteSource data;
+
+        public final String mimeType;
+
+        public Attachment( final String name, final ByteSource data, final String mimeType )
+        {
+            this.name = name;
+            this.data = data;
+            this.mimeType = mimeType;
+        }
     }
 }

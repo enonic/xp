@@ -1,6 +1,8 @@
 var assert = require('/lib/xp/assert.js');
 var mail = require('/lib/xp/mail.js');
 
+var TestClass = Java.type('com.enonic.xp.lib.mail.SendMailScriptTest');
+
 exports.simpleMail = function () {
 
     var result = mail.send({
@@ -91,6 +93,28 @@ exports.sendWithoutRequiredTo = function () {
     var result = mail.send({
         subject: 'test subject',
         from: 'to@bar.com'
+    });
+
+};
+
+exports.sendWithAttachments = function () {
+
+    var result = mail.send({
+        subject: 'test subject',
+        body: 'test body',
+        to: 'to@bar.com',
+        from: 'from@bar.com',
+        attachments: [
+            {
+                fileName: 'image.png',
+                mimeType: 'image/png',
+                data: TestClass.createByteSource('image data')
+            },
+            {
+                fileName: 'text.txt',
+                data: TestClass.createByteSource('Some text')
+            }
+        ]
     });
 
 };

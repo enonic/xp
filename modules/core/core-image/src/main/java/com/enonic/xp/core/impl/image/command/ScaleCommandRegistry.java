@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.image.command;
 
-public class ScaleCommandRegistry extends ImageCommandRegistry<ScaleCommand>
+public class ScaleCommandRegistry
+    extends ImageCommandRegistry<ScaleCommand>
 {
 
     public ScaleCommandRegistry()
@@ -11,6 +12,7 @@ public class ScaleCommandRegistry extends ImageCommandRegistry<ScaleCommand>
         register( new ScaleWideFunctionCommand() );
         register( new ScaleWidthFunctionCommand() );
         register( new ScaleBlockFunctionCommand() );
+        register( new ScaleFullFunctionCommand() );
     }
 
 }

@@ -11,14 +11,11 @@ import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.io.Resources;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -26,14 +23,12 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
-import com.enonic.xp.portal.impl.mapper.PortalResponseMapper;
 import com.enonic.xp.portal.impl.postprocess.PostProcessorImpl;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.impl.ScriptRuntimeFactoryImpl;
-import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 public abstract class AbstractControllerTest
@@ -113,14 +108,6 @@ public abstract class AbstractControllerTest
         return portalResponse.getAsString();
     }
 
-    protected String getResponseAsJson()
-        throws JsonProcessingException
-    {
-        final JsonMapGenerator generator = new JsonMapGenerator();
-        new PortalResponseMapper( portalResponse ).serialize( generator );
-        return this.mapper.writeValueAsString( generator.getRoot() );
-    }
-
     protected final void assertJson( final String name, final String actual )
         throws Exception
     {
@@ -135,19 +122,6 @@ public abstract class AbstractControllerTest
         final String actualStr = this.mapper.writeValueAsString( actualJson );
 
         Assert.assertEquals( expectedStr, actualStr );
-    }
-
-    protected final void assertHtml( final String name, final String actual )
-        throws Exception
-    {
-        final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".html";
-        final URL url = getClass().getResource( resource );
-        final String expected = Resources.toString( url, Charsets.UTF_8 );
-
-        if ( !normalizeHTMLString( expected ).equals( normalizeHTMLString( actual ) ) )
-        {
-            Assert.assertEquals( expected, actual );
-        }
     }
 
     private String normalizeHTMLString( final String text )

@@ -25,8 +25,6 @@ import com.enonic.xp.security.PrincipalKey;
 public class CreateContentHandlerTest
     extends BaseContentHandlerTest
 {
-    private final static char[] REPLACE_WITH_HYPHEN_CHARS =
-        {'$', '&', '|', ':', ';', '#', '/', '\\', '<', '>', '\"', '*', '+', ',', '=', '@', '%', '{', '}', '[', ']', '`', '~', '^', '_'};
 
     @Test
     public void createContent()
@@ -118,8 +116,6 @@ public class CreateContentHandlerTest
     public void createContentAutoGenerateName()
         throws Exception
     {
-        Mockito.when( this.contentService.generateContentName( Mockito.anyString() ) ).thenAnswer(
-            mock -> mockGenerateContentName( (String) mock.getArguments()[0] ) );
         Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
 
@@ -138,8 +134,6 @@ public class CreateContentHandlerTest
     public void createContentAutoGenerateNameWithExistingName()
         throws Exception
     {
-        Mockito.when( this.contentService.generateContentName( Mockito.anyString() ) ).thenAnswer(
-            mock -> mockGenerateContentName( (String) mock.getArguments()[0] ) );
         Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
 
@@ -180,13 +174,4 @@ public class CreateContentHandlerTest
         return builder.build();
     }
 
-    private String mockGenerateContentName( final String displayName )
-    {
-        String prettifiedName = displayName.toLowerCase().replaceAll( "\\s+", "-" );
-        for ( char toBeReplaced : REPLACE_WITH_HYPHEN_CHARS )
-        {
-            prettifiedName = prettifiedName.replace( toBeReplaced, '-' );
-        }
-        return prettifiedName;
-    }
 }

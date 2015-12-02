@@ -112,7 +112,6 @@
     top: 91px;
     left: 5px;
     bottom: 0px;
-
   }
 
   .splitter {
@@ -160,6 +159,10 @@
 
       .icon-list();
 
+      &:hover:not(.active) {
+        background-color: @admin-bg-light-gray;
+      }
+
       &.active {
         background-color: @admin-blue;
         &:before {
@@ -183,10 +186,17 @@
         .selected-option {
           background-color: @admin-blue;
           color: @admin-white;
+          &:hover {
+            background-color: @admin-blue;
+          }
         }
 
         .dropdown-handle {
           background-color: @admin-white;
+
+          &:hover {
+            background-color: @admin-bg-light-gray;
+          }
         }
       }
 
@@ -208,13 +218,6 @@
         &:after {
           margin: -5px 0 0 -5px;
         }
-
-        &.down {
-          background-color: @admin-blue;
-          &:after {
-            border-bottom: 10px solid @admin-white;
-          }
-        }
       }
 
       .selected-option {
@@ -223,6 +226,10 @@
         max-height: 35px;
         display: inline-block;
         border: 0px;
+
+        &:hover {
+          background-color: @admin-bg-light-gray;
+        }
 
         .option-value {
           margin: 0px 37px 0px 0px;

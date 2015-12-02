@@ -13,6 +13,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.impl.service.ServiceRegistryImpl;
 import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.runtime.ScriptSettings;
+import com.enonic.xp.server.RunMode;
 
 public final class ScriptExecutorManager
 {
@@ -47,6 +48,7 @@ public final class ScriptExecutorManager
         executor.setServiceRegistry( new ServiceRegistryImpl( application.getBundle().getBundleContext() ) );
         executor.setResourceService( this.resourceService );
         executor.setApplication( application );
+        executor.setRunMode( RunMode.get() );
         executor.initialize();
         return executor;
     }

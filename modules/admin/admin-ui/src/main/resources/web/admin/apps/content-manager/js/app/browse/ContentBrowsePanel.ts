@@ -23,6 +23,7 @@ module app.browse {
     import ActiveDetailsPanelsManager = app.view.detail.ActiveDetailsPanelManager;
     import NonMobileDetailsPanelsManager = app.view.detail.NonMobileDetailsPanelsManager;
     import NonMobileDetailsPanelsManagerBuilder = app.view.detail.NonMobileDetailsPanelsManagerBuilder;
+    import BatchContentServerEvent = api.content.BatchContentServerEvent;
 
     export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
@@ -256,13 +257,13 @@ module app.browse {
              */
             var handler = this.contentServerEventHandler.bind(this);
 
-            ContentServerEvent.on(handler);
+            api.content.BatchContentServerEvent.on(handler);
             this.onRemoved(() => {
-                ContentServerEvent.un(handler);
+                api.content.BatchContentServerEvent.un(handler);
             });
         }
 
-        private contentServerEventHandler(event: ContentServerEvent) {
+        private contentServerEventHandler(event: BatchContentServerEvent) {
             // TODO: IMPORTANT! Publishing multiple items may generate repeated event.
             /*
              * When handling the DELETE-CREATE sequence, we need to remember the removed nodes,
@@ -271,7 +272,10 @@ module app.browse {
              * The ContentPath of all of the children elements need to be updated too.
              */
 
-            var changes = event.getContentChanges();
+            var changes = [];
+            event.getEvents().forEach((event) => {
+                changes = changes.concat(event.getContentChanges());
+            });
 
             var deferred = wemQ.defer<ContentChangeResult>(),
                 promise = <wemQ.Promise<ContentChangeResult>>deferred.promise;
@@ -288,7 +292,6 @@ module app.browse {
                     promise = this.handleContentRenamed(change, promise, changes);
                     break;
                 case ContentServerChangeType.DELETE:
-                    promise = this.handleContentDeleted(change, promise, changes);
                     break;
                 case ContentServerChangeType.PENDING:
                     promise = this.handleContentPending(change, promise, changes);
@@ -309,6 +312,13 @@ module app.browse {
                     // MOVE event is a combination of DELETE and CREATE
                 }
             });
+
+            switch (event.getType()) { // move here events who needs in batch hadling
+            case ContentServerChangeType.DELETE:
+                promise = this.handleContentDeleted(changes, promise);
+                break;
+            }
+
 
             deferred.resolve(null);
         }
@@ -352,9 +362,9 @@ module app.browse {
                                         ).then((results) => {
                                                 nodes = nodes.concat(results);
                                             });
-                                    }
-                                    break;
                                 }
+                                    break;
+                            }
                             }
                         });
 
@@ -414,7 +424,7 @@ module app.browse {
 
                                         results.push(updateResult[i]);
                                         break;
-                                    }
+                                }
                                 }
                             });
                             this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems()); // update actions state in case of permission changes
@@ -438,16 +448,19 @@ module app.browse {
             return promise;
         }
 
-        private handleContentDeleted(change: ContentServerChange, promise: wemQ.Promise<any>,
-                                     changes: ContentServerChange[]): wemQ.Promise<any> {
+        private handleContentDeleted(changes: ContentServerChange[], promise: wemQ.Promise<any>): wemQ.Promise<any> {
 
             promise = promise.then((result: ContentChangeResult) => {
                 // Do not remove renamed elements
                 if (result && result.getChangeType() === ContentServerChangeType.RENAME) {
                     return result;
                 }
+                var paths = [];
+                changes.forEach(change => {
+                    paths = paths.concat(change.getContentPaths());
+                });
 
-                var deleteResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
+                var deleteResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
                 var nodes = deleteResult.map((el) => {
                     return el.getNodes();
                 });
@@ -455,13 +468,18 @@ module app.browse {
                 // merge array of nodes arrays
                 merged = merged.concat.apply(merged, nodes);
 
+                var contentDeletedEvent = new api.content.ContentDeletedEvent();
                 merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
-                    if (node.getData() && node.getData().getContentSummary()) {
+                    var contentSummary = node.getData().getContentSummary();
+                    if (node.getData() && !!contentSummary) {
 
                         this.updateDetailsPanel(null);
-                        new api.content.ContentDeletedEvent(node.getData().getContentSummary().getContentId()).fire();
+                        contentDeletedEvent.addItem(contentSummary.getContentId(), contentSummary.getPath());
                     }
                 });
+                if (!contentDeletedEvent.isEmpty()) {
+                    contentDeletedEvent.fire();
+                }
 
                 this.contentTreeGrid.xDeleteContentNodes(merged);
 
@@ -496,6 +514,7 @@ module app.browse {
                             return el !== null;
                         })
                 ).then((data: ContentSummaryAndCompareStatus[]) => {
+                        var contentDeletedEvent = new api.content.ContentDeletedEvent();
                         data.forEach((el) => {
                             for (var i = 0; i < pendingResult.length; i++) {
                                 if (pendingResult[i].getId() === el.getId()) {
@@ -503,11 +522,14 @@ module app.browse {
 
                                     this.updateItemInDetailsPanelIfNeeded(el);
 
-                                    new api.content.ContentDeletedEvent(el.getContentId(), true).fire();
+                                    contentDeletedEvent.addPendingItem(el.getContentId(), el.getPath());
                                     break;
-                                }
+                            }
                             }
                         });
+                        if (!contentDeletedEvent.isEmpty()) {
+                            contentDeletedEvent.fire();
+                        }
                         this.contentTreeGrid.invalidate();
                     });
             });

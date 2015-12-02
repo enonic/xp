@@ -140,7 +140,8 @@ module app.view.detail {
         private getUserAccessList(results: api.ui.security.acl.EffectivePermission[]): UserAccessListItemView[] {
 
             return results.
-                filter(item => item.getAccess() != this.everyoneAccessValue).
+                filter(item => item.getAccess() != this.everyoneAccessValue &&
+                               item.getPermissionAccess().getCount() > 0).
                 map((item: api.ui.security.acl.EffectivePermission) => {
                     var view = new UserAccessListItemView();
                     view.setObject(item);

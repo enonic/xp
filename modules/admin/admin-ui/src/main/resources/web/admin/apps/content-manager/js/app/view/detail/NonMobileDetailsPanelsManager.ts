@@ -72,7 +72,9 @@ module app.view.detail {
                 }
 
                 if (this.isExpanded()) {
+                    this.floatingDetailsPanel.resetWidgetsWidth();
                     this.floatingDetailsPanel.slideIn();
+                    this.floatingDetailsPanel.notifyPanelSizeChanged();
                 } else {
                     this.floatingDetailsPanel.slideOut();
                 }

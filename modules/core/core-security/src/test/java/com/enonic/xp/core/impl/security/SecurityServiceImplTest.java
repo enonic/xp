@@ -60,6 +60,8 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
+import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
+import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 
 import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.UserStoreAccess.CREATE_USERS;
@@ -582,6 +584,58 @@ public class SecurityServiceImplTest
             final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken();
             authToken.setUsername( "user1" );
             authToken.setPassword( "runar" );
+            authToken.setUserStore( SYSTEM );
+
+            final AuthenticationInfo authInfo = securityService.authenticate( authToken );
+            assertTrue( authInfo.isAuthenticated() );
+            assertEquals( user.getKey(), authInfo.getUser().getKey() );
+        } );
+    }
+
+    @Test
+    public void testAuthenticateByEmail()
+        throws Exception
+    {
+        runAsAdmin( () -> {
+            final CreateUserParams createUser = CreateUserParams.create().
+                userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
+                displayName( "User 1" ).
+                email( "user1@enonic.com" ).
+                login( "user1" ).
+                password( "password" ).
+                build();
+
+            final User user = securityService.createUser( createUser );
+            refresh();
+
+            final VerifiedEmailAuthToken authToken = new VerifiedEmailAuthToken();
+            authToken.setEmail( "user1@enonic.com" );
+            authToken.setUserStore( SYSTEM );
+
+            final AuthenticationInfo authInfo = securityService.authenticate( authToken );
+            assertTrue( authInfo.isAuthenticated() );
+            assertEquals( user.getKey(), authInfo.getUser().getKey() );
+        } );
+    }
+
+    @Test
+    public void testAuthenticateByUsername()
+        throws Exception
+    {
+        runAsAdmin( () -> {
+            final CreateUserParams createUser = CreateUserParams.create().
+                userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
+                displayName( "User 1" ).
+                email( "user1@enonic.com" ).
+                login( "user1" ).
+                password( "runar" ).
+                build();
+
+            final User user = securityService.createUser( createUser );
+            refresh();
+
+            final VerifiedUsernameAuthToken authToken = new VerifiedUsernameAuthToken();
+            authToken.setUsername( "user1" );
             authToken.setUserStore( SYSTEM );
 
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );

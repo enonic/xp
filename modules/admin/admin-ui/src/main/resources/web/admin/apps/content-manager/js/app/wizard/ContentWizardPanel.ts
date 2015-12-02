@@ -5,6 +5,7 @@ module app.wizard {
     import FormContextBuilder = api.form.FormContextBuilder;
     import ContentFormContext = api.content.form.ContentFormContext;
     import Content = api.content.Content;
+    import ContentPath = api.content.ContentPath;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import CompareStatus = api.content.CompareStatus;
     import ContentBuilder = api.content.ContentBuilder;
@@ -469,12 +470,25 @@ module app.wizard {
             return this.getPersistedItem() && id && this.getPersistedItem().getContentId().equals(id);
         }
 
+        private persistedItemPathIsDescendantOrEqual(path: ContentPath): boolean {
+            return this.getPersistedItem().getPath().isDescendantOf(path) || this.getPersistedItem().getPath().equals(path);
+        }
+
         private listenToContentEvents(ignore: boolean) {
 
             var deleteHandler = (event: api.content.ContentDeletedEvent) => {
-                if (event.isPending() && this.isCurrentContentId(event.getContentId())) {
-
-                    this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.PENDING_DELETE);
+                if (this.getPersistedItem()) {
+                    event.getDeletedItems().filter((deletedItem) => {
+                        return !!deletedItem;
+                    }).forEach((deletedItem) => {
+                        if (deletedItem.isPending()) {
+                            if (this.getPersistedItem().getPath().equals(deletedItem.getContentPath())) {
+                                this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.PENDING_DELETE);
+                            }
+                        } else if (this.persistedItemPathIsDescendantOrEqual(deletedItem.getContentPath())) {
+                            this.close();
+                        }
+                    });
                 }
             }
 

@@ -11,6 +11,10 @@
   ],
   "templates": {
     "cleverLinks": false,
-    "monospaceLinks": false
+    "monospaceLinks": false,
+    "default": {
+      "outputSourceFiles": false,
+      "outputSourcePath": false
+    }
   }
 }

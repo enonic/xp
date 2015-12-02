@@ -19,16 +19,9 @@ module api.ui.security.acl {
         doRender(): boolean {
             super.doRender();
 
-            this.addClass("empty");
-
             if (this.userAccessListItemViews && this.userAccessListItemViews.length > 0) {
                 this.userAccessListItemViews.forEach((userAccessListItemView: UserAccessListItemView) => {
                     this.appendChild(userAccessListItemView);
-                    userAccessListItemView.onRendered(() => {
-                        if (userAccessListItemView.isRendered()) {
-                            this.removeClass("empty");
-                        }
-                    });
                 });
             }
             return true;

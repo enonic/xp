@@ -2,10 +2,7 @@ package com.enonic.xp.admin.impl.widget;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptors;
@@ -88,35 +85,28 @@ final class GetWidgetDescriptorsByInterfaceCommand
         return builder.build();
     }
 
-    private WidgetDescriptors getDescriptorsFromModules( final Applications applications )
+    private void readDescriptorsFromApp( final List<WidgetDescriptor> list, final Application app )
     {
-        final List<WidgetDescriptor> widgetDescriptors = new ArrayList<>();
-        for ( final Application application : applications )
+        final ResourceKeys resourceKeys = this.resourceService.findFolders( app.getKey(), PATH );
+        for ( final ResourceKey resourceKey : resourceKeys )
         {
-            final ResourceKeys keys = this.resourceService.findResourceKeys( application.getKey(), PATH, "*", false );
-            Set<Resource> resourceSet = Sets.newHashSet();
-
-            if ( keys != null )
+            final DescriptorKey key = DescriptorKey.from( app.getKey(), resourceKey.getName() );
+            final WidgetDescriptor descriptor = getDescriptor( key );
+            if ( descriptor != null )
             {
-                for ( final ResourceKey key : keys )
-                {
-                    resourceSet.add( this.resourceService.getResource( key ) );
-                }
-            }
-
-            for ( final Resource resource : resourceSet )
-            {
-                final String descriptorName = resource.getKey().getName();
-                final DescriptorKey key = DescriptorKey.from( application.getKey(), descriptorName );
-                final WidgetDescriptor widgetDescriptor = getDescriptor( key );
-                if ( widgetDescriptor != null )
-                {
-                    widgetDescriptors.add( widgetDescriptor );
-                }
+                list.add( descriptor );
             }
         }
-
-        return WidgetDescriptors.from( widgetDescriptors );
     }
 
+    private WidgetDescriptors getDescriptorsFromModules( final Applications apps )
+    {
+        final List<WidgetDescriptor> list = new ArrayList<>();
+        for ( final Application app : apps )
+        {
+            readDescriptorsFromApp( list, app );
+        }
+
+        return WidgetDescriptors.from( list );
+    }
 }

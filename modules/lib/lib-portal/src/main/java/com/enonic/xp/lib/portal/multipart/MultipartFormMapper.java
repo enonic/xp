@@ -27,7 +27,9 @@ public final class MultipartFormMapper
     {
         for ( final MultipartItem item : getItems() )
         {
+            gen.map( item.getName() );
             MultipartItemMapper.serialize( gen, item );
+            gen.end();
         }
     }
 }

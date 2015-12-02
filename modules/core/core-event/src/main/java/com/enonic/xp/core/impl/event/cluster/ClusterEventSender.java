@@ -10,7 +10,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.event.Event;
-import com.enonic.xp.event.Event2;
 import com.enonic.xp.event.EventListener;
 
 @Component(immediate = true)
@@ -26,14 +25,10 @@ public final class ClusterEventSender
     @Override
     public void onEvent( final Event event )
     {
-        if ( event instanceof Event2 )
+        if ( event != null && event.isDistributed() )
         {
-            Event2 event2 = (Event2) event;
-            if ( event2.isDistributed() )
-            {
-                final TransportRequest transportRequest = new SendEventRequest( event2 );
-                send( transportRequest );
-            }
+            final TransportRequest transportRequest = new SendEventRequest( event );
+            send( transportRequest );
         }
     }
 

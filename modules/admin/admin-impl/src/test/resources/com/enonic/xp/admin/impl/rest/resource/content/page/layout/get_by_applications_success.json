@@ -12,7 +12,7 @@
               "indexed": false,
               "inputType": "Double",
               "label": "Columns",
-              "maximizeUIInputWidth": false,
+              "maximizeUIInputWidth": true,
               "name": "columns",
               "occurrences": {
                 "maximum": 1,
@@ -49,7 +49,7 @@
               "indexed": false,
               "inputType": "Double",
               "label": "Columns",
-              "maximizeUIInputWidth": false,
+              "maximizeUIInputWidth": true,
               "name": "columns",
               "occurrences": {
                 "maximum": 1,

@@ -11,3 +11,4 @@
 ///<reference path='AppManager.ts'/>
 ///<reference path='ServerEventsConnection.ts' />
 ///<reference path='ServerEventsListener.ts'/>
+///<reference path='ServerEventAggregator.ts'/>

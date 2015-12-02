@@ -45,15 +45,15 @@ module api.ui.responsive {
          */
         update() {
             var newRangeValue = this.element.getEl().getWidthWithBorder();
+            this.oldRangeValue = this.rangeValue;
+            this.oldRangeSize = this.rangeSize;
             if (newRangeValue !== this.rangeValue) {
-                this.oldRangeValue = this.rangeValue;
-                this.oldRangeSize = this.rangeSize;
                 this.rangeValue = newRangeValue;
                 this.element.getEl().removeClass(this.rangeSize.getRangeClass());
                 this.fitToRange(); // update rangeSize
                 this.element.getEl().addClass(this.rangeSize.getRangeClass());
             }
-            this.handle(this);     // Additional handler
+            this.handle.call(this, this);     // Additional handler
         }
 
         isRangeSizeChanged(): boolean {

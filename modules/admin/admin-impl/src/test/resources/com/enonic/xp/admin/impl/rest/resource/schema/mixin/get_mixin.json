@@ -16,7 +16,7 @@
                 "indexed": false,
                 "inputType": "TextLine",
                 "label": "Line Text 1",
-              "maximizeUIInputWidth": false,
+                "maximizeUIInputWidth": true,
                 "name": "input_text_1",
                 "occurrences": {
                     "maximum": 1,

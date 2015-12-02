@@ -33,7 +33,6 @@ import com.enonic.xp.core.impl.content.ContentNodeTranslatorImpl;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
-import com.enonic.xp.core.impl.schema.content.ContentTypeRegistryImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.site.SiteDescriptorRegistry;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
@@ -60,7 +59,6 @@ import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.content.ContentTypeRegistry;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -113,8 +111,6 @@ public class AbstractContentServiceTest
     protected BlobStore binaryBlobStore;
 
     protected MixinService mixinService;
-
-    protected ContentTypeRegistry contentTypeRegistry;
 
     protected ContentNodeTranslatorImpl translator;
 
@@ -189,7 +185,6 @@ public class AbstractContentServiceTest
         this.nodeService.initialize();
 
         this.mixinService = Mockito.mock( MixinService.class );
-        this.contentTypeRegistry = Mockito.mock( ContentTypeRegistry.class );
 
         final MediaInfoServiceImpl mediaInfoService = new MediaInfoServiceImpl();
         mediaInfoService.setDetector( new DefaultDetector() );
@@ -201,7 +196,6 @@ public class AbstractContentServiceTest
 
         final ContentTypeServiceImpl contentTypeService = new ContentTypeServiceImpl();
         contentTypeService.setMixinService( mixinService );
-        contentTypeService.setContentTypeRegistry( new ContentTypeRegistryImpl() );
 
         this.translator = new ContentNodeTranslatorImpl();
         this.translator.setNodeService( this.nodeService );

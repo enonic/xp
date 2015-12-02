@@ -24,6 +24,7 @@ import com.enonic.xp.script.impl.util.ErrorHelper;
 import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
+import com.enonic.xp.server.RunMode;
 
 final class ScriptExecutorImpl
     implements ScriptExecutor
@@ -34,7 +35,7 @@ final class ScriptExecutorImpl
 
     private Bindings global;
 
-    private Map<ResourceKey, Object> exportsCache;
+    private ScriptExportsCache exportsCache;
 
     private ClassLoader classLoader;
 
@@ -45,6 +46,8 @@ final class ScriptExecutorImpl
     private Application application;
 
     private Map<String, Object> mocks;
+
+    private RunMode runMode;
 
     public void setEngine( final ScriptEngine engine )
     {
@@ -76,10 +79,15 @@ final class ScriptExecutorImpl
         this.application = application;
     }
 
+    public void setRunMode( final RunMode runMode )
+    {
+        this.runMode = runMode;
+    }
+
     public void initialize()
     {
         this.mocks = Maps.newHashMap();
-        this.exportsCache = Maps.newHashMap();
+        this.exportsCache = new ScriptExportsCache();
         this.global = this.engine.createBindings();
         new CallFunction().register( this.global );
     }
@@ -94,12 +102,12 @@ final class ScriptExecutorImpl
         }
 
         final Object cached = this.exportsCache.get( key );
-        if ( cached != null )
+        final Resource resource = loadIfNeeded( key, cached );
+        if ( resource == null )
         {
             return cached;
         }
 
-        final Resource resource = loadResource( key );
         final ScriptContextImpl context = new ScriptContextImpl( resource, this.scriptSettings );
         context.setEngineScope( this.global );
         context.setGlobalScope( new SimpleBindings() );
@@ -107,7 +115,7 @@ final class ScriptExecutorImpl
         final ScriptObjectMirror func = (ScriptObjectMirror) doExecute( context, resource );
         final Object result = executeRequire( key, func );
 
-        this.exportsCache.put( key, result );
+        this.exportsCache.put( resource, result );
         return result;
     }
 
@@ -160,6 +168,27 @@ final class ScriptExecutorImpl
         {
             throw ErrorHelper.handleError( e );
         }
+    }
+
+    private Resource loadIfNeeded( final ResourceKey key, final Object cached )
+    {
+        if ( cached == null )
+        {
+            return loadResource( key );
+        }
+
+        if ( this.runMode != RunMode.DEV )
+        {
+            return null;
+        }
+
+        final Resource resource = loadResource( key );
+        if ( this.exportsCache.isModified( resource ) )
+        {
+            return resource;
+        }
+
+        return null;
     }
 
     @Override

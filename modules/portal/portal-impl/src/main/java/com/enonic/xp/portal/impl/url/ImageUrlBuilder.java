@@ -94,6 +94,7 @@ final class ImageUrlBuilder
         {
             throw new IllegalArgumentException( "Missing mandatory parameter 'scale' for image URL" );
         }
-        return this.params.getScale().replaceAll( "[(,]", "-" ).replace( ")", "" );
+
+        return this.params.getScale().replaceAll( "\\s", "" ).replaceAll( "[(,]", "-" ).replace( ")", "" );
     }
 }

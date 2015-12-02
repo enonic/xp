@@ -1,24 +1,7 @@
 module api.app {
-
-    export interface ServerEventJson {
+    export interface EventJson {
         type: string;
-        event: any;
-    }
-
-    export interface Event2Json extends ServerEventJson {
         timestamp: number;
-        distributed: boolean;
-        data: Event2DataJson;
-    }
-
-    export interface Event2DataJson {
-        nodes: Event2NodeJson[];
-    }
-
-    export interface Event2NodeJson {
-        id: string;
-        path: string;
-        newPath: string;
     }
 
     export class ServerEventsConnection {
@@ -91,9 +74,9 @@ module api.app {
             });
 
             this.ws.addEventListener('message', (remoteEvent: any) => {
-                var jsonEvent = <ServerEventJson> JSON.parse(remoteEvent.data);
+                var jsonEvent = <EventJson> JSON.parse(remoteEvent.data);
                 if (ServerEventsConnection.debug) {
-                    console.debug('ServerEventsConnection: Server event [' + jsonEvent.type + ']', jsonEvent.event);
+                    console.debug('ServerEventsConnection: Server event [' + jsonEvent.type + ']', jsonEvent);
                 }
                 this.handleServerEvent(jsonEvent);
             });
@@ -134,26 +117,25 @@ module api.app {
             return this.ws.readyState === WebSocket.OPEN;
         }
 
-        private handleServerEvent(serverEventJson: ServerEventJson): void {
-            var clientEvent: api.event.Event = this.translateServerEvent(serverEventJson);
+        private handleServerEvent(eventJson: EventJson): void {
+            var clientEvent: api.event.Event = this.translateServerEvent(eventJson);
 
             if (clientEvent) {
                 this.notifyServerEvent(clientEvent);
             }
         }
 
-        private translateServerEvent(serverEventJson: ServerEventJson): api.event.Event {
-            var eventType = serverEventJson.type;
+        private translateServerEvent(eventJson: EventJson): api.event.Event {
+            var eventType = eventJson.type;
 
-            if (eventType === 'ApplicationEvent') {
-                return api.application.ApplicationEvent.fromJson(serverEventJson.event);
+            if (eventType === 'application') {
+                return api.application.ApplicationEvent.fromJson(<api.application.ApplicationEventJson>eventJson);
             }
             if (eventType.indexOf('node.') === 0) {
-                var event = api.content.ContentServerEvent.fromJson(<Event2Json>serverEventJson);
+                var event = api.content.ContentServerEvent.fromJson(<api.content.NodeEventJson>eventJson);
                 if (event.getContentChanges().length === 0) {
                     return null;
                 } else {
-                    console.log("Event " + eventType + " received");
                     return event;
                 }
             }

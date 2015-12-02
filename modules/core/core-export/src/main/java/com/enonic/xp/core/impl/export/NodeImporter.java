@@ -1,17 +1,21 @@
 package com.enonic.xp.core.impl.export;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.io.CharSource;
 
 import com.enonic.xp.core.impl.export.reader.ExportReader;
 import com.enonic.xp.core.impl.export.validator.ContentImportValidator;
 import com.enonic.xp.core.impl.export.validator.ImportValidator;
 import com.enonic.xp.core.impl.export.xml.XmlNodeParser;
+import com.enonic.xp.core.impl.export.xml.XsltTransformer;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -33,7 +37,7 @@ import com.enonic.xp.vfs.VirtualFilePath;
 import com.enonic.xp.vfs.VirtualFilePaths;
 import com.enonic.xp.xml.XmlException;
 
-public class NodeImporter
+public final class NodeImporter
 {
     private static final Long IMPORT_NODE_ORDER_START_VALUE = 0L;
 
@@ -55,9 +59,9 @@ public class NodeImporter
 
     private final boolean importPermissions;
 
-    private final boolean keepTimestamp;
-
     private final Set<ImportValidator> importValidators = Sets.newHashSet( new ContentImportValidator() );
+
+    private final XsltTransformer transformer;
 
     private NodeImporter( final Builder builder )
     {
@@ -67,7 +71,7 @@ public class NodeImporter
         this.dryRun = builder.dryRun;
         this.importNodeIds = builder.importNodeIds;
         this.importPermissions = builder.importPermissions;
-        this.keepTimestamp = builder.keepTimestamp;
+        this.transformer = builder.xslt != null ? XsltTransformer.create( builder.xslt.getUrl(), builder.xsltParams ) : null;
     }
 
     public static Builder create()
@@ -177,12 +181,13 @@ public class NodeImporter
     {
         final VirtualFile nodeSource = this.exportReader.getNodeSource( nodeFolder );
 
+        final CharSource nodeCharSource = preProcessSource( nodeSource.getPath(), nodeSource.getCharSource() );
         final Node.Builder newNodeBuilder = Node.create();
         try
         {
             final XmlNodeParser parser = new XmlNodeParser();
             parser.builder( newNodeBuilder );
-            parser.source( nodeSource.getCharSource() );
+            parser.source( nodeCharSource );
             parser.parse();
         }
         catch ( final Exception e )
@@ -296,6 +301,28 @@ public class NodeImporter
         }
     }
 
+    private CharSource preProcessSource( final VirtualFilePath path, final CharSource charSource )
+    {
+        if ( this.transformer == null )
+        {
+            return charSource;
+        }
+        final String transformed = this.transform( path, charSource );
+        return CharSource.wrap( transformed );
+    }
+
+    private String transform( final VirtualFilePath path, final CharSource source )
+    {
+        try
+        {
+            return this.transformer.transform( source );
+        }
+        catch ( Exception e )
+        {
+            throw new ImportNodeException( "Error during XSLT pre-processing for node in '" + path.getPath() + "'", e );
+        }
+    }
+
     private CreateNodeParams validateImportData( final CreateNodeParams createNodeParams )
     {
         CreateNodeParams validatedCreateNodeParams = createNodeParams;
@@ -324,7 +351,9 @@ public class NodeImporter
 
         private boolean importPermissions = true;
 
-        private boolean keepTimestamp = true;
+        private VirtualFile xslt;
+
+        private Map<String, Object> xsltParams;
 
         private Builder()
         {
@@ -366,9 +395,25 @@ public class NodeImporter
             return this;
         }
 
-        public Builder keepTimestamp( final boolean keepTimestamp )
+        public Builder xslt( final VirtualFile xslt )
         {
-            this.keepTimestamp = keepTimestamp;
+            this.xslt = xslt;
+            return this;
+        }
+
+        public Builder xsltParams( final Map<String, Object> xsltParams )
+        {
+            this.xsltParams = xsltParams;
+            return this;
+        }
+
+        public Builder xsltParam( final String paramName, final Object paramValue )
+        {
+            if ( this.xsltParams == null )
+            {
+                this.xsltParams = new HashMap<>();
+            }
+            this.xsltParams.put( paramName, paramValue );
             return this;
         }
 
@@ -379,4 +424,3 @@ public class NodeImporter
     }
 
 }
-

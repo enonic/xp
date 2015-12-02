@@ -14,7 +14,8 @@ var expectedJson = {
     "valid": false,
     "data": {},
     "x": {},
-    "page": {}
+    "page": {},
+    "attachments": {}
 };
 
 exports.createMedia = function () {
@@ -28,3 +29,32 @@ exports.createMedia = function () {
     assert.assertJsonEquals(expectedJson, result);
 };
 
+var expectedJsonAutoGenerateName = {
+    "_id": "123456",
+    "_name": "my-content-3.jpg",
+    "_path": "/a/b/my-content-3.jpg",
+    "creator": "user:system:anonymous",
+    "createdTime": "1975-01-08T00:00:00Z",
+    "type": "base:unstructured",
+    "hasChildren": false,
+    "valid": false,
+    "data": {},
+    "x": {},
+    "page": {},
+    "attachments": {}
+};
+
+exports.createMediaAutoGenerateName = function () {
+    var counter = 1;
+    var result = content.createMedia({
+        name: 'my-content.jpg',
+        parentPath: '/a/b',
+        mimeType: 'text/plain',
+        data: TestClass.createByteSource('Hello World'),
+        idGenerator: function () {
+            return String(counter++);
+        }
+    });
+
+    assert.assertJsonEquals(expectedJsonAutoGenerateName, result);
+};

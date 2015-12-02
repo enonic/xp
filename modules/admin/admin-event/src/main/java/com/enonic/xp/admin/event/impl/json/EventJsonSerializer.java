@@ -10,42 +10,21 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.xp.app.ApplicationEvent;
 import com.enonic.xp.event.Event;
-import com.enonic.xp.event.Event2;
 
 public final class EventJsonSerializer
 {
     public ObjectNode toJson( final Event event )
     {
-        if ( event instanceof ApplicationEvent )
+        if ( event != null )
         {
-            return toJson( (ApplicationEvent) event );
+            final ObjectNode json = JsonNodeFactory.instance.objectNode();
+            json.put( "type", event.getType() );
+            json.put( "timestamp", event.getTimestamp() );
+            json.set( "data", toJsonNode( event.getData() ) );
+            return json;
         }
-
-        if ( event instanceof Event2 )
-        {
-            return toJson( (Event2) event );
-        }
-
         return null;
-    }
-
-    private ObjectNode toJson( final ApplicationEvent event )
-    {
-        final ObjectNode json = newObjectNode();
-        json.put( "eventType", event.getState() );
-        json.put( "applicationKey", event.getKey().toString() );
-        return eventWrapper( event, json );
-    }
-
-    private ObjectNode toJson( final Event2 event )
-    {
-        final ObjectNode json = JsonNodeFactory.instance.objectNode();
-        json.put( "type", event.getType() );
-        json.put( "timestamp", event.getTimestamp() );
-        json.set( "data", toJsonNode( event.getData() ) );
-        return json;
     }
 
     private JsonNode toJsonNode( Object value )
@@ -107,13 +86,5 @@ public final class EventJsonSerializer
     private ObjectNode newObjectNode()
     {
         return JsonNodeFactory.instance.objectNode();
-    }
-
-    private ObjectNode eventWrapper( final Event event, final ObjectNode data )
-    {
-        final ObjectNode json = newObjectNode();
-        json.put( "type", event.getClass().getSimpleName() );
-        json.set( "event", data );
-        return json;
     }
 }

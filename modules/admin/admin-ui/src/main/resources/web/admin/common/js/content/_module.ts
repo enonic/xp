@@ -105,3 +105,4 @@
 ///<reference path='WidgetDescriptorResourceRequest.ts' />
 ///<reference path='GetWidgetsByInterfaceRequest.ts' />
 ///<reference path='GetEffectivePermissions.ts' />
+///<reference path='BatchContentServerEvent.ts' />

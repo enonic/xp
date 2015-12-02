@@ -511,7 +511,7 @@ module api.ui.selector.combobox {
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
                     this.loadOptionsAfterShowDropdown().then(() => {
-                        this.comboBoxDropdown.navigateToFirstRowIfNotActive();
+                        this.comboBoxDropdown.navigateToRowIfNotActive();
                     }).catch((reason: any) => {
                         api.DefaultErrorHandler.handle(reason);
                     }).done();
@@ -558,7 +558,7 @@ module api.ui.selector.combobox {
                     this.showDropdown();
                     this.loadOptionsAfterShowDropdown().then(() => {
 
-                        this.comboBoxDropdown.navigateToFirstRowIfNotActive();
+                        this.comboBoxDropdown.navigateToRowIfNotActive();
                         this.input.setReadOnly(true);
 
                     }).catch((reason: any) => {
