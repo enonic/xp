@@ -3,6 +3,8 @@ package com.enonic.xp.security;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -15,6 +17,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Beta
 public final class PrincipalKey
 {
+    private final static char[] ILLEGAL_CHARACTERS = {'<', '>', '"', '\''};
+
     private final static String SEPARATOR = ":";
 
     private final static Pattern REF_PATTERN = Pattern.compile( "^(?:(role):([^:]+))|(user|group):([^:]+):([^:]+)$" );
@@ -41,7 +45,7 @@ public final class PrincipalKey
         this.userStore = userStore;
         this.type = checkNotNull( type, "Principal type cannot be null" );
         checkArgument( !Strings.isNullOrEmpty( principalId ), "Principal id cannot be null or empty" );
-        this.principalId = principalId;
+        this.principalId = checkId( principalId );
         if ( type == PrincipalType.ROLE )
         {
             this.refString = Joiner.on( SEPARATOR ).join( type.toString().toLowerCase(), principalId );
@@ -58,6 +62,15 @@ public final class PrincipalKey
         this.type = PrincipalType.USER;
         this.principalId = "anonymous";
         this.refString = Joiner.on( SEPARATOR ).join( type.toString().toLowerCase(), userStore.toString(), principalId );
+    }
+
+    private String checkId( final String value )
+    {
+        if ( StringUtils.containsAny( value, ILLEGAL_CHARACTERS ) )
+        {
+            throw new IllegalArgumentException( "Not a valid principal key [" + value + "]" );
+        }
+        return value;
     }
 
     public UserStoreKey getUserStore()
