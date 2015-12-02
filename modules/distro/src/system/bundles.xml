@@ -56,6 +56,7 @@
   <bundle level="26">${group}:web-jetty:${version}</bundle>
   <bundle level="26">${group}:web-impl:${version}</bundle>
   <bundle level="26">${group}:web-vhost:${version}</bundle>
+  <bundle level="26">${group}:web-dos:${version}</bundle>
 
   <!-- JaxRs app -->
   <bundle level="28">${group}:jaxrs-api:${version}</bundle>
