@@ -12,9 +12,9 @@ import static org.junit.Assert.*;
 public class BuiltinMixinsTypesTest
 {
     @Test
-    public void testBuiltin()
+    public void testGetAll()
     {
-        final Mixins mixins = new BuiltinMixinsTypes().load();
+        final Mixins mixins = new BuiltinMixinsTypes().getAll();
         assertEquals( 3, mixins.getSize() );
 
         assertSchema( mixins.get( 0 ), MixinName.from( ApplicationKey.MEDIA_MOD + ":imageInfo" ), false );
@@ -23,15 +23,15 @@ public class BuiltinMixinsTypesTest
     }
 
     @Test
-    public void testBuiltinLoadByApplication()
+    public void getGetByApplication()
     {
-        Mixins mixins = new BuiltinMixinsTypes().loadByApplication( ApplicationKey.MEDIA_MOD );
+        Mixins mixins = new BuiltinMixinsTypes().getByApplication( ApplicationKey.MEDIA_MOD );
         assertEquals( 2, mixins.getSize() );
 
         assertSchema( mixins.get( 0 ), MixinName.from( ApplicationKey.MEDIA_MOD + ":imageInfo" ), false );
         assertSchema( mixins.get( 1 ), MixinName.from( ApplicationKey.MEDIA_MOD + ":cameraInfo" ), false );
 
-        mixins = new BuiltinMixinsTypes().loadByApplication( ApplicationKey.BASE );
+        mixins = new BuiltinMixinsTypes().getByApplication( ApplicationKey.BASE );
         assertEquals( 1, mixins.getSize() );
 
         assertSchema( mixins.get( 0 ), MixinName.from( ApplicationKey.BASE + ":gpsInfo" ), false );
