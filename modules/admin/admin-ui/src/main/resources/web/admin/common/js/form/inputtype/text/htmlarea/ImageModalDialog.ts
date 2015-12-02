@@ -136,7 +136,7 @@ module api.form.inputtype.text.htmlarea {
                 var keepSize = this.imageElement.getAttribute("data-src").indexOf("keepSize=true") > 0;
                 if (keepSize) {
                     var pathAttr = this.imageElement.getAttribute("data-src");
-                    this.image.getEl().setAttribute("data-src", pathAttr + "?keepSize=true");
+                    this.image.getEl().setAttribute("data-src", pathAttr);
                 }
                 this.imageToolbar = new ImageToolbar(this.image);
             }
