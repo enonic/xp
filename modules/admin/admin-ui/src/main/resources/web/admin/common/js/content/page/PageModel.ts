@@ -205,6 +205,8 @@ module api.content.page {
             var newControllerKey = setController.descriptor ? setController.descriptor.getKey() : null;
             var controllerChanged = !api.ObjectHelper.equals(oldControllerKey, newControllerKey);
 
+            this.setControllerData(setController);
+
             if (setController.descriptor) {
                 this.setMode(PageMode.FORCED_CONTROLLER);
             }
@@ -212,7 +214,6 @@ module api.content.page {
                 this.setMode(PageMode.NO_CONTROLLER);
             }
 
-            this.setControllerData(setController);
 
             if (!this.isPageTemplate()) {
                 this.setCustomized(true);
