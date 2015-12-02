@@ -296,9 +296,6 @@ public class ContentServiceImplTest_update
         Mockito.when( this.mixinService.getByName( Mockito.isA( MixinName.class ) ) ).
             thenReturn( mixin );
 
-        Mockito.when( this.mixinService.getByLocalName( Mockito.isA( String.class ) ) ).
-            thenReturn( mixin );
-
         final ExtraData extraData = new ExtraData( MixinName.from( "myapplication:my_mixin" ), new PropertyTree() );
 
         ExtraDatas extraDatas = ExtraDatas.from( Lists.newArrayList( extraData ) );

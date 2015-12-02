@@ -1,8 +1,10 @@
 package com.enonic.xp.schema.mixin;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -57,6 +59,11 @@ public final class Mixins
         return map.get( mixinName );
     }
 
+    public Mixins filter( final Predicate<Mixin> filter )
+    {
+        return from( this.map.values().stream().filter( filter ).iterator() );
+    }
+
     public static Mixins empty()
     {
         final ImmutableList<Mixin> list = ImmutableList.of();
@@ -73,7 +80,7 @@ public final class Mixins
         return new Mixins( ImmutableList.copyOf( mixins ) );
     }
 
-    public static Mixins from( final Collection<? extends Mixin> mixins )
+    public static Mixins from( final Iterator<? extends Mixin> mixins )
     {
         return new Mixins( ImmutableList.copyOf( mixins ) );
     }

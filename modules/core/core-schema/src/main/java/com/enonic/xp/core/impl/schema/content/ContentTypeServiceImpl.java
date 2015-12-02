@@ -19,13 +19,13 @@ import com.enonic.xp.schema.mixin.MixinService;
 public final class ContentTypeServiceImpl
     implements ContentTypeService, ApplicationInvalidator
 {
-    private final ContentTypeRegistryImpl registry;
+    private final ContentTypeRegistry registry;
 
     private MixinService mixinService;
 
     public ContentTypeServiceImpl()
     {
-        this.registry = new ContentTypeRegistryImpl();
+        this.registry = new ContentTypeRegistry();
     }
 
     @Override

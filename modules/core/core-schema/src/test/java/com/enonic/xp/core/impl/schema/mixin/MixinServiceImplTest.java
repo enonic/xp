@@ -1,17 +1,9 @@
 package com.enonic.xp.core.impl.schema.mixin;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleEvent;
-import org.osgi.service.component.ComponentContext;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.app.Applications;
-import com.enonic.xp.core.impl.schema.AbstractBundleTest;
+import com.enonic.xp.core.impl.schema.AbstractSchemaTest;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.InlineMixin;
@@ -21,140 +13,47 @@ import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.mixin.Mixins;
 
 import static org.junit.Assert.*;
 
 public class MixinServiceImplTest
-    extends AbstractBundleTest
+    extends AbstractSchemaTest
 {
+    protected MixinServiceImpl service;
 
-    private Bundle myBundle;
-
-    private ApplicationKey myApplicationKey;
-
-    private Mixin mixin1;
-
-    private Application myApplication;
-
-    private ApplicationService applicationService;
-
-    private MixinServiceImpl service;
-
-    @Before
     @Override
-    public void setup()
+    protected void initialize()
         throws Exception
     {
-        super.setup();
-
-        //Mocks an application
-        startBundles( newBundle( "application2" ) );
-        myBundle = findBundle( "application2" );
-        myApplicationKey = ApplicationKey.from( myBundle );
-        this.mixin1 = createMixin( "application2:mixin1" );
-        myApplication = Mockito.mock( Application.class );
-        Mockito.when( myApplication.getKey() ).thenReturn( myApplicationKey );
-        Mockito.when( myApplication.getBundle() ).thenReturn( myBundle );
-        Mockito.when( myApplication.isStarted() ).thenReturn( true );
-
-        //Mocks the application service
-        applicationService = Mockito.mock( ApplicationService.class );
-
-        //Mocks the ComponentContext
-        final ComponentContext componentContext = Mockito.mock( ComponentContext.class );
-        Mockito.when( componentContext.getBundleContext() ).thenReturn( this.serviceRegistry.getBundleContext() );
-
-        //Creates the service to test
-        service = new MixinServiceImpl();
-        service.setApplicationService( applicationService );
-
-        //Starts the service
-        service.start( componentContext );
+        this.service = new MixinServiceImpl();
+        this.service.setApplicationService( this.applicationService );
+        this.service.setResourceService( this.resourceService );
     }
 
     @Test
-    public void test_empty()
+    public void testEmpty()
     {
-        Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
+        addApplications();
 
-        Mixins mixins = service.getAll();
-        assertNotNull( mixins );
-        assertEquals( 3, mixins.getSize() );
+        final Mixins types1 = this.service.getAll();
+        assertNotNull( types1 );
+        assertEquals( 3, types1.getSize() );
 
-        mixins = service.getByApplication( myApplicationKey );
-        assertNotNull( mixins );
-        assertEquals( 0, mixins.getSize() );
+        final Mixins types2 = this.service.getByApplication( ApplicationKey.from( "other" ) );
+        assertNotNull( types2 );
+        assertEquals( 0, types2.getSize() );
 
-        Mixin mixin = service.getByName( this.mixin1.getName() );
+        final Mixin mixin = service.getByName( MixinName.from( "other:mytype" ) );
         assertEquals( null, mixin );
     }
 
     @Test
-    public void test_get_by_local_name()
+    public void testSystemMixins()
     {
-
-        Applications applications = Applications.from( myApplication );
-        Mockito.when( applicationService.getAllApplications() ).thenReturn( applications );
-        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( myApplication );
-
-        Mixin mixin = service.getByLocalName( "mixin1" );
-        assertNotNull( mixin );
-        assertEquals( mixin.getName(), this.mixin1.getName() );
-    }
-
-    @Test
-    public void test_get_by_content_type()
-    {
-
-        Applications applications = Applications.from( myApplication );
-        Mockito.when( applicationService.getAllApplications() ).thenReturn( applications );
-        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( myApplication );
-
-        ContentType contentType = ContentType.create().
-            superType( ContentTypeName.structured() ).
-            name( "application2:mixin1" ).
-            metadata( MixinNames.from( "application2:mixin1", "application2:mixin3" ) ).
-            build();
-
-        Mixins mixins = service.getByContentType( contentType );
-        assertNotNull( mixins );
-        assertEquals( 1, mixins.getSize() );
-
-    }
-
-    @Test
-    public void test_add_removal_application()
-    {
-
-        Applications applications = Applications.from( myApplication );
-        Mockito.when( applicationService.getAllApplications() ).thenReturn( applications );
-        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( myApplication );
-
-        Mixins mixins = service.getAll();
-        assertNotNull( mixins );
-        assertEquals( 7, mixins.getSize() );
-
-        mixins = service.getByApplication( myApplicationKey );
-        assertNotNull( mixins );
-        assertEquals( 4, mixins.getSize() );
-
-        Mixin mixin = service.getByName( this.mixin1.getName() );
-        assertNotNull( mixin );
-
-        Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
-        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( null );
-        service.bundleChanged( new BundleEvent( BundleEvent.STOPPED, myBundle ) );
-
-        test_empty();
-    }
-
-    @Test
-    public void test_get_system_application()
-    {
-
-        Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
+        addApplications();
 
         Mixins mixins = service.getAll();
         assertNotNull( mixins );
@@ -175,19 +74,56 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void inlineFormItems_input()
+    public void testGetByContentType()
     {
-        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( myApplication );
+        addApplications( "application1", "application2" );
 
-        Form form = Form.create().
+        final ContentType contentType = ContentType.create().
+            superType( ContentTypeName.structured() ).
+            name( "application2:mixin1" ).
+            metadata( MixinNames.from( "application2:mixin1", "application2:mixin3" ) ).
+            build();
+
+        final Mixins mixins = service.getByContentType( contentType );
+        assertNotNull( mixins );
+        assertEquals( 1, mixins.getSize() );
+    }
+
+    @Test
+    public void testApplications()
+    {
+        addApplications( "application1", "application2" );
+
+        final Mixins types1 = this.service.getAll();
+        assertNotNull( types1 );
+        assertEquals( 9, types1.getSize() );
+
+        final Mixins types2 = this.service.getByApplication( ApplicationKey.from( "application1" ) );
+        assertNotNull( types2 );
+        assertEquals( 2, types2.getSize() );
+
+        this.service.invalidate( ApplicationKey.from( "application2" ) );
+
+        final Mixins types3 = this.service.getByApplication( ApplicationKey.from( "application2" ) );
+        assertNotNull( types3 );
+        assertEquals( 4, types3.getSize() );
+
+        final Mixin mixin = service.getByName( MixinName.from( "application2:mixin1" ) );
+        assertNotNull( mixin );
+    }
+
+    @Test
+    public void testInlineFormItems_input()
+    {
+        addApplications( "application1", "application2" );
+
+        final Form form = Form.create().
             addFormItem( Input.create().name( "my_input" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             addFormItem( InlineMixin.create().mixin( "application2:mixin2" ).build() ).
             build();
 
-        // exercise
-        Form transformedForm = service.inlineFormItems( form );
+        final Form transformedForm = service.inlineFormItems( form );
 
-        // verify:
         final Input mixedInInput = transformedForm.getInput( "input1" );
         assertNotNull( mixedInInput );
         assertEquals( "input1", mixedInInput.getPath().toString() );
@@ -196,19 +132,17 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void inlineFormItems_formItemSet()
+    public void testInlineFormItems_formItemSet()
     {
-        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( myApplication );
+        addApplications( "application1", "application2" );
 
-        Form form = Form.create().
+        final Form form = Form.create().
             addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             addFormItem( InlineMixin.create().mixin( "application2:address" ).build() ).
             build();
 
-        // exercise
-        Form transformedForm = service.inlineFormItems( form );
+        final Form transformedForm = service.inlineFormItems( form );
 
-        // verify:
         assertEquals( "address.label", transformedForm.getInput( "address.label" ).getPath().toString() );
         assertEquals( "address.street", transformedForm.getInput( "address.street" ).getPath().toString() );
         assertEquals( "address.postalNo", transformedForm.getInput( "address.postalNo" ).getPath().toString() );
@@ -216,11 +150,11 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void inlineFormItems_two_formItemSets_with_changed_names()
+    public void testInlineFormItems_two_formItemSets_with_changed_names()
     {
-        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( myApplication );
+        addApplications( "application1", "application2" );
 
-        Form form = Form.create().
+        final Form form = Form.create().
             addFormItem( FormItemSet.create().
                 name( "home" ).
                 addFormItem( InlineMixin.create().mixin( "application2:address" ).build() ).
@@ -231,10 +165,8 @@ public class MixinServiceImplTest
                 build() ).
             build();
 
-        // exercise
-        Form transformedForm = service.inlineFormItems( form );
+        final Form transformedForm = service.inlineFormItems( form );
 
-        // verify
         assertNotNull( transformedForm.getFormItemSet( "home" ) );
         assertNotNull( transformedForm.getFormItemSet( "cottage" ) );
         assertNotNull( transformedForm.getFormItemSet( "home.address" ) );
@@ -248,32 +180,17 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void inlineFormItems_layout()
+    public void testInlineFormItems_layout()
     {
-        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( myApplication );
+        addApplications( "application1", "application2" );
 
-        Form form = Form.create().
+        final Form form = Form.create().
             addFormItem( InlineMixin.create().mixin( "application2:address2" ).build() ).
             build();
 
-        // exercise
-        Form transformedForm = service.inlineFormItems( form );
+        final Form transformedForm = service.inlineFormItems( form );
 
-        // verify:
         assertEquals( "address.street", transformedForm.getInput( "address.street" ).getPath().toString() );
         assertEquals( "address.myFieldInLayout", transformedForm.getInput( "address.myFieldInLayout" ).getPath().toString() );
     }
-
-
-    @Test
-    public void test_stop()
-    {
-        service.stop();
-    }
-
-    private Mixin createMixin( final String name )
-    {
-        return Mixin.create().name( name ).build();
-    }
-
 }

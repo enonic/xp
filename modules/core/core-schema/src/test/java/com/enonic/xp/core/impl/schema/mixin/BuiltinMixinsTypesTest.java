@@ -9,12 +9,12 @@ import com.enonic.xp.schema.mixin.Mixins;
 
 import static org.junit.Assert.*;
 
-public class BuiltinMixinsLoaderTest
+public class BuiltinMixinsTypesTest
 {
     @Test
     public void testBuiltin()
     {
-        final Mixins mixins = new BuiltinMixinsLoader().load();
+        final Mixins mixins = new BuiltinMixinsTypes().load();
         assertEquals( 3, mixins.getSize() );
 
         assertSchema( mixins.get( 0 ), MixinName.from( ApplicationKey.MEDIA_MOD + ":imageInfo" ), false );
@@ -25,13 +25,13 @@ public class BuiltinMixinsLoaderTest
     @Test
     public void testBuiltinLoadByApplication()
     {
-        Mixins mixins = new BuiltinMixinsLoader().loadByApplication( ApplicationKey.MEDIA_MOD );
+        Mixins mixins = new BuiltinMixinsTypes().loadByApplication( ApplicationKey.MEDIA_MOD );
         assertEquals( 2, mixins.getSize() );
 
         assertSchema( mixins.get( 0 ), MixinName.from( ApplicationKey.MEDIA_MOD + ":imageInfo" ), false );
         assertSchema( mixins.get( 1 ), MixinName.from( ApplicationKey.MEDIA_MOD + ":cameraInfo" ), false );
 
-        mixins = new BuiltinMixinsLoader().loadByApplication( ApplicationKey.BASE );
+        mixins = new BuiltinMixinsTypes().loadByApplication( ApplicationKey.BASE );
         assertEquals( 1, mixins.getSize() );
 
         assertSchema( mixins.get( 0 ), MixinName.from( ApplicationKey.BASE + ":gpsInfo" ), false );

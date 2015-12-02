@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.schema.mixin;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
@@ -22,7 +21,7 @@ import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
 import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
 
-final class BuiltinMixinsLoader
+final class BuiltinMixinsTypes
 {
     private static final String MIXINS_FOLDER = "mixins";
 
@@ -117,9 +116,12 @@ final class BuiltinMixinsLoader
         return Input.create().inputType( InputTypeName.GEO_POINT ).label( label ).name( name ).immutable( true );
     }
 
-    private List<Mixin> generateSystemMixins()
+    private final Mixins mixins;
+
+    public BuiltinMixinsTypes()
     {
-        return generateSystemMixins( MIXINS );
+        final List<Mixin> generatedSystemMixins = generateSystemMixins( MIXINS );
+        this.mixins = Mixins.from( generatedSystemMixins );
     }
 
     private List<Mixin> generateSystemMixins( Iterable<Mixin> systemMixins )
@@ -135,19 +137,14 @@ final class BuiltinMixinsLoader
         return generatedSystemMixins;
     }
 
-    public Mixins load()
+    public Mixins getAll()
     {
-        final List<Mixin> generatedSystemMixins = generateSystemMixins();
-        return Mixins.from( generatedSystemMixins );
+        return this.mixins;
     }
 
-    public Mixins loadByApplication( final ApplicationKey applicationKey )
+    public Mixins getByApplication( final ApplicationKey key )
     {
-        final List<Mixin> systemMixinsByApplicationKey = MIXINS.stream().
-            filter( mixin -> mixin.getName().getApplicationKey().equals( applicationKey ) ).
-            collect( Collectors.toList() );
-        final List<Mixin> generatedSystemMixins = generateSystemMixins( systemMixinsByApplicationKey );
-        return Mixins.from( generatedSystemMixins );
+        return this.mixins.filter( ( type ) -> type.getName().getApplicationKey().equals( key ) );
     }
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )
