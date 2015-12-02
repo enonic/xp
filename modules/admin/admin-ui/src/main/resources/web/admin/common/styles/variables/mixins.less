@@ -525,7 +525,7 @@
   .material-layer-shadow();
 }
 
-.date-picker-dialog(@width: 100%, @padding: 10px) {
+.date-picker-mixin(@width: 100%, @padding: 10px) {
   .date-picker-dialog {
     .picker-dialog(@width, @padding);
     box-sizing: border-box;
@@ -559,9 +559,9 @@
   }
 }
 
-.time-picker-dialog(@width: auto, @padding: 5px) {
+.time-picker-mixin() {
   .time-picker-dialog {
-    .picker-dialog(@width, @padding);
+    .picker-dialog(auto, 5px);
 
     li {
       display: inline-block;
