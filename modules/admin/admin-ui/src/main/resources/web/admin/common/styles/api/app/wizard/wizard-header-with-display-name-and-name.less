@@ -1,11 +1,11 @@
 .wizard-header-with-display-name-and-name {
-  .name-wrapper, .text-input {
+  .name-wrapper, .@{_COMMON_PREFIX}text-input {
     max-width: 100%;
     box-sizing: content-box;
     .ellipsis();
   }
 
-  .text-input:disabled {
+  .@{_COMMON_PREFIX}text-input:disabled {
     color: @admin-blue;
 
     &:hover {
@@ -16,13 +16,13 @@
 }
 
 ._0-240, ._240-360 {
-  .name-wrapper, .text-input.large {
+  .name-wrapper, .@{_COMMON_PREFIX}text-input&.@{_CLS_PREFIX}large {
     min-width: 100px;
   }
 }
 
 ._360-540 {
-  .name-wrapper, .text-input.large {
+  .name-wrapper, .@{_COMMON_PREFIX}text-input&.@{_CLS_PREFIX}.large {
     min-width: 250px;
   }
 }

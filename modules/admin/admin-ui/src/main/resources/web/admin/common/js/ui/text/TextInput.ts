@@ -23,12 +23,10 @@ module api.ui.text {
         private valueChangedListeners: {(event: ValueChangedEvent):void}[] = [];
 
         constructor(className?: string, size?: string) {
-            super(className);
+            super("text-input " + (className || ""), "text", api.StyleHelper.COMMON_PREFIX);
 
-            this.getEl().setAttribute('type', 'text');
-            this.addClass('text-input');
             if (size) {
-                this.addClass(size);
+                this.addClassEx(size);
             }
 
             this.onKeyPressed((event: KeyboardEvent) => {
