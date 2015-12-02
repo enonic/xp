@@ -1,11 +1,11 @@
 package com.enonic.xp.server.impl.status;
 
+import java.util.Properties;
+
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import com.enonic.xp.server.BuildInfo;
 import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.server.VersionInfo;
 
@@ -20,18 +20,17 @@ public class ServerReporterTest
     protected void initialize()
     {
         VersionInfo.set( "0.0.0" );
-        final BuildInfo build = Mockito.mock( BuildInfo.class );
-        Mockito.when( build.getBranch() ).thenReturn( "master" );
-        Mockito.when( build.getHash() ).thenReturn( "12345678" );
-        Mockito.when( build.getShortHash() ).thenReturn( "1234" );
-        Mockito.when( build.getTimestamp() ).thenReturn( "2012-11-10T20:21:22" );
 
-        final ServerInfo info = Mockito.mock( ServerInfo.class );
-        Mockito.when( info.getName() ).thenReturn( "demo" );
-        Mockito.when( info.getBuildInfo() ).thenReturn( build );
+        final Properties props = new Properties();
+        props.put( "xp.build.branch", "master" );
+        props.put( "xp.build.hash", "12345678" );
+        props.put( "xp.build.shortHash", "1234" );
+        props.put( "xp.build.timestamp", "2012-11-10T20:21:22" );
+        props.put( "xp.name", "demo" );
+        props.put( "xp.runMode", "prod" );
 
         this.reporter = new ServerReporter();
-        this.reporter.setServerInfo( info );
+        this.reporter.serverInfo = new ServerInfo( props );
     }
 
     @Test

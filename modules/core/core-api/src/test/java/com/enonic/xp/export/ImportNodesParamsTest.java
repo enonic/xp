@@ -1,5 +1,7 @@
 package com.enonic.xp.export;
 
+import java.util.HashMap;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -15,8 +17,14 @@ public class ImportNodesParamsTest
     {
         ImportNodesParams.Builder builder = ImportNodesParams.create();
 
-        builder.dryRun( true ).includeNodeIds( true ).includePermissions( true ).targetNodePath( NodePath.ROOT ).source(
-            Mockito.mock( VirtualFile.class ) );
+        builder.dryRun( true ).
+            includeNodeIds( true ).
+            includePermissions( true ).
+            targetNodePath( NodePath.ROOT ).
+            source( Mockito.mock( VirtualFile.class ) ).
+            xslt( Mockito.mock( VirtualFile.class ) ).
+            xsltParam( "name", "value" ).
+            xsltParams( new HashMap<>() );
 
         ImportNodesParams result = builder.build();
 
@@ -25,5 +33,7 @@ public class ImportNodesParamsTest
         assertTrue( result.isImportPermissions() );
         assertTrue( result.getTargetNodePath().isRoot() );
         assertNotNull( result.getSource() );
+        assertNotNull( result.getXslt() );
+        assertNotNull( result.getXsltParams() );
     }
 }

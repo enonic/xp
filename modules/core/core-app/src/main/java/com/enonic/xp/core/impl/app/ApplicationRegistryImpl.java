@@ -1,87 +1,89 @@
 package com.enonic.xp.core.impl.app;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.SynchronousBundleListener;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationEvent;
+import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.app.ApplicationKeys;
 
 @Component(immediate = true)
 public final class ApplicationRegistryImpl
-    implements ApplicationRegistry, SynchronousBundleListener
+    implements ApplicationRegistry, ApplicationInvalidator
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ApplicationRegistryImpl.class );
+    private final ConcurrentMap<ApplicationKey, Application> applications;
 
-    private final Map<ApplicationKey, Application> applications;
-
-    private EventPublisher eventPublisher;
+    private BundleContext context;
 
     public ApplicationRegistryImpl()
     {
         this.applications = Maps.newConcurrentMap();
     }
 
-    @Activate
-    public void start( final BundleContext context )
+    private ApplicationKeys findApplicationKeys()
     {
-        context.addBundleListener( this );
-        for ( final Bundle bundle : context.getBundles() )
+        final List<ApplicationKey> list = Lists.newArrayList();
+        for ( final Bundle bundle : this.context.getBundles() )
         {
-            if ( !isApplication( bundle ) )
+            if ( isApplication( bundle ) )
             {
-                continue;
-            }
-
-            addBundle( bundle );
-
-            if ( bundle.getState() == Bundle.ACTIVE )
-            {
-                publishApplicationChangeEvent( new BundleEvent( BundleEvent.STARTED, bundle ) );
+                list.add( ApplicationKey.from( bundle ) );
             }
         }
+
+        return ApplicationKeys.from( list );
     }
 
     @Override
-    public void bundleChanged( final BundleEvent event )
+    public void invalidate( final ApplicationKey key )
     {
-        final Bundle bundle = event.getBundle();
+        this.applications.remove( key );
+    }
 
-        // we cannot check if the bundle is an application when it is uninstalled
-        if ( event.getType() == BundleEvent.UNINSTALLED )
+    @Activate
+    public void start( final BundleContext context )
+    {
+        this.context = context;
+        this.applications.clear();
+    }
+
+    @Override
+    public Application get( final ApplicationKey key )
+    {
+        return this.applications.computeIfAbsent( key, this::createApp );
+    }
+
+    @Override
+    public Collection<Application> getAll()
+    {
+        final List<Application> list = Lists.newArrayList();
+
+        for ( final ApplicationKey key : findApplicationKeys() )
         {
-            removeBundle( bundle );
-            publishApplicationChangeEvent( event );
-            return;
+            final Application app = get( key );
+            if ( app != null )
+            {
+                list.add( app );
+            }
         }
 
-        if ( !isApplication( bundle ) )
-        {
-            return;
-        }
+        return list;
+    }
 
-        switch ( event.getType() )
-        {
-            case BundleEvent.INSTALLED:
-            case BundleEvent.UPDATED:
-                addBundle( bundle );
-                break;
-        }
-
-        publishApplicationChangeEvent( event );
+    private Application createApp( final ApplicationKey key )
+    {
+        final Bundle bundle = findBundle( key.getName() );
+        return bundle != null ? new ApplicationImpl( bundle ) : null;
     }
 
     private boolean isApplication( final Bundle bundle )
@@ -89,59 +91,16 @@ public final class ApplicationRegistryImpl
         return ( bundle.getState() != Bundle.UNINSTALLED ) && ApplicationImpl.isApplication( bundle );
     }
 
-    private void publishApplicationChangeEvent( final BundleEvent event )
+    private Bundle findBundle( final String name )
     {
-        this.eventPublisher.publish( new ApplicationEvent( event ) );
-    }
-
-    private void addBundle( final Bundle bundle )
-    {
-        try
+        for ( final Bundle bundle : this.context.getBundles() )
         {
-            installApplication( bundle );
+            if ( bundle.getSymbolicName().equals( name ) )
+            {
+                return bundle;
+            }
         }
-        catch ( final Exception t )
-        {
-            LOG.warn( "Unable to load application " + bundle.getSymbolicName(), t );
-        }
-    }
 
-    private void removeBundle( final Bundle bundle )
-    {
-        final ApplicationKey applicationKey = ApplicationKey.from( bundle );
-        uninstallApplication( applicationKey );
-    }
-
-    private void installApplication( final Bundle bundle )
-    {
-        installApplication( new ApplicationImpl( bundle ) );
-    }
-
-    @Override
-    public Application get( final ApplicationKey key )
-    {
-        return this.applications.get( key );
-    }
-
-    @Override
-    public Collection<Application> getAll()
-    {
-        return this.applications.values();
-    }
-
-    private void uninstallApplication( final ApplicationKey key )
-    {
-        this.applications.remove( key );
-    }
-
-    private void installApplication( final Application application )
-    {
-        this.applications.put( application.getKey(), application );
-    }
-
-    @Reference
-    public void setEventPublisher( final EventPublisher eventPublisher )
-    {
-        this.eventPublisher = eventPublisher;
+        return null;
     }
 }

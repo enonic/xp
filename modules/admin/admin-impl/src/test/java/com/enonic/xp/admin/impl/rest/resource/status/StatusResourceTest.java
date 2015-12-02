@@ -1,24 +1,24 @@
 package com.enonic.xp.admin.impl.rest.resource.status;
 
+import java.util.Properties;
+
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
-import com.enonic.xp.server.BuildInfo;
 import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.server.VersionInfo;
 
 public class StatusResourceTest
     extends AdminResourceTestSupport
 {
-    private ServerInfo serverInfo;
+    private Properties serverInfo;
 
     @Override
     protected Object getResourceInstance()
     {
-        this.serverInfo = Mockito.mock( ServerInfo.class );
+        this.serverInfo = new Properties();
         final StatusResource resource = new StatusResource();
-        resource.setServerInfo( this.serverInfo );
+        resource.info = new ServerInfo( this.serverInfo );
         return resource;
     }
 
@@ -28,14 +28,11 @@ public class StatusResourceTest
     {
         VersionInfo.set( "1.1.1-SNAPSHOT" );
 
-        final BuildInfo buildInfo = Mockito.mock( BuildInfo.class );
-        Mockito.when( buildInfo.getBranch() ).thenReturn( "master" );
-        Mockito.when( buildInfo.getHash() ).thenReturn( "123456" );
-        Mockito.when( buildInfo.getShortHash() ).thenReturn( "123" );
-        Mockito.when( buildInfo.getTimestamp() ).thenReturn( "2015-11-11T22:11:00" );
-
-        Mockito.when( this.serverInfo.getName() ).thenReturn( "production" );
-        Mockito.when( this.serverInfo.getBuildInfo() ).thenReturn( buildInfo );
+        this.serverInfo.put( "xp.build.branch", "master" );
+        this.serverInfo.put( "xp.build.hash", "123456" );
+        this.serverInfo.put( "xp.build.shortHash", "123" );
+        this.serverInfo.put( "xp.build.timestamp", "2015-11-11T22:11:00" );
+        this.serverInfo.put( "xp.name", "production" );
 
         final String json = request().path( "/status" ).get().getAsString();
         assertJson( "status_ok.json", json );

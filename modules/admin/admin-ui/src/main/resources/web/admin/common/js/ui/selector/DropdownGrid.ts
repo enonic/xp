@@ -175,6 +175,10 @@ module api.ui.selector {
             return <Option<OPTION_DISPLAY_VALUE>>this.gridData.getItem(rowIndex);
         }
 
+        getRowByValue(value: string): number {
+            return this.gridData.getRowById(value);
+        }
+
         setFilterArgs(args: any) {
             this.gridData.setFilterArgs(args);
             this.gridData.refresh();
@@ -255,15 +259,17 @@ module api.ui.selector {
             }
         }
 
-        nagivateToFirstRow() {
+        navigateToFirstRow() {
+            this.navigateToRow(0);
+        }
 
-            this.grid.setActiveCell(0, 0);
+        navigateToRow(row: number) {
+            this.grid.setActiveCell(row, 0);
         }
 
         navigateToFirstRowIfNotActive() {
-
             if (!this.grid.getActiveCell()) {
-                this.grid.setActiveCell(0, 0);
+                this.navigateToFirstRow();
             }
         }
 

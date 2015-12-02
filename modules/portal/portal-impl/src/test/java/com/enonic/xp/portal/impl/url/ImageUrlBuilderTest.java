@@ -108,4 +108,26 @@ public class ImageUrlBuilderTest
         assertEquals( "test/draft/context/path/_/image/testID:e57c6588d59c360d2464a5eabdaa24c78f7d1ed6/testScale/testName.jpg.png",
                       stringBuilder.toString() );
     }
+
+    @Test
+    public void testWithScale()
+    {
+        final StringBuilder stringBuilder = new StringBuilder( "test/" );
+        imageUrlParams.scale( "block(310,175)" );
+
+        urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
+        assertEquals( "test/draft/context/path/_/image/testID:e57c6588d59c360d2464a5eabdaa24c78f7d1ed6/block-310-175/testName",
+                      stringBuilder.toString() );
+    }
+
+    @Test
+    public void testWithScale_spaces()
+    {
+        final StringBuilder stringBuilder = new StringBuilder( "test/" );
+        imageUrlParams.scale( "block( 310, 175)" );
+
+        urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
+        assertEquals( "test/draft/context/path/_/image/testID:e57c6588d59c360d2464a5eabdaa24c78f7d1ed6/block-310-175/testName",
+                      stringBuilder.toString() );
+    }
 }

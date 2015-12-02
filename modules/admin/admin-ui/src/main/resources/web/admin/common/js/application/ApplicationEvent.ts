@@ -4,7 +4,11 @@ module api.application {
         INSTALLED, UNINSTALLED, RESOLVED, STARTING, STARTED, UPDATED, STOPPING, STOPPED, UNRESOLVED
     }
 
-    export interface ApplicationEventJson {
+    export interface ApplicationEventJson extends api.app.EventJson {
+        data: ApplicationEventDataJson;
+    }
+
+    export interface ApplicationEventDataJson {
         eventType: string;
         applicationKey: string;
     }
@@ -44,9 +48,9 @@ module api.application {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
 
-        static fromJson(json: ApplicationEventJson): ApplicationEvent {
-            var applicationKey = api.application.ApplicationKey.fromString(json.applicationKey);
-            var eventType = ApplicationEventType[json.eventType];
+        static fromJson(applicationEventJson: ApplicationEventJson): ApplicationEvent {
+            var applicationKey = api.application.ApplicationKey.fromString(applicationEventJson.data.applicationKey);
+            var eventType = ApplicationEventType[applicationEventJson.data.eventType];
             return new ApplicationEvent(applicationKey, eventType);
         }
     }

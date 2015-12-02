@@ -61,6 +61,8 @@ public class ClusterReporterTest
 
         this.clusterState = Mockito.mock( ClusterState.class );
         this.localNodeInfo = Mockito.mock( NodeInfo.class );
+        Mockito.when( localNodeInfo.getVersion() ).thenReturn( Version.fromString( "1.0.0" ) );
+
         final ClusterStateResponse clusterStateResponse = Mockito.mock( ClusterStateResponse.class );
         final NodesInfoResponse nodesInfoResponse = Mockito.mock( NodesInfoResponse.class );
         final ClusterHealthResponse clusterHealthResponse = Mockito.mock( ClusterHealthResponse.class );

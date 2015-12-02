@@ -2,7 +2,6 @@ package com.enonic.xp.launcher.env;
 
 import java.io.File;
 import java.util.Map;
-import java.util.Properties;
 
 import com.google.common.collect.Maps;
 
@@ -50,13 +49,5 @@ final class EnvironmentImpl
         map.put( XP_HOME_DIR, this.homeDir.getAbsolutePath() );
         map.put( XP_INSTALL_DIR, this.installDir.getAbsolutePath() );
         return map;
-    }
-
-    @Override
-    public Properties getAsProperties()
-    {
-        final Properties props = new Properties();
-        props.putAll( getAsMap() );
-        return props;
     }
 }

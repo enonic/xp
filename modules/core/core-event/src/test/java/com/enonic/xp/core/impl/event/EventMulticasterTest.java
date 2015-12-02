@@ -26,7 +26,7 @@ public class EventMulticasterTest
     @Test
     public void testEventWithoutListeners()
     {
-        final Event event = new TestEvent();
+        final Event event = Event.create( "test" ).build();
         this.multicaster.publish( event );
     }
 
@@ -36,7 +36,7 @@ public class EventMulticasterTest
         final EventListener listener = mock( EventListener.class );
         this.multicaster.add( listener );
 
-        final Event event = new TestEvent();
+        final Event event = Event.create( "test" ).build();
         this.multicaster.publish( event );
 
         this.multicaster.remove( listener );
@@ -57,7 +57,7 @@ public class EventMulticasterTest
         final EventListener listener3 = mock( EventListener.class );
         this.multicaster.add( listener3 );
 
-        final Event event = new TestEvent();
+        final Event event = Event.create( "test" ).build();
         this.multicaster.publish( event );
 
         verify( listener1, times( 1 ) ).onEvent( event );
@@ -79,7 +79,7 @@ public class EventMulticasterTest
 
         doThrow( new RuntimeException( "Error" ) ).when( listener2 ).onEvent( Mockito.any() );
 
-        final Event event = new TestEvent();
+        final Event event = Event.create( "test" ).build();
         this.multicaster.publish( event );
 
         verify( listener1, times( 1 ) ).onEvent( event );

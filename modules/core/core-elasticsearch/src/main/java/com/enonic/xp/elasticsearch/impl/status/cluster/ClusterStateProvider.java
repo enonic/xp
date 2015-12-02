@@ -78,21 +78,21 @@ public final class ClusterStateProvider
             id( nodeId ).
             hostName( localNodeInfo.getNode().getHostName() ).
             master( nodeId.equals( clusterState.getNodes().getMasterNodeId() ) ).
+            version( localNodeInfo.getVersion().toString() ).
             build();
     }
 
     private List<MemberNodeState> getMembersState( DiscoveryNodes members )
     {
-
         final List<MemberNodeState> results = Lists.newArrayList();
 
         for ( DiscoveryNode node : members )
         {
-            final MemberNodeState memberNodeState = (MemberNodeState) MemberNodeState.create().
+            final MemberNodeState memberNodeState = MemberNodeState.create().
                 address( node.getAddress().toString() ).
-                version( node.getVersion() ).
                 id( node.id() ).
                 hostName( node.getHostName() ).
+                version( node.getVersion().toString() ).
                 master( node.getId().equals( members.getMasterNodeId() ) ).build();
 
             results.add( memberNodeState );
@@ -105,11 +105,9 @@ public final class ClusterStateProvider
     private ClusterStateResponse getClusterStateResponse()
     {
         final ClusterStateRequest clusterStateRequest = Requests.clusterStateRequest().
-            listenerThreaded( false ).
-            blocks( false ).
-            routingTable( false ).
+            clear().
+            nodes( true ).
             indices( "" ).
-            metaData( false ).
             masterNodeTimeout( CLUSTER_HEALTH_TIMEOUT );
 
         return clusterAdminClient.state( clusterStateRequest ).actionGet();

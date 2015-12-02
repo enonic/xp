@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
@@ -9,7 +10,9 @@ import org.osgi.framework.VersionRange;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -26,23 +29,27 @@ final class ApplicationImpl
 
     public final static String X_SYSTEM_VERSION = "X-System-Version";
 
+    public final static String X_SOURCE_PATHS = "X-Source-Paths";
+
     private static final String SITE_XML = "site/site.xml";
 
-    private ApplicationKey applicationKey;
+    private final ApplicationKey applicationKey;
 
-    private Version version;
+    private final Version version;
 
-    private String displayName;
+    private final String displayName;
 
-    private String url;
+    private final String url;
 
-    private String vendorName;
+    private final String vendorName;
 
-    private String vendorUrl;
+    private final String vendorUrl;
 
-    private String systemVersion;
+    private final String systemVersion;
 
-    private Bundle bundle;
+    private final Bundle bundle;
+
+    private final List<String> sourcePaths;
 
     public ApplicationImpl( final Bundle bundle )
     {
@@ -54,6 +61,7 @@ final class ApplicationImpl
         this.vendorName = getHeader( this.bundle, X_VENDOR_NAME, null );
         this.vendorUrl = getHeader( this.bundle, X_VENDOR_URL, null );
         this.systemVersion = getHeader( this.bundle, X_SYSTEM_VERSION, null );
+        this.sourcePaths = split( getHeader( this.bundle, X_SOURCE_PATHS, "" ), ',' );
     }
 
     @Override
@@ -173,6 +181,17 @@ final class ApplicationImpl
     {
         final String value = bundle.getHeaders().get( name );
         return Strings.isNullOrEmpty( value ) ? defValue : value;
+    }
+
+    @Override
+    public List<String> getSourcePaths()
+    {
+        return this.sourcePaths;
+    }
+
+    private static List<String> split( final String str, final char seperator )
+    {
+        return Lists.newArrayList( Splitter.on( seperator ).trimResults().split( str ) );
     }
 
     @Override

@@ -1,16 +1,10 @@
 package com.enonic.xp.core.impl.resource;
 
-import java.net.URL;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.osgi.framework.Bundle;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
@@ -19,102 +13,78 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
+import com.enonic.xp.server.RunMode;
 
 @Component(immediate = true)
-public class ResourceServiceImpl
-    implements ResourceService
+public final class ResourceServiceImpl
+    implements ResourceService, ApplicationInvalidator
 {
-
     private ApplicationService applicationService;
 
-    @Override
-    public Resource getResource( final ResourceKey resourceKey )
+    protected ResourceLoader resourceLoader;
+
+    private final ResourceProcessorCache processorCache;
+
+    public ResourceServiceImpl()
     {
-        URL resourceUrl = null;
-        final Application application = getActiveApplication( resourceKey.getApplicationKey() );
-        if ( application != null )
+        this.resourceLoader = createResourceLoader();
+        this.processorCache = new ResourceProcessorCache( RunMode.get() != RunMode.DEV );
+    }
+
+    private ResourceLoader createResourceLoader()
+    {
+        if ( RunMode.get() == RunMode.DEV )
         {
-            String resourcePath = resourceKey.getPath();
-            resourceUrl = application.getBundle().getResource( resourcePath );
+            return new DevResourceLoader();
         }
 
-        return new UrlResource( resourceKey, resourceUrl );
+        return new BundleResourceLoader();
     }
 
     @Override
-    public ResourceKeys findResourceKeys( final ApplicationKey applicationKey, final String path, final String filePattern,
-                                          boolean recurse )
+    public Resource getResource( final ResourceKey key )
     {
-        ResourceKeys resourceKeys = null;
-        final Application application = getActiveApplication( applicationKey );
-
-        if ( application != null )
+        final Application app = findApplication( key.getApplicationKey() );
+        if ( app == null )
         {
-            Bundle bundle = application.getBundle();
-
-            final Enumeration<URL> entries = bundle.findEntries( path, filePattern, recurse );
-
-            if ( entries != null )
-            {
-                final List<ResourceKey> resourceKeyList = Collections.list( entries ).
-                    stream().
-                    map( resourceUrl -> ResourceKey.from( applicationKey, resourceUrl.getPath() ) ).
-                    collect( Collectors.toList() );
-
-                resourceKeys = ResourceKeys.from( resourceKeyList );
-            }
-
+            return new UrlResource( key, null );
         }
 
-        if ( resourceKeys == null )
-        {
-            resourceKeys = ResourceKeys.empty();
-        }
-
-        return resourceKeys;
+        return this.resourceLoader.getResource( app, key );
     }
 
     @Override
-    public ResourceKeys findFolders( final ApplicationKey applicationKey, final String path )
+    public ResourceKeys findFiles( final ApplicationKey key, final String path, final String ext, final boolean recursive )
     {
-        ResourceKeys resourceKeys = null;
-        final Application application = getActiveApplication( applicationKey );
-
-        if ( application != null )
+        final Application app = findApplication( key );
+        if ( app == null )
         {
-            Bundle bundle = application.getBundle();
-
-            final Enumeration<String> entryPaths = bundle.getEntryPaths( path );
-
-            if ( entryPaths != null )
-            {
-                final List<ResourceKey> resourceKeyList = Collections.list( entryPaths ).
-                    stream().
-                    filter( entryPath -> entryPath.endsWith( "/" ) ).
-                    map( entryPath -> ResourceKey.from( applicationKey, entryPath ) ).
-                    collect( Collectors.toList() );
-
-                resourceKeys = ResourceKeys.from( resourceKeyList );
-            }
-
+            return ResourceKeys.empty();
         }
 
-        if ( resourceKeys == null )
-        {
-            resourceKeys = ResourceKeys.empty();
-        }
-
-        return resourceKeys;
+        return this.resourceLoader.findFiles( app, path, ext, recursive );
     }
 
-    private Application getActiveApplication( final ApplicationKey applicationKey )
+    @Override
+    public ResourceKeys findFolders( final ApplicationKey key, final String path )
+    {
+        final Application app = findApplication( key );
+        if ( app == null )
+        {
+            return ResourceKeys.empty();
+        }
+
+        return this.resourceLoader.findFolders( app, path );
+    }
+
+    private Application findApplication( final ApplicationKey key )
     {
         try
         {
-            final Application application = applicationService.getApplication( applicationKey );
-            return application.getBundle().getState() == Bundle.ACTIVE ? application : null;
+            final Application application = this.applicationService.getApplication( key );
+            return application.isStarted() ? application : null;
         }
-        catch ( ApplicationNotFoundException e )
+        catch ( final ApplicationNotFoundException e )
         {
             return null;
         }
@@ -124,5 +94,11 @@ public class ResourceServiceImpl
     public void setApplicationService( final ApplicationService applicationService )
     {
         this.applicationService = applicationService;
+    }
+
+    @Override
+    public void invalidate( final ApplicationKey key )
+    {
+        this.processorCache.invalidate();
     }
 }

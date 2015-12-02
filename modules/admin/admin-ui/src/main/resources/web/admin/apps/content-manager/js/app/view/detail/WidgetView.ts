@@ -15,6 +15,8 @@ module app.view.detail {
 
         private widget: Widget;
 
+        private containerWidth: number = 0;
+
         public static debug = false;
 
         constructor(builder: WidgetViewBuilder) {
@@ -31,18 +33,23 @@ module app.view.detail {
             this.layout();
             if (this.isUrlBased()) {
                 this.detailsPanel.onPanelSizeChanged(() => {
-                    if (this.detailsPanel.getItem()) {
+                    var containerWidth = this.detailsPanel.getEl().getWidth();
+                    if (this.detailsPanel.getItem() && containerWidth !== this.containerWidth) {
                         this.setContent(this.detailsPanel.getItem());
                     }
                 })
             };
         }
 
+        resetContainerWidth() {
+            this.containerWidth = 0;
+        }
+
         private setContentForWidgetItemView(widgetItemView: WidgetItemView, content: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
             if (!this.isUrlBased()) {
                 return wemQ.resolve(null);
             }
-            var path = content.getPath().getFirstElement();
+            var path = content.getPath().toString();
             return widgetItemView.setUrl(this.widget.getUrl(), path);
         }
 
@@ -51,6 +58,7 @@ module app.view.detail {
             this.widgetItemViews.forEach((widgetItemView: WidgetItemView) => {
                 promises.push(this.setContentForWidgetItemView(widgetItemView, content));
             });
+            this.containerWidth = this.detailsPanel.getEl().getWidth();
             return wemQ.all(promises);
         }
 
@@ -114,7 +122,10 @@ module app.view.detail {
 
         setActive() {
             if (WidgetView.debug) {
-                console.debug('WidgetView.setActive: ', this);
+                console.debug('WidgetView.setActive: ', this.getWidgetName());
+            }
+            if (this.isActive()) {
+                return;
             }
             this.detailsPanel.setActiveWidget(this);
             this.slideIn();
@@ -122,7 +133,7 @@ module app.view.detail {
 
         setInactive() {
             if (WidgetView.debug) {
-                console.debug('WidgetView.setInactive: ', this);
+                console.debug('WidgetView.setInactive: ', this.getWidgetName());
             }
             this.detailsPanel.resetActiveWidget();
             this.slideOut();
@@ -133,7 +144,7 @@ module app.view.detail {
         }
 
         private hasDynamicHeight(): boolean {
-            return (this.getEl().getHeight() == 0 && this.isUrlBased() && this.isActive());
+            return this.isUrlBased() && this.isActive();
         }
 
         private redoLayout() {

@@ -38,7 +38,8 @@ final class MultipartItemImpl
     @Override
     public MediaType getContentType()
     {
-        return MediaType.parse( this.item.getContentType() );
+        final String itemContentType = this.item.getContentType();
+        return itemContentType != null ? MediaType.parse( itemContentType ) : null;
     }
 
     @Override

@@ -90,6 +90,39 @@ module api.form.inputtype.text {
                 toolbar: [
                     "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor image link unlink | table | code"
                 ],
+                formats: {
+                    alignleft: [
+                        {
+                            selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
+                            styles: {textAlign: 'left'},
+                            defaultBlock: 'div'
+                        },
+                        {selector: 'table', collapsed: false, styles: {'float': 'left'}}
+                    ],
+                    aligncenter: [
+                        {
+                            selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
+                            styles: {textAlign: 'center'},
+                            defaultBlock: 'div'
+                        },
+                        {selector: 'table', collapsed: false, styles: {marginLeft: 'auto', marginRight: 'auto'}}
+                    ],
+                    alignright: [
+                        {
+                            selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
+                            styles: {textAlign: 'right'},
+                            defaultBlock: 'div'
+                        },
+                        {selector: 'table', collapsed: false, styles: {'float': 'right'}}
+                    ],
+                    alignjustify: [
+                        {
+                            selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
+                            styles: {textAlign: 'justify'},
+                            defaultBlock: 'div'
+                        }
+                    ]
+                },
                 menubar: false,
                 statusbar: false,
                 paste_as_text: true,
@@ -99,6 +132,7 @@ module api.form.inputtype.text {
                     "image": baseUrl + "/common/js/form/inputtype/text/plugins/image.js",
                     "anchor": baseUrl + "/common/js/form/inputtype/text/plugins/anchor.js"
                 },
+                object_resizing: "table",
                 autoresize_min_height: 100,
                 autoresize_bottom_margin: 0,
                 height: 100,
@@ -122,7 +156,7 @@ module api.form.inputtype.text {
                         textAreaWrapper.removeClass(focusedEditorCls);
                     });
                     editor.on('keydown', (e) => {
-                        if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
+                        if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {  // Cmd-S or Ctrl-S
                             e.preventDefault();
 
                             this.setPropertyValue(id, property);
@@ -139,7 +173,31 @@ module api.form.inputtype.text {
                                 charCode: e.charCode
                             });
                         }
+
+                        if (e.keyCode == 46) { // DELETE
+                            var selectedNode = editor.selection.getRng().startContainer;
+                            if (/^(FIGURE)$/.test(selectedNode.nodeName)) {
+                                editor.execCommand('mceRemoveNode', false, selectedNode);
+                                editor.focus();
+                            }
+                        }
                     });
+
+                    var dragParentElement;
+                    editor.on('dragstart', (e) => {
+                        dragParentElement = e.target.parentElement || e.target.parentNode;
+                    });
+
+                    editor.on('drop', (e) => {
+                        if (dragParentElement) {
+                            // prevent browser from handling the drop
+                            e.preventDefault();
+
+                            e.target.appendChild(dragParentElement);
+                            dragParentElement = undefined;
+                        }
+                    });
+
                 },
                 init_instance_callback: (editor) => {
                     this.setEditorContent(id, property);
@@ -148,6 +206,7 @@ module api.form.inputtype.text {
                     }
                     this.removeTooltipFromEditorArea(textAreaWrapper);
                     this.temporarilyDisableScrolling(); // XP-736
+                    this.updateImageAlignmentBehaviour(editor);
                 }
             });
         }
@@ -199,6 +258,27 @@ module api.form.inputtype.text {
             setTimeout(() => {
                 this.isScrollProhibited = false;
             }, 300);
+        }
+
+        private updateImageAlignmentBehaviour(editor) {
+            var imgs = editor.getBody().querySelectorAll('img');
+
+            for (let i = 0; i < imgs.length; i++) {
+                this.changeImageParentAlignmentOnImageAlignmentChange(imgs[i]);
+            }
+        }
+
+        private changeImageParentAlignmentOnImageAlignmentChange(img: HTMLImageElement) {
+            var observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    var alignment = (<HTMLElement>mutation.target).style["text-align"];
+                    img.parentElement.style.textAlign = alignment;
+                });
+            });
+
+            var config = {attributes: true, childList: false, characterData: false, attributeFilter: ["style"]};
+
+            observer.observe(img, config);
         }
 
         private updateStickyEditorToolbar(inputOccurence: Element) {

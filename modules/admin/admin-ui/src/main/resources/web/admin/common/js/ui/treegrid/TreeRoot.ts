@@ -133,12 +133,12 @@ module api.ui.treegrid {
             this.stashedSelection = [];
         }
 
-        removeSelection(dataId: string) {
+        removeSelections(dataIds: string[]) {
             this.currentSelection = this.currentSelection.filter((el) => {
-                return el.getDataId() !== dataId;
+                return dataIds.indexOf(el.getDataId()) < 0;
             });
             this.stashedSelection = this.stashedSelection.filter((el) => {
-                return el.getDataId() !== dataId;
+                return dataIds.indexOf(el.getDataId()) < 0;
             });
         }
 

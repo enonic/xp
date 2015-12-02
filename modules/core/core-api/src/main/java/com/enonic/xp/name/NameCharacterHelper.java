@@ -4,14 +4,20 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
+import com.google.common.collect.ImmutableSet;
 
 @Beta
-public final class NameCharacterHelper
+final class NameCharacterHelper
 {
-    private final static char[] ADDITIONAL_ALLOWED_CHARACTERS =
-        {' ', '.', '-', '_', ':', '#', '%', '+', '^', '&', '(', ')', '<', '>', ';', '$', '\'', ','};
+    private final static ImmutableSet<Character> ADDITIONAL_ALLOWED_CHARACTERS = ImmutableSet.of( ' ', '-' );
 
-    private final static char[] EXIPLICITLY_ILLEGAL_CHARACTERS = {'/', '\\'};
+    private final static ImmutableSet<Byte> ALLOWED_UNICODE_CATEGORIES =
+        ImmutableSet.of( Character.LOWERCASE_LETTER, Character.MODIFIER_LETTER, Character.UPPERCASE_LETTER, Character.DECIMAL_DIGIT_NUMBER,
+                         Character.END_PUNCTUATION, Character.START_PUNCTUATION, Character.FINAL_QUOTE_PUNCTUATION,
+                         Character.INITIAL_QUOTE_PUNCTUATION, Character.OTHER_PUNCTUATION, Character.CURRENCY_SYMBOL,
+                         Character.MODIFIER_SYMBOL, Character.MATH_SYMBOL, Character.OTHER_SYMBOL, Character.DASH_PUNCTUATION );
+
+    private final static char[] EXPLICITLY_ILLEGAL_CHARACTERS = {'/', '\\', '*', '?', '|'};
 
     public static boolean isValidCharacter( final char c )
     {
@@ -35,28 +41,22 @@ public final class NameCharacterHelper
 
     private static boolean isExplicitlyAllowed( final char c )
     {
-        for ( final char additional : ADDITIONAL_ALLOWED_CHARACTERS )
-        {
-            if ( additional == c )
-            {
-                return true;
-            }
-        }
-        return false;
+        final byte unicodeCategory = new Integer( Character.getType( c ) ).byteValue();
+        return ALLOWED_UNICODE_CATEGORIES.contains( unicodeCategory ) || ADDITIONAL_ALLOWED_CHARACTERS.contains( c );
     }
 
     public static boolean hasNoExplicitIllegal( final String value )
     {
-        return !StringUtils.containsAny( value, EXIPLICITLY_ILLEGAL_CHARACTERS );
+        return !StringUtils.containsAny( value, EXPLICITLY_ILLEGAL_CHARACTERS );
     }
 
     static String getUnicodeString( final char c )
     {
-        return "\\u" + Integer.toHexString( c | 0x10000 ).substring( 1 );
+        return "U+" + Integer.toHexString( c | 0x10000 ).substring( 1 );
     }
 
     public static char[] getExplicitlyIllegalCharacters()
     {
-        return EXIPLICITLY_ILLEGAL_CHARACTERS.clone();
+        return EXPLICITLY_ILLEGAL_CHARACTERS.clone();
     }
 }

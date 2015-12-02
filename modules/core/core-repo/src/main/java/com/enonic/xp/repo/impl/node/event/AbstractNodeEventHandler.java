@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 
@@ -19,7 +19,7 @@ abstract class AbstractNodeEventHandler
     protected final static String NEW_PATH = "newPath";
 
     @SuppressWarnings("unchecked")
-    List<Map<Object, Object>> getValueMapList( final Event2 event )
+    List<Map<Object, Object>> getValueMapList( final Event event )
     {
         try
         {

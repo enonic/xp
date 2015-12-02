@@ -24,22 +24,23 @@ module app.view.detail {
 
         private static doSetActiveDetailsPanel(detailsPanelToMakeActive: DetailsPanel) {
             var activeItem: ContentSummaryAndCompareStatus = null,
-                currentlyActivePanel = ActiveDetailsPanelManager.getActiveDetailsPanel();
+                currentlyActivePanel = ActiveDetailsPanelManager.getActiveDetailsPanel(),
+                currentlyActiveWidget: WidgetView;
 
             if (currentlyActivePanel == detailsPanelToMakeActive || !detailsPanelToMakeActive) {
                 return;
             } else if (currentlyActivePanel) {
                 activeItem = currentlyActivePanel.getItem();
-                var currentlyActiveWidget: WidgetView = currentlyActivePanel.getActiveWidget();
-                if (currentlyActiveWidget) {
-                    detailsPanelToMakeActive.setActiveWidgetWithName(currentlyActiveWidget.getWidgetName());
-                }
+                currentlyActiveWidget = currentlyActivePanel.getActiveWidget();
             }
             ActiveDetailsPanelManager.activeDetailsPanel = detailsPanelToMakeActive;
             detailsPanelToMakeActive.getCustomWidgetViewsAndUpdateDropdown();
-            detailsPanelToMakeActive.setItem(activeItem);
+            detailsPanelToMakeActive.setItem(activeItem).then(() => {
+                if (currentlyActiveWidget) {
+                    detailsPanelToMakeActive.setActiveWidgetWithName(currentlyActiveWidget.getWidgetName());
+                }
+            });
         }
-
     }
 
 }

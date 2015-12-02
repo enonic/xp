@@ -1,5 +1,8 @@
 package com.enonic.xp.export;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.node.NodePath;
@@ -18,6 +21,10 @@ public class ImportNodesParams
 
     private final boolean importPermissions;
 
+    private final VirtualFile xslt;
+
+    private final Map<String, Object> xsltParams;
+
     private ImportNodesParams( final Builder builder )
     {
         this.targetNodePath = builder.targetNodePath;
@@ -25,6 +32,8 @@ public class ImportNodesParams
         this.dryRun = builder.dryRun;
         this.importNodeids = builder.importNodeIds;
         this.importPermissions = builder.importPermissions;
+        this.xslt = builder.xslt;
+        this.xsltParams = builder.xsltParams;
     }
 
     public static Builder create()
@@ -57,6 +66,16 @@ public class ImportNodesParams
         return importPermissions;
     }
 
+    public VirtualFile getXslt()
+    {
+        return xslt;
+    }
+
+    public Map<String, Object> getXsltParams()
+    {
+        return xsltParams;
+    }
+
     public static final class Builder
     {
         private NodePath targetNodePath;
@@ -68,6 +87,10 @@ public class ImportNodesParams
         private boolean importNodeIds;
 
         private boolean importPermissions;
+
+        private VirtualFile xslt;
+
+        private Map<String, Object> xsltParams;
 
         private Builder()
         {
@@ -100,6 +123,28 @@ public class ImportNodesParams
         public Builder includePermissions( final boolean importPermissions )
         {
             this.importPermissions = importPermissions;
+            return this;
+        }
+
+        public Builder xslt( final VirtualFile xslt )
+        {
+            this.xslt = xslt;
+            return this;
+        }
+
+        public Builder xsltParams( final Map<String, Object> xsltParams )
+        {
+            this.xsltParams = xsltParams;
+            return this;
+        }
+
+        public Builder xsltParam( final String paramName, final Object paramValue )
+        {
+            if ( this.xsltParams == null )
+            {
+                this.xsltParams = new HashMap<>();
+            }
+            this.xsltParams.put( paramName, paramValue );
             return this;
         }
 

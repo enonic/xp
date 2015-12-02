@@ -58,7 +58,7 @@ module api.app.browse {
 
             this.browseItemPanel.onDeselected((event: ItemDeselectedEvent<M>) => {
                 let oldSelectedCount = this.treeGrid.getGrid().getSelectedRows().length;
-                this.treeGrid.deselectNode(event.getBrowseItem().getId());
+                this.treeGrid.deselectNodes([event.getBrowseItem().getId()]);
                 let newSelectedCount = this.treeGrid.getGrid().getSelectedRows().length;
 
                 if (oldSelectedCount === newSelectedCount) {

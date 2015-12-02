@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 
 class NodesEventData
 {
@@ -18,7 +18,7 @@ class NodesEventData
     }
 
     @SuppressWarnings("unchecked")
-    static NodesEventData create( final Event2 event )
+    static NodesEventData create( final Event event )
     {
         final Object nodesList = event.getData().get( "nodes" );
 

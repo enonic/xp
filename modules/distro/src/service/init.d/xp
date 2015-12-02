@@ -1,5 +1,3 @@
-#! /bin/sh
-
 #!/bin/sh
 #
 # /etc/init.d/enonicxp
@@ -8,39 +6,65 @@
 # chkconfig: 2345 95 05
 # description: Enonic XP server daemon
 #
-# processname: enonicxp
+# processname: xp
 
 # Define LSB log_* functions.
 # Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
-. /lib/lsb/init-functions
+
+if [ -f /lib/lsb/init-functions ]; then
+    . /lib/lsb/init-functions
+else
+    echo "Missing required library '/lib/lsb/init-functions'"
+    exit 1
+fi
 
 # Set according to environment
-XP_INSTALL="/home/xp/distro"
-XP_HOME="/home/xp/xp_home"
-RUNUSER=xp
-XP_LOG=$XP_HOME/logs/xp.out
+###############################
 
+XP_INSTALL="/opt/enonic/xp"
+RUNUSER="xp"
+
+OUT_LOG="/var/log/xp/xp.log"
+
+PIDFILE_DIR="/home/$RUNUSER/.$NAME"
+PIDFILE="$PIDFILE_DIR/$NAME.pid"
+
+################################
+
+XP_CONFIG="/etc/xp.conf"
+SCRIPTNAME="/etc/init.d/$NAME"
 
 DESC="Enonic XP"
-NAME=xp
-PIDFILE=$XP_INSTALL/work/xp.pid
-SCRIPTNAME=/etc/init.d/$NAME
-XP_CONFIG="/etc/xp.conf"
-
+NAME="xp"
 SCRIPT="service.sh"
+
 
 do_start()
 {
-    su - "$RUNUSER" -c "export XP_HOME=${XP_HOME};export XP_INSTALL=${XP_INSTALL};${XP_INSTALL}/bin/$SCRIPT $PIDFILE $XP_CONFIG" > ${XP_LOG} 2>&1
+    echo "Starting $DESC: $NAME...."
+
+    if [ ! -d "$PIDFILE_DIR" ]; then
+        su - "$RUNUSER" -c "mkdir -p ${PIDFILE_DIR}"
+    fi
+
+    su - "$RUNUSER" -c "export XP_INSTALL=${XP_INSTALL};${XP_INSTALL}/bin/$SCRIPT $PIDFILE $XP_CONFIG" > ${OUT_LOG} 2>&1
     RETVAL=$?
-	echo  -n "( with pid $(cat $PIDFILE) and exit code $RETVAL )"
-	echo
+
+    if [ "$RETVAL" = 0 ]; then
+        echo "$DESC: $NAME started"
+        echo "( with pid $(cat $PIDFILE) and exit code $RETVAL )"
+    else
+          echo "$DESC: $NAME not stared, exit code $RETVAL"
+          echo "Check log for details: $OUT_LOG"
+          exit 1;
+    fi
+
 }
 
 do_stop()
 {
     if [ -e $PIDFILE ]; then
-     	echo -n "Stopping $NAME:"
+     	echo -n "Stopping $NAME...."
 	kill $(cat $PIDFILE)
 	RETVAL=$?
 	[ "$RETVAL" = 0 ] && rm -f $PIDFILE
@@ -50,13 +74,25 @@ do_stop()
     fi
 }
 
-status()
-{
-    if [ ! -e $PIDFILE ]; then
-         log_failure_msg "$NAME is not running."
-         return 1
-       fi
-       status_of_proc -p $PIDFILE "" $NAME && exit 0 || exit $?
+status() {
+
+    if [ ! -f ${PIDFILE} ]; then
+        echo "Installation is not running"
+        exit 1
+    fi
+
+    STATUS=$(ps -p $(cat ${PIDFILE}) -o comm= )
+
+	if [ "$STATUS" = "x" ]; then
+        echo "Installation is not running"
+        exit 1
+	elif [ "$STATUS" = "java" ]; then
+	    echo "Installations is running with PID: $(cat ${PIDFILE})"
+	    exit 0
+	else
+	    echo "Hmmm... not shure, got this output: $STATUS"
+	    exit 255
+	fi
 }
 
 case "$1" in

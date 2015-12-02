@@ -33,6 +33,8 @@ public final class PortalUrlServiceImpl
 
     private static final int ID_INDEX = MODE_INDEX + 1;
 
+    private static final int PARAMS_INDEX = ID_INDEX + 1;
+
     private static final int NB_GROUPS = ID_INDEX;
 
     private static final String CONTENT_TYPE = "content";
@@ -47,13 +49,16 @@ public final class PortalUrlServiceImpl
 
     private final static Pattern CONTENT_PATTERN =
         Pattern.compile( "(?:href|src)=(\"((" + CONTENT_TYPE + "|" + MEDIA_TYPE + "|" + IMAGE_TYPE +
-                             ")://(?:(" + DOWNLOAD_MODE + "|" + INLINE_MODE + ")/)?([0-9a-z-/]+))\")",
+                             ")://(?:(" + DOWNLOAD_MODE + "|" + INLINE_MODE + ")/)?([0-9a-z-/]+)(\\?[^\"]+)?)\")",
                          Pattern.MULTILINE | Pattern.UNIX_LINES );
 
     private static final String IMAGE_SCALE = "width(768)";
 
+    private static final String IMAGE_NO_SCALING = "full";
+
     private static final String IMAGE_FORMAT = "jpeg";
 
+    private static final String KEEP_SIZE_TRUE = "?keepsize=true";
 
     private ContentService contentService;
 
@@ -109,13 +114,14 @@ public final class PortalUrlServiceImpl
 
         while ( contentMatcher.find() )
         {
-            if ( contentMatcher.groupCount() == NB_GROUPS )
+            if ( contentMatcher.groupCount() >= NB_GROUPS )
             {
                 final String match = contentMatcher.group( MATCH_INDEX );
                 final String link = contentMatcher.group( LINK_INDEX );
                 final String type = contentMatcher.group( TYPE_INDEX );
                 final String mode = contentMatcher.group( MODE_INDEX );
                 final String id = contentMatcher.group( ID_INDEX );
+                final String urlParams = contentMatcher.groupCount() == PARAMS_INDEX ? contentMatcher.group( PARAMS_INDEX ) : null;
 
                 if ( CONTENT_TYPE.equals( type ) )
                 {
@@ -126,20 +132,23 @@ public final class PortalUrlServiceImpl
 
                     final String pageUrl = pageUrl( pageUrlParams );
 
-                    processedHtml = processedHtml.replaceFirst( match, "\"" + pageUrl + "\"" );
+                    processedHtml = processedHtml.replaceFirst( Pattern.quote( match ), "\"" + pageUrl + "\"" );
                 }
                 else if ( IMAGE_TYPE.equals( type ) )
                 {
+                    final boolean keepSize = KEEP_SIZE_TRUE.equalsIgnoreCase( urlParams );
+                    final String imageScale = keepSize ? IMAGE_NO_SCALING : IMAGE_SCALE;
+
                     ImageUrlParams imageUrlParams = new ImageUrlParams().
                         type( params.getType() ).
                         id( id ).
-                        scale( IMAGE_SCALE ).
+                        scale( imageScale ).
                         format( IMAGE_FORMAT ).
                         portalRequest( params.getPortalRequest() );
 
                     final String imageUrl = imageUrl( imageUrlParams );
 
-                    processedHtml = processedHtml.replaceFirst( match, "\"" + imageUrl + "\"" );
+                    processedHtml = processedHtml.replaceFirst( Pattern.quote( match ), "\"" + imageUrl + "\"" );
                 }
                 else
                 {
@@ -151,7 +160,7 @@ public final class PortalUrlServiceImpl
 
                     final String attachmentUrl = attachmentUrl( attachmentUrlParams );
 
-                    processedHtml = processedHtml.replaceFirst( match, "\"" + attachmentUrl + "\"" );
+                    processedHtml = processedHtml.replaceFirst( Pattern.quote( match ), "\"" + attachmentUrl + "\"" );
                 }
             }
         }

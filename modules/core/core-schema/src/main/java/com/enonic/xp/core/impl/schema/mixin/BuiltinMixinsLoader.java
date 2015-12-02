@@ -1,15 +1,12 @@
 package com.enonic.xp.core.impl.schema.mixin;
 
-import java.io.InputStream;
-import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.osgi.service.component.annotations.Component;
 
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.schema.SchemaHelper;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
@@ -25,8 +22,7 @@ import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
 import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
 
-@Component(immediate = true)
-public final class BuiltinMixinsLoader
+final class BuiltinMixinsLoader
 {
     private static final String MIXINS_FOLDER = "mixins";
 
@@ -156,19 +152,6 @@ public final class BuiltinMixinsLoader
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )
     {
-        final String metaInfFolderBasePath = "/" + "META-INF" + "/" + metaInfFolderName;
-        final String filePath = metaInfFolderBasePath + "/" + name.toLowerCase() + ".png";
-        try (final InputStream stream = this.getClass().getResourceAsStream( filePath ))
-        {
-            if ( stream == null )
-            {
-                return null;
-            }
-            return Icon.from( stream, "image/png", Instant.now() );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( "Failed to load icon file: " + filePath, e );
-        }
+        return SchemaHelper.loadIcon( getClass(), metaInfFolderName, name );
     }
 }

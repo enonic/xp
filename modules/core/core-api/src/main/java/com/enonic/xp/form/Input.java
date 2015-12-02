@@ -206,7 +206,7 @@ public final class Input
 
         private final InputTypeConfig.Builder inputTypeConfig = InputTypeConfig.create();
 
-        private boolean maximizeUIInputWidth = false;
+        private boolean maximizeUIInputWidth = true;
 
         public Builder()
         {

@@ -33,7 +33,8 @@ var expectedJson = {
             }
         }
     },
-    "page": {}
+    "page": {},
+    "attachments": {}
 };
 
 exports.createContent = function () {
@@ -61,7 +62,8 @@ exports.createContent = function () {
                     a: 1
                 }
             }
-        }
+        },
+        "attachments": {}
     });
 
     assert.assertJsonEquals(expectedJson, result);
@@ -97,7 +99,8 @@ var expectedJsonAutoGenerateName = {
     "valid": false,
     "data": {},
     "x": {},
-    "page": {}
+    "page": {},
+    "attachments": {}
 };
 
 exports.createContentAutoGenerateName = function () {
@@ -123,7 +126,8 @@ var expectedJsonAutoGenerateName2 = {
     "valid": false,
     "data": {},
     "x": {},
-    "page": {}
+    "page": {},
+    "attachments": {}
 };
 
 exports.createContentAutoGenerateNameWithExistingName = function () {

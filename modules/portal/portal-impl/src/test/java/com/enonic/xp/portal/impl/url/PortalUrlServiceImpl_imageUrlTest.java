@@ -124,9 +124,34 @@ public class PortalUrlServiceImpl_imageUrlTest
             "http://localhost/portal/draft/a/b/mycontent/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent", url );
     }
 
+    @Test
+    public void createUrl_withSpacesInName()
+    {
+        this.portalRequest.setContent( createContent( "name with spaces(and-others).png" ) );
+
+        final ImageUrlParams params = new ImageUrlParams().
+            format( "png" ).
+            portalRequest( this.portalRequest ).
+            scale( "max(300)" );
+
+        final String url = this.service.imageUrl( params );
+        assertEquals(
+            "/portal/draft/a/b/name%20with%20spaces(and-others).png/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/name%20with%20spaces(and-others).png",
+            url );
+    }
+
     private Content createContent()
     {
-        final Media media = ContentFixtures.newMedia();
+        return createContent( null );
+    }
+
+    private Content createContent( final String name )
+    {
+        Media media = ContentFixtures.newMedia();
+        if ( name != null )
+        {
+            media = Media.create( media ).name( name ).build();
+        }
         Mockito.when( this.contentService.getByPath( media.getPath() ) ).thenReturn( media );
         Mockito.when( this.contentService.getById( media.getId() ) ).thenReturn( media );
         Mockito.when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(

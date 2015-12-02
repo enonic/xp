@@ -19,25 +19,26 @@ module app.view.detail {
             return wemQ<any>(null);
         }
 
-        private getFullWidgetUrl(baseUrl: string, contentPath: string, uid: string) {
-            return api.rendering.UriHelper.getAdminUri(baseUrl, contentPath) + "?uid=" + uid;
+        private getFullWidgetUrl(baseUrl: string, contentPath: string) {
+            return api.rendering.UriHelper.getAdminUri(baseUrl, contentPath) + "?uid=" + Date.now().toString();
         }
 
         public setUrl(baseUrl: string, contentPath: string): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>(),
-                uid = Date.now().toString(),
-                linkEl = new LinkEl(this.getFullWidgetUrl(baseUrl, contentPath, uid)),
+                linkEl = new LinkEl(this.getFullWidgetUrl(baseUrl, contentPath)),
                 el = this.getEl(),
-                onImportReady = function(e: CustomEvent) {
-                    el.appendChild(document.importNode(<Node>e.detail, true));
-                    document.removeEventListener("importready" + uid, onImportReady);
-                    
+                onLinkLoaded = ((event: UIEvent) => {
+                    var mainContainer = wemjq(event.target["import"]).find("div")[0];
+                    if (mainContainer) {
+                        el.appendChild(document.importNode(<Node>mainContainer, true));
+                    }
+                    linkEl.unLoaded(onLinkLoaded);
                     deferred.resolve(null);
-                };
-
-            document.addEventListener("importready" + uid, onImportReady);
+                });
 
             this.removeChildren();
+
+            linkEl.onLoaded(onLinkLoaded);
             this.appendChild(linkEl);
 
             return deferred.promise;

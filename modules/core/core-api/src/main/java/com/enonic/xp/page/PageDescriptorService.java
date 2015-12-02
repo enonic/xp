@@ -13,5 +13,4 @@ public interface PageDescriptorService
     PageDescriptors getByApplication( final ApplicationKey applicationKey );
 
     PageDescriptors getByApplications( final ApplicationKeys applicationKeys );
-
 }
