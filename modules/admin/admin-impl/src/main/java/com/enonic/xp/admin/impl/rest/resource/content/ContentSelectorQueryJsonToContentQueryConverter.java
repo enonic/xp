@@ -34,6 +34,7 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
+import com.enonic.xp.site.Site;
 
 public class ContentSelectorQueryJsonToContentQueryConverter
 {
@@ -47,7 +48,15 @@ public class ContentSelectorQueryJsonToContentQueryConverter
 
     final private Content content;
 
+    private Site parentSite;
+
     private final static FieldExpr PATH_FIELD_EXPR = FieldExpr.from( NodeIndexPath.PATH );
+
+    private final static String ALLOW_PATH_CONFIG_ENTRY = "allowPath";
+
+    private final static String ALLOW_CONTENT_TYPE_CONFIG_ENTRY = "allowContentType";
+
+    private final static String RELATIONSHIP_TYPE_CONFIG_ENTRY = "relationshipType";
 
     private ContentSelectorQueryJsonToContentQueryConverter( final Builder builder )
     {
@@ -76,117 +85,183 @@ public class ContentSelectorQueryJsonToContentQueryConverter
     {
         final List<String> allowedPaths = this.getAllowedPaths( contentSelectorInput );
 
-        if ( allowedPaths.size() > 0 )
-        {
-            return this.constructExprWithAllowedPaths( allowedPaths );
-        }
-        else
+        if ( allowedPaths.size() == 0 )
         {
             return QueryParser.parse( this.contentQueryJson.getQueryExprString() );
+        }
+
+        this.resolveParentSiteIfNeeded( allowedPaths );
+
+        return this.constructExprWithAllowedPaths( allowedPaths );
+    }
+
+    private void resolveParentSiteIfNeeded( final List<String> allowedPaths )
+    {
+        if ( ContentRelativePathResolver.anyPathNeedsSiteResolving( allowedPaths ) )
+        {
+            this.parentSite = this.contentService.getNearestSite( this.content.getId() );
         }
     }
 
     private QueryExpr constructExprWithAllowedPaths( final List<String> allowedPaths )
     {
-        final String firstPath = allowedPaths.get( 0 );
 
-        ConstraintExpr expr = createCompareExp( firstPath );
+        ConstraintExpr expr = null;
 
         for ( String allowedPath : allowedPaths )
         {
-            if ( !allowedPath.equals( firstPath ) )
-            {
-                ConstraintExpr likeExpr = createCompareExp( allowedPath );
-
-                expr = LogicalExpr.or( expr, likeExpr );
-            }
+            expr = this.addAllowPathToExpr( allowedPath, expr );
         }
 
-        if ( !Strings.isNullOrEmpty( this.contentQueryJson.getQueryExprString() ) )
+        if ( Strings.isNullOrEmpty( this.contentQueryJson.getQueryExprString() ) )
         {
-            final QueryExpr searchQueryExpr = QueryParser.parse( this.contentQueryJson.getQueryExprString() );
-            expr = LogicalExpr.and( expr, searchQueryExpr.getConstraint() );
-            return QueryExpr.from( expr, searchQueryExpr.getOrderList() );
+            return constraintExprToQueryExpr( expr );
         }
 
-        return QueryExpr.from( expr );
+        return this.addSearchQueryToExpr( expr );
     }
 
-    private CompareExpr createCompareExp( final String allowedPath )
+    private QueryExpr constraintExprToQueryExpr( final ConstraintExpr expr )
     {
-        return CompareExpr.like( PATH_FIELD_EXPR, createValueExpr( allowedPath ) );
+        return expr == null ? QueryParser.parse( "" ) : QueryExpr.from( expr );
     }
 
-    private ValueExpr createValueExpr( final String allowedPath )
+    private QueryExpr addSearchQueryToExpr( final ConstraintExpr expr )
     {
-        return ValueExpr.string(
-            "/" + ContentConstants.CONTENT_ROOT_NAME + ContentRelativePathResolver.create( this.content, allowedPath ) );
+
+        final QueryExpr searchQueryExpr = QueryParser.parse( this.contentQueryJson.getQueryExprString() );
+
+        if ( expr == null )
+        {
+            return searchQueryExpr;
+        }
+
+        final ConstraintExpr andExpr = LogicalExpr.and( expr, searchQueryExpr.getConstraint() );
+        return QueryExpr.from( andExpr, searchQueryExpr.getOrderList() );
+    }
+
+    private ConstraintExpr addAllowPathToExpr( final String allowedPath, final ConstraintExpr expr )
+    {
+        if ( ContentRelativePathResolver.hasSiteToResolve( allowedPath ) && this.parentSite == null )
+        {
+            return expr; // do nothing - we can't resolve site
+        }
+
+        final String resolvedPath = doResolvePath( allowedPath );
+
+        return createAndAppendExpr( resolvedPath, expr );
+    }
+
+    private String doResolvePath( final String allowedPath )
+    {
+        if ( ContentRelativePathResolver.hasSiteToResolve( allowedPath ) )
+        {
+            return ContentRelativePathResolver.resolveWithSite( allowedPath, this.parentSite );
+        }
+        return ContentRelativePathResolver.resolve( this.content, allowedPath );
+    }
+
+    private ConstraintExpr createAndAppendExpr( final String resolvedPath, final ConstraintExpr expr )
+    {
+        return expr == null ? createCompareExpr( resolvedPath ) : LogicalExpr.or( expr, createCompareExpr( resolvedPath ) );
+    }
+
+    private CompareExpr createCompareExpr( final String resolvedPath )
+    {
+        return CompareExpr.like( PATH_FIELD_EXPR, createValueExpr( resolvedPath ) );
+    }
+
+    private ValueExpr createValueExpr( final String resolvedPath )
+    {
+        return ValueExpr.string( "/" + ContentConstants.CONTENT_ROOT_NAME + resolvedPath );
     }
 
     private ContentTypeNames getContentTypeNames( final Input contentSelectorInput )
     {
-        if ( contentSelectorInput != null )
+        if ( contentSelectorInput == null )
         {
-            ContentTypeNames contentTypeNames =
-                ContentTypeNames.from( contentSelectorInput.getInputTypeConfig().getProperties( "allowContentType" ).
-                    stream().
-                    map( ( prop ) -> ContentTypeName.from( prop.getValue() ) ).
-                    collect( Collectors.toList() ) );
-
-            if ( contentTypeNames.getSize() == 0 )
-            {
-                contentTypeNames = getContentTypeNamesFromRelationship( contentSelectorInput );
-            }
-            return contentTypeNames;
+            return ContentTypeNames.empty();
         }
-        return ContentTypeNames.empty();
+
+        final ContentTypeNames contentTypeNames =
+            ContentTypeNames.from( contentSelectorInput.getInputTypeConfig().getProperties( ALLOW_CONTENT_TYPE_CONFIG_ENTRY ).
+                stream().
+                map( ( prop ) -> ContentTypeName.from( prop.getValue() ) ).
+                collect( Collectors.toList() ) );
+
+        if ( contentTypeNames.getSize() == 0 )
+        {
+            return getContentTypeNamesFromRelationship( contentSelectorInput );
+        }
+
+        return contentTypeNames;
     }
 
     private ContentTypeNames getContentTypeNamesFromRelationship( final Input contentSelectorInput )
     {
-        String relationshipConfigEntry = contentSelectorInput.getInputTypeConfig().getValue( "relationshipType" );
-        if ( relationshipConfigEntry != null )
+        final String relationshipConfigEntry = contentSelectorInput.getInputTypeConfig().getValue( RELATIONSHIP_TYPE_CONFIG_ENTRY );
+
+        if ( relationshipConfigEntry == null )
         {
-            final RelationshipType relationshipType =
-                relationshipTypeService.getByName( RelationshipTypeName.from( relationshipConfigEntry ) );
-            if ( relationshipType != null )
-            {
-                return ContentTypeNames.from( relationshipType.getAllowedToTypes() );
-            }
+            return ContentTypeNames.empty();
         }
-        return ContentTypeNames.empty();
+
+        final RelationshipType relationshipType = relationshipTypeService.getByName( RelationshipTypeName.from( relationshipConfigEntry ) );
+        return getContentTypeNamesFromRelationship( relationshipType );
+    }
+
+    private ContentTypeNames getContentTypeNamesFromRelationship( final RelationshipType relationshipType )
+    {
+        if ( relationshipType == null )
+        {
+            return ContentTypeNames.empty();
+        }
+        return ContentTypeNames.from( relationshipType.getAllowedToTypes() );
     }
 
     private List<String> getAllowedPaths( final Input contentSelectorInput )
     {
-        if ( contentSelectorInput != null )
+        if ( contentSelectorInput == null )
         {
-            return contentSelectorInput.getInputTypeConfig().getProperties( "allowPath" ).
-                stream().
-                map( ( prop ) -> prop.getValue() ).
-                collect( Collectors.toList() );
+            return ImmutableList.of();
         }
-        return ImmutableList.of();
+
+        return contentSelectorInput.getInputTypeConfig().getProperties( ALLOW_PATH_CONFIG_ENTRY ).
+            stream().
+            map( ( prop ) -> prop.getValue() ).
+            collect( Collectors.toList() );
     }
 
     private Input getContentSelectorInputFromContentType( final ContentType contentType, final String inputName )
     {
         final FormItem formItem = getInputFormItem( contentType, inputName );
 
-        return getContentSelectorInputFromFormItem( formItem );
+        if ( formItem == null || !FormItemType.INPUT.equals( formItem.getType() ) || !isContentSelectorInput( (Input) formItem ) )
+        {
+            return null;
+        }
+
+        return (Input) formItem;
     }
 
     private FormItem getInputFormItem( final ContentType contentType, final String inputName )
     {
-        if ( contentType != null )
+        if ( contentType == null )
         {
-            final FormItems inputFormItems = getInputFormItemsOrBasicFormItemsIfPresent( contentType );
-            if ( inputFormItems != null )
-            {
-                return inputFormItems.getItemByName( inputName );
-            }
+            return null;
         }
-        return null;
+
+        final FormItems inputFormItems = getInputFormItemsOrBasicFormItemsIfPresent( contentType );
+        return getFormItemFromItems( inputFormItems, inputName );
+    }
+
+    private FormItem getFormItemFromItems( final FormItems inputFormItems, final String inputName )
+    {
+        if ( inputFormItems == null )
+        {
+            return null;
+        }
+        return inputFormItems.getItemByName( inputName );
     }
 
     private FormItems getInputFormItemsOrBasicFormItemsIfPresent( final ContentType contentType )
@@ -199,18 +274,9 @@ public class ContentSelectorQueryJsonToContentQueryConverter
         return contentType.getForm().getFormItems();
     }
 
-    private Input getContentSelectorInputFromFormItem( final FormItem formItem )
+    private boolean isContentSelectorInput( final Input input )
     {
-        if ( formItem != null && FormItemType.INPUT.equals( formItem.getType() ) )
-        {
-            Input input = (Input) formItem;
-            if ( InputTypeName.CONTENT_SELECTOR.equals( input.getInputType() ) ||
-                InputTypeName.IMAGE_SELECTOR.equals( input.getInputType() ) )
-            {
-                return input;
-            }
-        }
-        return null;
+        return InputTypeName.CONTENT_SELECTOR.equals( input.getInputType() ) || InputTypeName.IMAGE_SELECTOR.equals( input.getInputType() );
     }
 
     private ContentType getContentType( final ContentTypeName contentTypeName )
@@ -219,6 +285,7 @@ public class ContentSelectorQueryJsonToContentQueryConverter
         {
             return null;
         }
+
         return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
     }
 
