@@ -5,7 +5,7 @@ import java.util.Set;
 
 public final class AdminApplicationDescriptorJson
 {
-    public AdminApplicationDescriptorKeyJson key;
+    public String key;
 
     public String name;
 
@@ -14,5 +14,4 @@ public final class AdminApplicationDescriptorJson
     public String iconUrl;
 
     public Set<String> allowedPrincipals;
-
 }
