@@ -55,10 +55,10 @@ public abstract class AbstractErrorHandlerTest
 
         final Application application = Mockito.mock( Application.class );
         Mockito.when( application.getBundle() ).thenReturn( bundle );
+        Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( applicationService.getApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
-        Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
         this.resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {

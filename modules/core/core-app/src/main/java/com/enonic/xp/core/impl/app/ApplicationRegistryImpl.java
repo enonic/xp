@@ -88,7 +88,7 @@ public final class ApplicationRegistryImpl
 
     private boolean isApplication( final Bundle bundle )
     {
-        return ( bundle.getState() != Bundle.UNINSTALLED ) && ApplicationImpl.isApplication( bundle );
+        return ( bundle.getState() != Bundle.UNINSTALLED ) && ApplicationHelper.isApplication( bundle );
     }
 
     private Bundle findBundle( final String name )

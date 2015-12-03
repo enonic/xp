@@ -21,7 +21,6 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.Applications;
 
@@ -70,19 +69,6 @@ public class ApplicationServiceImplTest
         Mockito.when( this.registry.getAll() ).thenReturn( Lists.newArrayList( application ) );
 
         final Applications result = this.service.getAllApplications();
-        assertNotNull( result );
-        assertEquals( 1, result.getSize() );
-        assertSame( application, result.get( 0 ) );
-    }
-
-    @Test
-    public void testGetApplications()
-    {
-        final Application application = createApplication( "fooapplication" );
-        Mockito.when( this.registry.get( application.getKey() ) ).thenReturn( application );
-
-        final Applications result = this.service.getApplications( ApplicationKeys.from( "fooapplication", "otherapplication" ) );
-
         assertNotNull( result );
         assertEquals( 1, result.getSize() );
         assertSame( application, result.get( 0 ) );

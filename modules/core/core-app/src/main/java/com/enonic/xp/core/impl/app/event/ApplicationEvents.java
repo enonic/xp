@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.app;
+package com.enonic.xp.core.impl.app.event;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +8,7 @@ import org.osgi.framework.BundleEvent;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
 
-public class ApplicationEvents
+final class ApplicationEvents
 {
     public static final String EVENT_TYPE = "application";
 

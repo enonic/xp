@@ -77,7 +77,6 @@ public abstract class ScriptTestSupport
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( applicationService.getApplication( this.applicationKey ) ).thenReturn( application );
-        Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
         return applicationService;
     }
 
@@ -88,6 +87,7 @@ public abstract class ScriptTestSupport
         Mockito.when( application.getBundle() ).thenReturn( bundle );
         Mockito.when( application.getKey() ).thenReturn( this.applicationKey );
         Mockito.when( application.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
+        Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
         return application;
     }
 

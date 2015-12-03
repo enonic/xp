@@ -3,11 +3,8 @@ package com.enonic.xp.core.impl.app;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.ImmutableList;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
@@ -32,30 +29,9 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Applications getApplications( final ApplicationKeys keys )
-    {
-        final ImmutableList.Builder<Application> applicationList = ImmutableList.builder();
-        for ( final ApplicationKey key : keys )
-        {
-            final Application application = this.registry.get( key );
-            if ( application != null )
-            {
-                applicationList.add( application );
-            }
-        }
-        return Applications.from( applicationList.build() );
-    }
-
-    @Override
     public Applications getAllApplications()
     {
         return Applications.from( this.registry.getAll() );
-    }
-
-    @Override
-    public ClassLoader getClassLoader( final Application application )
-    {
-        return new BundleClassLoader( application.getBundle() );
     }
 
     @Override

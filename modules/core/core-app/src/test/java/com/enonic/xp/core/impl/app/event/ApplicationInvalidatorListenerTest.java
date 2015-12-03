@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.app;
+package com.enonic.xp.core.impl.app.event;
 
 import org.junit.Before;
 import org.junit.Test;

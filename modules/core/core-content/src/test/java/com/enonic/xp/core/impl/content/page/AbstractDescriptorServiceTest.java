@@ -111,7 +111,6 @@ public abstract class AbstractDescriptorServiceTest
 
         final Applications applications = Applications.from( list );
         Mockito.when( this.applicationService.getAllApplications() ).thenReturn( applications );
-        Mockito.when( this.applicationService.getApplications( applications.getApplicationKeys() ) ).thenReturn( applications );
         return applications;
     }
 

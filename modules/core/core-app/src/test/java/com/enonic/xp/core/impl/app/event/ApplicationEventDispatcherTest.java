@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.app;
+package com.enonic.xp.core.impl.app.event;
 
 import java.util.List;
 
@@ -10,6 +10,7 @@ import org.osgi.framework.BundleEvent;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.app.ApplicationBundleTest;
 import com.enonic.xp.event.Event;
 
 import static org.junit.Assert.*;

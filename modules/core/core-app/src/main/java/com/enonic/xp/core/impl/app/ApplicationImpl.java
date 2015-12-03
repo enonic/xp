@@ -1,7 +1,9 @@
 package com.enonic.xp.core.impl.app;
 
+import java.net.URL;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
@@ -9,7 +11,6 @@ import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -30,8 +31,6 @@ final class ApplicationImpl
     public final static String X_SYSTEM_VERSION = "X-System-Version";
 
     public final static String X_SOURCE_PATHS = "X-Source-Paths";
-
-    private static final String SITE_XML = "site/site.xml";
 
     private final ApplicationKey applicationKey;
 
@@ -149,6 +148,12 @@ final class ApplicationImpl
     }
 
     @Override
+    public ClassLoader getClassLoader()
+    {
+        return new BundleClassLoader( this.bundle );
+    }
+
+    @Override
     public Instant getModifiedTime()
     {
         return Instant.ofEpochMilli( this.bundle.getLastModified() );
@@ -158,23 +163,6 @@ final class ApplicationImpl
     public boolean isStarted()
     {
         return this.bundle.getState() == Bundle.ACTIVE;
-    }
-
-    @Override
-    public boolean isApplication()
-    {
-        return true;
-    }
-
-    @Override
-    public boolean isSystem()
-    {
-        return !isApplication();
-    }
-
-    public static boolean isApplication( final Bundle bundle )
-    {
-        return ( bundle.getEntry( SITE_XML ) != null );
     }
 
     private static String getHeader( final Bundle bundle, final String name, final String defValue )
@@ -195,15 +183,14 @@ final class ApplicationImpl
     }
 
     @Override
-    public String toString()
+    public Set<String> getFiles()
     {
-        return MoreObjects.toStringHelper( this ).
-            add( "applicationKey", applicationKey ).
-            add( "displayName", displayName ).
-            add( "url", url ).
-            add( "vendorName", vendorName ).
-            add( "vendorUrl", vendorUrl ).
-            omitNullValues().
-            toString();
+        return null;
+    }
+
+    @Override
+    public URL resolveFile( final String path )
+    {
+        return null;
     }
 }
