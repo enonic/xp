@@ -22,12 +22,20 @@
     width: 60%;
 }
 
-.mce-content-body figure[style*="text-align: left"] img:not([data-src*="keepSize=true"]) {
-    width: 40%;
+.mce-content-body figure[style*="float: left"] img:not([data-src*="keepSize=true"]) {
+    width: 100%;
 }
 
-.mce-content-body figure[style*="text-align: right"] img:not([data-src*="keepSize=true"]) {
-    width: 40%;
+.mce-content-body figure[style*="float: left"] figcaption {
+    text-align: center;
+}
+
+.mce-content-body figure[style*="float: right"] img:not([data-src*="keepSize=true"]) {
+    width: 100%;
+}
+
+.mce-content-body figure[style*="float: right"] figcaption {
+    text-align: center;
 }
 
 .mce-content-body figcaption:empty:before {
