@@ -133,10 +133,10 @@ module api.app {
             }
             if (eventType.indexOf('node.') === 0) {
                 var event = api.content.ContentServerEvent.fromJson(<api.content.NodeEventJson>eventJson);
-                if (event.getContentChanges().length === 0) {
-                    return null;
-                } else {
+                if (!!event.getContentChange()) {
                     return event;
+                } else {
+                    return null;
                 }
             }
 
