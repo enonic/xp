@@ -18,8 +18,7 @@ module api.form.inputtype.combobox {
         private selectedOptionsView: api.ui.selector.combobox.SelectedOptionsView<string>;
 
         constructor(context: api.form.inputtype.InputTypeViewContext) {
-            super("combo-box");
-            this.addClass("input-type-view");
+            super("");
             this.context = context;
             this.readConfig(context.inputConfig);
         }

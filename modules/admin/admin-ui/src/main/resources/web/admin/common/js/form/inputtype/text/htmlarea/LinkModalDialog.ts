@@ -35,7 +35,7 @@ module api.form.inputtype.text.htmlarea {
             this.anchorList = config.anchorList;
             this.onlyTextSelected = config.onlyTextSelected;
 
-            super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Link"));
+            super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Link"), "link-modal-dialog");
         }
 
         private getHref(): string {
@@ -166,7 +166,7 @@ module api.form.inputtype.text.htmlarea {
         private createTargetCheckbox(id: string, isTabSelected: boolean): FormItem {
             var checkbox = new api.ui.Checkbox().setChecked(this.getTarget(isTabSelected));
 
-            return this.createFormItem(id, "Open new window", null, null, checkbox);
+            return this.createFormItem(id, "Open new window/tab", null, null, checkbox);
         }
 
         protected getMainFormItems(): FormItem [] {

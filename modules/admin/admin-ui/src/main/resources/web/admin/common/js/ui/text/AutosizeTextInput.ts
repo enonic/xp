@@ -43,7 +43,6 @@ module api.ui.text {
         }
 
         private updateSize() {
-            debugger;
             var inputEl = this.getEl(),
                 cloneEl = this.clone.getEl();
 

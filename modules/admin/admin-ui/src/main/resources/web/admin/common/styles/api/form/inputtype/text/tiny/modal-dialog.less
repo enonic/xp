@@ -1,3 +1,17 @@
+.modal-dialog-margin-mixin(@label-width: @form-label-width) {
+  .form-view .input-view {
+    label {
+      float: left;
+      max-width: @label-width - 10px;
+    }
+
+    label + .form-input,
+    label + .input-wrapper, {
+      margin-left: @label-width;
+    }
+  }
+}
+
 .html-area-modal-dialog {
   max-width: 600px;
   @media screen and (max-height: 360px) {
@@ -5,16 +19,10 @@
   }
 
   &._540-720 {
-    .form-view .input-view {
-      label {
-        float: left;
-        max-width: @form-label-width - 10px;
-      }
+    .modal-dialog-margin-mixin();
 
-      label + .form-input,
-      label + .input-wrapper, {
-        margin-left: @form-label-width;
-      }
+    &.link-modal-dialog {
+      .modal-dialog-margin-mixin(@form-label-width + 20px);
     }
   }
 
@@ -84,15 +92,6 @@
       }
     }
 
-    .combobox {
-      .form-input {
-        margin-top: 0;
-      }
-
-      + .selected-options .selected-option {
-        padding-left: 0;
-      }
-    }
     .checkbox.form-input {
       margin-top: 3px;
     }

@@ -71,7 +71,7 @@ module api.ui.selector.combobox {
         private active: boolean = false;
 
         constructor(name: string, config: ComboBoxConfig<OPTION_DISPLAY_VALUE>) {
-            super("div", "combobox");
+            super("div", "combobox", api.StyleHelper.COMMON_PREFIX);
             this.getEl().setAttribute("name", name);
 
             this.hideComboBoxWhenMaxReached = config.hideComboBoxWhenMaxReached;

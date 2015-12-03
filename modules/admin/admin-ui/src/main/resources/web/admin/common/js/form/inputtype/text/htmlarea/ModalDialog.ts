@@ -16,14 +16,14 @@ module api.form.inputtype.text.htmlarea {
         private keyDownListener: {(KeyboardEvent): void};
         private submitAction: api.ui.Action;
 
-        constructor(editor: HtmlAreaEditor, title: api.ui.dialog.ModalDialogHeader) {
+        constructor(editor: HtmlAreaEditor, title: api.ui.dialog.ModalDialogHeader, cls?: string) {
             super({
                 title: title
             });
 
             this.editor = editor;
 
-            this.getEl().addClass("html-area-modal-dialog");
+            this.getEl().addClass("html-area-modal-dialog" + (cls ? " " + cls : ""));
 
             this.layout();
             this.initializeActions();

@@ -23,7 +23,10 @@ module api.ui.text {
         private valueChangedListeners: {(event: ValueChangedEvent):void}[] = [];
 
         constructor(className?: string, size?: string) {
-            super("text-input " + (className || ""), "text", api.StyleHelper.COMMON_PREFIX);
+            super("text-input", "text", api.StyleHelper.COMMON_PREFIX);
+            if (className) {
+                this.addClass(className);
+            }
 
             if (size) {
                 this.addClassEx(size);
