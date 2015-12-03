@@ -39,23 +39,17 @@
     }
   }
 
-  .dialog-buttons {
-    .button {
-      &.save-button {
+  .dialog-buttons .@{_COMMON_PREFIX}button.save-button.spinner {
+    font-family: 'xp-admin-font-icon';
 
-        &.spinner {
-          font-family: 'xp-admin-font-icon';
-
-          &:after {
-            .animation(rotate360, .5s, .0s, linear);
-            content: "\e007";
-            color: white;
-            display: inline-block;
-          }
-        }
-      }
+    &:after {
+      .animation(rotate360, .5s, .0s, linear);
+      content: "\e007";
+      color: white;
+      display: inline-block;
     }
   }
+
 
   .slick-viewport {
     max-height: 440px;

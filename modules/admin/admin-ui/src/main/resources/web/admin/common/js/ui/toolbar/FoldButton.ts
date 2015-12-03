@@ -7,7 +7,9 @@ module api.ui.toolbar {
         private widthCache: number[] = [];
 
         constructor() {
-            super('button fold-button');
+            super("button", api.StyleHelper.COMMON_PREFIX);
+
+            this.addClass("fold-button");
 
             this.span = new api.dom.SpanEl();
             this.span.setHtml("More");
