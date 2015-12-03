@@ -260,7 +260,41 @@ module api.form.inputtype.text {
             var observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
                     var alignment = (<HTMLElement>mutation.target).style["text-align"];
-                    img.parentElement.style.textAlign = alignment;
+                    var keepOriginalSize = img.getAttribute("data-src").indexOf("keepSize=true") > 0;
+
+                    debugger;
+
+                    switch (alignment) {
+                    case 'justify':
+                        img.parentElement.setAttribute("style", "text-align: " + alignment);
+                        img.parentElement.setAttribute("data-mce-style", "text-align: " + alignment);
+                        break;
+                    case 'left':
+                        img.parentElement.setAttribute("style", "float: left; margin: 15px 15px 0 15px");
+                        if (!keepOriginalSize) {
+                            img.parentElement.style["width"] = "40%";
+                            img.parentElement.setAttribute("data-mce-style", "width: 40%; float: left; margin: 15px 15px 0 15px");
+                        }
+                        else {
+                            img.parentElement.setAttribute("data-mce-style", "float: left; margin: 15px 15px 0 15px");
+                        }
+                        break;
+                    case 'center':
+                        img.parentElement.setAttribute("style", "text-align: " + alignment);
+                        img.parentElement.setAttribute("data-mce-style", "text-align: " + alignment);
+                        break;
+                    case 'right':
+                        img.parentElement.setAttribute("style", "float: right; margin: 15px 15px 0 15px");
+                        if (!keepOriginalSize) {
+                            img.parentElement.style["width"] = "40%";
+                            img.parentElement.setAttribute("data-mce-style", "width: 40%; float: right; margin: 15px 15px 0 15px");
+                        }
+                        else {
+                            img.parentElement.setAttribute("data-mce-style", "float: right; margin: 15px 15px 0 15px");
+                        }
+
+                        break;
+                    }
                 });
             });
 
