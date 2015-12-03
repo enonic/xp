@@ -13,8 +13,7 @@ import com.google.common.collect.Maps;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
+import com.enonic.xp.server.RunMode;
 
 final class ApplicationRegistry
 {
@@ -22,10 +21,13 @@ final class ApplicationRegistry
 
     private final BundleContext context;
 
+    private final ApplicationFactory factory;
+
     public ApplicationRegistry( final BundleContext context )
     {
         this.context = context;
         this.applications = Maps.newConcurrentMap();
+        this.factory = new ApplicationFactory( RunMode.get() );
     }
 
     public ApplicationKeys getKeys()
@@ -76,13 +78,7 @@ final class ApplicationRegistry
     private Application createApp( final ApplicationKey key )
     {
         final Bundle bundle = findBundle( key.getName() );
-        return bundle != null ? createApp( bundle ) : null;
-    }
-
-    private Application createApp( final Bundle bundle )
-    {
-        final ApplicationUrlResolver urlResolver = createUrlResolver( bundle );
-        return new ApplicationImpl( bundle, urlResolver );
+        return bundle != null ? this.factory.create( bundle ) : null;
     }
 
     private boolean isApplication( final Bundle bundle )
@@ -101,10 +97,5 @@ final class ApplicationRegistry
         }
 
         return null;
-    }
-
-    private ApplicationUrlResolver createUrlResolver( final Bundle bundle )
-    {
-        return new BundleApplicationUrlResolver( bundle );
     }
 }
