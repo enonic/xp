@@ -100,6 +100,11 @@ public class ContentSelectorQueryJsonToContentQueryConverter
         if ( ContentRelativePathResolver.anyPathNeedsSiteResolving( allowedPaths ) )
         {
             this.parentSite = this.contentService.getNearestSite( this.content.getId() );
+
+            if ( this.parentSite == null )
+            {
+                throw new RuntimeException( "Could not resolve parent site for content: " + this.content.getDisplayName() );
+            }
         }
     }
 

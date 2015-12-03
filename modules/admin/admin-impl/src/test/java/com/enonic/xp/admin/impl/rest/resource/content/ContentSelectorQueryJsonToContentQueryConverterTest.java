@@ -30,6 +30,7 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.site.Site;
 
 import static org.junit.Assert.*;
 
@@ -62,9 +63,9 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             property( InputTypeProperty.create( "allowPath", "/path/to/parent" ).build() ).
             build();
 
-        ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
+        final ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
 
-        Content content = createContent( "content-id", "my-content", contentType.getName() );
+        final Content content = createContent( "content-id", "my-content", contentType.getName() );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( contentType );
@@ -89,17 +90,21 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
     }
 
     @Test
-    public void testSingleNullSitePathResolvedToDefault()
+    public void testPathsWithSiteResolved()
     {
         final InputTypeConfig config = InputTypeConfig.create().
             property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
             property( InputTypeProperty.create( "allowContentType", "myApplication:comment" ).build() ).
-            property( InputTypeProperty.create( "allowPath", "${site}/*" ).build() ).
+            property( InputTypeProperty.create( "allowPath", "${site}/path1" ).build() ).
+            property( InputTypeProperty.create( "allowPath", "${site}/path2/path3" ).build() ).
+            property( InputTypeProperty.create( "allowPath", "parent-path/child-path" ).build() ).
             build();
 
-        ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
+        final ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
 
-        Content content = createContent( "content-id", "my-content", contentType.getName() );
+        final Content content = createContent( "content-id", "my-content", contentType.getName() );
+
+        final Site site = createSite( "site-id", "my-site" );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( contentType );
@@ -108,7 +113,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             thenReturn( content );
 
         Mockito.when( contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( null );
+            thenReturn( site );
 
         ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName" );
         ContentSelectorQueryJsonToContentQueryConverter processor = ContentSelectorQueryJsonToContentQueryConverter.create().
@@ -123,23 +128,23 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
         assertEquals( 0, contentQuery.getFrom() );
         assertEquals( 100, contentQuery.getSize() );
         assertEquals( ContentTypeNames.from( "myApplication:comment" ), contentQuery.getContentTypes() );
-        assertEquals( "", contentQuery.getQueryExpr().toString() );
+        assertEquals(
+            "((_path LIKE '/content/my-site/path1*' OR _path LIKE '/content/my-site/path2/path3*') OR _path LIKE '/content/parent-path/child-path*')",
+            contentQuery.getQueryExpr().toString() );
     }
 
-    @Test
-    public void testNullSitePathsSkipped()
+    @Test(expected = RuntimeException.class)
+    public void testNullSiteResolved()
     {
         final InputTypeConfig config = InputTypeConfig.create().
             property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
             property( InputTypeProperty.create( "allowContentType", "myApplication:comment" ).build() ).
             property( InputTypeProperty.create( "allowPath", "${site}/*" ).build() ).
-            property( InputTypeProperty.create( "allowPath", "${site}/some-path/*" ).build() ).
-            property( InputTypeProperty.create( "allowPath", "/path/to/parent" ).build() ).
             build();
 
-        ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
+        final ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
 
-        Content content = createContent( "content-id", "my-content", contentType.getName() );
+        final Content content = createContent( "content-id", "my-content", contentType.getName() );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( contentType );
@@ -158,12 +163,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             relationshipTypeService( relationshipTypeService ).
             build();
 
-        final ContentQuery contentQuery = processor.createQuery();
-
-        assertEquals( 0, contentQuery.getFrom() );
-        assertEquals( 100, contentQuery.getSize() );
-        assertEquals( ContentTypeNames.from( "myApplication:comment" ), contentQuery.getContentTypes() );
-        assertEquals( "_path LIKE '/content/path/to/parent*'", contentQuery.getQueryExpr().toString() );
+        processor.createQuery();
     }
 
     @Test
@@ -174,9 +174,9 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             property( InputTypeProperty.create( "allowContentType", "myApplication:comment" ).build() ).
             build();
 
-        ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
+        final ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
 
-        Content content = createContent( "content-id", "my-content", contentType.getName() );
+        final Content content = createContent( "content-id", "my-content", contentType.getName() );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( contentType );
@@ -208,9 +208,9 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             property( InputTypeProperty.create( "allowPath", "/*" ).build() ).
             build();
 
-        ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
+        final ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
 
-        Content content = createContent( "content-id", "my-content", contentType.getName() );
+        final Content content = createContent( "content-id", "my-content", contentType.getName() );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( contentType );
@@ -242,9 +242,9 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             property( InputTypeProperty.create( "allowPath", "/*" ).build() ).
             build();
 
-        ContentType contentType = createContentTypeWithImageSelectorInput( "inputName", config );
+        final ContentType contentType = createContentTypeWithImageSelectorInput( "inputName", config );
 
-        Content content = createContent( "content-id", "my-content", contentType.getName() );
+        final Content content = createContent( "content-id", "my-content", contentType.getName() );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( contentType );
@@ -330,7 +330,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
     {
         final PropertyTree metadata = new PropertyTree();
 
-        Content parent1 = Content.create().
+        final Content parent1 = Content.create().
             id( ContentId.from( id ) ).
             parentPath( ContentPath.ROOT ).
             name( "parent-content-1" ).
@@ -346,7 +346,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             addExtraData( new ExtraData( MixinName.from( "myApplication:myField" ), metadata ) ).
             build();
 
-        Content parent2 = Content.create().
+        final Content parent2 = Content.create().
             id( ContentId.from( id ) ).
             parentPath( parent1.getPath() ).
             name( "parent-content-2" ).
@@ -376,6 +376,24 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( contentTypeName ).
             addExtraData( new ExtraData( MixinName.from( "myApplication:myField" ), metadata ) ).
+            build();
+    }
+
+    private Site createSite( final String id, final String name )
+    {
+        return Site.create().
+            id( ContentId.from( id ) ).
+            parentPath( ContentPath.ROOT ).
+            name( name ).
+            valid( true ).
+            createdTime( Instant.parse( this.currentTime ) ).
+            creator( PrincipalKey.from( "user:system:admin" ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
+            language( Locale.ENGLISH ).
+            displayName( "My Content" ).
+            modifiedTime( Instant.parse( this.currentTime ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            type( ContentTypeName.site() ).
             build();
     }
 }
