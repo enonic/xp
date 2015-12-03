@@ -46,7 +46,9 @@ module api.form.inputtype.text {
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
 
-            var textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index);
+            var value = this.processPropertyValue(property.toString());
+            var textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
+
             var editorId = textAreaEl.getId();
 
             var clazz = editorId.replace(/\./g, '_');
@@ -147,7 +149,9 @@ module api.form.inputtype.text {
                         this.setPropertyValue(id, property);
                     });
                     property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                        this.updateInputOccurrenceElement(textAreaWrapper, property, true);
+                        if (!this.ignorePropertyChange) {
+                            this.updateInputOccurrenceElement(textAreaWrapper, property, true);
+                        }
                     });
                     editor.on('focus', (e) => {
                         this.resetInputHeight();
@@ -365,7 +369,7 @@ module api.form.inputtype.text {
 
         private setEditorContent(editorId: string, property: Property): void {
             if (property.hasNonNullValue()) {
-                this.getEditor(editorId).setContent(this.propertyValue2Content(property.getString()));
+                this.getEditor(editorId).setContent(this.processPropertyValue(property.getString()));
             }
         }
 
@@ -374,7 +378,7 @@ module api.form.inputtype.text {
         }
 
         private setPropertyValue(id: string, property: Property) {
-            property.setValue(this.editorContent2PropertyValue(id));
+            this.onValueChanged(property, this.processEditorContent(id), ValueTypes.STRING);
         }
 
         private newValue(s: string): Value {
@@ -461,7 +465,7 @@ module api.form.inputtype.text {
             return "src=\"" + imageUrl + "\" data-src=\"" + imgSrc + "\"";
         }
 
-        private propertyValue2Content(propertyValue: string) {
+        private processPropertyValue(propertyValue: string): string {
             var content = propertyValue,
                 processedContent = propertyValue,
                 regex = /<img.*?src="(.*?)"/g,
@@ -477,7 +481,7 @@ module api.form.inputtype.text {
             return processedContent;
         }
 
-        private editorContent2PropertyValue(editorId: string): Value {
+        private processEditorContent(editorId: string): string {
             var content = this.getEditor(editorId).getContent(),
                 processedContent = this.getEditor(editorId).getContent(),
                 regex = /<img.*?data-src="(.*?)".*?>/g,
@@ -495,7 +499,7 @@ module api.form.inputtype.text {
                 }
             }
 
-            return this.newValue(processedContent);
+            return processedContent;
         }
     }
 

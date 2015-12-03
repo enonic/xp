@@ -82,36 +82,42 @@ module api.ui.time {
                 DatePickerShownEvent.un(onDatePickerShown);
             });
 
+            this.calendar = builder.calendar || new CalendarBuilder().
+                    setSelectedDate(builder.selectedDate).
+                    setMonth(builder.month).
+                    setYear(builder.year).
+                    setInteractive(true).
+                    build();
+
+            var popupBuilder = new DatePickerPopupBuilder().
+                setCalendar(this.calendar).
+                setCloseOnOutsideClick(false);
+
+            this.popup = popupBuilder.build();
+            this.popup.onShown(() => {
+                new DatePickerShownEvent(this).fire();
+            });
+
             this.validUserInput = true;
 
-            this.input = api.ui.text.TextInput.middle();
+            var value;
+            if (builder.selectedDate) {
+                value = this.formatDate(builder.selectedDate);
+                this.popup.setSelectedDate(builder.selectedDate);
+                this.selectedDate = builder.selectedDate;
+            }
+
+            this.input = api.ui.text.TextInput.middle(undefined, value);
             this.input.onClicked((e: MouseEvent) => {
                 e.preventDefault();
                 this.popup.show();
             });
 
-            var wrapper = new api.dom.DivEl('wrapper');
-            wrapper.appendChild(this.input);
-
-            this.calendar = builder.calendar || new CalendarBuilder().
-                setSelectedDate(builder.selectedDate).
-                setMonth(builder.month).
-                setYear(builder.year).
-                setInteractive(true).
-                build();
-
-            var popupBuilder = new DatePickerPopupBuilder().
-                setCalendar(this.calendar).
-                setCloseOnOutsideClick(false);
-            this.popup = popupBuilder.build();
-            this.popup.onShown(() => {
-                new DatePickerShownEvent(this).fire();
-            });
-            wrapper.appendChild(this.popup);
-
             this.popupTrigger = new api.ui.button.Button();
             this.popupTrigger.addClass('icon-calendar4');
-            wrapper.appendChild(this.popupTrigger);
+
+            var wrapper = new api.dom.DivEl('wrapper');
+            wrapper.appendChildren<api.dom.Element>(this.input, this.popup, this.popupTrigger);
 
             this.appendChild(wrapper);
 
@@ -125,17 +131,13 @@ module api.ui.time {
                 }
             });
 
-            if (builder.selectedDate) {
-                this.setSelectedDate(builder.selectedDate);
-            }
-
             this.popup.onSelectedDateChanged((e: SelectedDateChangedEvent) => {
                 if (builder.closeOnSelect) {
                     this.popup.hide();
                 }
                 this.selectedDate = e.getDate();
                 this.validUserInput = true;
-                this.input.setValue(this.formatDate(e.getDate()));
+                this.input.setValue(this.formatDate(e.getDate()), false, true);
                 this.notifySelectedDateChanged(e);
                 this.updateInputStyling();
             });
@@ -172,7 +174,7 @@ module api.ui.time {
 
             this.popup.onKeyDown((event: KeyboardEvent) => {
                 if (api.ui.KeyHelper.isTabKey(event)) {
-                    if(!(document.activeElement == this.input.getEl().getHTMLElement())) {
+                    if (!(document.activeElement == this.input.getEl().getHTMLElement())) {
                         event.preventDefault();
                         event.stopPropagation();
                         this.popup.hide();
@@ -183,7 +185,7 @@ module api.ui.time {
 
             this.input.onKeyDown((event: KeyboardEvent) => {
                 if (api.ui.KeyHelper.isTabKey(event)) { // handles tab navigation events on date input
-                    if(!event.shiftKey) {
+                    if (!event.shiftKey) {
                         event.preventDefault();
                         event.stopPropagation();
                         this.popupTrigger.giveFocus();
@@ -200,7 +202,7 @@ module api.ui.time {
             });
 
             api.dom.Body.get().onKeyDown((e: KeyboardEvent) => this.popupTabListener(e));
-            if (builder.closeOnOutsideClick){
+            if (builder.closeOnOutsideClick) {
                 api.dom.Body.get().onClicked((e: MouseEvent) => this.outsideClickListener(e));
             }
         }

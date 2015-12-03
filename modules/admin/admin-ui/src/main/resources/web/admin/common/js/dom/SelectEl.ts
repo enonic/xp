@@ -6,9 +6,5 @@ module api.dom {
             super("select", className);
         }
 
-        setName(value:string):SelectEl {
-            this.getEl().setAttribute('name', value);
-            return this;
-        }
     }
 }

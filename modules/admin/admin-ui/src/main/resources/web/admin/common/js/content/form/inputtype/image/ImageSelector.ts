@@ -158,11 +158,16 @@ module api.content.form.inputtype.image {
 
         createContentComboBox(maximumOccurrences: number, inputIconUrl: string, allowedContentTypes: string[],
                               inputName: string): ContentComboBox {
+            var value = this.getPropertyArray().getProperties().map((property) => {
+                return property.getString();
+            }).join(';');
+            
             var contentComboBox: ImageContentComboBox
                     = ImageContentComboBox.create().
                     setMaximumOccurrences(maximumOccurrences).
                     setAllowedContentTypes(allowedContentTypes.length ? allowedContentTypes : [ContentTypeName.IMAGE.toString()]).
                     setLoader(new ContentSelectorLoader(this.config.contentId, inputName)).
+                    setValue(value).
                     setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).
                     build(),
                 comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();
@@ -182,11 +187,13 @@ module api.content.form.inputtype.image {
             comboBox.setInputIconUrl(inputIconUrl);
 
             comboBox.onOptionDeselected((removed: SelectedOption<ImageSelectorDisplayValue>) => {
+                this.ignorePropertyChange = true;
                 // property not found.
                 if (!!removed.getOption().displayValue.getContentSummary()) {
                     this.getPropertyArray().remove(removed.getIndex());
                 }
                 this.validate(false);
+                this.ignorePropertyChange = false;
             });
 
             comboBox.onOptionSelected((added: SelectedOption<ImageSelectorDisplayValue>) => {
@@ -202,58 +209,48 @@ module api.content.form.inputtype.image {
             });
 
             comboBox.onOptionMoved((moved: SelectedOption<ImageSelectorDisplayValue>) => {
-
+                this.ignorePropertyChange = true;
                 this.getPropertyArray().set(moved.getIndex(), ValueTypes.REFERENCE.newValue(moved.getOption().value));
                 this.validate(false);
+                this.ignorePropertyChange = false;
             });
 
             return contentComboBox;
         }
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
-            super.layout(input, propertyArray);
+            return super.layout(input, propertyArray).then(() => {
+                return new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(this.relationshipTypeName).sendAndParse()
+                    .then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
 
-            return new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(this.relationshipTypeName).sendAndParse()
-                .then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
+                        this.contentComboBox = this.createContentComboBox(
+                            input.getOccurrences().getMaximum(), relationshipType.getIconUrl(), relationshipType.getAllowedToTypes() || [],
+                            input.getName()
+                        );
 
-                    this.contentComboBox = this.createContentComboBox(
-                        input.getOccurrences().getMaximum(), relationshipType.getIconUrl(), relationshipType.getAllowedToTypes() || [],
-                        input.getName()
-                    );
+                        var comboBoxWrapper = new api.dom.DivEl("combobox-wrapper");
 
-                    var comboBoxWrapper = new api.dom.DivEl("combobox-wrapper");
+                        comboBoxWrapper.appendChild(this.contentComboBox);
 
-                    comboBoxWrapper.appendChild(this.contentComboBox);
+                        this.contentRequestsAllowed = true;
 
-                    this.contentRequestsAllowed = true;
+                        if (this.config.contentId) {
+                            comboBoxWrapper.appendChild(this.createUploader());
+                        }
 
-                    if (this.config.contentId) {
-                        comboBoxWrapper.appendChild(this.createUploader());
-                    }
+                        this.appendChild(comboBoxWrapper);
+                        this.appendChild(this.selectedOptionsView);
 
-                    this.appendChild(comboBoxWrapper);
-                    this.appendChild(this.selectedOptionsView);
-
-                    return this.update(propertyArray).then(() => {
                         this.setLayoutInProgress(false);
                     });
-                });
+            });
         }
 
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
             if (!unchangedOnly || !this.contentComboBox.isDirty()) {
                 return super.update(propertyArray, unchangedOnly).then(() => {
-                    this.contentComboBox.clearSelection(true);
 
-                    return this.doLoadContent(propertyArray).then((contents: ContentSummary[]) => {
-                        debugger;
-                        contents.forEach((content: ContentSummary) => {
-                            this.contentComboBox.selectOption(<Option<ImageSelectorDisplayValue>>{
-                                value: content.getId(),
-                                displayValue: ImageSelectorDisplayValue.fromContentSummary(content)
-                            });
-                        });
-                    });
+                    this.contentComboBox.setValue(this.getValueFromPropertyArray(propertyArray));
                 })
             }
 
@@ -406,6 +403,7 @@ module api.content.form.inputtype.image {
         }
 
         private setContentIdProperty(contentId: api.content.ContentId) {
+            this.ignorePropertyChange = true;
             var reference = api.util.Reference.from(contentId);
 
             var value = new Value(reference, ValueTypes.REFERENCE);
@@ -416,6 +414,7 @@ module api.content.form.inputtype.image {
             else {
                 this.getPropertyArray().add(value);
             }
+            this.ignorePropertyChange = false;
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

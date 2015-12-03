@@ -75,7 +75,7 @@ module api.ui.time {
             this.renderMonth();
         }
 
-        public selectDate(value: Date) {
+        public selectDate(value: Date, silent?: boolean) {
             if (value) {
                 this.year = value.getFullYear();
                 this.month = value.getMonth();
@@ -95,6 +95,10 @@ module api.ui.time {
                 var now = new Date();
                 this.year = now.getFullYear();
                 this.month = now.getMonth();
+            }
+
+            if (!silent) {
+                this.notifySelectedDateChanged(value);
             }
         }
 

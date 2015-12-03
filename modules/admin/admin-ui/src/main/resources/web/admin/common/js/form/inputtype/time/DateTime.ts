@@ -54,7 +54,7 @@ module api.content.form.inputtype.time {
 
             if (!unchangedOnly || !dateTimePicker.isDirty()) {
                 var date = this.valueType == ValueTypes.DATE_TIME ? property.getDateTime().toDate() : property.getLocalDateTime();
-                dateTimePicker.setSelectedDate(date);
+                dateTimePicker.setSelectedDateTime(date);
             }
         }
 
@@ -84,13 +84,16 @@ module api.content.form.inputtype.time {
                     setMinutes(date.getMinutes());
             }
 
-            var dateTimePicker = new DateTimePicker(dateTimeBuilder);
+            var dateTimePicker = dateTimeBuilder.build();
+
             dateTimePicker.onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
                 this.onValueChanged(property, event.getDate(), valueType);
             });
 
             property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                this.updateInputOccurrenceElement(dateTimePicker, property, true);
+                if (!this.ignorePropertyChange) {
+                    this.updateInputOccurrenceElement(dateTimePicker, property, true);
+                }
             });
             return dateTimePicker;
         }
@@ -114,7 +117,9 @@ module api.content.form.inputtype.time {
                 this.onValueChanged(property, event.getDate() == null ? null : api.util.DateTime.fromDate(event.getDate()), valueType);
             });
             property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                this.updateInputOccurrenceElement(dateTimePicker, property, true);
+                if (!this.ignorePropertyChange) {
+                    this.updateInputOccurrenceElement(dateTimePicker, property, true);
+                }
             });
             return dateTimePicker;
         }

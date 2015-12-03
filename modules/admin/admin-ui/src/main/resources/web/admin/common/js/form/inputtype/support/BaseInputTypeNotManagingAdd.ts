@@ -24,6 +24,8 @@ module api.form.inputtype.support {
          */
         private draggingIndex: number;
 
+        protected ignorePropertyChange: boolean;
+
         constructor(context: api.form.inputtype.InputTypeViewContext, className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
             api.util.assertNotNull(context, "context cannot be null");
@@ -225,8 +227,8 @@ module api.form.inputtype.support {
                 else if (api.ObjectHelper.iFrameSafeInstanceOf(occurrenceView.getInputElement(), api.ui.time.DateTimePicker)) {
                     picker = <api.ui.time.DateTimePicker>(occurrenceView.getInputElement())
                 }
-                else if (api.ObjectHelper.iFrameSafeInstanceOf(occurrenceView.getInputElement(), api.ui.time.LocalTime)) {
-                    picker = (<api.ui.time.LocalTime>(occurrenceView.getInputElement())).getTimePicker();
+                else if (api.ObjectHelper.iFrameSafeInstanceOf(occurrenceView.getInputElement(), api.ui.time.TimePicker)) {
+                    picker = <api.ui.time.TimePicker>(occurrenceView.getInputElement());
                 }
 
                 if (picker && !picker.hasValidUserInput()) {
@@ -242,9 +244,15 @@ module api.form.inputtype.support {
         }
 
         protected onValueChanged(property: Property, value: Object, type: ValueType) {
+            this.ignorePropertyChange = true;
             var newValue = new Value(value, type);
             property.setValue(newValue);
             this.validate(false);
+            this.ignorePropertyChange = false;
+        }
+
+        protected getPropertyValue(property: Property): string {
+            return property.hasNonNullValue() ? property.getString() : "";
         }
 
         notifyRequiredContractBroken(state: boolean, index: number) {

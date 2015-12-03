@@ -10,10 +10,10 @@ module api.content.form.inputtype.checkbox {
 
         private checkbox: api.ui.Checkbox;
 
+        public static debug: boolean = false;
+
         constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
-
-            this.checkbox = new api.ui.Checkbox();
         }
 
         getValueType(): ValueType {
@@ -25,23 +25,23 @@ module api.content.form.inputtype.checkbox {
         }
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
-
-            if (property.hasNonNullValue()) {
-                this.checkbox.setChecked(property.getBoolean());
-            }
-            else {
-                this.checkbox.setChecked(false);
-            }
-
+            var checked = property.hasNonNullValue() ? property.getBoolean() : false;
+            this.checkbox = new api.ui.Checkbox(undefined, checked);
             this.appendChild(this.checkbox);
-            this.checkbox.onValueChanged((event: api.ui.ValueChangedEvent) => {
+
+            this.checkbox.onValueChanged((event: api.ValueChangedEvent) => {
                 var newValue = ValueTypes.BOOLEAN.newValue(event.getNewValue());
                 if (newValue) {
+                    this.ignorePropertyChange = true;
                     property.setValue(newValue);
+                    this.ignorePropertyChange = false;
                 }
             });
+
             property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                this.updateProperty(event.getProperty(), true);
+                if (!this.ignorePropertyChange) {
+                    this.updateProperty(event.getProperty(), true);
+                }
             });
 
             return wemQ<void>(null);

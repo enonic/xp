@@ -41,6 +41,8 @@ module api.form {
 
         private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
 
+        public static debug: boolean = false;
+
         constructor(config: InputViewConfig) {
             super(<FormItemViewConfig>{
                 className: "input-view",

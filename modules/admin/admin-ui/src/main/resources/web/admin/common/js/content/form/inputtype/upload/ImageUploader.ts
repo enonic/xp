@@ -55,7 +55,9 @@ module api.content.form.inputtype.upload {
             }
 
             property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                this.updateProperty(property, true);
+                if (!this.ignorePropertyChange) {
+                    this.updateProperty(property, true);
+                }
             });
 
             this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
@@ -64,34 +66,11 @@ module api.content.form.inputtype.upload {
 
                 this.imageUploader.setOriginalDimensions(content);
 
-                switch (this.property.getType()) {
-                case ValueTypes.DATA:
-                    // update the attachment name, and reset the focal point data
-                    var set = this.property.getPropertySet();
-                    set.setProperty('attachment', 0, value);
-                    set.removeProperty('focalPoint', 0);
-                    set.removeProperty('cropPosition', 0);
-                    set.removeProperty('zoomPosition', 0);
-
-                    break;
-                case ValueTypes.STRING:
-                    this.property.setValue(value);
-                    break;
-                }
+                this.onValueChanged(property, value.getString(), ValueTypes.STRING);
             });
 
             this.imageUploader.onUploadReset(() => {
-                switch (this.property.getType()) {
-                case ValueTypes.DATA:
-                    // reset both attachment name and focal point data
-                    var set = this.property.getPropertySet();
-                    set.setProperty('attachment', 0, ValueTypes.STRING.newNullValue());
-                    set.removeProperty('focalPoint', 0);
-                    break;
-                case ValueTypes.STRING:
-                    this.property.setValue(ValueTypes.STRING.newNullValue());
-                    break;
-                }
+                this.onValueChanged(property, null, ValueTypes.STRING);
             });
 
             this.imageUploader.onEditModeChanged((edit: boolean, crop: Rect, zoom: Rect, focus: Point) => {
@@ -115,6 +94,28 @@ module api.content.form.inputtype.upload {
             });
 
             return wemQ<void>(null);
+        }
+
+
+        protected onValueChanged(property: api.data.Property, value: Object, type: api.data.ValueType) {
+            this.ignorePropertyChange = true;
+            var newValue = new Value(value, type);
+            switch (this.property.getType()) {
+            case ValueTypes.DATA:
+                // update the attachment name, and reset the focal point data
+                var set = this.property.getPropertySet();
+                set.setProperty('attachment', 0, newValue);
+                set.removeProperty('focalPoint', 0);
+                set.removeProperty('cropPosition', 0);
+                set.removeProperty('zoomPosition', 0);
+
+                break;
+            case ValueTypes.STRING:
+                this.property.setValue(newValue);
+                break;
+            }
+            this.validate();
+            this.ignorePropertyChange = false;
         }
 
         updateProperty(property: api.data.Property, unchangedOnly?: boolean): Q.Promise<void> {

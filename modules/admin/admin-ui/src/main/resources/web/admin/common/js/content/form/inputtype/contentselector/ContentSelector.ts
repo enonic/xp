@@ -56,10 +56,13 @@ module api.content.form.inputtype.contentselector {
 
             var contentSelectorLoader = new ContentSelectorLoader(this.config.contentId, input.getName());
 
+            var value = this.getValueFromPropertyArray(propertyArray);
+
             this.contentComboBox = api.content.ContentComboBox.create()
                 .setName(input.getName())
                 .setMaximumOccurrences(input.getOccurrences().getMaximum())
                 .setLoader(contentSelectorLoader)
+                .setValue(value)
                 .build();
 
             return new GetRelationshipTypeByNameRequest(this.relationshipTypeName).
@@ -73,6 +76,7 @@ module api.content.form.inputtype.contentselector {
                     return this.doLoadContent(propertyArray).
                         then((contents: api.content.ContentSummary[]) => {
 
+                            //TODO: original value doesn't work because of additional request, so have to select manually
                             contents.forEach((content: api.content.ContentSummary) => {
                                 this.contentComboBox.select(content);
                             });
@@ -112,11 +116,9 @@ module api.content.form.inputtype.contentselector {
         update(propertyArray: api.data.PropertyArray, unchangedOnly: boolean): Q.Promise<void> {
             if (!unchangedOnly || !this.contentComboBox.isDirty()) {
                 return super.update(propertyArray, unchangedOnly).then(() => {
-                    this.contentComboBox.clearSelection(true);
 
-                    return this.doLoadContent(propertyArray).then<void>(() => {
-                        return wemQ<void>(null);
-                    });
+                    var value = this.getValueFromPropertyArray(propertyArray);
+                    this.contentComboBox.setValue(value);
                 });
             }
 
