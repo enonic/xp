@@ -19,7 +19,7 @@ import com.enonic.xp.xml.XmlException;
 
 public class GetAdminApplicationDescriptorCommand
 {
-    private static final String PATH = "/admin/app/";
+    private static final String PATH = "/admin/apps/";
 
     private static final AdminApplicationDescriptor CONTENT_MANAGER_APP = AdminApplicationDescriptor.create().
         key( DescriptorKey.from( ApplicationKey.SYSTEM, "content-manager" ) ).

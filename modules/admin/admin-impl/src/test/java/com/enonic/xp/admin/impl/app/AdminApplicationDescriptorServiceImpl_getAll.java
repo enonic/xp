@@ -31,10 +31,10 @@ public class AdminApplicationDescriptorServiceImpl_getAll
         final Applications applications = createApplications( "foomodule", "barmodule" );
         createDescriptors( "foomodule:foomodule-adminapp-descr", "barmodule:barmodule-adminapp-descr" );
 
-        mockResources( applications.getApplication( ApplicationKey.from( "foomodule" ) ), "/admin/app/",
-                       "admin/app/foomodule-adminapp-descr" );
-        mockResources( applications.getApplication( ApplicationKey.from( "barmodule" ) ), "/admin/app/",
-                       "admin/app/barmodule-adminapp-descr" );
+        mockResources( applications.getApplication( ApplicationKey.from( "foomodule" ) ), "/admin/apps/",
+                       "admin/apps/foomodule-adminapp-descr" );
+        mockResources( applications.getApplication( ApplicationKey.from( "barmodule" ) ), "/admin/apps/",
+                       "admin/apps/barmodule-adminapp-descr" );
 
         AdminApplicationDescriptors result = this.service.getAll();
         Assert.assertNotNull( result );
@@ -44,7 +44,7 @@ public class AdminApplicationDescriptorServiceImpl_getAll
     @Override
     protected final ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), "/admin/app/" + key.getName() + "/" + key.getName() + ".xml" );
+        return ResourceKey.from( key.getApplicationKey(), "/admin/apps/" + key.getName() + "/" + key.getName() + ".xml" );
     }
 
     @Override
