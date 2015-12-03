@@ -13,7 +13,7 @@ final class ScriptExportsCache
 
     public ScriptExportsCache()
     {
-        this.cache = Maps.newHashMap();
+        this.cache = Maps.newConcurrentMap();
     }
 
     public Object get( final ResourceKey key )
