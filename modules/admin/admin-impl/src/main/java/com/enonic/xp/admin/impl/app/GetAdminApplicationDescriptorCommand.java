@@ -14,40 +14,11 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.xml.XmlException;
 
 public class GetAdminApplicationDescriptorCommand
 {
     private static final String PATH = "/admin/apps/";
-
-    private static final AdminApplicationDescriptor CONTENT_MANAGER_APP = AdminApplicationDescriptor.create().
-        key( DescriptorKey.from( ApplicationKey.SYSTEM, "content-manager" ) ).
-        name( "Content Manager" ).
-        shortName( "CM" ).
-        iconUrl( "database" ).
-        addAllowedPrincipal( RoleKeys.ADMIN ).
-        addAllowedPrincipal( RoleKeys.CONTENT_MANAGER_ADMIN ).
-        addAllowedPrincipal( RoleKeys.CONTENT_MANAGER_APP ).
-        build();
-
-    private static final AdminApplicationDescriptor USER_MANAGER_APP = AdminApplicationDescriptor.create().
-        key( DescriptorKey.from( ApplicationKey.SYSTEM, "user-manager" ) ).
-        name( "Users" ).
-        shortName( "UM" ).
-        iconUrl( "users" ).
-        addAllowedPrincipal( RoleKeys.ADMIN ).
-        addAllowedPrincipal( RoleKeys.USER_MANAGER_ADMIN ).
-        addAllowedPrincipal( RoleKeys.USER_MANAGER_APP ).
-        build();
-
-    private static final AdminApplicationDescriptor APPLICATIONS_APP = AdminApplicationDescriptor.create().
-        key( DescriptorKey.from( ApplicationKey.SYSTEM, "applications" ) ).
-        name( "Applications" ).
-        shortName( "AM" ).
-        iconUrl( "puzzle" ).
-        addAllowedPrincipal( RoleKeys.ADMIN ).
-        build();
 
     private final ApplicationService applicationService;
 
@@ -86,7 +57,7 @@ public class GetAdminApplicationDescriptorCommand
 
     private Stream<AdminApplicationDescriptor> getSystemAdminApplicationDescriptors()
     {
-        return Stream.of( CONTENT_MANAGER_APP, USER_MANAGER_APP, APPLICATIONS_APP );
+        return Stream.of( AdminApplicationDescriptor.SYSTEM_ADMIN_APPLICATIONS );
     }
 
     private Stream<AdminApplicationDescriptor> getAdminApplicationDescriptors( Application application )

@@ -58,7 +58,7 @@ public final class LoginResultJson
 
     public String[] getApplications()
     {
-        return applications.stream().map( application -> application.getKey().getName() ).toArray( String[]::new );
+        return applications.stream().map( application -> application.getKeyString() ).toArray( String[]::new );
     }
 
     public String getMessage()

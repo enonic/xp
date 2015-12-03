@@ -1,0 +1,23 @@
+<script type="text/javascript">
+    function startApplication() {
+        var application = api.app.Application.getApplication();
+        var appBar = new api.app.bar.AppBar(application);
+        var body = api.dom.Body.get();
+        body.appendChild(appBar);
+
+        var linkEl = new api.dom.LinkEl("/admin/portal/admin/draft/features/_/adminapps/{{application}}/{{adminApplication}}")
+        var onLinkLoaded = function (event) {
+            var mainContainer = wemjq(event.target["import"]).find("div")[0];
+            if (mainContainer) {
+                body.getEl().appendChild(document.importNode(mainContainer, true));
+            }
+            linkEl.unLoaded(onLinkLoaded);
+        };
+
+        linkEl.onLoaded(onLinkLoaded);
+        body.appendChild(linkEl);
+
+        api.util.AppHelper.preventDragRedirect();
+        application.setLoaded(true);
+    }
+</script>

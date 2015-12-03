@@ -43,7 +43,7 @@ public class LauncherResource
     private AdminApplicationDescriptorJson toJson( final AdminApplicationDescriptor adminApplicationDescriptor )
     {
         final AdminApplicationDescriptorJson jsonEntry = new AdminApplicationDescriptorJson();
-        jsonEntry.key = adminApplicationDescriptor.getKey().getName();
+        jsonEntry.key = adminApplicationDescriptor.getKeyString();
         jsonEntry.name = adminApplicationDescriptor.getName();
         jsonEntry.shortName = adminApplicationDescriptor.getShortName();
         jsonEntry.iconUrl = adminApplicationDescriptor.getIconUrl();
