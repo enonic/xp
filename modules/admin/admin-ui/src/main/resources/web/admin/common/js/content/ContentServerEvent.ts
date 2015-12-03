@@ -16,21 +16,19 @@ module api.content {
 
     export class ContentServerEvent extends api.event.Event {
 
-        private changes: ContentServerChange[];
+        private change: ContentServerChange;
 
-        constructor(changes: ContentServerChange[]) {
+        constructor(change: ContentServerChange) {
             super();
-            this.changes = changes || [];
+            this.change = change;
         }
 
-        getContentChanges(): ContentServerChange[] {
-            return this.changes;
+        getContentChange(): ContentServerChange {
+            return this.change;
         }
 
         toString(): string {
-            return "ContentServerEvent: [" +
-                   this.changes.map((change) => change.toString()).join(", ") +
-                   "]";
+            return "ContentServerEvent: [" + this.change.toString() + "]";
         }
 
         static on(handler: (event: ContentServerEvent) => void) {
@@ -42,8 +40,8 @@ module api.content {
         }
 
         static fromJson(nodeEventJson: NodeEventJson): ContentServerEvent {
-            var changes = ContentServerChange.fromJson(nodeEventJson);
-            return new ContentServerEvent(changes);
+            var change = ContentServerChange.fromJson(nodeEventJson);
+            return new ContentServerEvent(change);
         }
     }
 }

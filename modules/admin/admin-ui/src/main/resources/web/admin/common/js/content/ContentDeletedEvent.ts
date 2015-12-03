@@ -26,6 +26,12 @@ module api.content {
             return this.contentDeletedItems.length == 0;
         }
 
+        fire() {
+            if (!this.isEmpty()) {
+                super.fire();
+            }
+        }
+
         static on(handler: (event: ContentDeletedEvent) => void) {
             api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
         }
