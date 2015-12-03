@@ -131,7 +131,8 @@ module api.form.inputtype.text.htmlarea {
 
             this.image = this.createImgEl(imgUrl, imageContent.getDisplayName(), contentId);
             if (this.imageElement) {
-                this.image.getHTMLElement().style["text-align"] = this.imageElement.parentElement.style.textAlign;
+                this.image.getHTMLElement().style["text-align"] =
+                this.imageElement.parentElement.style.textAlign || this.imageElement.parentElement.style.cssFloat;
 
                 var keepSize = this.imageElement.getAttribute("data-src").indexOf("keepSize=true") > 0;
                 if (keepSize) {
@@ -321,8 +322,41 @@ module api.form.inputtype.text.htmlarea {
                 alignment = this.image.getHTMLElement().style["text-align"];
             }
 
-            element.style["text-align"] = alignment;
-            element.setAttribute("data-mce-style", "text-align: " + alignment);
+            var keepSize = this.image.getEl().getAttribute("data-src").indexOf("keepSize=true") > 0;
+
+            switch (alignment) {
+            case 'justify':
+                element.setAttribute("style", "text-align: " + alignment);
+                element.setAttribute("data-mce-style", "text-align: " + alignment);
+                break;
+            case 'left':
+                element.setAttribute("style", "float: left; margin: 15px 15px 0 15px");
+                if (!keepSize) {
+                    element.style["width"] = "40%";
+                    element.setAttribute("data-mce-style", "width: 40%; float: left; margin: 15px 15px 0 15px");
+                }
+                else {
+                    element.setAttribute("data-mce-style", "float: left; margin: 15px 15px 0 15px");
+                }
+
+                break;
+            case 'center':
+                element.setAttribute("style", "text-align: " + alignment);
+                element.setAttribute("data-mce-style", "text-align: " + alignment);
+                break;
+            case 'right':
+                element.setAttribute("style", "float: right; margin: 15px 15px 0 15px");
+                if (!keepSize) {
+                    element.style["width"] = "40%";
+                    element.setAttribute("data-mce-style", "width: 40%; float: right; margin: 15px 15px 0 15px");
+                }
+                else {
+                    element.setAttribute("data-mce-style", "float: right; margin: 15px 15px 0 15px");
+                }
+
+                break;
+            }
+
         }
 
         private createImageTag(): void {
