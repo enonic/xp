@@ -136,7 +136,7 @@ module api.form.inputtype.text.htmlarea {
                 var keepSize = this.imageElement.getAttribute("data-src").indexOf("keepSize=true") > 0;
                 if (keepSize) {
                     var pathAttr = this.imageElement.getAttribute("data-src");
-                    this.image.getEl().setAttribute("data-src", pathAttr + "?keepSize=true");
+                    this.image.getEl().setAttribute("data-src", pathAttr);
                 }
                 this.imageToolbar = new ImageToolbar(this.image);
             }
@@ -355,10 +355,23 @@ module api.form.inputtype.text.htmlarea {
                     }
                 }
 
+                this.removeExtraIndentFromContainer(container);
+
                 new api.dom.ElementHelper(container).appendChild(figure.getHTMLElement());
+
                 this.getEditor().nodeChanged();
 
                 this.callback(figCaptionId);
+            }
+        }
+
+        private removeExtraIndentFromContainer(container) {
+            var elements = <Element[]>new api.dom.ElementHelper(container).getChildren();
+
+            for (let i = 0; i < elements.length; i++) {
+                if (elements[i].tagName.toLowerCase() === "br" && elements[i].hasAttribute("data-mce-bogus")) {
+                    container.removeChild(elements[i]);
+                }
             }
         }
 
