@@ -7,8 +7,8 @@ module api.app.wizard {
         constructor() {
             super();
 
-            this.nameEl = api.ui.text.AutosizeTextInput.large().setName('name').setForbiddenCharsRe(/[^_a-z0-9\-]+/ig);
-            this.nameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
+            this.nameEl = api.ui.text.AutosizeTextInput.large().setForbiddenCharsRe(/[^_a-z0-9\-]+/ig);
+            this.nameEl.setName('name').onValueChanged((event: api.ValueChangedEvent) => {
                 this.notifyPropertyChanged("name", event.getOldValue(), event.getNewValue());
             });
             this.appendChild(this.nameEl);

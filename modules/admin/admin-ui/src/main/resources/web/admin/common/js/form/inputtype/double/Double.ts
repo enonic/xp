@@ -21,19 +21,21 @@ module api.content.form.inputtype.double {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
-            var inputEl = api.ui.text.TextInput.middle();
+            var inputEl = api.ui.text.TextInput.middle(undefined, this.getPropertyValue(property));
             inputEl.setName(this.getInput().getName() + "-" + property.getIndex());
-            inputEl.setValue(this.getPropertyValue(property));
 
-            inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
-
-                var value = ValueTypes.DOUBLE.newValue(event.getNewValue());
-                property.setValue(value);
+            inputEl.onValueChanged((event: api.ValueChangedEvent) => {
+                var isValid = this.isValid(event.getNewValue());
+                if (isValid) {
+                    this.onValueChanged(property, parseFloat(event.getNewValue()), ValueTypes.DOUBLE);
+                }
                 inputEl.updateValidationStatusOnUserInput(this.isValid(event.getNewValue()));
             });
 
             property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                this.updateInputOccurrenceElement(inputEl, property, true);
+                if (!this.ignorePropertyChange) {
+                    this.updateInputOccurrenceElement(inputEl, property, true);
+                }
             });
 
             return inputEl;
@@ -45,10 +47,6 @@ module api.content.form.inputtype.double {
             if (!unchangedOnly || !input.isDirty()) {
                 input.setValue(this.getPropertyValue(property));
             }
-        }
-
-        private getPropertyValue(property: Property): string {
-            return property.hasNonNullValue() ? property.getString() : "";
         }
 
         availableSizeChanged() {

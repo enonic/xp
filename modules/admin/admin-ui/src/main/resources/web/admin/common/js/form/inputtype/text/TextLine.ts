@@ -32,20 +32,13 @@ module api.form.inputtype.text {
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
 
-            var inputEl = api.ui.text.TextInput.middle();
+            var inputEl = api.ui.text.TextInput.middle(undefined, property.getString());
+            inputEl.setName(this.getInput().getName() + "-" + index);
 
-            if (property.hasNonNullValue()) {
-                inputEl.setName(this.getInput().getName() + "-" + property.getIndex());
-                inputEl.setValue(property.getString());
-            }
-            else {
-                inputEl.setName(this.getInput().getName());
-            }
-
-            inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
+            inputEl.onValueChanged((event: api.ValueChangedEvent) => {
                 var isValid = this.isValid(event.getNewValue(), inputEl);
                 if (isValid) {
-                    property.setValue(this.newValue(event.getNewValue()));
+                    this.onValueChanged(property, event.getNewValue(), ValueTypes.STRING);
                 }
                 inputEl.updateValidationStatusOnUserInput(isValid);
             });

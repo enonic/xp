@@ -49,12 +49,8 @@ module api.ui.text {
             return this.input;
         }
 
-        getValue(): string {
-            return this.input.getValue();
-        }
-
-        setValue(value: string): EmailInput {
-            this.input.setValue(value);
+        doSetValue(value: string, silent?: boolean): EmailInput {
+            super.doSetValue(value, silent);
             this.checkAvailability(value);
             return this;
         }

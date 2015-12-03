@@ -22,18 +22,18 @@ module api.form.inputtype.text {
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
 
-            var inputEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index);
-            if (property.hasNonNullValue()) {
-                inputEl.setValue(property.getString());
-            }
+            var value = property.hasNonNullValue() ? property.getString() : undefined;
+            var inputEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
 
-            inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                property.setValue(this.newValue(event.getNewValue()));
+            inputEl.onValueChanged((event: api.ValueChangedEvent) => {
+                this.onValueChanged(property, event.getNewValue(), ValueTypes.STRING);
             });
 
             property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                this.updateInputOccurrenceElement(inputEl, property, true);
-            })
+                if (!this.ignorePropertyChange) {
+                    this.updateInputOccurrenceElement(inputEl, property, true);
+                }
+            });
 
             return inputEl;
         }

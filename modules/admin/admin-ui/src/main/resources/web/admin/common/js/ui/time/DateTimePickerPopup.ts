@@ -107,7 +107,7 @@ module api.ui.time {
         }
 
         getSelectedDate(): Date {
-            return this.datePickerPopup.getCalendar().getSelectedDate();
+            return this.datePickerPopup.getSelectedDate();
         }
 
         onSelectedDateChanged(listener: (event: SelectedDateChangedEvent) => void) {
@@ -141,6 +141,10 @@ module api.ui.time {
 
         setSelectedTime(hours: number, minutes: number, silent?: boolean) {
             this.timePickerPopup.setSelectedTime(hours, minutes, silent);
+        }
+
+        setSelectedDate(date: Date, silent?: boolean) {
+            this.datePickerPopup.setSelectedDate(date, silent);
         }
 
         private outsideClickListener(e: MouseEvent) {

@@ -19,8 +19,18 @@ module api.form.inputtype.support {
 
         private propertyArray: PropertyArray;
 
+        protected ignorePropertyChange: boolean;
+
         constructor(className: string) {
             super("input-type-view" + (className ? " " + className : ""));
+        }
+
+        protected getValueFromPropertyArray(propertyArray: api.data.PropertyArray): string {
+            return propertyArray.getProperties().map((property) => {
+                if (property.hasNonNullValue()) {
+                    return property.getString();
+                }
+            }).join(';');
         }
 
         availableSizeChanged() {
@@ -77,7 +87,8 @@ module api.form.inputtype.support {
 
         }
 
-        validate(silent: boolean = true, rec: api.form.inputtype.InputValidationRecording = null): api.form.inputtype.InputValidationRecording {
+        validate(silent: boolean = true,
+                 rec: api.form.inputtype.InputValidationRecording = null): api.form.inputtype.InputValidationRecording {
 
             var recording = rec || new api.form.inputtype.InputValidationRecording();
 
