@@ -9,22 +9,30 @@ module api.content {
         DELETE,
         PENDING,
         RENAME,
-        SORT
+        SORT,
+        MOVE
     }
 
     export class ContentServerChange {
 
-        private contentPaths: api.content.ContentPath[];
+        private contentPaths: ContentPath[];
+
+        private newContentPaths: ContentPath[];
 
         private type: ContentServerChangeType;
 
-        constructor(contentPaths: api.content.ContentPath[], type: ContentServerChangeType) {
+        constructor(type: ContentServerChangeType, contentPaths: ContentPath[], newContentPaths?: ContentPath[]) {
             this.contentPaths = contentPaths;
             this.type = type;
+            this.newContentPaths = newContentPaths;
         }
 
-        getContentPaths(): api.content.ContentPath[] {
+        getContentPaths(): ContentPath[] {
             return this.contentPaths;
+        }
+
+        getNewContentPaths(): ContentPath[] {
+            return this.newContentPaths;
         }
 
         getChangeType(): ContentServerChangeType {
@@ -33,11 +41,13 @@ module api.content {
 
         toString(): string {
             return ContentServerChangeType[this.type] + ": <" +
-                   this.contentPaths.map((contentPath) => contentPath.toString()).join(", ") +
+                   this.contentPaths.map((contentPath) => contentPath.toString()).join(", ") + !!this.newContentPaths
+                ? this.newContentPaths.map((contentPath) => contentPath.toString()).join(", ")
+                : "" +
                    ">";
         }
 
-        static fromJson(nodeEventJson: NodeEventJson): ContentServerChange[] {
+        static fromJson(nodeEventJson: NodeEventJson): ContentServerChange {
             var contentEventType;
 
             var contentPaths = nodeEventJson.data.nodes.
@@ -45,7 +55,7 @@ module api.content {
                 map((node: NodeEventNodeJson) => api.content.ContentPath.fromString(node.path.substr("/content".length)));
 
             if (contentPaths.length === 0) {
-                return [];
+                return null;
             }
 
             switch (nodeEventJson.type) {
@@ -71,17 +81,12 @@ module api.content {
                 var newContentPaths = nodeEventJson.data.nodes.
                     filter((node) => node.newPath.indexOf("/content") === 0).
                     map((node: NodeEventNodeJson) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
-                var deletedContentServerChange = new ContentServerChange(contentPaths, ContentServerChangeType.DELETE);
-                var createdContentServerChange = new ContentServerChange(newContentPaths, ContentServerChangeType.CREATE);
-                return [deletedContentServerChange, createdContentServerChange];
+                return new ContentServerChange(ContentServerChangeType.MOVE, contentPaths, newContentPaths);
             case 'node.renamed':
                 var newContentPaths = nodeEventJson.data.nodes.
                     filter((node) => node.newPath.indexOf("/content") === 0).
                     map((node: NodeEventNodeJson) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
-                var renamedContentServerChange = new ContentServerChange(contentPaths, ContentServerChangeType.RENAME);
-                var deletedContentServerChange = new ContentServerChange(contentPaths, ContentServerChangeType.DELETE);
-                var createdContentServerChange = new ContentServerChange(newContentPaths, ContentServerChangeType.CREATE);
-                return [renamedContentServerChange, deletedContentServerChange, createdContentServerChange];
+                return new ContentServerChange(ContentServerChangeType.RENAME, contentPaths, newContentPaths);
             case 'node.sorted':
                 contentEventType = ContentServerChangeType.SORT;
                 break;
@@ -89,7 +94,7 @@ module api.content {
                 contentEventType = ContentServerChangeType.UNKNOWN;
             }
 
-            return [new ContentServerChange(contentPaths, contentEventType)];
+            return new ContentServerChange(contentEventType, contentPaths);
         }
     }
 }

@@ -1,7 +1,5 @@
 module api.app {
 
-    import BatchContentServerEvent = api.content.BatchContentServerEvent;
-
     export class ServerEventAggregator {
 
         private static AGGREGATION_TIMEOUT: number = 500;
@@ -13,7 +11,6 @@ module api.app {
         private batchReadyListeners: {(event):void}[] = [];
 
         private debounced;
-
 
         constructor() {
             this.debounced = api.util.AppHelper.debounce(() => {
@@ -48,10 +45,9 @@ module api.app {
         }
 
         private isTheSameTypeEvent(event: api.content.ContentServerEvent) {
-            var changes = event.getContentChanges();
-            var types = changes.map(change =>  change.getChangeType());
+            var change = event.getContentChange();
 
-            if (types.some(type => this.type != type)) {
+            if (this.type != change.getChangeType()) {
                 return false;
             }
 
@@ -60,8 +56,7 @@ module api.app {
 
         private init(event: api.content.ContentServerEvent) {
             this.events = [event];
-            this.type = event.getContentChanges().length > 0 ?
-                        event.getContentChanges()[0].getChangeType() : null;
+            this.type = !!event.getContentChange() ? event.getContentChange().getChangeType() : null;
         }
 
         onBatchIsReady(listener: (event)=>void) {
