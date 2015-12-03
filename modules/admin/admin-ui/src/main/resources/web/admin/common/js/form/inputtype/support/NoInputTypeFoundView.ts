@@ -35,11 +35,13 @@ module api.form.inputtype.support {
             if (property != null) {
                 inputEl.setValue(property.getString());
             }
-            inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                property.setValue(ValueTypes.STRING.newValue(event.getNewValue()));
+            inputEl.onValueChanged((event: api.ValueChangedEvent) => {
+                this.onValueChanged(property, event.getNewValue(), ValueTypes.STRING);
             });
             property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                this.updateInputOccurrenceElement(inputEl, property, true);
+                if (!this.ignorePropertyChange) {
+                    this.updateInputOccurrenceElement(inputEl, property, true);
+                }
             });
             return inputEl;
         }

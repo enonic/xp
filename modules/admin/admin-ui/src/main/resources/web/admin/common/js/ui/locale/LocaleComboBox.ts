@@ -8,16 +8,17 @@ module api.ui.locale {
     import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
 
     export class LocaleComboBox extends api.ui.selector.combobox.RichComboBox<Locale> {
-        constructor(max?: number) {
+        constructor(maxOccurrences?: number, value?: string) {
             var localeSelectedOptionsView = new LocaleSelectedOptionsView();
             localeSelectedOptionsView.onOptionDeselected(() => {
                 this.clearSelection();
             });
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Locale>().
-                setMaximumOccurrences(max || 0).
+                setMaximumOccurrences(maxOccurrences || 0).
                 setComboBoxName("localeSelector").
                 setIdentifierMethod("getTag").
                 setLoader(new LocaleLoader()).
+                setValue(value).
                 setSelectedOptionsView(localeSelectedOptionsView).
                 setOptionDisplayValueViewer(new LocaleViewer()).
                 setDelayedInputValueChangedHandling(500);

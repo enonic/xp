@@ -1,47 +1,43 @@
 module api.ui {
 
+    export enum RadioOrientation {
+        VERTICAL,
+        HORIZONTAL
+    }
+
     export class RadioGroup extends api.dom.FormInputEl {
 
-        public static ORIENTATION_VERTICAL = "vertical";
-        public static ORIENTATION_HORIZONTAL = "horizontal";
-
-        private name: string;
         private options: RadioButton[] = [];
 
-        private oldValue: string = "";
+        constructor(name: string, originalValue?: string) {
+            super("div", "radio-group", originalValue);
+            this.setName(name);
+        }
 
-        private valueChangedListeners: {(event: ValueChangedEvent):void}[] = [];
-
-        constructor(name: string, orientation?: string) {
-            super("div", "radio-group");
-            this.name = name;
-            if (RadioGroup.ORIENTATION_VERTICAL == orientation) {
-                this.addClass("vertical");
-            }
-
+        public setOrientation(orientation: RadioOrientation): RadioGroup {
+            this.toggleClass('vertical', orientation == RadioOrientation.VERTICAL);
+            return this;
         }
 
         public addOption(value: string, label: string, checked?: boolean) {
-            var radio = new RadioButton(label, value, this.name, checked);
+            var radio = new RadioButton(label, value, this.getName(), checked);
+            radio.onValueChanged((event: api.ValueChangedEvent) => {
+                this.setValue(this.doGetValue(), false, true);
+            });
             this.options.push(radio);
             this.appendChild(radio);
-            radio.onClicked((event: MouseEvent) => {
-                this.notifyValueChanged(this.oldValue, this.getValue());
-                this.oldValue = this.getValue();
-            });
         }
 
-        setValue(value: string): RadioGroup {
-            super.setValue(value);
+        doSetValue(value: string, silent?: boolean): RadioGroup {
             var option;
             for (var i = 0; i < this.options.length; i++) {
                 option = this.options[i];
-                option.setChecked(option.getValue() == value);
+                option.setChecked(option.getValue() == value, true);
             }
             return this;
         }
 
-        getValue(): string {
+        doGetValue(): string {
             var option;
             for (var i = 0; i < this.options.length; i++) {
                 option = this.options[i];
@@ -52,25 +48,6 @@ module api.ui {
             return undefined;
         }
 
-        getName(): string {
-            return this.name;
-        }
-
-        onValueChanged(listener: (event: ValueChangedEvent)=>void) {
-            this.valueChangedListeners.push(listener);
-        }
-
-        unValueChanged(listener: (event: ValueChangedEvent)=>void) {
-            this.valueChangedListeners = this.valueChangedListeners.filter((currentListener: (event: ValueChangedEvent)=>void)=> {
-                return currentListener != listener;
-            });
-        }
-
-        private notifyValueChanged(oldValue: string, newValue: string) {
-            this.valueChangedListeners.forEach((listener: (event: ValueChangedEvent)=>void)=> {
-                listener.call(this, new ValueChangedEvent(oldValue, newValue));
-            })
-        }
     }
 
 
@@ -79,8 +56,10 @@ module api.ui {
         private radio: api.dom.InputEl;
         private label: api.dom.LabelEl;
 
+        public static debug: boolean = false;
+
         constructor(label: string, value: string, name: string, checked?: boolean) {
-            super("span", "radio-button");
+            super("span", "radio-button", String(checked != undefined ? checked : false));
 
             this.radio = new api.dom.InputEl();
             this.radio.getEl().setAttribute('type', 'radio');
@@ -90,16 +69,37 @@ module api.ui {
             this.label = new api.dom.LabelEl(label, this.radio);
             this.appendChild(this.label);
 
-            this.setChecked(checked);
+            wemjq(this.radio.getHTMLElement()).on('change', () => {
+                this.refreshDirtyState();
+                this.refreshValueChanged();
+            });
         }
 
         setValue(value: string): RadioButton {
+            if (RadioButton.debug) {
+                console.warn('RadioButton.setValue sets the value attribute, you may have wanted to use setChecked instead');
+            }
             this.radio.setValue(value);
             return this;
         }
 
+
         getValue(): string {
+            if (RadioButton.debug) {
+                console.warn('RadioButton.getValue gets the value attribute, you may have wanted to use isChecked instead');
+            }
             return this.radio.getValue();
+        }
+
+        protected doSetValue(value: string, silent?: boolean) {
+            if (RadioButton.debug) {
+                console.warn('RadioButton.doSetValue', value);
+            }
+            this.radio.getHTMLElement()['checked'] = value == 'true';
+        }
+
+        protected doGetValue(): string {
+            return String(this.radio.getHTMLElement()['checked']);
         }
 
         getName(): string {
@@ -107,11 +107,11 @@ module api.ui {
         }
 
         public isChecked(): boolean {
-            return this.radio.getHTMLElement()['checked'];
+            return super.getValue() == "true";
         }
 
-        public setChecked(checked: boolean = false): RadioButton {
-            this.radio.getHTMLElement()['checked'] = checked;
+        public setChecked(checked: boolean, silent?: boolean): RadioButton {
+            super.setValue(String(checked), silent);
             return this;
         }
 

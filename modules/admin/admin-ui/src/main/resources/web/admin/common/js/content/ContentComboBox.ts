@@ -19,6 +19,7 @@ module api.content {
                 setMaximumOccurrences(builder.maximumOccurrences).
                 setOptionDisplayValueViewer(new api.content.ContentSummaryViewer()).
                 setDelayedInputValueChangedHandling(750).
+                setValue(builder.value).
                 setMinWidth(builder.minWidth);
 
             super(richComboBoxBuilder);
@@ -110,6 +111,8 @@ module api.content {
 
         minWidth: number;
 
+        value: string;
+
         setName(value: string): ContentComboBoxBuilder {
             this.name = value;
             return this;
@@ -132,6 +135,11 @@ module api.content {
 
         setMinWidth(value: number): ContentComboBoxBuilder {
             this.minWidth = value;
+            return this;
+        }
+
+        setValue(value: string): ContentComboBoxBuilder {
+            this.value = value;
             return this;
         }
 

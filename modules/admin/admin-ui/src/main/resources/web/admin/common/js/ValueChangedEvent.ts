@@ -1,4 +1,4 @@
-module api.ui {
+module api {
 
     export class ValueChangedEvent {
 

@@ -21,11 +21,10 @@ module api.content.form.inputtype.long {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
-            var inputEl = api.ui.text.TextInput.middle();
+            var inputEl = api.ui.text.TextInput.middle(undefined, this.getPropertyValue(property));
             inputEl.setName(this.getInput().getName() + "-" + property.getIndex());
-            inputEl.setValue(this.getPropertyValue(property));
 
-            inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
+            inputEl.onValueChanged((event: api.ValueChangedEvent) => {
 
                 var value = ValueTypes.LONG.newValue(event.getNewValue());
                 property.setValue(value);
@@ -34,7 +33,7 @@ module api.content.form.inputtype.long {
 
             property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
                 this.updateInputOccurrenceElement(inputEl, property, true);
-            })
+            });
 
             return inputEl;
         }
@@ -45,10 +44,6 @@ module api.content.form.inputtype.long {
             if (!unchangedOnly || !input.isDirty()) {
                 input.setValue(this.getPropertyValue(property));
             }
-        }
-
-        private getPropertyValue(property: Property): string {
-            return property.hasNonNullValue() ? property.getString() : "";
         }
 
         availableSizeChanged() {

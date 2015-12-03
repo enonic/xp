@@ -44,7 +44,9 @@ module api.content.form.inputtype.upload {
             this.updateProperty(property);
 
             property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                this.updateProperty(event.getProperty(), true);
+                if (!this.ignorePropertyChange) {
+                    this.updateProperty(event.getProperty(), true);
+                }
             });
 
             this.uploader.onUploadStarted(() => {
@@ -59,14 +61,7 @@ module api.content.form.inputtype.upload {
 
                 this.uploader.setFileName(fileName);
 
-                switch (property.getType()) {
-                case ValueTypes.DATA:
-                    property.getPropertySet().setProperty('attachment', 0, value);
-                    break;
-                case ValueTypes.STRING:
-                    property.setValue(ValueTypes.STRING.newValue(fileName));
-                    break;
-                }
+                this.onValueChanged(property, fileName, ValueTypes.STRING);
 
                 api.notify.showFeedback('\"' + fileName + '\" uploaded');
 
@@ -80,15 +75,7 @@ module api.content.form.inputtype.upload {
 
             this.uploader.onUploadReset(() => {
                 this.uploader.setFileName('');
-
-                switch (property.getType()) {
-                case ValueTypes.DATA:
-                    property.getPropertySet().setProperty('attachment', 0, ValueTypes.STRING.newNullValue());
-                    break;
-                case ValueTypes.STRING:
-                    property.setValue(ValueTypes.STRING.newNullValue());
-                    break;
-                }
+                this.onValueChanged(property, null, ValueTypes.STRING);
             });
 
             this.appendChild(this.uploaderWrapper);
@@ -98,6 +85,21 @@ module api.content.form.inputtype.upload {
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
             return new api.form.inputtype.InputValidationRecording();
+        }
+
+        protected onValueChanged(property: Property, value: Object, type: ValueType) {
+            this.ignorePropertyChange = true;
+            var newValue = new Value(value, type);
+            switch (property.getType()) {
+            case ValueTypes.DATA:
+                property.getPropertySet().setProperty('attachment', 0, newValue);
+                break;
+            case ValueTypes.STRING:
+                property.setValue(newValue);
+                break;
+            }
+            this.validate();
+            this.ignorePropertyChange = false;
         }
 
 

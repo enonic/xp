@@ -1,82 +1,42 @@
 module api.ui.geo {
 
-    export class GeoPoint extends api.dom.DivEl {
-
-        private geoLocationInput: api.ui.text.TextInput;
+    export class GeoPoint extends api.ui.text.TextInput {
 
         private validUserInput: boolean;
 
-        private valueChangedListeners: {(event: ValueChangedEvent):void}[] = [];
-
-        constructor() {
-            super("geo-point");
+        constructor(originalValue?: api.util.GeoPoint) {
+            super("geo-point", undefined, originalValue ? originalValue.toString() : undefined);
 
             this.validUserInput = true;
-            this.geoLocationInput = new api.ui.text.TextInput();
-            this.geoLocationInput.getEl().setAttribute("title", "latitude,longitude").addClass("geo-point-input");
+            this.getEl().setAttribute("title", "latitude,longitude");
+            this.setPlaceholder(_i18n('latitude,longitude'));
 
-            this.layoutItems();
-
-            this.geoLocationInput.onKeyUp((event: KeyboardEvent) => {
-
-                var typedGeoPoint = this.geoLocationInput.getValue();
+            this.onKeyUp((event: KeyboardEvent) => {
+                var typedGeoPoint = this.getValue();
                 this.validUserInput = api.util.StringHelper.isEmpty(typedGeoPoint) ||
                                       api.util.GeoPoint.isValidString(typedGeoPoint);
 
-                this.updateInputStyling();
-                this.notifyValueChanged();
+                this.updateValidationStatusOnUserInput(this.validUserInput);
             });
         }
-
-        private layoutItems() {
-            this.removeChildren();
-
-            this.appendChild(this.geoLocationInput);
-            this.geoLocationInput.setPlaceholder(_i18n('latitude,longitude'));
-            return this;
-        }
-
-        isDirty(): boolean {
-            return this.geoLocationInput.isDirty();
-        }
-
-        onValueChanged(listener: (event: api.ui.ValueChangedEvent)=>void) {
-            this.valueChangedListeners.push(listener);
-        }
-
-        private notifyValueChanged() {
-            var newValue = this.validUserInput ? this.geoLocationInput.getValue() : null;
-            var oldValue = this.geoLocationInput.getOldValue();
-
-            this.valueChangedListeners.forEach((listener: (event: ValueChangedEvent)=>void) => {
-                listener.call(this, new ValueChangedEvent(oldValue, newValue));
-            });
-        }
-
 
         setGeoPoint(value: api.util.GeoPoint): GeoPoint {
-            this.geoLocationInput.setValue("" + value.getLatitude() + "," + value.getLongitude());
+            if (value) {
+                this.setValue(value.toString());
+            }
             return this;
         }
 
         getGeoPoint(): api.util.GeoPoint {
-            if (api.util.StringHelper.isEmpty(this.geoLocationInput.getValue())) {
+            var value = this.getValue();
+            if (api.util.StringHelper.isEmpty(value)) {
                 return null;
             }
-            return <api.util.GeoPoint>api.util.GeoPoint.fromString(this.geoLocationInput.getValue());
-
-        }
-
-        giveFocus(): boolean {
-            return this.geoLocationInput.giveFocus();
+            return <api.util.GeoPoint> api.util.GeoPoint.fromString(value);
         }
 
         hasValidUserInput(): boolean {
             return this.validUserInput;
-        }
-
-        private updateInputStyling() {
-            this.geoLocationInput.updateValidationStatusOnUserInput(this.validUserInput);
         }
 
     }

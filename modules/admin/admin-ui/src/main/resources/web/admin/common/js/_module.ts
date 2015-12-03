@@ -26,6 +26,7 @@
 ///<reference path='DefaultErrorHandler.ts' />
 ///<reference path='PropertyChangedEvent.ts' />
 ///<reference path='ValidityChangedEvent.ts' />
+///<reference path='ValueChangedEvent.ts' />
 ///<reference path='StyleHelper.ts' />
 
 ///<reference path='util/_module.ts' />
