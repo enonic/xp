@@ -3,12 +3,45 @@ package com.enonic.xp.admin.app;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleKeys;
 
 public class AdminApplicationDescriptor
 {
+    public static final AdminApplicationDescriptor CONTENT_MANAGER_APP = AdminApplicationDescriptor.create().
+        key( DescriptorKey.from( ApplicationKey.SYSTEM, "content-manager" ) ).
+        name( "Content Manager" ).
+        shortName( "CM" ).
+        iconUrl( "database" ).
+        addAllowedPrincipal( RoleKeys.ADMIN ).
+        addAllowedPrincipal( RoleKeys.CONTENT_MANAGER_ADMIN ).
+        addAllowedPrincipal( RoleKeys.CONTENT_MANAGER_APP ).
+        build();
+
+    public static final AdminApplicationDescriptor USER_MANAGER_APP = AdminApplicationDescriptor.create().
+        key( DescriptorKey.from( ApplicationKey.SYSTEM, "user-manager" ) ).
+        name( "Users" ).
+        shortName( "UM" ).
+        iconUrl( "users" ).
+        addAllowedPrincipal( RoleKeys.ADMIN ).
+        addAllowedPrincipal( RoleKeys.USER_MANAGER_ADMIN ).
+        addAllowedPrincipal( RoleKeys.USER_MANAGER_APP ).
+        build();
+
+    public static final AdminApplicationDescriptor APPLICATIONS_APP = AdminApplicationDescriptor.create().
+        key( DescriptorKey.from( ApplicationKey.SYSTEM, "applications" ) ).
+        name( "Applications" ).
+        shortName( "AM" ).
+        iconUrl( "puzzle" ).
+        addAllowedPrincipal( RoleKeys.ADMIN ).
+        build();
+
+    public static final AdminApplicationDescriptor[] SYSTEM_ADMIN_APPLICATIONS =
+        new AdminApplicationDescriptor[]{CONTENT_MANAGER_APP, USER_MANAGER_APP, APPLICATIONS_APP};
+
     private final DescriptorKey key;
 
     private final String name;
