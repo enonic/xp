@@ -2,29 +2,28 @@ package com.enonic.xp.core.impl.app.event;
 
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleEvent;
 
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.impl.app.ApplicationBundleTest;
+import com.enonic.xp.core.impl.app.BundleBasedTest;
 import com.enonic.xp.event.Event;
 
 import static org.junit.Assert.*;
 
 public class ApplicationEventDispatcherTest
-    extends ApplicationBundleTest
+    extends BundleBasedTest
 {
     private ApplicationEventDispatcher dispatcher;
 
     private List<Event> events;
 
-    @Override
-    protected void initialize()
-        throws Exception
+    @Before
+    public void initialize()
     {
         this.events = Lists.newArrayList();
     }
@@ -33,16 +32,14 @@ public class ApplicationEventDispatcherTest
     {
         this.dispatcher = new ApplicationEventDispatcher();
         this.dispatcher.setEventPublisher( this.events::add );
-        this.dispatcher.start( this.bundleContext );
+        this.dispatcher.start( getBundleContext() );
     }
 
     @Test
     public void testStart_noApplications()
         throws Exception
     {
-        startBundles();
         startDispatcher();
-
         assertEquals( 0, this.events.size() );
     }
 
@@ -57,33 +54,46 @@ public class ApplicationEventDispatcherTest
     public void testApplicationInstalled()
         throws Exception
     {
-        startBundles( newBundle( "bundle1", "Bundle 1" ), newBundle( "bundle2", "Bundle 2" ), newBundle( "bundle3", "Bundle 3" ) );
+        createBundle( "app1", true ).start();
+        createBundle( "app2", true ).start();
+        createBundle( "app3", false ).start();
+
         startDispatcher();
 
         assertEquals( 2, this.events.size() );
-        assertEvent( 0, ApplicationEvents.STARTED, ApplicationKey.from( "bundle1" ) );
-        assertEvent( 1, ApplicationEvents.STARTED, ApplicationKey.from( "bundle3" ) );
+        assertEvent( 0, ApplicationEvents.STARTED, ApplicationKey.from( "app1" ) );
+        assertEvent( 1, ApplicationEvents.STARTED, ApplicationKey.from( "app2" ) );
     }
 
     @Test
     public void testApplicationLifecycle()
         throws Exception
     {
-        startBundles( newBundle( "bundle1", "Bundle 1" ) );
+        final Bundle bundle = createBundle( "app1", true );
+        bundle.start();
+
         startDispatcher();
 
         assertEquals( 1, this.events.size() );
-        assertEvent( 0, ApplicationEvents.STARTED, ApplicationKey.from( "bundle1" ) );
+        assertEvent( 0, ApplicationEvents.STARTED, ApplicationKey.from( "app1" ) );
 
-        final Bundle bundle = newBundle( "bundle1", "Bundle 1" );
-        Mockito.when( bundle.getSymbolicName() ).thenReturn( "bundle1" );
+        bundle.stop();
 
-        this.dispatcher.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, bundle ) );
-        assertEquals( 2, this.events.size() );
-        assertEvent( 1, ApplicationEvents.UNINSTALLED, ApplicationKey.from( "bundle1" ) );
-
-        this.dispatcher.bundleChanged( new BundleEvent( BundleEvent.INSTALLED, bundle ) );
         assertEquals( 3, this.events.size() );
-        assertEvent( 2, ApplicationEvents.INSTALLED, ApplicationKey.from( "bundle1" ) );
+        assertEvent( 1, ApplicationEvents.STOPPING, ApplicationKey.from( "app1" ) );
+        assertEvent( 2, ApplicationEvents.STOPPED, ApplicationKey.from( "app1" ) );
+
+        bundle.start();
+
+        assertEquals( 5, this.events.size() );
+        assertEvent( 3, ApplicationEvents.STARTING, ApplicationKey.from( "app1" ) );
+        assertEvent( 4, ApplicationEvents.STARTED, ApplicationKey.from( "app1" ) );
+    }
+
+    private Bundle createBundle( final String key, final boolean isApp )
+        throws Exception
+    {
+        final TinyBundle builder = newBundle( key, isApp );
+        return deploy( key, builder );
     }
 }

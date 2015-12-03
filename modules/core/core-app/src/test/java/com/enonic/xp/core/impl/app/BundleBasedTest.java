@@ -12,6 +12,7 @@ import org.junit.rules.TemporaryFolder;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
 import com.google.common.collect.Maps;
@@ -37,6 +38,11 @@ public abstract class BundleBasedTest
         this.felix.start();
     }
 
+    protected final BundleContext getBundleContext()
+    {
+        return this.felix.getBundleContext();
+    }
+
     @After
     public final void destory()
         throws Exception
@@ -50,10 +56,23 @@ public abstract class BundleBasedTest
         return this.felix.getBundleContext().installBundle( name, in );
     }
 
-    protected final TinyBundle newBundle( final String name )
+    protected final Bundle deploy( final String name, final TinyBundle bundle )
+        throws Exception
     {
-        return TinyBundles.bundle().
+        return deploy( name, bundle.build() );
+    }
+
+    protected final TinyBundle newBundle( final String name, final boolean isApp )
+    {
+        final TinyBundle bundle = TinyBundles.bundle().
             set( Constants.BUNDLE_SYMBOLICNAME, name ).
             set( Constants.BUNDLE_VERSION, "1.0.0" );
+
+        if ( isApp )
+        {
+            bundle.add( "site/site.xml", getClass().getResource( "/bundles/bundle1/site/site.xml" ) );
+        }
+
+        return bundle;
     }
 }

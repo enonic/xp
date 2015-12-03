@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.app.resolver;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.osgi.framework.Bundle;
 
 import com.enonic.xp.core.impl.app.BundleBasedTest;
@@ -21,12 +21,10 @@ public class BundleApplicationUrlResolverTest
     public void initResolver()
         throws Exception
     {
-        final InputStream in = newBundle( "foo.bar.bundle" ).
-            add( "site/site.xml", getClass().getResource( "/bundles/bundle1/site/site.xml" ) ).
-            add( "dummy.txt", getClass().getResource( "/bundles/bundle1/dummy.txt" ) ).
-            build();
+        final TinyBundle builder = newBundle( "foo.bar.bundle", true );
+        builder.add( "dummy.txt", getClass().getResource( "/bundles/bundle1/dummy.txt" ) );
 
-        final Bundle bundle = deploy( "bundle", in );
+        final Bundle bundle = deploy( "bundle", builder );
         this.resolver = new BundleApplicationUrlResolver( bundle );
     }
 

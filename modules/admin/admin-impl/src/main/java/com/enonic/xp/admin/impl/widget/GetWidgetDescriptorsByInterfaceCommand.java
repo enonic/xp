@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptors;
-import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.app.Applications;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -29,8 +29,8 @@ final class GetWidgetDescriptorsByInterfaceCommand
 
     public WidgetDescriptors execute()
     {
-        final Applications applications = this.applicationService.getAllApplications();
-        final List<WidgetDescriptor> widgetDescriptorList = getDescriptorsFromModules( applications ).
+        final ApplicationKeys keys = this.applicationService.getApplicationKeys();
+        final List<WidgetDescriptor> widgetDescriptorList = getDescriptorsFromModules( keys ).
             stream().
             filter( widgetDescriptor -> widgetDescriptor.getInterfaces().contains( interfaceName ) ).
             collect( Collectors.toList() );
@@ -85,12 +85,12 @@ final class GetWidgetDescriptorsByInterfaceCommand
         return builder.build();
     }
 
-    private void readDescriptorsFromApp( final List<WidgetDescriptor> list, final Application app )
+    private void readDescriptorsFromApp( final List<WidgetDescriptor> list, final ApplicationKey appKey )
     {
-        final ResourceKeys resourceKeys = this.resourceService.findFolders( app.getKey(), PATH );
+        final ResourceKeys resourceKeys = this.resourceService.findFolders( appKey, PATH );
         for ( final ResourceKey resourceKey : resourceKeys )
         {
-            final DescriptorKey key = DescriptorKey.from( app.getKey(), resourceKey.getName() );
+            final DescriptorKey key = DescriptorKey.from( appKey, resourceKey.getName() );
             final WidgetDescriptor descriptor = getDescriptor( key );
             if ( descriptor != null )
             {
@@ -99,12 +99,12 @@ final class GetWidgetDescriptorsByInterfaceCommand
         }
     }
 
-    private WidgetDescriptors getDescriptorsFromModules( final Applications apps )
+    private WidgetDescriptors getDescriptorsFromModules( final ApplicationKeys appKeys )
     {
         final List<WidgetDescriptor> list = new ArrayList<>();
-        for ( final Application app : apps )
+        for ( final ApplicationKey appKey : appKeys )
         {
-            readDescriptorsFromApp( list, app );
+            readDescriptorsFromApp( list, appKey );
         }
 
         return WidgetDescriptors.from( list );

@@ -8,6 +8,8 @@ public interface ApplicationService
     Application getApplication( ApplicationKey key )
         throws ApplicationNotFoundException;
 
+    ApplicationKeys getApplicationKeys();
+
     Applications getAllApplications();
 
     void startApplication( ApplicationKey key );

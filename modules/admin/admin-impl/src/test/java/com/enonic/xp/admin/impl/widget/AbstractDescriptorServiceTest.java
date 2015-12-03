@@ -17,6 +17,7 @@ import com.google.common.io.Files;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.form.Form;
@@ -111,6 +112,7 @@ public abstract class AbstractDescriptorServiceTest
         }
 
         final Applications applications = Applications.from( list );
+        Mockito.when( this.applicationService.getApplicationKeys() ).thenReturn( ApplicationKeys.from( keys ) );
         Mockito.when( this.applicationService.getAllApplications() ).thenReturn( applications );
         return applications;
     }

@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.app;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.osgi.framework.Bundle;
 
 import static org.junit.Assert.*;
@@ -17,11 +17,10 @@ public class BundleClassLoaderTest
     public void testLoadClass()
         throws Exception
     {
-        final InputStream in = newBundle( "foo.bar.bundle" ).
-            add( getClass() ).
-            build();
+        final TinyBundle builder = newBundle( "foo.bar.bundle", false ).
+            add( getClass() );
 
-        final Bundle bundle = deploy( "bundle", in );
+        final Bundle bundle = deploy( "bundle", builder );
         final BundleClassLoader loader = new BundleClassLoader( bundle );
         final Class clz = loader.loadClass( getClass().getName() );
         assertNotNull( clz );
@@ -31,10 +30,9 @@ public class BundleClassLoaderTest
     public void testLoadClass_failed()
         throws Exception
     {
-        final InputStream in = newBundle( "foo.bar.bundle" ).
-            build();
+        final TinyBundle builder = newBundle( "foo.bar.bundle", false );
 
-        final Bundle bundle = deploy( "bundle", in );
+        final Bundle bundle = deploy( "bundle", builder );
         final BundleClassLoader loader = new BundleClassLoader( bundle );
         loader.loadClass( "no.class.found" );
     }
@@ -43,11 +41,10 @@ public class BundleClassLoaderTest
     public void testGetResource()
         throws Exception
     {
-        final InputStream in = newBundle( "foo.bar.bundle" ).
-            add( "dummy.txt", getClass().getResource( "/bundles/bundle1/dummy.txt" ) ).
-            build();
+        final TinyBundle builder = newBundle( "foo.bar.bundle", false ).
+            add( "dummy.txt", getClass().getResource( "/bundles/bundle1/dummy.txt" ) );
 
-        final Bundle bundle = deploy( "bundle", in );
+        final Bundle bundle = deploy( "bundle", builder );
         final BundleClassLoader loader = new BundleClassLoader( bundle );
 
         final URL url1 = loader.getResource( "dummy.txt" );
@@ -61,11 +58,10 @@ public class BundleClassLoaderTest
     public void testGetResources()
         throws Exception
     {
-        final InputStream in = newBundle( "foo.bar.bundle" ).
-            add( "dummy.txt", getClass().getResource( "/bundles/bundle1/dummy.txt" ) ).
-            build();
+        final TinyBundle builder = newBundle( "foo.bar.bundle", false ).
+            add( "dummy.txt", getClass().getResource( "/bundles/bundle1/dummy.txt" ) );
 
-        final Bundle bundle = deploy( "bundle", in );
+        final Bundle bundle = deploy( "bundle", builder );
         final BundleClassLoader loader = new BundleClassLoader( bundle );
 
         final List<URL> list = Collections.list( loader.getResources( "dummy.txt" ) );

@@ -3,8 +3,11 @@ package com.enonic.xp.core.impl.app;
 import java.io.InputStream;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
+
+import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 
 import static org.junit.Assert.*;
 
@@ -12,11 +15,13 @@ public class ApplicationImplTest
     extends BundleBasedTest
 {
     @Test
-    public void testCreateApplication()
+    public void testApplication()
         throws Exception
     {
-        final Bundle bundle = createBundle();
-        final ApplicationImpl application = new ApplicationImpl( bundle );
+        final Bundle bundle = deployBundle();
+
+        final ApplicationUrlResolver urlResolver = Mockito.mock( ApplicationUrlResolver.class );
+        final ApplicationImpl application = new ApplicationImpl( bundle, urlResolver );
 
         assertEquals( "myapplication", application.getKey().toString() );
         assertEquals( "1.0.0", application.getVersion().toString() );
@@ -29,33 +34,31 @@ public class ApplicationImplTest
         assertFalse( application.isStarted() );
         assertTrue( ApplicationHelper.isApplication( bundle ) );
         assertEquals( "[/a/b, /c/d]", application.getSourcePaths().toString() );
+        assertNotNull( application.getClassLoader() );
+        assertEquals( "[1.2.0,2.0.0)", application.getSystemVersion() );
+        assertEquals( "2.0.0", application.getMaxSystemVersion() );
+        assertEquals( "1.2.0", application.getMinSystemVersion() );
+
+        application.getFiles();
+        Mockito.verify( urlResolver, Mockito.times( 1 ) ).findFiles();
+
+        application.resolveFile( "a/b.txt" );
+        Mockito.verify( urlResolver, Mockito.times( 1 ) ).findUrl( "a/b.txt" );
 
         bundle.start();
         assertTrue( application.isStarted() );
     }
 
-    @Test
-    public void testSystemVersion()
+    private Bundle deployBundle()
         throws Exception
     {
-        final Bundle bundle = createBundle();
-        final ApplicationImpl application = new ApplicationImpl( bundle );
-        assertEquals( "[1.2,2)", application.getSystemVersion() );
-        assertEquals( "2.0.0", application.getMaxSystemVersion() );
-        assertEquals( "1.2.0", application.getMinSystemVersion() );
-    }
-
-    private Bundle createBundle()
-        throws Exception
-    {
-        final InputStream in = newBundle( "myapplication" ).
-            add( "site/site.xml", getClass().getResource( "/bundles/bundle1/site/site.xml" ) ).
+        final InputStream in = newBundle( "myapplication", true ).
             set( Constants.BUNDLE_NAME, "myapplication" ).
-            set( ApplicationImpl.X_APPLICATION_URL, "http://enonic.com/path/to/application" ).
-            set( ApplicationImpl.X_SYSTEM_VERSION, "[1.2,2)" ).
-            set( ApplicationImpl.X_VENDOR_NAME, "Enonic AS" ).
-            set( ApplicationImpl.X_VENDOR_URL, "http://enonic.com" ).
-            set( ApplicationImpl.X_SOURCE_PATHS, "/a/b,/c/d" ).
+            set( ApplicationHelper.X_APPLICATION_URL, "http://enonic.com/path/to/application" ).
+            set( ApplicationHelper.X_SYSTEM_VERSION, "[1.2,2)" ).
+            set( ApplicationHelper.X_VENDOR_NAME, "Enonic AS" ).
+            set( ApplicationHelper.X_VENDOR_URL, "http://enonic.com" ).
+            set( ApplicationHelper.X_SOURCE_PATHS, "/a/b,/c/d" ).
             build();
 
         return deploy( "bundle", in );
