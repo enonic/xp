@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content.page;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,17 +115,29 @@ public abstract class AbstractDescriptorServiceTest
         return applications;
     }
 
-    protected final void mockResources( final Application application, final String rootPath, final String... paths )
-        throws MalformedURLException
+    protected final void mockFindFiles( final Application application, final String rootPath, final String... paths )
     {
-        List<ResourceKey> resourceKeyList = new ArrayList<ResourceKey>();
+        final List<ResourceKey> resourceKeyList = new ArrayList<>();
         for ( final String path : paths )
         {
             final ResourceKey resourceKey = ResourceKey.from( application.getKey(), path );
             resourceKeyList.add( resourceKey );
         }
-        ResourceKeys resourceKeys = ResourceKeys.from( resourceKeyList );
 
+        final ResourceKeys resourceKeys = ResourceKeys.from( resourceKeyList );
+        Mockito.when( this.resourceService.findFiles( application.getKey(), rootPath, "xml", true ) ).thenReturn( resourceKeys );
+    }
+
+    protected final void mockFindFolders( final Application application, final String rootPath, final String... paths )
+    {
+        final List<ResourceKey> resourceKeyList = new ArrayList<>();
+        for ( final String path : paths )
+        {
+            final ResourceKey resourceKey = ResourceKey.from( application.getKey(), path );
+            resourceKeyList.add( resourceKey );
+        }
+
+        final ResourceKeys resourceKeys = ResourceKeys.from( resourceKeyList );
         Mockito.when( this.resourceService.findFolders( application.getKey(), rootPath ) ).thenReturn( resourceKeys );
     }
 }

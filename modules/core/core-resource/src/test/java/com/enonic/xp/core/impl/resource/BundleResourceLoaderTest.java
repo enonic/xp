@@ -36,7 +36,7 @@ public class BundleResourceLoaderTest
     }
 
     @Test
-    public void findFilders()
+    public void findFolders()
         throws Exception
     {
         Mockito.when( this.bundle.getEntryPaths( "/site/pages" ) ).thenReturn(
@@ -48,6 +48,21 @@ public class BundleResourceLoaderTest
         assertEquals( 2, keys.getSize() );
         assertTrue( keys.contains( ResourceKey.from( this.appKey, "rss" ) ) );
         assertTrue( keys.contains( ResourceKey.from( this.appKey, "default" ) ) );
+    }
+
+    @Test
+    public void findFiles()
+        throws Exception
+    {
+        Mockito.when( this.bundle.findEntries( "/site/pages", "*.xml", true ) ).thenReturn(
+            Collections.enumeration( Arrays.asList( new URL( "file:///site/pages/a.xml" ), new URL( "file:///site/pages/b.xml" ) ) ) );
+
+        final ResourceKeys keys = this.loader.findFiles( this.app, "/site/pages", "xml", true );
+        assertNotNull( keys );
+        assertTrue( keys.isNotEmpty() );
+        assertEquals( 2, keys.getSize() );
+        assertTrue( keys.contains( ResourceKey.from( this.appKey, "/site/pages/a.xml" ) ) );
+        assertTrue( keys.contains( ResourceKey.from( this.appKey, "/site/pages/b.xml" ) ) );
     }
 
     private URL mockResource( final String path )

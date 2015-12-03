@@ -1,6 +1,7 @@
 package com.enonic.xp.resource;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -29,7 +30,7 @@ public final class ResourceKeys
         return new ResourceKeys( ImmutableList.copyOf( resourceKeys ) );
     }
 
-    public static ResourceKeys from( final Collection<? extends ResourceKey> resourceKeys )
+    public static ResourceKeys from( final Iterator<? extends ResourceKey> resourceKeys )
     {
         return new ResourceKeys( ImmutableList.copyOf( resourceKeys ) );
     }

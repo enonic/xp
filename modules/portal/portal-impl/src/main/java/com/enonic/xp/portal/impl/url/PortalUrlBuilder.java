@@ -102,6 +102,11 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         return UrlEscapers.urlFormParameterEscaper().escape( value );
     }
 
+    private String urlEncodePathSegment( final String value )
+    {
+        return UrlEscapers.urlPathSegmentEscaper().escape( value );
+    }
+
     private String normalizePath( final String value )
     {
         if ( value == null )
@@ -111,11 +116,11 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
         if ( !value.contains( "/" ) )
         {
-            return value;
+            return urlEncodePathSegment( value );
         }
 
         final Iterable<String> splitted = Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value );
-        final Stream<String> transformed = Lists.newArrayList( splitted ).stream().map( this::urlEncode );
+        final Stream<String> transformed = Lists.newArrayList( splitted ).stream().map( this::urlEncodePathSegment );
         return Joiner.on( '/' ).join( transformed.iterator() );
     }
 

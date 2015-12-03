@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl;
 
 import org.junit.Test;
 
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
@@ -20,7 +20,7 @@ public class NodeEventsTest
     {
         final Node created = createNode( "created", NodePath.create( "/mynode1/child1" ).build(), "id" );
 
-        Event2 event = NodeEvents.created( created );
+        Event event = NodeEvents.created( created );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -35,7 +35,7 @@ public class NodeEventsTest
         final Node pushed3 = createNode( "pushed3", NodePath.create( "/mynode1/pushed3" ).build(), "id3" );
         final Nodes nodes = Nodes.from( pushed1, pushed2, pushed3 );
 
-        Event2 event = NodeEvents.pushed( nodes );
+        Event event = NodeEvents.pushed( nodes );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -51,7 +51,7 @@ public class NodeEventsTest
     {
         final Node deleted = createNode( "deleted", NodePath.create( "/mynode1/child1" ).build(), "myId" );
 
-        Event2 event = NodeEvents.created( deleted );
+        Event event = NodeEvents.created( deleted );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -63,7 +63,7 @@ public class NodeEventsTest
     {
         final Node duplicated = createNode( "duplicated", NodePath.create( "/mynode1/child1" ).build(), "myId" );
 
-        Event2 event = NodeEvents.duplicated( duplicated );
+        Event event = NodeEvents.duplicated( duplicated );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -76,7 +76,7 @@ public class NodeEventsTest
     {
         final Node updated = createNode( "updated", NodePath.create( "/mynode1/child1" ).build(), "myId" );
 
-        Event2 event = NodeEvents.updated( updated );
+        Event event = NodeEvents.updated( updated );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -90,7 +90,7 @@ public class NodeEventsTest
         final Node sourceNode = createNode( "before", NodePath.create( "/mynode1/child1" ).build(), "myId" );
         final Node targetNode = createNode( "after", NodePath.create( "/mynode1" ).build(), "myId" );
 
-        Event2 event = NodeEvents.moved( sourceNode, targetNode );
+        Event event = NodeEvents.moved( sourceNode, targetNode );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -104,7 +104,7 @@ public class NodeEventsTest
         final Node sourceNode = createNode( "before", NodePath.create( "/mynode1/child1" ).build(), "myId" );
         final Node targetNode = createNode( "after", NodePath.create( "/mynode1/child1" ).build(), "myId" );
 
-        Event2 event = NodeEvents.renamed( sourceNode, targetNode );
+        Event event = NodeEvents.renamed( sourceNode, targetNode );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -118,7 +118,7 @@ public class NodeEventsTest
     {
         final Node sorted = createNode( "sorted", NodePath.create( "/mynode1/child1" ).build(), "myId" );
 
-        Event2 event = NodeEvents.sorted( sorted );
+        Event event = NodeEvents.sorted( sorted );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -134,7 +134,7 @@ public class NodeEventsTest
         final Node pushed3 = createNode( "state_updated3", NodePath.create( "/mynode1/state_updated3" ).build(), "id3" );
         final Nodes nodes = Nodes.from( pushed1, pushed2, pushed3 );
 
-        Event2 event = NodeEvents.stateUpdated( nodes );
+        Event event = NodeEvents.stateUpdated( nodes );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -150,8 +150,8 @@ public class NodeEventsTest
     @Test
     public void testNullArguments()
     {
-        Event2 eventCreated = NodeEvents.created( null );
-        Event2 eventDeleted = NodeEvents.deleted( null );
+        Event eventCreated = NodeEvents.created( null );
+        Event eventDeleted = NodeEvents.deleted( null );
 
         assertNull( eventCreated );
         assertNull( eventDeleted );

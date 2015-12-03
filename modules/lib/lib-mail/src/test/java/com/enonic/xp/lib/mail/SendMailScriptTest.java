@@ -1,15 +1,23 @@
 package com.enonic.xp.lib.mail;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.google.common.io.ByteSource;
+import com.google.common.io.CharStreams;
 
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
@@ -107,7 +115,7 @@ public class SendMailScriptTest
         Assert.assertEquals( "test body", message.getContent() );
         assertArrayEquals( toAddresses( "from@bar.com" ), message.getFrom() );
         assertArrayEquals( toAddresses( "to@bar.com" ), message.getRecipients( Message.RecipientType.TO ) );
-        Assert.assertEquals( "text/html", message.getHeader( "Content-Type" )[0] );
+        Assert.assertEquals( "text/html", message.getContentType() );
     }
 
     @Test
@@ -154,6 +162,36 @@ public class SendMailScriptTest
         Assert.assertNull( this.actualMessage );
     }
 
+    @Test
+    public void testMailWithAttachments()
+        throws Exception
+    {
+        runFunction( "/site/test/send-test.js", "sendWithAttachments" );
+
+        final MimeMessage message = mockCompose( this.actualMessage );
+        message.saveChanges(); // required to updated headers (mimeType)
+
+        MimeMultipart content = (MimeMultipart) message.getContent();
+        assertEquals( 3, content.getCount() );
+        final BodyPart first = content.getBodyPart( 0 );
+        final BodyPart second = content.getBodyPart( 1 );
+        final BodyPart third = content.getBodyPart( 2 );
+        final String secondContent =
+            CharStreams.toString( new InputStreamReader( (InputStream) second.getContent(), StandardCharsets.UTF_8 ) );
+
+        assertEquals( "test body", first.getContent() );
+        assertEquals( "image data", secondContent );
+        assertEquals( "Some text", third.getContent() );
+
+        assertNull( first.getFileName() );
+        assertEquals( "image.png", second.getFileName() );
+        assertEquals( "text.txt", third.getFileName() );
+
+        assertEquals( "text/plain; charset=UTF-8", first.getContentType() );
+        assertTrue( second.getContentType().startsWith( "image/png" ) );
+        assertTrue( third.getContentType().startsWith( "text/plain" ) );
+    }
+
     private InternetAddress[] toAddresses( final String... addresses )
     {
         return Stream.of( addresses ).map( this::toAddress ).toArray( InternetAddress[]::new );
@@ -179,4 +217,10 @@ public class SendMailScriptTest
         message.compose( mimeMessage );
         return mimeMessage;
     }
+
+    public static ByteSource createByteSource( final String value )
+    {
+        return ByteSource.wrap( value.getBytes() );
+    }
+
 }

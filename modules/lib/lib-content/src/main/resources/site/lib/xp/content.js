@@ -424,7 +424,7 @@ exports.createMedia = function (params) {
  * Sets permissions on a content.
  *
  * @example
- * var updatedContent = contentLib.setPermissions({
+ * var result = contentLib.setPermissions({
  *   key: '03c6ae7b-7f48-45f5-973d-1f03606ab928',
  *   permissions: [{
  *     principal: 'user:system:anonymous',
@@ -441,7 +441,7 @@ exports.createMedia = function (params) {
  * @param {string} params.permissions.principal Principal key.
  * @param {array} params.permissions.allow Allowed permissions.
  * @param {array} params.permissions.deny Denied permissions.
- * @returns {object} Updated content.
+ * @returns {boolean} True if successful, false otherwise.
  */
 exports.setPermissions = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.SetPermissionsHandler');
@@ -457,6 +457,27 @@ exports.setPermissions = function (params) {
     }
     if (params.permissions) {
         bean.permissions = __.toScriptValue(params.permissions);
+    }
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * Gets permissions on a content.
+ *
+ * @example
+ * var result = contentLib.getPermissions({
+ *   key: '03c6ae7b-7f48-45f5-973d-1f03606ab928'
+ * });
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Path or ID of the content.
+ * @returns {object} Content permissions.
+ */
+exports.getPermissions = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.GetPermissionsHandler');
+
+    if (params.key) {
+        bean.key = params.key;
     }
     return __.toNativeObject(bean.execute());
 };

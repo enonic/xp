@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.event.Event2;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -34,7 +34,7 @@ public class NodeEventListenerTest
     public void invalid_event_no_list()
         throws Exception
     {
-        nodeEventListener.onEvent( Event2.create( NodeEvents.NODE_CREATED_EVENT ).
+        nodeEventListener.onEvent( Event.create( NodeEvents.NODE_CREATED_EVENT ).
             value( "fisk", "ost" ).
             localOrigin( false ).
             build() );
@@ -46,7 +46,7 @@ public class NodeEventListenerTest
     public void invalid_event_nodes_not_list()
         throws Exception
     {
-        nodeEventListener.onEvent( Event2.create( NodeEvents.NODE_CREATED_EVENT ).
+        nodeEventListener.onEvent( Event.create( NodeEvents.NODE_CREATED_EVENT ).
             value( "nodes", "ost" ).
             localOrigin( false ).
             build() );
@@ -61,7 +61,7 @@ public class NodeEventListenerTest
         final NodeId nodeId = NodeId.from( "node1" );
         final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
 
-        final Event2 localEvent = NodeEvents.created( Node.create().
+        final Event localEvent = NodeEvents.created( Node.create().
             id( nodeId ).
             parentPath( nodePath.getParentPath() ).
             name( nodePath.getLastElement().toString() ).
@@ -80,13 +80,13 @@ public class NodeEventListenerTest
         final NodeId nodeId = NodeId.from( "node1" );
         final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
 
-        final Event2 localEvent = NodeEvents.created( Node.create().
+        final Event localEvent = NodeEvents.created( Node.create().
             id( nodeId ).
             parentPath( nodePath.getParentPath() ).
             name( nodePath.getLastElement().toString() ).
             build() );
 
-        nodeEventListener.onEvent( Event2.create( localEvent ).
+        nodeEventListener.onEvent( Event.create( localEvent ).
             localOrigin( false ).
             build() );
 
@@ -101,13 +101,13 @@ public class NodeEventListenerTest
         final NodeId nodeId = NodeId.from( "node1" );
         final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
 
-        final Event2 localEvent = NodeEvents.deleted( Node.create().
+        final Event localEvent = NodeEvents.deleted( Node.create().
             id( nodeId ).
             parentPath( nodePath.getParentPath() ).
             name( nodePath.getLastElement().toString() ).
             build() );
 
-        nodeEventListener.onEvent( Event2.create( localEvent ).
+        nodeEventListener.onEvent( Event.create( localEvent ).
             localOrigin( false ).
             build() );
 
@@ -132,9 +132,9 @@ public class NodeEventListenerTest
             parentPath( NodePath.create( "newParent" ).build() ).
             build();
 
-        final Event2 localEvent = NodeEvents.moved( sourceNode, movedNode );
+        final Event localEvent = NodeEvents.moved( sourceNode, movedNode );
 
-        nodeEventListener.onEvent( Event2.create( localEvent ).
+        nodeEventListener.onEvent( Event.create( localEvent ).
             localOrigin( false ).
             build() );
 
@@ -161,9 +161,9 @@ public class NodeEventListenerTest
             parentPath( NodePath.create( "newParent" ).build() ).
             build();
 
-        final Event2 localEvent = NodeEvents.renamed( sourceNode, movedNode );
+        final Event localEvent = NodeEvents.renamed( sourceNode, movedNode );
 
-        nodeEventListener.onEvent( Event2.create( localEvent ).
+        nodeEventListener.onEvent( Event.create( localEvent ).
             localOrigin( false ).
             build() );
 
@@ -190,9 +190,9 @@ public class NodeEventListenerTest
             parentPath( NodePath.create( "newParent" ).build() ).
             build();
 
-        final Event2 localEvent = NodeEvents.duplicated( sourceNode );
+        final Event localEvent = NodeEvents.duplicated( sourceNode );
 
-        nodeEventListener.onEvent( Event2.create( localEvent ).
+        nodeEventListener.onEvent( Event.create( localEvent ).
             localOrigin( false ).
             build() );
 

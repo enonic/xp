@@ -24,7 +24,7 @@ public class EventPublisherImplTest
     @Test
     public void testPublish_noListener()
     {
-        final Event event = new TestEvent();
+        final Event event = Event.create( "test" ).build();
         this.publisher.publish( event );
     }
 
@@ -35,7 +35,7 @@ public class EventPublisherImplTest
         final EventListener listener = mock( EventListener.class );
         this.publisher.addListener( listener );
 
-        final Event event = new TestEvent();
+        final Event event = Event.create( "test" ).build();
         for ( int i = 0; i < 100; i++ )
         {
             this.publisher.publish( event );

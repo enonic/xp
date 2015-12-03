@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.schema.content;
 
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.content.ContentTypeRegistry;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.mixin.MixinService;
 
@@ -23,7 +22,7 @@ abstract class AbstractCommand
         return doTransformInlineMixins( contentTypes );
     }
 
-    private final ContentTypes doTransformInlineMixins( final ContentTypes contentTypes )
+    private ContentTypes doTransformInlineMixins( final ContentTypes contentTypes )
     {
         final ContentTypes.Builder transformedContentTypes = ContentTypes.create();
         for ( final ContentType contentType : contentTypes )

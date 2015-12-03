@@ -456,7 +456,7 @@ public class NodeServiceImpl
             build().
             execute();
 
-        for ( Node parentNode : reorderChildNodesResult.getParentNodes() ) //TODO Modify after Event2 data restructuration
+        for ( Node parentNode : reorderChildNodesResult.getParentNodes() )
         {
             this.eventPublisher.publish( NodeEvents.sorted( parentNode ) );
         }

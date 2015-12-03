@@ -8,6 +8,8 @@ import com.google.common.base.Preconditions;
 @Beta
 public final class UserStoreKey
 {
+    private final static char[] ILLEGAL_CHARACTERS = {'<', '>', '"', '\''};
+
     private final static UserStoreKey SYSTEM = UserStoreKey.from( "system" );
 
     private final static UserStoreKey DEFAULT = UserStoreKey.from( "default" );
@@ -19,9 +21,18 @@ public final class UserStoreKey
     public UserStoreKey( final String id )
     {
         Preconditions.checkArgument( !StringUtils.isBlank( id ), "UserStoreKey cannot be blank: %s", id );
-        Preconditions.checkArgument( !RESERVED_USER_STORE_ID.equalsIgnoreCase( id ),
-                                     "UserStoreKey id is reserved and cannot be used: %s", id );
-        this.id = id;
+        Preconditions.checkArgument( !RESERVED_USER_STORE_ID.equalsIgnoreCase( id ), "UserStoreKey id is reserved and cannot be used: %s",
+                                     id );
+        this.id = checkId( id );
+    }
+
+    private String checkId( final String value )
+    {
+        if ( StringUtils.containsAny( value, ILLEGAL_CHARACTERS ) )
+        {
+            throw new IllegalArgumentException( "Invalid UserStoreKey [" + value + "]" );
+        }
+        return value;
     }
 
     public static UserStoreKey from( final String id )

@@ -17,11 +17,16 @@ module api.ui.selector.dropdown {
 
         dataIdProperty?:string;
 
+        disableFilter?: boolean;
+
+        skipExpandOnClick?: boolean;
     }
 
     export class Dropdown<OPTION_DISPLAY_VALUE> extends api.dom.FormInputEl {
 
         private icon: api.dom.ImgEl;
+
+        private typeAhead: boolean = true;
 
         private dropdownHandle: DropdownHandle;
 
@@ -56,16 +61,23 @@ module api.ui.selector.dropdown {
                 this.appendChild(this.icon);
             }
 
+            if (config.disableFilter) {
+                this.typeAhead = false;
+            }
+
             this.input = new DropdownOptionFilterInput();
+            this.input.setVisible(this.typeAhead);
             this.appendChild(this.input);
 
+            this.selectedOptionView = new SelectedOptionView<OPTION_DISPLAY_VALUE>(this.optionDisplayValueViewer, config.skipExpandOnClick);
+            this.selectedOptionView.hide();
+            this.appendChild(this.selectedOptionView);
 
             this.dropdownHandle = new DropdownHandle();
             this.appendChild(this.dropdownHandle);
-            var filter = this.defaultFilter;
-            if (config.filter) {
-                filter = config.filter;
-            }
+
+            var filter = config.filter || this.defaultFilter;
+
             this.dropdownList = new DropdownList(<DropdownListConfig<OPTION_DISPLAY_VALUE>>{
                 maxHeight: 200,
                 width: this.input.getEl().getWidth(),
@@ -83,13 +95,9 @@ module api.ui.selector.dropdown {
 
             this.appendChild(this.dropdownList.getEmptyDropdown());
             this.appendChild(this.dropdownList.getDropdownGrid().getElement());
-            this.selectedOptionView = new SelectedOptionView<OPTION_DISPLAY_VALUE>(this.optionDisplayValueViewer);
-            this.selectedOptionView.hide();
-            this.appendChild(this.selectedOptionView);
 
             this.selectedOptionView.onOpenDropdown(() => {
                 this.showDropdown();
-                this.dropdownList.navigateToFirstRowIfNotActive();
                 this.input.giveFocus();
             });
 
@@ -106,10 +114,10 @@ module api.ui.selector.dropdown {
         }
 
         reset() {
+            this.input.setValue("");
             this.input.show();
             this.selectedOptionView.hide();
             this.selectedOptionView.resetOption();
-            this.dropdownHandle.show();
         }
 
         private defaultFilter(option: Option<OPTION_DISPLAY_VALUE>, args: any) {
@@ -158,10 +166,10 @@ module api.ui.selector.dropdown {
         }
 
         showDropdown() {
-
-            this.selectedOptionView.hide();
-            this.input.show();
-            this.dropdownHandle.show();
+            if (this.typeAhead) {
+                this.input.show();
+                this.selectedOptionView.hide();
+            }
 
             this.doUpdateDropdownTopPositionAndWidth();
             this.dropdownList.showDropdown([this.getSelectedOption()]);
@@ -173,18 +181,15 @@ module api.ui.selector.dropdown {
         }
 
         hideDropdown() {
-
             if (this.selectedOptionView.getOption()) {
                 this.input.hide();
-                this.dropdownHandle.hide();
                 this.selectedOptionView.show();
-            } else {
-                this.selectedOptionView.hide();
-                this.input.show();
-                this.dropdownHandle.up();
-                this.dropdownHandle.show();
             }
-
+            else if (this.typeAhead) {
+                this.input.show();
+                this.selectedOptionView.hide();
+            }
+            this.dropdownHandle.up();
             this.dropdownList.hideDropdown();
         }
 
@@ -282,15 +287,12 @@ module api.ui.selector.dropdown {
 
             this.dropdownHandle.onClicked((event: any) => {
 
-                this.dropdownList.navigateToFirstRowIfNotActive();
-
                 if (this.isDropdownShown()) {
                     this.hideDropdown();
-                    this.giveFocus();
                 } else {
                     this.showDropdown();
-                    this.giveFocus();
                 }
+                this.giveFocus();
             });
 
             this.input.onValueChanged((event: api.ui.ValueChangedEvent) => {
@@ -305,8 +307,6 @@ module api.ui.selector.dropdown {
             });
 
             this.input.onDblClicked((event: MouseEvent) => {
-
-                this.dropdownList.navigateToFirstRowIfNotActive();
 
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
@@ -323,7 +323,7 @@ module api.ui.selector.dropdown {
                     return;
                 }
 
-                this.dropdownList.navigateToFirstRowIfNotActive();
+                //this.dropdownList.navigateToFirstRowIfNotActive();
 
                 if (!this.isDropdownShown()) {
                     this.showDropdown();

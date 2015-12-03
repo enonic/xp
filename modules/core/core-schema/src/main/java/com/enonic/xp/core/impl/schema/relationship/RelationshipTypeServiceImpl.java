@@ -1,23 +1,22 @@
 package com.enonic.xp.core.impl.schema.relationship;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
-import org.osgi.service.component.ComponentContext;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.core.impl.schema.SchemaHelper;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
@@ -25,93 +24,84 @@ import com.enonic.xp.schema.relationship.RelationshipTypes;
 
 @Component(immediate = true)
 public final class RelationshipTypeServiceImpl
-    implements RelationshipTypeService, BundleListener
+    implements RelationshipTypeService, ApplicationInvalidator
 {
-    private final Map<ApplicationKey, RelationshipTypes> relationshipTypesMap;
+    private final BuiltinRelationshipTypes builtInTypes;
+
+    private final Map<RelationshipTypeName, RelationshipType> map;
 
     private ApplicationService applicationService;
 
-    private BundleContext context;
+    private ResourceService resourceService;
 
     public RelationshipTypeServiceImpl()
     {
-        this.relationshipTypesMap = Maps.newConcurrentMap();
-    }
-
-    @Activate
-    public void start( final ComponentContext context )
-    {
-        this.context = context.getBundleContext();
-        this.context.addBundleListener( this );
-    }
-
-    @Deactivate
-    public void stop()
-    {
-        this.context.removeBundleListener( this );
+        this.map = Maps.newConcurrentMap();
+        this.builtInTypes = new BuiltinRelationshipTypes();
     }
 
     @Override
     public RelationshipType getByName( final RelationshipTypeName name )
     {
-        final RelationshipTypes relationshipTypes = getByApplication( name.getApplicationKey() );
-        return relationshipTypes.get( name );
+        return this.map.computeIfAbsent( name, this::load );
     }
+
+    private boolean isSystem( final RelationshipTypeName name )
+    {
+        return SchemaHelper.isSystem( name.getApplicationKey() );
+    }
+
+    private RelationshipType load( final RelationshipTypeName name )
+    {
+        if ( isSystem( name ) )
+        {
+            return this.builtInTypes.getAll().get( name );
+        }
+
+        return new RelationshipTypeLoader( this.resourceService ).load( name );
+    }
+
 
     @Override
     public RelationshipTypes getAll()
     {
-        final Set<RelationshipType> relationshipTypeList = Sets.newLinkedHashSet();
+        final Set<RelationshipType> list = Sets.newLinkedHashSet();
+        list.addAll( this.builtInTypes.getAll().getList() );
 
-        //Gets the default RelationshipTypes
-        final RelationshipTypes systemRelationshipTypes = getByApplication( ApplicationKey.SYSTEM );
-        relationshipTypeList.addAll( systemRelationshipTypes.getList() );
-
-        //Gets for each application the RelationshipTypes
-        for ( Application application : this.applicationService.getAllApplications() )
+        for ( final Application application : this.applicationService.getAllApplications() )
         {
-            final RelationshipTypes relationshipTypes = getByApplication( application.getKey() );
-            relationshipTypeList.addAll( relationshipTypes.getList() );
+            final RelationshipTypes types = getByApplication( application.getKey() );
+            list.addAll( types.getList() );
         }
 
-        return RelationshipTypes.from( relationshipTypeList );
+        return RelationshipTypes.from( list );
     }
 
     @Override
-    public RelationshipTypes getByApplication( final ApplicationKey applicationKey )
+    public RelationshipTypes getByApplication( final ApplicationKey key )
     {
-        return relationshipTypesMap.computeIfAbsent( applicationKey, this::loadByApplication );
+        if ( SchemaHelper.isSystem( key ) )
+        {
+            return this.builtInTypes.getByApplication( key );
+        }
+
+        final List<RelationshipType> list = Lists.newArrayList();
+        for ( final RelationshipTypeName name : findNames( key ) )
+        {
+            final RelationshipType type = getByName( name );
+            if ( type != null )
+            {
+                list.add( type );
+            }
+
+        }
+
+        return RelationshipTypes.from( list );
     }
 
-    private RelationshipTypes loadByApplication( final ApplicationKey applicationKey )
+    private List<RelationshipTypeName> findNames( final ApplicationKey key )
     {
-        RelationshipTypes relationshipTypes = null;
-
-        //If the application is the default application
-        if ( ApplicationKey.SYSTEM.equals( applicationKey ) )
-        {
-            //loads the default relationship types
-            final BuiltinRelationshipTypeLoader builtinRelationshipTypeLoader = new BuiltinRelationshipTypeLoader();
-            relationshipTypes = builtinRelationshipTypeLoader.load();
-        }
-        else
-        {
-            //Else, loads the corresponding bundle relation types
-            final Application application = this.applicationService.getApplication( applicationKey );
-            if ( application != null && application.isStarted() )
-            {
-                final BundleRelationshipTypeLoader bundleRelationshipTypeLoader =
-                    new BundleRelationshipTypeLoader( application.getBundle() );
-                relationshipTypes = bundleRelationshipTypeLoader.load();
-            }
-        }
-
-        if ( relationshipTypes == null )
-        {
-            relationshipTypes = RelationshipTypes.empty();
-        }
-
-        return relationshipTypes;
+        return new RelationshipTypeLoader( this.resourceService ).findNames( key );
     }
 
     @Reference
@@ -120,12 +110,15 @@ public final class RelationshipTypeServiceImpl
         this.applicationService = applicationService;
     }
 
-    @Override
-    public void bundleChanged( final BundleEvent event )
+    @Reference
+    public void setResourceService( final ResourceService resourceService )
     {
-        if ( BundleEvent.STARTED == event.getType() || BundleEvent.STOPPED == event.getType() )
-        {
-            this.relationshipTypesMap.remove( ApplicationKey.from( event.getBundle() ) );
-        }
+        this.resourceService = resourceService;
+    }
+
+    @Override
+    public void invalidate( final ApplicationKey key )
+    {
+        this.map.clear();
     }
 }

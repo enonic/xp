@@ -55,9 +55,7 @@ import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.content.GetContentTypesParams;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
@@ -615,9 +613,6 @@ public class ContentResourceTest
     public void create_content_exception()
         throws Exception
     {
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "myapplication:my-type" ) ) );
-
         IllegalArgumentException e = new IllegalArgumentException( "Exception occured." );
 
         Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ) ) ).thenThrow( e );
@@ -632,9 +627,6 @@ public class ContentResourceTest
     public void create_content_success()
         throws Exception
     {
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "myapplication:my-type" ) ) );
-
         Content content = createContent( "content-id", "content-path", "myapplication:content-type" );
         Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ) ) ).thenReturn( content );
 
@@ -650,9 +642,6 @@ public class ContentResourceTest
     public void update_content_failure()
         throws Exception
     {
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "myapplication:my-type" ) ) );
-
         Exception e = new ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_DRAFT );
 
         Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
@@ -669,9 +658,6 @@ public class ContentResourceTest
     public void update_content_nothing_updated()
         throws Exception
     {
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "myapplication:my-type" ) ) );
-
         Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
         Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
@@ -688,9 +674,6 @@ public class ContentResourceTest
     public void update_content_success()
         throws Exception
     {
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "myapplication:my-type" ) ) );
-
         Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
         Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
@@ -702,7 +685,6 @@ public class ContentResourceTest
 
         assertJson( "update_content_success.json", jsonString );
     }
-
 
     @Test
     public void duplicate()
@@ -799,9 +781,6 @@ public class ContentResourceTest
     public void setChildOrder()
         throws Exception
     {
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "myapplication:my-type" ) ) );
-
         Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
         Mockito.when( contentService.setChildOrder( Mockito.isA( SetContentChildOrderParams.class ) ) ).thenReturn( content );
 
@@ -818,9 +797,6 @@ public class ContentResourceTest
     public void reorderChildrenContents()
         throws Exception
     {
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "myapplication:my-type" ) ) );
-
         Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
         content = Content.create( content ).childOrder( ChildOrder.defaultOrder() ).build();
         Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).thenReturn( content );
@@ -849,9 +825,6 @@ public class ContentResourceTest
     public void resortReorderChildrenContents()
         throws Exception
     {
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "myapplication:my-type" ) ) );
-
         Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
         content = Content.create( content ).childOrder( ChildOrder.defaultOrder() ).build();
         Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).thenReturn( content );

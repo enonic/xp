@@ -7,26 +7,24 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
-import org.osgi.service.component.ComponentContext;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.core.impl.schema.SchemaHelper;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.InlineMixin;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -35,109 +33,83 @@ import com.enonic.xp.schema.mixin.Mixins;
 
 @Component(immediate = true)
 public final class MixinServiceImpl
-    implements MixinService, BundleListener
+    implements MixinService, ApplicationInvalidator
 {
-    private final Map<ApplicationKey, Mixins> map;
+    private final BuiltinMixinsTypes builtInTypes;
+
+    private final Map<MixinName, Mixin> map;
 
     private ApplicationService applicationService;
 
-    private BundleContext context;
+    private ResourceService resourceService;
 
     public MixinServiceImpl()
     {
         this.map = Maps.newConcurrentMap();
-    }
-
-    @Activate
-    public void start( final ComponentContext context )
-    {
-        this.context = context.getBundleContext();
-        this.context.addBundleListener( this );
-    }
-
-    @Deactivate
-    public void stop()
-    {
-        this.context.removeBundleListener( this );
+        this.builtInTypes = new BuiltinMixinsTypes();
     }
 
     @Override
     public Mixin getByName( final MixinName name )
     {
-        return getByApplication( name.getApplicationKey() ).getMixin( name );
+        return this.map.computeIfAbsent( name, this::load );
     }
 
-    @Override
-    public Mixin getByLocalName( final String localName )
+    private boolean isSystem( final MixinName name )
     {
-        return getAll().
-            stream().
-            filter( mixin -> mixin.getName().getLocalName().equals( localName ) ).
-            findFirst().
-            orElse( null );
+        return SchemaHelper.isSystem( name.getApplicationKey() );
+    }
+
+    private Mixin load( final MixinName name )
+    {
+        if ( isSystem( name ) )
+        {
+            return this.builtInTypes.getAll().getMixin( name );
+        }
+
+        return new MixinLoader( this.resourceService ).load( name );
     }
 
     @Override
     public Mixins getAll()
     {
-        final Set<Mixin> mixinList = Sets.newLinkedHashSet();
+        final Set<Mixin> list = Sets.newLinkedHashSet();
+        list.addAll( this.builtInTypes.getAll().getList() );
 
-        //Gets builtin mixins
-        for ( ApplicationKey systemReservedApplicationKey : ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS )
+        for ( final Application application : this.applicationService.getAllApplications() )
         {
-            final Mixins mixins = getByApplication( systemReservedApplicationKey );
-            mixinList.addAll( mixins.getList() );
+            final Mixins types = getByApplication( application.getKey() );
+            list.addAll( types.getList() );
         }
 
-        //Gets application mixins
-        for ( Application application : this.applicationService.getAllApplications() )
-        {
-            final Mixins mixins = getByApplication( application.getKey() );
-            mixinList.addAll( mixins.getList() );
-        }
-
-        return Mixins.from( mixinList );
+        return Mixins.from( list );
     }
 
     @Override
-    public Mixins getByApplication( final ApplicationKey applicationKey )
+    public Mixins getByApplication( final ApplicationKey key )
     {
-        return this.map.computeIfAbsent( applicationKey, this::loadByApplication );
-    }
-
-    private Mixins loadByApplication( final ApplicationKey applicationKey )
-    {
-        Mixins mixins = null;
-
-        if ( ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( applicationKey ) )
+        if ( SchemaHelper.isSystem( key ) )
         {
-            mixins = new BuiltinMixinsLoader().loadByApplication( applicationKey );
+            return this.builtInTypes.getByApplication( key );
         }
-        else
+
+        final List<Mixin> list = Lists.newArrayList();
+        for ( final MixinName name : findNames( key ) )
         {
-            final Application application = this.applicationService.getApplication( applicationKey );
-            if ( application != null && application.isStarted() )
+            final Mixin type = getByName( name );
+            if ( type != null )
             {
-                final MixinLoader mixinLoader = new MixinLoader( application.getBundle() );
-                mixins = mixinLoader.loadMixins();
+                list.add( type );
             }
+
         }
 
-        if ( mixins == null )
-        {
-            mixins = Mixins.empty();
-        }
-
-        return mixins;
+        return Mixins.from( list );
     }
 
-    @Override
-    public void bundleChanged( final BundleEvent event )
+    private List<MixinName> findNames( final ApplicationKey key )
     {
-        if ( BundleEvent.STARTED == event.getType() || BundleEvent.STOPPED == event.getType() )
-        {
-            this.map.remove( ApplicationKey.from( event.getBundle() ) );
-        }
+        return new MixinLoader( this.resourceService ).findNames( key );
     }
 
     @Override
@@ -154,11 +126,7 @@ public final class MixinServiceImpl
     {
         final Form.Builder transformedForm = Form.create();
         final List<FormItem> transformedFormItems = transformFormItems( form );
-
-        for ( final FormItem formItem : transformedFormItems )
-        {
-            transformedForm.addFormItem( formItem );
-        }
+        transformedFormItems.forEach( transformedForm::addFormItem );
         return transformedForm.build();
     }
 
@@ -211,4 +179,15 @@ public final class MixinServiceImpl
         this.applicationService = applicationService;
     }
 
+    @Reference
+    public void setResourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
+    }
+
+    @Override
+    public void invalidate( final ApplicationKey key )
+    {
+        this.map.clear();
+    }
 }

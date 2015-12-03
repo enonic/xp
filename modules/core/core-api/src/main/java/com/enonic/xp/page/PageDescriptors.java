@@ -11,7 +11,6 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class PageDescriptors
     extends AbstractImmutableEntityList<PageDescriptor>
 {
-
     private PageDescriptors( final ImmutableList<PageDescriptor> list )
     {
         super( list );
@@ -37,5 +36,4 @@ public final class PageDescriptors
     {
         return new PageDescriptors( ImmutableList.copyOf( pageDescriptors ) );
     }
-
 }

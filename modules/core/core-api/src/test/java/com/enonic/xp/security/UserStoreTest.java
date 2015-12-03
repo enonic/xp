@@ -39,4 +39,33 @@ public class UserStoreTest
         assertEquals( userStoreKey, userStoreKey2 );
         assertEquals( "myUserStore", userStoreKey.toString() );
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidUserStoreKeyCharacter1()
+        throws Exception
+    {
+        UserStoreKey.from( "my<UserStore" );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidUserStoreKeyCharacter2()
+        throws Exception
+    {
+        UserStoreKey.from( "myUser>Store" );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidUserStoreKeyCharacter3()
+        throws Exception
+    {
+        UserStoreKey.from( "myUser\"Store" );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidUserStoreKeyCharacter4()
+        throws Exception
+    {
+        UserStoreKey.from( "myUserSt'ore" );
+    }
+
 }

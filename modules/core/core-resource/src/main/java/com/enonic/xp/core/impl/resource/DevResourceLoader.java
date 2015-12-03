@@ -33,6 +33,12 @@ final class DevResourceLoader
         return this.delegate.getResource( app, key );
     }
 
+    @Override
+    public ResourceKeys findFiles( final Application app, final String path, final String ext, final boolean recursive )
+    {
+        return this.delegate.findFiles( app, path, ext, recursive );
+    }
+
     public ResourceKeys findFolders( final Application app, final String path )
     {
         return this.delegate.findFolders( app, path );

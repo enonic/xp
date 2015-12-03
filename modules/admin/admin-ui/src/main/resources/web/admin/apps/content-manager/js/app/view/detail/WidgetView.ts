@@ -49,7 +49,7 @@ module app.view.detail {
             if (!this.isUrlBased()) {
                 return wemQ.resolve(null);
             }
-            var path = content.getPath().getFirstElement();
+            var path = content.getPath().toString();
             return widgetItemView.setUrl(this.widget.getUrl(), path);
         }
 
@@ -144,7 +144,7 @@ module app.view.detail {
         }
 
         private hasDynamicHeight(): boolean {
-            return (this.getEl().getHeight() == 0 && this.isUrlBased() && this.isActive());
+            return this.isUrlBased() && this.isActive();
         }
 
         private redoLayout() {

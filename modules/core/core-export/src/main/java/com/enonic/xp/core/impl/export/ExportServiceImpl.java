@@ -59,6 +59,8 @@ public class ExportServiceImpl
             dryRun( params.isDryRun() ).
             importNodeIds( params.isImportNodeids() ).
             importPermissions( params.isImportPermissions() ).
+            xslt( params.getXslt() ).
+            xsltParams( params.getXsltParams() ).
             build().
             execute();
     }

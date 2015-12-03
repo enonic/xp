@@ -21,8 +21,6 @@ public class ResourceServiceImplTest
 
     private Application app;
 
-    private ResourceLoader mockLoader;
-
     private Resource mockResource;
 
     @Before
@@ -49,13 +47,14 @@ public class ResourceServiceImplTest
 
     private void mockLoader()
     {
-        this.mockLoader = Mockito.mock( ResourceLoader.class );
+        final ResourceLoader mockLoader = Mockito.mock( ResourceLoader.class );
         this.mockResource = Mockito.mock( Resource.class );
 
-        Mockito.when( this.mockLoader.getResource( Mockito.any(), Mockito.any() ) ).thenReturn( this.mockResource );
-        Mockito.when( this.mockLoader.findFolders( Mockito.any(), Mockito.any() ) ).thenReturn( ResourceKeys.from( "myapp:/a" ) );
+        Mockito.when( mockLoader.getResource( Mockito.any(), Mockito.any() ) ).thenReturn( this.mockResource );
+        Mockito.when( mockLoader.findFolders( Mockito.any(), Mockito.any() ) ).thenReturn( ResourceKeys.from( "myapp:/a" ) );
+        Mockito.when( mockLoader.findFiles( this.app, "/", "xml", true ) ).thenReturn( ResourceKeys.from( "myapp:/a/b.xml" ) );
 
-        this.resourceService.resourceLoader = this.mockLoader;
+        this.resourceService.resourceLoader = mockLoader;
     }
 
     @Test
@@ -95,6 +94,27 @@ public class ResourceServiceImplTest
         Mockito.when( this.app.isStarted() ).thenReturn( false );
 
         final ResourceKeys keys = this.resourceService.findFolders( this.appKey, "/" );
+        assertNotNull( keys );
+        assertEquals( 0, keys.getSize() );
+    }
+
+    @Test
+    public void findFiles()
+    {
+        mockLoader();
+
+        final ResourceKeys keys = this.resourceService.findFiles( this.appKey, "/", "xml", true );
+        assertNotNull( keys );
+        assertEquals( 1, keys.getSize() );
+    }
+
+    @Test
+    public void findFiles_notActive()
+    {
+        mockLoader();
+        Mockito.when( this.app.isStarted() ).thenReturn( false );
+
+        final ResourceKeys keys = this.resourceService.findFiles( this.appKey, "/", "xml", true );
         assertNotNull( keys );
         assertEquals( 0, keys.getSize() );
     }

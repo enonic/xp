@@ -121,4 +121,32 @@ public class PrincipalKeyTest
     {
         PrincipalKey.from( "anonymous:myUserStore:anonymous" );
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidCharactersInKey1()
+        throws Exception
+    {
+        PrincipalKey.from( "user:my<User" );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidCharactersInKey2()
+        throws Exception
+    {
+        PrincipalKey.from( "user:my>User" );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidCharactersInKey3()
+        throws Exception
+    {
+        PrincipalKey.from( "user:my\"User" );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidCharactersInKey4()
+        throws Exception
+    {
+        PrincipalKey.from( "user:my'<User" );
+    }
 }

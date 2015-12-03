@@ -23,6 +23,7 @@ module app.browse {
     import ActiveDetailsPanelsManager = app.view.detail.ActiveDetailsPanelManager;
     import NonMobileDetailsPanelsManager = app.view.detail.NonMobileDetailsPanelsManager;
     import NonMobileDetailsPanelsManagerBuilder = app.view.detail.NonMobileDetailsPanelsManagerBuilder;
+    import BatchContentServerEvent = api.content.BatchContentServerEvent;
 
     export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
@@ -152,12 +153,12 @@ module app.browse {
 
             var contentPanelsAndDetailPanel: api.ui.panel.SplitPanel = new api.ui.panel.SplitPanelBuilder(this.getFilterAndContentGridAndBrowseSplitPanel(),
                 this.defaultDockedDetailsPanel).
-                setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).
-                setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
-                setSecondPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
-                setAnimationDelay(600).
-                setSecondPanelShouldSlideRight(true).
-                build();
+            setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).
+            setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
+            setSecondPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
+            setAnimationDelay(600).
+            setSecondPanelShouldSlideRight(true).
+            build();
 
             contentPanelsAndDetailPanel.addClass("split-panel-with-details");
             contentPanelsAndDetailPanel.setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL);
@@ -188,12 +189,12 @@ module app.browse {
                     var browseItems: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus>[] = this.getBrowseItemPanel().getItems();
                     if (browseItems.length == 1) {
                         new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItems[0].getId())).sendAndParse().
-                            then((renderable: boolean) => {
-                                var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItems[0].toViewItem();
-                                item.setRenderable(renderable);
-                                this.mobileContentItemStatisticsPanel.setItem(item);
-                                this.mobileBrowseActions.updateActionsEnabledState(browseItems);
-                            });
+                        then((renderable: boolean) => {
+                            var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItems[0].toViewItem();
+                            item.setRenderable(renderable);
+                            this.mobileContentItemStatisticsPanel.setItem(item);
+                            this.mobileBrowseActions.updateActionsEnabledState(browseItems);
+                        });
                     }
                 }
             });
@@ -223,10 +224,10 @@ module app.browse {
                     var data = node.getData();
                     if (!!data && !!data.getContentSummary()) {
                         var item = new BrowseItem<ContentSummaryAndCompareStatus>(data).
-                            setId(data.getId()).
-                            setDisplayName(data.getContentSummary().getDisplayName()).
-                            setPath(data.getContentSummary().getPath().toString()).
-                            setIconUrl(new ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
+                        setId(data.getId()).
+                        setDisplayName(data.getContentSummary().getDisplayName()).
+                        setPath(data.getContentSummary().getPath().toString()).
+                        setIconUrl(new ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
                         browseItems.push(item);
                     }
                 }
@@ -256,13 +257,13 @@ module app.browse {
              */
             var handler = this.contentServerEventHandler.bind(this);
 
-            ContentServerEvent.on(handler);
+            api.content.BatchContentServerEvent.on(handler);
             this.onRemoved(() => {
-                ContentServerEvent.un(handler);
+                api.content.BatchContentServerEvent.un(handler);
             });
         }
 
-        private contentServerEventHandler(event: ContentServerEvent) {
+        private contentServerEventHandler(event: BatchContentServerEvent) {
             // TODO: IMPORTANT! Publishing multiple items may generate repeated event.
             /*
              * When handling the DELETE-CREATE sequence, we need to remember the removed nodes,
@@ -271,7 +272,10 @@ module app.browse {
              * The ContentPath of all of the children elements need to be updated too.
              */
 
-            var changes = event.getContentChanges();
+            var changes = [];
+            event.getEvents().forEach((event) => {
+                changes = changes.concat(event.getContentChanges());
+            });
 
             var deferred = wemQ.defer<ContentChangeResult>(),
                 promise = <wemQ.Promise<ContentChangeResult>>deferred.promise;
@@ -288,7 +292,6 @@ module app.browse {
                     promise = this.handleContentRenamed(change, promise, changes);
                     break;
                 case ContentServerChangeType.DELETE:
-                    promise = this.handleContentDeleted(change, promise, changes);
                     break;
                 case ContentServerChangeType.PENDING:
                     promise = this.handleContentPending(change, promise, changes);
@@ -310,6 +313,13 @@ module app.browse {
                 }
             });
 
+            switch (event.getType()) { // move here events who needs in batch hadling
+            case ContentServerChangeType.DELETE:
+                promise = this.handleContentDeleted(changes, promise);
+                break;
+            }
+
+
             deferred.resolve(null);
         }
 
@@ -320,66 +330,66 @@ module app.browse {
                 var createResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths(), true);
 
                 return ContentSummaryAndCompareStatusFetcher.
-                    fetchByPaths(createResult.map((el) => {
-                        return el.getAltPath();
-                    })).
-                    then((data: ContentSummaryAndCompareStatus[]) => {
-                        var isFiltered = this.contentTreeGrid.getRoot().isFiltered(),
-                            nodes: TreeNode<ContentSummaryAndCompareStatus>[] = [];
+                fetchByPaths(createResult.map((el) => {
+                    return el.getAltPath();
+                })).
+                then((data: ContentSummaryAndCompareStatus[]) => {
+                    var isFiltered = this.contentTreeGrid.getRoot().isFiltered(),
+                        nodes: TreeNode<ContentSummaryAndCompareStatus>[] = [];
 
-                        data.forEach((el) => {
-                            for (var i = 0; i < createResult.length; i++) {
-                                if (el.getContentSummary().getPath().isChildOf(createResult[i].getPath())) {
-                                    if (result && result.getChangeType() === ContentServerChangeType.RENAME) {
-                                        var premerged = result.getResult().map((el) => {
-                                            return el.getNodes();
-                                        });
-                                        // merge array of nodes arrays
-                                        nodes = nodes.concat.apply(nodes, premerged);
-                                        nodes.forEach((node) => {
-                                            if (node.getDataId() === el.getId()) {
-                                                node.setData(el);
-                                                node.clearViewers();
-                                                this.contentTreeGrid.xUpdatePathsInChildren(node);
-                                            }
-                                        });
-                                    } else {
-                                        this.contentTreeGrid.xAppendContentNodes(
-                                            createResult[i].getNodes().map((node) => {
-                                                return new api.content.TreeNodeParentOfContent(el, node);
-                                            }),
-                                            !isFiltered
-                                        ).then((results) => {
-                                                nodes = nodes.concat(results);
-                                            });
-                                    }
-                                    break;
+                    data.forEach((el) => {
+                        for (var i = 0; i < createResult.length; i++) {
+                            if (el.getContentSummary().getPath().isChildOf(createResult[i].getPath())) {
+                                if (result && result.getChangeType() === ContentServerChangeType.RENAME) {
+                                    var premerged = result.getResult().map((el) => {
+                                        return el.getNodes();
+                                    });
+                                    // merge array of nodes arrays
+                                    nodes = nodes.concat.apply(nodes, premerged);
+                                    nodes.forEach((node) => {
+                                        if (node.getDataId() === el.getId()) {
+                                            node.setData(el);
+                                            node.clearViewers();
+                                            this.contentTreeGrid.xUpdatePathsInChildren(node);
+                                        }
+                                    });
+                                } else {
+                                    this.contentTreeGrid.xAppendContentNodes(
+                                        createResult[i].getNodes().map((node) => {
+                                            return new api.content.TreeNodeParentOfContent(el, node);
+                                        }),
+                                        !isFiltered
+                                    ).then((results) => {
+                                        nodes = nodes.concat(results);
+                                    });
                                 }
+                                break;
                             }
-                        });
-
-                        // Read the notice in the header of the `contentServerEventHandler()` method
-                        if (result && result.getChangeType() === ContentServerChangeType.DELETE) {
-                            var ids = result.getResult().map((el) => {
-                                return el.getId();
-                            });
-                            nodes.forEach((node) => {
-                                var index = ids.indexOf(node.getDataId());
-                                if (index >= 0) {
-                                    this.contentTreeGrid.xPopulateWithChildren(result.getResult()[index].getNodes()[0], node);
-                                }
-                            });
-                        }
-                        this.contentTreeGrid.initAndRender();
-
-                        isFiltered = true;
-                        if (isFiltered) {
-                            this.setFilterPanelRefreshNeeded(true);
-                            window.setTimeout(() => {
-                                this.refreshFilter();
-                            }, 1000);
                         }
                     });
+
+                    // Read the notice in the header of the `contentServerEventHandler()` method
+                    if (result && result.getChangeType() === ContentServerChangeType.DELETE) {
+                        var ids = result.getResult().map((el) => {
+                            return el.getId();
+                        });
+                        nodes.forEach((node) => {
+                            var index = ids.indexOf(node.getDataId());
+                            if (index >= 0) {
+                                this.contentTreeGrid.xPopulateWithChildren(result.getResult()[index].getNodes()[0], node);
+                            }
+                        });
+                    }
+                    this.contentTreeGrid.initAndRender();
+
+                    isFiltered = true;
+                    if (isFiltered) {
+                        this.setFilterPanelRefreshNeeded(true);
+                        window.setTimeout(() => {
+                            this.refreshFilter();
+                        }, 1000);
+                    }
+                });
             });
             return promise;
         }
@@ -399,28 +409,28 @@ module app.browse {
                         }));
                     });
                     return ContentSummaryAndCompareStatusFetcher.
-                        fetchByIds(ids).
-                        then((data: ContentSummaryAndCompareStatus[]) => {
-                            var results = [];
-                            data.forEach((el) => {
-                                for (var i = 0; i < updateResult.length; i++) {
-                                    if (updateResult[i].getId() === el.getId()) {
-                                        updateResult[i].updateNodeData(el);
+                    fetchByIds(ids).
+                    then((data: ContentSummaryAndCompareStatus[]) => {
+                        var results = [];
+                        data.forEach((el) => {
+                            for (var i = 0; i < updateResult.length; i++) {
+                                if (updateResult[i].getId() === el.getId()) {
+                                    updateResult[i].updateNodeData(el);
 
-                                        this.updateStatisticsPreview(el); // update preview item
+                                    this.updateStatisticsPreview(el); // update preview item
 
-                                        this.updateItemInDetailsPanelIfNeeded(el);
+                                    this.updateItemInDetailsPanelIfNeeded(el);
 
-                                        results.push(updateResult[i]);
-                                        break;
-                                    }
+                                    results.push(updateResult[i]);
+                                    break;
                                 }
-                            });
-                            this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems()); // update actions state in case of permission changes
-                            this.mobileBrowseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
-
-                            return this.contentTreeGrid.xPlaceContentNodes(results);
+                            }
                         });
+                        this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems()); // update actions state in case of permission changes
+                        this.mobileBrowseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
+
+                        return this.contentTreeGrid.xPlaceContentNodes(results);
+                    });
                 });
             }
 
@@ -437,16 +447,19 @@ module app.browse {
             return promise;
         }
 
-        private handleContentDeleted(change: ContentServerChange, promise: wemQ.Promise<any>,
-                                     changes: ContentServerChange[]): wemQ.Promise<any> {
+        private handleContentDeleted(changes: ContentServerChange[], promise: wemQ.Promise<any>): wemQ.Promise<any> {
 
             promise = promise.then((result: ContentChangeResult) => {
                 // Do not remove renamed elements
                 if (result && result.getChangeType() === ContentServerChangeType.RENAME) {
                     return result;
                 }
+                var paths = [];
+                changes.forEach(change => {
+                    paths = paths.concat(change.getContentPaths());
+                });
 
-                var deleteResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
+                var deleteResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
                 var nodes = deleteResult.map((el) => {
                     return el.getNodes();
                 });
@@ -454,13 +467,18 @@ module app.browse {
                 // merge array of nodes arrays
                 merged = merged.concat.apply(merged, nodes);
 
+                var contentDeletedEvent = new api.content.ContentDeletedEvent();
                 merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
-                    if (node.getData() && node.getData().getContentSummary()) {
+                    var contentSummary = node.getData().getContentSummary();
+                    if (node.getData() && !!contentSummary) {
 
                         this.updateDetailsPanel(null);
-                        new api.content.ContentDeletedEvent(node.getData().getContentSummary().getContentId()).fire();
+                        contentDeletedEvent.addItem(contentSummary.getContentId(), contentSummary.getPath());
                     }
                 });
+                if (!contentDeletedEvent.isEmpty()) {
+                    contentDeletedEvent.fire();
+                }
 
                 this.contentTreeGrid.xDeleteContentNodes(merged);
 
@@ -486,29 +504,33 @@ module app.browse {
                 var pendingResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
                 return ContentSummaryAndCompareStatusFetcher.fetchByPaths(pendingResult.
-                        map((el) => {
-                            return (el.getNodes().length > 0 && el.getNodes()[0].getData())
-                                ? el.getNodes()[0].getData().getContentSummary().getPath()
-                                : null;
-                        }).
-                        filter((el) => {
-                            return el !== null;
-                        })
+                    map((el) => {
+                        return (el.getNodes().length > 0 && el.getNodes()[0].getData())
+                            ? el.getNodes()[0].getData().getContentSummary().getPath()
+                            : null;
+                    }).
+                    filter((el) => {
+                        return el !== null;
+                    })
                 ).then((data: ContentSummaryAndCompareStatus[]) => {
-                        data.forEach((el) => {
-                            for (var i = 0; i < pendingResult.length; i++) {
-                                if (pendingResult[i].getId() === el.getId()) {
-                                    pendingResult[i].updateNodeData(el);
+                    var contentDeletedEvent = new api.content.ContentDeletedEvent();
+                    data.forEach((el) => {
+                        for (var i = 0; i < pendingResult.length; i++) {
+                            if (pendingResult[i].getId() === el.getId()) {
+                                pendingResult[i].updateNodeData(el);
 
-                                    this.updateItemInDetailsPanelIfNeeded(el);
+                                this.updateItemInDetailsPanelIfNeeded(el);
 
-                                    new api.content.ContentDeletedEvent(el.getContentId(), true).fire();
-                                    break;
-                                }
+                                contentDeletedEvent.addPendingItem(el.getContentId(), el.getPath());
+                                break;
                             }
-                        });
-                        this.contentTreeGrid.invalidate();
+                        }
                     });
+                    if (!contentDeletedEvent.isEmpty()) {
+                        contentDeletedEvent.fire();
+                    }
+                    this.contentTreeGrid.invalidate();
+                });
             });
             return promise;
         }
@@ -519,24 +541,24 @@ module app.browse {
                 var publishResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
                 return ContentSummaryAndCompareStatusFetcher.
-                    fetchByPaths(publishResult.map((el) => {
-                        return el.getPath();
-                    })).
-                    then((data: ContentSummaryAndCompareStatus[]) => {
-                        data.forEach((el) => {
-                            for (var i = 0; i < publishResult.length; i++) {
-                                if (publishResult[i].getId() === el.getId()) {
-                                    publishResult[i].updateNodeData(el);
+                fetchByPaths(publishResult.map((el) => {
+                    return el.getPath();
+                })).
+                then((data: ContentSummaryAndCompareStatus[]) => {
+                    data.forEach((el) => {
+                        for (var i = 0; i < publishResult.length; i++) {
+                            if (publishResult[i].getId() === el.getId()) {
+                                publishResult[i].updateNodeData(el);
 
-                                    this.updateItemInDetailsPanelIfNeeded(el);
+                                this.updateItemInDetailsPanelIfNeeded(el);
 
-                                    new api.content.ContentPublishedEvent(el.getContentId(), el.getCompareStatus()).fire();
-                                    break;
-                                }
+                                new api.content.ContentPublishedEvent(el.getContentId(), el.getCompareStatus()).fire();
+                                break;
                             }
-                        });
-                        this.contentTreeGrid.invalidate();
+                        }
                     });
+                    this.contentTreeGrid.invalidate();
+                });
             });
             return promise;
         }
@@ -570,15 +592,15 @@ module app.browse {
 
             if (!!content && !!previewItem && content.getPath().toString() === previewItem.getPath()) {
                 new api.content.page.IsRenderableRequest(el.getContentId()).sendAndParse().
-                    then((renderable: boolean) => {
-                        var item = new BrowseItem<ContentSummaryAndCompareStatus>(content).
-                            setId(content.getId()).
-                            setDisplayName(content.getDisplayName()).
-                            setPath(content.getPath().toString()).
-                            setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve()).
-                            setRenderable(renderable);
-                        this.getBrowseItemPanel().setStatisticsItem(item);
-                    });
+                then((renderable: boolean) => {
+                    var item = new BrowseItem<ContentSummaryAndCompareStatus>(content).
+                    setId(content.getId()).
+                    setDisplayName(content.getDisplayName()).
+                    setPath(content.getPath().toString()).
+                    setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve()).
+                    setRenderable(renderable);
+                    this.getBrowseItemPanel().setStatisticsItem(item);
+                });
             }
         }
 
