@@ -30,7 +30,7 @@ exports.createUserNoEmail = function () {
     var result = auth.createUser({
         userStore: 'myUserStore',
         name: 'userId',
-        displayName: 'user display name',
+        displayName: 'user display name'
     });
 
     var expectedJson = {

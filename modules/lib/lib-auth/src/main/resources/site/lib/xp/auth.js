@@ -134,12 +134,13 @@ exports.changePassword = function (params) {
 
 
 /**
- * Finds principal with given key or null if it doesn't exist.
+ * Returns the principal with the specified key.
  *
  * @example
  * authLib.getPrincipal('principal-key');
  *
  * @param {string} principalKey Principal key to look for.
+ * @returns {object} the principal specified, or null if it doesn't exist.
  */
 exports.getPrincipal = function (principalKey) {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetPrincipalHandler');
@@ -156,6 +157,7 @@ exports.getPrincipal = function (principalKey) {
  * authLib.getMemberships('principal-key');
  *
  * @param {string} principalKey Principal key to retrieve memberships for.
+ * @returns {object[]} Returns the list of principals.
  */
 exports.getMemberships = function (principalKey) {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetMembershipsHandler');
@@ -172,6 +174,7 @@ exports.getMemberships = function (principalKey) {
  * authLib.getMembers('principal-key');
  *
  * @param {string} principalKey Principal key to retrieve members for.
+ * @returns {object[]} Returns the list of principals.
  */
 exports.getMembers = function (principalKey) {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetMembersHandler');
@@ -210,7 +213,7 @@ exports.createUser = function (params) {
 };
 
 /**
- * Modifies user with passed parameters.
+ * Retrieves the user specified and updates it with the changes applied.
  *
  * @example
  * authLib.modifyUser({
@@ -224,19 +227,20 @@ exports.createUser = function (params) {
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Principal key of the user to modify.
- * @param {string} params.editor User editor function to apply to user.
+ * @param {function} params.editor User editor function to apply to user.
+ * @returns {object} the updated user.
  */
 exports.modifyUser = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.ModifyUserHandler');
 
     bean.principalKey = required(params, 'key');
-    bean.editor = __.toScriptValue(params.editor);
+    bean.editor = __.toScriptValue(required(params.editor, 'editor'));
 
     return __.toNativeObject(bean.modifyUser());
 };
 
 /**
- * Creates group from passed parameters.
+ * Creates a group.
  *
  * @example
  * authLib.createGroup({
@@ -261,7 +265,7 @@ exports.createGroup = function (params) {
 };
 
 /**
- * Modifies group with passed parameters.
+ * Retrieves the group specified and updates it with the changes applied.
  *
  * @example
  * authLib.modifyGroup({
@@ -274,13 +278,14 @@ exports.createGroup = function (params) {
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Principal key of the group to modify.
- * @param {string} params.editor Group editor function to apply to group.
+ * @param {function} params.editor Group editor function to apply to group.
+ * @returns {object} the updated group.
  */
 exports.modifyGroup = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.ModifyGroupHandler');
 
     bean.principalKey = required(params, 'key');
-    bean.editor = __.toScriptValue(params.editor);
+    bean.editor = __.toScriptValue(required(params.editor, 'editor'));
 
     return __.toNativeObject(bean.modifyGroup());
 };
@@ -340,6 +345,7 @@ exports.removeMembers = function (principalKey, members) {
  * @param {string} params.count A limit on the number of principals to be returned.
  * @param {string} params.name Name of the principal to look for.
  * @param {string} params.searchText Text to look for in any principal field.
+ * @returns {object} The "total" number of principals matching the search, the "count" of principals included, and an array of "hits" containing the principals.
  */
 exports.findPrincipals = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.FindPrincipalsHandler');

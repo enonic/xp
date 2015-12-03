@@ -68,7 +68,7 @@ public final class ModifyUserHandler
         };
     }
 
-    private void updateUser( final EditableUser target, final Map<?, ?> map )
+    private void updateUser( final EditableUser target, final Map map )
     {
         final String displayName = Converters.convert( map.get( "displayName" ), String.class );
         if ( displayName != null )

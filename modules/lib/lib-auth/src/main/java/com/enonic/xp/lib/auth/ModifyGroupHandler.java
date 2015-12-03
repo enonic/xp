@@ -68,7 +68,7 @@ public final class ModifyGroupHandler
         };
     }
 
-    private void updateGroup( final EditableGroup target, final Map<?, ?> map )
+    private void updateGroup( final EditableGroup target, final Map map )
     {
         final String displayName = Converters.convert( map.get( "displayName" ), String.class );
         if ( displayName != null )
