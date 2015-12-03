@@ -66,6 +66,11 @@ public class AdminApplicationDescriptor
         return key;
     }
 
+    public String getKeyString()
+    {
+        return ApplicationKey.SYSTEM.equals( key.getApplicationKey() ) ? key.getName() : key.toString();
+    }
+
     public String getName()
     {
         return name;

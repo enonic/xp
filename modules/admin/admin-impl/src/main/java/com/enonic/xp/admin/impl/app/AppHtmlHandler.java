@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.admin.app.AdminApplicationDescriptor;
 import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.util.StringTemplate;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
@@ -55,20 +54,22 @@ final class AppHtmlHandler
         return renderApplicationCustomBodyPart( app, assetsUri );
     }
 
-    private String renderSystemCustomBodyPart( final String app, final String assetsUri )
+    private String renderSystemCustomBodyPart( final String adminApplicationKey, final String assetsUri )
     {
         final Map<String, String> model = Maps.newHashMap();
-        model.put( "app", app );
+        model.put( "app", adminApplicationKey );
         model.put( "assetsUri", assetsUri );
 
         return StringTemplate.load( getClass(), "customBodyPart-system.html" ).
             apply( model );
     }
 
-    private String renderApplicationCustomBodyPart( final String app, final String assetsUri )
+    private String renderApplicationCustomBodyPart( final String adminApplicationKey, final String assetsUri )
     {
         final Map<String, String> model = Maps.newHashMap();
-        model.put( "app", app );
+        final String[] adminApplicationKeyValues = adminApplicationKey.split( ":" );
+        model.put( "application", adminApplicationKeyValues[0] );
+        model.put( "adminApplication", adminApplicationKeyValues[1] );
         model.put( "assetsUri", assetsUri );
 
         return StringTemplate.load( getClass(), "customBodyPart-application.html" ).
@@ -77,17 +78,6 @@ final class AppHtmlHandler
 
     private boolean isSystemApplication( final String app )
     {
-        if ( "app-launcher".equals( app ) )
-        {
-            return true;
-        }
-        for ( AdminApplicationDescriptor adminApplicationDescriptor : AdminApplicationDescriptor.SYSTEM_ADMIN_APPLICATIONS )
-        {
-            if ( adminApplicationDescriptor.getKey().getName().equals( app ) )
-            {
-                return true;
-            }
-        }
-        return false;
+        return !app.contains( ":" );
     }
 }

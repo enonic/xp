@@ -5,7 +5,7 @@
         var body = api.dom.Body.get();
         body.appendChild(appBar);
 
-        var linkEl = new api.dom.LinkEl("/admin/portal/admin/draft/features/_/adminapps/com.enonic.app.features/myadminapp")
+        var linkEl = new api.dom.LinkEl("/admin/portal/admin/draft/features/_/adminapps/{{application}}/{{adminApplication}}")
         var onLinkLoaded = function (event) {
             var mainContainer = wemjq(event.target["import"]).find("div")[0];
             if (mainContainer) {
