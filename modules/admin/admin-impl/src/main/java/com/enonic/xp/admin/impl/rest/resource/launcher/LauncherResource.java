@@ -18,6 +18,7 @@ import com.enonic.xp.admin.app.AdminApplicationDescriptor;
 import com.enonic.xp.admin.app.AdminApplicationDescriptorService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.launcher.json.AdminApplicationDescriptorJson;
+import com.enonic.xp.admin.impl.rest.resource.launcher.json.AdminApplicationDescriptorKeyJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -43,7 +44,9 @@ public class LauncherResource
     private AdminApplicationDescriptorJson toJson( final AdminApplicationDescriptor adminApplicationDescriptor )
     {
         final AdminApplicationDescriptorJson jsonEntry = new AdminApplicationDescriptorJson();
-        jsonEntry.key = adminApplicationDescriptor.getKey().getName();
+        jsonEntry.key = new AdminApplicationDescriptorKeyJson();
+        jsonEntry.key.application = adminApplicationDescriptor.getKey().getApplicationKey().toString();
+        jsonEntry.key.name = adminApplicationDescriptor.getKey().getName();
         jsonEntry.name = adminApplicationDescriptor.getName();
         jsonEntry.shortName = adminApplicationDescriptor.getShortName();
         jsonEntry.iconUrl = adminApplicationDescriptor.getIconUrl();

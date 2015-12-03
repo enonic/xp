@@ -14,7 +14,7 @@ module app.launcher {
         }
 
         fromJsonToApplication(json: app.launcher.json.AdminApplicationJson): api.app.Application {
-            return new api.app.Application(json.key, json.name, json.shortName, json.iconUrl);
+            return new api.app.Application(json.key.name, json.name, json.shortName, json.iconUrl);
         }
     }
 }

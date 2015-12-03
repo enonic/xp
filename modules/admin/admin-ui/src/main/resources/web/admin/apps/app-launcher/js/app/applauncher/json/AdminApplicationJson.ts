@@ -1,8 +1,7 @@
 module app.launcher.json {
+    export interface AdminApplicationJson {
 
-    export interface AdminApplicationJson extends api.item.ItemJson {
-
-        key:string;
+        key:AdminApplicationKeyJson;
 
         name:string;
 
