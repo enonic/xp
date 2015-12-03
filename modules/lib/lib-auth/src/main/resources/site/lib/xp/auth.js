@@ -234,7 +234,7 @@ exports.modifyUser = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.ModifyUserHandler');
 
     bean.principalKey = required(params, 'key');
-    bean.editor = __.toScriptValue(required(params.editor, 'editor'));
+    bean.editor = __.toScriptValue(required(params, 'editor'));
 
     return __.toNativeObject(bean.modifyUser());
 };
@@ -285,7 +285,7 @@ exports.modifyGroup = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.ModifyGroupHandler');
 
     bean.principalKey = required(params, 'key');
-    bean.editor = __.toScriptValue(required(params.editor, 'editor'));
+    bean.editor = __.toScriptValue(required(params, 'editor'));
 
     return __.toNativeObject(bean.modifyGroup());
 };
