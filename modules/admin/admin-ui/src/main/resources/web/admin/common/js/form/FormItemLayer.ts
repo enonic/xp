@@ -15,7 +15,7 @@ module api.form {
 
         private parent: FormItemSetOccurrenceView;
 
-        public static debug = true;
+        public static debug: boolean = false;
 
         constructor(context: FormContext) {
             this.context = context;

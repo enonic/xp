@@ -17,8 +17,6 @@ module api.form.inputtype.combobox {
 
         private selectedOptionsView: api.ui.selector.combobox.SelectedOptionsView<string>;
 
-        private ignorePropertyChange: boolean;
-
         constructor(context: api.form.inputtype.InputTypeViewContext) {
             super("combo-box");
             this.addClass("input-type-view");
@@ -71,8 +69,6 @@ module api.form.inputtype.combobox {
             propertyArray.onPropertyRemoved(changeHandler);
             propertyArray.onPropertyIndexChanged(changeHandler);
 
-            this.update(propertyArray);
-
             this.appendChild(this.comboBox);
             this.appendChild(this.selectedOptionsView);
 
@@ -84,12 +80,8 @@ module api.form.inputtype.combobox {
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
             if (!unchangedOnly || !this.comboBox.isDirty()) {
                 return super.update(propertyArray, unchangedOnly).then(() => {
-                    this.comboBox.clearSelection(false, false, true);
 
-                    var valueArray = this.getPropertyArray().getProperties().map((property: Property) => {
-                        return property.getString();
-                    });
-                    this.comboBox.setValues(valueArray, true);
+                    this.comboBox.setValue(this.getValueFromPropertyArray(propertyArray));
                 });
             }
 
@@ -102,7 +94,8 @@ module api.form.inputtype.combobox {
                 selectedOptionsView: this.selectedOptionsView,
                 maximumOccurrences: input.getOccurrences().getMaximum(),
                 optionDisplayValueViewer: new ComboBoxDisplayValueViewer(),
-                hideComboBoxWhenMaxReached: true
+                hideComboBoxWhenMaxReached: true,
+                value: this.getValueFromPropertyArray(this.getPropertyArray())
             });
 
             comboBox.onOptionFilterInputValueChanged((event: api.ui.selector.OptionFilterInputValueChangedEvent<string>) => {

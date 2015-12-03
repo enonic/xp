@@ -55,12 +55,8 @@ module api.schema.content.inputtype {
         }
 
         private onContentTypesLoaded(contentTypeArray: ContentTypeSummary[]): void {
-            var contentTypes = [];
-            this.getPropertyArray().forEach((property: Property) => {
-                contentTypes.push(property.getString());
-            });
 
-            this.combobox.getComboBox().setValues(contentTypes);
+            this.combobox.getComboBox().setValue(this.getValueFromPropertyArray(this.getPropertyArray()));
 
             this.setLayoutInProgress(false);
             this.combobox.unLoaded(this.onContentTypesLoaded);

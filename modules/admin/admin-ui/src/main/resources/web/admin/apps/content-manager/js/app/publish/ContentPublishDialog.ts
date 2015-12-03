@@ -179,7 +179,6 @@ module app.publish {
             };
 
             this.includeChildItemsCheck = new api.ui.Checkbox();
-            this.includeChildItemsCheck.setChecked(false);
             this.includeChildItemsCheck.addClass('include-child-check');
             this.includeChildItemsCheck.onValueChanged(this.includeChildrenCheckedListener);
             this.includeChildItemsCheck.setLabel('Include child items');

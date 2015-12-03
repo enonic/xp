@@ -37,6 +37,8 @@ module api.form {
 
         private blurListeners: {(event: FocusEvent):void}[] = [];
 
+        public static debug: boolean = false;
+
         /**
          * @param context the form context.
          * @param form the form to display.

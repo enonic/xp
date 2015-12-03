@@ -11,6 +11,8 @@ module api.form.inputtype.support {
 
         protected input: api.form.Input;
 
+        protected ignorePropertyChange: boolean;
+
         private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
         constructor(ctx: api.form.inputtype.InputTypeViewContext, className?: string) {
@@ -75,6 +77,14 @@ module api.form.inputtype.support {
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+        }
+
+        protected onValueChanged(property: Property, value: Object, type: ValueType) {
+            this.ignorePropertyChange = true;
+            var newValue = new Value(value, type);
+            property.setValue(newValue);
+            this.validate(false);
+            this.ignorePropertyChange = false;
         }
 
         protected notifyValidityChanged(event: api.form.inputtype.InputValidityChangedEvent) {

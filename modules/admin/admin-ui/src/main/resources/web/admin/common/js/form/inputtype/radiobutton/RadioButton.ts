@@ -97,7 +97,9 @@ module api.form.inputtype.radiobutton {
 
         private createRadioElement(name: string, property: Property): api.ui.RadioGroup {
 
-            var radioGroup = new api.ui.RadioGroup(name);
+
+            var value = property.hasNonNullValue ? property.getString() : undefined;
+            var radioGroup = new api.ui.RadioGroup(name, value);
 
             var options = this.radioButtonOptions;
             var l = options.length;
@@ -106,17 +108,14 @@ module api.form.inputtype.radiobutton {
                 radioGroup.addOption(option.value, option.label);
             }
 
-            if (property.hasNonNullValue()) {
-                radioGroup.setValue(property.getString());
-            }
-
-            radioGroup.onValueChanged((event: api.ui.ValueChangedEvent)=> {
-                property.setValue(this.newValue(event.getNewValue()));
-                this.validate(false);
+            radioGroup.onValueChanged((event: api.ValueChangedEvent)=> {
+                this.onValueChanged(property, event.getNewValue(), ValueTypes.STRING);
             });
 
             property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                this.updateProperty(property, true);
+                if (!this.ignorePropertyChange) {
+                    this.updateProperty(property, true);
+                }
             });
 
             return radioGroup;

@@ -15,17 +15,9 @@ module api.ui.text {
          */
         private allowedKeyCodes: number[] = [8, 9, 46, 39, 37];
 
-        /**
-         * Input value before it was changed by last input event.
-         */
-        private oldValue: string = "";
+        constructor(className?: string, size?: string, originalValue?: string) {
+            super(className, 'text', originalValue);
 
-        private valueChangedListeners: {(event: ValueChangedEvent):void}[] = [];
-
-        constructor(className?: string, size?: string) {
-            super(className);
-
-            this.getEl().setAttribute('type', 'text');
             this.addClass('text-input');
             if (size) {
                 this.addClass(size);
@@ -45,51 +37,19 @@ module api.ui.text {
                     }
                 }
             });
-
-            this.onInput((event: Event) => {
-                if (this.oldValue !== this.getValue()) {  //IE fix of input event fired when input placeholder removed/added on focus/unfocus
-                    this.notifyValueChanged(this.oldValue, this.getValue());
-                    this.oldValue = this.getValue();
-                }
-            });
         }
 
-        static large(className?: string): TextInput {
-            return new TextInput(className, TextInput.LARGE);
+        static large(className?: string, originalValue?: string): TextInput {
+            return new TextInput(className, TextInput.LARGE, originalValue);
         }
 
-        static middle(className?: string): TextInput {
-            return new TextInput(className, TextInput.MIDDLE);
+        static middle(className?: string, originalValue?: string): TextInput {
+            return new TextInput(className, TextInput.MIDDLE, originalValue);
         }
 
-        getOldValue(): string {
-            return this.oldValue;
-        }
-
-        setValue(value: string): TextInput {
-            var oldValue = this.getValue();
+        protected doSetValue(value: string, silent?: boolean) {
             var newValue = this.removeForbiddenChars(value);
-
-            super.setValue(value);
-
-            if (oldValue != newValue) {
-                super.setValue(newValue);
-                this.notifyValueChanged(oldValue, newValue);
-                // save new value to know which value was before input event.
-                this.oldValue = newValue;
-            }
-
-            return this;
-        }
-
-        setName(value: string): TextInput {
-            super.setName(value);
-            return this;
-        }
-
-        setPlaceholder(value: string): TextInput {
-            super.setPlaceholder(value);
-            return this;
+            super.doSetValue(newValue);
         }
 
         setForbiddenCharsRe(re: RegExp): TextInput {
@@ -130,34 +90,14 @@ module api.ui.text {
             this.selectText(pos, pos);
         }
 
-        onValueChanged(listener: (event: ValueChangedEvent)=>void) {
-            this.valueChangedListeners.push(listener);
-        }
-
-        unValueChanged(listener: (event: ValueChangedEvent)=>void) {
-            this.valueChangedListeners = this.valueChangedListeners.filter((currentListener: (event: ValueChangedEvent)=>void) => {
-                return listener != currentListener;
-            });
-        }
-
         updateValidationStatusOnUserInput(isValid: boolean) {
             if (isValid) {
                 this.removeClass("invalid");
-                if (!api.util.StringHelper.isEmpty(this.getValue())) {
-                    this.addClass("valid");
-                } else {
-                    this.removeClass("valid");
-                }
+                this.toggleClass("valid", !api.util.StringHelper.isEmpty(this.getValue()));
             } else {
                 this.removeClass("valid");
                 this.addClass("invalid");
             }
-        }
-
-        private notifyValueChanged(oldValue: string, newValue: string) {
-            this.valueChangedListeners.forEach((listener: (event: ValueChangedEvent)=>void) => {
-                listener.call(this, new ValueChangedEvent(oldValue, newValue));
-            });
         }
 
         private removeForbiddenChars(rawValue: string): string {

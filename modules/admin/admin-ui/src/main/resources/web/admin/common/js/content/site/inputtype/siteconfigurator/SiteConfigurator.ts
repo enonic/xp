@@ -9,7 +9,6 @@ module api.content.site.inputtype.siteconfigurator {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
-    import ValueChangedEvent = api.form.inputtype.support.ValueChangedEvent;
     import InputOccurrences = api.form.inputtype.support.InputOccurrences;
     import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
     import ComboBox = api.ui.selector.combobox.ComboBox;
@@ -30,10 +29,6 @@ module api.content.site.inputtype.siteconfigurator {
         private _displayValidationErrors: boolean;
 
         private formContext: api.content.form.ContentFormContext;
-
-        private siteConfigFormsToDisplay: string[] = [];
-
-        private ignorePropertyChange = false;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("site-configurator");
@@ -59,68 +54,21 @@ module api.content.site.inputtype.siteconfigurator {
 
             this.appendChild(this.comboBox);
 
-            return this.doLoadApplications(propertyArray).then(() => {
+            this.setLayoutInProgress(false);
 
-                this.setLayoutInProgress(false);
+            // 2-way data binding
+            var changeHandler = () => {
+                // don't update when property is changed by myself
+                if (!this.ignorePropertyChange) {
+                    this.update(propertyArray, true);
+                }
+            };
+            propertyArray.onPropertyValueChanged(changeHandler);
+            propertyArray.onPropertyAdded(changeHandler);
+            propertyArray.onPropertyRemoved(changeHandler);
+            propertyArray.onPropertyIndexChanged(changeHandler);
 
-                this.comboBox.onOptionDeselected((removed: SelectedOption<Application>) => {
-                    this.ignorePropertyChange = true;
-
-                    this.getPropertyArray().remove(removed.getIndex());
-
-                    this.ignorePropertyChange = false;
-                    this.validate(false);
-                });
-
-                this.comboBox.onOptionSelected((selectedOption: SelectedOption<Application>) => {
-                    this.ignorePropertyChange = true;
-
-                    var key = selectedOption.getOption().displayValue.getApplicationKey();
-                    if (!key) {
-                        return;
-                    }
-                    var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView>selectedOption.getOptionView();
-                    this.saveToSet(selectedOptionView.getSiteConfig(), selectedOption.getIndex());
-
-                    this.ignorePropertyChange = false;
-                    this.validate(false);
-                });
-
-                this.comboBox.onOptionMoved((selectedOption: SelectedOption<Application>) => {
-                    this.ignorePropertyChange = true;
-
-                    var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView> selectedOption.getOptionView();
-                    this.saveToSet(selectedOptionView.getSiteConfig(), selectedOption.getIndex());
-
-                    this.ignorePropertyChange = false;
-                    this.validate(false);
-                });
-
-                this.comboBox.onSiteConfigFormDisplayed((applicationKey: ApplicationKey, formView: FormView) => {
-                    var indexToRemove = this.siteConfigFormsToDisplay.indexOf(applicationKey.toString());
-                    if (indexToRemove != -1) {
-                        this.siteConfigFormsToDisplay.splice(indexToRemove, 1);
-                    }
-
-                    formView.onValidityChanged((event: FormValidityChangedEvent) => {
-                        this.validate(false);
-                    });
-
-                    this.validate(false);
-                });
-
-                // 2-way data binding
-                var changeHandler = () => {
-                    // don't update when property is changed by myself
-                    if (!this.ignorePropertyChange) {
-                        this.update(propertyArray, true);
-                    }
-                };
-                propertyArray.onPropertyValueChanged(changeHandler);
-                propertyArray.onPropertyAdded(changeHandler);
-                propertyArray.onPropertyRemoved(changeHandler);
-                propertyArray.onPropertyIndexChanged(changeHandler);
-            });
+            return wemQ<void>(null);
         }
 
 
@@ -128,10 +76,8 @@ module api.content.site.inputtype.siteconfigurator {
 
             if (!unchangedOnly || !this.comboBox.isDirty()) {
                 return super.update(propertyArray, unchangedOnly).then(() => {
-
-                    this.comboBox.clearSelection(true);
-
-                    return this.doLoadApplications(propertyArray);
+                    var value = this.getValueFromPropertyArray(propertyArray);
+                    this.comboBox.setValue(value);
                 });
             }
 
@@ -153,40 +99,74 @@ module api.content.site.inputtype.siteconfigurator {
             propertySet.setPropertySetByPath('config', config);
         }
 
-        private doLoadApplications(propertyArray: PropertyArray): wemQ.Promise<void> {
-            this.siteConfigFormsToDisplay.length = 0;
-
-            if (propertyArray.getSize() == 0) {
-                return wemQ<void>(null);
-            } else {
-                var appPromises = [];
-                propertyArray.forEach((property: Property) => {
-
-                    if (property.hasNonNullValue()) {
-                        var siteConfig = SiteConfig.create().fromData(property.getPropertySet()).build();
-                        this.siteConfigFormsToDisplay.push(siteConfig.getApplicationKey().toString());
-
-                        var appPromise = new GetApplicationRequest(siteConfig.getApplicationKey()).sendAndParse().
-                            then((requestedApplication: Application) => {
-                                this.comboBox.select(requestedApplication);
-                            });
-
-                        appPromises.push(appPromise);
-                    }
-                });
-
-                return wemQ.all(appPromises).spread<void>(() => {
-                    return wemQ<void>(null);
-                });
-            }
+        protected getValueFromPropertyArray(propertyArray: api.data.PropertyArray): string {
+            debugger;
+            return propertyArray.getProperties().map((property) => {
+                if (property.hasNonNullValue()) {
+                    var siteConfig = SiteConfig.create().fromData(property.getPropertySet()).build();
+                    return siteConfig.getApplicationKey().toString();
+                }
+            }).join(';');
         }
 
         private createComboBox(input: api.form.Input, siteConfigProvider: SiteConfigProvider): SiteConfiguratorComboBox {
 
-            return new SiteConfiguratorComboBox(input.getOccurrences().getMaximum() || 0, siteConfigProvider, this.formContext);
-        }
+            var value = this.getValueFromPropertyArray(this.getPropertyArray());
+            var siteConfigFormsToDisplay = value.split(';');
+            var comboBox = new SiteConfiguratorComboBox(input.getOccurrences().getMaximum() || 0, siteConfigProvider, this.formContext,
+                value);
 
-        availableSizeChanged() {
+            // creating selected option might involve property changes
+            comboBox.onBeforeOptionCreated(() => this.ignorePropertyChange = true);
+            comboBox.onAfterOptionCreated(() => this.ignorePropertyChange = false);
+
+            comboBox.onOptionDeselected((removed: SelectedOption<Application>) => {
+                this.ignorePropertyChange = true;
+
+                this.getPropertyArray().remove(removed.getIndex());
+
+                this.ignorePropertyChange = false;
+                this.validate(false);
+            });
+
+            comboBox.onOptionSelected((selectedOption: SelectedOption<Application>) => {
+                this.ignorePropertyChange = true;
+
+                var key = selectedOption.getOption().displayValue.getApplicationKey();
+                if (!key) {
+                    return;
+                }
+                var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView>selectedOption.getOptionView();
+                this.saveToSet(selectedOptionView.getSiteConfig(), selectedOption.getIndex());
+
+                this.ignorePropertyChange = false;
+                this.validate(false);
+            });
+
+            comboBox.onOptionMoved((selectedOption: SelectedOption<Application>) => {
+                this.ignorePropertyChange = true;
+
+                var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView> selectedOption.getOptionView();
+                this.saveToSet(selectedOptionView.getSiteConfig(), selectedOption.getIndex());
+
+                this.ignorePropertyChange = false;
+                this.validate(false);
+            });
+
+            comboBox.onSiteConfigFormDisplayed((applicationKey: ApplicationKey, formView: FormView) => {
+                var indexToRemove = siteConfigFormsToDisplay.indexOf(applicationKey.toString());
+                if (indexToRemove != -1) {
+                    siteConfigFormsToDisplay.splice(indexToRemove, 1);
+                }
+
+                formView.onValidityChanged((event: FormValidityChangedEvent) => {
+                    this.validate(false);
+                });
+
+                this.validate(false);
+            });
+
+            return comboBox;
         }
 
         displayValidationErrors(value: boolean) {

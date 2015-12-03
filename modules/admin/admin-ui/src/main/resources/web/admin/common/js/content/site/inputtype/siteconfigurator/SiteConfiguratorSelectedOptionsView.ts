@@ -16,6 +16,10 @@ module api.content.site.inputtype.siteconfigurator {
 
         private siteConfigFormDisplayedListeners: {(applicationKey: ApplicationKey, formView: FormView) : void}[] = [];
 
+        private beforeOptionCreatedListeners: {():void}[] = [];
+
+        private afterOptionCreatedListeners: {():void}[] = [];
+
         private formContext: api.content.form.ContentFormContext;
 
         constructor(siteConfigProvider: SiteConfigProvider, formContext: api.content.form.ContentFormContext) {
@@ -27,12 +31,16 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         createSelectedOption(option: Option<Application>): SelectedOption<Application> {
+            this.notifyBeforeOptionCreated();
+
             var siteConfig = this.siteConfigProvider.getConfig(option.displayValue.getApplicationKey());
             var optionView = new SiteConfiguratorSelectedOptionView(option, siteConfig, this.formContext);
+
             optionView.onSiteConfigFormDisplayed((applicationKey: ApplicationKey) => {
                 this.notifySiteConfigFormDisplayed(applicationKey, optionView.getFormView());
             });
 
+            this.notifyAfterOptionCreated();
             return new SelectedOption<Application>(optionView, this.count());
         }
 
@@ -47,6 +55,35 @@ module api.content.site.inputtype.siteconfigurator {
 
         private notifySiteConfigFormDisplayed(applicationKey: ApplicationKey, formView: FormView) {
             this.siteConfigFormDisplayedListeners.forEach((listener) => listener(applicationKey, formView));
+        }
+
+
+        onBeforeOptionCreated(listener: () => void) {
+            this.beforeOptionCreatedListeners.push(listener);
+        }
+
+        unBeforeOptionCreated(listener: () => void) {
+            this.beforeOptionCreatedListeners = this.beforeOptionCreatedListeners.filter((curr) => {
+                return listener !== curr;
+            });
+        }
+
+        private notifyBeforeOptionCreated() {
+            this.beforeOptionCreatedListeners.forEach((listener) => listener());
+        }
+
+        onAfterOptionCreated(listener: () => void) {
+            this.afterOptionCreatedListeners.push(listener);
+        }
+
+        unAfterOptionCreated(listener: () => void) {
+            this.afterOptionCreatedListeners = this.afterOptionCreatedListeners.filter((curr) => {
+                return listener !== curr;
+            });
+        }
+
+        private notifyAfterOptionCreated() {
+            this.afterOptionCreatedListeners.forEach((listener) => listener());
         }
 
     }

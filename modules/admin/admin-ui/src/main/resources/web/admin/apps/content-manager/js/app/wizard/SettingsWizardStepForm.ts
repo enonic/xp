@@ -22,13 +22,38 @@ module app.wizard {
         constructor() {
             super("settings-wizard-step-form");
 
-            this.localeCombo = new LocaleComboBox(1);
+            this.modelChangeListener = (event: api.PropertyChangedEvent) => {
+                switch (event.getPropertyName()) {
+                case ContentSettingsModel.PROPERTY_LANG:
+                    if (!this.updateUnchangedOnly || !this.localeCombo.isDirty()) {
+                        if (this.localeCombo.maximumOccurrencesReached()) {
+                            this.localeCombo.clearSelection(true);
+                        }
+                        this.localeCombo.setValue(event.getNewValue());
+                    }
+                    break;
+                case ContentSettingsModel.PROPERTY_OWNER:
+                    if (!this.updateUnchangedOnly || !this.localeCombo.isDirty()) {
+                        if (this.ownerCombo.maximumOccurrencesReached()) {
+                            this.ownerCombo.clearSelection(true);
+                        }
+                        this.ownerCombo.setValue((<api.security.PrincipalKey>event.getNewValue()).toString());
+                    }
+                    break;
+                }
+            }
+        }
+
+        layout(content: api.content.Content) {
+            this.content = content;
+
+            this.localeCombo = new LocaleComboBox(1, content.getLanguage());
             var localeFormItem = new FormItemBuilder(this.localeCombo).
                 setLabel('Language').
                 build();
 
             var loader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
-            this.ownerCombo = new PrincipalComboBox(loader, 1);
+            this.ownerCombo = new PrincipalComboBox(loader, 1, content.getOwner() ? content.getOwner().toString() : undefined);
             var ownerFormItem = new FormItemBuilder(this.ownerCombo).
                 setLabel('Owner').
                 build();
@@ -48,35 +73,12 @@ module app.wizard {
                 this.notifyBlurred(event);
             });
 
-            this.modelChangeListener = (event: api.PropertyChangedEvent) => {
-                switch (event.getPropertyName()) {
-                case ContentSettingsModel.PROPERTY_LANG:
-                    if (!this.updateUnchangedOnly || !this.localeCombo.isDirty()) {
-                        if (this.localeCombo.maximumOccurrencesReached()) {
-                            this.localeCombo.clearSelection(true);
-                        }
-                        this.localeCombo.setValue(event.getNewValue());
-                    }
-                    break;
-                case ContentSettingsModel.PROPERTY_OWNER:
-                    if (!this.updateUnchangedOnly || !this.localeCombo.isDirty()) {
-                        if (this.ownerCombo.maximumOccurrencesReached()) {
-                            this.ownerCombo.clearSelection(true);
-                        }
-                        this.ownerCombo.setValue(event.getNewValue());
-                    }
-                    break;
-                }
-            }
-        }
-
-        layout(content: api.content.Content) {
-            this.content = content;
             this.setModel(new ContentSettingsModel(content));
         }
 
         update(content: api.content.Content, unchangedOnly?: boolean) {
             this.updateUnchangedOnly = unchangedOnly;
+
             this.getModel().setOwner(content.getOwner()).setLanguage(content.getLanguage());
         }
 
@@ -85,13 +87,6 @@ module app.wizard {
 
             if (this.model) {
                 model.unPropertyChanged(this.modelChangeListener);
-            }
-
-            if (model.getOwner()) {
-                this.ownerCombo.setIgnoreNextFocus().setValue(model.getOwner().toString());
-            }
-            if (model.getLanguage()) {
-                this.localeCombo.setIgnoreNextFocus().setValue(model.getLanguage());
             }
 
             // 2-way data binding
