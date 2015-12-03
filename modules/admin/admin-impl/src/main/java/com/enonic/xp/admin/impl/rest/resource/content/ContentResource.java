@@ -796,6 +796,7 @@ public final class ContentResource
     @Path("selectorQuery")
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentQueryResultJson selectorQuery( final ContentSelectorQueryJson contentQueryJson )
+        throws Exception
     {
         final ContentIconUrlResolver iconUrlResolver = newContentIconUrlResolver();
 

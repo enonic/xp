@@ -68,6 +68,7 @@ public class ContentSelectorQueryJsonToContentQueryConverter
     }
 
     public ContentQuery createQuery()
+        throws Exception
     {
         final Input contentSelectorInput =
             this.getContentSelectorInputFromContentType( this.getContentType( content.getType() ), contentQueryJson.getInputName() );
@@ -82,6 +83,7 @@ public class ContentSelectorQueryJsonToContentQueryConverter
     }
 
     private QueryExpr createQueryExpr( final Input contentSelectorInput )
+        throws Exception
     {
         final List<String> allowedPaths = this.getAllowedPaths( contentSelectorInput );
 
@@ -96,10 +98,16 @@ public class ContentSelectorQueryJsonToContentQueryConverter
     }
 
     private void resolveParentSiteIfNeeded( final List<String> allowedPaths )
+        throws Exception
     {
         if ( ContentRelativePathResolver.anyPathNeedsSiteResolving( allowedPaths ) )
         {
             this.parentSite = this.contentService.getNearestSite( this.content.getId() );
+
+            if ( this.parentSite == null )
+            {
+                throw new Exception( "Could not resolve parent site for content: " + this.content.getDisplayName() );
+            }
         }
     }
 
