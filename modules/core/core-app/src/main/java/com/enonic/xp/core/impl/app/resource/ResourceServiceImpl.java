@@ -8,20 +8,30 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
+import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
+import com.enonic.xp.server.RunMode;
 
 @Component(immediate = true)
 public final class ResourceServiceImpl
-    implements ResourceService
+    implements ResourceService, ApplicationInvalidator
 {
+    private final ProcessingCache cache;
+
     private ApplicationService applicationService;
+
+    public ResourceServiceImpl()
+    {
+        this.cache = new ProcessingCache( this::getResource, RunMode.get() );
+    }
 
     @Override
     public Resource getResource( final ResourceKey key )
@@ -159,9 +169,21 @@ public final class ResourceServiceImpl
         }
     }
 
+    @Override
+    public <K, V> V processResource( final ResourceProcessor<K, V> processor )
+    {
+        return this.cache.process( processor );
+    }
+
     @Reference
     public void setApplicationService( final ApplicationService applicationService )
     {
         this.applicationService = applicationService;
+    }
+
+    @Override
+    public void invalidate( final ApplicationKey key )
+    {
+        this.cache.invalidate( key );
     }
 }

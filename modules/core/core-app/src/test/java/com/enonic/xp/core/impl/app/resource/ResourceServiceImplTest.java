@@ -14,7 +14,9 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.core.impl.app.MockApplication;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
+import com.enonic.xp.resource.ResourceProcessor;
 
 import static org.junit.Assert.*;
 
@@ -134,5 +136,47 @@ public class ResourceServiceImplTest
         final ResourceKeys keys2 = this.resourceService.findFolders2( this.appKey, "c/.+" );
         assertEquals( 1, keys2.getSize() );
         assertEquals( "[myapp:/c/d]", keys2.toString() );
+    }
+
+    private String processResource( final String segment, final String key, final String suffix )
+    {
+        final ResourceProcessor.Builder<String, String> processor = new ResourceProcessor.Builder<>();
+        processor.key( key );
+        processor.keyTranslator( name -> ResourceKey.from( "myapp:/" + name ) );
+        processor.segment( segment );
+        processor.processor( res -> res.getKey().toString() + "->" + suffix );
+
+        return this.resourceService.processResource( processor.build() );
+    }
+
+    @Test
+    public void testProcessResource()
+        throws Exception
+    {
+        newFile( "a.txt" );
+
+        final String value1 = processResource( "segment1", "a.txt", "1" );
+        assertEquals( "myapp:/a.txt->1", value1 );
+
+        final String value2 = processResource( "segment1", "a.txt", "2" );
+        assertEquals( value1, value2 );
+
+        this.resourceService.invalidate( ApplicationKey.from( "myapp" ) );
+
+        final String value3 = processResource( "segment1", "a.txt", "3" );
+        assertEquals( "myapp:/a.txt->3", value3 );
+
+        final String value4 = processResource( "segment1", "a.txt", "4" );
+        assertEquals( value3, value4 );
+
+        final String value5 = processResource( "segment2", "a.txt", "5" );
+        assertEquals( "myapp:/a.txt->5", value5 );
+    }
+
+    @Test
+    public void testProcessResource_notFound()
+    {
+        final String value = processResource( "segment1", "a.txt", "1" );
+        assertNull( value );
     }
 }
