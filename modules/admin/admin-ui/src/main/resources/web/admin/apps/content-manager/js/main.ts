@@ -120,4 +120,6 @@ function startApplication() {
             }
         }
     };
+
+    api.content.event.ContentServerEventsHandler.getInstance().start();
 }
