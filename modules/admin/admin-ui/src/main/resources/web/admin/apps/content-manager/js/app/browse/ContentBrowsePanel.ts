@@ -12,18 +12,18 @@ module app.browse {
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
-    import ContentServerEvent = api.content.ContentServerEvent;
-    import ContentServerChange = api.content.ContentServerChange;
-    import ContentServerChangeType = api.content.ContentServerChangeType;
+    import ContentServerEvent = api.content.event.ContentServerEvent;
+    import ContentServerChange = api.content.event.ContentServerChange;
+    import ContentServerChangeType = api.content.event.ContentServerChangeType;
     import BatchContentRequest = api.content.BatchContentRequest;
     import TreeNodesOfContentPath = api.content.TreeNodesOfContentPath;
-    import ContentChangeResult = api.content.ContentChangeResult;
     import ContentId = api.content.ContentId;
     import DetailsPanel = app.view.detail.DetailsPanel;
     import ActiveDetailsPanelsManager = app.view.detail.ActiveDetailsPanelManager;
     import NonMobileDetailsPanelsManager = app.view.detail.NonMobileDetailsPanelsManager;
     import NonMobileDetailsPanelsManagerBuilder = app.view.detail.NonMobileDetailsPanelsManagerBuilder;
-    import BatchContentServerEvent = api.content.BatchContentServerEvent;
+    import BatchContentServerEvent = api.content.event.BatchContentServerEvent;
+    import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
 
     export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
@@ -153,12 +153,12 @@ module app.browse {
 
             var contentPanelsAndDetailPanel: api.ui.panel.SplitPanel = new api.ui.panel.SplitPanelBuilder(this.getFilterAndContentGridAndBrowseSplitPanel(),
                 this.defaultDockedDetailsPanel).
-            setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).
-            setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
-            setSecondPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
-            setAnimationDelay(600).
-            setSecondPanelShouldSlideRight(true).
-            build();
+                setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).
+                setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
+                setSecondPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
+                setAnimationDelay(600).
+                setSecondPanelShouldSlideRight(true).
+                build();
 
             contentPanelsAndDetailPanel.addClass("split-panel-with-details");
             contentPanelsAndDetailPanel.setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL);
@@ -189,12 +189,12 @@ module app.browse {
                     var browseItems: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus>[] = this.getBrowseItemPanel().getItems();
                     if (browseItems.length == 1) {
                         new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItems[0].getId())).sendAndParse().
-                        then((renderable: boolean) => {
-                            var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItems[0].toViewItem();
-                            item.setRenderable(renderable);
-                            this.mobileContentItemStatisticsPanel.setItem(item);
-                            this.mobileBrowseActions.updateActionsEnabledState(browseItems);
-                        });
+                            then((renderable: boolean) => {
+                                var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItems[0].toViewItem();
+                                item.setRenderable(renderable);
+                                this.mobileContentItemStatisticsPanel.setItem(item);
+                                this.mobileBrowseActions.updateActionsEnabledState(browseItems);
+                            });
                     }
                 }
             });
@@ -224,10 +224,10 @@ module app.browse {
                     var data = node.getData();
                     if (!!data && !!data.getContentSummary()) {
                         var item = new BrowseItem<ContentSummaryAndCompareStatus>(data).
-                        setId(data.getId()).
-                        setDisplayName(data.getContentSummary().getDisplayName()).
-                        setPath(data.getContentSummary().getPath().toString()).
-                        setIconUrl(new ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
+                            setId(data.getId()).
+                            setDisplayName(data.getContentSummary().getDisplayName()).
+                            setPath(data.getContentSummary().getPath().toString()).
+                            setIconUrl(new ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
                         browseItems.push(item);
                     }
                 }
@@ -257,79 +257,68 @@ module app.browse {
              */
             var handler = this.contentServerEventHandler.bind(this);
 
-            api.content.BatchContentServerEvent.on(handler);
+            BatchContentServerEvent.on(handler);
             this.onRemoved(() => {
-                api.content.BatchContentServerEvent.un(handler);
+                BatchContentServerEvent.un(handler);
             });
         }
 
         private contentServerEventHandler(event: BatchContentServerEvent) {
-            // TODO: IMPORTANT! Publishing multiple items may generate repeated event.
-            /*
-             * When handling the DELETE-CREATE sequence, we need to remember the removed nodes,
-             * because this sequence only appears when node is updated or moved (path is changed).
-             * We need to restore the expanded nodes and common tree structure after that.
-             * The ContentPath of all of the children elements need to be updated too.
-             */
 
             var changes = [];
             event.getEvents().forEach((event) => {
-                changes = changes.concat(event.getContentChanges());
+                changes = changes.concat(event.getContentChange());
             });
-
-            var deferred = wemQ.defer<ContentChangeResult>(),
-                promise = <wemQ.Promise<ContentChangeResult>>deferred.promise;
 
             changes.forEach((change: ContentServerChange) => {
                 switch (change.getChangeType()) {
                 case ContentServerChangeType.CREATE:
-                    promise = this.handleContentCreated(change, promise, changes);
+                    this.handleContentCreated(change);
                     break;
                 case ContentServerChangeType.UPDATE:
-                    promise = this.handleContentUpdated(change, promise, changes);
+                    this.handleContentUpdated(change, changes);
                     break;
                 case ContentServerChangeType.RENAME:
-                    promise = this.handleContentRenamed(change, promise, changes);
+                    this.handleContentRenamed(change);
                     break;
                 case ContentServerChangeType.DELETE:
                     break;
                 case ContentServerChangeType.PENDING:
-                    promise = this.handleContentPending(change, promise, changes);
+                    this.handleContentPending(change);
                     break;
                 case ContentServerChangeType.DUPLICATE:
                     // same logic as for creation
-                    promise = this.handleContentCreated(change, promise, changes);
+                    this.handleContentCreated(change);
                     break;
                 case ContentServerChangeType.PUBLISH:
-                    promise = this.handleContentPublished(change, promise, changes);
+                    this.handleContentPublished(change);
+                    break;
+                case ContentServerChangeType.MOVE:
+                    this.handleContentMoved(change, changes);
                     break;
                 case ContentServerChangeType.SORT:
-                    promise = this.handleContentSorted(change, promise, changes);
+                    this.handleContentSorted(change);
                     break;
                 case ContentServerChangeType.UNKNOWN:
                     break;
                 default:
-                    // MOVE event is a combination of DELETE and CREATE
+                    //
                 }
             });
 
-            switch (event.getType()) { // move here events who needs in batch hadling
+            switch (event.getType()) { // move here events who needs in batch handling
             case ContentServerChangeType.DELETE:
-                promise = this.handleContentDeleted(changes, promise);
+                this.handleContentDeleted(changes);
                 break;
             }
-
-
-            deferred.resolve(null);
         }
 
-        private handleContentCreated(change: ContentServerChange, promise: wemQ.Promise<any>,
-                                     changes: ContentServerChange[]): wemQ.Promise<any> {
-            promise = promise.then((result: ContentChangeResult) => {
+        private handleContentCreated(change: ContentServerChange, useNewContentPaths: boolean = false, triggeredByRename: boolean = false) {
 
-                var createResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths(), true);
+            var paths: api.content.ContentPath[] = useNewContentPaths ? change.getNewContentPaths() : change.getContentPaths();
+            var createResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths, true);
 
-                return ContentSummaryAndCompareStatusFetcher.
+            return ContentSummaryAndCompareStatusFetcher.
                 fetchByPaths(createResult.map((el) => {
                     return el.getAltPath();
                 })).
@@ -340,8 +329,9 @@ module app.browse {
                     data.forEach((el) => {
                         for (var i = 0; i < createResult.length; i++) {
                             if (el.getContentSummary().getPath().isChildOf(createResult[i].getPath())) {
-                                if (result && result.getChangeType() === ContentServerChangeType.RENAME) {
-                                    var premerged = result.getResult().map((el) => {
+                                if (triggeredByRename) {
+                                    var renameResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
+                                    var premerged = renameResult.map((el) => {
                                         return el.getNodes();
                                     });
                                     // merge array of nodes arrays
@@ -360,26 +350,14 @@ module app.browse {
                                         }),
                                         !isFiltered
                                     ).then((results) => {
-                                        nodes = nodes.concat(results);
-                                    });
+                                            nodes = nodes.concat(results);
+                                        });
                                 }
                                 break;
                             }
                         }
                     });
 
-                    // Read the notice in the header of the `contentServerEventHandler()` method
-                    if (result && result.getChangeType() === ContentServerChangeType.DELETE) {
-                        var ids = result.getResult().map((el) => {
-                            return el.getId();
-                        });
-                        nodes.forEach((node) => {
-                            var index = ids.indexOf(node.getDataId());
-                            if (index >= 0) {
-                                this.contentTreeGrid.xPopulateWithChildren(result.getResult()[index].getNodes()[0], node);
-                            }
-                        });
-                    }
                     this.contentTreeGrid.initAndRender();
 
                     isFiltered = true;
@@ -390,25 +368,22 @@ module app.browse {
                         }, 1000);
                     }
                 });
-            });
-            return promise;
         }
 
-        private handleContentUpdated(change: ContentServerChange, promise: wemQ.Promise<any>,
-                                     changes: ContentServerChange[]): wemQ.Promise<any> {
+        private handleContentUpdated(change: ContentServerChange,
+                                     changes: ContentServerChange[]) {
 
             if (changes.length === 1) {
-                promise = promise.then((result: ContentChangeResult) => {
 
-                    var updateResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
+                var updateResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
-                    var ids: ContentId[] = [];
-                    updateResult.forEach((el) => {
-                        ids = ids.concat(el.getNodes().map((node) => {
-                            return node.getData().getContentId();
-                        }));
-                    });
-                    return ContentSummaryAndCompareStatusFetcher.
+                var ids: ContentId[] = [];
+                updateResult.forEach((el) => {
+                    ids = ids.concat(el.getNodes().map((node) => {
+                        return node.getData().getContentId();
+                    }));
+                });
+                return ContentSummaryAndCompareStatusFetcher.
                     fetchByIds(ids).
                     then((data: ContentSummaryAndCompareStatus[]) => {
                         var results = [];
@@ -420,6 +395,7 @@ module app.browse {
                                     this.updateStatisticsPreview(el); // update preview item
 
                                     this.updateItemInDetailsPanelIfNeeded(el);
+                                    new api.content.event.ContentUpdatedEvent(el.getContentId()).fire();
 
                                     results.push(updateResult[i]);
                                     break;
@@ -431,79 +407,61 @@ module app.browse {
 
                         return this.contentTreeGrid.xPlaceContentNodes(results);
                     });
-                });
             }
-
-            return promise;
         }
 
-        private handleContentRenamed(change: ContentServerChange, promise: wemQ.Promise<any>,
-                                     changes: ContentServerChange[]): wemQ.Promise<any> {
-            promise = promise.then((result: ContentChangeResult) => {
-                var renameResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
+        private handleContentRenamed(change: ContentServerChange) {
+            this.handleContentCreated(change, true, true)
+        }
 
-                return new ContentChangeResult(ContentServerChangeType.RENAME, renameResult);
+        private handleContentMoved(change: ContentServerChange, changes: ContentServerChange[]) {
+            this.handleContentDeleted(changes);
+            this.handleContentCreated(change, true);
+        }
+
+        private handleContentDeleted(changes: ContentServerChange[]) {
+
+            var paths = [];
+            changes.forEach(change => {
+                paths = paths.concat(change.getContentPaths());
             });
-            return promise;
-        }
 
-        private handleContentDeleted(changes: ContentServerChange[], promise: wemQ.Promise<any>): wemQ.Promise<any> {
-
-            promise = promise.then((result: ContentChangeResult) => {
-                // Do not remove renamed elements
-                if (result && result.getChangeType() === ContentServerChangeType.RENAME) {
-                    return result;
-                }
-                var paths = [];
-                changes.forEach(change => {
-                    paths = paths.concat(change.getContentPaths());
-                });
-
-                var deleteResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
-                var nodes = deleteResult.map((el) => {
-                    return el.getNodes();
-                });
-                var merged = [];
-                // merge array of nodes arrays
-                merged = merged.concat.apply(merged, nodes);
-
-                var contentDeletedEvent = new api.content.ContentDeletedEvent();
-                merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
-                    var contentSummary = node.getData().getContentSummary();
-                    if (node.getData() && !!contentSummary) {
-
-                        this.updateDetailsPanel(null);
-                        contentDeletedEvent.addItem(contentSummary.getContentId(), contentSummary.getPath());
-                    }
-                });
-                if (!contentDeletedEvent.isEmpty()) {
-                    contentDeletedEvent.fire();
-                }
-
-                this.contentTreeGrid.xDeleteContentNodes(merged);
-
-                var isFiltered = this.contentTreeGrid.getRoot().isFiltered();
-                isFiltered = true;
-                if (isFiltered) {
-                    this.setFilterPanelRefreshNeeded(true);
-                    window.setTimeout(() => {
-                        this.refreshFilter();
-                    }, 1000);
-                }
-
-                return new ContentChangeResult(ContentServerChangeType.DELETE, deleteResult);
+            var deleteResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
+            var nodes = deleteResult.map((el) => {
+                return el.getNodes();
             });
-            return promise;
+            var merged = [];
+            // merge array of nodes arrays
+            merged = merged.concat.apply(merged, nodes);
+
+            var contentDeletedEvent = new ContentDeletedEvent();
+            merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
+                var contentSummary = node.getData().getContentSummary();
+                if (node.getData() && !!contentSummary) {
+
+                    this.updateDetailsPanel(null);
+                    contentDeletedEvent.addItem(contentSummary.getContentId(), contentSummary.getPath());
+                }
+            });
+            contentDeletedEvent.fire();
+
+            this.contentTreeGrid.xDeleteContentNodes(merged);
+
+            var isFiltered = this.contentTreeGrid.getRoot().isFiltered();
+            isFiltered = true;
+            if (isFiltered) {
+                this.setFilterPanelRefreshNeeded(true);
+                window.setTimeout(() => {
+                    this.refreshFilter();
+                }, 1000);
+            }
         }
 
-        private handleContentPending(change: ContentServerChange, promise: wemQ.Promise<any>,
-                                     changes: ContentServerChange[]): wemQ.Promise<any> {
+        private handleContentPending(change: ContentServerChange) {
 
-            promise = promise.then(() => {
+            var pendingResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
-                var pendingResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
-
-                return ContentSummaryAndCompareStatusFetcher.fetchByPaths(pendingResult.
+            return ContentSummaryAndCompareStatusFetcher.fetchByPaths(pendingResult.
                     map((el) => {
                         return (el.getNodes().length > 0 && el.getNodes()[0].getData())
                             ? el.getNodes()[0].getData().getContentSummary().getPath()
@@ -512,8 +470,8 @@ module app.browse {
                     filter((el) => {
                         return el !== null;
                     })
-                ).then((data: ContentSummaryAndCompareStatus[]) => {
-                    var contentDeletedEvent = new api.content.ContentDeletedEvent();
+            ).then((data: ContentSummaryAndCompareStatus[]) => {
+                    var contentDeletedEvent = new ContentDeletedEvent();
                     data.forEach((el) => {
                         for (var i = 0; i < pendingResult.length; i++) {
                             if (pendingResult[i].getId() === el.getId()) {
@@ -526,21 +484,16 @@ module app.browse {
                             }
                         }
                     });
-                    if (!contentDeletedEvent.isEmpty()) {
-                        contentDeletedEvent.fire();
-                    }
+                    contentDeletedEvent.fire();
+
                     this.contentTreeGrid.invalidate();
                 });
-            });
-            return promise;
         }
 
-        private handleContentPublished(change: ContentServerChange, promise: wemQ.Promise<any>,
-                                       changes: ContentServerChange[]): wemQ.Promise<any> {
-            promise = promise.then(() => {
-                var publishResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
+        private handleContentPublished(change: ContentServerChange) {
+            var publishResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
-                return ContentSummaryAndCompareStatusFetcher.
+            return ContentSummaryAndCompareStatusFetcher.
                 fetchByPaths(publishResult.map((el) => {
                     return el.getPath();
                 })).
@@ -552,32 +505,26 @@ module app.browse {
 
                                 this.updateItemInDetailsPanelIfNeeded(el);
 
-                                new api.content.ContentPublishedEvent(el.getContentId(), el.getCompareStatus()).fire();
+                                new api.content.event.ContentPublishedEvent(el.getContentId(), el.getCompareStatus()).fire();
                                 break;
                             }
                         }
                     });
                     this.contentTreeGrid.invalidate();
                 });
-            });
-            return promise;
         }
 
-        private handleContentSorted(change: ContentServerChange, promise: wemQ.Promise<any>,
-                                    changes: ContentServerChange[]): wemQ.Promise<any> {
-            promise = promise.then((result: ContentChangeResult) => {
-                var sortResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
+        private handleContentSorted(change: ContentServerChange) {
+            var sortResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
-                var nodes = sortResult.map((el) => {
-                    return el.getNodes();
-                });
-                var merged = [];
-                // merge array of nodes arrays
-                merged = merged.concat.apply(merged, nodes);
-
-                this.contentTreeGrid.xSortNodesChildren(merged).then(() => this.contentTreeGrid.invalidate());
+            var nodes = sortResult.map((el) => {
+                return el.getNodes();
             });
-            return promise;
+            var merged = [];
+            // merge array of nodes arrays
+            merged = merged.concat.apply(merged, nodes);
+
+            this.contentTreeGrid.xSortNodesChildren(merged).then(() => this.contentTreeGrid.invalidate());
         }
 
         private handleNewMediaUpload(event: app.create.NewMediaUploadEvent) {
@@ -592,15 +539,15 @@ module app.browse {
 
             if (!!content && !!previewItem && content.getPath().toString() === previewItem.getPath()) {
                 new api.content.page.IsRenderableRequest(el.getContentId()).sendAndParse().
-                then((renderable: boolean) => {
-                    var item = new BrowseItem<ContentSummaryAndCompareStatus>(content).
-                    setId(content.getId()).
-                    setDisplayName(content.getDisplayName()).
-                    setPath(content.getPath().toString()).
-                    setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve()).
-                    setRenderable(renderable);
-                    this.getBrowseItemPanel().setStatisticsItem(item);
-                });
+                    then((renderable: boolean) => {
+                        var item = new BrowseItem<ContentSummaryAndCompareStatus>(content).
+                            setId(content.getId()).
+                            setDisplayName(content.getDisplayName()).
+                            setPath(content.getPath().toString()).
+                            setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve()).
+                            setRenderable(renderable);
+                        this.getBrowseItemPanel().setStatisticsItem(item);
+                    });
             }
         }
 

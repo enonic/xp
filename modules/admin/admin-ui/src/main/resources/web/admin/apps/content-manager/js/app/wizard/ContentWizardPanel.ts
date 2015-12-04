@@ -53,6 +53,12 @@ module app.wizard {
     import MixinNames = api.schema.mixin.MixinNames;
     import GetMixinByQualifiedNameRequest = api.schema.mixin.GetMixinByQualifiedNameRequest;
 
+    import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
+    import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
+    import ContentPublishedEvent = api.content.event.ContentPublishedEvent;
+    import ContentsPublishedEvent = api.content.event.ContentsPublishedEvent;
+    import ContentNamedEvent = api.content.event.ContentNamedEvent;
+
     import DialogButton = api.ui.dialog.DialogButton;
 
     export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
@@ -111,7 +117,7 @@ module app.wizard {
 
         private isContentFormValid: boolean;
 
-        private contentNamedListeners: {(event: api.content.ContentNamedEvent):void}[];
+        private contentNamedListeners: {(event: ContentNamedEvent):void}[];
 
         private isSecurityWizardStepFormAllowed: boolean;
 
@@ -466,46 +472,45 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private persistedItemPathIsDescendantOrEqual(path: ContentPath): boolean {
-            return this.getPersistedItem().getPath().isDescendantOf(path) || this.getPersistedItem().getPath().equals(path);
-        }
-
         private isCurrentContentId(id: api.content.ContentId): boolean {
             return this.getPersistedItem() && id && this.getPersistedItem().getContentId().equals(id);
         }
 
+        private persistedItemPathIsDescendantOrEqual(path: ContentPath): boolean {
+            return this.getPersistedItem().getPath().isDescendantOf(path) || this.getPersistedItem().getPath().equals(path);
+        }
+
         private listenToContentEvents(ignore: boolean) {
 
-                    var deleteHandler = (event: api.content.ContentDeletedEvent) => {
-                        if (this.getPersistedItem()) {
-                            event.getDeletedItems().filter((deletedItem) => {
-                                return !!deletedItem;
-                            }).forEach((deletedItem) => {
-                                if (deletedItem.isPending()) {
-                                    if (this.getPersistedItem().getPath().equals(deletedItem.getContentPath())) {
-                                        this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.PENDING_DELETE);
-                                    }
-                                } else if (this.persistedItemPathIsDescendantOrEqual(deletedItem.getContentPath())) {
-                                    this.close();
-                                }
-                            });
-                        }
-                    }
-
-                    var publishHandler = (event: api.content.ContentPublishedEvent) => {
-                        if (this.getPersistedItem() && event.getContentId() &&
-                            (this.getPersistedItem().getId() === event.getContentId().toString())) {
-
-                            this.contentWizardToolbarPublishControls.setCompareStatus(event.getCompareStatus());
-
-                            if (!ignore) {
-                                this.contentWizardHeader.disableNameGeneration(true);
-                                api.content.ContentPublishedEvent.un(publishHandler);
+            var deleteHandler = (event: api.content.event.ContentDeletedEvent) => {
+                if (this.getPersistedItem()) {
+                    event.getDeletedItems().filter((deletedItem) => {
+                        return !!deletedItem;
+                    }).forEach((deletedItem) => {
+                        if (deletedItem.isPending()) {
+                            if (this.getPersistedItem().getPath().equals(deletedItem.getContentPath())) {
+                                this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.PENDING_DELETE);
                             }
+                        } else if (this.persistedItemPathIsDescendantOrEqual(deletedItem.getContentPath())) {
+                            this.close();
                         }
-                    };
+                    });
+                }
+            }
 
-            var updateHandler = (event: api.content.ContentUpdatedEvent) => {
+            var publishHandler = (event: api.content.event.ContentPublishedEvent) => {
+                if (this.isCurrentContentId(event.getContentId())) {
+
+                    this.contentWizardToolbarPublishControls.setCompareStatus(event.getCompareStatus());
+
+                    if (!ignore) {
+                        this.contentWizardHeader.disableNameGeneration(true);
+                        ContentPublishedEvent.un(publishHandler);
+                    }
+                }
+            };
+
+            var updateHandler = (event: api.content.event.ContentUpdatedEvent) => {
 
                 if (this.isCurrentContentId(event.getContentId())) {
 
@@ -518,24 +523,15 @@ module app.wizard {
                     });
                 }
             };
-                    api.content.ContentPublishedEvent.on(publishHandler);
-                    api.content.ContentDeletedEvent.on(deleteHandler);
 
-                    this.onClosed(() => {
-                        api.content.ContentPublishedEvent.un(publishHandler);
-                        api.content.ContentDeletedEvent.un(deleteHandler);
-                    });
-                }
-            };
-
-            api.content.ContentUpdatedEvent.on(updateHandler);
-            api.content.ContentPublishedEvent.on(publishHandler);
-            api.content.ContentDeletedEvent.on(deleteHandler);
+            ContentUpdatedEvent.on(updateHandler);
+            ContentPublishedEvent.on(publishHandler);
+            ContentDeletedEvent.on(deleteHandler);
 
             this.onClosed(() => {
-                api.content.ContentUpdatedEvent.un(updateHandler);
-                api.content.ContentPublishedEvent.un(publishHandler);
-                api.content.ContentDeletedEvent.un(deleteHandler);
+                ContentUpdatedEvent.un(updateHandler);
+                ContentPublishedEvent.un(publishHandler);
+                ContentDeletedEvent.un(deleteHandler);
             });
         }
 
@@ -1070,11 +1066,11 @@ module app.wizard {
             return this.wizardActions.getCloseAction();
         }
 
-        onContentNamed(listener: (event: api.content.ContentNamedEvent)=>void) {
+        onContentNamed(listener: (event: ContentNamedEvent)=>void) {
             this.contentNamedListeners.push(listener);
         }
 
-        unContentNamed(listener: (event: api.content.ContentNamedEvent)=>void) {
+        unContentNamed(listener: (event: ContentNamedEvent)=>void) {
             this.contentNamedListeners = this.contentNamedListeners.filter((curr) => {
                 return curr != listener;
             });
@@ -1082,8 +1078,8 @@ module app.wizard {
         }
 
         private notifyContentNamed(content: api.content.Content) {
-            this.contentNamedListeners.forEach((listener: (event: api.content.ContentNamedEvent)=>void)=> {
-                listener.call(this, new api.content.ContentNamedEvent(this, content));
+            this.contentNamedListeners.forEach((listener: (event: ContentNamedEvent)=>void)=> {
+                listener.call(this, new ContentNamedEvent(this, content));
             });
         }
 
@@ -1215,7 +1211,7 @@ module app.wizard {
 
         private subscribePublishButtonForMobileToPublishEvents() {
 
-            var publishHandler = (event: api.content.ContentsPublishedEvent) => {
+            var publishHandler = (event: ContentsPublishedEvent) => {
                 if (this.getPersistedItem() && event.getContentIds()) {
                     var isPublished = (event.getContentIds().some((obj: api.content.ContentId) => {
                         return obj.toString() == this.getPersistedItem().getId();
@@ -1226,19 +1222,19 @@ module app.wizard {
                 }
             };
 
-            var publishHandlerOfServerEvent = (event: api.content.ContentPublishedEvent) => {
+            var publishHandlerOfServerEvent = (event: ContentPublishedEvent) => {
                 if (this.getPersistedItem() && event.getContentId() &&
                     (this.getPersistedItem().getId() === event.getContentId().toString())) {
                     this.managePublishButtonStateForMobile(CompareStatus.EQUAL);
                 }
             };
 
-            api.content.ContentsPublishedEvent.on(publishHandler);
-            api.content.ContentPublishedEvent.on(publishHandlerOfServerEvent);
+            ContentsPublishedEvent.on(publishHandler);
+            ContentPublishedEvent.on(publishHandlerOfServerEvent);
 
             this.onClosed(() => {
-                api.content.ContentPublishedEvent.un(publishHandlerOfServerEvent);
-                api.content.ContentsPublishedEvent.un(publishHandler);
+                ContentPublishedEvent.un(publishHandlerOfServerEvent);
+                ContentsPublishedEvent.un(publishHandler);
             });
         }
 

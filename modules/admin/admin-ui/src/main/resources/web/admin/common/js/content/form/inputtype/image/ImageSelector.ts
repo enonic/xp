@@ -71,7 +71,7 @@ module api.content.form.inputtype.image {
                 this.updateSelectedItemsIcons();
             });
 
-            api.content.ContentDeletedEvent.on((event) => {
+            api.content.event.ContentDeletedEvent.on((event) => {
                 event.getDeletedItems().filter((deletedItem) => {
                     return !!deletedItem;
                 }).forEach((deletedItem) => {

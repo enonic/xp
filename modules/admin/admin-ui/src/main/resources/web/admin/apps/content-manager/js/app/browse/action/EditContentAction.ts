@@ -10,7 +10,7 @@ module app.browse.action {
             this.onExecuted(() => {
                 var contents: api.content.ContentSummaryAndCompareStatus[]
                     = grid.getSelectedDataList();
-                new api.content.EditContentEvent(contents).fire();
+                new api.content.event.EditContentEvent(contents).fire();
             });
         }
     }

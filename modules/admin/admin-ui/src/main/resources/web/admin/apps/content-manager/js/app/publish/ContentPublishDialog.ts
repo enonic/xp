@@ -381,7 +381,7 @@ module app.publish {
                 setIds(selectedIds).send().done((jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
                     this.close();
                     PublishContentRequest.feedback(jsonResponse);
-                    new api.content.ContentsPublishedEvent(selectedIds).fire();
+                    new api.content.event.ContentsPublishedEvent(selectedIds).fire();
                 });
         }
 

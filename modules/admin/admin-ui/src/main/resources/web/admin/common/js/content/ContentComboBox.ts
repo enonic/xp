@@ -87,7 +87,7 @@ module api.content {
             let editButton = new api.dom.AEl("edit");
             editButton.onClicked((event: Event) => {
                 let model = [ContentSummaryAndCompareStatus.fromContentSummary(content)];
-                new api.content.EditContentEvent(model).fire();
+                new api.content.event.EditContentEvent(model).fire();
 
                 event.stopPropagation();
                 event.preventDefault();
