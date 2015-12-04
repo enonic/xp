@@ -1,4 +1,4 @@
-module app.launcher.json {
+module api.security.auth {
 
     export interface AdminApplicationJson extends api.item.ItemJson {
 
@@ -9,7 +9,5 @@ module app.launcher.json {
         shortName:string;
 
         iconUrl:string;
-
-        allowedPrincipals: string[];
     }
 }

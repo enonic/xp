@@ -2,25 +2,22 @@ module app.launcher {
 
     export class AppLauncher {
 
-        private appManager:api.app.AppManager;
+        private appManager: api.app.AppManager;
 
-        private homeMainContainer:app.home.HomeMainContainer;
+        private homeMainContainer: app.home.HomeMainContainer;
 
-        private applications: app.launcher.Applications;
+        private adminApplicationFrames: api.dom.DivEl;
 
-        private adminApplicationFrames:api.dom.DivEl;
+        private loadMask: api.ui.mask.LoadMask;
 
-        private loadMask:api.ui.mask.LoadMask;
+        private currentApplication: api.app.Application;
 
-        private currentApplication:api.app.Application;
+        private currentApplicationHash: string;
 
-        private currentApplicationHash:string;
+        private allowedApplications: {[id:string]:api.app.Application};
 
-        private allowedApplications:{[id:string]:api.app.Application};
-
-        constructor(mainContainer:app.home.HomeMainContainer, applications: app.launcher.Applications) {
+        constructor(mainContainer: app.home.HomeMainContainer) {
             this.homeMainContainer = mainContainer;
-            this.applications = applications;
             this.allowedApplications = {};
 
             var returnToAppAction = new api.ui.Action("Return");
@@ -55,7 +52,7 @@ module app.launcher {
                 this.homeMainContainer.disableBranding();
                 this.homeMainContainer.giveFocus();
 
-                this.applications.getAllApps().forEach((app:api.app.Application) => {
+                api.app.Applications.getAllApps().forEach((app: api.app.Application) => {
                     if (app != event.getApplication()) {
                         app.hide();
                     }
@@ -70,9 +67,9 @@ module app.launcher {
         }
 
         showApplication(application: api.app.Application): boolean {
-            if(!application.isPreparing()) {
-                this.doShowApplication(application).then((result:boolean) => {
-                    if(!result) {
+            if (!application.isPreparing()) {
+                this.doShowApplication(application).then((result: boolean) => {
+                    if (!result) {
                         application.setDisplayingStatus(api.app.ApplicationShowStatus.NOT_DISPLAYED);
                     }
                     return result;
@@ -84,7 +81,7 @@ module app.launcher {
             }
         }
 
-        private doShowApplication(application:api.app.Application): wemQ.Promise<boolean> {
+        private doShowApplication(application: api.app.Application): wemQ.Promise<boolean> {
             var deferred = wemQ.defer<boolean>();
 
             application.setDisplayingStatus(api.app.ApplicationShowStatus.PREPARING);
@@ -92,7 +89,7 @@ module app.launcher {
             if (!this.isAllowedApp(application)) {
 
                 new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
-                    var allowedApps = this.applications.getAppsByIds(loginResult.getApplications());
+                    var allowedApps = loginResult.getApplications();
                     this.setAllowedApps(allowedApps);
 
                     if (loginResult.isAuthenticated() && this.isAllowedApp(application)) {
@@ -115,9 +112,9 @@ module app.launcher {
             return deferred.promise;
         }
 
-        private doLoadApplication(application:api.app.Application):wemQ.Promise<boolean> {
+        private doLoadApplication(application: api.app.Application): wemQ.Promise<boolean> {
             var deferred = wemQ.defer<boolean>();
-            this.applications.getAllApps().forEach((app:api.app.Application) => {
+            api.app.Applications.getAllApps().forEach((app: api.app.Application) => {
                 if (app == application) {
                     app.show();
                 } else {
@@ -133,7 +130,7 @@ module app.launcher {
             api.ui.KeyBindings.get().reset();
             this.homeMainContainer.hide();
 
-            var appFrame:api.dom.IFrameEl = application.getAppFrame();
+            var appFrame: api.dom.IFrameEl = application.getAppFrame();
             if (application.isLoaded()) {
                 appFrame.show();
                 appFrame.giveFocus();
@@ -168,14 +165,14 @@ module app.launcher {
             hasher.setHash(AppRouter.HOME_HASH_ID);
         }
 
-        setAllowedApps(applications:api.app.Application[]) {
+        setAllowedApps(applications: api.app.Application[]) {
             this.allowedApplications = {};
-            applications.forEach((application:api.app.Application) => {
+            applications.forEach((application: api.app.Application) => {
                 this.allowedApplications[application.getId()] = application;
             });
         }
 
-        private isAllowedApp(application:api.app.Application):boolean {
+        private isAllowedApp(application: api.app.Application): boolean {
             return !!this.allowedApplications[application.getId()];
         }
 

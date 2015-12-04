@@ -1,7 +1,3 @@
-///<reference path='json/_module.ts' />
-///<reference path='LauncherResourceRequest.ts' />
-///<reference path='LauncherApplicationsRequest.ts' />
-///<reference path='Applications.ts' />
 ///<reference path='AppTile.ts' />
 ///<reference path='AppSelectorListener.ts' />
 ///<reference path='AppSelector.ts' />

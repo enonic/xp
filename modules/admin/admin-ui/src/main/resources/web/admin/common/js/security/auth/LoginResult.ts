@@ -8,7 +8,7 @@ module api.security.auth {
 
         private principals: api.security.PrincipalKey[];
 
-        private applications: string[];
+        private applications: api.app.Application[];
 
         private message: string;
 
@@ -17,7 +17,14 @@ module api.security.auth {
             if (json.user) {
                 this.user = api.security.User.fromJson(json.user);
             }
-            this.applications = json.applications || [];
+            this.applications = []
+            if (json.applications) {
+                json.applications.forEach((adminApplicationJson: AdminApplicationJson) => {
+                    var application = new api.app.Application(adminApplicationJson.key, adminApplicationJson.name,
+                        adminApplicationJson.shortName, adminApplicationJson.iconUrl)
+                    this.applications.push(application);
+                });
+            }
             this.principals = json.principals ?
                               json.principals.map((principal) => api.security.PrincipalKey.fromString(principal)) : [];
             this.message = json.message;
@@ -31,7 +38,7 @@ module api.security.auth {
             return this.user;
         }
 
-        getApplications(): string[] {
+        getApplications(): api.app.Application[] {
             return this.applications;
         }
 

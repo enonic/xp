@@ -4,5 +4,6 @@
 ///<reference path="AuthResourceRequest.ts"/>
 ///<reference path="LoginRequest.ts"/>
 ///<reference path="LogoutResultJson.ts"/>
+///<reference path="AdminApplicationJson.ts"/>
 ///<reference path="LogoutRequest.ts"/>
 ///<reference path="IsAuthenticatedRequest.ts"/>

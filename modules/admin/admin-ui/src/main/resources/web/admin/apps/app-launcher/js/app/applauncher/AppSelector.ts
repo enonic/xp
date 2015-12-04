@@ -23,9 +23,9 @@ module app.launcher {
         private tilesPlaceholder: api.dom.DivEl;
 
 
-        constructor(applications: api.app.Application[]) {
+        constructor() {
             super("app-selector-container");
-            this.apps = applications;
+            this.apps = [];
             this.appTiles = {};
             this.selectedAppIndex = -1;
 
@@ -35,7 +35,6 @@ module app.launcher {
             this.emptyMessagePlaceholder = new api.dom.DivEl();
             this.emptyMessagePlaceholder.getEl().setInnerHtml('No applications found');
 
-            this.addAppTiles(applications, this.tilesPlaceholder);
             this.homeAppSelector.appendChild(this.tilesPlaceholder);
 
             this.appendChild(this.homeAppSelector);
@@ -129,17 +128,16 @@ module app.launcher {
         }
 
         setAllowedApps(applications: api.app.Application[]) {
-            this.apps.forEach((application: api.app.Application) => {
-                var appTile = this.appTiles[application.getName()];
-                appTile.hide();
-            });
+            this.removeApps();
+            this.apps = applications;
+            this.addAppTiles(applications);
             applications.forEach((application: api.app.Application) => {
                 var appTile = this.appTiles[application.getName()];
                 appTile.show();
             });
         }
 
-        private addAppTiles(applications: api.app.Application[], tilesPlaceholder: api.dom.DivEl) {
+        private addAppTiles(applications: api.app.Application[]) {
             applications.forEach((application: api.app.Application, idx: number) => {
                 var appTile = new AppTile(application, idx);
 
@@ -154,9 +152,16 @@ module app.launcher {
                     this.unhighlightAppTile(application, idx, appTile);
                 });
 
-                tilesPlaceholder.appendChild(appTile);
+                this.tilesPlaceholder.appendChild(appTile);
                 this.appTiles[application.getName()] = appTile;
             });
+        }
+
+        private removeApps() {
+            this.apps = [];
+            this.appTiles = {};
+            this.selectedAppIndex = -1;
+            this.tilesPlaceholder.removeChildren();
         }
 
         private highlightAppTile(application: api.app.Application, index?: number, appTile?: AppTile) {
@@ -208,8 +213,9 @@ module app.launcher {
         }
 
         private getAppTileIndex(application: api.app.Application): number {
-            for (var i = 0; i < this.apps.length; i++) {
-                if (this.apps[i] == application) {
+            var apps = api.app.Applications.getAllApps();
+            for (var i = 0; i < apps.length; i++) {
+                if (apps[i] == application) {
                     return i;
                 }
             }

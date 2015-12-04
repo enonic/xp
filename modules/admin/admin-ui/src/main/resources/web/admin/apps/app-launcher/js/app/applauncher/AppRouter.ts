@@ -3,14 +3,13 @@ module app.launcher {
     export class AppRouter {
         static HOME_HASH_ID = 'home';
 
-        private applications: api.app.Application[];
+        private appRoutes: CrossroadsJs.Route[];
         private appLauncher: AppLauncher;
 
-        constructor(applications: api.app.Application[], appLauncher: AppLauncher) {
-            this.applications = applications;
+        constructor(appLauncher: AppLauncher) {
             this.appLauncher = appLauncher;
+            this.appRoutes = [];
             this.initRouting();
-            this.setupAppsRouting();
             this.setupHomeRouting();
             this.handleInitialUrl();
         }
@@ -38,14 +37,19 @@ module app.launcher {
             hasher.init(); //start listening for history change
         }
 
-        private setupAppsRouting() {
-            this.applications.forEach((application: api.app.Application, idx: number) => {
+        setAllowedApps(applications: api.app.Application[]) {
+            this.appRoutes.forEach((appRoute: CrossroadsJs.Route) => {
+                crossroads.removeRoute(appRoute);
+            });
+            this.appRoutes = [];
+            applications.forEach((application: api.app.Application, idx: number) => {
                 var appRoutPattern = application.getId() + '/:p1:/:p2:/:p3:'; // optional parameters in URL: action, id
-                crossroads.addRoute(appRoutPattern, (p1: string, p2: string, p3: string) => {
+                var appRoute: CrossroadsJs.Route = crossroads.addRoute(appRoutPattern, (p1: string, p2: string, p3: string) => {
                     var pathValues = [p1, p2, p3].filter((p)=> p != undefined);
                     var path: api.rest.Path = new api.rest.Path(pathValues);
                     this.appLauncher.showApplication(application.setPath(path));
                 });
+                this.appRoutes.push(appRoute);
             });
         }
 
