@@ -81,6 +81,7 @@ module app.launcher {
         }
 
 
+
         show() {
             this.showAppsCount();
             super.show();
@@ -208,8 +209,9 @@ module app.launcher {
         }
 
         private getAppTileIndex(application: api.app.Application): number {
-            for (var i = 0; i < this.apps.length; i++) {
-                if (this.apps[i] == application) {
+            var apps = app.launcher.Applications.getAllApps();
+            for (var i = 0; i < apps.length; i++) {
+                if (apps[i] == application) {
                     return i;
                 }
             }
@@ -250,9 +252,9 @@ module app.launcher {
 
         unAppUnhighlighted(listener: (event: AppUnhighlightedEvent)=>void) {
             this.appUnhighlightedListeners =
-                this.appUnhighlightedListeners.filter((currentListener: (event: AppUnhighlightedEvent)=>void)=> {
-                    return listener != currentListener
-                });
+            this.appUnhighlightedListeners.filter((currentListener: (event: AppUnhighlightedEvent)=>void)=> {
+                return listener != currentListener
+            });
         }
 
         unAppSelected(listener: (event: AppSelectedEvent)=>void) {

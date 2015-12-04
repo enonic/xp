@@ -6,7 +6,7 @@ function startApplication() {
 
 // called from api.app.Application.getApplication()
 function getApplication(id: string): api.app.Application {
-    return app.launcher.Applications.instance().getAppById(id);
+    return app.launcher.Applications.getAppById(id);
 }
 
 // called from Router
