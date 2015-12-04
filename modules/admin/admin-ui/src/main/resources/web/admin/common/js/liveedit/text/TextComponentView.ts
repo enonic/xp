@@ -199,7 +199,7 @@ module api.liveedit.text {
                 this.editor.activate();
 
                 if (this.textComponent.isEmpty()) {
-                    this.rootElement.setHtml("<h2>Text</h2>");
+                    this.rootElement.setHtml("<h2>Text</h2>", false);
                 }
             }
         }

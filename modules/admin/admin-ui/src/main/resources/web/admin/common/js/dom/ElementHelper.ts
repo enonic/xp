@@ -93,7 +93,7 @@ module api.dom {
             return this;
         }
 
-        setInnerHtml(value: string, escapeHtml: boolean = false): ElementHelper {
+        setInnerHtml(value: string, escapeHtml: boolean = true): ElementHelper {
             wemjq(this.el).html(escapeHtml ? api.util.StringHelper.escapeHtml(value) : value);
             return this;
         }

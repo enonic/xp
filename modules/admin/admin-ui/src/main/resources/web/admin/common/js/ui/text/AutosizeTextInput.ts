@@ -52,7 +52,7 @@ module api.ui.text {
 
             this.attendant.insertAfterEl(this);
 
-            cloneEl.setInnerHtml(this.getValue(), true);
+            cloneEl.setInnerHtml(this.getValue());
             // Set input width to text length from the clone <div>
             // or to maximum possible width corresponding to attendant width.
             if (cloneEl.getWidthWithBorder() > this.attendant.getEl().getWidth()) {

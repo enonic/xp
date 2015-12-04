@@ -12,7 +12,7 @@ module api.ui.tab {
         }
 
         setLabel(value: string, addTitle: boolean = true) {
-            this.labelEl.setHtml(value, true);
+            this.labelEl.setHtml(value);
             if (addTitle) {
                 this.labelEl.getEl().setAttribute('title', value);
             }
