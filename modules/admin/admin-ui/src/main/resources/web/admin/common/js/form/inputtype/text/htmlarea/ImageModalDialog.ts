@@ -131,7 +131,8 @@ module api.form.inputtype.text.htmlarea {
 
             this.image = this.createImgEl(imgUrl, imageContent.getDisplayName(), contentId);
             if (this.imageElement) {
-                this.image.getHTMLElement().style["text-align"] = this.imageElement.parentElement.style.textAlign;
+                this.image.getHTMLElement().style["text-align"] =
+                this.imageElement.parentElement.style.textAlign || this.imageElement.parentElement.style.cssFloat;
 
                 var keepSize = this.imageElement.getAttribute("data-src").indexOf("keepSize=true") > 0;
                 if (keepSize) {
@@ -321,8 +322,24 @@ module api.form.inputtype.text.htmlarea {
                 alignment = this.image.getHTMLElement().style["text-align"];
             }
 
-            element.style["text-align"] = alignment;
-            element.setAttribute("data-mce-style", "text-align: " + alignment);
+            var keepSize = this.image.getEl().getAttribute("data-src").indexOf("keepSize=true") > 0;
+
+            var styleAttr;
+            switch (alignment) {
+            case 'justify':
+            case 'center':
+                styleAttr = "text-align: " + alignment;
+                break;
+            case 'left':
+                styleAttr = "float: left; margin: 15px 15px 0 15px;" + (keepSize ? "" : "width: 40%");
+                break;
+            case 'right':
+                styleAttr = "float: right; margin: 15px 15px 0 15px;" + (keepSize ? "" : "width: 40%");
+                break;
+            }
+
+            element.setAttribute("style", styleAttr);
+            element.setAttribute("data-mce-style", styleAttr);
         }
 
         private createImageTag(): void {

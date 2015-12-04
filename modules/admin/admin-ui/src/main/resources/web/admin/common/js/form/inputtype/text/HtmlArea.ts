@@ -260,7 +260,24 @@ module api.form.inputtype.text {
             var observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
                     var alignment = (<HTMLElement>mutation.target).style["text-align"];
-                    img.parentElement.style.textAlign = alignment;
+                    var keepOriginalSize = img.getAttribute("data-src").indexOf("keepSize=true") > 0;
+
+                    var styleAttr;
+                    switch (alignment) {
+                    case 'justify':
+                    case 'center':
+                        styleAttr = "text-align: " + alignment;
+                        break;
+                    case 'left':
+                        styleAttr = "float: left; margin: 15px 15px 0 15px;" + (keepOriginalSize ? "" : "width: 40%");
+                        break;
+                    case 'right':
+                        styleAttr = "float: right; margin: 15px 15px 0 15px;" + (keepOriginalSize ? "" : "width: 40%");
+                        break;
+                    }
+
+                    img.parentElement.setAttribute("style", styleAttr);
+                    img.parentElement.setAttribute("data-mce-style", styleAttr);
                 });
             });
 
