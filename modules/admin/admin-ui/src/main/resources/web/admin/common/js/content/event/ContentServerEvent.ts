@@ -1,4 +1,4 @@
-module api.content {
+module api.content.event {
 
     export interface NodeEventJson extends api.app.EventJson {
         data: NodeEventDataJson;

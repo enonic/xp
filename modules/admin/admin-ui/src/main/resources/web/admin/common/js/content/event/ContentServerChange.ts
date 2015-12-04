@@ -1,4 +1,4 @@
-module api.content {
+module api.content.event {
 
     export enum ContentServerChangeType {
         UNKNOWN,
@@ -44,7 +44,7 @@ module api.content {
                    this.contentPaths.map((contentPath) => contentPath.toString()).join(", ") + !!this.newContentPaths
                 ? this.newContentPaths.map((contentPath) => contentPath.toString()).join(", ")
                 : "" +
-                   ">";
+                  ">";
         }
 
         static fromJson(nodeEventJson: NodeEventJson): ContentServerChange {

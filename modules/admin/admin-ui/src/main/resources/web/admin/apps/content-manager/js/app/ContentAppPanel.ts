@@ -5,8 +5,8 @@ module app {
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import Content = api.content.Content;
     import ContentId = api.content.ContentId;
-    import ContentNamedEvent = api.content.ContentNamedEvent;
-    import ContentUpdatedEvent = api.content.ContentUpdatedEvent;
+    import ContentNamedEvent = api.content.event.ContentNamedEvent;
+    import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
     import AppBarTabId = api.app.bar.AppBarTabId;
     import AppBarTabMenuItem = api.app.bar.AppBarTabMenuItem;
     import AppBarTabMenuItemBuilder = api.app.bar.AppBarTabMenuItemBuilder;
@@ -56,7 +56,7 @@ module app {
                 if (id) {
                     api.content.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).
                         done((content: ContentSummaryAndCompareStatus) => {
-                            new api.content.EditContentEvent([content]).fire();
+                            new api.content.event.EditContentEvent([content]).fire();
                         });
                 }
                 break;
@@ -84,7 +84,7 @@ module app {
                 this.handleView(event);
             });
 
-            api.content.EditContentEvent.on((event) => {
+            api.content.event.EditContentEvent.on((event) => {
                 this.handleEdit(event);
             });
 
@@ -171,7 +171,7 @@ module app {
         }
 
 
-        private handleEdit(event: api.content.EditContentEvent) {
+        private handleEdit(event: api.content.event.EditContentEvent) {
 
             var contents: ContentSummaryAndCompareStatus[] = event.getModels();
             contents.forEach((content: ContentSummaryAndCompareStatus) => {

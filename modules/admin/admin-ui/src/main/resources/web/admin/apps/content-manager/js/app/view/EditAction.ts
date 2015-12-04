@@ -5,7 +5,7 @@ module app.view {
         constructor(panel: api.app.view.ItemViewPanel<api.content.ContentSummaryAndCompareStatus>) {
             super("Edit");
             this.onExecuted(() => {
-                new api.content.EditContentEvent([panel.getItem().getModel()]).fire();
+                new api.content.event.EditContentEvent([panel.getItem().getModel()]).fire();
             });
         }
     }
