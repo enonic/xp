@@ -193,7 +193,6 @@ module app.browse {
         }
 
         private onAfterSetOrder() {
-            new api.content.ContentChildOrderUpdatedEvent(this.parentContent.getContentId()).fire();
             this.hideLoadingSpinner();
             this.close();
         }

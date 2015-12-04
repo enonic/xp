@@ -47,7 +47,6 @@
 ///<reference path='DeleteContentResultJson.ts' />
 ///<reference path='BatchContentRequest.ts' />
 ///<reference path='BatchContentResult.ts' />
-///<reference path='ContentChildOrderUpdatedEvent.ts' />
 ///<reference path='ContentComboBox.ts' />
 ///<reference path='MoveContentResult.ts' />
 ///<reference path='MoveContentResultJson.ts' />
