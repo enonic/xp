@@ -115,7 +115,7 @@ public final class PageDescriptorServiceImpl
 
     private List<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
     {
-        return new OptionalDescriptorKeyLocator( this.resourceService, PATH ).findKeys( key );
+        return new DescriptorKeyLocator( this.resourceService, PATH, true ).findKeys( key );
     }
 
     private PageDescriptor loadDescriptor( final DescriptorKey key, final Resource resource )

@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.core.impl.content.page.OptionalDescriptorKeyLocator;
+import com.enonic.xp.core.impl.content.page.DescriptorKeyLocator;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
@@ -138,6 +138,6 @@ public final class PartDescriptorServiceImpl
 
     private List<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
     {
-        return new OptionalDescriptorKeyLocator( this.resourceService, PATH ).findKeys( key );
+        return new DescriptorKeyLocator( this.resourceService, PATH, true ).findKeys( key );
     }
 }

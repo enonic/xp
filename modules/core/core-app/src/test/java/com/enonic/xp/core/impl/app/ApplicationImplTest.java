@@ -33,7 +33,6 @@ public class ApplicationImplTest
         assertTrue( application.getModifiedTime().getEpochSecond() > 0 );
         assertFalse( application.isStarted() );
         assertTrue( ApplicationHelper.isApplication( bundle ) );
-        assertEquals( "[/a/b, /c/d]", application.getSourcePaths().toString() );
         assertNotNull( application.getClassLoader() );
         assertEquals( "[1.2.0,2.0.0)", application.getSystemVersion() );
         assertEquals( "2.0.0", application.getMaxSystemVersion() );

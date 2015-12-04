@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.app;
 
 import java.net.URL;
 import java.time.Instant;
-import java.util.List;
 import java.util.Set;
 
 import org.osgi.framework.Bundle;
@@ -28,8 +27,6 @@ final class ApplicationImpl
 
     private final Bundle bundle;
 
-    private final List<String> sourcePaths;
-
     private final ApplicationUrlResolver urlResolver;
 
     public ApplicationImpl( final Bundle bundle, final ApplicationUrlResolver urlResolver )
@@ -37,7 +34,6 @@ final class ApplicationImpl
         this.bundle = bundle;
         this.key = ApplicationKey.from( bundle );
         this.systemVersion = ApplicationHelper.parseVersionRange( getHeader( X_SYSTEM_VERSION, null ) );
-        this.sourcePaths = ApplicationHelper.getSourcePaths( this.bundle );
         this.urlResolver = urlResolver;
     }
 
@@ -122,12 +118,6 @@ final class ApplicationImpl
     private String getHeader( final String name, final String defValue )
     {
         return ApplicationHelper.getHeader( this.bundle, name, defValue );
-    }
-
-    @Override
-    public List<String> getSourcePaths()
-    {
-        return this.sourcePaths;
     }
 
     @Override

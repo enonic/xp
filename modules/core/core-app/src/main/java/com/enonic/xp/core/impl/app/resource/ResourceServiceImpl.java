@@ -46,64 +46,19 @@ public final class ResourceServiceImpl
         return new UrlResource( key, url );
     }
 
-    private String normalizePath( final String path )
+    private String normalize( final String str )
     {
-        if ( path.startsWith( "/" ) )
+        if ( str.startsWith( "/" ) )
         {
-            return normalizePath( path.substring( 1 ) );
+            return normalize( str.substring( 1 ) );
         }
 
-        if ( path.endsWith( "/" ) )
+        if ( str.endsWith( "/" ) )
         {
-            return path.substring( 0, path.length() - 1 );
+            return str.substring( 0, str.length() - 1 );
         }
 
-        return path;
-    }
-
-    @Override
-    public ResourceKeys findFiles( final ApplicationKey key, final String path, final String ext, final boolean recursive )
-    {
-        final String normalized = normalizePath( path );
-
-        if ( recursive )
-        {
-            return findFiles2( key, normalized + "/.+\\." + ext );
-        }
-
-        return findFiles2( key, normalized + "/[^/]+\\." + ext );
-    }
-
-    @Override
-    public ResourceKeys findFolders( final ApplicationKey key, final String path )
-    {
-        final String normalized = normalizePath( path );
-
-        final Stream<String> folders = doFindFolders( key ).
-            map( name -> toFolderName( name, normalized ) ).
-            filter( name -> name != null ).
-            distinct();
-
-        return toKeys( key, folders );
-    }
-
-    private String toFolderName( final String name, final String prefix )
-    {
-        final String prefixWithSlash = prefix + "/";
-        if ( !name.startsWith( prefixWithSlash ) )
-        {
-            return null;
-        }
-
-        final String rest = name.substring( prefixWithSlash.length() );
-        final int index = rest.indexOf( '/' );
-
-        if ( index > 0 )
-        {
-            return prefixWithSlash + rest.substring( 0, index );
-        }
-
-        return prefixWithSlash + rest;
+        return str;
     }
 
     private Stream<String> doFindFiles( final ApplicationKey key )
@@ -117,35 +72,11 @@ public final class ResourceServiceImpl
         return app.getFiles().stream();
     }
 
-    private Stream<String> doFindFolders( final ApplicationKey key )
+    @Override
+    public ResourceKeys findFiles( final ApplicationKey key, final String pattern )
     {
-        return doFindFiles( key ).map( this::toFolderName ).filter( name -> name != null ).distinct();
-    }
-
-    private String toFolderName( final String path )
-    {
-        final int index = path.lastIndexOf( '/' );
-        if ( index > 0 )
-        {
-            return path.substring( 0, index );
-        }
-
-        return null;
-    }
-
-    public ResourceKeys findFiles2( final ApplicationKey key, final String pattern )
-    {
-        final Pattern compiled = Pattern.compile( pattern );
+        final Pattern compiled = Pattern.compile( normalize( pattern ) );
         final Stream<String> files = doFindFiles( key ).
-            filter( compiled.asPredicate() );
-
-        return toKeys( key, files );
-    }
-
-    public ResourceKeys findFolders2( final ApplicationKey key, final String pattern )
-    {
-        final Pattern compiled = Pattern.compile( pattern );
-        final Stream<String> files = doFindFolders( key ).
             filter( compiled.asPredicate() );
 
         return toKeys( key, files );

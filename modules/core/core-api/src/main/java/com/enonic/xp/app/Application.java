@@ -2,7 +2,6 @@ package com.enonic.xp.app;
 
 import java.net.URL;
 import java.time.Instant;
-import java.util.List;
 import java.util.Set;
 
 import org.osgi.framework.Bundle;
@@ -36,9 +35,6 @@ public interface Application
     ClassLoader getClassLoader();
 
     Instant getModifiedTime();
-
-    @Deprecated
-    List<String> getSourcePaths();
 
     boolean isStarted();
 

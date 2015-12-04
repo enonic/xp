@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.app;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.time.Instant;
-import java.util.List;
 import java.util.Set;
 
 import org.osgi.framework.Bundle;
@@ -92,12 +91,6 @@ public class MockApplication
 
     @Override
     public Instant getModifiedTime()
-    {
-        return null;
-    }
-
-    @Override
-    public List<String> getSourcePaths()
     {
         return null;
     }

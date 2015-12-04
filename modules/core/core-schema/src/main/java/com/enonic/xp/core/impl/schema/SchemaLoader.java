@@ -1,10 +1,9 @@
 package com.enonic.xp.core.impl.schema;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
@@ -19,7 +18,7 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
 {
     private final String path;
 
-    private final Pattern pattern;
+    private final String pattern;
 
     private final ResourceService resourceService;
 
@@ -27,7 +26,7 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
     {
         this.resourceService = resourceService;
         this.path = path;
-        this.pattern = Pattern.compile( this.path + "/([^/]+)/([^/]+)\\.xml" );
+        this.pattern = this.path + "/.+\\.xml";
     }
 
     public final V get( final N name )
@@ -70,16 +69,12 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
     public final List<N> findNames( final ApplicationKey key )
     {
         final List<N> keys = Lists.newArrayList();
-        for ( final ResourceKey resource : this.resourceService.findFiles( key, this.path, "xml", true ) )
+        for ( final ResourceKey resource : this.resourceService.findFiles( key, this.pattern ) )
         {
-            final Matcher matcher = this.pattern.matcher( resource.getPath() );
-            if ( matcher.matches() )
+            final String localName = getLocalName( resource );
+            if ( localName != null )
             {
-                final String name = matcher.group( 2 );
-                if ( name.equals( matcher.group( 1 ) ) )
-                {
-                    keys.add( newName( key, name ) );
-                }
+                keys.add( newName( key, localName ) );
             }
         }
 
@@ -88,17 +83,16 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
 
     protected abstract N newName( final ApplicationKey appKey, final String name );
 
-    protected final Resource getResource( final N name )
+    private String getLocalName( final ResourceKey key )
     {
-        final ResourceKey resourceKey = toResourceKey( name, "xml" );
-        final Resource resource = this.resourceService.getResource( resourceKey );
+        final String nameWithExt = key.getName();
+        final String nameWithoutExt = Files.getNameWithoutExtension( nameWithExt );
 
-        if ( !resource.exists() )
+        if ( key.getPath().equals( this.path + "/" + nameWithoutExt + "/" + nameWithExt ) )
         {
-            return null;
+            return nameWithoutExt;
         }
 
-        return resource;
+        return null;
     }
 }
-

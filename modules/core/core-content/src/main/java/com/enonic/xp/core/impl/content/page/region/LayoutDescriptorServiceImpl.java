@@ -126,6 +126,6 @@ public final class LayoutDescriptorServiceImpl
 
     private List<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
     {
-        return new DescriptorKeyLocator( this.resourceService, PATH ).findKeys( key );
+        return new DescriptorKeyLocator( this.resourceService, PATH, false ).findKeys( key );
     }
 }

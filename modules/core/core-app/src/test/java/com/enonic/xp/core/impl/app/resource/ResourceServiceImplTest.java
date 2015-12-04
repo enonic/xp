@@ -64,78 +64,20 @@ public class ResourceServiceImplTest
         throws Exception
     {
         newFile( "a.txt" );
-        newFile( "c/d.txt" );
-        newFile( "c/d/e.png" );
-        newFile( "c/d/f.png" );
-        newFile( "c/d/g.txt" );
-        newFile( "c/d/e/a.png" );
-
-        final ResourceKeys keys1 = this.resourceService.findFiles( this.appKey, "c/d", "png", false );
-        assertEquals( 2, keys1.getSize() );
-        assertEquals( "[myapp:/c/d/e.png, myapp:/c/d/f.png]", keys1.toString() );
-
-        final ResourceKeys keys2 = this.resourceService.findFiles( this.appKey, "c/d", "png", true );
-        assertEquals( 3, keys2.getSize() );
-        assertEquals( "[myapp:/c/d/e/a.png, myapp:/c/d/e.png, myapp:/c/d/f.png]", keys2.toString() );
-    }
-
-    @Test
-    public void findFolders()
-        throws Exception
-    {
-        newFile( "a.txt" );
-        newFile( "c/d.txt" );
-        newFile( "c/d/e.png" );
-        newFile( "c/d/f.png" );
-        newFile( "c/d/g.txt" );
-        newFile( "c/d/e/a.png" );
-
-        final ResourceKeys keys1 = this.resourceService.findFolders( this.appKey, "c" );
-        assertEquals( 1, keys1.getSize() );
-        assertEquals( "[myapp:/c/d]", keys1.toString() );
-
-        final ResourceKeys keys2 = this.resourceService.findFolders( this.appKey, "c/d" );
-        assertEquals( 1, keys2.getSize() );
-        assertEquals( "[myapp:/c/d/e]", keys2.toString() );
-    }
-
-    @Test
-    public void testFindFiles2()
-        throws Exception
-    {
-        newFile( "a.txt" );
         newFile( "b/c.txt" );
         newFile( "c/d/e.png" );
 
-        final ResourceKeys keys1 = this.resourceService.findFiles2( this.appKey, ".+" );
+        final ResourceKeys keys1 = this.resourceService.findFiles( this.appKey, ".+" );
         assertEquals( 3, keys1.getSize() );
         assertEquals( "[myapp:/b/c.txt, myapp:/a.txt, myapp:/c/d/e.png]", keys1.toString() );
 
-        final ResourceKeys keys2 = this.resourceService.findFiles2( this.appKey, "b/c\\.txt" );
+        final ResourceKeys keys2 = this.resourceService.findFiles( this.appKey, "b/c\\.txt" );
         assertEquals( 1, keys2.getSize() );
         assertEquals( "[myapp:/b/c.txt]", keys2.toString() );
 
-        final ResourceKeys keys3 = this.resourceService.findFiles2( this.appKey, ".+\\.txt" );
+        final ResourceKeys keys3 = this.resourceService.findFiles( this.appKey, ".+\\.txt" );
         assertEquals( 2, keys3.getSize() );
         assertEquals( "[myapp:/b/c.txt, myapp:/a.txt]", keys3.toString() );
-    }
-
-    @Test
-    public void testFindFolders2()
-        throws Exception
-    {
-        newFile( "a.txt" );
-        newFile( "b/c.txt" );
-        newFile( "b/d.txt" );
-        newFile( "c/d/e.png" );
-
-        final ResourceKeys keys1 = this.resourceService.findFolders2( this.appKey, ".+" );
-        assertEquals( 2, keys1.getSize() );
-        assertEquals( "[myapp:/b, myapp:/c/d]", keys1.toString() );
-
-        final ResourceKeys keys2 = this.resourceService.findFolders2( this.appKey, "c/.+" );
-        assertEquals( 1, keys2.getSize() );
-        assertEquals( "[myapp:/c/d]", keys2.toString() );
     }
 
     private String processResource( final String segment, final String key, final String suffix )
