@@ -42,7 +42,7 @@ public class BundleClassLoaderTest
         throws Exception
     {
         final TinyBundle builder = newBundle( "foo.bar.bundle", false ).
-            add( "dummy.txt", getClass().getResource( "/bundles/bundle1/dummy.txt" ) );
+            add( "dummy.txt", getClass().getResource( "/myapp/dummy.txt" ) );
 
         final Bundle bundle = deploy( "bundle", builder );
         final BundleClassLoader loader = new BundleClassLoader( bundle );
@@ -59,7 +59,7 @@ public class BundleClassLoaderTest
         throws Exception
     {
         final TinyBundle builder = newBundle( "foo.bar.bundle", false ).
-            add( "dummy.txt", getClass().getResource( "/bundles/bundle1/dummy.txt" ) );
+            add( "dummy.txt", getClass().getResource( "/myapp/dummy.txt" ) );
 
         final Bundle bundle = deploy( "bundle", builder );
         final BundleClassLoader loader = new BundleClassLoader( bundle );

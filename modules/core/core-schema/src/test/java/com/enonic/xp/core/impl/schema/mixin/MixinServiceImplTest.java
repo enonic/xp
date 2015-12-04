@@ -36,8 +36,6 @@ public class MixinServiceImplTest
     @Test
     public void testEmpty()
     {
-        addApplications();
-
         final Mixins types1 = this.service.getAll();
         assertNotNull( types1 );
         assertEquals( 3, types1.getSize() );
@@ -53,8 +51,6 @@ public class MixinServiceImplTest
     @Test
     public void testSystemMixins()
     {
-        addApplications();
-
         Mixins mixins = service.getAll();
         assertNotNull( mixins );
         assertEquals( 3, mixins.getSize() );
@@ -76,12 +72,12 @@ public class MixinServiceImplTest
     @Test
     public void testGetByContentType()
     {
-        addApplications( "application1", "application2" );
+        initializeApps();
 
         final ContentType contentType = ContentType.create().
             superType( ContentTypeName.structured() ).
-            name( "application2:mixin1" ).
-            metadata( MixinNames.from( "application2:mixin1", "application2:mixin3" ) ).
+            name( "myapp2:mixin1" ).
+            metadata( MixinNames.from( "myapp2:mixin1", "myapp2:mixin3" ) ).
             build();
 
         final Mixins mixins = service.getByContentType( contentType );
@@ -92,34 +88,34 @@ public class MixinServiceImplTest
     @Test
     public void testApplications()
     {
-        addApplications( "application1", "application2" );
+        initializeApps();
 
         final Mixins types1 = this.service.getAll();
         assertNotNull( types1 );
         assertEquals( 9, types1.getSize() );
 
-        final Mixins types2 = this.service.getByApplication( ApplicationKey.from( "application1" ) );
+        final Mixins types2 = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
         assertNotNull( types2 );
         assertEquals( 2, types2.getSize() );
 
-        this.service.invalidate( ApplicationKey.from( "application2" ) );
+        this.service.invalidate( ApplicationKey.from( "myapp2" ) );
 
-        final Mixins types3 = this.service.getByApplication( ApplicationKey.from( "application2" ) );
+        final Mixins types3 = this.service.getByApplication( ApplicationKey.from( "myapp2" ) );
         assertNotNull( types3 );
         assertEquals( 4, types3.getSize() );
 
-        final Mixin mixin = service.getByName( MixinName.from( "application2:mixin1" ) );
+        final Mixin mixin = service.getByName( MixinName.from( "myapp2:mixin1" ) );
         assertNotNull( mixin );
     }
 
     @Test
     public void testInlineFormItems_input()
     {
-        addApplications( "application1", "application2" );
+        initializeApps();
 
         final Form form = Form.create().
             addFormItem( Input.create().name( "my_input" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).
-            addFormItem( InlineMixin.create().mixin( "application2:mixin2" ).build() ).
+            addFormItem( InlineMixin.create().mixin( "myapp2:mixin2" ).build() ).
             build();
 
         final Form transformedForm = service.inlineFormItems( form );
@@ -134,11 +130,11 @@ public class MixinServiceImplTest
     @Test
     public void testInlineFormItems_formItemSet()
     {
-        addApplications( "application1", "application2" );
+        initializeApps();
 
         final Form form = Form.create().
             addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).build() ).
-            addFormItem( InlineMixin.create().mixin( "application2:address" ).build() ).
+            addFormItem( InlineMixin.create().mixin( "myapp2:address" ).build() ).
             build();
 
         final Form transformedForm = service.inlineFormItems( form );
@@ -152,16 +148,16 @@ public class MixinServiceImplTest
     @Test
     public void testInlineFormItems_two_formItemSets_with_changed_names()
     {
-        addApplications( "application1", "application2" );
+        initializeApps();
 
         final Form form = Form.create().
             addFormItem( FormItemSet.create().
                 name( "home" ).
-                addFormItem( InlineMixin.create().mixin( "application2:address" ).build() ).
+                addFormItem( InlineMixin.create().mixin( "myapp2:address" ).build() ).
                 build() ).
             addFormItem( FormItemSet.create().
                 name( "cottage" ).
-                addFormItem( InlineMixin.create().mixin( "application2:address" ).build() ).
+                addFormItem( InlineMixin.create().mixin( "myapp2:address" ).build() ).
                 build() ).
             build();
 
@@ -182,10 +178,10 @@ public class MixinServiceImplTest
     @Test
     public void testInlineFormItems_layout()
     {
-        addApplications( "application1", "application2" );
+        initializeApps();
 
         final Form form = Form.create().
-            addFormItem( InlineMixin.create().mixin( "application2:address2" ).build() ).
+            addFormItem( InlineMixin.create().mixin( "myapp2:address2" ).build() ).
             build();
 
         final Form transformedForm = service.inlineFormItems( form );

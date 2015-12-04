@@ -23,19 +23,19 @@ public class ClassLoaderApplicationUrlResolverTest
     {
         final Set<String> files = this.resolver.findFiles();
         assertFalse( files.isEmpty() );
-        assertTrue( files.contains( "bundles/bundle1/site/site.xml" ) );
+        assertTrue( files.contains( "myapp/site/site.xml" ) );
     }
 
     @Test
     public void testFindUrl()
     {
-        final URL url1 = this.resolver.findUrl( "/bundles/bundle1/site/site.xml" );
+        final URL url1 = this.resolver.findUrl( "/myapp/site/site.xml" );
         assertNotNull( url1 );
 
-        final URL url2 = this.resolver.findUrl( "bundles/bundle1/site/site.xml" );
+        final URL url2 = this.resolver.findUrl( "myapp/site/site.xml" );
         assertNotNull( url2 );
 
-        final URL url3 = this.resolver.findUrl( "bundles/bundle1/site/not-found.txt" );
+        final URL url3 = this.resolver.findUrl( "myapp/not-found.txt" );
         assertNull( url3 );
     }
 }

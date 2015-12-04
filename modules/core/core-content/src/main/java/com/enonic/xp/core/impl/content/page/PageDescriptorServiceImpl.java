@@ -116,7 +116,7 @@ public final class PageDescriptorServiceImpl
         return new OptionalDescriptorKeyLocator( this.resourceService, PATH ).findKeys( key );
     }
 
-    private final PageDescriptor loadDescriptor( final DescriptorKey key )
+    private PageDescriptor loadDescriptor( final DescriptorKey key )
     {
         final ResourceKey resourceKey = PageDescriptor.toResourceKey( key );
         final Resource resource = this.resourceService.getResource( resourceKey );
@@ -137,7 +137,7 @@ public final class PageDescriptorServiceImpl
             build();
     }
 
-    private final PageDescriptor createDefaultDescriptor( final DescriptorKey key )
+    private PageDescriptor createDefaultDescriptor( final DescriptorKey key )
     {
         return PageDescriptor.
             create().

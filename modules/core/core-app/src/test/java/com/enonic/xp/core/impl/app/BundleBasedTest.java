@@ -70,7 +70,7 @@ public abstract class BundleBasedTest
 
         if ( isApp )
         {
-            bundle.add( "site/site.xml", getClass().getResource( "/bundles/bundle1/site/site.xml" ) );
+            bundle.add( "site/site.xml", getClass().getResource( "/myapp/site/site.xml" ) );
         }
 
         return bundle;

@@ -22,7 +22,7 @@ public class BundleApplicationUrlResolverTest
         throws Exception
     {
         final TinyBundle builder = newBundle( "foo.bar.bundle", true );
-        builder.add( "dummy.txt", getClass().getResource( "/bundles/bundle1/dummy.txt" ) );
+        builder.add( "dummy.txt", getClass().getResource( "/myapp/dummy.txt" ) );
 
         final Bundle bundle = deploy( "bundle", builder );
         this.resolver = new BundleApplicationUrlResolver( bundle );

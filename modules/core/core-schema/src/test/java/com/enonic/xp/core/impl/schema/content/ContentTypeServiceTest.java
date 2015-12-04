@@ -35,8 +35,6 @@ public class ContentTypeServiceTest
     @Test
     public void testEmpty()
     {
-        addApplications();
-
         final ContentTypes types1 = this.service.getAll( new GetAllContentTypesParams() );
         assertNotNull( types1 );
         assertEquals( 21, types1.getSize() );
@@ -51,32 +49,31 @@ public class ContentTypeServiceTest
 
     @Test
     public void testApplications()
+        throws Exception
     {
-        addApplications( "application1", "application2" );
+        initializeApps();
 
         final ContentTypes types1 = this.service.getAll( new GetAllContentTypesParams() );
         assertNotNull( types1 );
         assertEquals( 23, types1.getSize() );
 
-        final ContentTypes types2 = this.service.getByApplication( ApplicationKey.from( "application1" ) );
+        final ContentTypes types2 = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
         assertNotNull( types2 );
         assertEquals( 1, types2.getSize() );
 
-        this.service.invalidate( ApplicationKey.from( "application2" ) );
+        this.service.invalidate( ApplicationKey.from( "myapp2" ) );
 
-        final ContentTypes types3 = this.service.getByApplication( ApplicationKey.from( "application2" ) );
+        final ContentTypes types3 = this.service.getByApplication( ApplicationKey.from( "myapp2" ) );
         assertNotNull( types3 );
         assertEquals( 1, types3.getSize() );
 
-        final ContentType contentType = service.getByName( new GetContentTypeParams().contentTypeName( "application1:tag" ) );
+        final ContentType contentType = service.getByName( new GetContentTypeParams().contentTypeName( "myapp1:tag" ) );
         assertNotNull( contentType );
     }
 
     @Test
     public void testSystemApplication()
     {
-        addApplications();
-
         ContentTypes contentTypes = this.service.getAll( new GetAllContentTypesParams() );
         assertNotNull( contentTypes );
         assertEquals( 21, contentTypes.getSize() );

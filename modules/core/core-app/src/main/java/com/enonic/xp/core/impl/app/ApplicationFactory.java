@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.app;
 
 import java.io.File;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.List;
 
 import org.osgi.framework.Bundle;
@@ -47,14 +46,13 @@ final class ApplicationFactory
         final List<String> sourcePaths = ApplicationHelper.getSourcePaths( bundle );
         final ApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( sourcePaths );
 
-        return new MultiApplicationUrlResolver( bundleUrlResolver, classLoaderUrlResolver );
+        return new MultiApplicationUrlResolver( classLoaderUrlResolver, bundleUrlResolver );
     }
 
     private ApplicationUrlResolver createClassLoaderUrlResolver( final List<String> paths )
     {
         final List<URL> urls = getSearchPathUrls( paths );
-        final URLClassLoader loader = new URLClassLoader( urls.toArray( new URL[urls.size()] ), null );
-        return new ClassLoaderApplicationUrlResolver( loader );
+        return ClassLoaderApplicationUrlResolver.create( urls );
     }
 
     private List<URL> getSearchPathUrls( final List<String> paths )
