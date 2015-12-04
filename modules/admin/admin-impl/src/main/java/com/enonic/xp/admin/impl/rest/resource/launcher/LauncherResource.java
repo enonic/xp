@@ -3,10 +3,10 @@ package com.enonic.xp.admin.impl.rest.resource.launcher;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.osgi.service.component.annotations.Component;
@@ -20,9 +20,11 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.launcher.json.AdminApplicationDescriptorJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "launcher")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true)
 public class LauncherResource
     implements JaxRsComponent
@@ -32,7 +34,7 @@ public class LauncherResource
 
     @GET
     @Path("apps")
-    public List<AdminApplicationDescriptorJson> getByInterface( @QueryParam("interface") final String widgetInterface )
+    public List<AdminApplicationDescriptorJson> getApps()
     {
         return adminApplicationDescriptorService.getAll().
             stream().
