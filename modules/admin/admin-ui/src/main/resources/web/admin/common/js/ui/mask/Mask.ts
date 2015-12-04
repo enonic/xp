@@ -5,7 +5,7 @@ module api.ui.mask {
         private masked: api.dom.Element;
 
         constructor(itemToMask?: api.dom.Element) {
-            super("mask");
+            super("mask", api.StyleHelper.COMMON_PREFIX);
 
             this.masked = itemToMask;
 
