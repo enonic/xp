@@ -5,7 +5,8 @@ module components {
 }
 
 function initToolTip() {
-    var ID = "tooltip", CLS_ON = "tooltip_ON", FOLLOW = true,
+    var ID = api.StyleHelper.getCls("tooltip", api.StyleHelper.COMMON_PREFIX),
+        CLS_ON = "tooltip_ON", FOLLOW = true,
         DATA = "_tooltip", OFFSET_X = 0, OFFSET_Y = 20,
         pageX = 0, pageY = 0,
         showAt = function (e) {
