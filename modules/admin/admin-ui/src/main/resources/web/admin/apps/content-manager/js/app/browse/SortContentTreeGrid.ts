@@ -108,7 +108,7 @@ module app.browse {
             }
 
             var icon = new api.dom.DivEl("icon-menu3 drag-icon");
-            wrapper.getEl().setInnerHtml(icon.toString());
+            wrapper.getEl().setInnerHtml(icon.toString(), false);
             return wrapper.toString();
         }
 

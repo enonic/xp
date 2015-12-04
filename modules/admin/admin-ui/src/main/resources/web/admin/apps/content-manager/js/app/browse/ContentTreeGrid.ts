@@ -195,7 +195,7 @@ module app.browse {
                     } else {
                         icon = new api.dom.DivEl("icon-menu3 sort-dialog-trigger");
                     }
-                    wrapper.getEl().setInnerHtml(icon.toString());
+                    wrapper.getEl().setInnerHtml(icon.toString(), false);
                 }
             }
             return wrapper.toString();

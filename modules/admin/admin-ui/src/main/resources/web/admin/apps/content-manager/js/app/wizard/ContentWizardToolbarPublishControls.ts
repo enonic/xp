@@ -52,7 +52,7 @@ module app.wizard {
         public refreshState() {
             var canBeEnabled = this.contentCompareStatus !== CompareStatus.EQUAL && this.contentCanBePublished && this.userCanPublish;
             this.publishAction.setEnabled(canBeEnabled);
-            this.contentStateSpan.setHtml(this.getContentStateValueForSpan(this.contentCompareStatus));
+            this.contentStateSpan.setHtml(this.getContentStateValueForSpan(this.contentCompareStatus), false);
         }
 
         public isOnline(): boolean {

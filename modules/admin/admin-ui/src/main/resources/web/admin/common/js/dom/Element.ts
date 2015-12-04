@@ -639,7 +639,7 @@ module api.dom {
             return this.getEl().getInnerHtml();
         }
 
-        setHtml(value: string, escapeHtml?: boolean): Element {
+        setHtml(value: string, escapeHtml: boolean = true): Element {
             this.getEl().setInnerHtml(value, escapeHtml);
             return this;
         }

@@ -108,7 +108,7 @@ module app.view {
         }
 
         setName(name: string) {
-            this.headerLabel.setHtml(name, true);
+            this.headerLabel.setHtml(name);
         }
 
         slideAllOut() {
