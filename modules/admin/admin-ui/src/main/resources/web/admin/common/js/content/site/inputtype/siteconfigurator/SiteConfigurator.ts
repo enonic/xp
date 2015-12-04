@@ -100,7 +100,6 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         protected getValueFromPropertyArray(propertyArray: api.data.PropertyArray): string {
-            debugger;
             return propertyArray.getProperties().map((property) => {
                 if (property.hasNonNullValue()) {
                     var siteConfig = SiteConfig.create().fromData(property.getPropertySet()).build();

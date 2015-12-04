@@ -35,6 +35,9 @@ module api.form {
 
         constructor(config: FormItemSetOccurrencesConfig) {
             this.occurrencesCollapsed = false;
+            this.context = config.context;
+            this.formItemSet = config.formItemSet;
+            this.parent = config.parent;
 
             super(<FormItemOccurrencesConfig>{
                 formItem: config.formItemSet,
@@ -42,17 +45,6 @@ module api.form {
                 occurrenceViewContainer: config.occurrenceViewContainer,
                 allowedOccurrences: config.formItemSet.getOccurrences()
             });
-            this.context = config.context;
-            this.formItemSet = config.formItemSet;
-            this.parent = config.parent;
-
-            var dataSetCount = this.propertyArray.getSize();
-            if (dataSetCount > 0) {
-                this.constructOccurrencesForData();
-            }
-            else {
-                this.constructOccurrencesForNoData();
-            }
         }
 
         getFormItemSet(): FormItemSet {
@@ -63,32 +55,34 @@ module api.form {
             return this.formItemSet.getOccurrences();
         }
 
-        constructOccurrencesForNoData() {
-
+        protected constructOccurrencesForNoData(): FormItemOccurrence<FormItemSetOccurrenceView>[] {
+            var occurrences: FormItemOccurrence<FormItemSetOccurrenceView>[] = [];
             var minimumOccurrences = this.getAllowedOccurrences().getMinimum();
-            if (minimumOccurrences > 0) {
 
+            if (minimumOccurrences > 0) {
                 for (var i = 0; i < minimumOccurrences; i++) {
-                    this.addOccurrence(this.createNewOccurrence(this, i));
+                    occurrences.push(this.createNewOccurrence(this, i));
                 }
+            } else if (this.context.getShowEmptyFormItemSetOccurrences()) {
+                occurrences.push(this.createNewOccurrence(this, 0));
             }
-            else {
-                if (this.context.getShowEmptyFormItemSetOccurrences()) {
-                    this.addOccurrence(this.createNewOccurrence(this, 0));
-                }
-            }
+
+            return occurrences;
         }
 
-        private constructOccurrencesForData() {
+        protected constructOccurrencesForData(): FormItemOccurrence<FormItemSetOccurrenceView>[] {
+            var occurrences: FormItemOccurrence<FormItemSetOccurrenceView>[] = [];
+
             this.propertyArray.forEach((property: Property, index: number) => {
-                this.addOccurrence(new FormItemSetOccurrence(this, index));
+                occurrences.push(this.createNewOccurrence(this, index));
             });
 
             if (this.countOccurrences() < this.formItemSet.getOccurrences().getMinimum()) {
                 for (var index: number = this.countOccurrences(); index < this.formItemSet.getOccurrences().getMinimum(); index++) {
-                    this.addOccurrence(new FormItemSetOccurrence(this, index));
+                    occurrences.push(this.createNewOccurrence(this, index));
                 }
             }
+            return occurrences;
         }
 
         createNewOccurrence(formItemOccurrences: FormItemOccurrences<FormItemSetOccurrenceView>,
@@ -109,7 +103,7 @@ module api.form {
             });
 
             newOccurrenceView.onRemoveButtonClicked((event: RemoveButtonClickedEvent<FormItemSetOccurrenceView>) => {
-                this.doRemoveOccurrence(event.getView(), event.getIndex());
+                this.removeOccurrenceView(event.getView());
             });
             return newOccurrenceView;
         }
