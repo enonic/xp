@@ -42,7 +42,7 @@ module api.form {
 
         notifyRemoveButtonClicked() {
             this.removeButtonClickedListeners.forEach((listener: (event: RemoveButtonClickedEvent<FormItemOccurrenceView>)=>void) => {
-                listener.call(this, new RemoveButtonClickedEvent(this, this.formItemOccurrence.getIndex()));
+                listener.call(this, new RemoveButtonClickedEvent(this));
             });
         }
 
