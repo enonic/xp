@@ -12,7 +12,6 @@ module app.browse {
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
-    import ContentServerEvent = api.content.event.ContentServerEvent;
     import ContentServerChange = api.content.event.ContentServerChange;
     import ContentServerChangeType = api.content.event.ContentServerChangeType;
     import BatchContentRequest = api.content.BatchContentRequest;
@@ -24,6 +23,7 @@ module app.browse {
     import NonMobileDetailsPanelsManagerBuilder = app.view.detail.NonMobileDetailsPanelsManagerBuilder;
     import BatchContentServerEvent = api.content.event.BatchContentServerEvent;
     import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
+    import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 
     export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
@@ -95,6 +95,7 @@ module app.browse {
                 }
             });
 
+            ContentServerEventsHandler.getInstance().setContentBrowsePanelCreated();
             this.handleGlobalEvents();
         }
 
@@ -239,10 +240,6 @@ module app.browse {
 
         private handleGlobalEvents() {
 
-            api.content.ContentChildOrderUpdatedEvent.on((event) => {
-                //this.handleChildOrderUpdated(event);
-            });
-
             ToggleSearchPanelEvent.on(() => {
                 this.toggleFilterPanel();
             });
@@ -251,66 +248,65 @@ module app.browse {
                 this.handleNewMediaUpload(event);
             });
 
-            /*
-             * ContentServerEvent handlers for the new API.
-             * TODO: Replace all of the old events with the new one.
-             */
-            var handler = this.contentServerEventHandler.bind(this);
-
-            BatchContentServerEvent.on(handler);
-            this.onRemoved(() => {
-                BatchContentServerEvent.un(handler);
-            });
+            this.subscribeOnContentEvents();
         }
 
-        private contentServerEventHandler(event: BatchContentServerEvent) {
+        private subscribeOnContentEvents() {
 
-            var changes = [];
-            event.getEvents().forEach((event) => {
-                changes = changes.concat(event.getContentChange());
+            ContentServerEventsHandler.getInstance().onContentCreated((changes: ContentServerChange[]) => {
+                changes.forEach((change: ContentServerChange) => {
+                    this.handleContentCreated(change);
+                });
             });
 
-            changes.forEach((change: ContentServerChange) => {
-                switch (change.getChangeType()) {
-                case ContentServerChangeType.CREATE:
-                    this.handleContentCreated(change);
-                    break;
-                case ContentServerChangeType.UPDATE:
+            ContentServerEventsHandler.getInstance().onContentUpdated((changes: ContentServerChange[]) => {
+                changes.forEach((change: ContentServerChange) => {
                     this.handleContentUpdated(change, changes);
-                    break;
-                case ContentServerChangeType.RENAME:
-                    this.handleContentRenamed(change);
-                    break;
-                case ContentServerChangeType.DELETE:
-                    break;
-                case ContentServerChangeType.PENDING:
+                });
+            });
+
+            ContentServerEventsHandler.getInstance().onContentRenamed((changes: ContentServerChange[]) => {
+                changes.forEach((change: ContentServerChange) => {
+                    this.handleContentCreated(change, true, true)
+                });
+            });
+
+            ContentServerEventsHandler.getInstance().onContentDeleted((changes: ContentServerChange[]) => {
+                this.handleContentDeleted(changes);
+            });
+
+            ContentServerEventsHandler.getInstance().onContentPending((changes: ContentServerChange[]) => {
+                changes.forEach((change: ContentServerChange) => {
                     this.handleContentPending(change);
-                    break;
-                case ContentServerChangeType.DUPLICATE:
+                });
+            });
+
+            ContentServerEventsHandler.getInstance().onContentDuplicated((changes: ContentServerChange[]) => {
+                changes.forEach((change: ContentServerChange) => {
                     // same logic as for creation
                     this.handleContentCreated(change);
-                    break;
-                case ContentServerChangeType.PUBLISH:
-                    this.handleContentPublished(change);
-                    break;
-                case ContentServerChangeType.MOVE:
-                    this.handleContentMoved(change, changes);
-                    break;
-                case ContentServerChangeType.SORT:
-                    this.handleContentSorted(change);
-                    break;
-                case ContentServerChangeType.UNKNOWN:
-                    break;
-                default:
-                    //
-                }
+                });
             });
 
-            switch (event.getType()) { // move here events who needs in batch handling
-            case ContentServerChangeType.DELETE:
+            ContentServerEventsHandler.getInstance().onContentPublished((changes: ContentServerChange[]) => {
+                changes.forEach((change: ContentServerChange) => {
+                    this.handleContentPublished(change);
+                });
+            });
+
+            ContentServerEventsHandler.getInstance().onContentMoved((changes: ContentServerChange[]) => {
+                // combination of delete and create
                 this.handleContentDeleted(changes);
-                break;
-            }
+                changes.forEach((change: ContentServerChange) => {
+                    this.handleContentCreated(change, true);
+                });
+            });
+
+            ContentServerEventsHandler.getInstance().onContentSorted((changes: ContentServerChange[]) => {
+                changes.forEach((change: ContentServerChange) => {
+                    this.handleContentSorted(change);
+                });
+            });
         }
 
         private handleContentCreated(change: ContentServerChange, useNewContentPaths: boolean = false, triggeredByRename: boolean = false) {
@@ -375,10 +371,10 @@ module app.browse {
 
             if (changes.length === 1) {
 
-                var updateResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
+                var treeNodes: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
                 var ids: ContentId[] = [];
-                updateResult.forEach((el) => {
+                treeNodes.forEach((el) => {
                     ids = ids.concat(el.getNodes().map((node) => {
                         return node.getData().getContentId();
                     }));
@@ -388,16 +384,16 @@ module app.browse {
                     then((data: ContentSummaryAndCompareStatus[]) => {
                         var results = [];
                         data.forEach((el) => {
-                            for (var i = 0; i < updateResult.length; i++) {
-                                if (updateResult[i].getId() === el.getId()) {
-                                    updateResult[i].updateNodeData(el);
+                            for (var i = 0; i < treeNodes.length; i++) {
+                                if (treeNodes[i].getId() === el.getId()) {
+                                    treeNodes[i].updateNodeData(el);
 
                                     this.updateStatisticsPreview(el); // update preview item
 
                                     this.updateItemInDetailsPanelIfNeeded(el);
                                     new api.content.event.ContentUpdatedEvent(el.getContentId()).fire();
 
-                                    results.push(updateResult[i]);
+                                    results.push(treeNodes[i]);
                                     break;
                                 }
                             }
@@ -408,15 +404,6 @@ module app.browse {
                         return this.contentTreeGrid.xPlaceContentNodes(results);
                     });
             }
-        }
-
-        private handleContentRenamed(change: ContentServerChange) {
-            this.handleContentCreated(change, true, true)
-        }
-
-        private handleContentMoved(change: ContentServerChange, changes: ContentServerChange[]) {
-            this.handleContentDeleted(changes);
-            this.handleContentCreated(change, true);
         }
 
         private handleContentDeleted(changes: ContentServerChange[]) {
@@ -459,9 +446,9 @@ module app.browse {
 
         private handleContentPending(change: ContentServerChange) {
 
-            var pendingResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
+            var treeNodes: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
-            return ContentSummaryAndCompareStatusFetcher.fetchByPaths(pendingResult.
+            return ContentSummaryAndCompareStatusFetcher.fetchByPaths(treeNodes.
                     map((el) => {
                         return (el.getNodes().length > 0 && el.getNodes()[0].getData())
                             ? el.getNodes()[0].getData().getContentSummary().getPath()
@@ -473,9 +460,9 @@ module app.browse {
             ).then((data: ContentSummaryAndCompareStatus[]) => {
                     var contentDeletedEvent = new ContentDeletedEvent();
                     data.forEach((el) => {
-                        for (var i = 0; i < pendingResult.length; i++) {
-                            if (pendingResult[i].getId() === el.getId()) {
-                                pendingResult[i].updateNodeData(el);
+                        for (var i = 0; i < treeNodes.length; i++) {
+                            if (treeNodes[i].getId() === el.getId()) {
+                                treeNodes[i].updateNodeData(el);
 
                                 this.updateItemInDetailsPanelIfNeeded(el);
 
@@ -491,17 +478,17 @@ module app.browse {
         }
 
         private handleContentPublished(change: ContentServerChange) {
-            var publishResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
+            var treeNodes: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
             return ContentSummaryAndCompareStatusFetcher.
-                fetchByPaths(publishResult.map((el) => {
+                fetchByPaths(treeNodes.map((el) => {
                     return el.getPath();
                 })).
                 then((data: ContentSummaryAndCompareStatus[]) => {
                     data.forEach((el) => {
-                        for (var i = 0; i < publishResult.length; i++) {
-                            if (publishResult[i].getId() === el.getId()) {
-                                publishResult[i].updateNodeData(el);
+                        for (var i = 0; i < treeNodes.length; i++) {
+                            if (treeNodes[i].getId() === el.getId()) {
+                                treeNodes[i].updateNodeData(el);
 
                                 this.updateItemInDetailsPanelIfNeeded(el);
 
