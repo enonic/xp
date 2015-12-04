@@ -132,7 +132,7 @@ module api.app {
                 return api.application.ApplicationEvent.fromJson(<api.application.ApplicationEventJson>eventJson);
             }
             if (eventType.indexOf('node.') === 0) {
-                var event = api.content.ContentServerEvent.fromJson(<api.content.NodeEventJson>eventJson);
+                var event = api.content.event.ContentServerEvent.fromJson(<api.content.event.NodeEventJson>eventJson);
                 if (!!event.getContentChange()) {
                     return event;
                 } else {

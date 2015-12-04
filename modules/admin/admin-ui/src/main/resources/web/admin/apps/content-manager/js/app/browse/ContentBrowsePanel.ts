@@ -12,18 +12,18 @@ module app.browse {
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
-    import ContentServerEvent = api.content.ContentServerEvent;
-    import ContentServerChange = api.content.ContentServerChange;
-    import ContentServerChangeType = api.content.ContentServerChangeType;
+    import ContentServerEvent = api.content.event.ContentServerEvent;
+    import ContentServerChange = api.content.event.ContentServerChange;
+    import ContentServerChangeType = api.content.event.ContentServerChangeType;
     import BatchContentRequest = api.content.BatchContentRequest;
     import TreeNodesOfContentPath = api.content.TreeNodesOfContentPath;
-    import ContentChangeResult = api.content.ContentChangeResult;
     import ContentId = api.content.ContentId;
     import DetailsPanel = app.view.detail.DetailsPanel;
     import ActiveDetailsPanelsManager = app.view.detail.ActiveDetailsPanelManager;
     import NonMobileDetailsPanelsManager = app.view.detail.NonMobileDetailsPanelsManager;
     import NonMobileDetailsPanelsManagerBuilder = app.view.detail.NonMobileDetailsPanelsManagerBuilder;
-    import BatchContentServerEvent = api.content.BatchContentServerEvent;
+    import BatchContentServerEvent = api.content.event.BatchContentServerEvent;
+    import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
 
     export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
@@ -395,7 +395,7 @@ module app.browse {
                                     this.updateStatisticsPreview(el); // update preview item
 
                                     this.updateItemInDetailsPanelIfNeeded(el);
-                                    new api.content.ContentUpdatedEvent(el.getContentId()).fire();
+                                    new api.content.event.ContentUpdatedEvent(el.getContentId()).fire();
 
                                     results.push(updateResult[i]);
                                     break;
@@ -434,7 +434,7 @@ module app.browse {
             // merge array of nodes arrays
             merged = merged.concat.apply(merged, nodes);
 
-            var contentDeletedEvent = new api.content.ContentDeletedEvent();
+            var contentDeletedEvent = new ContentDeletedEvent();
             merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
                 var contentSummary = node.getData().getContentSummary();
                 if (node.getData() && !!contentSummary) {
@@ -471,7 +471,7 @@ module app.browse {
                         return el !== null;
                     })
             ).then((data: ContentSummaryAndCompareStatus[]) => {
-                    var contentDeletedEvent = new api.content.ContentDeletedEvent();
+                    var contentDeletedEvent = new ContentDeletedEvent();
                     data.forEach((el) => {
                         for (var i = 0; i < pendingResult.length; i++) {
                             if (pendingResult[i].getId() === el.getId()) {
@@ -505,7 +505,7 @@ module app.browse {
 
                                 this.updateItemInDetailsPanelIfNeeded(el);
 
-                                new api.content.ContentPublishedEvent(el.getContentId(), el.getCompareStatus()).fire();
+                                new api.content.event.ContentPublishedEvent(el.getContentId(), el.getCompareStatus()).fire();
                                 break;
                             }
                         }
