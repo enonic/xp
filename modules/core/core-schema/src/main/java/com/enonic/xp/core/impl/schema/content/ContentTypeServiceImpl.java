@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.schema.content;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
@@ -17,7 +16,7 @@ import com.enonic.xp.schema.mixin.MixinService;
 
 @Component(immediate = true)
 public final class ContentTypeServiceImpl
-    implements ContentTypeService, ApplicationInvalidator
+    implements ContentTypeService
 {
     private final ContentTypeRegistry registry;
 
@@ -82,11 +81,5 @@ public final class ContentTypeServiceImpl
     public void setApplicationService( final ApplicationService applicationService )
     {
         this.registry.applicationService = applicationService;
-    }
-
-    @Override
-    public void invalidate( final ApplicationKey key )
-    {
-        this.registry.invalidate();
     }
 }

@@ -10,10 +10,12 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
 
-public abstract class SchemaLoader<N extends BaseSchemaName>
+public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchema>
 {
     private final String path;
 
@@ -26,6 +28,29 @@ public abstract class SchemaLoader<N extends BaseSchemaName>
         this.resourceService = resourceService;
         this.path = path;
         this.pattern = Pattern.compile( this.path + "/([^/]+)/([^/]+)\\.xml" );
+    }
+
+    public final V get( final N name )
+    {
+        final ResourceProcessor<N, V> processor = newProcessor( name );
+        return this.resourceService.processResource( processor );
+    }
+
+    protected abstract V load( N name, Resource resource );
+
+    private ResourceProcessor<N, V> newProcessor( final N key )
+    {
+        return new ResourceProcessor.Builder<N, V>().
+            key( key ).
+            segment( key.getClass().getSimpleName() ).
+            keyTranslator( this::toXmlResourceKey ).
+            processor( resource -> load( key, resource ) ).
+            build();
+    }
+
+    protected final ResourceKey toXmlResourceKey( final N name )
+    {
+        return toResourceKey( name, "xml" );
     }
 
     protected final ResourceKey toResourceKey( final N name, final String ext )
@@ -76,3 +101,4 @@ public abstract class SchemaLoader<N extends BaseSchemaName>
         return resource;
     }
 }
+

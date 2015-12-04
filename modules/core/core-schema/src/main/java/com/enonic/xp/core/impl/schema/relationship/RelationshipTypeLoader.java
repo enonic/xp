@@ -11,21 +11,16 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.xml.parser.XmlRelationshipTypeParser;
 
 final class RelationshipTypeLoader
-    extends SchemaLoader<RelationshipTypeName>
+    extends SchemaLoader<RelationshipTypeName, RelationshipType>
 {
     public RelationshipTypeLoader( final ResourceService resourceService )
     {
         super( resourceService, "/site/relationship-types" );
     }
 
-    public RelationshipType load( final RelationshipTypeName name )
+    @Override
+    protected RelationshipType load( final RelationshipTypeName name, final Resource resource )
     {
-        final Resource resource = getResource( name );
-        if ( resource == null )
-        {
-            return null;
-        }
-
         final RelationshipType.Builder builder = RelationshipType.create();
         parseXml( resource, builder );
 

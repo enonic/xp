@@ -98,8 +98,6 @@ public class MixinServiceImplTest
         assertNotNull( types2 );
         assertEquals( 2, types2.getSize() );
 
-        this.service.invalidate( ApplicationKey.from( "myapp2" ) );
-
         final Mixins types3 = this.service.getByApplication( ApplicationKey.from( "myapp2" ) );
         assertNotNull( types3 );
         assertEquals( 4, types3.getSize() );

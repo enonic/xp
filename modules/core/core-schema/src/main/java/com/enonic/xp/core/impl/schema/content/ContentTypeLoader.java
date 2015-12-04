@@ -11,21 +11,16 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.xml.parser.XmlContentTypeParser;
 
 final class ContentTypeLoader
-    extends SchemaLoader<ContentTypeName>
+    extends SchemaLoader<ContentTypeName, ContentType>
 {
     public ContentTypeLoader( final ResourceService resourceService )
     {
         super( resourceService, "/site/content-types" );
     }
 
-    public ContentType load( final ContentTypeName name )
+    @Override
+    protected ContentType load( final ContentTypeName name, final Resource resource )
     {
-        final Resource resource = getResource( name );
-        if ( resource == null )
-        {
-            return null;
-        }
-
         final ContentType.Builder builder = ContentType.create();
         parseXml( resource, builder );
 

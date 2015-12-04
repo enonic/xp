@@ -61,8 +61,6 @@ public class ContentTypeServiceTest
         assertNotNull( types2 );
         assertEquals( 1, types2.getSize() );
 
-        this.service.invalidate( ApplicationKey.from( "myapp2" ) );
-
         final ContentTypes types3 = this.service.getByApplication( ApplicationKey.from( "myapp2" ) );
         assertNotNull( types3 );
         assertEquals( 1, types3.getSize() );

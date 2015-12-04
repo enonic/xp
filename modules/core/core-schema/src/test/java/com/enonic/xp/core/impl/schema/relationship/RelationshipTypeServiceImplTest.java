@@ -70,8 +70,6 @@ public class RelationshipTypeServiceImplTest
         assertNotNull( types2 );
         assertEquals( 0, types2.getSize() );
 
-        this.service.invalidate( ApplicationKey.from( "myapp2" ) );
-
         final RelationshipTypes types3 = this.service.getByApplication( ApplicationKey.from( "myapp2" ) );
         assertNotNull( types3 );
         assertEquals( 1, types3.getSize() );
