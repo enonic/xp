@@ -2,15 +2,12 @@ package com.enonic.xp.core.impl.content.page;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
-import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.form.Form;
@@ -20,7 +17,7 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageDescriptors;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.xml.XmlException;
@@ -28,7 +25,7 @@ import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 
 @Component(immediate = true)
 public final class PageDescriptorServiceImpl
-    implements PageDescriptorService, ApplicationInvalidator
+    implements PageDescriptorService
 {
     private final static String PATH = "/site/pages";
 
@@ -36,22 +33,27 @@ public final class PageDescriptorServiceImpl
 
     private ResourceService resourceService;
 
-    private final ConcurrentMap<DescriptorKey, PageDescriptor> cache;
-
-    public PageDescriptorServiceImpl()
-    {
-        this.cache = Maps.newConcurrentMap();
-    }
-
     @Override
     public PageDescriptor getByKey( final DescriptorKey key )
     {
-        PageDescriptor pageDescriptor = this.cache.computeIfAbsent( key, this::loadDescriptor );
-        if ( pageDescriptor == null )
+        final ResourceProcessor<DescriptorKey, PageDescriptor> processor = newProcessor( key );
+        final PageDescriptor descriptor = this.resourceService.processResource( processor );
+        if ( descriptor != null )
         {
-            pageDescriptor = createDefaultDescriptor( key );
+            return descriptor;
         }
-        return pageDescriptor;
+
+        return createDefaultDescriptor( key );
+    }
+
+    private ResourceProcessor<DescriptorKey, PageDescriptor> newProcessor( final DescriptorKey key )
+    {
+        return new ResourceProcessor.Builder<DescriptorKey, PageDescriptor>().
+            key( key ).
+            segment( "pageDescriptor" ).
+            keyTranslator( PageDescriptor::toResourceKey ).
+            processor( resource -> loadDescriptor( key, resource ) ).
+            build();
     }
 
     @Override
@@ -116,16 +118,8 @@ public final class PageDescriptorServiceImpl
         return new OptionalDescriptorKeyLocator( this.resourceService, PATH ).findKeys( key );
     }
 
-    private PageDescriptor loadDescriptor( final DescriptorKey key )
+    private PageDescriptor loadDescriptor( final DescriptorKey key, final Resource resource )
     {
-        final ResourceKey resourceKey = PageDescriptor.toResourceKey( key );
-        final Resource resource = this.resourceService.getResource( resourceKey );
-
-        if ( !resource.exists() )
-        {
-            return null;
-        }
-
         final PageDescriptor.Builder builder = PageDescriptor.create();
         parseXml( resource, builder );
         builder.key( key );
@@ -146,11 +140,5 @@ public final class PageDescriptorServiceImpl
             config( Form.create().build() ).
             regions( RegionDescriptors.create().build() ).
             build();
-    }
-
-    @Override
-    public void invalidate( final ApplicationKey key )
-    {
-        this.cache.clear();
     }
 }

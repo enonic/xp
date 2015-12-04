@@ -2,15 +2,12 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
-import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.core.impl.content.page.OptionalDescriptorKeyLocator;
@@ -20,7 +17,7 @@ import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.PartDescriptors;
 import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.xml.XmlException;
@@ -28,7 +25,7 @@ import com.enonic.xp.xml.parser.XmlPartDescriptorParser;
 
 @Component
 public final class PartDescriptorServiceImpl
-    implements PartDescriptorService, ApplicationInvalidator
+    implements PartDescriptorService
 {
     private final static String PATH = "/site/parts";
 
@@ -36,22 +33,27 @@ public final class PartDescriptorServiceImpl
 
     private ResourceService resourceService;
 
-    private final ConcurrentMap<DescriptorKey, PartDescriptor> cache;
-
-    public PartDescriptorServiceImpl()
-    {
-        this.cache = Maps.newConcurrentMap();
-    }
-
     @Override
     public PartDescriptor getByKey( final DescriptorKey key )
     {
-        PartDescriptor partDescriptor = this.cache.computeIfAbsent( key, this::loadDescriptor );
-        if ( partDescriptor == null )
+        final ResourceProcessor<DescriptorKey, PartDescriptor> processor = newProcessor( key );
+        final PartDescriptor descriptor = this.resourceService.processResource( processor );
+        if ( descriptor != null )
         {
-            partDescriptor = createDefaultDescriptor( key );
+            return descriptor;
         }
-        return partDescriptor;
+
+        return createDefaultDescriptor( key );
+    }
+
+    private ResourceProcessor<DescriptorKey, PartDescriptor> newProcessor( final DescriptorKey key )
+    {
+        return new ResourceProcessor.Builder<DescriptorKey, PartDescriptor>().
+            key( key ).
+            segment( "partDescriptor" ).
+            keyTranslator( PartDescriptor::toResourceKey ).
+            processor( resource -> loadDescriptor( key, resource ) ).
+            build();
     }
 
     @Override
@@ -95,16 +97,8 @@ public final class PartDescriptorServiceImpl
         this.resourceService = resourceService;
     }
 
-    private PartDescriptor loadDescriptor( final DescriptorKey key )
+    private PartDescriptor loadDescriptor( final DescriptorKey key, final Resource resource )
     {
-        final ResourceKey resourceKey = PartDescriptor.toResourceKey( key );
-        final Resource resource = this.resourceService.getResource( resourceKey );
-
-        if ( !resource.exists() )
-        {
-            return null;
-        }
-
         final PartDescriptor.Builder builder = PartDescriptor.create();
         parseXml( resource, builder );
         builder.name( key.getName() ).key( key );
@@ -145,11 +139,5 @@ public final class PartDescriptorServiceImpl
     private List<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
     {
         return new OptionalDescriptorKeyLocator( this.resourceService, PATH ).findKeys( key );
-    }
-
-    @Override
-    public void invalidate( final ApplicationKey key )
-    {
-        this.cache.clear();
     }
 }

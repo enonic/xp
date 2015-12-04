@@ -2,15 +2,12 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
-import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.core.impl.content.page.DescriptorKeyLocator;
@@ -19,7 +16,7 @@ import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.LayoutDescriptors;
 import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.xml.XmlException;
@@ -27,7 +24,7 @@ import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 
 @Component
 public final class LayoutDescriptorServiceImpl
-    implements LayoutDescriptorService, ApplicationInvalidator
+    implements LayoutDescriptorService
 {
     private final static String PATH = "/site/layouts";
 
@@ -35,17 +32,27 @@ public final class LayoutDescriptorServiceImpl
 
     private ResourceService resourceService;
 
-    private final ConcurrentMap<DescriptorKey, LayoutDescriptor> cache;
-
-    public LayoutDescriptorServiceImpl()
-    {
-        this.cache = Maps.newConcurrentMap();
-    }
-
     @Override
     public LayoutDescriptor getByKey( final DescriptorKey key )
     {
-        return this.cache.computeIfAbsent( key, this::loadDescriptor );
+        final ResourceProcessor<DescriptorKey, LayoutDescriptor> processor = newProcessor( key );
+        final LayoutDescriptor descriptor = this.resourceService.processResource( processor );
+        if ( descriptor != null )
+        {
+            return descriptor;
+        }
+
+        return null;
+    }
+
+    private ResourceProcessor<DescriptorKey, LayoutDescriptor> newProcessor( final DescriptorKey key )
+    {
+        return new ResourceProcessor.Builder<DescriptorKey, LayoutDescriptor>().
+            key( key ).
+            segment( "layoutDescriptor" ).
+            keyTranslator( LayoutDescriptor::toResourceKey ).
+            processor( resource -> loadDescriptor( key, resource ) ).
+            build();
     }
 
     @Override
@@ -89,16 +96,8 @@ public final class LayoutDescriptorServiceImpl
         this.resourceService = resourceService;
     }
 
-    private LayoutDescriptor loadDescriptor( final DescriptorKey key )
+    private LayoutDescriptor loadDescriptor( final DescriptorKey key, final Resource resource )
     {
-        final ResourceKey resourceKey = LayoutDescriptor.toResourceKey( key );
-        final Resource resource = this.resourceService.getResource( resourceKey );
-
-        if ( !resource.exists() )
-        {
-            return null;
-        }
-
         final LayoutDescriptor.Builder builder = LayoutDescriptor.create();
         parseXml( resource, builder );
         builder.name( key.getName() ).key( key );
@@ -128,11 +127,5 @@ public final class LayoutDescriptorServiceImpl
     private List<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
     {
         return new DescriptorKeyLocator( this.resourceService, PATH ).findKeys( key );
-    }
-
-    @Override
-    public void invalidate( final ApplicationKey key )
-    {
-        this.cache.clear();
     }
 }
