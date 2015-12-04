@@ -1,4 +1,4 @@
-module app.launcher {
+module api.app {
 
     export class Applications {
 

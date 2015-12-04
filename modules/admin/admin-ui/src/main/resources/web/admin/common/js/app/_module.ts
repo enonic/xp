@@ -4,6 +4,7 @@
 ///<reference path='NamesAndIconViewSize.ts'/>
 ///<reference path='NamesAndIconView.ts'/>
 ///<reference path='Application.ts'/>
+///<reference path='Applications.ts'/>
 ///<reference path='AppLauncherEventType.ts' />
 ///<reference path='AppLauncherEvent.ts' />
 ///<reference path='AppPanel.ts' />

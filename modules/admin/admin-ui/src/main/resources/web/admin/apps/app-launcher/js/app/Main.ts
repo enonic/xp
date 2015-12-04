@@ -8,6 +8,7 @@ module app {
         private loginForm: app.login.LoginForm;
         private serverEventsListener: api.app.ServerEventsListener;
         private lostConnectionDetector: app.launcher.LostConnectionDetector;
+        private router: app.launcher.AppRouter;
         private appManager: api.app.AppManager;
         private authenticated: boolean = false;
         private connectionLost: boolean = false;
@@ -17,10 +18,9 @@ module app {
         }
 
         start() {
-            var allApplications: api.app.Application[] = app.launcher.Applications.getAllApps();
-            this.serverEventsListener = new api.app.ServerEventsListener(allApplications);
+            this.serverEventsListener = new api.app.ServerEventsListener();
 
-            this.appSelector = new app.launcher.AppSelector(allApplications);
+            this.appSelector = new app.launcher.AppSelector();
             this.appSelector.onAppSelected((event: app.launcher.AppSelectedEvent) => {
                 this.appLauncher.showApplication(event.getApplication());
             });
@@ -30,7 +30,7 @@ module app {
             this.homeMainContainer.hide();
             api.dom.Body.get().appendChild(this.homeMainContainer);
 
-            var router = new app.launcher.AppRouter(allApplications, this.appLauncher);
+            this.router = new app.launcher.AppRouter(this.appLauncher);
 
             this.appManager = api.app.AppManager.instance();
             this.serverEventsListener.onConnectionLost(this.onConnectionLost.bind(this));
@@ -81,12 +81,14 @@ module app {
             this.lostConnectionDetector.stopPolling();
             this.appSelector.setAllowedApps([]);
             this.appLauncher.setAllowedApps([]);
+            this.router.setAllowedApps([]);
             this.appManager.notifyConnectionRestored();
 
-            app.launcher.Applications.getAllApps().forEach((app: api.app.Application) => {
+            api.app.Applications.getAllApps().forEach((app: api.app.Application) => {
                 app.getAppFrame().remove();
                 app.setOpenTabs(0);
             });
+            api.app.Applications.setApps([]);
         }
 
         private onUserAuthenticated(loginResult: api.security.auth.LoginResult) {
@@ -95,9 +97,11 @@ module app {
             }
             this.authenticated = true;
             this.lostConnectionDetector.setAuthenticated(loginResult.isAuthenticated());
-            var allowedApps = app.launcher.Applications.getAppsByIds(loginResult.getApplications());
+            var allowedApps: api.app.Application[] = loginResult.getApplications();
+            api.app.Applications.setApps(allowedApps);
             this.appSelector.setAllowedApps(allowedApps);
             this.appLauncher.setAllowedApps(allowedApps);
+            this.router.setAllowedApps(allowedApps);
             new app.home.LogInEvent(loginResult.getUser()).fire();
             this.homeMainContainer.showAppSelector();
             this.serverEventsListener.start();

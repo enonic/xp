@@ -1,6 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.auth.json;
 
+import com.enonic.xp.admin.app.AdminApplicationDescriptor;
 import com.enonic.xp.admin.app.AdminApplicationDescriptors;
+import com.enonic.xp.admin.impl.rest.resource.launcher.json.AdminApplicationDescriptorJson;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.User;
@@ -56,9 +58,21 @@ public final class LoginResultJson
         return principals.stream().map( PrincipalKey::toString ).toArray( String[]::new );
     }
 
-    public String[] getApplications()
+    public AdminApplicationDescriptorJson[] getApplications()
     {
-        return applications.stream().map( application -> application.getKeyString() ).toArray( String[]::new );
+        return applications.stream().
+            map( this::toJson ).
+            toArray( AdminApplicationDescriptorJson[]::new );
+    }
+
+    private AdminApplicationDescriptorJson toJson( final AdminApplicationDescriptor adminApplicationDescriptor )
+    {
+        final AdminApplicationDescriptorJson jsonEntry = new AdminApplicationDescriptorJson();
+        jsonEntry.key = adminApplicationDescriptor.getKeyString();
+        jsonEntry.name = adminApplicationDescriptor.getName();
+        jsonEntry.shortName = adminApplicationDescriptor.getShortName();
+        jsonEntry.iconUrl = adminApplicationDescriptor.getIconUrl();
+        return jsonEntry;
     }
 
     public String getMessage()

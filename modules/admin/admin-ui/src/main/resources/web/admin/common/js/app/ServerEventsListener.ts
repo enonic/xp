@@ -3,11 +3,9 @@ module api.app {
     export class ServerEventsListener {
 
         private serverEventsConnection: api.app.ServerEventsConnection;
-        private applications: api.app.Application[];
         private aggregator: ServerEventAggregator;
 
-        constructor(applications: api.app.Application[]) {
-            this.applications = applications;
+        constructor() {
             this.serverEventsConnection = new api.app.ServerEventsConnection();
             this.serverEventsConnection.onServerEvent((event: api.event.Event) => this.onServerEvent(event));
             this.aggregator = new ServerEventAggregator();
@@ -54,7 +52,7 @@ module api.app {
         }
 
         private fireEvent(event: api.event.Event) {
-            this.applications.forEach((application)=> {
+            api.app.Applications.getAllApps().forEach((application)=> {
                 var appWindow = application.getWindow();
                 if (appWindow) {
                     event.fire(appWindow);

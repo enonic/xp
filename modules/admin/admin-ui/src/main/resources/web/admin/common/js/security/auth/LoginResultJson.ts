@@ -6,7 +6,7 @@ module api.security.auth {
 
         user: api.security.UserJson;
 
-        applications: string[];
+        applications: AdminApplicationJson[];
 
         principals: string[];
 
