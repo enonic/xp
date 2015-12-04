@@ -313,7 +313,6 @@ module api.ui.selector.combobox {
                 if (RichComboBox.debug) {
                     console.debug(this.toString() + '.doSetValue on loaded:', value);
                 }
-                debugger;
                 super.doSetValue(value, silent);
             });
         }

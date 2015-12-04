@@ -29,7 +29,8 @@ module app.wizard {
                         if (this.localeCombo.maximumOccurrencesReached()) {
                             this.localeCombo.clearSelection(true);
                         }
-                        this.localeCombo.setValue(event.getNewValue());
+                        var value = event.getNewValue();
+                        this.localeCombo.setValue(value ? value.toString() : "");
                     }
                     break;
                 case ContentSettingsModel.PROPERTY_OWNER:
@@ -37,7 +38,8 @@ module app.wizard {
                         if (this.ownerCombo.maximumOccurrencesReached()) {
                             this.ownerCombo.clearSelection(true);
                         }
-                        this.ownerCombo.setValue((<api.security.PrincipalKey>event.getNewValue()).toString());
+                        var value = event.getNewValue();
+                        this.ownerCombo.setValue(value ? value.toString() : "");
                     }
                     break;
                 }
