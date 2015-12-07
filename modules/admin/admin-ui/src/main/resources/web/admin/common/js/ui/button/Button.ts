@@ -9,7 +9,7 @@ module api.ui.button {
 
             this.labelEl = new api.dom.SpanEl();
             if (label) {
-                this.labelEl.getEl().setInnerHtml(label);
+                this.labelEl.getEl().setInnerHtml(label, false);
             }
             this.appendChild(this.labelEl);
         }
