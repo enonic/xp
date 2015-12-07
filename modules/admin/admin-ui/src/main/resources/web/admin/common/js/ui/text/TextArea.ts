@@ -7,7 +7,7 @@ module api.ui.text {
         private clone: api.dom.Element;
 
         constructor(name: string, originalValue?: string) {
-            super("textarea", "text-area", originalValue);
+            super("textarea", "text-area", undefined, originalValue);
             this.getEl().setAttribute("name", name);
 
             this.onInput((event: Event) => {

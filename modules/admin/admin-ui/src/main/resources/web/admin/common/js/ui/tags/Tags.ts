@@ -49,7 +49,7 @@ module api.ui.tags {
         private tagRemovedListeners: {(event: TagRemovedEvent) : void}[] = [];
 
         constructor(builder: TagsBuilder) {
-            super("ul", "tags", builder.tags ? builder.tags.join(';') : undefined);
+            super("ul", "tags", undefined, builder.tags ? builder.tags.join(';') : undefined);
             this.tagSuggester = builder.tagSuggester;
 
             this.maxTags = builder.maxTags;

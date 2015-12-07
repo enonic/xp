@@ -10,7 +10,7 @@ module api.ui {
         public static debug = false;
 
         constructor(text?: string, checked?: boolean) {
-            super("div", "checkbox", String(checked != undefined ? checked : false));
+            super("div", "checkbox", undefined, String(checked != undefined ? checked : false));
             // we need an id for the label to interact nicely
             this.checkbox = <api.dom.InputEl> new api.dom.Element(new api.dom.NewElementBuilder().
                 setTagName('input').
