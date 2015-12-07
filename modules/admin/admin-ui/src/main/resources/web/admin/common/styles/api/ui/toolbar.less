@@ -8,7 +8,7 @@
   border-bottom: 1px solid @admin-bg-light-gray;
   min-width: 200px;
 
-  .button {
+  .@{_COMMON_PREFIX}button {
     .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
 
     &:focus:not(:disabled) {
@@ -60,7 +60,7 @@
       border-top: 6px solid @admin-dark-gray;
     }
 
-    .dropdown {
+    .@{_COMMON_PREFIX}dropdown {
       display: none;
       position: absolute;
       margin: -1px 0px 0px 8px;
@@ -70,7 +70,7 @@
       background-color: @admin-white;
       .material-layer-shadow();
 
-      .button {
+      .@{_COMMON_PREFIX}button {
         width: 100%;
         padding: 5px;
 
@@ -86,10 +86,10 @@
       }
     }
 
-    &:hover .dropdown,
-    &:focus .dropdown,
-    .dropdown:hover,
-    .dropdown:focus {
+    &:hover .@{_COMMON_PREFIX}dropdown,
+    &:focus .@{_COMMON_PREFIX}dropdown,
+    .@{_COMMON_PREFIX}dropdown:hover,
+    .@{_COMMON_PREFIX}dropdown:focus {
       display: block;
     }
   }

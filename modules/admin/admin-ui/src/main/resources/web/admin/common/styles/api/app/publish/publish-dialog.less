@@ -1,4 +1,4 @@
-.modal-dialog.publish-dialog {
+.@{_COMMON_PREFIX}.publish-dialog {
 
   @media screen and (max-height: 360px) {
     max-height: 200px;
@@ -33,7 +33,7 @@
   }
 
   .dialog-buttons {
-    .button {
+    .@{_COMMON_PREFIX}button {
       &.publish-action {
         .button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 30%));
         padding: 4px 19px 4px 19px;
@@ -272,9 +272,11 @@
   }
 }
 
-.modal-dialog._0-240.publish-dialog, .modal-dialog._240-360.publish-dialog {
-  .include-child-check {
-    bottom: auto;
-    right: 10px;
+.@{_COMMON_PREFIX}.modal-dialog {
+  &._0-240, &._240-360 {
+    &.publish-dialog .include-child-check {
+      bottom: auto;
+      right: 10px;
+    }
   }
 }

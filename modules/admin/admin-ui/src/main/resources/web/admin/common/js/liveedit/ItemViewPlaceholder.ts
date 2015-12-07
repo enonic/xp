@@ -3,7 +3,7 @@ module api.liveedit {
     export class ItemViewPlaceholder extends api.dom.DivEl {
 
         constructor() {
-            super("item-placeholder", true);
+            super("item-placeholder", api.StyleHelper.PAGE_EDITOR_PREFIX);
         }
 
         showRenderingError(url: string, errorMessage: string = "Error rendering component") {

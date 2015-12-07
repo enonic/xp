@@ -2,10 +2,9 @@ declare var CONFIG;
 declare var wemjq: JQueryStatic;
 
 /*
-    clsPrefix must match @_CLS_PREFIX in n web\admin\live-edit\styles\less\live-edit.less
+    Prefix must match @_CLS_PREFIX in n web\admin\live-edit\styles\less\live-edit.less
  */
-declare var clsPrefix: string;
-clsPrefix = api.StyleHelper.PAGE_EDITOR_PREFIX;
+api.StyleHelper.setCurrentPrefix(api.StyleHelper.PAGE_EDITOR_PREFIX);
 
 var liveEditPage: LiveEdit.LiveEditPage;
 

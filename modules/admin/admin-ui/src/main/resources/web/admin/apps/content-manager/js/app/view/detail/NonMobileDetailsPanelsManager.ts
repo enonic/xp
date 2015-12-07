@@ -10,7 +10,7 @@ module app.view.detail {
         private defaultDockedDetailsPanel: DetailsPanel;
         private floatingDetailsPanel: DetailsPanel;
         private resizeEventMonitorLocked: boolean = false;
-        private toggleButton: api.dom.DivEl = new api.dom.DivEl("button non-mobile-details-panel-toggle-button");
+        private toggleButton: api.dom.DivEl = new app.view.detail.button.NonMobileDetailsPanelToggleButton();
         private debouncedResizeHandler: () => void = api.util.AppHelper.debounce(this.doHandleResizeEvent, 300, false);
 
         constructor(builder: NonMobileDetailsPanelsManagerBuilder) {
@@ -20,8 +20,6 @@ module app.view.detail {
             this.floatingDetailsPanel = builder.getFloatingDetailsPanel();
 
             this.toggleButton.onClicked((event) => {
-                this.toggleButton.toggleClass("expanded");
-
                 if (this.requiresAnimation()) {
                     this.doPanelAnimation();
                 }

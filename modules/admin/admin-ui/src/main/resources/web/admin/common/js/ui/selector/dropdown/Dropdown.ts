@@ -51,7 +51,7 @@ module api.ui.selector.dropdown {
         private active: boolean = false;
 
         constructor(name: string, config: DropdownConfig<OPTION_DISPLAY_VALUE>) {
-            super("div", "dropdown");
+            super("div", "dropdown", api.StyleHelper.COMMON_PREFIX);
             this.getEl().setAttribute("name", name);
 
             this.optionDisplayValueViewer = config.optionDisplayValueViewer || new DefaultOptionDisplayValueViewer();

@@ -27,7 +27,7 @@ module api.ui.dialog {
         private static openDialogsCounter: number = 0;
 
         constructor(config: ModalDialogConfig) {
-            super("modal-dialog");
+            super("modal-dialog", api.StyleHelper.COMMON_PREFIX);
 
             this.config = config;
 

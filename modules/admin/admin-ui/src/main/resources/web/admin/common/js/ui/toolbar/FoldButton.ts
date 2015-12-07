@@ -7,13 +7,15 @@ module api.ui.toolbar {
         private widthCache: number[] = [];
 
         constructor() {
-            super('button fold-button');
+            super("button", api.StyleHelper.COMMON_PREFIX);
+
+            this.addClass("fold-button");
 
             this.span = new api.dom.SpanEl();
             this.span.setHtml("More");
             this.appendChild(this.span);
 
-            this.dropdown = new api.dom.DivEl('dropdown');
+            this.dropdown = new api.dom.DivEl("dropdown", api.StyleHelper.COMMON_PREFIX);
             this.appendChild(this.dropdown);
         }
 

@@ -3,10 +3,10 @@ module api.dom {
 
         private validityChangedListeners: {(event: ValidityChangedEvent):void}[] = [];
 
-        constructor(tagName: string, className?: string) {
+        constructor(tagName: string, className?: string, prefix?: string) {
             super(new NewElementBuilder().
                 setTagName(tagName).
-                setClassName(className));
+                setClassName(className, prefix));
         }
 
         getName(): string {

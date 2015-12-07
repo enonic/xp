@@ -1,8 +1,8 @@
 module api.dom {
     export class FormInputEl extends FormItemEl {
 
-        constructor(tagName: string, className?: string) {
-            super(tagName, className);
+        constructor(tagName: string, className?: string, prefix?: string) {
+            super(tagName, className, prefix);
             this.addClass('form-input');
         }
 

@@ -475,3 +475,150 @@
     .ellipsis();
   }
 }
+
+.picker() {
+  .@{_COMMON_PREFIX}button {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    right: 0;
+    background: transparent;
+    padding: 0 6px;
+    border: 1px solid transparent;
+    font-size: 20px;
+    line-height: 0px;
+    &:before {
+      color: @admin-dark-gray;
+      vertical-align: middle;
+    }
+    &:hover, &:active {
+      background: transparent;
+      &:before {
+        color: @admin-dark-gray;
+      }
+    }
+  }
+
+  .wrapper {
+    position: relative;
+
+    .@{_COMMON_PREFIX}text-input {
+      width: 100%;
+      padding: 4px 32px 4px 5px;
+      line-height: 27px;
+    }
+  }
+}
+
+.picker-dialog(@width: 100%, @padding: 10px) {
+  position: absolute;
+  display: none;
+  top: auto;
+  left: auto;
+  bottom: auto;
+  right: auto;
+  height: auto;
+  width: @width;
+  z-index: 100;
+  padding: @padding;
+  background-color: #fff;
+  .material-layer-shadow();
+}
+
+.date-picker-mixin(@width: 100%, @padding: 10px) {
+  .date-picker-dialog {
+    .picker-dialog(@width, @padding);
+    box-sizing: border-box;
+
+    h2, h5 {
+      text-align: center;
+    }
+
+    .prev, .next {
+      cursor: pointer;
+      padding: 0 5px;
+      color: @admin-button-blue2;
+      vertical-align: middle;
+      text-decoration: none;
+    }
+
+    .prev {
+      .icon-arrow-left();
+    }
+
+    .next {
+      .icon-arrow-right4();
+    }
+
+    .month-container {
+      margin-bottom: 10px;
+    }
+    .calendar {
+      text-align: center;
+    }
+  }
+}
+
+.time-picker-mixin() {
+  .time-picker-dialog {
+    .picker-dialog(auto, 5px);
+
+    li {
+      display: inline-block;
+      font-size: 30px;
+      line-height: 40px;
+      padding: 5px;
+
+      &.colon {
+        vertical-align: top;
+        padding: 0;
+        margin-top: 19px;
+
+        &:before {
+          content: ':';
+        }
+      }
+
+      a, span {
+        display: block;
+      }
+
+      .prev, .next {
+        cursor: pointer;
+        overflow: hidden;
+        height: 16px;
+
+        width: 34px;
+        text-align: center;
+
+        span {
+          position: absolute;
+          width: inherit;
+          margin-top: -3px;
+          font-size: 0.8em;
+          color: @admin-button-blue2;
+        }
+      }
+
+      .prev {
+        span {
+          .icon-arrow-down4();
+        }
+      }
+
+      .next {
+        span {
+          .icon-arrow-up2();
+        }
+      }
+
+    }
+
+    .timezone {
+      color: @admin-button-blue2;
+      font-size: 15px;
+      display: block;
+      line-height: 25px;
+    }
+  }
+}

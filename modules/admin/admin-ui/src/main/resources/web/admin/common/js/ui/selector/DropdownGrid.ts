@@ -42,7 +42,6 @@ module api.ui.selector {
         constructor(config: DropdownGridConfig<OPTION_DISPLAY_VALUE>) {
             this.rowSelectionListeners = [];
             this.multipleSelectionListeners = [];
-            this.maxHeight = config.maxHeight || 200;
             this.optionDisplayValueViewer = config.optionDisplayValueViewer ?
                 new (<any>config.optionDisplayValueViewer['constructor'])() : new DefaultOptionDisplayValueViewer();
             this.filter = config.filter;
