@@ -7,6 +7,7 @@
     ]
   },
   "plugins": [
+    "plugins/example",
     "plugins/markdown"
   ],
   "templates": {
