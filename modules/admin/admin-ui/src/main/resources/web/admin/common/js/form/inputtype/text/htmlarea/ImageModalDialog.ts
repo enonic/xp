@@ -325,6 +325,7 @@ module api.form.inputtype.text.htmlarea {
             var figCaption = api.dom.ElementHelper.fromName("figcaption");
             figCaption.setId(figCaptionId);
             figCaption.setText(this.getCaptionFieldValue());
+            figCaption.setAttribute("style", "text-align: center");
 
             figure.appendChildren([(<api.dom.ImgEl>this.image).getEl().getHTMLElement(), figCaption.getHTMLElement()]);
 
@@ -337,19 +338,16 @@ module api.form.inputtype.text.htmlarea {
             }
 
             var keepSize = this.image.getEl().getAttribute("data-src").indexOf("keepSize=true") > 0;
+            var leftRightAlignCls = "float: {0}; margin: 15px;" + (keepSize ? "" : "width: 40%");
 
-            var styleAttr;
+            var styleAttr = "text-align: " + alignment;
             switch (alignment) {
-            case 'justify':
-            case 'center':
-                styleAttr = "text-align: " + alignment;
-                break;
-            case 'left':
-                styleAttr = "float: left; margin: 15px 15px 0 15px;" + (keepSize ? "" : "width: 40%");
-                break;
-            case 'right':
-                styleAttr = "float: right; margin: 15px 15px 0 15px;" + (keepSize ? "" : "width: 40%");
-                break;
+                case 'left':
+                    styleAttr = api.util.StringHelper.format(leftRightAlignCls, "left");
+                    break;
+                case 'right':
+                    styleAttr = api.util.StringHelper.format(leftRightAlignCls, "right");
+                    break;
             }
 
             element.setAttribute("style", styleAttr);

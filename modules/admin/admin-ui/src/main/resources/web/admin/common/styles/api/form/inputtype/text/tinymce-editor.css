@@ -22,16 +22,12 @@
     width: 60%;
 }
 
-.mce-content-body figure[style*="float: left"] img:not([data-src*="keepSize=true"]) {
+.mce-content-body figure[style*="float:"] img {
     width: 100%;
 }
 
 .mce-content-body figure[style*="float: left"] figcaption {
     text-align: center;
-}
-
-.mce-content-body figure[style*="float: right"] img:not([data-src*="keepSize=true"]) {
-    width: 100%;
 }
 
 .mce-content-body figure[style*="float: right"] figcaption {
