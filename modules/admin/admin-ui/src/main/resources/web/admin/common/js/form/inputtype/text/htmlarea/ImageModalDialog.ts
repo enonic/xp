@@ -132,22 +132,20 @@ module api.form.inputtype.text.htmlarea {
                     resolve();
 
             this.image = this.createImgEl(imgUrl, imageContent.getDisplayName(), contentId);
+
             if (this.imageElement) {
                 this.image.getHTMLElement().style["text-align"] =
-                this.imageElement.parentElement.style.textAlign || this.imageElement.parentElement.style.cssFloat;
+                    this.imageElement.parentElement.style.textAlign || this.imageElement.parentElement.style.cssFloat;
 
-                var keepSize = this.imageElement.getAttribute("data-src").indexOf("keepSize=true") > 0;
-                if (keepSize) {
-                    var pathAttr = this.imageElement.getAttribute("data-src");
-                    this.image.getEl().setAttribute("data-src", pathAttr);
-                }
                 this.imageToolbar = new ImageToolbar(this.image);
+                if (this.imageToolbar.isImageInOriginalSize(new api.dom.ElementHelper(this.imageElement))) {
+                    this.imageToolbar.appendKeepSizeParamToImagePath();
+                }
             }
             else {
                 this.imageToolbar = new ImageToolbar(this.image);
                 this.image.getHTMLElement().style["text-align"] = "justify";
             }
-
 
             this.image.onLoaded(() => {
                 this.imagePreviewContainer.removeClass("upload");
@@ -320,7 +318,17 @@ module api.form.inputtype.text.htmlarea {
             return (<api.dom.InputEl>this.imageCaptionField.getInput()).getValue().trim();
         }
 
+        private isImageWiderThanEditor() {
+            return (this.image.getHTMLElement()["width"] > this.getEditor()["editorContainer"].clientWidth);
+        }
+
+        private setImageWidthConstraint() {
+            var keepImageSize = this.imageToolbar.isImageInOriginalSize(this.image.getEl());
+            this.image.getHTMLElement().style["width"] = (this.isImageWiderThanEditor() || !keepImageSize) ? "100%" : "auto";
+        }
+
         private createFigureElement(figCaptionId: string) {
+
             var figure = api.dom.ElementHelper.fromName("figure");
             var figCaption = api.dom.ElementHelper.fromName("figcaption");
             figCaption.setId(figCaptionId);
@@ -337,16 +345,16 @@ module api.form.inputtype.text.htmlarea {
                 alignment = this.image.getHTMLElement().style["text-align"];
             }
 
-            var keepSize = this.image.getEl().getAttribute("data-src").indexOf("keepSize=true") > 0;
-            var leftRightAlignCls = "float: {0}; margin: 15px;" + (keepSize ? "" : "width: 40%");
+            var styleFormat = "float: {0}; margin: {1};" + (this.imageToolbar.isImageInOriginalSize(this.image.getEl()) ? "" : "width: {2}%;");
+            var styleAttr = "text-align: " + alignment + ";";
 
-            var styleAttr = "text-align: " + alignment;
             switch (alignment) {
                 case 'left':
-                    styleAttr = api.util.StringHelper.format(leftRightAlignCls, "left");
-                    break;
                 case 'right':
-                    styleAttr = api.util.StringHelper.format(leftRightAlignCls, "right");
+                    styleAttr = api.util.StringHelper.format(styleFormat, alignment, "15px", "40");
+                    break;
+                case 'center':
+                    styleAttr = styleAttr + api.util.StringHelper.format(styleFormat, "none", "auto", "60");
                     break;
             }
 
@@ -366,6 +374,7 @@ module api.form.inputtype.text.htmlarea {
 
                 wemjq(this.imageElement.parentElement).children("figcaption").text(this.getCaptionFieldValue());
                 this.imageElement.parentElement.replaceChild((<api.dom.ImgEl>this.image).getEl().getHTMLElement(), this.imageElement);
+                this.setImageWidthConstraint();
 
                 setTimeout(() => {
                     this.getEditor().nodeChanged({selectionChange: true})
@@ -377,6 +386,7 @@ module api.form.inputtype.text.htmlarea {
 
                 this.updateImageParentAlignment(figure.getHTMLElement());
                 this.changeImageParentAlignmentOnImageAlignmentChange(figure.getHTMLElement());
+                this.setImageWidthConstraint();
 
                 if (!isProperContainer() || container.nodeName === "FIGURE") {
                     while (!isProperContainer()) {
@@ -446,6 +456,10 @@ module api.form.inputtype.text.htmlarea {
             this.initActiveButton();
         }
 
+        public isImageInOriginalSize(image: api.dom.ElementHelper) {
+            return image.getAttribute("data-src").indexOf("keepSize=true") > 0;
+        }
+
         private createJustifiedButton(): api.ui.button.ActionButton {
             return this.createAlignmentButton("icon-paragraph-justify");
         }
@@ -492,15 +506,25 @@ module api.form.inputtype.text.htmlarea {
             return keepOriginalSizeCheckbox;
         }
 
-        private appendKeepSizeParamToImagePath() {
-            var pathAttr = this.image.getEl().getAttribute("data-src");
-            this.image.getEl().setAttribute("data-src", pathAttr + "?keepSize=true");
+        public appendKeepSizeParamToImagePath() {
+            if (!this.isImageInOriginalSize(this.image.getEl())) {
+                var pathAttr = this.image.getEl().getAttribute("data-src");
+                this.image.getEl().setAttribute("data-src", pathAttr + "?keepSize=true");
+            }
+            if (!this.keepOriginalSizeCheckbox.isChecked()) {
+                this.keepOriginalSizeCheckbox.setChecked(true);
+            }
         }
 
         private removeKeepSizeParamFromImagePath() {
-            var pathAttr = this.image.getEl().getAttribute("data-src");
-            var paramToRemoveIndex = this.image.getEl().getAttribute("data-src").indexOf("?keepSize=true");
-            this.image.getEl().setAttribute("data-src", pathAttr.substring(0, paramToRemoveIndex));
+            if (this.isImageInOriginalSize(this.image.getEl())) {
+                var pathAttr = this.image.getEl().getAttribute("data-src");
+                var paramToRemoveIndex = this.image.getEl().getAttribute("data-src").indexOf("?keepSize=true");
+                this.image.getEl().setAttribute("data-src", pathAttr.substring(0, paramToRemoveIndex));
+            }
+            if (this.keepOriginalSizeCheckbox.isChecked()) {
+                this.keepOriginalSizeCheckbox.setChecked(false);
+            }
         }
 
         private initActiveButton() {
