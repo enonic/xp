@@ -84,7 +84,7 @@ public final class ClientActivator
             return;
         }
 
-        LOG.error( "Cluster operational, register elasticsearch-client" );
+        LOG.info( "Cluster operational, register elasticsearch-client" );
         this.reg = this.context.registerService( Client.class, this.node.client(), new Hashtable<>() );
     }
 
@@ -97,7 +97,7 @@ public final class ClientActivator
 
         try
         {
-            LOG.error( "Cluster not operational, unregister elasticsearch-client" );
+            LOG.info( "Cluster not operational, unregister elasticsearch-client" );
             this.reg.unregister();
         }
         finally
