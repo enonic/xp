@@ -10,8 +10,7 @@ module api.dom {
             this.wrappedInput = wrappedInput;
             this.additionalElements = [];
 
-            super("div");
-            this.addClass("composite-input");
+            super("div", "composite-input");
 
             this.appendChild(this.wrappedInput);
 

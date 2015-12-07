@@ -75,7 +75,7 @@ module api.ui.uploader {
         public static debug: boolean = false;
 
         constructor(config: UploaderConfig) {
-            super("div", "uploader", config.value);
+            super("div", "uploader", undefined, config.value);
 
             // init defaults
             this.initConfig(config);
