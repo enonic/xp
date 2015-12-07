@@ -4,6 +4,11 @@
     min-height: 220px;
   }
 
+  @media screen and (max-height: 540px) {
+    padding-top: 20px;
+    padding-bottom: 10px;
+  }
+
   &._540-720 {
     .form-view .input-view {
       label {
@@ -37,27 +42,11 @@
       height: 65%;
     }
 
-    max-height: 480px;
-
-    overflow-y: auto;
-    overflow-x: hidden;
-
     .transition(max-height 0.2s);
-
-    @media screen and (max-height: 720px) {
-      max-height: 346px;
-    }
-
-    @media screen and (max-height: 540px) {
-      max-height: 145px;
-    }
-
-    @media screen and (max-height: 360px) {
-      max-height: 78%;
-    }
 
     input {
       width: 100%;
+
     }
 
     .panel {
@@ -147,6 +136,22 @@
       }
 
       .content-item-preview-panel {
+        max-height: 420px;
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        @media screen and (max-height: 720px) {
+          max-height: 270px;
+        }
+
+        @media screen and (max-height: 540px) {
+          max-height: 115px;
+        }
+
+        @media screen and (max-height: 360px) {
+          max-height: 100px;
+        }
+
         > .progress-bar {
           display: none;
           width: auto;

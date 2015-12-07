@@ -77,6 +77,7 @@ module api.form.inputtype.text.htmlarea {
 
                 formItem.addClass("image-preview");
                 this.previewImage(imageContent);
+                this.hideCaptionLabel();
                 this.uploader.hide();
             });
 
@@ -90,6 +91,7 @@ module api.form.inputtype.text.htmlarea {
                 formItem.removeClass("image-preview");
                 this.removePreview();
                 this.imageToolbar.remove();
+                this.showCaptionLabel();
                 this.uploader.show();
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
@@ -159,6 +161,18 @@ module api.form.inputtype.text.htmlarea {
 
             this.hideUploadMasks();
             this.imagePreviewContainer.insertChild(this.image, 0);
+        }
+
+        private hideCaptionLabel() {
+            this.imageCaptionField.getLabel().hide();
+            this.imageCaptionField.getInput().getEl().setAttribute("placeholder", "Caption");
+            this.imageCaptionField.getInput().getParentElement().getEl().setMarginLeft("0px");
+        }
+
+        private showCaptionLabel() {
+            this.imageCaptionField.getLabel().show();
+            this.imageCaptionField.getInput().getEl().removeAttribute("placeholder")
+            this.imageCaptionField.getInput().getParentElement().getEl().setMarginLeft("");
         }
 
         private removePreview() {
