@@ -50,22 +50,13 @@ public class StorageServiceImpl
 
         storeVersionMetadata( node, context, nodeVersionId );
 
-        storeBranchAndIndex( node, context, nodeVersionId );
+        storeBranchMetadata( node, context, nodeVersionId );
+
+        indexNode( node, nodeVersionId, context );
 
         return Node.create( node ).
             nodeVersionId( nodeVersionId ).
             build();
-
-    }
-
-    private void storeVersionMetadata( final Node node, final InternalContext context, final NodeVersionId nodeVersionId )
-    {
-        this.versionService.store( NodeVersionMetadata.create().
-            nodeId( node.id() ).
-            nodeVersionId( nodeVersionId ).
-            nodePath( node.path() ).
-            timestamp( node.getTimestamp() ).
-            build(), context );
     }
 
     @Override
@@ -110,7 +101,9 @@ public class StorageServiceImpl
 
         final NodeVersionId nodeVersionId = nodeBranchMetadata.getVersionId();
 
-        storeBranchAndIndex( node, context, nodeVersionId );
+        storeBranchMetadata( node, context, nodeVersionId );
+
+        indexNode( node, nodeVersionId, context );
 
         return Node.create( node ).
             nodeVersionId( nodeVersionId ).
@@ -236,6 +229,24 @@ public class StorageServiceImpl
         return canRead( node.getPermissions() ) ? node : null;
     }
 
+    private void indexNode( final Node node, final NodeVersionId nodeVersionId, final InternalContext context )
+    {
+        this.indexServiceInternal.store( Node.create( node ).
+            nodeVersionId( nodeVersionId ).
+            build(), context );
+    }
+
+    private void storeVersionMetadata( final Node node, final InternalContext context, final NodeVersionId nodeVersionId )
+    {
+        this.versionService.store( NodeVersionMetadata.create().
+            nodeId( node.id() ).
+            nodeVersionId( nodeVersionId ).
+            nodePath( node.path() ).
+            timestamp( node.getTimestamp() ).
+            build(), context );
+    }
+
+
     private Nodes doReturnNodes( final NodesBranchMetadata nodesBranchMetadata )
     {
         final NodeVersionIds.Builder builder = NodeVersionIds.create();
@@ -251,7 +262,7 @@ public class StorageServiceImpl
         return filteredNodes.build();
     }
 
-    private void storeBranchAndIndex( final Node node, final InternalContext context, final NodeVersionId nodeVersionId )
+    private void storeBranchMetadata( final Node node, final InternalContext context, final NodeVersionId nodeVersionId )
     {
         this.branchService.store( NodeBranchMetadata.create().
             nodeVersionId( nodeVersionId ).
@@ -261,9 +272,6 @@ public class StorageServiceImpl
             nodePath( node.path() ).
             build(), context );
 
-        this.indexServiceInternal.store( Node.create( node ).
-            nodeVersionId( nodeVersionId ).
-            build(), context );
     }
 
     private Node moveInBranchAndIndex( final Node node, final NodeVersionId nodeVersionId, final NodePath previousPath,
