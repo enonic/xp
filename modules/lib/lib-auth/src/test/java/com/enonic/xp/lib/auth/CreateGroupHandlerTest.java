@@ -20,6 +20,13 @@ public class CreateGroupHandlerTest
     }
 
     @Test
+    public void testExamples()
+    {
+        Mockito.when( securityService.createGroup( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestGroup() );
+        runScript( "/site/lib/xp/examples/createGroup.js" );
+    }
+
+    @Test
     public void testCreateGroup()
     {
         Mockito.when( securityService.createGroup( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestGroup() );

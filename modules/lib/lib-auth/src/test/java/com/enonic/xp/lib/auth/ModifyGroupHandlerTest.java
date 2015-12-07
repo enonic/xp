@@ -29,6 +29,18 @@ public class ModifyGroupHandlerTest
     }
 
     @Test
+    public void testExamples()
+    {
+        Mockito.<Optional<? extends Principal>>when( securityService.getGroup( Mockito.any() ) ).thenReturn(
+            Optional.of( TestDataFixtures.getTestUser() ) );
+
+        Mockito.when( this.securityService.updateGroup( Mockito.isA( UpdateGroupParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( (UpdateGroupParams) invocationOnMock.getArguments()[0] ) );
+
+        runScript( "/site/lib/xp/examples/modifyGroup.js" );
+    }
+
+    @Test
     public void testModifyGroup()
     {
         Mockito.<Optional<? extends Principal>>when(

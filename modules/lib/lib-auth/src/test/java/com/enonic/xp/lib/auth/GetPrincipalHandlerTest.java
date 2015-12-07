@@ -24,6 +24,15 @@ public class GetPrincipalHandlerTest
     }
 
     @Test
+    public void testExamples()
+    {
+        Mockito.<Optional<? extends Principal>>when(
+            securityService.getPrincipal( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn(
+            Optional.of( TestDataFixtures.getTestUser() ) );
+        runScript( "/site/lib/xp/examples/getPrincipal.js" );
+    }
+
+    @Test
     public void testGetUserPrincipal()
     {
         Mockito.<Optional<? extends Principal>>when(

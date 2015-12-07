@@ -4,23 +4,43 @@ import org.junit.Assert;
 
 public final class AssertHelper
 {
-    public static void assertEquals( final String expected, final String actual )
+    public static void assertEquals( final String message, final Object arg1, final Object arg2 )
     {
-        Assert.assertEquals( expected, actual );
+        if ( ( arg1 instanceof Number ) && ( arg2 instanceof Number ) )
+        {
+            doAssertEquals( message, (Number) arg1, (Number) arg2 );
+            return;
+        }
+
+        doAssertEquals( message, arg1, arg2 );
     }
 
-    public static void assertEquals( final String message, final String expected, final String actual )
+    private static void doAssertEquals( final String message, final Number arg1, final Number arg2 )
     {
-        Assert.assertEquals( message, expected, actual );
+        doAssertEquals( message, arg1.doubleValue(), arg2.doubleValue() );
     }
 
-    public static void assertEquals( final double expected, final double actual )
+    private static void doAssertEquals( final String message, final double arg1, final double arg2 )
     {
-        Assert.assertEquals( expected, actual, 0 );
+        if ( message == null )
+        {
+            Assert.assertEquals( arg1, arg2, 0 );
+        }
+        else
+        {
+            Assert.assertEquals( message, arg1, arg2, 0 );
+        }
     }
 
-    public static void assertEquals( final String message, final double expected, final double actual )
+    private static void doAssertEquals( final String message, final Object arg1, final Object arg2 )
     {
-        Assert.assertEquals( message, expected, actual, 0 );
+        if ( message == null )
+        {
+            Assert.assertEquals( arg1, arg2 );
+        }
+        else
+        {
+            Assert.assertEquals( message, arg1, arg2 );
+        }
     }
 }

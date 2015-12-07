@@ -1,3 +1,7 @@
+var authLib = require('/lib/xp/auth');
+var assert = require('/lib/xp/assert');
+
+// BEGIN
 // Creates a user.
 var user = authLib.createUser({
     userStore: 'myUserStore',
@@ -5,3 +9,20 @@ var user = authLib.createUser({
     displayName: 'User display name',
     email: 'userName@enonic.com'
 });
+// END
+
+// BEGIN
+// Information when creating a user.
+var expected = {
+    "type": "user",
+    "key": "user:enonic:user1",
+    "displayName": "User 1",
+    "modifiedTime": "1970-01-01T00:00:00Z",
+    "disabled": false,
+    "email": "user1@enonic.com",
+    "login": "user1",
+    "userStore": "enonic"
+};
+// END
+
+assert.assertJsonEquals(expected, user);

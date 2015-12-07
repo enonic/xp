@@ -23,6 +23,21 @@ public class FindPrincipalsHandlerTest
     }
 
     @Test
+    public void testExamples()
+    {
+        final PrincipalQueryResult result = PrincipalQueryResult.create().
+            addPrincipal( TestDataFixtures.getTestGroup() ).
+            addPrincipal( TestDataFixtures.getTestRole() ).
+            addPrincipal( TestDataFixtures.getTestUser() ).
+            totalSize( 3 ).
+            build();
+
+        Mockito.when( securityService.query( Mockito.any() ) ).thenReturn( result );
+
+        runScript( "/site/lib/xp/examples/findPrincipals.js" );
+    }
+
+    @Test
     public void testFindPrincipalsDefaultParameters()
     {
         final PrincipalQuery expectedQuery = PrincipalQuery.create().build();

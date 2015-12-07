@@ -12,4 +12,10 @@ public class CacheLibTest
     {
         runScript( "/site/test/cache-test.js" );
     }
+
+    @Test
+    public void testExamples()
+    {
+        runScript( "/site/lib/xp/examples/newCache.js" );
+    }
 }

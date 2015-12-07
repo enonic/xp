@@ -32,6 +32,13 @@ public class RemoveMembersHandlerTest
         addService( SecurityService.class, this.securityService );
     }
 
+
+    @Test
+    public void testExamples()
+    {
+        runScript( "/site/lib/xp/examples/removeMembers.js" );
+    }
+
     @Test
     public void testRemoveMembersFromUser()
         throws Exception

@@ -9,15 +9,15 @@ function assertEquals() {
     if (arguments.length == 3) {
         assertHelper.assertEquals(arguments[0], arguments[1], arguments[2]);
     } else {
-        assertHelper.assertEquals(arguments[0], arguments[1]);
+        assertHelper.assertEquals(null, arguments[0], arguments[1]);
     }
 }
 
 function assertJsonEquals() {
     if (arguments.length == 3) {
-        assert.assertEquals(arguments[0], toJson(arguments[1]), toJson(arguments[2]));
+        assertEquals(arguments[0], toJson(arguments[1]), toJson(arguments[2]));
     } else {
-        assert.assertEquals(toJson(arguments[0]), toJson(arguments[1]));
+        assertEquals(toJson(arguments[0]), toJson(arguments[1]));
     }
 }
 

@@ -26,6 +26,24 @@ public class GetMembersHandlerTest
     }
 
     @Test
+    public void testExamples()
+    {
+        final Group group = TestDataFixtures.getTestGroup();
+        final User user1 = TestDataFixtures.getTestUser();
+        final User user2 = TestDataFixtures.getTestUser2();
+        final PrincipalKeys principalKeys = PrincipalKeys.from( user1.getKey(), user2.getKey() );
+
+        final PrincipalRelationships relationships =
+            PrincipalRelationships.from( PrincipalRelationship.from( group.getKey() ).to( user1.getKey() ),
+                                         PrincipalRelationship.from( group.getKey() ).to( user2.getKey() ) );
+        Mockito.when( securityService.getRelationships( group.getKey() ) ).thenReturn( relationships );
+
+        Mockito.when( securityService.getPrincipals( principalKeys ) ).thenReturn( Principals.from( user1, user2 ) );
+
+        runScript( "/site/lib/xp/examples/getMembers.js" );
+    }
+
+    @Test
     public void testGetMembers()
     {
         final Group group = TestDataFixtures.getTestGroup();

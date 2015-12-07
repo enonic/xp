@@ -23,6 +23,19 @@ public class LogoutHandlerTest
     }
 
     @Test
+    public void testExamples()
+    {
+        final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
+        this.session.setAttribute( authInfo );
+
+        Assert.assertTrue( ContextAccessor.current().getAuthInfo().isAuthenticated() );
+
+        runScript( "/site/lib/xp/examples/logout.js" );
+
+        Assert.assertFalse( ContextAccessor.current().getAuthInfo().isAuthenticated() );
+    }
+
+    @Test
     public void testLogout()
     {
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();

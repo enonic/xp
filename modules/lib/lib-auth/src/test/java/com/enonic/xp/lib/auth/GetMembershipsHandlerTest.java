@@ -25,6 +25,19 @@ public class GetMembershipsHandlerTest
     }
 
     @Test
+    public void testExamples()
+    {
+        final Role role = TestDataFixtures.getTestRole();
+        final Group group = TestDataFixtures.getTestGroup();
+        final PrincipalKeys principalKeys = PrincipalKeys.from( role.getKey(), group.getKey() );
+
+        Mockito.when( securityService.getMemberships( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn( principalKeys );
+
+        Mockito.when( securityService.getPrincipals( principalKeys ) ).thenReturn( Principals.from( role, group ) );
+        runScript( "/site/lib/xp/examples/getMemberships.js" );
+    }
+
+    @Test
     public void testGetUserMemberships()
     {
         final Group group = TestDataFixtures.getTestGroup();

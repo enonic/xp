@@ -23,6 +23,17 @@ public class GetUserHandlerTest
     }
 
     @Test
+    public void testExamples()
+    {
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+
+        this.session.setAttribute( authInfo );
+
+        runScript( "/site/lib/xp/examples/getUser.js" );
+    }
+
+    @Test
     public void testGetUserAuthenticated()
     {
         final AuthenticationInfo authInfo =

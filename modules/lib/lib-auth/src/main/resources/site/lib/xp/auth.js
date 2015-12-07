@@ -27,10 +27,7 @@ function nullOrValue(value) {
 /**
  * Login a user with the specified userStore, userName and password.
  *
- * @example-ref {examples/login1.js}
- * @example-ref {examples/login2.js}
- * @example-ref {examples/login3.js}
- * @example-ref {examples/login-result.js}
+ * @example-ref examples/login.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.user Name of user to log in.
@@ -54,7 +51,7 @@ exports.login = function (params) {
 /**
  * Logout an already logged-in user.
  *
- * @example-ref {examples/logout.js}
+ * @example-ref examples/logout.js
  */
 exports.logout = function () {
     var bean = __.newBean('com.enonic.xp.lib.auth.LogoutHandler');
@@ -65,8 +62,7 @@ exports.logout = function () {
 /**
  * Returns the logged-in user. If not logged-in, this will return *undefined*.
  *
- * @example-ref {examples/getUser.js}
- * @example-ref {examples/getUser-result.js}
+ * @example-ref examples/getUser.js
  *
  * @returns {object} Information for logged-in user.
  */
@@ -79,7 +75,7 @@ exports.getUser = function () {
 /**
  * Checks if the logged-in user has the specified role.
  *
- * @example-ref {examples/hasRole.js}
+ * @example-ref examples/hasRole.js
  *
  * @param {string} role Role to check for.
  * @returns {boolean} True if the user has specfied role, false otherwise.
@@ -95,7 +91,7 @@ exports.hasRole = function (role) {
 /**
  * Generates a secure password.
  *
- * @example-ref {examples/generatePassword.js}
+ * @example-ref examples/generatePassword.js
  *
  * @returns {string} A secure generated password.
  */
@@ -108,7 +104,7 @@ exports.generatePassword = function () {
 /**
  * Changes password for specified user.
  *
- * @example-ref {examples/changePassword.js}
+ * @example-ref examples/changePassword.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.userKey Key for user to change password.
@@ -127,8 +123,7 @@ exports.changePassword = function (params) {
 /**
  * Returns the principal with the specified key.
  *
- * @example-ref {examples/getPrincipal.js}
- * @example-ref {examples/getPrincipal-result.js}
+ * @example-ref examples/getPrincipal.js
  *
  * @param {string} principalKey Principal key to look for.
  * @returns {object} the principal specified, or null if it doesn't exist.
@@ -144,8 +139,7 @@ exports.getPrincipal = function (principalKey) {
 /**
  * Returns a list of principals the specified principal is a member of.
  *
- * @example-ref {examples/getMemberships.js}
- * @example-ref {examples/getMemberships-result.js}
+ * @example-ref examples/getMemberships.js
  *
  * @param {string} principalKey Principal key to retrieve memberships for.
  * @returns {object[]} Returns the list of principals.
@@ -161,8 +155,7 @@ exports.getMemberships = function (principalKey) {
 /**
  * Returns a list of principals that are members of the specified principal.
  *
- * @example-ref {examples/getMembers.js}
- * @example-ref {examples/getMembers-result.js}
+ * @example-ref examples/getMembers.js
  *
  * @param {string} principalKey Principal key to retrieve members for.
  * @returns {object[]} Returns the list of principals.
@@ -178,8 +171,7 @@ exports.getMembers = function (principalKey) {
 /**
  * Creates user from passed parameters.
  *
- * @example-ref {examples/createUser.js}
- * @example-ref {examples/createUser-result.js}
+ * @example-ref examples/createUser.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.userStore Key for user store where user has to be created.
@@ -201,8 +193,7 @@ exports.createUser = function (params) {
 /**
  * Retrieves the user specified and updates it with the changes applied.
  *
- * @example-ref {examples/modifyUser.js}
- * @example-ref {examples/modifyUser-result.js}
+ * @example-ref examples/modifyUser.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Principal key of the user to modify.
@@ -221,8 +212,7 @@ exports.modifyUser = function (params) {
 /**
  * Creates a group.
  *
- * @example-ref {examples/createGroup.js}
- * @example-ref {examples/createGroup-result.js}
+ * @example-ref examples/createGroup.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.userStore Key for user store where group has to be created.
@@ -242,8 +232,7 @@ exports.createGroup = function (params) {
 /**
  * Retrieves the group specified and updates it with the changes applied.
  *
- * @example-ref {examples/modifyGroup.js}
- * @example-ref {examples/modifyGroup-result.js}
+ * @example-ref examples/modifyGroup.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Principal key of the group to modify.
@@ -262,7 +251,7 @@ exports.modifyGroup = function (params) {
 /**
  * Adds members to a principal (user or role).
  *
- * @example-ref {examples/addMembers.js}
+ * @example-ref examples/addMembers.js
  *
  * @param {string} principalKey Key of the principal to add members to.
  * @param {string} members Keys of the principals to add.
@@ -279,7 +268,7 @@ exports.addMembers = function (principalKey, members) {
 /**
  * Removes members from a principal (user or role).
  *
- * @example-ref {examples/removeMembers.js}
+ * @example-ref examples/removeMembers.js
  *
  * @param {string} principalKey Key of the principal to remove members from.
  * @param {string} members Keys of the principals to remove.
@@ -296,8 +285,7 @@ exports.removeMembers = function (principalKey, members) {
 /**
  * Search for principals matching the specified criteria.
  *
- * @example-ref {examples/findPrincipals.js}
- * @example-ref {examples/findPrincipals-result.js}
+ * @example-ref examples/findPrincipals.js
  *
  * @param {object} params JSON parameters.
  * @param {string} [params.type] Principal type to look for, one of: 'user', 'group' or 'role'. If not specified all principal types will be included.

@@ -24,6 +24,17 @@ public class HasRoleHandlerTest
     }
 
     @Test
+    public void testExamples()
+    {
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals(
+            PrincipalKey.ofRole( "system.admin.login" ) ).build();
+
+        this.session.setAttribute( authInfo );
+
+        runScript( "/site/lib/xp/examples/hasRole.js" );
+    }
+
+    @Test
     public void testHasRoleById()
     {
         final AuthenticationInfo authInfo =

@@ -29,6 +29,18 @@ public class ModifyUserHandlerTest
     }
 
     @Test
+    public void testExamples()
+    {
+        Mockito.<Optional<? extends Principal>>when( securityService.getUser( Mockito.any() ) ).thenReturn(
+            Optional.of( TestDataFixtures.getTestUser() ) );
+
+        Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( (UpdateUserParams) invocationOnMock.getArguments()[0] ) );
+
+        runScript( "/site/lib/xp/examples/modifyUser.js" );
+    }
+
+    @Test
     public void testModifyUser()
     {
         Mockito.<Optional<? extends Principal>>when( securityService.getUser( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn(

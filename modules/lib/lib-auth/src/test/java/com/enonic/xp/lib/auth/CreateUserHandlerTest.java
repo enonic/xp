@@ -21,6 +21,13 @@ public class CreateUserHandlerTest
     }
 
     @Test
+    public void testExamples()
+    {
+        Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUser() );
+        runScript( "/site/lib/xp/examples/createUser.js" );
+    }
+
+    @Test
     public void testCreateUser()
     {
         Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUser() );
