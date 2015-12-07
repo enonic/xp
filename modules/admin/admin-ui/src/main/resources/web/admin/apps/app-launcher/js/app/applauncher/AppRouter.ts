@@ -11,10 +11,9 @@ module app.launcher {
             this.appRoutes = [];
             this.initRouting();
             this.setupHomeRouting();
-            this.handleInitialUrl();
         }
 
-        private handleInitialUrl() {
+        handleInitialUrl() {
             var initialUrlHash = hasher.getHash();
             if (!initialUrlHash) {
                 hasher.setHash(AppRouter.HOME_HASH_ID);

@@ -52,6 +52,7 @@ module app {
                 } else {
                     this.lostConnectionDetector.setAuthenticated(false);
                     this.homeMainContainer.showLogin();
+                    this.router.handleInitialUrl();
                 }
             }).catch((reason: any) => {
                 this.homeMainContainer.showLogin();
@@ -102,6 +103,7 @@ module app {
             this.appSelector.setAllowedApps(allowedApps);
             this.appLauncher.setAllowedApps(allowedApps);
             this.router.setAllowedApps(allowedApps);
+            this.router.handleInitialUrl();
             new app.home.LogInEvent(loginResult.getUser()).fire();
             this.homeMainContainer.showAppSelector();
             this.serverEventsListener.start();
