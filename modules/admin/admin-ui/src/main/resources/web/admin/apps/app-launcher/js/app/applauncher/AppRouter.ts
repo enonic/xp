@@ -42,7 +42,8 @@ module app.launcher {
             });
             this.appRoutes = [];
             applications.forEach((application: api.app.Application, idx: number) => {
-                var appRoutPattern = application.getId() + '/:p1:/:p2:/:p3:'; // optional parameters in URL: action, id
+                var appRoutPattern = new RegExp("^\/?" + application.getId() + "\/?([^\/?]+)?\/?\/?([^\/?]+)?\/?\/?([^\/?]+)?\/?\/?$",
+                    "i");
                 var appRoute: CrossroadsJs.Route = crossroads.addRoute(appRoutPattern, (p1: string, p2: string, p3: string) => {
                     var pathValues = [p1, p2, p3].filter((p)=> p != undefined);
                     var path: api.rest.Path = new api.rest.Path(pathValues);
