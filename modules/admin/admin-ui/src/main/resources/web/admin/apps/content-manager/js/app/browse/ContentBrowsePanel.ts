@@ -415,6 +415,12 @@ module app.browse {
                         data.forEach((el) => {
                             for (var i = 0; i < updateResult.length; i++) {
                                 if (updateResult[i].getId() === el.getId()) {
+                                    updateResult[i].getNodes().forEach((node) => { //reload node to fetch children statuses in case of permissions updated
+                                        if (node.isExpanded() && node.getData().getCompareStatus() === CompareStatus.EQUAL) {
+                                            this.contentTreeGrid.doReloadNode(node);
+                                        }
+                                    })
+
                                     updateResult[i].updateNodeData(el);
 
                                     this.updateStatisticsPreview(el); // update preview item

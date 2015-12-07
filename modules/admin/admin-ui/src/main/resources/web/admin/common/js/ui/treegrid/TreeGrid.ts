@@ -651,6 +651,30 @@ module api.ui.treegrid {
                 }).done(() => this.notifyLoaded());
         }
 
+        doReloadNode(parentNode: TreeNode<DATA>) {
+            var expandedNodesDataId = this.grid.getDataView().getItems().filter((item) => {
+                return item.isExpanded();
+            }).map((item) => {
+                return item.getDataId();
+            });
+
+            var selection = this.root.getCurrentSelection();
+
+            parentNode.removeChildren();
+
+            this.reloadNode(parentNode, expandedNodesDataId)
+                .then(() => {
+                    parentNode.setExpanded(true);
+                    this.root.setCurrentSelection(selection);
+                    this.initData(this.root.getCurrentRoot().treeToList());
+                    this.updateExpanded();
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).finally(() => {
+                    this.updateExpanded();
+                }).done(() => this.notifyLoaded());
+        }
+
         private reloadNode(parentNode?: TreeNode<DATA>, expandedNodesDataId?: String[]): wemQ.Promise<void> {
 
             var deferred = wemQ.defer<void>(),
