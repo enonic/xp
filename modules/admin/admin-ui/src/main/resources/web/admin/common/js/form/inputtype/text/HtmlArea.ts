@@ -25,6 +25,8 @@ module api.form.inputtype.text {
         private previousScrollPos: number = 0; // fix for XP-736
         private isScrollProhibited: boolean = false;
 
+        private modalDialog: api.form.inputtype.text.htmlarea.ModalDialog;
+
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
 
             super(config);
@@ -141,7 +143,9 @@ module api.form.inputtype.text {
                     });
                     editor.on('blur', (e) => {
                         this.setStaticInputHeight();
-                        textAreaWrapper.removeClass(focusedEditorCls);
+                        if (!(this.modalDialog && this.modalDialog.isVisible())) {
+                            textAreaWrapper.removeClass(focusedEditorCls);
+                        }
                     });
                     editor.on('keydown', (e) => {
                         if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {  // Cmd-S or Ctrl-S
@@ -165,8 +169,15 @@ module api.form.inputtype.text {
                         if (e.keyCode == 46) { // DELETE
                             var selectedNode = editor.selection.getRng().startContainer;
                             if (/^(FIGURE)$/.test(selectedNode.nodeName)) {
-                                editor.execCommand('mceRemoveNode', false, selectedNode);
-                                editor.focus();
+                                var previousEl = selectedNode.previousSibling;
+                                e.preventDefault();
+                                selectedNode.remove();
+                                if (previousEl) {
+                                    editor.selection.setNode(previousEl);
+                                }
+                                else {
+                                    editor.focus();
+                                }
                             }
                         }
                     });
@@ -260,7 +271,24 @@ module api.form.inputtype.text {
             var observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
                     var alignment = (<HTMLElement>mutation.target).style["text-align"];
-                    img.parentElement.style.textAlign = alignment;
+                    var keepOriginalSize = img.getAttribute("data-src").indexOf("keepSize=true") > 0;
+
+                    var styleAttr;
+                    switch (alignment) {
+                    case 'justify':
+                    case 'center':
+                        styleAttr = "text-align: " + alignment;
+                        break;
+                    case 'left':
+                        styleAttr = "float: left; margin: 15px;" + (keepOriginalSize ? "" : "width: 40%");
+                        break;
+                    case 'right':
+                        styleAttr = "float: right; margin: 15px;" + (keepOriginalSize ? "" : "width: 40%");
+                        break;
+                    }
+
+                    img.parentElement.setAttribute("style", styleAttr);
+                    img.parentElement.setAttribute("data-mce-style", styleAttr);
                 });
             });
 
@@ -352,18 +380,18 @@ module api.form.inputtype.text {
         }
 
         private openLinkDialog(config: HtmlAreaAnchor) {
-            var linkModalDialog = new LinkModalDialog(config);
-            linkModalDialog.open();
+            this.modalDialog = new LinkModalDialog(config);
+            this.modalDialog.open();
         }
 
         private openImageDialog(config: HtmlAreaImage) {
-            var imageModalDialog = new ImageModalDialog(config, this.contentId);
-            imageModalDialog.open();
+            this.modalDialog = new ImageModalDialog(config, this.contentId);
+            this.modalDialog.open();
         }
 
         private openAnchorDialog(editor: HtmlAreaEditor) {
-            var anchorModalDialog = new AnchorModalDialog(editor);
-            anchorModalDialog.open();
+            this.modalDialog = new AnchorModalDialog(editor);
+            this.modalDialog.open();
         }
 
         private removeTooltipFromEditorArea(inputOccurence: Element) {

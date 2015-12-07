@@ -14,22 +14,6 @@
     -moz-margin-end: 0;
 }
 
-.mce-content-body figure img:not([data-src*="keepSize=true"]) {
-    width: 100%;
-}
-
-.mce-content-body figure[style*="text-align: center"] img:not([data-src*="keepSize=true"]) {
-    width: 60%;
-}
-
-.mce-content-body figure[style*="text-align: left"] img:not([data-src*="keepSize=true"]) {
-    width: 40%;
-}
-
-.mce-content-body figure[style*="text-align: right"] img:not([data-src*="keepSize=true"]) {
-    width: 40%;
-}
-
 .mce-content-body figcaption:empty:before {
     content: "Image caption goes here";
     color: lightgray;
