@@ -3,6 +3,9 @@ package com.enonic.xp.security;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.mail.EmailValidator;
+
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Beta
@@ -22,6 +25,10 @@ public final class UpdateUserParams
     {
         this.key = checkNotNull( builder.principalKey, "userKey is required for a user" );
         this.displayName = builder.displayName;
+        if ( builder.email != null )
+        {
+            checkArgument( EmailValidator.validate( builder.email ), "Email [" + builder.email + "] is not valid" );
+        }
         this.email = builder.email;
         this.login = builder.login;
         this.editor = builder.editor;
