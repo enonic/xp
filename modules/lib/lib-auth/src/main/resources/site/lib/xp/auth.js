@@ -31,7 +31,7 @@ function nullOrValue(value) {
  *
  * @param {object} params JSON parameters.
  * @param {string} params.user Name of user to log in.
- * @param {string} params.userStore Name of user-store where the user is stored. If not specified it will try all available user-stores in order.
+ * @param {string} [params.userStore] Name of user-store where the user is stored. If not specified it will try all available user-stores in order.
  * @param {string} params.password Password for the user.
  * @returns {object} Information for logged-in user.
  */

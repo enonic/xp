@@ -16,20 +16,30 @@ import com.enonic.xp.content.ContentPath;
 public class GetAttachmentStreamHandlerTest
     extends BaseContentHandlerTest
 {
-
     private static final byte[] ATTACHMENT_DATA = "data".getBytes( StandardCharsets.UTF_8 );
+
+    @Test
+    public void testExample()
+    {
+        mockAttachmentBinary();
+        runScript( "/site/lib/xp/examples/getAttachmentStream.js" );
+    }
+
+    private void mockAttachmentBinary()
+    {
+        final Content content = TestDataFixtures.newContent();
+        final Attachment attachment = content.getAttachments().byName( "document.pdf" );
+        Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+        Mockito.when( this.contentService.getBinary( content.getId(), attachment.getBinaryReference() ) ).thenReturn(
+            ByteSource.wrap( ATTACHMENT_DATA ) );
+    }
 
     @Test
     public void getById()
         throws Exception
     {
-        final Content content = TestDataFixtures.newContent();
-        final Attachment attachment = content.getAttachments().byName( "document.pdf" );
-
-        Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-        Mockito.when( this.contentService.getBinary( content.getId(), attachment.getBinaryReference() ) ).thenReturn(
-            ByteSource.wrap( ATTACHMENT_DATA ) );
-
+        mockAttachmentBinary();
         runFunction( "/site/test/GetAttachmentStreamHandlerTest.js", "getAttachmentStreamById" );
     }
 
@@ -37,12 +47,7 @@ public class GetAttachmentStreamHandlerTest
     public void getByPath()
         throws Exception
     {
-        final Content content = TestDataFixtures.newContent();
-        final Attachment attachment = content.getAttachments().byName( "document.pdf" );
-        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
-        Mockito.when( this.contentService.getBinary( content.getId(), attachment.getBinaryReference() ) ).thenReturn(
-            ByteSource.wrap( ATTACHMENT_DATA ) );
-
+        mockAttachmentBinary();
         runFunction( "/site/test/GetAttachmentStreamHandlerTest.js", "getAttachmentStreamByPath" );
     }
 

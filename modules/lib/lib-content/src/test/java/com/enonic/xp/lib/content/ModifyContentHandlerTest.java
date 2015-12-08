@@ -21,11 +21,29 @@ public class ModifyContentHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
+    public void testExample()
+    {
+        GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.unstructured() );
+        Mockito.when( this.contentTypeService.getByName( getContentType ) ).thenReturn(
+            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
+
+        final Content content = TestDataFixtures.newExampleContent();
+        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
+
+        Mockito.when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0], content ) );
+
+        mockXData();
+        runScript( "/site/lib/xp/examples/modify.js" );
+    }
+
+    @Test
     public void modifyById()
         throws Exception
     {
         Mockito.when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0] ) );
+            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
+                                              TestDataFixtures.newSmallContent() ) );
 
         final Content content = TestDataFixtures.newSmallContent();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
@@ -43,7 +61,8 @@ public class ModifyContentHandlerTest
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         Mockito.when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0] ) );
+            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
+                                              TestDataFixtures.newSmallContent() ) );
 
         mockXData();
 
@@ -126,14 +145,13 @@ public class ModifyContentHandlerTest
         Mockito.when( this.mixinService.getByName( Mockito.eq( mixin2.getName() ) ) ).thenReturn( mixin2 );
     }
 
-    private Content invokeUpdate( final UpdateContentParams params )
+    private Content invokeUpdate( final UpdateContentParams params, final Content content )
     {
         Assert.assertEquals( ContentId.from( "123456" ), params.getContentId() );
 
         final ContentEditor editor = params.getEditor();
         Assert.assertNotNull( editor );
 
-        final Content content = TestDataFixtures.newSmallContent();
         final EditableContent editable = new EditableContent( content );
 
         editor.edit( editable );

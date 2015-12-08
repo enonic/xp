@@ -45,17 +45,7 @@ exports.get = function (params) {
 /**
  * This function returns a content attachments.
  *
- * @example
- * var attachments = contentLib.getAttachments('/features/js-libraries/mycontent');
- *
- * if (attachments) {
- *   var attachment = attachments['thumbnail.png'];
- *   if (attachment) {
- *     log.info('Attachment: name = %s, size = %s, label = %s, mimeType = %s', attachment.name, attachment.size, attachment.label, attachment.mimeType);
- *   }
- * } else {
- *   log.info('Content was not found');
- * }
+ * @example-ref examples/getAttachments.js
  *
  * @param {string} key Path or id to the content.
  *
@@ -70,11 +60,7 @@ exports.getAttachments = function (key) {
 /**
  * This function returns a data-stream for the specified content attachment.
  *
- * @example
- * var result = contentLib.getAttachmentStream({
- *   key: '/features/js-libraries/mycontent',
- *   name: 'attachment-name'
- * });
+ * @example-ref examples/getAttachmentStream.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.
@@ -141,50 +127,7 @@ exports.getChildren = function (params) {
  * To create a content where the name is not important and there could be multiple instances under the same parent content,
  * skip the `name` parameter and specify a `displayName`.
  *
- * @example
- * var result = contentLib.create({
- *   name: 'mycontent',
- *   parentPath: '/features/js-libraries',
- *   displayName: 'My Content',
- *   requireValid: true,
- *   contentType: app.name + ':all-input-types',
- *   branch: 'draft',
- *   language: 'no',
- *   data: {
- *       myCheckbox: true,
- *       myComboBox: 'option1',
- *       myDate: '1970-01-01',
- *       myDateTime: '1970-01-01T10:00',
- *       myDouble: 3.14,
- *       myGeoPoint: '59.91,10.75',
- *       myHtmlArea: '<p>htmlAreaContent</p>',
- *       myImageSelector: '5a5fc786-a4e6-4a4d-a21a-19ac6fd4784b',
- *       myLong: 123,
- *       myRelationship: 'features',
- *       myRadioButtons: 'option1',
- *       myTag: 'aTag',
- *       myTextArea: 'textAreaContent',
- *       myTextLine: 'textLineContent',
- *       myTime: '10:00',
- *       myTextAreas: [
- *           'textAreaContent1',
- *           'textAreaContent2'
- *       ],
- *       myItemSet: {
- *           'textLine': 'textLineContent',
- *           'long': 123
- *       }
- *   },
- *   x: {
- *       "com-enonic-app-features": {
- *           "menu-item": {
- *               "menuItem": true
- *           }
- *       }
- *   }
- * });
- *
- * log.info('Content created with id ' + result._id);
+ * @example-ref examples/create.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} [params.name] Name of content.
@@ -247,25 +190,7 @@ exports.query = function (params) {
 /**
  * This function modifies a content.
  *
- * @example
- * function editor(c) {
- *   c.displayName = 'Modified';
- *   c.language = 'en';
- *   c.data.myCheckbox = false;
- *   c.data["myTime"] = "11:00";
- *   return c;
- * }
- *
- * var result = contentLib.modify({
- *   key: '/features/js-libraries/mycontent',
- *   editor: editor
- * });
- *
- * if (result) {
- *   log.info('Content modified. New title is ' + result.displayName);
- * } else {
- *   log.info('Content not found');
- * }
+ * @example-ref examples/modify.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.
@@ -285,13 +210,7 @@ exports.modify = function (params) {
 /**
  * Creates a media content.
  *
- * @example
- * var result = contentLib.createMedia({
- *   name: 'myphoto',
- *   parentPath: '/path/to/media',
- *   mimeType: 'image/jpg',
- *   data: mystream
- * });
+ * @example-ref examples/createMedia.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} [params.name] Name of content.
@@ -318,15 +237,7 @@ exports.createMedia = function (params) {
 /**
  * Sets permissions on a content.
  *
- * @example
- * var result = contentLib.setPermissions({
- *   key: '03c6ae7b-7f48-45f5-973d-1f03606ab928',
- *   permissions: [{
- *     principal: 'user:system:anonymous',
- *     allow: ['READ'],
- *     deny: []
- *   }]
- * });
+ * @example-ref examples/setPermissions.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Path or ID of the content.
@@ -359,10 +270,7 @@ exports.setPermissions = function (params) {
 /**
  * Gets permissions on a content.
  *
- * @example
- * var result = contentLib.getPermissions({
- *   key: '03c6ae7b-7f48-45f5-973d-1f03606ab928'
- * });
+ * @example-ref examples/getPermissions.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Path or ID of the content.

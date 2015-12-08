@@ -112,8 +112,10 @@ public class SetPermissionsHandler
 
                 return true;
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
+                e.printStackTrace();
+                // Do nothing
             }
         }
 
@@ -126,7 +128,7 @@ public class SetPermissionsHandler
         {
             if ( this.key.startsWith( "/" ) )
             {
-                final Content content = this.contentService.getByPath( ContentPath.from( key ) );
+                final Content content = this.contentService.getByPath( ContentPath.from( this.key ) );
                 if ( content != null )
                 {
                     return content.getId();
@@ -134,12 +136,14 @@ public class SetPermissionsHandler
             }
             else
             {
-                return ContentId.from( key );
+                return ContentId.from( this.key );
             }
         }
         catch ( final ContentNotFoundException e )
         {
+            // Do nothing
         }
+
         return null;
     }
 }

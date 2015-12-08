@@ -1,7 +1,7 @@
 var authLib = require('/lib/xp/auth');
 var assert = require('/lib/xp/assert');
 
-// BEGIN
+// BEGIN 
 // Login with a explicit user store.
 var result1 = authLib.login({
     user: 'user1@enonic.com',

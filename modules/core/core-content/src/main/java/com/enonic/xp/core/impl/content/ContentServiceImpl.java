@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 
 import org.osgi.service.component.annotations.Activate;
@@ -559,7 +560,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public CompletableFuture<Integer> applyPermissions( final ApplyContentPermissionsParams params )
+    public Future<Integer> applyPermissions( final ApplyContentPermissionsParams params )
     {
         final ApplyContentPermissionsCommand applyPermissionsCommand = ApplyContentPermissionsCommand.create( params ).
             nodeService( this.nodeService ).

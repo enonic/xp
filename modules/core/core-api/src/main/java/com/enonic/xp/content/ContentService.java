@@ -1,7 +1,7 @@
 package com.enonic.xp.content;
 
 import java.io.InputStream;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
@@ -41,7 +41,7 @@ public interface ContentService
 
     ReorderChildContentsResult reorderChildren( ReorderChildContentsParams params );
 
-    CompletableFuture<Integer> applyPermissions( ApplyContentPermissionsParams params );
+    Future<Integer> applyPermissions( ApplyContentPermissionsParams params );
 
     Content getById( ContentId contentId );
 

@@ -57,6 +57,11 @@ public final class TestDataFixtures
 
     public static Content newExampleContent()
     {
+        return newExampleContentBuilder().build();
+    }
+
+    public static Content.Builder newExampleContentBuilder()
+    {
         final Content.Builder builder = Content.create();
         builder.id( ContentId.from( "123456" ) );
         builder.name( "mycontent" );
@@ -75,7 +80,7 @@ public final class TestDataFixtures
         builder.attachments( newAttachments() );
         builder.valid( true );
 
-        return builder.build();
+        return builder;
     }
 
     public static Content newSmallContent()
@@ -115,7 +120,7 @@ public final class TestDataFixtures
 
             list.add( content );
         }
-        
+
         return Contents.from( list );
     }
 

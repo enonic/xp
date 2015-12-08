@@ -47,4 +47,18 @@ public class ContextLibTest
     {
         runFunction( "/site/test/context-test.js", "change" );
     }
+
+    @Test
+    public void testExample_get()
+        throws Exception
+    {
+        runScript( "/site/lib/xp/examples/get.js" );
+    }
+
+    @Test
+    public void testExample_run()
+        throws Exception
+    {
+        runScript( "/site/lib/xp/examples/run.js" );
+    }
 }
