@@ -8,8 +8,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.FindContentByParentParams;
-import com.enonic.xp.content.FindContentByParentResult;
 
 public class DeleteContentHandlerTest
     extends BaseContentHandlerTest
