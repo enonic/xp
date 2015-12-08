@@ -14,7 +14,7 @@ module api.content.form.inputtype.upload {
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super(config, "image");
+            super(config);
             var input = config.input;
 
             this.imageUploader = new api.content.ImageUploader(<api.content.ImageUploaderConfig>{
