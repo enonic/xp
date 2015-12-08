@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.util.StringChecker;
+import com.enonic.xp.util.CharacterChecker;
 
 @Beta
 public final class DescriptorKey
@@ -23,7 +23,7 @@ public final class DescriptorKey
     public DescriptorKey( final ApplicationKey applicationKey, final String name )
     {
         this.applicationKey = applicationKey;
-        this.name = StringChecker.defaultCheck( name, "Not a valid name for DescriptorKey [" + name + "]" );
+        this.name = CharacterChecker.defaultCheck( name, "Not a valid name for DescriptorKey [" + name + "]" );
         this.refString = applicationKey.toString() + SEPARATOR + name;
     }
 
