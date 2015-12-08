@@ -38,10 +38,10 @@ module api.util {
             });
         }
 
-        static difference(left: any[], right: any[], callback: (valueLeft: any, valueRight: any) => boolean) {
+        static difference<T>(left: T[], right: T[], compare: (valueLeft: T, valueRight: T) => boolean): T[] {
             return left.filter((value) => {
                 for (let i = 0; i < right.length; i++) {
-                    if (callback(value, right[i])) {
+                    if (compare(value, right[i])) {
                         return false;
                     }
                 }

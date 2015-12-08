@@ -75,11 +75,6 @@ module api.app.browse {
             let itemsToRemove = api.util.ArrayHelper.difference(this.items, items, doFilter);
 
             let itemsToAdd = api.util.ArrayHelper.difference(items, this.items, doFilter);
-            /*
-             let itemsUpdated = api.util.ArrayHelper.difference(items, this.items, (valueLeft: BrowseItem<M>, valueRight: BrowseItem<M>) => {
-             return !doFilter(valueLeft, valueRight);
-             });
-             */
 
             itemsToRemove.forEach((item: BrowseItem<M>) => {
                 this.removeItem(item);

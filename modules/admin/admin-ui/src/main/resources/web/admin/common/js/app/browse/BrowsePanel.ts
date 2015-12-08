@@ -100,7 +100,7 @@ module api.app.browse {
                 this.treeGrid.getContextMenu().getActions().updateActionsEnabledState(this.browseItemPanel.getItems()).
                     then(() => {
                         this.browseItemPanel.updateDisplayedPanel();
-                    }).catch(console.log.bind(console));
+                    }).catch(api.DefaultErrorHandler.handle);
             });
 
             this.onRendered(() => {

@@ -79,7 +79,7 @@ module app.browse.action {
                 promise.then<void>(() => {
                     deferred.resolve(contentBrowseItems);
                     return wemQ(null);
-                }).catch(console.log.bind(console));
+                }).catch(api.DefaultErrorHandler.handle);
                 break;
             case 1:
                 let contentSummary = contentSummaries[0];
@@ -104,7 +104,7 @@ module app.browse.action {
                 wemQ.all(parallelPromises).spread<void>(() => {
                     deferred.resolve(contentBrowseItems);
                     return wemQ(null);
-                }).catch(console.log.bind(console));
+                }).catch(api.DefaultErrorHandler.handle);
                 break;
             default:
                 this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
@@ -120,7 +120,7 @@ module app.browse.action {
                 promise.then<void>(() => {
                     deferred.resolve(contentBrowseItems);
                     return wemQ(null);
-                }).catch(console.log.bind(console));
+                }).catch(api.DefaultErrorHandler.handle);
             }
             return deferred.promise;
         }
@@ -189,7 +189,7 @@ module app.browse.action {
                                         then((accessControlList: AccessControlList) => {
                                             contentBrowseItem.setAccessControlList(accessControlList);
                                             updatePermissions(accessControlList);
-                                        }).catch(console.log.bind(console)));
+                                        }).catch(api.DefaultErrorHandler.handle));
                             }
                         });
 
