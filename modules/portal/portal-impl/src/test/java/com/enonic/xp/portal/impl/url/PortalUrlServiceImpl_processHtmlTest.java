@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -9,6 +10,7 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.impl.ContentFixtures;
+import com.enonic.xp.portal.owasp.impl.HtmlSanitizerImpl;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
@@ -18,6 +20,12 @@ import static org.junit.Assert.*;
 public class PortalUrlServiceImpl_processHtmlTest
     extends AbstractPortalUrlServiceImplTest
 {
+    @Before
+    public void before()
+    {
+        this.service.setHtmlSanitizer( new HtmlSanitizerImpl() );
+    }
+
     @Test
     public void process_empty_value()
     {
@@ -141,12 +149,14 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Process an html text containing an inline link to this content in a img tag
         params = new ProcessHtmlParams().
             portalRequest( this.portalRequest ).
-            value( "<img src=\"media://inline/" + content.getId() + "\">Media</a>" );
+            value( "<a href=\"/some/page\"><img src=\"media://inline/" + content.getId() + "\">Media</a>" );
 
         //Checks that the URL of the source attachment of the content is returned
         processedHtml = this.service.processHtml( params );
-        assertEquals( "<img src=\"/portal/draft/context/path/_/attachment/inline/" + content.getId() + ":binaryHash2/" + source.getName() +
-                          "\">Media</a>", processedHtml );
+        assertEquals(
+            "<a href=\"/some/page\"><img src=\"/portal/draft/context/path/_/attachment/inline/" + content.getId() + ":binaryHash2/" +
+                source.getName() +
+                "\" />Media</a>", processedHtml );
 
     }
 
@@ -259,4 +269,20 @@ public class PortalUrlServiceImpl_processHtmlTest
         assertEquals( "<a href=\"http://localhost/portal/draft" + content.getPath() + "\">Content</a>", processedHtml );
     }
 
+    @Test
+    public void process_html_with_script()
+    {
+        //Process an html text containing a link to this content
+        final ProcessHtmlParams params = new ProcessHtmlParams().
+            type( UrlTypeConstants.ABSOLUTE ).
+            portalRequest( this.portalRequest ).
+            value( "<a href=\"/some/path\"><script>alert('test')</script>Content</a><script>alert('test')</script>" );
+
+        MockHttpServletRequest req = new MockHttpServletRequest();
+        ServletRequestHolder.setRequest( req );
+
+        //Checks that the page URL of the content is returned
+        final String processedHtml = this.service.processHtml( params );
+        assertEquals( "<a href=\"/some/path\">Content</a>", processedHtml );
+    }
 }
