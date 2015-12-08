@@ -4,7 +4,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.xp.util.StringChecker;
+import com.enonic.xp.util.CharacterChecker;
 
 @Beta
 public final class Branch
@@ -13,8 +13,7 @@ public final class Branch
 
     private Branch( final Builder builder )
     {
-        this.name = StringChecker.defaultCheck( builder.name, "Not a valid name for Branch [" + builder.name + "]" );
-        ;
+        this.name = CharacterChecker.defaultCheck( builder.name, "Not a valid name for Branch [" + builder.name + "]" );
     }
 
     public static Branch from( final String name )
