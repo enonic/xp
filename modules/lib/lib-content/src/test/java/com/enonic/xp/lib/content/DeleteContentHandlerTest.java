@@ -8,10 +8,21 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.FindContentByParentParams;
+import com.enonic.xp.content.FindContentByParentResult;
 
 public class DeleteContentHandlerTest
     extends BaseContentHandlerTest
 {
+    @Test
+    public void testExample()
+    {
+        final Content content = TestDataFixtures.newContent();
+        Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( Contents.from( content ) );
+
+        runScript( "/site/lib/xp/examples/delete.js" );
+    }
+
     @Test
     public void deleteById()
         throws Exception
