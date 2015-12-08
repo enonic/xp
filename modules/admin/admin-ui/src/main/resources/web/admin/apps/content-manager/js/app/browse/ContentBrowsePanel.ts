@@ -223,11 +223,11 @@ module app.browse {
                 if (i === index) {
                     var data = node.getData();
                     if (!!data && !!data.getContentSummary()) {
-                        var item = new BrowseItem<ContentSummaryAndCompareStatus>(data).
-                        setId(data.getId()).
-                        setDisplayName(data.getContentSummary().getDisplayName()).
-                        setPath(data.getContentSummary().getPath().toString()).
-                        setIconUrl(new ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
+                        let item = new ContentBrowseItem(data).
+                            setId(data.getId()).
+                            setDisplayName(data.getContentSummary().getDisplayName()).
+                            setPath(data.getContentSummary().getPath().toString()).
+                            setIconUrl(new ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
                         browseItems.push(item);
                     }
                 }
@@ -426,7 +426,8 @@ module app.browse {
                                 }
                             }
                         });
-                        this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems()); // update actions state in case of permission changes
+                        // update actions state in case of permission changes
+                        this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
                         this.mobileBrowseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
 
                         return this.contentTreeGrid.xPlaceContentNodes(results);
@@ -614,6 +615,10 @@ module app.browse {
             if (detailsPanelItem && (detailsPanelItem.getId() == item.getId())) {
                 this.updateDetailsPanel(item);
             }
+        }
+
+        getBrowseItemPanel(): ContentBrowseItemPanel {
+            return <ContentBrowseItemPanel>super.getBrowseItemPanel();
         }
     }
 }

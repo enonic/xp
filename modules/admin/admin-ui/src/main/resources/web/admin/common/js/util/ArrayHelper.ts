@@ -37,6 +37,17 @@ module api.util {
                 return false;
             });
         }
+
+        static difference<T>(left: T[], right: T[], compare: (valueLeft: T, valueRight: T) => boolean): T[] {
+            return left.filter((value) => {
+                for (let i = 0; i < right.length; i++) {
+                    if (compare(value, right[i])) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        }
     }
 
 }
