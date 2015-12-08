@@ -153,7 +153,7 @@ module api.ui.time {
                     this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
                 }
                 else {
-                    var date = api.util.DateHelper.parseDate(typedDate);
+                    var date = api.util.DateHelper.parseDate(typedDate, "-", true);
                     if (date) {
                         this.selectedDate = date;
                         this.validUserInput = true;
