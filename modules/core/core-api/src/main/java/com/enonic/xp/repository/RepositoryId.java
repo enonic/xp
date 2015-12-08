@@ -5,6 +5,8 @@ import java.util.Objects;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.util.CharacterChecker;
+
 @Beta
 public final class RepositoryId
 {
@@ -13,7 +15,7 @@ public final class RepositoryId
     private RepositoryId( final String value )
     {
         Preconditions.checkNotNull( value );
-        this.value = value;
+        this.value = CharacterChecker.defaultCheck( value, "Not a valid value for RepositoryId [" + value + "]" );
     }
 
     @Override
