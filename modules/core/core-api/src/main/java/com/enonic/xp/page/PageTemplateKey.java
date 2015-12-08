@@ -3,6 +3,7 @@ package com.enonic.xp.page;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.util.StringChecker;
 
 @Beta
 public final class PageTemplateKey
@@ -39,7 +40,7 @@ public final class PageTemplateKey
 
     public static PageTemplateKey from( final String value )
     {
-        return from( ContentId.from( value ) );
+        return from( ContentId.from( StringChecker.defaultCheck( value, "Not a valid value for PageTemplateKey [" + value + "]" ) ) );
     }
 
     public static PageTemplateKey from( final ContentId value )
