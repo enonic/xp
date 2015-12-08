@@ -3,18 +3,27 @@
 var fs = require('fs');
 var path = require('path');
 
+var beginStr = '// BEGIN';
+var endStr = '// END';
+
 function splitLines(str) {
     return str.split(/\r?\n/);
 }
 
 function findExamples(examples, lines) {
     var current = undefined;
+
     for (var i = 0; i < lines.length; i++) {
         var line = lines[i];
 
-        if (line.startsWith('// BEGIN')) {
+        if (line.startsWith(beginStr)) {
             current = '';
-        } else if (line.startsWith('// END')) {
+
+            var caption = line.substring(beginStr.length).trim();
+            if (caption.length > 0) {
+                current = '<caption>' + caption + '</caption>\n';
+            }
+        } else if (line.startsWith(endStr)) {
             if (current) {
                 examples.push(current.trim());
             }
