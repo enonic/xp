@@ -42,8 +42,8 @@ module app.launcher {
             });
             this.appRoutes = [];
             applications.forEach((application: api.app.Application, idx: number) => {
-                var appRoutPattern = new RegExp("^\/?" + application.getId() + "\/?([^\/?]+)?\/?\/?([^\/?]+)?\/?\/?([^\/?]+)?\/?\/?$",
-                    "i");
+                console.log("setAllowedApps" + application);
+                var appRoutPattern = new RegExp("^\/?" + application.getId() + "(?:\/([^\/]+)){0,3}\/?$", "i");
                 var appRoute: CrossroadsJs.Route = crossroads.addRoute(appRoutPattern, (p1: string, p2: string, p3: string) => {
                     var pathValues = [p1, p2, p3].filter((p)=> p != undefined);
                     var path: api.rest.Path = new api.rest.Path(pathValues);
