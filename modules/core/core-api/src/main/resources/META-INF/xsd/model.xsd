@@ -193,9 +193,19 @@
 
   <xs:complexType name="adminApplicationDescriptor">
     <xs:sequence>
-      <xs:element minOccurs="1" name="name" type="xs:string"/>
-      <xs:element minOccurs="1" name="short-name" type="xs:string"/>
-      <xs:element minOccurs="1" name="icon" type="xs:string"/>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="short-name" type="xs:string"/>
+      <xs:choice>
+        <xs:element name="icon" type="xs:string"/>
+        <xs:element name="iconImage">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element minOccurs="0" name="application" type="xs:string"/>
+              <xs:element name="path" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
       <xs:element minOccurs="0" name="allow">
         <xs:complexType>
           <xs:sequence>

@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.auth.json;
 import com.enonic.xp.admin.app.AdminApplicationDescriptor;
 import com.enonic.xp.admin.app.AdminApplicationDescriptors;
 import com.enonic.xp.admin.impl.rest.resource.launcher.json.AdminApplicationDescriptorJson;
+import com.enonic.xp.admin.impl.rest.resource.launcher.json.AdminApplicationIconJson;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.User;
@@ -71,7 +72,14 @@ public final class LoginResultJson
         jsonEntry.key = adminApplicationDescriptor.getKeyString();
         jsonEntry.name = adminApplicationDescriptor.getName();
         jsonEntry.shortName = adminApplicationDescriptor.getShortName();
-        jsonEntry.iconUrl = adminApplicationDescriptor.getIconUrl();
+        jsonEntry.icon = adminApplicationDescriptor.getIcon();
+
+        if ( adminApplicationDescriptor.getIconImage() != null )
+        {
+            jsonEntry.iconImage = new AdminApplicationIconJson();
+            jsonEntry.iconImage.application = adminApplicationDescriptor.getIconImage().getApplicationKey().getName();
+            jsonEntry.iconImage.path = adminApplicationDescriptor.getIconImage().getPath();
+        }
         return jsonEntry;
     }
 

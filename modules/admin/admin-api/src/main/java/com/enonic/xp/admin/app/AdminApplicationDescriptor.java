@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
@@ -15,7 +16,7 @@ public class AdminApplicationDescriptor
         key( DescriptorKey.from( ApplicationKey.SYSTEM, "content-manager" ) ).
         name( "Content Manager" ).
         shortName( "CM" ).
-        iconUrl( "database" ).
+        icon( "database" ).
         addAllowedPrincipal( RoleKeys.ADMIN ).
         addAllowedPrincipal( RoleKeys.CONTENT_MANAGER_ADMIN ).
         addAllowedPrincipal( RoleKeys.CONTENT_MANAGER_APP ).
@@ -25,7 +26,7 @@ public class AdminApplicationDescriptor
         key( DescriptorKey.from( ApplicationKey.SYSTEM, "user-manager" ) ).
         name( "Users" ).
         shortName( "UM" ).
-        iconUrl( "users" ).
+        icon( "users" ).
         addAllowedPrincipal( RoleKeys.ADMIN ).
         addAllowedPrincipal( RoleKeys.USER_MANAGER_ADMIN ).
         addAllowedPrincipal( RoleKeys.USER_MANAGER_APP ).
@@ -35,7 +36,7 @@ public class AdminApplicationDescriptor
         key( DescriptorKey.from( ApplicationKey.SYSTEM, "applications" ) ).
         name( "Applications" ).
         shortName( "AM" ).
-        iconUrl( "puzzle" ).
+        icon( "puzzle" ).
         addAllowedPrincipal( RoleKeys.ADMIN ).
         build();
 
@@ -48,7 +49,9 @@ public class AdminApplicationDescriptor
 
     private final String shortName;
 
-    private final String iconUrl;
+    private final String icon;
+
+    private final ResourceKey iconImage;
 
     private final PrincipalKeys allowedPrincipals;
 
@@ -57,7 +60,8 @@ public class AdminApplicationDescriptor
         key = builder.key;
         name = builder.name;
         shortName = builder.shortName;
-        iconUrl = builder.iconUrl;
+        icon = builder.icon;
+        iconImage = builder.iconImage;
         allowedPrincipals = PrincipalKeys.from( builder.allowedPrincipals );
     }
 
@@ -81,9 +85,14 @@ public class AdminApplicationDescriptor
         return shortName;
     }
 
-    public String getIconUrl()
+    public String getIcon()
     {
-        return iconUrl;
+        return icon;
+    }
+
+    public ResourceKey getIconImage()
+    {
+        return iconImage;
     }
 
     public PrincipalKeys getAllowedPrincipals()
@@ -110,7 +119,9 @@ public class AdminApplicationDescriptor
 
         private String shortName;
 
-        private String iconUrl;
+        private String icon;
+
+        private ResourceKey iconImage;
 
         private List<PrincipalKey> allowedPrincipals = new LinkedList<>();
 
@@ -136,9 +147,15 @@ public class AdminApplicationDescriptor
             return this;
         }
 
-        public Builder iconUrl( final String iconUrl )
+        public Builder icon( final String icon )
         {
-            this.iconUrl = iconUrl;
+            this.icon = icon;
+            return this;
+        }
+
+        public Builder iconImage( final ResourceKey iconImage )
+        {
+            this.iconImage = iconImage;
             return this;
         }
 

@@ -20,8 +20,18 @@ module api.security.auth {
             this.applications = []
             if (json.applications) {
                 json.applications.forEach((adminApplicationJson: AdminApplicationJson) => {
+                    var iconUrl;
+                    var iconImage;
+                    if (adminApplicationJson.iconImage) {
+                        iconImage = true;
+                        iconUrl = api.rendering.UriHelper.getAdminUri("_/asset/" + adminApplicationJson.iconImage.application +
+                                                                      adminApplicationJson.iconImage.path, "");
+                    } else {
+                        iconImage = false;
+                        iconUrl = adminApplicationJson.icon
+                    }
                     var application = new api.app.Application(adminApplicationJson.key, adminApplicationJson.name,
-                        adminApplicationJson.shortName, adminApplicationJson.iconUrl)
+                        adminApplicationJson.shortName, iconUrl, null, iconImage);
                     this.applications.push(application);
                 });
             }

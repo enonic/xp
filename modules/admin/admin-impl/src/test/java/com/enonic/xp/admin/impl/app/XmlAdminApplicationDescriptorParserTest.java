@@ -53,7 +53,8 @@ public class XmlAdminApplicationDescriptorParserTest
         assertEquals( "myapplication:myadminApplication", result.getKey().toString() );
         assertEquals( "My admin application", result.getName() );
         assertEquals( "MyAdminApp", result.getShortName() );
-        assertEquals( "newspaper", result.getIconUrl() );
+        assertEquals( "newspaper", result.getIcon() );
+        assertNull( result.getIconImage() );
 
         final PrincipalKeys allowedPrincipals = result.getAllowedPrincipals();
         assertNotNull( allowedPrincipals );

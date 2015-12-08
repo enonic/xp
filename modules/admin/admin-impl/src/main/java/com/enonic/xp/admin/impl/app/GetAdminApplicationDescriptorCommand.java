@@ -95,8 +95,7 @@ public class GetAdminApplicationDescriptorCommand
         else
         {
             builder.name( parentResourceKey.getName() ).
-                shortName( parentResourceKey.getName() ).
-                iconUrl( "default" );
+                shortName( parentResourceKey.getName() );
         }
 
         builder.key( DescriptorKey.from( applicationKey, parentResourceKey.getName() ) );

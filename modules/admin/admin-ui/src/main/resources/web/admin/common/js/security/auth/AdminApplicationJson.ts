@@ -8,6 +8,15 @@ module api.security.auth {
 
         shortName:string;
 
-        iconUrl:string;
+        icon:string;
+
+        iconImage:AdminApplicationIconJson;
+    }
+
+    export interface AdminApplicationIconJson {
+
+        application:string;
+
+        path:string;
     }
 }

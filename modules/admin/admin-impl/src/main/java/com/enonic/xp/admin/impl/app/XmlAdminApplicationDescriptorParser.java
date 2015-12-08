@@ -5,6 +5,8 @@ import java.util.List;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.admin.app.AdminApplicationDescriptor;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.parser.XmlModelParser;
@@ -29,7 +31,15 @@ public final class XmlAdminApplicationDescriptorParser
 
         builder.name( root.getChildValue( "name" ) ).
             shortName( root.getChildValue( "short-name" ) ).
-            iconUrl( root.getChildValue( "icon" ) );
+            icon( root.getChildValue( "icon" ) );
+
+        final DomElement iconImage = root.getChild( "iconImage" );
+        if ( iconImage != null )
+        {
+            final String application = iconImage.getChildValue( "application" );
+            ApplicationKey applicationKey = application == null ? currentApplication : ApplicationKey.from( application );
+            builder.iconImage( ResourceKey.from( applicationKey, iconImage.getChildValue( "path" ) ) );
+        }
 
         final DomElement requiredAccess = root.getChild( "allow" );
         if ( requiredAccess != null )

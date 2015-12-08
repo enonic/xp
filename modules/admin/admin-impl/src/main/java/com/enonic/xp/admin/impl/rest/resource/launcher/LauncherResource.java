@@ -18,6 +18,7 @@ import com.enonic.xp.admin.app.AdminApplicationDescriptor;
 import com.enonic.xp.admin.app.AdminApplicationDescriptorService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.launcher.json.AdminApplicationDescriptorJson;
+import com.enonic.xp.admin.impl.rest.resource.launcher.json.AdminApplicationIconJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -48,7 +49,14 @@ public class LauncherResource
         jsonEntry.key = adminApplicationDescriptor.getKeyString();
         jsonEntry.name = adminApplicationDescriptor.getName();
         jsonEntry.shortName = adminApplicationDescriptor.getShortName();
-        jsonEntry.iconUrl = adminApplicationDescriptor.getIconUrl();
+        jsonEntry.icon = adminApplicationDescriptor.getIcon();
+
+        if ( adminApplicationDescriptor.getIconImage() != null )
+        {
+            jsonEntry.iconImage = new AdminApplicationIconJson();
+            jsonEntry.iconImage.application = adminApplicationDescriptor.getIconImage().getApplicationKey().getName();
+            jsonEntry.iconImage.path = adminApplicationDescriptor.getIconImage().getPath();
+        }
 
         final ImmutableSet.Builder<String> allowedPrincipals = ImmutableSet.builder();
 

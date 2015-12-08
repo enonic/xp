@@ -11,7 +11,9 @@ public final class AdminApplicationDescriptorJson
 
     public String shortName;
 
-    public String iconUrl;
+    public String icon;
+
+    public AdminApplicationIconJson iconImage;
 
     public Set<String> allowedPrincipals;
 }
