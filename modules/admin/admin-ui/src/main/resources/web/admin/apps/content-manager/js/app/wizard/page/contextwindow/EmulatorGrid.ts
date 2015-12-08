@@ -42,7 +42,7 @@ module app.wizard.page.contextwindow {
 
             var subtitle = new api.dom.H6El();
             var units = data.display_units ? data.units : "";
-            subtitle.getEl().setInnerHtml(data.width + units + " &times; " + data.height + units);
+            subtitle.getEl().setInnerHtml(data.width + units + " &times; " + data.height + units, false);
             rowEl.appendChild(icon);
             rowEl.appendChild(title);
             rowEl.appendChild(subtitle);
