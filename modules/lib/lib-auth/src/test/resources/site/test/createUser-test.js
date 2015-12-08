@@ -7,7 +7,7 @@ exports.createUser = function () {
         userStore: 'myUserStore',
         name: 'userId',
         displayName: 'user display name',
-        email: 'email'
+        email: 'user1@enonic.com'
     });
 
     var expectedJson = {

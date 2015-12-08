@@ -25,8 +25,10 @@ public final class CreateUserParams
     {
         this.key = checkNotNull( builder.principalKey, "userKey is required for a user" );
         this.displayName = checkNotNull( builder.displayName, "displayName is required for a user" );
-        checkNotNull( builder.email, "Email can not be null" );
-        checkArgument( EmailValidator.validate( builder.email ), "Email [" + builder.email + "] is not valid" );
+        if ( builder.email != null )
+        {
+            checkArgument( EmailValidator.isValid( builder.email ), "Email [" + builder.email + "] is not valid" );
+        }
         this.email = builder.email;
         this.login = checkNotNull( builder.login, "login is required for a user" );
         this.password = builder.password;

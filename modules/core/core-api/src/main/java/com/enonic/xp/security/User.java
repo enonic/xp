@@ -36,7 +36,7 @@ public final class User
         checkNotNull( builder.login, "login is required for a User" );
         if ( builder.email != null )
         {
-            checkArgument( EmailValidator.validate( builder.email ), "Email [" + builder.email + "] is not valid" );
+            checkArgument( EmailValidator.isValid( builder.email ), "Email [" + builder.email + "] is not valid" );
         }
         this.email = builder.email;
         this.login = requireNonNull( builder.login );

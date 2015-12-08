@@ -27,7 +27,7 @@ public final class UpdateUserParams
         this.displayName = builder.displayName;
         if ( builder.email != null )
         {
-            checkArgument( EmailValidator.validate( builder.email ), "Email [" + builder.email + "] is not valid" );
+            checkArgument( EmailValidator.isValid( builder.email ), "Email [" + builder.email + "] is not valid" );
         }
         this.email = builder.email;
         this.login = builder.login;

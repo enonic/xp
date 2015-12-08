@@ -20,8 +20,8 @@ public final class EmailPasswordAuthToken
 
     public void setEmail( final String email )
     {
-        checkNotNull( email, "Email can not be null" );
-        checkArgument( EmailValidator.validate( email ), "Email [" + email + "] is not valid" );
+        checkNotNull( email, "Email cannot be null" );
+        checkArgument( EmailValidator.isValid( email ), "Email [" + email + "] is not valid" );
         this.email = email;
     }
 }
