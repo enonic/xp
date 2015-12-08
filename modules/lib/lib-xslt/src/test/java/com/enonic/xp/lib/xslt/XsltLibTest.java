@@ -11,6 +11,12 @@ public class XsltLibTest
     extends ScriptTestSupport
 {
     @Test
+    public void testExample()
+    {
+        runScript( "/site/lib/xp/examples/render.js" );
+    }
+
+    @Test
     public void testSimple()
     {
         final String expected = loadResource( "/site/view/simple-result.xml" ).readString();

@@ -42,4 +42,40 @@ public class IOLibTest
     {
         runFunction( "/site/test/io-test.js", "testGetResource" );
     }
+
+    @Test
+    public void testExample_readText()
+    {
+        runScript( "/site/lib/xp/examples/readText.js" );
+    }
+
+    @Test
+    public void testExample_readLines()
+    {
+        runScript( "/site/lib/xp/examples/readLines.js" );
+    }
+
+    @Test
+    public void testExample_processLines()
+    {
+        runScript( "/site/lib/xp/examples/processLines.js" );
+    }
+
+    @Test
+    public void testExample_getSize()
+    {
+        runScript( "/site/lib/xp/examples/getSize.js" );
+    }
+
+    @Test
+    public void testExample_getMimeType()
+    {
+        runScript( "/site/lib/xp/examples/getMimeType.js" );
+    }
+
+    @Test
+    public void testExample_getResource()
+    {
+        runScript( "/site/lib/xp/examples/getResource.js" );
+    }
 }

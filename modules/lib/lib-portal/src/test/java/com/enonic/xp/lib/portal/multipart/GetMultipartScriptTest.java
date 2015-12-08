@@ -114,4 +114,31 @@ public class GetMultipartScriptTest
         runFunction( "/site/test/multipart-test.js", "getText_notFound" );
     }
 
+    @Test
+    public void testExample_getMultipartForm()
+    {
+        createForm();
+        runScript( "/site/lib/xp/examples/getMultipartForm.js" );
+    }
+
+    @Test
+    public void testExample_getMultipartItem()
+    {
+        createForm();
+        runScript( "/site/lib/xp/examples/getMultipartItem.js" );
+    }
+
+    @Test
+    public void testExample_getMultipartStream()
+    {
+        createForm();
+        runScript( "/site/lib/xp/examples/getMultipartStream.js" );
+    }
+
+    @Test
+    public void testExample_getMultipartText()
+    {
+        createTextForm();
+        runScript( "/site/lib/xp/examples/getMultipartText.js" );
+    }
 }

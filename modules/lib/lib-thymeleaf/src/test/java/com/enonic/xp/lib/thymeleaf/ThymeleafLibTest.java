@@ -15,6 +15,12 @@ public class ThymeleafLibTest
     extends ScriptTestSupport
 {
     @Test
+    public void testExample()
+    {
+        runScript( "/site/lib/xp/examples/render.js" );
+    }
+
+    @Test
     public void renderTest()
         throws Exception
     {

@@ -75,4 +75,46 @@ public class UrlServiceScriptTest
     {
         Assert.assertTrue( execute( "processHtmlTest" ) );
     }
+
+    @Test
+    public void testExample_assetUrl()
+    {
+        runScript( "/site/lib/xp/examples/assetUrl.js" );
+    }
+
+    @Test
+    public void testExample_imageUrl()
+    {
+        runScript( "/site/lib/xp/examples/imageUrl.js" );
+    }
+
+    @Test
+    public void testExample_componentUrl()
+    {
+        runScript( "/site/lib/xp/examples/componentUrl.js" );
+    }
+
+    @Test
+    public void testExample_attachmentUrl()
+    {
+        runScript( "/site/lib/xp/examples/attachmentUrl.js" );
+    }
+
+    @Test
+    public void testExample_pageUrl()
+    {
+        runScript( "/site/lib/xp/examples/pageUrl.js" );
+    }
+
+    @Test
+    public void testExample_serviceUrl()
+    {
+        runScript( "/site/lib/xp/examples/serviceUrl.js" );
+    }
+
+    @Test
+    public void testExample_processHtml()
+    {
+        runScript( "/site/lib/xp/examples/processHtml.js" );
+    }
 }

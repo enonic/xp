@@ -40,6 +40,12 @@ public class ScriptingTest
     }
 
     @Test
+    public void testExample()
+    {
+        runScript( "/site/lib/xp/examples/localize.js" );
+    }
+
+    @Test
     public void testLocalize()
         throws Exception
     {

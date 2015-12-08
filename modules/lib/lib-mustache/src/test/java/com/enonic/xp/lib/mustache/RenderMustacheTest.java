@@ -43,4 +43,10 @@ public class RenderMustacheTest
         final String expected = stripEmptyLines( readFile( "/site/test/view/test-result.html" ) );
         assertEquals( expected, result );
     }
+
+    @Test
+    public void exampleTest()
+    {
+        runScript( "/site/lib/xp/examples/render.js" );
+    }
 }

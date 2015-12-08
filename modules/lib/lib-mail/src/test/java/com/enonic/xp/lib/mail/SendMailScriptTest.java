@@ -40,6 +40,12 @@ public class SendMailScriptTest
     }
 
     @Test
+    public void testExample()
+    {
+        runScript( "/site/lib/xp/examples/send.js" );
+    }
+
+    @Test
     public void testSimpleMail()
         throws Exception
     {

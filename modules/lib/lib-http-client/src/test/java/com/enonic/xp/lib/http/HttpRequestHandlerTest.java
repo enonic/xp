@@ -19,6 +19,8 @@ import static org.junit.Assert.*;
 public class HttpRequestHandlerTest
     extends ScriptTestSupport
 {
+    public static String SERVER_HOST;
+
     protected MockWebServer server;
 
     @Override
@@ -34,6 +36,8 @@ public class HttpRequestHandlerTest
         {
             throw new RuntimeException( e );
         }
+
+        SERVER_HOST = serverHost();
     }
 
     @After
@@ -181,5 +185,13 @@ public class HttpRequestHandlerTest
     private String serverHost()
     {
         return server.getHostName() + ":" + server.getPort();
+    }
+
+    @Test
+    public void testExample()
+        throws Exception
+    {
+        this.server.enqueue( addResponse( "POST request" ) );
+        runScript( "/site/lib/xp/examples/request.js" );
     }
 }
