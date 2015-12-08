@@ -8,41 +8,27 @@ public class CharacterCheckerTest
     public void testLessThanSign()
         throws Exception
     {
-        CharacterChecker.defaultCheck( "myID<do", "id" );
+        CharacterChecker.check( "myID<do", "id" );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGreaterThanSign()
         throws Exception
     {
-        CharacterChecker.defaultCheck( "lookAtMyMoreThanSign>", "errorMessage" );
+        CharacterChecker.check( "lookAtMyMoreThanSign>", "errorMessage" );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testDoubleQuoteSign()
         throws Exception
     {
-        CharacterChecker.defaultCheck( "Quoting makes\"your text look smarter", "errorMessage" );
+        CharacterChecker.check( "Quoting makes\"your text look smarter", "errorMessage" );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSingleQuoteSign()
         throws Exception
     {
-        CharacterChecker.defaultCheck( "Lone quote looks ' like a typo ", "errorMessage" );
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCustomIllegalStringButDefaultUsed()
-        throws Exception
-    {
-        new CharacterChecker( null ).check( "Lone quote looks ' like a typo ", "errorMessage" );
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCustomIllegalString()
-        throws Exception
-    {
-        new CharacterChecker( "L".toCharArray() ).check( "Lone quote looks ' like a typo ", "errorMessage" );
+        CharacterChecker.check( "Lone quote looks ' like a typo ", "errorMessage" );
     }
 }

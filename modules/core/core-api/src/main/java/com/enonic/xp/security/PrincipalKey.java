@@ -42,7 +42,7 @@ public final class PrincipalKey
         this.userStore = userStore;
         this.type = checkNotNull( type, "Principal type cannot be null" );
         checkArgument( !Strings.isNullOrEmpty( principalId ), "Principal id cannot be null or empty" );
-        this.principalId = CharacterChecker.defaultCheck( principalId, "Not a valid principal key [" + principalId + "]" );
+        this.principalId = CharacterChecker.check( principalId, "Not a valid principal key [" + principalId + "]" );
         if ( type == PrincipalType.ROLE )
         {
             this.refString = Joiner.on( SEPARATOR ).join( type.toString().toLowerCase(), principalId );

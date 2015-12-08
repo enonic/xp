@@ -23,7 +23,7 @@ public final class UserStoreKey
         Preconditions.checkArgument( !StringUtils.isBlank( id ), "UserStoreKey cannot be blank: %s", id );
         Preconditions.checkArgument( !RESERVED_USER_STORE_ID.equalsIgnoreCase( id ), "UserStoreKey id is reserved and cannot be used: %s",
                                      id );
-        this.id = CharacterChecker.defaultCheck( id, "Invalid UserStoreKey [" + id + "]" );
+        this.id = CharacterChecker.check( id, "Invalid UserStoreKey [" + id + "]" );
     }
 
     public static UserStoreKey from( final String id )

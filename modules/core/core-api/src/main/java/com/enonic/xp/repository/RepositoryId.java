@@ -15,7 +15,7 @@ public final class RepositoryId
     private RepositoryId( final String value )
     {
         Preconditions.checkNotNull( value );
-        this.value = CharacterChecker.defaultCheck( value, "Not a valid value for RepositoryId [" + value + "]" );
+        this.value = CharacterChecker.check( value, "Not a valid value for RepositoryId [" + value + "]" );
     }
 
     @Override

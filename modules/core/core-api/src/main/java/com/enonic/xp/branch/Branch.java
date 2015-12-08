@@ -13,7 +13,7 @@ public final class Branch
 
     private Branch( final Builder builder )
     {
-        this.name = CharacterChecker.defaultCheck( builder.name, "Not a valid name for Branch [" + builder.name + "]" );
+        this.name = CharacterChecker.check( builder.name, "Not a valid name for Branch [" + builder.name + "]" );
     }
 
     public static Branch from( final String name )
