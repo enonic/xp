@@ -134,7 +134,7 @@ module api.util {
             return this.formatUTCDateTime(date) + "Z";
         }
 
-        public static parseDate(value: string, dateSeparator: string = "-"): Date {
+        public static parseDate(value: string, dateSeparator: string = "-", forceDaysBeOfTwoChars: boolean = false): Date {
             var dateStr = (value || '').trim();
             if (dateStr.length < 8 || dateStr.length > 10) {
                 return null;
@@ -143,6 +143,11 @@ module api.util {
             if (parts.length !== 3 || parts[0].length !== 4) {
                 return null;
             }
+
+            if (forceDaysBeOfTwoChars && parts[2].length != 2) {
+                return null;
+            }
+
             var parsedYear: number = Number(parts[0]);
             var parsedMonth: number = Number(parts[1]);
             var parsedDayOfMonth: number = Number(parts[2]);
