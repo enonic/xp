@@ -3,7 +3,6 @@ module app.browse.filter {
     import ContentQueryRequest = api.content.ContentQueryRequest;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ContentSummaryJson = api.content.json.ContentSummaryJson;
-    import ContentQueryResultJson = api.content.json.ContentQueryResultJson;
     import ContentQueryResult = api.content.ContentQueryResult;
     import ContentSummary = api.content.ContentSummary;
     import AggregationTypeWrapperJson = api.aggregation.AggregationTypeWrapperJson;

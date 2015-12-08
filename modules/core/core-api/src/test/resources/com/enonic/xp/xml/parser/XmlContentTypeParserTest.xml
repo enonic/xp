@@ -15,6 +15,17 @@
       <indexed>false</indexed>
       <occurrences minimum="0" maximum="1"/>
     </input>
+    <input type="ContentSelector" name="someonesParent">
+      <label>Someones parent</label>
+      <occurrences minimum="0" maximum="1"/>
+      <config>
+        <relationship>system:reference</relationship>
+        <allowType>mytype</allowType>
+        <allowType>mytype2</allowType>
+        <allowPath>path1</allowPath>
+        <allowPath>path2</allowPath>
+      </config>
+    </input>
     <item-set name="mySet">
       <immutable>false</immutable>
       <occurrences minimum="0" maximum="1"/>
