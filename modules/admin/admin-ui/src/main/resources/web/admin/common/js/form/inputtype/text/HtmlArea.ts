@@ -166,7 +166,7 @@ module api.form.inputtype.text {
                             });
                         }
 
-                        if (e.keyCode == 46) { // DELETE
+                        if (e.keyCode == 46 || e.keyCode == 8) { // DELETE
                             var selectedNode = editor.selection.getRng().startContainer;
                             if (/^(FIGURE)$/.test(selectedNode.nodeName)) {
                                 var previousEl = selectedNode.previousSibling;
