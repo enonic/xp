@@ -27,23 +27,33 @@ module api.content.page {
 
             this.initLoader();
 
+
             this.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.PageDescriptor>) => {
                 var pageDescriptor = event.getOption().displayValue;
                 var setController = new SetController(this).setDescriptor(pageDescriptor);
                 model.getPageModel().setController(setController);
             });
 
-            this.siteModel.onApplicationAdded((event: api.content.site.ApplicationAddedEvent) => {
+            var onApplicationAddedHandler = () => {
                 this.getPageDescriptorsByApplicationsRequest.setApplicationKeys(this.siteModel.getApplicationKeys());
                 this.removeAllOptions();
                 this.load();
-            });
+            }
 
-            this.siteModel.onApplicationRemoved((event: api.content.site.ApplicationRemovedEvent) => {
+            var onApplicationRemovedHandler = () => {
                 this.getPageDescriptorsByApplicationsRequest.setApplicationKeys(this.siteModel.getApplicationKeys());
                 this.removeAllOptions();
                 this.load();
-            });
+            }
+
+            this.siteModel.onApplicationAdded(onApplicationAddedHandler);
+
+            this.siteModel.onApplicationRemoved(onApplicationRemovedHandler);
+
+            this.onRemoved(() => {
+                this.siteModel.unApplicationAdded(onApplicationAddedHandler);
+                this.siteModel.unApplicationRemoved(onApplicationRemovedHandler);
+            })
         }
 
         private initLoader() {
