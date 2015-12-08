@@ -19,13 +19,13 @@ module app.view.detail {
             return wemQ<any>(null);
         }
 
-        private getFullWidgetUrl(baseUrl: string, contentPath: string) {
-            return api.rendering.UriHelper.getAdminUri(baseUrl, contentPath) + "?uid=" + Date.now().toString();
+        private getFullWidgetUrl(url: string) {
+            return url + "?uid=" + Date.now().toString();
         }
 
-        public setUrl(baseUrl: string, contentPath: string): wemQ.Promise<void> {
+        public setUrl(url: string): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>(),
-                linkEl = new LinkEl(this.getFullWidgetUrl(baseUrl, contentPath)),
+                linkEl = new LinkEl(this.getFullWidgetUrl(url)),
                 el = this.getEl(),
                 onLinkLoaded = ((event: UIEvent) => {
                     var mainContainer = wemjq(event.target["import"]).find("div")[0];

@@ -17,6 +17,8 @@ module app.view.detail {
 
         private containerWidth: number = 0;
 
+        private url: string = "";
+
         public static debug = false;
 
         constructor(builder: WidgetViewBuilder) {
@@ -35,7 +37,7 @@ module app.view.detail {
                 this.detailsPanel.onPanelSizeChanged(() => {
                     var containerWidth = this.detailsPanel.getEl().getWidth();
                     if (this.detailsPanel.getItem() && containerWidth !== this.containerWidth) {
-                        this.setContent(this.detailsPanel.getItem());
+                        this.setContent(this.detailsPanel.getItem(), true);
                     }
                 })
             };
@@ -45,18 +47,29 @@ module app.view.detail {
             this.containerWidth = 0;
         }
 
-        private setContentForWidgetItemView(widgetItemView: WidgetItemView, content: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
-            if (!this.isUrlBased()) {
-                return wemQ.resolve(null);
-            }
+        private getWidgetUrl(content: ContentSummaryAndCompareStatus) {
             var path = content.getPath().toString();
-            return widgetItemView.setUrl(this.widget.getUrl(), path);
+            return api.rendering.UriHelper.getAdminUri(this.widget.getUrl(), path);
         }
 
-        public setContent(content: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
+        private isDetailsPanelVisible(): boolean {
+            return this.detailsPanel.getHTMLElement().clientWidth > 0;
+        }
+
+        private setContentForWidgetItemView(widgetItemView: WidgetItemView, content: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
+            if (!this.isUrlBased() || !this.isDetailsPanelVisible()) {
+                return wemQ.resolve(null);
+            }
+            this.url = this.getWidgetUrl(content);
+            return widgetItemView.setUrl(this.url);
+        }
+
+        public setContent(content: ContentSummaryAndCompareStatus, force: boolean = false): wemQ.Promise<any> {
             var promises = [];
             this.widgetItemViews.forEach((widgetItemView: WidgetItemView) => {
-                promises.push(this.setContentForWidgetItemView(widgetItemView, content));
+                if (this.isUrlBased() && (force || this.url !== this.getWidgetUrl(content))) {
+                    promises.push(this.setContentForWidgetItemView(widgetItemView, content));
+                }
             });
             this.containerWidth = this.detailsPanel.getEl().getWidth();
             return wemQ.all(promises);
