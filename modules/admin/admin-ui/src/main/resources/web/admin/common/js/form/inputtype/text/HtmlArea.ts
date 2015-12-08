@@ -46,7 +46,7 @@ module api.form.inputtype.text {
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
 
-            var value = this.processPropertyValue(property.toString());
+            var value = this.processPropertyValue(property.getString());
             var textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
 
             var editorId = textAreaEl.getId();
