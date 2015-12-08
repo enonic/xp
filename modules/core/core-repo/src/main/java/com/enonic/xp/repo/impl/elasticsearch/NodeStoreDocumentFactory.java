@@ -11,6 +11,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyVisitor;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.Node;
@@ -144,6 +145,17 @@ class NodeStoreDocumentFactory
                     }
 
                     builder.addEntries( StoreDocumentItemFactory.create( property, configForData ) );
+
+                    addReferenceAggregation( property );
+                }
+            }
+
+            private void addReferenceAggregation( final Property property )
+            {
+                if ( property.getType().equals( ValueTypes.REFERENCE ) )
+                {
+                    builder.addEntries(
+                        StoreDocumentItemFactory.create( NodeIndexPath.REFERENCE, property.getValue(), IndexConfig.MINIMAL ) );
                 }
             }
         };

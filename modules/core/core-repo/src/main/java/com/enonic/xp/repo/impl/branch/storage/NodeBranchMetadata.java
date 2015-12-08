@@ -5,6 +5,7 @@ import java.time.Instant;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
@@ -21,6 +22,8 @@ public class NodeBranchMetadata
 
     private final NodeId nodeId;
 
+    private final NodeIds references;
+
     private NodeBranchMetadata( Builder builder )
     {
         this.nodeVersionId = builder.nodeVersionId;
@@ -28,6 +31,7 @@ public class NodeBranchMetadata
         this.nodePath = builder.nodePath;
         this.timestamp = builder.timestamp;
         this.nodeId = builder.nodeId;
+        this.references = builder.references;
     }
 
     public static Builder create()
@@ -58,6 +62,11 @@ public class NodeBranchMetadata
     public NodeId getNodeId()
     {
         return nodeId;
+    }
+
+    public NodeIds getReferences()
+    {
+        return references;
     }
 
     @Override
@@ -117,6 +126,8 @@ public class NodeBranchMetadata
 
         private NodeId nodeId;
 
+        private NodeIds references = NodeIds.empty();
+
         private Builder()
         {
         }
@@ -148,6 +159,12 @@ public class NodeBranchMetadata
         public Builder nodeId( final NodeId nodeId )
         {
             this.nodeId = nodeId;
+            return this;
+        }
+
+        public Builder references( final NodeIds references )
+        {
+            this.references = references;
             return this;
         }
 

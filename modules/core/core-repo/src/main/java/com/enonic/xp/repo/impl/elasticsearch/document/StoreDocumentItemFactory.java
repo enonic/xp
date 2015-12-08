@@ -89,7 +89,6 @@ public class StoreDocumentItemFactory
     private static void addFulltextFieldsTypeBased( final IndexPath path, final Value propertyValue,
                                                     final Set<AbstractStoreDocumentItem> indexDocumentItems )
     {
-
         if ( propertyValue.isText() )
         {
             indexDocumentItems.add( new StoreDocumentAnalyzedItem( path, propertyValue.asString() ) );

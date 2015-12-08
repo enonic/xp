@@ -24,6 +24,7 @@ class BranchStorageRequestFactory
             add( BranchIndexPath.PATH.getPath(), nodeBranchMetadata.getNodePath().toString() ).
             add( BranchIndexPath.TIMESTAMP.getPath(),
                  nodeBranchMetadata.getTimestamp() != null ? nodeBranchMetadata.getTimestamp() : Instant.now() ).
+            add( BranchIndexPath.REFERENCES.getPath(), nodeBranchMetadata.getReferences().getAsStrings() ).
             build();
 
         final NodeId nodeId = nodeBranchMetadata.getNodeId();

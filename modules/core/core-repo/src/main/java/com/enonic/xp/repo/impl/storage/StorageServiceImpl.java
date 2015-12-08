@@ -78,7 +78,7 @@ public class StorageServiceImpl
 
         storeVersionMetadata( params.getNode(), context, nodeVersionId );
 
-        return moveInBranchAndIndex( params.getNode(), nodeVersionId, nodeBranchMetadata.getNodePath(), context );
+        return moveInBranchAndReIndex( params.getNode(), nodeVersionId, nodeBranchMetadata.getNodePath(), context );
     }
 
     @Override
@@ -119,6 +119,7 @@ public class StorageServiceImpl
             nodeState( node.getNodeState() ).
             timestamp( node.getTimestamp() ).
             nodePath( node.path() ).
+            references( NodeReferenceResolver.getReferences( node ) ).
             build(), context );
 
         this.indexServiceInternal.store( node, context );
@@ -270,12 +271,12 @@ public class StorageServiceImpl
             nodeState( node.getNodeState() ).
             timestamp( node.getTimestamp() ).
             nodePath( node.path() ).
+            references( NodeReferenceResolver.getReferences( node ) ).
             build(), context );
-
     }
 
-    private Node moveInBranchAndIndex( final Node node, final NodeVersionId nodeVersionId, final NodePath previousPath,
-                                       final InternalContext context )
+    private Node moveInBranchAndReIndex( final Node node, final NodeVersionId nodeVersionId, final NodePath previousPath,
+                                         final InternalContext context )
     {
         final NodeVersion nodeVersion = NodeVersion.from( node );
 
@@ -286,6 +287,7 @@ public class StorageServiceImpl
                 nodeState( node.getNodeState() ).
                 timestamp( node.getTimestamp() ).
                 nodePath( node.path() ).
+                references( NodeReferenceResolver.getReferences( node ) ).
                 build() ).
             previousPath( previousPath ).
             build(), context );
