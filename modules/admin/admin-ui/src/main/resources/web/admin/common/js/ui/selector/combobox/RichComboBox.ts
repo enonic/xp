@@ -48,8 +48,12 @@ module api.ui.selector.combobox {
 
             super(this.comboBox, this.selectedOptionsView);
 
-            if (builder.comboBoxName) {
+            if (!api.util.StringHelper.isBlank(builder.comboBoxName)) {
                 this.setName(builder.comboBoxName);
+            }
+            if (!api.util.StringHelper.isBlank(builder.value)) {
+                // do not move focus when setting original value
+                this.setIgnoreNextFocus(true);
             }
 
             this.addClass('rich-combobox');
