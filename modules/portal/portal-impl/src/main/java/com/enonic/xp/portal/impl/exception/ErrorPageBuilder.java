@@ -105,7 +105,7 @@ final class ErrorPageBuilder
     private void buildHead( final HtmlBuilder html )
     {
         html.open( "head" );
-        html.open( "title" ).text( this.statusCode + " " + this.title ).close();
+        html.open( "title" ).escapedText( this.statusCode + " " + this.title ).close();
         html.open( "style" );
 
         html.text( "html, body, pre {" );
@@ -204,8 +204,8 @@ final class ErrorPageBuilder
     private void buildBody( final HtmlBuilder html )
     {
         html.open( "body" );
-        html.open( "h1" ).text( this.statusCode + " " + this.title ).close();
-        html.open( "p" ).attribute( "id", "detail" ).text( this.description ).close();
+        html.open( "h1" ).escapedText( this.statusCode + " " + this.title ).close();
+        html.open( "p" ).attribute( "id", "detail" ).escapedText( this.description ).close();
         buildSourceInfo( html );
         buildCauseInfo( html );
         html.close();
