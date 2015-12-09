@@ -608,7 +608,7 @@ public class SecurityResourceTest
         params.displayName = "usert1";
         params.email = "test@enonic.com";
         params.login = "test";
-        params.password = " ";
+        params.password = "";
 
         exception.expect( WebApplicationException.class );
         resource.createUser( params );

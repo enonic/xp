@@ -447,6 +447,7 @@ public final class SecurityServiceImpl
     public User setPassword( final PrincipalKey key, final String password )
     {
         Preconditions.checkArgument( key.isUser(), "Expected principal key of type User" );
+        Preconditions.checkArgument( password != null && password.length() > 0, "Password cannot be empty" );
 
         return callWithContext( () -> {
 
