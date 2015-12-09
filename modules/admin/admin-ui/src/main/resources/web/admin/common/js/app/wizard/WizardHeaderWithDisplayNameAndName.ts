@@ -106,7 +106,14 @@ module api.app.wizard {
                    name.toLowerCase() === this.generateName(displayName).toLowerCase();
         }
 
-        initNames(displayName: string, name: string, forceDisplayNameProgrammaticallySet: boolean) {
+        initNames(displayName: string, name: string, forceDisplayNameProgrammaticallySet: boolean, ignoreDirtyFlag: boolean = true) {
+
+            if (!ignoreDirtyFlag) {
+                if (this.displayNameEl.isDirty()) {
+                    displayName = this.displayNameEl.getValue();
+                    name = this.nameEl.getValue();
+                }
+            }
 
             this.autoGenerateName = this.checkAutoGenerateName(name, displayName);
 
