@@ -5,7 +5,9 @@ import java.util.Map;
 
 import org.apache.felix.framework.Felix;
 import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkListener;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.launcher.LauncherListener;
 import com.enonic.xp.launcher.impl.SharedConstants;
 import com.enonic.xp.launcher.impl.config.ConfigProperties;
 import com.enonic.xp.launcher.impl.util.OsgiExportsBuilder;
@@ -28,6 +31,8 @@ public final class FrameworkService
     private ConfigProperties config;
 
     private final List<BundleActivator> activators;
+
+    private LauncherListener listener;
 
     private long startTime;
 
@@ -45,6 +50,12 @@ public final class FrameworkService
     public FrameworkService activator( final BundleActivator activator )
     {
         this.activators.add( activator );
+        return this;
+    }
+
+    public FrameworkService listener( final LauncherListener listener )
+    {
+        this.listener = listener;
         return this;
     }
 
@@ -142,7 +153,16 @@ public final class FrameworkService
     private void setRunningStartLevel()
     {
         final int level = Integer.parseInt( this.config.get( XP_OSGI_STARTLEVEL ) );
-        setStartLevel( level, event -> LOG.info( "Started Enonic XP in {} ms", ( System.currentTimeMillis() - this.startTime ) ) );
+        setStartLevel( level, event -> serverStarted() );
+    }
+
+    private void serverStarted()
+    {
+        LOG.info( "Started Enonic XP in {} ms", ( System.currentTimeMillis() - this.startTime ) );
+        if ( this.listener != null )
+        {
+            this.listener.serverStarted();
+        }
     }
 
     public void stop()
@@ -166,7 +186,7 @@ public final class FrameworkService
     {
         stopActivators();
         this.felix.stop();
-        this.felix.waitForStop( 0 );
+        this.felix.waitForStop( 1000 );
     }
 
     private void startActivators()
@@ -184,6 +204,31 @@ public final class FrameworkService
         for ( final BundleActivator activator : this.activators )
         {
             activator.stop( this.felix.getBundleContext() );
+        }
+    }
+
+    public String getHttpUrl()
+    {
+        return "http://localhost:" + getHttpPort( 8080 );
+    }
+
+    public int getHttpPort( final int defValue )
+    {
+        final BundleContext context = this.felix.getBundleContext();
+        final ServiceReference ref = context.getServiceReference( "com.enonic.xp.web.jetty.impl.JettyController" );
+
+        if ( ref == null )
+        {
+            return defValue;
+        }
+
+        try
+        {
+            return Integer.parseInt( ref.getProperty( "http.port" ).toString() );
+        }
+        catch ( final Exception e )
+        {
+            return defValue;
         }
     }
 }

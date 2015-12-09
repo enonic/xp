@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Map;
 
 import com.enonic.xp.launcher.Launcher;
+import com.enonic.xp.launcher.LauncherListener;
 import com.enonic.xp.launcher.VersionInfo;
 import com.enonic.xp.launcher.impl.config.ConfigLoader;
 import com.enonic.xp.launcher.impl.config.ConfigProperties;
@@ -33,13 +34,15 @@ public final class LauncherImpl
 
     private FrameworkService framework;
 
+    private LauncherListener listener;
+
     public LauncherImpl( final String... args )
     {
         this.args = args;
-        System.setProperty( "java.awt.headless", "true" );
         applySystemPropertyArgs();
         this.systemProperties = SystemProperties.getDefault();
         this.version = VersionInfo.get();
+        checkRequirements();
     }
 
     private void checkRequirements()
@@ -89,6 +92,7 @@ public final class LauncherImpl
     private void createFramework()
     {
         this.framework = new FrameworkService();
+        this.framework.listener( this.listener );
         this.framework.config( this.config );
 
         addLogActivator();
@@ -119,7 +123,6 @@ public final class LauncherImpl
     public void start()
         throws Exception
     {
-        checkRequirements();
         resolveEnv();
         printBanner();
         setupLogging();
@@ -163,5 +166,31 @@ public final class LauncherImpl
     private void setRunMode( final String mode )
     {
         System.setProperty( "xp.runMode", mode );
+    }
+
+    @Override
+    public boolean hasArg( final String value )
+    {
+        for ( final String arg : this.args )
+        {
+            if ( arg.equalsIgnoreCase( value ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public void setListener( final LauncherListener listener )
+    {
+        this.listener = listener;
+    }
+
+    @Override
+    public String getHttpUrl()
+    {
+        return this.framework.getHttpUrl();
     }
 }
