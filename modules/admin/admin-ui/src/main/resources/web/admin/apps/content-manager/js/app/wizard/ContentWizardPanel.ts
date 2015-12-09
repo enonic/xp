@@ -127,6 +127,8 @@ module app.wizard {
 
         private inMobileViewMode: boolean;
 
+        private contentCompareStatus: CompareStatus;
+
         /**
          * Whether constructor is being currently executed or not.
          */
@@ -236,73 +238,17 @@ module app.wizard {
                 }
 
                 this.inMobileViewMode = false;
-                var responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-                    if (this.isVisible()) {
-                        this.updateStickyToolbar();
-                        if (item.isInRangeOrSmaller(ResponsiveRanges._720_960)) {
-                            this.inMobileViewMode = true;
-                            if (this.isSplitView()) {
-                                if (this.isMinimized()) {
-                                    this.toggleMinimize();
-                                }
-                                this.cycleViewModeButton.executePrevAction();
-                            }
-                        } else {
-                            if (this.inMobileViewMode && this.isLiveView()) {
-                                this.inMobileViewMode = false;
-                                this.showSplitEdit();
-                            }
 
-                            this.inMobileViewMode = false;
-                        }
-                    }
-                });
+                var responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, this.availableSizeChangedHandler.bind(this));
 
                 this.onRemoved((event) => {
                     ResponsiveManager.unAvailableSizeChanged(this);
                 });
 
-                this.onShown((event: api.dom.ElementShownEvent) => {
-                    if (this.getPersistedItem()) {
-                        app.Router.setHash("edit/" + this.getPersistedItem().getId());
-                    } else {
-                        app.Router.setHash("new/" + this.contentType.getName());
-                    }
-                    //Set split panel default
-
-                    this.wizardActions.getShowSplitEditAction().onExecuted(() => {
-                        if (!this.inMobileViewMode) {
-                            if (!this.isContentRenderable()) {
-                                this.closeLiveEdit();
-                                this.contextWindowToggler.setEnabled(false);
-                            } else {
-                                this.cycleViewModeButton.selectActiveAction(this.showLiveEditAction);
-                            }
-                        }
-                    });
-
-                    if (this.isContentRenderable()) {
-                        this.wizardActions.getShowSplitEditAction().execute();
-                    }
-                    else {
-                        if (!!this.getSplitPanel()) {
-                            this.wizardActions.getShowFormAction().execute();
-                        }
-                    }
-
-                    responsiveItem.update();
-                });
+                this.initOnShownHandler(responsiveItem);
 
                 if (this.thumbnailUploader) {
-                    this.thumbnailUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
-                        var newPersistedContent: Content = event.getUploadItem().getModel();
-                        this.setPersistedItem(newPersistedContent);
-                        this.updateMetadataAndMetadataStepForms(newPersistedContent);
-                        this.updateThumbnailWithContent(newPersistedContent);
-                        var contentToDisplay = (newPersistedContent.getDisplayName() && newPersistedContent.getDisplayName().length > 0) ?
-                                               '\"' + newPersistedContent.getDisplayName() + '\"' : "Content";
-                        api.notify.showFeedback(contentToDisplay + ' saved');
-                    });
+                    this.listenToFileUploaded();
                 }
 
                 this.constructing = false;
@@ -317,6 +263,75 @@ module app.wizard {
                 if (this.getPersistedItem().getContentId().equals(event.getContentId())) {
                     this.actions.suspendActions(event.isMask());
                 }
+            });
+
+            this.listenToContentEvents();
+        }
+
+        private availableSizeChangedHandler(item: ResponsiveItem) {
+            if (this.isVisible()) {
+                this.updateStickyToolbar();
+                if (item.isInRangeOrSmaller(ResponsiveRanges._720_960)) {
+                    this.inMobileViewMode = true;
+                    if (this.isSplitView()) {
+                        if (this.isMinimized()) {
+                            this.toggleMinimize();
+                        }
+                        this.cycleViewModeButton.executePrevAction();
+                    }
+                } else {
+                    if (this.inMobileViewMode && this.isLiveView()) {
+                        this.inMobileViewMode = false;
+                        this.showSplitEdit();
+                    }
+
+                    this.inMobileViewMode = false;
+                }
+            }
+        }
+
+        private initOnShownHandler(responsiveItem: ResponsiveItem) {
+            this.onShown((event: api.dom.ElementShownEvent) => {
+                if (this.getPersistedItem()) {
+                    app.Router.setHash("edit/" + this.getPersistedItem().getId());
+                } else {
+                    app.Router.setHash("new/" + this.contentType.getName());
+                }
+                //Set split panel default
+
+                this.wizardActions.getShowSplitEditAction().onExecuted(() => {
+                    if (!this.inMobileViewMode) {
+                        if (!this.isContentRenderable()) {
+                            this.closeLiveEdit();
+                            this.contextWindowToggler.setEnabled(false);
+                        } else {
+                            this.cycleViewModeButton.selectActiveAction(this.showLiveEditAction);
+                        }
+                    }
+                });
+
+                if (this.isContentRenderable()) {
+                    this.wizardActions.getShowSplitEditAction().execute();
+                }
+                else {
+                    if (!!this.getSplitPanel()) {
+                        this.wizardActions.getShowFormAction().execute();
+                    }
+                }
+
+                responsiveItem.update();
+            });
+        }
+
+        private listenToFileUploaded() {
+            this.thumbnailUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
+                var newPersistedContent: Content = event.getUploadItem().getModel();
+                this.setPersistedItem(newPersistedContent);
+                this.updateMetadataAndMetadataStepForms(newPersistedContent);
+                this.updateThumbnailWithContent(newPersistedContent);
+                var contentToDisplay = (newPersistedContent.getDisplayName() && newPersistedContent.getDisplayName().length > 0) ?
+                                       '\"' + newPersistedContent.getDisplayName() + '\"' : "Content";
+                api.notify.showFeedback(contentToDisplay + ' saved');
             });
         }
 
@@ -480,7 +495,7 @@ module app.wizard {
             return this.getPersistedItem().getPath().isDescendantOf(path) || this.getPersistedItem().getPath().equals(path);
         }
 
-        private listenToContentEvents(ignore: boolean) {
+        private listenToContentEvents() {
 
             var deleteHandler = (event: api.content.event.ContentDeletedEvent) => {
                 if (this.getPersistedItem()) {
@@ -490,6 +505,7 @@ module app.wizard {
                         if (deletedItem.isPending()) {
                             if (this.getPersistedItem().getPath().equals(deletedItem.getContentPath())) {
                                 this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.PENDING_DELETE);
+                                this.contentCompareStatus = CompareStatus.PENDING_DELETE;
                             }
                         } else if (this.persistedItemPathIsDescendantOrEqual(deletedItem.getContentPath())) {
                             this.close();
@@ -502,8 +518,9 @@ module app.wizard {
                 if (this.isCurrentContentId(event.getContentId())) {
 
                     this.contentWizardToolbarPublishControls.setCompareStatus(event.getCompareStatus());
+                    this.contentCompareStatus = event.getCompareStatus();
 
-                    if (!ignore) {
+                    if (this.contentCompareStatus === CompareStatus.NEW) {
                         this.contentWizardHeader.disableNameGeneration(true);
                         ContentPublishedEvent.un(publishHandler);
                     }
@@ -541,13 +558,13 @@ module app.wizard {
 
             api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).
                 done((contentSummaryAndCompareStatus: ContentSummaryAndCompareStatus) => {
-                    var ignore = contentSummaryAndCompareStatus.getCompareStatus() !== CompareStatus.NEW;
-                    this.contentWizardHeader.disableNameGeneration(ignore);
 
-                    this.listenToContentEvents(ignore);
+                    this.contentCompareStatus = contentSummaryAndCompareStatus.getCompareStatus();
 
-                    this.contentWizardToolbarPublishControls.setCompareStatus(contentSummaryAndCompareStatus.getCompareStatus());
-                    this.managePublishButtonStateForMobile(contentSummaryAndCompareStatus.getCompareStatus());
+                    this.contentWizardHeader.disableNameGeneration(this.contentCompareStatus !== CompareStatus.NEW);
+
+                    this.contentWizardToolbarPublishControls.setCompareStatus(this.contentCompareStatus);
+                    this.managePublishButtonStateForMobile(this.contentCompareStatus);
                 });
 
             var viewedContent;
@@ -1179,7 +1196,7 @@ module app.wizard {
 
             this.updateThumbnailWithContent(content);
 
-            this.contentWizardHeader.initNames(content.getDisplayName(), content.getName().toString(), true);
+            this.contentWizardHeader.initNames(content.getDisplayName(), content.getName().toString(), true, false);
         }
 
         private initPublishButtonForMobile() {
