@@ -1,0 +1,21 @@
+import com.enonic.gradle.BuildInfoHelper
+
+dependencies {
+    compile 'com.google.guava:guava:18.0'
+}
+
+ext {
+    buildInfo = BuildInfoHelper.extract( project.rootDir )
+}
+
+processResources {
+    filesMatching( '**/build.properties' ) {
+        expand( [info: buildInfo] )
+    }
+}
+
+jar {
+    manifest {
+        attributes( ['Implementation-Version': project.version] )
+    }
+}
