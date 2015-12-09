@@ -10,6 +10,7 @@ import com.google.common.base.Joiner;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.DomHelper;
@@ -41,7 +42,12 @@ public class XmlInputTypeConfigMapperTest
 
     private InputTypeConfig build( final String suffix )
     {
-        final XmlInputTypeConfigMapper mapper = new XmlInputTypeConfigMapper( APP_KEY );
+        return build( suffix, InputTypeName.from( "some-input-type" ) );
+    }
+
+    private InputTypeConfig build( final String suffix, final InputTypeName inputTypeName )
+    {
+        final XmlInputTypeConfigMapper mapper = new XmlInputTypeConfigMapper( APP_KEY, inputTypeName );
         return mapper.build( parse( suffix ) );
     }
 
@@ -96,6 +102,17 @@ public class XmlInputTypeConfigMapperTest
         assertEquals( "other4=[myMixinType=myapp:test]", toString( config.getProperties( "other4" ) ) );
         assertEquals( "other5=[myContentType=myapp:test]", toString( config.getProperties( "other5" ) ) );
         assertEquals( "other6=[myRelationshipType=myapp:test]", toString( config.getProperties( "other6" ) ) );
+    }
+
+    @Test
+    public void parseAliased()
+    {
+        final InputTypeConfig config = build( "aliased.xml", InputTypeName.CONTENT_SELECTOR );
+        assertNotNull( config );
+        assertEquals( 2, config.getSize() );
+
+        assertEquals( "allowContentType=myapp:contentTypeTest[]", toString( config.getProperties( "allowContentType" ) ) );
+        assertEquals( "relationshipType=myapp:relationshipTypeTest[]", toString( config.getProperties( "relationshipType" ) ) );
     }
 
     @Test

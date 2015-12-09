@@ -13,8 +13,7 @@ module api.content.form.inputtype.image {
 
         constructor(builder: ImageContentComboBoxBuilder) {
 
-            var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
-            loader.setAllowedContentTypes(builder.allowedContentTypes);
+            var loader = builder.loader ? builder.loader : new ContentSummaryLoader(builder.allowedContentTypes);
 
             var richComboBoxBuilder = new RichComboBoxBuilder().
                 setComboBoxName(builder.name ? builder.name : 'imageContentSelector').
@@ -48,7 +47,7 @@ module api.content.form.inputtype.image {
 
         maximumOccurrences: number = 0;
 
-        loader: ContentSummaryLoader;
+        loader: api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary>;
 
         allowedContentTypes: string[];
 
@@ -68,7 +67,7 @@ module api.content.form.inputtype.image {
             return this;
         }
 
-        setLoader(loader: ContentSummaryLoader): ImageContentComboBoxBuilder {
+        setLoader(loader: api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary>): ImageContentComboBoxBuilder {
             this.loader = loader;
             return this;
         }

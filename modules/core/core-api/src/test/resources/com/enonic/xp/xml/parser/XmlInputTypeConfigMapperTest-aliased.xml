@@ -1,0 +1,4 @@
+<config>
+  <allowType>contentTypeTest</allowType>
+  <relationship>relationshipTypeTest</relationship>
+</config>
