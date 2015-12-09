@@ -1,4 +1,4 @@
-var thymeleaf = require('/lib/xp/thymeleaf.js');
+var thymeleaf = require('/lib/xp/thymeleaf');
 
 exports.renderTest = function () {
 

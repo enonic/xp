@@ -40,6 +40,7 @@ public abstract class ScriptTestSupport
         this.scriptSettings.binding( Context.class, ContextAccessor::current );
         this.scriptSettings.binding( PortalRequest.class, () -> this.portalRequest );
         this.scriptSettings.debug( new ScriptDebugSettings() );
+        this.scriptSettings.globalVariable( "_test", this );
     }
 
     protected final ScriptExports runScript( final String path )
