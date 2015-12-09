@@ -23,18 +23,11 @@ final class JaxRsDispatcher
         Logger.setLoggerType( Logger.LoggerType.SLF4J );
     }
 
-    private String mappingPrefix;
+    private final JaxRsApplication app;
 
-    protected final JaxRsApplication app;
-
-    public JaxRsDispatcher()
+    public JaxRsDispatcher( final JaxRsApplication app )
     {
-        this.app = new JaxRsApplication();
-    }
-
-    public void setMappingPrefix( final String value )
-    {
-        this.mappingPrefix = value;
+        this.app = app;
     }
 
     public void init( final ServletContext context )
@@ -57,7 +50,7 @@ final class JaxRsDispatcher
         throws ServletException
     {
         final ServletConfigImpl config = new ServletConfigImpl( "jaxrs", context );
-        config.setInitParameter( ResteasyContextParameters.RESTEASY_SERVLET_MAPPING_PREFIX, this.mappingPrefix );
+        config.setInitParameter( ResteasyContextParameters.RESTEASY_SERVLET_MAPPING_PREFIX, "/" );
 
         final ServletBootstrap bootstrap = new ServletBootstrap( config );
         final RequestFactoryImpl requestFactory = new RequestFactoryImpl( context );
