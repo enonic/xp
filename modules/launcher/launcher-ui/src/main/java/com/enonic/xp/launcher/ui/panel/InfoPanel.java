@@ -1,7 +1,6 @@
 package com.enonic.xp.launcher.ui.panel;
 
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JPanel;
