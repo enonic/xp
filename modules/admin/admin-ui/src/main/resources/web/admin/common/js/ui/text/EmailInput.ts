@@ -4,7 +4,7 @@ module api.ui.text {
     import StringHelper = api.util.StringHelper;
     import CheckEmailAvailabilityRequest = api.security.CheckEmailAvailabilityRequest;
 
-    export class EmailInput extends api.dom.FormInputEl {
+    export class EmailInput extends api.dom.CompositeFormInputEl {
 
         private input: InputEl;
 
@@ -16,13 +16,13 @@ module api.ui.text {
 
         private userStoreKey: api.security.UserStoreKey;
 
-        private focusListeners: {(event: FocusEvent):void}[] = [];
+        private focusListeners: {(event: FocusEvent):void}[];
 
-        private blurListeners: {(event: FocusEvent):void}[] = [];
+        private blurListeners: {(event: FocusEvent):void}[];
 
         constructor() {
-            super("div", "email-input");
-
+            this.focusListeners = [];
+            this.blurListeners = [];
             this.input = new InputEl(undefined, 'email');
             this.input.setPattern("^[a-zA-Z0-9\_\-\.]+@[a-zA-Z0-9\-]+(?:\.[a-zA-Z0-9\-]{2,})*(?:\.[a-zA-Z]{2,4})$");
 
@@ -41,8 +41,9 @@ module api.ui.text {
                 this.checkTimeout = setTimeout((email) => this.checkAvailability(email), 500, this.input.getValue());
 
             });
-            this.appendChild(this.input);
 
+            super(this.input);
+            this.addClass("email-input");
         }
 
         getInput(): InputEl {
@@ -66,15 +67,6 @@ module api.ui.text {
 
         setUserStoreKey(userStoreKey: api.security.UserStoreKey): EmailInput {
             this.userStoreKey = userStoreKey;
-            return this;
-        }
-
-        getName(): string {
-            return this.input.getName();
-        }
-
-        setName(value: string): EmailInput {
-            this.input.setName(value);
             return this;
         }
 
@@ -155,6 +147,5 @@ module api.ui.text {
                 listener(event);
             })
         }
-
     }
 }
