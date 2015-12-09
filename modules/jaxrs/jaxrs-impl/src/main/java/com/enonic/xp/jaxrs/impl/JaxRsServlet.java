@@ -60,7 +60,10 @@ public final class JaxRsServlet
     @Override
     public void destroy()
     {
-        this.dispatcher.destroy();
+        if ( this.dispatcher != null )
+        {
+            this.dispatcher.destroy();
+        }
     }
 
     private void refreshIfNeeded( final ServletContext context )
