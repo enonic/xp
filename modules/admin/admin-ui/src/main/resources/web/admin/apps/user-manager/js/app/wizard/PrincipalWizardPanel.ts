@@ -47,11 +47,9 @@ module app.wizard {
 
             this.userStore = params.userStore;
 
-            this.wizardActions = new app.wizard.action.PrincipalWizardActions(this);
-            var duplicateAction = (<app.wizard.action.PrincipalWizardActions>this.wizardActions).getDuplicateAction();
+            this.wizardActions = new app.wizard.action.UserItemWizardActions(this);
             this.toolbar = new PrincipalWizardToolbar({
                 saveAction: this.wizardActions.getSaveAction(),
-                duplicateAction: duplicateAction,
                 deleteAction: this.wizardActions.getDeleteAction()
             });
 
