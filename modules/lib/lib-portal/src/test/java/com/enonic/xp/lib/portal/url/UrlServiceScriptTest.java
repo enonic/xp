@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.portal.url;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -10,14 +9,16 @@ import org.mockito.stubbing.Answer;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 
 public class UrlServiceScriptTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
-    @Before
-    public void setUp()
+    @Override
+    protected void initialize()
+        throws Exception
     {
+        super.initialize();
         addService( PortalUrlService.class, Mockito.mock( PortalUrlService.class, (Answer) this::urlAnswer ) );
     }
 
@@ -79,42 +80,42 @@ public class UrlServiceScriptTest
     @Test
     public void testExample_assetUrl()
     {
-        runScript( "/site/lib/xp/examples/assetUrl.js" );
+        runScript( "/site/lib/xp/examples/portal/assetUrl.js" );
     }
 
     @Test
     public void testExample_imageUrl()
     {
-        runScript( "/site/lib/xp/examples/imageUrl.js" );
+        runScript( "/site/lib/xp/examples/portal/imageUrl.js" );
     }
 
     @Test
     public void testExample_componentUrl()
     {
-        runScript( "/site/lib/xp/examples/componentUrl.js" );
+        runScript( "/site/lib/xp/examples/portal/componentUrl.js" );
     }
 
     @Test
     public void testExample_attachmentUrl()
     {
-        runScript( "/site/lib/xp/examples/attachmentUrl.js" );
+        runScript( "/site/lib/xp/examples/portal/attachmentUrl.js" );
     }
 
     @Test
     public void testExample_pageUrl()
     {
-        runScript( "/site/lib/xp/examples/pageUrl.js" );
+        runScript( "/site/lib/xp/examples/portal/pageUrl.js" );
     }
 
     @Test
     public void testExample_serviceUrl()
     {
-        runScript( "/site/lib/xp/examples/serviceUrl.js" );
+        runScript( "/site/lib/xp/examples/portal/serviceUrl.js" );
     }
 
     @Test
     public void testExample_processHtml()
     {
-        runScript( "/site/lib/xp/examples/processHtml.js" );
+        runScript( "/site/lib/xp/examples/portal/processHtml.js" );
     }
 }

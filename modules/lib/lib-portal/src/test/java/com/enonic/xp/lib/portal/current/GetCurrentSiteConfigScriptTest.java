@@ -4,10 +4,10 @@ import org.junit.Test;
 
 import com.enonic.xp.lib.portal.TestDataFixtures;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 
 public class GetCurrentSiteConfigScriptTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
     @Test
     public void currentSite()
@@ -31,6 +31,6 @@ public class GetCurrentSiteConfigScriptTest
         final Site site = TestDataFixtures.newSite();
         this.portalRequest.setSite( site );
 
-        runScript( "/site/lib/xp/examples/getSiteConfig.js" );
+        runScript( "/site/lib/xp/examples/portal/getSiteConfig.js" );
     }
 }

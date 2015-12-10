@@ -4,10 +4,10 @@ import org.junit.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.lib.portal.TestDataFixtures;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 
 public class GetCurrentContentScriptTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
     @Test
     public void currentContent()
@@ -31,6 +31,6 @@ public class GetCurrentContentScriptTest
         final Content content = TestDataFixtures.newExampleContent();
         this.portalRequest.setContent( content );
 
-        runScript( "/site/lib/xp/examples/getContent.js" );
+        runScript( "/site/lib/xp/examples/portal/getContent.js" );
     }
 }

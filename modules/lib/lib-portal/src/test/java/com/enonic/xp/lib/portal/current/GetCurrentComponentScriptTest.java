@@ -4,10 +4,10 @@ import org.junit.Test;
 
 import com.enonic.xp.lib.portal.TestDataFixtures;
 import com.enonic.xp.region.Component;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 
 public class GetCurrentComponentScriptTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
     @Test
     public void currentComponent()
@@ -31,6 +31,6 @@ public class GetCurrentComponentScriptTest
         final Component component = TestDataFixtures.newLayoutComponent();
         this.portalRequest.setComponent( component );
 
-        runScript( "/site/lib/xp/examples/getComponent.js" );
+        runScript( "/site/lib/xp/examples/portal/getComponent.js" );
     }
 }

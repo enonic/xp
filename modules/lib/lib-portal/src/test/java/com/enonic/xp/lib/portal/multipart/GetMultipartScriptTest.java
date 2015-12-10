@@ -7,18 +7,19 @@ import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 import com.enonic.xp.web.multipart.MultipartService;
 
 public class GetMultipartScriptTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
     private MultipartService multipartService;
 
     @Override
     protected void initialize()
+        throws Exception
     {
         super.initialize();
 
@@ -118,27 +119,27 @@ public class GetMultipartScriptTest
     public void testExample_getMultipartForm()
     {
         createForm();
-        runScript( "/site/lib/xp/examples/getMultipartForm.js" );
+        runScript( "/site/lib/xp/examples/portal/getMultipartForm.js" );
     }
 
     @Test
     public void testExample_getMultipartItem()
     {
         createForm();
-        runScript( "/site/lib/xp/examples/getMultipartItem.js" );
+        runScript( "/site/lib/xp/examples/portal/getMultipartItem.js" );
     }
 
     @Test
     public void testExample_getMultipartStream()
     {
         createForm();
-        runScript( "/site/lib/xp/examples/getMultipartStream.js" );
+        runScript( "/site/lib/xp/examples/portal/getMultipartStream.js" );
     }
 
     @Test
     public void testExample_getMultipartText()
     {
         createTextForm();
-        runScript( "/site/lib/xp/examples/getMultipartText.js" );
+        runScript( "/site/lib/xp/examples/portal/getMultipartText.js" );
     }
 }
