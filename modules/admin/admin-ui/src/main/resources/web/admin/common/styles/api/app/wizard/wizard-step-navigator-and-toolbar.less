@@ -1,0 +1,96 @@
+.wizard-step-navigator-and-toolbar {
+  height: 40px;
+  padding-left: 95px;
+  background-color: @admin-bg-light-gray;
+
+  .toolbar {
+    float: right;
+    margin: 0 40px;
+
+    button {
+      background: @admin-green;
+      color: white;
+      line-height: 20px;
+      padding: 10px 15px 10px 15px;
+      margin: 0;
+
+      &:hover {
+        background-color: lighten(@admin-green, 5%);
+      }
+    }
+  }
+
+  .fold-button {
+    display: none;
+    position: relative;
+    height: 100%;
+    padding-top: 8px;
+    padding-right: 27px;
+    float: left;
+    border: none;
+    background-color: @admin-bg-light-gray;
+
+    &:hover:not(:disabled) {
+      background-color: @admin-bg-light-gray;
+      span {
+        color: @admin-font-gray1;
+      }
+    }
+
+    &:focus:not(:disabled) {
+      border: none;
+      box-shadow: none;
+    }
+
+    span {
+      color: @admin-font-gray1;
+    }
+
+    .@{_COMMON_PREFIX}dropdown {
+      margin-top: 32px;
+      width: 180px;
+
+      .wizard-step-navigator {
+        margin-bottom: 0;
+        padding-right: 0;
+        li {
+          padding: 5px;
+          float: initial;
+          span {
+            line-height: 1em;
+          }
+
+          &.active {
+            &:before, &:after {
+              border-bottom: none;
+            }
+          }
+
+          &:active {
+            padding-bottom: 5px;
+          }
+
+          &:last-of-type {
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+
+  &.scroll-stick {
+    position: fixed;
+    z-index: @z-index-mask - 2; // to be above image input type mask and the input type itself
+    top: 84px;
+    border-top: 1px solid @admin-medium-gray-border;
+
+    .box-shadow(-3px 3px 6px 0 @admin-toolbar-shadow);
+  }
+
+}
+
+._0-240, ._240-360, ._360-540, ._540-720, ._720-960 {
+  .wizard-step-navigator-and-toolbar {
+    padding-left: 0;
+  }
+}
