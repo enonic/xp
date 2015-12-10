@@ -2,12 +2,12 @@ package com.enonic.xp.lib.auth;
 
 import org.junit.Test;
 
-import com.enonic.xp.testing.script.AbstractScriptTest2;
+import com.enonic.xp.testing.script.ScriptTestSupport;
 
 import static org.junit.Assert.*;
 
 public class GeneratePasswordHandlerTest
-    extends AbstractScriptTest2
+    extends ScriptTestSupport
 {
     @Test
     public void testExamples()

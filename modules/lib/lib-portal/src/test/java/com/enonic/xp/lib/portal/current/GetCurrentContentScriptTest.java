@@ -4,10 +4,10 @@ import org.junit.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.lib.portal.TestDataFixtures;
-import com.enonic.xp.testing.script.AbstractScriptTest2;
+import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class GetCurrentContentScriptTest
-    extends AbstractScriptTest2
+    extends ScriptTestSupport
 {
     @Test
     public void currentContent()

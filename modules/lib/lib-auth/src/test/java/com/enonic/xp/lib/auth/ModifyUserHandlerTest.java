@@ -13,10 +13,10 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserEditor;
-import com.enonic.xp.testing.script.AbstractScriptTest2;
+import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class ModifyUserHandlerTest
-    extends AbstractScriptTest2
+    extends ScriptTestSupport
 {
     private SecurityService securityService;
 

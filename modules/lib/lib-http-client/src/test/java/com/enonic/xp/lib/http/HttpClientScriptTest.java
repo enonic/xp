@@ -12,12 +12,12 @@ import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 import com.squareup.okhttp.mockwebserver.SocketPolicy;
 
-import com.enonic.xp.testing.script.AbstractScriptTest2;
+import com.enonic.xp.testing.script.ScriptTestSupport;
 
 import static org.junit.Assert.*;
 
 public class HttpClientScriptTest
-    extends AbstractScriptTest2
+    extends ScriptTestSupport
 {
     protected MockWebServer server;
 

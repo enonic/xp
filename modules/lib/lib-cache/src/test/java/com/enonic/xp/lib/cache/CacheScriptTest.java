@@ -1,9 +1,9 @@
 package com.enonic.xp.lib.cache;
 
-import com.enonic.xp.testing.script.ScriptTestSupport2;
+import com.enonic.xp.testing.script.ScriptRunnerSupport;
 
 public class CacheScriptTest
-    extends ScriptTestSupport2
+    extends ScriptRunnerSupport
 {
     @Override
     public String getScriptTestFile()

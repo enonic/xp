@@ -14,10 +14,10 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
-import com.enonic.xp.testing.script.AbstractScriptTest2;
+import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class LoginHandlerTest
-    extends AbstractScriptTest2
+    extends ScriptTestSupport
 {
     private SecurityService securityService;
 

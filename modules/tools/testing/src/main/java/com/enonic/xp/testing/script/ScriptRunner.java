@@ -16,7 +16,7 @@ public final class ScriptRunner
 {
     private final ScriptExports exports;
 
-    private final ScriptTestSupport2 testInstance;
+    private final ScriptRunnerSupport testInstance;
 
     public ScriptRunner( final Class<?> testClass )
         throws Exception
@@ -118,16 +118,16 @@ public final class ScriptRunner
         }
     }
 
-    private ScriptTestSupport2 createTestInstance()
+    private ScriptRunnerSupport createTestInstance()
         throws Exception
     {
         final Object value = getTestClass().getOnlyConstructor().newInstance();
-        if ( !( value instanceof ScriptTestSupport2 ) )
+        if ( !( value instanceof ScriptRunnerSupport ) )
         {
-            throw new IllegalArgumentException( "Test class must extend " + ScriptTestSupport2.class.getName() );
+            throw new IllegalArgumentException( "Test class must extend " + ScriptRunnerSupport.class.getName() );
         }
 
-        return (ScriptTestSupport2) value;
+        return (ScriptRunnerSupport) value;
     }
 
     private ScriptExports executeTestScript()

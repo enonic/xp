@@ -3,15 +3,16 @@ package com.enonic.xp.lib.thymeleaf;
 import org.junit.Test;
 
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.testing.script.ScriptBeanTestSupport2;
+import com.enonic.xp.testing.script.ScriptBeanTestSupport;
 
 public class ThymeleafServiceTest
-    extends ScriptBeanTestSupport2
+    extends ScriptBeanTestSupport
 {
     private ThymeleafService service;
 
     @Override
     protected void initialize()
+        throws Exception
     {
         super.initialize();
         this.service = new ThymeleafService();

@@ -8,13 +8,14 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.testing.script.ScriptTestSupport2;
+import com.enonic.xp.testing.script.ScriptRunnerSupport;
 
 public class ContextScriptTest
-    extends ScriptTestSupport2
+    extends ScriptRunnerSupport
 {
     @Override
     protected void initialize()
+        throws Exception
     {
         super.initialize();
 

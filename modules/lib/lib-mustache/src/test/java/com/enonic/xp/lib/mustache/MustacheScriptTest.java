@@ -8,10 +8,10 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.testing.script.ScriptTestSupport2;
+import com.enonic.xp.testing.script.ScriptRunnerSupport;
 
 public class MustacheScriptTest
-    extends ScriptTestSupport2
+    extends ScriptRunnerSupport
 {
     @Override
     public String getScriptTestFile()

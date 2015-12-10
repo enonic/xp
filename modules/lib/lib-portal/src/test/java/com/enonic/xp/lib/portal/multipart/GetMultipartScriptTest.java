@@ -7,13 +7,13 @@ import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.testing.script.AbstractScriptTest2;
+import com.enonic.xp.testing.script.ScriptTestSupport;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 import com.enonic.xp.web.multipart.MultipartService;
 
 public class GetMultipartScriptTest
-    extends AbstractScriptTest2
+    extends ScriptTestSupport
 {
     private MultipartService multipartService;
 

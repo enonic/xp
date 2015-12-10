@@ -13,13 +13,14 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.testing.script.ScriptTestSupport2;
+import com.enonic.xp.testing.script.ScriptRunnerSupport;
 
 public class I18NScriptTest
-    extends ScriptTestSupport2
+    extends ScriptRunnerSupport
 {
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
 

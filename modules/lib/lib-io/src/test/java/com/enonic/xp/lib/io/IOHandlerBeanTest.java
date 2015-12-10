@@ -6,17 +6,18 @@ import org.junit.Test;
 
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.testing.script.ScriptBeanTestSupport2;
+import com.enonic.xp.testing.script.ScriptBeanTestSupport;
 
 import static org.junit.Assert.*;
 
 public class IOHandlerBeanTest
-    extends ScriptBeanTestSupport2
+    extends ScriptBeanTestSupport
 {
     private IOHandlerBean bean;
 
     @Override
     protected void initialize()
+        throws Exception
     {
         super.initialize();
 

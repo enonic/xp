@@ -36,7 +36,7 @@ import com.enonic.xp.script.impl.ScriptRuntimeFactoryImpl;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
-public abstract class AbstractScriptTest2
+public abstract class ScriptTestSupport
 {
     public final static ApplicationKey APP_KEY = ApplicationKey.from( "myapp" );
 

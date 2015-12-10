@@ -4,10 +4,10 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.testing.script.AbstractScriptTest2;
+import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class CreateGroupHandlerTest
-    extends AbstractScriptTest2
+    extends ScriptTestSupport
 {
     private SecurityService securityService;
 

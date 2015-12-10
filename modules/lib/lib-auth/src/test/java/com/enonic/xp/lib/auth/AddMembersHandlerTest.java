@@ -6,12 +6,12 @@ import org.mockito.Mockito;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.testing.script.AbstractScriptTest2;
+import com.enonic.xp.testing.script.ScriptTestSupport;
 
 import static org.mockito.Matchers.eq;
 
 public class AddMembersHandlerTest
-    extends AbstractScriptTest2
+    extends ScriptTestSupport
 {
     private final PrincipalKey USER = PrincipalKey.from( "user:mystore:user1" );
 

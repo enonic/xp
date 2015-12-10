@@ -5,10 +5,10 @@ import org.mockito.Mockito;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.testing.script.AbstractScriptTest2;
+import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public abstract class BaseContentHandlerTest
-    extends AbstractScriptTest2
+    extends ScriptTestSupport
 {
     protected ContentService contentService;
 

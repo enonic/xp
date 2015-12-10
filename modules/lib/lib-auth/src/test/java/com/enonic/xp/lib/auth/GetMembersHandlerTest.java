@@ -10,10 +10,10 @@ import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
-import com.enonic.xp.testing.script.AbstractScriptTest2;
+import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class GetMembersHandlerTest
-    extends AbstractScriptTest2
+    extends ScriptTestSupport
 {
     private SecurityService securityService;
 

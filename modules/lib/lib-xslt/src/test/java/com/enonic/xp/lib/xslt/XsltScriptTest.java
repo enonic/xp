@@ -3,11 +3,11 @@ package com.enonic.xp.lib.xslt;
 import org.junit.Assert;
 
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.testing.script.ScriptTestSupport2;
+import com.enonic.xp.testing.script.ScriptRunnerSupport;
 import com.enonic.xp.xml.DomHelper;
 
 public class XsltScriptTest
-    extends ScriptTestSupport2
+    extends ScriptRunnerSupport
 {
     @Override
     public String getScriptTestFile()

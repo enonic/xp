@@ -9,10 +9,10 @@ import org.mockito.stubbing.Answer;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.testing.script.AbstractScriptTest2;
+import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class UrlServiceScriptTest
-    extends AbstractScriptTest2
+    extends ScriptTestSupport
 {
     @Override
     protected void initialize()
