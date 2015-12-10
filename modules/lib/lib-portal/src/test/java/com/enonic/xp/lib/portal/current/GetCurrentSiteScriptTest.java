@@ -5,7 +5,6 @@ import org.junit.Test;
 import com.enonic.xp.lib.portal.TestDataFixtures;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.testing.script.AbstractScriptTest2;
-import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class GetCurrentSiteScriptTest
     extends AbstractScriptTest2
