@@ -5,10 +5,10 @@ import org.mockito.Mockito;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 
 public abstract class BaseContentHandlerTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
     protected ContentService contentService;
 
@@ -18,6 +18,7 @@ public abstract class BaseContentHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
 

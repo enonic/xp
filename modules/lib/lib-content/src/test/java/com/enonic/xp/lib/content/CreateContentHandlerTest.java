@@ -93,7 +93,7 @@ public class CreateContentHandlerTest
     public void testExample()
     {
         mockCreateContent();
-        runScript( "/site/lib/xp/examples/create.js" );
+        runScript( "/site/lib/xp/examples/content/create.js" );
     }
 
     @Test

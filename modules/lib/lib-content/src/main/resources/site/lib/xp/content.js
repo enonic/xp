@@ -27,7 +27,7 @@ function nullOrValue(value) {
 /**
  * This function fetches a content.
  *
- * @example-ref examples/get.js
+ * @example-ref examples/content/get.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.
@@ -45,7 +45,7 @@ exports.get = function (params) {
 /**
  * This function returns a content attachments.
  *
- * @example-ref examples/getAttachments.js
+ * @example-ref examples/content/getAttachments.js
  *
  * @param {string} key Path or id to the content.
  *
@@ -60,7 +60,7 @@ exports.getAttachments = function (key) {
 /**
  * This function returns a data-stream for the specified content attachment.
  *
- * @example-ref examples/getAttachmentStream.js
+ * @example-ref examples/content/getAttachmentStream.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.
@@ -78,7 +78,7 @@ exports.getAttachmentStream = function (params) {
 /**
  * This function deletes a content.
  *
- * @example-ref examples/delete.js
+ * @example-ref examples/content/delete.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.
@@ -96,7 +96,7 @@ exports.delete = function (params) {
 /**
  * This function fetches children of a content.
  *
- * @example-ref examples/getChildren.js
+ * @example-ref examples/content/getChildren.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the parent content.
@@ -127,7 +127,7 @@ exports.getChildren = function (params) {
  * To create a content where the name is not important and there could be multiple instances under the same parent content,
  * skip the `name` parameter and specify a `displayName`.
  *
- * @example-ref examples/create.js
+ * @example-ref examples/content/create.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} [params.name] Name of content.
@@ -162,7 +162,7 @@ exports.create = function (params) {
 /**
  * This command queries content.
  *
- * @example-ref examples/query.js
+ * @example-ref examples/content/query.js
  *
  * @param {object} params JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).
@@ -190,7 +190,7 @@ exports.query = function (params) {
 /**
  * This function modifies a content.
  *
- * @example-ref examples/modify.js
+ * @example-ref examples/content/modify.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.
@@ -210,7 +210,7 @@ exports.modify = function (params) {
 /**
  * Creates a media content.
  *
- * @example-ref examples/createMedia.js
+ * @example-ref examples/content/createMedia.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} [params.name] Name of content.
@@ -237,7 +237,7 @@ exports.createMedia = function (params) {
 /**
  * Sets permissions on a content.
  *
- * @example-ref examples/setPermissions.js
+ * @example-ref examples/content/setPermissions.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Path or ID of the content.
@@ -270,7 +270,7 @@ exports.setPermissions = function (params) {
 /**
  * Gets permissions on a content.
  *
- * @example-ref examples/getPermissions.js
+ * @example-ref examples/content/getPermissions.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Path or ID of the content.

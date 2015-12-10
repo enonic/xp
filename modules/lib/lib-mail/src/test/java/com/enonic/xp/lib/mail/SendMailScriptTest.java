@@ -22,17 +22,18 @@ import com.google.common.io.CharStreams;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
 import com.enonic.xp.resource.ResourceProblemException;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 
 import static org.junit.Assert.*;
 
 public class SendMailScriptTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
     private MailMessage actualMessage;
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         final MailService mailService = message -> this.actualMessage = message;
@@ -42,7 +43,7 @@ public class SendMailScriptTest
     @Test
     public void testExample()
     {
-        runScript( "/site/lib/xp/examples/send.js" );
+        runScript( "/site/lib/xp/examples/mail/send.js" );
     }
 
     @Test
@@ -224,9 +225,8 @@ public class SendMailScriptTest
         return mimeMessage;
     }
 
-    public static ByteSource createByteSource( final String value )
+    public ByteSource createByteSource( final String value )
     {
         return ByteSource.wrap( value.getBytes() );
     }
-
 }

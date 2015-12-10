@@ -34,7 +34,7 @@ public class ModifyContentHandlerTest
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0], content ) );
 
         mockXData();
-        runScript( "/site/lib/xp/examples/modify.js" );
+        runScript( "/site/lib/xp/examples/content/modify.js" );
     }
 
     @Test

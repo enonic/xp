@@ -18,7 +18,7 @@ public class DeleteContentHandlerTest
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( Contents.from( content ) );
 
-        runScript( "/site/lib/xp/examples/delete.js" );
+        runScript( "/site/lib/xp/examples/content/delete.js" );
     }
 
     @Test

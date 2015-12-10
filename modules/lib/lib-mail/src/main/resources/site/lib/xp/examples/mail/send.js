@@ -1,10 +1,8 @@
 var mailLib = require('/lib/xp/mail.js');
 var assert = require('/lib/xp/assert.js');
 
-var TestClass = Java.type('com.enonic.xp.lib.mail.SendMailScriptTest');
-
-var stream1 = TestClass.createByteSource('image data');
-var stream2 = TestClass.createByteSource('some text');
+var stream1 = testInstance.createByteSource('image data');
+var stream2 = testInstance.createByteSource('some text');
 
 // BEGIN
 // Send a simple HTML mail.

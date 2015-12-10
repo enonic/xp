@@ -25,7 +25,7 @@ function checkRequired(params, name) {
  * The content-type of the email can be specified by using the `contentType` parameter. See example below for
  * sending a message with an HTML body.
  *
- * @example-ref examples/send.js
+ * @example-ref examples/mail/send.js
  *
  * @param {object} message JSON with the parameters.
  * @param {string} message.from The email address, and optionally name of the sender of the message.

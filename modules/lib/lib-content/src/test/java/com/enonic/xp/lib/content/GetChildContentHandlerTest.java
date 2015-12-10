@@ -21,7 +21,7 @@ public class GetChildContentHandlerTest
             FindContentByParentResult.create().hits( contents.getSize() ).totalHits( 20 ).contents( contents ).build();
         Mockito.when( this.contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn( findResult );
 
-        runScript( "/site/lib/xp/examples/getChildren.js" );
+        runScript( "/site/lib/xp/examples/content/getChildren.js" );
     }
 
     @Test
