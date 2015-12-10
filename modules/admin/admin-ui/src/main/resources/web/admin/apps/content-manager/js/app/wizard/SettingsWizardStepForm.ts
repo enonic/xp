@@ -23,22 +23,15 @@ module app.wizard {
             super("settings-wizard-step-form");
 
             this.modelChangeListener = (event: api.PropertyChangedEvent) => {
+                var value = event.getNewValue();
                 switch (event.getPropertyName()) {
                 case ContentSettingsModel.PROPERTY_LANG:
                     if (!this.updateUnchangedOnly || !this.localeCombo.isDirty()) {
-                        if (this.localeCombo.maximumOccurrencesReached()) {
-                            this.localeCombo.clearSelection(true);
-                        }
-                        var value = event.getNewValue();
                         this.localeCombo.setValue(value ? value.toString() : "");
                     }
                     break;
                 case ContentSettingsModel.PROPERTY_OWNER:
-                    if (!this.updateUnchangedOnly || !this.localeCombo.isDirty()) {
-                        if (this.ownerCombo.maximumOccurrencesReached()) {
-                            this.ownerCombo.clearSelection(true);
-                        }
-                        var value = event.getNewValue();
+                    if (!this.updateUnchangedOnly || !this.ownerCombo.isDirty()) {
                         this.ownerCombo.setValue(value ? value.toString() : "");
                     }
                     break;
