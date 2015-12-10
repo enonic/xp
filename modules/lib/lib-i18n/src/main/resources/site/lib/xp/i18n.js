@@ -10,7 +10,7 @@
 /**
  * This function localizes a phrase.
  *
- * @example-ref examples/localize.js
+ * @example-ref examples/i18n/localize.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key The property key.

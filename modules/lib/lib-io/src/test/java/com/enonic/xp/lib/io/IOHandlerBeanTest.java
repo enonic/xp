@@ -6,12 +6,12 @@ import org.junit.Test;
 
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.testing.script.ScriptBeanTestSupport;
+import com.enonic.xp.testing.script.ScriptBeanTestSupport2;
 
 import static org.junit.Assert.*;
 
 public class IOHandlerBeanTest
-    extends ScriptBeanTestSupport
+    extends ScriptBeanTestSupport2
 {
     private IOHandlerBean bean;
 

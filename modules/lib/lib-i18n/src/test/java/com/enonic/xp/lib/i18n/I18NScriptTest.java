@@ -3,7 +3,6 @@ package com.enonic.xp.lib.i18n;
 import java.util.Arrays;
 import java.util.Locale;
 
-import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -14,10 +13,10 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.ScriptTestSupport2;
 
-public class ScriptingTest
-    extends ScriptTestSupport
+public class I18NScriptTest
+    extends ScriptTestSupport2
 {
     @Override
     public void initialize()
@@ -39,31 +38,10 @@ public class ScriptingTest
         addService( LocaleService.class, localeService );
     }
 
-    @Test
-    public void testExample()
+    @Override
+    public String getScriptTestFile()
     {
-        runScript( "/site/lib/xp/examples/localize.js" );
-    }
-
-    @Test
-    public void testLocalize()
-        throws Exception
-    {
-        runFunction( "/site/test/localize-test.js", "localize" );
-    }
-
-    @Test
-    public void testLocalize_withLocale()
-        throws Exception
-    {
-        runFunction( "/site/test/localize-test.js", "localize_with_locale" );
-    }
-
-    @Test
-    public void testLocalize_withPlaceholders()
-        throws Exception
-    {
-        runFunction( "/site/test/localize-test.js", "localize_with_placeholders" );
+        return "/site/test/localize-test.js";
     }
 
     private Object answer( final InvocationOnMock invocation )

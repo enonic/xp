@@ -3,10 +3,10 @@ package com.enonic.xp.lib.thymeleaf;
 import org.junit.Test;
 
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.testing.script.ScriptBeanTestSupport;
+import com.enonic.xp.testing.script.ScriptBeanTestSupport2;
 
 public class ThymeleafServiceTest
-    extends ScriptBeanTestSupport
+    extends ScriptBeanTestSupport2
 {
     private ThymeleafService service;
 
@@ -15,14 +15,14 @@ public class ThymeleafServiceTest
     {
         super.initialize();
         this.service = new ThymeleafService();
-        this.service.initialize( newBeanContext( ResourceKey.from( "myapplication:/site" ) ) );
+        this.service.initialize( newBeanContext( ResourceKey.from( "myapp:/site" ) ) );
     }
 
     @Test
     public void testProcess()
     {
         final ThymeleafProcessor processor = this.service.newProcessor();
-        processor.setView( ResourceKey.from( "myapplication:/site/view/test.html" ) );
+        processor.setView( ResourceKey.from( "myapp:/site/view/test.html" ) );
         processor.setModel( null );
         processor.process();
     }

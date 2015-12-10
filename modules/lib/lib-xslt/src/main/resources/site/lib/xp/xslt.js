@@ -12,7 +12,7 @@ var service = __.newBean('com.enonic.xp.lib.xslt.XsltService');
 /**
  * This function renders a view using XSLT. The model is automatically transformed to XML.
  *
- * @example-ref examples/render.js
+ * @example-ref examples/xslt/render.js
  *
  * @param view Location of the view. Use `resolve(..)` to resolve a view.
  * @param {object} model Model that is passed to the view.
