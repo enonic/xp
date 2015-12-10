@@ -252,7 +252,7 @@ module api.form.inputtype.text {
                 api.ui.responsive.ResponsiveManager.unAvailableSizeChanged(this);
             });
 
-            this.onOccurrenceAdded(() => {
+            this.onOccurrenceRendered(() => {
                 this.resetInputHeight();
                 this.updateEditorToolbarWidth();
             });

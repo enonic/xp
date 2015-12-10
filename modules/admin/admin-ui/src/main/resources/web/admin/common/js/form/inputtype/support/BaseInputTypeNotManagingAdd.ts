@@ -89,12 +89,20 @@ module api.form.inputtype.support {
             this.inputOccurrences.onOccurrenceAdded(listener);
         }
 
+        onOccurrenceRendered(listener: (event: api.form.OccurrenceRenderedEvent) => void) {
+            this.inputOccurrences.onOccurrenceRendered(listener);
+        }
+
         onOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
             this.inputOccurrences.onOccurrenceRemoved(listener);
         }
 
         unOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void) {
             this.inputOccurrences.unOccurrenceAdded(listener);
+        }
+
+        unOccurrenceRendered(listener: (event: api.form.OccurrenceRenderedEvent) => void) {
+            this.inputOccurrences.onOccurrenceRendered(listener);
         }
 
         unOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
