@@ -71,6 +71,7 @@ module app.wizard {
 
             this.onShown((event) => {
                 this.constrainToParent();
+                this.getHTMLElement().style.display = "";
             });
 
             this.responsiveItem = ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get(), (item: ResponsiveItem) => {
