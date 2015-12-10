@@ -49,7 +49,7 @@ Cache.prototype.getSize = function () {
 /**
  * Creates a new cache.
  *
- * @example-ref examples/newCache.js
+ * @example-ref examples/cache/newCache.js
  *
  * @param {object} options Cache options as JSON.
  * @param {number} options.size Max size of cache.
