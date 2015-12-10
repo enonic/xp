@@ -145,7 +145,7 @@ module app.wizard {
                     api.notify.showFeedback('User was created!');
                     new api.security.UserItemCreatedEvent(principal, this.getUserStore(), this.isParentOfSameType()).fire();
                     this.userPasswordWizardStepForm.updatePrincipal(principal);
-
+                    this.notifyPrincipalNamed(principal);
                     return principal;
                 });
         }
