@@ -25,6 +25,13 @@ module api.app.wizard {
             this.appendChild(this.foldButton);
             this.minimized = false;
             this.maxFittingWidth = 0;
+
+            this.foldButton.getDropdown().onClicked(() => {
+                this.addClass("no-dropdown-hover");
+                // Place call in the queue outside of the stack and current context,
+                // so the repaint will be triggered between those two calls
+                setTimeout(this.removeClass.bind(this, "no-dropdown-hover"));
+            });
         }
 
         setStepToolbar(stepToolbar: Toolbar) {
@@ -57,11 +64,9 @@ module api.app.wizard {
         }
 
         checkAndMinimize() {
-            // remove with classes
             if (this.isStepNavigatorFit() == this.minimized) {
                 this.minimized = !this.minimized;
-
-                this.foldButton.setVisible(this.minimized);
+                this.toggleClass('minimized', this.minimized);
 
                 if (this.minimized) {
                     this.removeChild(this.stepNavigator);

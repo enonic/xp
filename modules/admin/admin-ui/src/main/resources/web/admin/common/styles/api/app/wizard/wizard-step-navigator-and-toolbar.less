@@ -3,6 +3,18 @@
   padding-left: 95px;
   background-color: @admin-bg-light-gray;
 
+  &.no-dropdown-hover {
+    .fold-button .@{_COMMON_PREFIX}dropdown {
+      display: none;
+    }
+  }
+
+  &.minimized {
+    .fold-button {
+      display: inline-block;
+    }
+  }
+
   .toolbar {
     float: right;
     margin: 0 40px;
@@ -32,7 +44,7 @@
 
     &:hover:not(:disabled) {
       background-color: @admin-bg-light-gray;
-      span {
+      .fold-label {
         color: @admin-font-gray1;
       }
     }
@@ -42,7 +54,7 @@
       box-shadow: none;
     }
 
-    span {
+    .fold-label {
       color: @admin-font-gray1;
     }
 
@@ -53,16 +65,29 @@
       .wizard-step-navigator {
         margin-bottom: 0;
         padding-right: 0;
+        background-color: @admin-white;
         li {
           padding: 5px;
           float: initial;
           span {
+            color: @admin-font-gray1;
+            .transition(none);
             line-height: 1em;
           }
 
           &.active {
             &:before, &:after {
               border-bottom: none;
+            }
+            span {
+              color: @admin-font-gray3;
+            }
+          }
+
+          &:hover {
+            background: @admin-bg-light-gray;
+            &:not(.active) span {
+              color: darken(@admin-font-gray1, 10%);
             }
           }
 

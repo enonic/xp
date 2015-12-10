@@ -56,39 +56,6 @@
       border-right: 4px solid transparent;
       border-top: 6px solid @admin-dark-gray;
     }
-
-    .@{_COMMON_PREFIX}dropdown {
-      display: none;
-      position: absolute;
-      margin: -1px 0px 0px 8px;
-      left: 0;
-      z-index: @z-index-toolbar-element;
-      padding: 4px;
-      background-color: @admin-white;
-      .material-layer-shadow();
-
-      .@{_COMMON_PREFIX}button {
-        width: 100%;
-        padding: 5px;
-
-        span {
-          line-height: 1em;
-        }
-      }
-
-      & > * {
-        display: block;
-        margin-left: 0;
-        margin-right: 0;
-      }
-    }
-
-    &:hover .@{_COMMON_PREFIX}dropdown,
-    &:focus .@{_COMMON_PREFIX}dropdown,
-    .@{_COMMON_PREFIX}dropdown:hover,
-    .@{_COMMON_PREFIX}dropdown:focus {
-      display: block;
-    }
   }
 
   &.content-browse-toolbar, &.user-browse-toolbar {

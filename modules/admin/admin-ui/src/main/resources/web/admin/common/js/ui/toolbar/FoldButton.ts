@@ -35,6 +35,10 @@ module api.ui.toolbar {
             this.span.setHtml(label);
         }
 
+        getDropdown(): api.dom.DivEl {
+            return this.dropdown;
+        }
+
         getNextButtonWidth(): number {
             return this.widthCache[0];
         }
