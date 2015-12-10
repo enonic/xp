@@ -5,15 +5,17 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class CreateUserHandlerTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
     private SecurityService securityService;
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -24,7 +26,7 @@ public class CreateUserHandlerTest
     public void testExamples()
     {
         Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUser() );
-        runScript( "/site/lib/xp/examples/createUser.js" );
+        runScript( "/site/lib/xp/examples/auth/createUser.js" );
     }
 
     @Test

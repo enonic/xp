@@ -14,15 +14,16 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 
 public class LoginHandlerTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
     private SecurityService securityService;
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -43,7 +44,7 @@ public class LoginHandlerTest
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
         Mockito.when( this.securityService.getUserStores() ).thenReturn( userStores );
 
-        runScript( "/site/lib/xp/examples/login.js" );
+        runScript( "/site/lib/xp/examples/auth/login.js" );
     }
 
     @Test

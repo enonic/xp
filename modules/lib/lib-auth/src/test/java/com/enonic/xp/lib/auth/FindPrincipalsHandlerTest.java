@@ -7,15 +7,16 @@ import com.enonic.xp.security.PrincipalQuery;
 import com.enonic.xp.security.PrincipalQueryResult;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 
 public class FindPrincipalsHandlerTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
     private SecurityService securityService;
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -34,7 +35,7 @@ public class FindPrincipalsHandlerTest
 
         Mockito.when( securityService.query( Mockito.any() ) ).thenReturn( result );
 
-        runScript( "/site/lib/xp/examples/findPrincipals.js" );
+        runScript( "/site/lib/xp/examples/auth/findPrincipals.js" );
     }
 
     @Test

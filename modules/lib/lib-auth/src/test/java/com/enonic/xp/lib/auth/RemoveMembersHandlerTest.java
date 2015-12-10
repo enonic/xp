@@ -7,12 +7,12 @@ import org.mockito.Mockito;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 
 import static org.mockito.Matchers.eq;
 
 public class RemoveMembersHandlerTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
     private final PrincipalKey USER = PrincipalKey.from( "user:myUserStore:userId" );
 
@@ -26,6 +26,7 @@ public class RemoveMembersHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -36,7 +37,7 @@ public class RemoveMembersHandlerTest
     @Test
     public void testExamples()
     {
-        runScript( "/site/lib/xp/examples/removeMembers.js" );
+        runScript( "/site/lib/xp/examples/auth/removeMembers.js" );
     }
 
     @Test

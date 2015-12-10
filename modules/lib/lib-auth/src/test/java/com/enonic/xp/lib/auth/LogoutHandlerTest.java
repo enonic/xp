@@ -7,15 +7,16 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 
 public class LogoutHandlerTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
     private SimpleSession session;
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.session = new SimpleSession( SessionKey.generate() );
@@ -30,7 +31,7 @@ public class LogoutHandlerTest
 
         Assert.assertTrue( ContextAccessor.current().getAuthInfo().isAuthenticated() );
 
-        runScript( "/site/lib/xp/examples/logout.js" );
+        runScript( "/site/lib/xp/examples/auth/logout.js" );
 
         Assert.assertFalse( ContextAccessor.current().getAuthInfo().isAuthenticated() );
     }

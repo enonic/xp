@@ -6,12 +6,12 @@ import org.mockito.Mockito;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 
 import static org.mockito.Matchers.eq;
 
 public class AddMembersHandlerTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
     private final PrincipalKey USER = PrincipalKey.from( "user:mystore:user1" );
 
@@ -23,6 +23,7 @@ public class AddMembersHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -32,7 +33,7 @@ public class AddMembersHandlerTest
     @Test
     public void testExamples()
     {
-        runScript( "/site/lib/xp/examples/addMembers.js" );
+        runScript( "/site/lib/xp/examples/auth/addMembers.js" );
 
         Mockito.verify( this.securityService ).addRelationship( eq( PrincipalRelationship.from( ROLE ).to( USER ) ) );
         Mockito.verify( this.securityService ).addRelationship( eq( PrincipalRelationship.from( ROLE ).to( GROUP ) ) );

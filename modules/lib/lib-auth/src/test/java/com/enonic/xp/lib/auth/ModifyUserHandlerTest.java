@@ -13,15 +13,16 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserEditor;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 
 public class ModifyUserHandlerTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
     private SecurityService securityService;
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -37,7 +38,7 @@ public class ModifyUserHandlerTest
         Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateUserParams) invocationOnMock.getArguments()[0] ) );
 
-        runScript( "/site/lib/xp/examples/modifyUser.js" );
+        runScript( "/site/lib/xp/examples/auth/modifyUser.js" );
     }
 
     @Test

@@ -4,15 +4,16 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 
 public class CreateGroupHandlerTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
     private SecurityService securityService;
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -23,7 +24,7 @@ public class CreateGroupHandlerTest
     public void testExamples()
     {
         Mockito.when( securityService.createGroup( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestGroup() );
-        runScript( "/site/lib/xp/examples/createGroup.js" );
+        runScript( "/site/lib/xp/examples/auth/createGroup.js" );
     }
 
     @Test

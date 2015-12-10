@@ -10,15 +10,16 @@ import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 
 public class GetMembersHandlerTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
     private SecurityService securityService;
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -40,7 +41,7 @@ public class GetMembersHandlerTest
 
         Mockito.when( securityService.getPrincipals( principalKeys ) ).thenReturn( Principals.from( user1, user2 ) );
 
-        runScript( "/site/lib/xp/examples/getMembers.js" );
+        runScript( "/site/lib/xp/examples/auth/getMembers.js" );
     }
 
     @Test

@@ -10,12 +10,12 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 
 import static org.mockito.Matchers.eq;
 
 public class ChangePasswordHandlerTest
-    extends ScriptTestSupport
+    extends AbstractScriptTest2
 {
     private SecurityService securityService;
 
@@ -23,6 +23,7 @@ public class ChangePasswordHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -40,7 +41,7 @@ public class ChangePasswordHandlerTest
 
         this.session.setAttribute( authInfo );
 
-        runScript( "/site/lib/xp/examples/changePassword.js" );
+        runScript( "/site/lib/xp/examples/auth/changePassword.js" );
         Mockito.verify( this.securityService ).setPassword( eq( authInfo.getUser().getKey() ), eq( "new-secret-password" ) );
     }
 
