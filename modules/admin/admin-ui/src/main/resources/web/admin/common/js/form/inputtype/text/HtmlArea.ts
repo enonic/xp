@@ -146,12 +146,7 @@ module api.form.inputtype.text {
                     editor.addCommand("openImageDialog", this.openImageDialog, this);
                     editor.addCommand("openAnchorDialog", this.openAnchorDialog, this);
                     editor.on('change', (e) => {
-                        this.setPropertyValue(id, property);
-                    });
-                    property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                        if (!this.ignorePropertyChange) {
-                            this.updateInputOccurrenceElement(textAreaWrapper, property, true);
-                        }
+                        this.notifyValueChanged(id, textAreaWrapper);
                     });
                     editor.on('focus', (e) => {
                         this.resetInputHeight();
@@ -167,7 +162,7 @@ module api.form.inputtype.text {
                         if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {  // Cmd-S or Ctrl-S
                             e.preventDefault();
 
-                            this.setPropertyValue(id, property);
+                            this.notifyValueChanged(id, textAreaWrapper);
 
                             wemjq(this.getEl().getHTMLElement()).simulate(e.type, { // as editor resides in a frame - propagate event via wrapping element
                                 bubbles: e.bubbles,
@@ -377,8 +372,9 @@ module api.form.inputtype.text {
             return !(wemjq(this.getHTMLElement()).parents(".inspection-panel").length > 0);
         }
 
-        private setPropertyValue(id: string, property: Property) {
-            this.onValueChanged(property, this.processEditorContent(id), ValueTypes.STRING);
+        private notifyValueChanged(id: string, occurrence: api.dom.Element) {
+            var value = ValueTypes.STRING.newValue(this.processEditorContent(id));
+            this.notifyOccurrenceValueChanged(occurrence, value);
         }
 
         private newValue(s: string): Value {

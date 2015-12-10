@@ -36,13 +36,10 @@ module api.form.inputtype.support {
                 inputEl.setValue(property.getString());
             }
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
-                this.onValueChanged(property, event.getNewValue(), ValueTypes.STRING);
+                var value = ValueTypes.STRING.newValue(event.getNewValue());
+                this.notifyOccurrenceValueChanged(inputEl, value);
             });
-            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                if (!this.ignorePropertyChange) {
-                    this.updateInputOccurrenceElement(inputEl, property, true);
-                }
-            });
+
             return inputEl;
         }
 

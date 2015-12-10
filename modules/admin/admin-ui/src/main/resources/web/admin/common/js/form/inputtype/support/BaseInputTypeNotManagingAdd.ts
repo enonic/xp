@@ -17,6 +17,8 @@ module api.form.inputtype.support {
 
         private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
+        private inputValueChangedListeners: {(occurrence: api.dom.Element, value: api.data.Value): void}[] = [];
+
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         /**
@@ -25,6 +27,8 @@ module api.form.inputtype.support {
         private draggingIndex: number;
 
         protected ignorePropertyChange: boolean;
+
+        public static debug: boolean = false;
 
         constructor(context: api.form.inputtype.InputTypeViewContext, className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
@@ -95,6 +99,30 @@ module api.form.inputtype.support {
 
         unOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
             this.inputOccurrences.unOccurrenceRemoved(listener);
+        }
+
+        onOccurrenceValueChanged(listener: (occurrence: api.dom.Element, value: api.data.Value) => void) {
+            this.inputValueChangedListeners.push(listener);
+        }
+
+        unOccurrenceValueChanged(listener: (occurrence: api.dom.Element, value: api.data.Value) => void) {
+            this.inputValueChangedListeners = this.inputValueChangedListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        protected notifyOccurrenceValueChanged(occurrence: api.dom.Element, value: api.data.Value) {
+            this.inputValueChangedListeners.forEach((listener: (occurrence: api.dom.Element, value: api.data.Value)=>void) => {
+                listener(occurrence, value);
+            });
+        }
+
+        onValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
+            throw new Error("User onOccurrenceValueChanged instead");
+        }
+
+        unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
+            throw new Error("User onOccurrenceValueChanged instead");
         }
 
         onValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
@@ -241,14 +269,6 @@ module api.form.inputtype.support {
             });
 
             return result;
-        }
-
-        protected onValueChanged(property: Property, value: Object, type: ValueType) {
-            this.ignorePropertyChange = true;
-            var newValue = new Value(value, type);
-            property.setValue(newValue);
-            this.validate(false);
-            this.ignorePropertyChange = false;
         }
 
         protected getPropertyValue(property: Property): string {

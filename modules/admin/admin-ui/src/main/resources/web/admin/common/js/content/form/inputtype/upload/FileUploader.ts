@@ -61,7 +61,7 @@ module api.content.form.inputtype.upload {
 
                 this.uploader.setFileName(fileName);
 
-                this.onValueChanged(property, fileName, ValueTypes.STRING);
+                this.saveToProperty(ValueTypes.STRING.newValue(fileName));
 
                 api.notify.showFeedback('\"' + fileName + '\" uploaded');
 
@@ -75,7 +75,7 @@ module api.content.form.inputtype.upload {
 
             this.uploader.onUploadReset(() => {
                 this.uploader.setFileName('');
-                this.onValueChanged(property, null, ValueTypes.STRING);
+                this.saveToProperty(ValueTypes.STRING.newNullValue());
             });
 
             this.appendChild(this.uploaderWrapper);
@@ -87,15 +87,15 @@ module api.content.form.inputtype.upload {
             return new api.form.inputtype.InputValidationRecording();
         }
 
-        protected onValueChanged(property: Property, value: Object, type: ValueType) {
+        protected saveToProperty(value: Value) {
             this.ignorePropertyChange = true;
-            var newValue = new Value(value, type);
+            var property = this.getProperty();
             switch (property.getType()) {
             case ValueTypes.DATA:
-                property.getPropertySet().setProperty('attachment', 0, newValue);
+                property.getPropertySet().setProperty('attachment', 0, value);
                 break;
             case ValueTypes.STRING:
-                property.setValue(newValue);
+                property.setValue(value);
                 break;
             }
             this.validate();

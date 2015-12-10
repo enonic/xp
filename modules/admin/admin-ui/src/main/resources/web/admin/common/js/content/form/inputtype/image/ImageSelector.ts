@@ -247,14 +247,16 @@ module api.content.form.inputtype.image {
         }
 
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
+            var superPromise = super.update(propertyArray, unchangedOnly);
+
             if (!unchangedOnly || !this.contentComboBox.isDirty()) {
-                return super.update(propertyArray, unchangedOnly).then(() => {
+                return superPromise.then(() => {
 
                     this.contentComboBox.setValue(this.getValueFromPropertyArray(propertyArray));
                 })
+            } else {
+                return superPromise;
             }
-
-            return wemQ<void>(null);
         }
 
         private createUploader(): ImageUploader {

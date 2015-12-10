@@ -133,7 +133,7 @@ module api.form {
                 occurrences = this.constructOccurrencesForNoData();
             }
 
-            var layoutPromises: wemQ.Promise<FormItemOccurrenceView>[] = [];
+            var layoutPromises: wemQ.Promise<V>[] = [];
             occurrences.forEach((occurrence: FormItemOccurrence<V>) => {
                 layoutPromises.push(this.addOccurrence(occurrence));
             });
@@ -155,28 +155,26 @@ module api.form {
                 }
             }
 
+            // next update propertyArray because it's used for creation of new occurrences
+            this.propertyArray = propertyArray;
+
             var promises = [];
             // next update existing occurrences and add missing ones if there are not enough
-            propertyArray.forEach((property: api.data.Property, i: number) => {
+            this.propertyArray.forEach((property: api.data.Property, i: number) => {
                 var occurrenceView = this.occurrenceViews[i];
-                if (occurrenceView) {
-                    // update array property
-                    this.propertyArray.set(i, propertyArray.get(i).getValue());
+                var occurrence = this.occurrences[i];
+                if (occurrenceView && occurrence) {
+                    // update occurrence index
+                    occurrence.setIndex(i);
+                    // update occurence view
                     promises.push(this.updateOccurrenceView(occurrenceView, propertyArray, unchangedOnly));
                 } else {
-                    // copy property from new array to our ones
-                    var property = propertyArray.get(i);
-                    property.setIndex(i);
-                    this.propertyArray.add(property.getValue());
                     promises.push(this.createAndAddOccurrence(i));
                 }
             });
 
 
-            return wemQ.all(promises).spread<void>(() => {
-                this.propertyArray = propertyArray;
-                return wemQ<void>(null);
-            });
+            return wemQ.all(promises).spread<void>(() => wemQ<void>(null));
         }
 
         createNewOccurrenceView(occurrence: FormItemOccurrence<V>): V {

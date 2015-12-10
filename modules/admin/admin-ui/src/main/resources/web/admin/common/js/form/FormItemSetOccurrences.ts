@@ -77,8 +77,8 @@ module api.form {
                 occurrences.push(this.createNewOccurrence(this, index));
             });
 
-            if (this.countOccurrences() < this.formItemSet.getOccurrences().getMinimum()) {
-                for (var index: number = this.countOccurrences(); index < this.formItemSet.getOccurrences().getMinimum(); index++) {
+            if (occurrences.length < this.formItemSet.getOccurrences().getMinimum()) {
+                for (var index: number = occurrences.length; index < this.formItemSet.getOccurrences().getMinimum(); index++) {
                     occurrences.push(this.createNewOccurrence(this, index));
                 }
             }

@@ -99,8 +99,8 @@ module api.form.inputtype.support {
                 occurrences.push(this.createNewOccurrence(this, index));
             });
 
-            if (this.countOccurrences() < this.input.getOccurrences().getMinimum()) {
-                for (var index: number = this.countOccurrences(); index < this.input.getOccurrences().getMinimum(); index++) {
+            if (occurrences.length < this.input.getOccurrences().getMinimum()) {
+                for (var index: number = occurrences.length; index < this.input.getOccurrences().getMinimum(); index++) {
                     occurrences.push(this.createNewOccurrence(this, index));
                 }
             }

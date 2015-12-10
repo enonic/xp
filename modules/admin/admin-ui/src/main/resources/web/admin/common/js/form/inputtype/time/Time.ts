@@ -30,14 +30,9 @@ module api.content.form.inputtype.time {
 
             timePicker.onSelectedTimeChanged((hours: number, minutes: number) => {
                 var valueStr = hours + ':' + minutes;
-                var value = api.util.LocalTime.isValidString(valueStr) ? api.util.LocalTime.fromString(valueStr) : null;
-                this.onValueChanged(property, value, ValueTypes.LOCAL_TIME);
-            });
-
-            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                if (!this.ignorePropertyChange) {
-                    this.updateInputOccurrenceElement(timePicker, property, true);
-                }
+                var value = new Value(api.util.LocalTime.isValidString(valueStr) ? api.util.LocalTime.fromString(valueStr) : null,
+                    ValueTypes.LOCAL_TIME);
+                this.notifyOccurrenceValueChanged(timePicker, value);
             });
 
             return timePicker;

@@ -114,15 +114,17 @@ module api.content.form.inputtype.contentselector {
 
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly: boolean): Q.Promise<void> {
+            var superPromise = super.update(propertyArray, unchangedOnly);
+
             if (!unchangedOnly || !this.contentComboBox.isDirty()) {
-                return super.update(propertyArray, unchangedOnly).then(() => {
+                return superPromise.then(() => {
 
                     var value = this.getValueFromPropertyArray(propertyArray);
                     this.contentComboBox.setValue(value);
                 });
+            } else {
+                return superPromise;
             }
-
-            return wemQ<void>(null);
         }
 
         private doLoadContent(propertyArray: PropertyArray): wemQ.Promise<api.content.ContentSummary[]> {

@@ -27,15 +27,10 @@ module api.content.form.inputtype.double {
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
                 var isValid = this.isValid(event.getNewValue());
                 if (isValid) {
-                    this.onValueChanged(property, parseFloat(event.getNewValue()), ValueTypes.DOUBLE);
+                    var value = ValueTypes.DOUBLE.newValue(event.getNewValue());
+                    this.notifyOccurrenceValueChanged(inputEl, value);
                 }
                 inputEl.updateValidationStatusOnUserInput(this.isValid(event.getNewValue()));
-            });
-
-            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                if (!this.ignorePropertyChange) {
-                    this.updateInputOccurrenceElement(inputEl, property, true);
-                }
             });
 
             return inputEl;

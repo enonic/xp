@@ -38,14 +38,10 @@ module api.content.form.inputtype.time {
             var datePicker = datePickerBuilder.build();
 
             datePicker.onSelectedDateChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-                this.onValueChanged(property, event.getDate(), ValueTypes.LOCAL_DATE);
+                var value = new Value(event.getDate(), ValueTypes.LOCAL_DATE);
+                this.notifyOccurrenceValueChanged(datePicker, value);
             });
 
-            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                if (!this.ignorePropertyChange) {
-                    this.updateInputOccurrenceElement(datePicker, property, true);
-                }
-            });
             return datePicker;
         }
 

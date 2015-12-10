@@ -21,16 +21,33 @@ module api.form.inputtype.support {
 
         private requiredContractBroken: boolean;
 
+        private propertyValueChangedHandler: (event: PropertyValueChangedEvent) => void;
+
+        public static debug: boolean = false;
+
         constructor(inputOccurrence: InputOccurrence, baseInputTypeView: BaseInputTypeNotManagingAdd<any>, property: Property) {
             super("input-occurrence-view", inputOccurrence);
 
-            this.property = property;
             this.inputTypeView = baseInputTypeView;
             this.inputElement = this.inputTypeView.createInputOccurrenceElement(inputOccurrence.getIndex(), property);
 
             this.requiredContractBroken = this.inputTypeView.valueBreaksRequiredContract(property != null ? property.getValue() : null);
 
-            var propertyValueChangedHandler = (event: PropertyValueChangedEvent) => {
+            var ignorePropertyChange = false;
+            this.inputTypeView.onOccurrenceValueChanged((occurrence: api.dom.Element, value: api.data.Value) => {
+                // check if this is our occurrence because all views will receive occurrence value changed event
+                if (this.inputElement == occurrence) {
+                    if (InputOccurrenceView.debug) {
+                        console.debug('InputOccurrenceView: onOccurrenceValueChanged ', occurrence, value);
+                    }
+                    ignorePropertyChange = true;
+                    this.property.setValue(value);
+                    this.inputTypeView.validate(false);
+                    ignorePropertyChange = false;
+                }
+            });
+
+            this.propertyValueChangedHandler = (event: PropertyValueChangedEvent) => {
 
                 var newStateOfRequiredContractBroken = this.inputTypeView.valueBreaksRequiredContract(event.getNewValue());
 
@@ -38,9 +55,16 @@ module api.form.inputtype.support {
                     this.requiredContractBroken = newStateOfRequiredContractBroken;
                     this.inputTypeView.notifyRequiredContractBroken(newStateOfRequiredContractBroken, inputOccurrence.getIndex());
                 }
+
+                if (!ignorePropertyChange) {
+                    if (InputOccurrenceView.debug) {
+                        console.debug('InputOccurrenceView: propertyValueChanged', property);
+                    }
+                    this.inputTypeView.updateInputOccurrenceElement(this.inputElement, property, true);
+                }
             };
-            property.onPropertyValueChanged(propertyValueChangedHandler);
-            
+
+            this.registerProperty(property);
 
             this.inputOccurrence = inputOccurrence;
 
@@ -63,8 +87,28 @@ module api.form.inputtype.support {
 
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
             var property = propertyArray.get(this.inputOccurrence.getIndex());
+
+            this.registerProperty(property);
+
             this.inputTypeView.updateInputOccurrenceElement(this.inputElement, property, unchangedOnly);
+
             return wemQ<void>(null);
+        }
+
+        private registerProperty(property: Property) {
+            if (this.property) {
+                if (InputOccurrenceView.debug) {
+                    console.debug('InputOccurrenceView.registerPoperty: unregister old property', this.property);
+                }
+                this.property.unPropertyValueChanged(this.propertyValueChangedHandler);
+            }
+            if (property) {
+                if (InputOccurrenceView.debug) {
+                    console.debug('InputOccurrenceView.registerPoperty: register new property', property);
+                }
+                property.onPropertyValueChanged(this.propertyValueChangedHandler);
+            }
+            this.property = property;
         }
 
         refresh() {
@@ -93,10 +137,8 @@ module api.form.inputtype.support {
         }
 
         hasValidUserInput(): boolean {
-
             return this.inputTypeView.hasInputElementValidUserInput(this.inputElement);
         }
-
 
         giveFocus(): boolean {
             return this.inputElement.giveFocus();

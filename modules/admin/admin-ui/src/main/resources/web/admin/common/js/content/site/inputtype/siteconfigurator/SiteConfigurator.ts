@@ -26,6 +26,8 @@ module api.content.site.inputtype.siteconfigurator {
 
         private comboBox: SiteConfiguratorComboBox;
 
+        private siteConfigProvider: SiteConfigProvider;
+
         private _displayValidationErrors: boolean;
 
         private formContext: api.content.form.ContentFormContext;
@@ -49,39 +51,30 @@ module api.content.site.inputtype.siteconfigurator {
 
             super.layout(input, propertyArray);
 
-            var siteConfigProvider = new SiteConfigProvider(propertyArray);
-            this.comboBox = this.createComboBox(input, siteConfigProvider);
+            this.siteConfigProvider = new SiteConfigProvider(propertyArray);
+            this.comboBox = this.createComboBox(input, this.siteConfigProvider);
 
             this.appendChild(this.comboBox);
 
             this.setLayoutInProgress(false);
-
-            // 2-way data binding
-            var changeHandler = () => {
-                // don't update when property is changed by myself
-                if (!this.ignorePropertyChange) {
-                    this.update(propertyArray, true);
-                }
-            };
-            propertyArray.onPropertyValueChanged(changeHandler);
-            propertyArray.onPropertyAdded(changeHandler);
-            propertyArray.onPropertyRemoved(changeHandler);
-            propertyArray.onPropertyIndexChanged(changeHandler);
 
             return wemQ<void>(null);
         }
 
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
+            var superPromise = super.update(propertyArray, unchangedOnly);
 
             if (!unchangedOnly || !this.comboBox.isDirty()) {
-                return super.update(propertyArray, unchangedOnly).then(() => {
-                    var value = this.getValueFromPropertyArray(propertyArray);
-                    this.comboBox.setValue(value);
-                });
-            }
+                return superPromise.then(() => {
 
-            return wemQ<void>(null);
+                    this.siteConfigProvider.setPropertyArray(propertyArray);
+
+                    this.comboBox.setValue(this.getValueFromPropertyArray(propertyArray));
+                });
+            } else {
+                return superPromise;
+            }
         }
 
 

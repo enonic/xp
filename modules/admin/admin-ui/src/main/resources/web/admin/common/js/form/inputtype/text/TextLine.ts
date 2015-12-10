@@ -38,7 +38,8 @@ module api.form.inputtype.text {
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
                 var isValid = this.isValid(event.getNewValue(), inputEl);
                 if (isValid) {
-                    this.onValueChanged(property, event.getNewValue(), ValueTypes.STRING);
+                    var value = ValueTypes.STRING.newValue(event.getNewValue());
+                    this.notifyOccurrenceValueChanged(inputEl, value);
                 }
                 inputEl.updateValidationStatusOnUserInput(isValid);
             });

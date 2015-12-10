@@ -31,17 +31,8 @@ module api.content.form.inputtype.checkbox {
 
             this.checkbox.onValueChanged((event: api.ValueChangedEvent) => {
                 var newValue = ValueTypes.BOOLEAN.newValue(event.getNewValue());
-                if (newValue) {
-                    this.ignorePropertyChange = true;
-                    property.setValue(newValue);
-                    this.ignorePropertyChange = false;
-                }
-            });
 
-            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                if (!this.ignorePropertyChange) {
-                    this.updateProperty(event.getProperty(), true);
-                }
+                this.saveToProperty(newValue);
             });
 
             return wemQ<void>(null);

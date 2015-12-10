@@ -10,7 +10,6 @@ module api.content.form.inputtype.upload {
     export class ImageUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
 
         private imageUploader: api.content.ImageUploader;
-        private property: Property;
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
@@ -48,7 +47,6 @@ module api.content.form.inputtype.upload {
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
 
             this.input = input;
-            this.property = property;
 
             if (property.hasNonNullValue()) {
                 this.updateProperty(property);
@@ -66,30 +64,30 @@ module api.content.form.inputtype.upload {
 
                 this.imageUploader.setOriginalDimensions(content);
 
-                this.onValueChanged(property, value.getString(), ValueTypes.STRING);
+                this.saveToProperty(value);
             });
 
             this.imageUploader.onUploadReset(() => {
-                this.onValueChanged(property, null, ValueTypes.STRING);
+                this.saveToProperty(null);
             });
 
             this.imageUploader.onEditModeChanged((edit: boolean, crop: Rect, zoom: Rect, focus: Point) => {
                 this.validate(false);
 
                 if (!edit && crop) {
-                    this.saveToProperty(crop, zoom, focus);
+                    this.saveEditDataToProperty(crop, zoom, focus);
                 }
             });
 
             this.imageUploader.onCropAutoPositionedChanged((auto) => {
                 if (auto) {
-                    this.saveToProperty({x: 0, y: 0, x2: 1, y2: 1}, {x: 0, y: 0, x2: 1, y2: 1}, null);
+                    this.saveEditDataToProperty({x: 0, y: 0, x2: 1, y2: 1}, {x: 0, y: 0, x2: 1, y2: 1}, null);
                 }
             });
 
             this.imageUploader.onFocusAutoPositionedChanged((auto) => {
                 if (auto) {
-                    this.saveToProperty(null, null, {x: 0.5, y: 0.5});
+                    this.saveEditDataToProperty(null, null, {x: 0.5, y: 0.5});
                 }
             });
 
@@ -97,21 +95,21 @@ module api.content.form.inputtype.upload {
         }
 
 
-        protected onValueChanged(property: api.data.Property, value: Object, type: api.data.ValueType) {
+        protected saveToProperty(value: api.data.Value) {
             this.ignorePropertyChange = true;
-            var newValue = new Value(value, type);
-            switch (this.property.getType()) {
+            var property = this.getProperty();
+            switch (property.getType()) {
             case ValueTypes.DATA:
                 // update the attachment name, and reset the focal point data
-                var set = this.property.getPropertySet();
-                set.setProperty('attachment', 0, newValue);
+                var set = property.getPropertySet();
+                set.setProperty('attachment', 0, value);
                 set.removeProperty('focalPoint', 0);
                 set.removeProperty('cropPosition', 0);
                 set.removeProperty('zoomPosition', 0);
 
                 break;
             case ValueTypes.STRING:
-                this.property.setValue(newValue);
+                property.setValue(value);
                 break;
             }
             this.validate();
@@ -139,8 +137,8 @@ module api.content.form.inputtype.upload {
             return wemQ<void>(null);
         }
 
-        private saveToProperty(crop: Rect, zoom: Rect, focus: Point) {
-            var container = this.getPropertyContainer(this.property);
+        private saveEditDataToProperty(crop: Rect, zoom: Rect, focus: Point) {
+            var container = this.getPropertyContainer(this.getProperty());
 
             if (container) {
                 if (crop) {
@@ -179,9 +177,9 @@ module api.content.form.inputtype.upload {
                 var propertyName = property.getName();
                 // remove old string property and set the new property set
                 propertyParent.removeProperty(propertyName, 0);
-                propertyParent.setPropertySet(propertyName, 0, container.getRoot());
+                var newProperty = propertyParent.setPropertySet(propertyName, 0, container.getRoot());
                 // update local property reference
-                this.property = propertyParent.getProperty(propertyName);
+                this.registerProperty(newProperty);
                 break;
             }
             return container;
@@ -261,7 +259,7 @@ module api.content.form.inputtype.upload {
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
             var recording = new api.form.inputtype.InputValidationRecording();
-            var propertyValue = this.property.getValue();
+            var propertyValue = this.getProperty().getValue();
 
             if (this.imageUploader.isFocalPointEditMode() || this.imageUploader.isCropEditMode()) {
                 recording.setBreaksMinimumOccurrences(true);

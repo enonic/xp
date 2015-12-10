@@ -82,18 +82,6 @@ module api.content.form.inputtype.tag {
                 this.ignorePropertyChange = false;
             });
 
-            // 2-way data binding
-            var changeHandler = () => {
-                // don't update when property is changed by myself
-                if (!this.ignorePropertyChange) {
-                    this.update(propertyArray, true);
-                }
-            };
-            propertyArray.onPropertyValueChanged(changeHandler);
-            propertyArray.onPropertyAdded(changeHandler);
-            propertyArray.onPropertyRemoved(changeHandler);
-            propertyArray.onPropertyIndexChanged(changeHandler);
-
             this.setLayoutInProgress(false);
 
             return wemQ<void>(null);
@@ -101,16 +89,15 @@ module api.content.form.inputtype.tag {
 
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
-            if (!unchangedOnly || !this.tags.isDirty()) {
-                super.update(propertyArray, unchangedOnly).then(() => {
-                    var value = propertyArray.getProperties().map((property) => {
-                        return property.getString();
-                    }).join(';');
-                    this.tags.setValue(value);
-                });
-            }
+            var superPromise = super.update(propertyArray, unchangedOnly);
 
-            return wemQ<void>(null);
+            if (!unchangedOnly || !this.tags.isDirty()) {
+                superPromise.then(() => {
+                    this.tags.setValue(this.getValueFromPropertyArray(propertyArray));
+                });
+            } else {
+                return superPromise;
+            }
         }
 
         protected getNumberOfValids(): number {

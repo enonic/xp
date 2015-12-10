@@ -11,6 +11,8 @@ module api.form.inputtype.support {
 
         private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
+        private inputValueChangedListeners: {(event: api.form.inputtype.ValueChangedEvent): void}[] = [];
+
         private input: api.form.Input;
 
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
@@ -19,10 +21,23 @@ module api.form.inputtype.support {
 
         private propertyArray: PropertyArray;
 
+        private propertyArrayListener: () => void;
+
         protected ignorePropertyChange: boolean;
+
+        public static debug: boolean = false;
 
         constructor(className: string) {
             super("input-type-view" + (className ? " " + className : ""));
+
+            this.propertyArrayListener = (...args: any[]) => {
+                if (!this.ignorePropertyChange) {
+                    if (BaseInputTypeManagingAdd.debug) {
+                        console.debug('BaseInputTypeManagingAdd: propertyArrayListener', args);
+                    }
+                    this.update(this.propertyArray, true);
+                }
+            };
         }
 
         protected getValueFromPropertyArray(propertyArray: api.data.PropertyArray): string {
@@ -60,9 +75,13 @@ module api.form.inputtype.support {
          * Must be resolved by inheritors.
          */
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
+            if (BaseInputTypeManagingAdd.debug) {
+                console.log('BaseInputTypeManagingAdd.layout', input, propertyArray);
+            }
             this.input = input;
             this.layoutInProgress = true;
-            this.propertyArray = propertyArray;
+
+            this.registerPropertyArray(propertyArray);
 
             return wemQ<void>(null);
         }
@@ -71,9 +90,34 @@ module api.form.inputtype.support {
          * Must be resolved by inheritors.
          */
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
-            this.propertyArray = propertyArray;
+            if (BaseInputTypeManagingAdd.debug) {
+                console.log('BaseInputTypeManagingAdd.update', propertyArray, unchangedOnly);
+            }
+            this.registerPropertyArray(propertyArray);
 
             return wemQ<void>(null);
+        }
+
+        private registerPropertyArray(propertyArray: PropertyArray) {
+            if (this.propertyArray) {
+                if (BaseInputTypeManagingAdd.debug) {
+                    console.debug('BaseInputTypeManagingAdd.registerPropertyArray: unregister old first ', this.propertyArray);
+                }
+                this.propertyArray.unPropertyValueChanged(this.propertyArrayListener);
+                this.propertyArray.unPropertyAdded(this.propertyArrayListener);
+                this.propertyArray.unPropertyRemoved(this.propertyArrayListener);
+                this.propertyArray.unPropertyIndexChanged(this.propertyArrayListener);
+            }
+            if (propertyArray) {
+                if (BaseInputTypeManagingAdd.debug) {
+                    console.debug('BaseInputTypeManagingAdd.registerPropertyArray: register new one ', propertyArray);
+                }
+                propertyArray.onPropertyValueChanged(this.propertyArrayListener);
+                propertyArray.onPropertyAdded(this.propertyArrayListener);
+                propertyArray.onPropertyRemoved(this.propertyArrayListener);
+                propertyArray.onPropertyIndexChanged(this.propertyArrayListener);
+            }
+            this.propertyArray = propertyArray;
         }
 
         hasValidUserInput(): boolean {
@@ -128,6 +172,22 @@ module api.form.inputtype.support {
         notifyValidityChanged(event: api.form.inputtype.InputValidityChangedEvent) {
 
             this.inputValidityChangedListeners.forEach((listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
+                listener(event);
+            });
+        }
+
+        onValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
+            this.inputValueChangedListeners.push(listener);
+        }
+
+        unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
+            this.inputValueChangedListeners = this.inputValueChangedListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        protected notifyValueChanged(event: api.form.inputtype.ValueChangedEvent) {
+            this.inputValueChangedListeners.forEach((listener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
                 listener(event);
             });
         }

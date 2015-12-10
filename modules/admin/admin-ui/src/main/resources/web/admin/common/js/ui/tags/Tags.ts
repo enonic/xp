@@ -124,6 +124,15 @@ module api.ui.tags {
                 this.textInput.getEl().setWidth('');
                 this.textInput.giveFocus();
             });
+
+            this.onTagAdded((event: TagAddedEvent) => {
+                this.refreshDirtyState();
+                this.refreshValueChanged();
+            });
+            this.onTagRemoved((event: TagRemovedEvent) => {
+                this.refreshDirtyState();
+                this.refreshValueChanged();
+            });
         }
 
         private searchSuggestions(searchString: string) {
@@ -172,7 +181,7 @@ module api.ui.tags {
             this.tags.slice().forEach((tag) => this.doRemoveTag(tag, silent));
         }
 
-        private doAddTag(value: string, silent?: boolean, refreshState: boolean = true): Tag {
+        private doAddTag(value: string, silent?: boolean): Tag {
             if (this.indexOf(value) > -1 || !value) {
                 return null;
             }
@@ -185,12 +194,6 @@ module api.ui.tags {
 
             if (this.isMaxTagsReached()) {
                 this.textInput.hide();
-            }
-
-            if (refreshState) {
-                // useful in case of addition multiple tags in a cycle to do a single refresh after it
-                this.refreshDirtyState(silent);
-                this.refreshValueChanged(silent);
             }
 
             if (!silent) {
@@ -210,9 +213,6 @@ module api.ui.tags {
                     this.textInput.setVisible(true);
                 }
                 this.textInput.giveFocus();
-
-                this.refreshDirtyState(silent);
-                this.refreshValueChanged(silent);
 
                 if (!silent) {
                     this.notifyTagRemoved(new TagRemovedEvent(tag.getValue(), index));
@@ -242,7 +242,7 @@ module api.ui.tags {
 
         protected doSetValue(value: string, silent: boolean) {
             this.doClearTags(true);
-            value.split(';').forEach((tag) => this.doAddTag(tag, true, false));
+            value.split(';').forEach((tag) => this.doAddTag(tag, true));
         }
 
         private doGetTags(): string[] {

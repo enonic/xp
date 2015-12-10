@@ -26,13 +26,8 @@ module api.form.inputtype.text {
             var inputEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
 
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
-                this.onValueChanged(property, event.getNewValue(), ValueTypes.STRING);
-            });
-
-            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                if (!this.ignorePropertyChange) {
-                    this.updateInputOccurrenceElement(inputEl, property, true);
-                }
+                var value = ValueTypes.STRING.newValue(event.getNewValue());
+                this.notifyOccurrenceValueChanged(inputEl, value);
             });
 
             return inputEl;

@@ -65,7 +65,7 @@ module api.ui.selector.combobox {
 
         private expandedListeners: {(event: api.ui.selector.DropdownExpandedEvent): void}[] = [];
 
-        public static debug: boolean = false;
+        public static debug: boolean = true;
 
         /**
          * Indicates if combobox is currently has focus
@@ -244,9 +244,9 @@ module api.ui.selector.combobox {
             value.split(';').forEach((val) => {
                 var option = this.getOptionByValue(val);
                 if (option != null) {
-                    this.selectOption(option, silent);
+                    this.selectOption(option, true);
                 }
-            })
+            });
         }
 
         handleRowSelected(index: number) {

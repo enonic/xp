@@ -48,6 +48,10 @@ module api.form.inputtype {
 
         unValidityChanged(listener: (event: InputValidityChangedEvent)=>void);
 
+        onValueChanged(listener: (event: ValueChangedEvent)=>void);
+
+        unValueChanged(listener: (event: ValueChangedEvent)=>void);
+
         availableSizeChanged();
 
         onFocus(listener: (event: FocusEvent) => void);

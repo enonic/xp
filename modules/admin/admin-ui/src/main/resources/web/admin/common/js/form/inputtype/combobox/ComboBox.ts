@@ -52,24 +52,14 @@ module api.form.inputtype.combobox {
             super.layout(input, propertyArray);
 
             this.selectedOptionsView = new api.ui.selector.combobox.BaseSelectedOptionsView<string>();
-            this.comboBox = this.createComboBox(input);
+            this.comboBox = this.createComboBox(input, propertyArray);
+
             this.comboBoxOptions.forEach((option: ComboBoxOption) => {
                 this.comboBox.addOption({value: option.value, displayValue: option.label})
             });
 
-            var changeHandler = () => {
-                // don't update when property is changed by myself
-                if (!this.ignorePropertyChange) {
-                    this.update(propertyArray, true);
-                }
-            };
-            propertyArray.onPropertyValueChanged(changeHandler);
-            propertyArray.onPropertyAdded(changeHandler);
-            propertyArray.onPropertyRemoved(changeHandler);
-            propertyArray.onPropertyIndexChanged(changeHandler);
-
             this.appendChild(this.comboBox);
-            this.appendChild(this.selectedOptionsView);
+            this.appendChild(<api.dom.Element> this.selectedOptionsView);
 
             this.setLayoutInProgress(false);
 
@@ -77,24 +67,25 @@ module api.form.inputtype.combobox {
         }
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
-            if (!unchangedOnly || !this.comboBox.isDirty()) {
-                return super.update(propertyArray, unchangedOnly).then(() => {
+            var superPromise = super.update(propertyArray, unchangedOnly);
 
+            if (!unchangedOnly || !this.comboBox.isDirty()) {
+                return superPromise.then(() => {
                     this.comboBox.setValue(this.getValueFromPropertyArray(propertyArray));
                 });
+            } else {
+                return superPromise;
             }
-
-            return wemQ<void>(null);
         }
 
-        createComboBox(input: api.form.Input): api.ui.selector.combobox.ComboBox<string> {
+        createComboBox(input: api.form.Input, propertyArray: PropertyArray): api.ui.selector.combobox.ComboBox<string> {
             var comboBox = new api.ui.selector.combobox.ComboBox<string>(name, {
                 filter: this.comboBoxFilter,
                 selectedOptionsView: this.selectedOptionsView,
                 maximumOccurrences: input.getOccurrences().getMaximum(),
                 optionDisplayValueViewer: new ComboBoxDisplayValueViewer(),
                 hideComboBoxWhenMaxReached: true,
-                value: this.getValueFromPropertyArray(this.getPropertyArray())
+                value: this.getValueFromPropertyArray(propertyArray)
             });
 
             comboBox.onOptionFilterInputValueChanged((event: api.ui.selector.OptionFilterInputValueChangedEvent<string>) => {

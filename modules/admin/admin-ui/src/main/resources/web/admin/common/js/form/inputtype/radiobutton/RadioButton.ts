@@ -12,7 +12,6 @@ module api.form.inputtype.radiobutton {
     export class RadioButton extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
 
         private selector: api.ui.RadioGroup;
-        private property: Property;
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
         private radioButtonOptions: {label: string; value: string;}[];
 
@@ -44,7 +43,6 @@ module api.form.inputtype.radiobutton {
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
 
             this.input = input;
-            this.property = property;
 
             this.selector = this.createRadioElement(input.getName(), property);
 
@@ -66,7 +64,7 @@ module api.form.inputtype.radiobutton {
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
             var recording = new api.form.inputtype.InputValidationRecording();
-            var propertyValue = this.property.getValue();
+            var propertyValue = this.getProperty().getValue();
             if (propertyValue.isNull() && this.input.getOccurrences().getMinimum() > 0) {
                 recording.setBreaksMinimumOccurrences(true);
             }
@@ -109,14 +107,9 @@ module api.form.inputtype.radiobutton {
             }
 
             radioGroup.onValueChanged((event: api.ValueChangedEvent)=> {
-                this.onValueChanged(property, event.getNewValue(), ValueTypes.STRING);
+                this.saveToProperty(ValueTypes.STRING.newValue(event.getNewValue()));
             });
 
-            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                if (!this.ignorePropertyChange) {
-                    this.updateProperty(property, true);
-                }
-            });
 
             return radioGroup;
         }

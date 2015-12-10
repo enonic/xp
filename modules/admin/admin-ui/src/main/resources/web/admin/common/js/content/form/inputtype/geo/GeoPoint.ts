@@ -27,14 +27,10 @@ module api.content.form.inputtype.geo {
             var geoPoint = new api.ui.geo.GeoPoint(property.getGeoPoint());
 
             geoPoint.onValueChanged((event: api.ValueChangedEvent) => {
-                var value = api.util.GeoPoint.isValidString(event.getNewValue()) ? api.util.GeoPoint.fromString(event.getNewValue()) : null;
-                this.onValueChanged(property, value, ValueTypes.GEO_POINT);
-            });
-
-            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                if (!this.ignorePropertyChange) {
-                    this.updateInputOccurrenceElement(geoPoint, property, true);
-                }
+                var value = api.util.GeoPoint.isValidString(event.getNewValue()) ?
+                            ValueTypes.GEO_POINT.newValue(event.getNewValue()) :
+                            ValueTypes.GEO_POINT.newNullValue();
+                this.notifyOccurrenceValueChanged(geoPoint, value);
             });
 
             return geoPoint;
