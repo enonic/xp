@@ -1,11 +1,13 @@
 var httpClientLib = require('/lib/xp/http-client');
 var assert = require('/lib/xp/assert');
 
-var serverHost = Java.type('com.enonic.xp.lib.http.HttpRequestHandlerTest').SERVER_HOST;
+function getServerHost() {
+    return testInstance.getServerHost();
+}
 
 // BEGIN
 var response = httpClientLib.request({
-    url: 'http://' + serverHost + '/my/service',
+    url: 'http://' + getServerHost() + '/my/service',
     method: 'POST',
     headers: {
         'X-Custom-Header': 'header-value'

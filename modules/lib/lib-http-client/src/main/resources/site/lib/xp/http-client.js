@@ -27,7 +27,7 @@ function checkRequired(params, name) {
  * Sends an HTTP request and returns the response received from the remote server.
  * The request is sent synchronously, the execution blocks until the response is received.
  *
- * @example-ref examples/request.js
+ * @example-ref examples/http-client/request.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.url URL to which the request is sent.

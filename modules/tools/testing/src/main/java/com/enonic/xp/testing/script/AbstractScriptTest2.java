@@ -52,11 +52,13 @@ public abstract class AbstractScriptTest2
 
     @Before
     public final void setup()
+        throws Exception
     {
         initialize();
     }
 
     protected void initialize()
+        throws Exception
     {
         this.portalRequest = createPortalRequest();
         PortalRequestAccessor.set( this.portalRequest );

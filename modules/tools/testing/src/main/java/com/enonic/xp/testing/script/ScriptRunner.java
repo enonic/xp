@@ -132,7 +132,14 @@ public final class ScriptRunner
 
     private ScriptExports executeTestScript()
     {
-        this.testInstance.setup();
+        try
+        {
+            this.testInstance.setup();
+        }
+        catch ( final Exception e )
+        {
+            throw new RuntimeException( e );
+        }
 
         final String file = this.testInstance.getScriptTestFile();
         return this.testInstance.runScript( file );

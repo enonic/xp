@@ -12,19 +12,18 @@ import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 import com.squareup.okhttp.mockwebserver.SocketPolicy;
 
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.AbstractScriptTest2;
 
 import static org.junit.Assert.*;
 
-public class HttpRequestHandlerTest
-    extends ScriptTestSupport
+public class HttpClientScriptTest
+    extends AbstractScriptTest2
 {
-    public static String SERVER_HOST;
-
     protected MockWebServer server;
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.server = new MockWebServer();
@@ -36,8 +35,6 @@ public class HttpRequestHandlerTest
         {
             throw new RuntimeException( e );
         }
-
-        SERVER_HOST = serverHost();
     }
 
     @After
@@ -78,7 +75,7 @@ public class HttpRequestHandlerTest
     {
         addResponse( "GET request" );
 
-        runFunction( "/site/test/request-test.js", "simpleGetRequest", serverHost() );
+        runFunction( "/site/test/request-test.js", "simpleGetRequest", getServerHost() );
 
         final RecordedRequest request = takeRequest();
         assertEquals( "GET", request.getMethod() );
@@ -92,7 +89,7 @@ public class HttpRequestHandlerTest
     {
         server.enqueue( addResponse( "POST request" ) );
 
-        runFunction( "/site/test/request-test.js", "simplePostRequest", serverHost() );
+        runFunction( "/site/test/request-test.js", "simplePostRequest", getServerHost() );
 
         final RecordedRequest request = takeRequest();
         assertEquals( "POST", request.getMethod() );
@@ -106,7 +103,7 @@ public class HttpRequestHandlerTest
     {
         addResponse( "GET request" );
 
-        runFunction( "/site/test/request-test.js", "getRequestWithParams", serverHost() );
+        runFunction( "/site/test/request-test.js", "getRequestWithParams", getServerHost() );
 
         final RecordedRequest request = takeRequest();
         assertEquals( "GET", request.getMethod() );
@@ -120,7 +117,7 @@ public class HttpRequestHandlerTest
     {
         addResponse( "POST request" );
 
-        runFunction( "/site/test/request-test.js", "postRequestWithParams", serverHost() );
+        runFunction( "/site/test/request-test.js", "postRequestWithParams", getServerHost() );
 
         final RecordedRequest request = takeRequest();
         assertEquals( "POST", request.getMethod() );
@@ -134,7 +131,7 @@ public class HttpRequestHandlerTest
     {
         addResponse( "POST request" );
 
-        runFunction( "/site/test/request-test.js", "postJsonRequest", serverHost() );
+        runFunction( "/site/test/request-test.js", "postJsonRequest", getServerHost() );
 
         final RecordedRequest request = takeRequest();
         assertEquals( "POST", request.getMethod() );
@@ -149,7 +146,7 @@ public class HttpRequestHandlerTest
     {
         addResponse( "GET request" );
 
-        runFunction( "/site/test/request-test.js", "getWithHeadersRequest", serverHost() );
+        runFunction( "/site/test/request-test.js", "getWithHeadersRequest", getServerHost() );
 
         final RecordedRequest request = takeRequest();
         assertEquals( "GET", request.getMethod() );
@@ -162,7 +159,7 @@ public class HttpRequestHandlerTest
     {
         addResponseWithDelay( "GET request", 2000 );
 
-        runFunction( "/site/test/request-test.js", "getWithResponseTimeout", serverHost() );
+        runFunction( "/site/test/request-test.js", "getWithResponseTimeout", getServerHost() );
 
         final RecordedRequest request = takeRequest();
         assertEquals( "GET", request.getMethod() );
@@ -176,13 +173,13 @@ public class HttpRequestHandlerTest
         response = response.setSocketPolicy( SocketPolicy.NO_RESPONSE );
         server.enqueue( response );
 
-        runFunction( "/site/test/request-test.js", "getWithConnectTimeout", serverHost() );
+        runFunction( "/site/test/request-test.js", "getWithConnectTimeout", getServerHost() );
 
         final RecordedRequest request = takeRequest();
         assertEquals( "GET", request.getMethod() );
     }
 
-    private String serverHost()
+    public String getServerHost()
     {
         return server.getHostName() + ":" + server.getPort();
     }
@@ -192,6 +189,6 @@ public class HttpRequestHandlerTest
         throws Exception
     {
         this.server.enqueue( addResponse( "POST request" ) );
-        runScript( "/site/lib/xp/examples/request.js" );
+        runScript( "/site/lib/xp/examples/http-client/request.js" );
     }
 }
