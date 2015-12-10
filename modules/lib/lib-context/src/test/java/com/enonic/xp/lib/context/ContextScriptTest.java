@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.context;
 
-import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.security.PrincipalKey;
@@ -9,10 +8,10 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.script.ScriptTestSupport2;
 
-public class ContextLibTest
-    extends ScriptTestSupport
+public class ContextScriptTest
+    extends ScriptTestSupport2
 {
     @Override
     protected void initialize()
@@ -34,31 +33,9 @@ public class ContextLibTest
         Mockito.when( securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
     }
 
-    @Test
-    public void testNoChange()
-        throws Exception
+    @Override
+    public String getScriptTestFile()
     {
-        runFunction( "/site/test/context-test.js", "noChange" );
-    }
-
-    @Test
-    public void testChange()
-        throws Exception
-    {
-        runFunction( "/site/test/context-test.js", "change" );
-    }
-
-    @Test
-    public void testExample_get()
-        throws Exception
-    {
-        runScript( "/site/lib/xp/examples/get.js" );
-    }
-
-    @Test
-    public void testExample_run()
-        throws Exception
-    {
-        runScript( "/site/lib/xp/examples/run.js" );
+        return "/site/test/context-test.js";
     }
 }

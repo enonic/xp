@@ -12,7 +12,7 @@ var bean = __.newBean('com.enonic.xp.lib.context.ContextHandlerBean');
 /**
  * Runs a function within a specified context.
  *
- * @example-ref examples/run.js
+ * @example-ref examples/context/run.js
  *
  * @param {object} context JSON parameters.
  * @param {string} [context.branch] Name of the branch to execute the callback in. Default is the current branch set in portal.
@@ -46,7 +46,7 @@ exports.run = function (context, callback) {
 /**
  * Returns the current context.
  *
- * @example-ref examples/get.js
+ * @example-ref examples/context/get.js
  *
  * @returns {object} Return the current context as JSON object.
  */
