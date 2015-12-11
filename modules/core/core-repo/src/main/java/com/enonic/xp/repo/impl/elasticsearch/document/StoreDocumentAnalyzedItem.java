@@ -6,7 +6,6 @@ import com.enonic.xp.repo.impl.index.IndexValueType;
 public class StoreDocumentAnalyzedItem
     extends AbstractStoreDocumentItem<String>
 {
-
     private final String value;
 
     public StoreDocumentAnalyzedItem( final IndexPath path, final String value )
