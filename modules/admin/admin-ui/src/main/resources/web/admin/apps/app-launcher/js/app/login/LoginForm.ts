@@ -122,9 +122,7 @@ module app.login {
 
             if(fieldsNotEmpty) {
                 this.loginButton.show();
-                if (event.keyCode == 13) {
-                    this.loginButtonClick();
-                } else {
+                if (event.keyCode !== 13) {
                     this.setMessage('');
                 }
             } else {
