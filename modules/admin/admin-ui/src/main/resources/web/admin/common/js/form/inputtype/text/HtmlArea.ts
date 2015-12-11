@@ -61,6 +61,9 @@ module api.form.inputtype.text {
             textAreaEl.onRendered(() => {
                 this.initEditor(editorId, property, textAreaWrapper);
             });
+            textAreaEl.onRemoved(() => {
+                this.destroyEditor(editorId);
+            });
 
             textAreaWrapper.appendChild(textAreaEl);
 
@@ -223,11 +226,11 @@ module api.form.inputtype.text {
 
         private setFocusOnEditorAfterCreate(inputOccurence: Element, id: string): void {
             inputOccurence.giveFocus = () => {
-                try {
-                    this.getEditor(id).focus();
+                var editor = this.getEditor(id);
+                if (editor) {
+                    editor.focus();
                     return true;
-                }
-                catch (e) {
+                } else {
                     console.log("Element.giveFocus(): Failed to give focus to HtmlArea element: id = " + this.getId());
                     return false;
                 }
@@ -427,7 +430,10 @@ module api.form.inputtype.text {
         }
 
         private destroyEditor(id: string): void {
-            this.getEditor(id).destroy(false);
+            var editor = this.getEditor(id)
+            if (editor) {
+                editor.destroy(false);
+            }
         }
 
         private reInitEditor(id: string) {

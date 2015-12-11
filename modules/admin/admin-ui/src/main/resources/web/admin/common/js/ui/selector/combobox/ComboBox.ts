@@ -65,7 +65,7 @@ module api.ui.selector.combobox {
 
         private expandedListeners: {(event: api.ui.selector.DropdownExpandedEvent): void}[] = [];
 
-        public static debug: boolean = true;
+        public static debug: boolean = false;
 
         /**
          * Indicates if combobox is currently has focus
