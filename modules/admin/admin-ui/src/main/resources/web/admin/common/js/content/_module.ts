@@ -24,9 +24,6 @@
 ///<reference path='TreeNodeParentOfContent.ts' />
 
 ///<reference path='OpenEditPermissionsDialogEvent.ts' />
-///<reference path='ContentServerEvent.ts' />
-///<reference path='ContentServerChange.ts' />
-///<reference path='ContentChangeResult.ts' />
 ///<reference path='ContentResourceRequest.ts' />
 ///<reference path='ApplyContentPermissionsRequest.ts' />
 ///<reference path='GetContentByIdRequest.ts' />
@@ -50,14 +47,7 @@
 ///<reference path='DeleteContentResultJson.ts' />
 ///<reference path='BatchContentRequest.ts' />
 ///<reference path='BatchContentResult.ts' />
-///<reference path='ContentCreatedEvent.ts' />
-///<reference path='ContentUpdatedEvent.ts' />
-///<reference path='ContentPublishedEvent.ts' />
-///<reference path='ContentsPublishedEvent.ts' />
-///<reference path='ContentDeletedEvent.ts' />
-///<reference path='ContentChildOrderUpdatedEvent.ts' />
 ///<reference path='ContentComboBox.ts' />
-///<reference path='ContentMovedEvent.ts' />
 ///<reference path='MoveContentResult.ts' />
 ///<reference path='MoveContentResultJson.ts' />
 ///<reference path='ContentMoveComboBox.ts' />
@@ -83,7 +73,6 @@
 ///<reference path='GetActiveContentVersionsRequest.ts' />
 ///<reference path='GetContentVersionsRequest.ts' />
 ///<reference path='GetNearestSiteRequest.ts' />
-///<reference path='ContentNamedEvent.ts' />
 ///<reference path='OrderChildMovement.ts' />
 ///<reference path='OrderChildMovements.ts' />
 ///<reference path='CreateContentFilter.ts' />
@@ -98,7 +87,6 @@
 ///<reference path='ImageUploader.ts' />
 ///<reference path='ThumbnailUploader.ts' />
 
-///<reference path='EditContentEvent.ts' />
 ///<reference path='TreeGridItemClickedEvent.ts' />
 ///<reference path='ContentRequiresSaveEvent.ts' />
 
@@ -106,4 +94,3 @@
 ///<reference path='WidgetDescriptorResourceRequest.ts' />
 ///<reference path='GetWidgetsByInterfaceRequest.ts' />
 ///<reference path='GetEffectivePermissions.ts' />
-///<reference path='BatchContentServerEvent.ts' />

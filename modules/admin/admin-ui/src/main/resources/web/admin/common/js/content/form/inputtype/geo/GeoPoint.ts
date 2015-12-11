@@ -24,21 +24,24 @@ module api.content.form.inputtype.geo {
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
 
-            var geoPoint = new api.ui.geo.GeoPoint();
+            var geoPoint = new api.ui.geo.GeoPoint(property.getGeoPoint());
 
-            if (property.hasNonNullValue()) {
-                var geoPointValue = property.getGeoPoint();
-                if (geoPointValue) {
-                    geoPoint.setGeoPoint(geoPointValue);
-                }
-            }
-
-            geoPoint.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                var value = api.util.GeoPoint.isValidString(event.getNewValue()) ? api.util.GeoPoint.fromString(event.getNewValue()) : null;
-                this.onValueChanged(property, value, ValueTypes.GEO_POINT);
+            geoPoint.onValueChanged((event: api.ValueChangedEvent) => {
+                var value = api.util.GeoPoint.isValidString(event.getNewValue()) ?
+                            ValueTypes.GEO_POINT.newValue(event.getNewValue()) :
+                            ValueTypes.GEO_POINT.newNullValue();
+                this.notifyOccurrenceValueChanged(geoPoint, value);
             });
 
             return geoPoint;
+        }
+
+        updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
+            var geoPoint = <api.ui.geo.GeoPoint> occurrence;
+
+            if (!unchangedOnly || !geoPoint.isDirty()) {
+                geoPoint.setGeoPoint(property.getGeoPoint());
+            }
         }
 
         availableSizeChanged() {

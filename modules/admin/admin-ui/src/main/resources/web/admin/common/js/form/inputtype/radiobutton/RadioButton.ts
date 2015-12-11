@@ -11,8 +11,7 @@ module api.form.inputtype.radiobutton {
 
     export class RadioButton extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
 
-        private selector: api.dom.Element;
-        private property: Property;
+        private selector: api.ui.RadioGroup;
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
         private radioButtonOptions: {label: string; value: string;}[];
 
@@ -44,7 +43,6 @@ module api.form.inputtype.radiobutton {
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
 
             this.input = input;
-            this.property = property;
 
             this.selector = this.createRadioElement(input.getName(), property);
 
@@ -53,13 +51,20 @@ module api.form.inputtype.radiobutton {
             return wemQ<void>(null);
         }
 
+        updateProperty(property: api.data.Property, unchangedOnly: boolean): Q.Promise<void> {
+            if (!unchangedOnly || !this.selector.isDirty()) {
+                this.selector.setValue(property.getString());
+            }
+            return wemQ<any>(null);
+        }
+
         giveFocus(): boolean {
             return this.selector.giveFocus();
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
             var recording = new api.form.inputtype.InputValidationRecording();
-            var propertyValue = this.property.getValue();
+            var propertyValue = this.getProperty().getValue();
             if (propertyValue.isNull() && this.input.getOccurrences().getMinimum() > 0) {
                 recording.setBreaksMinimumOccurrences(true);
             }
@@ -88,9 +93,11 @@ module api.form.inputtype.radiobutton {
             this.selector.unBlur(listener);
         }
 
-        private createRadioElement(name: string, property: Property): api.dom.Element {
+        private createRadioElement(name: string, property: Property): api.ui.RadioGroup {
 
-            var radioGroup = new api.ui.RadioGroup(name);
+
+            var value = property.hasNonNullValue ? property.getString() : undefined;
+            var radioGroup = new api.ui.RadioGroup(name, value);
 
             var options = this.radioButtonOptions;
             var l = options.length;
@@ -99,14 +106,10 @@ module api.form.inputtype.radiobutton {
                 radioGroup.addOption(option.value, option.label);
             }
 
-            if (property.hasNonNullValue()) {
-                radioGroup.setValue(property.getString());
-            }
-
-            radioGroup.onValueChanged((event: api.ui.ValueChangedEvent)=> {
-                property.setValue(this.newValue(event.getNewValue()));
-                this.validate(false);
+            radioGroup.onValueChanged((event: api.ValueChangedEvent)=> {
+                this.saveToProperty(ValueTypes.STRING.newValue(event.getNewValue()));
             });
+
 
             return radioGroup;
         }

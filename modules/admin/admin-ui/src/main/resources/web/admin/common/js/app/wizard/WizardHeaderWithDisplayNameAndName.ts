@@ -45,9 +45,9 @@ module api.app.wizard {
             this.displayNameGenerator = builder.displayNameGenerator;
             this.displayNameProgrammaticallySet = this.displayNameGenerator != null;
 
-            this.displayNameEl = api.ui.text.AutosizeTextInput.large().setName(api.query.QueryField.DISPLAY_NAME);
-            this.displayNameEl.setPlaceholder("<Display Name>");
-            this.displayNameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
+            this.displayNameEl = api.ui.text.AutosizeTextInput.large();
+            this.displayNameEl.setPlaceholder("<Display Name>").setName(api.query.QueryField.DISPLAY_NAME);
+            this.displayNameEl.onValueChanged((event: api.ValueChangedEvent) => {
                 this.notifyPropertyChanged(api.query.QueryField.DISPLAY_NAME, event.getOldValue(), event.getNewValue());
             });
             this.appendChild(this.displayNameEl);
@@ -57,15 +57,15 @@ module api.app.wizard {
             this.appendChild(this.pathEl);
 
             this.nameElWrapper = new api.dom.DivEl("name-wrapper");
-            this.nameEl = api.ui.text.AutosizeTextInput.middle().setName('name').setForbiddenCharsRe(this.forbiddenChars);
-            this.nameEl.setPlaceholder("<name>");
-            this.nameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
+            this.nameEl = api.ui.text.AutosizeTextInput.middle().setForbiddenCharsRe(this.forbiddenChars);
+            this.nameEl.setPlaceholder("<name>").setName('name');
+            this.nameEl.onValueChanged((event: api.ValueChangedEvent) => {
                 this.notifyPropertyChanged("name", event.getOldValue(), event.getNewValue());
             });
             this.nameElWrapper.appendChild(this.nameEl);
             this.appendChild(this.nameElWrapper);
 
-            this.displayNameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
+            this.displayNameEl.onValueChanged((event: api.ValueChangedEvent) => {
 
                 this.displayNameEl.removeClass("generated");
 
@@ -86,7 +86,7 @@ module api.app.wizard {
                 this.doAutoGenerateName(currentDisplayName);
             });
 
-            this.nameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
+            this.nameEl.onValueChanged((event: api.ValueChangedEvent) => {
                 var currentName = event.getNewValue() || "";
                 var displayName = this.getDisplayName() || "";
 
@@ -106,7 +106,14 @@ module api.app.wizard {
                    name.toLowerCase() === this.generateName(displayName).toLowerCase();
         }
 
-        initNames(displayName: string, name: string, forceDisplayNameProgrammaticallySet: boolean) {
+        initNames(displayName: string, name: string, forceDisplayNameProgrammaticallySet: boolean, ignoreDirtyFlag: boolean = true) {
+
+            if (!ignoreDirtyFlag) {
+                if (this.displayNameEl.isDirty()) {
+                    displayName = this.displayNameEl.getValue();
+                    name = this.nameEl.getValue();
+                }
+            }
 
             this.autoGenerateName = this.checkAutoGenerateName(name, displayName);
 
