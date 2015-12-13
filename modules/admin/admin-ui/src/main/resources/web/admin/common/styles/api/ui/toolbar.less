@@ -92,6 +92,19 @@
     .@{_COMMON_PREFIX}dropdown:focus {
       display: block;
     }
+
+    &:hover .@{_COMMON_PREFIX}dropdown {
+      .@{_COMMON_PREFIX}button {
+        &:hover:not(:disabled) span {
+          color: @admin-font-gray3;
+        }
+
+        &:not(:disabled) span {
+          color: @admin-font-gray2;
+        }
+      }
+
+    }
   }
 
   &.content-browse-toolbar, &.user-browse-toolbar {
