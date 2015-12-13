@@ -39,7 +39,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
     protected ControllerScriptFactory controllerScriptFactory;
 
     @Override
-    public final PortalResponse render( final R component, final PortalRequest portalRequest )
+    public PortalResponse render( final R component, final PortalRequest portalRequest )
     {
         try
         {
