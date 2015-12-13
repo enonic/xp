@@ -9,7 +9,6 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyVisitor;
-import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.index.IndexConfig;
@@ -17,7 +16,7 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
-import com.enonic.xp.repo.impl.elasticsearch.document.StoreDocumentItemFactory;
+import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItems;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -56,11 +55,19 @@ class NodeStoreDocumentFactory
         final IndexConfigDocument indexConfigDocument = this.node.getIndexConfigDocument();
 
         final IndexDocument.Builder builder = IndexDocument.create().
-            id( this.node.id() ).
+            id( this.node.id().toString() ).
             indexName( IndexNameResolver.resolveSearchIndexName( this.repositoryId ) ).
             indexTypeName( this.branch.getName() ).
             analyzer( indexConfigDocument.getAnalyzer() ).
+            indexItems( createIndexItems() ).
             refreshAfterOperation( this.refresh );
+
+        return builder.build();
+    }
+
+    private IndexItems createIndexItems()
+    {
+        final IndexItems.Builder builder = IndexItems.create();
 
         addNodeMetaData( builder );
         addNodeDataProperties( builder );
@@ -68,67 +75,99 @@ class NodeStoreDocumentFactory
         return builder.build();
     }
 
-    private void addNodeMetaData( final IndexDocument.Builder builder )
+
+    private void addNodeMetaData( final IndexItems.Builder builder )
     {
         addNodeBaseProperties( builder );
 
-        builder.addEntries( AccessControlListStoreDocumentFactory.create( this.node.getPermissions() ) );
+        builder.add( AccessControlListStoreDocumentFactory.create( this.node.getPermissions() ) );
     }
 
-    private void addNodeBaseProperties( final IndexDocument.Builder builder )
+    private void addNodeBaseProperties( final IndexItems.Builder builder )
     {
-        if ( node.getNodeVersionId() != null )
-        {
-            final Value nodeVersionIdValue = ValueFactory.newString( node.getNodeVersionId().toString() );
-            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.VERSION, nodeVersionIdValue, IndexConfig.MINIMAL ) );
-        }
+        addNodeVersion( builder );
 
-        if ( this.node.name() != null )
-        {
-            final Value nameValue = ValueFactory.newString( this.node.name().toString() );
-            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.NAME, nameValue, IndexConfig.FULLTEXT ) );
-        }
+        addNodeName( builder );
 
-        if ( this.node.path() != null )
-        {
-            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.PATH, ValueFactory.newString( this.node.path().toString() ),
-                                                                 IndexConfig.MINIMAL ) );
-        }
+        addNodePath( builder );
 
-        if ( this.node.parentPath() != null )
-        {
-            builder.addEntries(
-                StoreDocumentItemFactory.create( NodeIndexPath.PARENT_PATH, ValueFactory.newString( this.node.parentPath().toString() ),
-                                                 IndexConfig.MINIMAL ) );
-        }
+        addParentPath( builder );
 
-        if ( this.node.getManualOrderValue() != null )
-        {
-            builder.addEntries(
-                StoreDocumentItemFactory.create( NodeIndexPath.MANUAL_ORDER_VALUE, ValueFactory.newLong( this.node.getManualOrderValue() ),
-                                                 IndexConfig.MINIMAL ) );
-        }
+        addManualOrderValue( builder );
 
-        if ( this.node.getNodeType() != null )
-        {
-            builder.addEntries(
-                StoreDocumentItemFactory.create( NodeIndexPath.NODE_TYPE, ValueFactory.newString( this.node.getNodeType().getName() ),
-                                                 IndexConfig.MINIMAL ) );
-        }
+        addNodeType( builder );
 
+        addTimestamp( builder );
+
+        addNodeState( builder );
+    }
+
+    private void addNodeState( final IndexItems.Builder builder )
+    {
+        if ( this.node.getNodeState() != null )
+        {
+            builder.add( NodeIndexPath.STATE, ValueFactory.newString( this.node.getNodeState().value() ), IndexConfig.MINIMAL );
+        }
+    }
+
+    private void addTimestamp( final IndexItems.Builder builder )
+    {
         if ( this.node.getTimestamp() != null )
         {
-            builder.addEntries(
-                StoreDocumentItemFactory.create( NodeIndexPath.TIMESTAMP, ValueFactory.newDateTime( this.node.getTimestamp() ),
-                                                 IndexConfig.MINIMAL ) );
+            builder.add( NodeIndexPath.TIMESTAMP, ValueFactory.newDateTime( this.node.getTimestamp() ), IndexConfig.MINIMAL );
         }
-
-        builder.addEntries(
-            StoreDocumentItemFactory.create( NodeIndexPath.STATE, ValueFactory.newString( this.node.getNodeState().value() ),
-                                             IndexConfig.MINIMAL ) );
     }
 
-    private void addNodeDataProperties( final IndexDocument.Builder builder )
+    private void addNodeType( final IndexItems.Builder builder )
+    {
+        if ( this.node.getNodeType() != null )
+        {
+            builder.add( NodeIndexPath.NODE_TYPE, ValueFactory.newString( this.node.getNodeType().getName() ), IndexConfig.MINIMAL );
+        }
+    }
+
+    private void addManualOrderValue( final IndexItems.Builder builder )
+    {
+        if ( this.node.getManualOrderValue() != null )
+        {
+            builder.add( NodeIndexPath.MANUAL_ORDER_VALUE, ValueFactory.newLong( this.node.getManualOrderValue() ), IndexConfig.MINIMAL );
+        }
+    }
+
+    private void addParentPath( final IndexItems.Builder builder )
+    {
+        if ( this.node.parentPath() != null )
+        {
+            builder.add( NodeIndexPath.PARENT_PATH, ValueFactory.newString( this.node.parentPath().toString() ), IndexConfig.MINIMAL );
+        }
+    }
+
+    private void addNodePath( final IndexItems.Builder builder )
+    {
+        if ( this.node.path() != null )
+        {
+            builder.add( NodeIndexPath.PATH, ValueFactory.newString( this.node.path().toString() ), IndexConfig.MINIMAL );
+        }
+    }
+
+    private void addNodeName( final IndexItems.Builder builder )
+    {
+        if ( this.node.name() != null )
+        {
+            builder.add( NodeIndexPath.NAME, ValueFactory.newString( this.node.name().toString() ), IndexConfig.FULLTEXT );
+        }
+    }
+
+    private void addNodeVersion( final IndexItems.Builder builder )
+    {
+        if ( this.node.getNodeVersionId() != null )
+        {
+            builder.add( NodeIndexPath.VERSION, ValueFactory.newString( node.getNodeVersionId().toString() ), IndexConfig.MINIMAL );
+        }
+    }
+
+
+    private void addNodeDataProperties( final IndexItems.Builder builder )
     {
         PropertyVisitor visitor = new PropertyVisitor()
         {
@@ -144,7 +183,7 @@ class NodeStoreDocumentFactory
                         throw new RuntimeException( "Missing index configuration for data " + property.getPath() );
                     }
 
-                    builder.addEntries( StoreDocumentItemFactory.create( property, configForData ) );
+                    builder.add( property, configForData );
 
                     addReferenceAggregation( property );
                 }
@@ -154,8 +193,7 @@ class NodeStoreDocumentFactory
             {
                 if ( property.getType().equals( ValueTypes.REFERENCE ) )
                 {
-                    builder.addEntries(
-                        StoreDocumentItemFactory.create( NodeIndexPath.REFERENCE, property.getValue(), IndexConfig.MINIMAL ) );
+                    builder.add( NodeIndexPath.REFERENCE, property.getValue(), IndexConfig.MINIMAL );
                 }
             }
         };

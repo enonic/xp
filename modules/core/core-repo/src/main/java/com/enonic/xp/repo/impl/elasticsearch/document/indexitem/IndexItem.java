@@ -1,27 +1,28 @@
-package com.enonic.xp.repo.impl.index.document;
+package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
 import com.google.common.base.Strings;
 
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
 public abstract class IndexItem<T extends IndexValue>
 {
-    protected final static String INDEX_VALUE_TYPE_SEPARATOR = ".";
+    public final static String INDEX_VALUE_TYPE_SEPARATOR = ".";
 
-    private String keyBase;
+    private IndexPath indexPath;
 
     private T value;
 
-    public IndexItem( final String keyBase, final T value )
+    public IndexItem( final IndexPath indexPath, final T value )
     {
-        this.keyBase = keyBase;
+        this.indexPath = indexPath;
         this.value = value;
     }
 
-    protected String getKeyBase()
+    protected String getBasePath()
     {
-        return IndexFieldNameNormalizer.normalize( keyBase );
+        return IndexFieldNameNormalizer.normalize( indexPath.getPath() );
     }
 
     public abstract IndexValueType valueType();
@@ -31,9 +32,9 @@ public abstract class IndexItem<T extends IndexValue>
         return value;
     }
 
-    public String getKey()
+    public String getPath()
     {
-        return getKeyBase() + getTypeContextPostfix();
+        return getBasePath() + getTypeContextPostfix();
     }
 
     protected String getTypeContextPostfix()

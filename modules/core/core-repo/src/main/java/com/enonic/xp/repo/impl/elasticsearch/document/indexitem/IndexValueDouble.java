@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.index.document;
+package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
 public class IndexValueDouble
     extends IndexValue<Double>

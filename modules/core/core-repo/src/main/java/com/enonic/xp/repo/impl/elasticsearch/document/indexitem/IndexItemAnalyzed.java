@@ -1,13 +1,14 @@
-package com.enonic.xp.repo.impl.index.document;
+package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
 public class IndexItemAnalyzed
     extends IndexItem<IndexValueString>
 {
-    public IndexItemAnalyzed( final String keyBase, final String value )
+    public IndexItemAnalyzed( final IndexPath indexPath, final String value )
     {
-        super( keyBase, IndexValue.create( value ) );
+        super( indexPath, IndexValue.create( value ) );
     }
 
     @Override

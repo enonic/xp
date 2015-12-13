@@ -1,16 +1,17 @@
-package com.enonic.xp.repo.impl.index.document;
+package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
 import java.time.Instant;
 
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
 public class IndexItemInstant
     extends IndexItem<IndexValueInstant>
 {
 
-    public IndexItemInstant( final String keyBase, final Instant value )
+    public IndexItemInstant( final IndexPath indexPath, final Instant value )
     {
-        super( keyBase, IndexValue.create( value ) );
+        super( indexPath, IndexValue.create( value ) );
     }
 
     @Override

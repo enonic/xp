@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.index.document;
+package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
 import java.util.List;
 
@@ -16,9 +16,9 @@ public class AllTextTypeFactory
 
         if ( indexConfig.isDecideByType() || indexConfig.isIncludeInAllText() )
         {
-            allTextItems.add( new IndexItemAnalyzed( NodeIndexPath.ALL_TEXT.getPath(), propertyValue.asString() ) );
+            allTextItems.add( new IndexItemAnalyzed( NodeIndexPath.ALL_TEXT, propertyValue.asString() ) );
 
-            allTextItems.add( new IndexItemNgram( NodeIndexPath.ALL_TEXT.getPath(), propertyValue.asString() ) );
+            allTextItems.add( new IndexItemNgram( NodeIndexPath.ALL_TEXT, propertyValue.asString() ) );
         }
 
         return allTextItems;

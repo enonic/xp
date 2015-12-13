@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.index.document;
+package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
 import java.time.Instant;
 import java.util.List;
@@ -14,7 +14,6 @@ import static org.junit.Assert.*;
 
 public class IndexItemFactoryTest
 {
-
     @Test
     public void instant_minimal()
         throws Exception
@@ -35,8 +34,9 @@ public class IndexItemFactoryTest
             IndexItemFactory.create( "myProperty", ValueFactory.newDateTime( Instant.parse( "2015-12-11T10:29:30Z" ) ),
                                      IndexConfig.BY_TYPE );
 
-        assertEquals( 3, indexItems.size() );
-        assertTypes( indexItems, IndexValueType.DATETIME, IndexValueType.STRING, IndexValueType.ORDERBY );
+        assertEquals( 5, indexItems.size() );
+        assertTypes( indexItems, IndexValueType.DATETIME, IndexValueType.STRING, IndexValueType.ORDERBY, IndexValueType.ANALYZED,
+                     IndexValueType.NGRAM );
     }
 
     @Test
@@ -66,13 +66,13 @@ public class IndexItemFactoryTest
 
         for ( final IndexItem item : items )
         {
-            if ( item.getKey().equals(
+            if ( item.getPath().equals(
                 NodeIndexPath.ALL_TEXT + IndexItem.INDEX_VALUE_TYPE_SEPARATOR + IndexValueType.ANALYZED.getPostfix() ) )
             {
                 hasAllTextAnalyzed = true;
             }
 
-            if ( item.getKey().equals(
+            if ( item.getPath().equals(
                 NodeIndexPath.ALL_TEXT + IndexItem.INDEX_VALUE_TYPE_SEPARATOR + IndexValueType.ANALYZED.getPostfix() ) )
             {
                 hasAllTextNgram = true;
