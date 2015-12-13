@@ -9,6 +9,7 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.Assert.*;
 
@@ -57,6 +58,25 @@ public class IndexItemFactoryTest
 
         assertEquals( 6, indexItems.size() );
         assertTypes( indexItems, IndexValueType.ANALYZED, IndexValueType.STRING, IndexValueType.NGRAM, IndexValueType.ORDERBY );
+    }
+
+    @Test
+    public void double_minimal()
+        throws Exception
+    {
+        final List<IndexItem> indexItems = IndexItemFactory.create( "myProperty", ValueFactory.newDouble( 12.3 ), IndexConfig.MINIMAL );
+        assertEquals( 3, indexItems.size() );
+        assertTypes( indexItems, IndexValueType.NUMBER, IndexValueType.STRING, IndexValueType.ORDERBY );
+    }
+
+    @Test
+    public void geopoint_minimal()
+        throws Exception
+    {
+        final List<IndexItem> indexItems =
+            IndexItemFactory.create( "myProperty", ValueFactory.newGeoPoint( new GeoPoint( 80, 80 ) ), IndexConfig.MINIMAL );
+        assertEquals( 3, indexItems.size() );
+        assertTypes( indexItems, IndexValueType.GEO_POINT, IndexValueType.STRING, IndexValueType.ORDERBY );
     }
 
 
