@@ -18,3 +18,4 @@
 ///<reference path='WizardClosedEvent.ts' />
 ///<reference path='WizardValidityManager.ts' />
 ///<reference path='MaskContentWizardPanelEvent.ts' />
+///<reference path='WizardStepNavigatorAndToolbar.ts' />
