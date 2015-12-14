@@ -56,6 +56,20 @@
       border-right: 4px solid transparent;
       border-top: 6px solid @admin-dark-gray;
     }
+
+    &:hover .@{_COMMON_PREFIX}dropdown {
+      .@{_COMMON_PREFIX}button {
+        &:hover:not(:disabled) span {
+          color: @admin-font-gray3;
+          cursor: pointer;
+        }
+
+        &:not(:disabled) span {
+          color: @admin-font-gray2;
+        }
+      }
+
+    }
   }
 
   &.content-browse-toolbar, &.user-browse-toolbar {
