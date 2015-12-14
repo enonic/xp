@@ -439,7 +439,7 @@
     font-family: @admin-font-family;
     font-size: @admin-font-size;
 
-    & > * {
+    & > *:not([class*="-tooltip"]) {
       .reset(false);
     }
   }
