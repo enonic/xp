@@ -158,11 +158,13 @@ module api.content.form.inputtype.image {
 
         createContentComboBox(maximumOccurrences: number, inputIconUrl: string, allowedContentTypes: string[],
                               inputName: string): ContentComboBox {
+            var loader = new ContentSelectorLoader(this.config.contentId, inputName);
+            loader.setContentTypeNames(allowedContentTypes.length ? allowedContentTypes : [ContentTypeName.IMAGE.toString()]);
+
             var contentComboBox: ImageContentComboBox
                     = ImageContentComboBox.create().
                     setMaximumOccurrences(maximumOccurrences).
-                    setAllowedContentTypes(allowedContentTypes.length ? allowedContentTypes : [ContentTypeName.IMAGE.toString()]).
-                    setLoader(new ContentSelectorLoader(this.config.contentId, inputName)).
+                    setLoader(loader).
                     setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).
                     build(),
                 comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();

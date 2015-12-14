@@ -33,10 +33,11 @@ module app.wizard.page.contextwindow.inspect.region {
             super(<ComponentInspectionPanelConfig>{
                 iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("image", "icon-xlarge")
             });
+            var loader = new api.content.ContentSummaryLoader();
+            loader.setAllowedContentTypeNames([ContentTypeName.IMAGE]);
             this.imageSelector = ContentComboBox.create().
                 setMaximumOccurrences(1).
-                setAllowedContentTypes([ContentTypeName.IMAGE.toString()]).
-                setLoader(new api.content.ContentSummaryLoader()).
+                setLoader(loader).
                 build();
 
             this.imageSelectorForm = new ImageSelectorForm(this.imageSelector, "Image");

@@ -32,6 +32,8 @@ module api.content {
 
         private inputName: string;
 
+        private contentTypeNames: string[] = [];
+
         constructor() {
             super();
             super.setMethod("POST");
@@ -69,6 +71,10 @@ module api.content {
             return this.size;
         }
 
+        setContentTypeNames(contentTypeNames: string[]) {
+            this.contentTypeNames = contentTypeNames
+        }
+
         setQueryExpr(searchString: string) {
 
             var fulltextExpression: Expression = new api.query.FulltextSearchExpressionBuilder().
@@ -99,7 +105,8 @@ module api.content {
                 size: this.getSize(),
                 expand: this.expandAsString(),
                 contentId: this.getId().toString(),
-                inputName: this.getInputName()
+                inputName: this.getInputName(),
+                contentTypeNames: this.contentTypeNames,
             };
         }
 
