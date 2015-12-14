@@ -14,10 +14,12 @@ public final class HtmlSanitizerImpl
     private static final PolicyFactory HTML_SANITIZE_POLICY = new HtmlPolicyBuilder().
         allowCommonBlockElements().
         allowCommonInlineFormattingElements().
-        allowElements( "a", "img" ).
+        allowElements( "a", "img", "pre" ).
+        allowElements( "table", "caption", "thead", "tbody", "tfoot", "tr", "th", "td", "col", "colgroup" ).
         allowAttributes( "href" ).onElements( "a" ).
         allowAttributes( "src" ).onElements( "img" ).
         allowAttributes( "checked", "class", "id", "target", "title", "type" ).globally().
+        allowAttributes( "scope" ).onElements( "td", "th" ).
         allowStandardUrlProtocols().
         allowStyling().
         toFactory();
