@@ -397,18 +397,17 @@ module app.browse {
         private handleContentUpdated(change: ContentServerChange, promise: wemQ.Promise<any>,
                                      changes: ContentServerChange[]): wemQ.Promise<any> {
 
-            if (changes.length === 1) {
-                promise = promise.then((result: ContentChangeResult) => {
+            promise = promise.then((result: ContentChangeResult) => {
 
-                    var updateResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
+                var updateResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
-                    var ids: ContentId[] = [];
-                    updateResult.forEach((el) => {
-                        ids = ids.concat(el.getNodes().map((node) => {
-                            return node.getData().getContentId();
-                        }));
-                    });
-                    return ContentSummaryAndCompareStatusFetcher.
+                var ids: ContentId[] = [];
+                updateResult.forEach((el) => {
+                    ids = ids.concat(el.getNodes().map((node) => {
+                        return node.getData().getContentId();
+                    }));
+                });
+                return ContentSummaryAndCompareStatusFetcher.
                     fetchByIds(ids).
                     then((data: ContentSummaryAndCompareStatus[]) => {
                         var results = [];
@@ -423,17 +422,16 @@ module app.browse {
 
                                     results.push(updateResult[i]);
                                     break;
-                                }
                             }
-                        });
+                            }
+                    });
                         // update actions state in case of permission changes
                         this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
                         this.mobileBrowseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
 
                         return this.contentTreeGrid.xPlaceContentNodes(results);
-                    });
                 });
-            }
+            })
 
             return promise;
         }
