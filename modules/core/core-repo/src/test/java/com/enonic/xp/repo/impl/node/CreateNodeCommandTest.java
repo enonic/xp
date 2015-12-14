@@ -78,7 +78,6 @@ public class CreateNodeCommandTest
         assertNotNull( storedNode.getTimestamp() );
     }
 
-
     @Test
     public void populate_manual_order_value_and_insert_first()
         throws Exception
@@ -113,7 +112,6 @@ public class CreateNodeCommandTest
         assertTrue( c1.getManualOrderValue() < c2.getManualOrderValue() );
         assertTrue( c2.getManualOrderValue() < c3.getManualOrderValue() );
     }
-
 
     @Test
     public void populate_manual_order_value_and_insert_last()

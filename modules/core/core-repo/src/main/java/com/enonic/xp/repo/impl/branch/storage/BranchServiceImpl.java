@@ -39,7 +39,7 @@ public class BranchServiceImpl
 {
     private static final ReturnFields BRANCH_RETURN_FIELDS =
         ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH,
-                           BranchIndexPath.TIMESTAMP );
+                           BranchIndexPath.TIMESTAMP, BranchIndexPath.REFERENCES );
 
     private StorageDao storageDao;
 
