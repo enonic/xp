@@ -5,6 +5,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.region.Component;
@@ -17,6 +18,8 @@ final class ComponentHandlerWorker
     protected ComponentPath componentPath;
 
     protected RendererFactory rendererFactory;
+
+    protected PostProcessor postProcessor;
 
     @Override
     public void execute()
@@ -73,7 +76,9 @@ final class ComponentHandlerWorker
         this.request.setPageDescriptor( null );
 
         final Renderer<Component> renderer = this.rendererFactory.getRenderer( component );
-        final PortalResponse response = renderer.render( component, this.request );
+        PortalResponse response = renderer.render( component, this.request );
+        response = this.postProcessor.processResponseInstructions( this.request, response );
+
         this.response = PortalResponse.create( response );
     }
 }

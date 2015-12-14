@@ -10,6 +10,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.handler.PortalHandler;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
+import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.region.ComponentPath;
 
@@ -24,6 +25,8 @@ public final class ComponentHandler
     private PageDescriptorService pageDescriptorService;
 
     private PageTemplateService pageTemplateService;
+
+    protected PostProcessor postProcessor;
 
     public ComponentHandler()
     {
@@ -42,6 +45,7 @@ public final class ComponentHandler
         worker.rendererFactory = rendererFactory;
         worker.pageDescriptorService = pageDescriptorService;
         worker.pageTemplateService = pageTemplateService;
+        worker.postProcessor = postProcessor;
 
         return worker;
     }
@@ -68,5 +72,11 @@ public final class ComponentHandler
     public void setPageTemplateService( final PageTemplateService pageTemplateService )
     {
         this.pageTemplateService = pageTemplateService;
+    }
+
+    @Reference
+    public void setPostProcessor( final PostProcessor postProcessor )
+    {
+        this.postProcessor = postProcessor;
     }
 }
