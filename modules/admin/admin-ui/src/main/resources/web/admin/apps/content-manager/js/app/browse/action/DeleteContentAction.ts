@@ -14,7 +14,7 @@ module app.browse.action {
                     = grid.getSelectedDataList();
                 new ContentDeletePromptEvent(contents).
                     setYesCallback(() => {
-                    var excludeStatuses = [CompareStatus.EQUAL, CompareStatus.PENDING_DELETE],
+                        var excludeStatuses = [CompareStatus.EQUAL, CompareStatus.PENDING_DELETE, CompareStatus.NEWER],
                         deselected = [];
                         grid.getSelectedDataList().forEach((content: ContentSummaryAndCompareStatus) => {
                             if (excludeStatuses.indexOf(content.getCompareStatus()) < 0) {
