@@ -81,7 +81,7 @@ module api.content.form.inputtype.image {
                 event.preventDefault();
             });
 
-            this.check.onValueChanged((event: api.ui.ValueChangedEvent) => {
+            this.check.onValueChanged((event: api.ValueChangedEvent) => {
                 this.notifyChecked(event.getNewValue() == 'true');
             });
 

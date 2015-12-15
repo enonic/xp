@@ -179,7 +179,6 @@ module app.publish {
             };
 
             this.includeChildItemsCheck = new api.ui.Checkbox();
-            this.includeChildItemsCheck.setChecked(false);
             this.includeChildItemsCheck.addClass('include-child-check');
             this.includeChildItemsCheck.onValueChanged(this.includeChildrenCheckedListener);
             this.includeChildItemsCheck.setLabel('Include child items');
@@ -382,7 +381,7 @@ module app.publish {
                 setIds(selectedIds).send().done((jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
                     this.close();
                     PublishContentRequest.feedback(jsonResponse);
-                    new api.content.ContentsPublishedEvent(selectedIds).fire();
+                    new api.content.event.ContentsPublishedEvent(selectedIds).fire();
                 });
         }
 

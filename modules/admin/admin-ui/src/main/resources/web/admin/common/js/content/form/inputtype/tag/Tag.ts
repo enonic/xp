@@ -10,24 +10,21 @@ module api.content.form.inputtype.tag {
 
     export class Tag extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
+        private context: api.content.form.inputtype.ContentInputTypeViewContext;
+
         private tags: api.ui.tags.Tags;
 
         private tagSuggester: ContentTagSuggester;
 
         constructor(context: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("tag");
-
             this.addClass("input-type-view");
-            var dataPath = this.resolveDataPath(context);
-            this.tagSuggester = new ContentTagSuggesterBuilder().
-                setDataPath(dataPath).
-                build();
 
-            var tagsBuilder = new api.ui.tags.TagsBuilder().
-                setTagSuggester(this.tagSuggester).
-                setMaxTags(context.input.getOccurrences().getMaximum());
-            this.tags = tagsBuilder.build();
-            this.appendChild(this.tags);
+            this.context = context;
+
+            this.tagSuggester = new ContentTagSuggesterBuilder().
+                setDataPath(this.resolveDataPath(context)).
+                build();
         }
 
         private resolveDataPath(context: api.content.form.inputtype.ContentInputTypeViewContext): PropertyPath {
@@ -54,14 +51,19 @@ module api.content.form.inputtype.tag {
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
             super.layout(input, propertyArray);
 
-            this.tags.clearTags();
+            var tagsBuilder = new api.ui.tags.TagsBuilder().
+                setTagSuggester(this.tagSuggester).
+                setMaxTags(this.context.input.getOccurrences().getMaximum());
+
             propertyArray.forEach((property) => {
-                if (property.hasNonNullValue()) {
-                    this.tags.addTag(property.getString());
-                }
+                tagsBuilder.addTag(property.getString());
             });
 
-            this.tags.onTagAdded((event) => {
+            this.tags = tagsBuilder.build();
+            this.appendChild(this.tags);
+
+            this.tags.onTagAdded((event: api.ui.tags.TagAddedEvent) => {
+                this.ignorePropertyChange = true;
                 var value = new Value(event.getValue(), ValueTypes.STRING);
                 if (this.tags.countTags() == 1) {
                     this.getPropertyArray().set(0, value);
@@ -70,16 +72,32 @@ module api.content.form.inputtype.tag {
                     this.getPropertyArray().add(value);
                 }
                 this.validate(false);
+                this.ignorePropertyChange = false;
             });
 
-            this.tags.onTagRemoved((event) => {
+            this.tags.onTagRemoved((event: api.ui.tags.TagRemovedEvent) => {
+                this.ignorePropertyChange = true;
                 this.getPropertyArray().remove(event.getIndex());
                 this.validate(false);
+                this.ignorePropertyChange = false;
             });
 
             this.setLayoutInProgress(false);
 
             return wemQ<void>(null);
+        }
+
+
+        update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
+            var superPromise = super.update(propertyArray, unchangedOnly);
+
+            if (!unchangedOnly || !this.tags.isDirty()) {
+                superPromise.then(() => {
+                    this.tags.setValue(this.getValueFromPropertyArray(propertyArray));
+                });
+            } else {
+                return superPromise;
+            }
         }
 
         protected getNumberOfValids(): number {

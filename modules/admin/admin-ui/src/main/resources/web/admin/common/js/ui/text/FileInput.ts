@@ -11,18 +11,12 @@ module api.ui.text {
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
     import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
 
-    export class FileInput extends api.dom.FormInputEl {
+    export class FileInput extends api.dom.CompositeFormInputEl {
 
         private textInput: InputEl;
         private mediaUploader: MediaUploader;
 
-        constructor(className?: string) {
-            super("div", "file-input");
-
-            if (className) {
-                this.addClass(className);
-            }
-
+        constructor(className?: string, originalValue?: string) {
             this.textInput = new InputEl("text");
 
             this.mediaUploader = new api.content.MediaUploader({
@@ -31,7 +25,8 @@ module api.ui.text {
                 allowDrop: false,
                 showResult: false,
                 allowMultiSelection: true,
-                deferred: true  // wait till it's shown
+                deferred: true,  // wait till it's shown
+                value: originalValue
             });
 
             this.mediaUploader.onUploadStarted((event: api.ui.uploader.FileUploadStartedEvent<api.content.Content>) => {
@@ -41,7 +36,8 @@ module api.ui.text {
                 this.textInput.setValue(names.join(', '));
             });
 
-            this.appendChildren(<api.dom.FormInputEl>this.textInput, <api.dom.FormInputEl>this.mediaUploader);
+            super(this.textInput, this.mediaUploader);
+            this.addClass("file-input" + (className ? " " + className : ""));
         }
 
         setUploaderParams(params: {[key: string]: any}): FileInput {
@@ -60,39 +56,6 @@ module api.ui.text {
 
         getPlaceholder(): string {
             return this.textInput.getPlaceholder();
-        }
-
-        getValue(): string {
-            return this.textInput.getValue();
-        }
-
-        setValue(value: string): FileInput {
-            this.textInput.setValue(value);
-            return this;
-        }
-
-        onChange(listener: (event: Event) => void) {
-            this.textInput.onChange(listener);
-        }
-
-        unChange(listener: (event: Event) => void) {
-            this.textInput.unChange(listener);
-        }
-
-        onInput(listener: (event: Event) => void) {
-            this.textInput.onInput(listener);
-        }
-
-        unInput(listener: (event: Event) => void) {
-            this.textInput.unInput(listener);
-        }
-
-        giveFocus(): boolean {
-            return this.textInput.giveFocus();
-        }
-
-        giveBlur(): boolean {
-            return this.textInput.giveBlur();
         }
 
         reset(): FileInput {

@@ -5,7 +5,7 @@ module api.form.inputtype.support {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
 
-    export class BaseInputTypeNotManagingAdd<RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeViewNotManagingAdd<RAW_VALUE_TYPE> {
+    export class BaseInputTypeNotManagingAdd<RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeView<RAW_VALUE_TYPE> {
 
         private context: api.form.inputtype.InputTypeViewContext;
 
@@ -17,12 +17,18 @@ module api.form.inputtype.support {
 
         private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
+        private inputValueChangedListeners: {(occurrence: api.dom.Element, value: api.data.Value): void}[] = [];
+
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         /**
          * The index of child Data being dragged.
          */
         private draggingIndex: number;
+
+        protected ignorePropertyChange: boolean;
+
+        public static debug: boolean = false;
 
         constructor(context: api.form.inputtype.InputTypeViewContext, className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
@@ -83,6 +89,10 @@ module api.form.inputtype.support {
             this.inputOccurrences.onOccurrenceAdded(listener);
         }
 
+        onOccurrenceRendered(listener: (event: api.form.OccurrenceRenderedEvent) => void) {
+            this.inputOccurrences.onOccurrenceRendered(listener);
+        }
+
         onOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
             this.inputOccurrences.onOccurrenceRemoved(listener);
         }
@@ -91,8 +101,36 @@ module api.form.inputtype.support {
             this.inputOccurrences.unOccurrenceAdded(listener);
         }
 
+        unOccurrenceRendered(listener: (event: api.form.OccurrenceRenderedEvent) => void) {
+            this.inputOccurrences.onOccurrenceRendered(listener);
+        }
+
         unOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void) {
             this.inputOccurrences.unOccurrenceRemoved(listener);
+        }
+
+        onOccurrenceValueChanged(listener: (occurrence: api.dom.Element, value: api.data.Value) => void) {
+            this.inputValueChangedListeners.push(listener);
+        }
+
+        unOccurrenceValueChanged(listener: (occurrence: api.dom.Element, value: api.data.Value) => void) {
+            this.inputValueChangedListeners = this.inputValueChangedListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        protected notifyOccurrenceValueChanged(occurrence: api.dom.Element, value: api.data.Value) {
+            this.inputValueChangedListeners.forEach((listener: (occurrence: api.dom.Element, value: api.data.Value)=>void) => {
+                listener(occurrence, value);
+            });
+        }
+
+        onValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
+            throw new Error("User onOccurrenceValueChanged instead");
+        }
+
+        unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
+            throw new Error("User onOccurrenceValueChanged instead");
         }
 
         onValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
@@ -138,6 +176,12 @@ module api.form.inputtype.support {
             return this.inputOccurrences.layout().then(() => {
                 wemjq(this.getHTMLElement()).sortable("refresh");
             });
+        }
+
+        update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
+            this.propertyArray = propertyArray;
+
+            return this.inputOccurrences.update(propertyArray, unchangedOnly);
         }
 
         hasValidUserInput(): boolean {
@@ -219,8 +263,8 @@ module api.form.inputtype.support {
                 else if (api.ObjectHelper.iFrameSafeInstanceOf(occurrenceView.getInputElement(), api.ui.time.DateTimePicker)) {
                     picker = <api.ui.time.DateTimePicker>(occurrenceView.getInputElement())
                 }
-                else if (api.ObjectHelper.iFrameSafeInstanceOf(occurrenceView.getInputElement(), api.ui.time.LocalTime)) {
-                    picker = (<api.ui.time.LocalTime>(occurrenceView.getInputElement())).getTimePicker();
+                else if (api.ObjectHelper.iFrameSafeInstanceOf(occurrenceView.getInputElement(), api.ui.time.TimePicker)) {
+                    picker = <api.ui.time.TimePicker>(occurrenceView.getInputElement());
                 }
 
                 if (picker && !picker.hasValidUserInput()) {
@@ -235,10 +279,8 @@ module api.form.inputtype.support {
             return result;
         }
 
-        protected onValueChanged(property: Property, value: Object, type: ValueType) {
-            var newValue = new Value(value, type);
-            property.setValue(newValue);
-            this.validate(false);
+        protected getPropertyValue(property: Property): string {
+            return property.hasNonNullValue() ? property.getString() : "";
         }
 
         notifyRequiredContractBroken(state: boolean, index: number) {
@@ -255,6 +297,10 @@ module api.form.inputtype.support {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
+            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+        }
+
+        updateInputOccurrenceElement(occurrence: api.dom.Element, property: Property, unchangedOnly?: boolean) {
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 

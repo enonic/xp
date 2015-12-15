@@ -29,11 +29,15 @@ module api.ui.selector.combobox {
             } else {
                 this.onRendered(() => this.setSortable(sortable));
             }
-            this.toggleClass('sortable', sortable);
+        }
+
+        refreshSortable() {
+            if (this.hasClass('sortable')) {
+                wemjq(this.getHTMLElement()).sortable('refresh');
+            }
         }
 
         private setSortable(sortable: boolean) {
-            console.log('setSortable', sortable);
             if (sortable) {
                 wemjq(this.getHTMLElement()).sortable({
                     cursor: 'move',
@@ -45,6 +49,7 @@ module api.ui.selector.combobox {
             } else {
                 wemjq(this.getHtml()).sortable('destroy');
             }
+            this.toggleClass('sortable', sortable);
         }
 
 

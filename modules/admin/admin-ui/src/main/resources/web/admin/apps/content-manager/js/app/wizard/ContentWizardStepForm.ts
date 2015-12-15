@@ -21,6 +21,11 @@ module app.wizard {
             super();
         }
 
+        update(data: PropertyTree): wemQ.Promise<void> {
+            this.data = data;
+            return this.formView.update(data.getRoot(), true);
+        }
+
         layout(formContext: FormContext, data: PropertyTree, form: Form): wemQ.Promise<void> {
 
             this.formContext = formContext;
