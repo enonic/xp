@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
@@ -43,6 +44,17 @@ public class AdminApplicationDescriptor
     public PrincipalKeys getAllowedPrincipals()
     {
         return allowedPrincipals;
+    }
+
+    public boolean isAccessAllowed( final PrincipalKeys principalKeys )
+    {
+        return principalKeys.stream().
+            anyMatch( allowedPrincipals::contains );
+    }
+
+    public static ResourceKey toResourceKey( final DescriptorKey key )
+    {
+        return ResourceKey.from( key.getApplicationKey(), "admin/apps/" + key.getName() + "/" + key.getName() + ".xml" );
     }
 
     public static Builder create()
