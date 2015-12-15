@@ -532,9 +532,13 @@ module api.liveedit {
         }
 
         showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
-            if (this.getPageView().isDisabledContextMenu()) {
+            if (this.getPageView().isDisabledContextMenu() ) {
                 return;
             }
+            if(menuPosition && ItemViewContextMenuPosition.NONE == menuPosition) {
+                return;
+            }
+
             if (!this.contextMenu) {
                 this.contextMenu = new api.liveedit.ItemViewContextMenu(this.contextMenuTitle, this.contextMenuActions);
             }

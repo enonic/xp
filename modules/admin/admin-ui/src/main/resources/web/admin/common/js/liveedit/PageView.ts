@@ -151,8 +151,9 @@ module api.liveedit {
                     if (this.isTextEditMode()) {
                         this.setTextEditMode(false);
                     }
-                    itemView.select(null, null, event.isNew());
+                    itemView.select(null, ItemViewContextMenuPosition.NONE, event.isNew());
                 }
+                itemView.giveFocus();
 
             };
             this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => {
