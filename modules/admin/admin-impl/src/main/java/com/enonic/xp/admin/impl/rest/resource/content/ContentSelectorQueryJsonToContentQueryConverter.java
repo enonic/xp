@@ -76,7 +76,8 @@ public class ContentSelectorQueryJsonToContentQueryConverter
             from( this.contentQueryJson.getFrom() ).
             size( this.contentQueryJson.getSize() ).
             queryExpr( this.createQueryExpr( contentSelectorInput ) ).
-            addContentTypeNames( this.getContentTypeNames( contentSelectorInput ) );
+            addContentTypeNames( this.getContentTypeNamesFromConfig( contentSelectorInput ) ).
+            addContentTypeNames( this.contentQueryJson.getContentTypeNames() );
 
         return builder.build();
     }
@@ -181,7 +182,7 @@ public class ContentSelectorQueryJsonToContentQueryConverter
         return ValueExpr.string( "/" + ContentConstants.CONTENT_ROOT_NAME + resolvedPath );
     }
 
-    private ContentTypeNames getContentTypeNames( final Input contentSelectorInput )
+    private ContentTypeNames getContentTypeNamesFromConfig( final Input contentSelectorInput )
     {
         if ( contentSelectorInput == null )
         {
