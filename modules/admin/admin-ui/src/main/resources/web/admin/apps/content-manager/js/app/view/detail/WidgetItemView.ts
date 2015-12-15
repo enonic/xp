@@ -7,6 +7,7 @@ module app.view.detail {
     export class WidgetItemView extends api.dom.DivEl {
 
         public static debug = false;
+        private uid: string = "";
 
         constructor(className?: string) {
             super("widget-item-view" + (className ? " " + className : ""));
@@ -19,13 +20,14 @@ module app.view.detail {
             return wemQ<any>(null);
         }
 
-        private getFullWidgetUrl(url: string) {
-            return url + "?uid=" + Date.now().toString();
+        private getFullWidgetUrl(url: string, uid: string) {
+            return url + "?uid=" + uid;
         }
 
-        public setUrl(url: string): wemQ.Promise<void> {
+        public setUrl(url: string, keepId: boolean = false): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>(),
-                linkEl = new LinkEl(this.getFullWidgetUrl(url)),
+                uid = (!keepId || !this.uid) ? Date.now().toString() : this.uid,
+                linkEl = new LinkEl(this.getFullWidgetUrl(url, uid)),
                 el = this.getEl(),
                 onLinkLoaded = ((event: UIEvent) => {
                     var mainContainer = wemjq(event.target["import"]).find("div")[0];
@@ -36,6 +38,7 @@ module app.view.detail {
                     deferred.resolve(null);
                 });
 
+            this.uid = uid;
             this.removeChildren();
 
             linkEl.onLoaded(onLinkLoaded);

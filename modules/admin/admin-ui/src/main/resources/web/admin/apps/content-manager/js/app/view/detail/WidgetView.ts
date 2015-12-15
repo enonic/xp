@@ -52,23 +52,27 @@ module app.view.detail {
             return api.rendering.UriHelper.getAdminUri(this.widget.getUrl(), path);
         }
 
+        private getFullUrl(url: string) {
+            return url + "/" + this.detailsPanel.getEl().getWidth();
+        }
+
         private isDetailsPanelVisible(): boolean {
             return this.detailsPanel.getHTMLElement().clientWidth > 0;
         }
 
-        private setContentForWidgetItemView(widgetItemView: WidgetItemView, content: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
+        private setContentForWidgetItemView(widgetItemView: WidgetItemView, content: ContentSummaryAndCompareStatus, force: boolean = false): wemQ.Promise<any> {
             if (!this.isUrlBased() || !this.isDetailsPanelVisible()) {
                 return wemQ.resolve(null);
             }
             this.url = this.getWidgetUrl(content);
-            return widgetItemView.setUrl(this.url);
+            return widgetItemView.setUrl(this.getFullUrl(this.url), force);
         }
 
         public setContent(content: ContentSummaryAndCompareStatus, force: boolean = false): wemQ.Promise<any> {
             var promises = [];
             this.widgetItemViews.forEach((widgetItemView: WidgetItemView) => {
                 if (this.isUrlBased() && (force || this.url !== this.getWidgetUrl(content))) {
-                    promises.push(this.setContentForWidgetItemView(widgetItemView, content));
+                    promises.push(this.setContentForWidgetItemView(widgetItemView, content, force));
                 }
             });
             this.containerWidth = this.detailsPanel.getEl().getWidth();
