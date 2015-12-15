@@ -802,7 +802,6 @@ public final class ContentResource
             ContentSelectorQueryJsonToContentQueryConverter.create().
                 contentQueryJson( contentQueryJson ).
                 contentService( this.contentService ).
-                contentTypeService( this.contentTypeService ).
                 relationshipTypeService( this.relationshipTypeService ).
                 build();
 

@@ -1,6 +1,10 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import org.junit.Before;
@@ -15,19 +19,12 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.FieldSet;
-import com.enonic.xp.form.FormItem;
-import com.enonic.xp.form.Input;
-import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeConfig;
-import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
-import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
@@ -41,14 +38,11 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
 
     private RelationshipTypeService relationshipTypeService;
 
-    private ContentTypeService contentTypeService;
-
     private final String currentTime = "2013-08-23T12:55:09.162Z";
 
     @Before
     public void setUp()
     {
-        contentTypeService = Mockito.mock( ContentTypeService.class );
         contentService = Mockito.mock( ContentService.class );
         relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
     }
@@ -56,28 +50,24 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
     @Test
     public void testSelectorQueryWithFewAllowPaths()
     {
-        final InputTypeConfig config = InputTypeConfig.create().
-            property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
-            property( InputTypeProperty.create( "allowContentType", "myApplication:comment" ).build() ).
-            property( InputTypeProperty.create( "allowPath", "*" ).build() ).
-            property( InputTypeProperty.create( "allowPath", "/path/to/parent" ).build() ).
-            build();
 
-        final ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
-
-        final Content content = createContent( "content-id", "my-content", contentType.getName() );
-
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
-            thenReturn( contentType );
+        final Content content = createContent( "content-id", "my-content", ContentTypeName.folder() );
 
         Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).
             thenReturn( content );
 
-        ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName" );
+        final List<String> contentTypeNames = new ArrayList();
+        contentTypeNames.add( "myApplication:comment" );
+
+        final List<String> allowPaths = new ArrayList();
+        allowPaths.add( "*" );
+        allowPaths.add( "/path/to/parent" );
+
+        ContentSelectorQueryJson contentQueryJson =
+            new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName", contentTypeNames, allowPaths, null );
         ContentSelectorQueryJsonToContentQueryConverter processor = ContentSelectorQueryJsonToContentQueryConverter.create().
             contentQueryJson( contentQueryJson ).
             contentService( contentService ).
-            contentTypeService( contentTypeService ).
             relationshipTypeService( relationshipTypeService ).
             build();
 
@@ -92,22 +82,14 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
     @Test
     public void testPathsWithSiteResolved()
     {
-        final InputTypeConfig config = InputTypeConfig.create().
-            property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
-            property( InputTypeProperty.create( "allowContentType", "myApplication:comment" ).build() ).
-            property( InputTypeProperty.create( "allowPath", "${site}/path1" ).build() ).
-            property( InputTypeProperty.create( "allowPath", "${site}/path2/path3" ).build() ).
-            property( InputTypeProperty.create( "allowPath", "parent-path/child-path" ).build() ).
-            build();
-
-        final ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
-
-        final Content content = createContent( "content-id", "my-content", contentType.getName() );
+        final Content content = createContent( "content-id", "my-content", ContentTypeName.folder() );
 
         final Site site = createSite( "site-id", "my-site" );
 
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
-            thenReturn( contentType );
+        final List<String> allowPaths = new ArrayList();
+        allowPaths.add( "${site}/path1" );
+        allowPaths.add( "${site}/path2/path3" );
+        allowPaths.add( "parent-path/child-path" );
 
         Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).
             thenReturn( content );
@@ -115,11 +97,11 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
         Mockito.when( contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
             thenReturn( site );
 
-        ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName" );
+        ContentSelectorQueryJson contentQueryJson =
+            new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName", Collections.emptyList(), allowPaths, null );
         ContentSelectorQueryJsonToContentQueryConverter processor = ContentSelectorQueryJsonToContentQueryConverter.create().
             contentQueryJson( contentQueryJson ).
             contentService( contentService ).
-            contentTypeService( contentTypeService ).
             relationshipTypeService( relationshipTypeService ).
             build();
 
@@ -127,27 +109,48 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
 
         assertEquals( 0, contentQuery.getFrom() );
         assertEquals( 100, contentQuery.getSize() );
-        assertEquals( ContentTypeNames.from( "myApplication:comment" ), contentQuery.getContentTypes() );
         assertEquals(
             "((_path LIKE '/content/my-site/path1*' OR _path LIKE '/content/my-site/path2/path3*') OR _path LIKE '/content/parent-path/child-path*')",
             contentQuery.getQueryExpr().toString() );
     }
 
+    @Test
+    public void testPathWithAllowTypePassedFromJson()
+    {
+        final Content content = createContent( "content-id", "my-content", ContentTypeName.shortcut() );
+
+        final List<String> allowPaths = new ArrayList();
+        allowPaths.add( "parent-path/child-path" );
+
+        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).
+            thenReturn( content );
+
+        final List<String> allowTypesFromJson = Arrays.asList( "myApplication:type1", "myApplication:type2", "myApplication:type2" );
+
+        ContentSelectorQueryJson contentQueryJson =
+            new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName", allowTypesFromJson, allowPaths, null );
+        ContentSelectorQueryJsonToContentQueryConverter processor = ContentSelectorQueryJsonToContentQueryConverter.create().
+            contentQueryJson( contentQueryJson ).
+            contentService( contentService ).
+            relationshipTypeService( relationshipTypeService ).
+            build();
+
+        final ContentQuery contentQuery = processor.createQuery();
+
+        assertEquals( 0, contentQuery.getFrom() );
+        assertEquals( 100, contentQuery.getSize() );
+        assertEquals( ContentTypeNames.from( "myApplication:type1", "myApplication:type2", "myApplication:type2" ),
+                      contentQuery.getContentTypes() );
+        assertEquals( "_path LIKE '/content/parent-path/child-path*'", contentQuery.getQueryExpr().toString() );
+    }
+
     @Test(expected = RuntimeException.class)
     public void testNullSiteResolved()
     {
-        final InputTypeConfig config = InputTypeConfig.create().
-            property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
-            property( InputTypeProperty.create( "allowContentType", "myApplication:comment" ).build() ).
-            property( InputTypeProperty.create( "allowPath", "${site}/*" ).build() ).
-            build();
+        final Content content = createContent( "content-id", "my-content", ContentTypeName.shortcut() );
 
-        final ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
-
-        final Content content = createContent( "content-id", "my-content", contentType.getName() );
-
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
-            thenReturn( contentType );
+        final List<String> allowPaths = new ArrayList();
+        allowPaths.add( "${site}/*" );
 
         Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).
             thenReturn( content );
@@ -155,11 +158,11 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
         Mockito.when( contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
             thenReturn( null );
 
-        ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName" );
+        ContentSelectorQueryJson contentQueryJson =
+            new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName", Collections.emptyList(), allowPaths, null );
         ContentSelectorQueryJsonToContentQueryConverter processor = ContentSelectorQueryJsonToContentQueryConverter.create().
             contentQueryJson( contentQueryJson ).
             contentService( contentService ).
-            contentTypeService( contentTypeService ).
             relationshipTypeService( relationshipTypeService ).
             build();
 
@@ -169,102 +172,24 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
     @Test
     public void testQueryWithSearchAndNoPaths()
     {
-        final InputTypeConfig config = InputTypeConfig.create().
-            property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
-            property( InputTypeProperty.create( "allowContentType", "myApplication:comment" ).build() ).
-            build();
-
-        final ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
-
-        final Content content = createContent( "content-id", "my-content", contentType.getName() );
-
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
-            thenReturn( contentType );
+        final Content content = createContent( "content-id", "my-content", ContentTypeName.media() );
 
         Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).
             thenReturn( content );
 
         ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson(
             "(fulltext('displayName^5,_name^3,_alltext', 'check', 'AND') OR ngram('displayName^5,_name^3,_alltext', 'check', 'AND')) " +
-                "ORDER BY _modifiedTime DESC", 0, 100, "summary", "contentId", "inputName" );
+                "ORDER BY _modifiedTime DESC", 0, 100, "summary", "contentId", "inputName", Collections.emptyList(),
+            Collections.emptyList(), null );
         ContentSelectorQueryJsonToContentQueryConverter processor = getProcessor( contentQueryJson );
 
         final ContentQuery contentQuery = processor.createQuery();
 
         assertEquals( 0, contentQuery.getFrom() );
         assertEquals( 100, contentQuery.getSize() );
-        assertEquals( ContentTypeNames.from( "myApplication:comment" ), contentQuery.getContentTypes() );
         assertEquals(
             "(fulltext('displayName^5,_name^3,_alltext', 'check', 'AND') OR ngram('displayName^5,_name^3,_alltext', 'check', 'AND')) ORDER BY _modifiedtime DESC",
             contentQuery.getQueryExpr().toString() );
-    }
-
-    @Test
-    public void testQueryWithSearch()
-    {
-        final InputTypeConfig config = InputTypeConfig.create().
-            property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
-            property( InputTypeProperty.create( "allowContentType", "myApplication:comment" ).build() ).
-            property( InputTypeProperty.create( "allowPath", "/*" ).build() ).
-            build();
-
-        final ContentType contentType = createContentTypeWithSelectorInput( "inputName", config );
-
-        final Content content = createContent( "content-id", "my-content", contentType.getName() );
-
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
-            thenReturn( contentType );
-
-        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( content );
-
-        ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson(
-            "(fulltext('displayName^5,_name^3,_alltext', 'check', 'AND') OR ngram('displayName^5,_name^3,_alltext', 'check', 'AND')) " +
-                "ORDER BY _modifiedTime DESC", 0, 100, "summary", "contentId", "inputName" );
-        ContentSelectorQueryJsonToContentQueryConverter processor = getProcessor( contentQueryJson );
-
-        final ContentQuery contentQuery = processor.createQuery();
-
-        assertEquals( 0, contentQuery.getFrom() );
-        assertEquals( 100, contentQuery.getSize() );
-        assertEquals( ContentTypeNames.from( "myApplication:comment" ), contentQuery.getContentTypes() );
-        assertEquals( "(_path LIKE '/content/*' AND (fulltext('displayName^5,_name^3,_alltext', 'check', 'AND') " +
-                          "OR ngram('displayName^5,_name^3,_alltext', 'check', 'AND'))) ORDER BY _modifiedtime DESC",
-                      contentQuery.getQueryExpr().toString() );
-    }
-
-    @Test
-    public void testQueryForImageSelectorInput()
-    {
-        final InputTypeConfig config = InputTypeConfig.create().
-            property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
-            property( InputTypeProperty.create( "allowContentType", "myApplication:comment" ).build() ).
-            property( InputTypeProperty.create( "allowPath", "/*" ).build() ).
-            build();
-
-        final ContentType contentType = createContentTypeWithImageSelectorInput( "inputName", config );
-
-        final Content content = createContent( "content-id", "my-content", contentType.getName() );
-
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
-            thenReturn( contentType );
-
-        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( content );
-
-        ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson(
-            "(fulltext('displayName^5,_name^3,_alltext', 'check', 'AND') OR ngram('displayName^5,_name^3,_alltext', 'check', 'AND')) " +
-                "ORDER BY _modifiedTime DESC", 0, 100, "summary", "contentId", "inputName" );
-        ContentSelectorQueryJsonToContentQueryConverter processor = getProcessor( contentQueryJson );
-
-        final ContentQuery contentQuery = processor.createQuery();
-
-        assertEquals( 0, contentQuery.getFrom() );
-        assertEquals( 100, contentQuery.getSize() );
-        assertEquals( ContentTypeNames.from( "myApplication:comment" ), contentQuery.getContentTypes() );
-        assertEquals( "(_path LIKE '/content/*' AND (fulltext('displayName^5,_name^3,_alltext', 'check', 'AND') " +
-                          "OR ngram('displayName^5,_name^3,_alltext', 'check', 'AND'))) ORDER BY _modifiedtime DESC",
-                      contentQuery.getQueryExpr().toString() );
     }
 
     private ContentSelectorQueryJsonToContentQueryConverter getProcessor( final ContentSelectorQueryJson json )
@@ -272,58 +197,77 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
         return ContentSelectorQueryJsonToContentQueryConverter.create().
             contentQueryJson( json ).
             contentService( contentService ).
-            contentTypeService( contentTypeService ).
             relationshipTypeService( relationshipTypeService ).
             build();
     }
 
-    private ContentType createContentTypeWithSelectorInput( final String inputName, final InputTypeConfig inputTypeConfig,
-                                                            boolean addBasicFieldSet, boolean useImageSelectorInput )
+    @Test
+    public void testQueryWithSearch()
     {
+        final Content content = createContent( "content-id", "my-content", ContentTypeName.shortcut() );
 
-        final FormItem formItem =
-            createBasicFieldSetWithSelectorInput( inputName, inputTypeConfig, addBasicFieldSet, useImageSelectorInput );
+        final List<String> allowPaths = new ArrayList();
+        allowPaths.add( "/*" );
 
-        return ContentType.create().
-            superType( ContentTypeName.structured() ).
-            displayName( "My type" ).
-            name( "myApplication:my-content-type" ).
-            icon( Icon.from( new byte[]{123}, "image/gif", Instant.now() ) ).
-            addFormItem( formItem ).
+        final List<String> contentTypeNames = new ArrayList();
+        contentTypeNames.add( "myApplication:comment" );
+
+        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).
+            thenReturn( content );
+
+        ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson(
+            "(fulltext('displayName^5,_name^3,_alltext', 'check', 'AND') OR ngram('displayName^5,_name^3,_alltext', 'check', 'AND')) " +
+                "ORDER BY _modifiedTime DESC", 0, 100, "summary", "contentId", "inputName", contentTypeNames, allowPaths, null );
+        ContentSelectorQueryJsonToContentQueryConverter processor = getProcessor( contentQueryJson );
+
+        final ContentQuery contentQuery = processor.createQuery();
+
+        assertEquals( 0, contentQuery.getFrom() );
+        assertEquals( 100, contentQuery.getSize() );
+        assertEquals( ContentTypeNames.from( "myApplication:comment" ), contentQuery.getContentTypes() );
+        assertEquals( "(_path LIKE '/content/*' AND (fulltext('displayName^5,_name^3,_alltext', 'check', 'AND') " +
+                          "OR ngram('displayName^5,_name^3,_alltext', 'check', 'AND'))) ORDER BY _modifiedtime DESC",
+                      contentQuery.getQueryExpr().toString() );
+    }
+
+    @Test
+    public void testRelationshipTypesFetched()
+    {
+        final InputTypeConfig config = InputTypeConfig.create().
+            property( InputTypeProperty.create( "relationship", "system:reference" ).build() ).
+            property( InputTypeProperty.create( "allowContentType", "myApplication:comment" ).build() ).
+            property( InputTypeProperty.create( "allowPath", "/*" ).build() ).
             build();
-    }
 
-    private ContentType createContentTypeWithSelectorInput( final String inputName, final InputTypeConfig inputTypeConfig )
-    {
-        return this.createContentTypeWithSelectorInput( inputName, inputTypeConfig, true, false );
-    }
-
-    private ContentType createContentTypeWithImageSelectorInput( final String inputName, final InputTypeConfig inputTypeConfig )
-    {
-        return this.createContentTypeWithSelectorInput( inputName, inputTypeConfig, false, true );
-    }
-
-    private FormItem createBasicFieldSetWithSelectorInput( final String inputName, final InputTypeConfig inputTypeConfig,
-                                                           boolean addBasicFieldSet, boolean useImageSelectorInput )
-    {
-
-        final FormItem inputFormItem = Input.create().
-            name( inputName ).
-            label( "input" ).
-            inputType( useImageSelectorInput ? InputTypeName.IMAGE_SELECTOR : InputTypeName.CONTENT_SELECTOR ).
-            inputTypeConfig( inputTypeConfig ).
+        final RelationshipType relationshipType = RelationshipType.create().
+            addAllowedToType( ContentTypeName.media() ).
+            addAllowedToType( ContentTypeName.dataMedia() ).
             build();
 
-        if ( addBasicFieldSet )
-        {
-            return FieldSet.create().
-                label( "basic fieldSet" ).
-                name( "basic" ).
-                addFormItem( inputFormItem ).
-                build();
-        }
+        Mockito.when( this.relationshipTypeService.getByName( Mockito.any() ) ).thenReturn( relationshipType );
 
-        return inputFormItem;
+        final Content content = createContent( "content-id", "my-content", ContentTypeName.shortcut() );
+
+        final List<String> allowPaths = new ArrayList();
+        allowPaths.add( "/*" );
+
+        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).
+            thenReturn( content );
+
+        ContentSelectorQueryJson contentQueryJson = new ContentSelectorQueryJson(
+            "(fulltext('displayName^5,_name^3,_alltext', 'check', 'AND') OR ngram('displayName^5,_name^3,_alltext', 'check', 'AND')) " +
+                "ORDER BY _modifiedTime DESC", 0, 100, "summary", "contentId", "inputName", Collections.emptyList(), allowPaths,
+            "relationship-type" );
+        ContentSelectorQueryJsonToContentQueryConverter processor = getProcessor( contentQueryJson );
+
+        final ContentQuery contentQuery = processor.createQuery();
+
+        assertEquals( 0, contentQuery.getFrom() );
+        assertEquals( 100, contentQuery.getSize() );
+        assertEquals( relationshipType.getAllowedToTypes(), contentQuery.getContentTypes() );
+        assertEquals( "(_path LIKE '/content/*' AND (fulltext('displayName^5,_name^3,_alltext', 'check', 'AND') " +
+                          "OR ngram('displayName^5,_name^3,_alltext', 'check', 'AND'))) ORDER BY _modifiedtime DESC",
+                      contentQuery.getQueryExpr().toString() );
     }
 
     private Content createContent( final String id, final String name, final ContentTypeName contentTypeName )

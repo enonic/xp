@@ -32,6 +32,12 @@ module api.content {
 
         private inputName: string;
 
+        private contentTypeNames: string[] = [];
+
+        private allowedContentPaths: string[] = [];
+
+        private relationshipType: string;
+
         constructor() {
             super();
             super.setMethod("POST");
@@ -69,6 +75,18 @@ module api.content {
             return this.size;
         }
 
+        setContentTypeNames(contentTypeNames: string[]) {
+            this.contentTypeNames = contentTypeNames
+        }
+
+        setAllowedContentPaths(allowedContentPaths: string[]) {
+            this.allowedContentPaths = allowedContentPaths;
+        }
+
+        setRelationshipType(relationshipType: string) {
+            this.relationshipType = relationshipType;
+        }
+
         setQueryExpr(searchString: string) {
 
             var fulltextExpression: Expression = new api.query.FulltextSearchExpressionBuilder().
@@ -99,7 +117,10 @@ module api.content {
                 size: this.getSize(),
                 expand: this.expandAsString(),
                 contentId: this.getId().toString(),
-                inputName: this.getInputName()
+                inputName: this.getInputName(),
+                contentTypeNames: this.contentTypeNames,
+                allowedContentPaths: this.allowedContentPaths,
+                relationshipType: this.relationshipType
             };
         }
 

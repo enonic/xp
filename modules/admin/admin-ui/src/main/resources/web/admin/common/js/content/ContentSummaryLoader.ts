@@ -15,12 +15,8 @@ module api.content {
 
         private order: OrderExpr[];
 
-        constructor(allowedContentTypes?: string[]) {
+        constructor() {
             this.contentSummaryRequest = new ContentSummaryRequest();
-
-            if (!!allowedContentTypes) {
-                this.setAllowedContentTypes(allowedContentTypes);
-            }
 
             // Setting default order
             this.order = ContentSummaryLoader.ORDER_BY_MODIFIED_TIME_DESC;
