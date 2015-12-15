@@ -1,4 +1,4 @@
-module api.content {
+module api.content.event {
 
     export class BatchContentServerEvent extends api.event.Event {
 

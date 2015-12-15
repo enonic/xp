@@ -13,6 +13,8 @@ module app.wizard {
 
         private content: Content;
         private model: ContentSettingsModel;
+        private modelChangeListener: (event: api.PropertyChangedEvent) => void;
+        private updateUnchangedOnly: boolean = false;
 
         private localeCombo: LocaleComboBox;
         private ownerCombo: PrincipalComboBox;
@@ -20,13 +22,33 @@ module app.wizard {
         constructor() {
             super("settings-wizard-step-form");
 
-            this.localeCombo = new LocaleComboBox(1);
+            this.modelChangeListener = (event: api.PropertyChangedEvent) => {
+                var value = event.getNewValue();
+                switch (event.getPropertyName()) {
+                case ContentSettingsModel.PROPERTY_LANG:
+                    if (!this.updateUnchangedOnly || !this.localeCombo.isDirty()) {
+                        this.localeCombo.setValue(value ? value.toString() : "");
+                    }
+                    break;
+                case ContentSettingsModel.PROPERTY_OWNER:
+                    if (!this.updateUnchangedOnly || !this.ownerCombo.isDirty()) {
+                        this.ownerCombo.setValue(value ? value.toString() : "");
+                    }
+                    break;
+                }
+            }
+        }
+
+        layout(content: api.content.Content) {
+            this.content = content;
+
+            this.localeCombo = new LocaleComboBox(1, content.getLanguage());
             var localeFormItem = new FormItemBuilder(this.localeCombo).
                 setLabel('Language').
                 build();
 
             var loader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
-            this.ownerCombo = new PrincipalComboBox(loader, 1);
+            this.ownerCombo = new PrincipalComboBox(loader, 1, content.getOwner() ? content.getOwner().toString() : undefined);
             var ownerFormItem = new FormItemBuilder(this.ownerCombo).
                 setLabel('Owner').
                 build();
@@ -45,21 +67,21 @@ module app.wizard {
             form.onBlur((event) => {
                 this.notifyBlurred(event);
             });
+
+            this.setModel(new ContentSettingsModel(content));
         }
 
-        layout(content: api.content.Content) {
+        update(content: api.content.Content, unchangedOnly?: boolean) {
+            this.updateUnchangedOnly = unchangedOnly;
 
-            this.content = content;
+            this.getModel().setOwner(content.getOwner()).setLanguage(content.getLanguage());
         }
 
-        setModel(model: ContentSettingsModel) {
+        private setModel(model: ContentSettingsModel) {
             api.util.assertNotNull(model, "Model can't be null");
 
-            if (model.getOwner()) {
-                this.ownerCombo.setIgnoreNextFocus().setValue(model.getOwner().toString());
-            }
-            if (model.getLanguage()) {
-                this.localeCombo.setIgnoreNextFocus().setValue(model.getLanguage())
+            if (this.model) {
+                model.unPropertyChanged(this.modelChangeListener);
             }
 
             // 2-way data binding
@@ -76,16 +98,7 @@ module app.wizard {
             this.localeCombo.onOptionSelected((event) => localeListener());
             this.localeCombo.onOptionDeselected((option) => localeListener());
 
-            model.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                switch (event.getPropertyName()) {
-                case ContentSettingsModel.PROPERTY_LANG:
-                    this.localeCombo.setValue(event.getNewValue());
-                    break;
-                case ContentSettingsModel.PROPERTY_OWNER:
-                    this.ownerCombo.setValue(event.getNewValue());
-                    break;
-                }
-            });
+            model.onPropertyChanged(this.modelChangeListener);
 
             this.model = model;
         }

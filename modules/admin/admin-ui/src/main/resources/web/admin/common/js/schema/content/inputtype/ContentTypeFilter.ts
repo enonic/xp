@@ -55,12 +55,8 @@ module api.schema.content.inputtype {
         }
 
         private onContentTypesLoaded(contentTypeArray: ContentTypeSummary[]): void {
-            var contentTypes = [];
-            this.getPropertyArray().forEach((property: Property) => {
-                contentTypes.push(property.getString());
-            });
 
-            this.combobox.getComboBox().setValues(contentTypes);
+            this.combobox.getComboBox().setValue(this.getValueFromPropertyArray(this.getPropertyArray()));
 
             this.setLayoutInProgress(false);
             this.combobox.unLoaded(this.onContentTypesLoaded);
@@ -72,7 +68,7 @@ module api.schema.content.inputtype {
             if (this.isLayoutInProgress()) {
                 return;
             }
-
+            this.ignorePropertyChange = true;
             var value = new Value(selectedOption.getOption().displayValue.getContentTypeName().toString(), ValueTypes.STRING);
             if (this.combobox.countSelected() == 1) { // overwrite initial value
                 this.getPropertyArray().set(0, value);
@@ -82,11 +78,14 @@ module api.schema.content.inputtype {
             }
 
             this.validate(false);
+            this.ignorePropertyChange = false;
         }
 
         private onContentTypeDeselected(option: SelectedOption<ContentTypeSummary>): void {
+            this.ignorePropertyChange = true;
             this.getPropertyArray().remove(option.getIndex());
             this.validate(false);
+            this.ignorePropertyChange = false;
         }
 
         layout(input: Input, propertyArray: PropertyArray): wemQ.Promise<void> {
@@ -95,6 +94,20 @@ module api.schema.content.inputtype {
             this.appendChild(this.combobox = this.createComboBox());
 
             return wemQ<void>(null);
+        }
+
+
+        update(propertyArray: api.data.PropertyArray, unchangedOnly: boolean): Q.Promise<void> {
+            var superPromise = super.update(propertyArray, unchangedOnly);
+
+            if (!unchangedOnly || !this.combobox.isDirty()) {
+                return superPromise.then(() => {
+
+                    return this.combobox.getLoader().load().then(this.onContentTypesLoaded);
+                });
+            } else {
+                return superPromise;
+            }
         }
 
         private getValues(): Value[] {

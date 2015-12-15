@@ -18,7 +18,7 @@ module api.ui.security.acl {
         ];
 
         private value: Access;
-        private valueChangedListeners: {(event: api.ui.ValueChangedEvent):void}[] = [];
+        private valueChangedListeners: {(event: api.ValueChangedEvent):void}[] = [];
 
         constructor() {
             super("access-selector");
@@ -43,7 +43,7 @@ module api.ui.security.acl {
             if (option) {
                 this.selectNavigationItem(AccessSelector.OPTIONS.indexOf(option));
                 if (!silent) {
-                    this.notifyValueChanged(new api.ui.ValueChangedEvent(Access[this.value], Access[value]));
+                    this.notifyValueChanged(new api.ValueChangedEvent(Access[this.value], Access[value]));
                 }
                 this.value = value;
             }
@@ -85,17 +85,17 @@ module api.ui.security.acl {
             super.showMenu();
         }
 
-        onValueChanged(listener: (event: api.ui.ValueChangedEvent)=>void) {
+        onValueChanged(listener: (event: api.ValueChangedEvent)=>void) {
             this.valueChangedListeners.push(listener);
         }
 
-        unValueChanged(listener: (event: api.ui.ValueChangedEvent)=>void) {
+        unValueChanged(listener: (event: api.ValueChangedEvent)=>void) {
             this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
                 return curr !== listener;
             })
         }
 
-        private notifyValueChanged(event: api.ui.ValueChangedEvent) {
+        private notifyValueChanged(event: api.ValueChangedEvent) {
             this.valueChangedListeners.forEach((listener) => {
                 listener(event);
             })

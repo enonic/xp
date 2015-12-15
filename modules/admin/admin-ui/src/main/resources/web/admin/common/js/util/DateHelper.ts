@@ -56,12 +56,13 @@ module api.util {
             var parsedHours: number = Number(value.substring(11, 13));
             var parsedMinutes: number = Number(value.substring(14, 16));
             var parsedSeconds: number = Number(value.substring(17, 19));
-            if(ignoreLocalTimezone)
+            if (ignoreLocalTimezone) {
                 return DateHelper.newDateTime(parsedYear, parsedMonth - 1, parsedDayOfMonth, parsedHours, parsedMinutes,
                     parsedSeconds);
-            else
+            } else {
                 return DateHelper.newUTCDateTime(parsedYear, parsedMonth - 1, parsedDayOfMonth, parsedHours, parsedMinutes,
                     parsedSeconds);
+            }
         }
 
         public static newUTCDate(year: number, month: number, date: number) {
@@ -100,10 +101,12 @@ module api.util {
         /**
          * Formats time part of passed date object. Returns string like 10:55:00
          * @param date
+         * @param includeSeconds
          * @returns {string}
          */
-        public static formatTime(date: Date): string {
-            return this.padNumber(date.getHours()) + ":" + this.padNumber(date.getMinutes()) + ":" + this.padNumber(date.getSeconds());
+        public static formatTime(date: Date, includeSeconds: boolean = true): string {
+            return this.padNumber(date.getHours()) + ":" + this.padNumber(date.getMinutes()) +
+                   (includeSeconds ? ":" + this.padNumber(date.getSeconds()) : "");
         }
 
         private static padNumber(num: number): string {
@@ -131,7 +134,7 @@ module api.util {
             return this.formatUTCDateTime(date) + "Z";
         }
 
-        public static parseDate(value: string, dateSeparator: string = "-"): Date {
+        public static parseDate(value: string, dateSeparator: string = "-", forceDaysBeOfTwoChars: boolean = false): Date {
             var dateStr = (value || '').trim();
             if (dateStr.length < 8 || dateStr.length > 10) {
                 return null;
@@ -140,6 +143,11 @@ module api.util {
             if (parts.length !== 3 || parts[0].length !== 4) {
                 return null;
             }
+
+            if (forceDaysBeOfTwoChars && parts[2].length != 2) {
+                return null;
+            }
+
             var parsedYear: number = Number(parts[0]);
             var parsedMonth: number = Number(parts[1]);
             var parsedDayOfMonth: number = Number(parts[2]);
@@ -200,7 +208,7 @@ module api.util {
             return date;
         }
 
-        private static parseLongTime(value: string, timeSeparator: string= ":", fractionSeparator: string = "."): LongTime {
+        private static parseLongTime(value: string, timeSeparator: string = ":", fractionSeparator: string = "."): LongTime {
             var timeStr = (value || '').trim();
             if (timeStr.length < 5 || timeStr.length > 12) {
                 return null;
@@ -246,7 +254,8 @@ module api.util {
          * @param fractionSeparator
          * @returns {*}
          */
-        static parseLongDateTime(value: string, dateTimeSeparator: string = "-", dateSeparator: string = "-", timeSeparator: string = ":", fractionSeparator: string = "."): Date {
+        static parseLongDateTime(value: string, dateTimeSeparator: string = "-", dateSeparator: string = "-", timeSeparator: string = ":",
+                                 fractionSeparator: string = "."): Date {
             var dateStr = (value || '').trim();
 
             var parts = dateStr.split(dateTimeSeparator);
