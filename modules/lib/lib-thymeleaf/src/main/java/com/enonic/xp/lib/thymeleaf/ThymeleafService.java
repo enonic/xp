@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.dialect.IDialect;
+import org.thymeleaf.standard.StandardDialect;
 import org.thymeleaf.templateresolver.TemplateResolver;
 
 import com.google.common.collect.Sets;
@@ -28,7 +29,7 @@ public final class ThymeleafService
 
         final Set<IDialect> dialects = Sets.newHashSet();
         dialects.add( new ExtensionDialectImpl() );
-        dialects.add( new StandardDialectImpl() );
+        dialects.add( new StandardDialect() );
 
         this.engine.setDialects( dialects );
 
