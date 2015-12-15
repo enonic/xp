@@ -548,7 +548,9 @@ module app.browse {
                 if (!parent.hasParent() ||
                     (child.getData() && parent.hasChildren()) ||
                     (child.getData() && !parent.hasChildren() && !child.getData().getContentSummary().hasChildren())) {
+                    var parentExpanded = parent.isExpanded();
                     parent.moveChild(child, index);
+                    parent.setExpanded(parentExpanded); // in case of a single child it forces its parent to stay expanded
                 }
 
                 child.clearViewers();

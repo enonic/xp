@@ -60,6 +60,36 @@ public class HtmlSanitizerImplTest
         assertHtml( "iframe", sanitized );
     }
 
+    @Test
+    public void testSanitizeHtmlTable()
+        throws Exception
+    {
+        final String html = readHtml( "table" );
+        final String sanitized = new HtmlSanitizerImpl().sanitizeHtml( html );
+
+        assertHtml( "table", sanitized );
+    }
+
+    @Test
+    public void testSanitizeHtmlBlockTags()
+        throws Exception
+    {
+        final String html = readHtml( "block" );
+        final String sanitized = new HtmlSanitizerImpl().sanitizeHtml( html );
+
+        assertHtml( "block", sanitized );
+    }
+
+    @Test
+    public void testSanitizeHtmlInlineTags()
+        throws Exception
+    {
+        final String html = readHtml( "inline" );
+        final String sanitized = new HtmlSanitizerImpl().sanitizeHtml( html );
+
+        assertHtml( "inline", sanitized );
+    }
+
     private void assertHtml( final String name, final String html )
         throws Exception
     {

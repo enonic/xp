@@ -76,11 +76,20 @@ module api.app.browse {
 
             let itemsToAdd = api.util.ArrayHelper.difference(items, this.items, doFilter);
 
+            let itemsUpdated = api.util.ArrayHelper.difference(items, this.items, (valueLeft: BrowseItem<M>, valueRight: BrowseItem<M>) => {
+                return !doFilter(valueLeft, valueRight);
+            });
+
             itemsToRemove.forEach((item: BrowseItem<M>) => {
                 this.removeItem(item);
             });
 
             itemsToAdd.forEach((item: BrowseItem<M>) => {
+                this.addItem(item);
+            });
+
+            itemsUpdated.forEach((item: BrowseItem<M>) => {
+                // addItem() will update the item, if there is a difference between them
                 this.addItem(item);
             });
 

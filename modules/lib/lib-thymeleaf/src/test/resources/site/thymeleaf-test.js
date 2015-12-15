@@ -53,6 +53,23 @@ exports.testDate = function () {
     assertHtmlEquals('view/date-result.html', result);
 };
 
+exports.testJsExec = function () {
+    var view = resolve('view/jsexec.html');
+    var result = thymeleaf.render(view, {
+        func1: function () {
+            return "Hello";
+        },
+        func2: function (arg1) {
+            return "Hello " + arg1;
+        },
+        func3: function (arg1, arg2) {
+            return "Hello " + arg1 + " and " + arg2;
+        }
+    });
+
+    assertHtmlEquals('view/jsexec-result.html', result);
+};
+
 exports.testExamples = function () {
     testInstance.runScript('/site/lib/xp/examples/thymeleaf/render.js')
 };

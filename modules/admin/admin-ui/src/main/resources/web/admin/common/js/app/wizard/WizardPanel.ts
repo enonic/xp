@@ -32,8 +32,6 @@ module api.app.wizard {
 
         private mainToolbar: api.ui.toolbar.Toolbar;
 
-        private stepToolbar: api.ui.toolbar.Toolbar;
-
         protected actions: WizardActions<EQUITABLE>;
 
         private header: WizardHeader;
@@ -57,7 +55,7 @@ module api.app.wizard {
 
         private lastFocusedElement: JQuery;
 
-        private stepNavigatorAndToolbarContainer: api.dom.DivEl;
+        private stepNavigatorAndToolbarContainer: WizardStepNavigatorAndToolbar;
 
         private splitPanel: api.ui.panel.SplitPanel;
 
@@ -83,7 +81,7 @@ module api.app.wizard {
             this.persistedItem = params.persistedItem;
             this.header = params.header;
             this.mainToolbar = params.mainToolbar;
-            this.stepToolbar = params.stepToolbar;
+            params.stepToolbar;
             this.actions = params.actions;
 
             this.validityManager.setHeader(this.header);
@@ -114,12 +112,12 @@ module api.app.wizard {
             headerAndNavigatorContainer.appendChild(this.header);
 
             var container = new api.dom.DivEl("test-container");
-            this.stepNavigatorAndToolbarContainer = new api.dom.DivEl("wizard-step-navigator-and-toolbar");
+            this.stepNavigatorAndToolbarContainer = new WizardStepNavigatorAndToolbar("wizard-step-navigator-and-toolbar");
             this.stepNavigator = new WizardStepNavigator();
-            if (this.stepToolbar) {
-                this.stepNavigatorAndToolbarContainer.appendChild(this.stepToolbar);
+            if (params.stepToolbar) {
+                this.stepNavigatorAndToolbarContainer.setStepToolbar(params.stepToolbar);
             }
-            this.stepNavigatorAndToolbarContainer.appendChild(this.stepNavigator);
+            this.stepNavigatorAndToolbarContainer.setStepNavigator(this.stepNavigator);
             headerAndNavigatorContainer.appendChild(this.stepNavigatorAndToolbarContainer);
 
             this.stepsPanel = new WizardStepsPanel(this.stepNavigator, this.formPanel);
@@ -132,6 +130,8 @@ module api.app.wizard {
                 if (this.isVisible()) {
                     this.updateStickyToolbar();
                     this.stepsPanel.setScrollOffset(item.getElement().getEl().getHeight());
+
+                    this.stepNavigatorAndToolbarContainer.checkAndMinimize();
                 }
             });
             this.formPanel.appendChildren(headerAndNavigatorContainer, this.stepsPanel);

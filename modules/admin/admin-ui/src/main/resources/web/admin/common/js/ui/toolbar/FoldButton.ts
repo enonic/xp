@@ -11,12 +11,12 @@ module api.ui.toolbar {
 
             this.addClass("fold-button");
 
-            this.span = new api.dom.SpanEl();
-            this.span.setHtml("More");
-            this.appendChild(this.span);
-
             this.dropdown = new api.dom.DivEl("dropdown", api.StyleHelper.COMMON_PREFIX);
             this.appendChild(this.dropdown);
+
+            this.span = new api.dom.SpanEl('fold-label');
+            this.span.setHtml("More");
+            this.appendChild(this.span);
         }
 
         push(element: api.dom.Element, width: number) {
@@ -33,6 +33,10 @@ module api.ui.toolbar {
 
         setLabel(label: string) {
             this.span.setHtml(label);
+        }
+
+        getDropdown(): api.dom.DivEl {
+            return this.dropdown;
         }
 
         getNextButtonWidth(): number {
