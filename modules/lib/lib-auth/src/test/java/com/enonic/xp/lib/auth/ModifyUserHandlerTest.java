@@ -22,6 +22,7 @@ public class ModifyUserHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -37,7 +38,7 @@ public class ModifyUserHandlerTest
         Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateUserParams) invocationOnMock.getArguments()[0] ) );
 
-        runScript( "/site/lib/xp/examples/modifyUser.js" );
+        runScript( "/site/lib/xp/examples/auth/modifyUser.js" );
     }
 
     @Test

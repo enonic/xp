@@ -29,12 +29,15 @@ final class ApplicationImpl
 
     private final ApplicationUrlResolver urlResolver;
 
-    public ApplicationImpl( final Bundle bundle, final ApplicationUrlResolver urlResolver )
+    private final ClassLoader classLoader;
+
+    public ApplicationImpl( final Bundle bundle, final ApplicationUrlResolver urlResolver, final ClassLoader classLoader )
     {
         this.bundle = bundle;
         this.key = ApplicationKey.from( bundle );
         this.systemVersion = ApplicationHelper.parseVersionRange( getHeader( X_SYSTEM_VERSION, null ) );
         this.urlResolver = urlResolver;
+        this.classLoader = classLoader;
     }
 
     @Override
@@ -100,7 +103,7 @@ final class ApplicationImpl
     @Override
     public ClassLoader getClassLoader()
     {
-        return new BundleClassLoader( this.bundle );
+        return this.classLoader;
     }
 
     @Override

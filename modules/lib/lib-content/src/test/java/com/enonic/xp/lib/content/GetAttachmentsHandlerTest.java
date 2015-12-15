@@ -17,7 +17,7 @@ public class GetAttachmentsHandlerTest
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
-        runScript( "/site/lib/xp/examples/getAttachments.js" );
+        runScript( "/site/lib/xp/examples/content/getAttachments.js" );
     }
 
     @Test

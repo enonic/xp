@@ -19,6 +19,7 @@ public class GetMultipartScriptTest
 
     @Override
     protected void initialize()
+        throws Exception
     {
         super.initialize();
 
@@ -118,27 +119,27 @@ public class GetMultipartScriptTest
     public void testExample_getMultipartForm()
     {
         createForm();
-        runScript( "/site/lib/xp/examples/getMultipartForm.js" );
+        runScript( "/site/lib/xp/examples/portal/getMultipartForm.js" );
     }
 
     @Test
     public void testExample_getMultipartItem()
     {
         createForm();
-        runScript( "/site/lib/xp/examples/getMultipartItem.js" );
+        runScript( "/site/lib/xp/examples/portal/getMultipartItem.js" );
     }
 
     @Test
     public void testExample_getMultipartStream()
     {
         createForm();
-        runScript( "/site/lib/xp/examples/getMultipartStream.js" );
+        runScript( "/site/lib/xp/examples/portal/getMultipartStream.js" );
     }
 
     @Test
     public void testExample_getMultipartText()
     {
         createTextForm();
-        runScript( "/site/lib/xp/examples/getMultipartText.js" );
+        runScript( "/site/lib/xp/examples/portal/getMultipartText.js" );
     }
 }

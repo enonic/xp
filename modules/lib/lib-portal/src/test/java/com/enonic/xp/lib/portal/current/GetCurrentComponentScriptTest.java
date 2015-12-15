@@ -31,6 +31,6 @@ public class GetCurrentComponentScriptTest
         final Component component = TestDataFixtures.newLayoutComponent();
         this.portalRequest.setComponent( component );
 
-        runScript( "/site/lib/xp/examples/getComponent.js" );
+        runScript( "/site/lib/xp/examples/portal/getComponent.js" );
     }
 }

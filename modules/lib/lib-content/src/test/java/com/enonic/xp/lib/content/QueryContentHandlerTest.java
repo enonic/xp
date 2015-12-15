@@ -23,7 +23,7 @@ public class QueryContentHandlerTest
     public void testExample()
     {
         setupQuery( 2 );
-        runScript( "/site/lib/xp/examples/query.js" );
+        runScript( "/site/lib/xp/examples/content/query.js" );
     }
 
     @Test

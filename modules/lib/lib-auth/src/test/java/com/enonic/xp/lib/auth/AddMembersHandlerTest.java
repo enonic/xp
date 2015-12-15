@@ -23,6 +23,7 @@ public class AddMembersHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -32,7 +33,7 @@ public class AddMembersHandlerTest
     @Test
     public void testExamples()
     {
-        runScript( "/site/lib/xp/examples/addMembers.js" );
+        runScript( "/site/lib/xp/examples/auth/addMembers.js" );
 
         Mockito.verify( this.securityService ).addRelationship( eq( PrincipalRelationship.from( ROLE ).to( USER ) ) );
         Mockito.verify( this.securityService ).addRelationship( eq( PrincipalRelationship.from( ROLE ).to( GROUP ) ) );

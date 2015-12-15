@@ -18,6 +18,6 @@ public class SetPermissionsHandlerTest
 
         Mockito.when( this.contentService.applyPermissions( Mockito.any() ) ).thenReturn( Futures.immediateFuture( 1 ) );
 
-        runScript( "/site/lib/xp/examples/setPermissions.js" );
+        runScript( "/site/lib/xp/examples/content/setPermissions.js" );
     }
 }

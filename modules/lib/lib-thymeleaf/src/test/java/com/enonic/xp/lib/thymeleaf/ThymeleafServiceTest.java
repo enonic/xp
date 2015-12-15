@@ -12,17 +12,18 @@ public class ThymeleafServiceTest
 
     @Override
     protected void initialize()
+        throws Exception
     {
         super.initialize();
         this.service = new ThymeleafService();
-        this.service.initialize( newBeanContext( ResourceKey.from( "myapplication:/site" ) ) );
+        this.service.initialize( newBeanContext( ResourceKey.from( "myapp:/site" ) ) );
     }
 
     @Test
     public void testProcess()
     {
         final ThymeleafProcessor processor = this.service.newProcessor();
-        processor.setView( ResourceKey.from( "myapplication:/site/view/test.html" ) );
+        processor.setView( ResourceKey.from( "myapp:/site/view/test.html" ) );
         processor.setModel( null );
         processor.process();
     }

@@ -31,6 +31,6 @@ public class GetCurrentContentScriptTest
         final Content content = TestDataFixtures.newExampleContent();
         this.portalRequest.setContent( content );
 
-        runScript( "/site/lib/xp/examples/getContent.js" );
+        runScript( "/site/lib/xp/examples/portal/getContent.js" );
     }
 }

@@ -10,7 +10,7 @@
 /**
  * This function generates a URL pointing to a static file.
  *
- * @example-ref examples/assetUrl.js
+ * @example-ref examples/portal/assetUrl.js
  *
  * @param {object} params Input parameters as JSON.
  * @param {string} params.path Path to the asset.
@@ -28,7 +28,7 @@ exports.assetUrl = function (params) {
 /**
  * This function generates a URL pointing to an image.
  *
- * @example-ref examples/imageUrl.js
+ * @example-ref examples/portal/imageUrl.js
  *
  * @param {object} params Input parameters as JSON.
  * @param {string} params.id ID of the image content.
@@ -51,7 +51,7 @@ exports.imageUrl = function (params) {
 /**
  * This function generates a URL pointing to a component.
  *
- * @example-ref examples/componentUrl.js
+ * @example-ref examples/portal/componentUrl.js
  *
  * @param {object} params Input parameters as JSON.
  * @param {string} [params.id] Id to the page.
@@ -70,7 +70,7 @@ exports.componentUrl = function (params) {
 /**
  * This function generates a URL pointing to an attachment.
  *
- * @example-ref examples/attachmentUrl.js
+ * @example-ref examples/portal/attachmentUrl.js
  *
  * @param {object} params Input parameters as JSON.
  * @param {string} [params.id] Id to the content holding the attachment.
@@ -91,7 +91,7 @@ exports.attachmentUrl = function (params) {
 /**
  * This function generates a URL pointing to a page.
  *
- * @example-ref examples/pageUrl.js
+ * @example-ref examples/portal/pageUrl.js
  *
  * @param {object} params Input parameters as JSON.
  * @param {string} [params.id] Id to the page. If id is set, then path is not used.
@@ -109,7 +109,7 @@ exports.pageUrl = function (params) {
 /**
  * This function generates a URL pointing to a service.
  *
- * @example-ref examples/serviceUrl.js
+ * @example-ref examples/portal/serviceUrl.js
  *
  * @param {object} params Input parameters as JSON.
  * @param {string} params.name Name of the service.
@@ -129,7 +129,7 @@ exports.serviceUrl = function (params) {
  *
  * When outputting processed HTML in Thymeleaf, use attribute `data-th-utext="${processedHtml}"`.
  *
- * @example-ref examples/processHtml.js
+ * @example-ref examples/portal/processHtml.js
  *
  * @param {object} params Input parameters as JSON.
  * @param {string} params.value Html value string to process.
@@ -146,7 +146,7 @@ exports.processHtml = function (params) {
  * This function returns the parent site of the content corresponding to the current execution context. It is meant to be
  * called from a page, layout or part controller.
  *
- * @example-ref examples/getSite.js
+ * @example-ref examples/portal/getSite.js
  *
  * @returns {object} The current site as JSON.
  */
@@ -159,7 +159,7 @@ exports.getSite = function () {
  * This function returns the site configuration for this app in the parent site of the content corresponding to the current
  * execution context. It is meant to be called from a page, layout or part controller.
  *
- * @example-ref examples/getSiteConfig.js
+ * @example-ref examples/portal/getSiteConfig.js
  *
  * @returns {object} The site configuration for current application as JSON.
  */
@@ -172,7 +172,7 @@ exports.getSiteConfig = function () {
  * This function returns the content corresponding to the current execution context. It is meant to be called from a page, layout or
  * part controller
  *
- * @example-ref examples/getContent.js
+ * @example-ref examples/portal/getContent.js
  *
  * @returns {object} The current content as JSON.
  */
@@ -185,7 +185,7 @@ exports.getContent = function () {
  * This function returns the component corresponding to the current execution context. It is meant to be called
  * from a layout or part controller.
  *
- * @example-ref examples/getComponent.js
+ * @example-ref examples/portal/getComponent.js
  *
  * @returns {object} The current component as JSON.
  */
@@ -197,7 +197,7 @@ exports.getComponent = function () {
 /**
  * This function returns a JSON containing multipart items. If not a multipart request, then this function returns `undefined`.
  *
- * @example-ref examples/getMultipartForm.js
+ * @example-ref examples/portal/getMultipartForm.js
  *
  * @returns {object} The multipart form items.
  */
@@ -209,7 +209,7 @@ exports.getMultipartForm = function () {
 /**
  * This function returns a JSON containing a named multipart item. If the item does not exists, it returns `undefined`.
  *
- * @example-ref examples/getMultipartItem.js
+ * @example-ref examples/portal/getMultipartItem.js
  *
  * @returns {object} The named multipart form item.
  */
@@ -221,7 +221,7 @@ exports.getMultipartItem = function (name) {
 /**
  * This function returns a data-stream for a named multipart item.
  *
- * @example-ref examples/getMultipartStream.js
+ * @example-ref examples/portal/getMultipartStream.js
  *
  * @returns {*} Stream of multipart item data.
  */
@@ -233,7 +233,7 @@ exports.getMultipartStream = function (name) {
 /**
  * This function returns the multipart item data as text.
  *
- * @example-ref examples/getMultipartText.js
+ * @example-ref examples/portal/getMultipartText.js
  *
  * @returns {string} Text for multipart item data.
  */

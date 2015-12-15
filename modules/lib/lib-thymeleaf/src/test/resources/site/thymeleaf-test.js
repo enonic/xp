@@ -1,9 +1,12 @@
 var thymeleaf = require('/lib/xp/thymeleaf');
 
-exports.renderTest = function () {
+function assertHtmlEquals(res, actual) {
+    testInstance.assertHtmlEquals(resolve(res), actual);
+}
 
+exports.testRender = function () {
     var view = resolve('view/test.html');
-    return thymeleaf.render(view, {
+    var result = thymeleaf.render(view, {
             fruits: [
                 {
                     name: 'Apple',
@@ -17,34 +20,39 @@ exports.renderTest = function () {
         }
     );
 
+    assertHtmlEquals('view/test-result.html', result);
 };
 
-exports.functionsTest = function () {
-
+exports.testFunctions = function () {
     var view = resolve('view/functions.html');
-    return thymeleaf.render(view, {});
+    var result = thymeleaf.render(view, {});
 
+    assertHtmlEquals('view/functions-result.html', result);
 };
 
-exports.inlineFragmentTest = function () {
-
+exports.testInlineFragment = function () {
     var view = resolve('fragment/inline-fragment.html');
-    return thymeleaf.render(view, {});
+    var result = thymeleaf.render(view, {});
 
+    assertHtmlEquals('fragment/inline-fragment-result.html', result);
 };
 
-exports.externalFragmentTest = function () {
-
+exports.testExternalFragment = function () {
     var view = resolve('fragment/external-fragment.html');
-    return thymeleaf.render(view, {});
+    var result = thymeleaf.render(view, {});
 
+    assertHtmlEquals('fragment/external-fragment-result.html', result);
 };
 
-exports.dateTest = function () {
-
+exports.testDate = function () {
     var view = resolve('view/date.html');
-    return thymeleaf.render(view, {
+    var result = thymeleaf.render(view, {
         date: new Date(Date.parse('1995-11-12T22:24:25'))
     });
 
+    assertHtmlEquals('view/date-result.html', result);
+};
+
+exports.testExamples = function () {
+    testInstance.runScript('/site/lib/xp/examples/thymeleaf/render.js')
 };

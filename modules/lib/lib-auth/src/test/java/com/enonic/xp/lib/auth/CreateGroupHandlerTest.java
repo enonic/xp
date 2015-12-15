@@ -13,6 +13,7 @@ public class CreateGroupHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -23,7 +24,7 @@ public class CreateGroupHandlerTest
     public void testExamples()
     {
         Mockito.when( securityService.createGroup( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestGroup() );
-        runScript( "/site/lib/xp/examples/createGroup.js" );
+        runScript( "/site/lib/xp/examples/auth/createGroup.js" );
     }
 
     @Test

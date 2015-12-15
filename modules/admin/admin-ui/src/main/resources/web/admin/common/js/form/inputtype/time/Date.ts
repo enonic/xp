@@ -36,13 +36,24 @@ module api.content.form.inputtype.time {
                     setMonth(date.getMonth());
             }
             var datePicker = datePickerBuilder.build();
+
             datePicker.onSelectedDateChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-                this.onValueChanged(property, event.getDate(), ValueTypes.LOCAL_DATE);
+                var value = new Value(event.getDate(), ValueTypes.LOCAL_DATE);
+                this.notifyOccurrenceValueChanged(datePicker, value);
             });
+
             return datePicker;
         }
 
         availableSizeChanged() {
+        }
+
+
+        updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly?: boolean) {
+            var datePicker = <api.ui.time.DatePicker> occurrence;
+            if (!unchangedOnly || !datePicker.isDirty()) {
+                datePicker.setSelectedDate(property.getLocalDate());
+            }
         }
 
         valueBreaksRequiredContract(value: Value): boolean {

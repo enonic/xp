@@ -23,7 +23,7 @@ public class CreateMediaHandlerTest
         Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
 
-        runScript( "/site/lib/xp/examples/createMedia.js" );
+        runScript( "/site/lib/xp/examples/content/createMedia.js" );
     }
 
     @Test

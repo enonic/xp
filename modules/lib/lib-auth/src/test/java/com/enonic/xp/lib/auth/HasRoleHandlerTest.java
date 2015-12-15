@@ -17,6 +17,7 @@ public class HasRoleHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.session = new SimpleSession( SessionKey.generate() );
@@ -31,7 +32,7 @@ public class HasRoleHandlerTest
 
         this.session.setAttribute( authInfo );
 
-        runScript( "/site/lib/xp/examples/hasRole.js" );
+        runScript( "/site/lib/xp/examples/auth/hasRole.js" );
     }
 
     @Test

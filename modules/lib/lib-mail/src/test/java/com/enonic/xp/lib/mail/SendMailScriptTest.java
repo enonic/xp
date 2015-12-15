@@ -33,6 +33,7 @@ public class SendMailScriptTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         final MailService mailService = message -> this.actualMessage = message;
@@ -42,7 +43,7 @@ public class SendMailScriptTest
     @Test
     public void testExample()
     {
-        runScript( "/site/lib/xp/examples/send.js" );
+        runScript( "/site/lib/xp/examples/mail/send.js" );
     }
 
     @Test
@@ -224,9 +225,8 @@ public class SendMailScriptTest
         return mimeMessage;
     }
 
-    public static ByteSource createByteSource( final String value )
+    public ByteSource createByteSource( final String value )
     {
         return ByteSource.wrap( value.getBytes() );
     }
-
 }

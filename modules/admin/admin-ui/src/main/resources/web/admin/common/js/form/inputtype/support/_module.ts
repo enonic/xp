@@ -5,4 +5,3 @@
 ///<reference path='BaseInputTypeManagingAdd.ts' />
 ///<reference path='BaseInputTypeSingleOccurrence.ts' />
 ///<reference path='NoInputTypeFoundView.ts' />
-///<reference path='ValueChangedEvent.ts' />

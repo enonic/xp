@@ -31,6 +31,6 @@ public class GetCurrentSiteConfigScriptTest
         final Site site = TestDataFixtures.newSite();
         this.portalRequest.setSite( site );
 
-        runScript( "/site/lib/xp/examples/getSiteConfig.js" );
+        runScript( "/site/lib/xp/examples/portal/getSiteConfig.js" );
     }
 }

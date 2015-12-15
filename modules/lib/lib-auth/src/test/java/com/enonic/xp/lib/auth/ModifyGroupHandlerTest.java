@@ -22,6 +22,7 @@ public class ModifyGroupHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -37,7 +38,7 @@ public class ModifyGroupHandlerTest
         Mockito.when( this.securityService.updateGroup( Mockito.isA( UpdateGroupParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateGroupParams) invocationOnMock.getArguments()[0] ) );
 
-        runScript( "/site/lib/xp/examples/modifyGroup.js" );
+        runScript( "/site/lib/xp/examples/auth/modifyGroup.js" );
     }
 
     @Test

@@ -16,6 +16,7 @@ public class FindPrincipalsHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -34,7 +35,7 @@ public class FindPrincipalsHandlerTest
 
         Mockito.when( securityService.query( Mockito.any() ) ).thenReturn( result );
 
-        runScript( "/site/lib/xp/examples/findPrincipals.js" );
+        runScript( "/site/lib/xp/examples/auth/findPrincipals.js" );
     }
 
     @Test

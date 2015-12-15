@@ -31,8 +31,10 @@ final class ApplicationFactory
             return null;
         }
 
-        final ApplicationUrlResolver urlResolver = createUrlResolver( bundle );
-        return new ApplicationImpl( bundle, urlResolver );
+        final ApplicationBuilder builder = new ApplicationBuilder();
+        builder.bundle( bundle );
+        builder.urlResolver( createUrlResolver( bundle ) );
+        return builder.build();
     }
 
     protected ApplicationUrlResolver createUrlResolver( final Bundle bundle )

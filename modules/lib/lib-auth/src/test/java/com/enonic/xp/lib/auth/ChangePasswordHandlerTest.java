@@ -23,6 +23,7 @@ public class ChangePasswordHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -40,7 +41,7 @@ public class ChangePasswordHandlerTest
 
         this.session.setAttribute( authInfo );
 
-        runScript( "/site/lib/xp/examples/changePassword.js" );
+        runScript( "/site/lib/xp/examples/auth/changePassword.js" );
         Mockito.verify( this.securityService ).setPassword( eq( authInfo.getUser().getKey() ), eq( "new-secret-password" ) );
     }
 

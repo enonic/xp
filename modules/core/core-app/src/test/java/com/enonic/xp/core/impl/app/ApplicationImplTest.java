@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 
 import static org.junit.Assert.*;
@@ -21,7 +22,7 @@ public class ApplicationImplTest
         final Bundle bundle = deployBundle();
 
         final ApplicationUrlResolver urlResolver = Mockito.mock( ApplicationUrlResolver.class );
-        final ApplicationImpl application = new ApplicationImpl( bundle, urlResolver );
+        final Application application = new ApplicationBuilder().bundle( bundle ).urlResolver( urlResolver ).build();
 
         assertEquals( "myapplication", application.getKey().toString() );
         assertEquals( "1.0.0", application.getVersion().toString() );

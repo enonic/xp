@@ -12,7 +12,7 @@ public class GeneratePasswordHandlerTest
     @Test
     public void testExamples()
     {
-        runScript( "/site/lib/xp/examples/generatePassword.js" );
+        runScript( "/site/lib/xp/examples/auth/generatePassword.js" );
     }
 
     @Test

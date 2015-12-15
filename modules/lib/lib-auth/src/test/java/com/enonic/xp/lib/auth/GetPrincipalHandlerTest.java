@@ -17,6 +17,7 @@ public class GetPrincipalHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -29,7 +30,7 @@ public class GetPrincipalHandlerTest
         Mockito.<Optional<? extends Principal>>when(
             securityService.getPrincipal( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn(
             Optional.of( TestDataFixtures.getTestUser() ) );
-        runScript( "/site/lib/xp/examples/getPrincipal.js" );
+        runScript( "/site/lib/xp/examples/auth/getPrincipal.js" );
     }
 
     @Test

@@ -1,8 +1,6 @@
 var assert = require('/lib/xp/assert.js');
 var mail = require('/lib/xp/mail.js');
 
-var TestClass = Java.type('com.enonic.xp.lib.mail.SendMailScriptTest');
-
 exports.simpleMail = function () {
 
     var result = mail.send({
@@ -108,11 +106,11 @@ exports.sendWithAttachments = function () {
             {
                 fileName: 'image.png',
                 mimeType: 'image/png',
-                data: TestClass.createByteSource('image data')
+                data: testInstance.createByteSource('image data')
             },
             {
                 fileName: 'text.txt',
-                data: TestClass.createByteSource('Some text')
+                data: testInstance.createByteSource('Some text')
             }
         ]
     });

@@ -17,7 +17,9 @@ module api.content.site.inputtype.siteconfigurator {
 
         private siteConfiguratorSelectedOptionsView: SiteConfiguratorSelectedOptionsView;
 
-        constructor(maxOccurrences: number, siteConfigProvider: SiteConfigProvider, formContext: api.content.form.ContentFormContext) {
+        constructor(maxOccurrences: number, siteConfigProvider: SiteConfigProvider,
+                    formContext: api.content.form.ContentFormContext, value?: string) {
+
             var filterObject = {
                 state: Application.STATE_STARTED
             };
@@ -31,6 +33,7 @@ module api.content.site.inputtype.siteconfigurator {
                 setLoader(new ApplicationLoader(500, filterObject)).
                 setSelectedOptionsView(this.siteConfiguratorSelectedOptionsView).
                 setOptionDisplayValueViewer(new ApplicationViewer()).
+                setValue(value).
                 setDelayedInputValueChangedHandling(500);
 
             super(builder);
@@ -50,6 +53,22 @@ module api.content.site.inputtype.siteconfigurator {
 
         unSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey, formView: FormView): void;}) {
             this.siteConfiguratorSelectedOptionsView.unSiteConfigFormDisplayed(listener);
+        }
+
+        onBeforeOptionCreated(listener: () => void) {
+            this.siteConfiguratorSelectedOptionsView.onBeforeOptionCreated(listener);
+        }
+
+        unBeforeOptionCreated(listener: () => void) {
+            this.siteConfiguratorSelectedOptionsView.unBeforeOptionCreated(listener);
+        }
+
+        onAfterOptionCreated(listener: () => void) {
+            this.siteConfiguratorSelectedOptionsView.onAfterOptionCreated(listener);
+        }
+
+        unAfterOptionCreated(listener: () => void) {
+            this.siteConfiguratorSelectedOptionsView.unAfterOptionCreated(listener);
         }
     }
 

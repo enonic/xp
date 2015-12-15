@@ -22,7 +22,7 @@ public class GetAttachmentStreamHandlerTest
     public void testExample()
     {
         mockAttachmentBinary();
-        runScript( "/site/lib/xp/examples/getAttachmentStream.js" );
+        runScript( "/site/lib/xp/examples/content/getAttachmentStream.js" );
     }
 
     private void mockAttachmentBinary()

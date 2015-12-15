@@ -16,6 +16,7 @@ public class GetUserHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.session = new SimpleSession( SessionKey.generate() );
@@ -30,7 +31,7 @@ public class GetUserHandlerTest
 
         this.session.setAttribute( authInfo );
 
-        runScript( "/site/lib/xp/examples/getUser.js" );
+        runScript( "/site/lib/xp/examples/auth/getUser.js" );
     }
 
     @Test

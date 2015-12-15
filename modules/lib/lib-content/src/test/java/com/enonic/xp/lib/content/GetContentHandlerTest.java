@@ -17,7 +17,7 @@ public class GetContentHandlerTest
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
-        runScript( "/site/lib/xp/examples/get.js" );
+        runScript( "/site/lib/xp/examples/content/get.js" );
     }
 
     @Test

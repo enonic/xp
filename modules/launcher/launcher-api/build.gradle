@@ -13,9 +13,3 @@ processResources {
         expand( [info: buildInfo] )
     }
 }
-
-jar {
-    manifest {
-        attributes( ['Implementation-Version': project.version] )
-    }
-}

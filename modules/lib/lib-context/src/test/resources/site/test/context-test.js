@@ -1,7 +1,7 @@
-var assert = require('/lib/xp/assert.js');
-var context = require('/lib/xp/context.js');
+var assert = require('/lib/xp/assert');
+var context = require('/lib/xp/context');
 
-exports.noChange = function () {
+exports.testNoChange = function () {
     var result = context.run({}, function () {
         return context.get();
     });
@@ -18,7 +18,7 @@ exports.noChange = function () {
     }, result);
 };
 
-exports.change = function () {
+exports.testChange = function () {
     var result = context.run({
         branch: 'mybranch',
         user: {
@@ -48,4 +48,13 @@ exports.change = function () {
             ]
         }
     }, result);
+};
+
+function runExample(name) {
+    testInstance.runScript('/site/lib/xp/examples/context/' + name + '.js');
+}
+
+exports.testExamples = function () {
+    runExample('get');
+    runExample('run');
 };

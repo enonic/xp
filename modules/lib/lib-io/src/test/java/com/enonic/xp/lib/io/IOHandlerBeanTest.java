@@ -17,6 +17,7 @@ public class IOHandlerBeanTest
 
     @Override
     protected void initialize()
+        throws Exception
     {
         super.initialize();
 

@@ -47,3 +47,17 @@ exports.testGetResource = function () {
     res = io.getResource('/unknown.txt');
     assert.assertEquals(false, res.exists());
 };
+
+function runExample(name) {
+    testInstance.runScript('/site/lib/xp/examples/io/' + name + '.js');
+}
+
+exports.testExamples = function () {
+    runExample('getMimeType');
+    runExample('getResource');
+    runExample('getSize');
+    runExample('newStream');
+    runExample('processLines');
+    runExample('readLines');
+    runExample('readText');
+};

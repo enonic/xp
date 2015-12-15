@@ -19,6 +19,7 @@ public class GetMembersHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -40,7 +41,7 @@ public class GetMembersHandlerTest
 
         Mockito.when( securityService.getPrincipals( principalKeys ) ).thenReturn( Principals.from( user1, user2 ) );
 
-        runScript( "/site/lib/xp/examples/getMembers.js" );
+        runScript( "/site/lib/xp/examples/auth/getMembers.js" );
     }
 
     @Test
