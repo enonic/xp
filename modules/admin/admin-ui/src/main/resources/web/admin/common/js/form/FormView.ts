@@ -25,6 +25,8 @@ module api.form {
 
         private formItemViews: FormItemView[] = [];
 
+        private formItemLayer: FormItemLayer;
+
         private formValidityChangedListeners: {(event: FormValidityChangedEvent):void}[] = [];
 
         private previousValidationRecording: ValidationRecording;
@@ -34,6 +36,8 @@ module api.form {
         private focusListeners: {(event: FocusEvent):void}[] = [];
 
         private blurListeners: {(event: FocusEvent):void}[] = [];
+
+        public static debug: boolean = false;
 
         /**
          * @param context the form context.
@@ -45,6 +49,8 @@ module api.form {
             this.context = context;
             this.form = form;
             this.data = data;
+
+            this.formItemLayer = new FormItemLayer(context);
         }
 
         /**
@@ -55,8 +61,7 @@ module api.form {
             var deferred = wemQ.defer<void>();
 
             var formItems = this.form.getFormItems();
-            var layoutPromise: wemQ.Promise<FormItemView[]> = new FormItemLayer().
-                setFormContext(this.context).
+            var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.
                 setFormItems(formItems).
                 setParentElement(this).
                 layout(this.data);
@@ -101,7 +106,7 @@ module api.form {
 
                     formItemView.onEditContentRequest((content: api.content.ContentSummary) => {
                         var summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
-                        new api.content.EditContentEvent([summaryAndStatus]).fire();
+                        new api.content.event.EditContentEvent([summaryAndStatus]).fire();
                     })
                 });
 
@@ -113,6 +118,13 @@ module api.form {
             }).done();
 
             return deferred.promise;
+        }
+
+        public update(propertySet: PropertySet, unchangedOnly?: boolean): wemQ.Promise<void> {
+            if (FormView.debug) {
+                console.debug('FormView.update' + (unchangedOnly ? ' (unchanged only)' : ''), this, propertySet);
+            }
+            return this.formItemLayer.update(propertySet, unchangedOnly);
         }
 
         private checkSizeChanges() {

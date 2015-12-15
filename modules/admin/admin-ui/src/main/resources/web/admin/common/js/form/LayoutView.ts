@@ -26,8 +26,5 @@ module api.form {
             this._layout = config.layout;
         }
 
-        public layout(): wemQ.Promise<void> {
-            throw new Error("Must be implemented by inheritors");
-        }
     }
 }
