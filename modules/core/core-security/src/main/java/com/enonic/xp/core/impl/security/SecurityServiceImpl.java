@@ -203,13 +203,32 @@ public final class SecurityServiceImpl
     public void removeRelationships( final PrincipalKey from )
     {
         callWithContext( () -> {
-            final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeAllRelationshipsToUpdateNodeParams( from );
-            nodeService.update( updateNodeParams );
-
+            doRemoveRelationships( from );
             this.nodeService.refresh( RefreshMode.SEARCH );
-
             return null;
         } );
+    }
+
+    public void doRemoveRelationships( final PrincipalKey from )
+    {
+        final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeAllRelationshipsToUpdateNodeParams( from );
+        nodeService.update( updateNodeParams );
+    }
+
+    private void doRemoveMemberships( final PrincipalKey member )
+    {
+        final PrincipalKeys memberships = queryDirectMemberships( member );
+        if ( memberships.isEmpty() )
+        {
+            return;
+        }
+
+        for ( PrincipalKey from : memberships )
+        {
+            final PrincipalRelationship relationship = PrincipalRelationship.from( from ).to( member );
+            final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeRelationshipToUpdateNodeParams( relationship );
+            nodeService.update( updateNodeParams );
+        }
     }
 
     private void removeRelationships( final UserStoreKey from )
@@ -764,8 +783,10 @@ public final class SecurityServiceImpl
     @Override
     public void deletePrincipal( final PrincipalKey principalKey )
     {
-        removeRelationships( principalKey );
         final Node deletedNode = callWithContext( () -> {
+            doRemoveRelationships( principalKey );
+            doRemoveMemberships( principalKey );
+
             final Node node = this.nodeService.deleteById( toNodeId( principalKey ) );
             this.nodeService.refresh( RefreshMode.SEARCH );
             return node;
