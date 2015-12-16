@@ -64,7 +64,7 @@ final class ContentTypeRegistry
         return ContentTypes.from( list );
     }
 
-    private List<ContentTypeName> findNames( final ApplicationKey key )
+    private Set<ContentTypeName> findNames( final ApplicationKey key )
     {
         return new ContentTypeLoader( this.resourceService ).findNames( key );
     }

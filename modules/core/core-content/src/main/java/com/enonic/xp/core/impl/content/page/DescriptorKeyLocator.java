@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.content.page;
 
-import java.util.List;
+import java.util.Set;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -25,9 +25,9 @@ public final class DescriptorKeyLocator
         this.pattern = this.path + "/.+\\.(xml" + ( optional ? "|js" : "" ) + ")";
     }
 
-    public List<DescriptorKey> findKeys( final ApplicationKey key )
+    public Set<DescriptorKey> findKeys( final ApplicationKey key )
     {
-        final List<DescriptorKey> keys = Lists.newArrayList();
+        final Set<DescriptorKey> keys = Sets.newLinkedHashSet();
         for ( final ResourceKey resource : this.service.findFiles( key, this.pattern ) )
         {
             final DescriptorKey descriptorKey = newDescriptorKey( key, resource );
