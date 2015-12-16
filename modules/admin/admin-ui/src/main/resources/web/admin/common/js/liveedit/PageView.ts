@@ -153,8 +153,6 @@ module api.liveedit {
                     }
                     itemView.select(null, ItemViewContextMenuPosition.NONE, event.isNew());
                 }
-                itemView.giveFocus();
-
             };
             this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => {
                 // register the view and all its child views (i.e layout with regions)

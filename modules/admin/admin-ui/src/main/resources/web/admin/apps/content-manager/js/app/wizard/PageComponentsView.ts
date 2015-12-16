@@ -227,7 +227,7 @@ module app.wizard {
 
                 var treeNode = data[0];
 
-                if (treeNode) {
+                if (treeNode && !treeNode.getData().isSelected()) {
                     this.clicked ? treeNode.getData().selectWithoutMenu() : //immediate
                     this.selectionChangedHandler(treeNode); // with timeout
                     this.clicked = false;
