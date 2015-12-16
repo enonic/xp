@@ -1,4 +1,4 @@
-module api.content {
+module api.content.event {
 
     export class ContentDeletedEvent extends api.event.Event {
 
@@ -24,6 +24,12 @@ module api.content {
 
         isEmpty(): boolean {
             return this.contentDeletedItems.length == 0;
+        }
+
+        fire() {
+            if (!this.isEmpty()) {
+                super.fire();
+            }
         }
 
         static on(handler: (event: ContentDeletedEvent) => void) {

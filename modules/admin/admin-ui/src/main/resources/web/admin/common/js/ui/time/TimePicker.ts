@@ -43,7 +43,12 @@ module api.ui.time {
             super('time-picker');
             this.validUserInput = true;
 
-            this.input = api.ui.text.TextInput.middle();
+            var value;
+            if (builder.hours || builder.minutes) {
+                value = this.formatTime(builder.hours, builder.minutes);
+            }
+
+            this.input = api.ui.text.TextInput.middle(undefined, value);
             this.input.onClicked((e: MouseEvent) => {
                 e.preventDefault();
                 this.popup.show();
@@ -101,13 +106,9 @@ module api.ui.time {
                 }
             });
 
-            if (builder.hours || builder.minutes) {
-                this.input.setValue(this.formatTime(builder.hours, builder.minutes));
-            }
-
             this.popup.onSelectedTimeChanged((hours: number, minutes: number) => {
                 if (hours != null && minutes != null) {
-                    this.input.setValue(this.formatTime(hours, minutes));
+                    this.input.setValue(this.formatTime(hours, minutes), false, true);
                     this.validUserInput = true;
                 }
 
@@ -116,7 +117,7 @@ module api.ui.time {
 
             this.popup.onKeyDown((event: KeyboardEvent) => {
                 if (api.ui.KeyHelper.isTabKey(event)) {
-                    if(!(document.activeElement == this.input.getEl().getHTMLElement())) {
+                    if (!(document.activeElement == this.input.getEl().getHTMLElement())) {
                         event.preventDefault();
                         event.stopPropagation();
                         this.popup.hide();
@@ -127,7 +128,7 @@ module api.ui.time {
 
             this.input.onKeyDown((event: KeyboardEvent) => {
                 if (api.ui.KeyHelper.isTabKey(event)) { // handles tab navigation events on date input
-                    if(!event.shiftKey) {
+                    if (!event.shiftKey) {
                         event.preventDefault();
                         event.stopPropagation();
                         this.popupTrigger.giveFocus();
@@ -144,10 +145,14 @@ module api.ui.time {
             });
 
             api.dom.Body.get().onKeyDown((e: KeyboardEvent) => this.popupTabListener(e));
-            if (builder.closeOnOutsideClick){
+            if (builder.closeOnOutsideClick) {
                 api.dom.Body.get().onClicked((e: MouseEvent) => this.outsideClickListener(e));
             }
 
+        }
+
+        isDirty(): boolean {
+            return this.input.isDirty();
         }
 
         // as popup blur and focus events behave incorrectly - we manually catch tab navigation event in popup below
@@ -170,6 +175,11 @@ module api.ui.time {
 
         hasValidUserInput(): boolean {
             return this.validUserInput;
+        }
+
+        setSelectedTime(hour: number, minute: number) {
+            this.input.setValue(this.formatTime(hour, minute));
+            this.popup.setSelectedTime(hour, minute, true);
         }
 
         getSelectedTime(): {hour: number; minute: number} {

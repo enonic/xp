@@ -33,7 +33,7 @@ function initToolTip() {
         }
         showAt(e);
     });
-    wemjq(document).on("mouseleave", "." + CLS_ON, function (e) {
+    wemjq(document).on("mouseleave click", "." + CLS_ON, function (e) {
         if (wemjq(this).data(DATA)) {
             wemjq(this).attr("title", wemjq(this).data(DATA));
         }
@@ -121,4 +121,6 @@ function startApplication() {
             }
         }
     };
+
+    api.content.event.ContentServerEventsHandler.getInstance().start();
 }

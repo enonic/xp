@@ -1,19 +1,19 @@
 module api.app {
 
-    import BatchContentServerEvent = api.content.BatchContentServerEvent;
+    import ContentServerEvent = api.content.event.ContentServerEvent;
+    import ContentServerChangeType = api.content.event.ContentServerChangeType;
 
     export class ServerEventAggregator {
 
         private static AGGREGATION_TIMEOUT: number = 500;
 
-        private events: api.content.ContentServerEvent[];
+        private events: ContentServerEvent[];
 
-        private type: api.content.ContentServerChangeType;
+        private type: ContentServerChangeType;
 
         private batchReadyListeners: {(event):void}[] = [];
 
         private debounced;
-
 
         constructor() {
             this.debounced = api.util.AppHelper.debounce(() => {
@@ -21,7 +21,7 @@ module api.app {
             }, ServerEventAggregator.AGGREGATION_TIMEOUT, false);
         }
 
-        getEvents(): api.content.ContentServerEvent[] {
+        getEvents(): ContentServerEvent[] {
             return this.events;
         }
 
@@ -29,7 +29,7 @@ module api.app {
             this.events = [];
         }
 
-        appendEvent(event: api.content.ContentServerEvent) {
+        appendEvent(event: ContentServerEvent) {
             if (this.events == null || this.events.length == 0) {
                 this.init(event);
             } else {
@@ -43,25 +43,23 @@ module api.app {
             this.debounced();
         }
 
-        getType(): api.content.ContentServerChangeType {
+        getType(): ContentServerChangeType {
             return this.type;
         }
 
-        private isTheSameTypeEvent(event: api.content.ContentServerEvent) {
-            var changes = event.getContentChanges();
-            var types = changes.map(change =>  change.getChangeType());
+        private isTheSameTypeEvent(event: ContentServerEvent) {
+            var change = event.getContentChange();
 
-            if (types.some(type => this.type != type)) {
+            if (this.type != change.getChangeType()) {
                 return false;
             }
 
             return true;
         }
 
-        private init(event: api.content.ContentServerEvent) {
+        private init(event: ContentServerEvent) {
             this.events = [event];
-            this.type = event.getContentChanges().length > 0 ?
-                        event.getContentChanges()[0].getChangeType() : null;
+            this.type = !!event.getContentChange() ? event.getContentChange().getChangeType() : null;
         }
 
         onBatchIsReady(listener: (event)=>void) {

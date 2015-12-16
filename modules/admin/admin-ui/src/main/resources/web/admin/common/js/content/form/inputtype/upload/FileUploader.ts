@@ -41,12 +41,13 @@ module api.content.form.inputtype.upload {
 
             this.uploaderWrapper = this.createUploaderWrapper(property);
 
-            if (this.getContext().contentId) {
-                this.uploader.setValue(this.getContext().contentId.toString());
-                if (property.getValue() != null) {
-                    this.uploader.setFileName(this.getFileNameFromProperty(property));
+            this.updateProperty(property);
+
+            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
+                if (!this.ignorePropertyChange) {
+                    this.updateProperty(event.getProperty(), true);
                 }
-            }
+            });
 
             this.uploader.onUploadStarted(() => {
                 this.uploaderWrapper.removeClass("empty");
@@ -60,14 +61,7 @@ module api.content.form.inputtype.upload {
 
                 this.uploader.setFileName(fileName);
 
-                switch (property.getType()) {
-                case ValueTypes.DATA:
-                    property.getPropertySet().setProperty('attachment', 0, value);
-                    break;
-                case ValueTypes.STRING:
-                    property.setValue(ValueTypes.STRING.newValue(fileName));
-                    break;
-                }
+                this.saveToProperty(ValueTypes.STRING.newValue(fileName));
 
                 api.notify.showFeedback('\"' + fileName + '\" uploaded');
 
@@ -81,15 +75,7 @@ module api.content.form.inputtype.upload {
 
             this.uploader.onUploadReset(() => {
                 this.uploader.setFileName('');
-
-                switch (property.getType()) {
-                case ValueTypes.DATA:
-                    property.getPropertySet().setProperty('attachment', 0, ValueTypes.STRING.newNullValue());
-                    break;
-                case ValueTypes.STRING:
-                    property.setValue(ValueTypes.STRING.newNullValue());
-                    break;
-                }
+                this.saveToProperty(ValueTypes.STRING.newNullValue());
             });
 
             this.appendChild(this.uploaderWrapper);
@@ -99,6 +85,34 @@ module api.content.form.inputtype.upload {
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
             return new api.form.inputtype.InputValidationRecording();
+        }
+
+        protected saveToProperty(value: Value) {
+            this.ignorePropertyChange = true;
+            var property = this.getProperty();
+            switch (property.getType()) {
+            case ValueTypes.DATA:
+                property.getPropertySet().setProperty('attachment', 0, value);
+                break;
+            case ValueTypes.STRING:
+                property.setValue(value);
+                break;
+            }
+            this.validate();
+            this.ignorePropertyChange = false;
+        }
+
+
+        updateProperty(property: Property, unchangedOnly?: boolean): wemQ.Promise<void> {
+            if ((!unchangedOnly || !this.uploader.isDirty()) && this.getContext().contentId) {
+
+                this.uploader.setValue(this.getContext().contentId.toString());
+
+                if (property.hasNonNullValue()) {
+                    this.uploader.setFileName(this.getFileNameFromProperty(property));
+                }
+            }
+            return wemQ<void>(null);
         }
 
         private deleteContent(property: Property) {
@@ -125,7 +139,7 @@ module api.content.form.inputtype.upload {
                     }).done();
                 });
         }
-        
+
         private getFileNameFromProperty(property: Property): string {
             if (property.getValue() != null) {
                 switch (property.getType()) {

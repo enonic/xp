@@ -10,6 +10,10 @@ module api.content.site.inputtype.siteconfigurator {
         private propertyArray: PropertyArray;
 
         constructor(propertyArray: PropertyArray) {
+            this.setPropertyArray(propertyArray);
+        }
+
+        setPropertyArray(propertyArray: PropertyArray) {
             this.propertyArray = propertyArray;
         }
 
