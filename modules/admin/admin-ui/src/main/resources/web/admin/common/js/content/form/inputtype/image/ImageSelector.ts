@@ -47,6 +47,10 @@ module api.content.form.inputtype.image {
 
         private relationshipType: string;
 
+        private allowedContentTypes: string[];
+
+        private allowedContentPaths: string[];
+
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("image-selector");
             this.addClass("input-type-view");
@@ -87,13 +91,19 @@ module api.content.form.inputtype.image {
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
             var relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
-            var relationshipType = relationshipTypeConfig['value'];
+            this.relationshipType = relationshipTypeConfig['value'];
 
-            if (relationshipType) {
-                this.relationshipTypeName = new RelationshipTypeName(relationshipType);
+            if (this.relationshipType) {
+                this.relationshipTypeName = new RelationshipTypeName(this.relationshipType);
             } else {
                 this.relationshipTypeName = RelationshipTypeName.REFERENCE;
             }
+
+            var allowContentTypeConfig = inputConfig['allowContentType'] || [];
+            this.allowedContentTypes = allowContentTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val);
+
+            var allowContentPathConfig = inputConfig['allowPath'] || [];
+            this.allowedContentPaths = allowContentPathConfig.map((cfg) => cfg['value']).filter((val) => !!val);
         }
 
         private updateSelectedItemsIcons() {
@@ -156,13 +166,25 @@ module api.content.form.inputtype.image {
             return selectedOptionsView;
         }
 
-        createContentComboBox(maximumOccurrences: number, inputIconUrl: string, allowedContentTypes: string[],
+        createContentComboBox(maximumOccurrences: number, inputIconUrl: string, relationshipAllowedContentTypes: string[],
                               inputName: string): ContentComboBox {
+
+            var contentTypes = this.allowedContentTypes.length ? this.allowedContentTypes :
+                               relationshipAllowedContentTypes.length ? relationshipAllowedContentTypes :
+                                   [ContentTypeName.IMAGE.toString()];
+
+            var contentSelectorLoader = ContentSelectorLoader.create().
+                setId(this.config.contentId).
+                setInputName(inputName).
+                setAllowedContentPaths(this.allowedContentPaths).
+                setContentTypeNames(contentTypes).
+                setRelationshipType(this.relationshipType).
+                build();
+
             var contentComboBox: ImageContentComboBox
                     = ImageContentComboBox.create().
                     setMaximumOccurrences(maximumOccurrences).
-                    setAllowedContentTypes(allowedContentTypes.length ? allowedContentTypes : [ContentTypeName.IMAGE.toString()]).
-                    setLoader(new ContentSelectorLoader(this.config.contentId, inputName)).
+                    setLoader(contentSelectorLoader).
                     setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).
                     build(),
                 comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();

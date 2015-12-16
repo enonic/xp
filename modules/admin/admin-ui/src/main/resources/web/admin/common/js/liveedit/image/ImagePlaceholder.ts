@@ -42,10 +42,12 @@ module api.liveedit.image {
                 new ImageOpenUploadDialogEvent(this).fire();
             });
 
+            var loader = new api.content.ContentSummaryLoader();
+            loader.setAllowedContentTypeNames([ContentTypeName.IMAGE]);
+
             this.comboBox = api.content.ContentComboBox.create().
                 setMaximumOccurrences(1).
-                setAllowedContentTypes([ContentTypeName.IMAGE.toString()]).
-                setLoader(new api.content.ContentSummaryLoader()).
+                setLoader(loader).
                 setMinWidth(270).
                 build();
 
