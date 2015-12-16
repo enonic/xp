@@ -76,9 +76,16 @@ module api.app {
             return this.appFrame;
         }
 
-        getWindow() {
-            return this.getAppFrame().getHTMLElement()["contentWindow"];
+        private window: any;
+
+        setWindow(window) {
+            this.window = window;
         }
+
+        getWindow() {
+            return this.window == null ? this.getAppFrame().getHTMLElement()["contentWindow"] : this.window;
+        }
+
 
         isFullSizeIcon(): boolean {
             return this.fullSizeIcon;
