@@ -2,15 +2,22 @@ declare var CONFIG;
 
 import Application = api.application.Application;
 
+
+var application = (function () {
+    var application = new api.app.Application('applications', 'Applications', 'AM', 'puzzle');
+    application.setPath(api.rest.Path.fromString("/"));
+    application.setWindow(window);
+    this.serverEventsListener = new api.app.ServerEventsListener([application]);
+    return application;
+})();
+
+function getApplication(id: string): api.app.Application {
+    return application;
+}
+
 function startApplication() {
 
     var application: api.app.Application = api.app.Application.getApplication();
-    if (!application) {
-        application = new api.app.Application('applications', 'Applications', 'AM', 'puzzle');
-        application.setPath(api.rest.Path.fromString("/"));
-        application.setWindow(window);
-        this.serverEventsListener = new api.app.ServerEventsListener([application]);
-    }
     var appBar = new api.app.bar.AppBar(application);
     var appPanel = new app.ApplicationAppPanel(appBar, application.getPath());
 
