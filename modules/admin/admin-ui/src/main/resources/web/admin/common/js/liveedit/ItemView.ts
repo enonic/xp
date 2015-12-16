@@ -535,7 +535,9 @@ module api.liveedit {
             if (this.getPageView().isDisabledContextMenu() ) {
                 return;
             }
+
             if(menuPosition && ItemViewContextMenuPosition.NONE == menuPosition) {
+                this.hideContextMenu();
                 return;
             }
 
