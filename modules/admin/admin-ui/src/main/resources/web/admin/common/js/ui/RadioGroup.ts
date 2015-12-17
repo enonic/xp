@@ -5,7 +5,13 @@ module api.ui {
         public static ORIENTATION_VERTICAL = "vertical";
         public static ORIENTATION_HORIZONTAL = "horizontal";
 
+        // Group name is similar to name, but have and addition counter
+        // to prevent inappropriate behaviour of the radio group on one page
+        // with the same names
+        private groupName: string;
+
         private name: string;
+
         private options: RadioButton[] = [];
 
         private oldValue: string = "";
@@ -15,6 +21,7 @@ module api.ui {
         constructor(name: string, orientation?: string) {
             super("div", "radio-group");
             this.name = name;
+            this.groupName = `${this.name}-${api.dom.ElementRegistry.getElementCountById(this.getId())}`;
             if (RadioGroup.ORIENTATION_VERTICAL == orientation) {
                 this.addClass("vertical");
             }
@@ -22,7 +29,7 @@ module api.ui {
         }
 
         public addOption(value: string, label: string, checked?: boolean) {
-            var radio = new RadioButton(label, value, this.name, checked);
+            var radio = new RadioButton(label, value, this.groupName, checked);
             this.options.push(radio);
             this.appendChild(radio);
             radio.onClicked((event: MouseEvent) => {
@@ -68,7 +75,7 @@ module api.ui {
         private notifyValueChanged(oldValue: string, newValue: string) {
             this.valueChangedListeners.forEach((listener: (event: ValueChangedEvent)=>void)=> {
                 listener.call(this, new ValueChangedEvent(oldValue, newValue));
-            })
+            });
         }
     }
 
