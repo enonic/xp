@@ -28,10 +28,7 @@ function startApplication() {
     api.util.AppHelper.preventDragRedirect();
 
     application.setLoaded(true);
-
-    if (this.serverEventsListener) {
-        this.serverEventsListener.start();
-    }
+    this.serverEventsListener.start();
 
     window.onmessage = (e: MessageEvent) => {
         if (e.data.appLauncherEvent) {

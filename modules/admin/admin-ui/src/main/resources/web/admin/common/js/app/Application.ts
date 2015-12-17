@@ -18,6 +18,7 @@ module api.app {
         private loaded: boolean;
         private path: api.rest.Path;
         private loadedListeners: {(): void}[] = [];
+        private window: Window;
 
         constructor(id: string, name: string, shortName: string, icon: string, appFrame: api.dom.IFrameEl = null,
                     iconImage: boolean = false) {
@@ -76,16 +77,13 @@ module api.app {
             return this.appFrame;
         }
 
-        private window: any;
-
-        setWindow(window) {
-            this.window = window;
-        }
-
         getWindow() {
             return this.window == null ? this.getAppFrame().getHTMLElement()["contentWindow"] : this.window;
         }
 
+        setWindow(window) {
+            this.window = window;
+        }
 
         isFullSizeIcon(): boolean {
             return this.fullSizeIcon;
