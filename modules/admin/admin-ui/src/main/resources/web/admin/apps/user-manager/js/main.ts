@@ -4,7 +4,6 @@ var application = (function () {
     var application = new api.app.Application('applications', 'Applications', 'AM', 'puzzle');
     application.setPath(api.rest.Path.fromString("/"));
     application.setWindow(window);
-    console.log("aaa");
     this.serverEventsListener = new api.app.ServerEventsListener([application]);
     return application;
 })();
