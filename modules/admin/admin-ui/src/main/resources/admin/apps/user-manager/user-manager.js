@@ -7,7 +7,7 @@ function handleGet(req) {
         assetsUri: '/admin/assets/0',
         baseUri: '',
         xpVersion: '6.4.0-SNAPSHOT',
-        app: 'applications'
+        app: 'user-manager'
     };
     return {
         contentType: 'text/html',
