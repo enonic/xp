@@ -1,5 +1,18 @@
 declare var CONFIG;
 
+var application = (function () {
+    var application = new api.app.Application('applications', 'Applications', 'AM', 'puzzle');
+    application.setPath(api.rest.Path.fromString("/"));
+    application.setWindow(window);
+    console.log("aaa");
+    this.serverEventsListener = new api.app.ServerEventsListener([application]);
+    return application;
+})();
+
+function getApplication(id: string): api.app.Application {
+    return application;
+}
+
 function startApplication() {
 
     var application: api.app.Application = api.app.Application.getApplication();
@@ -14,6 +27,7 @@ function startApplication() {
 
     var changePasswordDialog = new app.wizard.ChangeUserPasswordDialog();
     application.setLoaded(true);
+    this.serverEventsListener.start();
 
     window.onmessage = (e: MessageEvent) => {
         if (e.data.appLauncherEvent) {
