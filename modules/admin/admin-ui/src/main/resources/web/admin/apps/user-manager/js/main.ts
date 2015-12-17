@@ -1,7 +1,7 @@
 declare var CONFIG;
 
 var application = (function () {
-    var application = new api.app.Application('applications', 'Applications', 'AM', 'puzzle');
+    var application = new api.app.Application('user-manager', 'Users', 'UM', 'users');
     application.setPath(api.rest.Path.fromString("/"));
     application.setWindow(window);
     this.serverEventsListener = new api.app.ServerEventsListener([application]);
