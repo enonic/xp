@@ -1,18 +1,18 @@
 package com.enonic.xp.launcher.ui.util;
 
 import java.awt.Desktop;
-import java.net.URI;
+import java.io.File;
 import java.net.URL;
 
-public final class Browser
+public final class DesktopHelper
 {
     public static void launch( final String url )
     {
         try
         {
-            launch( new URL( url ) );
+            doLaunch( new URL( url ) );
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             throw new RuntimeException( e );
         }
@@ -22,21 +22,27 @@ public final class Browser
     {
         try
         {
-            launch( url.toURI() );
+            doLaunch( url );
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             throw new RuntimeException( e );
         }
     }
 
-    public static void launch( final URI uri )
+    private static void doLaunch( final URL url )
+        throws Exception
+    {
+        Desktop.getDesktop().browse( url.toURI() );
+    }
+
+    public static void open( final File file )
     {
         try
         {
-            Desktop.getDesktop().browse( uri );
+            Desktop.getDesktop().open( file );
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             throw new RuntimeException( e );
         }

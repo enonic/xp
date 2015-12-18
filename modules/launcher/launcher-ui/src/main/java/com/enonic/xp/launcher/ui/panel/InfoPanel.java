@@ -16,7 +16,7 @@ public final class InfoPanel
     {
         setOpaque( false );
         setLayout( new CardLayout( 20, 20 ) );
-        setPreferredSize( new Dimension( 300, 150 ) );
+        setPreferredSize( new Dimension( 350, 150 ) );
 
         add( new StartedInfoBox(), STARTED );
         add( new StartingInfoBox(), STARTING );

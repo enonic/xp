@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import com.enonic.xp.launcher.ui.util.Browser;
+import com.enonic.xp.launcher.ui.util.DesktopHelper;
 
 abstract class AbstractInfoBox
     extends JPanel
@@ -60,7 +60,7 @@ abstract class AbstractInfoBox
         final URL url = event.getURL();
         if ( url != null )
         {
-            Browser.launch( url );
+            DesktopHelper.launch( url );
         }
     }
 }
