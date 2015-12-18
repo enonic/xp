@@ -5,4 +5,6 @@ import java.io.File;
 public interface RepoConfiguration
 {
     File getBlobStoreDir();
+
+    File getSnapshotsDir();
 }

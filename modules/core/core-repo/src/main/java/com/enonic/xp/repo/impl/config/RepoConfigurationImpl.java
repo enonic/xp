@@ -22,6 +22,12 @@ public final class RepoConfigurationImpl
         return getFileProperty( "blobStore.dir" );
     }
 
+    @Override
+    public File getSnapshotsDir()
+    {
+        return getFileProperty( "snapshots.dir" );
+    }
+
     private File getFileProperty( final String name )
     {
         return new File( this.config.get( name ) );

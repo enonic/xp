@@ -48,7 +48,10 @@ public class NodeServiceImplTest
     extends AbstractNodeTest
 {
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public TemporaryFolder blobStore = new TemporaryFolder();
+
+    @Rule
+    public TemporaryFolder snapshot = new TemporaryFolder();
 
     private NodeServiceImpl nodeService;
 
@@ -56,6 +59,7 @@ public class NodeServiceImplTest
     public void setUp()
         throws Exception
     {
+
         super.setUp();
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
@@ -65,8 +69,10 @@ public class NodeServiceImplTest
         this.nodeService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
         final RepoConfiguration config = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( config.getBlobStoreDir() ).thenReturn( this.temporaryFolder.getRoot() );
+        Mockito.when( config.getBlobStoreDir() ).thenReturn( this.blobStore.getRoot() );
+        Mockito.when( config.getSnapshotsDir() ).thenReturn( this.snapshot.getRoot() );
         this.nodeService.setConfiguration( config );
+        this.elasticsearchDao.setConfiguration( config );
 
         this.nodeService.initialize();
         this.createDefaultRootNode();
