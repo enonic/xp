@@ -240,20 +240,6 @@ module api.content {
         }
 
         createResultItem(value: string): api.dom.DivEl {
-
-            /* var existingEditor = this.imageEditors.filter(elem => {
-             return !!elem.getSrc() && elem.getSrc().indexOf(value) > -1;
-             })[0];
-
-             if(!!existingEditor)
-             return existingEditor;
-
-             if(!!existingEditor) {
-             this.imageEditors = this.imageEditors.filter((curr) => {
-             return curr !== existingEditor;
-             })
-             }*/
-
             if (!this.initialWidth) {
                 this.initialWidth = this.getParentElement().getEl().getWidth();
             }
