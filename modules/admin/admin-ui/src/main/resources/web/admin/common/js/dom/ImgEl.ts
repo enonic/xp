@@ -6,6 +6,8 @@ module api.dom {
 
         private loadedListeners: {(event: UIEvent): void}[] = [];
 
+        private errorListeners: {(event: UIEvent): void}[] = [];
+
         public static debug = false;
 
         /* 1px x 1px gif with a 1bit palette */
@@ -23,6 +25,13 @@ module api.dom {
                     console.log('ImgEl.onLoaded', this.getSrc(), this.loaded.toString());
                 }
                 this.notifyLoaded(event);
+            });
+            this.onImgElError((event: UIEvent) => {
+                this.loaded = true;
+                if (ImgEl.debug) {
+                    console.log('ImgEl.onLoaded', this.getSrc(), this.loaded.toString());
+                }
+                this.notifyError(event);
             });
         }
 
@@ -54,8 +63,18 @@ module api.dom {
             this.loadedListeners.push(listener);
         }
 
+        onError(listener: (event: UIEvent) => void) {
+            this.errorListeners.push(listener);
+        }
+
         unLoaded(listener: (event: UIEvent) => void) {
             this.loadedListeners = this.loadedListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        unError(listener: (event: UIEvent) => void) {
+            this.errorListeners = this.errorListeners.filter((curr) => {
                 return curr !== listener;
             })
         }
@@ -64,8 +83,16 @@ module api.dom {
             this.loadedListeners.forEach(listener => listener(event));
         }
 
+        private notifyError(event: UIEvent) {
+            this.errorListeners.forEach(listener => listener(event));
+        }
+
         private onImgElLoaded(listener: (event: UIEvent) => void) {
             this.getEl().addEventListener("load", listener);
+        }
+
+        private onImgElError(listener: (event: UIEvent) => void) {
+            this.getEl().addEventListener("error", listener);
         }
 
         isLoaded(): boolean {

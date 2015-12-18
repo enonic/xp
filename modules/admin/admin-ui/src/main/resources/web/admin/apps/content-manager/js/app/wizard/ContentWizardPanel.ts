@@ -45,6 +45,7 @@ module app.wizard {
     import WizardStep = api.app.wizard.WizardStep;
     import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
     import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
+    import ImageErrorEvent = api.content.ImageErrorEvent;
 
     import Application = api.application.Application;
     import ApplicationKey = api.application.ApplicationKey;
@@ -258,6 +259,7 @@ module app.wizard {
 
             this.initPublishButtonForMobile();
             this.handleSiteConfigApply();
+            this.handleBrokenImageInTheWizard();
 
             api.app.wizard.MaskContentWizardPanelEvent.on(event => {
                 if (this.getPersistedItem().getContentId().equals(event.getContentId())) {
@@ -345,6 +347,20 @@ module app.wizard {
             ContentRequiresSaveEvent.on(siteConfigApplyHandler);
             this.onClosed(() => {
                 ContentRequiresSaveEvent.un(siteConfigApplyHandler);
+            });
+        }
+
+        private handleBrokenImageInTheWizard() {
+            var brokenImageHandler = (event: ImageErrorEvent) => {
+                if (this.getPersistedItem().getId() === event.getContentId().toString()) {
+                    this.wizardActions.enableDeleteOnly();
+                    this.publishAction.setEnabled(false);
+                }
+            };
+
+            ImageErrorEvent.on(brokenImageHandler);
+            this.onClosed(() => {
+                ImageErrorEvent.un(brokenImageHandler);
             });
         }
 

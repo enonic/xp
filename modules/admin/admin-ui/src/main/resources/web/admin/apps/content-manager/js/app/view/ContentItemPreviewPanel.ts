@@ -20,6 +20,11 @@ module app.view {
                 var myEl = this.getEl();
                 this.centerImage(imgEl.getWidth(), imgEl.getHeight(), myEl.getWidth(), myEl.getHeight());
             });
+
+            this.image.onError((event: UIEvent) => {
+                this.setNoPreview();
+            });
+
             this.appendChild(this.image);
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
@@ -76,9 +81,7 @@ module app.view {
                         this.frame.setSrc(api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW,
                             api.content.Branch.DRAFT));
                     } else {
-                        this.getEl().removeClass("image-preview page-preview").addClass('no-preview');
-                        this.frame.setSrc("about:blank");
-                        this.mask.hide();
+                        this.setNoPreview();
                     }
                 }
             }
@@ -87,6 +90,12 @@ module app.view {
 
         public getItem(): ViewItem<ContentSummaryAndCompareStatus> {
             return this.item;
+        }
+
+        private setNoPreview() {
+            this.getEl().removeClass("image-preview page-preview").addClass('no-preview');
+            this.frame.setSrc("about:blank");
+            this.mask.hide();
         }
 
         private showMask() {
