@@ -75,6 +75,10 @@ module app.view.detail {
 
         private layoutBottom(content: Content) {
 
+            if(this.hasChild(this.bottomEl)) {
+                this.removeChild(this.bottomEl);
+            }
+
             this.bottomEl = new api.dom.AEl("edit-permissions-link").setHtml("Edit Permissions");
             this.appendChild(this.bottomEl);
 
@@ -92,6 +96,9 @@ module app.view.detail {
 
             request.sendAndParse().then((results: api.ui.security.acl.EffectivePermission[]) => {
 
+                if(this.hasChild(this.accessListView)) {
+                    this.removeChild(this.accessListView);
+                }
                 var userAccessList = this.getUserAccessList(results);
 
                 this.accessListView = new UserAccessListView();
@@ -109,7 +116,6 @@ module app.view.detail {
             if (UserAccessWidgetItemView.debug) {
                 console.debug('UserAccessWidgetItemView.layout');
             }
-            this.removeChildren();
 
             return super.layout().then(this.layoutUserAccess.bind(this));
         }
@@ -121,7 +127,7 @@ module app.view.detail {
                 if (this.contentId) {
                     return new api.content.GetContentByIdRequest(this.contentId).sendAndParse().
                         then((content: Content) => {
-
+                             this.removeChildren();
                             if (content) {
                                 this.layoutHeader(content);
                                 return this.layoutList(content).then(() => {
