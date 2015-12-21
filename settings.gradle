@@ -15,6 +15,7 @@ include 'core:core-app'
 
 include 'server:server-shell'
 include 'server:server-status'
+include 'server:server-udc'
 
 include 'script:script-api'
 include 'script:script-impl'
