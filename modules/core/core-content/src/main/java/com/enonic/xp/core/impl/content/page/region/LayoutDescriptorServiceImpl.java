@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -124,7 +125,7 @@ public final class LayoutDescriptorServiceImpl
         }
     }
 
-    private List<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
+    private Set<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
     {
         return new DescriptorKeyLocator( this.resourceService, PATH, false ).findKeys( key );
     }

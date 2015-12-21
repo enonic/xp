@@ -11,6 +11,8 @@ module app.view.detail {
 
         private content: ContentSummary;
 
+        private list: api.dom.DlEl;
+
         public static debug = false;
 
         constructor() {
@@ -52,7 +54,10 @@ module app.view.detail {
 
         private layoutApplication(application?: Application) {
 
-            var newDl = new api.dom.DlEl();
+            if(this.hasChild(this.list)) {
+                this.removeChild(this.list);
+            }
+            this.list = new api.dom.DlEl();
 
             var strings: FieldString[];
 
@@ -78,10 +83,10 @@ module app.view.detail {
 
             strings.forEach((stringItem: FieldString) => {
                 if (stringItem) {
-                    stringItem.layout(newDl);
+                    stringItem.layout(this.list);
                 }
             });
-            this.appendChild(newDl);
+            this.appendChild(this.list);
         }
     }
 

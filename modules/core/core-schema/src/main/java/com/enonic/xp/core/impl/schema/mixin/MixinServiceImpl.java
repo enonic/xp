@@ -96,7 +96,7 @@ public final class MixinServiceImpl
         return Mixins.from( list );
     }
 
-    private List<MixinName> findNames( final ApplicationKey key )
+    private Set<MixinName> findNames( final ApplicationKey key )
     {
         return new MixinLoader( this.resourceService ).findNames( key );
     }

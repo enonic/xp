@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
 import javax.swing.JFrame;
 
@@ -94,6 +95,11 @@ public final class MainWindow
     public String getHttpUrl()
     {
         return this.launcher.getHttpUrl();
+    }
+
+    public File getHomeDir()
+    {
+        return this.launcher.getHomeDir();
     }
 
     public static MainWindow get()

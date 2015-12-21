@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
 import java.util.Collection;
 import java.util.Set;
 
@@ -41,12 +40,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.node.SnapshotParams;
 import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.node.SnapshotResults;
+import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.document.DeleteDocument;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
@@ -78,6 +77,8 @@ public class ElasticsearchDaoImpl
     private final String deleteTimeout = "5s";
 
     private Client client;
+
+    private RepoConfiguration configuration;
 
     private static int safeLongToInt( long l )
     {
@@ -364,16 +365,19 @@ public class ElasticsearchDaoImpl
         }
     }
 
+    private File getSnapshotsDir()
+    {
+        return this.configuration.getSnapshotsDir();
+    }
+
     private void registerRepository()
     {
-        final Path SNAPSHOT_PATH = Paths.get( HomeDir.get().toString(), "data", "snapshot" );
-
         final PutRepositoryRequestBuilder requestBuilder = new PutRepositoryRequestBuilder( this.client.admin().cluster() ).
             setName( SNAPSHOT_REPOSITORY_NAME ).
             setType( "fs" ).
             setSettings( ImmutableSettings.settingsBuilder().
                 put( "compress", true ).
-                put( "location", SNAPSHOT_PATH.toFile() ).
+                put( "location", getSnapshotsDir() ).
                 build() );
 
         this.client.admin().cluster().putRepository( requestBuilder.request() ).actionGet();
@@ -389,6 +393,12 @@ public class ElasticsearchDaoImpl
         {
             return query.getSize();
         }
+    }
+
+    @Reference
+    public void setConfiguration( final RepoConfiguration configuration )
+    {
+        this.configuration = configuration;
     }
 
     @Reference

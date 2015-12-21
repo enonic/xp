@@ -13,7 +13,7 @@ module api.content.form.inputtype.image {
 
         constructor(builder: ImageContentComboBoxBuilder) {
 
-            var loader = builder.loader ? builder.loader : new ContentSummaryLoader(builder.allowedContentTypes);
+            var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
 
             var richComboBoxBuilder = new RichComboBoxBuilder().
                 setComboBoxName(builder.name ? builder.name : 'imageContentSelector').
@@ -50,8 +50,6 @@ module api.content.form.inputtype.image {
 
         loader: api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary>;
 
-        allowedContentTypes: string[];
-
         minWidth: number;
 
         selectedOptionsView: ImageSelectorSelectedOptionsView;
@@ -77,11 +75,6 @@ module api.content.form.inputtype.image {
 
         setLoader(loader: api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary>): ImageContentComboBoxBuilder {
             this.loader = loader;
-            return this;
-        }
-
-        setAllowedContentTypes(allowedTypes: string[]): ImageContentComboBoxBuilder {
-            this.allowedContentTypes = allowedTypes;
             return this;
         }
 

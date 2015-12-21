@@ -105,13 +105,19 @@ module app.view.detail {
             this.appendChild(this.widgetsSelectionRow);
         }
 
-        getCustomWidgetViewsAndUpdateDropdown() {
+        getCustomWidgetViewsAndUpdateDropdown(): wemQ.Promise<void> {
+            var deferred = wemQ.defer<void>();
             if (!this.alreadyFetchedCustomWidgets) {
                 this.getAndInitCustomWidgetViews().done(() => {
                     this.initWidgetsDropdownForSelectedItem();
                     this.alreadyFetchedCustomWidgets = true;
+                    deferred.resolve(null);
                 });
             }
+            else {
+                deferred.resolve(null);
+            }
+            return deferred.promise;
         }
 
         setActiveWidget(widgetView: WidgetView) {

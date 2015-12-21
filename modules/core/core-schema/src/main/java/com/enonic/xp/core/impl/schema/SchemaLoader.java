@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.schema;
 
-import java.util.List;
+import java.util.Set;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -66,9 +66,9 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
         return SchemaHelper.loadIcon( resource );
     }
 
-    public final List<N> findNames( final ApplicationKey key )
+    public final Set<N> findNames( final ApplicationKey key )
     {
-        final List<N> keys = Lists.newArrayList();
+        final Set<N> keys = Sets.newLinkedHashSet();
         for ( final ResourceKey resource : this.resourceService.findFiles( key, this.pattern ) )
         {
             final String localName = getLocalName( resource );

@@ -193,4 +193,10 @@ public final class LauncherImpl
     {
         return this.framework.getHttpUrl();
     }
+
+    @Override
+    public File getHomeDir()
+    {
+        return this.env.getHomeDir();
+    }
 }
