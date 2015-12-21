@@ -7,6 +7,8 @@ import com.google.common.annotations.Beta;
 @Beta
 public final class BuildInfo
 {
+    private final static String NA = "N/A";
+
     private final Properties props;
 
     public BuildInfo( final Properties props )
@@ -16,21 +18,21 @@ public final class BuildInfo
 
     public String getHash()
     {
-        return this.props.getProperty( "xp.build.hash" );
+        return this.props.getProperty( "xp.build.hash", NA );
     }
 
     public String getShortHash()
     {
-        return this.props.getProperty( "xp.build.shortHash" );
+        return this.props.getProperty( "xp.build.shortHash", NA );
     }
 
     public String getTimestamp()
     {
-        return this.props.getProperty( "xp.build.timestamp" );
+        return this.props.getProperty( "xp.build.timestamp", NA );
     }
 
     public String getBranch()
     {
-        return this.props.getProperty( "xp.build.branch" );
+        return this.props.getProperty( "xp.build.branch", NA );
     }
 }
