@@ -394,6 +394,8 @@ module app.wizard.page {
                     }
                     this.inspectComponent(<ComponentView<Component>>itemView);
                 }
+
+                this.minimizeContentFormPanelIfNeeded();
             });
 
             this.liveEditPageProxy.onItemViewDeselected((event: ItemViewDeselectedEvent) => {
@@ -452,6 +454,12 @@ module app.wizard.page {
                 new app.wizard.ShowContentFormEvent().fire();
                 this.contentWizardPanel.showForm();
             });
+        }
+
+        private minimizeContentFormPanelIfNeeded() {
+            if (this.contextWindow.isFloating() && !this.contentWizardPanel.isMinimized()) {
+                this.contentWizardPanel.toggleMinimize();
+            }
         }
 
         private inspectPage() {
