@@ -1,13 +1,13 @@
 var mustache = require('/lib/xp/mustache');
-var portal = require('/lib/xp/portal');
 
 function handleGet(req) {
-    var view = resolve('login.html');
-
+    log.info("Req: " + JSON.stringify(req, null, 2));
+    var view = resolve('../common/admin-app.html');
     var params = {
         assetsUri: '/admin/assets/0',
         baseUri: '',
-        xpVersion: '6.4.0-SNAPSHOT'
+        xpVersion: '6.4.0-SNAPSHOT',
+        app: 'login'
     };
     return {
         contentType: 'text/html',
