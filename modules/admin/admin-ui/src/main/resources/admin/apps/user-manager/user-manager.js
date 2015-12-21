@@ -6,7 +6,7 @@ function handleGet(req) {
     var params = {
         assetsUri: '/admin/assets/0',
         baseUri: '',
-        xpVersion: '6.4.0-SNAPSHOT',
+        xpVersion: app.version,
         app: 'user-manager'
     };
     return {
