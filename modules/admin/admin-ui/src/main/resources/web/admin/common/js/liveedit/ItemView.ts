@@ -471,6 +471,9 @@ module api.liveedit {
 
         handleClick(event: MouseEvent) {
             event.stopPropagation();
+            if (event.which == 3) { // right click
+                event.preventDefault();
+            }
 
             if (!this.isSelected()) {
                 // we prevented mouse events to bubble up so if parent view is selected
@@ -479,7 +482,11 @@ module api.liveedit {
                 this.deselectParent();
                 this.getPageView().deselectChildViews();
 
-                this.select(!this.isEmpty() ? {x: event.pageX, y: event.pageY} : null);
+                var clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
+                event.which == 3 ?
+                this.select(clickPosition) :
+                this.select(clickPosition, ItemViewContextMenuPosition.NONE);
+
             } else {
                 this.deselect();
             }
