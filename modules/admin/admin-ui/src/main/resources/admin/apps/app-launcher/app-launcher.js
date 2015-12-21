@@ -12,16 +12,10 @@ function handleGet(req) {
     var adminApplications = getAdminApplications();
 
     for (var i = 0; i < adminApplications.length; i++) {
-        var icon = adminApplications[i].icon;
-        if (icon.indexOf("icon:") == 0) {
-            adminApplications[i].fontIcon = icon.substr("icon:".length);
-        } else {
-            if (icon.indexOf("//") < 0) {
-                icon = portal.assetUrl({
-                    path: adminApplications[i].icon
-                });
-            }
-            adminApplications[i].imgIcon = icon;
+        if (adminApplications[i].icon.indexOf("//") < 0) {
+            adminApplications[i].icon = portal.assetUrl({
+                path: adminApplications[i].icon
+            });
         }
     }
 
