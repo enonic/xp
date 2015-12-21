@@ -93,6 +93,8 @@ module api.ui.image {
         private maskClickListener: (event: MouseEvent) => void;
         private maskHideListener: (event: api.dom.ElementHiddenEvent) => void;
 
+        private imageErrorListeners: {(event: UIEvent): void}[] = [];
+
         private skipNextOutsideClick: boolean;
 
         public static debug = false;
@@ -136,6 +138,13 @@ module api.ui.image {
             };
 
             this.image.onLoaded(onLoaded);
+
+            let imageErrorHandler = (event: UIEvent) => {
+                this.notifyImageError(event);
+                this.remove();
+            };
+
+            this.image.onError(imageErrorHandler);
 
             var myId = this.getId();
 
@@ -192,8 +201,11 @@ module api.ui.image {
             });
             this.onRemoved((event: api.dom.ElementRemovedEvent) => {
                 // element has already been removed so use parent
-                wemjq(event.getParent().getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).unbind("scroll", scrollListener);
+                if (!!event.getParent()) {
+                    wemjq(event.getParent().getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).unbind("scroll", scrollListener);
+                }
                 api.ui.responsive.ResponsiveManager.unAvailableSizeChanged(this);
+                this.unImageError(imageErrorHandler);
             });
 
             if (src) {
@@ -1897,6 +1909,20 @@ module api.ui.image {
             this.shaderVisibilityChangedListeners.forEach((listener) => {
                 listener(auto);
             })
+        }
+
+        onImageError(listener: (event: UIEvent) => void) {
+            this.imageErrorListeners.push(listener);
+        }
+
+        unImageError(listener: (event: UIEvent) => void) {
+            this.imageErrorListeners = this.imageErrorListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        private notifyImageError(event: UIEvent) {
+            this.imageErrorListeners.forEach(listener => listener(event));
         }
     }
 

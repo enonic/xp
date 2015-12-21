@@ -2,6 +2,7 @@ module api.ui.uploader {
 
     import Button = api.ui.button.Button;
     import CloseButton = api.ui.button.CloseButton;
+    import Element = api.dom.Element;
 
     export class PluploadStatus {
         public static QUEUED = plupload.QUEUED;
@@ -300,19 +301,54 @@ module api.ui.uploader {
             }
             this.value = value;
 
-            if (value && this.config.showResult) {
-                this.setResultVisible();
+            if (value) {
+                if (this.config.showResult) {
+                    this.setResultVisible();
+                } else {
+                    this.setDropzoneVisible();
+                }
             } else {
                 this.setDropzoneVisible();
+                this.getResultContainer().removeChildren();
+                return this;
             }
-            var results = this.getResultContainer().removeChildren();
+
+            var newItemsToAppend: Element[] = [],
+                existingItems: Element[] = [];
 
             this.parseValues(value).forEach((val) => {
                 if (val) {
-                    results.appendChild(this.createResultItem(val));
+                    var existingItem = this.getExistingItem(val);
+                    if (!existingItem) {
+                        newItemsToAppend.push(this.createResultItem(val));
+                    } else {
+                        existingItems.push(existingItem);
+                    }
                 }
             });
+
+            this.removeAllChildrenExceptGiven(existingItems);
+            this.appendNewItems(newItemsToAppend);
+
             return this;
+        }
+
+        private appendNewItems(newItemsToAppend: Element[]) {
+            newItemsToAppend.forEach((elem) => {
+                this.getResultContainer().appendChild(elem);
+            });
+        }
+
+        private removeAllChildrenExceptGiven(itemsToKeep: Element[]) {
+            this.getResultContainer().getChildren().forEach((elem) => {
+                if (!itemsToKeep.some((itemToKeep) => itemToKeep == elem)) {
+                    elem.remove();
+                }
+            });
+        }
+
+        protected getExistingItem(value: string): Element {
+            return null;
         }
 
         parseValues(jsonString: string): string[] {
