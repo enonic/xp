@@ -3,9 +3,11 @@ package com.enonic.xp.admin.impl.adminapp;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.admin.adminapp.AdminApplicationDescriptor;
 import com.enonic.xp.admin.adminapp.AdminApplicationDescriptorService;
 import com.enonic.xp.admin.adminapp.AdminApplicationDescriptors;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.PrincipalKeys;
 
@@ -24,6 +26,15 @@ public final class AdminApplicationDescriptorServiceImpl
             applicationService( this.applicationService ).
             resourceService( this.resourceService ).
             filter( adminApplicationDescriptor -> adminApplicationDescriptor.isAccessAllowed( principalKeys ) ).
+            execute();
+    }
+
+    @Override
+    public AdminApplicationDescriptor getByKey( final DescriptorKey descriptorKey )
+    {
+        return new GetAdminApplicationDescriptorCommand().
+            resourceService( this.resourceService ).
+            descriptorKey( descriptorKey ).
             execute();
     }
 

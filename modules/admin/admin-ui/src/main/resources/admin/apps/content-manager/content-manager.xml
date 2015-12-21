@@ -4,5 +4,7 @@
   <icon>icon:database</icon>
   <allow>
     <principal>role:system.admin</principal>
+    <principal>role:cms.admin</principal>
+    <principal>role:cms.cm.app</principal>
   </allow>
 </admin-app>

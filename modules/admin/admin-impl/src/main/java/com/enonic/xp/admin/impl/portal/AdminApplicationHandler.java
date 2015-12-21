@@ -6,14 +6,14 @@ import java.util.regex.Pattern;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.admin.adminapp.AdminApplicationDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.content.ContentService;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.handler.PortalHandler;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
-import com.enonic.xp.resource.ResourceKey;
 
 @Component(immediate = true, service = PortalHandler.class)
 public final class AdminApplicationHandler
@@ -21,7 +21,7 @@ public final class AdminApplicationHandler
 {
     private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
 
-    private ContentService contentService;
+    private AdminApplicationDescriptorService adminApplicationDescriptorService;
 
     private ControllerScriptFactory controllerScriptFactory;
 
@@ -42,20 +42,21 @@ public final class AdminApplicationHandler
             throw notFound( "Not a valid service url pattern" );
         }
 
-        final ApplicationKey appKey = ApplicationKey.from( matcher.group( 1 ) );
-        final ResourceKey scriptDir = ResourceKey.from( appKey, "admin/apps/" + matcher.group( 2 ) );
+        final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
+        final String adminApplicationName = matcher.group( 2 );
+        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, adminApplicationName );
 
         final AdminApplicationHandlerWorker worker = new AdminApplicationHandlerWorker();
-        worker.scriptDir = scriptDir;
         worker.controllerScriptFactory = this.controllerScriptFactory;
-        worker.setContentService( this.contentService );
+        worker.adminApplicationDescriptorService = adminApplicationDescriptorService;
+        worker.descriptorKey = descriptorKey;
         return worker;
     }
 
     @Reference
-    public void setContentService( final ContentService contentService )
+    public void setAdminApplicationDescriptorService( final AdminApplicationDescriptorService adminApplicationDescriptorService )
     {
-        this.contentService = contentService;
+        this.adminApplicationDescriptorService = adminApplicationDescriptorService;
     }
 
     @Reference

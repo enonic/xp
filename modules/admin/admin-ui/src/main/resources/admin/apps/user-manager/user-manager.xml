@@ -4,5 +4,7 @@
   <icon>icon:users</icon>
   <allow>
     <principal>role:system.admin</principal>
+    <principal>role:system.user.admin</principal>
+    <principal>role:system.user.app</principal>
   </allow>
 </admin-app>

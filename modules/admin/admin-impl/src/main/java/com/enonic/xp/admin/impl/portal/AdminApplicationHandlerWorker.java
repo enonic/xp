@@ -1,34 +1,50 @@
 package com.enonic.xp.admin.impl.portal;
 
-import com.enonic.xp.portal.PortalException;
+import com.enonic.xp.admin.adminapp.AdminApplicationDescriptor;
+import com.enonic.xp.admin.adminapp.AdminApplicationDescriptorService;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.ControllerHandlerWorker;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.security.PrincipalKeys;
 
 final class AdminApplicationHandlerWorker
     extends ControllerHandlerWorker
 {
-    protected ResourceKey scriptDir;
 
     protected ControllerScriptFactory controllerScriptFactory;
+
+    protected AdminApplicationDescriptorService adminApplicationDescriptorService;
+
+    protected DescriptorKey descriptorKey;
 
     @Override
     public void execute()
         throws Exception
     {
-
-        if ( this.request.getMode() != RenderMode.ADMIN )
+        //Retrieves the AdminApplicationDescriptor
+        final AdminApplicationDescriptor adminApplicationDescriptor = adminApplicationDescriptorService.getByKey( descriptorKey );
+        if ( adminApplicationDescriptor == null )
         {
-            throw new PortalException( HttpStatus.FORBIDDEN, "Render mode must be ADMIN." );
+            throw notFound( "Admin application [%s] not found", descriptorKey.toString() );
         }
 
-        this.request.setApplicationKey( this.scriptDir.getApplicationKey() );
+        //Checks if the access to AdminApplicationDescriptor is allowed
+        final PrincipalKeys principals = ContextAccessor.current().
+            getAuthInfo().
+            getPrincipals();
+        if ( !adminApplicationDescriptor.isAccessAllowed( principals ) )
+        {
+            throw forbidden( "You don't have permission to access [%s]", descriptorKey.toString() );
+        }
 
-        final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( this.scriptDir );
+        //Render the Admin application
+        this.request.setApplicationKey( descriptorKey.getApplicationKey() );
+        final ResourceKey scriptDir = ResourceKey.from( descriptorKey.getApplicationKey(), "admin/apps/" + descriptorKey.getName() );
+        final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( scriptDir );
         this.response = PortalResponse.create( controllerScript.execute( this.request ) );
     }
 }
