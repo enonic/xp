@@ -165,18 +165,12 @@ module api.ui.time {
                     this.popup.hide();
                 }
                 this.setDate(e.getDate());
-                this.validUserInput = true;
-                this.input.setValue(this.formatDateTime(this.selectedDate), false, true);
-                this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(this.selectedDate));
-                this.updateInputStyling();
+                this.setInputValue();
             });
 
             this.popup.onSelectedTimeChanged((hours: number, minutes: number) => {
                 this.setTime(hours, minutes);
-                this.validUserInput = true;
-                this.input.setValue(this.formatDateTime(this.selectedDate), false, true);
-                this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(this.selectedDate));
-                this.updateInputStyling();
+                this.setInputValue();
             });
 
             this.input.onKeyUp((event: KeyboardEvent) => {
@@ -185,21 +179,16 @@ module api.ui.time {
                 }
                 var typedDateTime = this.input.getValue();
                 if (api.util.StringHelper.isEmpty(typedDateTime)) {
-                    this.popup.setSelectedDate(null, true);
-                    this.selectedDate = null;
                     this.validUserInput = true;
+                    this.setDateTime(null);
                     this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(null));
                     this.popup.hide();
                 } else {
                     var date = api.util.DateHelper.parseDateTime(typedDateTime);
                     var dateLength = date && date.getFullYear().toString().length + 12;
                     if (date && date.toString() != "Invalid Date" && typedDateTime.length == dateLength) {
-                        this.selectedDate = date;
                         this.validUserInput = true;
-                        this.popup.setSelectedDate(date, true);
-                        date ?
-                            this.popup.setSelectedTime(date.getHours(), date.getMinutes(), true) :
-                            this.popup.setSelectedTime(null, null, true);
+                        this.setDateTime(date);
                         this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(date));
                         if (!this.popup.isVisible()) {
                             this.popup.show();
@@ -274,11 +263,22 @@ module api.ui.time {
 
         public setSelectedDateTime(date: Date) {
             this.input.setValue(this.formatDateTime(date));
+            this.setDateTime(date);
+        }
+
+        private setDateTime(date: Date) {
+            this.selectedDate = date;
             this.popup.setSelectedDate(date, true);
             date ?
-                this.popup.setSelectedTime(date.getHours(), date.getMinutes(), true) :
-                this.popup.setSelectedTime(null, null, true);
-            this.selectedDate = date;
+            this.popup.setSelectedTime(date.getHours(), date.getMinutes(), true) :
+            this.popup.setSelectedTime(null, null, true);
+        }
+
+        private setInputValue() {
+            this.validUserInput = true;
+            this.input.setValue(this.formatDateTime(this.selectedDate), false, true);
+            this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(this.selectedDate));
+            this.updateInputStyling();
         }
 
         private setTime(hours: number, minutes: number) {
