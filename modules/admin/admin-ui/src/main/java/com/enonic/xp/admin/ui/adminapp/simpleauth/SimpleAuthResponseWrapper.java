@@ -10,6 +10,8 @@ import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+
 public class SimpleAuthResponseWrapper
     extends HttpServletResponseWrapper
 {
@@ -123,7 +125,7 @@ public class SimpleAuthResponseWrapper
         throws UnsupportedEncodingException
     {
         super.setStatus( 303 );
-        super.setHeader( "Location", "/portal/draft/_/adminapp/com.enonic.xp.admin.ui/login" );
+        super.setHeader( "Location", ServletRequestUrlHelper.createUri( "/portal/draft/_/adminapp/com.enonic.xp.admin.ui/login" ) );
         redirected = true;
     }
 }
