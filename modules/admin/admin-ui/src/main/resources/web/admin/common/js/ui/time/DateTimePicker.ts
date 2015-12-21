@@ -178,27 +178,26 @@ module api.ui.time {
                     return;
                 }
                 var typedDateTime = this.input.getValue();
+                var date: Date = null;
                 if (api.util.StringHelper.isEmpty(typedDateTime)) {
                     this.validUserInput = true;
                     this.setDateTime(null);
-                    this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(null));
                     this.popup.hide();
                 } else {
-                    var date = api.util.DateHelper.parseDateTime(typedDateTime);
+                    date = api.util.DateHelper.parseDateTime(typedDateTime);
                     var dateLength = date && date.getFullYear().toString().length + 12;
                     if (date && date.toString() != "Invalid Date" && typedDateTime.length == dateLength) {
                         this.validUserInput = true;
                         this.setDateTime(date);
-                        this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(date));
                         if (!this.popup.isVisible()) {
                             this.popup.show();
                         }
                     } else {
                         this.selectedDate = null;
                         this.validUserInput = false;
-                        this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(null));
                     }
                 }
+                this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(date));
                 this.updateInputStyling();
             });
 
