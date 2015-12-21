@@ -197,7 +197,9 @@ module api.ui.time {
                         this.selectedDate = date;
                         this.validUserInput = true;
                         this.popup.setSelectedDate(date, true);
-                        this.popup.setSelectedTime(date.getHours(), date.getMinutes(), true);
+                        date ?
+                            this.popup.setSelectedTime(date.getHours(), date.getMinutes(), true) :
+                            this.popup.setSelectedTime(null, null, true);
                         this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(date));
                         if (!this.popup.isVisible()) {
                             this.popup.show();
@@ -273,7 +275,9 @@ module api.ui.time {
         public setSelectedDateTime(date: Date) {
             this.input.setValue(this.formatDateTime(date));
             this.popup.setSelectedDate(date, true);
-            this.popup.setSelectedTime(date.getHours(), date.getMinutes(), true);
+            date ?
+                this.popup.setSelectedTime(date.getHours(), date.getMinutes(), true) :
+                this.popup.setSelectedTime(null, null, true);
             this.selectedDate = date;
         }
 
