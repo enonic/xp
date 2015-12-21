@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <admin-app xmlns="urn:enonic:xp:model:1.0">
   <display-name>User Manager</display-name>
-  <icon>https://enonic.com/_/asset/com.enonic.web.enonic.com:1450102657/img/enonic-xp-shield-big.svg</icon>
+  <icon>icon:users</icon>
   <allow>
     <principal>role:system.admin</principal>
   </allow>

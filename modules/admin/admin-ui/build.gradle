@@ -11,7 +11,10 @@ bundle {
 }
 
 dependencies {
+    compile project( ":admin:admin-api" )
+    compile project( ":script:script-api" )
     include project( ":lib:lib-mustache" );
+    include project( ":lib:lib-portal" );
 }
 
 task cleanSourceFiles( type: Delete ) {
