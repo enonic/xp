@@ -150,32 +150,32 @@ module api.content {
             }
         }
 
-        private createImageEditor(imgUrl: string): ImageEditor {
+        private createImageEditor(value: string): ImageEditor {
+
+            var contentId = new api.content.ContentId(value),
+                imgUrl = new ContentImageUrlResolver().
+                    setContentId(contentId).
+                    setTimestamp(new Date()).
+                    setSource(true).
+                    resolve();
 
             this.togglePlaceholder(true);
 
-            var imageEditor = new ImageEditor(imgUrl);
-            imageEditor.onEditModeChanged((edit: boolean, crop: Rect, zoom: Rect, focus: Point) => {
-                this.notifyEditModeChanged(edit, crop, zoom, focus);
-            });
-            imageEditor.onFocusAutoPositionedChanged((auto: boolean) => this.notifyFocusAutoPositionedChanged(auto));
-            imageEditor.onCropAutoPositionedChanged((auto: boolean) => this.notifyCropAutoPositionedChanged(auto));
+            var imageEditor = new ImageEditor();
+            this.subscribeImageEditorOnEvents(imageEditor, contentId);
+            imageEditor.setSrc(imgUrl);
 
-            imageEditor.getImage().onLoaded((event: UIEvent) => {
-                this.togglePlaceholder(false);
-            });
+            return imageEditor;
+        }
 
-            imageEditor.getUploadButton().onClicked(() => {
-                wemjq(this.getDropzone().getEl().getHTMLElement()).simulate("click");
-            });
-
-            imageEditor.getLastButtonInContainer().onBlur(() => {
-                this.toggleSelected(imageEditor);
-            });
-
-            var index = -1;
-            imageEditor.onEditModeChanged((edit: boolean, position: Rect, zoom: Rect, focus: Point) => {
+        private subscribeImageEditorOnEvents(imageEditor: ImageEditor, contentId: api.content.ContentId) {
+            var focusAutoPositionedChangedHandler = (auto: boolean) => this.notifyFocusAutoPositionedChanged(auto);
+            var cropAutoPositionedChangedHandler = (auto: boolean) => this.notifyCropAutoPositionedChanged(auto);
+            var editModeChangedHandler = (edit: boolean, position: Rect, zoom: Rect, focus: Point) => {
+                this.notifyEditModeChanged(edit, position, zoom, focus);
                 this.togglePlaceholder(edit);
+
+                var index = -1;
 
                 if (edit) {
                     index = imageEditor.getSiblingIndex();
@@ -184,9 +184,46 @@ module api.content {
                 } else {
                     this.getResultContainer().insertChild(imageEditor.removeClass(ImageUploader.STANDOUT_CLASS), index);
                 }
+            };
+            var uploadButtonClickedHandler = () => {
+                wemjq(this.getDropzone().getEl().getHTMLElement()).simulate("click");
+            };
+            var getLastButtonInContainerBlurHandler = () => {
+                this.toggleSelected(imageEditor);
+            };
+            var shaderVisibilityChangedHandler = (visible: boolean) => {
+                new api.app.wizard.MaskContentWizardPanelEvent(contentId, visible).fire();
+            };
+
+            var imageErrorHandler = (event: UIEvent) => {
+                new api.content.ImageErrorEvent(contentId).fire();
+                this.imageEditors = this.imageEditors.filter((curr) => {
+                    return curr !== imageEditor;
+                })
+                api.notify.showError('Failed to upload an image ' + contentId.toString());
+            };
+
+            imageEditor.getImage().onLoaded((event: UIEvent) => {
+                this.togglePlaceholder(false);
+                imageEditor.onShaderVisibilityChanged(shaderVisibilityChangedHandler);
+                imageEditor.onEditModeChanged(editModeChangedHandler);
+                imageEditor.onFocusAutoPositionedChanged(focusAutoPositionedChangedHandler);
+                imageEditor.onCropAutoPositionedChanged(cropAutoPositionedChangedHandler);
+                imageEditor.getUploadButton().onClicked(uploadButtonClickedHandler);
+                imageEditor.getLastButtonInContainer().onBlur(getLastButtonInContainerBlurHandler);
             });
 
-            return imageEditor;
+            imageEditor.onImageError(imageErrorHandler);
+
+            imageEditor.onRemoved(() => {
+                imageEditor.unShaderVisibilityChanged(shaderVisibilityChangedHandler);
+                imageEditor.unEditModeChanged(editModeChangedHandler);
+                imageEditor.unFocusAutoPositionedChanged(focusAutoPositionedChangedHandler);
+                imageEditor.unCropAutoPositionedChanged(cropAutoPositionedChangedHandler);
+                imageEditor.getUploadButton().unClicked(uploadButtonClickedHandler);
+                imageEditor.getLastButtonInContainer().unBlur(getLastButtonInContainerBlurHandler);
+                imageEditor.unImageError(imageErrorHandler);
+            });
         }
 
         private positionImageEditor(imageEditor: ImageEditor) {
@@ -196,23 +233,18 @@ module api.content {
                 setLeftPx(resultOffset.left);
         }
 
+        protected getExistingItem(value: string): api.dom.Element {
+            return this.imageEditors.filter(elem => {
+                return !!elem.getSrc() && elem.getSrc().indexOf(value) > -1;
+            })[0];
+        }
+
         createResultItem(value: string): api.dom.DivEl {
             if (!this.initialWidth) {
                 this.initialWidth = this.getParentElement().getEl().getWidth();
             }
 
-            var contentId = new api.content.ContentId(value),
-                imgUrl = new ContentImageUrlResolver().
-                    setContentId(contentId).
-                    setTimestamp(new Date()).
-                    setSource(true).
-                    resolve();
-
-            var imageEditor = this.createImageEditor(imgUrl);
-
-            imageEditor.onShaderVisibilityChanged((visible: boolean) => {
-                new api.app.wizard.MaskContentWizardPanelEvent(contentId, visible).fire();
-            });
+            var imageEditor = this.createImageEditor(value);
 
             this.imageEditors.push(imageEditor);
 

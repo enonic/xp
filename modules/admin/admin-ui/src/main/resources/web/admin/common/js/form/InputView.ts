@@ -146,6 +146,8 @@ module api.form {
             if (InputView.debug) {
                 console.debug('InputView.update' + (unchangedOnly ? ' ( unchanged only)' : ''), this, propertySet);
             }
+            // update parent first because it can be used in getPropertyArray
+            this.parentPropertySet = propertySet;
             this.propertyArray = this.getPropertyArray(propertySet);
 
             return this.inputTypeView.update(this.propertyArray, unchangedOnly);

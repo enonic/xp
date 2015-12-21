@@ -1,22 +1,17 @@
 module api.content.form.inputtype.contentselector {
 
-    /**
-     * Extends ContentSummaryLoader to restrict requests before allowed content types are set.
-     * If search() method was called before allowed content types are set
-     * then search string is preserved and request postponed.
-     * After content types are set, search request is made with latest preserved search string.
-     */
     export class ContentSelectorLoader extends api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary> {
-
-        private postponedSearchString: string;
 
         private contentSelectorQueryRequest: ContentSelectorQueryRequest;
 
-        constructor(contentId: api.content.ContentId, inputName: string) {
+        constructor(builder: Builder) {
             this.contentSelectorQueryRequest = new ContentSelectorQueryRequest();
             super(this.contentSelectorQueryRequest);
-            this.contentSelectorQueryRequest.setId(contentId);
-            this.contentSelectorQueryRequest.setInputName(inputName);
+            this.contentSelectorQueryRequest.setId(builder.id);
+            this.contentSelectorQueryRequest.setInputName(builder.inputName);
+            this.contentSelectorQueryRequest.setContentTypeNames(builder.contentTypeNames);
+            this.contentSelectorQueryRequest.setAllowedContentPaths(builder.allowedContentPaths);
+            this.contentSelectorQueryRequest.setRelationshipType(builder.relationshipType);
         }
 
         search(searchString: string): wemQ.Promise<ContentSummary[]> {
@@ -30,5 +25,53 @@ module api.content.form.inputtype.contentselector {
             return this.contentSelectorQueryRequest.sendAndParse();
         }
 
+        public static create(): Builder {
+            return new Builder();
+        }
+    }
+
+    export class Builder {
+
+        constructor() {
+        }
+
+        id: ContentId;
+
+        inputName: string;
+
+        contentTypeNames: string[] = [];
+
+        allowedContentPaths: string[] = [];
+
+        relationshipType: string;
+
+        public setId(id: ContentId): Builder {
+            this.id = id;
+            return this;
+        }
+
+        public setInputName(name: string): Builder {
+            this.inputName = name;
+            return this;
+        }
+
+        public setContentTypeNames(contentTypeNames: string[]): Builder {
+            this.contentTypeNames = contentTypeNames;
+            return this;
+        }
+
+        public setAllowedContentPaths(allowedContentPaths: string[]): Builder {
+            this.allowedContentPaths = allowedContentPaths;
+            return this;
+        }
+
+        public setRelationshipType(relationshipType: string): Builder {
+            this.relationshipType = relationshipType;
+            return this;
+        }
+
+        public build(): ContentSelectorLoader {
+            return new ContentSelectorLoader(this);
+        }
     }
 }

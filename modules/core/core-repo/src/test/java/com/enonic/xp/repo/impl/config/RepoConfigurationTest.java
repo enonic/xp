@@ -47,4 +47,14 @@ public class RepoConfigurationTest
         final RepoConfiguration config = createConfig();
         Assert.assertEquals( new File( "/a/b" ), config.getBlobStoreDir() );
     }
+
+    @Test
+    public void testSnapshotsDir()
+    {
+        this.map.put( "snapshots.dir", "/a/b" );
+
+        final RepoConfiguration config = createConfig();
+        Assert.assertEquals( new File( "/a/b" ), config.getSnapshotsDir() );
+    }
+
 }

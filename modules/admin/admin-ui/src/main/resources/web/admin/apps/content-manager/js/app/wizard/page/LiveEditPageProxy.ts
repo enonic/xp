@@ -279,7 +279,6 @@ module app.wizard.page {
 
                     var event = new ComponentLoadedEvent(newComponentView, componentView);
                     event.fire(this.liveEditWindow);
-                    this.notifyComponentLoaded(event);
 
                     newComponentView.select();
 

@@ -158,13 +158,16 @@ module app.wizard {
             this.liveEditPage.onComponentLoaded((event: ComponentLoadedEvent) => {
                 var oldDataId = this.tree.getDataId(event.getOldComponentView());
 
+                var oldNode = this.tree.getRoot().getCurrentRoot().findNode(oldDataId);
+                oldNode.removeChildren();
+
                 this.tree.updateNode(event.getNewComponentView(), oldDataId).then(() => {
                     var newDataId = this.tree.getDataId(event.getNewComponentView());
 
                     if (this.tree.hasChildren(event.getNewComponentView())) {
                         // expand new node as it has children
                         var newNode = this.tree.getRoot().getCurrentRoot().findNode(newDataId);
-                        this.tree.expandNode(newNode);
+                        this.tree.expandNode(newNode, true);
                     }
 
                     if (event.getNewComponentView().isSelected()) {
@@ -224,7 +227,7 @@ module app.wizard {
 
                 var treeNode = data[0];
 
-                if (treeNode) {
+                if (treeNode && !treeNode.getData().isSelected()) {
                     this.clicked ? treeNode.getData().selectWithoutMenu() : //immediate
                     this.selectionChangedHandler(treeNode); // with timeout
                     this.clicked = false;

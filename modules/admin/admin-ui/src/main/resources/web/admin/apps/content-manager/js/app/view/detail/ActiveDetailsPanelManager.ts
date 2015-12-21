@@ -34,8 +34,8 @@ module app.view.detail {
                 currentlyActiveWidget = currentlyActivePanel.getActiveWidget();
             }
             ActiveDetailsPanelManager.activeDetailsPanel = detailsPanelToMakeActive;
-            detailsPanelToMakeActive.getCustomWidgetViewsAndUpdateDropdown();
-            detailsPanelToMakeActive.setItem(activeItem).then(() => {
+            detailsPanelToMakeActive.getCustomWidgetViewsAndUpdateDropdown().then(() => {
+                detailsPanelToMakeActive.setItem(activeItem);
                 if (currentlyActiveWidget) {
                     detailsPanelToMakeActive.setActiveWidgetWithName(currentlyActiveWidget.getWidgetName());
                 }

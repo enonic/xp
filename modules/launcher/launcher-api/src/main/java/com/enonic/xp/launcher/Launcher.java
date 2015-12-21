@@ -1,5 +1,7 @@
 package com.enonic.xp.launcher;
 
+import java.io.File;
+
 public interface Launcher
 {
     void start()
@@ -10,6 +12,8 @@ public interface Launcher
     void stop();
 
     boolean hasArg( String value );
+
+    File getHomeDir();
 
     String getHttpUrl();
 }

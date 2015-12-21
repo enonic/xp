@@ -114,18 +114,41 @@ module app.browse.filter {
             setExpand(api.rest.Expand.SUMMARY).
             sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                 if (api.util.StringHelper.isEmpty(searchString)) {
-                    this.resetFacets(true, true);
+                    this.resetFacets(true, true).then(() => {
+                        this.updateAggregations(this.getAggregationsToUpdate(contentQuery, contentQueryResult), true);
+                        this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
+                        this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
+                        new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
+                    })
                 }
-
-                this.updateAggregations(contentQueryResult.getAggregations(), false);
-                this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
-                this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
-                new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
+                else {
+                    this.updateAggregations(contentQueryResult.getAggregations(), false);
+                    this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
+                    this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
+                    new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
+                }
 
 
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
+        }
+
+        private getAggregationsToUpdate(contentQuery: ContentQuery,
+                                        contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>): Aggregation[] {
+            var updateAllAggreegations = this.isUpdateOfContentTypesNeeded(contentQuery);
+            if (updateAllAggreegations) {
+                return contentQueryResult.getAggregations();
+            }
+            else { //only last modified aggregation to update
+                return contentQueryResult.getAggregations().filter((aggregation) => {
+                    return aggregation.getName() !== ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME;
+                });
+            }
+        }
+
+        private isUpdateOfContentTypesNeeded(contentQuery: ContentQuery): boolean {
+            return !(contentQuery.getContentTypes().length > 0 && contentQuery.getQueryFilters().length == 0);
         }
 
         private initAggregationGroupView(aggregationGroupView: AggregationGroupView[]) {

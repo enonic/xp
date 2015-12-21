@@ -117,7 +117,7 @@ module app.wizard {
 
             (<ComponentView<Component>>item.getData()).moveToRegion(<RegionView>newParent.getData(), insertIndex);
 
-            item.getData().select();
+            item.getData().select(null, api.liveedit.ItemViewContextMenuPosition.NONE);
             this.contentGrid.refresh();
 
 

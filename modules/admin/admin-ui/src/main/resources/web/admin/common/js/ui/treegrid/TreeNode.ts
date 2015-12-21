@@ -197,6 +197,7 @@ module api.ui.treegrid {
         removeChildren() {
             this.children.length = 0;
             this.expanded = false;
+            this.clearViewers();
         }
 
         remove() {

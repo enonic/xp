@@ -113,7 +113,7 @@ public final class PageDescriptorServiceImpl
         }
     }
 
-    private List<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
+    private Iterable<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
     {
         return new DescriptorKeyLocator( this.resourceService, PATH, true ).findKeys( key );
     }

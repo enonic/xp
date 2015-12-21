@@ -76,9 +76,7 @@ module api.app.browse {
 
             let itemsToAdd = api.util.ArrayHelper.difference(items, this.items, doFilter);
 
-            let itemsUpdated = api.util.ArrayHelper.difference(items, this.items, (valueLeft: BrowseItem<M>, valueRight: BrowseItem<M>) => {
-                return !doFilter(valueLeft, valueRight);
-            });
+            let itemsUpdated = api.util.ArrayHelper.intersection(items, this.items, doFilter);
 
             itemsToRemove.forEach((item: BrowseItem<M>) => {
                 this.removeItem(item);
@@ -99,7 +97,7 @@ module api.app.browse {
             return changes;
         }
 
-        createItemViewer(item: BrowseItem<M>): api.ui.Viewer<M>  {
+        createItemViewer(item: BrowseItem<M>): api.ui.Viewer<M> {
             var viewer = new api.ui.Viewer<M>();
             viewer.setObject(item.getModel());
             return viewer;

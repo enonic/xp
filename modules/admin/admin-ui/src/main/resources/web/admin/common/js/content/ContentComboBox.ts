@@ -9,7 +9,7 @@ module api.content {
 
         constructor(builder: ContentComboBoxBuilder) {
 
-            var loader = builder.loader ? builder.loader : new ContentSummaryLoader(builder.allowedContentTypes);
+            var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
 
             var richComboBoxBuilder = new RichComboBoxBuilder<ContentSummary>().
                 setComboBoxName(builder.name ? builder.name : 'contentSelector').
@@ -106,8 +106,6 @@ module api.content {
 
         loader: api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary>;
 
-        allowedContentTypes: string[];
-
         minWidth: number;
 
         value: string;
@@ -124,11 +122,6 @@ module api.content {
 
         setLoader(loader: api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary>): ContentComboBoxBuilder {
             this.loader = loader;
-            return this;
-        }
-
-        setAllowedContentTypes(allowedTypes: string[]): ContentComboBoxBuilder {
-            this.allowedContentTypes = allowedTypes;
             return this;
         }
 

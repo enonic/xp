@@ -12,6 +12,10 @@ module app.view.detail {
 
         private content: ContentSummary;
 
+        private list: api.dom.UlEl;
+
+        private placeholder: api.dom.SpanEl;
+
         public static debug = false;
 
         constructor() {
@@ -45,8 +49,16 @@ module app.view.detail {
         private layoutAttachments(): wemQ.Promise<Attachments> {
             return new api.content.GetContentAttachmentsRequest(this.content.getContentId()).sendAndParse().then((attachments: Attachments) => {
 
+                if(this.hasChild(this.list)) {
+                    this.removeChild(this.list);
+                }
+
+                if(this.hasChild(this.placeholder)) {
+                    this.removeChild(this.placeholder);
+                }
+
                 if (attachments) {
-                    var uploaderList = new api.dom.UlEl("uploader-list");
+                    this.list = new api.dom.UlEl("uploader-list");
 
                     attachments.forEach((attachment: Attachment) => {
                         var uploader = new MediaUploader({
@@ -68,14 +80,15 @@ module app.view.detail {
 
                         var uploaderContainer = new api.dom.LiEl("uploader-container");
                         uploaderContainer.appendChild(uploader);
-                        uploaderList.appendChild(uploaderContainer);
+                        this.list.appendChild(uploaderContainer);
 
                     });
 
-                    this.appendChild(uploaderList);
+                    this.appendChild(this.list);
 
                 } else {
-                    this.appendChild(new api.dom.SpanEl("att-placeholder").setHtml("This item has no attachments"));
+                    this.placeholder = new api.dom.SpanEl("att-placeholder").setHtml("This item has no attachments");
+                    this.appendChild(this.placeholder);
                 }
 
                 return attachments;

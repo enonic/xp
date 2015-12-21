@@ -87,7 +87,7 @@ public final class RelationshipTypeServiceImpl
         return RelationshipTypes.from( list );
     }
 
-    private List<RelationshipTypeName> findNames( final ApplicationKey key )
+    private Set<RelationshipTypeName> findNames( final ApplicationKey key )
     {
         return new RelationshipTypeLoader( this.resourceService ).findNames( key );
     }

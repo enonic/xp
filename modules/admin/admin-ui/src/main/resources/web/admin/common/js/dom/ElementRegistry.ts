@@ -38,6 +38,11 @@ module api.dom {
             return ElementRegistry.elements[id];
         }
 
+        public static getElementCountById(id: string): number {
+            // Get the counter from the id according to the name notation
+            let count = parseInt(id.slice(id.lastIndexOf('-') + 1)) || 0;
+            return count;
+        }
     }
 
 }
