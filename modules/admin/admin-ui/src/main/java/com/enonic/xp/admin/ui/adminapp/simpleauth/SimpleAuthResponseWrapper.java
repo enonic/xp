@@ -125,7 +125,7 @@ public class SimpleAuthResponseWrapper
         throws UnsupportedEncodingException
     {
         super.setStatus( 303 );
-        super.setHeader( "Location", UriScriptHelper.generateAdminApplicationPortalUri( "com.enonic.xp.admin.ui", "login" ) );
+        super.setHeader( "Location", UriScriptHelper.generateAdminApplicationUri( "com.enonic.xp.admin.ui", "login" ) );
         redirected = true;
     }
 }
