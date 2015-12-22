@@ -52,6 +52,11 @@ public class AdminApplicationDescriptor
             anyMatch( allowedPrincipals::contains );
     }
 
+    public boolean isAppLauncherApplication()
+    {
+        return displayName != null && icon != null;
+    }
+
     public static ResourceKey toResourceKey( final DescriptorKey key )
     {
         return ResourceKey.from( key.getApplicationKey(), "admin/apps/" + key.getName() + "/" + key.getName() + ".xml" );

@@ -3,6 +3,7 @@ package com.enonic.xp.admin.ui.adminapp;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.admin.adminapp.AdminApplicationDescriptor;
 import com.enonic.xp.admin.adminapp.AdminApplicationDescriptorService;
 import com.enonic.xp.admin.ui.adminapp.mapper.AdminApplicationMapper;
 import com.enonic.xp.context.ContextAccessor;
@@ -23,6 +24,7 @@ public class GetAdminApplicationsScriptBean
             getPrincipals();
         return adminApplicationDescriptorService.getAllowedAdminApplicationDescriptors( principals ).
             stream().
+            filter( AdminApplicationDescriptor::isAppLauncherApplication ).
             map( adminApplicationDescriptor -> new AdminApplicationMapper( adminApplicationDescriptor ) ).
             collect( Collectors.toList() );
     }
