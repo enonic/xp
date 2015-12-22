@@ -43,7 +43,7 @@ module api.liveedit {
         }
 
         private resizeToComponent(itemView: ItemView): void {
-            var itemDimensions = itemView.getElementDimensions();
+            var itemDimensions = itemView.getEl().getDimensions();
             var w = Math.round(itemDimensions.width),
                 h = Math.round(itemDimensions.height),
                 top = Math.round(itemDimensions.top),
