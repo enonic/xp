@@ -10,7 +10,7 @@ import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.PrincipalKeys;
 
-public class GetAdminApplicationsHandler
+public class GetAdminApplicationsScriptBean
     implements ScriptBean
 {
 

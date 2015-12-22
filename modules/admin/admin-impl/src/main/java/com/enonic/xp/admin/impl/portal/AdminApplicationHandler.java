@@ -21,6 +21,8 @@ public final class AdminApplicationHandler
 {
     private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
 
+    private final static DescriptorKey DEFAULT_DESCRIPTOR_KEY = DescriptorKey.from( "com.enonic.xp.admin.ui:app-launcher" );
+
     private AdminApplicationDescriptorService adminApplicationDescriptorService;
 
     private ControllerScriptFactory controllerScriptFactory;
@@ -37,14 +39,17 @@ public final class AdminApplicationHandler
         final String restPath = findRestPath( req );
         final Matcher matcher = PATTERN.matcher( restPath );
 
-        if ( !matcher.find() )
+        final DescriptorKey descriptorKey;
+        if ( matcher.find() )
         {
-            throw notFound( "Not a valid service url pattern" );
+            final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
+            final String adminApplicationName = matcher.group( 2 );
+            descriptorKey = DescriptorKey.from( applicationKey, adminApplicationName );
         }
-
-        final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
-        final String adminApplicationName = matcher.group( 2 );
-        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, adminApplicationName );
+        else
+        {
+            descriptorKey = DEFAULT_DESCRIPTOR_KEY;
+        }
 
         final AdminApplicationHandlerWorker worker = new AdminApplicationHandlerWorker();
         worker.controllerScriptFactory = this.controllerScriptFactory;

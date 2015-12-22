@@ -1,10 +1,11 @@
 var mustache = require('/lib/xp/mustache');
 
 function handleGet(req) {
-    log.info("Req: " + JSON.stringify(req, null, 2));
+    var assetsUri = Java.type("com.enonic.xp.admin.ui.adminapp.UriScriptHelper").ADMIN_ASSETS_URI_PREFIX;
     var view = resolve('../common/admin-app.html');
+
     var params = {
-        assetsUri: '/admin/assets/0',
+        assetsUri: assetsUri,
         baseUri: '',
         xpVersion: app.version,
         app: 'content-manager'
