@@ -9,7 +9,7 @@ function getAdminTools() {
 function handleGet(req) {
     var uriScriptHelper = Java.type("com.enonic.xp.admin.ui.tool.UriScriptHelper");
     var assetsUri = uriScriptHelper.ADMIN_ASSETS_URI_PREFIX;
-    var view = resolve('app-launcher.html');
+    var view = resolve('launcher.html');
 
     var adminTools = getAdminTools();
     for (var i = 0; i < adminTools.length; i++) {
