@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<admin-app xmlns="urn:enonic:xp:model:1.0">
-  <display-name>Applications</display-name>
-  <icon>icons/puzzle.svg</icon>
-  <allow>
-    <principal>role:system.admin</principal>
-  </allow>
-</admin-app>
