@@ -41,7 +41,7 @@ public final class PortalToolForwardHandler
         portalAttributes.setRenderMode( RenderMode.ADMIN );
         req.setAttribute( PortalAttributes.class.getName(), portalAttributes );
 
-        final RequestDispatcher dispatcher = req.getRequestDispatcher( "/portal/draft/_/adminapp" + path );
+        final RequestDispatcher dispatcher = req.getRequestDispatcher( "/portal/draft/_/tool" + path );
         dispatcher.forward( req, res );
     }
 }
