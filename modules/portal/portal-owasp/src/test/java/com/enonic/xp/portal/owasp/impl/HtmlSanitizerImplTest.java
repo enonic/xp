@@ -90,6 +90,16 @@ public class HtmlSanitizerImplTest
         assertHtml( "inline", sanitized );
     }
 
+    @Test
+    public void testSanitizeHtmlFigureTags()
+        throws Exception
+    {
+        final String html = readHtml( "figure_tag" );
+        final String sanitized = new HtmlSanitizerImpl().sanitizeHtml( html );
+
+        assertHtml( "figure_tag", sanitized );
+    }
+
     private void assertHtml( final String name, final String html )
         throws Exception
     {
