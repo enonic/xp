@@ -341,7 +341,7 @@ module api.liveedit {
 
         scrollComponentIntoView(): void {
             if (!this.visibleInViewport()) {
-                wemjq("html,body").animate({scrollTop: this.getElementDimensions().top - 10}, 200);
+                wemjq("html,body").animate({scrollTop: this.getEl().getDimensions().top - 10}, 200);
             }
         }
 
@@ -550,8 +550,17 @@ module api.liveedit {
 
             if (!this.contextMenu) {
                 this.contextMenu = new api.liveedit.ItemViewContextMenu(this.contextMenuTitle, this.contextMenuActions);
+                this.contextMenu.onOrientationChanged((orientation: ItemViewContextMenuOrientation) => {
+
+                    // move menu to the top edge of empty view in order to not overlay it
+                    if (orientation == ItemViewContextMenuOrientation.UP && this.isEmpty()) {
+                        this.contextMenu.getEl().setMarginTop("-" + dimensions.height + "px");
+                    } else {
+                        this.contextMenu.getEl().setMarginTop("0px");
+                    }
+                });
             }
-            var dimensions = this.getElementDimensions();
+            var dimensions = this.getEl().getDimensions();
             var x, y;
 
             if (clickPosition) {
@@ -725,18 +734,6 @@ module api.liveedit {
             }
         }
 
-        getElementDimensions(): ElementDimensions {
-            var el = this.getEl(),
-                offset = el.getOffset();
-
-            return {
-                top: offset.top,
-                left: offset.left,
-                width: el.getWidthWithBorder(),
-                height: el.getHeightWithBorder()
-            };
-        }
-
         getContextMenuActions(): api.ui.Action[] {
             return this.contextMenuActions;
         }
@@ -797,10 +794,11 @@ module api.liveedit {
         }
 
         private visibleInViewport(): boolean {
-            var dimensions = this.getElementDimensions();
+            var dimensions = this.getEl().getDimensions();
             var screenTopPosition: number = document.body.scrollTop != 0 ? document.body.scrollTop : document.documentElement.scrollTop;
 
-            return !(dimensions.top != undefined && ((dimensions.top - 10 < screenTopPosition) || (dimensions.top + dimensions.height > screenTopPosition + window.innerHeight)));
+            return !(dimensions.top != undefined && ((dimensions.top - 10 < screenTopPosition) ||
+                                                     (dimensions.top + dimensions.height > screenTopPosition + window.innerHeight)));
 
         }
 
