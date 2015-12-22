@@ -62,9 +62,6 @@ module app.wizard.page {
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
-    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
-    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
-    import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 
     import Panel = api.ui.panel.Panel;
 
@@ -194,6 +191,13 @@ module app.wizard.page {
                 this.contentWizardPanel.getContextWindowToggler(),
                 this.contentWizardPanel.getComponentsViewToggler()
             );
+
+            this.contextWindow.onDisplayModeChanged(() => {
+                if (!this.contextWindow.isFloating()) {
+                    this.contentWizardPanel.getContextWindowToggler().setActive(true);
+                    this.contextWindow.slideIn();
+                }
+            });
 
             this.liveEditListen();
         }
