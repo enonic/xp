@@ -384,8 +384,12 @@ html, body {
           width: 100%;
           text-align: center;
           & > img {
-            width: 48px;
-            height: 48px;
+            width: 56px;
+            height: 56px;
+            @media only screen and (max-width: @tablet-threshold) {
+              width: 48px;
+              height: 48px;
+            }
           }
 
           & > i {
