@@ -21,16 +21,16 @@ public class AdminToolDescriptorsTest
     public void from()
     {
         final AdminToolDescriptor adminToolDescriptor1 = AdminToolDescriptor.create().
-            displayName( "My adminApplication" ).
+            displayName( "My admin tool" ).
             icon( "/path/to/icon" ).
             addAllowedPrincipals( PrincipalKey.from( "role:system.admin" ) ).
-            key( DescriptorKey.from( "module:my-adminApplication" ) ).
+            key( DescriptorKey.from( "module:my-admin-tool" ) ).
             build();
 
         final AdminToolDescriptor adminToolDescriptor2 = AdminToolDescriptor.create().
-            displayName( "My second adminApplication" ).
+            displayName( "My second admin tool 2" ).
             icon( "/path/to/secondicon" ).
-            key( DescriptorKey.from( "module:my-second-adminApplication" ) ).
+            key( DescriptorKey.from( "module:my-second-admin-tool" ) ).
             build();
 
         assertEquals( 2, AdminToolDescriptors.from( adminToolDescriptor1, adminToolDescriptor2 ).getSize() );

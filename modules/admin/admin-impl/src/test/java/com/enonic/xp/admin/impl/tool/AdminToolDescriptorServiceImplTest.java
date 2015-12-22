@@ -8,7 +8,7 @@ import com.enonic.xp.core.impl.app.ApplicationTestSupport;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
-public class AdminAppDescriptorServiceImplTest
+public class AdminToolDescriptorServiceImplTest
     extends ApplicationTestSupport
 {
     protected AdminToolDescriptorServiceImpl service;

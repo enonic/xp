@@ -26,7 +26,7 @@ public class XmlAdminToolDescriptorParserTest
         this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
 
         this.builder = AdminToolDescriptor.create();
-        this.builder.key( DescriptorKey.from( "myapplication:myadminapp" ) );
+        this.builder.key( DescriptorKey.from( "myapplication:myadmintool" ) );
         this.parser.builder( this.builder );
     }
 
@@ -50,8 +50,8 @@ public class XmlAdminToolDescriptorParserTest
         throws Exception
     {
         final AdminToolDescriptor result = this.builder.build();
-        assertEquals( "myapplication:myadminapp", result.getKey().toString() );
-        assertEquals( "My admin app", result.getDisplayName() );
+        assertEquals( "myapplication:myadmintool", result.getKey().toString() );
+        assertEquals( "My admin tool", result.getDisplayName() );
         assertEquals( "/path/to/icon", result.getIcon() );
 
         final PrincipalKeys allowedPrincipals = result.getAllowedPrincipals();
