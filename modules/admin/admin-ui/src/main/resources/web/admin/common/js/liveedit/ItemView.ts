@@ -8,6 +8,13 @@ module api.liveedit {
         height: number;
     }
 
+    export class ClickData {
+        clickPosition: Position = null;
+        menuPosition: ItemViewContextMenuPosition;
+        isNew: boolean;
+        silent: boolean;
+    }
+
     export class ItemViewBuilder {
 
         liveEditModel: LiveEditModel;
@@ -627,7 +634,7 @@ module api.liveedit {
         select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false) {
             this.selectItem();
             this.showContextMenu(clickPosition, menuPosition);
-            new ItemViewSelectedEvent(this, clickPosition, isNew).fire();
+            new ItemViewSelectedEvent(this, clickPosition, isNew, true).fire();
         }
 
         selectWithoutMenu(isNew: boolean = false) {
