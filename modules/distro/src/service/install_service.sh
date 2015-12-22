@@ -242,12 +242,15 @@ initLogDir()
 showSummary()
 {
     message "Enonic XP ${VERSION} installed successfully"
+    info " Run-user: ${USER}"
     info " Installation path: $XP_INSTALL_PATH"
     info " Service definition: $SERVICE_SCRIPT_LOCATION"
     info " Service config: $CONFIG_LOCATION"
     info " Service logs: $SERVICE_LOG/"
     info " XP home: $XP_HOME"
     info " Application logs: $XP_HOME/logs"
+    br
+    info " Remember to update ${CONFIG_LOCATION} with settings matching your environment"
 }
 
 main() {
