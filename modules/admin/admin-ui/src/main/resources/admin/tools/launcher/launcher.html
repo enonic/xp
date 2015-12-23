@@ -36,6 +36,13 @@
     <div class="lazy-image"
          style="background-image: url(&quot;/admin/common/images/background-1920.jpg&quot;);"></div>
     <div class="center-panel">
+        <div class="profile">
+            <div class="profile-info">
+                <img style="width: 56px" src="{{userIconUrl}}">
+                <span>{{user.displayName}}</span>
+            </div>
+            <button onclick="location.href='{{logoutServiceUrl}}';">Log Out</button>
+        </div>
         <div class="app-selector-panel">
             <div class="app-selector-container">
                 <div class="app-selector fade-in-and-scale-up">
@@ -56,6 +63,5 @@
         </div>
     </div>
 </div>
-
 </body>
 </html>
