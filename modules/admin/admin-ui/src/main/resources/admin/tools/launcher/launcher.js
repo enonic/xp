@@ -1,3 +1,4 @@
+var auth = require('/lib/xp/auth');
 var mustache = require('/lib/xp/mustache');
 var portal = require('/lib/xp/portal');
 
@@ -11,6 +12,7 @@ function handleGet(req) {
     var assetsUri = uriScriptHelper.ADMIN_ASSETS_URI_PREFIX;
     var view = resolve('launcher.html');
 
+    //Retrieves the Admin tools
     var adminTools = getAdminTools();
     for (var i = 0; i < adminTools.length; i++) {
         if (adminTools[i].icon.indexOf("//") < 0) {
@@ -22,12 +24,20 @@ function handleGet(req) {
             uriScriptHelper.generateAdminToolUri(adminTools[i].key.application, adminTools[i].key.name);
     }
 
+    //Retrieves the profile informations
+    var userIconUrl = portal.assetUrl({path: "icons/user.svg"});
+    var logoutServiceUrl = portal.serviceUrl({service: 'logout'});
+    var user = auth.getUser();
+
     var params = {
         assetsUri: assetsUri,
         baseUri: '',
         xpVersion: app.version,
         app: 'applications',
-        adminTools: adminTools
+        adminTools: adminTools,
+        userIconUrl: userIconUrl,
+        user: user,
+        logoutServiceUrl: logoutServiceUrl
     };
     return {
         contentType: 'text/html',
