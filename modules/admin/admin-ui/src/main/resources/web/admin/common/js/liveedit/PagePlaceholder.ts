@@ -19,7 +19,7 @@ module api.liveedit {
             this.addClassEx("page-placeholder");
             this.pageView = pageView;
 
-            this.controllerDropdown = new PageDescriptorDropdown(pageView.liveEditModel);
+            this.controllerDropdown = new PageDescriptorDropdown(pageView.getLiveEditModel());
             this.controllerDropdown.load();
             this.appendChild(this.controllerDropdown);
 
@@ -30,7 +30,7 @@ module api.liveedit {
             this.controllerDropdown.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
                 if (event.getData().length > 0) {
                     this.controllerDropdown.show();
-                    var content = this.pageView.liveEditModel.getContent();
+                    var content = this.pageView.getLiveEditModel().getContent();
                     if (!content.isPageTemplate()) {
                         new GetContentTypeByNameRequest(content.getType()).sendAndParse().then((contentType: ContentType) => {
                             this.infoBlock.setTextForContent(contentType.getDisplayName());
