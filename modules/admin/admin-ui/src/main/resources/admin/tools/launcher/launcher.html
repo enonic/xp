@@ -36,12 +36,10 @@
     <div class="lazy-image"
          style="background-image: url(&quot;/admin/common/images/background-1920.jpg&quot;);"></div>
     <div class="center-panel">
-        <div class="profile">
-            <div class="profile-info">
-                <img style="width: 56px" src="{{userIconUrl}}">
-                <span>{{user.displayName}}</span>
-            </div>
-            <button onclick="location.href='{{logoutServiceUrl}}';">Log Out</button>
+        <div class="profile" style="width: 320px;margin: auto; color: white">
+            <img src="{{userIconUrl}}" style="width: 56px">
+            <span>{{user.displayName}}</span>
+            <a href="{{logoutServiceUrl}}" style="background-color: #DD0000;padding: 0.5em 2em">Log Out</a>
         </div>
         <div class="app-selector-panel">
             <div class="app-selector-container">

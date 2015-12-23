@@ -9,13 +9,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.RenderMode;
 
 @Component(immediate = true, service = Servlet.class,
-    property = {"osgi.http.whiteboard.servlet.pattern=/admin/tool/*"})
+    property = {"osgi.http.whiteboard.servlet.pattern=/admin/tool", "osgi.http.whiteboard.servlet.pattern=/admin/tool/*"})
 public final class PortalToolForwardHandler
     extends HttpServlet
 {
@@ -33,7 +34,7 @@ public final class PortalToolForwardHandler
         forwardToPortal( newPath, req, res );
     }
 
-    private void forwardToPortal( final String path, final HttpServletRequest req, final HttpServletResponse res )
+    private void forwardToPortal( final String toolPath, final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
         final PortalAttributes portalAttributes = new PortalAttributes();
@@ -41,7 +42,8 @@ public final class PortalToolForwardHandler
         portalAttributes.setRenderMode( RenderMode.ADMIN );
         req.setAttribute( PortalAttributes.class.getName(), portalAttributes );
 
-        final RequestDispatcher dispatcher = req.getRequestDispatcher( "/portal/draft/_/tool" + path );
+        final String path = "/portal/draft/_/tool" + ( StringUtils.isEmpty( toolPath ) ? "/" : toolPath );
+        final RequestDispatcher dispatcher = req.getRequestDispatcher( path );
         dispatcher.forward( req, res );
     }
 }
