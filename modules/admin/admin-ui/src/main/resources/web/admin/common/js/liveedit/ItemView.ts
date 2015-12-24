@@ -491,8 +491,8 @@ module api.liveedit {
 
                 var clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
                 event.which == 3 ?
-                this.select(clickPosition) :
-                this.select(clickPosition, ItemViewContextMenuPosition.NONE);
+                this.select(clickPosition, null, false, true) :
+                this.select(clickPosition, ItemViewContextMenuPosition.NONE, false, true);
 
             } else {
                 this.deselect();
@@ -631,10 +631,10 @@ module api.liveedit {
             return this.getEl().hasAttribute('data-live-edit-selected');
         }
 
-        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false) {
+        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false, silent: boolean = false) {
             this.selectItem();
             this.showContextMenu(clickPosition, menuPosition);
-            new ItemViewSelectedEvent(this, clickPosition, isNew, true).fire();
+            new ItemViewSelectedEvent(this, clickPosition, isNew, silent).fire();
         }
 
         selectWithoutMenu(isNew: boolean = false) {

@@ -392,12 +392,16 @@ module app.wizard.page {
                 var itemView = event.getItemView();
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
 
-                if(itemView.isEmpty() && this.contextWindow.isFloating() && event.isSilent() ) {
-                    this.contextWindow.slideOut();
-                }
-
                 if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
-                    if (event.isNew() && !toggler.isActive()) {
+                    if(itemView.isEmpty() && event.isSilent()) {
+                        if(!this.contextWindow.isFixed()) {
+                            if (this.contextWindow.isFloating() && this.contextWindow.isShownOrAboutToBeShown()) {
+                                toggler.setActive(false);
+                            }
+                        } else {
+                            this.contextWindow.setFixed(false);
+                        }
+                    }else if (event.isNew() && !toggler.isActive()) {
                         toggler.setActive(true);
                     }
                     this.inspectComponent(<ComponentView<Component>>itemView);
