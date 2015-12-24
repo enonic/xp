@@ -39,6 +39,8 @@ module app.wizard {
         private selectionChangedHandler: (treeNode: TreeNode<ItemView>) =>
             void = api.util.AppHelper.debounce(this.selectItem, 500, this.clicked);
 
+        private beforeInsertActionListeners: {(event):void}[] = [];
+
         private mouseDownListener: (event: MouseEvent) => void;
         private mouseUpListener: (event?: MouseEvent) => void;
         private mouseMoveListener: (event: MouseEvent) => void;
@@ -423,6 +425,9 @@ module app.wizard {
 
             this.contextMenu.getMenu().onBeforeAction((action: api.ui.Action) => {
                 this.pageView.setDisabledContextMenu(true);
+                if (action.hasParentAction() && action.getParentAction().getLabel() == "Insert"){
+                    this.notifyBeforeInsertAction();
+                }
             });
 
             this.contextMenu.getMenu().onAfterAction((action: api.ui.Action) => {
@@ -462,6 +467,25 @@ module app.wizard {
             return clickedRow == currentlySelectedRow;
         }
 
+        onBeforeInsertAction(listener: (event)=>void) {
+            this.beforeInsertActionListeners.push(listener);
+        }
+
+        unBeforeInsertAction(listener: (event)=>void) {
+            this.beforeInsertActionListeners = this.beforeInsertActionListeners.filter((currentListener: (event)=>void)=> {
+                return listener != currentListener
+            });
+        }
+
+        private notifyBeforeInsertAction() {
+            this.beforeInsertActionListeners.forEach((listener: (event)=>void)=> {
+                listener.call(this);
+            });
+        }
+
+
     }
+
+
 
 }
