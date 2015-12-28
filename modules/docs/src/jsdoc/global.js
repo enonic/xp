@@ -125,3 +125,58 @@ var log = {
 
     }
 };
+
+/**
+ * Java to Javascript bridge functions.
+ *
+ * @global
+ * @namespace
+ */
+var __ = {
+
+    /**
+     * Doc newBean.
+     *
+     * @param name Classname for bean to create.
+     */
+    newBean: function (name) {
+
+    },
+
+    /**
+     * Doc toScriptValue.
+     *
+     * @param value Value to convert.
+     */
+    toScriptValue: function (value) {
+
+    },
+
+    /**
+     * Doc toNativeObject.
+     *
+     * @param value Value to convert.
+     */
+    toNativeObject: function (value) {
+
+    },
+
+    /**
+     * Doc nullOrValue.
+     *
+     * @param value Value to convert.
+     */
+    nullOrValue: function (value) {
+
+    },
+
+    /**
+     * Doc registerMock.
+     *
+     * @param name Name of mock.
+     * @param value Value to register.
+     */
+    registerMock: function (name, value) {
+
+    }
+};
