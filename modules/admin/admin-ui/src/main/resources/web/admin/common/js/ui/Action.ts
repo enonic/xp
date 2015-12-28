@@ -84,6 +84,10 @@ module api.ui {
             return !!this.parentAction;
         }
 
+        getParentAction() : Action {
+            return this.parentAction;
+        }
+
         getChildActions(): Action[] {
             return this.childActions;
         }
