@@ -24,7 +24,7 @@ module api.liveedit.part {
 
             this.partComponentView = partView;
 
-            var request = new GetPartDescriptorsByApplicationsRequest(partView.liveEditModel.getSiteModel().getApplicationKeys());
+            var request = new GetPartDescriptorsByApplicationsRequest(partView.getLiveEditModel().getSiteModel().getApplicationKeys());
             var loader = new PartDescriptorLoader(request);
             loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
             this.comboBox = new PartDescriptorComboBox(loader);
@@ -39,9 +39,9 @@ module api.liveedit.part {
                 partComponent.setDescriptor(descriptor.getKey(), descriptor);
             });
 
-            partView.liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
+            partView.getLiveEditModel().getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() == SiteModel.PROPERTY_NAME_SITE_CONFIGS) {
-                    request.setApplicationKeys(partView.liveEditModel.getSiteModel().getApplicationKeys());
+                    request.setApplicationKeys(partView.getLiveEditModel().getSiteModel().getApplicationKeys());
                     loader.load();
                 }
             });

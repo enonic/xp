@@ -312,6 +312,9 @@ module api.liveedit {
             else if (this.isSelected()) {
                 this.deselect();
             }
+            else if(!!event.type && (event.type == 'click' || event.type == 'contextmenu') && this.isClicked(event)) {
+                this.handleClick(event);
+            }
         }
 
         handleClick(event: MouseEvent) {

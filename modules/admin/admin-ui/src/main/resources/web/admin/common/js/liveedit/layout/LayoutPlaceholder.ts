@@ -19,7 +19,7 @@ module api.liveedit.layout {
             this.addClassEx("layout-placeholder");
             this.layoutComponentView = layoutView;
 
-            var request = new GetLayoutDescriptorsByApplicationsRequest(layoutView.liveEditModel.getSiteModel().getApplicationKeys());
+            var request = new GetLayoutDescriptorsByApplicationsRequest(layoutView.getLiveEditModel().getSiteModel().getApplicationKeys());
             var loader = new LayoutDescriptorLoader(request);
             loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
             this.comboBox = new LayoutDescriptorComboBox(loader);
@@ -35,9 +35,9 @@ module api.liveedit.layout {
                 layoutComponent.setDescriptor(descriptor.getKey(), descriptor);
             });
 
-            layoutView.liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
+            layoutView.getLiveEditModel().getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() == SiteModel.PROPERTY_NAME_SITE_CONFIGS) {
-                    request.setApplicationKeys(layoutView.liveEditModel.getSiteModel().getApplicationKeys());
+                    request.setApplicationKeys(layoutView.getLiveEditModel().getSiteModel().getApplicationKeys());
                     loader.load();
                 }
             });

@@ -32,7 +32,7 @@ module api.liveedit.layout {
         constructor(builder: LayoutComponentViewBuilder) {
             this.regionViews = [];
 
-            this.liveEditModel = builder.parentRegionView.liveEditModel;
+            this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.layoutComponent = builder.component;
             LayoutComponentView.debug = false;
 

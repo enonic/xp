@@ -83,7 +83,7 @@ module api.liveedit {
 
     export class ItemView extends api.dom.Element {
 
-        liveEditModel: LiveEditModel;
+        protected liveEditModel: LiveEditModel;
 
         private itemViewIdProducer: ItemViewIdProducer;
 
@@ -126,7 +126,7 @@ module api.liveedit {
 
             this.type = builder.type;
             this.parentItemView = builder.parentView;
-            this.liveEditModel = builder.liveEditModel ? builder.liveEditModel : builder.parentView.liveEditModel;
+            this.liveEditModel = builder.liveEditModel ? builder.liveEditModel : builder.parentView.getLiveEditModel();
             this.itemViewIdProducer = builder.itemViewIdProducer;
             this.contextMenuActions = builder.contextMenuActions;
             this.contextMenuTitle = builder.contextMenuTitle;
@@ -496,6 +496,17 @@ module api.liveedit {
             if (this.isSelected()) {
                 this.deselect();
             }
+            if(!!event.type && (event.type == 'click' || event.type == 'contextmenu') && this.isClicked(event)) {
+                this.handleClick(event);
+            }
+        }
+
+        protected isClicked(event: MouseEvent): boolean {
+            var el = this.getEl();
+            return event.pageX >= el.getOffsetLeft() &&
+                   event.pageX <= (el.getOffsetLeft() + el.getWidth()) &&
+                   event.pageY >= (el.getOffsetTop() - el.getScrollTop())&&
+                   event.pageY <= (el.getOffsetTop() + el.getHeight() - el.getScrollTop() );
         }
 
         private deselectParent() {
@@ -745,6 +756,10 @@ module api.liveedit {
 
         toString(): string {
             return this.getItemId().toNumber() + " : " + this.getType().getShortName()
+        }
+
+        getLiveEditModel(): LiveEditModel {
+            return this.liveEditModel;
         }
 
         static findParentItemViewAsHTMLElement(htmlElement: HTMLElement): HTMLElement {
