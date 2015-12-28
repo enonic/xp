@@ -127,7 +127,7 @@ var log = {
 };
 
 /**
- * Java to Javascript bridge functions.
+ * Javascript to Java bridge functions.
  *
  * @global
  * @namespace
@@ -135,7 +135,7 @@ var log = {
 var __ = {
 
     /**
-     * Doc newBean.
+     * Creates a new JavaScript bean that wraps the given Java class and makes it's methods available to be called from JavaScript.
      *
      * @param name Classname for bean to create.
      */
@@ -153,7 +153,7 @@ var __ = {
     },
 
     /**
-     * Doc toNativeObject.
+     * Converts arrays or complex Java objects to JSon.
      *
      * @param value Value to convert.
      */
