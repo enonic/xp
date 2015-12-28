@@ -41,24 +41,28 @@ public class AdminToolResource
         final PrincipalKeys principals = ContextAccessor.current().
             getAuthInfo().
             getPrincipals();
+        final boolean isAdmin = principals.contains( RoleKeys.ADMIN );
         return adminToolDescriptorService.getAllowedAdminToolDescriptors( principals ).
             stream().
-            map( this::mapAdminToolDescriptorToJson ).
+            map( adminToolDescriptor -> mapAdminToolDescriptorToJson( adminToolDescriptor, isAdmin ) ).
             collect( Collectors.toList() );
     }
 
-    private AdminToolJson mapAdminToolDescriptorToJson( final AdminToolDescriptor adminToolDescriptor )
+    private AdminToolJson mapAdminToolDescriptorToJson( final AdminToolDescriptor adminToolDescriptor, final boolean mapAllowedPrincipals )
     {
         final AdminToolJson jsonEntry = new AdminToolJson();
         jsonEntry.key = adminToolDescriptor.getKey().toString();
         jsonEntry.displayName = adminToolDescriptor.getDisplayName();
         jsonEntry.icon = adminToolDescriptor.getIcon();
-        final ImmutableSet.Builder<String> allowedPrincipals = ImmutableSet.builder();
-        for ( PrincipalKey principalKey : adminToolDescriptor.getAllowedPrincipals() )
+        if ( mapAllowedPrincipals )
         {
-            allowedPrincipals.add( principalKey.toString() );
+            final ImmutableSet.Builder<String> allowedPrincipals = ImmutableSet.builder();
+            for ( PrincipalKey principalKey : adminToolDescriptor.getAllowedPrincipals() )
+            {
+                allowedPrincipals.add( principalKey.toString() );
+            }
+            jsonEntry.allow = allowedPrincipals.build();
         }
-        jsonEntry.allow = allowedPrincipals.build();
         return jsonEntry;
     }
 
