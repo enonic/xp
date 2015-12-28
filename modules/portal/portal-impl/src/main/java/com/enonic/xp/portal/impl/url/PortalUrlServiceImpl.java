@@ -8,7 +8,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.portal.owasp.HtmlSanitizer;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
@@ -64,8 +63,6 @@ public final class PortalUrlServiceImpl
     private ContentService contentService;
 
     private ApplicationService applicationService;
-
-    private HtmlSanitizer htmlSanitizer;
 
     @Override
     public String assetUrl( final AssetUrlParams params )
@@ -168,7 +165,7 @@ public final class PortalUrlServiceImpl
             }
         }
 
-        return htmlSanitizer.sanitizeHtml( processedHtml );
+        return processedHtml;
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )
@@ -190,11 +187,5 @@ public final class PortalUrlServiceImpl
     public void setApplicationService( final ApplicationService applicationService )
     {
         this.applicationService = applicationService;
-    }
-
-    @Reference
-    public void setHtmlSanitizer( final HtmlSanitizer htmlSanitizer )
-    {
-        this.htmlSanitizer = htmlSanitizer;
     }
 }

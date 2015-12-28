@@ -16,6 +16,7 @@ public final class HtmlSanitizerImpl
         allowCommonInlineFormattingElements().
         allowElements( "a", "img", "pre" ).
         allowElements( "table", "caption", "thead", "tbody", "tfoot", "tr", "th", "td", "col", "colgroup" ).
+        allowElements( "figure", "figcaption" ).
         allowAttributes( "href" ).onElements( "a" ).
         allowAttributes( "src" ).onElements( "img" ).
         allowAttributes( "checked", "class", "id", "target", "title", "type" ).globally().

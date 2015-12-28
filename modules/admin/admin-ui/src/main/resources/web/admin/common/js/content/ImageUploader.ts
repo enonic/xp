@@ -240,6 +240,7 @@ module api.content {
         }
 
         createResultItem(value: string): api.dom.DivEl {
+
             if (!this.initialWidth) {
                 this.initialWidth = this.getParentElement().getEl().getWidth();
             }

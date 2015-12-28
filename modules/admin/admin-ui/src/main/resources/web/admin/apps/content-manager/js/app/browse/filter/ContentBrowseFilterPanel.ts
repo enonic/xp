@@ -72,9 +72,8 @@ module app.browse.filter {
             }
 
             var contentQuery: ContentQuery = this.createContentQuery(event);
-            var searchString: string = event.getSearchInputValues().getTextSearchFieldValue();
 
-            this.searchDataAndHandleResponse(contentQuery, searchString);
+            this.searchDataAndHandleResponse(contentQuery);
         }
 
         private handleEmptyFilterInput(event: api.app.browse.filter.SearchEvent) {
@@ -109,46 +108,57 @@ module app.browse.filter {
             return contentQuery;
         }
 
-        private searchDataAndHandleResponse(contentQuery: ContentQuery, searchString: string) {
+        private searchDataAndHandleResponse(contentQuery: ContentQuery) {
             new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
             setExpand(api.rest.Expand.SUMMARY).
             sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
-                if (api.util.StringHelper.isEmpty(searchString)) {
-                    this.resetFacets(true, true).then(() => {
-                        this.updateAggregations(this.getAggregationsToUpdate(contentQuery, contentQueryResult), true);
-                        this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
-                        this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
-                        new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
-                    })
-                }
-                else {
-                    this.updateAggregations(contentQueryResult.getAggregations(), false);
+                this.getAggregations(contentQuery, contentQueryResult).then((aggregations: api.aggregation.Aggregation[]) => {
+                    this.updateAggregations(aggregations, true);
                     this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
                     this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
                     new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
-                }
-
+            });
 
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
         }
 
-        private getAggregationsToUpdate(contentQuery: ContentQuery,
-                                        contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>): Aggregation[] {
-            var updateAllAggreegations = this.isUpdateOfContentTypesNeeded(contentQuery);
-            if (updateAllAggreegations) {
-                return contentQueryResult.getAggregations();
-            }
-            else { //only last modified aggregation to update
-                return contentQueryResult.getAggregations().filter((aggregation) => {
-                    return aggregation.getName() !== ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME;
-                });
-            }
+        private cloneContentQueryNoContentTypes(contentQuery: ContentQuery): ContentQuery {
+            var newContentQuery: ContentQuery = new ContentQuery();
+            newContentQuery.setContentTypeNames([]);
+            newContentQuery.setFrom(contentQuery.getFrom());
+            newContentQuery.setQueryExpr(contentQuery.getQueryExpr());
+            newContentQuery.setSize(contentQuery.getSize());
+            contentQuery.getAggregationQueries().forEach((aggregationQUery) => {
+                newContentQuery.addAggregationQuery(aggregationQUery);
+            });
+            contentQuery.getQueryFilters().forEach((queryFilter) => {
+                newContentQuery.addQueryFilter(queryFilter);
+            });
+
+            return newContentQuery;
         }
 
-        private isUpdateOfContentTypesNeeded(contentQuery: ContentQuery): boolean {
-            return !(contentQuery.getContentTypes().length > 0 && contentQuery.getQueryFilters().length == 0);
+        private getAggregations(contentQuery: ContentQuery, contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>): wemQ.Promise<api.aggregation.Aggregation[]> {
+            return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(this.cloneContentQueryNoContentTypes(contentQuery)).
+                setExpand(api.rest.Expand.SUMMARY).
+                sendAndParse().then((contentQueryResultNoContentTypesSelected: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+                    return this.combineAggregations(contentQueryResult, contentQueryResultNoContentTypesSelected);
+                });
+        }
+
+        private combineAggregations(contentQueryResult, contentQueryResultNoContentTypesSelected): api.aggregation.Aggregation[] {
+            var contentTypesAggr = contentQueryResultNoContentTypesSelected.getAggregations().filter((aggregation) => {
+                return aggregation.getName() === ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME;
+            });
+            var dateModifiedAggr = contentQueryResult.getAggregations().filter((aggregation) => {
+                return aggregation.getName() !== ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME;
+            });
+
+            var aggregations = [contentTypesAggr[0], dateModifiedAggr[0]];
+
+            return aggregations;
         }
 
         private initAggregationGroupView(aggregationGroupView: AggregationGroupView[]) {
