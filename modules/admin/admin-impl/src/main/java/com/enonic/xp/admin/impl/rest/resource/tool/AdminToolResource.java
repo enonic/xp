@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.tool.json.AdminToolJson;
+import com.enonic.xp.admin.impl.rest.resource.tool.json.AdminToolKeyJson;
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.context.ContextAccessor;
@@ -51,7 +52,9 @@ public class AdminToolResource
     private AdminToolJson mapAdminToolDescriptorToJson( final AdminToolDescriptor adminToolDescriptor, final boolean mapAllowedPrincipals )
     {
         final AdminToolJson jsonEntry = new AdminToolJson();
-        jsonEntry.key = adminToolDescriptor.getKey().toString();
+        jsonEntry.key = new AdminToolKeyJson();
+        jsonEntry.key.application = adminToolDescriptor.getKey().getApplicationKey().getName();
+        jsonEntry.key.name = adminToolDescriptor.getKey().getName();
         jsonEntry.displayName = adminToolDescriptor.getDisplayName();
         jsonEntry.icon = adminToolDescriptor.getIcon();
         if ( mapAllowedPrincipals )
