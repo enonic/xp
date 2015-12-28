@@ -129,6 +129,12 @@ var log = {
 /**
  * Javascript to Java bridge functions.
  *
+ * @example
+ * var bean = __.newBean('com.enonic.xp.MyJavaUtils');
+ *
+ * @example
+ * return __.toNativeObject(bean.findArray(arrayName));
+ *
  * @global
  * @namespace
  */
