@@ -28,6 +28,15 @@ module api.ui {
             return this;
         }
 
+        public setItemName(itemName: string) {
+            var p = new api.dom.PEl();
+            p.setClass("drag-item-name");
+            p.setHtml(itemName);
+
+            this.removeChildren();
+            this.appendChild(p);
+        }
+
         isDropAllowed(): boolean {
             return this.hasClass('drop-allowed');
         }
