@@ -1,0 +1,14 @@
+.launcher-button {
+    position: fixed;
+    right: 0;
+    margin: 10px;
+    background-color: transparent;
+}
+
+.launcher-button:before {
+    font-family: 'icomoon';
+    -webkit-font-smoothing: antialiased;
+    font-size: 24px;
+    color: white;
+    content: "\e2a3";
+}
