@@ -9,7 +9,7 @@ module api.content.form.inputtype.upload {
 
     export class ImageUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
 
-        private imageUploader: api.content.ImageUploader;
+        private imageUploaderEl: api.content.ImageUploaderEl;
         private property: Property;
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
@@ -17,11 +17,11 @@ module api.content.form.inputtype.upload {
             super(config);
             var input = config.input;
 
-            this.imageUploader = new api.content.ImageUploader(<api.content.ImageUploaderConfig>{
+            this.imageUploaderEl = new api.content.ImageUploaderEl(<api.content.ImageUploaderElConfig>{
                 params: {
                     content: config.contentId.toString()
                 },
-                operation: api.content.MediaUploaderOperation.update,
+                operation: api.content.MediaUploaderElOperation.update,
                 name: input.getName(),
                 skipWizardEvents: false,
                 maximumOccurrences: 1,
@@ -30,7 +30,7 @@ module api.content.form.inputtype.upload {
                 showReset: false
             });
 
-            this.appendChild(this.imageUploader);
+            this.appendChild(this.imageUploaderEl);
         }
 
         getContext(): api.content.form.inputtype.ContentInputTypeViewContext {
@@ -55,8 +55,8 @@ module api.content.form.inputtype.upload {
                 new api.content.GetContentByIdRequest(this.getContext().contentId).
                     sendAndParse().
                     then((content: api.content.Content) => {
-                        this.imageUploader.setOriginalDimensions(content);
-                        this.imageUploader.setValue(content.getId());
+                        this.imageUploaderEl.setOriginalDimensions(content);
+                        this.imageUploaderEl.setValue(content.getId());
 
                         this.configEditorsProperties(content);
 
@@ -65,11 +65,11 @@ module api.content.form.inputtype.upload {
                     }).done();
             }
 
-            this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
+            this.imageUploaderEl.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
                 var content = event.getUploadItem().getModel(),
-                    value = this.imageUploader.getMediaValue(content);
+                    value = this.imageUploaderEl.getMediaValue(content);
 
-                this.imageUploader.setOriginalDimensions(content);
+                this.imageUploaderEl.setOriginalDimensions(content);
 
                 switch (this.property.getType()) {
                 case ValueTypes.DATA:
@@ -87,7 +87,7 @@ module api.content.form.inputtype.upload {
                 }
             });
 
-            this.imageUploader.onUploadReset(() => {
+            this.imageUploaderEl.onUploadReset(() => {
                 switch (this.property.getType()) {
                 case ValueTypes.DATA:
                     // reset both attachment name and focal point data
@@ -101,7 +101,7 @@ module api.content.form.inputtype.upload {
                 }
             });
 
-            this.imageUploader.onEditModeChanged((edit: boolean, crop: Rect, zoom: Rect, focus: Point) => {
+            this.imageUploaderEl.onEditModeChanged((edit: boolean, crop: Rect, zoom: Rect, focus: Point) => {
                 this.validate(false);
 
                 if (!edit && crop) {
@@ -109,13 +109,13 @@ module api.content.form.inputtype.upload {
                 }
             });
 
-            this.imageUploader.onCropAutoPositionedChanged((auto) => {
+            this.imageUploaderEl.onCropAutoPositionedChanged((auto) => {
                 if (auto) {
                     this.saveToProperty({x: 0, y: 0, x2: 1, y2: 1}, {x: 0, y: 0, x2: 1, y2: 1}, null);
                 }
             });
 
-            this.imageUploader.onFocusAutoPositionedChanged((auto) => {
+            this.imageUploaderEl.onFocusAutoPositionedChanged((auto) => {
                 if (auto) {
                     this.saveToProperty(null, null, {x: 0.5, y: 0.5});
                 }
@@ -230,17 +230,17 @@ module api.content.form.inputtype.upload {
         private configEditorsProperties(content: Content) {
             var focalPoint = this.getFocalPoint(content);
             if (focalPoint) {
-                this.imageUploader.setFocalPoint(focalPoint.x, focalPoint.y);
+                this.imageUploaderEl.setFocalPoint(focalPoint.x, focalPoint.y);
             }
 
             var cropPosition = this.getRectFromProperty(content, 'cropPosition');
             if (cropPosition) {
-                this.imageUploader.setCrop(cropPosition);
+                this.imageUploaderEl.setCrop(cropPosition);
             }
 
             var zoomPosition = this.getRectFromProperty(content, 'zoomPosition');
             if (zoomPosition) {
-                this.imageUploader.setZoom(zoomPosition);
+                this.imageUploaderEl.setZoom(zoomPosition);
             }
         }
 
@@ -248,7 +248,7 @@ module api.content.form.inputtype.upload {
             var recording = new api.form.inputtype.InputValidationRecording();
             var propertyValue = this.property.getValue();
 
-            if (this.imageUploader.isFocalPointEditMode() || this.imageUploader.isCropEditMode()) {
+            if (this.imageUploaderEl.isFocalPointEditMode() || this.imageUploaderEl.isCropEditMode()) {
                 recording.setBreaksMinimumOccurrences(true);
             }
             if (propertyValue.isNull() && this.input.getOccurrences().getMinimum() > 0) {
@@ -264,19 +264,19 @@ module api.content.form.inputtype.upload {
         }
 
         onFocus(listener: (event: FocusEvent) => void) {
-            this.imageUploader.onFocus(listener);
+            this.imageUploaderEl.onFocus(listener);
         }
 
         unFocus(listener: (event: FocusEvent) => void) {
-            this.imageUploader.unFocus(listener);
+            this.imageUploaderEl.unFocus(listener);
         }
 
         onBlur(listener: (event: FocusEvent) => void) {
-            this.imageUploader.onBlur(listener);
+            this.imageUploaderEl.onBlur(listener);
         }
 
         unBlur(listener: (event: FocusEvent) => void) {
-            this.imageUploader.unBlur(listener);
+            this.imageUploaderEl.unBlur(listener);
         }
 
     }

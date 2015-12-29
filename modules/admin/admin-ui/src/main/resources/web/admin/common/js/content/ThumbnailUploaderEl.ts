@@ -3,15 +3,15 @@ module api.content {
     import Button = api.ui.button.Button;
     import CloseButton = api.ui.button.CloseButton;
 
-    export interface ThumbnailUploaderConfig extends api.ui.uploader.UploaderConfig {
+    export interface ThumbnailUploaderElConfig extends api.ui.uploader.UploaderElConfig {
 
     }
 
-    export class ThumbnailUploader extends api.ui.uploader.Uploader<Content> {
+    export class ThumbnailUploaderEl extends api.ui.uploader.UploaderEl<Content> {
 
         private iconUrlResolver: ContentIconUrlResolver;
 
-        constructor(config?: ThumbnailUploaderConfig) {
+        constructor(config?: ThumbnailUploaderElConfig) {
 
             if (config.url == undefined) {
                 config.url = api.util.UriHelper.getRestUri("content/updateThumbnail");
@@ -39,7 +39,7 @@ module api.content {
 
             super(config);
 
-            this.addClass('thumbnail-uploader');
+            this.addClass('thumbnail-uploader-el');
             this.iconUrlResolver = new ContentIconUrlResolver();
         }
 

@@ -4,4 +4,4 @@
 ///<reference path='FileUploadedEvent.ts' />
 ///<reference path='FileUploadCompleteEvent.ts' />
 ///<reference path='FileUploadFailedEvent.ts' />
-///<reference path='Uploader.ts' />
+///<reference path='UploaderEl.ts' />

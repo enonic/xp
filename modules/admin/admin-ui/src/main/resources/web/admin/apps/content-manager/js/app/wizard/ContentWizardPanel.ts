@@ -36,7 +36,7 @@ module app.wizard {
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import FormIcon = api.app.wizard.FormIcon;
-    import ThumbnailUploader = api.content.ThumbnailUploader;
+    import ThumbnailUploaderEl = api.content.ThumbnailUploaderEl;
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
     import TogglerButton = api.ui.button.TogglerButton;
     import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
@@ -69,7 +69,7 @@ module app.wizard {
 
         private contentType: ContentType;
 
-        private thumbnailUploader: ThumbnailUploader;
+        private thumbnailUploaderEl: ThumbnailUploaderEl;
 
         private contentWizardHeader: WizardHeaderWithDisplayNameAndName;
 
@@ -143,8 +143,8 @@ module app.wizard {
                 setDisplayNameGenerator(this.displayNameScriptExecutor).
                 build();
 
-            this.thumbnailUploader = new ThumbnailUploader({
-                name: 'thumbnail-uploader',
+            this.thumbnailUploaderEl = new ThumbnailUploaderEl({
+                name: 'thumbnail-uploader-el',
                 disabled: params.contentType.isImage(),
                 deferred: true
             });
@@ -180,7 +180,7 @@ module app.wizard {
 
             this.createSite = params.createSite;
             if (this.createSite || (params.persistedContent && params.persistedContent.isSite())) {
-                this.thumbnailUploader.addClass("site");
+                this.thumbnailUploaderEl.addClass("site");
             }
 
             this.contentWizardStepForm = new ContentWizardStepForm();
@@ -210,7 +210,7 @@ module app.wizard {
             super({
                 tabId: params.tabId,
                 persistedItem: params.persistedContent,
-                formIcon: this.thumbnailUploader,
+                formIcon: this.thumbnailUploaderEl,
                 mainToolbar: mainToolbar,
                 header: this.contentWizardHeader,
                 actions: this.wizardActions,
@@ -220,7 +220,7 @@ module app.wizard {
 
                 this.onValidityChanged((event: api.ValidityChangedEvent) => {
                     this.isContentFormValid = this.isValid();
-                    this.thumbnailUploader.toggleClass("invalid", !this.isValid());
+                    this.thumbnailUploaderEl.toggleClass("invalid", !this.isValid());
                     this.contentWizardToolbarPublishControls.setContentCanBePublished(this.checkContentCanBePublished(false));
                 });
 
@@ -287,8 +287,8 @@ module app.wizard {
                     responsiveItem.update();
                 });
 
-                if (this.thumbnailUploader) {
-                    this.thumbnailUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
+                if (this.thumbnailUploaderEl) {
+                    this.thumbnailUploaderEl.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
                         var newPersistedContent: Content = event.getUploadItem().getModel();
                         this.setPersistedItem(newPersistedContent);
                         this.updateMetadataAndMetadataForms(newPersistedContent);
@@ -600,14 +600,14 @@ module app.wizard {
         }
 
         private updateThumbnailWithContent(content: Content) {
-            this.thumbnailUploader.
+            this.thumbnailUploaderEl.
                 setValue(new ContentIconUrlResolver().setContent(content).resolve()).
                 setEnabled(!content.isImage()).
                 setParams({
                     id: content.getContentId().toString()
                 });
 
-            this.thumbnailUploader.toggleClass("invalid", !content.isValid());
+            this.thumbnailUploaderEl.toggleClass("invalid", !content.isValid());
         }
 
         private doLayoutPersistedItem(content: Content): wemQ.Promise<void> {

@@ -4,30 +4,30 @@ module api.content {
     import CloseButton = api.ui.button.CloseButton;
     import ValueTypes = api.data.ValueTypes;
 
-    export enum MediaUploaderOperation
+    export enum MediaUploaderElOperation
     {
         create,
         update
     }
 
-    export interface MediaUploaderConfig extends api.ui.uploader.UploaderConfig {
+    export interface MediaUploaderElConfig extends api.ui.uploader.UploaderElConfig {
 
-        operation: MediaUploaderOperation;
+        operation: MediaUploaderElOperation;
     }
 
-    export class MediaUploader extends api.ui.uploader.Uploader<Content> {
+    export class MediaUploaderEl extends api.ui.uploader.UploaderEl<Content> {
 
         private fileName: string;
 
-        constructor(config: MediaUploaderConfig) {
+        constructor(config: MediaUploaderElConfig) {
 
             if (config.url == undefined) {
-                config.url = api.util.UriHelper.getRestUri("content/" + MediaUploaderOperation[config.operation] + "Media")
+                config.url = api.util.UriHelper.getRestUri("content/" + MediaUploaderElOperation[config.operation] + "Media")
             }
 
             super(config);
 
-            this.addClass('media-uploader');
+            this.addClass('media-uploader-el');
         }
 
 

@@ -28,7 +28,7 @@ module app.create {
 
         private fileInput: api.ui.text.FileInput;
 
-        private mediaUploader: api.content.MediaUploader;
+        private mediaUploaderEl: api.content.MediaUploaderEl;
 
         private listItems: NewContentDialogListItem[];
         private mostPopularItems: MostPopularItem[];
@@ -144,8 +144,8 @@ module app.create {
             var uploaderMask = new api.dom.DivEl('uploader-mask');
             uploaderContainer.appendChild(uploaderMask);
 
-            this.mediaUploader = new api.content.MediaUploader({
-                operation: api.content.MediaUploaderOperation.create,
+            this.mediaUploaderEl = new api.content.MediaUploaderEl({
+                operation: api.content.MediaUploaderElOperation.create,
                 params: {
                     parent: ContentPath.ROOT.toString()
                 },
@@ -154,9 +154,9 @@ module app.create {
                 allowMultiSelection: true,
                 deferred: true  // wait till the window is shown
             });
-            uploaderContainer.appendChild(this.mediaUploader);
+            uploaderContainer.appendChild(this.mediaUploaderEl);
 
-            this.mediaUploader.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
+            this.mediaUploaderEl.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
                 this.closeAndFireEventFromMediaUpload(event.getUploadItems());
             });
 
@@ -234,7 +234,7 @@ module app.create {
                 parent: parent ? parent.getPath().toString() : api.content.ContentPath.ROOT.toString()
             };
 
-            this.mediaUploader.setParams(params);
+            this.mediaUploaderEl.setParams(params);
             this.fileInput.setUploaderParams(params)
         }
 
@@ -274,7 +274,7 @@ module app.create {
 
         hide() {
             super.hide();
-            this.mediaUploader.stop();
+            this.mediaUploaderEl.stop();
             this.addClass("hidden");
             this.removeClass("animated");
             this.mostPopularItemsBlock.hide();
@@ -403,16 +403,16 @@ module app.create {
             this.uploaderEnabled = !this.parentContent || !this.parentContent.getType().isTemplateFolder();
 
             if (this.uploaderEnabled) {
-                this.removeClass("no-uploader");
+                this.removeClass("no-uploader-el");
             } else {
-                this.addClass("no-uploader");
+                this.addClass("no-uploader-el");
             }
         }
 
         private resetFileInputWithUploader() {
-            this.mediaUploader.reset();
+            this.mediaUploaderEl.reset();
             this.fileInput.reset();
-            this.mediaUploader.setEnabled(this.uploaderEnabled);
+            this.mediaUploaderEl.setEnabled(this.uploaderEnabled);
             this.fileInput.getUploader().setEnabled(this.uploaderEnabled);
         }
 
