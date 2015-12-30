@@ -41,6 +41,7 @@
   <bundle level="22">${group}:core-i18n:${version}</bundle>
   <bundle level="22">${group}:core-media:${version}</bundle>
   <bundle level="22">${group}:core-app:${version}</bundle>
+  <bundle level="22">${group}:core-auth:${version}</bundle>
 
   <!-- Server bundles -->
   <bundle level="15">${group}:server-shell:${version}</bundle>

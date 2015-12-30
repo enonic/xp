@@ -12,6 +12,7 @@ include 'core:core-site'
 include 'core:core-i18n'
 include 'core:core-media'
 include 'core:core-app'
+include 'core:core-auth'
 
 include 'server:server-shell'
 include 'server:server-status'
