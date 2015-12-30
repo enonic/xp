@@ -6,12 +6,15 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
+import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 public final class VirtualHostMapping
     implements VirtualHost, Comparable<VirtualHostMapping>
 {
     private final static String DEFAULT_HOST = "localhost";
+
+    private final static String DEFAULT_USERSTORE = UserStoreKey.system().toString();
 
     private final String name;
 
@@ -21,12 +24,15 @@ public final class VirtualHostMapping
 
     private String target;
 
+    private String userstore;
+
     public VirtualHostMapping( final String name )
     {
         this.name = name;
         setHost( null );
         setSource( null );
         setTarget( null );
+        setUserstore( null );
     }
 
     @Override
@@ -48,6 +54,12 @@ public final class VirtualHostMapping
     }
 
     @Override
+    public String getUserstore()
+    {
+        return this.userstore;
+    }
+
+    @Override
     public String getTarget()
     {
         return this.target;
@@ -66,6 +78,11 @@ public final class VirtualHostMapping
     public void setTarget( final String value )
     {
         this.target = normalizePath( value );
+    }
+
+    public void setUserstore( final String value )
+    {
+        this.userstore = Strings.isNullOrEmpty( value ) ? DEFAULT_USERSTORE : value;
     }
 
     public boolean matches( final HttpServletRequest req )

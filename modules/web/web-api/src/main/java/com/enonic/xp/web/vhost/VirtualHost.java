@@ -12,4 +12,6 @@ public interface VirtualHost
     String getSource();
 
     String getTarget();
+
+    String getUserstore();
 }
