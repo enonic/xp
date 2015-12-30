@@ -28,7 +28,7 @@ public final class BasicAuthFilter
         throws Exception
     {
         login( req );
-        chain.doFilter( req, res );
+        chain.doFilter( req, new AuthResponseWrapper( req, res, securityService ) );
     }
 
     private void login( final HttpServletRequest req )
