@@ -23,7 +23,7 @@ module api.ui.uploader {
         lastModifiedDate: Date;
     }
 
-    export interface UploaderConfig {
+    export interface UploaderElConfig {
         name: string;
         url?: string;
         allowBrowse?: boolean;
@@ -46,9 +46,9 @@ module api.ui.uploader {
         beforeUploadCallback?: (files: PluploadFile[]) => void;
     }
 
-    export class Uploader<MODEL extends api.Equitable> extends api.dom.FormInputEl {
+    export class UploaderEl<MODEL extends api.Equitable> extends api.dom.FormInputEl {
 
-        private config: UploaderConfig;
+        private config: UploaderElConfig;
         private uploader;
         private value;
         private uploadedItems: UploadItem<MODEL>[] = [];
@@ -75,8 +75,8 @@ module api.ui.uploader {
 
         public static debug: boolean = false;
 
-        constructor(config: UploaderConfig) {
-            super("div", "uploader");
+        constructor(config: UploaderElConfig) {
+            super("div", "uploader-el");
 
             // init defaults
             this.initConfig(config);
@@ -165,7 +165,7 @@ module api.ui.uploader {
 
                     if (!dragOverEl) {
 
-                        if (Uploader.debug) {
+                        if (UploaderEl.debug) {
                             console.log('drag entered, adding class');
                         }
                         this.addClass('dragover');
@@ -179,7 +179,7 @@ module api.ui.uploader {
                     var targetEl = <HTMLElement> event.target;
 
                     if (dragOverEl == targetEl) {
-                        if (Uploader.debug) {
+                        if (UploaderEl.debug) {
                             console.log('drag left, removing class');
                         }
                         this.removeClass('dragover');
@@ -190,7 +190,7 @@ module api.ui.uploader {
 
             this.onDrop((event: DragEvent) => {
                 if (this.config.dropAlwaysAllowed) {
-                    if (Uploader.debug) {
+                    if (UploaderEl.debug) {
                         console.log('drag drop removing class');
                     }
                     this.removeClass('dragover');
@@ -209,11 +209,11 @@ module api.ui.uploader {
 
         private initHandler() {
             if (this.config.disabled) {
-                if (Uploader.debug) {
+                if (UploaderEl.debug) {
                     console.log('Skipping init, because of config.disabled = true', this);
                 }
             } else {
-                if (Uploader.debug) {
+                if (UploaderEl.debug) {
                     console.log('Initing uploader', this);
                 }
                 if (!this.uploader && this.config.url) {
@@ -232,7 +232,7 @@ module api.ui.uploader {
         }
 
         private destroyHandler() {
-            if (Uploader.debug) {
+            if (UploaderEl.debug) {
                 console.log('Destroying uploader', this);
             }
             if (this.uploader) {
@@ -241,7 +241,7 @@ module api.ui.uploader {
             }
         }
 
-        private initConfig(config: UploaderConfig) {
+        private initConfig(config: UploaderElConfig) {
             this.config = config;
 
             if (this.config.showResult == undefined) {
@@ -295,8 +295,8 @@ module api.ui.uploader {
             return this.value;
         }
 
-        setValue(value: string): Uploader<MODEL> {
-            if (Uploader.debug) {
+        setValue(value: string): UploaderEl<MODEL> {
+            if (UploaderEl.debug) {
                 console.log('Setting uploader value', value, this);
             }
             this.value = value;
@@ -371,19 +371,19 @@ module api.ui.uploader {
             throw new Error('Should be overridden by inheritors');
         }
 
-        setMaximumOccurrences(value: number): Uploader<MODEL> {
+        setMaximumOccurrences(value: number): UploaderEl<MODEL> {
             this.config.maximumOccurrences = value;
             return this;
         }
 
-        stop(): Uploader<MODEL> {
+        stop(): UploaderEl<MODEL> {
             if (this.uploader) {
                 this.uploader.stop();
             }
             return this;
         }
 
-        reset(): Uploader<MODEL> {
+        reset(): UploaderEl<MODEL> {
             this.setValue(null);
             this.notifyUploadReset();
             return this;
@@ -439,7 +439,7 @@ module api.ui.uploader {
             throw new Error('Should be overridden by inheritors');
         }
 
-        setParams(params: {[key: string]: any}): Uploader<MODEL> {
+        setParams(params: {[key: string]: any}): UploaderEl<MODEL> {
             if (this.uploader) {
                 this.uploader.setOption('multipart_params', params);
             } else {
@@ -448,7 +448,7 @@ module api.ui.uploader {
             return this;
         }
 
-        setEnabled(enabled: boolean): Uploader<MODEL> {
+        setEnabled(enabled: boolean): UploaderEl<MODEL> {
             this.config.disabled = !enabled;
 
             if (!enabled) {
@@ -458,14 +458,14 @@ module api.ui.uploader {
             }
 
             if (!enabled && this.uploader) {
-                if (Uploader.debug) {
+                if (UploaderEl.debug) {
                     console.log('Disabling uploader', this);
                 }
                 this.destroyHandler();
 
             } else if (enabled && !this.uploader) {
 
-                if (Uploader.debug) {
+                if (UploaderEl.debug) {
                     console.log('Enabling uploader', this);
                 }
                 if (this.config.deferred) {
@@ -473,7 +473,7 @@ module api.ui.uploader {
                     if (this.isVisible()) {
                         this.initHandler();
                     } else {
-                        if (Uploader.debug) {
+                        if (UploaderEl.debug) {
                             console.log('Deferring enabling uploader until it\' shown', this);
                         }
                         this.onShown((event) => this.initHandler.call(this, event));
@@ -483,7 +483,7 @@ module api.ui.uploader {
                     if (this.isRendered()) {
                         this.initHandler();
                     } else {
-                        if (Uploader.debug) {
+                        if (UploaderEl.debug) {
                             console.log('Deferring enabling uploader until it\' rendered', this);
                         }
                         this.onRendered((event) => this.initHandler.call(this, event));
@@ -521,7 +521,7 @@ module api.ui.uploader {
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
                 if (this.isFolder(file)) {
-                    if (Uploader.debug) {
+                    if (UploaderEl.debug) {
                         console.log('Removing folder [' + file.name + '] because it can\'t be uploaded', this);
                     }
 
@@ -533,7 +533,7 @@ module api.ui.uploader {
 
             // Check for max allowed occurrences
             if (this.config.maximumOccurrences > 0 && files.length > this.config.maximumOccurrences) {
-                if (Uploader.debug) {
+                if (UploaderEl.debug) {
                     console.log('Max ' + this.config.maximumOccurrences + ' files allowed, removing the rest', this);
                 }
 
@@ -567,7 +567,7 @@ module api.ui.uploader {
             });
 
             uploader.bind('Init', (up, params) => {
-                if (Uploader.debug) {
+                if (UploaderEl.debug) {
                     console.log('uploader init', up, params);
                 }
                 this.disableInputFocus();
@@ -580,12 +580,12 @@ module api.ui.uploader {
                     this.beforeUploadCallback(files);
                 }
 
-                if (Uploader.debug) {
+                if (UploaderEl.debug) {
                     console.log('uploader files added', up, files);
                 }
 
                 if (!this.validateFiles(up, files)) {
-                    if (Uploader.debug) {
+                    if (UploaderEl.debug) {
                         console.log('no valid files for upload found', up, files);
                     }
                     return;
@@ -606,19 +606,19 @@ module api.ui.uploader {
             }, this);
 
             uploader.bind('QueueChanged', (up) => {
-                if (Uploader.debug) {
+                if (UploaderEl.debug) {
                     console.log('uploader queue changed', up);
                 }
             }, this);
 
             uploader.bind('UploadFile', (up, file) => {
-                if (Uploader.debug) {
+                if (UploaderEl.debug) {
                     console.log('uploader upload file', up, file);
                 }
             }, this);
 
             uploader.bind('UploadProgress', (up, file: PluploadFile) => {
-                if (Uploader.debug) {
+                if (UploaderEl.debug) {
                     console.log('uploader upload progress', up, file);
                 }
 
@@ -632,7 +632,7 @@ module api.ui.uploader {
             }, this);
 
             uploader.bind('FileUploaded', (up, file: PluploadFile, response) => {
-                if (Uploader.debug) {
+                if (UploaderEl.debug) {
                     console.log('uploader file uploaded', up, file, response);
                 }
 
@@ -652,7 +652,7 @@ module api.ui.uploader {
             }, this);
 
             uploader.bind('Error', (up, response) => {
-                if (Uploader.debug) {
+                if (UploaderEl.debug) {
                     console.log('uploader error', up, response);
                 }
 
@@ -674,7 +674,7 @@ module api.ui.uploader {
             }, this);
 
             uploader.bind('UploadComplete', (up, files) => {
-                if (Uploader.debug) {
+                if (UploaderEl.debug) {
                     console.log('uploader upload complete', up, files);
                 }
 

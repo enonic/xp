@@ -7,24 +7,24 @@ import com.enonic.xp.data.ValueTypes;
 
 import static org.junit.Assert.*;
 
-public class FileUploaderTypeTest
+public class MediaUploaderTypeTest
     extends BaseInputTypeTest
 {
-    public FileUploaderTypeTest()
+    public MediaUploaderTypeTest()
     {
-        super( FileUploaderType.INSTANCE );
+        super( MediaUploaderType.INSTANCE );
     }
 
     @Test
     public void testName()
     {
-        assertEquals( "FileUploader", this.type.getName().toString() );
+        assertEquals( "MediaUploader", this.type.getName().toString() );
     }
 
     @Test
     public void testToString()
     {
-        assertEquals( "FileUploader", this.type.toString() );
+        assertEquals( "MediaUploader", this.type.toString() );
     }
 
     @Test

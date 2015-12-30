@@ -3,7 +3,7 @@ module app.view.detail {
     import CompareStatus = api.content.CompareStatus;
     import CompareStatusFormatter = api.content.CompareStatusFormatter;
     import ContentSummary = api.content.ContentSummary;
-    import MediaUploader = api.content.MediaUploader;
+    import MediaUploader = api.content.MediaUploaderEl;
     import Attachments = api.content.attachment.Attachments;
     import Attachment = api.content.attachment.Attachment;
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
@@ -65,7 +65,7 @@ module app.view.detail {
                             params: {
                                 parent: this.content.getContentId().toString()
                             },
-                            operation: api.content.MediaUploaderOperation.create,
+                            operation: api.content.MediaUploaderElOperation.create,
                             name: attachment.getName().toString(),
                             showReset: false,
                             showCancel: false,

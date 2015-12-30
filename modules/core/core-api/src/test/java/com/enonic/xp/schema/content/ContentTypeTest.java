@@ -22,7 +22,7 @@ public class ContentTypeTest
     private static final Form MEDIA_DEFAULT = Form.create().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Media" ).
-            inputType( InputTypeName.FILE_UPLOADER ).build() ).
+            inputType( InputTypeName.MEDIA_UPLOADER ).build() ).
         build();
 
     @Test
