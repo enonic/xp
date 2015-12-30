@@ -114,6 +114,7 @@ module app.wizard {
                 if (!event.isNew()) {
                     var selectedItemId = this.tree.getDataId(event.getItemView());
                     this.tree.selectNode(selectedItemId);
+                    this.tree.getGrid().focus();
 
                     if (!event.getPosition()) {
                         this.scrollToItem(selectedItemId);
