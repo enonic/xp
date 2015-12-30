@@ -2,6 +2,7 @@
 ///<reference path='DeleteAction.ts' />
 ///<reference path='EditAction.ts' />
 ///<reference path='ContentItemViewToolbar.ts' />
+///<reference path='ContentPreviewPathChangedEvent.ts' />
 ///<reference path='ContentItemPreviewPanel.ts' />
 ///<reference path='ContentVersionsTreeGrid.ts' />
 ///<reference path='AllContentVersionsTreeGrid.ts' />
