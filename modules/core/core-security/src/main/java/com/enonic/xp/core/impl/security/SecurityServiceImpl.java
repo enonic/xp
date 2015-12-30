@@ -820,8 +820,13 @@ public final class SecurityServiceImpl
     @Override
     public UserStore createUserStore( final CreateUserStoreParams createUserStoreParams )
     {
+        final String displayName = createUserStoreParams.getDisplayName();
+        final String authApplication =
+            createUserStoreParams.getAuthApplication() == null ? null : createUserStoreParams.getAuthApplication().toString();
+
         final PropertyTree data = new PropertyTree();
-        data.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, createUserStoreParams.getDisplayName() );
+        data.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, displayName );
+        data.setString( UserStorePropertyNames.AUTH_APPLICATION_KEY, authApplication );
 
         final Node node = callWithContext( () -> {
 
