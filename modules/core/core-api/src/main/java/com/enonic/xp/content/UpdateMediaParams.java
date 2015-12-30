@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
 @Beta
-public class UpdateMediaParams
+public final class UpdateMediaParams
 {
     private ContentId content;
 
@@ -19,6 +19,14 @@ public class UpdateMediaParams
     private double focalX = 0.5;
 
     private double focalY = 0.5;
+
+    private String caption;
+
+    private String artist;
+
+    private String copyright;
+
+    private String tags;
 
     public UpdateMediaParams content( final ContentId value )
     {
@@ -53,6 +61,30 @@ public class UpdateMediaParams
     public UpdateMediaParams focalY( final double focalY )
     {
         this.focalY = focalY;
+        return this;
+    }
+
+    public UpdateMediaParams caption( final String caption )
+    {
+        this.caption = caption;
+        return this;
+    }
+
+    public UpdateMediaParams artist( final String artist )
+    {
+        this.artist = artist;
+        return this;
+    }
+
+    public UpdateMediaParams copyright( final String copyright )
+    {
+        this.copyright = copyright;
+        return this;
+    }
+
+    public UpdateMediaParams tags( final String tags )
+    {
+        this.tags = tags;
         return this;
     }
 
@@ -91,5 +123,25 @@ public class UpdateMediaParams
     public double getFocalY()
     {
         return focalY;
+    }
+
+    public String getCaption()
+    {
+        return caption;
+    }
+
+    public String getArtist()
+    {
+        return artist;
+    }
+
+    public String getCopyright()
+    {
+        return copyright;
+    }
+
+    public String getTags()
+    {
+        return tags;
     }
 }

@@ -80,4 +80,5 @@ public interface ContentService
 
     boolean contentExists( ContentPath contentPath );
 
+    Content reprocess( ContentId contentId );
 }

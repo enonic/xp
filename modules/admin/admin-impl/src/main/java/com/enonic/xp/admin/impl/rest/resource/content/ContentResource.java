@@ -34,6 +34,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 
+import io.swagger.annotations.ApiOperation;
+
 import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
 import com.enonic.xp.admin.impl.json.content.CompareContentResultsJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
@@ -957,6 +959,52 @@ public final class ContentResource
             permissionsJson.add( new EffectivePermissionJson( access.name(), accessJson ) );
         }
         return permissionsJson;
+    }
+
+    @POST
+    @Path("reprocess")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed(RoleKeys.ADMIN_ID)
+    @ApiOperation("Reprocesses content")
+    public ReprocessContentResultJson reprocess( final ReprocessContentRequestJson request )
+    {
+        final List<ContentPath> updated = new ArrayList<>();
+
+        final Content content = this.contentService.getByPath( request.getSourceBranchPath().getContentPath() );
+        reprocessContent( content, request.isSkipChildren(), updated );
+
+        return new ReprocessContentResultJson( ContentPaths.from( updated ) );
+    }
+
+    private void reprocessContent( final Content content, final boolean skipChildren, final List<ContentPath> updated )
+    {
+        final Content reprocessedContent = this.contentService.reprocess( content.getId() );
+        if ( !reprocessedContent.equals( content ) )
+        {
+            updated.add( content.getPath() );
+        }
+        if ( skipChildren )
+        {
+            return;
+        }
+
+        int from = 0;
+        int resultCount;
+        do
+        {
+            final FindContentByParentParams findParams = FindContentByParentParams.create().parentId( content.getId() ).
+                from( from ).size( 5 ).build();
+            final FindContentByParentResult results = this.contentService.findByParent( findParams );
+
+            for ( Content child : results.getContents() )
+            {
+                reprocessContent( child, false, updated );
+            }
+            resultCount = Math.toIntExact( results.getHits() );
+            from = from + resultCount;
+        }
+        while ( resultCount > 0 );
     }
 
     private PrincipalQueryResult getTotalUsers()
