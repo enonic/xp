@@ -14,8 +14,9 @@ module app.wizard.action {
                     .setYesCallback(() => {
                         new api.content.DeleteContentRequest()
                             .addContentPath(wizardPanel.getPersistedItem().getPath())
-                            .sendAndParse()
-                            .catch((reason: any) => {
+                            .sendAndParse().then(
+                            (result) => api.content.DeleteContentRequest.feedback(result),
+                            (reason: any) => {
                                 if (reason && reason.message) {
                                     api.notify.showError(reason.message);
                                 } else {
