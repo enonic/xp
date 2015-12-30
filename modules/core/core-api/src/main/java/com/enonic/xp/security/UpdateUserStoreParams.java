@@ -2,6 +2,7 @@ package com.enonic.xp.security;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -14,12 +15,15 @@ public final class UpdateUserStoreParams
 
     private final String displayName;
 
+    private final ApplicationKey authApplication;
+
     private final UserStoreAccessControlList userStorePermissions;
 
     private UpdateUserStoreParams( final Builder builder )
     {
         this.userStoreKey = checkNotNull( builder.userStoreKey, "userStoreKey is required" );
         this.displayName = checkNotNull( builder.displayName, "displayName is required" );
+        this.authApplication = builder.authApplication;
         this.userStorePermissions = builder.userStorePermissions;
     }
 
@@ -31,6 +35,11 @@ public final class UpdateUserStoreParams
     public String getDisplayName()
     {
         return displayName;
+    }
+
+    public ApplicationKey getAuthApplication()
+    {
+        return authApplication;
     }
 
     public UserStoreAccessControlList getUserStorePermissions()
@@ -49,6 +58,8 @@ public final class UpdateUserStoreParams
 
         private String displayName;
 
+        private ApplicationKey authApplication;
+
         private UserStoreAccessControlList userStorePermissions;
 
         private Builder()
@@ -64,6 +75,12 @@ public final class UpdateUserStoreParams
         public Builder displayName( final String value )
         {
             this.displayName = value;
+            return this;
+        }
+
+        public Builder authApplication( final ApplicationKey value )
+        {
+            this.authApplication = value;
             return this;
         }
 

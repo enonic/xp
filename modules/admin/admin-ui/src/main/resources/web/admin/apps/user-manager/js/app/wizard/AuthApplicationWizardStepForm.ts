@@ -10,11 +10,20 @@ module app.wizard {
     export class AuthApplicationWizardStepForm extends api.app.wizard.WizardStepForm {
 
         private appCombobox: api.application.ApplicationComboBox;
+        private appComboboxLoaded = false;
+        private authApplication: string;
 
         constructor() {
             super();
 
             this.appCombobox = new api.application.ApplicationComboBox(1);
+            var appComboboxLoadingListener = () => {
+                this.appComboboxLoaded = true;
+                this.selectAuthApplication();
+                this.appCombobox.unLoaded(appComboboxLoadingListener);
+            };
+            this.appCombobox.onLoaded(appComboboxLoadingListener);
+            this.appCombobox.getLoader().load();
 
             var authApplicationFormItem = new FormItemBuilder(this.appCombobox).
                 setLabel('Authentication').
@@ -40,7 +49,23 @@ module app.wizard {
         }
 
         layout(userStore: api.security.UserStore) {
-            console.log("AuthApplicationWizardStepForm: " + userStore.getAuthApplication());
+            this.authApplication = userStore.getAuthApplication();
+            this.selectAuthApplication();
+        }
+
+        private selectAuthApplication(): void {
+            if (this.appComboboxLoaded) {
+                if (this.authApplication) {
+                    this.appCombobox.getDisplayValues().
+                        filter((application: api.application.Application) => {
+                            return this.authApplication == application.getApplicationKey().toString();
+                        }).
+                        forEach((selectedOption: api.application.Application) => {
+                            this.appCombobox.select(selectedOption);
+                        });
+
+                }
+            }
         }
 
         getApplication(): string {

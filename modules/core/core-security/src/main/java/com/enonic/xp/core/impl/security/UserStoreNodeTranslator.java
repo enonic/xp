@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
@@ -219,11 +220,15 @@ abstract class UserStoreNodeTranslator
 
     static UpdateNodeParams toUpdateNodeParams( final UpdateUserStoreParams updateUserStoreParams, final NodeId nodeId )
     {
+        final String displayName = updateUserStoreParams.getDisplayName();
+        final String authApplication =
+            updateUserStoreParams.getAuthApplication() == null ? null : updateUserStoreParams.getAuthApplication().toString();
         return UpdateNodeParams.create().
             id( nodeId ).
             editor( editableNode -> {
                 final PropertyTree nodeData = editableNode.data;
-                nodeData.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, updateUserStoreParams.getDisplayName() );
+                nodeData.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, displayName );
+                nodeData.setString( UserStorePropertyNames.AUTH_APPLICATION_KEY, authApplication );
             } ).
             build();
     }
@@ -248,10 +253,13 @@ abstract class UserStoreNodeTranslator
             return null;
         }
         final PropertySet nodeAsSet = node.data().getRoot();
+        final String displayName = nodeAsSet.getString( UserStorePropertyNames.DISPLAY_NAME_KEY );
+        final String authApplication = nodeAsSet.getString( UserStorePropertyNames.AUTH_APPLICATION_KEY );
 
         return UserStore.create().
-            displayName( nodeAsSet.getString( UserStorePropertyNames.DISPLAY_NAME_KEY ) ).
+            displayName( displayName ).
             key( UserStoreNodeTranslator.toKey( node ) ).
+            authApplication( authApplication == null ? null : ApplicationKey.from( authApplication ) ).
             build();
     }
 
