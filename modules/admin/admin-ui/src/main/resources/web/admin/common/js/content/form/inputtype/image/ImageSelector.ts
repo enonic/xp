@@ -185,6 +185,7 @@ module api.content.form.inputtype.image {
                     = ImageContentComboBox.create().
                     setMaximumOccurrences(maximumOccurrences).
                     setLoader(contentSelectorLoader).
+                    setPostLoad(contentSelectorLoader.postLoad.bind(contentSelectorLoader)).
                     setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).
                     build(),
                 comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();

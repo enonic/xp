@@ -470,6 +470,11 @@ module api.ui.grid {
         }
 
         subscribeOnScroll(callback: (e) => void) {
+            this.slickGrid.onScroll.subscribe(callback);
+        }
+
+        // scrolled event is for the mouse wheel only
+        subscribeOnScrolled(callback: (e) => void) {
             if (this.getHTMLElement().addEventListener) {
                 this.getHTMLElement().addEventListener('DOMMouseScroll', callback, false); // firefox
                 this.getHTMLElement().addEventListener('mousewheel', callback, false);     // chrome

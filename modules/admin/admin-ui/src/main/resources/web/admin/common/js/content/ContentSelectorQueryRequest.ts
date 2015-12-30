@@ -12,7 +12,7 @@ module api.content {
 
     export class ContentSelectorQueryRequest extends ContentResourceRequest<json.ContentQueryResultJson<ContentSummaryJson>, ContentSummary[]> {
 
-        public static DEFAULT_SIZE = 100;
+        public static DEFAULT_SIZE = 15;
 
         public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("_modifiedTime"), OrderDirection.DESC);
 
@@ -37,6 +37,10 @@ module api.content {
         private allowedContentPaths: string[] = [];
 
         private relationshipType: string;
+
+        private loaded: boolean;
+
+        private results: ContentSummary[] = [];
 
         constructor() {
             super();
@@ -107,6 +111,19 @@ module api.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "selectorQuery");
         }
 
+        isPartiallyLoaded(): boolean {
+            return this.results.length > 0 && !this.loaded;
+        }
+
+        isLoaded(): boolean {
+            return this.loaded;
+        }
+
+        resetParams() {
+            this.from = 0;
+            this.loaded = false;
+        }
+
         getParams(): Object {
 
             var queryExprAsString = this.getQueryExpr() ? this.getQueryExpr().toString() : "";
@@ -135,7 +152,15 @@ module api.content {
 
                     var contentSummaries: ContentSummary[] = <any[]> this.fromJsonToContentSummaryArray(<json.ContentSummaryJson[]>contentsAsJson);
 
-                    return contentSummaries;
+                    if (this.from === 0) {
+                        this.results = [];
+                    }
+                    this.from += responseResult.metadata["hits"];
+                    this.loaded = this.from >= responseResult.metadata["totalHits"];
+
+                    this.results = this.results.concat(contentSummaries);
+
+                    return this.results;
                 });
         }
 

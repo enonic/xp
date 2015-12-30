@@ -35,9 +35,9 @@ module api.util.loader {
             return this.request.sendAndParse();
         }
 
-        load(): wemQ.Promise<OBJECT[]> {
+        load(postLoad: boolean = false): wemQ.Promise<OBJECT[]> {
 
-            this.notifyLoadingData();
+            this.notifyLoadingData(postLoad);
             return this.sendRequest().then((results: OBJECT[]) => {
                 this.results = results;
                 if (this.comparator) {
@@ -106,10 +106,10 @@ module api.util.loader {
             });
         }
 
-        notifyLoadingData() {
+        notifyLoadingData(postLoad: boolean = false) {
             this.status = LoaderStatus.LOADING;
             this.loadingDataListeners.forEach((listener: (event: LoadingDataEvent)=>void)=> {
-                listener.call(this, new LoadingDataEvent());
+                listener.call(this, new LoadingDataEvent(postLoad));
             });
         }
 
