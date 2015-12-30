@@ -23,6 +23,7 @@ module api.liveedit {
         private unlockClickedListeners: {(event: MouseEvent): void}[] = [];
         private mouseEnterListeners: {(event: MouseEvent): void}[] = [];
         private mouseLeaveListeners: {(event: MouseEvent): void}[] = [];
+        private mouseMoveListeners: {(event: MouseEvent): void}[] = [];
 
         private static INSTANCE: Shader;
 
@@ -60,6 +61,7 @@ module api.liveedit {
                 shader.onContextMenu((event: MouseEvent) => this.handleClick(event));
                 shader.onMouseEnter((event: MouseEvent) => this.notifyMouseEntered(event));
                 shader.onMouseLeave((event: MouseEvent) => this.notifyMouseLeft(event));
+                shader.onMouseMove((event: MouseEvent) => this.notifyMouseMove(event));
             });
         }
 
@@ -145,6 +147,22 @@ module api.liveedit {
 
         private notifyMouseLeft(event: MouseEvent) {
             this.mouseLeaveListeners.forEach((listener) => {
+                listener(event);
+            })
+        }
+
+        onMouseMove(listener: (event: MouseEvent) => void) {
+            this.mouseMoveListeners.push(listener);
+        }
+
+        unMouseMove(listener: (event: MouseEvent) => void) {
+            this.mouseMoveListeners = this.mouseMoveListeners.filter((curr) => {
+                return listener != curr;
+            })
+        }
+
+        private notifyMouseMove(event: MouseEvent) {
+            this.mouseMoveListeners.forEach((listener) => {
                 listener(event);
             })
         }
