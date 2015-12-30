@@ -524,7 +524,6 @@ module api.ui.treegrid {
             return parentNode ? this.fetchChildren(parentNode) : this.fetchRoot();
         }
 
-
         dataToTreeNode(data: DATA, parent: TreeNode<DATA>): TreeNode<DATA> {
             return new TreeNodeBuilder<DATA>().
                 setData(data, this.getDataId(data)).
@@ -987,7 +986,7 @@ module api.ui.treegrid {
             }
         }
 
-        private updateExpanded() {
+        protected updateExpanded() {
             this.invalidate();
             this.active = true;
         }
