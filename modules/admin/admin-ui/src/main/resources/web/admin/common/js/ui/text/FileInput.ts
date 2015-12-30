@@ -3,7 +3,7 @@ module api.ui.text {
     import InputEl = api.dom.InputEl;
 
     import Content = api.content.Content;
-    import MediaUploader = api.content.MediaUploaderEl;
+    import MediaUploaderEl = api.content.MediaUploaderEl;
 
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import FileUploadProgressEvent = api.ui.uploader.FileUploadProgressEvent;
@@ -14,7 +14,7 @@ module api.ui.text {
     export class FileInput extends api.dom.FormInputEl {
 
         private textInput: InputEl;
-        private mediaUploaderEl: MediaUploader;
+        private mediaUploaderEl: MediaUploaderEl;
 
         constructor(className?: string) {
             super("div", "file-input");
@@ -106,7 +106,7 @@ module api.ui.text {
             return this;
         }
 
-        getUploader(): MediaUploader{
+        getUploader(): MediaUploaderEl{
             return this.mediaUploaderEl;
         }
 
