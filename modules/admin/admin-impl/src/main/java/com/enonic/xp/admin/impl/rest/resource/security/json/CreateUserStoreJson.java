@@ -18,6 +18,7 @@ public final class CreateUserStoreJson
 
     @JsonCreator
     public CreateUserStoreJson( @JsonProperty("key") final String userStoreKey, @JsonProperty("displayName") final String displayName,
+                                @JsonProperty("authApplication") final String authApplication,
                                 @JsonProperty("permissions") final List<UserStoreAccessControlEntryJson> aclEntries )
     {
         final UserStoreAccessControlEntry[] userStoreAclEntries = aclEntries.stream().map( UserStoreAccessControlEntryJson::getEntry ).

@@ -18,6 +18,7 @@ public final class UpdateUserStoreJson
 
     @JsonCreator
     public UpdateUserStoreJson( @JsonProperty("key") final String userStoreKey, @JsonProperty("displayName") final String displayName,
+                                @JsonProperty("authApplication") final String authApplication,
                                 @JsonProperty("permissions") final List<UserStoreAccessControlEntryJson> aclEntries )
     {
         final UserStoreAccessControlEntry[] userStoreAclEntries = aclEntries == null ? null : aclEntries.stream().
