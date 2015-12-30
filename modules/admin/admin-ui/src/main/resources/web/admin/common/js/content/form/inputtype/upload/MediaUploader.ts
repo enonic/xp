@@ -8,18 +8,18 @@ module api.content.form.inputtype.upload {
     import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
     import PluploadFile = api.ui.uploader.PluploadFile;
 
-    export interface FileUploaderConfigAllowType {
+    export interface MediaUploaderConfigAllowType {
         name: string;
         extensions: string;
     }
 
-    export class FileUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
+    export class MediaUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
         private config: api.content.form.inputtype.ContentInputTypeViewContext;
         private mediaUploaderEl: api.content.MediaUploaderEl;
         private uploaderWrapper: api.dom.DivEl;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super(config, "file-uploader");
+            super(config, "media-uploader");
             this.config = config;
         }
 
@@ -148,7 +148,7 @@ module api.content.form.inputtype.upload {
                     !api.util.StringHelper.isEmpty(property.getPropertySet().getString('attachment')));
         }
 
-        private getAllowTypeFromFileName(fileName: string): FileUploaderConfigAllowType[] {
+        private getAllowTypeFromFileName(fileName: string): MediaUploaderConfigAllowType[] {
             return [{name: "Media", extensions: this.getFileExtensionFromFileName(fileName)}];
         }
 
@@ -180,8 +180,8 @@ module api.content.form.inputtype.upload {
                 predefinedAllowTypes = this.getAllowTypeFromFileName(attachmentFileName);
             }
 
-            var allowTypesConfig: FileUploaderConfigAllowType[] = predefinedAllowTypes || (<any>(this.config.inputConfig)).allowTypes || [];
-            var allowTypes = allowTypesConfig.map((allowType: FileUploaderConfigAllowType) => {
+            var allowTypesConfig: MediaUploaderConfigAllowType[] = predefinedAllowTypes || (<any>(this.config.inputConfig)).allowTypes || [];
+            var allowTypes = allowTypesConfig.map((allowType: MediaUploaderConfigAllowType) => {
                 return {title: allowType.name, extensions: allowType.extensions};
             });
 
@@ -224,5 +224,5 @@ module api.content.form.inputtype.upload {
             this.mediaUploaderEl.unBlur(listener);
         }
     }
-    api.form.inputtype.InputTypeManager.register(new api.Class("FileUploader", FileUploader));
+    api.form.inputtype.InputTypeManager.register(new api.Class("MediaUploader", MediaUploader));
 }
