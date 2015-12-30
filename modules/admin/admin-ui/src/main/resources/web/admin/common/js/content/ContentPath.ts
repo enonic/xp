@@ -42,6 +42,17 @@ module api.content {
             }
         }
 
+        getPathAtLevel(level: number): ContentPath {
+            var result = "";
+            for (var index = 0; index < this.getElements().length; index++) {
+                result = result + ContentPath.ELEMENT_DIVIDER + this.getElements()[index];
+                if (index == (level - 1)) {
+                    return ContentPath.fromString(result);
+                }
+            }
+            return null;
+        }
+
         getElements(): string[] {
             return this.elements;
         }
