@@ -114,6 +114,7 @@ module api.liveedit {
         private mouseOverViewListener;
         private mouseLeaveViewListener;
         private shaderClickedListener;
+        private shaderMouseMoveListener;
         private mouseEnterListener;
         private mouseLeaveListener;
         private mouseClickedListener;
@@ -220,6 +221,9 @@ module api.liveedit {
             this.shaderClickedListener = this.handleShaderClick.bind(this);
             Shader.get().onClicked(this.shaderClickedListener);
 
+            this.shaderMouseMoveListener = this.handleShaderMouseMove.bind(this);
+            Shader.get().onMouseMove(this.shaderMouseMoveListener);
+
             this.mouseOverViewListener = () => {
                 var isRegistered = !!this.getParentItemView();
                 if (ItemView.debug) {
@@ -229,10 +233,10 @@ module api.liveedit {
                     // the component has not been registered yet
                     return;
                 }
-                var hasSelectedView = pageView.hasSelectedView();
+
                 var isDragging = DragAndDrop.get().isDragging();
 
-                if (!hasSelectedView && !isDragging) {
+                if (!isDragging) {
                     this.showTooltip();
                     this.showCursor();
                     this.highlight();
@@ -249,10 +253,10 @@ module api.liveedit {
                     // the component has not been registered yet
                     return;
                 }
-                var hasSelectedView = pageView.hasSelectedView();
+
                 var isDragging = DragAndDrop.get().isDragging();
 
-                if (!hasSelectedView && !isDragging) {
+                if (!isDragging) {
                     this.hideTooltip();
                     this.resetCursor();
                     this.unhighlight();
@@ -275,6 +279,7 @@ module api.liveedit {
 
             api.ui.responsive.ResponsiveManager.unAvailableSizeChanged(this);
             Shader.get().unClicked(this.shaderClickedListener);
+            Shader.get().unMouseMove(this.shaderMouseMoveListener);
             this.unMouseOverView(this.mouseOverViewListener);
             this.unMouseLeaveView(this.mouseLeaveViewListener);
         }
@@ -496,16 +501,36 @@ module api.liveedit {
             if (this.isSelected()) {
                 this.deselect();
             }
-            if(!!event.type && (event.type == 'click' || event.type == 'contextmenu') && this.isClicked(event)) {
+            if (!!event.type && (event.type == 'click' || event.type == 'contextmenu') && this.isClicked(event)) {
                 this.handleClick(event);
             }
+        }
+
+        handleShaderMouseMove(event: MouseEvent) {
+            var contains = this.eventOverItem(event);
+            if (!this.mouseOver && contains) {
+                this.handleMouseEnter(event);
+            } else if (this.mouseOver && !contains) {
+                this.handleMouseLeave(event);
+            }
+        }
+
+        private eventOverItem(event: MouseEvent): boolean {
+            var offset = this.getEl().getDimensions(),
+                x = event.x || event.clientX,
+                y = event.y || event.clientY;
+
+            return x >= offset.left
+                   && x <= offset.left + offset.width
+                   && y >= offset.top
+                   && y <= offset.top + offset.height;
         }
 
         protected isClicked(event: MouseEvent): boolean {
             var el = this.getEl();
             return event.pageX >= el.getOffsetLeft() &&
                    event.pageX <= (el.getOffsetLeft() + el.getWidth()) &&
-                   event.pageY >= (el.getOffsetTop() - el.getScrollTop())&&
+                   event.pageY >= (el.getOffsetTop() - el.getScrollTop()) &&
                    event.pageY <= (el.getOffsetTop() + el.getHeight() - el.getScrollTop() );
         }
 
@@ -550,11 +575,11 @@ module api.liveedit {
         }
 
         showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
-            if (this.getPageView().isDisabledContextMenu() ) {
+            if (this.getPageView().isDisabledContextMenu()) {
                 return;
             }
 
-            if(menuPosition && ItemViewContextMenuPosition.NONE == menuPosition) {
+            if (menuPosition && ItemViewContextMenuPosition.NONE == menuPosition) {
                 this.hideContextMenu();
                 return;
             }
