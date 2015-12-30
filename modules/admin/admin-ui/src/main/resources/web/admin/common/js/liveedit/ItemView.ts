@@ -475,7 +475,7 @@ module api.liveedit {
                 event.preventDefault();
             }
 
-            if (!this.isSelected()) {
+            if (!this.isSelected() || event.which == 3) {
                 // we prevented mouse events to bubble up so if parent view is selected
                 // it won't receive mouse event and won't be deselected
                 // therefore we deselect it manually
