@@ -268,21 +268,22 @@ public final class ContentResource
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public ContentJson updateThumbnail( final MultipartForm form )
     {
-        final MultipartItem mediaFile = form.get( "file" );
-
-        final CreateAttachment thumbnailAttachment = CreateAttachment.create().
-            name( AttachmentNames.THUMBNAIL ).
-            mimeType( mediaFile.getContentType().toString() ).
-            byteSource( getFileItemByteSource( mediaFile ) ).
-            build();
-
-        final UpdateContentParams params = new UpdateContentParams().
-            contentId( ContentId.from( form.getAsString( "id" ) ) ).
-            createAttachments( CreateAttachments.from( thumbnailAttachment ) );
-
-        final Content persistedContent = contentService.update( params );
+        final Content persistedContent = this.doCreateAttachment(AttachmentNames.THUMBNAIL, form);
 
         return new ContentJson( persistedContent, newContentIconUrlResolver(), principalsResolver );
+    }
+
+    @POST
+    @Path("createAttachment")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public AttachmentJson createAttachment( final MultipartForm form ) {
+
+        final String attachmentName = form.getAsString( "attachmentName" );
+
+        final Content persistedContent = this.doCreateAttachment(attachmentName, form);
+
+        return new AttachmentJson(persistedContent.getAttachments().byName( attachmentName ));
+
     }
 
     @POST
@@ -957,6 +958,22 @@ public final class ContentResource
             permissionsJson.add( new EffectivePermissionJson( access.name(), accessJson ) );
         }
         return permissionsJson;
+    }
+
+    private Content doCreateAttachment(final String attachmentName, final MultipartForm form) {
+        final MultipartItem mediaFile = form.get( "file" );
+
+        final CreateAttachment attachment = CreateAttachment.create().
+            name( attachmentName ).
+            mimeType( mediaFile.getContentType().toString() ).
+            byteSource( getFileItemByteSource( mediaFile ) ).
+            build();
+
+        final UpdateContentParams params = new UpdateContentParams().
+            contentId( ContentId.from( form.getAsString( "id" ) ) ).
+            createAttachments( CreateAttachments.from( attachment ) );
+
+        return contentService.update( params );
     }
 
     private PrincipalQueryResult getTotalUsers()
