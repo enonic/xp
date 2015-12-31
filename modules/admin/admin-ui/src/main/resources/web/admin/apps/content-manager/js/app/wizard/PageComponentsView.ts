@@ -155,7 +155,10 @@ module app.wizard {
             this.liveEditPage.onComponentRemoved((event: ComponentRemovedEvent) => {
                 this.tree.deleteNode(event.getComponentView());
                 // update parent node in case it was the only child
-                this.tree.updateNode(event.getParentRegionView());
+                this.tree.updateNode(event.getParentRegionView()).then(() => {
+                    this.tree.refresh();
+                });
+
             });
 
             this.liveEditPage.onComponentLoaded((event: ComponentLoadedEvent) => {
@@ -214,6 +217,8 @@ module app.wizard {
 
                 this.tree.getGrid().selectRow(data.row);
 
+                api.liveedit.Highlighter.get().hide();
+
                 if (this.isMenuIconClicked(data.cell)) {
                     this.showContextMenu(data.row, {x: event.pageX, y: event.pageY});
                 }
@@ -222,7 +227,28 @@ module app.wizard {
                     this.hide();
                 }
             };
+
             this.tree.getGrid().subscribeOnClick(this.clickListener);
+
+            this.tree.getGrid().subscribeOnMouseEnter((event, data) => {
+                var rowElement = event.target,
+                    selected = false;
+
+                while(!rowElement.classList.contains("slick-row")) {
+                    if(rowElement.classList.contains("selected")) {
+                        selected = true;
+                    }
+
+                    rowElement = rowElement.parentElement;
+                }
+
+                this.highlightRow(rowElement, selected);
+            });
+
+            this.tree.getGrid().subscribeOnMouseLeave((event, data) => {
+                api.liveedit.Highlighter.get().hide();
+            });
+
             this.tree.onSelectionChanged((data, nodes) => {
                 if (nodes.length > 0 && this.isModal()) {
                     this.hide();
@@ -468,6 +494,21 @@ module app.wizard {
             return clickedRow == currentlySelectedRow;
         }
 
+        private highlightRow(rowElement: HTMLElement, selected: boolean): void {
+            if(selected) {
+                api.liveedit.Highlighter.get().hide();
+            }
+            else {
+                var elementHelper = new api.dom.ElementHelper(rowElement);
+                var dimensions = elementHelper.getDimensions();
+                var nodes = this.tree.getRoot().getCurrentRoot().treeToList(),
+                    hoveredNode = nodes[new api.dom.ElementHelper(rowElement).getSiblingIndex()],
+                    highlighterStyle = hoveredNode.getData().getType().getConfig().getHighlighterStyle();
+
+                api.liveedit.Highlighter.get().highlightElement(dimensions, highlighterStyle);
+            }
+        }
+
         onBeforeInsertAction(listener: (event)=>void) {
             this.beforeInsertActionListeners.push(listener);
         }
@@ -486,7 +527,5 @@ module app.wizard {
 
 
     }
-
-
 
 }

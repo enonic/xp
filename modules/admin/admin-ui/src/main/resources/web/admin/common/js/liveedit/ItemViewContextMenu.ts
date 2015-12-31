@@ -183,14 +183,14 @@ module api.liveedit {
 
             if (orientation == ItemViewContextMenuOrientation.DOWN) {
                 // account for arrow
-                desiredY = y + arrowHeight;
+                desiredY = y + arrowHeight + (notClicked ? 0 : 1);
                 if (desiredY + height > maxY) {
                     orientation = ItemViewContextMenuOrientation.UP;
                 }
             }
             if (orientation == ItemViewContextMenuOrientation.UP) {
                 // subtract my full height to display above target
-                desiredY = y - arrowHeight - height;
+                desiredY = y - arrowHeight - height - (notClicked ? 0 : 1);
                 if (desiredY < minY) {
                     orientation = ItemViewContextMenuOrientation.DOWN;
                 }
