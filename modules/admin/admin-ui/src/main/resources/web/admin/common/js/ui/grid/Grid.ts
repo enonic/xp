@@ -475,5 +475,13 @@ module api.ui.grid {
                 this.getHTMLElement().addEventListener('mousewheel', callback, false);     // chrome
             }
         }
+
+        subscribeOnMouseEnter(callback: (e, args) => void) {
+            this.slickGrid.onMouseEnter.subscribe(callback);
+        }
+
+        subscribeOnMouseLeave(callback: (e, args) => void) {
+            this.slickGrid.onMouseLeave.subscribe(callback);
+        }
     }
 }
