@@ -6,3 +6,6 @@
 ///<reference path="LogoutResultJson.ts"/>
 ///<reference path="LogoutRequest.ts"/>
 ///<reference path="IsAuthenticatedRequest.ts"/>
+///<reference path="AuthServiceJson.ts"/>
+///<reference path="AuthService.ts"/>
+///<reference path="AuthServicesRequest.ts"/>

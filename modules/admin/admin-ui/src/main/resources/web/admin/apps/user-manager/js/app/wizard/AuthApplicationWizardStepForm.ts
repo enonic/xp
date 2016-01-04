@@ -9,14 +9,14 @@ module app.wizard {
 
     export class AuthApplicationWizardStepForm extends api.app.wizard.WizardStepForm {
 
-        private appCombobox: api.application.ApplicationComboBox;
+        private appCombobox: api.ui.security.auth.AuthServiceComboBox;
         private appComboboxLoaded = false;
         private authApplication: string;
 
         constructor() {
             super();
 
-            this.appCombobox = new api.application.ApplicationComboBox(1);
+            this.appCombobox = new api.ui.security.auth.AuthServiceComboBox();
             var appComboboxLoadingListener = () => {
                 this.appComboboxLoaded = true;
                 this.selectAuthApplication();
@@ -57,10 +57,10 @@ module app.wizard {
             if (this.appComboboxLoaded) {
                 if (this.authApplication) {
                     this.appCombobox.getDisplayValues().
-                        filter((application: api.application.Application) => {
-                            return this.authApplication == application.getApplicationKey().toString();
+                        filter((application: api.security.auth.AuthService) => {
+                            return this.authApplication == application.getKey();
                         }).
-                        forEach((selectedOption: api.application.Application) => {
+                        forEach((selectedOption: api.security.auth.AuthService) => {
                             this.appCombobox.select(selectedOption);
                         });
 
@@ -73,8 +73,7 @@ module app.wizard {
                 return null;
             }
             return this.appCombobox.getSelectedDisplayValues()[0].
-                getApplicationKey().
-                toString();
+                getKey();
         }
 
         giveFocus(): boolean {
