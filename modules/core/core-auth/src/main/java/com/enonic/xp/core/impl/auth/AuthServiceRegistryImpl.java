@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.auth;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
@@ -10,20 +12,28 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.auth.AuthService;
+import com.enonic.xp.auth.AuthServiceRegistry;
 
 @Component(immediate = true)
 public class AuthServiceRegistryImpl
+    implements AuthServiceRegistry
 {
     private final Map<String, AuthService> authServiceMap = Maps.newConcurrentMap();
+
+    @Override
+    public Collection<AuthService> getAuthServices()
+    {
+        return Collections.unmodifiableCollection( authServiceMap.values() );
+    }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addAuthService( AuthService authService )
     {
-        authServiceMap.put( authService.getName(), authService );
+        authServiceMap.put( authService.getKey(), authService );
     }
 
     public void removeAuthService( AuthService authService )
     {
-        authServiceMap.remove( authService.getName() );
+        authServiceMap.remove( authService.getKey() );
     }
 }
