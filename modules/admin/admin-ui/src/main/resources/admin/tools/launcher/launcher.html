@@ -36,26 +36,28 @@
     <div class="lazy-image"
          style="background-image: url(&quot;/admin/common/images/background-1920.jpg&quot;);"></div>
     <div class="center-panel">
-        <div class="profile" style="width: 320px;margin: auto; color: white">
-            <img src="{{userIconUrl}}" style="width: 56px">
-            <span>{{user.displayName}}</span>
-            <a href="{{logoutServiceUrl}}" style="background-color: #DD0000;padding: 0.5em 2em">Log Out</a>
+        <div class="profile">
+            <div class="profile-image">
+                <img src="{{userIconUrl}}" style="width: 56px">
+                <span>{{user.displayName}}</span>
+            </div>
+            <div class="profile-logout">
+                <a href="{{logoutServiceUrl}}">Log Out</a>
+            </div>
         </div>
-        <div class="app-selector-panel">
-            <div class="app-selector-container">
-                <div class="app-selector fade-in-and-scale-up">
-                    <div class="app-tiles-placeholder">
-                        {{#adminTools}}
-                        <div class="app-tile" tabindex="1">
-                            <a href="{{uri}}">
-                                <div class="icon-container">
-                                    <img src="{{icon}}">
-                                </div>
-                                <div class="name-container">{{displayName}}</div>
-                            </a>
-                        </div>
-                        {{/adminTools}}
+        <div class="app-selector-container">
+            <div class="app-selector fade-in-and-scale-up">
+                <div class="app-tiles-placeholder">
+                    {{#adminTools}}
+                    <div class="app-tile" tabindex="1">
+                        <a href="{{uri}}">
+                            <div class="icon-container">
+                                <img src="{{icon}}">
+                            </div>
+                            <div class="name-container">{{displayName}}</div>
+                        </a>
                     </div>
+                    {{/adminTools}}
                 </div>
             </div>
         </div>
