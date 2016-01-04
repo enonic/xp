@@ -20,6 +20,7 @@ module api.app.browse {
                 if (!item.equals(currentItem)) {
                     // update current item
                     this.items[index] = item;
+                    this.selectionItems[index].setBrowseItem(item);
                 }
                 return;
             }
@@ -105,25 +106,18 @@ module api.app.browse {
 
         updateItemViewers(items: BrowseItem<M>[]) {
             items.forEach((item) => {
-                for (var i = 0; i < this.selectionItems.length; i++) {
-                    if (this.selectionItems[i].getBrowseItem().getPath() === item.getPath()) {
-                        this.selectionItems[i].updateViewer(this.createItemViewer(item));
-                        break;
-                    }
+                var index = this.indexOf(item);
+                if (index >= 0) {
+                    this.selectionItems[index].setBrowseItem(item);
                 }
             });
         }
 
         private indexOf(item: BrowseItem<M>): number {
             for (var i = 0; i < this.items.length; i++) {
-                if (item.getPath()) {
-                    if (item.getPath() == this.items[i].getPath()) {
-                        return i;
-                    }
-                } else {
-                    if (item.getId() == this.items[i].getId()) {
-                        return i;
-                    }
+                if (item.getPath() && item.getPath() == this.items[i].getPath() ||
+                    item.getId() == this.items[i].getId()) {
+                    return i;
                 }
             }
             return -1;
