@@ -4,6 +4,8 @@ module api.content.form.inputtype.contentselector {
 
         private contentSelectorQueryRequest: ContentSelectorQueryRequest;
 
+        private isPostLoading: boolean;
+
         constructor(builder: Builder) {
             this.contentSelectorQueryRequest = new ContentSelectorQueryRequest();
             super(this.contentSelectorQueryRequest);
@@ -12,18 +14,35 @@ module api.content.form.inputtype.contentselector {
             this.contentSelectorQueryRequest.setContentTypeNames(builder.contentTypeNames);
             this.contentSelectorQueryRequest.setAllowedContentPaths(builder.allowedContentPaths);
             this.contentSelectorQueryRequest.setRelationshipType(builder.relationshipType);
+            this.isPostLoading = false;
         }
 
         search(searchString: string): wemQ.Promise<ContentSummary[]> {
 
             this.contentSelectorQueryRequest.setQueryExpr(searchString);
-
             return this.load();
         }
 
         sendRequest(): wemQ.Promise<ContentSummary[]> {
+            if (!this.isPostLoading) {
+                this.contentSelectorQueryRequest.resetParams();
+            }
             return this.contentSelectorQueryRequest.sendAndParse();
         }
+
+        postLoad() {
+            // already have elements and not more than total
+            if (this.contentSelectorQueryRequest.isPartiallyLoaded() && this.isLoaded()) {
+                this.isPostLoading = true;
+                this.load(true).then(() => {
+                    this.isPostLoading = false;
+                }).catch(() => {
+                    this.isPostLoading = false;
+                });
+            }
+        }
+
+        // delegate the postLoad to ComboBox to trigger it before the end of the list
 
         public static create(): Builder {
             return new Builder();

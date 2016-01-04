@@ -79,11 +79,12 @@ module api.content.form.inputtype.contentselector {
                         setRelationshipType(this.relationshipType).
                         build();
 
-                    this.contentComboBox = api.content.ContentComboBox.create()
-                        .setName(input.getName())
-                        .setMaximumOccurrences(input.getOccurrences().getMaximum())
-                        .setLoader(contentSelectorLoader)
-                        .build();
+                    this.contentComboBox = api.content.ContentComboBox.create().
+                        setName(input.getName()).
+                        setMaximumOccurrences(input.getOccurrences().getMaximum()).
+                        setLoader(contentSelectorLoader).
+                        setPostLoad(contentSelectorLoader.postLoad.bind(contentSelectorLoader)).
+                        build();
 
                     this.contentComboBox.setInputIconUrl(relationshipType.getIconUrl());
 

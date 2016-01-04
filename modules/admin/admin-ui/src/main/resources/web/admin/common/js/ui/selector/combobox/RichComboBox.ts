@@ -33,6 +33,8 @@ module api.ui.selector.combobox {
 
         private setNextInputFocusWhenMaxReached: boolean;
 
+        private interval: number;
+
         constructor(builder: RichComboBoxBuilder<OPTION_DISPLAY_VALUE>) {
 
             this.loadedListeners = [];
@@ -71,6 +73,35 @@ module api.ui.selector.combobox {
             super(this.comboBox, this.selectedOptionsView);
 
             this.addClass('rich-combobox');
+        }
+
+        handleLastRange(handler: () => void) {
+            let grid = this.getComboBox().getComboBoxDropdownGrid().getElement();
+
+            grid.onShown(() => {
+                if (this.interval) {
+                    clearInterval(this.interval);
+                }
+                this.interval = setInterval(() => {
+                    grid = this.getComboBox().getComboBoxDropdownGrid().getElement();
+                    let canvas = grid.getCanvasNode();
+                    let canvasEl = new api.dom.ElementHelper(canvas);
+                    let viewportEl = new api.dom.ElementHelper(canvas.parentElement);
+
+                    let isLastRange = viewportEl.getScrollTop() >= canvasEl.getHeight() - 3 * viewportEl.getHeight();
+
+                    if (isLastRange) {
+                        handler();
+                    }
+                }, 200);
+            });
+
+            grid.onHidden(() => {
+                if (this.interval) {
+                    clearInterval(this.interval);
+                }
+            });
+
         }
 
         setIgnoreNextFocus(value: boolean = true): RichComboBox<OPTION_DISPLAY_VALUE> {
@@ -232,7 +263,9 @@ module api.ui.selector.combobox {
             });
 
             this.loader.onLoadingData((event: api.util.loader.event.LoadingDataEvent) => {
-                this.comboBox.setEmptyDropdownText("Searching...");
+                if (!event.isPostLoad()) {
+                    this.comboBox.setEmptyDropdownText("Searching...");
+                }
                 this.notifyLoading();
             });
 
