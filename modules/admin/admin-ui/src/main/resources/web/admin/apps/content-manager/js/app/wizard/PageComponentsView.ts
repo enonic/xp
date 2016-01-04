@@ -231,6 +231,11 @@ module app.wizard {
             this.tree.getGrid().subscribeOnClick(this.clickListener);
 
             this.tree.getGrid().subscribeOnMouseEnter((event, data) => {
+
+                if (api.ui.DragHelper.get().isVisible()) {
+                    return;
+                }
+
                 var rowElement = event.target,
                     selected = false;
 
@@ -502,10 +507,11 @@ module app.wizard {
                 var elementHelper = new api.dom.ElementHelper(rowElement);
                 var dimensions = elementHelper.getDimensions();
                 var nodes = this.tree.getRoot().getCurrentRoot().treeToList(),
-                    hoveredNode = nodes[new api.dom.ElementHelper(rowElement).getSiblingIndex()],
-                    highlighterStyle = hoveredNode.getData().getType().getConfig().getHighlighterStyle();
+                    hoveredNode = nodes[new api.dom.ElementHelper(rowElement).getSiblingIndex()];
 
-                api.liveedit.Highlighter.get().highlightElement(dimensions, highlighterStyle);
+                if (hoveredNode) {
+                    api.liveedit.Highlighter.get().highlightElement(dimensions, hoveredNode.getData().getType().getConfig().getHighlighterStyle());
+                }
             }
         }
 
