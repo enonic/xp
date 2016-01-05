@@ -60,7 +60,8 @@ module app.view.detail {
             return this.detailsPanel.getHTMLElement().clientWidth > 0;
         }
 
-        private setContentForWidgetItemView(widgetItemView: WidgetItemView, content: ContentSummaryAndCompareStatus, force: boolean = false): wemQ.Promise<any> {
+        private setContentForWidgetItemView(widgetItemView: WidgetItemView, content: ContentSummaryAndCompareStatus,
+                                            force: boolean = false): wemQ.Promise<any> {
             if (!this.isUrlBased() || !this.isDetailsPanelVisible()) {
                 return wemQ.resolve(null);
             }

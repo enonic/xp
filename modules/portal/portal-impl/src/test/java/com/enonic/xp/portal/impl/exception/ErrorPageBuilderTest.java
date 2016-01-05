@@ -16,7 +16,6 @@ public class ErrorPageBuilderTest
     private ResourceService resourceService;
 
 
-
     @Before
     public void setup()
     {
@@ -24,19 +23,18 @@ public class ErrorPageBuilderTest
     }
 
     @Test
-    public void test_html_description() throws Exception {
+    public void test_html_description()
+        throws Exception
+    {
 
-        final StackTraceElement[] traceElements =
-            new StackTraceElement[]{ new StackTraceElement("class", "method", "fileName",1 )};
+        final StackTraceElement[] traceElements = new StackTraceElement[]{new StackTraceElement( "class", "method", "fileName", 1 )};
 
-        final Exception cause = new Exception(  );
+        final Exception cause = new Exception();
         cause.setStackTrace( traceElements );
-
 
         final ErrorPageBuilder builder = new ErrorPageBuilder().
             cause( cause ).
-            description( "<\"description\" \'with\' " +
-                             " escapable  text/> && </>" ).
+            description( "<\"description\" \'with\' " + " escapable  text/> && </>" ).
             resourceService( resourceService ).
             status( 404 ).
             title( "title" );
@@ -46,12 +44,13 @@ public class ErrorPageBuilderTest
     }
 
     @Test
-    public void test_html_title() throws Exception {
+    public void test_html_title()
+        throws Exception
+    {
 
-        final StackTraceElement[] traceElements =
-            new StackTraceElement[]{ new StackTraceElement("class", "method", "fileName",1 )};
+        final StackTraceElement[] traceElements = new StackTraceElement[]{new StackTraceElement( "class", "method", "fileName", 1 )};
 
-        final Exception cause = new Exception(  );
+        final Exception cause = new Exception();
         cause.setStackTrace( traceElements );
 
         final ErrorPageBuilder builder = new ErrorPageBuilder().
@@ -59,25 +58,25 @@ public class ErrorPageBuilderTest
             description( "desc" ).
             resourceService( resourceService ).
             status( 404 ).
-            title( "<\"title\" \'with\' " +
-                             " escapable  text/> && </>" );
+            title( "<\"title\" \'with\' " + " escapable  text/> && </>" );
 
         final String result = readResource( "title_error_page_builder_test.html" );
         assertEquals( result, builder.build() );
     }
 
     @Test
-    public void test_html_cause() throws Exception {
+    public void test_html_cause()
+        throws Exception
+    {
 
         final String classStr = "<\"class name\" 'with'  escapable  text/> && </>";
         final String methodStr = "<\"method name\" 'with'  escapable  text/> && </>";
         final String fileStr = "<\"file name\" 'with'  escapable  text/> && </>";
 
-        final StackTraceElement traceElement = new StackTraceElement(classStr, methodStr, fileStr, 1);
-        final StackTraceElement[] traceElements =
-            new StackTraceElement[]{traceElement};
+        final StackTraceElement traceElement = new StackTraceElement( classStr, methodStr, fileStr, 1 );
+        final StackTraceElement[] traceElements = new StackTraceElement[]{traceElement};
 
-        final Exception cause = new Exception(  );
+        final Exception cause = new Exception();
         cause.setStackTrace( traceElements );
 
         final ErrorPageBuilder builder = new ErrorPageBuilder().
@@ -85,8 +84,7 @@ public class ErrorPageBuilderTest
             description( "desc" ).
             resourceService( resourceService ).
             status( 404 ).
-            title( "<\"title\" \'with\' " +
-                       " escapable  text/> && </>" );
+            title( "<\"title\" \'with\' " + " escapable  text/> && </>" );
 
         final String result = readResource( "cause_error_page_builder_test.html" );
         assertEquals( result, builder.build() );

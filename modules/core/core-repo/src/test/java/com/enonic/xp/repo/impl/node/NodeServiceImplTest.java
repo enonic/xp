@@ -48,7 +48,7 @@ public class NodeServiceImplTest
     extends AbstractNodeTest
 {
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public TemporaryFolder blobStore = new TemporaryFolder();
 
     @Rule
     public TemporaryFolder snapshots = new TemporaryFolder();

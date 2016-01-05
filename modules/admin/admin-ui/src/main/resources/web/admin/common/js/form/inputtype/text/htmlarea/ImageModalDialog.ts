@@ -345,17 +345,18 @@ module api.form.inputtype.text.htmlarea {
                 alignment = this.image.getHTMLElement().style["text-align"];
             }
 
-            var styleFormat = "float: {0}; margin: {1};" + (this.imageToolbar.isImageInOriginalSize(this.image.getEl()) ? "" : "width: {2}%;");
+            var styleFormat = "float: {0}; margin: {1};" +
+                              (this.imageToolbar.isImageInOriginalSize(this.image.getEl()) ? "" : "width: {2}%;");
             var styleAttr = "text-align: " + alignment + ";";
 
             switch (alignment) {
-                case 'left':
-                case 'right':
-                    styleAttr = api.util.StringHelper.format(styleFormat, alignment, "15px", "40");
-                    break;
-                case 'center':
-                    styleAttr = styleAttr + api.util.StringHelper.format(styleFormat, "none", "auto", "60");
-                    break;
+            case 'left':
+            case 'right':
+                styleAttr = api.util.StringHelper.format(styleFormat, alignment, "15px", "40");
+                break;
+            case 'center':
+                styleAttr = styleAttr + api.util.StringHelper.format(styleFormat, "none", "auto", "60");
+                break;
             }
 
             element.setAttribute("style", styleAttr);

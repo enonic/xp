@@ -75,7 +75,7 @@ module app.view.detail {
 
         private layoutBottom(content: Content) {
 
-            if(this.hasChild(this.bottomEl)) {
+            if (this.hasChild(this.bottomEl)) {
                 this.removeChild(this.bottomEl);
             }
 
@@ -96,7 +96,7 @@ module app.view.detail {
 
             request.sendAndParse().then((results: api.ui.security.acl.EffectivePermission[]) => {
 
-                if(this.hasChild(this.accessListView)) {
+                if (this.hasChild(this.accessListView)) {
                     this.removeChild(this.accessListView);
                 }
                 var userAccessList = this.getUserAccessList(results);
@@ -127,7 +127,7 @@ module app.view.detail {
                 if (this.contentId) {
                     return new api.content.GetContentByIdRequest(this.contentId).sendAndParse().
                         then((content: Content) => {
-                             this.removeChildren();
+                            this.removeChildren();
                             if (content) {
                                 this.layoutHeader(content);
                                 return this.layoutList(content).then(() => {

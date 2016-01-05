@@ -125,7 +125,7 @@ module api.content.form.inputtype.upload {
                     }).done();
                 });
         }
-        
+
         private getFileNameFromProperty(property: Property): string {
             if (property.getValue() != null) {
                 switch (property.getType()) {
@@ -180,7 +180,8 @@ module api.content.form.inputtype.upload {
                 predefinedAllowTypes = this.getAllowTypeFromFileName(attachmentFileName);
             }
 
-            var allowTypesConfig: MediaUploaderConfigAllowType[] = predefinedAllowTypes || (<any>(this.config.inputConfig)).allowTypes || [];
+            var allowTypesConfig: MediaUploaderConfigAllowType[] = predefinedAllowTypes || (<any>(this.config.inputConfig)).allowTypes ||
+                [];
             var allowTypes = allowTypesConfig.map((allowType: MediaUploaderConfigAllowType) => {
                 return {title: allowType.name, extensions: allowType.extensions};
             });
