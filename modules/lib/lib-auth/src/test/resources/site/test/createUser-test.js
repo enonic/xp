@@ -7,7 +7,7 @@ exports.createUser = function () {
         userStore: 'myUserStore',
         name: 'userId',
         displayName: 'user display name',
-        email: 'email'
+        email: 'user1@enonic.com'
     });
 
     var expectedJson = {
@@ -30,7 +30,7 @@ exports.createUserNoEmail = function () {
     var result = auth.createUser({
         userStore: 'myUserStore',
         name: 'userId',
-        displayName: 'user display name',
+        displayName: 'user display name'
     });
 
     var expectedJson = {

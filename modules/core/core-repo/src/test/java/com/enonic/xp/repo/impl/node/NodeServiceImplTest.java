@@ -48,10 +48,10 @@ public class NodeServiceImplTest
     extends AbstractNodeTest
 {
     @Rule
-    public TemporaryFolder blobStore = new TemporaryFolder();
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Rule
-    public TemporaryFolder snapshot = new TemporaryFolder();
+    public TemporaryFolder snapshots = new TemporaryFolder();
 
     private NodeServiceImpl nodeService;
 
@@ -59,7 +59,6 @@ public class NodeServiceImplTest
     public void setUp()
         throws Exception
     {
-
         super.setUp();
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
@@ -70,7 +69,7 @@ public class NodeServiceImplTest
 
         final RepoConfiguration config = Mockito.mock( RepoConfiguration.class );
         Mockito.when( config.getBlobStoreDir() ).thenReturn( this.blobStore.getRoot() );
-        Mockito.when( config.getSnapshotsDir() ).thenReturn( this.snapshot.getRoot() );
+        Mockito.when( config.getSnapshotsDir() ).thenReturn( this.snapshots.getRoot() );
         this.nodeService.setConfiguration( config );
         this.elasticsearchDao.setConfiguration( config );
 

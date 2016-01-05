@@ -10,6 +10,12 @@ public class GeneratePasswordHandlerTest
     extends ScriptTestSupport
 {
     @Test
+    public void testExamples()
+    {
+        runScript( "/site/lib/xp/examples/auth/generatePassword.js" );
+    }
+
+    @Test
     public void testPasswordGeneration()
         throws Exception
     {

@@ -13,6 +13,8 @@ module api.form.inputtype {
 
         layout(input: api.form.Input, propertyArray: PropertyArray) : wemQ.Promise<void>;
 
+        update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void>;
+
         newInitialValue(): Value;
 
         /*
@@ -45,6 +47,10 @@ module api.form.inputtype {
         onValidityChanged(listener: (event: InputValidityChangedEvent)=>void);
 
         unValidityChanged(listener: (event: InputValidityChangedEvent)=>void);
+
+        onValueChanged(listener: (event: ValueChangedEvent)=>void);
+
+        unValueChanged(listener: (event: ValueChangedEvent)=>void);
 
         availableSizeChanged();
 

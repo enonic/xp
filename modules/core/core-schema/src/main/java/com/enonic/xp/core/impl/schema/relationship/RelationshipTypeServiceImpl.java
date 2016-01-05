@@ -1,18 +1,15 @@
 package com.enonic.xp.core.impl.schema.relationship;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.core.impl.schema.SchemaHelper;
@@ -24,11 +21,9 @@ import com.enonic.xp.schema.relationship.RelationshipTypes;
 
 @Component(immediate = true)
 public final class RelationshipTypeServiceImpl
-    implements RelationshipTypeService, ApplicationInvalidator
+    implements RelationshipTypeService
 {
     private final BuiltinRelationshipTypes builtInTypes;
-
-    private final Map<RelationshipTypeName, RelationshipType> map;
 
     private ApplicationService applicationService;
 
@@ -36,31 +31,24 @@ public final class RelationshipTypeServiceImpl
 
     public RelationshipTypeServiceImpl()
     {
-        this.map = Maps.newConcurrentMap();
         this.builtInTypes = new BuiltinRelationshipTypes();
     }
 
     @Override
     public RelationshipType getByName( final RelationshipTypeName name )
     {
-        return this.map.computeIfAbsent( name, this::load );
+        if ( isSystem( name ) )
+        {
+            return this.builtInTypes.getAll().get( name );
+        }
+
+        return new RelationshipTypeLoader( this.resourceService ).get( name );
     }
 
     private boolean isSystem( final RelationshipTypeName name )
     {
         return SchemaHelper.isSystem( name.getApplicationKey() );
     }
-
-    private RelationshipType load( final RelationshipTypeName name )
-    {
-        if ( isSystem( name ) )
-        {
-            return this.builtInTypes.getAll().get( name );
-        }
-
-        return new RelationshipTypeLoader( this.resourceService ).load( name );
-    }
-
 
     @Override
     public RelationshipTypes getAll()
@@ -99,7 +87,7 @@ public final class RelationshipTypeServiceImpl
         return RelationshipTypes.from( list );
     }
 
-    private List<RelationshipTypeName> findNames( final ApplicationKey key )
+    private Set<RelationshipTypeName> findNames( final ApplicationKey key )
     {
         return new RelationshipTypeLoader( this.resourceService ).findNames( key );
     }
@@ -115,10 +103,5 @@ public final class RelationshipTypeServiceImpl
     {
         this.resourceService = resourceService;
     }
-
-    @Override
-    public void invalidate( final ApplicationKey key )
-    {
-        this.map.clear();
-    }
 }
+

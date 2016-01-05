@@ -53,6 +53,10 @@ final class CreateMediaCommand
             attachment( params.getName() ).
             focalX( params.getFocalX() ).
             focalY( params.getFocalY() ).
+            caption( params.getCaption() ).
+            artist( params.getArtist() ).
+            copyright( params.getCopyright() ).
+            tags( params.getTags() ).
             build( data );
 
         final CreateAttachment mediaAttachment = CreateAttachment.create().

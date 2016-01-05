@@ -3,7 +3,7 @@ module app.view.detail {
     import CompareStatus = api.content.CompareStatus;
     import CompareStatusFormatter = api.content.CompareStatusFormatter;
     import ContentSummary = api.content.ContentSummary;
-    import MediaUploader = api.content.MediaUploader;
+    import MediaUploader = api.content.MediaUploaderEl;
     import Attachments = api.content.attachment.Attachments;
     import Attachment = api.content.attachment.Attachment;
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
@@ -11,6 +11,10 @@ module app.view.detail {
     export class AttachmentsWidgetItemView extends WidgetItemView {
 
         private content: ContentSummary;
+
+        private list: api.dom.UlEl;
+
+        private placeholder: api.dom.SpanEl;
 
         public static debug = false;
 
@@ -45,15 +49,23 @@ module app.view.detail {
         private layoutAttachments(): wemQ.Promise<Attachments> {
             return new api.content.GetContentAttachmentsRequest(this.content.getContentId()).sendAndParse().then((attachments: Attachments) => {
 
+                if(this.hasChild(this.list)) {
+                    this.removeChild(this.list);
+                }
+
+                if(this.hasChild(this.placeholder)) {
+                    this.removeChild(this.placeholder);
+                }
+
                 if (attachments) {
-                    var uploaderList = new api.dom.UlEl("uploader-list");
+                    this.list = new api.dom.UlEl("uploader-list");
 
                     attachments.forEach((attachment: Attachment) => {
                         var uploader = new MediaUploader({
                             params: {
                                 parent: this.content.getContentId().toString()
                             },
-                            operation: api.content.MediaUploaderOperation.create,
+                            operation: api.content.MediaUploaderElOperation.create,
                             name: attachment.getName().toString(),
                             showReset: false,
                             showCancel: false,
@@ -68,14 +80,15 @@ module app.view.detail {
 
                         var uploaderContainer = new api.dom.LiEl("uploader-container");
                         uploaderContainer.appendChild(uploader);
-                        uploaderList.appendChild(uploaderContainer);
+                        this.list.appendChild(uploaderContainer);
 
                     });
 
-                    this.appendChild(uploaderList);
+                    this.appendChild(this.list);
 
                 } else {
-                    this.appendChild(new api.dom.SpanEl("att-placeholder").setHtml("This item has no attachments"));
+                    this.placeholder = new api.dom.SpanEl("att-placeholder").setHtml("This item has no attachments");
+                    this.appendChild(this.placeholder);
                 }
 
                 return attachments;

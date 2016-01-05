@@ -37,6 +37,28 @@ module api.util {
                 return false;
             });
         }
+
+        static difference<T>(left: T[], right: T[], equals: (valueLeft: T, valueRight: T) => boolean): T[] {
+            return left.filter((value) => {
+                for (let i = 0; i < right.length; i++) {
+                    if (equals(value, right[i])) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        }
+
+        static intersection<T>(left: T[], right: T[], equals: (valueLeft: T, valueRight: T) => boolean): T[] {
+            return left.filter((value) => {
+                for (let i = 0; i < right.length; i++) {
+                    if (equals(value, right[i])) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+        }
     }
 
 }

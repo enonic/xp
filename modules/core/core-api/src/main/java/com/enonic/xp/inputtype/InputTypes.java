@@ -21,7 +21,7 @@ public final class InputTypes
         add( GeoPointType.INSTANCE ).
         add( HtmlAreaType.INSTANCE ).
         add( ImageUploaderType.INSTANCE ).
-        add( FileUploaderType.INSTANCE ).
+        add( MediaUploaderType.INSTANCE ).
         add( ImageSelectorType.INSTANCE ).
         add( ContentSelectorType.INSTANCE ).
         add( RadioButtonType.INSTANCE ).

@@ -1,65 +1,34 @@
 package com.enonic.xp.resource;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.ByteSource;
+import com.google.common.collect.Lists;
 
 import static org.junit.Assert.*;
 
 public class ResourcesTest
 {
-    private static final String RESOURCE_URI_1 = "myapplication-1.0.0:";
-
-    private static final String RESOURCE_URI_2 = "myapplication-1.0.0:/a/b.txt";
-
-    private static final String RESOURCE_URI_3 = "myapplication-1.0.0:/a/c.txt";
-
-    private ArrayList<Resource> list;
-
     private Resource resource1;
 
     private Resource resource2;
 
     private Resource resource3;
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
     @Before
     public void initList()
-        throws Exception
     {
-        final File applicationsDir = temporaryFolder.newFolder( "applications" );
-        writeFile( applicationsDir, "myapplication-1.0.0/a/b.txt", "a/b.txt" );
-        writeFile( applicationsDir, "myapplication-1.0.0/a/c.txt", "a/c.txt" );
-
-        final ResourceKey resourceKey1 = ResourceKey.from( RESOURCE_URI_1 );
-        final ResourceKey resourceKey2 = ResourceKey.from( RESOURCE_URI_2 );
-        final ResourceKey resourceKey3 = ResourceKey.from( RESOURCE_URI_3 );
-        resource1 = new FileResource( resourceKey1, new File( applicationsDir, "myapplication-1.0.0" ) );
-        resource2 = new FileResource( resourceKey2, new File( applicationsDir, "myapplication-1.0.0/a/b.txt" ) );
-        resource3 = new FileResource( resourceKey3, new File( applicationsDir, "myapplication-1.0.0/a/c.txt" ) );
-
-        this.list = new ArrayList();
-        this.list.add( resource1 );
-        this.list.add( resource2 );
-        this.list.add( resource3 );
+        this.resource1 = mockResource( "myapp:/a.txt" );
+        this.resource2 = mockResource( "myapp:/a/b.txt" );
+        this.resource3 = mockResource( "myapp:/a/c.txt" );
     }
 
-    private static void writeFile( final File dir, final String path, final String value )
-        throws Exception
+    private Resource mockResource( final String name )
     {
-        final File file = new File( dir, path );
-        file.getParentFile().mkdirs();
-        ByteSource.wrap( value.getBytes( Charsets.UTF_8 ) ).copyTo( new FileOutputStream( file ) );
+        final Resource resource = Mockito.mock( Resource.class );
+        Mockito.when( resource.getKey() ).thenReturn( ResourceKey.from( name ) );
+        return resource;
     }
 
     @Test
@@ -70,47 +39,22 @@ public class ResourcesTest
     }
 
     @Test
-    public void fromIterable()
+    public void testFrom()
     {
-        final Resources resources = Resources.from( (Iterable<Resource>) this.list );
-
+        Resources resources = Resources.from( this.resource1, this.resource2, this.resource3 );
         assertEquals( 3, resources.getSize() );
         assertEquals( resource1, resources.first() );
-        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_1 ) ) );
-        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_2 ) ) );
-        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_3 ) ) );
-    }
 
-    @Test
-    public void fromCollection()
-    {
-        final Resources resources = Resources.from( this.list );
-
+        resources = Resources.from( Lists.newArrayList( this.resource1, this.resource2, this.resource3 ) );
         assertEquals( 3, resources.getSize() );
         assertEquals( resource1, resources.first() );
-        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_1 ) ) );
-        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_2 ) ) );
-        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_3 ) ) );
-    }
-
-    @Test
-    public void fromArrayList()
-    {
-        Resources resources = Resources.from( this.list.get( 0 ), this.list.get( 1 ), this.list.get( 2 ) );
-
-        assertEquals( 3, resources.getSize() );
-        assertEquals( resource1, resources.first() );
-        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_1 ) ) );
-        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_2 ) ) );
-        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_3 ) ) );
     }
 
     @Test
     public void getResourceKeys()
     {
-        final Resources resources = Resources.from( this.list );
-
-        final ResourceKeys resourceKeys = ResourceKeys.from( RESOURCE_URI_1, RESOURCE_URI_2, RESOURCE_URI_3 );
+        final Resources resources = Resources.from( this.resource1, this.resource2, this.resource3 );
+        final ResourceKeys resourceKeys = ResourceKeys.from( "myapp:/a.txt", "myapp:/a/b.txt", "myapp:/a/c.txt" );
 
         assertEquals( resourceKeys, resources.getResourceKeys() );
     }
@@ -118,11 +62,11 @@ public class ResourcesTest
     @Test
     public void filter()
     {
-        final Resources resources = Resources.from( this.list );
-        final Resources filteredResources = resources.filter( resource -> resource2.equals( resource ) );
+        final Resources resources = Resources.from( this.resource1, this.resource2, this.resource3 );
+        final Resources filteredResources = resources.filter( resource -> this.resource2.equals( resource ) );
 
         assertEquals( 1, filteredResources.getSize() );
-        assertEquals( resource2, filteredResources.first() );
+        assertEquals( this.resource2, filteredResources.first() );
     }
 
 }

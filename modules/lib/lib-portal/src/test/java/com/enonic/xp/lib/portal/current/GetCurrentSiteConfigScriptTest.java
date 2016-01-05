@@ -24,4 +24,13 @@ public class GetCurrentSiteConfigScriptTest
         this.portalRequest.setSite( null );
         runFunction( "/site/test/getCurrentSiteConfig-test.js", "noCurrentSite" );
     }
+
+    @Test
+    public void testExample()
+    {
+        final Site site = TestDataFixtures.newSite();
+        this.portalRequest.setSite( site );
+
+        runScript( "/site/lib/xp/examples/portal/getSiteConfig.js" );
+    }
 }

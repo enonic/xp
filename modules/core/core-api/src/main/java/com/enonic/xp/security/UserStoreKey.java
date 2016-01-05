@@ -5,11 +5,11 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.util.CharacterChecker;
+
 @Beta
 public final class UserStoreKey
 {
-    private final static char[] ILLEGAL_CHARACTERS = {'<', '>', '"', '\''};
-
     private final static UserStoreKey SYSTEM = UserStoreKey.from( "system" );
 
     private final static UserStoreKey DEFAULT = UserStoreKey.from( "default" );
@@ -23,16 +23,7 @@ public final class UserStoreKey
         Preconditions.checkArgument( !StringUtils.isBlank( id ), "UserStoreKey cannot be blank: %s", id );
         Preconditions.checkArgument( !RESERVED_USER_STORE_ID.equalsIgnoreCase( id ), "UserStoreKey id is reserved and cannot be used: %s",
                                      id );
-        this.id = checkId( id );
-    }
-
-    private String checkId( final String value )
-    {
-        if ( StringUtils.containsAny( value, ILLEGAL_CHARACTERS ) )
-        {
-            throw new IllegalArgumentException( "Invalid UserStoreKey [" + value + "]" );
-        }
-        return value;
+        this.id = CharacterChecker.check( id, "Invalid UserStoreKey [" + id + "]" );
     }
 
     public static UserStoreKey from( final String id )

@@ -25,10 +25,7 @@ import com.enonic.xp.security.PrincipalKey;
 public class CreateContentHandlerTest
     extends BaseContentHandlerTest
 {
-
-    @Test
-    public void createContent()
-        throws Exception
+    private void mockCreateContent()
     {
         Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
@@ -90,7 +87,20 @@ public class CreateContentHandlerTest
             build();
         Mockito.when( this.mixinService.getByName( Mockito.eq( MixinName.from( "com.enonic.myapplication:myschema" ) ) ) ).thenReturn(
             mixin );
+    }
 
+    @Test
+    public void testExample()
+    {
+        mockCreateContent();
+        runScript( "/site/lib/xp/examples/content/create.js" );
+    }
+
+    @Test
+    public void createContent()
+        throws Exception
+    {
+        mockCreateContent();
         runFunction( "/site/test/CreateContentHandlerTest.js", "createContent" );
     }
 

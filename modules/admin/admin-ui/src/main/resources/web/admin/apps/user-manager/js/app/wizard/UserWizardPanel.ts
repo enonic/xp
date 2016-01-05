@@ -145,7 +145,7 @@ module app.wizard {
                     api.notify.showFeedback('User was created!');
                     new api.security.UserItemCreatedEvent(principal, this.getUserStore(), this.isParentOfSameType()).fire();
                     this.userPasswordWizardStepForm.updatePrincipal(principal);
-
+                    this.notifyPrincipalNamed(principal);
                     return principal;
                 });
         }
@@ -253,12 +253,14 @@ module app.wizard {
         }
 
         hasUnsavedChanges(): boolean {
-            var persistedPrincipal = this.getPersistedItem();
+            var persistedPrincipal = this.getPersistedItem(),
+                email = this.userEmailWizardStepForm.getEmail(),
+                memberships = this.userMembershipsWizardStepForm.getMemberships();
             if (persistedPrincipal == undefined) {
                 return this.wizardHeader.getName() !== "" ||
-                    this.wizardHeader.getDisplayName() !== "" ||
-                    this.userEmailWizardStepForm.getEmail() !== "" ||
-                    this.userMembershipsWizardStepForm.getMemberships().length !== 0;
+                       this.wizardHeader.getDisplayName() !== "" ||
+                       (!!email && email !== "") ||
+                       (!!memberships && memberships.length !== 0);
             } else {
                 return !this.isPersistedEqualsViewed();
             }

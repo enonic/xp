@@ -102,6 +102,8 @@ module app.wizard {
 
                 callback(this);
             });
+
+            this.formIcon.addClass("icon-address-book");
         }
 
         getUserItemType(): string {

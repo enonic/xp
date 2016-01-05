@@ -10,7 +10,6 @@ module api.content {
         constructor(builder: ContentComboBoxBuilder) {
 
             var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
-            loader.setAllowedContentTypes(builder.allowedContentTypes);
 
             var richComboBoxBuilder = new RichComboBoxBuilder<ContentSummary>().
                 setComboBoxName(builder.name ? builder.name : 'contentSelector').
@@ -19,11 +18,16 @@ module api.content {
                 setMaximumOccurrences(builder.maximumOccurrences).
                 setOptionDisplayValueViewer(new api.content.ContentSummaryViewer()).
                 setDelayedInputValueChangedHandling(750).
+                setValue(builder.value).
                 setMinWidth(builder.minWidth);
 
             super(richComboBoxBuilder);
 
             this.addClass('content-combo-box');
+
+            if (builder.postLoad) {
+                this.handleLastRange(builder.postLoad);
+            }
         }
 
         getContent(contentId: ContentId): ContentSummary {
@@ -86,7 +90,7 @@ module api.content {
             let editButton = new api.dom.AEl("edit");
             editButton.onClicked((event: Event) => {
                 let model = [ContentSummaryAndCompareStatus.fromContentSummary(content)];
-                new api.content.EditContentEvent(model).fire();
+                new api.content.event.EditContentEvent(model).fire();
 
                 event.stopPropagation();
                 event.preventDefault();
@@ -104,11 +108,13 @@ module api.content {
 
         maximumOccurrences: number = 0;
 
-        loader: ContentSummaryLoader;
-
-        allowedContentTypes: string[];
+        loader: api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary>;
 
         minWidth: number;
+
+        value: string;
+
+        postLoad: () => void;
 
         setName(value: string): ContentComboBoxBuilder {
             this.name = value;
@@ -120,18 +126,23 @@ module api.content {
             return this;
         }
 
-        setLoader(loader: ContentSummaryLoader): ContentComboBoxBuilder {
+        setLoader(loader: api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary>): ContentComboBoxBuilder {
             this.loader = loader;
-            return this;
-        }
-
-        setAllowedContentTypes(allowedTypes: string[]): ContentComboBoxBuilder {
-            this.allowedContentTypes = allowedTypes;
             return this;
         }
 
         setMinWidth(value: number): ContentComboBoxBuilder {
             this.minWidth = value;
+            return this;
+        }
+
+        setValue(value: string): ContentComboBoxBuilder {
+            this.value = value;
+            return this;
+        }
+
+        setPostLoad(postLoad: () => void) {
+            this.postLoad = postLoad;
             return this;
         }
 

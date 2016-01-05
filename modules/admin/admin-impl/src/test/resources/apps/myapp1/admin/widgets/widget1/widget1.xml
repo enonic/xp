@@ -1,0 +1,6 @@
+<widget>
+  <display-name>MyWidget</display-name>
+  <interfaces>
+    <interface>com.enonic.xp.my-interface</interface>
+  </interfaces>
+</widget>

@@ -34,6 +34,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 
+import io.swagger.annotations.ApiOperation;
+
 import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
 import com.enonic.xp.admin.impl.json.content.CompareContentResultsJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
@@ -55,6 +57,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.BatchContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CompareContentsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentPublishItemJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CountItemsWithChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CreateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentJson;
@@ -133,6 +136,7 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -179,6 +183,8 @@ public final class ContentResource
     private ContentPrincipalsResolver principalsResolver;
 
     private SecurityService securityService;
+
+    private RelationshipTypeService relationshipTypeService;
 
     @POST
     @Path("create")
@@ -264,21 +270,23 @@ public final class ContentResource
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public ContentJson updateThumbnail( final MultipartForm form )
     {
-        final MultipartItem mediaFile = form.get( "file" );
-
-        final CreateAttachment thumbnailAttachment = CreateAttachment.create().
-            name( AttachmentNames.THUMBNAIL ).
-            mimeType( mediaFile.getContentType().toString() ).
-            byteSource( getFileItemByteSource( mediaFile ) ).
-            build();
-
-        final UpdateContentParams params = new UpdateContentParams().
-            contentId( ContentId.from( form.getAsString( "id" ) ) ).
-            createAttachments( CreateAttachments.from( thumbnailAttachment ) );
-
-        final Content persistedContent = contentService.update( params );
+        final Content persistedContent = this.doCreateAttachment(AttachmentNames.THUMBNAIL, form);
 
         return new ContentJson( persistedContent, newContentIconUrlResolver(), principalsResolver );
+    }
+
+    @POST
+    @Path("createAttachment")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public AttachmentJson createAttachment( final MultipartForm form ) {
+
+        final MultipartItem mediaFile = form.get( "file" );
+        final String attachmentName = mediaFile.getFileName();
+
+        final Content persistedContent = this.doCreateAttachment( attachmentName, form );
+
+        return new AttachmentJson(persistedContent.getAttachments().byName( attachmentName ));
+
     }
 
     @POST
@@ -775,12 +783,34 @@ public final class ContentResource
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentQueryResultJson query( final ContentQueryJson contentQueryJson )
     {
+        //TODO: do we need this param? it does not seem to be checked at all
         final boolean getChildrenIds = !Expand.NONE.matches( contentQueryJson.getExpand() );
 
         final ContentIconUrlResolver iconUrlResolver = newContentIconUrlResolver();
         final FindContentByQueryResult findResult = contentService.find( FindContentByQueryParams.create().
             populateChildren( getChildrenIds ).
             contentQuery( contentQueryJson.getContentQuery() ).
+            build() );
+
+        return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver, principalsResolver );
+    }
+
+    @POST
+    @Path("selectorQuery")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public AbstractContentQueryResultJson selectorQuery( final ContentSelectorQueryJson contentQueryJson )
+    {
+        final ContentIconUrlResolver iconUrlResolver = newContentIconUrlResolver();
+
+        final ContentSelectorQueryJsonToContentQueryConverter selectorQueryProcessor =
+            ContentSelectorQueryJsonToContentQueryConverter.create().
+                contentQueryJson( contentQueryJson ).
+                contentService( this.contentService ).
+                relationshipTypeService( this.relationshipTypeService ).
+                build();
+
+        final FindContentByQueryResult findResult = contentService.find( FindContentByQueryParams.create().
+            contentQuery( selectorQueryProcessor.createQuery() ).
             build() );
 
         return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver, principalsResolver );
@@ -933,6 +963,68 @@ public final class ContentResource
         return permissionsJson;
     }
 
+    @POST
+    @Path("reprocess")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed(RoleKeys.ADMIN_ID)
+    @ApiOperation("Reprocesses content")
+    public ReprocessContentResultJson reprocess( final ReprocessContentRequestJson request )
+    {
+        final List<ContentPath> updated = new ArrayList<>();
+
+        final Content content = this.contentService.getByPath( request.getSourceBranchPath().getContentPath() );
+        reprocessContent( content, request.isSkipChildren(), updated );
+
+        return new ReprocessContentResultJson( ContentPaths.from( updated ) );
+    }
+
+    private void reprocessContent( final Content content, final boolean skipChildren, final List<ContentPath> updated )
+    {
+        final Content reprocessedContent = this.contentService.reprocess( content.getId() );
+        if ( !reprocessedContent.equals( content ) )
+        {
+            updated.add( content.getPath() );
+        }
+        if ( skipChildren )
+        {
+            return;
+        }
+
+        int from = 0;
+        int resultCount;
+        do
+        {
+            final FindContentByParentParams findParams = FindContentByParentParams.create().parentId( content.getId() ).
+                from( from ).size( 5 ).build();
+            final FindContentByParentResult results = this.contentService.findByParent( findParams );
+
+            for ( Content child : results.getContents() )
+            {
+                reprocessContent( child, false, updated );
+            }
+            resultCount = Math.toIntExact( results.getHits() );
+            from = from + resultCount;
+        }
+        while ( resultCount > 0 );
+    }
+
+    private Content doCreateAttachment(final String attachmentName, final MultipartForm form) {
+        final MultipartItem mediaFile = form.get( "file" );
+
+        final CreateAttachment attachment = CreateAttachment.create().
+            name( attachmentName ).
+            mimeType( mediaFile.getContentType().toString() ).
+            byteSource( getFileItemByteSource( mediaFile ) ).
+            build();
+
+        final UpdateContentParams params = new UpdateContentParams().
+            contentId( ContentId.from( form.getAsString( "id" ) ) ).
+            createAttachments( CreateAttachments.from( attachment ) );
+
+        return contentService.update( params );
+    }
+
     private PrincipalQueryResult getTotalUsers()
     {
         final PrincipalQuery query = PrincipalQuery.create().includeUsers().size( MAX_EFFECTIVE_PERMISSIONS_PRINCIPALS ).build();
@@ -964,7 +1056,7 @@ public final class ContentResource
         return new ContentIconUrlResolver( this.contentTypeService );
     }
 
-    private ContentPaths filterChildrenIfParentPresents( ContentPaths sourceContentPaths )
+    private ContentPaths filterChildrenIfParentPresents( final ContentPaths sourceContentPaths )
     {
         ContentPaths filteredContentPaths = ContentPaths.empty();
 
@@ -980,12 +1072,12 @@ public final class ContentResource
         return filteredContentPaths;
     }
 
-    private long countContentsAndTheirChildren( ContentPaths contentsPaths )
+    private long countContentsAndTheirChildren( final ContentPaths contentsPaths )
     {
         return contentsPaths.getSize() + ( contentsPaths.isEmpty() ? 0 : countChildren( contentsPaths ) );
     }
 
-    private long countChildren( ContentPaths contentsPaths )
+    private long countChildren( final ContentPaths contentsPaths )
     {
         FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
             contentQuery( ContentQuery.create().size( 0 ).queryExpr( constructExprToCountChildren( contentsPaths ) ).build() ).
@@ -994,7 +1086,7 @@ public final class ContentResource
         return result.getTotalHits();
     }
 
-    private QueryExpr constructExprToCountChildren( ContentPaths contentsPaths )
+    private QueryExpr constructExprToCountChildren( final ContentPaths contentsPaths )
     {
         ConstraintExpr expr = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( "/content" + contentsPaths.first() + "/*" ) );
 
@@ -1049,5 +1141,11 @@ public final class ContentResource
     {
         this.principalsResolver = new ContentPrincipalsResolver( securityService );
         this.securityService = securityService;
+    }
+
+    @Reference
+    public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
+    {
+        this.relationshipTypeService = relationshipTypeService;
     }
 }

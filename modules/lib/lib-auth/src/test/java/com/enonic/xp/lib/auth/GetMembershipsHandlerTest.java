@@ -18,10 +18,24 @@ public class GetMembershipsHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, this.securityService );
+    }
+
+    @Test
+    public void testExamples()
+    {
+        final Role role = TestDataFixtures.getTestRole();
+        final Group group = TestDataFixtures.getTestGroup();
+        final PrincipalKeys principalKeys = PrincipalKeys.from( role.getKey(), group.getKey() );
+
+        Mockito.when( securityService.getMemberships( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn( principalKeys );
+
+        Mockito.when( securityService.getPrincipals( principalKeys ) ).thenReturn( Principals.from( role, group ) );
+        runScript( "/site/lib/xp/examples/auth/getMemberships.js" );
     }
 
     @Test

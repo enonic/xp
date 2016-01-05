@@ -12,6 +12,15 @@ public class GetContentHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
+    public void testExample()
+    {
+        final Content content = TestDataFixtures.newExampleContent();
+        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
+
+        runScript( "/site/lib/xp/examples/content/get.js" );
+    }
+
+    @Test
     public void getById()
         throws Exception
     {

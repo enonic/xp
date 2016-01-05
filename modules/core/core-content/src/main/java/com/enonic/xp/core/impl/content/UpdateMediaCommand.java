@@ -7,7 +7,6 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -59,18 +58,20 @@ final class UpdateMediaCommand
             byteSource( params.getByteSource() ).
             build();
 
-        final PropertyTree data = new PropertyTree();
-        new MediaFormDataBuilder().
+        final MediaFormDataBuilder mediaFormBuilder = new MediaFormDataBuilder().
             type( type ).
             attachment( params.getName() ).
             focalX( params.getFocalX() ).
             focalY( params.getFocalY() ).
-            build( data );
+            caption( params.getCaption() ).
+            artist( params.getArtist() ).
+            copyright( params.getCopyright() ).
+            tags( params.getTags() );
 
         final UpdateContentParams updateParams = new UpdateContentParams().
             contentId( params.getContent() ).
             createAttachments( CreateAttachments.from( mediaAttachment ) ).
-            editor( editable -> editable.data = data );
+            editor( editable -> mediaFormBuilder.build( editable.data ) );
 
         return UpdateContentCommand.create( this ).
             params( updateParams ).

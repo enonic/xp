@@ -13,4 +13,3 @@
 ///<reference path='TimePickerPopup.ts' />
 ///<reference path='DateTimePicker.ts' />
 ///<reference path='DateTimePickerPopup.ts' />
-///<reference path='LocalTime.ts' />

@@ -16,7 +16,7 @@ module api.form.inputtype.text.htmlarea {
 
         private imagePreviewContainer: api.dom.DivEl;
         private imageCaptionField: FormItem;
-        private uploader: api.content.ImageUploader;
+        private imageUploaderEl: api.content.ImageUploaderEl;
         private imageElement: HTMLImageElement;
         private contentId: api.content.ContentId;
         private imageSelector: api.content.ContentComboBox;
@@ -77,7 +77,8 @@ module api.form.inputtype.text.htmlarea {
 
                 formItem.addClass("image-preview");
                 this.previewImage(imageContent);
-                this.uploader.hide();
+                this.hideCaptionLabel();
+                this.imageUploaderEl.hide();
             });
 
             imageSelectorComboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
@@ -90,7 +91,8 @@ module api.form.inputtype.text.htmlarea {
                 formItem.removeClass("image-preview");
                 this.removePreview();
                 this.imageToolbar.remove();
-                this.uploader.show();
+                this.showCaptionLabel();
+                this.imageUploaderEl.show();
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
 
@@ -130,21 +132,20 @@ module api.form.inputtype.text.htmlarea {
                     resolve();
 
             this.image = this.createImgEl(imgUrl, imageContent.getDisplayName(), contentId);
-            if (this.imageElement) {
-                this.image.getHTMLElement().style["text-align"] = this.imageElement.parentElement.style.textAlign;
 
-                var keepSize = this.imageElement.getAttribute("data-src").indexOf("keepSize=true") > 0;
-                if (keepSize) {
-                    var pathAttr = this.imageElement.getAttribute("data-src");
-                    this.image.getEl().setAttribute("data-src", pathAttr);
-                }
+            if (this.imageElement) {
+                this.image.getHTMLElement().style["text-align"] =
+                    this.imageElement.parentElement.style.textAlign || this.imageElement.parentElement.style.cssFloat;
+
                 this.imageToolbar = new ImageToolbar(this.image);
+                if (this.imageToolbar.isImageInOriginalSize(new api.dom.ElementHelper(this.imageElement))) {
+                    this.imageToolbar.appendKeepSizeParamToImagePath();
+                }
             }
             else {
                 this.imageToolbar = new ImageToolbar(this.image);
                 this.image.getHTMLElement().style["text-align"] = "justify";
             }
-
 
             this.image.onLoaded(() => {
                 this.imagePreviewContainer.removeClass("upload");
@@ -160,6 +161,18 @@ module api.form.inputtype.text.htmlarea {
             this.imagePreviewContainer.insertChild(this.image, 0);
         }
 
+        private hideCaptionLabel() {
+            this.imageCaptionField.getLabel().hide();
+            this.imageCaptionField.getInput().getEl().setAttribute("placeholder", "Caption");
+            this.imageCaptionField.getInput().getParentElement().getEl().setMarginLeft("0px");
+        }
+
+        private showCaptionLabel() {
+            this.imageCaptionField.getLabel().show();
+            this.imageCaptionField.getInput().getEl().removeAttribute("placeholder")
+            this.imageCaptionField.getInput().getParentElement().getEl().setMarginLeft("");
+        }
+
         private removePreview() {
             this.imagePreviewContainer.removeChild(this.image);
         }
@@ -167,7 +180,7 @@ module api.form.inputtype.text.htmlarea {
         show() {
             super.show();
 
-            this.uploader.show();
+            this.imageUploaderEl.show();
         }
 
         protected getMainFormItems(): FormItem[] {
@@ -206,19 +219,19 @@ module api.form.inputtype.text.htmlarea {
         private addUploaderAndPreviewControls(imageSelector: FormItem) {
             var imageSelectorContainer = imageSelector.getInput().getParentElement();
 
-            imageSelectorContainer.appendChild(this.uploader = this.createImageUploader());
+            imageSelectorContainer.appendChild(this.imageUploaderEl = this.createImageUploader());
 
             this.createImagePreviewContainer();
 
             wemjq(this.imagePreviewContainer.getHTMLElement()).insertAfter(imageSelectorContainer.getHTMLElement());
         }
 
-        private createImageUploader(): api.content.ImageUploader {
-            var uploader = new api.content.ImageUploader(<api.content.ImageUploaderConfig>{
+        private createImageUploader(): api.content.ImageUploaderEl {
+            var uploader = new api.content.ImageUploaderEl(<api.content.ImageUploaderElConfig>{
                 params: {
                     parent: this.contentId.toString()
                 },
-                operation: api.content.MediaUploaderOperation.create,
+                operation: api.content.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',
                 showButtons: false,
                 showResult: false,
@@ -247,7 +260,7 @@ module api.form.inputtype.text.htmlarea {
                 var item = event.getUploadItem();
                 var createdContent = item.getModel();
 
-                new api.content.ContentUpdatedEvent(this.contentId).fire();
+                //new api.content.ContentUpdatedEvent(this.contentId).fire();
                 this.imageSelector.setContent(createdContent);
             });
 
@@ -305,11 +318,22 @@ module api.form.inputtype.text.htmlarea {
             return (<api.dom.InputEl>this.imageCaptionField.getInput()).getValue().trim();
         }
 
+        private isImageWiderThanEditor() {
+            return (this.image.getHTMLElement()["width"] > this.getEditor()["editorContainer"].clientWidth);
+        }
+
+        private setImageWidthConstraint() {
+            var keepImageSize = this.imageToolbar.isImageInOriginalSize(this.image.getEl());
+            this.image.getHTMLElement().style["width"] = (this.isImageWiderThanEditor() || !keepImageSize) ? "100%" : "auto";
+        }
+
         private createFigureElement(figCaptionId: string) {
+
             var figure = api.dom.ElementHelper.fromName("figure");
             var figCaption = api.dom.ElementHelper.fromName("figcaption");
             figCaption.setId(figCaptionId);
             figCaption.setText(this.getCaptionFieldValue());
+            figCaption.setAttribute("style", "text-align: center");
 
             figure.appendChildren([(<api.dom.ImgEl>this.image).getEl().getHTMLElement(), figCaption.getHTMLElement()]);
 
@@ -321,8 +345,21 @@ module api.form.inputtype.text.htmlarea {
                 alignment = this.image.getHTMLElement().style["text-align"];
             }
 
-            element.style["text-align"] = alignment;
-            element.setAttribute("data-mce-style", "text-align: " + alignment);
+            var styleFormat = "float: {0}; margin: {1};" + (this.imageToolbar.isImageInOriginalSize(this.image.getEl()) ? "" : "width: {2}%;");
+            var styleAttr = "text-align: " + alignment + ";";
+
+            switch (alignment) {
+                case 'left':
+                case 'right':
+                    styleAttr = api.util.StringHelper.format(styleFormat, alignment, "15px", "40");
+                    break;
+                case 'center':
+                    styleAttr = styleAttr + api.util.StringHelper.format(styleFormat, "none", "auto", "60");
+                    break;
+            }
+
+            element.setAttribute("style", styleAttr);
+            element.setAttribute("data-mce-style", styleAttr);
         }
 
         private createImageTag(): void {
@@ -337,6 +374,7 @@ module api.form.inputtype.text.htmlarea {
 
                 wemjq(this.imageElement.parentElement).children("figcaption").text(this.getCaptionFieldValue());
                 this.imageElement.parentElement.replaceChild((<api.dom.ImgEl>this.image).getEl().getHTMLElement(), this.imageElement);
+                this.setImageWidthConstraint();
 
                 setTimeout(() => {
                     this.getEditor().nodeChanged({selectionChange: true})
@@ -348,6 +386,7 @@ module api.form.inputtype.text.htmlarea {
 
                 this.updateImageParentAlignment(figure.getHTMLElement());
                 this.changeImageParentAlignmentOnImageAlignmentChange(figure.getHTMLElement());
+                this.setImageWidthConstraint();
 
                 if (!isProperContainer() || container.nodeName === "FIGURE") {
                     while (!isProperContainer()) {
@@ -417,6 +456,10 @@ module api.form.inputtype.text.htmlarea {
             this.initActiveButton();
         }
 
+        public isImageInOriginalSize(image: api.dom.ElementHelper) {
+            return image.getAttribute("data-src").indexOf("keepSize=true") > 0;
+        }
+
         private createJustifiedButton(): api.ui.button.ActionButton {
             return this.createAlignmentButton("icon-paragraph-justify");
         }
@@ -463,15 +506,25 @@ module api.form.inputtype.text.htmlarea {
             return keepOriginalSizeCheckbox;
         }
 
-        private appendKeepSizeParamToImagePath() {
-            var pathAttr = this.image.getEl().getAttribute("data-src");
-            this.image.getEl().setAttribute("data-src", pathAttr + "?keepSize=true");
+        public appendKeepSizeParamToImagePath() {
+            if (!this.isImageInOriginalSize(this.image.getEl())) {
+                var pathAttr = this.image.getEl().getAttribute("data-src");
+                this.image.getEl().setAttribute("data-src", pathAttr + "?keepSize=true");
+            }
+            if (!this.keepOriginalSizeCheckbox.isChecked()) {
+                this.keepOriginalSizeCheckbox.setChecked(true);
+            }
         }
 
         private removeKeepSizeParamFromImagePath() {
-            var pathAttr = this.image.getEl().getAttribute("data-src");
-            var paramToRemoveIndex = this.image.getEl().getAttribute("data-src").indexOf("?keepSize=true");
-            this.image.getEl().setAttribute("data-src", pathAttr.substring(0, paramToRemoveIndex));
+            if (this.isImageInOriginalSize(this.image.getEl())) {
+                var pathAttr = this.image.getEl().getAttribute("data-src");
+                var paramToRemoveIndex = this.image.getEl().getAttribute("data-src").indexOf("?keepSize=true");
+                this.image.getEl().setAttribute("data-src", pathAttr.substring(0, paramToRemoveIndex));
+            }
+            if (this.keepOriginalSizeCheckbox.isChecked()) {
+                this.keepOriginalSizeCheckbox.setChecked(false);
+            }
         }
 
         private initActiveButton() {

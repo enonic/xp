@@ -74,7 +74,8 @@ module api.ui {
         show() {
             this.stopTimeout();
             if (!this.tooltipEl) {
-                this.tooltipEl = new api.dom.DivEl("tooltip " + this.side);
+                this.tooltipEl = new api.dom.DivEl("tooltip", api.StyleHelper.COMMON_PREFIX);
+                this.tooltipEl.addClass(this.side);
                 if (this.contentEl) {
                     this.tooltipEl.appendChild(this.contentEl);
                 } else {

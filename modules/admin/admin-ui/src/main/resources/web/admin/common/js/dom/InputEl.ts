@@ -2,18 +2,14 @@ module api.dom {
 
     export class InputEl extends FormInputEl {
 
-        constructor(className?: string, type?: string) {
-            super("input", className);
+        constructor(className?: string, type?: string, prefix?: string, originalValue?: string) {
+            super("input", className, prefix, originalValue);
             this.setType(type || 'text');
-        }
 
-        getValue(): string {
-            return this.getEl().getValue();
-        }
-
-        setValue(value: string): InputEl {
-            this.getEl().setValue(value);
-            return this;
+            this.onInput((event: Event) => {
+                this.refreshDirtyState();
+                this.refreshValueChanged();
+            });
         }
 
         getName(): string {

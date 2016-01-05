@@ -69,23 +69,68 @@
     }
 
     .form-panel.minimized {
-      .thumbnail-uploader, .wizard-header, .wizard-steps-panel {
+      .thumbnail-uploader-el, .wizard-header, .wizard-steps-panel {
         display: none;
-        //visibility: hidden;
       }
 
       .wizard-step-navigator-and-toolbar {
         margin-top: 40px;
+        padding-left: 40px;
+        .box-sizing(border-box);
+        overflow: initial;
+        .fold-button {
+          margin-left: -40px;
+          .fold-label {
+            position: absolute;
+            width: 120px;
+            padding: 0 20px;
+            box-sizing: border-box;
+            transform: rotate(90deg);
+            transform-origin: 15px 0px;
+          }
+          .@{_COMMON_PREFIX}dropdown {
+            position: fixed;
+            top: 125px;
+            left: 35px;
+            margin: 0;
+
+            .wizard-step-navigator {
+              transform: initial;
+            }
+          }
+
+          &:after {
+            margin: 80px 5px 0 0;
+            box-sizing: border-box;
+            border-top: none;
+            border-left: 6px solid @admin-dark-gray;
+            border-right: 6px solid transparent;
+            border-bottom: 4px solid transparent;
+            border-top: 4px solid transparent;
+          }
+        }
+        &:before {
+          content: " ";
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          margin: -40px 0 0 -40px;
+          background: @admin-bg-light-gray;
+        }
       }
 
       .wizard-step-navigator {
+        width: 100%;
+        box-sizing: border-box;
         transform: rotate(90deg);
-        transform-origin: 40px 0px;
-        padding-left: 40px;
+        transform-origin: 0 0;
       }
 
       .minimize-edit {
-
+        position: absolute;
+        left: 38px !important;
+        top: 0;
+        background: @admin-white;
         &:before {
           transform: rotate(0deg);
         }
@@ -112,7 +157,7 @@
       }
 
       &:hover {
-        color: #333333;
+        color: @admin-bg-dark-gray;
       }
     }
   }
@@ -126,7 +171,7 @@
         display: inherit;
         height: 100%;
 
-        .button.content-wizard-toolbar-publish-button {
+        .@{_COMMON_PREFIX}button.content-wizard-toolbar-publish-button {
           .button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 30%), false);
           &:disabled {
             background-color: @admin-font-gray1;

@@ -11,21 +11,16 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.xml.parser.XmlMixinParser;
 
 final class MixinLoader
-    extends SchemaLoader<MixinName>
+    extends SchemaLoader<MixinName, Mixin>
 {
     public MixinLoader( final ResourceService resourceService )
     {
         super( resourceService, "/site/mixins" );
     }
 
-    public Mixin load( final MixinName name )
+    @Override
+    protected Mixin load( final MixinName name, final Resource resource )
     {
-        final Resource resource = getResource( name );
-        if ( resource == null )
-        {
-            return null;
-        }
-
         final Mixin.Builder builder = Mixin.create();
         parseXml( resource, builder );
 

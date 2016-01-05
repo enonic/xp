@@ -15,7 +15,9 @@ module api.ui.selector.dropdown {
 
         filter?: (item: Option<OPTION_DISPLAY_VALUE>, args: any) => boolean;
 
-        dataIdProperty?:string;
+        dataIdProperty?: string;
+
+        value?: string;
 
         disableFilter?: boolean;
 
@@ -51,7 +53,7 @@ module api.ui.selector.dropdown {
         private active: boolean = false;
 
         constructor(name: string, config: DropdownConfig<OPTION_DISPLAY_VALUE>) {
-            super("div", "dropdown");
+            super("div", "dropdown", api.StyleHelper.COMMON_PREFIX, config.value);
             this.getEl().setAttribute("name", name);
 
             this.optionDisplayValueViewer = config.optionDisplayValueViewer || new DefaultOptionDisplayValueViewer();
@@ -295,7 +297,7 @@ module api.ui.selector.dropdown {
                 this.giveFocus();
             });
 
-            this.input.onValueChanged((event: api.ui.ValueChangedEvent) => {
+            this.input.onValueChanged((event: api.ValueChangedEvent) => {
 
                 this.notifyOptionFilterInputValueChanged(event.getOldValue(), event.getNewValue());
 
@@ -400,11 +402,11 @@ module api.ui.selector.dropdown {
             });
         }
 
-        onValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
+        onOptionFilterInputValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
             this.optionFilterInputValueChangedListeners.push(listener);
         }
 
-        unValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
+        unOptionFilterInputValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
             this.optionFilterInputValueChangedListeners.filter((currentListener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 return listener != currentListener;
             })

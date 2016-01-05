@@ -40,7 +40,6 @@
   <bundle level="22">${group}:core-site:${version}</bundle>
   <bundle level="22">${group}:core-i18n:${version}</bundle>
   <bundle level="22">${group}:core-media:${version}</bundle>
-  <bundle level="22">${group}:core-resource:${version}</bundle>
   <bundle level="22">${group}:core-app:${version}</bundle>
 
   <!-- Server bundles -->
@@ -65,6 +64,7 @@
 
   <!-- Portal app -->
   <bundle level="30">${group}:portal-api:${version}</bundle>
+  <bundle level="30">${group}:portal-owasp:${version}</bundle>
   <bundle level="30">${group}:portal-impl:${version}</bundle>
 
   <!-- Admin app -->

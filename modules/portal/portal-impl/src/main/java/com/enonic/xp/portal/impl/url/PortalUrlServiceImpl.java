@@ -164,8 +164,8 @@ public final class PortalUrlServiceImpl
                 }
             }
         }
-        return processedHtml;
 
+        return processedHtml;
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )

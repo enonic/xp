@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 
 import org.osgi.service.component.annotations.Activate;
@@ -51,6 +52,7 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ReprocessContentParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
@@ -559,7 +561,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public CompletableFuture<Integer> applyPermissions( final ApplyContentPermissionsParams params )
+    public Future<Integer> applyPermissions( final ApplyContentPermissionsParams params )
     {
         final ApplyContentPermissionsCommand applyPermissionsCommand = ApplyContentPermissionsCommand.create( params ).
             nodeService( this.nodeService ).
@@ -639,6 +641,19 @@ public class ContentServiceImpl
     public String getBinaryKey( final ContentId contentId, final BinaryReference binaryReference )
     {
         return nodeService.getBinaryKey( NodeId.from( contentId.toString() ), binaryReference );
+    }
+
+    @Override
+    public Content reprocess( final ContentId contentId )
+    {
+        return ReprocessContentCommand.create( ReprocessContentParams.create().contentId( contentId ).build() ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            contentService( this ).
+            build().
+            execute();
     }
 
     @Override

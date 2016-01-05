@@ -9,19 +9,18 @@ module api.content.form.inputtype.upload {
 
     export class ImageUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
 
-        private imageUploader: api.content.ImageUploader;
-        private property: Property;
+        private imageUploader: api.content.ImageUploaderEl;
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super(config, "image");
+            super(config);
             var input = config.input;
 
-            this.imageUploader = new api.content.ImageUploader(<api.content.ImageUploaderConfig>{
+            this.imageUploader = new api.content.ImageUploaderEl(<api.content.ImageUploaderElConfig>{
                 params: {
                     content: config.contentId.toString()
                 },
-                operation: api.content.MediaUploaderOperation.update,
+                operation: api.content.MediaUploaderElOperation.update,
                 name: input.getName(),
                 skipWizardEvents: false,
                 maximumOccurrences: 1,
@@ -48,22 +47,16 @@ module api.content.form.inputtype.upload {
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
 
             this.input = input;
-            this.property = property;
 
             if (property.hasNonNullValue()) {
-                //TODO: should we pass Content.getId() instead of ContentId in property to spare this request ?
-                new api.content.GetContentByIdRequest(this.getContext().contentId).
-                    sendAndParse().
-                    then((content: api.content.Content) => {
-                        this.imageUploader.setOriginalDimensions(content);
-                        this.imageUploader.setValue(content.getId());
-
-                        this.configEditorsProperties(content);
-
-                    }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason);
-                    }).done();
+                this.updateProperty(property);
             }
+
+            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
+                if (!this.ignorePropertyChange) {
+                    this.updateProperty(property, true);
+                }
+            });
 
             this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
                 var content = event.getUploadItem().getModel(),
@@ -71,61 +64,81 @@ module api.content.form.inputtype.upload {
 
                 this.imageUploader.setOriginalDimensions(content);
 
-                switch (this.property.getType()) {
-                case ValueTypes.DATA:
-                    // update the attachment name, and reset the focal point data
-                    var set = this.property.getPropertySet();
-                    set.setProperty('attachment', 0, value);
-                    set.removeProperty('focalPoint', 0);
-                    set.removeProperty('cropPosition', 0);
-                    set.removeProperty('zoomPosition', 0);
-
-                    break;
-                case ValueTypes.STRING:
-                    this.property.setValue(value);
-                    break;
-                }
+                this.saveToProperty(value);
             });
 
             this.imageUploader.onUploadReset(() => {
-                switch (this.property.getType()) {
-                case ValueTypes.DATA:
-                    // reset both attachment name and focal point data
-                    var set = this.property.getPropertySet();
-                    set.setProperty('attachment', 0, ValueTypes.STRING.newNullValue());
-                    set.removeProperty('focalPoint', 0);
-                    break;
-                case ValueTypes.STRING:
-                    this.property.setValue(ValueTypes.STRING.newNullValue());
-                    break;
-                }
+                this.saveToProperty(null);
             });
 
             this.imageUploader.onEditModeChanged((edit: boolean, crop: Rect, zoom: Rect, focus: Point) => {
                 this.validate(false);
 
                 if (!edit && crop) {
-                    this.saveToProperty(crop, zoom, focus);
+                    this.saveEditDataToProperty(crop, zoom, focus);
                 }
             });
 
             this.imageUploader.onCropAutoPositionedChanged((auto) => {
                 if (auto) {
-                    this.saveToProperty({x: 0, y: 0, x2: 1, y2: 1}, {x: 0, y: 0, x2: 1, y2: 1}, null);
+                    this.saveEditDataToProperty({x: 0, y: 0, x2: 1, y2: 1}, {x: 0, y: 0, x2: 1, y2: 1}, null);
                 }
             });
 
             this.imageUploader.onFocusAutoPositionedChanged((auto) => {
                 if (auto) {
-                    this.saveToProperty(null, null, {x: 0.5, y: 0.5});
+                    this.saveEditDataToProperty(null, null, {x: 0.5, y: 0.5});
                 }
             });
 
             return wemQ<void>(null);
         }
 
-        private saveToProperty(crop: Rect, zoom: Rect, focus: Point) {
-            var container = this.getPropertyContainer(this.property);
+
+        protected saveToProperty(value: api.data.Value) {
+            this.ignorePropertyChange = true;
+            var property = this.getProperty();
+            switch (property.getType()) {
+            case ValueTypes.DATA:
+                // update the attachment name, and reset the focal point data
+                var set = property.getPropertySet();
+                set.setProperty('attachment', 0, value);
+                set.removeProperty('focalPoint', 0);
+                set.removeProperty('cropPosition', 0);
+                set.removeProperty('zoomPosition', 0);
+
+                break;
+            case ValueTypes.STRING:
+                property.setValue(value);
+                break;
+            }
+            this.validate();
+            this.ignorePropertyChange = false;
+        }
+
+        updateProperty(property: api.data.Property, unchangedOnly?: boolean): Q.Promise<void> {
+            if ((!unchangedOnly || !this.imageUploader.isDirty()) && this.getContext().contentId) {
+
+                this.imageUploader.setValue(this.getContext().contentId.toString());
+                //TODO: should we pass Content.getId() instead of ContentId in property to spare this request ?
+                return new api.content.GetContentByIdRequest(this.getContext().contentId).
+                    sendAndParse().
+                    then((content: api.content.Content) => {
+
+                        this.imageUploader.setOriginalDimensions(content);
+                        this.imageUploader.setValue(content.getId());
+
+                        this.configEditorsProperties(content);
+
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    });
+            }
+            return wemQ<void>(null);
+        }
+
+        private saveEditDataToProperty(crop: Rect, zoom: Rect, focus: Point) {
+            var container = this.getPropertyContainer(this.getProperty());
 
             if (container) {
                 if (crop) {
@@ -164,9 +177,9 @@ module api.content.form.inputtype.upload {
                 var propertyName = property.getName();
                 // remove old string property and set the new property set
                 propertyParent.removeProperty(propertyName, 0);
-                propertyParent.setPropertySet(propertyName, 0, container.getRoot());
+                var newProperty = propertyParent.setPropertySet(propertyName, 0, container.getRoot());
                 // update local property reference
-                this.property = propertyParent.getProperty(propertyName);
+                this.registerProperty(newProperty);
                 break;
             }
             return container;
@@ -246,7 +259,7 @@ module api.content.form.inputtype.upload {
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
             var recording = new api.form.inputtype.InputValidationRecording();
-            var propertyValue = this.property.getValue();
+            var propertyValue = this.getProperty().getValue();
 
             if (this.imageUploader.isFocalPointEditMode() || this.imageUploader.isCropEditMode()) {
                 recording.setBreaksMinimumOccurrences(true);

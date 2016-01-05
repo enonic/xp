@@ -16,10 +16,24 @@ public class LogoutHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.session = new SimpleSession( SessionKey.generate() );
         ContextAccessor.current().getLocalScope().setSession( session );
+    }
+
+    @Test
+    public void testExamples()
+    {
+        final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
+        this.session.setAttribute( authInfo );
+
+        Assert.assertTrue( ContextAccessor.current().getAuthInfo().isAuthenticated() );
+
+        runScript( "/site/lib/xp/examples/auth/logout.js" );
+
+        Assert.assertFalse( ContextAccessor.current().getAuthInfo().isAuthenticated() );
     }
 
     @Test

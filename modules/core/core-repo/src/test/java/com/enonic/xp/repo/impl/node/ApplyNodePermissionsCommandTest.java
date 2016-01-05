@@ -15,6 +15,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -119,7 +120,7 @@ public class ApplyNodePermissionsCommandTest
             overwriteChildPermissions( true ).
             build();
 
-        final int appliedNodeCount = ApplyNodePermissionsCommand.create().
+        final Nodes updateNodes = ApplyNodePermissionsCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
@@ -129,7 +130,7 @@ public class ApplyNodePermissionsCommandTest
 
         refresh();
 
-        assertEquals( 5, appliedNodeCount );
+        assertEquals( 5, updateNodes.getSize() );
 
         final Node topNodeUpdated = getNodeById( topNode.id() );
         assertEquals( permissions, topNodeUpdated.getPermissions() );
@@ -238,7 +239,8 @@ public class ApplyNodePermissionsCommandTest
             nodeId( topNode.id() ).
             overwriteChildPermissions( false ).
             build();
-        final int appliedNodeCount = ApplyNodePermissionsCommand.create().
+
+        final Nodes updatedNodes = ApplyNodePermissionsCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
@@ -248,7 +250,7 @@ public class ApplyNodePermissionsCommandTest
 
         refresh();
 
-        assertEquals( 5, appliedNodeCount );
+        assertEquals( 5, updatedNodes.getSize() );
 
         final Node topNodeUpdated = getNodeById( topNode.id() );
         assertEquals( permissions, topNodeUpdated.getPermissions() );

@@ -24,4 +24,13 @@ public class GetCurrentContentScriptTest
         this.portalRequest.setContent( null );
         runFunction( "/site/test/getCurrentContent-test.js", "noCurrentContent" );
     }
+
+    @Test
+    public void testExample()
+    {
+        final Content content = TestDataFixtures.newExampleContent();
+        this.portalRequest.setContent( content );
+
+        runScript( "/site/lib/xp/examples/portal/getContent.js" );
+    }
 }

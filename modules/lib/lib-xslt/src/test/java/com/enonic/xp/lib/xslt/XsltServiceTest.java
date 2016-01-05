@@ -12,17 +12,18 @@ public class XsltServiceTest
 
     @Override
     protected void initialize()
+        throws Exception
     {
         super.initialize();
         this.service = new XsltService();
-        this.service.initialize( newBeanContext( ResourceKey.from( "myapplication:/site" ) ) );
+        this.service.initialize( newBeanContext( ResourceKey.from( "myapp:/site" ) ) );
     }
 
     @Test
     public void testProcess()
     {
         final XsltProcessor processor = this.service.newProcessor();
-        processor.setView( ResourceKey.from( "myapplication:/site/view/simple.xsl" ) );
+        processor.setView( ResourceKey.from( "myapp:/site/view/simple.xsl" ) );
         processor.setModel( null );
         processor.process();
     }

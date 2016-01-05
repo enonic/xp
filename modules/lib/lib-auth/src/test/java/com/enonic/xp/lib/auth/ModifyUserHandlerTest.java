@@ -22,10 +22,23 @@ public class ModifyUserHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, this.securityService );
+    }
+
+    @Test
+    public void testExamples()
+    {
+        Mockito.<Optional<? extends Principal>>when( securityService.getUser( Mockito.any() ) ).thenReturn(
+            Optional.of( TestDataFixtures.getTestUser() ) );
+
+        Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( (UpdateUserParams) invocationOnMock.getArguments()[0] ) );
+
+        runScript( "/site/lib/xp/examples/auth/modifyUser.js" );
     }
 
     @Test

@@ -32,24 +32,27 @@ module api.form.inputtype.text {
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
 
-            var inputEl = api.ui.text.TextInput.middle();
+            var inputEl = api.ui.text.TextInput.middle(undefined, property.getString());
+            inputEl.setName(this.getInput().getName() + "-" + index);
 
-            if (property.hasNonNullValue()) {
-                inputEl.setName(this.getInput().getName() + "-" + property.getIndex());
-                inputEl.setValue(property.getString());
-            }
-            else {
-                inputEl.setName(this.getInput().getName());
-            }
-
-            inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
+            inputEl.onValueChanged((event: api.ValueChangedEvent) => {
                 var isValid = this.isValid(event.getNewValue(), inputEl);
                 if (isValid) {
-                    property.setValue(this.newValue(event.getNewValue()));
+                    var value = ValueTypes.STRING.newValue(event.getNewValue());
+                    this.notifyOccurrenceValueChanged(inputEl, value);
                 }
                 inputEl.updateValidationStatusOnUserInput(isValid);
             });
             return inputEl;
+        }
+
+
+        updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
+            var input = <api.ui.text.TextInput> occurrence;
+
+            if (!unchangedOnly || !input.isDirty()) {
+                input.setValue(property.getString());
+            }
         }
 
         availableSizeChanged() {
@@ -80,7 +83,7 @@ module api.form.inputtype.text {
             }
             var valid = this.regexp.test(value);
             if (!silent) {
-                parent.toggleClass('valid-regexp', valid)
+                parent.toggleClass('valid-regexp', valid);
                 parent.toggleClass('invalid-regexp', !valid);
             }
             return valid;

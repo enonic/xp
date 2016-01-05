@@ -24,7 +24,7 @@ public final class SessionConfigurator
         cookie.setName( getCookieName() );
         cookie.setDomain( null );
         cookie.setSecure( false );
-        cookie.setHttpOnly( false );
+        cookie.setHttpOnly( true );
         cookie.setPath( null );
         cookie.setMaxAge( -1 );
     }

@@ -54,6 +54,12 @@ module app.wizard.action {
             this.enableActionsForExistingByPermissions(existing);
         }
 
+        enableDeleteOnly() {
+            this.save.setEnabled(false);
+            this.duplicate.setEnabled(false);
+            this.delete.setEnabled(true)
+        }
+
         private enableActionsForExistingByPermissions(existing: api.content.Content) {
             new api.security.auth.IsAuthenticatedRequest().
                 sendAndParse().

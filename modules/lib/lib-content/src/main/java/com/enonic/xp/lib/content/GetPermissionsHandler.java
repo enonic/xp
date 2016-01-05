@@ -20,7 +20,7 @@ public class GetPermissionsHandler
     @Override
     protected Object doExecute()
     {
-        Content content = getContent();
+        final Content content = getContent();
         if ( content != null )
         {
             return new PermissionsMapper( content );
@@ -43,7 +43,9 @@ public class GetPermissionsHandler
         }
         catch ( final ContentNotFoundException e )
         {
+            // Do nothing
         }
+
         return null;
     }
 }

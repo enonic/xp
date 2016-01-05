@@ -3,7 +3,7 @@ var auth = require('/lib/xp/auth.js');
 
 function editor(c) {
     c.displayName = 'Modified display name';
-    c.email = "Modified email";
+    c.email = "modified_email@enonic.com";
 
     return c;
 }
@@ -21,7 +21,7 @@ exports.modifyUser = function () {
         "displayName": "Modified display name",
         "modifiedTime": "1970-01-01T00:00:00Z",
         "disabled": false,
-        "email": "Modified email",
+        "email": "modified_email@enonic.com",
         "login": "user1",
         "userStore": "enonic"
     };

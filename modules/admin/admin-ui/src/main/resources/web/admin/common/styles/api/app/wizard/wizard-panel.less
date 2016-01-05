@@ -1,7 +1,7 @@
 .wizard-panel {
   font-size: 14px;
 
-  .mask {
+  .@{_COMMON_PREFIX}mask {
     background-color: white;
     .opacity(.8);
   }
@@ -15,8 +15,8 @@
     }
   }
 
-  .thumbnail-uploader,
-  .form-icon {
+  .thumbnail-uploader-el,
+  .@{_COMMON_PREFIX}form-icon {
     float: left;
     width: 64px;
     height: 64px;
@@ -33,38 +33,6 @@
     overflow-y: auto !important;
   }
 
-  .wizard-step-navigator-and-toolbar {
-    background-color: #eeeeee;
-    padding-left: 95px;
-
-    .toolbar {
-      float: right;
-      margin: 0 40px;
-
-      button {
-        background: @admin-green;
-        color: white;
-        line-height: 20px;
-        padding: 10px 15px 10px 15px;
-        margin: 0;
-
-        &:hover {
-          background-color: lighten(@admin-green, 5%);
-        }
-      }
-    }
-
-    &.scroll-stick {
-      position: fixed;
-      z-index: @z-index-mask - 2; // to be above image input type mask and the input type itself
-      top: 84px;
-      border-top: 1px solid @admin-medium-gray-border;
-
-      .box-shadow(-3px 3px 6px 0 @admin-toolbar-shadow);
-    }
-
-  }
-
   .wizard-steps-panel {
     margin: 0;
     padding: 0 0 0 110px;
@@ -77,15 +45,9 @@
     }
   }
 
-  ._0-240, ._240-360, ._360-540, ._540-720, ._720-960 {
-    .wizard-step-navigator-and-toolbar {
-      padding-left: 0;
-    }
-  }
-
   ._0-240, ._240-360, ._360-540 {
-    .thumbnail-uploader,
-    .form-icon {
+    .thumbnail-uploader-el,
+    .@{_COMMON_PREFIX}form-icon {
       margin: 5px 10px 0 10px;
     }
   }

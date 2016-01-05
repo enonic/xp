@@ -25,6 +25,8 @@ module api.form.inputtype.text {
         private previousScrollPos: number = 0; // fix for XP-736
         private isScrollProhibited: boolean = false;
 
+        private modalDialog: api.form.inputtype.text.htmlarea.ModalDialog;
+
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
 
             super(config);
@@ -44,7 +46,9 @@ module api.form.inputtype.text {
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
 
-            var textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index);
+            var value = this.processPropertyValue(property.getString());
+            var textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
+
             var editorId = textAreaEl.getId();
 
             var clazz = editorId.replace(/\./g, '_');
@@ -57,12 +61,24 @@ module api.form.inputtype.text {
             textAreaEl.onRendered(() => {
                 this.initEditor(editorId, property, textAreaWrapper);
             });
+            textAreaEl.onRemoved(() => {
+                this.destroyEditor(editorId);
+            });
 
             textAreaWrapper.appendChild(textAreaEl);
 
             this.setFocusOnEditorAfterCreate(textAreaWrapper, editorId);
 
             return textAreaWrapper;
+        }
+
+        updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
+            var textArea = <api.ui.text.TextArea> occurrence.getFirstChild();
+            var id = textArea.getId();
+
+            if (!unchangedOnly || !textArea.isDirty()) {
+                this.setEditorContent(id, property);
+            }
         }
 
         private initEditor(id: string, property: Property, textAreaWrapper: Element): void {
@@ -133,7 +149,7 @@ module api.form.inputtype.text {
                     editor.addCommand("openImageDialog", this.openImageDialog, this);
                     editor.addCommand("openAnchorDialog", this.openAnchorDialog, this);
                     editor.on('change', (e) => {
-                        this.setPropertyValue(id, property);
+                        this.notifyValueChanged(id, textAreaWrapper);
                     });
                     editor.on('focus', (e) => {
                         this.resetInputHeight();
@@ -141,13 +157,15 @@ module api.form.inputtype.text {
                     });
                     editor.on('blur', (e) => {
                         this.setStaticInputHeight();
-                        textAreaWrapper.removeClass(focusedEditorCls);
+                        if (!(this.modalDialog && this.modalDialog.isVisible())) {
+                            textAreaWrapper.removeClass(focusedEditorCls);
+                        }
                     });
                     editor.on('keydown', (e) => {
                         if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {  // Cmd-S or Ctrl-S
                             e.preventDefault();
 
-                            this.setPropertyValue(id, property);
+                            this.notifyValueChanged(id, textAreaWrapper);
 
                             wemjq(this.getEl().getHTMLElement()).simulate(e.type, { // as editor resides in a frame - propagate event via wrapping element
                                 bubbles: e.bubbles,
@@ -162,11 +180,18 @@ module api.form.inputtype.text {
                             });
                         }
 
-                        if (e.keyCode == 46) { // DELETE
+                        if (e.keyCode == 46 || e.keyCode == 8) { // DELETE
                             var selectedNode = editor.selection.getRng().startContainer;
                             if (/^(FIGURE)$/.test(selectedNode.nodeName)) {
-                                editor.execCommand('mceRemoveNode', false, selectedNode);
-                                editor.focus();
+                                var previousEl = selectedNode.previousSibling;
+                                e.preventDefault();
+                                selectedNode.remove();
+                                if (previousEl) {
+                                    editor.selection.setNode(previousEl);
+                                }
+                                else {
+                                    editor.focus();
+                                }
                             }
                         }
                     });
@@ -201,11 +226,11 @@ module api.form.inputtype.text {
 
         private setFocusOnEditorAfterCreate(inputOccurence: Element, id: string): void {
             inputOccurence.giveFocus = () => {
-                try {
-                    this.getEditor(id).focus();
+                var editor = this.getEditor(id);
+                if (editor) {
+                    editor.focus();
                     return true;
-                }
-                catch (e) {
+                } else {
                     console.log("Element.giveFocus(): Failed to give focus to HtmlArea element: id = " + this.getId());
                     return false;
                 }
@@ -230,7 +255,7 @@ module api.form.inputtype.text {
                 api.ui.responsive.ResponsiveManager.unAvailableSizeChanged(this);
             });
 
-            this.onOccurrenceAdded(() => {
+            this.onOccurrenceRendered(() => {
                 this.resetInputHeight();
                 this.updateEditorToolbarWidth();
             });
@@ -260,7 +285,24 @@ module api.form.inputtype.text {
             var observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
                     var alignment = (<HTMLElement>mutation.target).style["text-align"];
-                    img.parentElement.style.textAlign = alignment;
+                    var keepOriginalSize = img.getAttribute("data-src").indexOf("keepSize=true") > 0;
+
+                    var styleAttr;
+                    switch (alignment) {
+                    case 'justify':
+                    case 'center':
+                        styleAttr = "text-align: " + alignment;
+                        break;
+                    case 'left':
+                        styleAttr = "float: left; margin: 15px;" + (keepOriginalSize ? "" : "width: 40%");
+                        break;
+                    case 'right':
+                        styleAttr = "float: right; margin: 15px;" + (keepOriginalSize ? "" : "width: 40%");
+                        break;
+                    }
+
+                    img.parentElement.setAttribute("style", styleAttr);
+                    img.parentElement.setAttribute("data-mce-style", styleAttr);
                 });
             });
 
@@ -325,7 +367,7 @@ module api.form.inputtype.text {
 
         private setEditorContent(editorId: string, property: Property): void {
             if (property.hasNonNullValue()) {
-                this.getEditor(editorId).setContent(this.propertyValue2Content(property.getString()));
+                this.getEditor(editorId).setContent(this.processPropertyValue(property.getString()));
             }
         }
 
@@ -333,8 +375,9 @@ module api.form.inputtype.text {
             return !(wemjq(this.getHTMLElement()).parents(".inspection-panel").length > 0);
         }
 
-        private setPropertyValue(id: string, property: Property) {
-            property.setValue(this.editorContent2PropertyValue(id));
+        private notifyValueChanged(id: string, occurrence: api.dom.Element) {
+            var value = ValueTypes.STRING.newValue(this.processEditorContent(id));
+            this.notifyOccurrenceValueChanged(occurrence, value);
         }
 
         private newValue(s: string): Value {
@@ -352,18 +395,18 @@ module api.form.inputtype.text {
         }
 
         private openLinkDialog(config: HtmlAreaAnchor) {
-            var linkModalDialog = new LinkModalDialog(config);
-            linkModalDialog.open();
+            this.modalDialog = new LinkModalDialog(config);
+            this.modalDialog.open();
         }
 
         private openImageDialog(config: HtmlAreaImage) {
-            var imageModalDialog = new ImageModalDialog(config, this.contentId);
-            imageModalDialog.open();
+            this.modalDialog = new ImageModalDialog(config, this.contentId);
+            this.modalDialog.open();
         }
 
         private openAnchorDialog(editor: HtmlAreaEditor) {
-            var anchorModalDialog = new AnchorModalDialog(editor);
-            anchorModalDialog.open();
+            this.modalDialog = new AnchorModalDialog(editor);
+            this.modalDialog.open();
         }
 
         private removeTooltipFromEditorArea(inputOccurence: Element) {
@@ -387,7 +430,10 @@ module api.form.inputtype.text {
         }
 
         private destroyEditor(id: string): void {
-            this.getEditor(id).destroy(false);
+            var editor = this.getEditor(id)
+            if (editor) {
+                editor.destroy(false);
+            }
         }
 
         private reInitEditor(id: string) {
@@ -421,7 +467,7 @@ module api.form.inputtype.text {
             return "src=\"" + imageUrl + "\" data-src=\"" + imgSrc + "\"";
         }
 
-        private propertyValue2Content(propertyValue: string) {
+        private processPropertyValue(propertyValue: string): string {
             var content = propertyValue,
                 processedContent = propertyValue,
                 regex = /<img.*?src="(.*?)"/g,
@@ -430,14 +476,14 @@ module api.form.inputtype.text {
             while ((imgSrcs = regex.exec(content)) != null) {
                 imgSrc = imgSrcs[1];
                 if (imgSrc.indexOf(HtmlArea.imagePrefix) === 0) {
-                    processedContent = processedContent.replace("src=\"" + imgSrc + "\"", this.getConvertedImageSrc(imgSrc));
+                    processedContent = processedContent.replace(new RegExp("src=\"" + imgSrc + "\"","g"), this.getConvertedImageSrc(imgSrc));
                 }
             }
 
             return processedContent;
         }
 
-        private editorContent2PropertyValue(editorId: string): Value {
+        private processEditorContent(editorId: string): string {
             var content = this.getEditor(editorId).getContent(),
                 processedContent = this.getEditor(editorId).getContent(),
                 regex = /<img.*?data-src="(.*?)".*?>/g,
@@ -455,7 +501,7 @@ module api.form.inputtype.text {
                 }
             }
 
-            return this.newValue(processedContent);
+            return processedContent;
         }
     }
 

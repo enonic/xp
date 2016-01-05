@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.schema.mixin;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -11,11 +10,9 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.core.impl.schema.SchemaHelper;
@@ -33,11 +30,9 @@ import com.enonic.xp.schema.mixin.Mixins;
 
 @Component(immediate = true)
 public final class MixinServiceImpl
-    implements MixinService, ApplicationInvalidator
+    implements MixinService
 {
     private final BuiltinMixinsTypes builtInTypes;
-
-    private final Map<MixinName, Mixin> map;
 
     private ApplicationService applicationService;
 
@@ -45,29 +40,23 @@ public final class MixinServiceImpl
 
     public MixinServiceImpl()
     {
-        this.map = Maps.newConcurrentMap();
         this.builtInTypes = new BuiltinMixinsTypes();
     }
 
     @Override
     public Mixin getByName( final MixinName name )
     {
-        return this.map.computeIfAbsent( name, this::load );
-    }
-
-    private boolean isSystem( final MixinName name )
-    {
-        return SchemaHelper.isSystem( name.getApplicationKey() );
-    }
-
-    private Mixin load( final MixinName name )
-    {
         if ( isSystem( name ) )
         {
             return this.builtInTypes.getAll().getMixin( name );
         }
 
-        return new MixinLoader( this.resourceService ).load( name );
+        return new MixinLoader( this.resourceService ).get( name );
+    }
+
+    private boolean isSystem( final MixinName name )
+    {
+        return SchemaHelper.isSystem( name.getApplicationKey() );
     }
 
     @Override
@@ -107,7 +96,7 @@ public final class MixinServiceImpl
         return Mixins.from( list );
     }
 
-    private List<MixinName> findNames( final ApplicationKey key )
+    private Set<MixinName> findNames( final ApplicationKey key )
     {
         return new MixinLoader( this.resourceService ).findNames( key );
     }
@@ -183,11 +172,5 @@ public final class MixinServiceImpl
     public void setResourceService( final ResourceService resourceService )
     {
         this.resourceService = resourceService;
-    }
-
-    @Override
-    public void invalidate( final ApplicationKey key )
-    {
-        this.map.clear();
     }
 }

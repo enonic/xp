@@ -93,7 +93,7 @@ final class BuiltinContentTypes
     private static final Form MEDIA_DEFAULT_FORM = Form.create().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Media" ).
-            inputType( InputTypeName.FILE_UPLOADER ).build() ).
+            inputType( InputTypeName.MEDIA_UPLOADER ).build() ).
         build();
 
     private static final ContentType SITE = createSystemType( ContentTypeName.site() ).

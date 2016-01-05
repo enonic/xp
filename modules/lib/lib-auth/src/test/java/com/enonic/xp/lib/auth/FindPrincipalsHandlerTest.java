@@ -16,10 +16,26 @@ public class FindPrincipalsHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, this.securityService );
+    }
+
+    @Test
+    public void testExamples()
+    {
+        final PrincipalQueryResult result = PrincipalQueryResult.create().
+            addPrincipal( TestDataFixtures.getTestGroup() ).
+            addPrincipal( TestDataFixtures.getTestRole() ).
+            addPrincipal( TestDataFixtures.getTestUser() ).
+            totalSize( 3 ).
+            build();
+
+        Mockito.when( securityService.query( Mockito.any() ) ).thenReturn( result );
+
+        runScript( "/site/lib/xp/examples/auth/findPrincipals.js" );
     }
 
     @Test

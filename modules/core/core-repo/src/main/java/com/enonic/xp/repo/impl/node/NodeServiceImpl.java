@@ -507,7 +507,7 @@ public class NodeServiceImpl
     @Override
     public int applyPermissions( final ApplyNodePermissionsParams params )
     {
-        return ApplyNodePermissionsCommand.create().
+        final Nodes updatedNodes = ApplyNodePermissionsCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
             searchService( this.searchService ).
@@ -515,6 +515,13 @@ public class NodeServiceImpl
             searchService( this.searchService ).
             build().
             execute();
+
+        for ( final Node node : updatedNodes )
+        {
+            this.eventPublisher.publish( NodeEvents.updated( node ) );
+        }
+
+        return updatedNodes.getSize();
     }
 
     @Override

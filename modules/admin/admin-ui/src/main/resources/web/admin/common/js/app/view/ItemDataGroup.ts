@@ -22,13 +22,13 @@ module api.app.view {
                 var headerElement = new api.dom.LiEl();
                 headerElement.addClass("list-header");
 
-                headerElement.getEl().setInnerHtml(header);
+                headerElement.getEl().setInnerHtml(header, false);
                 dataList.appendChild(headerElement);
             }
 
             datas.forEach((data) => {
                 var dataElement = new api.dom.LiEl();
-                dataElement.getEl().setInnerHtml(data);
+                dataElement.getEl().setInnerHtml(data, false);
                 dataList.appendChild(dataElement);
             });
 

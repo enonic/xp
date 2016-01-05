@@ -88,7 +88,7 @@ module app.publish {
                     this.checkBox.setDisabled(true);
                     this.checkBox.addClass("disabled");
                 } else {
-                    this.checkBox.onValueChanged((event: api.ui.ValueChangedEvent) => {
+                    this.checkBox.onValueChanged((event: api.ValueChangedEvent) => {
                         if (callback) {
                             callback();
                         }

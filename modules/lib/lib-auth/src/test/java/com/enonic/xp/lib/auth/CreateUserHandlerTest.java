@@ -14,10 +14,18 @@ public class CreateUserHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, this.securityService );
+    }
+
+    @Test
+    public void testExamples()
+    {
+        Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUser() );
+        runScript( "/site/lib/xp/examples/auth/createUser.js" );
     }
 
     @Test

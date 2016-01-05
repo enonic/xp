@@ -13,9 +13,9 @@ import static org.mockito.Matchers.eq;
 public class AddMembersHandlerTest
     extends ScriptTestSupport
 {
-    private final PrincipalKey USER = PrincipalKey.from( "user:myUserStore:userId" );
+    private final PrincipalKey USER = PrincipalKey.from( "user:mystore:user1" );
 
-    private final PrincipalKey GROUP = PrincipalKey.from( "group:myGroupStore:groupId" );
+    private final PrincipalKey GROUP = PrincipalKey.from( "group:mystore:group1" );
 
     private final PrincipalKey ROLE = PrincipalKey.from( "role:roleId" );
 
@@ -23,10 +23,20 @@ public class AddMembersHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, this.securityService );
+    }
+
+    @Test
+    public void testExamples()
+    {
+        runScript( "/site/lib/xp/examples/auth/addMembers.js" );
+
+        Mockito.verify( this.securityService ).addRelationship( eq( PrincipalRelationship.from( ROLE ).to( USER ) ) );
+        Mockito.verify( this.securityService ).addRelationship( eq( PrincipalRelationship.from( ROLE ).to( GROUP ) ) );
     }
 
     @Test

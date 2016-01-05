@@ -1,7 +1,8 @@
 package com.enonic.xp.app;
 
+import java.net.URL;
 import java.time.Instant;
-import java.util.List;
+import java.util.Set;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
@@ -31,13 +32,13 @@ public interface Application
 
     Bundle getBundle();
 
-    Instant getModifiedTime();
+    ClassLoader getClassLoader();
 
-    List<String> getSourcePaths();
+    Instant getModifiedTime();
 
     boolean isStarted();
 
-    boolean isApplication();
+    Set<String> getFiles();
 
-    boolean isSystem();
+    URL resolveFile( String path );
 }

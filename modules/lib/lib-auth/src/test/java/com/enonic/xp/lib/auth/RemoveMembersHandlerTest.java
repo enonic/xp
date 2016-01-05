@@ -26,10 +26,18 @@ public class RemoveMembersHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, this.securityService );
+    }
+
+
+    @Test
+    public void testExamples()
+    {
+        runScript( "/site/lib/xp/examples/auth/removeMembers.js" );
     }
 
     @Test

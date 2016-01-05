@@ -1,11 +1,9 @@
 package com.enonic.xp.core.impl.schema.content;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.Application;
@@ -25,11 +23,8 @@ final class ContentTypeRegistry
 
     protected ResourceService resourceService;
 
-    private final Map<ContentTypeName, ContentType> map;
-
     public ContentTypeRegistry()
     {
-        this.map = Maps.newConcurrentMap();
         this.builtInTypes = new BuiltinContentTypes();
     }
 
@@ -40,17 +35,12 @@ final class ContentTypeRegistry
 
     public ContentType get( final ContentTypeName name )
     {
-        return this.map.computeIfAbsent( name, this::load );
-    }
-
-    private ContentType load( final ContentTypeName name )
-    {
         if ( isSystem( name ) )
         {
             return this.builtInTypes.getAll().getContentType( name );
         }
 
-        return new ContentTypeLoader( this.resourceService ).load( name );
+        return new ContentTypeLoader( this.resourceService ).get( name );
     }
 
     public ContentTypes getByApplication( final ApplicationKey key )
@@ -74,7 +64,7 @@ final class ContentTypeRegistry
         return ContentTypes.from( list );
     }
 
-    private List<ContentTypeName> findNames( final ApplicationKey key )
+    private Set<ContentTypeName> findNames( final ApplicationKey key )
     {
         return new ContentTypeLoader( this.resourceService ).findNames( key );
     }
@@ -91,10 +81,5 @@ final class ContentTypeRegistry
         }
 
         return ContentTypes.from( contentTypeList );
-    }
-
-    public void invalidate()
-    {
-        this.map.clear();
     }
 }

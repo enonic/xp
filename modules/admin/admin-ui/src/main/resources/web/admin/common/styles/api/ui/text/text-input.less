@@ -1,6 +1,6 @@
 @available-color: #008424;
 
-.text-input {
+.@{_COMMON_PREFIX}text-input {
   .reset();
   .input-border();
   .input-font();
@@ -25,23 +25,23 @@
   min-height: 30px;
   padding: 0px 5px;
 
-  &.middle {
+  &.@{_CLS_PREFIX}middle {
     // by default
   }
 
-  &.large {
+  &.@{_CLS_PREFIX}large {
     min-height: 40px;
     font-size: 26px;
   }
-}
 
-.text-input.autosize + .autosize-attendant {
-  overflow: hidden;
-  height: 0;
+  &.autosize + .autosize-attendant {
+    overflow: hidden;
+    height: 0;
 
-  .autosize-clone {
-    .text-input;
-    display: inline-block;
-    white-space: pre;
+    .autosize-clone {
+      display: inline-block;
+      white-space: pre;
+    }
   }
+
 }

@@ -16,10 +16,22 @@ public class GetUserHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.session = new SimpleSession( SessionKey.generate() );
         ContextAccessor.current().getLocalScope().setSession( session );
+    }
+
+    @Test
+    public void testExamples()
+    {
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+
+        this.session.setAttribute( authInfo );
+
+        runScript( "/site/lib/xp/examples/auth/getUser.js" );
     }
 
     @Test

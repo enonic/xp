@@ -72,7 +72,7 @@ module api.ui.tab {
 
             var oldValue = this.label;
             this.label = newValue;
-            this.labelEl.setHtml(newValue, true);
+            this.labelEl.setHtml(newValue);
 
             if (addLabelTitleAttribute) {
                 this.labelEl.getEl().setAttribute('title', newValue);

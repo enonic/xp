@@ -1,157 +1,69 @@
 #!/bin/bash
 
-if [ -z $1 ]; then
-     echo "Missing version-argument"
-     exit 0
-fi
+### Setup
 
-VERSION=$1
+# Override if running script outside distro
+XP_DISTRO_PATH="";
 
+# App info
+VERSION="6.3.0-SNAPSHOT"
+APP_NAME="xp"
+DISTRO_NAME="enonic-xp-${VERSION}"
 
-XP_INSTALL="/opt/enonic"
-LINK_NAME="xp"
-INSTALL_HOME=${XP_INSTALL}/${LINK_NAME}
-DISTRO="distro-${VERSION}.zip"
-REPO_URL="http://repo.enonic.com/public/com/enonic/xp/distro/${VERSION}/${DISTRO}"
-
+# User to run as service
 USER="xp"
 USER_ID=1337
 USER_HOME="/home/${USER}"
 
-APP_NAME="xp"
+# Files location
+XP_INSTALL_BASE="/opt/enonic"
+LINK_NAME="xp"
+XP_INSTALL_PATH=${XP_INSTALL_BASE}/${LINK_NAME}
 XP_HOME="${USER_HOME}/enonic/${APP_NAME}"
+XP_INSTALL_FULL_PATH="$XP_INSTALL_BASE/${DISTRO_NAME}"
 
+# Service config
 SERVICE_SCRIPT_LOCATION="/etc/init.d/${APP_NAME}"
 CONFIG_LOCATION="/etc/${APP_NAME}.conf"
+SERVICE_LOG="/var/log/${APP_NAME}";
 
 LINUX_DISTRO=""
 
-checkDistro()
-{
-    DISTRO_STRING=`sudo cat /proc/version`
+### Helpers
 
-    if [[ ${DISTRO_STRING} == *"Ubuntu"* ]];
-    then
-        LINUX_DISTRO="Ubuntu";
-        echo "Ubuntu detected";
-	elif [[ ${DISTRO_STRING} == *"Red Hat"* ]]; then
-        LINUX_DISTRO="RedHat";
-        echo "RedHat detected";
-	else
-		 LINUX_DISTRO="Generic";
-		 echo "Unknown distrubtion";
-    fi
+CYAN="\033[36m"
+BLUE="\033[34m"
+GRAY="\033[33m"
+RED="\033[31m"
+END="\033[0m\033[27m"
+INVERSE="\033[7m"
+
+# Functions
+
+function br() {
+    printf "\n"
 }
 
-doCreateUser() 
-{
-
-	if [ "$LINUX_DISTRO" = "Ubuntu" ]; then
-		sudo adduser --home ${USER_HOME} --gecos "" --UID ${USER_ID} --disabled-password ${USER}
-	elif [ "$LINUX_DISTRO" = "RedHat" ]; then
-		sudo adduser -d ${USER_HOME} -m -r -u ${USER_ID} ${USER}
-	else
-		sudo adduser --home ${USER_HOME} --gecos "" --UID ${USER_ID} --disabled-password ${USER}
-	fi
+function message() {
+    printf "$INVERSE$BLUE$1$END\n"
 }
 
-addUser()
-{
-    ret=false
-    sudo getent passwd ${USER} >/dev/null 2>&1 && ret=true
 
-    if ${ret}; then
-        echo "User ${USER} exists already"
-    else
-        echo "Create user ${USER}"
-		doCreateUser
-    fi
+function info() {
+    printf "* $BLUE$1$END\n"
 }
 
-install()
-{
-    echo "Installing..."
-
-    _mkdir "${XP_INSTALL}"
-    cd ${XP_INSTALL}
-
-    do_download
-    unpack
-    create_link
-
-    sudo rm ${XP_INSTALL}/${DISTRO}
+function details() {
+    printf " - $GRAY$1$END\n"
 }
 
-do_download()
-{
-    if [ ! -f ${XP_INSTALL}/${DISTRO} ]; then
-        echo "Downloading from ${REPO_URL} "
-        sudo curl --fail -o ${XP_INSTALL}/${DISTRO} ${REPO_URL}
-
-        if (($? > 0)); then
-            printf '%s\n' 'not able to download distribution' >&2
-            exit 1
-        fi
-    else
-        echo "Distro ${DISTRO} found"
-    fi
+function error() {
+    printf "$RED$1$END\n"
 }
 
-unpack()
-{
-    echo "Unpack and setup..."
-    sudo unzip -qq ${DISTRO}
-
-    if (($? > 0)); then
-        printf '%s\n' 'cannot unzip distro' >&2
-        exit 1
-    fi
-
-}
-
-create_link()
-{
-    if [ -h ${XP_INSTALL}/xp ]; then
-        sudo unlink ${XP_INSTALL}/xp
-    fi
-
-    echo "Creating symbolic link ${XP_INSTALL}/xp to ${XP_INSTALL}/enonic-xp-${VERSION}"
-    sudo ln -s ${XP_INSTALL}/enonic-xp-${VERSION} ${XP_INSTALL}/xp
-}
-
-installService()
-{
-    echo "Installing service script..."
-    _cp "${INSTALL_HOME}/service/init.d/xp" ${SERVICE_SCRIPT_LOCATION}
-}
-
-createXPHome()
-{
-    if [ ! -d ${XP_HOME} ]; then
-        echo "Create XP_HOME at ${XP_HOME}"
-        _mkdir ${XP_HOME}
-        _cp "${INSTALL_HOME}/home/*" ${XP_HOME}
-        _chown ${XP_HOME}
-    else
-        echo "XP_HOME exists at ${XP_HOME}"
-    fi
-}
-
-installConfig()
-{
-    if [ ! -f ${CONFIG_LOCATION} ]; then
-        _cp "${INSTALL_HOME}/service/xp.conf" ${CONFIG_LOCATION}
-    else
-        echo "Config exists at ${CONFIG_LOCATION}"
-    fi
-}
-
-initLogDir()
-{
-    LOGDIR="/var/log/${APP_NAME}";
-
-    _mkdir ${LOGDIR}
-    _chown ${LOGDIR}
+function die() {
+    error "$1"
+    exit 1
 }
 
 _cp()
@@ -159,7 +71,7 @@ _cp()
     sudo cp -R $1 $2
 
     if (($? > 0)); then
-        printf '%s\n' 'cannot copy directory $1 to $2' >&2
+        printf '%s\n' 'cannot copy directory ${1} to ${2}' >&2
         exit 1
     fi
 }
@@ -186,14 +98,168 @@ _chown()
      fi
 }
 
-main() {
-    checkDistro;
-    addUser
-    install
-    installService
+### Main
+
+getLinuxDistro()
+{
+    info "Detecting Linux distribution"
+
+    DISTRO_STRING=`sudo cat /proc/version`
+    if [[ ${DISTRO_STRING} == *"Ubuntu"* ]];
+    then
+        LINUX_DISTRO="Ubuntu";
+        details "Ubuntu detected";
+	elif [[ ${DISTRO_STRING} == *"Red Hat"* ]]; then
+        LINUX_DISTRO="RedHat";
+        details "RedHat detected";
+	else
+		LINUX_DISTRO="Generic";
+	    error "Unknown distrubtion detected";
+    fi
+}
+
+createUser()
+{
+    message "Creating user ${USER}"
+
+    ret=false
+    sudo getent passwd ${USER} >/dev/null 2>&1 && ret=true
+
+    if ${ret}; then
+        details "User ${USER} exists already"
+    else
+        doCreateUser
+        info "User ${USER} created successfully"
+    fi
+}
+
+doCreateUser()
+{
+	if [ "$LINUX_DISTRO" = "Ubuntu" ]; then
+		sudo adduser --home ${USER_HOME} --gecos "" --UID ${USER_ID} --disabled-password ${USER}
+	elif [ "$LINUX_DISTRO" = "RedHat" ]; then
+		sudo adduser -d ${USER_HOME} -m -r -u ${USER_ID} ${USER}
+	else
+		sudo adduser --home ${USER_HOME} --gecos "" --UID ${USER_ID} --disabled-password ${USER}
+	fi
+}
+
+
+installFiles()
+{
+    message "Installing files"
+
+    setXPDistroPath
+    info "Installing xp distro from path: ${XP_DISTRO_PATH}"
+    copyDistroToInstallPath
     createXPHome
+}
+
+setXPDistroPath()
+{
+    if [ -z ${XP_DISTRO_PATH} ]; then
+        details "No explicit xp distro path set, using relative from script"
+        setScriptPath
+        XP_DISTRO_PATH="`( cd \"${SCRIPT_PATH}/..\" && pwd )`"
+    fi
+}
+
+setScriptPath()
+{
+    SCRIPT_PATH="`dirname \"$0\"`"              # relative
+    SCRIPT_PATH="`( cd \"${SCRIPT_PATH}\" && pwd )`"  # absolutized and normalized
+    if [ -z "${SCRIPT_PATH}" ] ; then
+        exit 1  # fail
+    fi
+
+    details "Install base: ${SCRIPT_PATH}"
+}
+
+copyDistroToInstallPath()
+{
+    _mkdir ${XP_INSTALL_FULL_PATH}
+    cd ${XP_INSTALL_FULL_PATH}
+
+    _cp ${XP_DISTRO_PATH}/bin ${XP_INSTALL_FULL_PATH}
+    _cp ${XP_DISTRO_PATH}/lib ${XP_INSTALL_FULL_PATH}
+    _cp ${XP_DISTRO_PATH}/system ${XP_INSTALL_FULL_PATH}
+    _cp ${XP_DISTRO_PATH}/toolbox ${XP_INSTALL_FULL_PATH}
+    _cp ${XP_DISTRO_PATH}/NOTICE.txt ${XP_INSTALL_FULL_PATH}
+    _cp ${XP_DISTRO_PATH}/LICENSE.txt ${XP_INSTALL_FULL_PATH}
+    createLink
+}
+
+createXPHome()
+{
+    if [ ! -d ${XP_HOME} ]; then
+        info "Create XP_HOME at ${XP_HOME}"
+        _mkdir ${XP_HOME}
+        _cp "${XP_DISTRO_PATH}/home/*" ${XP_HOME}
+        _chown ${XP_HOME}
+    else
+        details "XP_HOME exists at ${XP_HOME}"
+    fi
+}
+
+createLink()
+{
+    if [ -h ${XP_INSTALL_BASE}/${APP_NAME} ]; then
+        sudo unlink ${XP_INSTALL_BASE}/${APP_NAME}
+    fi
+
+    info "Creating symbolic link ${XP_INSTALL_PATH} to ${XP_INSTALL_FULL_PATH}"
+    sudo ln -s ${XP_INSTALL_FULL_PATH} ${XP_INSTALL_PATH}
+}
+
+configureService()
+{
+    message "Configure service"
+    installServiceScript
     installConfig
+}
+
+installServiceScript()
+{
+  info "Installing service script..."
+    _cp "${XP_DISTRO_PATH}/service/init.d/xp" ${SERVICE_SCRIPT_LOCATION}
+}
+
+installConfig()
+{
+    if [ ! -f ${CONFIG_LOCATION} ]; then
+        _cp "${XP_DISTRO_PATH}/service/xp.conf" ${CONFIG_LOCATION}
+    else
+        details "Config exists at ${CONFIG_LOCATION}"
+    fi
+}
+
+initLogDir()
+{
+    _mkdir ${SERVICE_LOG}
+    _chown ${SERVICE_LOG}
+}
+
+showSummary()
+{
+    message "Enonic XP ${VERSION} installed successfully"
+    info " Run-user: ${USER}"
+    info " Installation path: $XP_INSTALL_PATH"
+    info " Service definition: $SERVICE_SCRIPT_LOCATION"
+    info " Service config: $CONFIG_LOCATION"
+    info " Service logs: $SERVICE_LOG/"
+    info " XP home: $XP_HOME"
+    info " Application logs: $XP_HOME/logs"
+    br
+    info " Remember to update ${CONFIG_LOCATION} with settings matching your environment"
+}
+
+main() {
+    getLinuxDistro
+    createUser
+    installFiles
+    configureService
     initLogDir
+    showSummary
 }
 
 main

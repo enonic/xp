@@ -26,6 +26,8 @@ final class ApplyNodePermissionsCommand
 
     private final PermissionsMergingStrategy mergingStrategy;
 
+    private final Nodes.Builder updatedNodes = Nodes.create();
+
     private ApplyNodePermissionsCommand( final Builder builder )
     {
         super( builder );
@@ -33,19 +35,21 @@ final class ApplyNodePermissionsCommand
         this.mergingStrategy = builder.mergingStrategy;
     }
 
-    public int execute()
+    public Nodes execute()
     {
         final Node node = doGetById( params.getNodeId() );
 
         if ( node == null )
         {
-            return 0;
+            return Nodes.empty();
         }
 
-        return applyPermissionsToChildren( node );
+        applyPermissionsToChildren( node );
+
+        return updatedNodes.build();
     }
 
-    private int applyPermissionsToChildren( final Node parent )
+    private void applyPermissionsToChildren( final Node parent )
     {
         final AccessControlList parentPermissions = parent.getPermissions();
 
@@ -56,27 +60,23 @@ final class ApplyNodePermissionsCommand
 
         final Nodes children = doFindNodesByParent( findByParentParams ).getNodes();
 
-        int appliedNodeCount = 0;
         for ( Node child : children )
         {
             if ( contextUserHasPermissionOrAdmin( Permission.WRITE_PERMISSIONS, child ) )
             {
                 final Node childApplied = applyNodePermissions( parentPermissions, child );
-                appliedNodeCount++;
-                appliedNodeCount += applyPermissionsToChildren( childApplied );
+                applyPermissionsToChildren( childApplied );
+                updatedNodes.add( childApplied );
             }
             else
             {
                 LOG.info( "Not enough rights for applying permissions to node [" + child.id() + "] " + child.path() );
             }
         }
-
-        return appliedNodeCount;
     }
 
     private Node applyNodePermissions( final AccessControlList parentPermissions, final Node node )
     {
-        LOG.info( "Applying permissions to node [" + node.id() + "] " + node.path() );
         final Node updatedNode;
         if ( params.isOverwriteChildPermissions() || node.inheritsPermissions() )
         {

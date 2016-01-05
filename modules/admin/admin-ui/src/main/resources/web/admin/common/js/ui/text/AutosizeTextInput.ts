@@ -5,8 +5,8 @@ module api.ui.text {
         private attendant: api.dom.Element;
         private clone: api.dom.Element;
 
-        constructor(className?: string, size: string = TextInput.MIDDLE) {
-            super(className, size);
+        constructor(className?: string, size: string = TextInput.MIDDLE, originalValue?: string) {
+            super(className, size, originalValue);
 
             this.addClass('autosize');
 
@@ -34,12 +34,12 @@ module api.ui.text {
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item) => this.updateSize());
         }
 
-        static large(className?: string): AutosizeTextInput {
-            return new AutosizeTextInput(className, TextInput.LARGE);
+        static large(className?: string, originalValue?: string): AutosizeTextInput {
+            return new AutosizeTextInput(className, TextInput.LARGE, originalValue);
         }
 
-        static middle(className?: string): AutosizeTextInput {
-            return new AutosizeTextInput(className, TextInput.MIDDLE);
+        static middle(className?: string, originalValue?: string): AutosizeTextInput {
+            return new AutosizeTextInput(className, TextInput.MIDDLE, originalValue);
         }
 
         private updateSize() {
@@ -52,7 +52,7 @@ module api.ui.text {
 
             this.attendant.insertAfterEl(this);
 
-            cloneEl.setInnerHtml(this.getValue(), true);
+            cloneEl.setInnerHtml(this.getValue());
             // Set input width to text length from the clone <div>
             // or to maximum possible width corresponding to attendant width.
             if (cloneEl.getWidthWithBorder() > this.attendant.getEl().getWidth()) {

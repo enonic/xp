@@ -1,4 +1,6 @@
 .wizard-step-navigator {
+  display: inline-block;
+  margin-bottom: -4px;
   background-color: @admin-bg-light-gray;
   color: @admin-font-gray1;
   overflow: hidden;
@@ -6,6 +8,7 @@
   li {
     float: left;
     padding: 10px 15px 10px 25px;
+    line-height: 20px;
     cursor: pointer;
 
     &:hover {
@@ -43,6 +46,10 @@
         margin-left: 10px;
         margin-right: -25px;
       }
+    }
+
+    &:last-of-type {
+      margin-right: 10px;
     }
   }
 }

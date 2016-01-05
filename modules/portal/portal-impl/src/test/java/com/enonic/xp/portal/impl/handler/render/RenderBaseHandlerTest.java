@@ -19,6 +19,7 @@ import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.BaseHandlerTest;
+import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -48,6 +49,8 @@ public abstract class RenderBaseHandlerTest
 
     protected RendererFactory rendererFactory;
 
+    protected PostProcessor postProcessor;
+
     @Override
     @SuppressWarnings("unchecked")
     protected void configure()
@@ -60,6 +63,7 @@ public abstract class RenderBaseHandlerTest
         this.portalUrlService = Mockito.mock( PortalUrlService.class );
 
         this.rendererFactory = Mockito.mock( RendererFactory.class );
+        this.postProcessor = Mockito.mock( PostProcessor.class );
 
         this.renderer = Mockito.mock( Renderer.class );
         Mockito.when( this.rendererFactory.getRenderer( Mockito.any() ) ).thenReturn( this.renderer );

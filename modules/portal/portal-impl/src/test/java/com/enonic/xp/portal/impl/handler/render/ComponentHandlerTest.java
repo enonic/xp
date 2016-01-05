@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler.render;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
 
@@ -28,6 +29,7 @@ public class ComponentHandlerTest
         this.handler.setPageDescriptorService( this.pageDescriptorService );
         this.handler.setPageTemplateService( this.pageTemplateService );
         this.handler.setRendererFactory( this.rendererFactory );
+        this.handler.setPostProcessor( this.postProcessor );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
@@ -80,6 +82,9 @@ public class ComponentHandlerTest
             header( "some-header", "some-value" ).
             status( HttpStatus.OK ).
             build();
+
+        Mockito.when( this.postProcessor.processResponseInstructions(
+            Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
         setRendererResult( portalResponse );
 

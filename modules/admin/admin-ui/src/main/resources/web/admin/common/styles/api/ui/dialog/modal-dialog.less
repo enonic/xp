@@ -1,4 +1,4 @@
-.modal-dialog {
+.@{_COMMON_PREFIX}modal-dialog {
   .reset(true);
 
   display: none;
@@ -59,14 +59,14 @@
       float: right;
     }
 
-    .button {
+    .@{_COMMON_PREFIX}button {
       .button(@form-button-font, @admin-button-blue2);
       padding: 4px 19px 4px 19px;
       margin-left: 11px;
     }
   }
 
-  .button {
+  .@{_COMMON_PREFIX}button {
     &.cancel-button-top {
       &:extend(.icon);
       .icon-close;

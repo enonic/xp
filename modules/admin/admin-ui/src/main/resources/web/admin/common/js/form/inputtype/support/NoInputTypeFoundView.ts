@@ -35,10 +35,20 @@ module api.form.inputtype.support {
             if (property != null) {
                 inputEl.setValue(property.getString());
             }
-            inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                property.setValue(ValueTypes.STRING.newValue(event.getNewValue()));
+            inputEl.onValueChanged((event: api.ValueChangedEvent) => {
+                var value = ValueTypes.STRING.newValue(event.getNewValue());
+                this.notifyOccurrenceValueChanged(inputEl, value);
             });
+
             return inputEl;
+        }
+
+        updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
+            var input = <api.ui.text.TextInput> occurrence;
+
+            if ((!unchangedOnly || !input.isDirty()) && property != null) {
+                input.setValue(property.getString());
+            }
         }
 
         valueBreaksRequiredContract(value: Value): boolean {

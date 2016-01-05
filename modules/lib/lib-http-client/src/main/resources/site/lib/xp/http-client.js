@@ -27,28 +27,17 @@ function checkRequired(params, name) {
  * Sends an HTTP request and returns the response received from the remote server.
  * The request is sent synchronously, the execution blocks until the response is received.
  *
- * @example
- * var response = httpClientLib.request({
- *   url: 'http://my-server/some/path',
- *   method: 'post',
- *   headers: {
- *      'X-Custom-Header': 'header-value'
- *   },
- *   connectionTimeout: 20000,
- *   readTimeout: 5000,
- *   body: '{"id": 123}',
- *   contentType: 'application/json'
- * });
+ * @example-ref examples/http-client/request.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.url URL to which the request is sent.
- * @param {string} params.method The HTTP method to use for the request (e.g. "POST", "GET", "PUT"). Optional, default value is 'GET'.
- * @param {object} params.params Query or form parameters to be sent with the request. Optional.
- * @param {object} params.headers HTTP headers, an object where the keys are header names and the values the header values. Optional.
- * @param {number} params.connectionTimeout The timeout on establishing the connection, in milliseconds. Default 10000ms (10s).
- * @param {number} params.readTimeout The timeout on waiting to receive data, in milliseconds. Default 10000ms (10s).
- * @param {string} params.body Body content to send with the request, usually for POST or PUT requests. Optional.
- * @param {string} params.contentType Content type of the request. Optional.
+ * @param {string} [params.method=GET] The HTTP method to use for the request (e.g. "POST", "GET", "PUT"). Optional, default value is 'GET'.
+ * @param {object} [params.params] Query or form parameters to be sent with the request. Optional.
+ * @param {object} [params.headers] HTTP headers, an object where the keys are header names and the values the header values. Optional.
+ * @param {number} [params.connectionTimeout=10000] The timeout on establishing the connection, in milliseconds. Default 10000ms (10s).
+ * @param {number} [params.readTimeout=10000] The timeout on waiting to receive data, in milliseconds. Default 10000ms (10s).
+ * @param {string} [params.body] Body content to send with the request, usually for POST or PUT requests. Optional.
+ * @param {string} [params.contentType] Content type of the request. Optional.
  *
  * @return {Response} response HTTP response received.
  */

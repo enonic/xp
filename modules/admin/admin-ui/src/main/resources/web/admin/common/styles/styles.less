@@ -15,6 +15,7 @@
 @import "api/ui/mask";
 @import "api/ui/dropzone";
 @import "api/ui/toolbar";
+@import "api/ui/fold-button";
 @import "api/ui/tooltip";
 @import "api/ui/progress-bar";
 @import "api/ui/toggle-slide";
@@ -49,7 +50,7 @@
 @import "api/ui/panel/panel-strip";
 @import "api/ui/panel/split-panel";
 @import "api/ui/panel/docked-panel";
-@import "api/ui/uploader";
+@import "api/ui/uploader-el";
 @import "api/ui/button";
 @import "api/ui/checkbox";
 @import "api/ui/cycle-button";
@@ -87,13 +88,13 @@
 @import "api/app/wizard/content-wizard-toolbar";
 @import "api/app/wizard/wizard-panel";
 @import "api/app/wizard/wizard-steps-panel";
+@import "api/app/wizard/wizard-step-navigator-and-toolbar";
 @import "api/app/wizard/wizard-header";
 @import "api/app/wizard/wizard-header-with-display-name-and-name";
 @import "api/app/wizard/form-icon";
 @import "api/app/wizard/wizard-step-form";
 @import "api/app/wizard/wizard-step-navigator";
 @import "api/form/input/input-occurrence-view";
-@import "api/form/inputtype/combo-box";
 @import "api/form/inputtype/text/html-area";
 @import "api/form/inputtype/text/tiny/modal-dialog";
 @import "api/form/form-item-set-occurrence-view";
@@ -106,11 +107,10 @@
 @import "api/content/content-summary-and-compare-status-viewer";
 @import "api/content/inputtype/relationship/relationship";
 @import "api/content/inputtype/image/image-selector";
-@import "api/content/inputtype/imageupload/image";
-@import "api/content/image-uploader";
+@import "api/content/image-uploader-el";
+@import "api/content/media-uploader-el";
+@import "api/content/thumbnail-uploader-el";
 @import "api/content/media-uploader";
-@import "api/content/thumbnail-uploader";
-@import "api/content/file-uploader";
 // api application
 @import "api/application/inputtype/siteconfigurator/site-configurator";
 // apps: content
@@ -140,8 +140,6 @@
 @import "apps/module/new/new-schema-dialog";
 @import "apps/module/view/application-item-statistics-panel";
 // app user
-@import "apps/user/wizard/user-wizard-panel";
-@import "apps/user/wizard/change-password-dialog";
-@import "apps/user/view/user-item-statistics-panel";
-
-
+@import "apps/user/change-password-dialog";
+@import "apps/user/principal-item-statistics-panel";
+@import "apps/user/user-wizard-panel";

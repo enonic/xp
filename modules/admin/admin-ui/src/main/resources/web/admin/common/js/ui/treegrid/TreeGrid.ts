@@ -406,7 +406,7 @@ module api.ui.treegrid {
                 this.fetchChildren(node.getParent()).then((dataList: DATA[]) => {
                     var oldChildren = node.getParent().getChildren();
                     // Ensure to remove empty node from the end if present
-                    if (oldChildren[oldChildren.length - 1].getDataId() === "") {
+                    if (oldChildren.length > 0 && oldChildren[oldChildren.length - 1].getDataId() === "") {
                         oldChildren.pop();
                     }
                     var fetchedChildren = this.dataToTreeNodes(dataList, node.getParent());
@@ -523,7 +523,6 @@ module api.ui.treegrid {
         private fetchData(parentNode?: TreeNode<DATA>): wemQ.Promise<DATA[]> {
             return parentNode ? this.fetchChildren(parentNode) : this.fetchRoot();
         }
-
 
         dataToTreeNode(data: DATA, parent: TreeNode<DATA>): TreeNode<DATA> {
             return new TreeNodeBuilder<DATA>().
@@ -987,7 +986,7 @@ module api.ui.treegrid {
             }
         }
 
-        private updateExpanded() {
+        protected updateExpanded() {
             this.invalidate();
             this.active = true;
         }

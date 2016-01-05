@@ -125,3 +125,64 @@ var log = {
 
     }
 };
+
+/**
+ * Javascript to Java bridge functions.
+ *
+ * @example
+ * var bean = __.newBean('com.enonic.xp.MyJavaUtils');
+ *
+ * @example
+ * return __.toNativeObject(bean.findArray(arrayName));
+ *
+ * @global
+ * @namespace
+ */
+var __ = {
+
+    /**
+     * Creates a new JavaScript bean that wraps the given Java class and makes it's methods available to be called from JavaScript.
+     *
+     * @param name Classname for bean to create.
+     */
+    newBean: function (name) {
+
+    },
+
+    /**
+     * Doc toScriptValue.
+     *
+     * @param value Value to convert.
+     */
+    toScriptValue: function (value) {
+
+    },
+
+    /**
+     * Converts arrays or complex Java objects to JSon.
+     *
+     * @param value Value to convert.
+     */
+    toNativeObject: function (value) {
+
+    },
+
+    /**
+     * Doc nullOrValue.
+     *
+     * @param value Value to convert.
+     */
+    nullOrValue: function (value) {
+
+    },
+
+    /**
+     * Doc registerMock.
+     *
+     * @param name Name of mock.
+     * @param value Value to register.
+     */
+    registerMock: function (name, value) {
+
+    }
+};

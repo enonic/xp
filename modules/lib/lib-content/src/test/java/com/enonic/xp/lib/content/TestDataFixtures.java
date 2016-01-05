@@ -3,7 +3,10 @@ package com.enonic.xp.lib.content;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Locale;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
@@ -52,6 +55,34 @@ public final class TestDataFixtures
         return builder.build();
     }
 
+    public static Content newExampleContent()
+    {
+        return newExampleContentBuilder().build();
+    }
+
+    public static Content.Builder newExampleContentBuilder()
+    {
+        final Content.Builder builder = Content.create();
+        builder.id( ContentId.from( "123456" ) );
+        builder.name( "mycontent" );
+        builder.displayName( "My Content" );
+        builder.parentPath( ContentPath.from( "/path/to" ) );
+        builder.modifier( PrincipalKey.from( "user:system:admin" ) );
+        builder.modifiedTime( Instant.ofEpochSecond( 0 ) );
+        builder.creator( PrincipalKey.from( "user:system:admin" ) );
+        builder.createdTime( Instant.ofEpochSecond( 0 ) );
+        builder.language( Locale.ENGLISH );
+
+        final PropertyTree tree = new PropertyTree();
+        tree.setString( "myfield", "Hello World" );
+
+        builder.data( tree );
+        builder.attachments( newAttachments() );
+        builder.valid( true );
+
+        return builder;
+    }
+
     public static Content newSmallContent()
     {
         final Content.Builder builder = Content.create().
@@ -71,42 +102,26 @@ public final class TestDataFixtures
         return builder.build();
     }
 
-    public static Contents newContents()
+    public static Contents newContents( final int num )
     {
-        final Content content1 = Content.create().
-            id( ContentId.from( "111111" ) ).
-            name( "mycontent" ).
-            displayName( "My Content" ).
-            parentPath( ContentPath.from( "/a/b" ) ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            creator( PrincipalKey.from( "user:system:admin" ) ).
-            createdTime( Instant.ofEpochSecond( 0 ) ).
-            build();
+        final List<Content> list = Lists.newArrayList();
+        for ( int i = 0; i < num; i++ )
+        {
+            final Content content = Content.create().
+                id( ContentId.from( "id" + ( i + 1 ) ) ).
+                name( "name" + ( i + 1 ) ).
+                displayName( "My Content " + ( i + 1 ) ).
+                parentPath( ContentPath.from( "/a/b" ) ).
+                modifier( PrincipalKey.from( "user:system:admin" ) ).
+                modifiedTime( Instant.ofEpochSecond( 0 ) ).
+                creator( PrincipalKey.from( "user:system:admin" ) ).
+                createdTime( Instant.ofEpochSecond( 0 ) ).
+                build();
 
-        final Content content2 = Content.create().
-            id( ContentId.from( "222222" ) ).
-            name( "othercontent" ).
-            displayName( "Other Content" ).
-            parentPath( ContentPath.from( "/a/b" ) ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            creator( PrincipalKey.from( "user:system:admin" ) ).
-            createdTime( Instant.ofEpochSecond( 0 ) ).
-            build();
+            list.add( content );
+        }
 
-        final Content content3 = Content.create().
-            id( ContentId.from( "333333" ) ).
-            name( "another" ).
-            displayName( "Another Content" ).
-            parentPath( ContentPath.from( "/a/b" ) ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            creator( PrincipalKey.from( "user:system:admin" ) ).
-            createdTime( Instant.ofEpochSecond( 0 ) ).
-            build();
-
-        return Contents.from( content1, content2, content3 );
+        return Contents.from( list );
     }
 
     public static PropertyTree newPropertyTree()

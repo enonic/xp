@@ -1,20 +1,33 @@
+.modal-dialog-margin-mixin(@label-width: @form-label-width) {
+  .form-view .input-view {
+    label {
+      float: left;
+      max-width: @label-width - 10px;
+    }
+
+    label + .form-input,
+    label + .input-wrapper, {
+      margin-left: @label-width;
+    }
+  }
+}
+
 .html-area-modal-dialog {
   max-width: 600px;
   @media screen and (max-height: 360px) {
     min-height: 220px;
   }
 
-  &._540-720 {
-    .form-view .input-view {
-      label {
-        float: left;
-        max-width: @form-label-width - 10px;
-      }
+  @media screen and (max-height: 540px) {
+    padding-top: 20px;
+    padding-bottom: 10px;
+  }
 
-      label + .form-input,
-      label + .input-wrapper, {
-        margin-left: @form-label-width;
-      }
+  &._540-720 {
+    .modal-dialog-margin-mixin();
+
+    &.link-modal-dialog {
+      .modal-dialog-margin-mixin(@form-label-width + 20px);
     }
   }
 
@@ -37,27 +50,11 @@
       height: 65%;
     }
 
-    max-height: 480px;
-
-    overflow-y: auto;
-    overflow-x: hidden;
-
     .transition(max-height 0.2s);
-
-    @media screen and (max-height: 720px) {
-      max-height: 346px;
-    }
-
-    @media screen and (max-height: 540px) {
-      max-height: 145px;
-    }
-
-    @media screen and (max-height: 360px) {
-      max-height: 78%;
-    }
 
     input {
       width: 100%;
+
     }
 
     .panel {
@@ -84,15 +81,6 @@
       }
     }
 
-    .combobox {
-      .form-input {
-        margin-top: 0;
-      }
-
-      + .selected-options .selected-option {
-        padding-left: 0;
-      }
-    }
     .checkbox.form-input {
       margin-top: 3px;
     }
@@ -147,6 +135,22 @@
       }
 
       .content-item-preview-panel {
+        max-height: 420px;
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        @media screen and (max-height: 720px) {
+          max-height: 270px;
+        }
+
+        @media screen and (max-height: 540px) {
+          max-height: 115px;
+        }
+
+        @media screen and (max-height: 360px) {
+          max-height: 100px;
+        }
+
         > .progress-bar {
           display: none;
           width: auto;
@@ -177,7 +181,7 @@
         margin-left: 0;
       }
 
-      &.invalid .uploader {
+      &.invalid .uploader-el {
         margin-top: 10px;
         margin-right: 10px;
       }
@@ -203,7 +207,7 @@
       position: relative;
       border-bottom-width: 0px;
 
-      .button {
+      .@{_COMMON_PREFIX}button {
 
         padding: 7px 7px;
 

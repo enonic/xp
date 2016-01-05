@@ -151,9 +151,8 @@ module api.liveedit {
                     if (this.isTextEditMode()) {
                         this.setTextEditMode(false);
                     }
-                    itemView.select(null, null, event.isNew());
+                    itemView.select(null, ItemViewContextMenuPosition.NONE, event.isNew());
                 }
-
             };
             this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => {
                 // register the view and all its child views (i.e layout with regions)

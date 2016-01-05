@@ -10,34 +10,7 @@
       "rotatable": false
     },
     {
-      "name": "iPhone 6 Plus",
-      "device_type": "mobile",
-      "width": "414",
-      "height": "736",
-      "units": "px",
-      "display_units": false,
-      "rotatable": true
-    },
-    {
-      "name": "iPhone 6",
-      "device_type": "mobile",
-      "width": "375",
-      "height": "667",
-      "units": "px",
-      "display_units": false,
-      "rotatable": true
-    },
-    {
-      "name": "iPhone 5",
-      "device_type": "mobile",
-      "width": "320",
-      "height": "578",
-      "units": "px",
-      "display_units": false,
-      "rotatable": true
-    },
-    {
-      "name": "iPhone 4",
+      "name": "Small Phone",
       "device_type": "mobile",
       "width": "320",
       "height": "480",
@@ -46,7 +19,25 @@
       "rotatable": true
     },
     {
-      "name": "iPad",
+      "name": "Medium Phone",
+      "device_type": "mobile",
+      "width": "375",
+      "height": "667",
+      "units": "px",
+      "display_units": false,
+      "rotatable": true
+    },
+    {
+      "name": "Large Phone",
+      "device_type": "mobile",
+      "width": "414",
+      "height": "736",
+      "units": "px",
+      "display_units": false,
+      "rotatable": true
+    },
+    {
+      "name": "Tablet",
       "device_type": "tablet",
       "width": "768",
       "height": "1024",

@@ -62,6 +62,7 @@ module api.app.browse {
                 let newSelectedCount = this.treeGrid.getGrid().getSelectedRows().length;
 
                 if (oldSelectedCount === newSelectedCount) {
+                    //
                     this.treeGrid.getContextMenu().getActions().updateActionsEnabledState(this.browseItemPanel.getItems()).
                         then(() => {
                             this.browseItemPanel.updateDisplayedPanel();
@@ -94,13 +95,12 @@ module api.app.browse {
             }
 
             this.treeGrid.onSelectionChanged((currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
-                var browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
+                let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
                 this.browseItemPanel.setItems(browseItems);
-
                 this.treeGrid.getContextMenu().getActions().updateActionsEnabledState(this.browseItemPanel.getItems()).
                     then(() => {
                         this.browseItemPanel.updateDisplayedPanel();
-                    });
+                    }).catch(api.DefaultErrorHandler.handle);
             });
 
             this.onRendered(() => {

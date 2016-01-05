@@ -12,17 +12,18 @@ public class MustacheServiceTest
 
     @Override
     protected void initialize()
+        throws Exception
     {
         super.initialize();
         this.service = new MustacheService();
-        this.service.initialize( newBeanContext( ResourceKey.from( "myapplication:/site" ) ) );
+        this.service.initialize( newBeanContext( ResourceKey.from( "myapp:/site" ) ) );
     }
 
     @Test
     public void testProcess()
     {
         final MustacheProcessor processor = this.service.newProcessor();
-        processor.setView( ResourceKey.from( "myapplication:/site/test/view/test-view.html" ) );
+        processor.setView( ResourceKey.from( "myapp:/site/test/view/test.html" ) );
         processor.setModel( null );
         processor.process();
     }

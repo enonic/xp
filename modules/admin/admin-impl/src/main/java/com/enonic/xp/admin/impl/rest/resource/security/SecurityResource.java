@@ -252,7 +252,7 @@ public final class SecurityResource
     @Path("principals/createUser")
     public UserJson createUser( final CreateUserJson params )
     {
-        if ( StringUtils.isBlank( params.password ) )
+        if ( StringUtils.isEmpty( params.password ) )
         {
             throw new WebApplicationException( "Password has not been set." );
         }
@@ -334,13 +334,13 @@ public final class SecurityResource
     {
         final PrincipalKey userKey = params.getUserKey();
 
-        if ( StringUtils.isNotBlank( params.getPassword() ) )
+        if ( StringUtils.isEmpty( params.getPassword() ) )
         {
-            final User user = securityService.setPassword( userKey, params.getPassword() );
-            return new UserJson( user );
+            throw new WebApplicationException( "Password has not been set." );
         }
 
-        throw new WebApplicationException( "Password has not been set." );
+        final User user = securityService.setPassword( userKey, params.getPassword() );
+        return new UserJson( user );
     }
 
     @POST
@@ -420,7 +420,7 @@ public final class SecurityResource
         } );
         members = PrincipalKeys.from( members, subMembers );
 
-        return PrincipalKeys.from( members.stream().filter( member -> member.isUser() ).collect( toList() ) );
+        return PrincipalKeys.from( members.stream().filter( PrincipalKey::isUser ).collect( toList() ) );
     }
 
 

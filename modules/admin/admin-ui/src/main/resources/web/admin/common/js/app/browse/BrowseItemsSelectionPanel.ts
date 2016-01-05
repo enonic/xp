@@ -17,9 +17,10 @@ module api.app.browse {
             if (index >= 0) {
                 // item already exist
                 var currentItem = this.items[index];
-                if (!currentItem.equals(item)) {
+                if (!item.equals(currentItem)) {
                     // update current item
                     this.items[index] = item;
+                    this.selectionItems[index].setBrowseItem(item);
                 }
                 return;
             }
@@ -59,31 +60,45 @@ module api.app.browse {
             return this.items;
         }
 
-        setItems(items: BrowseItem<M>[]) {
-            var itemsToRemove = this.items.filter((item: BrowseItem<M>) => {
-                for (var i = 0; i < items.length; i++) {
-                    if (item.getPath()) {
-                        if (item.getPath() == items[i].getPath()) {
-                            return false;
-                        }
-                    } else {
-                        if (item.getId() == items[i].getId()) {
-                            return false;
-                        }
-                    }
+        setItems(items: BrowseItem<M>[]): BrowseItemsChanges {
+            let changes = new BrowseItemsChanges();
+
+            let doFilter = (valueLeft: BrowseItem<M>, valueRight: BrowseItem<M>) => {
+                if (valueLeft.getPath() && valueLeft.getPath() === valueRight.getPath()) {
+                    return true;
+                } else if (valueLeft.getId() === valueRight.getId()) {
+                    return true;
                 }
-                return true;
-            });
+
+                return false;
+            };
+
+            let itemsToRemove = api.util.ArrayHelper.difference(this.items, items, doFilter);
+
+            let itemsToAdd = api.util.ArrayHelper.difference(items, this.items, doFilter);
+
+            let itemsUpdated = api.util.ArrayHelper.intersection(items, this.items, doFilter);
+
             itemsToRemove.forEach((item: BrowseItem<M>) => {
                 this.removeItem(item);
             });
 
-            items.forEach((item: BrowseItem<M>) => {
+            itemsToAdd.forEach((item: BrowseItem<M>) => {
                 this.addItem(item);
             });
+
+            itemsUpdated.forEach((item: BrowseItem<M>) => {
+                // addItem() will update the item, if there is a difference between them
+                this.addItem(item);
+            });
+
+            changes.setAdded(itemsToAdd);
+            changes.setRemoved(itemsToRemove);
+
+            return changes;
         }
 
-        createItemViewer(item: BrowseItem<M>): api.ui.Viewer<M>  {
+        createItemViewer(item: BrowseItem<M>): api.ui.Viewer<M> {
             var viewer = new api.ui.Viewer<M>();
             viewer.setObject(item.getModel());
             return viewer;
@@ -91,25 +106,18 @@ module api.app.browse {
 
         updateItemViewers(items: BrowseItem<M>[]) {
             items.forEach((item) => {
-                for (var i = 0; i < this.selectionItems.length; i++) {
-                    if (this.selectionItems[i].getBrowseItem().getPath() === item.getPath()) {
-                        this.selectionItems[i].updateViewer(this.createItemViewer(item));
-                        break;
-                    }
+                var index = this.indexOf(item);
+                if (index >= 0) {
+                    this.selectionItems[index].setBrowseItem(item);
                 }
             });
         }
 
         private indexOf(item: BrowseItem<M>): number {
             for (var i = 0; i < this.items.length; i++) {
-                if (item.getPath()) {
-                    if (item.getPath() == this.items[i].getPath()) {
-                        return i;
-                    }
-                } else {
-                    if (item.getId() == this.items[i].getId()) {
-                        return i;
-                    }
+                if (item.getPath() && item.getPath() == this.items[i].getPath() ||
+                    item.getId() == this.items[i].getId()) {
+                    return i;
                 }
             }
             return -1;

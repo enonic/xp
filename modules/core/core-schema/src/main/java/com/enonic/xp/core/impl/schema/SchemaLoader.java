@@ -1,23 +1,24 @@
 package com.enonic.xp.core.impl.schema;
 
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Set;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
 
-public abstract class SchemaLoader<N extends BaseSchemaName>
+public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchema>
 {
     private final String path;
 
-    private final Pattern pattern;
+    private final String pattern;
 
     private final ResourceService resourceService;
 
@@ -25,7 +26,30 @@ public abstract class SchemaLoader<N extends BaseSchemaName>
     {
         this.resourceService = resourceService;
         this.path = path;
-        this.pattern = Pattern.compile( this.path + "/([^/]+)/([^/]+)\\.xml" );
+        this.pattern = this.path + "/.+\\.xml";
+    }
+
+    public final V get( final N name )
+    {
+        final ResourceProcessor<N, V> processor = newProcessor( name );
+        return this.resourceService.processResource( processor );
+    }
+
+    protected abstract V load( N name, Resource resource );
+
+    private ResourceProcessor<N, V> newProcessor( final N key )
+    {
+        return new ResourceProcessor.Builder<N, V>().
+            key( key ).
+            segment( key.getClass().getSimpleName() ).
+            keyTranslator( this::toXmlResourceKey ).
+            processor( resource -> load( key, resource ) ).
+            build();
+    }
+
+    protected final ResourceKey toXmlResourceKey( final N name )
+    {
+        return toResourceKey( name, "xml" );
     }
 
     protected final ResourceKey toResourceKey( final N name, final String ext )
@@ -42,19 +66,15 @@ public abstract class SchemaLoader<N extends BaseSchemaName>
         return SchemaHelper.loadIcon( resource );
     }
 
-    public final List<N> findNames( final ApplicationKey key )
+    public final Set<N> findNames( final ApplicationKey key )
     {
-        final List<N> keys = Lists.newArrayList();
-        for ( final ResourceKey resource : this.resourceService.findFiles( key, this.path, "xml", true ) )
+        final Set<N> keys = Sets.newLinkedHashSet();
+        for ( final ResourceKey resource : this.resourceService.findFiles( key, this.pattern ) )
         {
-            final Matcher matcher = this.pattern.matcher( resource.getPath() );
-            if ( matcher.matches() )
+            final String localName = getLocalName( resource );
+            if ( localName != null )
             {
-                final String name = matcher.group( 2 );
-                if ( name.equals( matcher.group( 1 ) ) )
-                {
-                    keys.add( newName( key, name ) );
-                }
+                keys.add( newName( key, localName ) );
             }
         }
 
@@ -63,16 +83,16 @@ public abstract class SchemaLoader<N extends BaseSchemaName>
 
     protected abstract N newName( final ApplicationKey appKey, final String name );
 
-    protected final Resource getResource( final N name )
+    private String getLocalName( final ResourceKey key )
     {
-        final ResourceKey resourceKey = toResourceKey( name, "xml" );
-        final Resource resource = this.resourceService.getResource( resourceKey );
+        final String nameWithExt = key.getName();
+        final String nameWithoutExt = Files.getNameWithoutExtension( nameWithExt );
 
-        if ( !resource.exists() )
+        if ( key.getPath().equals( this.path + "/" + nameWithoutExt + "/" + nameWithExt ) )
         {
-            return null;
+            return nameWithoutExt;
         }
 
-        return resource;
+        return null;
     }
 }

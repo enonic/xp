@@ -20,10 +20,23 @@ public class QueryContentHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
+    public void testExample()
+    {
+        setupQuery( 2 );
+        runScript( "/site/lib/xp/examples/content/query.js" );
+    }
+
+    @Test
     public void query()
         throws Exception
     {
-        final Contents contents = TestDataFixtures.newContents();
+        setupQuery( 3 );
+        runFunction( "/site/test/QueryContentHandlerTest.js", "query" );
+    }
+
+    private void setupQuery( final int count )
+    {
+        final Contents contents = TestDataFixtures.newContents( count );
 
         final Instant t1 = Instant.parse( "2014-09-01T00:00:00.00Z" );
         final Instant t2 = Instant.parse( "2014-10-01T00:00:00.00Z" );
@@ -62,8 +75,6 @@ public class QueryContentHandlerTest
             aggregations( aggregations ).
             build();
         Mockito.when( this.contentService.find( Mockito.isA( FindContentByQueryParams.class ) ) ).thenReturn( findResult );
-
-        runFunction( "/site/test/QueryContentHandlerTest.js", "query" );
     }
 
     @Test

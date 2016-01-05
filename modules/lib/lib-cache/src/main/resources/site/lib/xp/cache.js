@@ -21,11 +21,6 @@ function Cache(native) {
 /**
  * Returns value for cache entry if exists, otherwise it's calculated and put into the cache.
  *
- * @example
- * var value = cache.get('mykey', function() {
- *   return 'myvalue';
- * });
- *
  * @param {string} key Cache key to use.
  * @param {function} callback Callback to a function that can calculate the cache value.
  * @returns {*} Cache value for key.
@@ -37,10 +32,6 @@ Cache.prototype.get = function (key, callback) {
 
 /**
  * Clears the cache.
- *
- * @example
- * cache.clear();
- *
  */
 Cache.prototype.clear = function () {
     this.cache.clear();
@@ -48,9 +39,6 @@ Cache.prototype.clear = function () {
 
 /**
  * Returns number of elements in cache.
- *
- * @example
- * var size = cache.getSize();
  *
  * @returns {number} Returns number of elements in cache.
  */
@@ -61,15 +49,7 @@ Cache.prototype.getSize = function () {
 /**
  * Creates a new cache.
  *
- * @example
- * var cache = cacheLib.newCache({
- *   size: 100,
- *   expire: 60
- * });
- *
- * var value = cache.get('mykey', function() {
- *   return 'myvalue';
- * });
+ * @example-ref examples/cache/newCache.js
  *
  * @param {object} options Cache options as JSON.
  * @param {number} options.size Max size of cache.

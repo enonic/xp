@@ -8,7 +8,7 @@ configurations {
 }
 
 dependencies {
-    lib project( ':launcher' )
+    lib project( ':launcher:launcher-main' )
     toolbox project( ':tools:toolbox' )
 }
 

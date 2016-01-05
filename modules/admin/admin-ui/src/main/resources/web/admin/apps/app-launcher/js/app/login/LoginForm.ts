@@ -10,13 +10,11 @@ module app.login {
         private loginButton: api.ui.button.Button;
 
         private authenticator: Authenticator;
-        private userStores: {[userStoreId: string]: UserStore;};
         private onUserAuthenticatedHandler: (loginResult: api.security.auth.LoginResult) => void;
 
         constructor(authenticator: Authenticator) {
             super('login-form');
             this.authenticator = authenticator;
-            this.userStores = {};
             this.onUserAuthenticatedHandler = null;
 
             this.userIdInput = new api.ui.text.TextInput('input-view');
@@ -37,7 +35,7 @@ module app.login {
             this.loginButton.onClicked((event) => {
                 this.loginButtonClick();
                 event.preventDefault();
-            })
+            });
 
 
             this.messageContainer = new api.dom.DivEl("message-container");
@@ -122,9 +120,7 @@ module app.login {
 
             if(fieldsNotEmpty) {
                 this.loginButton.show();
-                if (event.keyCode == 13) {
-                    this.loginButtonClick();
-                } else {
+                if (event.keyCode !== 13) {
                     this.setMessage('');
                 }
             } else {

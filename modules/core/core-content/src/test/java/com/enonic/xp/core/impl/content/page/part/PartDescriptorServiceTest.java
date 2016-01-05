@@ -1,49 +1,37 @@
 package com.enonic.xp.core.impl.content.page.part;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.Applications;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.core.impl.content.page.AbstractDescriptorServiceTest;
 import com.enonic.xp.core.impl.content.page.region.PartDescriptorServiceImpl;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptors;
-import com.enonic.xp.resource.ResourceKey;
 
 public class PartDescriptorServiceTest
     extends AbstractDescriptorServiceTest
 {
     protected PartDescriptorServiceImpl service;
 
-    @Before
-    public final void setupService()
+    @Override
+    protected void initialize()
+        throws Exception
     {
+        super.initialize();
+
         this.service = new PartDescriptorServiceImpl();
         this.service.setResourceService( this.resourceService );
         this.service.setMixinService( this.mixinService );
-    }
-
-    @Override
-    protected final ResourceKey toResourceKey( final DescriptorKey key )
-    {
-        return ResourceKey.from( key.getApplicationKey(), "site/parts/" + key.getName() + "/" + key.getName() + ".xml" );
-    }
-
-    @Override
-    protected final String toDescriptorXml( final DescriptorKey key )
-    {
-        return "<part><display-name>" + key.getName() + "</display-name></part>";
     }
 
     @Test
     public void testGetByKey()
         throws Exception
     {
-        final DescriptorKey key = createDescriptor( "myapp:mypart" );
+        final DescriptorKey key = DescriptorKey.from( "myapp1:mypart" );
         final PartDescriptor descriptor = this.service.getByKey( key );
         Assert.assertNotNull( descriptor );
     }
@@ -52,12 +40,7 @@ public class PartDescriptorServiceTest
     public void testGetByApplication()
         throws Exception
     {
-        final Application application = createApplication( "myapp" );
-        createDescriptors( "myapp:mypart" );
-
-        mockFindFolders( application, "/site/parts", "/site/parts/mypart" );
-
-        final PartDescriptors result = this.service.getByApplication( application.getKey() );
+        final PartDescriptors result = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
 
         Assert.assertNotNull( result );
         Assert.assertEquals( 1, result.getSize() );
@@ -67,13 +50,7 @@ public class PartDescriptorServiceTest
     public void testGetByApplications()
         throws Exception
     {
-        final Applications applications = createApplications( "myapp1", "myapp2" );
-        createDescriptors( "myapp1:mypart", "myapp2:mypart" );
-
-        mockFindFolders( applications.getApplication( ApplicationKey.from( "myapp1" ) ), "/site/parts", "/site/parts/mypart" );
-        mockFindFolders( applications.getApplication( ApplicationKey.from( "myapp2" ) ), "/site/parts", "/site/parts/mypart" );
-
-        final PartDescriptors result = this.service.getByApplications( applications.getApplicationKeys() );
+        final PartDescriptors result = this.service.getByApplications( ApplicationKeys.from( "myapp1", "myapp2" ) );
 
         Assert.assertNotNull( result );
         Assert.assertEquals( 2, result.getSize() );

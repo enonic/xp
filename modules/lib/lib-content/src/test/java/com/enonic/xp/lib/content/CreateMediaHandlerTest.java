@@ -18,6 +18,15 @@ public class CreateMediaHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
+    public void testExample()
+    {
+        Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer(
+            mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
+
+        runScript( "/site/lib/xp/examples/content/createMedia.js" );
+    }
+
+    @Test
     public void createMedia()
         throws Exception
     {

@@ -3,7 +3,7 @@ module api.ui.text {
     import InputEl = api.dom.InputEl;
 
     import Content = api.content.Content;
-    import MediaUploader = api.content.MediaUploader;
+    import MediaUploaderEl = api.content.MediaUploaderEl;
 
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import FileUploadProgressEvent = api.ui.uploader.FileUploadProgressEvent;
@@ -11,46 +11,42 @@ module api.ui.text {
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
     import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
 
-    export class FileInput extends api.dom.FormInputEl {
+    export class FileInput extends api.dom.CompositeFormInputEl {
 
         private textInput: InputEl;
-        private mediaUploader: MediaUploader;
+        private mediaUploaderEl: MediaUploaderEl;
 
-        constructor(className?: string) {
-            super("div", "file-input");
-
-            if (className) {
-                this.addClass(className);
-            }
-
+        constructor(className?: string, originalValue?: string) {
             this.textInput = new InputEl("text");
 
-            this.mediaUploader = new api.content.MediaUploader({
-                operation: api.content.MediaUploaderOperation.create,
+            this.mediaUploaderEl = new api.content.MediaUploaderEl({
+                operation: api.content.MediaUploaderElOperation.create,
                 name: 'file-input-uploader',
                 allowDrop: false,
                 showResult: false,
                 allowMultiSelection: true,
-                deferred: true  // wait till it's shown
+                deferred: true,  // wait till it's shown
+                value: originalValue
             });
 
-            this.mediaUploader.onUploadStarted((event: api.ui.uploader.FileUploadStartedEvent<api.content.Content>) => {
+            this.mediaUploaderEl.onUploadStarted((event: api.ui.uploader.FileUploadStartedEvent<api.content.Content>) => {
                 var names = event.getUploadItems().map((uploadItem: api.ui.uploader.UploadItem<api.content.Content>) => {
                     return uploadItem.getName();
                 });
                 this.textInput.setValue(names.join(', '));
             });
 
-            this.appendChildren(<api.dom.FormInputEl>this.textInput, <api.dom.FormInputEl>this.mediaUploader);
+            super(this.textInput, this.mediaUploaderEl);
+            this.addClass("file-input" + (className ? " " + className : ""));
         }
 
         setUploaderParams(params: {[key: string]: any}): FileInput {
-            this.mediaUploader.setParams(params);
+            this.mediaUploaderEl.setParams(params);
             return this;
         }
 
         getUploaderParams(): {[key: string]: string} {
-            return this.mediaUploader.getParams();
+            return this.mediaUploaderEl.getParams();
         }
 
         setPlaceholder(placeholder: string): FileInput {
@@ -62,100 +58,67 @@ module api.ui.text {
             return this.textInput.getPlaceholder();
         }
 
-        getValue(): string {
-            return this.textInput.getValue();
-        }
-
-        setValue(value: string): FileInput {
-            this.textInput.setValue(value);
-            return this;
-        }
-
-        onChange(listener: (event: Event) => void) {
-            this.textInput.onChange(listener);
-        }
-
-        unChange(listener: (event: Event) => void) {
-            this.textInput.unChange(listener);
-        }
-
-        onInput(listener: (event: Event) => void) {
-            this.textInput.onInput(listener);
-        }
-
-        unInput(listener: (event: Event) => void) {
-            this.textInput.unInput(listener);
-        }
-
-        giveFocus(): boolean {
-            return this.textInput.giveFocus();
-        }
-
-        giveBlur(): boolean {
-            return this.textInput.giveBlur();
-        }
-
         reset(): FileInput {
             this.textInput.reset();
-            this.mediaUploader.reset();
+            this.mediaUploaderEl.reset();
             return this;
         }
 
         stop(): FileInput {
-            this.mediaUploader.stop();
+            this.mediaUploaderEl.stop();
             return this;
         }
 
-        getUploader(): MediaUploader{
-            return this.mediaUploader;
+        getUploader(): MediaUploaderEl{
+            return this.mediaUploaderEl;
         }
 
         onUploadStarted(listener: (event: FileUploadStartedEvent<Content>) => void) {
-            this.mediaUploader.onUploadStarted(listener);
+            this.mediaUploaderEl.onUploadStarted(listener);
         }
 
         unUploadStarted(listener: (event: FileUploadStartedEvent<Content>) => void) {
-            this.mediaUploader.unUploadStarted(listener);
+            this.mediaUploaderEl.unUploadStarted(listener);
         }
 
         onUploadProgress(listener: (event: FileUploadProgressEvent<Content>) => void) {
-            this.mediaUploader.onUploadProgress(listener);
+            this.mediaUploaderEl.onUploadProgress(listener);
         }
 
         unUploadProgress(listener: (event: FileUploadProgressEvent<Content>) => void) {
-            this.mediaUploader.unUploadProgress(listener);
+            this.mediaUploaderEl.unUploadProgress(listener);
         }
 
         onFileUploaded(listener: (event: FileUploadedEvent<Content>) => void) {
-            this.mediaUploader.onFileUploaded(listener);
+            this.mediaUploaderEl.onFileUploaded(listener);
         }
 
         unFileUploaded(listener: (event: FileUploadedEvent<Content>) => void) {
-            this.mediaUploader.unFileUploaded(listener);
+            this.mediaUploaderEl.unFileUploaded(listener);
         }
 
         onUploadCompleted(listener: (event: FileUploadCompleteEvent<Content>) => void) {
-            this.mediaUploader.onUploadCompleted(listener);
+            this.mediaUploaderEl.onUploadCompleted(listener);
         }
 
         unUploadCompleted(listener: (event: FileUploadCompleteEvent<Content>) => void) {
-            this.mediaUploader.unUploadCompleted(listener);
+            this.mediaUploaderEl.unUploadCompleted(listener);
         }
 
         onUploadReset(listener: () => void) {
-            this.mediaUploader.onUploadReset(listener);
+            this.mediaUploaderEl.onUploadReset(listener);
         }
 
         unUploadReset(listener: () => void) {
-            this.mediaUploader.unUploadReset(listener);
+            this.mediaUploaderEl.unUploadReset(listener);
         }
 
         onUploadFailed(listener: (event: FileUploadFailedEvent<Content>) => void) {
-            this.mediaUploader.onUploadFailed(listener);
+            this.mediaUploaderEl.onUploadFailed(listener);
         }
 
         unUploadFailed(listener: (event: FileUploadFailedEvent<Content>) => void) {
-            this.mediaUploader.unUploadFailed(listener);
+            this.mediaUploaderEl.unUploadFailed(listener);
         }
 
     }

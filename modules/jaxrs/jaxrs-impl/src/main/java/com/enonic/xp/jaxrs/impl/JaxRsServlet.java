@@ -27,15 +27,16 @@ public final class JaxRsServlet
     extends HttpServlet
     implements JaxRsService
 {
-    private final JaxRsDispatcher dispatcher;
+    private JaxRsDispatcher dispatcher;
+
+    private final JaxRsApplication app;
 
     private boolean needsRefresh;
 
     public JaxRsServlet()
     {
-        this.dispatcher = new JaxRsDispatcher();
         this.needsRefresh = true;
-        this.dispatcher.setMappingPrefix( "/" );
+        this.app = new JaxRsApplication();
     }
 
     @Override
@@ -59,7 +60,10 @@ public final class JaxRsServlet
     @Override
     public void destroy()
     {
-        this.dispatcher.destroy();
+        if ( this.dispatcher != null )
+        {
+            this.dispatcher.destroy();
+        }
     }
 
     private void refreshIfNeeded( final ServletContext context )
@@ -76,27 +80,35 @@ public final class JaxRsServlet
     private synchronized void refresh( final ServletContext context )
         throws ServletException
     {
-        destroy();
-        this.dispatcher.init( context );
+        final JaxRsDispatcher newDispatcher = new JaxRsDispatcher( this.app );
+        newDispatcher.init( context );
+
+        final JaxRsDispatcher oldDispatcher = this.dispatcher;
+        this.dispatcher = newDispatcher;
         this.needsRefresh = false;
+
+        if ( oldDispatcher != null )
+        {
+            oldDispatcher.destroy();
+        }
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addComponent( final JaxRsComponent resource )
     {
-        this.dispatcher.app.addSingleton( resource );
+        this.app.addSingleton( resource );
         this.needsRefresh = true;
     }
 
     public void removeComponent( final JaxRsComponent resource )
     {
-        this.dispatcher.app.removeSingleton( resource );
+        this.app.removeSingleton( resource );
         this.needsRefresh = true;
     }
 
     @Override
     public List<JaxRsComponent> getComponents()
     {
-        return ImmutableList.copyOf( this.dispatcher.app.getComponents() );
+        return ImmutableList.copyOf( this.app.getComponents() );
     }
 }

@@ -1,9 +1,12 @@
-var mustache = require('/lib/xp/mustache.js');
+var mustache = require('/lib/xp/mustache');
 
-exports.render = function () {
+function assertHtmlEquals(res, actual) {
+    testInstance.assertHtmlEquals(resolve(res), actual);
+}
 
-    var view = resolve('./view/test-view.html');
-    return mustache.render(view, {
+exports.testRender = function () {
+    var view = resolve('view/test.html');
+    var result = mustache.render(view, {
             fruits: [
                 {
                     name: 'Apple',
@@ -17,4 +20,9 @@ exports.render = function () {
         }
     );
 
+    assertHtmlEquals('view/test-result.html', result);
+};
+
+exports.testExamples = function () {
+    testInstance.runScript('/site/lib/xp/examples/mustache/render.js')
 };

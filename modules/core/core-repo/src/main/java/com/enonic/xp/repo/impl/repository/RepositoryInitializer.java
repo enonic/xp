@@ -96,7 +96,7 @@ public final class RepositoryInitializer
 
     private void waitForInitialized( final RepositoryId repositoryId )
     {
-        LOG.info( "Waiting for cluster to be initialized" );
+        LOG.info( "Waiting for repository '{}' to be initialized", repositoryId );
 
         final String storageIndexName = getStoreIndexName( repositoryId );
         final String searchIndexName = getSearchIndexName( repositoryId );

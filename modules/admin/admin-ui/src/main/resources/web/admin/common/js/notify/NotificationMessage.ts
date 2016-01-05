@@ -11,7 +11,7 @@ module api.notify {
             notificationRemove.setHtml("X");
             notificationRemove.setUrl("#");
             var notificationContent = new api.dom.DivEl("notification-content");
-            notificationContent.getEl().setInnerHtml(message);
+            notificationContent.getEl().setInnerHtml(message, false);
             this.notificationInner.appendChild(notificationRemove).appendChild(notificationContent);
             this.appendChild(this.notificationInner);
         }

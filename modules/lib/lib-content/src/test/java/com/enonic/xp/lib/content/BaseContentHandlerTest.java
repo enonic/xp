@@ -18,6 +18,7 @@ public abstract class BaseContentHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
 

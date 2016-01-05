@@ -9,12 +9,10 @@
 
 var bean = __.newBean('com.enonic.xp.lib.io.IOHandlerBean');
 
-
 /**
  * Read text from a stream.
  *
- * @example
- * var text = ioLib.readText(stream);
+ * @example-ref examples/io/readText.js
  *
  * @param stream Stream to read text from.
  * @returns {string} Returns the text read from stream or string.
@@ -26,11 +24,10 @@ exports.readText = function (stream) {
 /**
  * Read lines from a stream.
  *
- * @example
- * var lines = ioLib.readLines(stream);
+ * @example-ref examples/io/readLines.js
  *
  * @param stream Stream to read lines from.
- * @returns {string} Returns lines as an array.
+ * @returns {string[]} Returns lines as an array.
  */
 exports.readLines = function (stream) {
     return __.toNativeObject(bean.readLines(stream));
@@ -39,10 +36,7 @@ exports.readLines = function (stream) {
 /**
  * Process lines from a stream.
  *
- * @example
- * ioLib.processLines(stream, function(line) {
- *   log.info(line);
- * });
+ * @example-ref examples/io/processLines.js
  *
  * @param stream Stream to read lines from.
  * @param {function} func Callback function to be called for each line.
@@ -54,8 +48,7 @@ exports.processLines = function (stream, func) {
 /**
  * Returns the size of a stream.
  *
- * @example
- * var size = ioLib.getSize(stream);
+ * @example-ref examples/io/getSize.js
  *
  * @param stream Stream to get size of.
  * @returns {number} Returns the size of a stream.
@@ -67,8 +60,7 @@ exports.getSize = function (stream) {
 /**
  * Returns the mime-type from a name or extension.
  *
- * @example
- * var mimeType = ioLib.getMimeType('myfile.txt');
+ * @example-ref examples/io/getMimeType.js
  *
  * @param {string} name Name of file or extension.
  * @returns {string} Mime-type of name or extension.
@@ -80,8 +72,7 @@ exports.getMimeType = function (name) {
 /**
  * Returns a new stream from a string.
  *
- * @example
- * var stream = ioLib.newStream('my text string');
+ * @example-ref examples/io/newStream.js
  *
  * @param {string} text String to create a stream of.
  * @returns {*} A new stream.
@@ -104,9 +95,6 @@ function Resource(native) {
 /**
  * Returns the resource stream.
  *
- * @example
- * var stream = res.getStream();
- *
  * @returns Stream of resource.
  */
 Resource.prototype.getStream = function () {
@@ -115,9 +103,6 @@ Resource.prototype.getStream = function () {
 
 /**
  * Returns the resource size.
- *
- * @example
- * var size = res.getSize();
  *
  * @returns {number} Size of resource in bytes.
  */
@@ -128,9 +113,6 @@ Resource.prototype.getSize = function () {
 /**
  * Returns true if the resource exists.
  *
- * @example
- * var exists = res.exists();
- *
  * @returns {boolean} True if resource exists.
  */
 Resource.prototype.exists = function () {
@@ -140,17 +122,7 @@ Resource.prototype.exists = function () {
 /**
  * Looks up a resource.
  *
- * @example
- * var res = ioLib.getResource('/path/to/myfile.txt');
- * var exists = res.exists();
- * var size = res.getSize();
- * var stream = res.getStream();
- *
- * @example
- * var res = ioLib.getResource(resolve('./myfile.txt'));
- * var exists = res.exists();
- * var size = res.getSize();
- * var stream = res.getStream();
+ * @example-ref examples/io/getResource.js
  *
  * @param {string} key Resource key to look up.
  * @returns {Resource} Resource reference.

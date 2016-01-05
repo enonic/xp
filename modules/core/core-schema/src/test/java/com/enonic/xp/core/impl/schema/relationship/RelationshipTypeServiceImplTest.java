@@ -27,8 +27,6 @@ public class RelationshipTypeServiceImplTest
     @Test
     public void testEmpty()
     {
-        addApplications();
-
         final RelationshipTypes types1 = this.service.getAll();
         assertNotNull( types1 );
         assertEquals( 2, types1.getSize() );
@@ -44,8 +42,6 @@ public class RelationshipTypeServiceImplTest
     @Test
     public void testSystemTypes()
     {
-        addApplications();
-
         RelationshipTypes relationshipTypes = service.getAll();
         assertNotNull( relationshipTypes );
         assertEquals( 2, relationshipTypes.getSize() );
@@ -64,23 +60,21 @@ public class RelationshipTypeServiceImplTest
     @Test
     public void testApplications()
     {
-        addApplications( "application1", "application2" );
+        initializeApps();
 
         final RelationshipTypes types1 = this.service.getAll();
         assertNotNull( types1 );
         assertEquals( 3, types1.getSize() );
 
-        final RelationshipTypes types2 = this.service.getByApplication( ApplicationKey.from( "application1" ) );
+        final RelationshipTypes types2 = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
         assertNotNull( types2 );
         assertEquals( 0, types2.getSize() );
 
-        this.service.invalidate( ApplicationKey.from( "application2" ) );
-
-        final RelationshipTypes types3 = this.service.getByApplication( ApplicationKey.from( "application2" ) );
+        final RelationshipTypes types3 = this.service.getByApplication( ApplicationKey.from( "myapp2" ) );
         assertNotNull( types3 );
         assertEquals( 1, types3.getSize() );
 
-        final RelationshipType type = service.getByName( RelationshipTypeName.from( "application2:member" ) );
+        final RelationshipType type = service.getByName( RelationshipTypeName.from( "myapp2:member" ) );
         assertNotNull( type );
     }
 }

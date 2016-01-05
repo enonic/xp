@@ -5,7 +5,8 @@ module components {
 }
 
 function initToolTip() {
-    var ID = "tooltip", CLS_ON = "tooltip_ON", FOLLOW = true,
+    var ID = api.StyleHelper.getCls("tooltip", api.StyleHelper.COMMON_PREFIX),
+        CLS_ON = "tooltip_ON", FOLLOW = true,
         DATA = "_tooltip", OFFSET_X = 0, OFFSET_Y = 20,
         pageX = 0, pageY = 0,
         showAt = function (e) {
@@ -32,7 +33,7 @@ function initToolTip() {
         }
         showAt(e);
     });
-    wemjq(document).on("mouseleave", "." + CLS_ON, function (e) {
+    wemjq(document).on("mouseleave click", "." + CLS_ON, function (e) {
         if (wemjq(this).data(DATA)) {
             wemjq(this).attr("title", wemjq(this).data(DATA));
         }
@@ -120,4 +121,6 @@ function startApplication() {
             }
         }
     };
+
+    api.content.event.ContentServerEventsHandler.getInstance().start();
 }

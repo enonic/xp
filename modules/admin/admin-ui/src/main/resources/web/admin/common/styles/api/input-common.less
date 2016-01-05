@@ -109,23 +109,17 @@
 
   label + .form-input,
   label + .input-wrapper,
-  label + .button {
+  label + .@{_COMMON_PREFIX}button {
     margin-left: @form-label-width;
   }
 
   &:not(.label-over-input) .input-label, label {
-    float: left;
     max-width: @form-label-width - 10px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  }
 
-    .required, .wrapper.required, &.required {
-      &:after {
-        position: absolute;
-        content: '\00a0*';
-        color: @input-red-text;
-      }
-    }
+  .input-label, label {
+    float: left;
+    text-overflow: ellipsis;
 
     .label {
       display: inline-block;
@@ -134,14 +128,26 @@
       text-overflow: ellipsis;
       max-width: 100%;
     }
-
+    .required, .wrapper.required {
+      &:after {
+        float: left;
+        position: absolute;
+        content: '\00a0*';
+        color: @input-red-text;
+      }
+    }
   }
+
 
   .input-wrapper .form-input {
     width: 100%;
   }
   .input-type-view {
     margin: 0 0 0 @form-label-width;
+
+    .image-uploader-el {
+      width: 100%;
+    }
   }
 
   .bottom-button-row {

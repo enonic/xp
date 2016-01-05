@@ -10,18 +10,7 @@
 /**
  * This function localizes a phrase.
  *
- * @example
- * var i18nLib = require('/lib/xp/i18n');
- *
- * var complex_message = i18nLib.localize({
- *   key: 'complex_message'
- * });
- *
- * var message_multi_placeholder = i18nLib.localize({
- *   key: 'message_multi_placeholder',
- *   locale: "no",
- *   values: ["John", "London"]
- * });
+ * @example-ref examples/i18n/localize.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key The property key.

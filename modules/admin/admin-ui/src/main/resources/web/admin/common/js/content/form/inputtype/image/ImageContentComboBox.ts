@@ -14,7 +14,6 @@ module api.content.form.inputtype.image {
         constructor(builder: ImageContentComboBoxBuilder) {
 
             var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
-            loader.setAllowedContentTypes(builder.allowedContentTypes);
 
             var richComboBoxBuilder = new RichComboBoxBuilder().
                 setComboBoxName(builder.name ? builder.name : 'imageContentSelector').
@@ -23,11 +22,16 @@ module api.content.form.inputtype.image {
                 setMaximumOccurrences(builder.maximumOccurrences).
                 setOptionDisplayValueViewer(new ImageSelectorViewer()).
                 setDelayedInputValueChangedHandling(750).
+                setValue(builder.value).
                 setMinWidth(builder.minWidth);
 
             // Actually the hack.
             // ImageSelectorSelectedOptionsView and BaseSelectedOptionsView<ContentSummary> are incompatible in loaders.
             super(<RichComboBoxBuilder<ImageSelectorDisplayValue>>richComboBoxBuilder);
+
+            if (builder.postLoad) {
+                this.handleLastRange(builder.postLoad);
+            }
         }
 
         createOption(value: ContentSummary): Option<ImageSelectorDisplayValue> {
@@ -48,9 +52,7 @@ module api.content.form.inputtype.image {
 
         maximumOccurrences: number = 0;
 
-        loader: ContentSummaryLoader;
-
-        allowedContentTypes: string[];
+        loader: api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary>;
 
         minWidth: number;
 
@@ -58,8 +60,17 @@ module api.content.form.inputtype.image {
 
         optionDisplayValueViewer: ImageSelectorViewer;
 
+        postLoad: () => void;
+
+        value: string;
+
         setName(value: string): ImageContentComboBoxBuilder {
             this.name = value;
+            return this;
+        }
+
+        setValue(value: string): ImageContentComboBoxBuilder {
+            this.value = value;
             return this;
         }
 
@@ -68,13 +79,8 @@ module api.content.form.inputtype.image {
             return this;
         }
 
-        setLoader(loader: ContentSummaryLoader): ImageContentComboBoxBuilder {
+        setLoader(loader: api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary>): ImageContentComboBoxBuilder {
             this.loader = loader;
-            return this;
-        }
-
-        setAllowedContentTypes(allowedTypes: string[]): ImageContentComboBoxBuilder {
-            this.allowedContentTypes = allowedTypes;
             return this;
         }
 
@@ -90,6 +96,11 @@ module api.content.form.inputtype.image {
 
         setOptionDisplayValueViewer(value: ImageSelectorViewer): ImageContentComboBoxBuilder {
             this.optionDisplayValueViewer = value;
+            return this;
+        }
+
+        setPostLoad(postLoad: () => void) {
+            this.postLoad = postLoad;
             return this;
         }
 

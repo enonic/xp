@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
 @Beta
-public class CreateMediaParams
+public final class CreateMediaParams
 {
     private ContentPath parent;
 
@@ -19,6 +19,14 @@ public class CreateMediaParams
     private double focalX = 0.5;
 
     private double focalY = 0.5;
+
+    private String caption = "";
+
+    private String artist = "";
+
+    private String copyright = "";
+
+    private String tags = "";
 
     public CreateMediaParams parent( final ContentPath value )
     {
@@ -53,6 +61,30 @@ public class CreateMediaParams
     public CreateMediaParams focalY( final double focalY )
     {
         this.focalY = focalY;
+        return this;
+    }
+
+    public CreateMediaParams caption( final String caption )
+    {
+        this.caption = caption;
+        return this;
+    }
+
+    public CreateMediaParams artist( final String artist )
+    {
+        this.artist = artist;
+        return this;
+    }
+
+    public CreateMediaParams copyright( final String copyright )
+    {
+        this.copyright = copyright;
+        return this;
+    }
+
+    public CreateMediaParams tags( final String tags )
+    {
+        this.tags = tags;
         return this;
     }
 
@@ -92,5 +124,25 @@ public class CreateMediaParams
     public double getFocalY()
     {
         return focalY;
+    }
+
+    public String getCaption()
+    {
+        return caption;
+    }
+
+    public String getArtist()
+    {
+        return artist;
+    }
+
+    public String getCopyright()
+    {
+        return copyright;
+    }
+
+    public String getTags()
+    {
+        return tags;
     }
 }

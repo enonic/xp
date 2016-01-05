@@ -34,10 +34,10 @@ public abstract class AbstractScriptTest
         Mockito.when( application.getBundle() ).thenReturn( bundle );
         Mockito.when( application.getKey() ).thenReturn( APPLICATION_KEY );
         Mockito.when( application.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
+        Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( applicationService.getApplication( APPLICATION_KEY ) ).thenReturn( application );
-        Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
         final ResourceService resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {

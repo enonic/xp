@@ -12,22 +12,7 @@ var service = __.newBean('com.enonic.xp.lib.mustache.MustacheService');
 /**
  * This function renders a view using mustache.
  *
- * @example
- * var view = resolve('view/fruit.html');
- * var model = {
- * fruits: [
- *   {
- *     name: 'Apple',
- *     color: 'Red'
- *   },
- *   {
- *     name: 'Pear',
- *     color: 'Green'
- *   }
- * ]};
- *
- * var mustacheLib = require('/lib/xp/mustache');
- * var result = mustacheLib.render(view, model);
+ * @example-ref examples/mustache/render.js
  *
  * @param view Location of the view. Use `resolve(..)` to resolve a view.
  * @param {object} model Model that is passed to the view.

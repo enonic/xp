@@ -27,6 +27,8 @@ module api.content.form.inputtype.image {
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
     import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
 
+    import ContentSelectorLoader = api.content.form.inputtype.contentselector.ContentSelectorLoader;
+
     export class ImageSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<ContentId> {
 
         private config: api.content.form.inputtype.ContentInputTypeViewContext;
@@ -37,15 +39,17 @@ module api.content.form.inputtype.image {
 
         private selectedOptionsView: ImageSelectorSelectedOptionsView;
 
-        private contentSummaryLoader: ContentSummaryLoader;
-
         private contentRequestsAllowed: boolean;
 
-        private uploader: ImageUploader;
+        private uploader: ImageUploaderEl;
 
         private editContentRequestListeners: {(content: ContentSummary): void }[] = [];
 
         private relationshipType: string;
+
+        private allowedContentTypes: string[];
+
+        private allowedContentPaths: string[];
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("image-selector");
@@ -71,7 +75,7 @@ module api.content.form.inputtype.image {
                 this.updateSelectedItemsIcons();
             });
 
-            api.content.ContentDeletedEvent.on((event) => {
+            api.content.event.ContentDeletedEvent.on((event) => {
                 event.getDeletedItems().filter((deletedItem) => {
                     return !!deletedItem;
                 }).forEach((deletedItem) => {
@@ -87,13 +91,19 @@ module api.content.form.inputtype.image {
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
             var relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
-            var relationshipType = relationshipTypeConfig['value'];
+            this.relationshipType = relationshipTypeConfig['value'];
 
-            if (relationshipType) {
-                this.relationshipTypeName = new RelationshipTypeName(relationshipType);
+            if (this.relationshipType) {
+                this.relationshipTypeName = new RelationshipTypeName(this.relationshipType);
             } else {
                 this.relationshipTypeName = RelationshipTypeName.REFERENCE;
             }
+
+            var allowContentTypeConfig = inputConfig['allowContentType'] || [];
+            this.allowedContentTypes = allowContentTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val);
+
+            var allowContentPathConfig = inputConfig['allowPath'] || [];
+            this.allowedContentPaths = allowContentPathConfig.map((cfg) => cfg['value']).filter((val) => !!val);
         }
 
         private updateSelectedItemsIcons() {
@@ -156,12 +166,25 @@ module api.content.form.inputtype.image {
             return selectedOptionsView;
         }
 
-        createContentComboBox(maximumOccurrences: number, inputIconUrl: string, allowedContentTypes: string[]): ContentComboBox {
+        createContentComboBox(maximumOccurrences: number, inputIconUrl: string, relationshipAllowedContentTypes: string[],
+                              inputName: string): ContentComboBox {
+
+            var contentTypes = this.allowedContentTypes.length ? this.allowedContentTypes :
+                               relationshipAllowedContentTypes.length ? relationshipAllowedContentTypes :
+                                   [ContentTypeName.IMAGE.toString()];
+
+            var contentSelectorLoader = ContentSelectorLoader.create().
+                setId(this.config.contentId).
+                setInputName(inputName).
+                setAllowedContentPaths(this.allowedContentPaths).
+                setContentTypeNames(contentTypes).
+                setRelationshipType(this.relationshipType).
+                build();
+
             var contentComboBox: ImageContentComboBox
                     = ImageContentComboBox.create().
                     setMaximumOccurrences(maximumOccurrences).
-                    setAllowedContentTypes(allowedContentTypes.length ? allowedContentTypes : [ContentTypeName.IMAGE.toString()]).
-                    setLoader(this.contentSummaryLoader = new ContentSummaryLoader()).
+                    setLoader(contentSelectorLoader).
                     setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).
                     build(),
                 comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();
@@ -210,48 +233,54 @@ module api.content.form.inputtype.image {
         }
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
-            super.layout(input, propertyArray);
+            return super.layout(input, propertyArray).then(() => {
+                return new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(this.relationshipTypeName).sendAndParse()
+                    .then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
 
-            return new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(this.relationshipTypeName).sendAndParse()
-                .then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
-                    this.contentComboBox = this.createContentComboBox(
-                        input.getOccurrences().getMaximum(), relationshipType.getIconUrl(), relationshipType.getAllowedToTypes() || []
-                    );
+                        this.contentComboBox = this.createContentComboBox(
+                            input.getOccurrences().getMaximum(), relationshipType.getIconUrl(), relationshipType.getAllowedToTypes() || [],
+                            input.getName()
+                        );
 
-                    var comboBoxWrapper = new api.dom.DivEl("combobox-wrapper");
+                        var comboBoxWrapper = new api.dom.DivEl("combobox-wrapper");
 
-                    comboBoxWrapper.appendChild(this.contentComboBox);
+                        comboBoxWrapper.appendChild(this.contentComboBox);
 
-                    this.contentRequestsAllowed = true;
+                        this.contentRequestsAllowed = true;
 
-                    if (this.config.contentId) {
-                        comboBoxWrapper.appendChild(this.createUploader());
-                    }
+                        if (this.config.contentId) {
+                            comboBoxWrapper.appendChild(this.createUploader());
+                        }
 
-                    this.appendChild(comboBoxWrapper);
-                    this.appendChild(this.selectedOptionsView);
-
-                    return this.doLoadContent(this.getPropertyArray()).then((contents: ContentSummary[]) => {
-                        contents.forEach((content: ContentSummary) => {
-                            this.contentComboBox.selectOption(<Option<ImageSelectorDisplayValue>>{
-                                value: content.getId(),
-                                displayValue: ImageSelectorDisplayValue.fromContentSummary(content)
-                            });
-                        });
+                        this.appendChild(comboBoxWrapper);
+                        this.appendChild(this.selectedOptionsView);
 
                         this.setLayoutInProgress(false);
                     });
-                });
+            });
         }
 
-        private createUploader(): ImageUploader {
+        update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
+            var superPromise = super.update(propertyArray, unchangedOnly);
+
+            if (!unchangedOnly || !this.contentComboBox.isDirty()) {
+                return superPromise.then(() => {
+
+                    this.contentComboBox.setValue(this.getValueFromPropertyArray(propertyArray));
+                })
+            } else {
+                return superPromise;
+            }
+        }
+
+        private createUploader(): ImageUploaderEl {
             var multiSelection = (this.getInput().getOccurrences().getMaximum() != 1);
 
-            this.uploader = new api.content.ImageUploader({
+            this.uploader = new api.content.ImageUploaderEl({
                 params: {
                     parent: this.config.contentId.toString()
                 },
-                operation: api.content.MediaUploaderOperation.create,
+                operation: api.content.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',
                 showCancel: false,
                 showReset: false,
@@ -289,7 +318,7 @@ module api.content.form.inputtype.image {
                 var item = event.getUploadItem();
                 var createdContent = item.getModel();
 
-                new api.content.ContentUpdatedEvent(this.config.contentId).fire();
+                //new api.content.ContentUpdatedEvent(this.config.contentId).fire();
 
                 var selectedOption = this.selectedOptionsView.getById(item.getId());
                 var option = selectedOption.getOption();
@@ -390,6 +419,7 @@ module api.content.form.inputtype.image {
         }
 
         private setContentIdProperty(contentId: api.content.ContentId) {
+            this.ignorePropertyChange = true;
             var reference = api.util.Reference.from(contentId);
 
             var value = new Value(reference, ValueTypes.REFERENCE);
@@ -400,6 +430,7 @@ module api.content.form.inputtype.image {
             else {
                 this.getPropertyArray().add(value);
             }
+            this.ignorePropertyChange = false;
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

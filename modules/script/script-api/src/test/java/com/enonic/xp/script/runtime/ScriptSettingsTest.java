@@ -39,4 +39,15 @@ public class ScriptSettingsTest
         assertNotNull( settings.getBinding( Integer.class ) );
         assertEquals( new Integer( 2 ), settings.getBinding( Integer.class ).get() );
     }
+
+    @Test
+    public void testGlobals()
+    {
+        final ScriptSettings settings = ScriptSettings.create().
+            globalVariable( "var", "hello" ).
+            build();
+
+        assertNotNull( settings.getGlobalVariables() );
+        assertEquals( "hello", settings.getGlobalVariables().get( "var" ) );
+    }
 }

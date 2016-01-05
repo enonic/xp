@@ -89,6 +89,7 @@ final class ScriptExecutorImpl
         this.mocks = Maps.newHashMap();
         this.exportsCache = new ScriptExportsCache();
         this.global = this.engine.createBindings();
+        this.global.putAll( this.scriptSettings.getGlobalVariables() );
         new CallFunction().register( this.global );
     }
 

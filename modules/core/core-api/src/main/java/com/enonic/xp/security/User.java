@@ -4,7 +4,12 @@ import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
+import com.enonic.xp.mail.EmailValidator;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Objects.requireNonNull;
 
 @Beta
@@ -29,7 +34,13 @@ public final class User
     private User( final Builder builder )
     {
         super( builder );
-        Preconditions.checkNotNull( builder.login, "login is required for a User" );
+        checkNotNull( builder.login, "login is required for a User" );
+
+        if ( !Strings.isNullOrEmpty( builder.email ) )
+        {
+            checkArgument( EmailValidator.isValid( builder.email ), "Email [" + builder.email + "] is not valid" );
+        }
+
         this.email = builder.email;
         this.login = requireNonNull( builder.login );
         this.loginDisabled = builder.loginDisabled;
@@ -99,7 +110,7 @@ public final class User
 
         public Builder email( final String value )
         {
-            this.email = value;
+            this.email = Strings.emptyToNull( value );
             return this;
         }
 
@@ -143,5 +154,4 @@ public final class User
             return new User( this );
         }
     }
-
 }

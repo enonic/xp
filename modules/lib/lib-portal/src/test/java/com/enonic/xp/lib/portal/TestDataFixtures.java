@@ -51,6 +51,22 @@ public final class TestDataFixtures
         return builder.build();
     }
 
+    public static Content newExampleContent()
+    {
+        final Content.Builder builder = Content.create();
+        builder.id( ContentId.from( "123456" ) );
+        builder.name( "mycontent" );
+        builder.displayName( "My Content" );
+        builder.parentPath( ContentPath.from( "/a/b" ) );
+        builder.modifier( PrincipalKey.from( "user:system:admin" ) );
+        builder.modifiedTime( Instant.ofEpochSecond( 0 ) );
+        builder.creator( PrincipalKey.from( "user:system:admin" ) );
+        builder.createdTime( Instant.ofEpochSecond( 0 ) );
+        builder.language( Locale.ENGLISH );
+        builder.data( newTinyPropertyTree() );
+        return builder.build();
+    }
+
     public static PropertyTree newPropertyTree()
     {
         final PropertyTree tree = new PropertyTree();

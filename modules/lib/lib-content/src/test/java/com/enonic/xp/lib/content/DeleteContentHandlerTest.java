@@ -13,6 +13,15 @@ public class DeleteContentHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
+    public void testExample()
+    {
+        final Content content = TestDataFixtures.newContent();
+        Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( Contents.from( content ) );
+
+        runScript( "/site/lib/xp/examples/content/delete.js" );
+    }
+
+    @Test
     public void deleteById()
         throws Exception
     {

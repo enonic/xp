@@ -13,10 +13,22 @@ public class GetChildContentHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
+    public void testExample()
+    {
+        final Contents contents = TestDataFixtures.newContents( 2 );
+
+        final FindContentByParentResult findResult =
+            FindContentByParentResult.create().hits( contents.getSize() ).totalHits( 20 ).contents( contents ).build();
+        Mockito.when( this.contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn( findResult );
+
+        runScript( "/site/lib/xp/examples/content/getChildren.js" );
+    }
+
+    @Test
     public void getChildrenById()
         throws Exception
     {
-        final Contents contents = TestDataFixtures.newContents();
+        final Contents contents = TestDataFixtures.newContents( 3 );
 
         final FindContentByParentResult findResult =
             FindContentByParentResult.create().hits( contents.getSize() ).totalHits( 20 ).contents( contents ).build();
@@ -29,7 +41,7 @@ public class GetChildContentHandlerTest
     public void getChildrenByPath()
         throws Exception
     {
-        final Contents contents = TestDataFixtures.newContents();
+        final Contents contents = TestDataFixtures.newContents( 3 );
 
         final FindContentByParentResult findResult =
             FindContentByParentResult.create().hits( contents.getSize() ).totalHits( 20 ).contents( contents ).build();
@@ -64,7 +76,7 @@ public class GetChildContentHandlerTest
     public void getChildrenByPath_allParameters()
         throws Exception
     {
-        final Contents contents = TestDataFixtures.newContents();
+        final Contents contents = TestDataFixtures.newContents( 3 );
 
         final FindContentByParentResult findResult =
             FindContentByParentResult.create().hits( contents.getSize() ).totalHits( 20 ).contents( contents ).build();

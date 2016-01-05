@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.app;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationNotFoundException;
@@ -15,9 +15,15 @@ import com.enonic.xp.util.Exceptions;
 
 @Component
 public final class ApplicationServiceImpl
-    implements ApplicationService
+    implements ApplicationService, ApplicationInvalidator
 {
     private ApplicationRegistry registry;
+
+    @Activate
+    public void activate( final BundleContext context )
+    {
+        this.registry = new ApplicationRegistry( context );
+    }
 
     @Override
     public Application getApplication( final ApplicationKey key )
@@ -32,30 +38,15 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Applications getApplications( final ApplicationKeys keys )
+    public ApplicationKeys getApplicationKeys()
     {
-        final ImmutableList.Builder<Application> applicationList = ImmutableList.builder();
-        for ( final ApplicationKey key : keys )
-        {
-            final Application application = this.registry.get( key );
-            if ( application != null )
-            {
-                applicationList.add( application );
-            }
-        }
-        return Applications.from( applicationList.build() );
+        return this.registry.getKeys();
     }
 
     @Override
     public Applications getAllApplications()
     {
         return Applications.from( this.registry.getAll() );
-    }
-
-    @Override
-    public ClassLoader getClassLoader( final Application application )
-    {
-        return new BundleClassLoader( application.getBundle() );
     }
 
     @Override
@@ -94,9 +85,9 @@ public final class ApplicationServiceImpl
         }
     }
 
-    @Reference
-    public void setRegistry( final ApplicationRegistry registry )
+    @Override
+    public void invalidate( final ApplicationKey key )
     {
-        this.registry = registry;
+        this.registry.invalidate( key );
     }
 }

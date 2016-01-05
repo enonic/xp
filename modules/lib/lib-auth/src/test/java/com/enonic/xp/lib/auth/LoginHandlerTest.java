@@ -23,6 +23,7 @@ public class LoginHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
@@ -30,6 +31,20 @@ public class LoginHandlerTest
 
         final SimpleSession session = new SimpleSession( SessionKey.generate() );
         ContextAccessor.current().getLocalScope().setSession( session );
+    }
+
+    @Test
+    public void testExamples()
+    {
+        final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
+
+        final UserStores userStores =
+            UserStores.from( UserStore.create().displayName( "system" ).key( UserStoreKey.from( "system" ) ).build() );
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+        Mockito.when( this.securityService.getUserStores() ).thenReturn( userStores );
+
+        runScript( "/site/lib/xp/examples/auth/login.js" );
     }
 
     @Test

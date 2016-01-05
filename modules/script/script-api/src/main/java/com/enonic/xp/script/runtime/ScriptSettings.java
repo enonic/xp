@@ -1,5 +1,6 @@
 package com.enonic.xp.script.runtime;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 import com.google.common.collect.ImmutableMap;
@@ -10,11 +11,14 @@ public final class ScriptSettings
 
     private final ImmutableMap<Class, Supplier> bindings;
 
+    private final ImmutableMap<String, Object> globalMap;
+
     private DebugSettings debug;
 
     private ScriptSettings( final Builder builder )
     {
         this.basePath = builder.basePath;
+        this.globalMap = builder.globalMap.build();
         this.bindings = builder.attributes.build();
         this.debug = builder.debug;
     }
@@ -22,6 +26,11 @@ public final class ScriptSettings
     public String getBasePath()
     {
         return this.basePath != null ? this.basePath : "";
+    }
+
+    public Map<String, Object> getGlobalVariables()
+    {
+        return this.globalMap;
     }
 
     public <T> Supplier<T> getBinding( final Class<T> type )
@@ -51,16 +60,25 @@ public final class ScriptSettings
 
         private final ImmutableMap.Builder<Class, Supplier> attributes;
 
+        private final ImmutableMap.Builder<String, Object> globalMap;
+
         private DebugSettings debug;
 
         private Builder()
         {
             this.attributes = ImmutableMap.builder();
+            this.globalMap = ImmutableMap.builder();
         }
 
         public Builder basePath( final String basePath )
         {
             this.basePath = basePath;
+            return this;
+        }
+
+        public Builder globalVariable( final String name, final Object value )
+        {
+            this.globalMap.put( name, value );
             return this;
         }
 

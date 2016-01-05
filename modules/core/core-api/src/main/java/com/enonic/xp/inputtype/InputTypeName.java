@@ -21,7 +21,7 @@ public final class InputTypeName
 
     public final static InputTypeName DOUBLE = InputTypeName.from( "Double" );
 
-    public final static InputTypeName FILE_UPLOADER = InputTypeName.from( "FileUploader" );
+    public final static InputTypeName MEDIA_UPLOADER = InputTypeName.from( "MediaUploader" );
 
     public final static InputTypeName GEO_POINT = InputTypeName.from( "GeoPoint" );
 

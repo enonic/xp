@@ -8,24 +8,27 @@ module api.dom {
 
         parentElement: Element;
 
+        private getParsedClass(cls: string): string {
+            return cls.trim().split(/\s+/)
+                .filter((elem, index, arr) => {
+                    return arr.indexOf(elem) === index;
+                }).join(" ");
+        }
+
         setGenerateId(value: boolean): ElementBuilder {
             this.generateId = value;
             return this;
         }
 
-        setClassName(name: string, usePrefix?: boolean): ElementBuilder {
+        setClassName(cls: string, prefix?: string): ElementBuilder {
             // Ensure class has only one entry
-            if (name) {
-                name = name.trim().split(/\s+/)
-                    .filter((elem, index, arr) => {
-                        return arr.indexOf(elem) === index;
-                    }).join(" ");
-
-                if (usePrefix) {
-                    name = api.StyleHelper.getCls(name);
+            if (cls) {
+                cls = this.getParsedClass(cls);
+                if (prefix) {
+                    cls = api.StyleHelper.getCls(cls, prefix);
                 }
             }
-            this.className = name;
+            this.className = cls;
             return this;
         }
 
@@ -639,7 +642,7 @@ module api.dom {
             return this.getEl().getInnerHtml();
         }
 
-        setHtml(value: string, escapeHtml?: boolean): Element {
+        setHtml(value: string, escapeHtml: boolean = true): Element {
             this.getEl().setInnerHtml(value, escapeHtml);
             return this;
         }

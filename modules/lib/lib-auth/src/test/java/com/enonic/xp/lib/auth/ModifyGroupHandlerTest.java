@@ -22,10 +22,23 @@ public class ModifyGroupHandlerTest
 
     @Override
     public void initialize()
+        throws Exception
     {
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, this.securityService );
+    }
+
+    @Test
+    public void testExamples()
+    {
+        Mockito.<Optional<? extends Principal>>when( securityService.getGroup( Mockito.any() ) ).thenReturn(
+            Optional.of( TestDataFixtures.getTestUser() ) );
+
+        Mockito.when( this.securityService.updateGroup( Mockito.isA( UpdateGroupParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( (UpdateGroupParams) invocationOnMock.getArguments()[0] ) );
+
+        runScript( "/site/lib/xp/examples/auth/modifyGroup.js" );
     }
 
     @Test

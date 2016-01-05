@@ -20,6 +20,11 @@ module app.view {
                 var myEl = this.getEl();
                 this.centerImage(imgEl.getWidth(), imgEl.getHeight(), myEl.getWidth(), myEl.getHeight());
             });
+
+            this.image.onError((event: UIEvent) => {
+                this.setNoPreview();
+            });
+
             this.appendChild(this.image);
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
@@ -34,6 +39,20 @@ module app.view {
                 if (this.item && this.hasClass("image-preview")) {
                     this.addImageSizeToUrl(this.item);
                 }
+            });
+
+            this.frame.onLoaded((event: UIEvent) => {
+                var frameWindow = this.frame.getHTMLElement()["contentWindow"];
+
+                try {
+                    if (frameWindow) {
+                        var pathname: string = frameWindow.location.pathname;
+                        if (pathname && pathname !== 'blank') {
+                            new ContentPreviewPathChangedEvent(pathname).fire();
+                        }
+                    }
+                } catch (reason) {}
+
             });
         }
 
@@ -73,12 +92,15 @@ module app.view {
                     this.showMask();
                     if (item.isRenderable()) {
                         this.getEl().removeClass("image-preview no-preview").addClass('page-preview');
-                        this.frame.setSrc(api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW,
-                            api.content.Branch.DRAFT));
+                        var src = api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW,
+                            api.content.Branch.DRAFT);
+                        if (!this.frame.isSrcAlreadyShown(src)) {
+                            this.frame.setSrc(src);
+                        } else {
+                            this.mask.hide();
+                        }
                     } else {
-                        this.getEl().removeClass("image-preview page-preview").addClass('no-preview');
-                        this.frame.setSrc("about:blank");
-                        this.mask.hide();
+                        this.setNoPreview();
                     }
                 }
             }
@@ -87,6 +109,12 @@ module app.view {
 
         public getItem(): ViewItem<ContentSummaryAndCompareStatus> {
             return this.item;
+        }
+
+        private setNoPreview() {
+            this.getEl().removeClass("image-preview page-preview").addClass('no-preview');
+            this.frame.setSrc("about:blank");
+            this.mask.hide();
         }
 
         private showMask() {

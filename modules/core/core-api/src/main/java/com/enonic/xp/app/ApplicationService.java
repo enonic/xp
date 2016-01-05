@@ -8,11 +8,9 @@ public interface ApplicationService
     Application getApplication( ApplicationKey key )
         throws ApplicationNotFoundException;
 
-    Applications getApplications( ApplicationKeys keys );
+    ApplicationKeys getApplicationKeys();
 
     Applications getAllApplications();
-
-    ClassLoader getClassLoader(Application application );
 
     void startApplication( ApplicationKey key );
 

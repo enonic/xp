@@ -1,7 +1,7 @@
-var assert = require('/lib/xp/assert.js');
-var i18n = require('/lib/xp/i18n.js');
+var assert = require('/lib/xp/assert');
+var i18n = require('/lib/xp/i18n');
 
-exports.localize = function () {
+exports.testLocalize = function () {
     var result = i18n.localize({
         key: 'myKey'
     });
@@ -9,7 +9,7 @@ exports.localize = function () {
     assert.assertEquals("[myKey]", result);
 };
 
-exports.localize_with_locale = function () {
+exports.testLocalizeWithLocale = function () {
     var result = i18n.localize({
         key: 'myKey',
         locale: 'en-US'
@@ -18,11 +18,15 @@ exports.localize_with_locale = function () {
     assert.assertEquals("[myKey]", result);
 };
 
-exports.localize_with_placeholders = function () {
+exports.testLocalizeWithPlaceholders = function () {
     var result = i18n.localize({
         key: 'myKey',
         values: ['a', 1, 'b']
     });
 
     assert.assertEquals("[myKey, a, 1, b]", result);
+};
+
+exports.testExamples = function () {
+    testInstance.runScript('/site/lib/xp/examples/i18n/localize.js')
 };

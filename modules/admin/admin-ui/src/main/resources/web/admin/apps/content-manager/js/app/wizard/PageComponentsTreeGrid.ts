@@ -147,7 +147,7 @@ module app.wizard {
             var wrapper = new api.dom.SpanEl();
 
             var icon = new api.dom.DivEl("menu-icon");
-            wrapper.getEl().setInnerHtml(icon.toString());
+            wrapper.getEl().setInnerHtml(icon.toString(), false);
             return wrapper.toString();
         }
 

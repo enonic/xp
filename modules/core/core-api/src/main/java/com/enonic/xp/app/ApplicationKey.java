@@ -6,6 +6,8 @@ import org.osgi.framework.FrameworkUtil;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.util.CharacterChecker;
+
 @Beta
 public final class ApplicationKey
 {
@@ -25,7 +27,7 @@ public final class ApplicationKey
     {
         Preconditions.checkNotNull( name, "ApplicationKey cannot be null" );
         Preconditions.checkArgument( !name.trim().isEmpty(), "ApplicationKey cannot be blank" );
-        this.name = name;
+        this.name = CharacterChecker.check( name, "Not a valid ApplicationKey [" + name + "]" );
     }
 
     public String getName()

@@ -29,7 +29,7 @@ module api.app.view {
                 this.prependChild(this.iconEl);
 
                 var displayName = item.getDisplayName() || '';
-                this.headerTitleEl.getEl().setInnerHtml(displayName, true).setAttribute("title", displayName);
+                this.headerTitleEl.getEl().setInnerHtml(displayName).setAttribute("title", displayName);
 
                 this.headerPathEl.removeChildren();
                 if (item.getPath()) {
@@ -61,7 +61,7 @@ module api.app.view {
 
         private appendToHeaderPath(value, className) {
             var pathName = new api.dom.SpanEl(className);
-            pathName.getEl().setInnerHtml(value, true);
+            pathName.getEl().setInnerHtml(value);
             this.headerPathEl.appendChild(pathName);
         }
     }
