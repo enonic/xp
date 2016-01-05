@@ -1,5 +1,5 @@
 (function () {
-    var adminUrl = "http://localhost:8080/admin/tool";
+    var adminUrl = "/admin/tool";
     var launcherPanel;
 
     function appendLauncherToolbar() {
