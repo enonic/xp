@@ -99,8 +99,8 @@ module api.ui.time {
             return this.calendar.getSelectedDate();
         }
 
-        getCalendar(): Calendar {
-            return this.calendar;
+        setSelectedDate(date: Date, silent?: boolean) {
+            this.calendar.selectDate(date, silent);
         }
 
         onSelectedDateChanged(listener: (event: SelectedDateChangedEvent) => void) {

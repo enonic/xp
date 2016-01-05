@@ -1,5 +1,7 @@
 module api.form {
 
+    import PropertyArray = api.data.PropertyArray;
+
     export class FormItemOccurrenceView extends api.dom.DivEl {
 
         private formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>;
@@ -16,6 +18,10 @@ module api.form {
         }
 
         public layout(): wemQ.Promise<void> {
+            return wemQ<void>(null);
+        }
+
+        public update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
             return wemQ<void>(null);
         }
 
@@ -36,7 +42,7 @@ module api.form {
 
         notifyRemoveButtonClicked() {
             this.removeButtonClickedListeners.forEach((listener: (event: RemoveButtonClickedEvent<FormItemOccurrenceView>)=>void) => {
-                listener.call(this, new RemoveButtonClickedEvent(this, this.formItemOccurrence.getIndex()));
+                listener.call(this, new RemoveButtonClickedEvent(this));
             });
         }
 

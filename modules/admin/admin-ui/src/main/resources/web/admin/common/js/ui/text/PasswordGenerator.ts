@@ -65,12 +65,12 @@ module api.ui.text {
             this.appendChild(this.generateLink);
         }
 
-        getValue(): string {
+        doGetValue(): string {
             return this.input.getValue();
         }
 
-        setValue(value: string): PasswordGenerator {
-            this.input.setValue(value);
+        doSetValue(value: string, silent?: boolean): PasswordGenerator {
+            this.input.setValue(value, silent);
             this.assessComplexity(value);
             return this;
         }

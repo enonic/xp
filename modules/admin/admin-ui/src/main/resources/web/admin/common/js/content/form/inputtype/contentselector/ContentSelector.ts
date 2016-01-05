@@ -20,10 +20,6 @@ module api.content.form.inputtype.contentselector {
 
         private relationshipType: string;
 
-        private allowedContentTypes: string[];
-
-        private allowedContentPaths: string[];
-
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("relationship");
             this.addClass("input-type-view");
@@ -33,19 +29,13 @@ module api.content.form.inputtype.contentselector {
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
             var relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
-            this.relationshipType = relationshipTypeConfig['value'];
+            var relationshipType = relationshipTypeConfig['value'];
 
-            if (this.relationshipType) {
-                this.relationshipTypeName = new RelationshipTypeName(this.relationshipType);
+            if (relationshipType) {
+                this.relationshipTypeName = new RelationshipTypeName(relationshipType);
             } else {
                 this.relationshipTypeName = RelationshipTypeName.REFERENCE;
             }
-
-            var allowContentTypeConfig = inputConfig['allowContentType'] || [];
-            this.allowedContentTypes = allowContentTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val);
-
-            var allowContentPathConfig = inputConfig['allowPath'] || [];
-            this.allowedContentPaths = allowContentPathConfig.map((cfg) => cfg['value']).filter((val) => !!val);
         }
 
         availableSizeChanged() {
@@ -64,27 +54,21 @@ module api.content.form.inputtype.contentselector {
 
             super.layout(input, propertyArray);
 
+            var contentSelectorLoader = new ContentSelectorLoader(this.config.contentId, input.getName());
+
+            var value = this.getValueFromPropertyArray(propertyArray);
+
+            this.contentComboBox = api.content.ContentComboBox.create()
+                .setName(input.getName())
+                .setMaximumOccurrences(input.getOccurrences().getMaximum())
+                .setLoader(contentSelectorLoader)
+                .setValue(value)
+                .setPostLoad(contentSelectorLoader.postLoad.bind(contentSelectorLoader))
+                .build();
+
             return new GetRelationshipTypeByNameRequest(this.relationshipTypeName).
                 sendAndParse().
                 then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
-
-                    var contentTypes = this.allowedContentTypes.length ? this.allowedContentTypes :
-                                       relationshipType.getAllowedToTypes().length ? relationshipType.getAllowedToTypes() : [];
-
-                    var contentSelectorLoader = ContentSelectorLoader.create().
-                        setId(this.config.contentId).
-                        setInputName(input.getName()).
-                        setAllowedContentPaths(this.allowedContentPaths).
-                        setContentTypeNames(this.allowedContentTypes).
-                        setRelationshipType(this.relationshipType).
-                        build();
-
-                    this.contentComboBox = api.content.ContentComboBox.create().
-                        setName(input.getName()).
-                        setMaximumOccurrences(input.getOccurrences().getMaximum()).
-                        setLoader(contentSelectorLoader).
-                        setPostLoad(contentSelectorLoader.postLoad.bind(contentSelectorLoader)).
-                        build();
 
                     this.contentComboBox.setInputIconUrl(relationshipType.getIconUrl());
 
@@ -93,6 +77,7 @@ module api.content.form.inputtype.contentselector {
                     return this.doLoadContent(propertyArray).
                         then((contents: api.content.ContentSummary[]) => {
 
+                            //TODO: original value doesn't work because of additional request, so have to select manually
                             contents.forEach((content: api.content.ContentSummary) => {
                                 this.contentComboBox.select(content);
                             });
@@ -126,6 +111,21 @@ module api.content.form.inputtype.contentselector {
                             this.setLayoutInProgress(false);
                         });
                 });
+        }
+
+
+        update(propertyArray: api.data.PropertyArray, unchangedOnly: boolean): Q.Promise<void> {
+            var superPromise = super.update(propertyArray, unchangedOnly);
+
+            if (!unchangedOnly || !this.contentComboBox.isDirty()) {
+                return superPromise.then(() => {
+
+                    var value = this.getValueFromPropertyArray(propertyArray);
+                    this.contentComboBox.setValue(value);
+                });
+            } else {
+                return superPromise;
+            }
         }
 
         private doLoadContent(propertyArray: PropertyArray): wemQ.Promise<api.content.ContentSummary[]> {

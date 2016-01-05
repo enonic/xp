@@ -22,6 +22,7 @@ module api.content.form.inputtype.image {
                 setMaximumOccurrences(builder.maximumOccurrences).
                 setOptionDisplayValueViewer(new ImageSelectorViewer()).
                 setDelayedInputValueChangedHandling(750).
+                setValue(builder.value).
                 setMinWidth(builder.minWidth);
 
             // Actually the hack.
@@ -61,8 +62,15 @@ module api.content.form.inputtype.image {
 
         postLoad: () => void;
 
+        value: string;
+
         setName(value: string): ImageContentComboBoxBuilder {
             this.name = value;
+            return this;
+        }
+
+        setValue(value: string): ImageContentComboBoxBuilder {
+            this.value = value;
             return this;
         }
 

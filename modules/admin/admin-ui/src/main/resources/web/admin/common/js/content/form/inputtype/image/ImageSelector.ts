@@ -41,15 +41,11 @@ module api.content.form.inputtype.image {
 
         private contentRequestsAllowed: boolean;
 
-        private imageUploaderEl: ImageUploaderEl;
+        private uploader: ImageUploader;
 
         private editContentRequestListeners: {(content: ContentSummary): void }[] = [];
 
         private relationshipType: string;
-
-        private allowedContentTypes: string[];
-
-        private allowedContentPaths: string[];
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("image-selector");
@@ -75,7 +71,7 @@ module api.content.form.inputtype.image {
                 this.updateSelectedItemsIcons();
             });
 
-            api.content.ContentDeletedEvent.on((event) => {
+            api.content.event.ContentDeletedEvent.on((event) => {
                 event.getDeletedItems().filter((deletedItem) => {
                     return !!deletedItem;
                 }).forEach((deletedItem) => {
@@ -91,19 +87,13 @@ module api.content.form.inputtype.image {
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
             var relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
-            this.relationshipType = relationshipTypeConfig['value'];
+            var relationshipType = relationshipTypeConfig['value'];
 
-            if (this.relationshipType) {
-                this.relationshipTypeName = new RelationshipTypeName(this.relationshipType);
+            if (relationshipType) {
+                this.relationshipTypeName = new RelationshipTypeName(relationshipType);
             } else {
                 this.relationshipTypeName = RelationshipTypeName.REFERENCE;
             }
-
-            var allowContentTypeConfig = inputConfig['allowContentType'] || [];
-            this.allowedContentTypes = allowContentTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val);
-
-            var allowContentPathConfig = inputConfig['allowPath'] || [];
-            this.allowedContentPaths = allowContentPathConfig.map((cfg) => cfg['value']).filter((val) => !!val);
         }
 
         private updateSelectedItemsIcons() {
@@ -166,24 +156,19 @@ module api.content.form.inputtype.image {
             return selectedOptionsView;
         }
 
-        createContentComboBox(maximumOccurrences: number, inputIconUrl: string, relationshipAllowedContentTypes: string[],
+        createContentComboBox(maximumOccurrences: number, inputIconUrl: string, allowedContentTypes: string[],
                               inputName: string): ContentComboBox {
-
-            var contentTypes = this.allowedContentTypes.length ? this.allowedContentTypes :
-                               relationshipAllowedContentTypes.length ? relationshipAllowedContentTypes :
-                                   [ContentTypeName.IMAGE.toString()];
-
-            var contentSelectorLoader = ContentSelectorLoader.create().
-                setId(this.config.contentId).
-                setInputName(inputName).
-                setAllowedContentPaths(this.allowedContentPaths).
-                setContentTypeNames(contentTypes).
-                setRelationshipType(this.relationshipType).
-                build();
-
+            var value = this.getPropertyArray().getProperties().map((property) => {
+                return property.getString();
+            }).join(';');
+            
+            var contentSelectorLoader = new ContentSelectorLoader(this.config.contentId, inputName);
+                
             var contentComboBox: ImageContentComboBox
                     = ImageContentComboBox.create().
                     setMaximumOccurrences(maximumOccurrences).
+                    setAllowedContentTypes(allowedContentTypes.length ? allowedContentTypes : [ContentTypeName.IMAGE.toString()]).
+                    setValue(value).
                     setLoader(contentSelectorLoader).
                     setPostLoad(contentSelectorLoader.postLoad.bind(contentSelectorLoader)).
                     setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).
@@ -192,24 +177,26 @@ module api.content.form.inputtype.image {
 
             comboBox.onHidden((event: api.dom.ElementHiddenEvent) => {
                 // hidden on max occurrences reached
-                if (this.imageUploaderEl) {
-                    this.imageUploaderEl.hide();
+                if (this.uploader) {
+                    this.uploader.hide();
                 }
             });
             comboBox.onShown((event: api.dom.ElementShownEvent) => {
                 // shown on occurrences between min and max
-                if (this.imageUploaderEl) {
-                    this.imageUploaderEl.show();
+                if (this.uploader) {
+                    this.uploader.show();
                 }
             });
             comboBox.setInputIconUrl(inputIconUrl);
 
             comboBox.onOptionDeselected((removed: SelectedOption<ImageSelectorDisplayValue>) => {
+                this.ignorePropertyChange = true;
                 // property not found.
                 if (!!removed.getOption().displayValue.getContentSummary()) {
                     this.getPropertyArray().remove(removed.getIndex());
                 }
                 this.validate(false);
+                this.ignorePropertyChange = false;
             });
 
             comboBox.onOptionSelected((added: SelectedOption<ImageSelectorDisplayValue>) => {
@@ -225,58 +212,64 @@ module api.content.form.inputtype.image {
             });
 
             comboBox.onOptionMoved((moved: SelectedOption<ImageSelectorDisplayValue>) => {
-
+                this.ignorePropertyChange = true;
                 this.getPropertyArray().set(moved.getIndex(), ValueTypes.REFERENCE.newValue(moved.getOption().value));
                 this.validate(false);
+                this.ignorePropertyChange = false;
             });
 
             return contentComboBox;
         }
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
-            super.layout(input, propertyArray);
+            return super.layout(input, propertyArray).then(() => {
+                return new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(this.relationshipTypeName).sendAndParse()
+                    .then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
 
-            return new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(this.relationshipTypeName).sendAndParse()
-                .then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
-                    this.contentComboBox = this.createContentComboBox(
-                        input.getOccurrences().getMaximum(), relationshipType.getIconUrl(), relationshipType.getAllowedToTypes() || [],
-                        input.getName()
-                    );
+                        this.contentComboBox = this.createContentComboBox(
+                            input.getOccurrences().getMaximum(), relationshipType.getIconUrl(), relationshipType.getAllowedToTypes() || [],
+                            input.getName()
+                        );
 
-                    var comboBoxWrapper = new api.dom.DivEl("combobox-wrapper");
+                        var comboBoxWrapper = new api.dom.DivEl("combobox-wrapper");
 
-                    comboBoxWrapper.appendChild(this.contentComboBox);
+                        comboBoxWrapper.appendChild(this.contentComboBox);
 
-                    this.contentRequestsAllowed = true;
+                        this.contentRequestsAllowed = true;
 
-                    if (this.config.contentId) {
-                        comboBoxWrapper.appendChild(this.createUploader());
-                    }
+                        if (this.config.contentId) {
+                            comboBoxWrapper.appendChild(this.createUploader());
+                        }
 
-                    this.appendChild(comboBoxWrapper);
-                    this.appendChild(this.selectedOptionsView);
-
-                    return this.doLoadContent(this.getPropertyArray()).then((contents: ContentSummary[]) => {
-                        contents.forEach((content: ContentSummary) => {
-                            this.contentComboBox.selectOption(<Option<ImageSelectorDisplayValue>>{
-                                value: content.getId(),
-                                displayValue: ImageSelectorDisplayValue.fromContentSummary(content)
-                            });
-                        });
+                        this.appendChild(comboBoxWrapper);
+                        this.appendChild(this.selectedOptionsView);
 
                         this.setLayoutInProgress(false);
                     });
-                });
+            });
         }
 
-        private createUploader(): ImageUploaderEl {
+        update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
+            var superPromise = super.update(propertyArray, unchangedOnly);
+
+            if (!unchangedOnly || !this.contentComboBox.isDirty()) {
+                return superPromise.then(() => {
+
+                    this.contentComboBox.setValue(this.getValueFromPropertyArray(propertyArray));
+                })
+            } else {
+                return superPromise;
+            }
+        }
+
+        private createUploader(): ImageUploader {
             var multiSelection = (this.getInput().getOccurrences().getMaximum() != 1);
 
-            this.imageUploaderEl = new api.content.ImageUploaderEl({
+            this.uploader = new api.content.ImageUploader({
                 params: {
                     parent: this.config.contentId.toString()
                 },
-                operation: api.content.MediaUploaderElOperation.create,
+                operation: api.content.MediaUploaderOperation.create,
                 name: 'image-selector-upload-dialog',
                 showCancel: false,
                 showReset: false,
@@ -287,7 +280,7 @@ module api.content.form.inputtype.image {
                 deferred: true
             });
 
-            this.imageUploaderEl.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
+            this.uploader.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
                 event.getUploadItems().forEach((uploadItem: UploadItem<Content>) => {
                     var value = ImageSelectorDisplayValue.fromUploadItem(uploadItem);
 
@@ -299,7 +292,7 @@ module api.content.form.inputtype.image {
                 });
             });
 
-            this.imageUploaderEl.onUploadProgress((event: FileUploadProgressEvent<Content>) => {
+            this.uploader.onUploadProgress((event: FileUploadProgressEvent<Content>) => {
                 var item = event.getUploadItem();
 
                 var selectedOption = this.selectedOptionsView.getById(item.getId());
@@ -307,14 +300,14 @@ module api.content.form.inputtype.image {
                     (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).setProgress(item.getProgress());
                 }
 
-                this.imageUploaderEl.setMaximumOccurrences(this.getRemainingOccurrences());
+                this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
             });
 
-            this.imageUploaderEl.onFileUploaded((event: FileUploadedEvent<Content>) => {
+            this.uploader.onFileUploaded((event: FileUploadedEvent<Content>) => {
                 var item = event.getUploadItem();
                 var createdContent = item.getModel();
 
-                new api.content.ContentUpdatedEvent(this.config.contentId).fire();
+                //new api.content.ContentUpdatedEvent(this.config.contentId).fire();
 
                 var selectedOption = this.selectedOptionsView.getById(item.getId());
                 var option = selectedOption.getOption();
@@ -330,10 +323,10 @@ module api.content.form.inputtype.image {
                 this.setContentIdProperty(createdContent.getContentId());
                 this.validate(false);
 
-                this.imageUploaderEl.setMaximumOccurrences(this.getRemainingOccurrences());
+                this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
             });
 
-            this.imageUploaderEl.onUploadFailed((event: FileUploadFailedEvent<Content>) => {
+            this.uploader.onUploadFailed((event: FileUploadFailedEvent<Content>) => {
                 var item = event.getUploadItem();
 
                 var selectedOption = this.selectedOptionsView.getById(item.getId());
@@ -341,11 +334,11 @@ module api.content.form.inputtype.image {
                     (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).showError("Upload failed");
                 }
 
-                this.imageUploaderEl.setMaximumOccurrences(this.getRemainingOccurrences());
+                this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
             });
 
-            this.imageUploaderEl.onClicked(() => {
-                this.imageUploaderEl.setMaximumOccurrences(this.getRemainingOccurrences());
+            this.uploader.onClicked(() => {
+                this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
             });
 
             /*
@@ -355,7 +348,7 @@ module api.content.form.inputtype.image {
             var iFrame = api.app.Application.getApplication().getAppFrame();
             var body = api.dom.Body.get();
 
-            this.imageUploaderEl.addClass("minimized");
+            this.uploader.addClass("minimized");
             var dragOverEl;
             // make use of the fact that when dragging
             // first drag enter occurs on the child element and after that
@@ -365,8 +358,8 @@ module api.content.form.inputtype.image {
             this.onDragEnter((event: DragEvent) => {
                 if (iFrame.isVisible()) {
                     var target = <HTMLElement> event.target;
-                    this.imageUploaderEl.giveFocus();
-                    this.imageUploaderEl.toggleClass("minimized", false);
+                    this.uploader.giveFocus();
+                    this.uploader.toggleClass("minimized", false);
                     dragOverEl = target;
                 }
             });
@@ -375,8 +368,8 @@ module api.content.form.inputtype.image {
                 if (iFrame.isVisible()) {
                     var targetEl = <HTMLElement> event.target;
                     if (dragOverEl == targetEl) {
-                        this.imageUploaderEl.giveBlur();
-                        this.imageUploaderEl.toggleClass("minimized", true);
+                        this.uploader.giveBlur();
+                        this.uploader.toggleClass("minimized", true);
                         dragOverEl = null;
                     }
                 }
@@ -384,12 +377,12 @@ module api.content.form.inputtype.image {
 
             body.onDrop((event: DragEvent) => {
                 if (iFrame.isVisible()) {
-                    this.imageUploaderEl.setMaximumOccurrences(this.getRemainingOccurrences());
-                    this.imageUploaderEl.toggleClass("minimized", true);
+                    this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
+                    this.uploader.toggleClass("minimized", true);
                 }
             });
 
-            return this.imageUploaderEl;
+            return this.uploader;
         }
 
         private doLoadContent(propertyArray: PropertyArray): wemQ.Promise<ContentSummary[]> {
@@ -415,6 +408,7 @@ module api.content.form.inputtype.image {
         }
 
         private setContentIdProperty(contentId: api.content.ContentId) {
+            this.ignorePropertyChange = true;
             var reference = api.util.Reference.from(contentId);
 
             var value = new Value(reference, ValueTypes.REFERENCE);
@@ -425,6 +419,7 @@ module api.content.form.inputtype.image {
             else {
                 this.getPropertyArray().add(value);
             }
+            this.ignorePropertyChange = false;
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

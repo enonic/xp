@@ -57,7 +57,7 @@ module app.wizard {
             if(defaultUserStore)
             {
                 defaultUserStore.getPermissions().getEntries().forEach((item) => {
-                    this.comboBox.selectReadOnly(item);
+                    this.comboBox.select(item, true);
                 });
             }
 
@@ -75,7 +75,7 @@ module app.wizard {
             this.comboBox.clearSelection();
             userStore.getPermissions().getEntries().forEach((item) => {
                 if (!this.comboBox.isSelected(item)) {
-                    this.comboBox.selectReadOnly(item);
+                    this.comboBox.select(item, true);
                 }
             });
 

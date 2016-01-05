@@ -26,7 +26,8 @@ module app.wizard {
 
         setOwner(owner: api.security.PrincipalKey, silent?: boolean): ContentSettingsModel {
             if (!silent) {
-                this.notifyPropertyChanged(new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_OWNER, this.owner, owner));
+                var event = new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_OWNER, this.owner, owner);
+                this.notifyPropertyChanged(event);
             }
             this.owner = owner;
             return this;
@@ -38,7 +39,8 @@ module app.wizard {
 
         setLanguage(lang: string, silent?: boolean): ContentSettingsModel {
             if (!silent) {
-                this.notifyPropertyChanged(new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_LANG, this.language, lang));
+                var event = new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_LANG, this.language, lang);
+                this.notifyPropertyChanged(event);
             }
             this.language = lang;
             return this;

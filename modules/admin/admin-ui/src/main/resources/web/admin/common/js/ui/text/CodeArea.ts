@@ -6,6 +6,8 @@ module api.ui.text {
 
         mode: string;
 
+        value: string;
+
         lineNumbers: boolean;
 
         public setName(value: string): CodeAreaBuilder {
@@ -15,6 +17,11 @@ module api.ui.text {
 
         public setMode(value: string): CodeAreaBuilder {
             this.mode = value;
+            return this;
+        }
+
+        public setValue(value: string): CodeAreaBuilder {
+            this.value = value;
             return this;
         }
 
@@ -39,7 +46,7 @@ module api.ui.text {
         private mode: string;
 
         constructor(builder: CodeAreaBuilder) {
-            this.textArea = new TextArea(builder.name);
+            this.textArea = new TextArea(builder.name, builder.value);
 
             super(this.textArea);
 
@@ -60,15 +67,6 @@ module api.ui.text {
             this.onShown((event) => {
                 this.codeMirror.refresh();
             });
-        }
-
-        setValue(value: string): CodeArea {
-            this.codeMirror.setValue(value);
-            return this;
-        }
-
-        getValue(): string {
-            return this.codeMirror.getValue();
         }
     }
 }
