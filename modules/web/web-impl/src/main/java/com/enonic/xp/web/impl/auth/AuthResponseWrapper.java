@@ -3,6 +3,7 @@ package com.enonic.xp.web.impl.auth;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.concurrent.Callable;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
@@ -10,34 +11,46 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.UserStore;
+import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.web.auth.AuthService;
+import com.enonic.xp.web.auth.AuthServiceRegistry;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 
 public class AuthResponseWrapper
     extends HttpServletResponseWrapper
 {
-//    private final HttpServletRequest request;
-//
-//    private final SecurityService securityService;
+    private final HttpServletRequest request;
+
+    private final SecurityService securityService;
+
+    private final AuthServiceRegistry authServiceRegistry;
 
     private boolean errorHandled;
 
-    public AuthResponseWrapper( final HttpServletRequest request, final HttpServletResponse response,
-                                final SecurityService securityService )
+    public AuthResponseWrapper( final HttpServletRequest request, final HttpServletResponse response, final SecurityService securityService,
+                                final AuthServiceRegistry authServiceRegistry )
     {
         super( response );
-//        this.request = request;
-//        this.securityService = securityService;
+        this.request = request;
+        this.securityService = securityService;
+        this.authServiceRegistry = authServiceRegistry;
     }
 
     @Override
     public void setStatus( final int sc )
     {
-        if ( canHandleError( sc ) )
-        {
-            handleError();
-        }
-        else
+        handleError( sc );
+
+        if ( !errorHandled )
         {
             super.setStatus( sc );
         }
@@ -98,11 +111,9 @@ public class AuthResponseWrapper
     public void sendError( final int sc )
         throws IOException
     {
-        if ( canHandleError( sc ) )
-        {
-            handleError();
-        }
-        else
+        handleError( sc );
+
+        if ( !errorHandled )
         {
             super.sendError( sc );
         }
@@ -112,54 +123,59 @@ public class AuthResponseWrapper
     public void sendError( final int sc, final String msg )
         throws IOException
     {
-        if ( canHandleError( sc ) )
-        {
-            handleError();
-        }
-        else
+        handleError( sc );
+
+        if ( !errorHandled )
         {
             super.sendError( sc, msg );
         }
     }
 
-    private boolean canHandleError( final int sc )
+    private void handleError( final int sc )
     {
-        return 403 == sc || 401 == sc;
+        if ( 403 == sc || 401 == sc )
+        {
+            final AuthService authService = retrieveAuthService();
+            if ( authService != null )
+            {
+                errorHandled = true;
+                System.out.println( "Handle error" );
+                authService.authenticate( request, (HttpServletResponse) getResponse() );
+            }
+        }
     }
 
-
-    private void handleError()
+    private AuthService retrieveAuthService()
     {
-        errorHandled = true;
-        System.out.println( "Handle error" );
+        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request );
+        if ( virtualHost != null )
+        {
+            final String userStoreKey = virtualHost.getUserstore();
+            if ( userStoreKey != null )
+            {
+                final UserStore userStore = runAsAuthenticated( () -> securityService.getUserStore( UserStoreKey.from( userStoreKey ) ) );
+                if ( userStore != null )
+                {
+                    final String authServiceKey = userStore.getAuthServiceKey();
+                    if ( authServiceKey != null )
+                    {
+                        return authServiceRegistry.getAuthService( authServiceKey );
+                    }
+                }
+            }
+        }
+        return null;
     }
 
-//    private void handleError()
-//        throws UnsupportedEncodingException
-//    {
-//        final VirtualHost vhost = VirtualHostHelper.getVirtualHost( request );
-//        if ( vhost != null )
-//        {
-//            final UserStoreKey userStoreKey = UserStoreKey.from( vhost.getUserstore() );
-//            final UserStore userStore = runAsAuthenticated( () -> securityService.getUserStore( userStoreKey ) );
-//            System.out.println( userStore );
-//
-//            super.setStatus( 303 );
-//            super.setHeader( "Location", "/123" );
-//            redirected = true;
-//        }
-//    }
-//
-//
-//    private <T> T runAsAuthenticated( final Callable<T> callable )
-//    {
-//        final Context context = ContextAccessor.current();
-//        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( context.getAuthInfo() ).
-//            principals( RoleKeys.AUTHENTICATED ).
-//            build();
-//        return ContextBuilder.from( context ).
-//            authInfo( authenticationInfo ).
-//            build().
-//            callWith( callable );
-//}
+    private <T> T runAsAuthenticated( final Callable<T> callable )
+    {
+        final Context context = ContextAccessor.current();
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( context.getAuthInfo() ).
+            principals( RoleKeys.AUTHENTICATED ).
+            build();
+        return ContextBuilder.from( context ).
+            authInfo( authenticationInfo ).
+            build().
+            callWith( callable );
+    }
 }

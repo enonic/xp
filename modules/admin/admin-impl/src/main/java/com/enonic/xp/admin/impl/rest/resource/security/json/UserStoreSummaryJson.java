@@ -25,6 +25,6 @@ public class UserStoreSummaryJson
 
     public String getAuthServiceKey()
     {
-        return userStore.getAuthApplication();
+        return userStore.getAuthServiceKey();
     }
 }

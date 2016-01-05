@@ -28,7 +28,7 @@ public final class UserStore
         return displayName;
     }
 
-    public String getAuthApplication()
+    public String getAuthServiceKey()
     {
         return authServiceKey;
     }

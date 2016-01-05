@@ -13,6 +13,7 @@ import com.google.common.io.BaseEncoding;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.web.auth.AuthServiceRegistry;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 
 @Component(immediate = true, service = Filter.class,
@@ -23,12 +24,14 @@ public final class BasicAuthFilter
 {
     private SecurityService securityService;
 
+    private AuthServiceRegistry authServiceRegistry;
+
     @Override
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
         login( req );
-        chain.doFilter( req, new AuthResponseWrapper( req, res, securityService ) );
+        chain.doFilter( req, new AuthResponseWrapper( req, res, securityService, authServiceRegistry ) );
     }
 
     private void login( final HttpServletRequest req )
@@ -47,12 +50,6 @@ public final class BasicAuthFilter
 
         final AuthHelper helper = new AuthHelper( this.securityService );
         helper.login( parts[0], parts[1], false );
-    }
-
-    @Reference
-    public void setSecurityService( final SecurityService securityService )
-    {
-        this.securityService = securityService;
     }
 
     private static String[] parseHeader( final String header )
@@ -80,5 +77,17 @@ public final class BasicAuthFilter
         }
 
         return parts;
+    }
+
+    @Reference
+    public void setSecurityService( final SecurityService securityService )
+    {
+        this.securityService = securityService;
+    }
+
+    @Reference
+    public void setAuthServiceRegistry( final AuthServiceRegistry authServiceRegistry )
+    {
+        this.authServiceRegistry = authServiceRegistry;
     }
 }

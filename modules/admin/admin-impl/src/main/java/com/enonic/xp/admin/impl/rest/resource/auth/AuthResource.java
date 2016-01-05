@@ -17,13 +17,13 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.auth.json.AuthServiceJson;
 import com.enonic.xp.admin.impl.rest.resource.auth.json.LoginResultJson;
 import com.enonic.xp.admin.impl.security.AuthHelper;
-import com.enonic.xp.auth.AuthServiceRegistry;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.Session;
+import com.enonic.xp.web.auth.AuthServiceRegistry;
 
 @Path(ResourceConstants.REST_ROOT + "auth")
 @Produces(MediaType.APPLICATION_JSON)

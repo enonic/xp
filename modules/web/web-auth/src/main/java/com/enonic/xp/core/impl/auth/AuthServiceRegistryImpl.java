@@ -11,8 +11,8 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.auth.AuthService;
-import com.enonic.xp.auth.AuthServiceRegistry;
+import com.enonic.xp.web.auth.AuthService;
+import com.enonic.xp.web.auth.AuthServiceRegistry;
 
 @Component(immediate = true)
 public class AuthServiceRegistryImpl
@@ -24,6 +24,12 @@ public class AuthServiceRegistryImpl
     public Collection<AuthService> getAuthServices()
     {
         return Collections.unmodifiableCollection( authServiceMap.values() );
+    }
+
+    @Override
+    public AuthService getAuthService( final String key )
+    {
+        return authServiceMap.get( key );
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
