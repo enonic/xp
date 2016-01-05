@@ -1,6 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.security.json;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.security.UserStore;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -24,9 +23,8 @@ public class UserStoreSummaryJson
         return userStore.getKey().toString();
     }
 
-    public String getAuthApplication()
+    public String getAuthServiceKey()
     {
-        final ApplicationKey authApplication = userStore.getAuthApplication();
-        return authApplication == null ? null : authApplication.toString();
+        return userStore.getAuthApplication();
     }
 }

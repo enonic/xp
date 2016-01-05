@@ -2,8 +2,6 @@ package com.enonic.xp.security;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.app.ApplicationKey;
-
 @Beta
 public final class UserStore
 {
@@ -11,13 +9,13 @@ public final class UserStore
 
     private final String displayName;
 
-    private final ApplicationKey authApplication;
+    private final String authServiceKey;
 
     public UserStore( final Builder builder )
     {
         this.key = builder.key;
         this.displayName = builder.displayName;
-        this.authApplication = builder.authApplication;
+        this.authServiceKey = builder.authServiceKey;
     }
 
     public UserStoreKey getKey()
@@ -30,9 +28,9 @@ public final class UserStore
         return displayName;
     }
 
-    public ApplicationKey getAuthApplication()
+    public String getAuthApplication()
     {
-        return authApplication;
+        return authServiceKey;
     }
 
     public static Builder create()
@@ -51,7 +49,7 @@ public final class UserStore
 
         private String displayName;
 
-        private ApplicationKey authApplication;
+        private String authServiceKey;
 
         private Builder()
         {
@@ -61,7 +59,7 @@ public final class UserStore
         {
             this.key = userStore.key;
             this.displayName = userStore.displayName;
-            this.authApplication = userStore.authApplication;
+            this.authServiceKey = userStore.authServiceKey;
         }
 
         public Builder displayName( final String value )
@@ -76,9 +74,9 @@ public final class UserStore
             return this;
         }
 
-        public Builder authApplication( final ApplicationKey value )
+        public Builder authServiceKey( final String value )
         {
-            this.authApplication = value;
+            this.authServiceKey = value;
             return this;
         }
 

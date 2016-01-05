@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.security.CreateUserStoreParams;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
@@ -19,7 +18,7 @@ public final class CreateUserStoreJson
 
     @JsonCreator
     public CreateUserStoreJson( @JsonProperty("key") final String userStoreKey, @JsonProperty("displayName") final String displayName,
-                                @JsonProperty("authApplication") final String authApplication,
+                                @JsonProperty("authServiceKey") final String authServiceKey,
                                 @JsonProperty("permissions") final List<UserStoreAccessControlEntryJson> aclEntries )
     {
         final UserStoreAccessControlEntry[] userStoreAclEntries = aclEntries.stream().map( UserStoreAccessControlEntryJson::getEntry ).
@@ -29,7 +28,7 @@ public final class CreateUserStoreJson
         this.createUserStoreParams = CreateUserStoreParams.create().
             key( UserStoreKey.from( userStoreKey ) ).
             displayName( displayName ).
-            authApplication( authApplication == null ? null : ApplicationKey.from( authApplication ) ).
+            authServiceKey( authServiceKey ).
             permissions( permissions ).
             build();
     }
