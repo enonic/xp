@@ -287,34 +287,6 @@ module app.browse {
                 api.content.Branch.DRAFT);
         }
 
-        private selectPreviewedContentInGrid(contentPreviewPath: string) {
-            var path = this.getPathFromPreviewPath(contentPreviewPath);
-            if (path) {
-                var contentPath = api.content.ContentPath.fromString(path)
-                if (this.isSingleItemSelectedInGrid() && !this.isGivenPathSelectedInGrid(contentPath)) {
-                    this.selectContentInGridByPath(contentPath);
-                }
-            }
-        }
-
-        private selectContentInGridByPath(path: api.content.ContentPath) {
-            this.contentTreeGrid.expandTillNodeWithGivenPath(path, this.contentTreeGrid.getSelectedNodes()[0]);
-        }
-
-        private isGivenPathSelectedInGrid(path: api.content.ContentPath): boolean {
-            var contentSummary: ContentSummaryAndCompareStatus = this.contentTreeGrid.getSelectedNodes()[0].getData();
-            return contentSummary.getPath().equals(path);
-        }
-
-        private isSingleItemSelectedInGrid(): boolean {
-            return this.contentTreeGrid.getSelectedNodes() && this.contentTreeGrid.getSelectedNodes().length == 1;
-        }
-
-        private getPathFromPreviewPath(contentPreviewPath: string): string {
-            return api.rendering.UriHelper.getPathFromPortalPreviewUri(contentPreviewPath, api.rendering.RenderingMode.PREVIEW,
-                api.content.Branch.DRAFT);
-        }
-
         private subscribeOnContentEvents() {
 
             ContentServerEventsHandler.getInstance().onContentCreated((changes: ContentServerChange[]) => {
