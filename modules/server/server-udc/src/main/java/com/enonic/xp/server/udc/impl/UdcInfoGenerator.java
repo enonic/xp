@@ -39,8 +39,14 @@ final class UdcInfoGenerator
     {
         final InetAddress addr = InetAddress.getLocalHost();
         final NetworkInterface network = NetworkInterface.getByInetAddress( addr );
-        final byte[] hardwareAddr = network.getHardwareAddress();
-        return BaseEncoding.base16().encode( hardwareAddr );
+
+        if ( network != null )
+        {
+            final byte[] hardwareAddr = network.getHardwareAddress();
+            return BaseEncoding.base16().encode( hardwareAddr );
+        }
+
+        return "unknown";
     }
 
     private long getMaxMemory()
