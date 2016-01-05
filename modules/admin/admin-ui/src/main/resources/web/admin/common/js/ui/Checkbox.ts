@@ -2,19 +2,15 @@ module api.ui {
 
     export class Checkbox extends api.dom.FormInputEl {
         //TODO: USE HTML CHECKED PROPERTY INSTEAD OF ATTRIBUTE CHECKED! from ljl
-        /**
-         * Input value before it was changed by last input event.
-         */
-        private oldValue: boolean = false;
-
-        private valueChangedListeners: {(event: ValueChangedEvent):void}[] = [];
 
         private checkbox: api.dom.InputEl;
 
         private label: api.dom.LabelEl;
 
-        constructor(text?: string) {
-            super("div", "checkbox");
+        public static debug = false;
+
+        constructor(text?: string, checked?: boolean) {
+            super("div", "checkbox", undefined, String(checked != undefined ? checked : false));
             // we need an id for the label to interact nicely
             this.checkbox = <api.dom.InputEl> new api.dom.Element(new api.dom.NewElementBuilder().
                 setTagName('input').
@@ -25,44 +21,52 @@ module api.ui {
             this.label = new api.dom.LabelEl(text, this.checkbox);
             this.appendChild(this.label);
 
-            wemjq(this.checkbox.getHTMLElement()).change(() => {
-                var newValue = this.isChecked();
-                this.notifyValueChanged(this.oldValue, newValue);
-                this.oldValue = newValue;
+            wemjq(this.checkbox.getHTMLElement()).change((e) => {
+                if (Checkbox.debug) {
+                    console.debug('Checkbox on change', e);
+                }
+                this.refreshValueChanged();
+                this.refreshDirtyState();
             });
         }
 
-        setChecked(newValue: boolean, suppressEvent?: boolean): Checkbox {
-            this.checkbox.getHTMLElement()["checked"] = newValue;
-
-            if (!suppressEvent) {
-                this.notifyValueChanged(this.oldValue, newValue);
-            }
-            // save new value to know which value was before input event.
-            this.oldValue = newValue;
-
+        setChecked(newValue: boolean, silent?: boolean): Checkbox {
+            super.setValue(String(newValue), silent);
             return this;
         }
 
-        setDisabled(value: boolean): Checkbox {
-            this.checkbox.getEl().setDisabled(value);
-            return this;
+        isChecked(): boolean {
+            return super.getValue() == "true";
         }
 
         toggleChecked() {
             this.setChecked(!this.isChecked());
         }
 
-        isChecked(): boolean {
-            return this.checkbox.getHTMLElement()["checked"];
+        protected doSetValue(value: string, silent?: boolean) {
+            if (Checkbox.debug) {
+                console.debug('Checkbox.doSetValue: ', value);
+            }
+            this.checkbox.getHTMLElement()['checked'] = value == 'true';
         }
 
-        setValue(value: string): Checkbox {
-            throw new Error("CheckboxInput does not support method setValue, use setChecked instead");
+        protected doGetValue(): string {
+            return String(this.checkbox.getHTMLElement()['checked']);
+        }
+
+        setValue(value: string, silent?: boolean): Checkbox {
+            if (Checkbox.debug) {
+                console.warn('Checkbox.setValue sets the value attribute, you may have wanted to use setChecked instead');
+            }
+            this.getEl().setValue(value);
+            return this;
         }
 
         getValue(): string {
-            throw new Error("CheckboxInput does not support method setValue, use isChecked instead");
+            if (Checkbox.debug) {
+                console.warn('Checkbox.getValue gets the value attribute, you may have wanted to use getChecked instead');
+            }
+            return this.getEl().getValue();
         }
 
         giveFocus(): boolean {
@@ -75,6 +79,11 @@ module api.ui {
 
         setName(value: string): Checkbox {
             this.checkbox.setName(value);
+            return this;
+        }
+
+        setDisabled(value: boolean): Checkbox {
+            this.checkbox.getEl().setDisabled(value);
             return this;
         }
 
@@ -94,23 +103,6 @@ module api.ui {
 
         getPlaceholder(): string {
             return this.checkbox.getEl().getAttribute('placeholder');
-        }
-
-
-        onValueChanged(listener: (event: ValueChangedEvent)=>void) {
-            this.valueChangedListeners.push(listener);
-        }
-
-        unValueChanged(listener: (event: ValueChangedEvent)=>void) {
-            this.valueChangedListeners = this.valueChangedListeners.filter((currentListener: (event: ValueChangedEvent)=>void) => {
-                return listener != currentListener;
-            });
-        }
-
-        private notifyValueChanged(oldValue: boolean, newValue: boolean) {
-            this.valueChangedListeners.forEach((listener: (event: ValueChangedEvent)=>void) => {
-                listener.call(this, new ValueChangedEvent(oldValue.toString(), newValue.toString()));
-            });
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

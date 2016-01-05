@@ -8,6 +8,7 @@ module app.view.detail {
     import CompareStatus = api.content.CompareStatus;
     import Widget = api.content.Widget;
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
+    import ContentsPublishedEvent = api.content.event.ContentsPublishedEvent;
 
     export class DetailsPanel extends api.ui.panel.Panel {
 
@@ -78,7 +79,7 @@ module app.view.detail {
         }
 
         private managePublishEvent() {
-            api.content.ContentsPublishedEvent.on((event: api.content.ContentsPublishedEvent) => {
+            ContentsPublishedEvent.on((event: ContentsPublishedEvent) => {
                 if (this.getItem()) {
                     // check for item because it can be null after publishing pending for delete item
                     var itemId = this.getItem().getId();

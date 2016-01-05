@@ -31,7 +31,7 @@ module api.ui.security.acl {
             this.removeButton.onClicked((event: MouseEvent) => this.notifyRemoveClicked(event));
 
             this.permissionSelector = new PermissionSelector();
-            this.permissionSelector.onValueChanged((event: api.ui.ValueChangedEvent) => {
+            this.permissionSelector.onValueChanged((event: api.ValueChangedEvent) => {
                 this.toggleClass("dirty", event.getNewValue() != JSON.stringify({
                     allow: this.ace.getAllowedPermissions().sort(),
                     deny: this.ace.getDeniedPermissions().sort()
@@ -42,7 +42,7 @@ module api.ui.security.acl {
             this.permissionSelector.setValue({allow: ace.getAllowedPermissions(), deny: ace.getDeniedPermissions()}, true);
             // this.toggleClass("dirty", !ace.isInherited());
 
-            this.accessSelector.onValueChanged((event: api.ui.ValueChangedEvent) => {
+            this.accessSelector.onValueChanged((event: api.ValueChangedEvent) => {
                 if (Access[event.getNewValue()] == Access.CUSTOM) {
                     this.permissionSelector.show();
                 } else {

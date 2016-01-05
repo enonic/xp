@@ -18,6 +18,7 @@ module api.content {
                 setMaximumOccurrences(builder.maximumOccurrences).
                 setOptionDisplayValueViewer(new api.content.ContentSummaryViewer()).
                 setDelayedInputValueChangedHandling(750).
+                setValue(builder.value).
                 setMinWidth(builder.minWidth);
 
             super(richComboBoxBuilder);
@@ -89,7 +90,7 @@ module api.content {
             let editButton = new api.dom.AEl("edit");
             editButton.onClicked((event: Event) => {
                 let model = [ContentSummaryAndCompareStatus.fromContentSummary(content)];
-                new api.content.EditContentEvent(model).fire();
+                new api.content.event.EditContentEvent(model).fire();
 
                 event.stopPropagation();
                 event.preventDefault();
@@ -111,6 +112,8 @@ module api.content {
 
         minWidth: number;
 
+        value: string;
+
         postLoad: () => void;
 
         setName(value: string): ContentComboBoxBuilder {
@@ -130,6 +133,11 @@ module api.content {
 
         setMinWidth(value: number): ContentComboBoxBuilder {
             this.minWidth = value;
+            return this;
+        }
+
+        setValue(value: string): ContentComboBoxBuilder {
+            this.value = value;
             return this;
         }
 

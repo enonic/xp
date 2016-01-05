@@ -28,7 +28,7 @@ module api.ui.tags {
         }
     }
 
-    export class Tags extends api.dom.UlEl {
+    export class Tags extends api.dom.FormInputEl {
 
         private tagSuggester: TagSuggester;
 
@@ -49,12 +49,9 @@ module api.ui.tags {
         private tagRemovedListeners: {(event: TagRemovedEvent) : void}[] = [];
 
         constructor(builder: TagsBuilder) {
-            super("tags");
+            super("ul", "tags", undefined, builder.tags ? builder.tags.join(';') : undefined);
             this.tagSuggester = builder.tagSuggester;
 
-            builder.tags.forEach((value: string) => {
-                this.doAddTag(value);
-            });
             this.maxTags = builder.maxTags;
 
             this.textInput = new api.ui.text.TextInput();
@@ -71,7 +68,7 @@ module api.ui.tags {
                     event.preventDefault();
                 } else if (event.keyCode == 8) {
                     if (!this.textInput.getValue() && this.countTags() > 0) {
-                        this.removeTag(this.tags[this.countTags() - 1]);
+                        this.doRemoveTag(this.tags[this.countTags() - 1]);
                     }
                 } else if (event.keyCode == 38) {
                     if (this.tagSuggestions.isVisible()) {
@@ -107,7 +104,7 @@ module api.ui.tags {
                 this.textInput.getEl().setWidth('');
             });
 
-            this.textInput.onValueChanged((event: api.ui.ValueChangedEvent) => {
+            this.textInput.onValueChanged((event: api.ValueChangedEvent) => {
                 if (this.searchTimeout) {
                     clearTimeout(this.searchTimeout);
                     this.searchTimeout = undefined;
@@ -127,6 +124,15 @@ module api.ui.tags {
                 this.textInput.getEl().setWidth('');
                 this.textInput.giveFocus();
             });
+
+            this.onTagAdded((event: TagAddedEvent) => {
+                this.refreshDirtyState();
+                this.refreshValueChanged();
+            });
+            this.onTagRemoved((event: TagRemovedEvent) => {
+                this.refreshDirtyState();
+                this.refreshValueChanged();
+            });
         }
 
         private searchSuggestions(searchString: string) {
@@ -136,7 +142,7 @@ module api.ui.tags {
                     return;
                 }
 
-                var existingValues = this.getTags().concat(searchString);
+                var existingValues = this.doGetTags().concat(searchString);
                 values = values.filter((value: string) => (existingValues.indexOf(value) < 0));
 
                 if (values.length == 0) {
@@ -161,7 +167,6 @@ module api.ui.tags {
 
             var tag = this.doAddTag(word);
             if (tag) {
-                this.notifyTagAdded(new TagAddedEvent(tag.getValue()));
                 this.textInput.setValue("");
 
                 if (this.isMaxTagsReached()) {
@@ -171,23 +176,13 @@ module api.ui.tags {
             }
         }
 
-        clearTags() {
-            this.tags.forEach((tag) => tag.remove());
-            this.tags = [];
+        private doClearTags(silent?: boolean) {
+            // use tags copy because doRemoveTag modifies tags array
+            this.tags.slice().forEach((tag) => this.doRemoveTag(tag, silent));
         }
 
-        addTag(value: string) {
-
-            var tag = this.doAddTag(value);
-            if (tag) {
-                if (this.isMaxTagsReached()) {
-                    this.textInput.hide();
-                }
-            }
-        }
-
-        private doAddTag(value: string): Tag {
-            if (this.hasTag(value) || !value) {
+        private doAddTag(value: string, silent?: boolean): Tag {
+            if (this.indexOf(value) > -1 || !value) {
                 return null;
             }
 
@@ -195,39 +190,62 @@ module api.ui.tags {
             this.tags.push(tag);
             tag.insertBeforeEl(this.textInput);
 
-            tag.onTagRemove(() => this.removeTag(tag));
+            tag.onRemoveClicked(() => this.doRemoveTag(tag));
+
+            if (this.isMaxTagsReached()) {
+                this.textInput.hide();
+            }
+
+            if (!silent) {
+                this.notifyTagAdded(new TagAddedEvent(tag.getValue()));
+            }
 
             return tag;
         }
 
-        private removeTag(tag: Tag) {
-            var index = this.tags.indexOf(tag);
+        private doRemoveTag(tag: Tag, silent?: boolean) {
+            var index = this.indexOf(tag.getValue());
             if (index >= 0) {
                 tag.remove();
                 this.tags.splice(index, 1);
+
                 if (!this.textInput.isVisible() && !this.isMaxTagsReached()) {
                     this.textInput.setVisible(true);
                 }
                 this.textInput.giveFocus();
-                this.notifyTagRemoved(new TagRemovedEvent(tag.getValue(), index));
+
+                if (!silent) {
+                    this.notifyTagRemoved(new TagRemovedEvent(tag.getValue(), index));
+                }
             }
         }
 
-        hasTag(value: string) {
-            var match = false;
-            this.tags.forEach((tag) => {
-                if (value == tag.getValue()) {
-                    match = true;
+        private indexOf(value: string): number {
+            if (!api.util.StringHelper.isEmpty(value)) {
+                for (var i = 0; i < this.tags.length; i++) {
+                    if (value == this.tags[i].getValue()) {
+                        return i;
+                    }
+
                 }
-            });
-            return match;
+            }
+            return -1;
         }
 
         countTags(): number {
             return this.tags.length;
         }
 
-        getTags(): string[] {
+        protected doGetValue(): string {
+            return this.doGetTags().join(';');
+        }
+
+        protected doSetValue(value: string, silent: boolean) {
+            this.doClearTags(true);
+            value.split(';').forEach((tag) => this.doAddTag(tag, true));
+        }
+
+        private doGetTags(): string[] {
             return this.tags.map((tag: Tag) => tag.getValue());
         }
 

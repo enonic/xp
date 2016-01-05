@@ -26,6 +26,7 @@
 ///<reference path='DefaultErrorHandler.ts' />
 ///<reference path='PropertyChangedEvent.ts' />
 ///<reference path='ValidityChangedEvent.ts' />
+///<reference path='ValueChangedEvent.ts' />
 ///<reference path='StyleHelper.ts' />
 
 ///<reference path='util/_module.ts' />
@@ -122,6 +123,7 @@
 ///<reference path='thumb/_module.ts' />
 ///<reference path='content/json/_module.ts' />
 ///<reference path='content/attachment/_module.ts' />
+///<reference path='content/event/_module.ts' />
 ///<reference path='content/_module.ts' />
 ///<reference path='content/query/_module.ts' />
 ///<reference path='content/image/_module.ts' />

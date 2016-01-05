@@ -1,4 +1,4 @@
-module api.content {
+module api.content.event {
 
     export interface ContentUpdatedEventJson {
         contentId: string;
