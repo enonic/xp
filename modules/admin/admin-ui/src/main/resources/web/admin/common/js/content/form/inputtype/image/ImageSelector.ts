@@ -169,6 +169,10 @@ module api.content.form.inputtype.image {
         createContentComboBox(maximumOccurrences: number, inputIconUrl: string, relationshipAllowedContentTypes: string[],
                               inputName: string): ContentComboBox {
 
+            var value = this.getPropertyArray().getProperties().map((property) => {
+                return property.getString();
+            }).join(';');
+
             var contentTypes = this.allowedContentTypes.length ? this.allowedContentTypes :
                                relationshipAllowedContentTypes.length ? relationshipAllowedContentTypes :
                                    [ContentTypeName.IMAGE.toString()];
@@ -186,6 +190,8 @@ module api.content.form.inputtype.image {
                     setMaximumOccurrences(maximumOccurrences).
                     setLoader(contentSelectorLoader).
                     setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).
+                    setPostLoad(contentSelectorLoader.postLoad.bind(contentSelectorLoader)).
+                    setValue(value).
                     build(),
                 comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();
 
