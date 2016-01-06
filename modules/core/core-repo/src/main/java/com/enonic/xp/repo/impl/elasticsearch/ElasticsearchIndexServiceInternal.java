@@ -27,7 +27,6 @@ import com.google.common.base.Stopwatch;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.elasticsearch.document.DeleteDocument;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
@@ -35,7 +34,6 @@ import com.enonic.xp.repo.impl.index.IndexException;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.index.IndexSettings;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
-import com.enonic.xp.repo.impl.storage.NodeReferenceResolver;
 
 
 @Component
@@ -222,8 +220,6 @@ public class ElasticsearchIndexServiceInternal
     @Override
     public void store( final Node node, final InternalContext context )
     {
-
-        final NodeIds references = NodeReferenceResolver.getReferences( node );
 
         final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).

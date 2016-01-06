@@ -123,7 +123,6 @@ public class StorageServiceImpl
             nodeState( node.getNodeState() ).
             timestamp( node.getTimestamp() ).
             nodePath( node.path() ).
-            references( NodeReferenceResolver.getReferences( node ) ).
             build(), context );
 
         this.indexServiceInternal.store( node, context );
@@ -281,7 +280,6 @@ public class StorageServiceImpl
             nodeState( node.getNodeState() ).
             timestamp( node.getTimestamp() ).
             nodePath( node.path() ).
-            references( NodeReferenceResolver.getReferences( node ) ).
             build(), context );
     }
 
@@ -297,7 +295,6 @@ public class StorageServiceImpl
                 nodeState( node.getNodeState() ).
                 timestamp( node.getTimestamp() ).
                 nodePath( node.path() ).
-                references( NodeReferenceResolver.getReferences( node ) ).
                 build() ).
             previousPath( previousPath ).
             build(), context );

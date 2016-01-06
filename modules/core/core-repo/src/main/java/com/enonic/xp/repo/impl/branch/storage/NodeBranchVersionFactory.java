@@ -31,7 +31,6 @@ public class NodeBranchVersionFactory
             nodeVersionId( NodeVersionId.from( versionId.toString() ) ).
             timestamp( Instant.parse( timestamp.toString() ) ).
             nodeId( NodeId.from( nodeId.toString() ) ).
-            references( referenceNodeIds ).
             build();
     }
 

@@ -39,10 +39,6 @@
       "nodeid": {
         "type": "string",
         "index": "not_analyzed"
-      },
-      "references": {
-        "type": "string",
-        "index": "not_analyzed"
       }
     }
   }
