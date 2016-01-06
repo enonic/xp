@@ -268,6 +268,36 @@ html, body {
 
 }
 
+.launcher-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 44px;
+  z-index: 2500;
+
+  .launcher-button {
+    position: fixed;
+    border: none;
+    right: 0;
+    margin: 7px 4px;
+    background-color: transparent;
+    cursor: pointer;
+    .icon-grid2;
+
+    &:before {
+      font-size: 24px;
+      color: white;
+    }
+  }
+}
+
+._0-240, ._240-360 {
+  .launcher-panel {
+    width: 100%;
+  }
+}
+
 .launcher-panel {
   position: fixed;
   overflow: hidden;
@@ -275,18 +305,10 @@ html, body {
   right: 0;
   height: 100%;
   z-index: 100000;
-  width: 125*3px;
-
-  @media only screen and (max-width: @mobile-threshold) {
-    width: 110*3px;
-  }
+  width: 375px;
 
   &.hidden, &.slideout {
-    right: -125*3px;
-
-    @media only screen and (max-width: @mobile-threshold) {
-      right: -110*3px;
-    }
+    right: -375px;
   }
 
   &.visible {
@@ -300,16 +322,17 @@ html, body {
   }
 
   .launcher-panel-close {
-    .icon-close;
+    .icon-close2;
 
     position: absolute;
-    top: 15px;
-    right: 12px;
+    top: 7px;
+    right: 4px;
     z-index: 1;
     background-color: transparent;
     border: none;
     color: @admin-white;
     cursor: pointer;
+    font-size: 25px;
   }
 }
 
@@ -534,30 +557,6 @@ html, body {
   }
 }
 
-.launcher-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 44px;
-  z-index: 10000;
-
-  .launcher-button {
-    position: fixed;
-    border: none;
-    right: 0;
-    margin: 7px 4px;
-    background-color: transparent;
-    cursor: pointer;
-    .icon-grid2;
-
-    &:before {
-      font-size: 24px;
-      color: white;
-    }
-  }
-}
-
 ._0-240, ._240-360, ._360-540, ._540-720 {
   .home-main-container {
     .user-name {
@@ -565,4 +564,5 @@ html, body {
     }
   }
 }
+
 
