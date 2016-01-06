@@ -1,6 +1,6 @@
 (function () {
     var adminUrl = "/admin/tool";
-    var launcherPanel, bodyMaskDiv;
+    var launcherPanel, bodyMask;
 
     function appendLauncherToolbar() {
         var div = document.createElement("div");
@@ -63,39 +63,19 @@
     function createBodyMaskDiv() {
         var div = document.createElement("div");
         div.classList.add("xp-admin-common-mask", "body-mask");
-        div.style.display = "block";
-        div.addEventListener("click", closeLauncherPanel);
+        div.style.display = "none";
 
         document.getElementsByTagName("body")[0].appendChild(div);
 
         return div;
     }
 
-    function removeBodyMaskDiv() {
-        document.getElementsByTagName("body")[0].removeChild(bodyMaskDiv);
-        bodyMaskDiv = null;
-    }
-
     function showBodyMask() {
-        var bodyMask = getBodyMask();
-        if (bodyMask) {
-            bodyMask.style.display = "block";
-        }
-        else {
-            bodyMaskDiv = createBodyMaskDiv();
-        }
+        bodyMask.style.display = "block";
     }
 
     function hideBodyMask() {
-        if (bodyMaskDiv) {
-            removeBodyMaskDiv();
-        }
-        else {
-            var bodyMask = getBodyMask();
-            if (bodyMask) {
-                bodyMask.style.display = "block";
-            }
-        }
+        bodyMask.style.display = "none";
     }
 
     function openLauncherPanel() {
@@ -110,7 +90,16 @@
         hideBodyMask();
     }
 
+    function initBodyMask() {
+        bodyMask = getBodyMask();
+        if (!bodyMask) {
+            bodyMask = createBodyMaskDiv();
+        }
+        bodyMask.addEventListener("click", closeLauncherPanel);
+    }
+
     function init() {
+        initBodyMask();
         appendLauncherToolbar();
         appendLauncherPanel();
     }
