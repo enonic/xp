@@ -141,7 +141,7 @@ public class MoveNodeCommand
     {
         final Node persistedNode = doGetById( id );
 
-        final NodeQueryResult nodeQueryResult = this.searchService.search( NodeQuery.create().
+        final NodeQueryResult nodeQueryResult = this.searchService.query( NodeQuery.create().
             parent( persistedNode.path() ).
             from( 0 ).
             size( SearchService.GET_ALL_SIZE_FLAG ).

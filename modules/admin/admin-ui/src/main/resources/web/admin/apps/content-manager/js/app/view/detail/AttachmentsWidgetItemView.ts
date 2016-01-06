@@ -49,11 +49,11 @@ module app.view.detail {
         private layoutAttachments(): wemQ.Promise<Attachments> {
             return new api.content.GetContentAttachmentsRequest(this.content.getContentId()).sendAndParse().then((attachments: Attachments) => {
 
-                if(this.hasChild(this.list)) {
+                if (this.hasChild(this.list)) {
                     this.removeChild(this.list);
                 }
 
-                if(this.hasChild(this.placeholder)) {
+                if (this.hasChild(this.placeholder)) {
                     this.removeChild(this.placeholder);
                 }
 

@@ -54,7 +54,7 @@ module app.view.detail {
 
         private layoutApplication(application?: Application) {
 
-            if(this.hasChild(this.list)) {
+            if (this.hasChild(this.list)) {
                 this.removeChild(this.list);
             }
             this.list = new api.dom.DlEl();

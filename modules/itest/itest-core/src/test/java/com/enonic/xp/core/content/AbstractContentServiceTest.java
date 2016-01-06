@@ -54,6 +54,7 @@ import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
+import com.enonic.xp.repo.impl.storage.IndexedDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.Repository;
@@ -126,6 +127,8 @@ public class AbstractContentServiceTest
 
     private SearchServiceImpl searchService;
 
+    private IndexedDataServiceImpl indexedDataService;
+
     private ElasticsearchSearchDao searchDao;
 
     @Before
@@ -164,11 +167,15 @@ public class AbstractContentServiceTest
 
         this.contentService = new ContentServiceImpl();
 
+        this.indexedDataService = new IndexedDataServiceImpl();
+        this.indexedDataService.setStorageDao( storageDao );
+
         this.storageService = new StorageServiceImpl();
         this.storageService.setBranchService( this.branchService );
         this.storageService.setVersionService( this.versionService );
         this.storageService.setNodeVersionDao( this.nodeDao );
         this.storageService.setIndexServiceInternal( this.indexService );
+        this.storageService.setIndexedDataService( this.indexedDataService );
 
         this.searchDao = new ElasticsearchSearchDao();
         this.searchDao.setElasticsearchDao( this.elasticsearchDao );

@@ -69,7 +69,7 @@ public class IndexServiceImpl
                 CompareExpr.create( FieldExpr.from( BranchIndexPath.BRANCH_NAME.getPath() ), CompareExpr.Operator.EQ,
                                     ValueExpr.string( branch.getName() ) );
 
-            final NodeBranchQueryResult results = this.searchService.search( NodeBranchQuery.create().
+            final NodeBranchQueryResult results = this.searchService.query( NodeBranchQuery.create().
                 query( QueryExpr.from( compareExpr ) ).
                 size( SearchService.GET_ALL_SIZE_FLAG ).
                 build(), InternalContext.create( ContextAccessor.current() ).

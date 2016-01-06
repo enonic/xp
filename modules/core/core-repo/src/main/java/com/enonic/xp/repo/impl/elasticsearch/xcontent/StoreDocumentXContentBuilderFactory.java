@@ -1,20 +1,17 @@
 package com.enonic.xp.repo.impl.elasticsearch.xcontent;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 
-import com.enonic.xp.repo.impl.elasticsearch.FieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.IndexConstants;
-import com.enonic.xp.repo.impl.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
-import com.enonic.xp.repo.impl.elasticsearch.document.StoreDocumentOrderbyItem;
+import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItem;
+import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItems;
+import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexValue;
+import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexValueString;
 import com.enonic.xp.repo.impl.index.IndexException;
 import com.enonic.xp.repo.impl.index.IndexValueNormalizer;
 
@@ -57,45 +54,23 @@ public class StoreDocumentXContentBuilderFactory
     private static void addIndexDocumentItems( final XContentBuilder result, final IndexDocument indexDocument )
         throws Exception
     {
-        final Multimap<String, Object> fieldMultiValueMap = ArrayListMultimap.create();
+        final IndexItems indexItems = indexDocument.getIndexItems();
 
-        // OrderBy should only have one value, add to own one-value-map
-        final Map<String, Object> orderByMap = Maps.newHashMap();
-
-        final Set<AbstractStoreDocumentItem> indexDocumentItems = indexDocument.getStoreDocumentItems();
-
-        for ( AbstractStoreDocumentItem item : indexDocumentItems )
+        for ( final String key : indexItems )
         {
-            final String fieldName = FieldNameResolver.resolve( item );
-
-            if ( item instanceof StoreDocumentOrderbyItem )
-            {
-                orderByMap.put( fieldName, normalizeValueIfString( item ) );
-            }
-            else
-            {
-                fieldMultiValueMap.put( fieldName, normalizeValueIfString( item ) );
-            }
-        }
-
-        for ( String field : fieldMultiValueMap.keySet() )
-        {
-            addField( result, field, fieldMultiValueMap.get( field ) );
-        }
-
-        for ( String field : orderByMap.keySet() )
-        {
-            addField( result, field, orderByMap.get( field ) );
+            addField( result, key, indexItems.get( key ).stream().
+                map( IndexValue::getValue ).
+                collect( Collectors.toList() ) );
         }
     }
 
-    private static Object normalizeValueIfString( final AbstractStoreDocumentItem item )
+    private static Object normalizeValueIfString( final IndexItem item )
     {
-        final Object value = item.getValue();
+        final IndexValue value = item.getValue();
 
-        if ( value instanceof String )
+        if ( value instanceof IndexValueString )
         {
-            return IndexValueNormalizer.normalize( (String) value );
+            return IndexValueNormalizer.normalize( ( (IndexValueString) value ).getValue() );
         }
         else
         {

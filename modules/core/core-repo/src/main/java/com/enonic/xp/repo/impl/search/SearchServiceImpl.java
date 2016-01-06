@@ -41,7 +41,7 @@ public class SearchServiceImpl
                            BranchIndexPath.TIMESTAMP );
 
     @Override
-    public NodeQueryResult search( final NodeQuery query, final InternalContext context )
+    public NodeQueryResult query( final NodeQuery query, final InternalContext context )
     {
         final StorageType storageType = SearchStorageType.from( context.getBranch() );
 
@@ -60,7 +60,7 @@ public class SearchServiceImpl
     }
 
     @Override
-    public NodeBranchQueryResult search( final NodeBranchQuery nodeBranchQuery, final InternalContext context )
+    public NodeBranchQueryResult query( final NodeBranchQuery nodeBranchQuery, final InternalContext context )
     {
         final StorageType storageType = StaticStorageType.BRANCH;
         final StorageName storageName = StoreStorageName.from( context.getRepositoryId() );
@@ -84,7 +84,7 @@ public class SearchServiceImpl
     }
 
     @Override
-    public NodeVersionQueryResult search( final NodeVersionQuery query, final InternalContext context )
+    public NodeVersionQueryResult query( final NodeVersionQuery query, final InternalContext context )
     {
         final StorageType storageType = StaticStorageType.VERSION;
         final StorageName storageName = StoreStorageName.from( context.getRepositoryId() );
@@ -108,7 +108,7 @@ public class SearchServiceImpl
     }
 
     @Override
-    public NodeVersionDiffResult search( final NodeVersionDiffQuery query, final InternalContext context )
+    public NodeVersionDiffResult query( final NodeVersionDiffQuery query, final InternalContext context )
     {
         final StorageType storageType = StaticStorageType.VERSION;
         final StorageName storageName = StoreStorageName.from( context.getRepositoryId() );

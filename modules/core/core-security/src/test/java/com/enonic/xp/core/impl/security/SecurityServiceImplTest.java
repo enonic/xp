@@ -26,6 +26,7 @@ import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
+import com.enonic.xp.repo.impl.storage.IndexedDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.Repository;
@@ -118,11 +119,15 @@ public class SecurityServiceImplTest
         final SearchServiceImpl searchService = new SearchServiceImpl();
         searchService.setSearchDao( searchDao );
 
+        IndexedDataServiceImpl indexedDataService = new IndexedDataServiceImpl();
+        indexedDataService.setStorageDao( storageDao );
+
         final StorageServiceImpl storageService = new StorageServiceImpl();
         storageService.setBranchService( branchService );
         storageService.setVersionService( versionService );
         storageService.setNodeVersionDao( nodeDao );
         storageService.setIndexServiceInternal( this.indexServiceInternal );
+        storageService.setIndexedDataService( indexedDataService );
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
