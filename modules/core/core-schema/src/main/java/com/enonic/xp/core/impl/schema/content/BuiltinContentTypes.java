@@ -94,6 +94,11 @@ final class BuiltinContentTypes
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Media" ).
             inputType( InputTypeName.MEDIA_UPLOADER ).build() ).
+        addFormItem( Input.create().name( "tags" ).
+            inputType( InputTypeName.TAG ).
+            label( "Tags" ).
+            occurrences( 0, 0 ).
+            build() ).
         build();
 
     private static final ContentType SITE = createSystemType( ContentTypeName.site() ).
