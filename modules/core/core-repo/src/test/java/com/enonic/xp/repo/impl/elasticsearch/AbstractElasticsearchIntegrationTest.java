@@ -7,6 +7,8 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +18,9 @@ import com.enonic.xp.repository.RepositoryId;
 
 public abstract class AbstractElasticsearchIntegrationTest
 {
+    @Rule
+    public TemporaryFolder xpHome = new TemporaryFolder();
+
     protected static final Repository TEST_REPO = Repository.create().
         id( RepositoryId.from( "cms-repo" ) ).
         build();
@@ -34,7 +39,7 @@ public abstract class AbstractElasticsearchIntegrationTest
     public void setUp()
         throws Exception
     {
-        server = new EmbeddedElasticsearchServer();
+        server = new EmbeddedElasticsearchServer( xpHome.getRoot() );
 
         this.client = server.getClient();
         this.elasticsearchDao = new ElasticsearchDaoImpl();

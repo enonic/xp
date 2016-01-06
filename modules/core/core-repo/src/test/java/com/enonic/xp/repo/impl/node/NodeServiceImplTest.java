@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.time.Instant;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -47,12 +45,6 @@ import static org.junit.Assert.*;
 public class NodeServiceImplTest
     extends AbstractNodeTest
 {
-    @Rule
-    public TemporaryFolder blobStore = new TemporaryFolder();
-
-    @Rule
-    public TemporaryFolder snapshots = new TemporaryFolder();
-
     private NodeServiceImpl nodeService;
 
     @Before
@@ -68,8 +60,8 @@ public class NodeServiceImplTest
         this.nodeService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
         final RepoConfiguration config = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( config.getBlobStoreDir() ).thenReturn( this.blobStore.getRoot() );
-        Mockito.when( config.getSnapshotsDir() ).thenReturn( this.snapshots.getRoot() );
+        Mockito.when( config.getBlobStoreDir() ).thenReturn( xpHome.newFolder() );
+        Mockito.when( config.getSnapshotsDir() ).thenReturn( xpHome.newFolder() );
         this.nodeService.setConfiguration( config );
         this.elasticsearchDao.setConfiguration( config );
 
