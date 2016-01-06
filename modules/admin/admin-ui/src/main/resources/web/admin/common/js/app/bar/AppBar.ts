@@ -25,8 +25,6 @@ module api.app.bar {
             this.homeButton = new HomeButton(this.application, AppBarActions.SHOW_BROWSE_PANEL);
             this.appendChild(this.homeButton);
 
-            this.appendChild(this.tabMenu);
-
             this.tabMenu.onNavigationItemAdded((event: api.ui.NavigatorEvent)=> {
                 this.updateAppOpenTabs();
             });
