@@ -1,6 +1,6 @@
 (function () {
     var adminUrl = "/admin/tool";
-    var launcherPanel;
+    var launcherPanel, bodyMaskDiv;
 
     function appendLauncherToolbar() {
         var div = document.createElement("div");
@@ -9,7 +9,7 @@
         var button = document.createElement("button");
         button.setAttribute("class", "launcher-button");
 
-        button.addEventListener("click", onLauncherClick);
+        button.addEventListener("click", openLauncherPanel);
 
         document.getElementsByTagName("body")[0].appendChild(div);
         div.appendChild(button);
@@ -18,6 +18,13 @@
     function appendLauncherPanel() {
         var div = document.createElement("div");
         div.setAttribute("class", "launcher-panel");
+        div.classList.add("hidden");
+
+        var button = document.createElement("button");
+        button.setAttribute("class", "launcher-panel-close");
+        button.addEventListener("click", closeLauncherPanel);
+
+        div.appendChild(button);
         div.appendChild(createLauncherLink(div));
 
         document.getElementsByTagName("body")[0].appendChild(div);
@@ -36,36 +43,74 @@
             while (clonedDiv.childNodes.length > 0) {
                 container.appendChild(clonedDiv.childNodes[0]);
             }
+
+            var appTiles = container.querySelector('.app-tiles-placeholder').querySelectorAll("a");
+            for (var i = 0; i < appTiles.length; i++) {
+                if (appTiles[i].target == "") {
+                    appTiles[i].target = "_blank";
+                    appTiles[i].addEventListener("click", closeLauncherPanel.bind(this, true));
+                }
+            }
         };
 
         return link;
     }
 
-    function setLauncherPanelDisplay(display) {
-        launcherPanel.style.display = display;
+    function getBodyMask() {
+        return document.querySelector('.xp-admin-common-mask.body-mask');
     }
 
+    function createBodyMaskDiv() {
+        var div = document.createElement("div");
+        div.classList.add("xp-admin-common-mask", "body-mask");
+        div.style.display = "block";
+        div.addEventListener("click", closeLauncherPanel);
 
-    function isLauncherPanelVisible() {
-        return launcherPanel.style.display == "block";
+        document.getElementsByTagName("body")[0].appendChild(div);
+
+        return div;
     }
 
-    function onLauncherClick() {
-        setLauncherPanelDisplay('block');
+    function removeBodyMaskDiv() {
+        document.getElementsByTagName("body")[0].removeChild(bodyMaskDiv);
+        bodyMaskDiv = null;
     }
 
-    function onBodyClicked(e) {
-        if (launcherPanel && isLauncherPanelVisible() && e.target != getLauncherButton() && !launcherPanel.contains(e.target)) {
-            setLauncherPanelDisplay('none');
+    function showBodyMask() {
+        var bodyMask = getBodyMask();
+        if (bodyMask) {
+            bodyMask.style.display = "block";
+        }
+        else {
+            bodyMaskDiv = createBodyMaskDiv();
         }
     }
 
-    function getLauncherButton() {
-        return document.querySelector('.launcher-button');
+    function hideBodyMask() {
+        if (bodyMaskDiv) {
+            removeBodyMaskDiv();
+        }
+        else {
+            var bodyMask = getBodyMask();
+            if (bodyMask) {
+                bodyMask.style.display = "block";
+            }
+        }
+    }
+
+    function openLauncherPanel() {
+        showBodyMask();
+        launcherPanel.classList.remove("hidden", "slideout");
+        launcherPanel.classList.add("visible");
+    }
+
+    function closeLauncherPanel(skipTransition) {
+        launcherPanel.classList.remove("visible");
+        launcherPanel.classList.add((skipTransition == true) ? "hidden" : "slideout");
+        hideBodyMask();
     }
 
     function init() {
-        document.getElementsByTagName("body")[0].addEventListener("click", onBodyClicked);
         appendLauncherToolbar();
         appendLauncherPanel();
     }
