@@ -53,7 +53,6 @@
   <!-- Web app -->
   <bundle level="26">${group}:web-api:${version}</bundle>
   <bundle level="26">${group}:web-jetty:${version}</bundle>
-  <bundle level="26">${group}:web-auth:${version}</bundle>
   <bundle level="26">${group}:web-impl:${version}</bundle>
   <bundle level="26">${group}:web-vhost:${version}</bundle>
   <bundle level="26">${group}:web-dos:${version}</bundle>

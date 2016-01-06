@@ -19,8 +19,6 @@ module app.wizard {
 
         private descriptionWizardStepForm: PrincipalDescriptionWizardStepForm;
 
-        private authServiceWizardStepForm: AuthServiceWizardStepForm;
-
         private permissionsWizardStepForm: SecurityWizardStepForm;
 
         private defaultUserStore: UserStore;
@@ -35,7 +33,6 @@ module app.wizard {
         constructor(params: UserStoreWizardPanelParams, callback: (wizard: UserStoreWizardPanel) => void) {
 
             this.descriptionWizardStepForm = new PrincipalDescriptionWizardStepForm();
-            this.authServiceWizardStepForm = new AuthServiceWizardStepForm();
             this.permissionsWizardStepForm = new SecurityWizardStepForm();
 
             this.constructing = true;
@@ -69,8 +66,7 @@ module app.wizard {
             } else {
                 this.getUserStoreWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
                     var updateStatus = event.getPropertyName() === "name" ||
-                                       (this.getUserStoreWizardHeader().isAutoGenerationEnabled() &&
-                                        event.getPropertyName() === "displayName");
+                        (this.getUserStoreWizardHeader().isAutoGenerationEnabled() && event.getPropertyName() === "displayName");
 
                     if (updateStatus) {
                         this.wizardActions.getSaveAction().setEnabled(!!event.getNewValue());
@@ -142,7 +138,6 @@ module app.wizard {
             var steps: WizardStep[] = [];
 
             steps.push(new WizardStep("UserStore", this.descriptionWizardStepForm));
-            steps.push(new WizardStep("Authentication", this.authServiceWizardStepForm));
             steps.push(new WizardStep("Permissions", this.permissionsWizardStepForm));
 
             this.setSteps(steps);
@@ -201,7 +196,6 @@ module app.wizard {
             var deferred = wemQ.defer<void>();
 
             this.wizardHeader.initNames(existing.getDisplayName(), existing.getKey().getId(), false);
-            this.authServiceWizardStepForm.layout(existing.clone());
             this.permissionsWizardStepForm.layout(existing.clone(), this.defaultUserStore);
 
             deferred.resolve(null);
@@ -239,9 +233,8 @@ module app.wizard {
             var persistedUserStore: UserStore = this.getPersistedItem();
             if (persistedUserStore == undefined) {
                 return this.wizardHeader.getName() !== "" ||
-                       this.wizardHeader.getDisplayName() !== "" ||
-                       this.authServiceWizardStepForm.getAuthServiceKey() != null ||
-                       !this.permissionsWizardStepForm.getPermissions().equals(this.defaultUserStore.getPermissions());
+                    this.wizardHeader.getDisplayName() !== "" ||
+                    !this.permissionsWizardStepForm.getPermissions().equals(this.defaultUserStore.getPermissions());
             } else {
                 var viewedUserStore = this.assembleViewedUserStore();
                 return !this.getPersistedItem().equals(viewedUserStore);
@@ -264,7 +257,6 @@ module app.wizard {
             return new UserStoreBuilder().
                 setDisplayName(this.wizardHeader.getDisplayName()).
                 setKey(this.getPersistedItem().getKey().toString()).
-                setAuthServiceKey(this.authServiceWizardStepForm.getAuthServiceKey()).
                 setPermissions(this.permissionsWizardStepForm.getPermissions()).
                 build();
         }
@@ -272,25 +264,21 @@ module app.wizard {
         private produceCreateUserStoreRequest(): CreateUserStoreRequest {
             var key = new UserStoreKey(this.wizardHeader.getName()),
                 name = this.wizardHeader.getDisplayName(),
-                authServiceKey = this.authServiceWizardStepForm.getAuthServiceKey(),
                 permissions = this.permissionsWizardStepForm.getPermissions();
             return new CreateUserStoreRequest().
                 setDisplayName(name).
                 setKey(key).
-                setAuthServiceKey(authServiceKey).
                 setPermissions(permissions);
         }
 
         private produceUpdateUserStoreRequest(viewedUserStore: UserStore): UpdateUserStoreRequest {
             var key = this.getPersistedItem().getKey(),
                 name = viewedUserStore.getDisplayName(),
-                authServiceKey = viewedUserStore.getAuthServiceKey(),
                 permissions = viewedUserStore.getPermissions();
 
             return new UpdateUserStoreRequest().
                 setKey(key).
                 setDisplayName(name).
-                setAuthServiceKey(authServiceKey).
                 setPermissions(permissions);
         }
 

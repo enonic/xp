@@ -22,9 +22,6 @@ module api.app.bar {
 
             this.showAppLauncherAction = new ShowAppLauncherAction(this.application);
 
-            this.launcherButton = new LauncherButton(this.showAppLauncherAction);
-            this.appendChild(this.launcherButton);
-
             this.homeButton = new HomeButton(this.application, AppBarActions.SHOW_BROWSE_PANEL);
             this.appendChild(this.homeButton);
 

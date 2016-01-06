@@ -22,9 +22,4 @@ public class UserStoreSummaryJson
     {
         return userStore.getKey().toString();
     }
-
-    public String getAuthServiceKey()
-    {
-        return userStore.getAuthServiceKey();
-    }
 }

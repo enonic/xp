@@ -9,13 +9,10 @@ public final class UserStore
 
     private final String displayName;
 
-    private final String authServiceKey;
-
     public UserStore( final Builder builder )
     {
         this.key = builder.key;
         this.displayName = builder.displayName;
-        this.authServiceKey = builder.authServiceKey;
     }
 
     public UserStoreKey getKey()
@@ -26,11 +23,6 @@ public final class UserStore
     public String getDisplayName()
     {
         return displayName;
-    }
-
-    public String getAuthServiceKey()
-    {
-        return authServiceKey;
     }
 
     public static Builder create()
@@ -49,8 +41,6 @@ public final class UserStore
 
         private String displayName;
 
-        private String authServiceKey;
-
         private Builder()
         {
         }
@@ -59,7 +49,6 @@ public final class UserStore
         {
             this.key = userStore.key;
             this.displayName = userStore.displayName;
-            this.authServiceKey = userStore.authServiceKey;
         }
 
         public Builder displayName( final String value )
@@ -71,12 +60,6 @@ public final class UserStore
         public Builder key( final UserStoreKey value )
         {
             this.key = value;
-            return this;
-        }
-
-        public Builder authServiceKey( final String value )
-        {
-            this.authServiceKey = value;
             return this;
         }
 

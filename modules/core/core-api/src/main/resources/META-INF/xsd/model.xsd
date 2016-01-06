@@ -11,6 +11,7 @@
   <xs:element name="page" type="pageDescriptor"/>
   <xs:element name="part" type="partDescriptor"/>
   <xs:element name="widget" type="widgetDescriptor"/>
+  <xs:element name="tool" type="adminToolDescriptor"/>
   <xs:element name="relationship-type" type="relationshipType"/>
 
   <xs:complexType name="site">
@@ -184,6 +185,20 @@
         <xs:complexType>
           <xs:sequence>
             <xs:element maxOccurs="unbounded" minOccurs="0" name="interface" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="adminToolDescriptor">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="display-name" type="xs:string"/>
+      <xs:element minOccurs="0" name="icon" type="xs:string"/>
+      <xs:element name="allow">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="principal" type="xs:string"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>

@@ -224,7 +224,6 @@ abstract class UserStoreNodeTranslator
             editor( editableNode -> {
                 final PropertyTree nodeData = editableNode.data;
                 nodeData.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, updateUserStoreParams.getDisplayName() );
-                nodeData.setString( UserStorePropertyNames.AUTH_SERVICE_KEY, updateUserStoreParams.getAuthServiceKey() );
             } ).
             build();
     }
@@ -249,13 +248,10 @@ abstract class UserStoreNodeTranslator
             return null;
         }
         final PropertySet nodeAsSet = node.data().getRoot();
-        final String displayName = nodeAsSet.getString( UserStorePropertyNames.DISPLAY_NAME_KEY );
-        final String authServiceKey = nodeAsSet.getString( UserStorePropertyNames.AUTH_SERVICE_KEY );
 
         return UserStore.create().
-            displayName( displayName ).
+            displayName( nodeAsSet.getString( UserStorePropertyNames.DISPLAY_NAME_KEY ) ).
             key( UserStoreNodeTranslator.toKey( node ) ).
-            authServiceKey( authServiceKey ).
             build();
     }
 

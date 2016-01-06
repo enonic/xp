@@ -4,7 +4,6 @@ module api.security {
 
         private userStoreKey: UserStoreKey;
         private displayName: string;
-        private authServiceKey: string;
         private permissions: api.security.acl.UserStoreAccessControlList;
 
         constructor() {
@@ -16,7 +15,6 @@ module api.security {
             return {
                 key: this.userStoreKey.toString(),
                 displayName: this.displayName,
-                authServiceKey: this.authServiceKey,
                 permissions: this.permissions ? this.permissions.toJson() : undefined
             };
         }
@@ -28,11 +26,6 @@ module api.security {
 
         setDisplayName(displayName: string): UpdateUserStoreRequest {
             this.displayName = displayName;
-            return this;
-        }
-
-        setAuthServiceKey(authServiceKey: string): UpdateUserStoreRequest {
-            this.authServiceKey = authServiceKey;
             return this;
         }
 

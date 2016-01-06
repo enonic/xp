@@ -46,7 +46,6 @@ final class VirtualHostConfigMap
         mapping.setHost( getString( prefix + "host" ) );
         mapping.setSource( getString( prefix + "source" ) );
         mapping.setTarget( getString( prefix + "target" ) );
-        mapping.setUserstore( getString( prefix + "userstore" ) );
 
         return mapping;
     }

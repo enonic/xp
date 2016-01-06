@@ -60,7 +60,7 @@ module app.browse {
                 anyUserStore = userStoresSelected > 0;
 
             this.NEW.setEnabled((directoriesSelected <= 1) && (totalSelection <= 1));
-            this.EDIT.setEnabled(anyUserStore || anyPrincipal);
+            this.EDIT.setEnabled(directoriesSelected < 1 && (anyUserStore || anyPrincipal));
 
             if (totalSelection == 1) {
                 if (principalsSelected == 1) {
