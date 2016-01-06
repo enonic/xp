@@ -17,6 +17,8 @@ import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.ReturnFields;
+import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.storage.MoveBranchParams;
 import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
@@ -42,6 +44,8 @@ public class StorageServiceImpl
     private NodeVersionDao nodeVersionDao;
 
     private IndexServiceInternal indexServiceInternal;
+
+    private IndexedDataService indexedDataService;
 
     @Override
     public Node store( final Node node, final InternalContext context )
@@ -161,6 +165,12 @@ public class StorageServiceImpl
     public NodeVersion get( final NodeVersionMetadata nodeVersionMetadata )
     {
         return this.nodeVersionDao.get( nodeVersionMetadata.getNodeVersionId() );
+    }
+
+    @Override
+    public ReturnValues getIndexedData( final NodeId nodeId, final ReturnFields returnFields, final InternalContext context )
+    {
+        return this.indexedDataService.get( nodeId, returnFields, context );
     }
 
     @Override
@@ -331,5 +341,11 @@ public class StorageServiceImpl
     public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
     {
         this.indexServiceInternal = indexServiceInternal;
+    }
+
+    @Reference
+    public void setIndexedDataService( final IndexedDataService indexedDataService )
+    {
+        this.indexedDataService = indexedDataService;
     }
 }

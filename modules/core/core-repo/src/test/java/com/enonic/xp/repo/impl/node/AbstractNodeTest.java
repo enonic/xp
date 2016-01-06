@@ -42,6 +42,7 @@ import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
+import com.enonic.xp.repo.impl.storage.IndexedDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.Repository;
@@ -107,6 +108,8 @@ public abstract class AbstractNodeTest
 
     protected ElasticsearchSearchDao searchDao;
 
+    protected IndexedDataServiceImpl indexedDataService;
+
     @Before
     public void setUp()
         throws Exception
@@ -148,11 +151,15 @@ public abstract class AbstractNodeTest
         this.nodeDao.setConfiguration( repoConfig );
         this.nodeDao.initialize();
 
+        this.indexedDataService = new IndexedDataServiceImpl();
+        this.indexedDataService.setStorageDao( storageDao );
+
         this.storageService = new StorageServiceImpl();
         this.storageService.setVersionService( this.versionService );
         this.storageService.setBranchService( this.branchService );
         this.storageService.setIndexServiceInternal( this.indexServiceInternal );
         this.storageService.setNodeVersionDao( this.nodeDao );
+        this.storageService.setIndexedDataService( this.indexedDataService );
 
         // Search-service
 

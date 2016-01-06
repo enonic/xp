@@ -70,7 +70,7 @@ public class SetNodeChildOrderCommand
 
     private void orderChildNodes( final Node parentNode )
     {
-        final NodeQueryResult childNodeResult = searchService.search( NodeQuery.create().
+        final NodeQueryResult childNodeResult = searchService.query( NodeQuery.create().
             parent( parentNode.path() ).
             query( new QueryExpr( parentNode.getChildOrder().getOrderExpressions() ) ).
             size( SearchService.GET_ALL_SIZE_FLAG ).

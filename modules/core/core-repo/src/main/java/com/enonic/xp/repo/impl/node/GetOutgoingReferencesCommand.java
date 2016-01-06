@@ -5,8 +5,11 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
+import com.enonic.xp.repo.impl.ReturnFields;
+import com.enonic.xp.repo.impl.ReturnValue;
+import com.enonic.xp.repo.impl.ReturnValues;
 
 public class GetOutgoingReferencesCommand
     extends AbstractNodeCommand
@@ -21,10 +24,24 @@ public class GetOutgoingReferencesCommand
 
     public NodeIds execute()
     {
-        final NodeBranchMetadata branchNodeVersion =
-            this.storageService.getBranchNodeVersion( nodeId, InternalContext.from( ContextAccessor.current() ) );
+        final ReturnValues returnValues = this.storageService.getIndexedData( nodeId, ReturnFields.from( NodeIndexPath.REFERENCE ),
+                                                                              InternalContext.from( ContextAccessor.current() ) );
 
-        return branchNodeVersion.getReferences();
+        final ReturnValue returnValue = returnValues.get( NodeIndexPath.REFERENCE.getPath() );
+
+        if ( returnValue == null || returnValue.getValues().isEmpty() )
+        {
+            return NodeIds.empty();
+        }
+
+        final NodeIds.Builder builder = NodeIds.create();
+
+        for ( final Object value : returnValue.getValues() )
+        {
+            builder.add( NodeId.from( value.toString() ) );
+        }
+
+        return builder.build();
     }
 
     public static Builder create()

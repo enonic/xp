@@ -40,8 +40,6 @@ public class GetOutgoingReferencesCommandTest
             data( data ).
             build() );
 
-        printBranchIndex();
-
         final NodeIds references = GetOutgoingReferencesCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             searchService( this.searchService ).
