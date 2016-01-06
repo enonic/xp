@@ -150,7 +150,7 @@ var __ = {
     },
 
     /**
-     * Doc toScriptValue.
+     * Converts JSon to a Java Map structure that can be used as parameters to a Java method on a bean created with <code>newBean</code>.
      *
      * @param value Value to convert.
      */
@@ -168,7 +168,8 @@ var __ = {
     },
 
     /**
-     * Doc nullOrValue.
+     * Converts a JavaScript variable that is undefined to a Java <code>null</code> object.
+     * If the JavaScript variable is defined, it is returned as is.
      *
      * @param value Value to convert.
      */
