@@ -24,13 +24,14 @@ module api.app.browse {
             });
         }
 
-        getBrowseItem(): BrowseItem<M> {
-            return this.item;
+        setBrowseItem(item: BrowseItem<M>) {
+            this.item = item;
+            this.viewer.setObject(item.getModel());
+            this.render();
         }
 
-        updateViewer(viewer: api.ui.Viewer<M>) {
-            this.viewer = viewer;
-            this.render();
+        getBrowseItem(): BrowseItem<M> {
+            return this.item;
         }
 
         doRender(): boolean {

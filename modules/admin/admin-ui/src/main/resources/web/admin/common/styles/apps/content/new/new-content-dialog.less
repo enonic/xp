@@ -194,7 +194,7 @@
 
   }
 
-  &.no-uploader {
+  &.no-uploader-el {
     .dialog-buttons {
        &:before {
           content: '';
@@ -202,7 +202,7 @@
     }
 
     .file-input {
-      .uploader {
+      .uploader-el {
         pointer-events: none;
         cursor: default;
         opacity: 0.5;
@@ -230,7 +230,7 @@
       z-index: @z-index-modal-dialog + 2;
     }
 
-    .uploader {
+    .uploader-el {
       position: absolute;
       top: 0;
       left: 0;

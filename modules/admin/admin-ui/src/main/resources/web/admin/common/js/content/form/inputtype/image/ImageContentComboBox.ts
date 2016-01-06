@@ -28,6 +28,10 @@ module api.content.form.inputtype.image {
             // Actually the hack.
             // ImageSelectorSelectedOptionsView and BaseSelectedOptionsView<ContentSummary> are incompatible in loaders.
             super(<RichComboBoxBuilder<ImageSelectorDisplayValue>>richComboBoxBuilder);
+
+            if (builder.postLoad) {
+                this.handleLastRange(builder.postLoad);
+            }
         }
 
         createOption(value: ContentSummary): Option<ImageSelectorDisplayValue> {
@@ -55,6 +59,8 @@ module api.content.form.inputtype.image {
         selectedOptionsView: ImageSelectorSelectedOptionsView;
 
         optionDisplayValueViewer: ImageSelectorViewer;
+
+        postLoad: () => void;
 
         value: string;
 
@@ -90,6 +96,11 @@ module api.content.form.inputtype.image {
 
         setOptionDisplayValueViewer(value: ImageSelectorViewer): ImageContentComboBoxBuilder {
             this.optionDisplayValueViewer = value;
+            return this;
+        }
+
+        setPostLoad(postLoad: () => void) {
+            this.postLoad = postLoad;
             return this;
         }
 

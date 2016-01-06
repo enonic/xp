@@ -52,6 +52,7 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ReprocessContentParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
@@ -640,6 +641,19 @@ public class ContentServiceImpl
     public String getBinaryKey( final ContentId contentId, final BinaryReference binaryReference )
     {
         return nodeService.getBinaryKey( NodeId.from( contentId.toString() ), binaryReference );
+    }
+
+    @Override
+    public Content reprocess( final ContentId contentId )
+    {
+        return ReprocessContentCommand.create( ReprocessContentParams.create().contentId( contentId ).build() ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            contentService( this ).
+            build().
+            execute();
     }
 
     @Override

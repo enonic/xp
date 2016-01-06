@@ -9,7 +9,7 @@ module api.content.form.inputtype.image {
 
     export class ImageUploadDialog extends api.ui.dialog.ModalDialog {
 
-        private imageUploader: api.content.ImageUploader;
+        private imageUploader: api.content.ImageUploaderEl;
 
         constructor(parentContent: api.content.ContentId, allowMultiSelection = false) {
 
@@ -24,11 +24,11 @@ module api.content.form.inputtype.image {
             description.getEl().setInnerHtml("Images uploaded will be added as children to this content, you may move them later if desired");
             this.appendChildToContentPanel(description);
 
-            this.imageUploader = new api.content.ImageUploader({
+            this.imageUploader = new api.content.ImageUploaderEl({
                 params: {
                     parent: parentContent.toString()
                 },
-                operation: api.content.MediaUploaderOperation.create,
+                operation: api.content.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',
                 showCancel: false,
                 showReset: false,

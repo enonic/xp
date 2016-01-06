@@ -9,18 +9,18 @@ module api.content.form.inputtype.upload {
 
     export class ImageUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
 
-        private imageUploader: api.content.ImageUploader;
+        private imageUploader: api.content.ImageUploaderEl;
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super(config);
             var input = config.input;
 
-            this.imageUploader = new api.content.ImageUploader(<api.content.ImageUploaderConfig>{
+            this.imageUploader = new api.content.ImageUploaderEl(<api.content.ImageUploaderElConfig>{
                 params: {
                     content: config.contentId.toString()
                 },
-                operation: api.content.MediaUploaderOperation.update,
+                operation: api.content.MediaUploaderElOperation.update,
                 name: input.getName(),
                 skipWizardEvents: false,
                 maximumOccurrences: 1,

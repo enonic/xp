@@ -16,7 +16,7 @@ module api.form.inputtype.text.htmlarea {
 
         private imagePreviewContainer: api.dom.DivEl;
         private imageCaptionField: FormItem;
-        private uploader: api.content.ImageUploader;
+        private imageUploaderEl: api.content.ImageUploaderEl;
         private imageElement: HTMLImageElement;
         private contentId: api.content.ContentId;
         private imageSelector: api.content.ContentComboBox;
@@ -78,7 +78,7 @@ module api.form.inputtype.text.htmlarea {
                 formItem.addClass("image-preview");
                 this.previewImage(imageContent);
                 this.hideCaptionLabel();
-                this.uploader.hide();
+                this.imageUploaderEl.hide();
             });
 
             imageSelectorComboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
@@ -92,7 +92,7 @@ module api.form.inputtype.text.htmlarea {
                 this.removePreview();
                 this.imageToolbar.remove();
                 this.showCaptionLabel();
-                this.uploader.show();
+                this.imageUploaderEl.show();
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
 
@@ -180,7 +180,7 @@ module api.form.inputtype.text.htmlarea {
         show() {
             super.show();
 
-            this.uploader.show();
+            this.imageUploaderEl.show();
         }
 
         protected getMainFormItems(): FormItem[] {
@@ -219,19 +219,19 @@ module api.form.inputtype.text.htmlarea {
         private addUploaderAndPreviewControls(imageSelector: FormItem) {
             var imageSelectorContainer = imageSelector.getInput().getParentElement();
 
-            imageSelectorContainer.appendChild(this.uploader = this.createImageUploader());
+            imageSelectorContainer.appendChild(this.imageUploaderEl = this.createImageUploader());
 
             this.createImagePreviewContainer();
 
             wemjq(this.imagePreviewContainer.getHTMLElement()).insertAfter(imageSelectorContainer.getHTMLElement());
         }
 
-        private createImageUploader(): api.content.ImageUploader {
-            var uploader = new api.content.ImageUploader(<api.content.ImageUploaderConfig>{
+        private createImageUploader(): api.content.ImageUploaderEl {
+            var uploader = new api.content.ImageUploaderEl(<api.content.ImageUploaderElConfig>{
                 params: {
                     parent: this.contentId.toString()
                 },
-                operation: api.content.MediaUploaderOperation.create,
+                operation: api.content.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',
                 showButtons: false,
                 showResult: false,

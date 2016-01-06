@@ -34,6 +34,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 
+import io.swagger.annotations.ApiOperation;
+
 import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
 import com.enonic.xp.admin.impl.json.content.CompareContentResultsJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
@@ -268,21 +270,23 @@ public final class ContentResource
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public ContentJson updateThumbnail( final MultipartForm form )
     {
-        final MultipartItem mediaFile = form.get( "file" );
-
-        final CreateAttachment thumbnailAttachment = CreateAttachment.create().
-            name( AttachmentNames.THUMBNAIL ).
-            mimeType( mediaFile.getContentType().toString() ).
-            byteSource( getFileItemByteSource( mediaFile ) ).
-            build();
-
-        final UpdateContentParams params = new UpdateContentParams().
-            contentId( ContentId.from( form.getAsString( "id" ) ) ).
-            createAttachments( CreateAttachments.from( thumbnailAttachment ) );
-
-        final Content persistedContent = contentService.update( params );
+        final Content persistedContent = this.doCreateAttachment(AttachmentNames.THUMBNAIL, form);
 
         return new ContentJson( persistedContent, newContentIconUrlResolver(), principalsResolver );
+    }
+
+    @POST
+    @Path("createAttachment")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public AttachmentJson createAttachment( final MultipartForm form ) {
+
+        final MultipartItem mediaFile = form.get( "file" );
+        final String attachmentName = mediaFile.getFileName();
+
+        final Content persistedContent = this.doCreateAttachment( attachmentName, form );
+
+        return new AttachmentJson(persistedContent.getAttachments().byName( attachmentName ));
+
     }
 
     @POST
@@ -957,6 +961,68 @@ public final class ContentResource
             permissionsJson.add( new EffectivePermissionJson( access.name(), accessJson ) );
         }
         return permissionsJson;
+    }
+
+    @POST
+    @Path("reprocess")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed(RoleKeys.ADMIN_ID)
+    @ApiOperation("Reprocesses content")
+    public ReprocessContentResultJson reprocess( final ReprocessContentRequestJson request )
+    {
+        final List<ContentPath> updated = new ArrayList<>();
+
+        final Content content = this.contentService.getByPath( request.getSourceBranchPath().getContentPath() );
+        reprocessContent( content, request.isSkipChildren(), updated );
+
+        return new ReprocessContentResultJson( ContentPaths.from( updated ) );
+    }
+
+    private void reprocessContent( final Content content, final boolean skipChildren, final List<ContentPath> updated )
+    {
+        final Content reprocessedContent = this.contentService.reprocess( content.getId() );
+        if ( !reprocessedContent.equals( content ) )
+        {
+            updated.add( content.getPath() );
+        }
+        if ( skipChildren )
+        {
+            return;
+        }
+
+        int from = 0;
+        int resultCount;
+        do
+        {
+            final FindContentByParentParams findParams = FindContentByParentParams.create().parentId( content.getId() ).
+                from( from ).size( 5 ).build();
+            final FindContentByParentResult results = this.contentService.findByParent( findParams );
+
+            for ( Content child : results.getContents() )
+            {
+                reprocessContent( child, false, updated );
+            }
+            resultCount = Math.toIntExact( results.getHits() );
+            from = from + resultCount;
+        }
+        while ( resultCount > 0 );
+    }
+
+    private Content doCreateAttachment(final String attachmentName, final MultipartForm form) {
+        final MultipartItem mediaFile = form.get( "file" );
+
+        final CreateAttachment attachment = CreateAttachment.create().
+            name( attachmentName ).
+            mimeType( mediaFile.getContentType().toString() ).
+            byteSource( getFileItemByteSource( mediaFile ) ).
+            build();
+
+        final UpdateContentParams params = new UpdateContentParams().
+            contentId( ContentId.from( form.getAsString( "id" ) ) ).
+            createAttachments( CreateAttachments.from( attachment ) );
+
+        return contentService.update( params );
     }
 
     private PrincipalQueryResult getTotalUsers()

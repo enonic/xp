@@ -40,6 +40,20 @@ module app.view {
                     this.addImageSizeToUrl(this.item);
                 }
             });
+
+            this.frame.onLoaded((event: UIEvent) => {
+                var frameWindow = this.frame.getHTMLElement()["contentWindow"];
+
+                try {
+                    if (frameWindow) {
+                        var pathname: string = frameWindow.location.pathname;
+                        if (pathname && pathname !== 'blank') {
+                            new ContentPreviewPathChangedEvent(pathname).fire();
+                        }
+                    }
+                } catch (reason) {}
+
+            });
         }
 
         private centerImage(imgWidth, imgHeight, myWidth, myHeight) {
@@ -78,8 +92,13 @@ module app.view {
                     this.showMask();
                     if (item.isRenderable()) {
                         this.getEl().removeClass("image-preview no-preview").addClass('page-preview');
-                        this.frame.setSrc(api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW,
-                            api.content.Branch.DRAFT));
+                        var src = api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW,
+                            api.content.Branch.DRAFT);
+                        if (!this.frame.isSrcAlreadyShown(src)) {
+                            this.frame.setSrc(src);
+                        } else {
+                            this.mask.hide();
+                        }
                     } else {
                         this.setNoPreview();
                     }

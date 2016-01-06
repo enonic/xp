@@ -41,11 +41,15 @@ module api.content.form.inputtype.image {
 
         private contentRequestsAllowed: boolean;
 
-        private uploader: ImageUploader;
+        private uploader: ImageUploaderEl;
 
         private editContentRequestListeners: {(content: ContentSummary): void }[] = [];
 
         private relationshipType: string;
+
+        private allowedContentTypes: string[];
+
+        private allowedContentPaths: string[];
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("image-selector");
@@ -87,13 +91,19 @@ module api.content.form.inputtype.image {
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
             var relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
-            var relationshipType = relationshipTypeConfig['value'];
+            this.relationshipType = relationshipTypeConfig['value'];
 
-            if (relationshipType) {
-                this.relationshipTypeName = new RelationshipTypeName(relationshipType);
+            if (this.relationshipType) {
+                this.relationshipTypeName = new RelationshipTypeName(this.relationshipType);
             } else {
                 this.relationshipTypeName = RelationshipTypeName.REFERENCE;
             }
+
+            var allowContentTypeConfig = inputConfig['allowContentType'] || [];
+            this.allowedContentTypes = allowContentTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val);
+
+            var allowContentPathConfig = inputConfig['allowPath'] || [];
+            this.allowedContentPaths = allowContentPathConfig.map((cfg) => cfg['value']).filter((val) => !!val);
         }
 
         private updateSelectedItemsIcons() {
@@ -156,18 +166,25 @@ module api.content.form.inputtype.image {
             return selectedOptionsView;
         }
 
-        createContentComboBox(maximumOccurrences: number, inputIconUrl: string, allowedContentTypes: string[],
+        createContentComboBox(maximumOccurrences: number, inputIconUrl: string, relationshipAllowedContentTypes: string[],
                               inputName: string): ContentComboBox {
-            var value = this.getPropertyArray().getProperties().map((property) => {
-                return property.getString();
-            }).join(';');
-            
+
+            var contentTypes = this.allowedContentTypes.length ? this.allowedContentTypes :
+                               relationshipAllowedContentTypes.length ? relationshipAllowedContentTypes :
+                                   [ContentTypeName.IMAGE.toString()];
+
+            var contentSelectorLoader = ContentSelectorLoader.create().
+                setId(this.config.contentId).
+                setInputName(inputName).
+                setAllowedContentPaths(this.allowedContentPaths).
+                setContentTypeNames(contentTypes).
+                setRelationshipType(this.relationshipType).
+                build();
+
             var contentComboBox: ImageContentComboBox
                     = ImageContentComboBox.create().
                     setMaximumOccurrences(maximumOccurrences).
-                    setAllowedContentTypes(allowedContentTypes.length ? allowedContentTypes : [ContentTypeName.IMAGE.toString()]).
-                    setLoader(new ContentSelectorLoader(this.config.contentId, inputName)).
-                    setValue(value).
+                    setLoader(contentSelectorLoader).
                     setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).
                     build(),
                 comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();
@@ -187,13 +204,11 @@ module api.content.form.inputtype.image {
             comboBox.setInputIconUrl(inputIconUrl);
 
             comboBox.onOptionDeselected((removed: SelectedOption<ImageSelectorDisplayValue>) => {
-                this.ignorePropertyChange = true;
                 // property not found.
                 if (!!removed.getOption().displayValue.getContentSummary()) {
                     this.getPropertyArray().remove(removed.getIndex());
                 }
                 this.validate(false);
-                this.ignorePropertyChange = false;
             });
 
             comboBox.onOptionSelected((added: SelectedOption<ImageSelectorDisplayValue>) => {
@@ -209,10 +224,9 @@ module api.content.form.inputtype.image {
             });
 
             comboBox.onOptionMoved((moved: SelectedOption<ImageSelectorDisplayValue>) => {
-                this.ignorePropertyChange = true;
+
                 this.getPropertyArray().set(moved.getIndex(), ValueTypes.REFERENCE.newValue(moved.getOption().value));
                 this.validate(false);
-                this.ignorePropertyChange = false;
             });
 
             return contentComboBox;
@@ -259,14 +273,14 @@ module api.content.form.inputtype.image {
             }
         }
 
-        private createUploader(): ImageUploader {
+        private createUploader(): ImageUploaderEl {
             var multiSelection = (this.getInput().getOccurrences().getMaximum() != 1);
 
-            this.uploader = new api.content.ImageUploader({
+            this.uploader = new api.content.ImageUploaderEl({
                 params: {
                     parent: this.config.contentId.toString()
                 },
-                operation: api.content.MediaUploaderOperation.create,
+                operation: api.content.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',
                 showCancel: false,
                 showReset: false,

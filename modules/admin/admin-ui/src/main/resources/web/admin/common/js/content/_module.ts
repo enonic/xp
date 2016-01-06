@@ -83,9 +83,9 @@
 ///<reference path='FieldOrderExpr.ts' />
 ///<reference path='ChildOrder.ts' />
 
-///<reference path='MediaUploader.ts' />
-///<reference path='ImageUploader.ts' />
-///<reference path='ThumbnailUploader.ts' />
+///<reference path='MediaUploaderEl.ts' />
+///<reference path='ImageUploaderEl.ts' />
+///<reference path='ThumbnailUploaderEl.ts' />
 
 ///<reference path='TreeGridItemClickedEvent.ts' />
 ///<reference path='ContentRequiresSaveEvent.ts' />

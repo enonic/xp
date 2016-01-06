@@ -146,6 +146,10 @@ module api.ui.selector.combobox {
             this.input.giveFocus();
         }
 
+        getComboBoxDropdownGrid() {
+            return this.comboBoxDropdown.getDropdownGrid();
+        }
+
         isDropdownShown(): boolean {
             return this.comboBoxDropdown.isDropdownShown();
         }
@@ -458,7 +462,7 @@ module api.ui.selector.combobox {
                 this.setOnBlurListener();
             });
 
-            this.onScroll((event: WheelEvent) => {
+            this.onScrolled((event: WheelEvent) => {
                 event.stopPropagation();
             });
 
@@ -782,7 +786,11 @@ module api.ui.selector.combobox {
             this.input.unBlur(listener);
         }
 
-        onScroll(listener: (event: WheelEvent) => void) {
+        onScrolled(listener: (event: WheelEvent) => void) {
+            this.comboBoxDropdown.getDropdownGrid().getElement().subscribeOnScrolled(listener);
+        }
+
+        onScroll(listener: (event: Event) => void) {
             this.comboBoxDropdown.getDropdownGrid().getElement().subscribeOnScroll(listener);
         }
     }

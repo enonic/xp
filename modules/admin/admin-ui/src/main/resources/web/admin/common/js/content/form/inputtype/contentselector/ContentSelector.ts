@@ -20,6 +20,10 @@ module api.content.form.inputtype.contentselector {
 
         private relationshipType: string;
 
+        private allowedContentTypes: string[];
+
+        private allowedContentPaths: string[];
+
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("relationship");
             this.addClass("input-type-view");
@@ -29,13 +33,19 @@ module api.content.form.inputtype.contentselector {
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
             var relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
-            var relationshipType = relationshipTypeConfig['value'];
+            this.relationshipType = relationshipTypeConfig['value'];
 
-            if (relationshipType) {
-                this.relationshipTypeName = new RelationshipTypeName(relationshipType);
+            if (this.relationshipType) {
+                this.relationshipTypeName = new RelationshipTypeName(this.relationshipType);
             } else {
                 this.relationshipTypeName = RelationshipTypeName.REFERENCE;
             }
+
+            var allowContentTypeConfig = inputConfig['allowContentType'] || [];
+            this.allowedContentTypes = allowContentTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val);
+
+            var allowContentPathConfig = inputConfig['allowPath'] || [];
+            this.allowedContentPaths = allowContentPathConfig.map((cfg) => cfg['value']).filter((val) => !!val);
         }
 
         availableSizeChanged() {
@@ -54,7 +64,13 @@ module api.content.form.inputtype.contentselector {
 
             super.layout(input, propertyArray);
 
-            var contentSelectorLoader = new ContentSelectorLoader(this.config.contentId, input.getName());
+            var contentSelectorLoader = ContentSelectorLoader.create().
+                setId(this.config.contentId).
+                setInputName(input.getName()).
+                setAllowedContentPaths(this.allowedContentPaths).
+                setContentTypeNames(this.allowedContentTypes).
+                setRelationshipType(this.relationshipType).
+                build();
 
             var value = this.getValueFromPropertyArray(propertyArray);
 
@@ -63,6 +79,7 @@ module api.content.form.inputtype.contentselector {
                 .setMaximumOccurrences(input.getOccurrences().getMaximum())
                 .setLoader(contentSelectorLoader)
                 .setValue(value)
+                .setPostLoad(contentSelectorLoader.postLoad.bind(contentSelectorLoader))
                 .build();
 
             return new GetRelationshipTypeByNameRequest(this.relationshipTypeName).

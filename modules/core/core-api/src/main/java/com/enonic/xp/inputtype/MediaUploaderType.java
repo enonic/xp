@@ -6,14 +6,14 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.util.Reference;
 
-final class FileUploaderType
+final class MediaUploaderType
     extends InputTypeBase
 {
-    public final static FileUploaderType INSTANCE = new FileUploaderType();
+    public final static MediaUploaderType INSTANCE = new MediaUploaderType();
 
-    private FileUploaderType()
+    private MediaUploaderType()
     {
-        super( InputTypeName.FILE_UPLOADER );
+        super( InputTypeName.MEDIA_UPLOADER );
     }
 
     @Override

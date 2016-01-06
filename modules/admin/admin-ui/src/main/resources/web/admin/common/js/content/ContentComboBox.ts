@@ -24,6 +24,10 @@ module api.content {
             super(richComboBoxBuilder);
 
             this.addClass('content-combo-box');
+
+            if (builder.postLoad) {
+                this.handleLastRange(builder.postLoad);
+            }
         }
 
         getContent(contentId: ContentId): ContentSummary {
@@ -110,6 +114,8 @@ module api.content {
 
         value: string;
 
+        postLoad: () => void;
+
         setName(value: string): ContentComboBoxBuilder {
             this.name = value;
             return this;
@@ -132,6 +138,11 @@ module api.content {
 
         setValue(value: string): ContentComboBoxBuilder {
             this.value = value;
+            return this;
+        }
+
+        setPostLoad(postLoad: () => void) {
+            this.postLoad = postLoad;
             return this;
         }
 

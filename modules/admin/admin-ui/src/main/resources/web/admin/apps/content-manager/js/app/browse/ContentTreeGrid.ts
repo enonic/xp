@@ -482,6 +482,70 @@ module app.browse {
             return result;
         }
 
+        expandTillNodeWithGivenPath(path: ContentPath, startExpandingFromNode?: TreeNode<ContentSummaryAndCompareStatus>) {
+            var node: TreeNode<ContentSummaryAndCompareStatus>;
+            if (startExpandingFromNode && path.isDescendantOf(startExpandingFromNode.getData().getPath())) {
+                node = startExpandingFromNode;
+            } else {
+                node = this.getRoot().getCurrentRoot();
+            }
+
+            // go down and expand path's parents level by level until we reach the desired element within the list of fetched children
+            this.expandNodeAndCheckTargetReached(node, path);
+        }
+
+        private expandNodeAndCheckTargetReached(nodeToExpand: TreeNode<ContentSummaryAndCompareStatus>, targetPathToExpand: ContentPath) {
+
+            if (!!nodeToExpand.getData() && targetPathToExpand.equals(nodeToExpand.getData().getPath())) {
+                return;
+            }
+
+            if (nodeToExpand) {
+                nodeToExpand.setExpanded(true);
+
+                if (nodeToExpand.hasChildren()) {
+                    this.initData(this.getRoot().getCurrentRoot().treeToList());
+                    this.updateExpanded();
+                    this.expandMoreOrSelectTargetIfReached(nodeToExpand, targetPathToExpand);
+                } else {
+                    this.mask();
+                    this.fetchChildrenData(nodeToExpand)
+                        .then((dataList: ContentSummaryAndCompareStatus[]) => {
+                            nodeToExpand.setChildren(this.dataToTreeNodes(dataList, nodeToExpand));
+                            this.initData(this.getRoot().getCurrentRoot().treeToList());
+                            this.updateExpanded();
+                            this.expandMoreOrSelectTargetIfReached(nodeToExpand, targetPathToExpand);
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                        }).finally(() => {
+                        }).done(() => this.notifyLoaded());
+                }
+            }
+        }
+
+        private expandMoreOrSelectTargetIfReached(nodeToExpand: TreeNode<ContentSummaryAndCompareStatus>, targetPathToExpand: ContentPath) {
+            var nextChildPath = targetPathToExpand.getPathAtLevel(!!nodeToExpand.getData()
+                ? nodeToExpand.getData().getPath().getLevel() + 1
+                : 1);
+
+            var children = nodeToExpand.getChildren();
+            for (var i = 0; i < children.length; i++) {
+                var child: TreeNode<ContentSummaryAndCompareStatus> = children[i],
+                    childPath = child.getData().getPath();
+                if (childPath && childPath.equals(targetPathToExpand)) {
+                    this.selectNode(child.getDataId());
+                    this.scrollToRow(this.getGrid().getDataView().getRowById(child.getId()));
+                    break;
+                } else if (childPath && childPath.equals(nextChildPath)) {
+                    this.expandNodeAndCheckTargetReached(child, targetPathToExpand);
+                }
+            }
+        }
+
+        private fetchChildrenData(parentNode: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+            return this.fetchChildren(parentNode);
+        }
+
         xAppendContentNode(relationship: TreeNodeParentOfContent,
                            update: boolean = true): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>> {
             var appendedNode = this.dataToTreeNode(relationship.getData(), relationship.getNode()),
