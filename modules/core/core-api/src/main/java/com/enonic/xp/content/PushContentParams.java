@@ -13,8 +13,6 @@ public class PushContentParams
 
     private final boolean includeChildren;
 
-    private final boolean allowPublishOutsideSelection;
-
     private final boolean resolveDependencies;
 
     private PushContentParams( Builder builder )
@@ -22,7 +20,6 @@ public class PushContentParams
         contentIds = builder.contentIds;
         target = builder.target;
         includeChildren = builder.includeChildren;
-        allowPublishOutsideSelection = builder.allowPublishOutsideSelection;
         resolveDependencies = builder.resolveDependencies;
     }
 
@@ -46,11 +43,6 @@ public class PushContentParams
         return includeChildren;
     }
 
-    public boolean isAllowPublishOutsideSelection()
-    {
-        return allowPublishOutsideSelection;
-    }
-
     public boolean isResolveDependencies()
     {
         return resolveDependencies;
@@ -63,8 +55,6 @@ public class PushContentParams
         private Branch target;
 
         private boolean includeChildren = true;
-
-        private boolean allowPublishOutsideSelection = true;
 
         private boolean resolveDependencies = true;
 
@@ -87,12 +77,6 @@ public class PushContentParams
         public Builder includeChildren( boolean includeChildren )
         {
             this.includeChildren = includeChildren;
-            return this;
-        }
-
-        public Builder allowPublishOutsideSelection( boolean allowPublishOutsideSelection )
-        {
-            this.allowPublishOutsideSelection = allowPublishOutsideSelection;
             return this;
         }
 

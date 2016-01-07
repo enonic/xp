@@ -435,7 +435,6 @@ public final class ContentResource
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
             includeChildren( params.isIncludeChildren() ).
-            allowPublishOutsideSelection( true ).
             resolveDependencies( true ).
             build() );
 
