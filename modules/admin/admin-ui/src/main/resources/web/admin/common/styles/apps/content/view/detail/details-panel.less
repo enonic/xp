@@ -106,12 +106,9 @@
   }
 
   .details-container {
-    position: absolute;
-    overflow-y: scroll;
-    right: -15px;
-    top: 91px;
-    left: 5px;
-    bottom: 0px;
+    position: relative;
+    overflow-y: auto;
+    margin-top: 2px;
   }
 
   .splitter {
@@ -144,8 +141,7 @@
   .widgets-selection-row {
 
     background-color: @admin-white;
-
-    max-height: 35px;
+    height: 36px;
 
     .info-widget-toggle-button {
       cursor: pointer;
