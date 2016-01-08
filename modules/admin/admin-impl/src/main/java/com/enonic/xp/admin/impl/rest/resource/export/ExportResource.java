@@ -21,9 +21,9 @@ import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.home.HomeDir;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.vfs.VirtualFiles;
-import com.enonic.xp.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "export")
 @Produces(MediaType.APPLICATION_JSON)
@@ -67,6 +67,8 @@ public class ExportResource
                 dryRun( request.isDryRun() ).
                 includeNodeIds( request.isImportWithIds() ).
                 includePermissions( request.isImportWithPermissions() ).
+                xslt( VirtualFiles.from( getExportDirectory( request.getXslSource() ) ) ).
+                xsltParams( request.getXslParams() ).
                 build() ) );
 
         return NodeImportResultJson.from( result );

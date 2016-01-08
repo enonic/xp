@@ -1,5 +1,7 @@
 package com.enonic.xp.toolbox.repo;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -21,6 +23,8 @@ public class ImportCommandTest
         configure( command );
         command.exportName = "myexport";
         command.targetRepoPath = "<draft>:<master>:<root/node1>";
+        command.xslSource = "transform.xsl";
+        command.xslParam = Arrays.asList( "param1=1", "param2=false" );
 
         addResponse( createResponseJson() );
 
@@ -39,6 +43,11 @@ public class ImportCommandTest
         json.put( "targetRepoPath", "<draft>:<master>:<root/node1>" );
         json.put( "importWithIds", true );
         json.put( "importWithPermissions", true );
+        json.put( "xslSource", "transform.xsl" );
+        final ObjectNode xslParamsJson = JsonHelper.newObjectNode();
+        xslParamsJson.put( "param1", "1" );
+        xslParamsJson.put( "param2", "false" );
+        json.set( "xslParams", xslParamsJson );
         return json;
     }
 

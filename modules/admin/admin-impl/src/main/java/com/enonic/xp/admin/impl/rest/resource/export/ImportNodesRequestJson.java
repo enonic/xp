@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.export;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
@@ -16,12 +18,18 @@ public class ImportNodesRequestJson
 
     private final boolean importWithPermissions;
 
+    private final String xslSource;
+
+    private final Map<String, Object> xslParams;
+
     @JsonCreator
     public ImportNodesRequestJson( @JsonProperty("exportName") final String exportName, //
                                    @JsonProperty("targetRepoPath") final String targetRepoPath, //
                                    @JsonProperty("importWithIds") final Boolean importWithIds, //
                                    @JsonProperty("importWithPermissions") final Boolean importWithPermissions, //
-                                   @JsonProperty("dryRun") final Boolean dryRun )
+                                   @JsonProperty("dryRun") final Boolean dryRun, //
+                                   @JsonProperty("xslSource") final String xslSource, //
+                                   @JsonProperty("xslParams") final Map<String, Object> xslParams )
 
     {
 
@@ -33,6 +41,8 @@ public class ImportNodesRequestJson
         this.dryRun = dryRun != null ? dryRun : false;
         this.importWithIds = importWithIds != null ? importWithIds : true;
         this.importWithPermissions = importWithPermissions != null ? importWithPermissions : true;
+        this.xslSource = xslSource;
+        this.xslParams = xslParams;
     }
 
     public RepoPath getTargetRepoPath()
@@ -58,5 +68,15 @@ public class ImportNodesRequestJson
     public boolean isImportWithPermissions()
     {
         return importWithPermissions;
+    }
+
+    public String getXslSource()
+    {
+        return xslSource;
+    }
+
+    public Map<String, Object> getXslParams()
+    {
+        return xslParams;
     }
 }
