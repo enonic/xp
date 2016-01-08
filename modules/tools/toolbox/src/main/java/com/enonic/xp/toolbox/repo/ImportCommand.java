@@ -27,7 +27,7 @@ public final class ImportCommand
     @Option(name = "--skip-permissions", description = "Flag that skips permissions.", required = false)
     public boolean skipPermissions = false;
 
-    @Option(name = "-xslSource", description = "Local path to xsl file for applying transformations to node.xml before importing.", required = false)
+    @Option(name = "-xslSource", description = "Path to xsl file (relative to <XP_HOME>/data/export) for applying transformations to node.xml before importing.", required = false)
     public String xslSource;
 
     @Option(name = "-xslParam", description = "Parameter to pass to the XSL transformations before importing nodes. Format: <parameter-name>=<parameter-value> . e.g. 'applicationId=com.enonic.myapp'", required = false)
