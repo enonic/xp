@@ -23,6 +23,7 @@ import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFiles;
 
 @Path(ResourceConstants.REST_ROOT + "export")
@@ -60,6 +61,9 @@ public class ExportResource
     public NodeImportResultJson importNodes( final ImportNodesRequestJson request )
         throws Exception
     {
+        final String xsl = request.getXslSource();
+        final VirtualFile xsltFile = xsl != null ? VirtualFiles.from( getExportDirectory( xsl ) ) : null;
+
         final NodeImportResult result =
             getContext( request.getTargetRepoPath() ).callWith( () -> this.exportService.importNodes( ImportNodesParams.create().
                 source( VirtualFiles.from( getExportDirectory( request.getExportName() ) ) ).
@@ -67,7 +71,7 @@ public class ExportResource
                 dryRun( request.isDryRun() ).
                 includeNodeIds( request.isImportWithIds() ).
                 includePermissions( request.isImportWithPermissions() ).
-                xslt( VirtualFiles.from( getExportDirectory( request.getXslSource() ) ) ).
+                xslt( xsltFile ).
                 xsltParams( request.getXslParams() ).
                 build() ) );
 
