@@ -326,7 +326,7 @@ html, body {
 
     position: absolute;
     top: 7px;
-    right: 4px;
+    right: 3px;
     z-index: 1;
     background-color: transparent;
     border: none;
@@ -359,31 +359,26 @@ html, body {
 
     .profile {
       width: 100%;
-      z-index: 100000;
       position: absolute;
-      top: 15%;
+      top: 0;
+      background-color: rgba(0, 0, 0, 0.3);
       color: @admin-white;
-      text-align: center;
       font-size: 14px;
-      .profile-image {
-        > * {
-          vertical-align: middle;
-        }
-        img {
-          margin-right: 5px;
-        }
+      display: table;
+      height: 44px;
+
+      > * {
+        display: table-cell;
+        vertical-align: middle;
       }
-      .profile-logout {
-        margin-top: 10px;
-        margin-left: 85px;
-        a {
-          font-size: 12px;
-          font-weight: bold;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-          background-color: @admin-red;
-          padding: 0.5em 2em;
-        }
+      img {
+          width: 30px;
+          margin: 6px 10px;
+      }
+      span {
+        width: 100%;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
     }
