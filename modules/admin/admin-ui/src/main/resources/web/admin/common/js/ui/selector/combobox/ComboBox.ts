@@ -349,8 +349,15 @@ module api.ui.selector.combobox {
 
             this.dropdownHandle.setEnabled(true);
 
-            if (!this.maximumOccurrencesReached() && this.hideComboBoxWhenMaxReached) {
-                this.show();
+            if (this.hideComboBoxWhenMaxReached) {
+                if (this.isVisible() && this.maximumOccurrencesReached()) {
+                    this.hide();
+                }
+
+                if (!this.isVisible() && !this.maximumOccurrencesReached()) {
+                    this.show();
+                }
+
             }
         }
 
