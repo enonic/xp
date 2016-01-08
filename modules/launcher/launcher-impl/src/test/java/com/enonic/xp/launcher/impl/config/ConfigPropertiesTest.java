@@ -17,7 +17,7 @@ public class ConfigPropertiesTest
         props.put( " key2 ", " value2 " );
 
         Assert.assertEquals( "value1", props.get( "key1" ) );
-        Assert.assertEquals( "value2", props.get( "key2" ) );
+        Assert.assertEquals( " value2 ", props.get( " key2 " ) );
     }
 
     @Test
@@ -31,7 +31,7 @@ public class ConfigPropertiesTest
         props.putAll( map );
 
         Assert.assertEquals( "value1", props.get( "key1" ) );
-        Assert.assertEquals( "value2", props.get( "key2" ) );
+        Assert.assertEquals( " value2 ", props.get( " key2 " ) );
     }
 
     @Test
