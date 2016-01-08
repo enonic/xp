@@ -15,7 +15,7 @@ import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.security.SecurityService;
 
 
-public class AuthErrorResponseWrapper
+public class AuthResponseWrapper
     extends HttpServletResponseWrapper
 {
     private final HttpServletRequest request;
@@ -26,8 +26,8 @@ public class AuthErrorResponseWrapper
 
     private boolean errorHandled;
 
-    public AuthErrorResponseWrapper( final HttpServletRequest request, final HttpServletResponse response,
-                                     final SecurityService securityService, final AuthDescriptorService authDescriptorService )
+    public AuthResponseWrapper( final HttpServletRequest request, final HttpServletResponse response, final SecurityService securityService,
+                                final AuthDescriptorService authDescriptorService )
     {
         super( response );
         this.request = request;

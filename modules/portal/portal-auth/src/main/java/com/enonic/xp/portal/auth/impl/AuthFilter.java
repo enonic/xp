@@ -11,12 +11,12 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
-import com.enonic.xp.web.impl.auth.AuthErrorResponseWrapper;
+import com.enonic.xp.web.impl.auth.AuthResponseWrapper;
 
 @Component(immediate = true, service = Filter.class,
     property = {"osgi.http.whiteboard.filter.pattern=/", "service.ranking:Integer=30", "osgi.http.whiteboard.filter.dispatcher=FORWARD",
         "osgi.http.whiteboard.filter.dispatcher=REQUEST"})
-public final class AuthErrorFilter
+public final class AuthFilter
     extends OncePerRequestFilter
 {
     private SecurityService securityService;
@@ -27,7 +27,7 @@ public final class AuthErrorFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        final AuthErrorResponseWrapper responseWrapper = new AuthErrorResponseWrapper( req, res, securityService, authDescriptorService );
+        final AuthResponseWrapper responseWrapper = new AuthResponseWrapper( req, res, securityService, authDescriptorService );
         chain.doFilter( req, responseWrapper );
     }
 
