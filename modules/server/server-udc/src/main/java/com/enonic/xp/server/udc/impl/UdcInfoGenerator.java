@@ -43,7 +43,10 @@ final class UdcInfoGenerator
         if ( network != null )
         {
             final byte[] hardwareAddr = network.getHardwareAddress();
-            return BaseEncoding.base16().encode( hardwareAddr );
+            if ( hardwareAddr != null )
+            {
+                return BaseEncoding.base16().encode( hardwareAddr );
+            }
         }
 
         return "unknown";

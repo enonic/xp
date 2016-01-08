@@ -43,7 +43,6 @@ public class ContentServiceImplTest_push
         final PushContentsResult push = this.contentService.push( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
-            allowPublishOutsideSelection( false ).
             resolveDependencies( false ).
             build() );
 
@@ -64,7 +63,6 @@ public class ContentServiceImplTest_push
         final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
-            allowPublishOutsideSelection( false ).
             build();
 
         final PushContentsResult push = this.contentService.push( pushParams );
@@ -79,24 +77,15 @@ public class ContentServiceImplTest_push
     }
 
     @Test
-    public void push_dependencies_not_allow_outside()
+    public void push_dependencies()
         throws Exception
     {
-        final PushContentsResult result = doPushWithDependencies( false );
+        final PushContentsResult result = doPushWithDependencies();
 
         assertEquals( 4, result.getPushedContents().getSize() );
     }
 
-    @Test
-    public void push_dependencies_allow_outside()
-        throws Exception
-    {
-        final PushContentsResult result = doPushWithDependencies( true );
-
-        assertEquals( 4, result.getPushedContents().getSize() );
-    }
-
-    private PushContentsResult doPushWithDependencies( final boolean allowPublishOutsideSelection )
+    private PushContentsResult doPushWithDependencies()
     {
         final Content content1 = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
@@ -132,7 +121,6 @@ public class ContentServiceImplTest_push
         final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( child2.getId() ) ).
             target( CTX_OTHER.getBranch() ).
-            allowPublishOutsideSelection( allowPublishOutsideSelection ).
             build();
 
         refresh();

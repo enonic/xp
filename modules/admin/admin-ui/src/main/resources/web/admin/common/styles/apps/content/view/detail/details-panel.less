@@ -1,3 +1,5 @@
+@widget-selector-height: 35px;
+
 .content-grid-and-browse-split-panel {
   .browse-toolbar {
     .details-panel-toggle-button, .non-mobile-details-panel-toggle-button {
@@ -106,12 +108,9 @@
   }
 
   .details-container {
-    position: absolute;
-    overflow-y: scroll;
-    right: -15px;
-    top: 91px;
-    left: 5px;
-    bottom: 0px;
+    position: relative;
+    overflow-y: auto;
+    margin-top: 2px;
   }
 
   .splitter {
@@ -144,8 +143,7 @@
   .widgets-selection-row {
 
     background-color: @admin-white;
-
-    max-height: 35px;
+    height: @widget-selector-height;
 
     .info-widget-toggle-button {
       cursor: pointer;
@@ -156,6 +154,7 @@
       border-right: 1px solid #cccccc;
       border-left: 1px solid #cccccc;
       box-sizing: border-box;
+      height: @widget-selector-height;
 
       .icon-list();
 
@@ -174,8 +173,7 @@
 
     .widget-selector {
 
-      max-width: none;
-      width: 100%;
+      width: calc(~'100% - 2px');
       border: 1px solid #cccccc;
       border-left: 0px;
 
@@ -213,7 +211,7 @@
       .dropdown-handle {
         border-left: 1px solid #cccccc;
         border-right: 1px solid #cccccc;
-        max-height: 35px;
+        max-height: @widget-selector-height;
         width: 38px;
 
         &:after {
@@ -224,7 +222,7 @@
       .selected-option {
         background: none;
         width: calc(~'100% - 40px');
-        max-height: 35px;
+        max-height: @widget-selector-height;
         display: inline-block;
         border: 0px;
 
@@ -236,7 +234,7 @@
           margin: 0px 37px 0px 0px;
 
           .viewer {
-            line-height: 35px;
+            line-height: @widget-selector-height;
           }
         }
       }
@@ -249,10 +247,6 @@
 
       .options-container {
         border-top: 0px;
-      }
-
-      .grid {
-        width: calc(~'100% - 2px') !important;
       }
     }
   }

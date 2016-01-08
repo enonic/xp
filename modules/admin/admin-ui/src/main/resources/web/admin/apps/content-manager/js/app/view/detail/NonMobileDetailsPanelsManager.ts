@@ -42,6 +42,9 @@ module app.view.detail {
                 } else if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
                     this.defaultDockedDetailsPanel.notifyPanelSizeChanged();
                 }
+                else if (this.isFloatingDetailsPanelActive()) {
+                    this.floatingDetailsPanel.notifyPanelSizeChanged();
+                }
                 setTimeout(() => {
                     this.resizeEventMonitorLocked = false;
                 }, 600);
@@ -52,6 +55,10 @@ module app.view.detail {
 
         private contentBrowsePanelIsVisible(): boolean {
             return this.splitPanelWithGridAndDetails.getParentElement().isVisible();
+        }
+
+        private isFloatingDetailsPanelActive(): boolean {
+            return ActiveDetailsPanelsManager.getActiveDetailsPanel() == this.floatingDetailsPanel;
         }
 
         private nonMobileDetailsPanelIsActive(): boolean {

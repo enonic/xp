@@ -27,6 +27,8 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
@@ -175,6 +177,8 @@ public final class ContentResource
     private final static String EXPAND_NONE = "none";
 
     private static final int MAX_EFFECTIVE_PERMISSIONS_PRINCIPALS = 10;
+
+    private final static Logger LOG = LoggerFactory.getLogger( ContentResource.class );
 
     private ContentService contentService;
 
@@ -431,7 +435,6 @@ public final class ContentResource
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
             includeChildren( params.isIncludeChildren() ).
-            allowPublishOutsideSelection( true ).
             resolveDependencies( true ).
             build() );
 
@@ -973,14 +976,25 @@ public final class ContentResource
     public ReprocessContentResultJson reprocess( final ReprocessContentRequestJson request )
     {
         final List<ContentPath> updated = new ArrayList<>();
+        final List<String> errors = new ArrayList<>();
 
         final Content content = this.contentService.getByPath( request.getSourceBranchPath().getContentPath() );
-        reprocessContent( content, request.isSkipChildren(), updated );
+        try
+        {
+            reprocessContent( content, request.isSkipChildren(), updated, errors );
+        }
+        catch ( Throwable t )
+        {
+            errors.add(
+                String.format( "Content '%s' - %s: %s", content.getPath().toString(), t.getClass().getCanonicalName(), t.getMessage() ) );
+            LOG.warn( "Error reprocessing content [" + content.getPath() + "]", t );
+        }
 
-        return new ReprocessContentResultJson( ContentPaths.from( updated ) );
+        return new ReprocessContentResultJson( ContentPaths.from( updated ), errors );
     }
 
-    private void reprocessContent( final Content content, final boolean skipChildren, final List<ContentPath> updated )
+    private void reprocessContent( final Content content, final boolean skipChildren, final List<ContentPath> updated,
+                                   final List<String> errors )
     {
         final Content reprocessedContent = this.contentService.reprocess( content.getId() );
         if ( !reprocessedContent.equals( content ) )
@@ -1002,7 +1016,16 @@ public final class ContentResource
 
             for ( Content child : results.getContents() )
             {
-                reprocessContent( child, false, updated );
+                try
+                {
+                    reprocessContent( child, false, updated, errors );
+                }
+                catch ( Throwable t )
+                {
+                    errors.add( String.format( "Content '%s' - %s: %s", child.getPath().toString(), t.getClass().getCanonicalName(),
+                                               t.getMessage() ) );
+                    LOG.warn( "Error reprocessing content [" + child.getPath() + "]", t );
+                }
             }
             resultCount = Math.toIntExact( results.getHits() );
             from = from + resultCount;
