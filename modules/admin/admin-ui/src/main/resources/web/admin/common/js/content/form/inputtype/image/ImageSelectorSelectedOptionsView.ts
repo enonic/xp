@@ -58,7 +58,7 @@ module api.content.form.inputtype.image {
         addOption(option: Option<ImageSelectorDisplayValue>, silent: boolean = false): boolean {
 
             var selectedOption = this.getByOption(option);
-            if (!selectedOption && !this.maximumOccurrencesReached()) {
+            if (!selectedOption) {
                 this.addNewOption(option, silent);
                 return true;
             } else if (selectedOption) {

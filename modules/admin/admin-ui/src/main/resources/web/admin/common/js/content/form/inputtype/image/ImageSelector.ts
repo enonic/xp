@@ -414,7 +414,7 @@ module api.content.form.inputtype.image {
         }
 
         protected getNumberOfValids(): number {
-            return this.contentComboBox.countSelected();
+            return this.getPropertyArray().getSize();
         }
 
         giveFocus(): boolean {
@@ -425,18 +425,20 @@ module api.content.form.inputtype.image {
         }
 
         private setContentIdProperty(contentId: api.content.ContentId) {
-            this.ignorePropertyChange = true;
             var reference = api.util.Reference.from(contentId);
 
             var value = new Value(reference, ValueTypes.REFERENCE);
 
-            if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
-                this.getPropertyArray().set(0, value);
+            if (!this.getPropertyArray().containsValue(value)) {
+                this.ignorePropertyChange = true;
+                if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
+                    this.getPropertyArray().set(0, value);
+                }
+                else {
+                    this.getPropertyArray().add(value);
+                }
+                this.ignorePropertyChange = false;
             }
-            else {
-                this.getPropertyArray().add(value);
-            }
-            this.ignorePropertyChange = false;
         }
 
         onFocus(listener: (event: FocusEvent) => void) {
