@@ -27,7 +27,7 @@ public class AuthResponseWrapper
     private boolean errorHandled;
 
     public AuthResponseWrapper( final HttpServletRequest request, final HttpServletResponse response, final SecurityService securityService,
-                                final AuthDescriptorService authDescriptorService )
+                                final AuthDescriptorService authDescriptorService, final String userStoreKey )
     {
         super( response );
         this.request = request;
