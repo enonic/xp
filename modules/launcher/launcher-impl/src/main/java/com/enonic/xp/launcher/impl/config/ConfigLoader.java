@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
@@ -65,6 +66,12 @@ public final class ConfigLoader
     {
         final Properties props = new Properties();
         props.load( source.openStream() );
-        return Maps.fromProperties( props );
+
+        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+        for ( String propertyName : props.stringPropertyNames() )
+        {
+            builder.put( propertyName.trim(), props.getProperty( propertyName ).trim() );
+        }
+        return builder.build();
     }
 }
