@@ -34,6 +34,7 @@ include 'jaxrs:jaxrs-swagger'
 include 'portal:portal-api'
 include 'portal:portal-owasp'
 include 'portal:portal-impl'
+include 'portal:portal-auth'
 
 include 'admin:admin-api'
 include 'admin:admin-impl'

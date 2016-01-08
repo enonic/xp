@@ -18,7 +18,7 @@ import com.enonic.xp.web.filter.OncePerRequestFilter;
 @Component(immediate = true, service = Filter.class,
     property = {"osgi.http.whiteboard.filter.pattern=/", "service.ranking:Integer=40", "osgi.http.whiteboard.filter.dispatcher=FORWARD",
         "osgi.http.whiteboard.filter.dispatcher=REQUEST"})
-public final class BasicAuthFilter
+public final class AuthFilter
     extends OncePerRequestFilter
 {
     private SecurityService securityService;
