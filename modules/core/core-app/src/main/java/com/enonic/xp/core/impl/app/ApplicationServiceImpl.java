@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.app;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
@@ -12,7 +11,7 @@ import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
-import com.google.common.io.ByteStreams;
+import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
 import com.enonic.xp.app.Application;
@@ -76,9 +75,9 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Application installApplication( final InputStream inputStream )
+    public Application installApplication( final ByteSource byteSource )
     {
-        final File tmpFile = writeAsTmpFile( inputStream );
+        final File tmpFile = writeAsTmpFile( byteSource );
 
         final String symbolicName = findSymbolicName( tmpFile );
 
@@ -101,14 +100,13 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private File writeAsTmpFile( final InputStream inputStream )
+    private File writeAsTmpFile( final ByteSource byteSource )
     {
         File targetFile;
         try
         {
-            final byte[] bytes = ByteStreams.toByteArray( inputStream );
             targetFile = File.createTempFile( createTmpFileName(), ".jar" );
-            Files.write( bytes, targetFile );
+            byteSource.copyTo( Files.asByteSink( targetFile ) );
         }
         catch ( IOException e )
         {

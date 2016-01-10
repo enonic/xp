@@ -15,8 +15,11 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.admin.impl.json.application.ApplicationJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstalledJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationListParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSuccessJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ListApplicationJson;
@@ -24,10 +27,12 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
-import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.multipart.MultipartForm;
+import com.enonic.xp.web.multipart.MultipartItem;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 
@@ -95,6 +100,21 @@ public final class ApplicationResource
     {
         params.getKeys().forEach( this.applicationService::stopApplication );
         return new ApplicationSuccessJson();
+    }
+
+    @POST
+    @Path("install")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public ApplicationInstalledJson stop( final MultipartForm form )
+        throws Exception
+    {
+        final MultipartItem appFile = form.get( "file" );
+
+        final ByteSource byteSource = appFile.getBytes();
+
+        final Application application = this.applicationService.installApplication( byteSource );
+
+        return new ApplicationInstalledJson( application );
     }
 
     @Reference

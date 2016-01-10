@@ -6,6 +6,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 
+import com.google.common.io.ByteSource;
+import com.google.common.io.ByteStreams;
+
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
@@ -101,7 +104,7 @@ public class ApplicationServiceImplTest
         final InputStream in = newBundle( "my-bundle", true ).
             build();
 
-        final Application application = this.service.installApplication( in );
+        final Application application = this.service.installApplication( ByteSource.wrap( ByteStreams.toByteArray( in ) ) );
 
         assertNotNull( application );
         assertEquals( "my-bundle", application.getKey().getName() );
