@@ -94,6 +94,19 @@ public class ApplicationServiceImplTest
         assertEquals( Bundle.RESOLVED, bundle.getState() );
     }
 
+    @Test
+    public void installBundle()
+        throws Exception
+    {
+        final InputStream in = newBundle( "my-bundle", true ).
+            build();
+
+        final Application application = this.service.installApplication( in );
+
+        assertNotNull( application );
+        assertEquals( "my-bundle", application.getKey().getName() );
+    }
+
     private Bundle deployBundle( final String key, final boolean isApp )
         throws Exception
     {
