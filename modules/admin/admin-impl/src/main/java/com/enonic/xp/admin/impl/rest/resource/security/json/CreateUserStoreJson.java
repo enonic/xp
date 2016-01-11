@@ -18,6 +18,7 @@ public final class CreateUserStoreJson
 
     @JsonCreator
     public CreateUserStoreJson( @JsonProperty("key") final String userStoreKey, @JsonProperty("displayName") final String displayName,
+                                @JsonProperty("authConfig") final UserStoreAuthConfigJson authConfigJson,
                                 @JsonProperty("permissions") final List<UserStoreAccessControlEntryJson> aclEntries )
     {
         final UserStoreAccessControlEntry[] userStoreAclEntries = aclEntries.stream().map( UserStoreAccessControlEntryJson::getEntry ).
@@ -27,6 +28,7 @@ public final class CreateUserStoreJson
         this.createUserStoreParams = CreateUserStoreParams.create().
             key( UserStoreKey.from( userStoreKey ) ).
             displayName( displayName ).
+            authConfig( authConfigJson == null ? null : authConfigJson.getUserStoreAuthConfig() ).
             permissions( permissions ).
             build();
     }
