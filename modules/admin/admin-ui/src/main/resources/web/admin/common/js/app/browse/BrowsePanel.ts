@@ -78,8 +78,9 @@ module api.app.browse {
             this.gridAndToolbarContainer.appendChild(gridPanel);
 
             this.contentGridAndBrowseSplitPanel = new api.ui.panel.SplitPanelBuilder(this.gridAndToolbarContainer, this.browseItemPanel)
-                .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD).build();
-            this.contentGridAndBrowseSplitPanel.prependChild(this.browseToolbar);
+                .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD)
+                .setToolbar(this.browseToolbar).
+                build();
             this.contentGridAndBrowseSplitPanel.setFirstPanelSize(38, api.ui.panel.SplitPanelUnit.PERCENT);
 
             this.browseToolbar.addClass("browse-toolbar");
