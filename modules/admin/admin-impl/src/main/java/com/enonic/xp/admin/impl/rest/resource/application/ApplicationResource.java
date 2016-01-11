@@ -24,10 +24,12 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.auth.AuthDescriptor;
+import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
-import com.enonic.xp.jaxrs.JaxRsComponent;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 
@@ -41,6 +43,8 @@ public final class ApplicationResource
     private ApplicationService applicationService;
 
     private SiteService siteService;
+
+    private AuthDescriptorService authDescriptorService;
 
     @GET
     @Path("list")
@@ -63,7 +67,10 @@ public final class ApplicationResource
         final ListApplicationJson json = new ListApplicationJson();
         for ( final Application application : applications )
         {
-            json.add( application, this.siteService.getDescriptor( application.getKey() ) );
+            final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( application.getKey() );
+            final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( application.getKey() );
+
+            json.add( application, siteDescriptor, authDescriptor );
         }
 
         return json;
@@ -74,7 +81,8 @@ public final class ApplicationResource
     {
         final Application application = this.applicationService.getApplication( ApplicationKey.from( applicationKey ) );
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( ApplicationKey.from( applicationKey ) );
-        return new ApplicationJson( application, siteDescriptor );
+        final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( ApplicationKey.from( applicationKey ) );
+        return new ApplicationJson( application, siteDescriptor, authDescriptor );
     }
 
     @POST
@@ -109,5 +117,10 @@ public final class ApplicationResource
         this.siteService = siteService;
     }
 
+    @Reference
+    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
+    {
+        this.authDescriptorService = authDescriptorService;
+    }
 }
 

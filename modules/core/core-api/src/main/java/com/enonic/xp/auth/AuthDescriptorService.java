@@ -7,5 +7,5 @@ import com.enonic.xp.app.ApplicationKey;
 @Beta
 public interface AuthDescriptorService
 {
-    AuthDescriptor getByKey( final ApplicationKey key );
+    AuthDescriptor getDescriptor( final ApplicationKey key );
 }

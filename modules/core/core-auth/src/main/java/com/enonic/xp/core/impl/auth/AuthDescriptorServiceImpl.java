@@ -19,7 +19,7 @@ public final class AuthDescriptorServiceImpl
     private ResourceService resourceService;
 
     @Override
-    public AuthDescriptor getByKey( final ApplicationKey key )
+    public AuthDescriptor getDescriptor( final ApplicationKey key )
     {
         final ResourceProcessor<ApplicationKey, AuthDescriptor> processor = newProcessor( key );
         return this.resourceService.processResource( processor );

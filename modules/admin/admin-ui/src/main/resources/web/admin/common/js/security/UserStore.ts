@@ -3,11 +3,13 @@ module api.security {
     export class UserStore implements api.Equitable {
         private displayName: string;
         private key: UserStoreKey;
+        private authConfig: UserStoreAuthConfig;
         private permissions: api.security.acl.UserStoreAccessControlList;
 
         constructor(builder: UserStoreBuilder) {
             this.displayName = builder.displayName;
             this.key = builder.key;
+            this.authConfig = builder.authConfig;
             this.permissions = builder.permissions || new api.security.acl.UserStoreAccessControlList();
         }
 
@@ -17,6 +19,10 @@ module api.security {
 
         getKey(): UserStoreKey {
             return this.key;
+        }
+
+        getAuthConfig(): UserStoreAuthConfig {
+            return this.authConfig;
         }
 
         getPermissions(): api.security.acl.UserStoreAccessControlList {
@@ -54,6 +60,7 @@ module api.security {
 
             return this.key.equals(other.key) &&
                    this.displayName === other.displayName &&
+                   this.authConfig.equals(other.authConfig) &&
                    this.permissions.equals(other.permissions)
         }
 
@@ -61,6 +68,7 @@ module api.security {
             return UserStore.create().
                 setDisplayName(this.displayName).
                 setKey(this.key.toString()).
+                setAuthConfig(this.authConfig).
                 setPermissions(this.permissions.clone()).
                 build();
         }
@@ -77,6 +85,7 @@ module api.security {
     export class UserStoreBuilder {
         displayName: string;
         key: UserStoreKey;
+        authConfig: UserStoreAuthConfig;
         permissions: api.security.acl.UserStoreAccessControlList;
 
         constructor() {
@@ -85,6 +94,7 @@ module api.security {
         fromJson(json: api.security.UserStoreJson): UserStoreBuilder {
             this.key = new UserStoreKey(json.key);
             this.displayName = json.displayName;
+            this.authConfig = json.authConfig ? UserStoreAuthConfig.fromJson(json.authConfig) : null;
             this.permissions = json.permissions ? api.security.acl.UserStoreAccessControlList.fromJson(json.permissions) : null;
             return this;
         }
@@ -96,6 +106,11 @@ module api.security {
 
         setDisplayName(displayName: string): UserStoreBuilder {
             this.displayName = displayName;
+            return this;
+        }
+
+        setAuthConfig(authConfig: UserStoreAuthConfig): UserStoreBuilder {
+            this.authConfig = authConfig;
             return this;
         }
 

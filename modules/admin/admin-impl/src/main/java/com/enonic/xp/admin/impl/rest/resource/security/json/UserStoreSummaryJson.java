@@ -24,7 +24,7 @@ public class UserStoreSummaryJson
         return userStore.getKey().toString();
     }
 
-    public UserStoreAuthConfigJson getAuthApplication()
+    public UserStoreAuthConfigJson getAuthConfig()
     {
         final UserStoreAuthConfig authConfig = userStore.getAuthConfig();
         return UserStoreAuthConfigJson.toJson( authConfig );

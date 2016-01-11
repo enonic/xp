@@ -235,7 +235,7 @@ abstract class UserStoreNodeTranslator
                 else
                 {
                     nodeData.setString( UserStorePropertyNames.AUTH_APPLICATION_KEY, authConfig.getApplicationKey().toString() );
-                    nodeData.setSet( UserStorePropertyNames.AUTH_CONFIG_KEY, authConfig.getConfig().getRoot() );
+                    nodeData.setSet( UserStorePropertyNames.AUTH_CONFIG_FORM_KEY, authConfig.getConfig().getRoot() );
                 }
             } ).
             build();
