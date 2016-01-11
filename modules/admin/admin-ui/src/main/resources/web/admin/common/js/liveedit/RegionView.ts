@@ -137,7 +137,7 @@ module api.liveedit {
             this.mouseOverListener = (e: MouseEvent) => {
                 var isDragging = DragAndDrop.get().isDragging();
 
-                if (isDragging && this.isMouseExactlyOverThisRegion((<HTMLElement>e.target))) {
+                if (isDragging && this.isElementOverRegion((<HTMLElement>e.target))) {
                     this.highlight();
                 }
 
@@ -148,8 +148,8 @@ module api.liveedit {
 
         /*
             Checking if this region is where mouseover triggered to not highlight region's ancestor regions
-         */
-        private isMouseExactlyOverThisRegion(element: HTMLElement): boolean {
+        */
+        private isElementOverRegion(element: HTMLElement): boolean {
             while(!element.hasAttribute("data-portal-region")) {
                 element = element.parentElement;
             }
