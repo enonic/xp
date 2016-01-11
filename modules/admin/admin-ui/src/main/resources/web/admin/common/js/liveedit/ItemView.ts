@@ -517,8 +517,8 @@ module api.liveedit {
 
         private eventOverItem(event: MouseEvent): boolean {
             var offset = this.getEl().getDimensions(),
-                x = event.x || event.clientX,
-                y = event.y || event.clientY;
+                x = event.pageX,
+                y = event.pageY;
 
             return x >= offset.left
                    && x <= offset.left + offset.width
