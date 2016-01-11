@@ -72,6 +72,8 @@ module api.liveedit {
 
         private mouseDownLastTarget: HTMLElement;
 
+        private mouseOverListener;
+
         public static debug: boolean;
 
         constructor(builder: RegionViewBuilder) {
@@ -131,6 +133,28 @@ module api.liveedit {
             this.parseComponentViews();
 
             this.onMouseDown(this.memorizeLastMouseDownTarget.bind(this));
+
+            this.mouseOverListener = (e: MouseEvent) => {
+                var isDragging = DragAndDrop.get().isDragging();
+
+                if (isDragging && this.isMouseExactlyOverThisRegion((<HTMLElement>e.target))) {
+                    this.highlight();
+                }
+
+            };
+
+            this.onMouseOver(this.mouseOverListener);
+        }
+
+        /*
+            Checking if this region is where mouseover triggered to not highlight region's ancestor regions
+         */
+        private isMouseExactlyOverThisRegion(element: HTMLElement): boolean {
+            while(!element.hasAttribute("data-portal-region")) {
+                element = element.parentElement;
+            }
+
+            return element === this.getHTMLElement();
         }
 
         memorizeLastMouseDownTarget(event: MouseEvent) {
@@ -197,8 +221,7 @@ module api.liveedit {
         }
 
         highlight() {
-            var isDragging = DragAndDrop.get().isDragging();
-            if (!this.getPageView().isTextEditMode() && !isDragging) {
+            if (!this.getPageView().isTextEditMode()) {
                 super.highlight();
             }
         }
@@ -379,6 +402,12 @@ module api.liveedit {
                 // remove component modifies the components array so we can't rely on forEach
                 this.removeComponentView(this.componentViews[0]);
             }
+        }
+
+        remove(): RegionView {
+            this.unMouseOver(this.mouseOverListener);
+            super.remove();
+            return this;
         }
 
         toItemViewArray(): ItemView[] {
