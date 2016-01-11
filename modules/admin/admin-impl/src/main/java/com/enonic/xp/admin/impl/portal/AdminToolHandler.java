@@ -21,7 +21,7 @@ public final class AdminToolHandler
 {
     private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
 
-    private final static DescriptorKey DEFAULT_DESCRIPTOR_KEY = DescriptorKey.from( "com.enonic.xp.admin.ui:launcher" );
+    private final static DescriptorKey DEFAULT_DESCRIPTOR_KEY = DescriptorKey.from( "com.enonic.xp.admin.ui:home" );
 
     private AdminToolDescriptorService adminToolDescriptorService;
 

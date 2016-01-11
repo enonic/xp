@@ -8,7 +8,7 @@ function handleGet(req) {
     var params = {
         assetsUri: assetsUri,
         baseUri: '',
-        portalAssetsUrl: portal.assetUrl({path: ""}),
+        portalAssetsUrl: '',
         xpVersion: app.version,
         app: 'login'
     };

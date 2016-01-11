@@ -1,5 +1,5 @@
 (function () {
-    var adminUrl = "/admin/tool";
+    var adminUrl = "/admin/tool/com.enonic.xp.admin.ui/launcher";
     var launcherPanel, bodyMask;
 
     function appendLauncherToolbar() {
@@ -105,4 +105,8 @@
     }
 
     init();
+
+    if (CONFIG && CONFIG.autoOpenLauncher) {
+        openLauncherPanel();
+    }
 }());

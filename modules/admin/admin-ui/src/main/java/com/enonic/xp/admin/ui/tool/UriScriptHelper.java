@@ -3,6 +3,7 @@ package com.enonic.xp.admin.ui.tool;
 
 import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+import com.enonic.xp.server.ServerInfo;
 
 public class UriScriptHelper
 {
@@ -32,5 +33,10 @@ public class UriScriptHelper
         {
             return version.getVersion();
         }
+    }
+
+    public static final String getInstallation()
+    {
+        return ServerInfo.get().getName();
     }
 }
