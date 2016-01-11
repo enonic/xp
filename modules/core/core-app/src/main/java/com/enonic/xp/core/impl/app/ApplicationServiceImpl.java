@@ -81,23 +81,28 @@ public final class ApplicationServiceImpl
 
         final String symbolicName = findSymbolicName( tmpFile );
 
-        final Bundle bundle = installBundle( tmpFile, symbolicName );
+        final Bundle bundle;
 
-        tmpFile.delete();
+        try
+        {
+            bundle = installBundle( tmpFile, symbolicName );
+        }
+        catch ( Exception e )
+        {
+            throw new InstallApplicationException( "Could not install application bundle:   '" + symbolicName + "'", e );
+        }
+        finally
+        {
+            tmpFile.delete();
+        }
 
         return this.registry.get( ApplicationKey.from( bundle ) );
     }
 
     private Bundle installBundle( final File tmpFile, final String symbolicName )
+        throws Exception
     {
-        try
-        {
-            return this.context.installBundle( symbolicName, Files.asByteSource( tmpFile ).openStream() );
-        }
-        catch ( Exception e )
-        {
-            throw new InstallApplicationException( "Could not install application '" + symbolicName + "'", e );
-        }
+        return this.context.installBundle( symbolicName, Files.asByteSource( tmpFile ).openStream() );
     }
 
     private File writeAsTmpFile( final ByteSource byteSource )
@@ -134,6 +139,11 @@ public final class ApplicationServiceImpl
         catch ( IOException e )
         {
             throw new RuntimeException( "Could not find symbolic name from bundle-file", e );
+        }
+
+        if ( man == null )
+        {
+            throw new RuntimeException( "Manifest-info not found" );
         }
 
         return man.getMainAttributes().getValue( Constants.BUNDLE_SYMBOLICNAME );

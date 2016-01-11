@@ -1,5 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.application;
 
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -16,9 +19,11 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
+import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.admin.impl.json.application.ApplicationJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstalledJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationListParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSuccessJson;
@@ -105,14 +110,45 @@ public final class ApplicationResource
     @POST
     @Path("install")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public ApplicationInstalledJson stop( final MultipartForm form )
+    public ApplicationInstalledJson install( final MultipartForm form )
         throws Exception
     {
         final MultipartItem appFile = form.get( "file" );
 
+        if ( appFile == null )
+        {
+            throw new RuntimeException( "Missing file item" );
+        }
+
         final ByteSource byteSource = appFile.getBytes();
 
         final Application application = this.applicationService.installApplication( byteSource );
+
+        return new ApplicationInstalledJson( application );
+    }
+
+    @POST
+    @Path("installUrl")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public ApplicationInstalledJson installUrl( final ApplicationInstallParams params )
+        throws Exception
+    {
+        final String urlString = params.getURL();
+
+        final URL url;
+        try
+        {
+            url = new URL( urlString );
+        }
+        catch ( MalformedURLException e )
+        {
+            throw new RuntimeException( "cannot fetch from URL " + urlString, e );
+        }
+
+        final InputStream inputStream = url.openStream();
+
+        final Application application =
+            this.applicationService.installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ) );
 
         return new ApplicationInstalledJson( application );
     }
