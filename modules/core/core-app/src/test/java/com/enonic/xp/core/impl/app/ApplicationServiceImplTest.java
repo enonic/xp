@@ -4,6 +4,7 @@ import java.io.InputStream;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 
 import com.google.common.io.ByteSource;
@@ -22,11 +23,15 @@ public class ApplicationServiceImplTest
 {
     private ApplicationServiceImpl service;
 
+    private ApplicationRepoServiceImpl repoService;
+
     @Before
     public void initService()
     {
         this.service = new ApplicationServiceImpl();
         this.service.activate( getBundleContext() );
+        this.repoService = Mockito.mock( ApplicationRepoServiceImpl.class );
+        this.service.setRepoService( this.repoService );
     }
 
     @Test

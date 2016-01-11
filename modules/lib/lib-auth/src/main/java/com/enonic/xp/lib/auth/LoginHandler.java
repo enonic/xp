@@ -10,8 +10,8 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
@@ -137,8 +137,8 @@ public final class LoginHandler
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
         return ContextBuilder.from( this.context.get() ).
             authInfo( authInfo ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-            branch( SystemConstants.BRANCH_SECURITY ).build().
+            repositoryId( SecurityConstants.SECURITY_REPO.getId() ).
+            branch( SecurityConstants.BRANCH_SECURITY ).build().
             callWith( runnable );
     }
 

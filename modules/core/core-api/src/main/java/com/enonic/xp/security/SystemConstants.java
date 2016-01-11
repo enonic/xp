@@ -3,16 +3,16 @@ package com.enonic.xp.security;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 
 @Beta
 public final class SystemConstants
 {
-
-    public static final Branch BRANCH_SECURITY = Branch.create().
+    public static final Branch BRANCH_SYSTEM = Branch.create().
         name( "master" ).
         build();
 
@@ -20,8 +20,17 @@ public final class SystemConstants
         id( RepositoryId.from( "system-repo" ) ).
         build();
 
-    public static final Context CONTEXT_SECURITY = ContextBuilder.create().
-        branch( BRANCH_SECURITY ).
-        repositoryId( SYSTEM_REPO.getId() ).
+    private static final AccessControlEntry authenticatedRead = AccessControlEntry.create().
+        allow( Permission.READ ).
+        principal( RoleKeys.AUTHENTICATED ).
         build();
+
+    private static final AccessControlEntry adminFullAccess = AccessControlEntry.create().
+        allowAll().
+        principal( RoleKeys.ADMIN ).
+        build();
+
+    public static final AccessControlList SYSTEM_REPO_DEFAULT_ACL = AccessControlList.of( adminFullAccess, authenticatedRead );
+
+
 }

@@ -4,9 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.security.CreateRoleParams;
@@ -15,21 +13,19 @@ import com.enonic.xp.security.CreateUserStoreParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.acl.AccessControlEntry;
-import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.system.SystemRepoInitializer;
 
-import static com.enonic.xp.security.SystemConstants.CONTEXT_SECURITY;
 import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.UserStoreAccess.READ;
 
-public final class SecurityInitializer
+final class SecurityInitializer
 {
 
     static final String SYSTEM_USER_STORE_DISPLAY_NAME = "System User Store";
@@ -50,60 +46,42 @@ public final class SecurityInitializer
 
     public final void initialize()
     {
-        final String branchName = CONTEXT_SECURITY.getBranch().getName();
-
         runAsAdmin( () -> {
 
-            if ( isBranchInitialized() )
+            new SystemRepoInitializer( this.nodeService ).initialize();
+
+            if ( isInitialized() )
             {
-                LOG.info( "Branch [" + branchName + "] already initialized" );
+                LOG.info( "System-repo [security] layout already initialized" );
                 return;
             }
 
-            LOG.info( "Initializing [" + branchName + "] branch..." );
+            LOG.info( "Initializing system-repo [security] layout" );
 
-            initializeUsersBranch();
+            initializeRoleFolder();
             initializeSystemUserStore();
 
             createRoles();
             createUsers();
 
-            LOG.info( "[" + branchName + "] branch successfully initialized" );
+            LOG.info( "System-repo [security] layout successfully initialized" );
 
         } );
+    }
+
+    private boolean isInitialized()
+    {
+        return this.nodeService.getByPath( UserStoreNodeTranslator.getRolesNodePath() ) != null &&
+            this.nodeService.getByPath( UserStoreNodeTranslator.getUserStoresParentPath() ) != null;
     }
 
     private void runAsAdmin( Runnable runnable )
     {
         final User admin = User.create().key( SUPER_USER ).login( "su" ).build();
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( admin ).build();
-        ContextBuilder.from( CONTEXT_SECURITY ).authInfo( authInfo ).build().runWith( runnable );
+        ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).authInfo( authInfo ).build().runWith( runnable );
     }
 
-    private boolean isBranchInitialized()
-    {
-        return this.nodeService.getRoot() != null;
-    }
-
-    private void initializeUsersBranch()
-    {
-        final AccessControlEntry adminFullAccess = AccessControlEntry.create().
-            allowAll().
-            principal( RoleKeys.ADMIN ).
-            build();
-        final AccessControlEntry authenticatedRead = AccessControlEntry.create().
-            allow( Permission.READ ).
-            principal( RoleKeys.AUTHENTICATED ).
-            build();
-
-        this.nodeService.createRootNode( CreateRootNodeParams.create().
-            childOrder( ChildOrder.defaultOrder() ).
-            permissions( AccessControlList.of( adminFullAccess, authenticatedRead ) ).
-
-            build() );
-
-        initializeRoleFolder();
-    }
 
     private void initializeRoleFolder()
     {

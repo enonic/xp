@@ -10,6 +10,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
@@ -30,6 +31,8 @@ public final class ApplicationServiceImpl
     private ApplicationRegistry registry;
 
     private BundleContext context;
+
+    private ApplicationRepoService repoService;
 
     @Activate
     public void activate( final BundleContext context )
@@ -77,7 +80,7 @@ public final class ApplicationServiceImpl
     @Override
     public Application installApplication( final ByteSource byteSource )
     {
-        final File tmpFile = writeAsTmpFile( byteSource );
+        final File tmpFile = writeToTmpFile( byteSource );
 
         final String symbolicName = findSymbolicName( tmpFile );
 
@@ -96,7 +99,11 @@ public final class ApplicationServiceImpl
             tmpFile.delete();
         }
 
-        return this.registry.get( ApplicationKey.from( bundle ) );
+        final Application application = this.registry.get( ApplicationKey.from( bundle ) );
+
+        repoService.createApplicationNode( application, byteSource );
+
+        return application;
     }
 
     private Bundle installBundle( final File tmpFile, final String symbolicName )
@@ -105,7 +112,7 @@ public final class ApplicationServiceImpl
         return this.context.installBundle( symbolicName, Files.asByteSource( tmpFile ).openStream() );
     }
 
-    private File writeAsTmpFile( final ByteSource byteSource )
+    private File writeToTmpFile( final ByteSource byteSource )
     {
         File targetFile;
         try
@@ -178,5 +185,11 @@ public final class ApplicationServiceImpl
     public void invalidate( final ApplicationKey key )
     {
         this.registry.invalidate( key );
+    }
+
+    @Reference
+    public void setRepoService( final ApplicationRepoService repoService )
+    {
+        this.repoService = repoService;
     }
 }

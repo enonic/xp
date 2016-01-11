@@ -63,6 +63,7 @@ import com.enonic.xp.security.PrincipalType;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateGroupParams;
 import com.enonic.xp.security.UpdateRoleParams;
@@ -84,7 +85,6 @@ import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 
 import static com.enonic.xp.core.impl.security.PrincipalKeyNodeTranslator.toNodeId;
-import static com.enonic.xp.security.SystemConstants.CONTEXT_SECURITY;
 
 @Component(immediate = true)
 public final class SecurityServiceImpl
@@ -953,7 +953,7 @@ public final class SecurityServiceImpl
     private Context getContext()
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        return ContextBuilder.from( CONTEXT_SECURITY ).authInfo( authInfo ).build();
+        return ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).authInfo( authInfo ).build();
     }
 
     private <T> T callAsAuthenticated( Callable<T> runnable )
@@ -964,7 +964,7 @@ public final class SecurityServiceImpl
     private Context getAuthenticatedContext()
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
-        return ContextBuilder.from( CONTEXT_SECURITY ).authInfo( authInfo ).build();
+        return ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).authInfo( authInfo ).build();
     }
 
     @Reference
