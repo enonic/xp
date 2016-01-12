@@ -55,7 +55,7 @@ module api.content.page.region {
             var oldValue = this.descriptor;
             this.descriptor = descriptorKey;
 
-            this.alignNameWithDescriptor(descriptor);
+            this.setName(descriptor ? new ComponentName(descriptor.getDisplayName()) : null);
 
             if (!api.ObjectHelper.equals(oldValue, descriptorKey)) {
                 this.notifyPropertyChanged(DescriptorBasedComponent.PROPERTY_DESCRIPTOR);
@@ -75,11 +75,6 @@ module api.content.page.region {
             if (!api.ObjectHelper.equals(oldValue, config)) {
                 this.notifyPropertyChanged(DescriptorBasedComponent.PROPERTY_CONFIG);
             }
-        }
-
-        alignNameWithDescriptor(descriptor: Descriptor) {
-            var newName: ComponentName = descriptor ? new ComponentName(descriptor.getDisplayName()) : null;
-            this.setName(newName);
         }
 
         getConfig(): PropertyTree {

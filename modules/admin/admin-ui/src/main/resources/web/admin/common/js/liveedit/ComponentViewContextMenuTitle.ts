@@ -9,14 +9,17 @@ module api.liveedit {
         constructor(component: COMPONENT, type: ComponentItemType) {
             var handler = (event: ComponentPropertyChangedEvent) => {
                 if (event.getPropertyName() == Component.PROPERTY_NAME) {
-                    this.setMainName(component.getName() ? component.getName().toString() : "");
+                    this.setMainName(this.createMainName(component, type));
                 }
             };
-
-            super(component.getName() ? component.getName().toString() : "", type.getConfig().getIconCls());
+            super(this.createMainName(component, type), type.getConfig().getIconCls());
 
             component.onPropertyChanged(handler);
             this.onRemoved(() => component.unPropertyChanged(handler));
+        }
+
+        private createMainName(component: COMPONENT, type: ComponentItemType): string {
+            return component.getName() ? component.getName().toString() : type.toComponentType().getDefaultName();
         }
 
     }

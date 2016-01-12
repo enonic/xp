@@ -430,8 +430,7 @@ module api.liveedit {
         }
 
         public createComponent(componentType: ComponentType): Component {
-            var shortName = api.util.StringHelper.capitalize(api.util.StringHelper.removeWhitespaces(componentType.getShortName()));
-            var componentName = new ComponentName(shortName);
+            var componentName = new ComponentName(componentType.getDefaultName());
 
             var builder = componentType.newComponentBuilder().setName(componentName);
 
