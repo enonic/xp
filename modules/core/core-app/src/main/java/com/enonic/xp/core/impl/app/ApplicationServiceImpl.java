@@ -77,9 +77,18 @@ public final class ApplicationServiceImpl
     @Override
     public Application installApplication( final ByteSource byteSource )
     {
-        final String bundleName = BundleNameResolver.resolve( byteSource );
+        final String applicationName;
 
-        final Bundle bundle = doInstallBundle( byteSource, bundleName );
+        try
+        {
+            applicationName = ApplicationNameResolver.resolve( byteSource );
+        }
+        catch ( Exception e )
+        {
+            throw new ApplicationInstallException( "Cannot install application", e );
+        }
+
+        final Bundle bundle = doInstallBundle( byteSource, applicationName );
 
         final Application application = this.registry.get( ApplicationKey.from( bundle ) );
 

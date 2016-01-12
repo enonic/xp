@@ -9,27 +9,38 @@ import com.google.common.io.ByteStreams;
 
 import static org.junit.Assert.*;
 
-public class BundleNameResolverTest
+public class ApplicationNameResolverTest
     extends BundleBasedTest
 {
-
     @Test
-    public void test_bundle_name()
+    public void valid_bundle()
         throws Exception
     {
         final ByteSource source = createBundle( "myBundle", true );
 
-        final String bundleName = BundleNameResolver.resolve( source );
+        final String bundleName = ApplicationNameResolver.resolve( source );
 
         assertEquals( "myBundle", bundleName );
     }
 
-    @Test(expected = ApplicationInstallException.class)
+    @Test(expected = IOException.class)
     public void invalid_bundle()
         throws Exception
     {
         final ByteSource source = ByteSource.wrap( "abc".getBytes() );
-        BundleNameResolver.resolve( source );
+        final String appName = ApplicationNameResolver.resolve( source );
+
+        assertNull( appName );
+    }
+
+    @Test(expected = ApplicationInvalidException.class)
+    public void not_application()
+        throws Exception
+    {
+        final ByteSource source = createBundle( "myBundle", false );
+        final String appName = ApplicationNameResolver.resolve( source );
+
+        assertNull( appName );
     }
 
     private ByteSource createBundle( final String bundleName, final boolean isApp )

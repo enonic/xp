@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.util.List;
+import java.util.jar.JarFile;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.VersionRange;
@@ -26,6 +27,11 @@ public final class ApplicationHelper
     public static boolean isApplication( final Bundle bundle )
     {
         return ( bundle.getEntry( SITE_XML ) != null );
+    }
+
+    public static boolean isApplication( final JarFile jarFile )
+    {
+        return ( jarFile.getEntry( SITE_XML ) != null );
     }
 
     public static String getHeader( final Bundle bundle, final String name, final String defValue )

@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.app;
 import java.io.InputStream;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
@@ -103,7 +104,7 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void installBundle()
+    public void installApplication()
         throws Exception
     {
         final InputStream in = newBundle( "my-bundle", true ).
@@ -114,6 +115,36 @@ public class ApplicationServiceImplTest
         assertNotNull( application );
         assertEquals( "my-bundle", application.getKey().getName() );
     }
+
+    @Test
+    public void installIsNotApplication()
+        throws Exception
+    {
+        final InputStream in = newBundle( "my-bundle", true ).
+            build();
+
+        final Application application = this.service.installApplication( ByteSource.wrap( ByteStreams.toByteArray( in ) ) );
+
+        assertNotNull( application );
+        assertEquals( "my-bundle", application.getKey().getName() );
+    }
+
+    @Ignore
+    @Test
+    public void updateBundle()
+        throws Exception
+    {
+        final Application application =
+            this.service.installApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.0" ).
+                build() ) ) );
+
+        final Application updatedApplication =
+            this.service.installApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.1" ).
+                build() ) ) );
+
+        assertEquals( "1.0.1", updatedApplication.getVersion().toString() );
+    }
+
 
     private Bundle deployBundle( final String key, final boolean isApp )
         throws Exception

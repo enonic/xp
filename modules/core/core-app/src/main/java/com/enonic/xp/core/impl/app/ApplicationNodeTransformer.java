@@ -8,7 +8,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.util.BinaryReference;
 
 class ApplicationNodeTransformer
@@ -30,7 +29,6 @@ class ApplicationNodeTransformer
             parent( ApplicationRepoServiceImpl.APPLICATION_PATH ).
             name( app.getKey().getName() ).
             data( data ).
-            setNodeId( NodeId.from( app.getKey().toString() ) ).
             setBinaryAttachments( BinaryAttachments.create().
                 add( new BinaryAttachment( BinaryReference.from( APPLICATION_BINARY_REF ), source ) ).
                 build() ).
