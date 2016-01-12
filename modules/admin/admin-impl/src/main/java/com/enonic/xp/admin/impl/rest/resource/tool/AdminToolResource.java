@@ -56,6 +56,7 @@ public class AdminToolResource
         jsonEntry.key.application = adminToolDescriptor.getKey().getApplicationKey().getName();
         jsonEntry.key.name = adminToolDescriptor.getKey().getName();
         jsonEntry.displayName = adminToolDescriptor.getDisplayName();
+        jsonEntry.description = adminToolDescriptor.getDescription();
         jsonEntry.icon = adminToolDescriptor.getIcon();
         if ( mapAllowedPrincipals )
         {

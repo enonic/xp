@@ -6,32 +6,50 @@
 
     <!-- Styles -->
     <link rel="stylesheet" type="text/css" href="{{assetsUri}}/common/styles/_all.css">
+
 </head>
 <body>
 
-<div class="home-main-container" tabindex="100" style="">
-    <div class="center-panel">
-        <div class="profile">
-            <img src="{{userIconUrl}}">
-            <span>{{user.displayName}}</span>
+    <div class="launcher-main-container" tabindex="100" style="">
+        <div class="launcher-title">
+            <span class="container-title">Tools</span>
         </div>
-        <div class="app-selector-container">
-            <div class="app-selector fade-in-and-scale-up">
-                <div class="app-tiles-placeholder">
-                    {{#adminTools}}
-                    <div class="app-tile" tabindex="1">
-                        <a href="{{uri}}">
-                            <div class="icon-container">
-                                <img src="{{icon}}">
-                            </div>
-                            <div class="name-container">{{displayName}}</div>
-                        </a>
+
+        <div class="launcher-app-container">
+            {{#adminTools}}
+            <div class="app-row" tabindex="1">
+                <a href="{{uri}}">
+                    <div class="application">
+                        <img src="{{icon}}" class="app-icon">
+                        <div class="app-info">
+                            <p class="app-name">{{displayName}}</p>
+                            <p class="app-description">{{description}}</p>
+                        </div>
                     </div>
-                    {{/adminTools}}
-                </div>
+                </a>
+            </div>
+            {{/adminTools}}
+            <div class="app-row" tabindex="1">
+                <a href="{{homeUrl}}">
+                    <div class="application">
+                        <div class="app-home-icon"></div>
+                        <div class="app-info">
+                            <p class="app-name">Home</p>
+                            <p class="app-description">Start page for Enonic XP</p>
+                        </div>
+                    </div>
+                </a>
             </div>
         </div>
+
+        <div class="launcher-user">
+            <div class="user-info">
+                <img src="{{userIconUrl}}">
+                <span>{{user.displayName}}</span>
+            </div>
+            <a href="{{logoutServiceUrl}}" class="user-logout">Log out</a>
+        </div>
+
     </div>
-</div>
 </body>
 </html>

@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <tool xmlns="urn:enonic:xp:model:1.0">
-  <display-name>User Manager</display-name>
+  <display-name>Users</display-name>
+  <description>Manage users and roles</description>
   <icon>icons/users.svg</icon>
   <allow>
     <principal>role:system.admin</principal>

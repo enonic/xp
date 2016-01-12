@@ -37,7 +37,8 @@ function handleGet(req) {
         adminTools: adminTools,
         userIconUrl: userIconUrl,
         user: user,
-        logoutServiceUrl: logoutServiceUrl
+        logoutServiceUrl: logoutServiceUrl,
+        homeUrl: uriScriptHelper.generateHomeUri(adminTools[0].key.application)
     };
     return {
         contentType: 'text/html',

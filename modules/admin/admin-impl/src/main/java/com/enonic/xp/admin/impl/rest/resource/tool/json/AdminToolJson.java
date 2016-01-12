@@ -8,6 +8,8 @@ public class AdminToolJson
 
     public String displayName;
 
+    public String description;
+
     public String icon;
 
     public Set<String> allow;

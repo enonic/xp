@@ -45,17 +45,19 @@
     <div class="lazy-image"
          style="background-image: url(&quot;/admin/common/images/background-1920.jpg&quot;);"></div>
     <div class="header">
-        <span>{{installation}}</span>
+        <span class="container-title">{{installation}}</span>
     </div>
     <div class="footer">
-        <span>Enonic XP version {{xpVersion}}</span>
+        <script type="text/javascript">
+            document.write("<span>Enonic XP v{{xpVersion}}".replace(".SNAPSHOT", "") + "</span>");
+        </script>
+
         <a href="https://enonic.com/community" target="_blank">Community</a>
         <a href="https://enonic.com/docs/latest/" target="_blank">Documentation</a>
 
         <script type="text/javascript">
             document.write("<a href='https://github.com/enonic/xp/releases/tag/v{{xpVersion}}".replace(".SNAPSHOT", "") + "' target='_blank'>Release notes</a>");
         </script>
-
 
     </div>
 </div>

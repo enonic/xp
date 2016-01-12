@@ -14,6 +14,8 @@ public class AdminToolDescriptor
 
     private final String displayName;
 
+    private final String description;
+
     private final String icon;
 
     private final PrincipalKeys allowedPrincipals;
@@ -22,6 +24,7 @@ public class AdminToolDescriptor
     {
         key = builder.key;
         displayName = builder.displayName;
+        description = builder.description;
         icon = builder.icon;
         allowedPrincipals = PrincipalKeys.from( builder.allowedPrincipals );
     }
@@ -34,6 +37,11 @@ public class AdminToolDescriptor
     public String getDisplayName()
     {
         return displayName;
+    }
+
+    public String getDescription()
+    {
+        return description;
     }
 
     public String getIcon()
@@ -74,6 +82,8 @@ public class AdminToolDescriptor
 
         private String displayName;
 
+        private String description;
+
         private String icon;
 
         private List<PrincipalKey> allowedPrincipals = new LinkedList<>();
@@ -91,6 +101,12 @@ public class AdminToolDescriptor
         public Builder displayName( final String displayName )
         {
             this.displayName = displayName;
+            return this;
+        }
+
+        public Builder description( final String description )
+        {
+            this.description = description;
             return this;
         }
 

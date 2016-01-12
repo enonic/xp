@@ -39,12 +39,12 @@
         link.setAttribute("href", adminUrl);
 
         link.onload = function() {
-            var clonedDiv = link.import.querySelector('.home-main-container').cloneNode(true);
+            var clonedDiv = link.import.querySelector('.launcher-main-container').cloneNode(true);
             while (clonedDiv.childNodes.length > 0) {
                 container.appendChild(clonedDiv.childNodes[0]);
             }
 
-            var appTiles = container.querySelector('.app-tiles-placeholder').querySelectorAll("a");
+            var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
             for (var i = 0; i < appTiles.length; i++) {
                 if (appTiles[i].target == "") {
                     appTiles[i].target = "_blank";

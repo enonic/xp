@@ -22,6 +22,7 @@ public final class AdminToolMapper
         gen.end();
 
         gen.value( "displayName", value.getDisplayName() );
+        gen.value( "description", value.getDescription() );
         gen.value( "icon", value.getIcon() );
     }
 

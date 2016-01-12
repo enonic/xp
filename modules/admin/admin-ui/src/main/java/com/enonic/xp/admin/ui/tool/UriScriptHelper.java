@@ -22,6 +22,12 @@ public class UriScriptHelper
         return ServletRequestUrlHelper.createUri( uri );
     }
 
+    public static final String generateHomeUri( String application )
+    {
+        String uri = ADMIN_TOOLS_URI_PREFIX + "/" + application + "/home";
+        return ServletRequestUrlHelper.createUri( uri );
+    }
+
     private static final String generateVersion()
     {
         final VersionInfo version = VersionInfo.get();

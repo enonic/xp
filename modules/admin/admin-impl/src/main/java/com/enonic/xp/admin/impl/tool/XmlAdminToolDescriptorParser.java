@@ -24,6 +24,7 @@ public class XmlAdminToolDescriptorParser
     {
         assertTagName( root, "tool" );
         this.builder.displayName( root.getChildValue( "display-name" ) );
+        this.builder.description( root.getChildValue( "description" ) );
         this.builder.icon( root.getChildValue( "icon" ) );
 
         final DomElement allowedPrincipals = root.getChild( "allow" );
