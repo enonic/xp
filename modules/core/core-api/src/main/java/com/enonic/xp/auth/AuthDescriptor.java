@@ -26,6 +26,11 @@ public class AuthDescriptor
         return config;
     }
 
+    public ResourceKey getResourceKey()
+    {
+        return ResourceKey.from( key, "res/auth/auth.js" );
+    }
+
     public static ResourceKey toResourceKey( final ApplicationKey key )
     {
         return ResourceKey.from( key, "res/auth/auth.xml" );
