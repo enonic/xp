@@ -1,4 +1,4 @@
-package com.enonic.xp.web.impl.auth;
+package com.enonic.xp.portal.impl.auth;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,12 +16,21 @@ import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
+import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
+import com.enonic.xp.portal.impl.error.PortalError;
+import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreAuthConfig;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.Exceptions;
+import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
 
 
 public class AuthResponseWrapper
@@ -29,21 +38,28 @@ public class AuthResponseWrapper
 {
     private final HttpServletRequest request;
 
+    private final HttpServletResponse response;
+
     private final SecurityService securityService;
 
     private final AuthDescriptorService authDescriptorService;
+
+    private final ErrorHandlerScriptFactory errorHandlerScriptFactory;
 
     private final UserStoreKey userStoreKey;
 
     private boolean errorHandled;
 
     public AuthResponseWrapper( final HttpServletRequest request, final HttpServletResponse response, final SecurityService securityService,
-                                final AuthDescriptorService authDescriptorService, final String userStoreKey )
+                                final AuthDescriptorService authDescriptorService,
+                                final ErrorHandlerScriptFactory errorHandlerScriptFactory, final String userStoreKey )
     {
         super( response );
         this.request = request;
+        this.response = response;
         this.securityService = securityService;
         this.authDescriptorService = authDescriptorService;
+        this.errorHandlerScriptFactory = errorHandlerScriptFactory;
         this.userStoreKey = UserStoreKey.from( userStoreKey );
     }
 
@@ -140,9 +156,28 @@ public class AuthResponseWrapper
             final AuthDescriptor authDescriptor = retrieveAuthDescriptor();
             if ( authDescriptor != null )
             {
-                errorHandled = true;
-                System.out.println( "Handle error" );
-                //TODO Render
+                final PortalRequest portalRequest = new PortalRequest();
+                portalRequest.setMethod( HttpMethod.valueOf( request.getMethod().toUpperCase() ) );
+
+                final PortalError portalError = PortalError.create().
+                    status( HttpStatus.FORBIDDEN ).
+                    message( "Forbidden" ).
+                    request( portalRequest ).
+                    build();
+
+                final ErrorHandlerScript errorHandlerScript = errorHandlerScriptFactory.errorScript( authDescriptor.getResourceKey() );
+                final PortalResponse portalResponse = errorHandlerScript.execute( portalError );
+
+                final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );
+                try
+                {
+                    serializer.serialize( response );
+                    errorHandled = true;
+                }
+                catch ( IOException e )
+                {
+                    throw Exceptions.unchecked( e );
+                }
             }
         }
     }
@@ -155,7 +190,7 @@ public class AuthResponseWrapper
             final UserStoreAuthConfig authConfig = userStore.getAuthConfig();
             if ( authConfig != null )
             {
-                System.out.println( "AuthConfig " + authConfig.getApplicationKey() );
+                return authDescriptorService.getDescriptor( authConfig.getApplicationKey() );
             }
         }
         return null;

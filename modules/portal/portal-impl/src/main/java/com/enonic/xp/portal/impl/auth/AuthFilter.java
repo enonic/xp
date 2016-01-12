@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.auth.impl;
+package com.enonic.xp.portal.impl.auth;
 
 import java.util.Map;
 import java.util.Optional;
@@ -16,9 +16,9 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
-import com.enonic.xp.web.impl.auth.AuthResponseWrapper;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.portal.auth", service = Filter.class,
     property = {"osgi.http.whiteboard.filter.pattern=/", "service.ranking:Integer=30", "osgi.http.whiteboard.filter.dispatcher=FORWARD",
@@ -31,6 +31,8 @@ public final class AuthFilter
     private SecurityService securityService;
 
     private AuthDescriptorService authDescriptorService;
+
+    private ErrorHandlerScriptFactory errorHandlerScriptFactory;
 
     private Map<String, String> config;
 
@@ -63,7 +65,8 @@ public final class AuthFilter
         if ( foundMappingEntry.isPresent() )
         {
             final AuthResponseWrapper responseWrapper =
-                new AuthResponseWrapper( req, res, securityService, authDescriptorService, foundMappingEntry.get().getValue() );
+                new AuthResponseWrapper( req, res, securityService, authDescriptorService, errorHandlerScriptFactory,
+                                         foundMappingEntry.get().getValue() );
             chain.doFilter( req, responseWrapper );
         }
         else
@@ -84,5 +87,11 @@ public final class AuthFilter
     public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
     {
         this.authDescriptorService = authDescriptorService;
+    }
+
+    @Reference
+    public void setControllerScriptFactory( final ErrorHandlerScriptFactory errorHandlerScriptFactory )
+    {
+        this.errorHandlerScriptFactory = errorHandlerScriptFactory;
     }
 }

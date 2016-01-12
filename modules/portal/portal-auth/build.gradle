@@ -1,9 +1,0 @@
-apply from: "$rootDir/gradle/osgi.gradle"
-
-dependencies {
-    compile project( ':portal:portal-api' )
-}
-
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Portal - Auth'
-}
