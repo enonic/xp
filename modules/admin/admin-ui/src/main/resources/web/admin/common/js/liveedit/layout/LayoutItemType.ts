@@ -15,18 +15,7 @@ module api.liveedit.layout {
         }
 
         constructor() {
-            super("layout", <ItemTypeConfigJson>{
-                cssSelector: '[data-portal-component-type=layout]',
-                draggable: true,
-                cursor: 'move',
-                iconCls: api.StyleHelper.COMMON_PREFIX + 'icon-layout',
-                highlighterStyle: {
-                    stroke: 'rgba(255, 165, 0, 1)',
-                    strokeDasharray: '5 5',
-                    fill: 'rgba(100, 12, 36, 0)'
-                },
-                contextMenuConfig: ['parent', 'remove', 'clear', 'duplicate']
-            });
+            super("layout", this.getDefaultConfigJson("layout"));
         }
 
         isComponentType(): boolean {

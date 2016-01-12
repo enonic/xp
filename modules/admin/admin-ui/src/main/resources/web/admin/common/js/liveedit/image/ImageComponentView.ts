@@ -19,7 +19,7 @@ module api.liveedit.image {
         private imageComponent: ImageComponent;
 
         constructor(builder: ImageComponentViewBuilder) {
-            this.liveEditModel = builder.parentRegionView.liveEditModel;
+            this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.imageComponent = builder.component;
 
             super(builder.setPlaceholder(

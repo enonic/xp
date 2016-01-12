@@ -62,9 +62,6 @@ module app.wizard.page {
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
-    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
-    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
-    import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 
     import Panel = api.ui.panel.Panel;
 
@@ -194,6 +191,13 @@ module app.wizard.page {
                 this.contentWizardPanel.getContextWindowToggler(),
                 this.contentWizardPanel.getComponentsViewToggler()
             );
+
+            this.contextWindow.onDisplayModeChanged(() => {
+                if (!this.contextWindow.isFloating()) {
+                    this.contentWizardPanel.getContextWindowToggler().setActive(true);
+                    this.contextWindow.slideIn();
+                }
+            });
 
             this.liveEditListen();
         }
@@ -389,11 +393,21 @@ module app.wizard.page {
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
 
                 if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
-                    if (event.isNew() && !toggler.isActive()) {
-                        toggler.setActive(true);
+                    if(!this.contextWindow.isFixed()) {
+                        if(itemView.isEmpty() && event.isSilent()) {
+                            if (this.contextWindow.isFloating() && this.contextWindow.isShownOrAboutToBeShown()) {
+                                toggler.setActive(false);
+                            }
+                        }else if (event.isNew() && !toggler.isActive()) {
+                            toggler.setActive(true);
+                        }
+                    } else {
+                        this.contextWindow.setFixed(false);
                     }
                     this.inspectComponent(<ComponentView<Component>>itemView);
                 }
+
+                this.minimizeContentFormPanelIfNeeded();
             });
 
             this.liveEditPageProxy.onItemViewDeselected((event: ItemViewDeselectedEvent) => {
@@ -450,6 +464,12 @@ module app.wizard.page {
                 new app.wizard.ShowContentFormEvent().fire();
                 this.contentWizardPanel.showForm();
             });
+        }
+
+        private minimizeContentFormPanelIfNeeded() {
+            if (this.contextWindow.isFloating() && !this.contentWizardPanel.isMinimized()) {
+                this.contentWizardPanel.toggleMinimize();
+            }
         }
 
         private inspectPage() {

@@ -474,7 +474,8 @@ module api.ui.selector.combobox {
             });
 
             this.input.onClicked((event: MouseEvent) => {
-                this.input.setReadOnly(false);
+                this.giveInputFocus();
+                event.stopPropagation();
             });
 
             this.comboBoxDropdown.onRowSelection((event: DropdownGridRowSelectedEvent) => {

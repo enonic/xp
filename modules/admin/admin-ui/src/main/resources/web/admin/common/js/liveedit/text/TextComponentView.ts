@@ -29,7 +29,7 @@ module api.liveedit.text {
         constructor(builder: TextComponentViewBuilder) {
 
             this.lastClicked = 0;
-            this.liveEditModel = builder.parentRegionView.liveEditModel;
+            this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.textComponent = builder.component;
 
             super(builder.

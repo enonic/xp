@@ -151,7 +151,7 @@ module api.liveedit {
                     if (this.isTextEditMode()) {
                         this.setTextEditMode(false);
                     }
-                    itemView.select(null, ItemViewContextMenuPosition.NONE, event.isNew());
+                    itemView.select(null, ItemViewContextMenuPosition.NONE, event.isNew(), true);
                 }
             };
             this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => {
@@ -311,6 +311,9 @@ module api.liveedit {
             }
             else if (this.isSelected()) {
                 this.deselect();
+            }
+            else if(!!event.type && (event.type == 'click' || event.type == 'contextmenu') && this.isClicked(event)) {
+                this.handleClick(event);
             }
         }
 

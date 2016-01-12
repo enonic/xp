@@ -15,6 +15,7 @@ module app.wizard {
     import TreeNode = api.ui.treegrid.TreeNode;
     import PageView = api.liveedit.PageView;
     import ItemView = api.liveedit.ItemView;
+    import TextComponentView = api.liveedit.text.TextComponentView;
 
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
@@ -38,6 +39,8 @@ module app.wizard {
 
         private selectionChangedHandler: (treeNode: TreeNode<ItemView>) =>
             void = api.util.AppHelper.debounce(this.selectItem, 500, this.clicked);
+
+        private beforeInsertActionListeners: {(event):void}[] = [];
 
         private mouseDownListener: (event: MouseEvent) => void;
         private mouseUpListener: (event?: MouseEvent) => void;
@@ -112,6 +115,7 @@ module app.wizard {
                 if (!event.isNew()) {
                     var selectedItemId = this.tree.getDataId(event.getItemView());
                     this.tree.selectNode(selectedItemId);
+                    this.tree.getGrid().focus();
 
                     if (!event.getPosition()) {
                         this.scrollToItem(selectedItemId);
@@ -143,6 +147,10 @@ module app.wizard {
                                 this.tree.expandNode(componentNode, true);
                             }
 
+                            if(api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), TextComponentView)) {
+                                this.bindTreeTextNodeUpdateOnTextComponentModify(<TextComponentView>event.getComponentView());
+                            }
+
                             this.constrainToParent();
                         });
                     }
@@ -152,7 +160,10 @@ module app.wizard {
             this.liveEditPage.onComponentRemoved((event: ComponentRemovedEvent) => {
                 this.tree.deleteNode(event.getComponentView());
                 // update parent node in case it was the only child
-                this.tree.updateNode(event.getParentRegionView());
+                this.tree.updateNode(event.getParentRegionView()).then(() => {
+                    this.tree.refresh();
+                });
+
             });
 
             this.liveEditPage.onComponentLoaded((event: ComponentLoadedEvent) => {
@@ -173,6 +184,10 @@ module app.wizard {
                     if (event.getNewComponentView().isSelected()) {
                         this.tree.selectNode(newDataId);
                         this.scrollToItem(newDataId);
+                    }
+
+                    if(api.ObjectHelper.iFrameSafeInstanceOf(event.getNewComponentView(), TextComponentView)) {
+                        this.bindTreeTextNodeUpdateOnTextComponentModify(<TextComponentView>event.getNewComponentView());
                     }
                 });
             });
@@ -211,6 +226,8 @@ module app.wizard {
 
                 this.tree.getGrid().selectRow(data.row);
 
+                api.liveedit.Highlighter.get().hide();
+
                 if (this.isMenuIconClicked(data.cell)) {
                     this.showContextMenu(data.row, {x: event.pageX, y: event.pageY});
                 }
@@ -219,7 +236,33 @@ module app.wizard {
                     this.hide();
                 }
             };
+
             this.tree.getGrid().subscribeOnClick(this.clickListener);
+
+            this.tree.getGrid().subscribeOnMouseEnter((event, data) => {
+
+                if (api.ui.DragHelper.get().isVisible()) {
+                    return;
+                }
+
+                var rowElement = event.target,
+                    selected = false;
+
+                while(!rowElement.classList.contains("slick-row")) {
+                    if(rowElement.classList.contains("selected")) {
+                        selected = true;
+                    }
+
+                    rowElement = rowElement.parentElement;
+                }
+
+                this.highlightRow(rowElement, selected);
+            });
+
+            this.tree.getGrid().subscribeOnMouseLeave((event, data) => {
+                api.liveedit.Highlighter.get().hide();
+            });
+
             this.tree.onSelectionChanged((data, nodes) => {
                 if (nodes.length > 0 && this.isModal()) {
                     this.hide();
@@ -248,6 +291,25 @@ module app.wizard {
             this.appendChild(this.tree);
 
             this.tree.onRemoved((event) => this.tree.getGrid().unsubscribeOnClick(this.clickListener));
+
+            this.tree.onLoaded(() => this.bindTextComponentViewsUpdateOnTextModify());
+        }
+
+        private bindTextComponentViewsUpdateOnTextModify() {
+            this.tree.getGrid().getDataView().getItems().map((dataItem) => {
+                return dataItem.getData();
+            }).filter((itemView: ItemView) => {
+                return api.ObjectHelper.iFrameSafeInstanceOf(itemView, TextComponentView);
+            }).forEach((textComponentView: TextComponentView) => {
+                this.bindTreeTextNodeUpdateOnTextComponentModify(textComponentView);
+            });
+        }
+
+        private bindTreeTextNodeUpdateOnTextComponentModify(textComponentView: TextComponentView) {
+            var handler = () => this.tree.updateNode(textComponentView);
+
+            textComponentView.onKeyUp(handler);
+            textComponentView.getHTMLElement().onpaste = handler;
         }
 
         private selectItem(treeNode: TreeNode<ItemView>) {
@@ -423,6 +485,9 @@ module app.wizard {
 
             this.contextMenu.getMenu().onBeforeAction((action: api.ui.Action) => {
                 this.pageView.setDisabledContextMenu(true);
+                if (action.hasParentAction() && action.getParentAction().getLabel() == "Insert"){
+                    this.notifyBeforeInsertAction();
+                }
             });
 
             this.contextMenu.getMenu().onAfterAction((action: api.ui.Action) => {
@@ -461,6 +526,39 @@ module app.wizard {
             var currentlySelectedRow = this.tree.getGrid().getSelectedRows()[0];
             return clickedRow == currentlySelectedRow;
         }
+
+        private highlightRow(rowElement: HTMLElement, selected: boolean): void {
+            if(selected) {
+                api.liveedit.Highlighter.get().hide();
+            }
+            else {
+                var elementHelper = new api.dom.ElementHelper(rowElement);
+                var dimensions = elementHelper.getDimensions();
+                var nodes = this.tree.getRoot().getCurrentRoot().treeToList(),
+                    hoveredNode = nodes[new api.dom.ElementHelper(rowElement).getSiblingIndex()];
+
+                if (hoveredNode) {
+                    api.liveedit.Highlighter.get().highlightElement(dimensions, hoveredNode.getData().getType().getConfig().getHighlighterStyle());
+                }
+            }
+        }
+
+        onBeforeInsertAction(listener: (event)=>void) {
+            this.beforeInsertActionListeners.push(listener);
+        }
+
+        unBeforeInsertAction(listener: (event)=>void) {
+            this.beforeInsertActionListeners = this.beforeInsertActionListeners.filter((currentListener: (event)=>void)=> {
+                return listener != currentListener
+            });
+        }
+
+        private notifyBeforeInsertAction() {
+            this.beforeInsertActionListeners.forEach((listener: (event)=>void)=> {
+                listener.call(this);
+            });
+        }
+
 
     }
 

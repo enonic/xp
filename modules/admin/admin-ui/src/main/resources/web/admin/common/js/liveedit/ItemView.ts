@@ -83,7 +83,7 @@ module api.liveedit {
 
     export class ItemView extends api.dom.Element {
 
-        liveEditModel: LiveEditModel;
+        protected liveEditModel: LiveEditModel;
 
         private itemViewIdProducer: ItemViewIdProducer;
 
@@ -114,6 +114,7 @@ module api.liveedit {
         private mouseOverViewListener;
         private mouseLeaveViewListener;
         private shaderClickedListener;
+        private shaderMouseMoveListener;
         private mouseEnterListener;
         private mouseLeaveListener;
         private mouseClickedListener;
@@ -126,7 +127,7 @@ module api.liveedit {
 
             this.type = builder.type;
             this.parentItemView = builder.parentView;
-            this.liveEditModel = builder.liveEditModel ? builder.liveEditModel : builder.parentView.liveEditModel;
+            this.liveEditModel = builder.liveEditModel ? builder.liveEditModel : builder.parentView.getLiveEditModel();
             this.itemViewIdProducer = builder.itemViewIdProducer;
             this.contextMenuActions = builder.contextMenuActions;
             this.contextMenuTitle = builder.contextMenuTitle;
@@ -220,6 +221,9 @@ module api.liveedit {
             this.shaderClickedListener = this.handleShaderClick.bind(this);
             Shader.get().onClicked(this.shaderClickedListener);
 
+            this.shaderMouseMoveListener = this.handleShaderMouseMove.bind(this);
+            Shader.get().onMouseMove(this.shaderMouseMoveListener);
+
             this.mouseOverViewListener = () => {
                 var isRegistered = !!this.getParentItemView();
                 if (ItemView.debug) {
@@ -229,10 +233,10 @@ module api.liveedit {
                     // the component has not been registered yet
                     return;
                 }
-                var hasSelectedView = pageView.hasSelectedView();
+
                 var isDragging = DragAndDrop.get().isDragging();
 
-                if (!hasSelectedView && !isDragging) {
+                if (!isDragging) {
                     this.showTooltip();
                     this.showCursor();
                     this.highlight();
@@ -249,10 +253,10 @@ module api.liveedit {
                     // the component has not been registered yet
                     return;
                 }
-                var hasSelectedView = pageView.hasSelectedView();
+
                 var isDragging = DragAndDrop.get().isDragging();
 
-                if (!hasSelectedView && !isDragging) {
+                if (!isDragging) {
                     this.hideTooltip();
                     this.resetCursor();
                     this.unhighlight();
@@ -275,6 +279,7 @@ module api.liveedit {
 
             api.ui.responsive.ResponsiveManager.unAvailableSizeChanged(this);
             Shader.get().unClicked(this.shaderClickedListener);
+            Shader.get().unMouseMove(this.shaderMouseMoveListener);
             this.unMouseOverView(this.mouseOverViewListener);
             this.unMouseLeaveView(this.mouseLeaveViewListener);
         }
@@ -341,7 +346,7 @@ module api.liveedit {
 
         scrollComponentIntoView(): void {
             if (!this.visibleInViewport()) {
-                wemjq("html,body").animate({scrollTop: this.getElementDimensions().top - 10}, 200);
+                wemjq("html,body").animate({scrollTop: this.getEl().getDimensions().top - 10}, 200);
             }
         }
 
@@ -471,15 +476,22 @@ module api.liveedit {
 
         handleClick(event: MouseEvent) {
             event.stopPropagation();
+            if (event.which == 3) { // right click
+                event.preventDefault();
+            }
 
-            if (!this.isSelected()) {
+            if (!this.isSelected() || event.which == 3) {
                 // we prevented mouse events to bubble up so if parent view is selected
                 // it won't receive mouse event and won't be deselected
                 // therefore we deselect it manually
                 this.deselectParent();
                 this.getPageView().deselectChildViews();
 
-                this.select(!this.isEmpty() ? {x: event.pageX, y: event.pageY} : null);
+                var clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
+                event.which == 3 ?
+                this.select(clickPosition, null, false, true) :
+                this.select(clickPosition, ItemViewContextMenuPosition.NONE, false, true);
+
             } else {
                 this.deselect();
             }
@@ -489,6 +501,37 @@ module api.liveedit {
             if (this.isSelected()) {
                 this.deselect();
             }
+            if (!!event.type && (event.type == 'click' || event.type == 'contextmenu') && this.isClicked(event)) {
+                this.handleClick(event);
+            }
+        }
+
+        handleShaderMouseMove(event: MouseEvent) {
+            var contains = this.eventOverItem(event);
+            if (!this.mouseOver && contains) {
+                this.handleMouseEnter(event);
+            } else if (this.mouseOver && !contains) {
+                this.handleMouseLeave(event);
+            }
+        }
+
+        private eventOverItem(event: MouseEvent): boolean {
+            var offset = this.getEl().getDimensions(),
+                x = event.pageX,
+                y = event.pageY;
+
+            return x >= offset.left
+                   && x <= offset.left + offset.width
+                   && y >= offset.top
+                   && y <= offset.top + offset.height;
+        }
+
+        protected isClicked(event: MouseEvent): boolean {
+            var el = this.getEl();
+            return event.pageX >= el.getOffsetLeft() &&
+                   event.pageX <= (el.getOffsetLeft() + el.getWidth()) &&
+                   event.pageY >= (el.getOffsetTop() - el.getScrollTop()) &&
+                   event.pageY <= (el.getOffsetTop() + el.getHeight() - el.getScrollTop() );
         }
 
         private deselectParent() {
@@ -543,8 +586,17 @@ module api.liveedit {
 
             if (!this.contextMenu) {
                 this.contextMenu = new api.liveedit.ItemViewContextMenu(this.contextMenuTitle, this.contextMenuActions);
+                this.contextMenu.onOrientationChanged((orientation: ItemViewContextMenuOrientation) => {
+
+                    // move menu to the top edge of empty view in order to not overlay it
+                    if (orientation == ItemViewContextMenuOrientation.UP && this.isEmpty()) {
+                        this.contextMenu.getEl().setMarginTop("-" + dimensions.height + "px");
+                    } else {
+                        this.contextMenu.getEl().setMarginTop("0px");
+                    }
+                });
             }
-            var dimensions = this.getElementDimensions();
+            var dimensions = this.getEl().getDimensions();
             var x, y;
 
             if (clickPosition) {
@@ -608,10 +660,10 @@ module api.liveedit {
             return this.getEl().hasAttribute('data-live-edit-selected');
         }
 
-        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false) {
+        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false, silent: boolean = false) {
             this.selectItem();
             this.showContextMenu(clickPosition, menuPosition);
-            new ItemViewSelectedEvent(this, clickPosition, isNew).fire();
+            new ItemViewSelectedEvent(this, clickPosition, isNew, silent).fire();
         }
 
         selectWithoutMenu(isNew: boolean = false) {
@@ -718,18 +770,6 @@ module api.liveedit {
             }
         }
 
-        getElementDimensions(): ElementDimensions {
-            var el = this.getEl(),
-                offset = el.getOffset();
-
-            return {
-                top: offset.top,
-                left: offset.left,
-                width: el.getWidthWithBorder(),
-                height: el.getHeightWithBorder()
-            };
-        }
-
         getContextMenuActions(): api.ui.Action[] {
             return this.contextMenuActions;
         }
@@ -741,6 +781,10 @@ module api.liveedit {
 
         toString(): string {
             return this.getItemId().toNumber() + " : " + this.getType().getShortName()
+        }
+
+        getLiveEditModel(): LiveEditModel {
+            return this.liveEditModel;
         }
 
         static findParentItemViewAsHTMLElement(htmlElement: HTMLElement): HTMLElement {
@@ -790,10 +834,11 @@ module api.liveedit {
         }
 
         private visibleInViewport(): boolean {
-            var dimensions = this.getElementDimensions();
+            var dimensions = this.getEl().getDimensions();
             var screenTopPosition: number = document.body.scrollTop != 0 ? document.body.scrollTop : document.documentElement.scrollTop;
 
-            return !(dimensions.top != undefined && ((dimensions.top - 10 < screenTopPosition) || (dimensions.top + dimensions.height > screenTopPosition + window.innerHeight)));
+            return !(dimensions.top != undefined && ((dimensions.top - 10 < screenTopPosition) ||
+                                                     (dimensions.top + dimensions.height > screenTopPosition + window.innerHeight)));
 
         }
 
