@@ -4,7 +4,7 @@ module api.aggregation {
 
         initialize() {
 
-            var displayNameMap: string[] = [];
+            var displayNameMap: {[name:string]:string} = {};
 
             var mask: api.ui.mask.LoadMask = new api.ui.mask.LoadMask(this);
             this.appendChild(mask);
@@ -16,7 +16,7 @@ module api.aggregation {
             request.sendAndParse().done((contentTypes: api.schema.content.ContentTypeSummary[]) => {
 
                 contentTypes.forEach((contentType: api.schema.content.ContentTypeSummary)=> {
-                    displayNameMap[contentType.getName()] = contentType.getDisplayName();
+                    displayNameMap[contentType.getName().toLowerCase()] = contentType.getDisplayName();
                 });
 
                 this.getAggregationViews().forEach((aggregationView: api.aggregation.AggregationView)=> {
