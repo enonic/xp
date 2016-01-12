@@ -6,8 +6,8 @@ module api.app.browse {
 
         private itemsSelectionPanel: BrowseItemsSelectionPanel<M>;
 
-        constructor() {
-            super("browse-item-panel");
+        constructor(className?: string) {
+            super("browse-item-panel" + (className ? " " + className : ""));
 
             this.itemsSelectionPanel = this.createItemSelectionPanel();
             this.itemStatisticsPanel = this.createItemStatisticsPanel();
