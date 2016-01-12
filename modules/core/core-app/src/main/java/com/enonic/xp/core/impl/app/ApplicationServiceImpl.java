@@ -1,19 +1,16 @@
 package com.enonic.xp.core.impl.app;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
+import java.io.InputStream;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
+import org.osgi.framework.BundleException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidator;
@@ -80,24 +77,9 @@ public final class ApplicationServiceImpl
     @Override
     public Application installApplication( final ByteSource byteSource )
     {
-        final File tmpFile = writeToTmpFile( byteSource );
+        final String bundleName = BundleNameResolver.resolve( byteSource );
 
-        final String symbolicName = findSymbolicName( tmpFile );
-
-        final Bundle bundle;
-
-        try
-        {
-            bundle = installBundle( tmpFile, symbolicName );
-        }
-        catch ( Exception e )
-        {
-            throw new InstallApplicationException( "Could not install application bundle:   '" + symbolicName + "'", e );
-        }
-        finally
-        {
-            tmpFile.delete();
-        }
+        final Bundle bundle = doInstallBundle( byteSource, bundleName );
 
         final Application application = this.registry.get( ApplicationKey.from( bundle ) );
 
@@ -106,56 +88,21 @@ public final class ApplicationServiceImpl
         return application;
     }
 
-    private Bundle installBundle( final File tmpFile, final String symbolicName )
-        throws Exception
+    private Bundle doInstallBundle( final ByteSource source, final String symbolicName )
     {
-        return this.context.installBundle( symbolicName, Files.asByteSource( tmpFile ).openStream() );
-    }
-
-    private File writeToTmpFile( final ByteSource byteSource )
-    {
-        File targetFile;
-        try
+        try (final InputStream in = source.openStream())
         {
-            targetFile = File.createTempFile( createTmpFileName(), ".jar" );
-            byteSource.copyTo( Files.asByteSink( targetFile ) );
+            return this.context.installBundle( symbolicName, in );
+        }
+        catch ( BundleException e )
+        {
+            throw new ApplicationInstallException( "Could not install application bundle:   '" + symbolicName + "'", e );
         }
         catch ( IOException e )
         {
-            throw new InstallApplicationException( "Could not read file", e );
+            throw new RuntimeException( "Failed to install bundle", e );
         }
-
-        return targetFile;
     }
-
-    private String createTmpFileName()
-    {
-        return System.currentTimeMillis() + "";
-    }
-
-    private String findSymbolicName( final File file )
-    {
-        final Manifest man;
-
-        try
-        {
-            final JarFile jarFile = new JarFile( file );
-            man = jarFile.getManifest();
-            jarFile.close();
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( "Could not find symbolic name from bundle-file", e );
-        }
-
-        if ( man == null )
-        {
-            throw new RuntimeException( "Manifest-info not found" );
-        }
-
-        return man.getMainAttributes().getValue( Constants.BUNDLE_SYMBOLICNAME );
-    }
-
 
     private void startApplication( final Application application )
     {
