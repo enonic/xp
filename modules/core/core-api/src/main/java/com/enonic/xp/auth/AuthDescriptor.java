@@ -16,6 +16,16 @@ public class AuthDescriptor
         config = builder.config;
     }
 
+    public ApplicationKey getKey()
+    {
+        return key;
+    }
+
+    public Form getConfig()
+    {
+        return config;
+    }
+
     public static ResourceKey toResourceKey( final ApplicationKey key )
     {
         return ResourceKey.from( key, "res/auth/auth.xml" );
@@ -25,7 +35,6 @@ public class AuthDescriptor
     {
         return new Builder();
     }
-
 
     public static final class Builder
     {

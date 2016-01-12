@@ -25,6 +25,17 @@ public final class UserStoreAuthConfigJson
             build();
     }
 
+    public String getApplicationKey()
+    {
+        return userStoreAuthConfig.getApplicationKey().toString();
+    }
+
+    public List<PropertyArrayJson> getConfig()
+    {
+        return PropertyTreeJson.toJson( userStoreAuthConfig.getConfig() );
+    }
+
+
     @JsonIgnore
     public UserStoreAuthConfig getUserStoreAuthConfig()
     {
