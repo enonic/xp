@@ -15,6 +15,7 @@ module app.wizard {
     import TreeNode = api.ui.treegrid.TreeNode;
     import PageView = api.liveedit.PageView;
     import ItemView = api.liveedit.ItemView;
+    import TextComponentView = api.liveedit.text.TextComponentView;
 
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
@@ -146,6 +147,10 @@ module app.wizard {
                                 this.tree.expandNode(componentNode, true);
                             }
 
+                            if(api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), TextComponentView)) {
+                                this.bindTreeTextNodeUpdateOnTextComponentModify(<TextComponentView>event.getComponentView());
+                            }
+
                             this.constrainToParent();
                         });
                     }
@@ -179,6 +184,10 @@ module app.wizard {
                     if (event.getNewComponentView().isSelected()) {
                         this.tree.selectNode(newDataId);
                         this.scrollToItem(newDataId);
+                    }
+
+                    if(api.ObjectHelper.iFrameSafeInstanceOf(event.getNewComponentView(), TextComponentView)) {
+                        this.bindTreeTextNodeUpdateOnTextComponentModify(<TextComponentView>event.getNewComponentView());
                     }
                 });
             });
@@ -282,6 +291,25 @@ module app.wizard {
             this.appendChild(this.tree);
 
             this.tree.onRemoved((event) => this.tree.getGrid().unsubscribeOnClick(this.clickListener));
+
+            this.tree.onLoaded(() => this.bindTextComponentViewsUpdateOnTextModify());
+        }
+
+        private bindTextComponentViewsUpdateOnTextModify() {
+            this.tree.getGrid().getDataView().getItems().map((dataItem) => {
+                return dataItem.getData();
+            }).filter((itemView: ItemView) => {
+                return api.ObjectHelper.iFrameSafeInstanceOf(itemView, TextComponentView);
+            }).forEach((textComponentView: TextComponentView) => {
+                this.bindTreeTextNodeUpdateOnTextComponentModify(textComponentView);
+            });
+        }
+
+        private bindTreeTextNodeUpdateOnTextComponentModify(textComponentView: TextComponentView) {
+            var handler = () => this.tree.updateNode(textComponentView);
+
+            textComponentView.onKeyUp(handler);
+            textComponentView.getHTMLElement().onpaste = handler;
         }
 
         private selectItem(treeNode: TreeNode<ItemView>) {
