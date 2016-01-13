@@ -86,6 +86,7 @@
 ///<reference path='MediaUploaderEl.ts' />
 ///<reference path='ImageUploaderEl.ts' />
 ///<reference path='ThumbnailUploaderEl.ts' />
+///<reference path='AttachmentUploaderEl.ts' />
 
 ///<reference path='TreeGridItemClickedEvent.ts' />
 ///<reference path='ContentRequiresSaveEvent.ts' />

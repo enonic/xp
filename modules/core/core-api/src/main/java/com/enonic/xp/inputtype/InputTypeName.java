@@ -23,6 +23,8 @@ public final class InputTypeName
 
     public final static InputTypeName MEDIA_UPLOADER = InputTypeName.from( "MediaUploader" );
 
+    public final static InputTypeName ATTACHMENT_UPLOADER = InputTypeName.from( "AttachmentUploader" );
+
     public final static InputTypeName GEO_POINT = InputTypeName.from( "GeoPoint" );
 
     public final static InputTypeName HTML_AREA = InputTypeName.from( "HtmlArea" );

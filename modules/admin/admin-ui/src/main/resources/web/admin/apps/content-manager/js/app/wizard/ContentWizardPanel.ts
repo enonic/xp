@@ -339,8 +339,8 @@ module app.wizard {
 
         private handleSiteConfigApply() {
             var siteConfigApplyHandler = (event: ContentRequiresSaveEvent) => {
-                if (this.getPersistedItem().getId() == event.getContent().getId()) {
-                    this.saveChanges()
+                if (this.getPersistedItem().getContentId().equals(event.getContentId())) {
+                    this.saveChanges();
                 }
             };
 
