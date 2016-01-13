@@ -40,7 +40,7 @@ public class NodeSettingsBuilderTest
         final Settings settings = this.builder.buildSettings( map );
 
         assertNotNull( settings );
-        assertEquals( 22, settings.getAsMap().size() );
+        assertEquals( 23, settings.getAsMap().size() );
         assertSettings( System.getProperty( "xp.home" ) + "/repo/index", settings );
     }
 
@@ -53,7 +53,7 @@ public class NodeSettingsBuilderTest
         final Settings settings = this.builder.buildSettings( map );
 
         assertNotNull( settings );
-        assertEquals( 22, settings.getAsMap().size() );
+        assertEquals( 23, settings.getAsMap().size() );
         assertSettings( "/to/some/other/path", settings );
     }
 
@@ -75,6 +75,7 @@ public class NodeSettingsBuilderTest
         assertEquals( "false", settings.get( "cluster.routing.allocation.disk.threshold_enabled" ) );
         assertEquals( "1", settings.get( "index.recovery.initial_shards" ) );
         assertEquals( pathValue, settings.get( "path" ) );
+        assertEquals( System.getProperty( "xp.home" ), settings.get( "path.repo" ) );
         assertEquals( pathValue + "/data", settings.get( "path.data" ) );
         assertEquals( pathValue + "/work", settings.get( "path.work" ) );
         assertEquals( pathValue + "/conf", settings.get( "path.conf" ) );

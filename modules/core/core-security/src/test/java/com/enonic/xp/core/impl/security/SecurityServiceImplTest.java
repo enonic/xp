@@ -4,9 +4,7 @@ import java.io.File;
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import com.enonic.xp.context.Context;
@@ -73,9 +71,6 @@ public class SecurityServiceImplTest
     extends AbstractElasticsearchIntegrationTest
 {
     private static final UserStoreKey SYSTEM = UserStoreKey.system();
-
-    @Rule
-    public TemporaryFolder xpHome = new TemporaryFolder();
 
     private SecurityServiceImpl securityService;
 

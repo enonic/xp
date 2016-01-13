@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branch;
@@ -86,9 +84,6 @@ public abstract class AbstractNodeTest
         repositoryId( TEST_REPO.getId() ).
         authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
-
-    @Rule
-    public TemporaryFolder xpHome = new TemporaryFolder();
 
     public BlobStore binaryBlobStore;
 
