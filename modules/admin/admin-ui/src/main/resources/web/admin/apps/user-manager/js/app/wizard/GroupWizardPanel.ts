@@ -62,6 +62,7 @@ module app.wizard {
                     api.notify.showFeedback('Group was created!');
                     new api.security.UserItemCreatedEvent(principal, this.getUserStore(), this.isParentOfSameType()).fire();
                     this.notifyPrincipalNamed(principal);
+                    (<PrincipalLoader>this.getMembersWizardStepForm().getLoader()).skipPrincipal(principal.getKey());
 
                     return principal;
                 });
