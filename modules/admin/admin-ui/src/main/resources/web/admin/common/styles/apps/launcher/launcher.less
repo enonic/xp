@@ -337,7 +337,7 @@ html, body {
 
     position: absolute;
     top: 8px;
-    right: 0;
+    right: 3px;
     z-index: 1;
     background-color: transparent;
     border: none;
@@ -371,7 +371,8 @@ html, body {
       width: @panel-inner-width;
       height: 100%;
       width: 100%;
-      overflow: auto;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
 
     a {
@@ -434,9 +435,13 @@ html, body {
     font-size: 14px;
 
     .user-info {
-      display: table;
       vertical-align: middle;
-      padding-top: 9px;
+      padding: 9px 15px 0 0;
+      width: 200px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
       > * {
         vertical-align: middle
       }
@@ -447,16 +452,15 @@ html, body {
       display: table-cell;
       vertical-align: middle;
       font-size: 16px;
+      width: 100%;
     }
     img {
       width: 40px;
       margin-right: 10px;
     }
     span {
-      width: 100%;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
       font-size: 16px;
+      vertical-align: middle;
     }
 
   }

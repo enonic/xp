@@ -46,10 +46,7 @@
 
             var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
             for (var i = 0; i < appTiles.length; i++) {
-                if (appTiles[i].target == "") {
-                    appTiles[i].target = "_blank";
-                    appTiles[i].addEventListener("click", closeLauncherPanel.bind(this, true));
-                }
+                appTiles[i].addEventListener("click", closeLauncherPanel.bind(this, true));
             }
 
             if (CONFIG && CONFIG.autoOpenLauncher) {
