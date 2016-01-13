@@ -385,7 +385,7 @@ html, body {
 
     .app-row {
 
-      margin: 40px 0;
+      margin: 30px 0;
 
       .application {
         display: table;
@@ -409,23 +409,15 @@ html, body {
         }
 
         .app-icon {
-          margin-right: 20px;
-          width: 48px;
-          height: 48px;
+          margin: 4px 22px 0 0;
+          width: 40px;
+          height: 40px;
 
-          @media only screen and (max-width: @tablet-threshold) {
-            width: 36px;
-            height: 36px;
+          &.app-home-icon {
+            float: left;
+            background: url("../images/enonic.svg") 0 0 no-repeat;
+            background-size: 40px 40px;
           }
-        }
-        .app-home-icon {
-          display: block;
-          float: left;
-          background: url("../images/enonic.svg") 0 0 no-repeat;
-          background-size: 100%;
-          width: 45px;
-          height: 60px;
-          margin: 0 20px 0 5px;
         }
       }
     }
@@ -501,7 +493,7 @@ html, body {
     display: table;
     width: 400px;
     left: 40px;
-    bottom: 29px;
+    bottom: 23px;
     text-align: left;
 
     a, span {

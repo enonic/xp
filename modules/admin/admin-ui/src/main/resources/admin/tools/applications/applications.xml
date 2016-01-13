@@ -2,7 +2,7 @@
 <tool xmlns="urn:enonic:xp:model:1.0">
   <display-name>Applications</display-name>
   <description>Install and manage your Apps</description>
-  <icon>icons/puzzle.svg</icon>
+  <icon>icons/applications.svg</icon>
   <allow>
     <principal>role:system.admin</principal>
   </allow>
