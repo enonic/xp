@@ -73,13 +73,9 @@ module app.wizard {
                 return null;
             }
 
-            var applicationKey = this.authApplicationCombobox.getSelectedDisplayValues()[0].
-                getApplicationKey()
-
-            return api.security.UserStoreAuthConfig.create().
-                setApplicationKey(applicationKey).
-                setConfig(new api.data.PropertyTree()).
-                build();
+            var selectedOption = this.authApplicationCombobox.getSelectedOptions()[0];
+            var selectedOptionView: api.ui.security.auth.AuthApplicationSelectedOptionView = selectedOption.getOptionView();
+            return selectedOptionView.getAuthConfig();
         }
 
         giveFocus(): boolean {
