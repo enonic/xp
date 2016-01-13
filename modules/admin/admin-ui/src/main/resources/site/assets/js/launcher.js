@@ -10,6 +10,10 @@
         var button = document.createElement("button");
         button.setAttribute("class", "launcher-button");
 
+        var span = document.createElement("span");
+        span.setAttribute("class", "lines");
+        button.appendChild(span);
+
         button.addEventListener("click", openLauncherPanel);
 
         document.getElementsByTagName("body")[0].appendChild(div);

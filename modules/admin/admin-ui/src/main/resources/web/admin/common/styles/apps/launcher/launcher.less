@@ -285,18 +285,59 @@ html, body {
   .launcher-button {
     position: fixed;
     border: none;
-    right: 4px;
-    top: 9px;
+    right: 10px;
+    top: 15px;
     background-color: transparent;
     cursor: pointer;
     z-index: 1;
-    .icon-grid2;
 
-    &:before {
-      font-size: 24px;
-      color: white;
+    .line {
+      display: inline-block;
+      width: 25px;
+      height: 3px;
+      background: @admin-white;
+      transition: 0.3s;
+
+      .dark & {
+        background: @admin-bg-light-gray;
+      }
+    }
+
+    .lines {
+      .line;
+      position: relative;
+      top: -4px;
+
+      &:before, &:after {
+        .line;
+        position: absolute;
+        left: 0;
+        content: '';
+        -webkit-transform-origin: 2rem/14 center;
+        transform-origin: 2rem/14 center;
+      }
+      &:before {
+        top: 6px;
+      }
+      &:after {
+        top: -6px;
+      }
+    }
+
+    &:hover {
+      opacity: 1;
+      background: none;
+      .lines {
+        &:before {
+          top: 9px;
+        }
+        &:after {
+          top: -9px;
+        }
+      }
     }
   }
+
 }
 
 .launcher-panel {
@@ -337,7 +378,7 @@ html, body {
 
     position: absolute;
     top: 8px;
-    right: 3px;
+    right: 10px;
     z-index: 1;
     background-color: transparent;
     border: none;
@@ -702,6 +743,9 @@ html, body {
     .user-name, .footer {
       display: none;
     }
+  }
+  .launcher-panel-close {
+    right: 0;
   }
 }
 
