@@ -12,8 +12,6 @@ import java.util.UUID;
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.parser.DefaultParser;
 import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -101,9 +99,6 @@ public class AbstractContentServiceTest
         repositoryId( TEST_REPO.getId() ).
         authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
-
-    @Rule
-    public TemporaryFolder xpHome = new TemporaryFolder();
 
     protected ContentServiceImpl contentService;
 
