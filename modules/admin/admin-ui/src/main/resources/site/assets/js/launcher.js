@@ -1,6 +1,7 @@
 (function () {
     var adminUrl = "/admin/tool/com.enonic.xp.admin.ui/launcher";
     var launcherPanel, bodyMask;
+    var isHomeApp = (CONFIG && CONFIG.autoOpenLauncher);
 
     function appendLauncherToolbar() {
         var div = document.createElement("div");
@@ -64,6 +65,9 @@
     function createBodyMaskDiv() {
         var div = document.createElement("div");
         div.classList.add("xp-admin-common-mask", "body-mask");
+        if (isHomeApp) {
+            div.classList.add("app-home");
+        }
         div.style.display = "none";
 
         document.getElementsByTagName("body")[0].appendChild(div);
