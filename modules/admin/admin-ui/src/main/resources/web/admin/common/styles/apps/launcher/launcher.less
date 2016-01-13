@@ -1,7 +1,11 @@
 @mobile-threshold: 540px;
 @tablet-threshold: 1380px;
 
-@toolbar-height: 44px;
+@panel-outer-width: 320px;
+@panel-inner-width: 280px;
+@header-height: 44px;
+@footer-height: 60px;
+@panel-indent: 30px;
 
 @enonic-logo-img-width: 103px;
 @enonic-logo-img-height: 137px;
@@ -61,7 +65,7 @@ html, body {
   .header-panel {
     position: absolute;
     width: 100%;
-    height: @toolbar-height;
+    height: @header-height;
     padding: 6px 10px;
     background-size: cover;
     text-align: center;
@@ -275,7 +279,7 @@ html, body {
   top: 0;
   left: 0;
   width: 100%;
-  height: @toolbar-height;
+  height: @header-height;
   z-index: 1;
 
   .launcher-button {
@@ -295,12 +299,6 @@ html, body {
   }
 }
 
-._0-240, ._240-360 {
-  .launcher-panel {
-    width: 100%;
-  }
-}
-
 .launcher-panel {
   position: fixed;
   overflow: hidden;
@@ -308,7 +306,7 @@ html, body {
   right: 0;
   height: 100%;
   z-index: 100000;
-  width: 320px;
+  width: @panel-outer-width;
 
   & > * {
     -webkit-font-smoothing: antialiased;
@@ -316,7 +314,7 @@ html, body {
   }
 
   & > div {
-    padding: 0 30px;
+    padding: 0 @panel-indent;
     display: table;
   }
 
@@ -339,7 +337,7 @@ html, body {
 
     position: absolute;
     top: 8px;
-    right: 3px;
+    right: 0;
     z-index: 1;
     background-color: transparent;
     border: none;
@@ -349,19 +347,32 @@ html, body {
   }
 
   .launcher-title {
-    width: 100%;
+    position: absolute;
+    top: 0;
+    height: @header-height;
+    width: @panel-outer-width;
     background-color: rgba(0, 0, 0, 1);
     color: @admin-white;
     font-size: 25px;
-    height: @toolbar-height;
     display: table;
   }
 
   .launcher-app-container {
-    height: calc(~"100% - @{toolbar-height} - 70px");
-
-    width: 280px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    height: 100%;
+    width: @panel-outer-width;
+    padding: @header-height calc(@panel-outer-width - @panel-inner-width - @panel-indent) @footer-height @panel-indent;
+    overflow: hidden;
     background-color: rgba(0, 0, 0, 0.7);
+
+    .scrollable-content {
+      width: @panel-inner-width;
+      height: 100%;
+      width: 100%;
+      overflow: auto;
+    }
 
     a {
       color: @admin-white;
@@ -385,9 +396,14 @@ html, body {
 
         .app-info {
           .app-name {
+            width: 220px;
             font-size: 20px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
           }
           .app-description {
+            width: 220px;
             font-size: 14px;
           }
         }
@@ -416,17 +432,19 @@ html, body {
   }
 
   .launcher-user {
-    width: 100%;
+    position: absolute;
+    bottom: 0;
+    display: table;
+    height: @footer-height;
+    width: @panel-outer-width;
     background-color: rgba(255, 255, 255, 0.3);
     color: @admin-white;
     font-size: 14px;
-    display: table;
-    height: 70px;
 
     .user-info {
       display: table;
       vertical-align: middle;
-      padding-top: 15px;
+      padding-top: 9px;
       > * {
         vertical-align: middle
       }
@@ -469,9 +487,9 @@ html, body {
     position: absolute;
     display: table;
     top: 0;
-    height: @toolbar-height;
+    height: @header-height;
     width: 100%;
-    padding-left: 30px;
+    padding-left: @panel-indent;
     z-index: 1;
     text-transform: uppercase;
     background-color: rgba(0, 0, 0, 0.3);
@@ -691,4 +709,11 @@ html, body {
   }
 }
 
+._240-360 {
+  .home-main-container {
+    .header {
+      padding-left: calc(~'100% - @{panel-outer-width}');
+    }
+  }
 
+}

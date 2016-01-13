@@ -51,6 +51,10 @@
                     appTiles[i].addEventListener("click", closeLauncherPanel.bind(this, true));
                 }
             }
+
+            if (CONFIG && CONFIG.autoOpenLauncher) {
+                openLauncherPanel();
+            }
         };
 
         return link;
@@ -105,8 +109,4 @@
     }
 
     init();
-
-    if (CONFIG && CONFIG.autoOpenLauncher) {
-        openLauncherPanel();
-    }
 }());

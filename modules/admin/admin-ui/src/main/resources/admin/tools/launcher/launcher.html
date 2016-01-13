@@ -16,29 +16,31 @@
         </div>
 
         <div class="launcher-app-container">
-            {{#adminTools}}
-            <div class="app-row" tabindex="1">
-                <a href="{{uri}}">
-                    <div class="application">
-                        <img src="{{icon}}" class="app-icon">
-                        <div class="app-info">
-                            <p class="app-name">{{displayName}}</p>
-                            <p class="app-description">{{description}}</p>
+            <div class="scrollable-content">
+                {{#adminTools}}
+                <div class="app-row" tabindex="1">
+                    <a href="{{uri}}">
+                        <div class="application">
+                            <img src="{{icon}}" class="app-icon">
+                            <div class="app-info">
+                                <p class="app-name">{{displayName}}</p>
+                                <p class="app-description">{{description}}</p>
+                            </div>
                         </div>
-                    </div>
-                </a>
-            </div>
-            {{/adminTools}}
-            <div class="app-row" tabindex="1">
-                <a href="{{homeUrl}}">
-                    <div class="application">
-                        <div class="app-home-icon"></div>
-                        <div class="app-info">
-                            <p class="app-name">Home</p>
-                            <p class="app-description">Start page for Enonic XP</p>
+                    </a>
+                </div>
+                {{/adminTools}}
+                <div class="app-row" tabindex="1">
+                    <a href="{{homeUrl}}">
+                        <div class="application">
+                            <div class="app-home-icon"></div>
+                            <div class="app-info">
+                                <p class="app-name">Home</p>
+                                <p class="app-description">Start page for Enonic XP</p>
+                            </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
             </div>
         </div>
 
