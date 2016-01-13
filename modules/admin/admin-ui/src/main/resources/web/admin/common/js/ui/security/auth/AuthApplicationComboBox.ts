@@ -46,6 +46,10 @@ module api.ui.security.auth {
             return this.authConfig;
         }
 
+        setAuthConfig(authConfig: api.security.UserStoreAuthConfig) {
+            this.authConfig = authConfig;
+        }
+
         resolveIconUrl(content: api.application.Application): string {
             return api.util.UriHelper.getAdminUri("common/images/icons/icoMoon/32x32/shield.png");
         }
@@ -73,36 +77,26 @@ module api.ui.security.auth {
             if (this.application.getAuthForm().getFormItems().length > 0) {
 
                 var tempSiteConfig: api.security.UserStoreAuthConfig = this.makeTemporaryAuthConfig();
-
                 var formViewStateOnDialogOpen = this.formView;
-                //this.unbindValidationEvent(formViewStateOnDialogOpen);
-
                 this.formView = this.createFormView(this.formContext, tempSiteConfig);
-                //this.bindValidationEvent(this.formView);
 
                 var okCallback = () => {
                     if (!tempSiteConfig.equals(this.authConfig)) {
                         this.applyTemporaryConfig(tempSiteConfig);
-                        //new ContentRequiresSaveEvent(this.formContext.getPersistedContent()).fire();
                     }
-                };
-
-                var cancelCallback = () => {
-                    //this.revertFormViewToGivenState(formViewStateOnDialogOpen);
                 };
 
                 var siteConfiguratorDialog = new api.content.site.inputtype.siteconfigurator.SiteConfiguratorDialog(this.application.getDisplayName(),
                     this.application.getName() + "-" + this.application.getVersion(),
                     this.formView,
-                    okCallback,
-                    cancelCallback);
+                    okCallback);
                 siteConfiguratorDialog.open();
             }
         }
 
         private makeTemporaryAuthConfig(): api.security.UserStoreAuthConfig {
             return api.security.UserStoreAuthConfig.create().
-                setConfig(new api.data.PropertyTree(undefined)).
+                setConfig(this.authConfig.getConfig().copy()).
                 setApplicationKey(this.authConfig.getApplicationKey()).build();
         }
 
@@ -113,7 +107,6 @@ module api.ui.security.auth {
             formView.layout().then(() => {
                 this.formView.validate(false, true);
                 this.toggleClass("invalid", !this.formView.isValid());
-                //this.notifySiteConfigFormDisplayed(this.application.getApplicationKey());
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
