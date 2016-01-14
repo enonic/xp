@@ -27,7 +27,7 @@ module app {
         }
 
         private onUserAuthenticated(loginResult: api.security.auth.LoginResult) {
-            window.location.href = "..";
+            window.location.href = CONFIG.callback ? CONFIG.callback : "..";
         }
     }
 

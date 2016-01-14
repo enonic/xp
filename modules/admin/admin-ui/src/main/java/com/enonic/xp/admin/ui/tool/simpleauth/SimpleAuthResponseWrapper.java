@@ -4,22 +4,29 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+
+import com.google.common.base.Strings;
 
 import com.enonic.xp.admin.ui.tool.UriScriptHelper;
 
 public class SimpleAuthResponseWrapper
     extends HttpServletResponseWrapper
 {
+    private final HttpServletRequest request;
+
     private boolean redirected;
 
-    public SimpleAuthResponseWrapper( final HttpServletResponse response )
+    public SimpleAuthResponseWrapper( final HttpServletRequest req, final HttpServletResponse response )
     {
         super( response );
+        this.request = req;
     }
 
     @Override
@@ -125,7 +132,16 @@ public class SimpleAuthResponseWrapper
         throws UnsupportedEncodingException
     {
         super.setStatus( 303 );
-        super.setHeader( "Location", UriScriptHelper.generateAdminToolUri( "com.enonic.xp.admin.ui", "login" ) );
+        StringBuffer uri = new StringBuffer( request.getRequestURI() );
+        if ( !Strings.isNullOrEmpty( request.getQueryString() ) )
+        {
+            uri.append( "?" ).
+                append( request.getQueryString() );
+        }
+        final String callbackUri = URLEncoder.encode( uri.toString(), "UTF-8" );
+
+        super.setHeader( "Location",
+                         UriScriptHelper.generateAdminToolUri( "com.enonic.xp.admin.ui", "login" ) + "?callback=" + callbackUri );
         redirected = true;
     }
 }

@@ -20,7 +20,7 @@ public class SimpleAuthFilter
         throws Exception
     {
         //Executes the rest of the filters with a wrapped response
-        final SimpleAuthResponseWrapper auth0ResponseWrapper = new SimpleAuthResponseWrapper( res );
+        final SimpleAuthResponseWrapper auth0ResponseWrapper = new SimpleAuthResponseWrapper( req, res );
         chain.doFilter( req, auth0ResponseWrapper );
     }
 }

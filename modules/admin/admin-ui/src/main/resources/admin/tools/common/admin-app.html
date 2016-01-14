@@ -39,6 +39,9 @@
 <!-- Configuration -->
 <script type="text/javascript">
     var CONFIG = {
+        {{#config}}
+        {{key}}: '{{value}}',
+        {{/config}}
         baseUri: '{{baseUri}}',
         assetsUri: '{{assetsUri}}',
         xpVersion: '{{xpVersion}}'

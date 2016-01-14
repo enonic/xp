@@ -1,9 +1,9 @@
 package com.enonic.xp.admin.ui.tool;
 
 
+import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
-import com.enonic.xp.server.ServerInfo;
 
 public class UriScriptHelper
 {
@@ -11,21 +11,26 @@ public class UriScriptHelper
 
     public static final String ADMIN_TOOLS_URI_PREFIX = "/admin/tool";
 
+    public static final String rewriteUri( final String uri )
+    {
+        return ServletRequestUrlHelper.createUri( uri );
+    }
+
     public static final String generateAdminToolUri()
     {
-        return ServletRequestUrlHelper.createUri( ADMIN_TOOLS_URI_PREFIX );
+        return rewriteUri( ADMIN_TOOLS_URI_PREFIX );
     }
 
     public static final String generateAdminToolUri( String application, String adminTool )
     {
         String uri = ADMIN_TOOLS_URI_PREFIX + "/" + application + "/" + adminTool;
-        return ServletRequestUrlHelper.createUri( uri );
+        return rewriteUri( uri );
     }
 
     public static final String generateHomeUri( String application )
     {
         String uri = ADMIN_TOOLS_URI_PREFIX + "/" + application + "/home";
-        return ServletRequestUrlHelper.createUri( uri );
+        return rewriteUri( uri );
     }
 
     private static final String generateVersion()
