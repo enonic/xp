@@ -17,7 +17,8 @@ function handleGet(req) {
     for (var i = 0; i < adminTools.length; i++) {
         if (adminTools[i].icon.indexOf("//") < 0) {
             adminTools[i].icon = portal.assetUrl({
-                path: adminTools[i].icon
+                path: adminTools[i].icon,
+                application: adminTools[i].key.application
             });
         }
         adminTools[i].uri =
