@@ -75,6 +75,10 @@ module app.view.detail {
             this.appendChild(this.detailsContainer);
             this.appendChild(this.divForNoSelection);
 
+            this.onPanelSizeChanged(() => {
+                this.setDetailsContainerHeight();
+            });
+
             this.layout();
         }
 
@@ -239,6 +243,7 @@ module app.view.detail {
 
             return wemQ.all([defaultPromise, commonPromise, customPromise]).then(() => {
                 // update active widget's height
+                this.setDetailsContainerHeight();
                 this.activeWidget.slideIn();
             });
         }
@@ -356,6 +361,17 @@ module app.view.detail {
                     ResponsiveManager.fireResizeEvent();
                 }
             });
+        }
+
+        private setDetailsContainerHeight() {
+            var panelHeight = this.getEl().getHeight(),
+                panelOffset = this.getEl().getOffsetToParent(),
+                containerHeight = this.detailsContainer.getEl().getHeight(),
+                containerOffset = this.detailsContainer.getEl().getOffsetToParent();
+
+            if (containerOffset.top > 0 && containerHeight !== (panelHeight - panelOffset.top - containerOffset.top)) {
+                this.detailsContainer.getEl().setHeightPx(panelHeight - panelOffset.top - containerOffset.top);
+            }
         }
 
         private splitterWithinBoundaries(offset: number) {

@@ -15,4 +15,6 @@ public class BranchIndexPath
     public static final IndexPath STATE = IndexPath.from( "state" );
 
     public static final IndexPath PATH = IndexPath.from( "path" );
+
+    public static final IndexPath REFERENCES = IndexPath.from( "references" );
 }

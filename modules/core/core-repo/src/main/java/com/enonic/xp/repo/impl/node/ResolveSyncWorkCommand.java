@@ -6,15 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.data.Property;
-import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.node.FindNodesWithVersionDifferenceParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
@@ -139,19 +136,14 @@ public class ResolveSyncWorkCommand
 
         if ( !allPossibleNodesAreIncluded )
         {
-            final Node node = GetNodeByIdCommand.create( this ).
-                id( nodeId ).
-                build().
-                execute();
-
             ensureThatParentExists( nodeId );
             if ( !nodePendingDelete( comparison ) )
             {
-                includeReferences( node );
+                includeReferences( nodeId );
             }
             if ( nodePendingDelete( comparison ) )
             {
-                includeChildren( node );
+                includeChildren( nodeId );
             }
         }
     }
@@ -190,18 +182,14 @@ public class ResolveSyncWorkCommand
         }
     }
 
-    private void includeReferences( final Node node )
+    private void includeReferences( final NodeId nodeId )
     {
+        final NodeIds references = GetOutgoingReferencesCommand.create( this ).
+            nodeId( nodeId ).
+            build().
+            execute();
 
-        final ImmutableList<Property> references = node.data().getProperties( ValueTypes.REFERENCE );
-
-        final NodeIds.Builder referredNodeIds = NodeIds.create();
-
-        references.stream().filter( Property::hasNotNullValue ).forEach( reference -> {
-            referredNodeIds.add( reference.getReference().getNodeId() );
-        } );
-
-        for ( final NodeId referredNodeId : referredNodeIds.build() )
+        for ( final NodeId referredNodeId : references )
         {
             if ( !this.processedIds.contains( referredNodeId ) )
             {
@@ -214,15 +202,18 @@ public class ResolveSyncWorkCommand
                 }
                 else
                 {
-                    LOG.warn( "Node with id: " + referredNodeId + " referred to from node " + node.path() + " not found" );
+                    LOG.warn( "Node with id: " + referredNodeId + " referred to from node " + nodeId + " not found" );
                 }
             }
         }
     }
 
-    private void includeChildren( final Node node )
+    private void includeChildren( final NodeId nodeId )
     {
-        findNodesWithVersionDifference( node.path() ).
+        final NodeBranchMetadata branchNodeVersion =
+            this.storageService.getBranchNodeVersion( nodeId, InternalContext.from( ContextAccessor.current() ) );
+
+        findNodesWithVersionDifference( branchNodeVersion.getNodePath() ).
             getNodesWithDifferences().
             stream().
             filter( childNodeId -> !this.processedIds.contains( childNodeId ) ).

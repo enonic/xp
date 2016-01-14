@@ -8,7 +8,7 @@ module api.aggregation {
 
         private bucketSelectionChangedListeners: Function[] = [];
 
-        displayNameMap: string[] = [];
+        private displayNameMap: {[name:string]:string} = {};
 
         constructor(aggregation: api.aggregation.Aggregation, parentGroupView: api.aggregation.AggregationGroupView) {
             super('aggregation-view');
@@ -16,7 +16,7 @@ module api.aggregation {
             this.parentGroupView = parentGroupView;
         }
 
-        setDisplayNamesMap(displayNameMap: string[]): void {
+        setDisplayNamesMap(displayNameMap: {[name:string]:string}): void {
             this.displayNameMap = displayNameMap;
             this.setDisplayNames();
         }
@@ -26,7 +26,7 @@ module api.aggregation {
         }
 
         getDisplayNameForName(name: string): string {
-            return this.displayNameMap[name];
+            return this.displayNameMap[name.toLowerCase()];
         }
 
         getAggregation(): api.aggregation.Aggregation {

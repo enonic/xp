@@ -57,7 +57,7 @@ public class NodeOrderTest
                 OrderExpr.Direction.ASC ) ) ).
             build();
 
-        final NodeQueryResult nodeQueryResult = searchService.search( distanceQuery, InternalContext.from( ContextAccessor.current() ) );
+        final NodeQueryResult nodeQueryResult = searchService.query( distanceQuery, InternalContext.from( ContextAccessor.current() ) );
 
         final Iterator<NodeId> iterator = nodeQueryResult.getNodeIds().iterator();
         assertEquals( node4.id(), iterator.next() );
@@ -88,7 +88,7 @@ public class NodeOrderTest
 
         printContentRepoIndex();
 
-        final NodeQueryResult nodeQueryResult = searchService.search( fulltextQuery, InternalContext.from( ContextAccessor.current() ) );
+        final NodeQueryResult nodeQueryResult = searchService.query( fulltextQuery, InternalContext.from( ContextAccessor.current() ) );
 
         assertEquals( 4, nodeQueryResult.getHits() );
 

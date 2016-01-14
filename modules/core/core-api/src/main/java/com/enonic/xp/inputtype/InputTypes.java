@@ -22,6 +22,7 @@ public final class InputTypes
         add( HtmlAreaType.INSTANCE ).
         add( ImageUploaderType.INSTANCE ).
         add( MediaUploaderType.INSTANCE ).
+        add( AttachmentUploaderType.INSTANCE ).
         add( ImageSelectorType.INSTANCE ).
         add( ContentSelectorType.INSTANCE ).
         add( RadioButtonType.INSTANCE ).

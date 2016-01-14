@@ -26,7 +26,7 @@ public class FindNodesWithVersionDifferenceCommand
 
     public NodeVersionDiffResult execute()
     {
-        return this.searchService.search( NodeVersionDiffQuery.create().
+        return this.searchService.query( NodeVersionDiffQuery.create().
             source( params.getSource() ).
             target( params.getTarget() ).
             nodePath( params.getNodePath() ).

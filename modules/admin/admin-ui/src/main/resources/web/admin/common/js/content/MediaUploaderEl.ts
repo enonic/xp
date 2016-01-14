@@ -17,7 +17,7 @@ module api.content {
 
     export class MediaUploaderEl extends api.ui.uploader.UploaderEl<Content> {
 
-        private fileName: string;
+        protected fileName: string;
 
         constructor(config: MediaUploaderElConfig) {
 

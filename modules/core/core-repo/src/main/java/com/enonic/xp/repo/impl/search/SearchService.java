@@ -14,11 +14,13 @@ public interface SearchService
 {
     int GET_ALL_SIZE_FLAG = -1;
 
-    NodeQueryResult search( final NodeQuery query, final InternalContext context );
+    NodeQueryResult query( final NodeQuery query, final InternalContext context );
 
-    NodeVersionQueryResult search( final NodeVersionQuery query, final InternalContext context );
+    NodeVersionQueryResult query( final NodeVersionQuery query, final InternalContext context );
 
-    NodeBranchQueryResult search( final NodeBranchQuery nodeBranchQuery, final InternalContext context );
+    NodeBranchQueryResult query( final NodeBranchQuery nodeBranchQuery, final InternalContext context );
 
-    NodeVersionDiffResult search( final NodeVersionDiffQuery query, final InternalContext context );
+    NodeVersionDiffResult query( final NodeVersionDiffQuery query, final InternalContext context );
+
+
 }

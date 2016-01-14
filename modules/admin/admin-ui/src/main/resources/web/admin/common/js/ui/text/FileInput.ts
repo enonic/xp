@@ -69,7 +69,7 @@ module api.ui.text {
             return this;
         }
 
-        getUploader(): MediaUploaderEl{
+        getUploader(): MediaUploaderEl {
             return this.mediaUploaderEl;
         }
 

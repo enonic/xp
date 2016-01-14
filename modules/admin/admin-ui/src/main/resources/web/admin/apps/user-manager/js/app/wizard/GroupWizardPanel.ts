@@ -7,6 +7,7 @@ module app.wizard {
 
     import Principal = api.security.Principal;
     import PrincipalKey = api.security.PrincipalKey;
+    import PrincipalLoader = api.security.PrincipalLoader;
 
     import UserTreeGridItem = app.browse.UserTreeGridItem;
     import UserTreeGridItemBuilder = app.browse.UserTreeGridItemBuilder;
@@ -62,6 +63,7 @@ module app.wizard {
                     api.notify.showFeedback('Group was created!');
                     new api.security.UserItemCreatedEvent(principal, this.getUserStore(), this.isParentOfSameType()).fire();
                     this.notifyPrincipalNamed(principal);
+                    (<PrincipalLoader>this.getMembersWizardStepForm().getLoader()).skipPrincipal(principal.getKey());
 
                     return principal;
                 });

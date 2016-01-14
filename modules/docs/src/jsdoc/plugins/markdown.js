@@ -26,7 +26,7 @@ function shouldProcessString(tagName, text) {
     var shouldProcess = true;
 
     // we only want to process `@author` and `@see` tags that contain Markdown links
-    if ( (tagName === 'author' || tagName === 'see') && text.indexOf('[') === -1 ) {
+    if ((tagName === 'author' || tagName === 'see') && text.indexOf('[') === -1) {
         shouldProcess = false;
     }
 
@@ -40,16 +40,16 @@ function shouldProcessString(tagName, text) {
  * strings, objects, or arrays of objects.
  */
 function process(doclet) {
-    tags.forEach(function(tag) {
-        if ( !hasOwnProp.call(doclet, tag) ) {
+    tags.forEach(function (tag) {
+        if (!hasOwnProp.call(doclet, tag)) {
             return;
         }
 
-        if (typeof doclet[tag] === 'string' && shouldProcessString(tag, doclet[tag]) ) {
+        if (typeof doclet[tag] === 'string' && shouldProcessString(tag, doclet[tag])) {
             doclet[tag] = parse(doclet[tag]);
         }
-        else if ( Array.isArray(doclet[tag]) ) {
-            doclet[tag].forEach(function(value, index, original) {
+        else if (Array.isArray(doclet[tag])) {
+            doclet[tag].forEach(function (value, index, original) {
                 var inner = {};
                 inner[tag] = value;
                 process(inner);
@@ -70,7 +70,7 @@ if (config.tags) {
 if (config.excludeTags) {
     excludeTags = config.excludeTags.slice();
 }
-defaultTags.forEach(function(tag) {
+defaultTags.forEach(function (tag) {
     if (excludeTags.indexOf(tag) === -1 && tags.indexOf(tag) === -1) {
         tags.push(tag);
     }
@@ -81,7 +81,7 @@ exports.handlers = {
      * Translate markdown syntax in a new doclet's description into HTML. Is run
      * by JSDoc 3 whenever a "newDoclet" event fires.
      */
-    newDoclet: function(e) {
+    newDoclet: function (e) {
         process(e.doclet);
     }
 };

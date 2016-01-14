@@ -12,8 +12,6 @@ import java.util.UUID;
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.parser.DefaultParser;
 import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -54,6 +52,7 @@ import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
+import com.enonic.xp.repo.impl.storage.IndexedDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.Repository;
@@ -101,9 +100,6 @@ public class AbstractContentServiceTest
         authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
 
-    @Rule
-    public TemporaryFolder xpHome = new TemporaryFolder();
-
     protected ContentServiceImpl contentService;
 
     protected NodeServiceImpl nodeService;
@@ -125,6 +121,8 @@ public class AbstractContentServiceTest
     private StorageServiceImpl storageService;
 
     private SearchServiceImpl searchService;
+
+    private IndexedDataServiceImpl indexedDataService;
 
     private ElasticsearchSearchDao searchDao;
 
@@ -164,11 +162,15 @@ public class AbstractContentServiceTest
 
         this.contentService = new ContentServiceImpl();
 
+        this.indexedDataService = new IndexedDataServiceImpl();
+        this.indexedDataService.setStorageDao( storageDao );
+
         this.storageService = new StorageServiceImpl();
         this.storageService.setBranchService( this.branchService );
         this.storageService.setVersionService( this.versionService );
         this.storageService.setNodeVersionDao( this.nodeDao );
         this.storageService.setIndexServiceInternal( this.indexService );
+        this.storageService.setIndexedDataService( this.indexedDataService );
 
         this.searchDao = new ElasticsearchSearchDao();
         this.searchDao.setElasticsearchDao( this.elasticsearchDao );

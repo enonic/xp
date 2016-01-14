@@ -1,13 +1,13 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import java.util.Set;
+import java.util.List;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.xp.repo.impl.elasticsearch.document.AbstractStoreDocumentItem;
-import com.enonic.xp.repo.impl.elasticsearch.document.StoreDocumentStringItem;
+import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItem;
+import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItemString;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -15,9 +15,9 @@ import com.enonic.xp.security.acl.Permission;
 
 public class AccessControlListStoreDocumentFactory
 {
-    static Set<AbstractStoreDocumentItem> create( final AccessControlList accessControlList )
+    static List<IndexItem> create( final AccessControlList accessControlList )
     {
-        final Set<AbstractStoreDocumentItem> aclStoreDocumentItems = Sets.newHashSet();
+        final List<IndexItem> aclStoreDocumentItems = Lists.newArrayList();
 
         for ( final AccessControlEntry entry : accessControlList )
         {
@@ -27,7 +27,7 @@ public class AccessControlListStoreDocumentFactory
 
             for ( final Permission permission : allowedPermissions )
             {
-                aclStoreDocumentItems.add( new StoreDocumentStringItem( getPathForPermission( permission ), principalKey.toString() ) );
+                aclStoreDocumentItems.add( new IndexItemString( getPathForPermission( permission ), principalKey.toString() ) );
             }
         }
 

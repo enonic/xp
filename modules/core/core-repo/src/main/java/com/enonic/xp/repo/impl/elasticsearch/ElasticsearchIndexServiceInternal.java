@@ -220,6 +220,7 @@ public class ElasticsearchIndexServiceInternal
     @Override
     public void store( final Node node, final InternalContext context )
     {
+
         final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             branch( context.getBranch() ).

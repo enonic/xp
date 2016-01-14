@@ -41,7 +41,7 @@ public class GetNodeVersionsCommand
             addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) ).
             build();
 
-        return this.searchService.search( query, InternalContext.from( ContextAccessor.current() ) );
+        return this.searchService.query( query, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static Builder create()

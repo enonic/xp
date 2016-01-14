@@ -29,8 +29,6 @@ public class PushContentCommand
 
     private final Branch target;
 
-    private final PushContentStrategy strategy;
-
     private final boolean resolveDependencies;
 
     private final PushContentsResult.Builder resultBuilder;
@@ -42,7 +40,6 @@ public class PushContentCommand
         super( builder );
         this.contentIds = builder.contentIds;
         this.target = builder.target;
-        this.strategy = builder.strategy;
         this.resolveDependencies = builder.resolveDependencies;
         this.includeChildren = builder.includeChildren;
         this.resultBuilder = PushContentsResult.create();
@@ -185,8 +182,6 @@ public class PushContentCommand
 
         private Branch target;
 
-        private PushContentStrategy strategy = PushContentStrategy.STRICT;
-
         private boolean resolveDependencies = true;
 
         private boolean includeChildren = true;
@@ -200,12 +195,6 @@ public class PushContentCommand
         public Builder target( final Branch target )
         {
             this.target = target;
-            return this;
-        }
-
-        public Builder strategy( final PushContentStrategy strategy )
-        {
-            this.strategy = strategy;
             return this;
         }
 
@@ -235,12 +224,5 @@ public class PushContentCommand
             return new PushContentCommand( this );
         }
 
-    }
-
-    public static enum PushContentStrategy
-    {
-        IGNORE_CONFLICTS,
-        ALLOW_PUBLISH_OUTSIDE_SELECTION,
-        STRICT
     }
 }

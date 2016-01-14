@@ -150,7 +150,7 @@ exports.getWithResponseTimeout = function (mockServer) {
 
     } catch (e) {
         var expectedResult = ("timeout" == e.message) || ("Read timed out" == e.message);
-        assert.assertTrue('Expected exception',expectedResult);
+        assert.assertTrue('Expected exception', expectedResult);
     }
 };
 

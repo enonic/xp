@@ -130,7 +130,6 @@ public class ContentServiceImplTest_delete
         final PushContentsResult result = this.contentService.push( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
-            allowPublishOutsideSelection( false ).
             build() );
 
         assertEquals( 1, result.getPushedContents().getSize() );
@@ -197,12 +196,11 @@ public class ContentServiceImplTest_delete
         final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
-            allowPublishOutsideSelection( true ).
             build();
 
         refresh();
 
-        final PushContentsResult push = this.contentService.push( pushParams );
+        this.contentService.push( pushParams );
 
         //Deletes the content
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
@@ -251,7 +249,6 @@ public class ContentServiceImplTest_delete
         final PushContentsResult result = this.contentService.push( PushContentParams.create().
             contentIds( ContentIds.from( parent.getId() ) ).
             target( CTX_OTHER.getBranch() ).
-            allowPublishOutsideSelection( true ).
             includeChildren( true ).
             build() );
         assertEquals( 2, result.getPushedContents().getSize() );

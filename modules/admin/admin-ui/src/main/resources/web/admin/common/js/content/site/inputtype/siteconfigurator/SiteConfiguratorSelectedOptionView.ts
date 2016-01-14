@@ -98,7 +98,7 @@ module api.content.site.inputtype.siteconfigurator {
                 var okCallback = () => {
                     if (!tempSiteConfig.equals(this.siteConfig)) {
                         this.applyTemporaryConfig(tempSiteConfig);
-                        new ContentRequiresSaveEvent(this.formContext.getPersistedContent()).fire();
+                        new ContentRequiresSaveEvent(this.formContext.getPersistedContent().getContentId()).fire();
                     }
                 };
 

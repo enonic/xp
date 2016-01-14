@@ -1,10 +1,10 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import java.util.Set;
+import java.util.List;
 
 import org.junit.Test;
 
-import com.enonic.xp.repo.impl.elasticsearch.document.AbstractStoreDocumentItem;
+import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItem;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -26,7 +26,7 @@ public class AccessControlListIndexDocumentFactoryTest
                 build() ).
             build();
 
-        final Set<AbstractStoreDocumentItem> aclStoreDocumentItems = AccessControlListStoreDocumentFactory.create( acl );
+        final List<IndexItem> aclStoreDocumentItems = AccessControlListStoreDocumentFactory.create( acl );
 
         assertEquals( 1, aclStoreDocumentItems.size() );
     }
@@ -55,7 +55,7 @@ public class AccessControlListIndexDocumentFactoryTest
                 build() ).
             build();
 
-        final Set<AbstractStoreDocumentItem> aclStoreDocumentItems = AccessControlListStoreDocumentFactory.create( acl );
+        final List<IndexItem> aclStoreDocumentItems = AccessControlListStoreDocumentFactory.create( acl );
 
         assertEquals( 5, aclStoreDocumentItems.size() );
     }
@@ -77,7 +77,7 @@ public class AccessControlListIndexDocumentFactoryTest
                 build() ).
             build();
 
-        final Set<AbstractStoreDocumentItem> aclStoreDocumentItems = AccessControlListStoreDocumentFactory.create( acl );
+        final List<IndexItem> aclStoreDocumentItems = AccessControlListStoreDocumentFactory.create( acl );
 
         assertEquals( 7, aclStoreDocumentItems.size() );
     }
