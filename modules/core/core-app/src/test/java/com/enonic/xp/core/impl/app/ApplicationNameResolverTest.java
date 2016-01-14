@@ -3,6 +3,9 @@ package com.enonic.xp.core.impl.app;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.ops4j.pax.tinybundles.core.TinyBundle;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
+import org.osgi.framework.Constants;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -16,7 +19,7 @@ public class ApplicationNameResolverTest
     public void valid_bundle()
         throws Exception
     {
-        final ByteSource source = createBundle( "myBundle", true );
+        final ByteSource source = wrapBundle( newBundle( "myBundle", true ) );
 
         final String bundleName = ApplicationNameResolver.resolve( source );
 
@@ -37,15 +40,37 @@ public class ApplicationNameResolverTest
     public void not_application()
         throws Exception
     {
-        final ByteSource source = createBundle( "myBundle", false );
+        final ByteSource source = wrapBundle( newBundle( "myBundle", false ) );
         final String appName = ApplicationNameResolver.resolve( source );
 
         assertNull( appName );
     }
 
-    private ByteSource createBundle( final String bundleName, final boolean isApp )
+
+    @Test
+    public void has_application_header()
+        throws Exception
+    {
+        final ByteSource source = wrapBundle( createBundleWithHeader( "myBundle", "1.0.0" ) );
+        final String appName = ApplicationNameResolver.resolve( source );
+
+        assertEquals( "myBundle", appName );
+    }
+
+
+    private TinyBundle createBundleWithHeader( final String name, final String version )
+    {
+        final TinyBundle bundle = TinyBundles.bundle().
+            set( Constants.BUNDLE_SYMBOLICNAME, name ).
+            set( Constants.BUNDLE_VERSION, version ).
+            set( ApplicationHelper.BUNDLE_TYPE_HEADER, ApplicationHelper.APPLICATION_BUNDLE_TYPE );
+
+        return bundle;
+    }
+
+    private ByteSource wrapBundle( final TinyBundle bundle )
         throws IOException
     {
-        return ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, isApp ).build() ) );
+        return ByteSource.wrap( ByteStreams.toByteArray( bundle.build() ) );
     }
 }
