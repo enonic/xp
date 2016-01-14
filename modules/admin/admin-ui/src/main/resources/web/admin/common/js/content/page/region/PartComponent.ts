@@ -39,6 +39,8 @@ module api.content.page.region {
         constructor(source?: PartComponent) {
 
             super(source);
+
+            this.setType(PartComponentType.get());
         }
 
         public fromJson(json: PartComponentJson, region: Region): PartComponentBuilder {

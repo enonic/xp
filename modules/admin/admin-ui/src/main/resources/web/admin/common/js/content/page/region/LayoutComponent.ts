@@ -149,6 +149,8 @@ module api.content.page.region {
             if (source) {
                 this.regions = source.getRegions().clone();
             }
+
+            this.setType(LayoutComponentType.get());
         }
 
         public fromJson(json: LayoutComponentJson, region: Region): LayoutComponent {

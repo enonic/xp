@@ -23,8 +23,8 @@ module api.content.page.region {
             return ComponentType.shortNameToInstance[shortName];
         }
 
-        getDefaultName(): string {
-            return api.util.StringHelper.capitalize(api.util.StringHelper.removeWhitespaces(this.shortName));
+        getDefaultName(): ComponentName {
+            return new ComponentName(api.util.StringHelper.capitalize(api.util.StringHelper.removeWhitespaces(this.shortName)));
         }
     }
 

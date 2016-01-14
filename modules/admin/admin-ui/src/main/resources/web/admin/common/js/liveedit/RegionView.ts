@@ -430,9 +430,8 @@ module api.liveedit {
         }
 
         public createComponent(componentType: ComponentType): Component {
-            var componentName = new ComponentName(componentType.getDefaultName());
 
-            var builder = componentType.newComponentBuilder().setName(componentName);
+            var builder = componentType.newComponentBuilder().setName(componentType.getDefaultName());
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedComponentBuilder)) {
                 var descriptorBuilder = <DescriptorBasedComponentBuilder<DescriptorBasedComponent>> builder;

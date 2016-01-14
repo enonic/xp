@@ -55,7 +55,7 @@ module api.content.page.region {
             var oldValue = this.descriptor;
             this.descriptor = descriptorKey;
 
-            this.setName(descriptor ? new ComponentName(descriptor.getDisplayName()) : null);
+            this.setName(descriptor ? new ComponentName(descriptor.getDisplayName()) : this.getType().getDefaultName());
 
             if (!api.ObjectHelper.equals(oldValue, descriptorKey)) {
                 this.notifyPropertyChanged(DescriptorBasedComponent.PROPERTY_DESCRIPTOR);
