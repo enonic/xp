@@ -7,6 +7,7 @@ module app.wizard {
 
     import Principal = api.security.Principal;
     import PrincipalKey = api.security.PrincipalKey;
+    import PrincipalLoader = api.security.PrincipalLoader;
 
     import UserTreeGridItem = app.browse.UserTreeGridItem;
     import UserTreeGridItemBuilder = app.browse.UserTreeGridItemBuilder;

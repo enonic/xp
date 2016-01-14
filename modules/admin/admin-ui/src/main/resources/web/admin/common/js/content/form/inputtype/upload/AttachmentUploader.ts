@@ -10,6 +10,7 @@ module api.content.form.inputtype.upload {
 
     import AttachmentUploaderEl = api.content.AttachmentUploaderEl;
     import Content = api.content.Content;
+    import Attachment = api.content.attachment.Attachment;
     import UploaderEl = api.ui.uploader.UploaderEl;
 
 
