@@ -26,7 +26,7 @@ module app.wizard {
             this.authApplicationCombobox.getLoader().load();
 
             var authApplicationFormItem = new FormItemBuilder(this.authApplicationCombobox).
-                setLabel('Authentication').
+                setLabel('Application').
                 build();
 
             var fieldSet = new api.ui.form.Fieldset();
