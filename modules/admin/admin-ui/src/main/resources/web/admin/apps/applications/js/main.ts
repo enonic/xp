@@ -8,6 +8,23 @@ var application = (function () {
     application.setPath(api.rest.Path.fromString("/"));
     application.setWindow(window);
     this.serverEventsListener = new api.app.ServerEventsListener([application]);
+
+    var messageId;
+    this.lostConnectionDetector = new api.system.LostConnectionDetector();
+    this.lostConnectionDetector.setAuthenticated(true);
+    this.lostConnectionDetector.onConnectionLost(() => {
+        api.notify.NotifyManager.get().hide(messageId);
+        messageId = api.notify.showError("Lost connection to server - Please wait until connection is restored", false);
+    });
+    this.lostConnectionDetector.onSessionExpired(() => {
+        api.notify.NotifyManager.get().hide(messageId);
+        messageId = api.notify.showError("Your session has expired.", false);
+    });
+    this.lostConnectionDetector.onConnectionRestored(() => {
+        api.notify.NotifyManager.get().hide(messageId);
+    });
+
+
     return application;
 })();
 
@@ -29,6 +46,7 @@ function startApplication() {
 
     application.setLoaded(true);
     this.serverEventsListener.start();
+    this.lostConnectionDetector.startPolling();
 
     window.onmessage = (e: MessageEvent) => {
         if (e.data.appLauncherEvent) {
