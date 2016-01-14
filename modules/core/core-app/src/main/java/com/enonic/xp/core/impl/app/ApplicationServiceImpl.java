@@ -140,7 +140,7 @@ public final class ApplicationServiceImpl
         }
         catch ( Exception e )
         {
-            throw new ApplicationInstallException( "Cannot install application", e );
+            throw new ApplicationInstallException( "Cannot install application: " + e.getMessage(), e );
         }
         return applicationName;
     }
