@@ -84,7 +84,7 @@ module api.content.form.inputtype.upload {
         }
 
 
-        protected createUploader(property: Property): UploaderEl<Content> {
+        protected createUploader(property: Property): UploaderEl<any> {
 
             var predefinedAllowTypes,
                 attachmentFileName = this.getFileNameFromProperty(property);
