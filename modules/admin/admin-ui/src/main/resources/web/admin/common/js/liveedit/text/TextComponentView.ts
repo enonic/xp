@@ -130,7 +130,6 @@ module api.liveedit.text {
             super.handleClick(event);
         }
 
-
         handleClick(event: MouseEvent) {
             if (TextComponentView.debug) {
                 console.group('Handling click [' + this.getId() + '] at ' + new Date().getTime());
@@ -138,6 +137,9 @@ module api.liveedit.text {
             }
 
             event.stopPropagation();
+            if (event.which == 3) { // right click
+                event.preventDefault();
+            }
 
             if (this.isEditMode()) {
                 if (TextComponentView.debug) {
