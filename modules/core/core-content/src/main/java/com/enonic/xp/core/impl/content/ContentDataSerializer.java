@@ -1,7 +1,9 @@
 package com.enonic.xp.core.impl.content;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -25,6 +27,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
+import com.enonic.xp.util.BinaryReferences;
 import com.enonic.xp.util.Exceptions;
 
 import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT;
@@ -51,7 +54,6 @@ public final class ContentDataSerializer
         final PropertySet contentAsData = newPropertyTree.getRoot();
 
         final Content content = params.getEditedContent();
-        final CreateAttachments createAttachments = params.getCreateAttachments();
 
         contentAsData.setBoolean( ContentPropertyNames.VALID, content.isValid() );
         contentAsData.ifNotNull().addString( DISPLAY_NAME, content.getDisplayName() );
@@ -83,14 +85,8 @@ public final class ContentDataSerializer
             }
         }
 
-        if ( createAttachments != null )
-        {
-            applyCreateAttachments( createAttachments, contentAsData );
-        }
-        else
-        {
-            applyAttachmentsAsData( content.getAttachments(), contentAsData );
-        }
+        final Attachments attachments = mergeAttachments( content.getAttachments(), params );
+        applyAttachmentsAsData( attachments, contentAsData );
 
         if ( content.hasPage() )
         {
@@ -253,15 +249,7 @@ public final class ContentDataSerializer
             attachmentSet.addString( "label", createAttachment.getLabel() );
             attachmentSet.addBinaryReference( "binary", createAttachment.getBinaryReference() );
             attachmentSet.addString( "mimeType", createAttachment.getMimeType() );
-
-            try
-            {
-                attachmentSet.addLong( "size", createAttachment.getByteSource().size() );
-            }
-            catch ( IOException e )
-            {
-                throw Exceptions.unchecked( e );
-            }
+            attachmentSet.addLong( "size", attachmentSize( createAttachment ) );
         }
     }
 
@@ -275,6 +263,51 @@ public final class ContentDataSerializer
             attachmentSet.addBinaryReference( "binary", attachment.getBinaryReference() );
             attachmentSet.addString( "mimeType", attachment.getMimeType() );
             attachmentSet.addLong( "size", attachment.getSize() );
+        }
+    }
+
+    private Attachments mergeAttachments( final Attachments existingAttachments, final UpdateContentTranslatorParams params )
+    {
+        CreateAttachments createAttachments = params.getCreateAttachments();
+        BinaryReferences removeAttachments = params.getRemoveAttachments();
+        if ( createAttachments == null && removeAttachments == null && !params.isClearAttachments() )
+        {
+            return existingAttachments;
+        }
+
+        createAttachments = createAttachments == null ? CreateAttachments.empty() : createAttachments;
+        removeAttachments = removeAttachments == null ? BinaryReferences.empty() : removeAttachments;
+
+        final Map<BinaryReference, Attachment> attachments = new LinkedHashMap<>();
+        if ( !params.isClearAttachments() )
+        {
+            existingAttachments.stream().forEach( ( a ) -> attachments.put( a.getBinaryReference(), a ) );
+        }
+        removeAttachments.stream().forEach( attachments::remove );
+
+        // added attachments with same BinaryReference will replace existing ones
+        for ( final CreateAttachment createAttachment : createAttachments )
+        {
+            final Attachment attachment = Attachment.create().
+                name( createAttachment.getName() ).
+                label( createAttachment.getLabel() ).
+                mimeType( createAttachment.getMimeType() ).
+                size( attachmentSize( createAttachment ) ).
+                build();
+            attachments.put( attachment.getBinaryReference(), attachment );
+        }
+        return Attachments.from( attachments.values() );
+    }
+
+    private long attachmentSize( final CreateAttachment createAttachment )
+    {
+        try
+        {
+            return createAttachment.getByteSource().size();
+        }
+        catch ( IOException e )
+        {
+            throw Exceptions.unchecked( e );
         }
     }
 }

@@ -70,6 +70,7 @@ final class UpdateMediaCommand
 
         final UpdateContentParams updateParams = new UpdateContentParams().
             contentId( params.getContent() ).
+            clearAttachments( true ).
             createAttachments( CreateAttachments.from( mediaAttachment ) ).
             editor( editable -> mediaFormBuilder.build( editable.data ) );
 

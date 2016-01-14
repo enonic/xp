@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.util.BinaryReferences;
 
 @Beta
 public class UpdateContentTranslatorParams
@@ -19,11 +20,17 @@ public class UpdateContentTranslatorParams
 
     private final CreateAttachments createAttachments;
 
+    private final BinaryReferences removeAttachments;
+
+    private final boolean clearAttachments;
+
     private UpdateContentTranslatorParams( final Builder builder )
     {
         editedContent = builder.editedContent;
         modifier = builder.modifier;
         createAttachments = builder.createAttachments;
+        removeAttachments = builder.removeAttachments;
+        clearAttachments = builder.clearAttachments;
     }
 
     public static Builder create()
@@ -46,6 +53,16 @@ public class UpdateContentTranslatorParams
         return createAttachments;
     }
 
+    public BinaryReferences getRemoveAttachments()
+    {
+        return removeAttachments;
+    }
+
+    public boolean isClearAttachments()
+    {
+        return clearAttachments;
+    }
+
     public Instant getModifiedTime()
     {
         return modifiedTime;
@@ -58,6 +75,10 @@ public class UpdateContentTranslatorParams
         private PrincipalKey modifier;
 
         private CreateAttachments createAttachments = null;
+
+        private BinaryReferences removeAttachments = null;
+
+        private boolean clearAttachments = false;
 
         private Builder()
         {
@@ -78,6 +99,18 @@ public class UpdateContentTranslatorParams
         public Builder createAttachments( final CreateAttachments createAttachments )
         {
             this.createAttachments = createAttachments;
+            return this;
+        }
+
+        public Builder removeAttachments( final BinaryReferences removeAttachments )
+        {
+            this.removeAttachments = removeAttachments;
+            return this;
+        }
+
+        public Builder clearAttachments( final boolean clearAttachments )
+        {
+            this.clearAttachments = clearAttachments;
             return this;
         }
 
