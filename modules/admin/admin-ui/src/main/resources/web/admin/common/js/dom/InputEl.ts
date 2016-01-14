@@ -6,10 +6,12 @@ module api.dom {
             super("input", className, prefix, originalValue);
             this.setType(type || 'text');
 
-            this.onInput((event: Event) => {
-                this.refreshDirtyState();
-                this.refreshValueChanged();
-            });
+            this.onInput(this.handleInput.bind(this));
+        }
+
+        protected handleInput() {
+            this.refreshDirtyState();
+            this.refreshValueChanged();
         }
 
         getName(): string {
