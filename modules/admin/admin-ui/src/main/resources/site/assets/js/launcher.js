@@ -1,35 +1,38 @@
 (function () {
     var adminUrl = "/admin/tool/com.enonic.xp.admin.ui/launcher";
-    var launcherPanel, bodyMask;
+    var launcherPanel, bodyMask, launcherButton;
     var isHomeApp = (CONFIG && CONFIG.autoOpenLauncher);
 
     function appendLauncherToolbar() {
-        var div = document.createElement("div");
-        div.setAttribute("class", "launcher-bar");
-
-        var button = document.createElement("button");
-        button.setAttribute("class", "launcher-button");
+        launcherButton = document.createElement("button");
+        launcherButton.setAttribute("class", "launcher-button");
 
         var span = document.createElement("span");
         span.setAttribute("class", "lines");
-        button.appendChild(span);
+        launcherButton.appendChild(span);
 
-        button.addEventListener("click", openLauncherPanel);
+        launcherButton.addEventListener("click", togglePanelState);
 
-        document.getElementsByTagName("body")[0].appendChild(div);
-        div.appendChild(button);
+        document.getElementsByTagName("body")[0].appendChild(launcherButton);
+    }
+
+    function togglePanelState() {
+        if (isPanelExpanded()) {
+            closeLauncherPanel();
+        }
+        else {
+            openLauncherPanel();
+        }
+    }
+
+    function toggleButton() {
+        launcherButton.classList.toggle("toggled");
     }
 
     function appendLauncherPanel() {
         var div = document.createElement("div");
         div.setAttribute("class", "launcher-panel");
         div.classList.add("hidden");
-
-        var button = document.createElement("button");
-        button.setAttribute("class", "launcher-panel-close");
-        button.addEventListener("click", closeLauncherPanel);
-
-        div.appendChild(button);
         div.appendChild(createLauncherLink(div));
 
         document.getElementsByTagName("body")[0].appendChild(div);
@@ -49,14 +52,16 @@
                 container.appendChild(clonedDiv.childNodes[0]);
             }
 
-            var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
-            for (var i = 0; i < appTiles.length; i++) {
-                appTiles[i].addEventListener("click", closeLauncherPanel.bind(this, true));
-            }
-
-            if (CONFIG && CONFIG.autoOpenLauncher) {
+            if (isHomeApp) {
                 openLauncherPanel();
             }
+            else {
+                var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
+                for (var i = 0; i < appTiles.length; i++) {
+                    appTiles[i].addEventListener("click", closeLauncherPanel.bind(this, true));
+                }
+            }
+
         };
 
         return link;
@@ -87,7 +92,12 @@
         bodyMask.style.display = "none";
     }
 
+    function isPanelExpanded() {
+        return launcherPanel.classList.contains("visible");
+    }
+
     function openLauncherPanel() {
+        toggleButton();
         showBodyMask();
         launcherPanel.classList.remove("hidden", "slideout");
         launcherPanel.classList.add("visible");
@@ -97,6 +107,7 @@
         launcherPanel.classList.remove("visible");
         launcherPanel.classList.add((skipTransition == true) ? "hidden" : "slideout");
         hideBodyMask();
+        toggleButton();
     }
 
     function initBodyMask() {

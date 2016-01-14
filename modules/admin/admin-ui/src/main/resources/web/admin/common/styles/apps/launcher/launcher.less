@@ -274,70 +274,99 @@ html, body {
 
 }
 
-.launcher-bar {
+.launcher-button {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: @header-height;
-  z-index: 1;
+  border: none;
+  right: 6px;
+  top: 15px;
+  background-color: transparent;
+  cursor: pointer;
+  z-index: 10000;
 
-  .launcher-button {
-    position: fixed;
-    border: none;
-    right: 10px;
-    top: 15px;
-    background-color: transparent;
-    cursor: pointer;
-    z-index: 1;
+  .line {
+    display: inline-block;
+    width: 20px;
+    height: 3px;
+    background: @admin-white;
+    transition: 0.3s;
 
-    .line {
-      display: inline-block;
-      width: 25px;
-      height: 3px;
-      background: @admin-white;
-      transition: 0.3s;
-
-      .dark & {
-        background: @admin-bg-light-gray;
-      }
+    .dark & {
+      background: @admin-bg-light-gray;
     }
+  }
 
-    .lines {
+  .lines {
+    .line;
+    position: relative;
+    top: -4px;
+
+    &:before, &:after {
       .line;
-      position: relative;
-      top: -4px;
+      position: absolute;
+      left: 0;
+      content: '';
+      -webkit-transform-origin: 2rem/14 center;
+      transform-origin: 2rem/14 center;
+    }
+    &:before {
+      top: 6px;
+    }
+    &:after {
+      top: -6px;
+    }
+  }
 
-      &:before, &:after {
-        .line;
-        position: absolute;
-        left: 0;
-        content: '';
-        -webkit-transform-origin: 2rem/14 center;
-        transform-origin: 2rem/14 center;
-      }
+  &:hover {
+    opacity: 1;
+    background: none;
+    .lines {
       &:before {
-        top: 6px;
+        top: 9px;
       }
       &:after {
-        top: -6px;
-      }
-    }
-
-    &:hover {
-      opacity: 1;
-      background: none;
-      .lines {
-        &:before {
-          top: 9px;
-        }
-        &:after {
-          top: -9px;
-        }
+        top: -9px;
       }
     }
   }
 
+  &.toggled {
+    -webkit-transform: scale3d(.8, .8, .8);
+    transform: scale3d(.8, .8, .8);
+    padding: 6px 3px;
+    margin-top: -3px;
+
+    &:hover {
+      .lines {
+        &:before {
+          top: 0;
+        }
+        &:after {
+          top: 0;
+        }
+      }
+    }
+
+    .lines {
+      background: transparent !important;
+      &:before, &:after {
+        -webkit-transform-origin: 50% 50%;
+        transform-origin: 50% 50%;
+        top: 0;
+        width: 1.6rem;
+        left: -7px;
+      }
+      &:before {
+        background-color: #fff;
+        -webkit-transform: rotate3d(0, 0, 1, 45deg);
+        transform: rotate3d(0, 0, 1, 45deg);
+      }
+      &:after {
+        background-color: #fff;
+        -webkit-transform: rotate3d(0, 0, 1, -45deg);
+        transform: rotate3d(0, 0, 1, -45deg);
+      }
+    }
+  }
 }
 
 .launcher-panel {
@@ -346,7 +375,7 @@ html, body {
   top: 0;
   right: 0;
   height: 100%;
-  z-index: 100000;
+  z-index: 3000;
   width: @panel-outer-width;
 
   & > * {
@@ -406,7 +435,7 @@ html, body {
     width: @panel-outer-width;
     padding: @header-height calc(@panel-outer-width - @panel-inner-width - @panel-indent) @footer-height @panel-indent;
     overflow: hidden;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.9);
 
     .scrollable-content {
       width: @panel-inner-width;
@@ -427,7 +456,7 @@ html, body {
 
     .app-row {
 
-      margin: 30px 0;
+      margin: 24px 0;
 
       .application {
         display: table;
@@ -447,6 +476,7 @@ html, body {
           .app-description {
             width: 220px;
             font-size: 14px;
+            color: darkgray;
           }
         }
 
@@ -471,13 +501,13 @@ html, body {
     display: table;
     height: @footer-height;
     width: @panel-outer-width;
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.1);
     color: @admin-white;
     font-size: 14px;
 
     .user-info {
       vertical-align: middle;
-      padding: 9px 15px 0 0;
+      padding: 17px 15px 0 0;
       width: 200px;
       overflow: hidden;
       white-space: nowrap;
@@ -492,15 +522,13 @@ html, body {
       text-decoration: none;
       display: table-cell;
       vertical-align: middle;
-      font-size: 16px;
       width: 100%;
     }
     img {
-      width: 40px;
+      width: 24px;
       margin-right: 10px;
     }
     span {
-      font-size: 16px;
       vertical-align: middle;
     }
 
