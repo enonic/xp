@@ -35,9 +35,25 @@ public class ApplicationRepoServiceImpl
 
     public Node createApplicationNode( final Application application, final ByteSource source )
     {
-        final CreateNodeParams createNodeParams = ApplicationNodeTransformer.toNode( application, source );
+        final CreateNodeParams createNodeParams = ApplicationNodeTransformer.toCreateNodeParams( application, source );
 
         return callWithContext( () -> this.nodeService.create( createNodeParams ) );
+    }
+
+    @Override
+    public Node updateApplicationNode( final Application application, final ByteSource source )
+    {
+        final Node existingNode = callWithContext(
+            () -> this.nodeService.getByPath( NodePath.create( APPLICATION_PATH, application.getKey().getName() ).build() ) );
+
+        if ( existingNode == null )
+        {
+            throw new RuntimeException(
+                "Expected to find existing node in repository for application with key [" + application.getKey() + "]" );
+        }
+
+        return callWithContext(
+            () -> this.nodeService.update( ApplicationNodeTransformer.toUpdateNodeParams( application, source, existingNode ) ) );
     }
 
     private <T> T callWithContext( Callable<T> runnable )

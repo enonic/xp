@@ -8,4 +8,6 @@ import com.enonic.xp.node.Node;
 interface ApplicationRepoService
 {
     Node createApplicationNode( final Application application, final ByteSource source );
+
+    Node updateApplicationNode( final Application application, final ByteSource source );
 }

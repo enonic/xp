@@ -77,6 +77,61 @@ public final class ApplicationServiceImpl
     @Override
     public Application installApplication( final ByteSource byteSource )
     {
+        final String applicationName = getApplicationName( byteSource );
+
+        final Application existingApp = this.registry.get( ApplicationKey.from( applicationName ) );
+
+        if ( existingApp != null )
+        {
+            return doUpdateApplication( applicationName, byteSource );
+        }
+        else
+        {
+            return doInstallApplication( byteSource, applicationName );
+        }
+
+    }
+
+    private Application doUpdateApplication( final String applicationName, final ByteSource source )
+    {
+        uninstallBundle( applicationName );
+
+        this.registry.invalidate( ApplicationKey.from( applicationName ) );
+
+        final Bundle bundle = doInstallBundle( source, applicationName );
+
+        final Application application = this.registry.get( ApplicationKey.from( bundle ) );
+
+        repoService.updateApplicationNode( application, source );
+
+        return application;
+    }
+
+    private void uninstallBundle( final String applicationName )
+    {
+        try
+        {
+            this.context.getBundle( applicationName ).uninstall();
+        }
+        catch ( BundleException e )
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private Application doInstallApplication( final ByteSource byteSource, final String applicationName )
+    {
+        final Bundle bundle = doInstallBundle( byteSource, applicationName );
+
+        final Application application = this.registry.get( ApplicationKey.from( bundle ) );
+
+        repoService.createApplicationNode( application, byteSource );
+
+        return application;
+    }
+
+    private String getApplicationName( final ByteSource byteSource )
+    {
         final String applicationName;
 
         try
@@ -87,14 +142,7 @@ public final class ApplicationServiceImpl
         {
             throw new ApplicationInstallException( "Cannot install application", e );
         }
-
-        final Bundle bundle = doInstallBundle( byteSource, applicationName );
-
-        final Application application = this.registry.get( ApplicationKey.from( bundle ) );
-
-        repoService.createApplicationNode( application, byteSource );
-
-        return application;
+        return applicationName;
     }
 
     private Bundle doInstallBundle( final ByteSource source, final String symbolicName )

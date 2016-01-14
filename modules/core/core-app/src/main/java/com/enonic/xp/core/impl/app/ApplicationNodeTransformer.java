@@ -8,13 +8,29 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 
 class ApplicationNodeTransformer
 {
     private static final String APPLICATION_BINARY_REF = "applicationFile";
 
-    static CreateNodeParams toNode( final Application app, final ByteSource source )
+    static CreateNodeParams toCreateNodeParams( final Application app, final ByteSource source )
+    {
+        final PropertyTree data = createApplicationProperties( app );
+
+        return CreateNodeParams.create().
+            parent( ApplicationRepoServiceImpl.APPLICATION_PATH ).
+            name( app.getKey().getName() ).
+            data( data ).
+            setBinaryAttachments( BinaryAttachments.create().
+                add( new BinaryAttachment( BinaryReference.from( APPLICATION_BINARY_REF ), source ) ).
+                build() ).
+            build();
+    }
+
+    private static PropertyTree createApplicationProperties( final Application app )
     {
         final PropertyTree data = new PropertyTree();
         data.setString( ApplicationPropertyNames.DISPLAY_NAME, app.getDisplayName() );
@@ -24,14 +40,17 @@ class ApplicationNodeTransformer
         data.setString( ApplicationPropertyNames.VENDOR_NAME, app.getVendorName() );
         data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, app.getModifiedTime() );
         addFiles( app, data );
+        return data;
+    }
 
-        return CreateNodeParams.create().
-            parent( ApplicationRepoServiceImpl.APPLICATION_PATH ).
-            name( app.getKey().getName() ).
-            data( data ).
+    static UpdateNodeParams toUpdateNodeParams( final Application app, final ByteSource source, final Node existingNode )
+    {
+        return UpdateNodeParams.create().
+            id( existingNode.id() ).
             setBinaryAttachments( BinaryAttachments.create().
                 add( new BinaryAttachment( BinaryReference.from( APPLICATION_BINARY_REF ), source ) ).
                 build() ).
+            editor( ( node ) -> createApplicationProperties( app ) ).
             build();
     }
 

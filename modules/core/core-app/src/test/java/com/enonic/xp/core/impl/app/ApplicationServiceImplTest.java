@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.app;
 import java.io.InputStream;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
@@ -129,12 +128,11 @@ public class ApplicationServiceImplTest
         assertEquals( "my-bundle", application.getKey().getName() );
     }
 
-    @Ignore
     @Test
     public void updateBundle()
         throws Exception
     {
-        final Application application =
+        final Application originalApplication =
             this.service.installApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.0" ).
                 build() ) ) );
 
@@ -142,6 +140,7 @@ public class ApplicationServiceImplTest
             this.service.installApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.1" ).
                 build() ) ) );
 
+        assertEquals( "1.0.0", originalApplication.getVersion().toString() );
         assertEquals( "1.0.1", updatedApplication.getVersion().toString() );
     }
 
