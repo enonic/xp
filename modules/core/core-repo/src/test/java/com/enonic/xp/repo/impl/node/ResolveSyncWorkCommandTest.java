@@ -668,12 +668,6 @@ public class ResolveSyncWorkCommandTest
 
         assertEquals( 4, result.getSize() );
 
-        /*
-        assertRequested( requests, "a2_1" );
-        assertReferredFrom( requests, "b2_1", "a2_1" );
-        assertParentFor( requests, "b2", "b2_1" );
-        assertParentFor( requests, "s2", "b2" );
-        */
     }
 
     /*
@@ -774,15 +768,6 @@ public class ResolveSyncWorkCommandTest
         final NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
 
         assertEquals( 7, result.getSize() );
-/*
-        assertNode( nodePublishRequests, "s1" );
-        assertNode( nodePublishRequests, "a2" );
-        assertNode( nodePublishRequests, "a2_1" );
-        assertNode( nodePublishRequests, "s2" );
-        assertNode( nodePublishRequests, "b2" );
-        assertNode( nodePublishRequests, "b2_1" );
-  */
-
     }
 
     /*
@@ -805,16 +790,6 @@ public class ResolveSyncWorkCommandTest
         final NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
 
         assertEquals( 7, result.getSize() );
-
-        /*
-        assertRequested( requests, "s1" );
-        assertChildOf( requests, "a1", "s1" );
-        assertChildOf( requests, "a2", "s1" );
-        assertChildOf( requests, "a2_1", "a2" );
-        assertParentFor( requests, "b2", "b2_1" );
-        assertParentFor( requests, "s2", "b2" );
-        assertReferredFrom( requests, "b2_1", "a2_1" );
-        */
     }
 
     /*
@@ -837,9 +812,6 @@ public class ResolveSyncWorkCommandTest
         final NodeIds result = resolveSyncWorkResult( NodeId.from( "a1" ), true );
 
         assertEquals( 2, result.getSize() );
-
-        //assertParentFor( requests, "s1", "a1" );
-        //assertRequested( requests, "a1" );
     }
 
     /*
@@ -862,15 +834,6 @@ public class ResolveSyncWorkCommandTest
         final NodeIds result = resolveSyncWorkResult( NodeId.from( "a2" ), true );
 
         assertEquals( 6, result.getSize() );
-
-        /*
-        assertRequested( requests, "a2" );
-        assertChildOf( requests, "a2_1", "a2" );
-        assertParentFor( requests, "s1", "a2" );
-        assertParentFor( requests, "b2", "b2_1" );
-        assertParentFor( requests, "s2", "b2" );
-        assertReferredFrom( requests, "b2_1", "a2_1" );
-        */
     }
 
     /*
@@ -891,15 +854,6 @@ public class ResolveSyncWorkCommandTest
         final NodeIds result = resolveSyncWorkResult( NodeId.from( "a2_1" ), true );
 
         assertEquals( 6, result.getSize() );
-
-        /*
-        assertRequested( requests, "a2_1" );
-        assertParentFor( requests, "a2", "a2_1" );
-        assertParentFor( requests, "s1", "a2" );
-        assertReferredFrom( requests, "b2_1", "a2_1" );
-        assertParentFor( requests, "b2", "b2_1" );
-        assertParentFor( requests, "s2", "b2" );
-        */
     }
 
     /*
@@ -934,15 +888,6 @@ public class ResolveSyncWorkCommandTest
 
         assertEquals( 7, result.getSize() );
 
-        /*
-        assertRequested( requests, s1d.id().toString() );
-        assertChildOf( requests, a1d.id().toString(), s1d.id().toString() );
-        assertChildOf( requests, a2d.id().toString(), s1d.id().toString() );
-        assertChildOf( requests, a2_1d.id().toString(), a2d.id().toString() );
-        assertReferredFrom( requests, "b2_1", a2_1d.id().toString() );
-        assertParentFor( requests, "b2", "b2_1" );
-        assertParentFor( requests, "s2", "b2" );
-        */
     }
 
     @Test
@@ -1004,13 +949,6 @@ public class ResolveSyncWorkCommandTest
             execute();
 
         assertEquals( 5, result.getSize() );
-        /*
-        assertNotNull( nodePublishRequests.get( node1.id() ) );
-        assertNotNull( nodePublishRequests.get( node1_1.id() ) );
-        assertNotNull( nodePublishRequests.get( node2.id() ) );
-        assertNotNull( nodePublishRequests.get( node2_1.id() ) );
-        assertNotNull( nodePublishRequests.get( node2_1_1.id() ) );
-        */
     }
 
     @Test

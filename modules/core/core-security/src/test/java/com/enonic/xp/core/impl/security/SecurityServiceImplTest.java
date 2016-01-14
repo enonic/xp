@@ -4,9 +4,7 @@ import java.io.File;
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import com.enonic.xp.context.Context;
@@ -26,6 +24,7 @@ import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
 import com.enonic.xp.repo.impl.search.SearchServiceImpl;
+import com.enonic.xp.repo.impl.storage.IndexedDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.StorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.Repository;
@@ -73,9 +72,6 @@ public class SecurityServiceImplTest
 {
     private static final UserStoreKey SYSTEM = UserStoreKey.system();
 
-    @Rule
-    public TemporaryFolder xpHome = new TemporaryFolder();
-
     private SecurityServiceImpl securityService;
 
     private NodeServiceImpl nodeService;
@@ -118,11 +114,15 @@ public class SecurityServiceImplTest
         final SearchServiceImpl searchService = new SearchServiceImpl();
         searchService.setSearchDao( searchDao );
 
+        IndexedDataServiceImpl indexedDataService = new IndexedDataServiceImpl();
+        indexedDataService.setStorageDao( storageDao );
+
         final StorageServiceImpl storageService = new StorageServiceImpl();
         storageService.setBranchService( branchService );
         storageService.setVersionService( versionService );
         storageService.setNodeVersionDao( nodeDao );
         storageService.setIndexServiceInternal( this.indexServiceInternal );
+        storageService.setIndexedDataService( indexedDataService );
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );

@@ -39,7 +39,7 @@ public class NodeHasChildResolver
 
     private boolean doResolve( final Node node )
     {
-        final NodeQueryResult nodeQueryResult = this.searchService.search( NodeQuery.create().
+        final NodeQueryResult nodeQueryResult = this.searchService.query( NodeQuery.create().
             parent( node.path() ).
             searchMode( SearchMode.COUNT ).
             build(), InternalContext.from( ContextAccessor.current() ) );

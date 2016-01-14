@@ -29,6 +29,8 @@ public class NodeIndexPath
 
     public static final IndexPath NAME = IndexPath.from( "_name" );
 
+    public static final IndexPath REFERENCE = IndexPath.from( "_references" );
+
     public static final IndexPath PARENT_PATH = IndexPath.from( "_parentPath" );
 
     public static final IndexPath PERMISSIONS_READ = IndexPath.from( PERMISSIONS_ROOT + DIVIDER + "read" );

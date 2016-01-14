@@ -10,8 +10,11 @@ final class ReprocessContentResultJson
 {
     public final List<String> updatedContent;
 
-    public ReprocessContentResultJson( final ContentPaths result )
+    public final List<String> errors;
+
+    public ReprocessContentResultJson( final ContentPaths result, final List<String> errors )
     {
         this.updatedContent = result.stream().map( ContentPath::toString ).collect( Collectors.toList() );
+        this.errors = errors;
     }
 }

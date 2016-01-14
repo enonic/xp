@@ -6,17 +6,23 @@ import org.junit.Test;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeBinaryReferenceException;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.util.BinaryReference;
+import com.enonic.xp.util.Reference;
 
 import static org.junit.Assert.*;
 
@@ -72,7 +78,6 @@ public class CreateNodeCommandTest
         assertNotNull( storedNode.getTimestamp() );
     }
 
-
     @Test
     public void populate_manual_order_value_and_insert_first()
         throws Exception
@@ -107,7 +112,6 @@ public class CreateNodeCommandTest
         assertTrue( c1.getManualOrderValue() < c2.getManualOrderValue() );
         assertTrue( c2.getManualOrderValue() < c3.getManualOrderValue() );
     }
-
 
     @Test
     public void populate_manual_order_value_and_insert_last()
@@ -216,6 +220,39 @@ public class CreateNodeCommandTest
             build() );
 
         assertNotNull( getNodeByPath( childNode.path() ) );
+    }
+
+    @Test
+    public void node_with_reference()
+    {
+        final Node referredNode = createNode( CreateNodeParams.create().
+            name( "test2" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        PropertyTree data = new PropertyTree();
+        data.setReference( "myCar", new Reference( referredNode.id() ) );
+
+        createNode( CreateNodeParams.create().
+            name( "test" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            build() );
+
+        final FindNodesByQueryResult result = FindNodesByQueryCommand.create().
+            storageService( this.storageService ).
+            searchService( this.searchService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            query( NodeQuery.create().
+                addQueryFilter( ValueFilter.create().
+                    fieldName( NodeIndexPath.REFERENCE.getPath() ).
+                    addValue( ValueFactory.newReference( Reference.from( referredNode.id().toString() ) ) ).
+                    build() ).
+                build() ).
+            build().
+            execute();
+
+        assertEquals( 1, result.getHits() );
     }
 
     @Test

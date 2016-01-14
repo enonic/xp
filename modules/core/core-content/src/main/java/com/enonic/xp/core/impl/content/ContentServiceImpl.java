@@ -282,9 +282,6 @@ public class ContentServiceImpl
             contentIds( params.getContentIds() ).
             target( params.getTarget() ).
             includeChildren( params.isIncludeChildren() ).
-            strategy( params.isAllowPublishOutsideSelection()
-                          ? PushContentCommand.PushContentStrategy.ALLOW_PUBLISH_OUTSIDE_SELECTION
-                          : PushContentCommand.PushContentStrategy.STRICT ).
             resolveDependencies( params.isResolveDependencies() ).
             build().
             execute();

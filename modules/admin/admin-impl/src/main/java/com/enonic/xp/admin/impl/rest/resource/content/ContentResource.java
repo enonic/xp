@@ -27,6 +27,8 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
@@ -176,6 +178,8 @@ public final class ContentResource
 
     private static final int MAX_EFFECTIVE_PERMISSIONS_PRINCIPALS = 10;
 
+    private final static Logger LOG = LoggerFactory.getLogger( ContentResource.class );
+
     private ContentService contentService;
 
     private ContentTypeService contentTypeService;
@@ -270,7 +274,7 @@ public final class ContentResource
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public ContentJson updateThumbnail( final MultipartForm form )
     {
-        final Content persistedContent = this.doCreateAttachment(AttachmentNames.THUMBNAIL, form);
+        final Content persistedContent = this.doCreateAttachment( AttachmentNames.THUMBNAIL, form );
 
         return new ContentJson( persistedContent, newContentIconUrlResolver(), principalsResolver );
     }
@@ -278,14 +282,15 @@ public final class ContentResource
     @POST
     @Path("createAttachment")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public AttachmentJson createAttachment( final MultipartForm form ) {
+    public AttachmentJson createAttachment( final MultipartForm form )
+    {
 
         final MultipartItem mediaFile = form.get( "file" );
         final String attachmentName = mediaFile.getFileName();
 
         final Content persistedContent = this.doCreateAttachment( attachmentName, form );
 
-        return new AttachmentJson(persistedContent.getAttachments().byName( attachmentName ));
+        return new AttachmentJson( persistedContent.getAttachments().byName( attachmentName ) );
 
     }
 
@@ -430,7 +435,6 @@ public final class ContentResource
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
             includeChildren( params.isIncludeChildren() ).
-            allowPublishOutsideSelection( true ).
             resolveDependencies( true ).
             build() );
 
@@ -972,14 +976,25 @@ public final class ContentResource
     public ReprocessContentResultJson reprocess( final ReprocessContentRequestJson request )
     {
         final List<ContentPath> updated = new ArrayList<>();
+        final List<String> errors = new ArrayList<>();
 
         final Content content = this.contentService.getByPath( request.getSourceBranchPath().getContentPath() );
-        reprocessContent( content, request.isSkipChildren(), updated );
+        try
+        {
+            reprocessContent( content, request.isSkipChildren(), updated, errors );
+        }
+        catch ( Throwable t )
+        {
+            errors.add(
+                String.format( "Content '%s' - %s: %s", content.getPath().toString(), t.getClass().getCanonicalName(), t.getMessage() ) );
+            LOG.warn( "Error reprocessing content [" + content.getPath() + "]", t );
+        }
 
-        return new ReprocessContentResultJson( ContentPaths.from( updated ) );
+        return new ReprocessContentResultJson( ContentPaths.from( updated ), errors );
     }
 
-    private void reprocessContent( final Content content, final boolean skipChildren, final List<ContentPath> updated )
+    private void reprocessContent( final Content content, final boolean skipChildren, final List<ContentPath> updated,
+                                   final List<String> errors )
     {
         final Content reprocessedContent = this.contentService.reprocess( content.getId() );
         if ( !reprocessedContent.equals( content ) )
@@ -1001,7 +1016,16 @@ public final class ContentResource
 
             for ( Content child : results.getContents() )
             {
-                reprocessContent( child, false, updated );
+                try
+                {
+                    reprocessContent( child, false, updated, errors );
+                }
+                catch ( Throwable t )
+                {
+                    errors.add( String.format( "Content '%s' - %s: %s", child.getPath().toString(), t.getClass().getCanonicalName(),
+                                               t.getMessage() ) );
+                    LOG.warn( "Error reprocessing content [" + child.getPath() + "]", t );
+                }
             }
             resultCount = Math.toIntExact( results.getHits() );
             from = from + resultCount;
@@ -1009,7 +1033,8 @@ public final class ContentResource
         while ( resultCount > 0 );
     }
 
-    private Content doCreateAttachment(final String attachmentName, final MultipartForm form) {
+    private Content doCreateAttachment( final String attachmentName, final MultipartForm form )
+    {
         final MultipartItem mediaFile = form.get( "file" );
 
         final CreateAttachment attachment = CreateAttachment.create().

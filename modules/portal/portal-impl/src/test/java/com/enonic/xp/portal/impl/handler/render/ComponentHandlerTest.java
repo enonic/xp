@@ -83,8 +83,7 @@ public class ComponentHandlerTest
             status( HttpStatus.OK ).
             build();
 
-        Mockito.when( this.postProcessor.processResponseInstructions(
-            Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
+        Mockito.when( this.postProcessor.processResponseInstructions( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
         setRendererResult( portalResponse );
 

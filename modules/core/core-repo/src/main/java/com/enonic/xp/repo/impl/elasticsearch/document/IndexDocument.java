@@ -1,43 +1,25 @@
 package com.enonic.xp.repo.impl.elasticsearch.document;
 
-
-import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-
-import com.enonic.xp.node.NodeId;
+import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItems;
 
 public class IndexDocument
     extends AbstractIndexDocument
 {
-    private final NodeId id;
+    private final String id;
 
-    private final ImmutableSet<AbstractStoreDocumentItem> indexDocumentItems;
+    private final IndexItems indexItems;
 
     private final String analyzer;
 
-    private IndexDocument( final Builder builder )
-    {
-        super( builder );
-        this.id = builder.id;
-        this.indexDocumentItems = ImmutableSet.copyOf( builder.indexDocumentEntries );
-        this.analyzer = builder.analyzer;
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
 
     public String getId()
     {
-        return id.toString();
+        return id;
     }
 
-    public Set<AbstractStoreDocumentItem> getStoreDocumentItems()
+    public IndexItems getIndexItems()
     {
-        return indexDocumentItems;
+        return indexItems;
     }
 
     public String getAnalyzer()
@@ -45,23 +27,42 @@ public class IndexDocument
         return analyzer;
     }
 
+    private IndexDocument( Builder builder )
+    {
+        super( builder );
+        id = builder.id;
+        indexItems = builder.indexItems;
+        analyzer = builder.analyzer;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+
     public static class Builder
         extends AbstractIndexDocument.Builder<Builder>
     {
-        private NodeId id;
+        private String id;
+
+        private IndexItems indexItems;
 
         private String analyzer;
 
-        private final Set<AbstractStoreDocumentItem> indexDocumentEntries;
-
-        public Builder()
+        private Builder()
         {
-            indexDocumentEntries = Sets.newHashSet();
         }
 
-        public Builder id( final NodeId id )
+        public Builder id( final String id )
         {
             this.id = id;
+            return this;
+        }
+
+        public Builder indexItems( final IndexItems indexItems )
+        {
+            this.indexItems = indexItems;
             return this;
         }
 
@@ -71,24 +72,9 @@ public class IndexDocument
             return this;
         }
 
-        public Builder addEntry( final AbstractStoreDocumentItem entry )
-        {
-            this.indexDocumentEntries.add( entry );
-
-            return this;
-        }
-
-        public Builder addEntries( final Set<AbstractStoreDocumentItem> entries )
-        {
-            this.indexDocumentEntries.addAll( entries );
-            return this;
-        }
-
         public IndexDocument build()
         {
             return new IndexDocument( this );
         }
     }
-
 }
-

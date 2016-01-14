@@ -476,7 +476,8 @@ module api.form.inputtype.text {
             while ((imgSrcs = regex.exec(content)) != null) {
                 imgSrc = imgSrcs[1];
                 if (imgSrc.indexOf(HtmlArea.imagePrefix) === 0) {
-                    processedContent = processedContent.replace(new RegExp("src=\"" + imgSrc + "\"","g"), this.getConvertedImageSrc(imgSrc));
+                    processedContent =
+                        processedContent.replace(new RegExp("src=\"" + imgSrc + "\"", "g"), this.getConvertedImageSrc(imgSrc));
                 }
             }
 

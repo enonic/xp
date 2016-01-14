@@ -34,7 +34,7 @@ public class FindNodesByIdsCommand
     {
         final Context context = ContextAccessor.current();
 
-        final NodeQueryResult result = this.searchService.search( NodeQuery.create().
+        final NodeQueryResult result = this.searchService.query( NodeQuery.create().
             addQueryFilters( Filters.create().
                 add( ValueFilter.create().
                     fieldName( NodeIndexPath.ID.getPath() ).

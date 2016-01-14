@@ -110,18 +110,18 @@ module app.browse.filter {
 
         private searchDataAndHandleResponse(contentQuery: ContentQuery) {
             new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
-            setExpand(api.rest.Expand.SUMMARY).
-            sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
-                this.getAggregations(contentQuery, contentQueryResult).then((aggregations: api.aggregation.Aggregation[]) => {
-                    this.updateAggregations(aggregations, true);
-                    this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
-                    this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
-                    new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
-            });
+                setExpand(api.rest.Expand.SUMMARY).
+                sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+                    this.getAggregations(contentQuery, contentQueryResult).then((aggregations: api.aggregation.Aggregation[]) => {
+                        this.updateAggregations(aggregations, true);
+                        this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
+                        this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
+                        new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
+                    });
 
-            }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
         }
 
         private cloneContentQueryNoContentTypes(contentQuery: ContentQuery): ContentQuery {
@@ -140,7 +140,8 @@ module app.browse.filter {
             return newContentQuery;
         }
 
-        private getAggregations(contentQuery: ContentQuery, contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>): wemQ.Promise<api.aggregation.Aggregation[]> {
+        private getAggregations(contentQuery: ContentQuery,
+                                contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>): wemQ.Promise<api.aggregation.Aggregation[]> {
             return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(this.cloneContentQueryNoContentTypes(contentQuery)).
                 setExpand(api.rest.Expand.SUMMARY).
                 sendAndParse().then((contentQueryResultNoContentTypesSelected: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
