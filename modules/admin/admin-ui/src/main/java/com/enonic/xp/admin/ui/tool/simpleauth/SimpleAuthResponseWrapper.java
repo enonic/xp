@@ -3,7 +3,6 @@ package com.enonic.xp.admin.ui.tool.simpleauth;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import javax.servlet.ServletOutputStream;
@@ -38,7 +37,7 @@ public class SimpleAuthResponseWrapper
             {
                 redirect();
             }
-            catch ( UnsupportedEncodingException e )
+            catch ( IOException e )
             {
                 e.printStackTrace();
             }
@@ -129,9 +128,8 @@ public class SimpleAuthResponseWrapper
     }
 
     private void redirect()
-        throws UnsupportedEncodingException
+        throws IOException
     {
-        super.setStatus( 307 );
         StringBuffer uri = new StringBuffer( request.getRequestURI() );
         if ( !Strings.isNullOrEmpty( request.getQueryString() ) )
         {
@@ -140,8 +138,7 @@ public class SimpleAuthResponseWrapper
         }
         final String callbackUri = URLEncoder.encode( uri.toString(), "UTF-8" );
 
-        super.setHeader( "Location",
-                         UriScriptHelper.generateAdminToolUri( "com.enonic.xp.admin.ui", "login" ) + "?callback=" + callbackUri );
+        sendRedirect( UriScriptHelper.generateAdminToolUri( "com.enonic.xp.admin.ui", "login" ) + "?callback=" + callbackUri );
         redirected = true;
     }
 }
