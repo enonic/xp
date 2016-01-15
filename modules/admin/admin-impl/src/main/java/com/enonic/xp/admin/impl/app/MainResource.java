@@ -1,13 +1,10 @@
 package com.enonic.xp.admin.impl.app;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.osgi.service.component.annotations.Component;
@@ -53,10 +50,10 @@ public final class MainResource
 
     @GET
     @Path("admin")
-    public Response getAdminApp( @QueryParam("app") @DefaultValue("app-launcher") final String app )
-        throws URISyntaxException
+    public Response getAdminApp()
+        throws Exception
     {
-        return Response.temporaryRedirect( new URI( "/admin/tool" ) ).build();
+        return redirectToLoginPage();
     }
 
     @Reference
