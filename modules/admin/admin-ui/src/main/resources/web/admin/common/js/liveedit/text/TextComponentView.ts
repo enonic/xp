@@ -119,7 +119,6 @@ module api.liveedit.text {
             }
 
             this.startPageTextEditMode();
-            this.selectText();
         }
 
         private doHandleClick(event: MouseEvent) {
@@ -205,6 +204,7 @@ module api.liveedit.text {
 
                 if (this.textComponent.isEmpty()) {
                     this.rootElement.setHtml("<h2>Text</h2>", false);
+                    this.selectText();
                 }
             }
         }

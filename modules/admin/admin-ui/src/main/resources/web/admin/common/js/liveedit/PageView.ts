@@ -146,6 +146,9 @@ module api.liveedit {
                     if (!this.isTextEditMode()) {
                         this.setTextEditMode(true);
                     }
+                    else {
+                        (<api.liveedit.text.TextComponentView>itemView).setEditMode(true);
+                    }
                     itemView.giveFocus();
                 } else {
                     if (this.isTextEditMode()) {
