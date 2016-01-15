@@ -25,8 +25,9 @@ function startApplication() {
         }
     };
 
+    var installAppDialog = new app.installation.InstallAppDialog();
+
     app.installation.InstallAppPromptEvent.on((event) => {
-        var installAppDialog = new app.installation.InstallAppDialog();
         installAppDialog.open();
     });
 
