@@ -1,18 +1,18 @@
 module api.content {
 
-    import Content = api.content.Content;
+    import ContentId = api.content.ContentId;
 
     export class ContentRequiresSaveEvent extends api.event.Event {
 
-        private content: Content;
+        private contentId: ContentId;
 
-        constructor(content: Content) {
+        constructor(contentId: ContentId) {
             super();
-            this.content = content;
+            this.contentId = contentId;
         }
 
-        getContent(): Content {
-            return this.content;
+        getContentId(): ContentId {
+            return this.contentId;
         }
 
         static on(handler: (event: ContentRequiresSaveEvent) => void) {

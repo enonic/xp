@@ -24,11 +24,11 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.image.ImageHelper;
+import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.Exceptions;
-import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.jaxrs.JaxRsExceptions;
 
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
@@ -74,12 +74,7 @@ public final class ContentMediaResource
             throw JaxRsExceptions.notFound( String.format( "Content [%s] was not found", contentId ) );
         }
 
-        if ( !( content instanceof Media ) )
-        {
-            throw JaxRsExceptions.notFound( String.format( "Content [%s] is not a media", contentId ) );
-        }
-
-        final Attachment attachment = resolveAttachment( identifier, (Media) content );
+        final Attachment attachment = resolveAttachment( identifier, content );
         if ( attachment == null )
         {
             throw JaxRsExceptions.notFound( String.format( "Content [%s] has no attachments", contentId ) );
@@ -99,20 +94,20 @@ public final class ContentMediaResource
         }
     }
 
-    private Attachment resolveAttachment( final String identifier, final Media media )
+    private Attachment resolveAttachment( final String identifier, final Content content )
     {
-        Attachment attachment;
+        Attachment attachment = null;
         if ( isNotEmpty( identifier ) )
         {
-            attachment = media.getAttachments().byName( identifier );
+            attachment = content.getAttachments().byName( identifier );
             if ( attachment == null )
             {
-                attachment = media.getAttachments().byLabel( identifier );
+                attachment = content.getAttachments().byLabel( identifier );
             }
         }
-        else
+        if ( content.getType().isDescendantOfMedia() && attachment == null )
         {
-            attachment = media.getSourceAttachment();
+            attachment = ( (Media) content ).getSourceAttachment();
         }
         return attachment;
     }

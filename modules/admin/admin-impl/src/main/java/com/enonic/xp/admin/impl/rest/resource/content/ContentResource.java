@@ -62,6 +62,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CountItemsWithChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CreateContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteAttachmentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
@@ -182,20 +183,20 @@ public final class ContentResource
 
     private ContentService contentService;
 
-    private ContentTypeService contentTypeService;
-
     private ContentPrincipalsResolver principalsResolver;
 
     private SecurityService securityService;
 
     private RelationshipTypeService relationshipTypeService;
 
+    private ContentIconUrlResolver contentIconUrlResolver;
+
     @POST
     @Path("create")
     public ContentJson create( final CreateContentJson params )
     {
         final Content persistedContent = contentService.create( params.getCreateContent() );
-        return new ContentJson( persistedContent, newContentIconUrlResolver(), principalsResolver );
+        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
     }
 
     @POST
@@ -236,7 +237,7 @@ public final class ContentResource
 
         persistedContent = contentService.create( createMediaParams );
 
-        return new ContentJson( persistedContent, newContentIconUrlResolver(), principalsResolver );
+        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
     }
 
     @POST
@@ -266,7 +267,7 @@ public final class ContentResource
         params.byteSource( getFileItemByteSource( mediaFile ) );
         persistedContent = contentService.update( params );
 
-        return new ContentJson( persistedContent, newContentIconUrlResolver(), principalsResolver );
+        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
     }
 
     @POST
@@ -276,7 +277,7 @@ public final class ContentResource
     {
         final Content persistedContent = this.doCreateAttachment( AttachmentNames.THUMBNAIL, form );
 
-        return new ContentJson( persistedContent, newContentIconUrlResolver(), principalsResolver );
+        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
     }
 
     @POST
@@ -295,12 +296,24 @@ public final class ContentResource
     }
 
     @POST
+    @Path("deleteAttachment")
+    public ContentJson deleteAttachment( final DeleteAttachmentJson json )
+    {
+        final UpdateContentParams params = new UpdateContentParams().
+            contentId( json.getContentId() ).
+            removeAttachments( json.getAttachmentReferences() );
+
+        final Content content = contentService.update( params );
+        return new ContentJson( content, contentIconUrlResolver, principalsResolver );
+    }
+
+    @POST
     @Path("duplicate")
     public ContentJson duplicate( final DuplicateContentJson params )
     {
         final Content duplicatedContent = contentService.duplicate( new DuplicateContentParams( params.getContentId() ) );
 
-        return new ContentJson( duplicatedContent, newContentIconUrlResolver(), principalsResolver );
+        return new ContentJson( duplicatedContent, contentIconUrlResolver, principalsResolver );
     }
 
     @POST
@@ -349,7 +362,7 @@ public final class ContentResource
         final Content updatedContent = contentService.update( updateParams );
         if ( json.getContentName().equals( updatedContent.getName() ) )
         {
-            return new ContentJson( updatedContent, newContentIconUrlResolver(), principalsResolver );
+            return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
         }
 
         try
@@ -357,7 +370,7 @@ public final class ContentResource
             // in case content with same name and path was created in between content updated and renamed
             final RenameContentParams renameParams = json.getRenameContentParams();
             final Content renamedContent = contentService.rename( renameParams );
-            return new ContentJson( renamedContent, newContentIconUrlResolver(), principalsResolver );
+            return new ContentJson( renamedContent, contentIconUrlResolver, principalsResolver );
         }
         catch ( ContentAlreadyExistsException e )
         {
@@ -478,9 +491,6 @@ public final class ContentResource
 
     private List<ContentPublishItemJson> resolveContentPublishItems( final ContentIds contentIds )
     {
-        //Prepares an icon url resolver
-        final ContentIconUrlResolver contentIconUrlResolver = new ContentIconUrlResolver( this.contentTypeService );
-
         //Retrieves the contents
         final Contents contents = contentService.getByIds( new GetContentByIdsParams( contentIds ) );
 
@@ -520,7 +530,7 @@ public final class ContentResource
             overwriteChildPermissions( jsonParams.isOverwriteChildPermissions() ).
             build() );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), principalsResolver );
+        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
     }
 
     @GET
@@ -541,7 +551,7 @@ public final class ContentResource
             silent( params.isSilent() ).
             build() );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), principalsResolver );
+        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
     }
 
     @POST
@@ -615,11 +625,11 @@ public final class ContentResource
         }
         else if ( EXPAND_SUMMARY.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentSummaryJson( content, newContentIconUrlResolver() );
+            return new ContentSummaryJson( content, contentIconUrlResolver );
         }
         else
         {
-            return new ContentJson( content, newContentIconUrlResolver(), principalsResolver );
+            return new ContentJson( content, contentIconUrlResolver, principalsResolver );
         }
     }
 
@@ -640,11 +650,11 @@ public final class ContentResource
         }
         else if ( EXPAND_SUMMARY.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentSummaryJson( content, newContentIconUrlResolver() );
+            return new ContentSummaryJson( content, contentIconUrlResolver );
         }
         else
         {
-            return new ContentJson( content, newContentIconUrlResolver(), principalsResolver );
+            return new ContentJson( content, contentIconUrlResolver, principalsResolver );
         }
     }
 
@@ -665,7 +675,7 @@ public final class ContentResource
         final Content nearestSite = this.contentService.getNearestSite( contentId );
         if ( nearestSite != null )
         {
-            return new ContentJson( nearestSite, newContentIconUrlResolver(), principalsResolver );
+            return new ContentJson( nearestSite, contentIconUrlResolver, principalsResolver );
         }
         else
         {
@@ -746,7 +756,7 @@ public final class ContentResource
             hits( contents.getSize() ).
             build();
 
-        return new ContentSummaryListJson( contents, metaData, newContentIconUrlResolver() );
+        return new ContentSummaryListJson( contents, metaData, contentIconUrlResolver );
     }
 
     private AbstractContentListJson doGetByParentPath( final String expandParam, final FindContentByParentParams params,
@@ -765,11 +775,11 @@ public final class ContentResource
         }
         else if ( EXPAND_FULL.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentListJson( result.getContents(), metaData, newContentIconUrlResolver(), principalsResolver );
+            return new ContentListJson( result.getContents(), metaData, contentIconUrlResolver, principalsResolver );
         }
         else
         {
-            return new ContentSummaryListJson( result.getContents(), metaData, newContentIconUrlResolver() );
+            return new ContentSummaryListJson( result.getContents(), metaData, contentIconUrlResolver );
         }
     }
 
@@ -790,7 +800,7 @@ public final class ContentResource
         //TODO: do we need this param? it does not seem to be checked at all
         final boolean getChildrenIds = !Expand.NONE.matches( contentQueryJson.getExpand() );
 
-        final ContentIconUrlResolver iconUrlResolver = newContentIconUrlResolver();
+        final ContentIconUrlResolver iconUrlResolver = contentIconUrlResolver;
         final FindContentByQueryResult findResult = contentService.find( FindContentByQueryParams.create().
             populateChildren( getChildrenIds ).
             contentQuery( contentQueryJson.getContentQuery() ).
@@ -804,7 +814,7 @@ public final class ContentResource
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentQueryResultJson selectorQuery( final ContentSelectorQueryJson contentQueryJson )
     {
-        final ContentIconUrlResolver iconUrlResolver = newContentIconUrlResolver();
+        final ContentIconUrlResolver iconUrlResolver = contentIconUrlResolver;
 
         final ContentSelectorQueryJsonToContentQueryConverter selectorQueryProcessor =
             ContentSelectorQueryJsonToContentQueryConverter.create().
@@ -1076,11 +1086,6 @@ public final class ContentResource
         return item.getBytes();
     }
 
-    private ContentIconUrlResolver newContentIconUrlResolver()
-    {
-        return new ContentIconUrlResolver( this.contentTypeService );
-    }
-
     private ContentPaths filterChildrenIfParentPresents( final ContentPaths sourceContentPaths )
     {
         ContentPaths filteredContentPaths = ContentPaths.empty();
@@ -1158,7 +1163,7 @@ public final class ContentResource
     @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
-        this.contentTypeService = contentTypeService;
+        this.contentIconUrlResolver = new ContentIconUrlResolver( contentTypeService );
     }
 
     @Reference

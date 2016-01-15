@@ -36,12 +36,12 @@ module api.form.inputtype.text.htmlarea {
             super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Image"));
         }
 
-        private getImageId(images: api.content.ContentSummary[]): string {
+        private getImageContent(images: api.content.ContentSummary[]): api.content.ContentSummary {
             var filteredImages = images.filter((image: api.content.ContentSummary) => {
                 return this.imageElement.src.indexOf(image.getId()) > 0;
             });
 
-            return filteredImages.length > 0 ? filteredImages[0].getId() : api.util.StringHelper.EMPTY_STRING;
+            return filteredImages.length > 0 ? filteredImages[0] : null;
         }
 
         private createImageSelector(id: string): FormItem {
@@ -59,9 +59,10 @@ module api.form.inputtype.text.htmlarea {
 
             if (this.imageElement) {
                 var singleLoadListener = (event: api.util.loader.event.LoadedDataEvent<api.content.ContentSummary>) => {
-                    var imageId = this.getImageId(event.getData());
-                    if (imageId) {
-                        imageSelector.setValue(imageId);
+                    var imageContent = this.getImageContent(event.getData());
+                    if (imageContent) {
+                        imageSelector.setValue(imageContent.getId());
+                        this.previewImage(imageContent, formItem);
                     }
                     loader.unLoadedData(singleLoadListener);
                 };
@@ -75,10 +76,7 @@ module api.form.inputtype.text.htmlarea {
                     return;
                 }
 
-                formItem.addClass("image-preview");
-                this.previewImage(imageContent);
-                this.hideCaptionLabel();
-                this.imageUploaderEl.hide();
+                this.previewImage(imageContent, formItem);
             });
 
             imageSelectorComboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
@@ -123,7 +121,7 @@ module api.form.inputtype.text.htmlarea {
             return imageEl;
         }
 
-        private previewImage(imageContent: api.content.ContentSummary) {
+        private previewImage(imageContent: api.content.ContentSummary, formItem: FormItem) {
             var contentId = imageContent.getContentId().toString(),
                 imgUrl = new api.content.ContentImageUrlResolver().
                     setContentId(new api.content.ContentId(contentId)).
@@ -157,7 +155,12 @@ module api.form.inputtype.text.htmlarea {
                 }
             });
 
+            formItem.addClass("image-preview");
+
             this.hideUploadMasks();
+            this.hideCaptionLabel();
+            this.imageUploaderEl.hide();
+
             this.imagePreviewContainer.insertChild(this.image, 0);
         }
 

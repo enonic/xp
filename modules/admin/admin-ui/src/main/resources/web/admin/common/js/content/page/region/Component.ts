@@ -18,11 +18,14 @@ module api.content.page.region {
 
         private resetListeners: {(event: ComponentResetEvent):void}[] = [];
 
+        private type: ComponentType;
+
         constructor(builder: ComponentBuilder<any>) {
 
             this.name = builder.name;
             this.index = builder.index;
             this.parent = builder.parent;
+            this.type = builder.type;
         }
 
         setParent(parent: Region) {
@@ -35,6 +38,10 @@ module api.content.page.region {
 
         getIndex(): number {
             return this.index;
+        }
+
+        getType(): ComponentType {
+            return this.type;
         }
 
         hasPath(): boolean {
@@ -213,11 +220,14 @@ module api.content.page.region {
 
         parent: Region;
 
+        type: ComponentType;
+
         constructor(source?: Component) {
             if (source) {
                 this.name = source.getName();
                 this.parent = source.getParent();
                 this.index = source.getIndex();
+                this.type = source.getType();
             }
         }
 
@@ -233,6 +243,11 @@ module api.content.page.region {
 
         public setParent(value: Region): ComponentBuilder<COMPONENT> {
             this.parent = value;
+            return this;
+        }
+
+        public setType(value: ComponentType): ComponentBuilder<COMPONENT> {
+            this.type = value;
             return this;
         }
 
