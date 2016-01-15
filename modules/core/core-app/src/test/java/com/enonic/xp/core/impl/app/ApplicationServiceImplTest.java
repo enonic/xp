@@ -15,10 +15,12 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.Nodes;
 
 import static org.junit.Assert.*;
 
@@ -27,7 +29,7 @@ public class ApplicationServiceImplTest
 {
     private ApplicationServiceImpl service;
 
-    private ApplicationRepoServiceImpl repoService;
+    private ApplicationRepoServiceImpl repoService = Mockito.mock( ApplicationRepoServiceImpl.class );
 
     private EventPublisher eventPublisher;
 
@@ -35,10 +37,7 @@ public class ApplicationServiceImplTest
     public void initService()
     {
         this.service = new ApplicationServiceImpl();
-        this.service.activate( getBundleContext() );
-        this.repoService = Mockito.mock( ApplicationRepoServiceImpl.class );
         this.service.setRepoService( this.repoService );
-
         this.eventPublisher = Mockito.mock( EventPublisher.class );
         this.service.setEventPublisher( this.eventPublisher );
     }
@@ -47,9 +46,14 @@ public class ApplicationServiceImplTest
     public void testGetApplication()
         throws Exception
     {
+        Mockito.when( this.repoService.getApplications() ).
+            thenReturn( Nodes.empty() );
+
+        this.service.activate( getBundleContext() );
+
         final Bundle bundle = deployBundle( "app1", true );
 
-        final Application result = this.service.getApplication( ApplicationKey.from( "app1" ) );
+        final Application result = this.service.getInstalledApplication( ApplicationKey.from( "app1" ) );
         assertNotNull( result );
         assertSame( bundle, result.getBundle() );
     }
@@ -57,18 +61,28 @@ public class ApplicationServiceImplTest
     @Test(expected = ApplicationNotFoundException.class)
     public void testGetApplication_notFound()
     {
-        this.service.getApplication( ApplicationKey.from( "app1" ) );
+        Mockito.when( this.repoService.getApplications() ).
+            thenReturn( Nodes.empty() );
+
+        this.service.activate( getBundleContext() );
+
+        this.service.getInstalledApplication( ApplicationKey.from( "app1" ) );
     }
 
     @Test
     public void testGetAllApplications()
         throws Exception
     {
+        Mockito.when( this.repoService.getApplications() ).
+            thenReturn( Nodes.empty() );
+
+        this.service.activate( getBundleContext() );
+
         deployBundle( "app1", true );
         deployBundle( "app2", true );
         deployBundle( "app3", false );
 
-        final Applications result = this.service.getAllApplications();
+        final Applications result = this.service.getInstalledApplications();
         assertNotNull( result );
         assertEquals( 2, result.getSize() );
     }
@@ -77,11 +91,16 @@ public class ApplicationServiceImplTest
     public void testGetApplicationKeys()
         throws Exception
     {
+        Mockito.when( this.repoService.getApplications() ).
+            thenReturn( Nodes.empty() );
+
+        this.service.activate( getBundleContext() );
+
         deployBundle( "app1", true );
         deployBundle( "app2", true );
         deployBundle( "app3", false );
 
-        final ApplicationKeys result = this.service.getApplicationKeys();
+        final ApplicationKeys result = this.service.getInstalledApplicationKeys();
         assertNotNull( result );
         assertEquals( 2, result.getSize() );
         assertTrue( result.contains( ApplicationKey.from( "app1" ) ) );
@@ -92,6 +111,11 @@ public class ApplicationServiceImplTest
     public void testStartApplication()
         throws Exception
     {
+        Mockito.when( this.repoService.getApplications() ).
+            thenReturn( Nodes.empty() );
+
+        this.service.activate( getBundleContext() );
+
         final Bundle bundle = deployBundle( "app1", true );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
@@ -103,6 +127,11 @@ public class ApplicationServiceImplTest
     public void testStopApplication()
         throws Exception
     {
+        Mockito.when( this.repoService.getApplications() ).
+            thenReturn( Nodes.empty() );
+
+        this.service.activate( getBundleContext() );
+
         final Bundle bundle = deployBundle( "app1", true );
         bundle.start();
 
@@ -115,6 +144,11 @@ public class ApplicationServiceImplTest
     public void installApplication()
         throws Exception
     {
+        Mockito.when( this.repoService.getApplications() ).
+            thenReturn( Nodes.empty() );
+
+        this.service.activate( getBundleContext() );
+
         Mockito.when( this.repoService.createApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
             thenReturn( Node.create().
                 id( NodeId.from( "myNode" ) ).
@@ -136,6 +170,11 @@ public class ApplicationServiceImplTest
     public void updateBundle()
         throws Exception
     {
+        Mockito.when( this.repoService.getApplications() ).
+            thenReturn( Nodes.empty() );
+
+        this.service.activate( getBundleContext() );
+
         final Node node = Node.create().
             id( NodeId.from( "myNode" ) ).
             parentPath( NodePath.ROOT ).
@@ -163,6 +202,37 @@ public class ApplicationServiceImplTest
         assertEquals( "1.0.1", updatedApplication.getVersion().toString() );
     }
 
+    @Test
+    public void install_applications_in_repo()
+        throws Exception
+    {
+        final Node node = Node.create().
+            id( NodeId.from( "myNodeId" ) ).
+            name( "myBundle" ).
+            parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH ).
+            build();
+
+        Mockito.when( this.repoService.getApplications() ).
+            thenReturn( Nodes.create().
+                add( node ).
+                build() );
+
+        Mockito.when( this.repoService.getApplicationSource( node.id() ) ).
+            thenReturn( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.1" ).
+                build() ) ) );
+
+        Mockito.when( this.repoService.createApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
+            thenReturn( node );
+
+        this.service.activate( getBundleContext() );
+
+        Mockito.verify( this.repoService, Mockito.times( 1 ) ).getApplications();
+        Mockito.verify( this.repoService, Mockito.times( 1 ) ).getApplicationSource( node.id() );
+        Mockito.verify( this.repoService, Mockito.times( 1 ) ).createApplicationNode( Mockito.isA( Application.class ),
+                                                                                      Mockito.isA( ByteSource.class ) );
+        Mockito.verify( this.eventPublisher, Mockito.times( 1 ) ).publish( Mockito.isA( Event.class ) );
+
+    }
 
     private Bundle deployBundle( final String key, final boolean isApp )
         throws Exception

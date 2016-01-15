@@ -5,6 +5,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.Nodes;
 
 interface ApplicationRepoService
 {
@@ -15,5 +16,7 @@ interface ApplicationRepoService
     Node getApplicationNode( final String applicationName );
 
     ByteSource getApplicationSource( final NodeId nodeId );
+
+    Nodes getApplications();
 
 }

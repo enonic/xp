@@ -56,7 +56,7 @@ public final class RelationshipTypeServiceImpl
         final Set<RelationshipType> list = Sets.newLinkedHashSet();
         list.addAll( this.builtInTypes.getAll().getList() );
 
-        for ( final Application application : this.applicationService.getAllApplications() )
+        for ( final Application application : this.applicationService.getInstalledApplications() )
         {
             final RelationshipTypes types = getByApplication( application.getKey() );
             list.addAll( types.getList() );

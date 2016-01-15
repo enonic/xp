@@ -24,6 +24,7 @@ import com.enonic.xp.app.Applications;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.util.Exceptions;
 
 @Component
@@ -45,10 +46,26 @@ public final class ApplicationServiceImpl
     {
         this.registry = new ApplicationRegistry( context );
         this.context = context;
+        this.installStoredApplications();
+    }
+
+    private void installStoredApplications()
+    {
+        LOG.info( "Searching for installed applications" );
+
+        final Nodes applications = ApplicationHelper.runAsAdmin( this.repoService::getApplications );
+
+        LOG.info( "Found [" + applications.getSize() + "] installed applications" );
+
+        for ( final Node application : applications )
+        {
+            final Application installedApp = ApplicationHelper.runAsAdmin( () -> doInstallApplication( application.id() ) );
+            LOG.info( "Application [{}] installed successfully", installedApp.getKey() );
+        }
     }
 
     @Override
-    public Application getApplication( final ApplicationKey key )
+    public Application getInstalledApplication( final ApplicationKey key )
         throws ApplicationNotFoundException
     {
         final Application application = this.registry.get( key );
@@ -60,13 +77,13 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public ApplicationKeys getApplicationKeys()
+    public ApplicationKeys getInstalledApplicationKeys()
     {
         return this.registry.getKeys();
     }
 
     @Override
-    public Applications getAllApplications()
+    public Applications getInstalledApplications()
     {
         return Applications.from( this.registry.getAll() );
     }
@@ -74,23 +91,34 @@ public final class ApplicationServiceImpl
     @Override
     public void startApplication( final ApplicationKey key )
     {
-        startApplication( getApplication( key ) );
+        startApplication( getInstalledApplication( key ) );
     }
 
     @Override
     public void stopApplication( final ApplicationKey key )
     {
-        stopApplication( getApplication( key ) );
+        stopApplication( getInstalledApplication( key ) );
     }
 
     @Override
     public Application installApplication( final ByteSource byteSource )
     {
-        return installOrUpdateApplication( byteSource );
+        final Application application = installOrUpdateApplication( byteSource );
+        LOG.info( "Application [{}] installed successfully", application.getKey() );
+
+        return application;
     }
 
     @Override
     public Application installApplication( final NodeId nodeId )
+    {
+        final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( nodeId ) );
+        LOG.info( "Application [{}] installed successfully", application.getKey() );
+
+        return application;
+    }
+
+    private Application doInstallApplication( final NodeId nodeId )
     {
         final ByteSource byteSource = this.repoService.getApplicationSource( nodeId );
 
@@ -108,13 +136,11 @@ public final class ApplicationServiceImpl
         {
             application = doUpdateApplication( applicationName, byteSource );
             node = repoService.updateApplicationNode( application, byteSource );
-            LOG.info( "Application [{}] updated successfully", application.getKey() );
         }
         else
         {
             application = doInstallApplication( byteSource, applicationName );
             node = repoService.createApplicationNode( application, byteSource );
-            LOG.info( "Application [{}] installed successfully", application.getKey() );
         }
 
         this.eventPublisher.publish( ApplicationEvents.installed( node ) );
@@ -164,10 +190,6 @@ public final class ApplicationServiceImpl
             if ( bundle != null )
             {
                 bundle.uninstall();
-            }
-            else
-            {
-                LOG.info( "Cannot uninstall application [" + applicationName + "], not installed" );
             }
         }
         catch ( BundleException e )

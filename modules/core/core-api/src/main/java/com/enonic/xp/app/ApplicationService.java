@@ -8,12 +8,12 @@ import com.enonic.xp.node.NodeId;
 @Beta
 public interface ApplicationService
 {
-    Application getApplication( ApplicationKey key )
+    Application getInstalledApplication( ApplicationKey key )
         throws ApplicationNotFoundException;
 
-    ApplicationKeys getApplicationKeys();
+    ApplicationKeys getInstalledApplicationKeys();
 
-    Applications getAllApplications();
+    Applications getInstalledApplications();
 
     void startApplication( ApplicationKey key );
 

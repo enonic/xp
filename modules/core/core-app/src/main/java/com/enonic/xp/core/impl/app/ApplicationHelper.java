@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
@@ -11,6 +12,11 @@ import org.osgi.framework.VersionRange;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public final class ApplicationHelper
 {
@@ -94,4 +100,24 @@ public final class ApplicationHelper
             return null;
         }
     }
+
+    static <T> T runAsAdmin( final Callable<T> callable )
+    {
+        return ContextBuilder.from( ApplicationConstants.CONTEXT_APPLICATIONS ).
+            authInfo( ApplicationConstants.APPLICATION_SU_AUTH_INFO ).
+            build().
+            callWith( callable );
+    }
+
+    static <T> T callWithContext( Callable<T> runnable )
+    {
+        return getContext().callWith( runnable );
+    }
+
+    private static Context getContext()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        return ContextBuilder.from( ApplicationConstants.CONTEXT_APPLICATIONS ).authInfo( authInfo ).build();
+    }
+
 }

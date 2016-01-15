@@ -32,7 +32,7 @@ public class ApplicationResourceTest
     {
         final Application application = createApplication();
         final Applications applications = Applications.from( application );
-        Mockito.when( this.applicationService.getAllApplications() ).thenReturn( applications );
+        Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
@@ -48,7 +48,7 @@ public class ApplicationResourceTest
     {
         final Application application = createApplication();
         final Applications applications = Applications.from( application, createEmptyApplication() );
-        Mockito.when( this.applicationService.getAllApplications() ).thenReturn( applications );
+        Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
@@ -65,7 +65,7 @@ public class ApplicationResourceTest
     {
         final Application application = createApplication();
         final Applications applications = Applications.from( application, createEmptyApplication() );
-        Mockito.when( this.applicationService.getAllApplications() ).thenReturn( applications );
+        Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
@@ -81,7 +81,7 @@ public class ApplicationResourceTest
         throws Exception
     {
         final Application application = createApplication();
-        Mockito.when( this.applicationService.getApplication( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( application );
+        Mockito.when( this.applicationService.getInstalledApplication( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( application );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 

@@ -37,7 +37,7 @@ public abstract class AbstractScriptTest
         Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getApplication( APPLICATION_KEY ) ).thenReturn( application );
+        Mockito.when( applicationService.getInstalledApplication( APPLICATION_KEY ) ).thenReturn( application );
 
         final ResourceService resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {

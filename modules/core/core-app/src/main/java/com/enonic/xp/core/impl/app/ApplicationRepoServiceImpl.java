@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.app;
 
-import java.util.concurrent.Callable;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -10,16 +8,15 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.Application;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.util.BinaryReference;
 
 @Component
@@ -33,6 +30,7 @@ public class ApplicationRepoServiceImpl
     private IndexService indexService;
 
     @Activate
+    @SuppressWarnings("unused")
     public void activate( final BundleContext context )
     {
         if ( indexService.isMaster() )
@@ -45,7 +43,7 @@ public class ApplicationRepoServiceImpl
     {
         final CreateNodeParams createNodeParams = ApplicationNodeTransformer.toCreateNodeParams( application, source );
 
-        return callWithContext( () -> this.nodeService.create( createNodeParams ) );
+        return this.nodeService.create( createNodeParams );
     }
 
     @Override
@@ -61,15 +59,13 @@ public class ApplicationRepoServiceImpl
                 "Expected to find existing node in repository for application with key [" + application.getKey() + "]" );
         }
 
-        return callWithContext(
-            () -> this.nodeService.update( ApplicationNodeTransformer.toUpdateNodeParams( application, source, existingNode ) ) );
+        return this.nodeService.update( ApplicationNodeTransformer.toUpdateNodeParams( application, source, existingNode ) );
     }
 
     @Override
     public ByteSource getApplicationSource( final NodeId nodeId )
     {
-        return callWithContext(
-            () -> this.nodeService.getBinary( nodeId, BinaryReference.from( ApplicationNodeTransformer.APPLICATION_BINARY_REF ) ) );
+        return this.nodeService.getBinary( nodeId, BinaryReference.from( ApplicationNodeTransformer.APPLICATION_BINARY_REF ) );
     }
 
     @Override
@@ -78,21 +74,22 @@ public class ApplicationRepoServiceImpl
         return doGetNodeByName( applicationName );
     }
 
+    @Override
+    public Nodes getApplications()
+    {
+        final FindNodesByParentResult byParent =
+            ApplicationHelper.runAsAdmin( () -> this.nodeService.findByParent( FindNodesByParentParams.create().
+                parentPath( APPLICATION_PATH ).
+                build() ) );
+
+        return byParent.getNodes();
+    }
+
     private Node doGetNodeByName( final String applicationName )
     {
-        return callWithContext( () -> this.nodeService.getByPath( NodePath.create( APPLICATION_PATH, applicationName ).build() ) );
+        return this.nodeService.getByPath( NodePath.create( APPLICATION_PATH, applicationName ).build() );
     }
 
-    private <T> T callWithContext( Callable<T> runnable )
-    {
-        return this.getContext().callWith( runnable );
-    }
-
-    private Context getContext()
-    {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        return ContextBuilder.from( ApplicationConstants.CONTEXT_APPLICATIONS ).authInfo( authInfo ).build();
-    }
 
     @Reference
     public void setNodeService( final NodeService nodeService )
@@ -105,4 +102,6 @@ public class ApplicationRepoServiceImpl
     {
         this.indexService = indexService;
     }
+
+
 }

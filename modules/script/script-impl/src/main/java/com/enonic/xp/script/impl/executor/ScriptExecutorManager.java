@@ -37,7 +37,7 @@ public final class ScriptExecutorManager
 
     private ScriptExecutor createExecutor( final ApplicationKey key )
     {
-        final Application application = this.applicationService.getApplication( key );
+        final Application application = this.applicationService.getInstalledApplication( key );
         final ClassLoader classLoader = application.getClassLoader();
         final ScriptEngine engine = NashornHelper.getScriptEngine( classLoader, "-strict" );
 

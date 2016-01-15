@@ -56,7 +56,7 @@ public final class ApplicationResource
     @Path("list")
     public ListApplicationJson list( @QueryParam("query") final String query )
     {
-        Applications applications = this.applicationService.getAllApplications();
+        Applications applications = this.applicationService.getInstalledApplications();
         if ( StringUtils.isNotBlank( query ) )
         {
             applications = Applications.from( applications.stream().
@@ -82,7 +82,7 @@ public final class ApplicationResource
     @GET
     public ApplicationJson getByKey( @QueryParam("applicationKey") String applicationKey )
     {
-        final Application application = this.applicationService.getApplication( ApplicationKey.from( applicationKey ) );
+        final Application application = this.applicationService.getInstalledApplication( ApplicationKey.from( applicationKey ) );
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( ApplicationKey.from( applicationKey ) );
         return new ApplicationJson( application, siteDescriptor );
     }
