@@ -200,22 +200,20 @@
     }
 
     function onKeyPressed(e) {
+        e.stopPropagation();
         switch(e.keyCode) {
             case 38:
                 // up key pressed
-                e.stopPropagation();
                 launcherButton.blur();
                 selectPreviousApp();
                 break;
             case 40:
                 // down key pressed
-                e.stopPropagation();
                 launcherButton.blur();
                 selectNextApp();
                 break;
             case 13:
                 // enter key pressed
-                e.stopPropagation();
                 var selectedApp = getSelectedApp();
                 if (selectedApp) {
                     startApp(selectedApp);
@@ -223,7 +221,6 @@
                 break;
             case 27:
                 // esc key pressed
-                e.stopPropagation();
                 closeLauncherPanel();
                 break;
         }
