@@ -468,19 +468,24 @@ module api.form.inputtype.text {
         }
 
         private processPropertyValue(propertyValue: string): string {
-            var content = propertyValue,
-                processedContent = propertyValue,
+            var processedContent = propertyValue,
                 regex = /<img.*?src="(.*?)"/g,
-                imgSrcs, imgSrc;
+                imgSrcs;
 
-            while ((imgSrcs = regex.exec(content)) != null) {
-                imgSrc = imgSrcs[1];
-                if (imgSrc.indexOf(HtmlArea.imagePrefix) === 0) {
-                    processedContent =
-                        processedContent.replace(new RegExp("src=\"" + imgSrc + "\"", "g"), this.getConvertedImageSrc(imgSrc));
-                }
+            if (!processedContent) {
+                return propertyValue;
             }
 
+            while (processedContent.search(" src=\"" + HtmlArea.imagePrefix) > -1) {
+                imgSrcs = regex.exec(processedContent);
+                if (imgSrcs) {
+                    imgSrcs.forEach((imgSrc: string) => {
+                        if (imgSrc.indexOf(HtmlArea.imagePrefix) === 0) {
+                            processedContent = processedContent.replace(" src=\"" + imgSrc + "\"", this.getConvertedImageSrc(imgSrc));
+                        }
+                    });
+                }
+            }
             return processedContent;
         }
 

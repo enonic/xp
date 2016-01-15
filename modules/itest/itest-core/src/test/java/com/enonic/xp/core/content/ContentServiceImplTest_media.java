@@ -80,7 +80,7 @@ public class ContentServiceImplTest_media
 
         for ( final Attachment attachment : attachments )
         {
-            attachment.getName().startsWith( "darth-small" );
+            assertTrue( attachment.getName().startsWith( "dart-small" ) );
         }
     }
 }

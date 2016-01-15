@@ -98,6 +98,7 @@ public class ContentServiceImplTest_update
             editor( edit -> {
                 edit.displayName = "new display name";
             } ).
+            clearAttachments( true ).
             createAttachments( createAttachment( "darth", "image/jpg", loadImage( "darth-small.jpg" ) ) );
 
         this.contentService.update( updateContentParams );

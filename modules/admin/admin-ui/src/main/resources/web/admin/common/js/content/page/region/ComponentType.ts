@@ -22,6 +22,10 @@ module api.content.page.region {
         static byShortName(shortName: string): ComponentType {
             return ComponentType.shortNameToInstance[shortName];
         }
+
+        getDefaultName(): ComponentName {
+            return new ComponentName(api.util.StringHelper.capitalize(api.util.StringHelper.removeWhitespaces(this.shortName)));
+        }
     }
 
 }

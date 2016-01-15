@@ -72,7 +72,7 @@ module api.content.page.region {
             var oldValue = this.image;
             this.image = contentId;
 
-            this.setName(name ? new ComponentName(name) : null);
+            this.setName(name ? new ComponentName(name) : this.getType().getDefaultName());
 
             if (!api.ObjectHelper.equals(oldValue, contentId)) {
                 this.notifyPropertyChanged(ImageComponent.PROPERTY_IMAGE);
@@ -141,10 +141,10 @@ module api.content.page.region {
             if (source) {
                 this.image = source.getImage();
                 this.config = source.getConfig() ? source.getConfig().copy() : null;
-            }
-            else {
+            } else {
                 this.config = new PropertyTree();
             }
+            this.setType(ImageComponentType.get());
         }
 
         public setImage(value: api.content.ContentId): ImageComponentBuilder {

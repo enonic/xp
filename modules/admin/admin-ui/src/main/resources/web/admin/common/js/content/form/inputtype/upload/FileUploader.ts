@@ -18,7 +18,7 @@ module api.content.form.inputtype.upload {
     export class FileUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
 
         protected config: api.content.form.inputtype.ContentInputTypeViewContext;
-        protected uploaderEl: UploaderEl<Content>;
+        protected uploaderEl: UploaderEl<any>;
         protected uploaderWrapper: api.dom.DivEl;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
@@ -86,7 +86,7 @@ module api.content.form.inputtype.upload {
             return wrapper;
         }
 
-        protected createUploader(property: Property): UploaderEl<Content> {
+        protected createUploader(property: Property): UploaderEl<any> {
             throw new Error("must be implemented in inheritors");
         }
 

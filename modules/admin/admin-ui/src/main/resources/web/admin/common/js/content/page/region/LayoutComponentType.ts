@@ -2,6 +2,8 @@ module api.content.page.region {
 
     export class LayoutComponentType extends ComponentType {
 
+        private static INSTANCE = new LayoutComponentType();
+
         constructor() {
             super("layout");
         }
@@ -9,8 +11,10 @@ module api.content.page.region {
         newComponentBuilder(): LayoutComponentBuilder {
             return new LayoutComponentBuilder();
         }
-    }
 
-    new LayoutComponentType();
+        public static get(): LayoutComponentType {
+            return LayoutComponentType.INSTANCE;
+        }
+    }
 
 }
