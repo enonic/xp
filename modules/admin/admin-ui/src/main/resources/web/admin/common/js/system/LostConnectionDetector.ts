@@ -1,4 +1,4 @@
-module app.launcher {
+module api.system {
 
     export class LostConnectionDetector {
 
@@ -32,9 +32,9 @@ module app.launcher {
         }
 
         private doPoll() {
-            var request = new api.system.StatusRequest();
+            var request = new StatusRequest();
             request.setTimeout(this.pollIntervalMs);
-            request.sendAndParse().then((status: api.system.StatusResult) => {
+            request.sendAndParse().then((status: StatusResult) => {
                 if (!this.connected) {
                     this.notifyConnectionRestored();
                     this.connected = !this.connected;

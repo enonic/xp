@@ -4,6 +4,34 @@ module components {
     export var detailPanel: app.browse.ContentBrowseItemPanel;
 }
 
+var application = (function () {
+    var application = new api.app.Application('content-manager', 'Content Manager', 'CM', 'database');
+    application.setPath(api.rest.Path.fromString("/"));
+    application.setWindow(window);
+    this.serverEventsListener = new api.app.ServerEventsListener([application]);
+
+    var messageId;
+    this.lostConnectionDetector = new api.system.LostConnectionDetector();
+    this.lostConnectionDetector.setAuthenticated(true);
+    this.lostConnectionDetector.onConnectionLost(() => {
+        api.notify.NotifyManager.get().hide(messageId);
+        messageId = api.notify.showError("Lost connection to server - Please wait until connection is restored", false);
+    });
+    this.lostConnectionDetector.onSessionExpired(() => {
+        api.notify.NotifyManager.get().hide(messageId);
+        messageId = api.notify.showError("Your session has expired.", false);
+    });
+    this.lostConnectionDetector.onConnectionRestored(() => {
+        api.notify.NotifyManager.get().hide(messageId);
+    });
+
+    return application;
+})();
+
+function getApplication(id: string): api.app.Application {
+    return application;
+}
+
 function initToolTip() {
     var ID = api.StyleHelper.getCls("tooltip", api.StyleHelper.COMMON_PREFIX),
         CLS_ON = "tooltip_ON", FOLLOW = true,
@@ -112,6 +140,8 @@ function startApplication() {
     var moveDialog = new app.browse.MoveContentDialog();
     var editPermissionsDialog = new app.wizard.EditPermissionsDialog();
     application.setLoaded(true);
+    this.serverEventsListener.start();
+    this.lostConnectionDetector.startPolling();
 
     window.onmessage = (e: MessageEvent) => {
         if (e.data.appLauncherEvent) {

@@ -2,12 +2,9 @@ package com.enonic.xp.admin.impl.app;
 
 import java.net.URI;
 
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.osgi.service.component.annotations.Component;
@@ -20,13 +17,11 @@ import com.enonic.xp.jaxrs.JaxRsComponent;
 public final class MainResource
     implements JaxRsComponent
 {
-    private final AppHtmlHandler appHtmlHandler;
 
     private final ResourceHandler resourceHandler;
 
     public MainResource()
     {
-        this.appHtmlHandler = new AppHtmlHandler();
         this.resourceHandler = new ResourceHandler();
     }
 
@@ -34,7 +29,7 @@ public final class MainResource
     public Response redirectToLoginPage()
         throws Exception
     {
-        return Response.temporaryRedirect( new URI( "/admin" ) ).build();
+        return Response.temporaryRedirect( new URI( "/admin/tool" ) ).build();
     }
 
     @GET
@@ -55,10 +50,10 @@ public final class MainResource
 
     @GET
     @Path("admin")
-    @Produces("text/html")
-    public String getAdminApp( @QueryParam("app") @DefaultValue("app-launcher") final String app )
+    public Response getAdminApp()
+        throws Exception
     {
-        return this.appHtmlHandler.render( app );
+        return redirectToLoginPage();
     }
 
     @Reference

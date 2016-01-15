@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<tool xmlns="urn:enonic:xp:model:1.0">
+  <display-name>Content Manager</display-name>
+  <description>Manage content and sites</description>
+  <icon>icons/database.svg</icon>
+  <allow>
+    <principal>role:system.admin</principal>
+    <principal>role:cms.admin</principal>
+    <principal>role:cms.cm.app</principal>
+  </allow>
+</tool>

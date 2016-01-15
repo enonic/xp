@@ -7,13 +7,13 @@ module app {
         private homeMainContainer: app.home.HomeMainContainer;
         private loginForm: app.login.LoginForm;
         private serverEventsListener: api.app.ServerEventsListener;
-        private lostConnectionDetector: app.launcher.LostConnectionDetector;
+        private lostConnectionDetector: api.system.LostConnectionDetector;
         private appManager: api.app.AppManager;
         private authenticated: boolean = false;
         private connectionLost: boolean = false;
 
         constructor() {
-            this.lostConnectionDetector = new app.launcher.LostConnectionDetector();
+            this.lostConnectionDetector = new api.system.LostConnectionDetector();
         }
 
         start() {

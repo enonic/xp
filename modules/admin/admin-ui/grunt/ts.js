@@ -13,6 +13,7 @@ add('app_launcher', 'apps/app-launcher', false);
 add('content_manager', 'apps/content-manager', false);
 add('applications', 'apps/applications', false);
 add('user_manager', 'apps/user-manager', false);
+add('login', 'apps/login', false);
 add('live_edit', 'live-edit', false);
 
 function add(name, path, declaration) {
