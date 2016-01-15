@@ -126,11 +126,11 @@
     }
 
     function listenToKeyboardEvents() {
-        window.addEventListener("keyup", onKeyPressed, true);
+        window.addEventListener("keydown", onKeyPressed, true);
     }
 
     function unlistenToKeyboardEvents() {
-        window.removeEventListener("keyup", onKeyPressed, true);
+        window.removeEventListener("keydown", onKeyPressed, true);
     }
 
     function getSelectedApp() {
@@ -203,16 +203,19 @@
         switch(e.keyCode) {
             case 38:
                 // up key pressed
+                e.stopPropagation();
                 launcherButton.blur();
                 selectPreviousApp();
                 break;
             case 40:
                 // down key pressed
+                e.stopPropagation();
                 launcherButton.blur();
                 selectNextApp();
                 break;
             case 13:
                 // enter key pressed
+                e.stopPropagation();
                 var selectedApp = getSelectedApp();
                 if (selectedApp) {
                     startApp(selectedApp);
@@ -220,6 +223,7 @@
                 break;
             case 27:
                 // esc key pressed
+                e.stopPropagation();
                 closeLauncherPanel();
                 break;
         }
