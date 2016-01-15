@@ -15,6 +15,10 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
 
 import static org.junit.Assert.*;
 
@@ -25,6 +29,8 @@ public class ApplicationServiceImplTest
 
     private ApplicationRepoServiceImpl repoService;
 
+    private EventPublisher eventPublisher;
+
     @Before
     public void initService()
     {
@@ -32,6 +38,9 @@ public class ApplicationServiceImplTest
         this.service.activate( getBundleContext() );
         this.repoService = Mockito.mock( ApplicationRepoServiceImpl.class );
         this.service.setRepoService( this.repoService );
+
+        this.eventPublisher = Mockito.mock( EventPublisher.class );
+        this.service.setEventPublisher( this.eventPublisher );
     }
 
     @Test
@@ -106,23 +115,18 @@ public class ApplicationServiceImplTest
     public void installApplication()
         throws Exception
     {
+        Mockito.when( this.repoService.createApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
+            thenReturn( Node.create().
+                id( NodeId.from( "myNode" ) ).
+                parentPath( NodePath.ROOT ).
+                name( "myNode" ).
+                build() );
+
         final InputStream in = newBundle( "my-bundle", true ).
             build();
 
-        final Application application = this.service.installApplication( ByteSource.wrap( ByteStreams.toByteArray( in ) ) );
-
-        assertNotNull( application );
-        assertEquals( "my-bundle", application.getKey().getName() );
-    }
-
-    @Test
-    public void installIsNotApplication()
-        throws Exception
-    {
-        final InputStream in = newBundle( "my-bundle", true ).
-            build();
-
-        final Application application = this.service.installApplication( ByteSource.wrap( ByteStreams.toByteArray( in ) ) );
+        final ByteSource byteSource = ByteSource.wrap( ByteStreams.toByteArray( in ) );
+        final Application application = this.service.installApplication( byteSource );
 
         assertNotNull( application );
         assertEquals( "my-bundle", application.getKey().getName() );
@@ -132,9 +136,24 @@ public class ApplicationServiceImplTest
     public void updateBundle()
         throws Exception
     {
+        final Node node = Node.create().
+            id( NodeId.from( "myNode" ) ).
+            parentPath( NodePath.ROOT ).
+            name( "myNode" ).
+            build();
+
+        Mockito.when( this.repoService.createApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
+            thenReturn( node );
+
+        Mockito.when( this.repoService.updateApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
+            thenReturn( node );
+
         final Application originalApplication =
             this.service.installApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.0" ).
                 build() ) ) );
+
+        Mockito.when( this.repoService.getApplicationNode( "my-bundle" ) ).
+            thenReturn( node );
 
         final Application updatedApplication =
             this.service.installApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.1" ).

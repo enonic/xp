@@ -9,6 +9,8 @@ import org.osgi.framework.BundleException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 
@@ -19,6 +21,9 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.util.Exceptions;
 
 @Component
@@ -30,6 +35,10 @@ public final class ApplicationServiceImpl
     private BundleContext context;
 
     private ApplicationRepoService repoService;
+
+    private EventPublisher eventPublisher;
+
+    private final static Logger LOG = LoggerFactory.getLogger( ApplicationServiceImpl.class );
 
     @Activate
     public void activate( final BundleContext context )
@@ -77,19 +86,62 @@ public final class ApplicationServiceImpl
     @Override
     public Application installApplication( final ByteSource byteSource )
     {
+        return installOrUpdateApplication( byteSource );
+    }
+
+    @Override
+    public Application installApplication( final NodeId nodeId )
+    {
+        final ByteSource byteSource = this.repoService.getApplicationSource( nodeId );
+
+        return installOrUpdateApplication( byteSource );
+    }
+
+    private Application installOrUpdateApplication( final ByteSource byteSource )
+    {
         final String applicationName = getApplicationName( byteSource );
 
+        final Application application;
+        final Node node;
+
+        if ( applicationExists( applicationName ) )
+        {
+            application = doUpdateApplication( applicationName, byteSource );
+            node = repoService.updateApplicationNode( application, byteSource );
+            LOG.info( "Application [{}] updated successfully", application.getKey() );
+        }
+        else
+        {
+            application = doInstallApplication( byteSource, applicationName );
+            node = repoService.createApplicationNode( application, byteSource );
+            LOG.info( "Application [{}] installed successfully", application.getKey() );
+        }
+
+        this.eventPublisher.publish( ApplicationEvents.installed( node ) );
+
+        return application;
+    }
+
+    private boolean applicationExists( final String applicationName )
+    {
+        final Node existingNode = this.repoService.getApplicationNode( applicationName );
+
+        return existingNode != null;
+    }
+
+    private Application doInstallApplication( final ByteSource byteSource, final String applicationName )
+    {
         final Application existingApp = this.registry.get( ApplicationKey.from( applicationName ) );
 
         if ( existingApp != null )
         {
-            return doUpdateApplication( applicationName, byteSource );
-        }
-        else
-        {
-            return doInstallApplication( byteSource, applicationName );
+            LOG.info( "Application [" + applicationName + "] exists in registry but not in repo, uninstalling existing" );
+            uninstallBundle( existingApp.getKey().getName() );
         }
 
+        final Bundle bundle = doInstallBundle( byteSource, applicationName );
+
+        return this.registry.get( ApplicationKey.from( bundle ) );
     }
 
     private Application doUpdateApplication( final String applicationName, final ByteSource source )
@@ -100,34 +152,28 @@ public final class ApplicationServiceImpl
 
         final Bundle bundle = doInstallBundle( source, applicationName );
 
-        final Application application = this.registry.get( ApplicationKey.from( bundle ) );
-
-        repoService.updateApplicationNode( application, source );
-
-        return application;
+        return this.registry.get( ApplicationKey.from( bundle ) );
     }
 
     private void uninstallBundle( final String applicationName )
     {
         try
         {
-            this.context.getBundle( applicationName ).uninstall();
+            final Bundle bundle = this.context.getBundle( applicationName );
+
+            if ( bundle != null )
+            {
+                bundle.uninstall();
+            }
+            else
+            {
+                LOG.info( "Cannot uninstall application [" + applicationName + "], not installed" );
+            }
         }
         catch ( BundleException e )
         {
             e.printStackTrace();
         }
-    }
-
-    private Application doInstallApplication( final ByteSource byteSource, final String applicationName )
-    {
-        final Bundle bundle = doInstallBundle( byteSource, applicationName );
-
-        final Application application = this.registry.get( ApplicationKey.from( bundle ) );
-
-        repoService.createApplicationNode( application, byteSource );
-
-        return application;
     }
 
     private String getApplicationName( final ByteSource byteSource )
@@ -195,5 +241,11 @@ public final class ApplicationServiceImpl
     public void setRepoService( final ApplicationRepoService repoService )
     {
         this.repoService = repoService;
+    }
+
+    @Reference
+    public void setEventPublisher( final EventPublisher eventPublisher )
+    {
+        this.eventPublisher = eventPublisher;
     }
 }

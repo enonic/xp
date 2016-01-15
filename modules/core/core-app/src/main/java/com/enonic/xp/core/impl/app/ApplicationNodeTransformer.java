@@ -14,7 +14,7 @@ import com.enonic.xp.util.BinaryReference;
 
 class ApplicationNodeTransformer
 {
-    private static final String APPLICATION_BINARY_REF = "applicationFile";
+    static final String APPLICATION_BINARY_REF = "applicationFile";
 
     static CreateNodeParams toCreateNodeParams( final Application app, final ByteSource source )
     {
@@ -39,6 +39,7 @@ class ApplicationNodeTransformer
         data.setString( ApplicationPropertyNames.VERSION, app.getVersion().toString() );
         data.setString( ApplicationPropertyNames.VENDOR_NAME, app.getVendorName() );
         data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, app.getModifiedTime() );
+        data.setBinaryReference( APPLICATION_BINARY_REF, BinaryReference.from( APPLICATION_BINARY_REF ) );
         addFiles( app, data );
         return data;
     }
