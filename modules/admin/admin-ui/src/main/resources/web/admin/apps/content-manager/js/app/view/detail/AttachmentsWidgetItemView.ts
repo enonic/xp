@@ -1,12 +1,10 @@
 module app.view.detail {
 
-    import CompareStatus = api.content.CompareStatus;
-    import CompareStatusFormatter = api.content.CompareStatusFormatter;
     import ContentSummary = api.content.ContentSummary;
-    import MediaUploader = api.content.MediaUploaderEl;
     import Attachments = api.content.attachment.Attachments;
     import Attachment = api.content.attachment.Attachment;
-    import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
+    import ContentId = api.content.ContentId;
+    import AttachmentName = api.content.attachment.AttachmentName;
 
     export class AttachmentsWidgetItemView extends WidgetItemView {
 
@@ -19,7 +17,7 @@ module app.view.detail {
         public static debug = false;
 
         constructor() {
-            super("attachments-widget-item-view");
+            super('attachments-widget-item-view');
         }
 
         public setContent(content: ContentSummary) {
@@ -47,53 +45,47 @@ module app.view.detail {
         }
 
         private layoutAttachments(): wemQ.Promise<Attachments> {
-            return new api.content.GetContentAttachmentsRequest(this.content.getContentId()).sendAndParse().then((attachments: Attachments) => {
+            return new api.content.GetContentAttachmentsRequest(this.content.getContentId()).sendAndParse().then(
+                (attachments: Attachments) => {
 
-                if (this.hasChild(this.list)) {
-                    this.removeChild(this.list);
-                }
+                    if (this.hasChild(this.list)) {
+                        this.removeChild(this.list);
+                    }
 
-                if (this.hasChild(this.placeholder)) {
-                    this.removeChild(this.placeholder);
-                }
+                    if (this.hasChild(this.placeholder)) {
+                        this.removeChild(this.placeholder);
+                    }
 
-                if (attachments) {
-                    this.list = new api.dom.UlEl("uploader-list");
+                    if (attachments) {
+                        this.list = new api.dom.UlEl('attachment-list');
 
-                    attachments.forEach((attachment: Attachment) => {
-                        var uploader = new MediaUploader({
-                            params: {
-                                parent: this.content.getContentId().toString()
-                            },
-                            operation: api.content.MediaUploaderElOperation.create,
-                            name: attachment.getName().toString(),
-                            showReset: false,
-                            showCancel: false,
-                            maximumOccurrences: 1,
-                            allowMultiSelection: false,
-                            hideDropZone: true,
-                            deferred: true
+                        var contentId = this.content.getContentId();
+                        attachments.forEach((attachment: Attachment) => {
+                            var attachmentContainer = new api.dom.LiEl('attachment-container');
+                            var link = this.createLinkEl(contentId, attachment.getName());
+                            attachmentContainer.appendChild(link);
+                            this.list.appendChild(attachmentContainer);
+
                         });
 
-                        uploader.setValue(this.content.getContentId().toString());
-                        uploader.setFileName(attachment.getName().toString());
+                        this.appendChild(this.list);
 
-                        var uploaderContainer = new api.dom.LiEl("uploader-container");
-                        uploaderContainer.appendChild(uploader);
-                        this.list.appendChild(uploaderContainer);
+                    } else {
+                        this.placeholder = new api.dom.SpanEl('att-placeholder').setHtml('This item has no attachments');
+                        this.appendChild(this.placeholder);
+                    }
 
-                    });
-
-                    this.appendChild(this.list);
-
-                } else {
-                    this.placeholder = new api.dom.SpanEl("att-placeholder").setHtml("This item has no attachments");
-                    this.appendChild(this.placeholder);
-                }
-
-                return attachments;
-            });
+                    return attachments;
+                });
         }
+
+        private createLinkEl(contentId: ContentId, attachmentName: AttachmentName): api.dom.AEl {
+            var url = `content/media/${contentId.toString()}/${attachmentName.toString()}`;
+            var link = new api.dom.AEl().setUrl(api.util.UriHelper.getRestUri(url), '_blank');
+            link.setHtml(attachmentName.toString());
+            return link;
+        }
+
     }
 
 }
