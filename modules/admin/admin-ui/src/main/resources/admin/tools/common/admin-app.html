@@ -55,11 +55,13 @@
 
 <!-- Start the app -->
 <script type="text/javascript">
-    var launcherJs = document.createElement("script");
-    launcherJs.setAttribute("type", "text/javascript");
-    launcherJs.setAttribute("src", CONFIG.portalAssetsUrl + "/js/launcher.js");
+    if (CONFIG.portalAssetsUrl) {
+        var launcherJs = document.createElement("script");
+        launcherJs.setAttribute("type", "text/javascript");
+        launcherJs.setAttribute("src", CONFIG.portalAssetsUrl + "/js/launcher.js");
 
-    document.getElementsByTagName("body")[0].appendChild(launcherJs);
+        document.getElementsByTagName("body")[0].appendChild(launcherJs);
+    }
 
     window.onload = function () {
         startApplication();
