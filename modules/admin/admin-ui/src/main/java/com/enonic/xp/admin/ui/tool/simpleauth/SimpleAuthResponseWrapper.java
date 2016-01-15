@@ -131,7 +131,7 @@ public class SimpleAuthResponseWrapper
     private void redirect()
         throws UnsupportedEncodingException
     {
-        super.setStatus( 303 );
+        super.setStatus( 307 );
         StringBuffer uri = new StringBuffer( request.getRequestURI() );
         if ( !Strings.isNullOrEmpty( request.getQueryString() ) )
         {
