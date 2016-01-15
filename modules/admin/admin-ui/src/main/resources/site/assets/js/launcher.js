@@ -86,10 +86,12 @@
 
     function showBodyMask() {
         bodyMask.style.display = "block";
+        bodyMask.classList.add("launcher");
     }
 
     function hideBodyMask() {
         bodyMask.style.display = "none";
+        bodyMask.classList.remove("launcher");
     }
 
     function isPanelExpanded() {

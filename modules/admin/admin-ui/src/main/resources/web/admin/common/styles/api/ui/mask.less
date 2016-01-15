@@ -2,7 +2,7 @@
   .reset(true);
 
   position: absolute;
-  background-color: white;
+  background-color: @admin-black;
   display: none;
   z-index: @z-index-mask;
   .opacity(0.5);
@@ -47,6 +47,10 @@
 
     &.app-home {
       .opacity(0);
+    }
+
+    &.launcher {
+      background-color: @admin-white;
     }
   }
 
