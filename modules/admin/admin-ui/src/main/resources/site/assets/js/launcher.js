@@ -1,7 +1,7 @@
 (function () {
     var adminUrl = "/admin/tool/com.enonic.xp.admin.ui/launcher";
     var launcherPanel, bodyMask, launcherButton;
-    var isHomeApp = (CONFIG && CONFIG.autoOpenLauncher);
+    var isHomeApp = (window.CONFIG && window.CONFIG.autoOpenLauncher);
 
     function appendLauncherToolbar() {
         launcherButton = document.createElement("button");
@@ -46,7 +46,7 @@
         link.setAttribute("rel", "import");
         link.setAttribute("href", adminUrl);
 
-        link.onload = function() {
+        link.onload = function () {
             var clonedDiv = link.import.querySelector('.launcher-main-container').cloneNode(true);
             while (clonedDiv.childNodes.length > 0) {
                 container.appendChild(clonedDiv.childNodes[0]);
