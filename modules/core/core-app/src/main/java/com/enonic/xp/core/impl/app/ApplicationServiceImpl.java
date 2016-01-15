@@ -21,6 +21,7 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -51,16 +52,34 @@ public final class ApplicationServiceImpl
 
     private void installStoredApplications()
     {
+        ApplicationHelper.runAsAdmin( this::doInstallStoredApplications );
+    }
+
+    private void doInstallStoredApplications()
+    {
         LOG.info( "Searching for installed applications" );
 
-        final Nodes applications = ApplicationHelper.runAsAdmin( this.repoService::getApplications );
+        final Nodes applications = repoService.getApplications();
 
         LOG.info( "Found [" + applications.getSize() + "] installed applications" );
 
         for ( final Node application : applications )
         {
-            final Application installedApp = ApplicationHelper.runAsAdmin( () -> doInstallApplication( application.id() ) );
-            LOG.info( "Application [{}] installed successfully", installedApp.getKey() );
+            final Application installedApp;
+            try
+            {
+                installedApp = doInstallApplication( application.id() );
+                if ( getStartedState( application ) )
+                {
+                    doStartApplication( installedApp.getKey() );
+                }
+
+                LOG.info( "Application [{}] installed successfully", installedApp.getKey() );
+            }
+            catch ( Exception e )
+            {
+                LOG.error( "Cannot install application [{}]", application.name(), e );
+            }
         }
     }
 
@@ -91,7 +110,19 @@ public final class ApplicationServiceImpl
     @Override
     public void startApplication( final ApplicationKey key )
     {
+        doStartApplication( key );
+    }
+
+    private void doStartApplication( final ApplicationKey key )
+    {
+        doStopApplication( key );
+        ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, true ) );
+    }
+
+    private void doStopApplication( final ApplicationKey key )
+    {
         startApplication( getInstalledApplication( key ) );
+        ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, false ) );
     }
 
     @Override
@@ -103,7 +134,7 @@ public final class ApplicationServiceImpl
     @Override
     public Application installApplication( final ByteSource byteSource )
     {
-        final Application application = installOrUpdateApplication( byteSource );
+        final Application application = ApplicationHelper.callWithContext( () -> installOrUpdateApplication( byteSource ) );
         LOG.info( "Application [{}] installed successfully", application.getKey() );
 
         return application;
@@ -141,11 +172,18 @@ public final class ApplicationServiceImpl
         {
             application = doInstallApplication( byteSource, applicationName );
             node = repoService.createApplicationNode( application, byteSource );
+            doStartApplication( application.getKey() );
         }
 
         this.eventPublisher.publish( ApplicationEvents.installed( node ) );
 
         return application;
+    }
+
+    private Boolean getStartedState( final Node node )
+    {
+        final PropertyTree data = node.data();
+        return data.getBoolean( ApplicationPropertyNames.STARTED );
     }
 
     private boolean applicationExists( final String applicationName )

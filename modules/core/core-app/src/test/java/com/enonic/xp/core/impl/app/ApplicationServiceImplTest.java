@@ -15,6 +15,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
@@ -206,10 +207,14 @@ public class ApplicationServiceImplTest
     public void install_applications_in_repo()
         throws Exception
     {
+        final PropertyTree data = new PropertyTree();
+        data.setBoolean( ApplicationPropertyNames.STARTED, true );
+
         final Node node = Node.create().
             id( NodeId.from( "myNodeId" ) ).
             name( "myBundle" ).
             parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH ).
+            data( data ).
             build();
 
         Mockito.when( this.repoService.getApplications() ).

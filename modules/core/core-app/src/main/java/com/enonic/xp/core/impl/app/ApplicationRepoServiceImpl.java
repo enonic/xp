@@ -8,15 +8,18 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 
 @Component
@@ -83,6 +86,22 @@ public class ApplicationRepoServiceImpl
                 build() ) );
 
         return byParent.getNodes();
+    }
+
+    @Override
+    public Node updateStartedState( final ApplicationKey appKey, final boolean started )
+    {
+        final Node applicationNode = this.nodeService.getByPath( NodePath.create( APPLICATION_PATH, appKey.getName() ).build() );
+
+        if ( applicationNode == null )
+        {
+            throw new NodeNotFoundException( "Didnt find application node in repo" );
+        }
+
+        return this.nodeService.update( UpdateNodeParams.create().
+            id( applicationNode.id() ).
+            editor( toBeEdited -> toBeEdited.data.setBoolean( ApplicationPropertyNames.STARTED, started ) ).
+            build() );
     }
 
     private Node doGetNodeByName( final String applicationName )

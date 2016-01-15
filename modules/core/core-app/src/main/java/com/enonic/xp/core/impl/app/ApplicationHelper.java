@@ -109,6 +109,14 @@ public final class ApplicationHelper
             callWith( callable );
     }
 
+    static void runAsAdmin( final Runnable runnable )
+    {
+        ContextBuilder.from( ApplicationConstants.CONTEXT_APPLICATIONS ).
+            authInfo( ApplicationConstants.APPLICATION_SU_AUTH_INFO ).
+            build().
+            runWith( runnable );
+    }
+
     static <T> T callWithContext( Callable<T> runnable )
     {
         return getContext().callWith( runnable );

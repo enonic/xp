@@ -31,4 +31,6 @@ class ApplicationPropertyNames
 
     static final String FILE = "file";
 
+    static final String STARTED = "started";
+
 }
