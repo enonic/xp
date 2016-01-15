@@ -175,8 +175,11 @@ module api.liveedit.text {
             this.lastClicked = new Date().getTime();
         }
 
-        private handleKey() {
+        private handleKey(e: KeyboardEvent) {
             this.processChanges();
+            if (this.isEditMode() && e.keyCode == 27) {
+                this.closePageTextEditMode();
+            }
         }
 
         isEditMode(): boolean {
@@ -292,6 +295,13 @@ module api.liveedit.text {
                 pageView.setTextEditMode(true);
             }
             this.giveFocus();
+        }
+
+        private closePageTextEditMode() {
+            var pageView = this.getPageView();
+            if (pageView.isTextEditMode()) {
+                pageView.setTextEditMode(false);
+            }
         }
 
         giveFocus() {
