@@ -310,7 +310,6 @@ module api.ui.selector.combobox {
             if (!added) {
                 return;
             }
-            var index = this.countSelectedOptions() - 1;
 
             this.comboBoxDropdown.markSelections(this.getSelectedOptions());
             this.hideDropdown();
