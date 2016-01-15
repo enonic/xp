@@ -458,14 +458,21 @@ html, body {
 
       margin: 24px 0;
 
+      &.selected {
+        .application .app-icon {
+          border-bottom: 4px solid @admin-red;
+          padding-bottom: 6px;
+        }
+      }
+
       .application {
         display: table;
         & > * {
           display: table-cell;
-          vertical-align: middle;
         }
 
         .app-info {
+          vertical-align: top;
           .app-name {
             width: 220px;
             font-size: 20px;
@@ -481,9 +488,11 @@ html, body {
         }
 
         .app-icon {
+          vertical-align: middle;
           margin: 4px 22px 0 0;
           width: 40px;
           height: 40px;
+          padding-bottom: 10px;
 
           &.app-home-icon {
             float: left;

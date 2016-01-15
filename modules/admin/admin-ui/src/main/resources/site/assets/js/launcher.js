@@ -27,6 +27,7 @@
 
     function toggleButton() {
         launcherButton.classList.toggle("toggled");
+        launcherButton.focus();
     }
 
     function appendLauncherPanel() {
@@ -54,6 +55,7 @@
 
             if (isHomeApp) {
                 openLauncherPanel();
+                launcherButton.focus();
             }
             else {
                 var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
@@ -99,6 +101,7 @@
     }
 
     function openLauncherPanel() {
+        listenToKeyboardEvents();
         toggleButton();
         showBodyMask();
         launcherPanel.classList.remove("hidden", "slideout");
@@ -106,10 +109,12 @@
     }
 
     function closeLauncherPanel(skipTransition) {
+        unlistenToKeyboardEvents();
         launcherPanel.classList.remove("visible");
         launcherPanel.classList.add((skipTransition == true) ? "hidden" : "slideout");
         hideBodyMask();
         toggleButton();
+        unselectCurrentApp();
     }
 
     function initBodyMask() {
@@ -118,6 +123,106 @@
             bodyMask = createBodyMaskDiv();
         }
         bodyMask.addEventListener("click", closeLauncherPanel);
+    }
+
+    function listenToKeyboardEvents() {
+        window.addEventListener("keyup", onKeyPressed, true);
+    }
+
+    function unlistenToKeyboardEvents() {
+        window.removeEventListener("keyup", onKeyPressed, true);
+    }
+
+    function getSelectedApp() {
+        return launcherPanel.querySelector('.app-row.selected');
+    }
+
+    function getSelectedAppIndex() {
+        var apps = launcherPanel.querySelectorAll('.app-row');
+        for (var i=0; i<apps.length; i++) {
+            if (apps[i].classList.contains("selected")) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    function selectNextApp() {
+        var selectedIndex = getSelectedAppIndex();
+        var apps = launcherPanel.querySelectorAll('.app-row');
+
+        selectApp((selectedIndex + 1) == apps.length ? 0 : selectedIndex + 1);
+    }
+
+    function selectPreviousApp() {
+        var selectedIndex = getSelectedAppIndex();
+        var nextIndex;
+        if (selectedIndex == -1) {
+            nextIndex = 0;
+        }
+        else if (selectedIndex == 0) {
+            nextIndex = launcherPanel.querySelectorAll('.app-row').length - 1;
+        }
+        else {
+            nextIndex = selectedIndex - 1;
+        }
+
+        selectApp(nextIndex);
+    }
+
+    function selectApp(index) {
+        unselectCurrentApp();
+        getAppByIndex(index).classList.add("selected");
+    }
+
+    function unselectCurrentApp() {
+        var selectedApp = getSelectedApp();
+        if (selectedApp) {
+            selectedApp.classList.remove("selected");
+        }
+    }
+
+    function getAppByIndex(index) {
+        var apps = launcherPanel.querySelectorAll('.app-row');
+        for (var i=0; i<apps.length; i++) {
+            if (i == index) {
+                return apps[i];
+            }
+        }
+        return null;
+    }
+
+    function startApp(app) {
+        var anchorEl = app.querySelector("a");
+        if (anchorEl && anchorEl.click) {
+            anchorEl.click();
+        }
+    }
+
+    function onKeyPressed(e) {
+        switch(e.keyCode) {
+            case 38:
+                // up key pressed
+                launcherButton.blur();
+                selectPreviousApp();
+                break;
+            case 40:
+                // down key pressed
+                launcherButton.blur();
+                selectNextApp();
+                break;
+            case 13:
+                // enter key pressed
+                var selectedApp = getSelectedApp();
+                if (selectedApp) {
+                    startApp(selectedApp);
+                }
+                break;
+            case 27:
+                // esc key pressed
+                closeLauncherPanel();
+                break;
+        }
     }
 
     function init() {
