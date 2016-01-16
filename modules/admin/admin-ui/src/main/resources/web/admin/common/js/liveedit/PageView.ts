@@ -299,6 +299,7 @@ module api.liveedit {
 
         handleShaderClick(event: MouseEvent) {
             if (this.isLocked()) {
+
                 if (!this.lockedContextMenu) {
                     this.lockedContextMenu = this.createLockedContextMenu();
                 }
@@ -312,7 +313,7 @@ module api.liveedit {
             else if (this.isSelected()) {
                 this.deselect();
             }
-            else if(!!event.type && (event.type == 'click' || event.type == 'contextmenu') && this.isClicked(event)) {
+            else if (!!event.type && (event.type == 'click' || event.type == 'contextmenu') && this.isEventOverItem(event)) {
                 this.handleClick(event);
             }
         }

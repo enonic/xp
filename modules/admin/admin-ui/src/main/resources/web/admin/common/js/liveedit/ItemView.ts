@@ -107,6 +107,8 @@ module api.liveedit {
 
         private mouseOver: boolean;
 
+        private shaded: boolean;
+
         private mouseOverViewListeners: {(): void} [];
 
         private mouseOutViewListeners: {(): void} [];
@@ -115,6 +117,8 @@ module api.liveedit {
         private mouseLeaveViewListener;
         private shaderClickedListener;
         private shaderMouseMoveListener;
+        private pageItemViewAddedListener;
+        private pageClickedListener;
         private mouseEnterListener;
         private mouseLeaveListener;
         private mouseClickedListener;
@@ -222,9 +226,22 @@ module api.liveedit {
                 }
             });
 
+            // component shader allows mouse events through
+            // thus bind listener to pageView to know when shader was clicked in case of unlocked page
+            this.pageClickedListener = (event) => {
+                if (!pageView.isLocked() && this.shaded && !this.isEventOverItem(event)) {
+                    this.handleShaderClick(event);
+                }
+            };
+            pageView.onClicked(this.pageClickedListener);
+
+            // page shader catches mouse events
+            // so bind listener to it in case of the locked page
             this.shaderClickedListener = this.handleShaderClick.bind(this);
             Shader.get().onClicked(this.shaderClickedListener);
 
+            // page shader catches mouse events
+            // so bind listener to it to highlight underlying views
             this.shaderMouseMoveListener = this.handleShaderMouseMove.bind(this);
             Shader.get().onMouseMove(this.shaderMouseMoveListener);
 
@@ -268,9 +285,16 @@ module api.liveedit {
             };
             this.onMouseLeaveView(this.mouseLeaveViewListener);
 
-            pageView.onItemViewAdded(this.shaderClickedListener);
+            this.pageItemViewAddedListener = (event) => {
+                if (this.isSelected()) {
+                    this.deselect();
+                }
+            };
+            pageView.onItemViewAdded(this.pageItemViewAddedListener);
+
             this.onRemoved(() => {
-                pageView.unItemViewAdded(this.shaderClickedListener);
+                pageView.unItemViewAdded(this.pageItemViewAddedListener);
+                pageView.unClicked(this.pageClickedListener);
             });
         }
 
@@ -298,10 +322,12 @@ module api.liveedit {
 
         shade() {
             Shader.get().shade(this);
+            this.shaded = true;
         }
 
         unshade() {
             Shader.get().hide();
+            this.shaded = false;
         }
 
         showCursor() {
@@ -496,8 +522,8 @@ module api.liveedit {
         }
 
         handleClick(event: MouseEvent) {
-
             event.stopPropagation();
+
             if (event.which == 3) { // right click
                 event.preventDefault();
             }
@@ -506,16 +532,22 @@ module api.liveedit {
         }
 
         handleShaderClick(event: MouseEvent) {
+            event.stopPropagation();
+
+            if (this.getPageView().isLocked()) {
+                return;
+            }
             if (this.isSelected()) {
                 this.deselect();
             }
-            if (!!event.type && (event.type == 'click' || event.type == 'contextmenu') && this.isClicked(event)) {
+            if (!!event.type && (event.type == 'click' || event.type == 'contextmenu') && this.isEventOverItem(event)) {
                 this.handleClick(event);
             }
         }
 
         handleShaderMouseMove(event: MouseEvent) {
-            var contains = this.eventOverItem(event);
+            var contains = this.isEventOverItem(event);
+
             if (!this.mouseOver && contains) {
                 this.handleMouseEnter(event);
             } else if (this.mouseOver && !contains) {
@@ -523,7 +555,7 @@ module api.liveedit {
             }
         }
 
-        private eventOverItem(event: MouseEvent): boolean {
+        protected isEventOverItem(event: MouseEvent): boolean {
             var offset = this.getEl().getDimensions(),
                 x = event.pageX,
                 y = event.pageY;
@@ -532,14 +564,6 @@ module api.liveedit {
                    && x <= offset.left + offset.width
                    && y >= offset.top
                    && y <= offset.top + offset.height;
-        }
-
-        protected isClicked(event: MouseEvent): boolean {
-            var el = this.getEl();
-            return event.pageX >= el.getOffsetLeft() &&
-                   event.pageX <= (el.getOffsetLeft() + el.getWidth()) &&
-                   event.pageY >= (el.getOffsetTop() - el.getScrollTop()) &&
-                   event.pageY <= (el.getOffsetTop() + el.getHeight() - el.getScrollTop() );
         }
 
         private deselectParent() {
