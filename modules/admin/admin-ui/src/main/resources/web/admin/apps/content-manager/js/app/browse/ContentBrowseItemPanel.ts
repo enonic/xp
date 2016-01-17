@@ -2,6 +2,10 @@ module app.browse {
 
     export class ContentBrowseItemPanel extends api.app.browse.BrowseItemPanel<api.content.ContentSummaryAndCompareStatus> {
 
+        constructor() {
+            super("content-browse-item-panel");
+        }
+
         createItemSelectionPanel(): ContentBrowseItemsSelectionPanel {
             return new ContentBrowseItemsSelectionPanel();
         }

@@ -33,6 +33,8 @@ module api.ui.panel {
 
         private alignment: SplitPanelAlignment = SplitPanelAlignment.HORIZONTAL;
 
+        private toolbar: api.ui.toolbar.Toolbar;
+
         private alignmentTreshold: number;
 
         private animationDelay: number = 0;
@@ -80,6 +82,11 @@ module api.ui.panel {
 
         setAlignment(alignment: SplitPanelAlignment): SplitPanelBuilder {
             this.alignment = alignment;
+            return this;
+        }
+
+        setToolbar(toolbar: api.ui.toolbar.Toolbar): SplitPanelBuilder {
+            this.toolbar = toolbar;
             return this;
         }
 
@@ -134,6 +141,11 @@ module api.ui.panel {
         getAlignmentTreshold(): number {
             return this.alignmentTreshold;
         }
+
+        getToolbar(): api.ui.toolbar.Toolbar {
+            return this.toolbar;
+        }
+
 
         getAnimationDelay(): number {
             return this.animationDelay;
@@ -216,6 +228,8 @@ module api.ui.panel {
 
         private secondPanelShouldSlideRight: boolean;
 
+        private toolbar: api.ui.toolbar.Toolbar;
+
         constructor(builder: SplitPanelBuilder) {
             super("split-panel");
             this.firstPanel = builder.getFirstPanel();
@@ -226,6 +240,7 @@ module api.ui.panel {
             this.secondPanelUnit = builder.getSecondPanelUnit();
             this.animationDelay = builder.getAnimationDelay();
             this.secondPanelShouldSlideRight = builder.isSecondPanelShouldSlideRight();
+            this.toolbar = builder.getToolbar();
             this.firstPanelIsHidden = false;
             this.secondPanelIsHidden = false;
             this.firstPanelIsFullScreen = false;
@@ -247,6 +262,9 @@ module api.ui.panel {
             this.firstPanel.setDoOffset(false);
             this.secondPanel.setDoOffset(false);
 
+            if (!!this.toolbar) {
+                this.appendChild(this.toolbar);
+            }
             this.appendChild(this.firstPanel);
             this.appendChild(this.splitter);
             this.appendChild(this.secondPanel);
@@ -513,10 +531,14 @@ module api.ui.panel {
                     result = "calc(" + size + "%" + " - " + (this.getSplitterThickness() / 2) + "px)";
                 }
             } else { // Other panel is the deciding panel
+                var toolbarHeight = 0;
+                if (this.isHorizontal() && !!this.toolbar) {
+                    toolbarHeight = this.toolbar.getEl().getHeightWithBorder();
+                }
                 if (otherPanelUnit == SplitPanelUnit.PIXEL) {
-                    result = "calc(100% - " + (otherPanelSize + (this.getSplitterThickness() / 2)) + "px)";
+                    result = "calc(100% - " + (otherPanelSize + (this.getSplitterThickness() / 2 + toolbarHeight)) + "px)";
                 } else {
-                    result = "calc(" + (100 - otherPanelSize) + "%" + " - " + (this.getSplitterThickness() / 2) + "px)";
+                    result = "calc(" + (100 - otherPanelSize) + "%" + " - " + (this.getSplitterThickness() / 2 + toolbarHeight) + "px)";
                 }
             }
             return result;
