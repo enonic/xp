@@ -66,6 +66,12 @@ public class ApplicationRepoServiceImpl
     }
 
     @Override
+    public void deleteApplicationNode( final Application application )
+    {
+        this.nodeService.deleteByPath( NodePath.create( APPLICATION_PATH, application.getKey().getName() ).build() );
+    }
+
+    @Override
     public ByteSource getApplicationSource( final NodeId nodeId )
     {
         return this.nodeService.getBinary( nodeId, BinaryReference.from( ApplicationNodeTransformer.APPLICATION_BINARY_REF ) );
@@ -108,6 +114,7 @@ public class ApplicationRepoServiceImpl
     {
         return this.nodeService.getByPath( NodePath.create( APPLICATION_PATH, applicationName ).build() );
     }
+
     @Reference
     public void setNodeService( final NodeService nodeService )
     {

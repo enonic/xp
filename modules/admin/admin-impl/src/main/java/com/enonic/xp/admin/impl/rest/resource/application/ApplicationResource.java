@@ -128,6 +128,16 @@ public final class ApplicationResource
     }
 
     @POST
+    @Path("uninstall")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public ApplicationSuccessJson uninstall( final ApplicationListParams params )
+        throws Exception
+    {
+        params.getKeys().forEach( this.applicationService::uninstallApplication );
+        return new ApplicationSuccessJson();
+    }
+
+    @POST
     @Path("installUrl")
     @Consumes(MediaType.APPLICATION_JSON)
     public ApplicationInstalledJson installUrl( final ApplicationInstallParams params )

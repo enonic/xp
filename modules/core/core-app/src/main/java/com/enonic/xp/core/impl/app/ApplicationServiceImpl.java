@@ -157,6 +157,36 @@ public final class ApplicationServiceImpl
         return application;
     }
 
+    @Override
+    public void uninstallApplication( final ApplicationKey key )
+    {
+        final Application application = this.registry.get( key );
+
+        if ( application == null )
+        {
+            LOG.warn( "Trying to uninstall bundle with key: [{}] but no such bundle installed", key );
+            return;
+        }
+
+        final Bundle bundle = application.getBundle();
+
+        try
+        {
+            bundle.uninstall();
+        }
+        catch ( BundleException e )
+        {
+            throw new ApplicationInstallException( "Cannot uninstall bundle " + key, e );
+        }
+
+        this.registry.invalidate( application.getKey() );
+
+        this.repoService.deleteApplicationNode( application );
+
+        this.eventPublisher.publish( ApplicationEvents.uninstalled( application.getKey() ) );
+
+    }
+
     private void doStartApplication( final ApplicationKey key )
     {
         doStartApplication( this.registry.get( key ) );

@@ -8,6 +8,8 @@ public class ApplicationEvents
 {
     final static String APPLICATION_INSTALLED_EVENT = "application.installed";
 
+    final static String APPLICATION_UNINSTALLED_EVENT = "application.uninstalled";
+
     final static String APPLICATION_STATE_CHANGE_EVENT = "application.state";
 
     static final String NODE_ID_PARAM = "id";
@@ -21,6 +23,14 @@ public class ApplicationEvents
         return Event.create( APPLICATION_INSTALLED_EVENT ).
             distributed( true ).
             value( NODE_ID_PARAM, applicationNode.id() ).
+            build();
+    }
+
+    public static Event uninstalled( final ApplicationKey applicationKey )
+    {
+        return Event.create( APPLICATION_UNINSTALLED_EVENT ).
+            distributed( true ).
+            value( APPLICATION_KEY_PARAM, applicationKey.getName() ).
             build();
     }
 

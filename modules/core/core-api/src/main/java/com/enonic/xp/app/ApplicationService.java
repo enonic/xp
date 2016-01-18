@@ -23,4 +23,6 @@ public interface ApplicationService
 
     Application installApplication( final NodeId nodeId );
 
+    void uninstallApplication( final ApplicationKey key );
+
 }

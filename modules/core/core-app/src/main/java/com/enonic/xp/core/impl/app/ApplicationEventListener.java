@@ -43,6 +43,9 @@ public class ApplicationEventListener
             case ApplicationEvents.APPLICATION_STATE_CHANGE_EVENT:
                 handleStateChangedEvent( event );
                 break;
+            case ApplicationEvents.APPLICATION_UNINSTALLED_EVENT:
+                handleUninstalledEvent( event );
+                break;
         }
     }
 
@@ -53,6 +56,16 @@ public class ApplicationEventListener
         if ( valueAs.isPresent() )
         {
             ApplicationHelper.runAsAdmin( () -> this.applicationService.installApplication( NodeId.from( valueAs.get() ) ) );
+        }
+    }
+
+    private void handleUninstalledEvent( final Event event )
+    {
+        final Optional<String> appKey = event.getValueAs( String.class, ApplicationEvents.APPLICATION_KEY_PARAM );
+
+        if ( appKey.isPresent() )
+        {
+            ApplicationHelper.runAsAdmin( () -> this.applicationService.uninstallApplication( ApplicationKey.from( appKey.get() ) ) );
         }
     }
 
