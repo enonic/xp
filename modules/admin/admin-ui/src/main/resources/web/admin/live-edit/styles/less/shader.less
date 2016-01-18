@@ -4,9 +4,11 @@
   background-color: #000;
   .opacity(.2);
   z-index: @z-index-shader;
+  pointer-events: none;
 
   &.@{_CLS_PREFIX}page {
     position: fixed !important;
+    pointer-events: all;
 
     .centered {
       display: none;
