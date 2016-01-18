@@ -65,6 +65,8 @@ module api.ui.selector.combobox {
 
         private expandedListeners: {(event: api.ui.selector.DropdownExpandedEvent): void}[] = [];
 
+        private selectiondDelta = [];
+
         public static debug: boolean = false;
 
         /**
@@ -290,8 +292,10 @@ module api.ui.selector.combobox {
 
             // fast alternative to isSelectionChanged()
             if (this.applySelectionsButton && this.applySelectionsButton.isVisible()) {
-                this.clearSelection(true);
-                this.comboBoxDropdown.applyMultipleSelection();
+                this.selectiondDelta.forEach((value: string) => {
+                    var row = this.comboBoxDropdown.getDropdownGrid().getRowByValue(value);
+                    this.handleRowSelected(row);
+                });
                 this.input.setValue("");
                 this.hideDropdown();
             } else {
@@ -685,9 +689,28 @@ module api.ui.selector.combobox {
             this.input.giveFocus();
             if (this.isSelectionChanged()) {
                 this.applySelectionsButton.show();
+                this.updateSelectionDelta();
             } else {
                 this.applySelectionsButton.hide();
             }
+        }
+
+        private updateSelectionDelta() {
+
+            var selectedValues = this.getSelectedOptions().map((x) => {
+                return x.value;
+            });
+
+            var gridOptions = [];
+
+            this.comboBoxDropdown.getDropdownGrid().getElement().getSelectedRows().forEach((row: number) => {
+                gridOptions.push(this.comboBoxDropdown.getDropdownGrid().getOptionByRow(row).value);
+            });
+
+            this.selectiondDelta = gridOptions
+                .filter(x => selectedValues.indexOf(x) == -1)
+                .concat(selectedValues.filter(x => gridOptions.indexOf(x) == -1));
+
         }
 
         /**
