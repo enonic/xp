@@ -65,11 +65,12 @@ public class ApplicationEventListener
         {
             if ( started.get() )
             {
-                ApplicationHelper.runAsAdmin( () -> this.applicationService.startApplication( ApplicationKey.from( appKey.get() ) ) );
+                ApplicationHelper.runAsAdmin(
+                    () -> this.applicationService.startApplication( ApplicationKey.from( appKey.get() ), false ) );
             }
             else
             {
-                ApplicationHelper.runAsAdmin( () -> this.applicationService.stopApplication( ApplicationKey.from( appKey.get() ) ) );
+                ApplicationHelper.runAsAdmin( () -> this.applicationService.stopApplication( ApplicationKey.from( appKey.get() ), false ) );
             }
         }
     }

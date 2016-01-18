@@ -15,9 +15,9 @@ public interface ApplicationService
 
     Applications getInstalledApplications();
 
-    void startApplication( ApplicationKey key );
+    void startApplication( ApplicationKey key, final boolean triggerEvent );
 
-    void stopApplication( ApplicationKey key );
+    void stopApplication( ApplicationKey key, final boolean triggerEvent );
 
     Application installApplication( final ByteSource byteSource );
 

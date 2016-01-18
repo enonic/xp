@@ -101,7 +101,7 @@ public class ApplicationResourceTest
             entity( "{\"key\":[\"testapplication\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
-        Mockito.verify( this.applicationService ).startApplication( ApplicationKey.from( "testapplication" ) );
+        Mockito.verify( this.applicationService ).startApplication( ApplicationKey.from( "testapplication" ), true );
     }
 
     @Test
@@ -113,7 +113,7 @@ public class ApplicationResourceTest
             entity( "{\"key\":[\"testapplication\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
-        Mockito.verify( this.applicationService ).stopApplication( ApplicationKey.from( "testapplication" ) );
+        Mockito.verify( this.applicationService ).stopApplication( ApplicationKey.from( "testapplication" ), true );
     }
 
     private Application createApplication()

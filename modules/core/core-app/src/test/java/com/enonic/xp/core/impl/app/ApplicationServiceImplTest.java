@@ -30,7 +30,7 @@ public class ApplicationServiceImplTest
 {
     private ApplicationServiceImpl service;
 
-    private ApplicationRepoServiceImpl repoService = Mockito.mock( ApplicationRepoServiceImpl.class );
+    private final ApplicationRepoServiceImpl repoService = Mockito.mock( ApplicationRepoServiceImpl.class );
 
     private EventPublisher eventPublisher;
 
@@ -120,7 +120,7 @@ public class ApplicationServiceImplTest
         final Bundle bundle = deployBundle( "app1", true );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
-        this.service.startApplication( ApplicationKey.from( "app1" ) );
+        this.service.startApplication( ApplicationKey.from( "app1" ), false );
         assertEquals( Bundle.ACTIVE, bundle.getState() );
     }
 
@@ -137,7 +137,7 @@ public class ApplicationServiceImplTest
         bundle.start();
 
         assertEquals( Bundle.ACTIVE, bundle.getState() );
-        this.service.stopApplication( ApplicationKey.from( "app1" ) );
+        this.service.stopApplication( ApplicationKey.from( "app1" ), false );
         assertEquals( Bundle.RESOLVED, bundle.getState() );
     }
 
@@ -150,12 +150,17 @@ public class ApplicationServiceImplTest
 
         this.service.activate( getBundleContext() );
 
+        final Node applicationNode = Node.create().
+            id( NodeId.from( "myNode" ) ).
+            parentPath( NodePath.ROOT ).
+            name( "myNode" ).
+            build();
+
         Mockito.when( this.repoService.createApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
-            thenReturn( Node.create().
-                id( NodeId.from( "myNode" ) ).
-                parentPath( NodePath.ROOT ).
-                name( "myNode" ).
-                build() );
+            thenReturn( applicationNode );
+
+        Mockito.when( this.repoService.getApplicationNode( "my-bundle" ) ).
+            thenReturn( applicationNode );
 
         final InputStream in = newBundle( "my-bundle", true ).
             build();
@@ -186,6 +191,9 @@ public class ApplicationServiceImplTest
             thenReturn( node );
 
         Mockito.when( this.repoService.updateApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
+            thenReturn( node );
+
+        Mockito.when( this.repoService.getApplicationNode( "my-bundle" ) ).
             thenReturn( node );
 
         final Application originalApplication =
@@ -237,7 +245,7 @@ public class ApplicationServiceImplTest
                                                                                       Mockito.isA( ByteSource.class ) );
 
         // One installed, one started event
-        Mockito.verify( this.eventPublisher, Mockito.times( 2 ) ).publish( Mockito.isA( Event.class ) );
+        Mockito.verify( this.eventPublisher, Mockito.never() ).publish( Mockito.isA( Event.class ) );
 
     }
 

@@ -108,23 +108,40 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public void startApplication( final ApplicationKey key )
+    public void startApplication( final ApplicationKey key, final boolean triggerEvent )
     {
         doStartApplication( key );
+        if ( triggerEvent )
+        {
+            this.eventPublisher.publish( ApplicationEvents.started( key ) );
+        }
     }
 
     @Override
-    public void stopApplication( final ApplicationKey key )
+    public void stopApplication( final ApplicationKey key, final boolean triggerEvent )
     {
         doStopApplication( key );
+
+        if ( triggerEvent )
+        {
+            this.eventPublisher.publish( ApplicationEvents.stopped( key ) );
+        }
     }
+
 
     @Override
     public Application installApplication( final ByteSource byteSource )
     {
         final Application application = ApplicationHelper.callWithContext( () -> installOrUpdateApplication( byteSource ) );
         LOG.info( "Application [{}] installed successfully", application.getKey() );
+
+        final Node node = ApplicationHelper.callWithContext( () -> this.repoService.getApplicationNode( application.getKey().getName() ) );
+
+        this.eventPublisher.publish( ApplicationEvents.installed( node ) );
+
         doStartApplication( application.getKey() );
+
+        this.eventPublisher.publish( ApplicationEvents.started( application.getKey() ) );
 
         return application;
     }
@@ -134,6 +151,7 @@ public final class ApplicationServiceImpl
     {
         final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( nodeId ) );
         LOG.info( "Application [{}] installed successfully", application.getKey() );
+
         doStartApplication( application.getKey() );
 
         return application;
@@ -144,7 +162,7 @@ public final class ApplicationServiceImpl
         doStartApplication( this.registry.get( key ) );
 
         ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, true ) );
-        this.eventPublisher.publish( ApplicationEvents.started( key ) );
+
     }
 
     private void doStopApplication( final ApplicationKey key )
@@ -152,7 +170,6 @@ public final class ApplicationServiceImpl
         doStopApplication( this.registry.get( key ) );
 
         ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, false ) );
-        this.eventPublisher.publish( ApplicationEvents.stopped( key ) );
     }
 
     private void doStartApplication( final Application application )
@@ -191,20 +208,17 @@ public final class ApplicationServiceImpl
         final String applicationName = getApplicationName( byteSource );
 
         final Application application;
-        final Node node;
 
         if ( applicationExists( applicationName ) )
         {
             application = doUpdateApplication( applicationName, byteSource );
-            node = repoService.updateApplicationNode( application, byteSource );
+            repoService.updateApplicationNode( application, byteSource );
         }
         else
         {
             application = doInstallApplication( byteSource, applicationName );
-            node = repoService.createApplicationNode( application, byteSource );
+            repoService.createApplicationNode( application, byteSource );
         }
-
-        this.eventPublisher.publish( ApplicationEvents.installed( node ) );
 
         return application;
     }

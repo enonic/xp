@@ -93,7 +93,7 @@ public final class ApplicationResource
     public ApplicationSuccessJson start( final ApplicationListParams params )
         throws Exception
     {
-        params.getKeys().forEach( this.applicationService::startApplication );
+        params.getKeys().forEach( ( key ) -> this.applicationService.startApplication( key, true ) );
         return new ApplicationSuccessJson();
     }
 
@@ -103,7 +103,7 @@ public final class ApplicationResource
     public ApplicationSuccessJson stop( final ApplicationListParams params )
         throws Exception
     {
-        params.getKeys().forEach( this.applicationService::stopApplication );
+        params.getKeys().forEach( ( key ) -> this.applicationService.stopApplication( key, true ) );
         return new ApplicationSuccessJson();
     }
 

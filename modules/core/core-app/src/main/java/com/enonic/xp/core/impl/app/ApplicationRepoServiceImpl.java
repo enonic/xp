@@ -108,8 +108,6 @@ public class ApplicationRepoServiceImpl
     {
         return this.nodeService.getByPath( NodePath.create( APPLICATION_PATH, applicationName ).build() );
     }
-
-
     @Reference
     public void setNodeService( final NodeService nodeService )
     {
