@@ -163,7 +163,7 @@ module api.ui.treegrid {
             this.appendChild(this.grid);
 
             if (builder.isAutoLoad()) {
-                this.reload();
+                this.reload().then(() => this.grid.resizeCanvas());
             }
 
             if (builder.isPartialLoadEnabled()) {
@@ -624,7 +624,7 @@ module api.ui.treegrid {
 
         // Hard reset
 
-        reload(parentNodeData?: DATA): void {
+        reload(parentNodeData?: DATA): wemQ.Promise<void> {
             var expandedNodesDataId = this.grid.getDataView().getItems().filter((item) => {
                 return item.isExpanded();
             }).map((item) => {
@@ -637,16 +637,17 @@ module api.ui.treegrid {
             this.initData([]);
 
             this.mask();
-            this.reloadNode(null, expandedNodesDataId)
+
+            return this.reloadNode(null, expandedNodesDataId)
                 .then(() => {
                     this.root.setCurrentSelection(selection);
                     this.initData(this.root.getCurrentRoot().treeToList());
                     this.updateExpanded();
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
-                }).finally(() => {
+                }).then(() => {
                     this.updateExpanded();
-                }).done(() => this.notifyLoaded());
+                }).then(() => this.notifyLoaded());
         }
 
         private reloadNode(parentNode?: TreeNode<DATA>, expandedNodesDataId?: String[]): wemQ.Promise<void> {
