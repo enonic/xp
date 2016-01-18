@@ -8,11 +8,14 @@ module api.liveedit {
 
         private newlyCreated: boolean;
 
-        constructor(itemView: ItemView, position: Position, isNew: boolean = false) {
+        private silent: boolean;
+
+        constructor(itemView: ItemView, position: Position, isNew: boolean = false, silent: boolean = false) {
             super();
             this.pageItemView = itemView;
             this.position = position;
             this.newlyCreated = isNew;
+            this.silent = silent;
         }
 
         getItemView(): ItemView {
@@ -25,6 +28,10 @@ module api.liveedit {
 
         isNew(): boolean {
             return this.newlyCreated;
+        }
+
+        isSilent(): boolean {
+            return this.silent;
         }
 
         static on(handler: (event: ItemViewSelectedEvent) => void, contextWindow: Window = window) {

@@ -146,12 +146,15 @@ module api.liveedit {
                     if (!this.isTextEditMode()) {
                         this.setTextEditMode(true);
                     }
+                    else {
+                        (<api.liveedit.text.TextComponentView>itemView).setEditMode(true);
+                    }
                     itemView.giveFocus();
                 } else {
                     if (this.isTextEditMode()) {
                         this.setTextEditMode(false);
                     }
-                    itemView.select(null, ItemViewContextMenuPosition.NONE, event.isNew());
+                    itemView.select(null, ItemViewContextMenuPosition.NONE, event.isNew(), true);
                 }
             };
             this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => {
@@ -299,6 +302,7 @@ module api.liveedit {
 
         handleShaderClick(event: MouseEvent) {
             if (this.isLocked()) {
+
                 if (!this.lockedContextMenu) {
                     this.lockedContextMenu = this.createLockedContextMenu();
                 }
@@ -311,6 +315,9 @@ module api.liveedit {
             }
             else if (this.isSelected()) {
                 this.deselect();
+            }
+            else if (!!event.type && (event.type == 'click' || event.type == 'contextmenu') && this.isEventOverItem(event)) {
+                this.handleClick(event);
             }
         }
 

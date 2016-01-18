@@ -281,6 +281,7 @@ module app.wizard.page {
                     event.fire(this.liveEditWindow);
 
                     newComponentView.select();
+                    newComponentView.hideContextMenu();
 
                     deferred.resolve("");
                 },

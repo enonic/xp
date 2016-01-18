@@ -56,6 +56,8 @@ module app.wizard.page.contextwindow {
 
         private animationTimer;
 
+        private fixed: boolean = false;
+
         constructor(config: ContextWindowConfig) {
             super();
             this.liveFormPanel = config.liveFormPanel;
@@ -82,6 +84,10 @@ module app.wizard.page.contextwindow {
             this.onRemoved((event) => {
                 ResponsiveManager.unAvailableSizeChanged(this);
                 ResponsiveManager.unAvailableSizeChanged(this.liveFormPanel);
+            });
+
+            this.insertablesPanel.getComponentsView().onBeforeInsertAction(() => {
+                this.fixed = true;
             });
         }
 
@@ -143,8 +149,25 @@ module app.wizard.page.contextwindow {
             return this.contextWindowState == ContextWindowState.SHOWN;
         }
 
+        isSlidingIn(): boolean {
+            return this.contextWindowState == ContextWindowState.SLIDING_IN;
+        }
+
+        isSlidingOut(): boolean {
+            return this.contextWindowState == ContextWindowState.SLIDING_OUT;
+        }
+
+
+        isFixed(): boolean {
+            return this.fixed;
+        }
+
+        setFixed(value: boolean) {
+            this.fixed = value;
+        }
+
         isShownOrAboutToBeShown(): boolean {
-            return this.contextWindowState == ContextWindowState.SHOWN || this.contextWindowState == ContextWindowState.SLIDING_IN;
+            return this.isShown() || this.isSlidingIn();
         }
 
         slideOut() {

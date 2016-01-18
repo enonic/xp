@@ -29,6 +29,7 @@ module app.wizard {
         protected handleDragStart() {
             super.handleDragStart();
 
+            api.liveedit.Highlighter.get().hide();
             this.getDraggableItem().getChildren().forEach((childEl: api.dom.Element) => {
                 childEl.removeClass("selected");
             });
