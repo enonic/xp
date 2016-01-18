@@ -11,7 +11,7 @@ module api.ui.geo {
             this.getEl().setAttribute("title", "latitude,longitude");
             this.setPlaceholder(_i18n('latitude,longitude'));
 
-            this.onKeyUp((event: KeyboardEvent) => {
+            this.onValueChanged((event: api.ValueChangedEvent) => {
                 var typedGeoPoint = this.getValue();
                 this.validUserInput = api.util.StringHelper.isEmpty(typedGeoPoint) ||
                                       api.util.GeoPoint.isValidString(typedGeoPoint);
