@@ -19,7 +19,7 @@ var application = (function () {
     });
     this.lostConnectionDetector.onSessionExpired(() => {
         api.notify.NotifyManager.get().hide(messageId);
-        messageId = api.notify.showError("Your session has expired.", false);
+        window.location.href = "/admin/tool";
     });
     this.lostConnectionDetector.onConnectionRestored(() => {
         api.notify.NotifyManager.get().hide(messageId);
