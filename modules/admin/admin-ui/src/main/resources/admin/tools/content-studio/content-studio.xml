@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <tool xmlns="urn:enonic:xp:model:1.0">
-  <display-name>Content Manager</display-name>
+  <display-name>Content Studio</display-name>
   <description>Manage content and sites</description>
-  <icon>icons/database.svg</icon>
+  <icon>icons/content-studio.svg</icon>
   <allow>
     <principal>role:system.admin</principal>
     <principal>role:cms.admin</principal>

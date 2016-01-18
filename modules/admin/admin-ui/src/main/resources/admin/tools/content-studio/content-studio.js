@@ -10,7 +10,8 @@ function handleGet(req) {
         baseUri: '',
         portalAssetsUrl: portal.assetUrl({path: ""}),
         xpVersion: app.version,
-        app: 'content-manager'
+        app: 'content-studio',
+        appName: 'Content Studio'
     };
     return {
         contentType: 'text/html',

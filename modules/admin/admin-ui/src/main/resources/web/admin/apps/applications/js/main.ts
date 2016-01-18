@@ -4,7 +4,7 @@ import Application = api.application.Application;
 
 
 var application = (function () {
-    var application = new api.app.Application('applications', 'Applications', 'AM', 'puzzle');
+    var application = new api.app.Application('applications', 'Applications', 'AM', 'applications');
     application.setPath(api.rest.Path.fromString("/"));
     application.setWindow(window);
     this.serverEventsListener = new api.app.ServerEventsListener([application]);

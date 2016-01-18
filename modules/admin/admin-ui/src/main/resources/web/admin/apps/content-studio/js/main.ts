@@ -5,8 +5,8 @@ module components {
 }
 
 var application = (function () {
-    var application = new api.app.Application('content-manager', 'Content Manager', 'CM', 'database');
-    application.setPath(api.rest.Path.fromString(app.Router.getPath()));
+    var application = new api.app.Application('content-studio', 'Content Studio', 'CM', 'database');
+    application.setPath(api.rest.Path.fromString("/"));
     application.setWindow(window);
     this.serverEventsListener = new api.app.ServerEventsListener([application]);
 
