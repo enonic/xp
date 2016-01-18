@@ -129,7 +129,7 @@ public final class ApplicationResource
 
     @POST
     @Path("installUrl")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Consumes(MediaType.APPLICATION_JSON)
     public ApplicationInstalledJson installUrl( final ApplicationInstallParams params )
         throws Exception
     {
