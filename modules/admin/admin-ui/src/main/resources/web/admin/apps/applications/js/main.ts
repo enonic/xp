@@ -18,7 +18,7 @@ var application = (function () {
     });
     this.lostConnectionDetector.onSessionExpired(() => {
         api.notify.NotifyManager.get().hide(messageId);
-        window.location.href = "/admin/tool";
+        window.location.href = api.util.UriHelper.getToolUri();
     });
     this.lostConnectionDetector.onConnectionRestored(() => {
         api.notify.NotifyManager.get().hide(messageId);
