@@ -235,7 +235,9 @@ public class ApplicationServiceImplTest
         Mockito.verify( this.repoService, Mockito.times( 1 ) ).getApplicationSource( node.id() );
         Mockito.verify( this.repoService, Mockito.times( 1 ) ).createApplicationNode( Mockito.isA( Application.class ),
                                                                                       Mockito.isA( ByteSource.class ) );
-        Mockito.verify( this.eventPublisher, Mockito.times( 1 ) ).publish( Mockito.isA( Event.class ) );
+
+        // One installed, one started event
+        Mockito.verify( this.eventPublisher, Mockito.times( 2 ) ).publish( Mockito.isA( Event.class ) );
 
     }
 

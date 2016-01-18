@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
@@ -39,6 +40,9 @@ public class ApplicationEventListener
             case ApplicationEvents.APPLICATION_INSTALLED_EVENT:
                 handleInstalledEvent( event );
                 break;
+            case ApplicationEvents.APPLICATION_STATE_CHANGE_EVENT:
+                handleStateChangedEvent( event );
+                break;
         }
     }
 
@@ -49,6 +53,24 @@ public class ApplicationEventListener
         if ( valueAs.isPresent() )
         {
             ApplicationHelper.runAsAdmin( () -> this.applicationService.installApplication( NodeId.from( valueAs.get() ) ) );
+        }
+    }
+
+    private void handleStateChangedEvent( final Event event )
+    {
+        final Optional<String> appKey = event.getValueAs( String.class, ApplicationEvents.APPLICATION_KEY_PARAM );
+        final Optional<Boolean> started = event.getValueAs( Boolean.class, ApplicationEvents.STARTED_PARAM );
+
+        if ( appKey.isPresent() && started.isPresent() )
+        {
+            if ( started.get() )
+            {
+                ApplicationHelper.runAsAdmin( () -> this.applicationService.startApplication( ApplicationKey.from( appKey.get() ) ) );
+            }
+            else
+            {
+                ApplicationHelper.runAsAdmin( () -> this.applicationService.stopApplication( ApplicationKey.from( appKey.get() ) ) );
+            }
         }
     }
 

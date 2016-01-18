@@ -113,22 +113,10 @@ public final class ApplicationServiceImpl
         doStartApplication( key );
     }
 
-    private void doStartApplication( final ApplicationKey key )
-    {
-        doStopApplication( key );
-        ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, true ) );
-    }
-
-    private void doStopApplication( final ApplicationKey key )
-    {
-        startApplication( getInstalledApplication( key ) );
-        ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, false ) );
-    }
-
     @Override
     public void stopApplication( final ApplicationKey key )
     {
-        stopApplication( getInstalledApplication( key ) );
+        doStopApplication( key );
     }
 
     @Override
@@ -136,6 +124,7 @@ public final class ApplicationServiceImpl
     {
         final Application application = ApplicationHelper.callWithContext( () -> installOrUpdateApplication( byteSource ) );
         LOG.info( "Application [{}] installed successfully", application.getKey() );
+        doStartApplication( application.getKey() );
 
         return application;
     }
@@ -145,8 +134,49 @@ public final class ApplicationServiceImpl
     {
         final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( nodeId ) );
         LOG.info( "Application [{}] installed successfully", application.getKey() );
+        doStartApplication( application.getKey() );
 
         return application;
+    }
+
+    private void doStartApplication( final ApplicationKey key )
+    {
+        doStartApplication( this.registry.get( key ) );
+
+        ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, true ) );
+        this.eventPublisher.publish( ApplicationEvents.started( key ) );
+    }
+
+    private void doStopApplication( final ApplicationKey key )
+    {
+        doStopApplication( this.registry.get( key ) );
+
+        ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, false ) );
+        this.eventPublisher.publish( ApplicationEvents.stopped( key ) );
+    }
+
+    private void doStartApplication( final Application application )
+    {
+        try
+        {
+            application.getBundle().start();
+        }
+        catch ( final Exception e )
+        {
+            throw Exceptions.unchecked( e );
+        }
+    }
+
+    private void doStopApplication( final Application application )
+    {
+        try
+        {
+            application.getBundle().stop();
+        }
+        catch ( final Exception e )
+        {
+            throw Exceptions.unchecked( e );
+        }
     }
 
     private Application doInstallApplication( final NodeId nodeId )
@@ -172,7 +202,6 @@ public final class ApplicationServiceImpl
         {
             application = doInstallApplication( byteSource, applicationName );
             node = repoService.createApplicationNode( application, byteSource );
-            doStartApplication( application.getKey() );
         }
 
         this.eventPublisher.publish( ApplicationEvents.installed( node ) );
@@ -267,29 +296,6 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private void startApplication( final Application application )
-    {
-        try
-        {
-            application.getBundle().start();
-        }
-        catch ( final Exception e )
-        {
-            throw Exceptions.unchecked( e );
-        }
-    }
-
-    private void stopApplication( final Application application )
-    {
-        try
-        {
-            application.getBundle().stop();
-        }
-        catch ( final Exception e )
-        {
-            throw Exceptions.unchecked( e );
-        }
-    }
 
     @Override
     public void invalidate( final ApplicationKey key )
