@@ -2,7 +2,7 @@ declare var CONFIG;
 
 var application = (function () {
     var application = new api.app.Application('user-manager', 'Users', 'UM', 'users');
-    application.setPath(api.rest.Path.fromString("/"));
+    application.setPath(api.rest.Path.fromString(app.Router.getPath()));
     application.setWindow(window);
     this.serverEventsListener = new api.app.ServerEventsListener([application]);
 
@@ -15,7 +15,7 @@ var application = (function () {
     });
     this.lostConnectionDetector.onSessionExpired(() => {
         api.notify.NotifyManager.get().hide(messageId);
-        messageId = api.notify.showError("Your session has expired.", false);
+        window.location.href = api.util.UriHelper.getToolUri("");
     });
     this.lostConnectionDetector.onConnectionRestored(() => {
         api.notify.NotifyManager.get().hide(messageId);

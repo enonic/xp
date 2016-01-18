@@ -32,5 +32,10 @@ module api.app.browse.filter {
             window.clearTimeout(this.timerId);
             this.setValue('', true);
         }
+
+        protected handleInput() {
+            //overriding super.handleInput method
+            //we handle onKeyDown event instead of onInput as onInput does not fire for 'enter' and 'tab' keys
+        }
     }
 }

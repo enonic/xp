@@ -48,6 +48,45 @@ public class PushContentParams
         return resolveDependencies;
     }
 
+    @Override
+    public boolean equals( final Object obj )
+    {
+        PushContentParams other;
+        if ( obj instanceof PushContentParams )
+        {
+            other = (PushContentParams) obj;
+        }
+        else
+        {
+            return false;
+        }
+
+        if ( this.isIncludeChildren() != other.isIncludeChildren() )
+        {
+            return false;
+        }
+
+        if ( this.isResolveDependencies() != other.isResolveDependencies() )
+        {
+            return false;
+        }
+
+        if ( !this.getTarget().equals( other.getTarget() ) )
+        {
+            return false;
+        }
+
+        if ( this.getContentIds().equals( other.getContentIds() ) )
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
     public static final class Builder
     {
         private ContentIds contentIds;

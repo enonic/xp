@@ -208,6 +208,33 @@ exports.modify = function (params) {
 };
 
 /**
+ * This function publishes content to a branch.
+ *
+ * @example-ref examples/content/publish.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string[]} params.keys Mandatory list of all keys of content that should be published.
+ * @param {string} params.targetBranch The branch to which the content should be published.  Technically, publishing is just a move from on branch to
+ * another, and publishing user content from master to draft is therefore also valid usage of this function.
+ * @param {boolean} params.includeChildren Optional parameter, saying whether all children should be included when publishing content.  Default is true.
+ * @param {boolean} params.resolveDependencies Optional parameter, saying whether all related content should be included when publishing content.  Default is true.
+ *
+ * @returns {object} Modified content as JSON.
+ */
+exports.publish = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.PublishContentHandler');
+    bean.keys = required(params, 'keys');
+    bean.targetBranch = required(params, 'targetBranch');
+    if (!nullOrValue(params.includeChildren)) {
+        bean.includeChildren = params.includeChildren;
+    }
+    if (!nullOrValue(params.resolveDependencies)) {
+        bean.resolveDependencies = params.resolveDependencies;
+    }
+    return __.toNativeObject(bean.execute());
+};
+
+/**
  * Creates a media content.
  *
  * @example-ref examples/content/createMedia.js
