@@ -445,7 +445,6 @@ module api.ui.treegrid {
         }
 
         private postLoad() {
-            console.log("postLoad");
             // Skip if not visible or active (is loading something)
             var disabled = !this.isInRenderingView();
 
