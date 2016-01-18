@@ -32,6 +32,13 @@ function getApplication(id: string): api.app.Application {
     return application;
 }
 
+// called from Router
+function setHash(path: string) {
+    hasher.changed.active = false;
+    hasher.setHash(path);
+    hasher.changed.active = true;
+}
+
 function initToolTip() {
     var ID = api.StyleHelper.getCls("tooltip", api.StyleHelper.COMMON_PREFIX),
         CLS_ON = "tooltip_ON", FOLLOW = true,

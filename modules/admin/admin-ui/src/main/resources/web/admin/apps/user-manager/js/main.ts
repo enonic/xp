@@ -28,6 +28,13 @@ function getApplication(id: string): api.app.Application {
     return application;
 }
 
+// called from Router
+function setHash(path: string) {
+    hasher.changed.active = false;
+    hasher.setHash(path);
+    hasher.changed.active = true;
+}
+
 function startApplication() {
 
     var application: api.app.Application = api.app.Application.getApplication();
