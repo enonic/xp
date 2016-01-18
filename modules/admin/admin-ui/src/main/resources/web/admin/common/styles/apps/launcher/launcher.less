@@ -433,14 +433,13 @@ html, body {
     box-sizing: border-box;
     height: 100%;
     width: @panel-outer-width;
-    padding: @header-height calc(@panel-outer-width - @panel-inner-width - @panel-indent) @footer-height @panel-indent;
+    padding: calc(@header-height + 10) calc(@panel-outer-width - @panel-inner-width - @panel-indent) @footer-height @panel-indent;
     overflow: hidden;
     background-color: rgba(0, 0, 0, 0.9);
 
     .scrollable-content {
       width: @panel-inner-width;
       height: 100%;
-      width: 100%;
       overflow-x: hidden;
       overflow-y: auto;
     }
@@ -456,12 +455,12 @@ html, body {
 
     .app-row {
 
-      margin: 24px 0;
+      margin: 20px 0;
 
-      &.selected {
+      &:hover, &.selected {
         .application .app-icon {
           border-bottom: 4px solid @admin-red;
-          padding-bottom: 6px;
+          padding-bottom: 10px;
         }
       }
 
@@ -489,15 +488,14 @@ html, body {
 
         .app-icon {
           vertical-align: middle;
-          margin: 4px 22px 0 0;
+          margin: 4px 15px 0 0;
           width: 40px;
           height: 40px;
-          padding-bottom: 10px;
+          padding: 0 10px 14px;
 
           &.app-home-icon {
             float: left;
-            height: 32px;
-            margin-top: 0px;
+            margin-top: -5px;
             padding-bottom: 16px;
             background: url("../images/enonic.svg") 0 0 no-repeat;
             background-size: 30px 40px;

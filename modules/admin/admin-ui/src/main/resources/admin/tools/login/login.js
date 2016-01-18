@@ -19,7 +19,8 @@ function handleGet(req) {
         baseUri: '',
         portalAssetsUrl: '',
         xpVersion: app.version,
-        app: 'login'
+        app: 'login',
+        appName: 'Login'
     };
     return {
         contentType: 'text/html',
