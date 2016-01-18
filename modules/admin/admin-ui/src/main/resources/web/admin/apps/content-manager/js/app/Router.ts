@@ -1,9 +1,13 @@
 module app {
     export class Router {
         static setHash(path: string) {
-            if (window.parent["setHash"]) {
-                window.parent["setHash"](path);
-            }
+            hasher.changed.active = false;
+            hasher.setHash(path);
+            hasher.changed.active = true;
+        }
+
+        static getPath(): string {
+            return window.location.hash ? window.location.hash.substr(1) : "/";
         }
     }
 }

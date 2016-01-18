@@ -2,7 +2,7 @@ declare var CONFIG;
 
 var application = (function () {
     var application = new api.app.Application('user-manager', 'Users', 'UM', 'users');
-    application.setPath(api.rest.Path.fromString("/"));
+    application.setPath(api.rest.Path.fromString(app.Router.getPath()));
     application.setWindow(window);
     this.serverEventsListener = new api.app.ServerEventsListener([application]);
 
@@ -26,13 +26,6 @@ var application = (function () {
 
 function getApplication(id: string): api.app.Application {
     return application;
-}
-
-// called from Router
-function setHash(path: string) {
-    hasher.changed.active = false;
-    hasher.setHash(path);
-    hasher.changed.active = true;
 }
 
 function startApplication() {
