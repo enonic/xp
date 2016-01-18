@@ -1,0 +1,20 @@
+{
+  "hits": [
+    {
+      "applicationUrl": "http://enonic.com/market/vendor/enonic/google-analytics",
+      "description": "Adds Google Analytics to your sites and provides in-context analytics graphs",
+      "displayName": "Google Analytics",
+      "iconUrl": "http://enonic.com/market/applications/_/asset/com.enonic.app.market:1452774231/img/software-type-application.svg",
+      "latestVersion": "1.1.0",
+      "versions": {
+        "1.0.0": {
+          "downloadUrl": "https://repo.enonic.com/public/com/enonic/app/app-google-analytics/1.0.0/app-google-analytics-1.1.0.jar"
+        },
+        "1.1.0": {
+          "downloadUrl": "https://repo.enonic.com/public/com/enonic/app/app-google-analytics/1.0.0/app-google-analytics-1.1.0.jar"
+        }
+      }
+    }
+  ],
+  "total": 1
+}

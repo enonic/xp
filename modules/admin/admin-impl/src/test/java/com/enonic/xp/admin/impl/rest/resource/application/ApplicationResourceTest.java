@@ -116,6 +116,19 @@ public class ApplicationResourceTest
         Mockito.verify( this.applicationService ).stopApplication( ApplicationKey.from( "testapplication" ), true );
     }
 
+    @Test
+    public void getMarkedApplications()
+        throws Exception
+    {
+        final String response = request().
+            path( "application/getMarketApplications" ).
+            entity( "{\"version\":\"6.3.0\"}", MediaType.APPLICATION_JSON_TYPE ).
+            post().
+            getAsString();
+
+        assertJson( "get_marked_applications.json", response );
+    }
+
     private Application createApplication()
     {
         final Application application = Mockito.mock( Application.class );
