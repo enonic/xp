@@ -24,10 +24,10 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
-import com.enonic.xp.jaxrs.JaxRsComponent;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 
@@ -63,7 +63,10 @@ public final class ApplicationResource
         final ListApplicationJson json = new ListApplicationJson();
         for ( final Application application : applications )
         {
-            json.add( application, this.siteService.getDescriptor( application.getKey() ) );
+            if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( application.getKey() ) )//Remove after 7.0.0 refactoring
+            {
+                json.add( application, this.siteService.getDescriptor( application.getKey() ) );
+            }
         }
 
         return json;
