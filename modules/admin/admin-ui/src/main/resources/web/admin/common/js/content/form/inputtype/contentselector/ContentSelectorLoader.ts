@@ -30,6 +30,25 @@ module api.content.form.inputtype.contentselector {
             return this.contentSelectorQueryRequest.sendAndParse();
         }
 
+        preLoad(ids: string): wemQ.Promise<ContentSummary[]> {
+            this.notifyLoadingData(false);
+
+            let contentIds = ids.split(";").map((id) => {
+                return new api.content.ContentId(id);
+            });
+            return new GetContentSummaryByIds(contentIds).
+                get().
+                then((results: ContentSummary[]) => {
+                    if (this.getComparator()) {
+                        this.setResults(results.sort(this.getComparator().compare));
+                    } else {
+                        this.setResults(results);
+                    }
+                    this.notifyLoadedData(results);
+                    return this.getResults();
+                });
+        }
+
         postLoad() {
             // already have elements and not more than total
             if (this.contentSelectorQueryRequest.isPartiallyLoaded() && this.isLoaded()) {

@@ -353,20 +353,20 @@ module api.ui.selector.combobox {
                     console.debug(this.toString() + '.doSetValue on loaded:', value);
                 }
                 super.doSetValue(value, silent);
-            });
+            }, value);
         }
 
-        private doWhenLoaded(func: Function) {
+        private doWhenLoaded(callback: Function, value: string) {
             if (this.loader.isLoaded()) {
-                func();
+                callback();
             } else {
                 var singleLoadListener = () => {
-                    func();
+                    callback();
                     this.loader.unLoadedData(singleLoadListener);
                 };
                 this.loader.onLoadedData(singleLoadListener);
                 if (this.loader.isNotStarted()) {
-                    this.loader.load();
+                    this.loader.preLoad(value);
                 }
             }
         }

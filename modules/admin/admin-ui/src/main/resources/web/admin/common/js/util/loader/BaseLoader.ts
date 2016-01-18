@@ -48,6 +48,10 @@ module api.util.loader {
             });
         }
 
+        preLoad(searchString: string = ""): wemQ.Promise<OBJECT[]> {
+            return this.load();
+        }
+
         isLoading(): boolean {
             return this.status == LoaderStatus.LOADING;
         }
@@ -89,6 +93,18 @@ module api.util.loader {
             }
 
             return deferred.promise;
+        }
+
+        getResults(): OBJECT[] {
+            return this.results;
+        }
+
+        setResults(results: OBJECT[]) {
+            this.results = results;
+        }
+
+        getComparator(): Comparator<OBJECT> {
+            return this.comparator;
         }
 
         getSearchString(): string {
