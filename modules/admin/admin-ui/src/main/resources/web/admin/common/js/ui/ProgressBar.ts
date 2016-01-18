@@ -19,7 +19,7 @@ module api.ui {
         }
 
         setValue(value: number) {
-            var normalizedValue = value > 0 ? this.normalizeValue(value) : 0;
+            var normalizedValue = this.isIntAndInRangeOf100(value) ? value / 100 : (value > 0 ? this.normalizeValue(value) : 0);
             this.progress.getEl().setWidth(normalizedValue * 100 + "%");
             this.value = normalizedValue;
         }
@@ -37,6 +37,14 @@ module api.ui {
             var integralLength = Math.ceil(Math.log(value) / Math.log(10));
             var maxValue = Math.pow(10, integralLength);
             return value / maxValue;
+        }
+
+        private isInt(value: number): boolean {
+            return value % 1 === 0;
+        }
+
+        private isIntAndInRangeOf100(value: number) {
+            return this.isInt(value) && value > 0 && value <= 100;
         }
 
     }

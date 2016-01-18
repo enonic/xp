@@ -16,3 +16,5 @@
 ///<reference path='ApplicationBasedName.ts' />
 ///<reference path='ApplicationCaches.ts' />
 ///<reference path='ApplicationBasedCache.ts' />
+///<reference path='ApplicationUploaderEl.ts' />
+///<reference path='ApplicationUploadStartedEvent.ts' />
