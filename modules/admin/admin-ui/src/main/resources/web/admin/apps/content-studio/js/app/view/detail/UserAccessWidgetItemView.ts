@@ -82,8 +82,11 @@ module app.view.detail {
             this.bottomEl = new api.dom.AEl("edit-permissions-link").setHtml("Edit Permissions");
             this.appendChild(this.bottomEl);
 
-            this.bottomEl.onClicked(() => {
+            this.bottomEl.onClicked((event: MouseEvent) => {
                 new api.content.OpenEditPermissionsDialogEvent(content).fire();
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
             });
 
         }
