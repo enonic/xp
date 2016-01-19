@@ -28,7 +28,12 @@ module api.ui.security.acl {
             this.accessSelector = new AccessSelector();
 
             this.removeButton = new api.dom.AEl("icon-close");
-            this.removeButton.onClicked((event: MouseEvent) => this.notifyRemoveClicked(event));
+            this.removeButton.onClicked((event: MouseEvent) => {
+                this.notifyRemoveClicked(event);
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
+            });
 
             this.permissionSelector = new PermissionSelector();
             this.permissionSelector.onValueChanged((event: api.ValueChangedEvent) => {
