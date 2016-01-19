@@ -528,7 +528,8 @@ module api.liveedit {
                 event.preventDefault();
             }
 
-            ItemView.debouncedClickHandler(this, event);
+            //ItemView.debouncedClickHandler(this, event); // Commented until XP-2638 is done
+            ItemView.handleItemViewClickEvent(this, event);
         }
 
         handleShaderClick(event: MouseEvent) {
