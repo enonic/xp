@@ -29,7 +29,7 @@ public class PushContentCommand
 
     private final Branch target;
 
-    private final boolean resolveDependencies;
+    private final boolean includeDependencies;
 
     private final PushContentsResult.Builder resultBuilder;
 
@@ -40,7 +40,7 @@ public class PushContentCommand
         super( builder );
         this.contentIds = builder.contentIds;
         this.target = builder.target;
-        this.resolveDependencies = builder.resolveDependencies;
+        this.includeDependencies = builder.includeDependencies;
         this.includeChildren = builder.includeChildren;
         this.resultBuilder = PushContentsResult.create();
     }
@@ -49,7 +49,7 @@ public class PushContentCommand
     {
         this.nodeService.refresh( RefreshMode.ALL );
 
-        if ( resolveDependencies )
+        if ( includeDependencies )
         {
             pushAndDelete( getWithDependents() );
         }
@@ -182,7 +182,7 @@ public class PushContentCommand
 
         private Branch target;
 
-        private boolean resolveDependencies = true;
+        private boolean includeDependencies = true;
 
         private boolean includeChildren = true;
 
@@ -198,9 +198,9 @@ public class PushContentCommand
             return this;
         }
 
-        public Builder resolveDependencies( final boolean resolveDependencies )
+        public Builder includeDependencies( final boolean includeDependencies )
         {
-            this.resolveDependencies = resolveDependencies;
+            this.includeDependencies = includeDependencies;
             return this;
         }
 

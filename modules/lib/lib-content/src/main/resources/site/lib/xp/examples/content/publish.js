@@ -7,7 +7,7 @@ var result = contentLib.publish({
     keys: ['/mysite/somepage', '79e21db0-5b43-45ce-b58c-6e1c420b22bd'],
     targetBranch: 'master',
     includeChildren: true,
-    resolveDependencies: false
+    includeDependencies: false
 });
 
 if (result) {

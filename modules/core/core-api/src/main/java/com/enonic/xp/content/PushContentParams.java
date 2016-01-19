@@ -13,14 +13,14 @@ public class PushContentParams
 
     private final boolean includeChildren;
 
-    private final boolean resolveDependencies;
+    private final boolean includeDependencies;
 
     private PushContentParams( Builder builder )
     {
         contentIds = builder.contentIds;
         target = builder.target;
         includeChildren = builder.includeChildren;
-        resolveDependencies = builder.resolveDependencies;
+        includeDependencies = builder.includeDependencies;
     }
 
     public static Builder create()
@@ -43,9 +43,9 @@ public class PushContentParams
         return includeChildren;
     }
 
-    public boolean isResolveDependencies()
+    public boolean isIncludeDependencies()
     {
-        return resolveDependencies;
+        return includeDependencies;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class PushContentParams
             return false;
         }
 
-        if ( this.isResolveDependencies() != other.isResolveDependencies() )
+        if ( this.isIncludeDependencies() != other.isIncludeDependencies() )
         {
             return false;
         }
@@ -95,7 +95,7 @@ public class PushContentParams
 
         private boolean includeChildren = true;
 
-        private boolean resolveDependencies = true;
+        private boolean includeDependencies = true;
 
         private Builder()
         {
@@ -119,9 +119,9 @@ public class PushContentParams
             return this;
         }
 
-        public Builder resolveDependencies( final boolean resolveDependencies )
+        public Builder includeDependencies( final boolean includeDependencies )
         {
-            this.resolveDependencies = resolveDependencies;
+            this.includeDependencies = includeDependencies;
             return this;
         }
 

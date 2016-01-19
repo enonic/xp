@@ -17,7 +17,7 @@ public class PublishContentHandler
 
     private Boolean includeChildren;
 
-    private Boolean resolveDependencies;
+    private Boolean includeDependencies;
 
 
     @Override
@@ -37,9 +37,9 @@ public class PublishContentHandler
         {
             builder.includeChildren( this.includeChildren );
         }
-        if ( this.resolveDependencies != null )
+        if ( this.includeDependencies != null )
         {
-            builder.resolveDependencies( resolveDependencies );
+            builder.includeDependencies( includeDependencies );
         }
         final PushContentsResult result = this.contentService.push( builder.build() );
         return result != null ? new PushContentResultMapper( result ) : null;
@@ -60,8 +60,8 @@ public class PublishContentHandler
         this.includeChildren = includeChildren;
     }
 
-    public void setResolveDependencies( final Boolean resolveDependencies )
+    public void setIncludeDependencies( final Boolean includeDependencies )
     {
-        this.resolveDependencies = resolveDependencies;
+        this.includeDependencies = includeDependencies;
     }
 }

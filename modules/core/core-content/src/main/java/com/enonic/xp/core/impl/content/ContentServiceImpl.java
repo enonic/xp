@@ -282,7 +282,7 @@ public class ContentServiceImpl
             contentIds( params.getContentIds() ).
             target( params.getTarget() ).
             includeChildren( params.isIncludeChildren() ).
-            resolveDependencies( params.isResolveDependencies() ).
+            includeDependencies( params.isIncludeDependencies() ).
             build().
             execute();
     }

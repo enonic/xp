@@ -46,7 +46,7 @@ exports.publishWithoutChildrenOrDependencies = function () {
         keys : ['e1f57280-d672-4cd8-b674-98e26e5b69ae'],
         targetBranch : 'master',
         includeChildren : false,
-        resolveDependencies : false
+        includeDependencies : false
     });
 
     assert.assertJsonEquals(expectedLimitedJson, result);

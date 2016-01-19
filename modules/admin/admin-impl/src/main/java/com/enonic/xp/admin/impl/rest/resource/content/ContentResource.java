@@ -448,7 +448,7 @@ public final class ContentResource
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
             includeChildren( params.isIncludeChildren() ).
-            resolveDependencies( true ).
+            includeDependencies( true ).
             build() );
 
         return PublishContentResultJson.create().
@@ -1092,7 +1092,7 @@ public final class ContentResource
 
         for ( ContentPath contentPath : sourceContentPaths )
         {
-            boolean hasParent = sourceContentPaths.stream().anyMatch( ( possibleParentCP ) -> contentPath.isChildOf( possibleParentCP ) );
+            boolean hasParent = sourceContentPaths.stream().anyMatch( contentPath::isChildOf );
             if ( !hasParent )
             {
                 filteredContentPaths = filteredContentPaths.add( contentPath );

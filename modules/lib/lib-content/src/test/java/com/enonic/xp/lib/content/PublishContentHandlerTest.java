@@ -38,7 +38,7 @@ public class PublishContentHandlerTest
 
         ContentIds ids = ContentIds.from( PUB_ID_1, FAIL_ID );
         PushContentParams pushParams =
-            PushContentParams.create().contentIds( ids ).target( Branch.from( "master" ) ).includeChildren( true ).resolveDependencies(
+            PushContentParams.create().contentIds( ids ).target( Branch.from( "master" ) ).includeChildren( true ).includeDependencies(
                 false ).build();
         Mockito.when( this.contentService.push( pushParams ) ).thenReturn( exampleResult() );
 
@@ -60,7 +60,8 @@ public class PublishContentHandlerTest
     {
         final Content myContent = exampleContent( PUB_ID_2, "mycontent", "My Content", "/myfolder/mycontent", "myfield", "Hello World" );
         Mockito.when( this.contentService.getByPath( ContentPath.from( "/myfolder/mycontent" ) ) ).thenReturn( myContent );
-        final Content yourContent = exampleContent( PUB_ID_3, "yourcontent", "Your Content", "/yourfolder/yourcontent", "yourfield", "Hello Universe!" );
+        final Content yourContent =
+            exampleContent( PUB_ID_3, "yourcontent", "Your Content", "/yourfolder/yourcontent", "yourfield", "Hello Universe!" );
         Mockito.when( this.contentService.getByPath( ContentPath.from( "/yourfolder/yourcontent" ) ) ).thenReturn( yourContent );
 
         ContentIds ids = ContentIds.from( PUB_ID_2, PUB_ID_3 );
@@ -77,7 +78,9 @@ public class PublishContentHandlerTest
             Contents.from( exampleContent( PUB_ID_3, "mycontent", "My Content", "/mysite/somepage", "myfield", "Hello World" ) );
         PushContentsResult exampleResult = PushContentsResult.create().setPushed( published ).build();
         ContentIds ids = ContentIds.from( PUB_ID_3 );
-        PushContentParams pushParams = PushContentParams.create().contentIds( ids ).target( Branch.from( "master" ) ).includeChildren( false ).resolveDependencies( false ).build();
+        PushContentParams pushParams =
+            PushContentParams.create().contentIds( ids ).target( Branch.from( "master" ) ).includeChildren( false ).includeDependencies(
+                false ).build();
         Mockito.when( this.contentService.push( pushParams ) ).thenReturn( exampleResult );
 
         runFunction( "/site/test/PublishContentHandlerTest.js", "publishWithoutChildrenOrDependencies" );
