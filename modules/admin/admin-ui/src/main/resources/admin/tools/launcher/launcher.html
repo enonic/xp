@@ -17,8 +17,19 @@
 
         <div class="launcher-app-container">
             <div class="scrollable-content">
+                <div class="app-row" tabindex="1" id="home">
+                    <a href="{{homeUrl}}" target="_blank">
+                        <div class="application">
+                            <div class="app-icon app-home-icon"></div>
+                            <div class="app-info">
+                                <p class="app-name">Home</p>
+                                <p class="app-description">Start page for Enonic XP</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
                 {{#adminTools}}
-                <div class="app-row" tabindex="1">
+                <div class="app-row" tabindex="1" id="{{appId}}">
                     <a href="{{uri}}" target="_blank">
                         <div class="application">
                             <img src="{{icon}}" class="app-icon">
@@ -30,17 +41,6 @@
                     </a>
                 </div>
                 {{/adminTools}}
-                <div class="app-row" tabindex="1">
-                    <a href="{{homeUrl}}">
-                        <div class="application">
-                            <div class="app-icon app-home-icon"></div>
-                            <div class="app-info">
-                                <p class="app-name">Home</p>
-                                <p class="app-description">Start page for Enonic XP</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
             </div>
         </div>
 

@@ -10,7 +10,7 @@ function handleGet(req) {
         baseUri: '',
         portalAssetsUrl: portal.assetUrl({path: ""}),
         xpVersion: app.version,
-        app: 'applications',
+        appId: 'applications',
         appName: 'Applications'
     };
     return {

@@ -63,7 +63,7 @@
                     appTiles[i].addEventListener("click", closeLauncherPanel.bind(this, true));
                 }
             }
-
+            highlightActiveApp();
         };
 
         return link;
@@ -197,6 +197,19 @@
         if (anchorEl && anchorEl.click) {
             anchorEl.click();
         }
+    }
+
+    function highlightActiveApp() {
+        if (!window.CONFIG.appId) {
+            return;
+        }
+        var appRows = launcherPanel.querySelectorAll('.app-row');
+        for (var i = 0; i < appRows.length; i++) {
+            if (appRows[i].id == window.CONFIG.appId ) {
+                appRows[i].classList.add("active");
+            }
+        }
+
     }
 
     function onKeyPressed(e) {

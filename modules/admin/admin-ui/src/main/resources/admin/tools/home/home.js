@@ -12,7 +12,7 @@ function handleGet(req) {
         baseUri: '',
         portalAssetsUrl: portal.assetUrl({path: ""}),
         xpVersion: app.version,
-        app: 'home',
+        appId: 'home',
         installation: uriScriptHelper.getInstallation()
     };
     return {
