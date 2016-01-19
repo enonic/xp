@@ -214,20 +214,29 @@
   }
 }
 
-
-.@{_COMMON_PREFIX}button.icon-applications, .home-button:hover&.@{_COMMON_PREFIX}button.icon-applications {
+.@{_COMMON_PREFIX}button.icon-applications, .home-button:hover&.@{_COMMON_PREFIX}button.icon-applications,
+.@{_COMMON_PREFIX}button.icon-content-studio, .home-button:hover&.@{_COMMON_PREFIX}button.icon-content-studio {
   .icon;
-  background-image: url("../images/icons/applications.svg");
   background-size: 28px 28px;
   padding: 8px 25px !important;
   background-position: 0 10px;
   background-repeat: no-repeat;
 }
 
-.home-button:hover&.@{_COMMON_PREFIX}button.icon-applications {
-  opacity: 0.5;
-  span {
-    color: rgba(255,255,255,1);
+.@{_COMMON_PREFIX}button.icon-applications, .home-button:hover&.@{_COMMON_PREFIX}button.icon-applications {
+  background-image: url("../images/icons/applications.svg");
+}
+
+.@{_COMMON_PREFIX}button.icon-content-studio, .home-button:hover&.@{_COMMON_PREFIX}button.icon-content-studio {
+  background-image: url("../images/icons/content-studio.svg");
+}
+
+.home-button:hover&.@{_COMMON_PREFIX}button {
+  &.icon-applications, &.icon-content-studio {
+    opacity: 0.5;
+    span {
+      color: rgba(255, 255, 255, 1);
+    }
   }
 }
 

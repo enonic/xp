@@ -13,7 +13,12 @@ function handleGet(req) {
     var view = resolve('launcher.html');
 
     //Retrieves the Admin tools
-    var adminTools = getAdminTools();
+    var adminTools = getAdminTools().sort(function (tool1, tool2) {
+        if (tool1.key.displayName > tool2.key.displayName) {
+            return -1;
+        }
+        return 1;
+    });
     for (var i = 0; i < adminTools.length; i++) {
         if (adminTools[i].icon.indexOf("//") < 0) {
             adminTools[i].icon = portal.assetUrl({
@@ -21,6 +26,8 @@ function handleGet(req) {
                 application: adminTools[i].key.application
             });
         }
+        log.info(JSON.stringify(adminTools[i].key));
+        adminTools[i].appId = adminTools[i].key.name;
         adminTools[i].uri =
             uriScriptHelper.generateAdminToolUri(adminTools[i].key.application, adminTools[i].key.name);
     }
@@ -34,7 +41,7 @@ function handleGet(req) {
         assetsUri: assetsUri,
         baseUri: '',
         xpVersion: app.version,
-        app: 'applications',
+        appId: 'launcher',
         adminTools: adminTools,
         userIconUrl: userIconUrl,
         user: user,

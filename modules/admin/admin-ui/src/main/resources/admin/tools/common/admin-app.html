@@ -20,7 +20,7 @@
     <link rel="mask-icon" href="{{assetsUri}}/common/images/favicons/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#33333a">
     <meta name="theme-color" content="#ffffff">
-    <link rel="icon" type="image/png" href="{{portalAssetsUrl}}/icons/{{app}}.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="{{portalAssetsUrl}}/icons/{{appId}}.png" sizes="96x96">
 
     <!-- Libraries -->
     <script type="text/javascript" src="{{assetsUri}}/common/lib/_all.js"></script>
@@ -37,13 +37,14 @@
         baseUri: '{{baseUri}}',
         assetsUri: '{{assetsUri}}',
         portalAssetsUrl : '{{portalAssetsUrl}}',
-        xpVersion: '{{xpVersion}}'
+        xpVersion: '{{xpVersion}}',
+        appId: '{{appId}}'
     };
 </script>
 
 <!-- App javascript -->
 <script type="text/javascript" src="{{assetsUri}}/common/js/_all.js"></script>
-<script type="text/javascript" src="{{assetsUri}}/apps/{{app}}/js/_all.js"></script>
+<script type="text/javascript" src="{{assetsUri}}/apps/{{appId}}/js/_all.js"></script>
 
 <!-- Start the app -->
 <script type="text/javascript">

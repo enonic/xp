@@ -433,12 +433,11 @@ html, body {
     box-sizing: border-box;
     height: 100%;
     width: @panel-outer-width;
-    padding: calc(@header-height + 10) calc(@panel-outer-width - @panel-inner-width - @panel-indent) @footer-height @panel-indent;
+    padding: calc(@header-height + 10) 0 @footer-height 0;
     overflow: hidden;
     background-color: rgba(0, 0, 0, 0.9);
 
     .scrollable-content {
-      width: @panel-inner-width;
       height: 100%;
       overflow-x: hidden;
       overflow-y: auto;
@@ -455,12 +454,19 @@ html, body {
 
     .app-row {
 
-      margin: 20px 0;
+      margin: 5px 0;
+      padding: 10px 0 10px 30px;
+
+      &.active{
+        border-left: 4px solid @admin-red;
+        padding-left: 26px;
+      }
+
 
       &:hover, &.selected {
-        .application .app-icon {
-          border-bottom: 4px solid @admin-red;
-          padding-bottom: 10px;
+        background-color: rgba(255, 255, 255, 0.3);
+        .application .app-info .app-description {
+          color: @admin-white;
         }
       }
 
@@ -474,7 +480,7 @@ html, body {
           vertical-align: top;
           .app-name {
             width: 220px;
-            font-size: 20px;
+            font-size: 18px;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -488,15 +494,12 @@ html, body {
 
         .app-icon {
           vertical-align: middle;
-          margin: 4px 15px 0 0;
+          margin: 3px 15px 0 0;
           width: 40px;
           height: 40px;
-          padding: 0 10px 14px;
 
           &.app-home-icon {
             float: left;
-            margin-top: -5px;
-            padding-bottom: 16px;
             background: url("../images/enonic.svg") 0 0 no-repeat;
             background-size: 30px 40px;
             background-position: center;
