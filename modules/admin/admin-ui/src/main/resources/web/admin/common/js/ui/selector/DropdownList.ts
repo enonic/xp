@@ -83,6 +83,10 @@ module api.ui.selector {
             return this.dropdownGrid.getOptions();
         }
 
+        getSelectedOptions(): Option<OPTION_DISPLAY_VALUE>[] {
+            return this.dropdownGrid.getSelectedOptions();
+        }
+
         getOptionByValue(value: string): Option<OPTION_DISPLAY_VALUE> {
             return this.dropdownGrid.getOptionByValue(value);
         }

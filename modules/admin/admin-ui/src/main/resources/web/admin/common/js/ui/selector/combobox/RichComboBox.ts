@@ -234,7 +234,8 @@ module api.ui.selector.combobox {
 
             this.loader.onLoadedData((event: api.util.loader.event.LoadedDataEvent<OPTION_DISPLAY_VALUE>) => {
                 var options = this.createOptions(event.getData());
-                this.comboBox.setOptions(options);
+                // check if postLoad and save selection
+                this.comboBox.setOptions(options, event.isPostLoaded());
                 this.notifyLoaded(event.getData());
             });
         }

@@ -43,7 +43,7 @@ module api.util.loader {
                 if (this.comparator) {
                     this.results = results.sort(this.comparator.compare);
                 }
-                this.notifyLoadedData(results);
+                this.notifyLoadedData(results, postLoad);
                 return this.results;
             });
         }
@@ -115,16 +115,16 @@ module api.util.loader {
             throw Error("must be implemented");
         }
 
-        notifyLoadedData(results: OBJECT[]) {
+        notifyLoadedData(results: OBJECT[], postLoad?: boolean) {
             this.status = LoaderStatus.LOADED;
-            this.loadedDataListeners.forEach((listener: (event: LoadedDataEvent<OBJECT>)=>void)=> {
-                listener.call(this, new LoadedDataEvent<OBJECT>(results));
+            this.loadedDataListeners.forEach((listener: (event: LoadedDataEvent<OBJECT>) => void) => {
+                listener.call(this, new LoadedDataEvent<OBJECT>(results, postLoad));
             });
         }
 
-        notifyLoadingData(postLoad: boolean = false) {
+        notifyLoadingData(postLoad?: boolean) {
             this.status = LoaderStatus.LOADING;
-            this.loadingDataListeners.forEach((listener: (event: LoadingDataEvent)=>void)=> {
+            this.loadingDataListeners.forEach((listener: (event: LoadingDataEvent) => void) => {
                 listener.call(this, new LoadingDataEvent(postLoad));
             });
         }

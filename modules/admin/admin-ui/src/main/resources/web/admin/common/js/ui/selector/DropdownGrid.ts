@@ -166,6 +166,12 @@ module api.ui.selector {
             return this.gridData.getItems();
         }
 
+        getSelectedOptions(): Option<OPTION_DISPLAY_VALUE>[] {
+            return this.grid.getSelectedRows().map((row) => {
+                return this.gridData.getItem(row);
+            });
+        }
+
         getOptionByValue(value: string): Option<OPTION_DISPLAY_VALUE> {
             return <Option<OPTION_DISPLAY_VALUE>>this.gridData.getItemById(value);
         }
