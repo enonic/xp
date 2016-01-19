@@ -184,8 +184,8 @@ module api.ui.selector.combobox {
             this.input.setReadOnly(false);
         }
 
-        setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
-            this.comboBoxDropdown.setOptions(options, this.getSelectedOptions());
+        setOptions(options: Option<OPTION_DISPLAY_VALUE>[], saveSelection?: boolean) {
+            this.comboBoxDropdown.setOptions(options, this.getSelectedOptions(), saveSelection);
         }
 
         addOption(option: Option<OPTION_DISPLAY_VALUE>) {

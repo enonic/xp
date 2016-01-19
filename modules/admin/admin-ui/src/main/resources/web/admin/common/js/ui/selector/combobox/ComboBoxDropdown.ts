@@ -26,15 +26,12 @@ module api.ui.selector.combobox {
             };
         }
 
-        setOptions(options: Option<OPTION_DISPLAY_VALUE>[], selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = []) {
+        setOptions(options: Option<OPTION_DISPLAY_VALUE>[], selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = [], saveSelection?: boolean) {
 
             selectedOptions.forEach((selectedOption: Option<OPTION_DISPLAY_VALUE>) => {
-                if(selectedOption.readOnly)
-                {
-                    for(var i = 0; i < options.length; i++ )
-                    {
-                        if(selectedOption.value == options[i].value)
-                        {
+                if (selectedOption.readOnly) {
+                    for (let i = 0; i < options.length; i++) {
+                        if (selectedOption.value == options[i].value) {
                             options[i].readOnly = true;
                             break;
                         }
@@ -42,9 +39,26 @@ module api.ui.selector.combobox {
                 }
             });
 
+            // `from` is used to determine, from which point should selection be updated
+            let from = this.getDropdownGrid().getOptionCount();
+
             this.getDropdownGrid().setOptions(options);
+
             if (this.isDropdownShown()) {
-                this.showDropdown(selectedOptions);
+                let selected = selectedOptions;
+
+                // Save the current grid selection and restore the selection for the new items,
+                // according to the selected options
+                if (saveSelection) {
+                    let gridSelection = this.getDropdownGrid().getSelectedOptions();
+                    let newSelection = selectedOptions.filter((option) => {
+                        return this.getDropdownGrid().getRowByValue(option.value) >= from;
+                    });
+
+                    selected = gridSelection.concat(newSelection);
+                }
+
+                this.showDropdown(selected);
             }
         }
 
