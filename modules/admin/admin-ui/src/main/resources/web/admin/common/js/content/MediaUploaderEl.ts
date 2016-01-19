@@ -17,7 +17,8 @@ module api.content {
 
     export class MediaUploaderEl extends api.ui.uploader.UploaderEl<Content> {
 
-        protected fileName: string;
+        //TODO: should be extended from FileUploaderEl
+        protected contentId: string;
 
         constructor(config: MediaUploaderElConfig) {
 
@@ -43,7 +44,7 @@ module api.content {
         }
 
         getModelValue(item: Content): string {
-            return item.getId();
+            return item.getDisplayName().toString();
         }
 
         getMediaValue(item: Content): api.data.Value {
@@ -60,14 +61,13 @@ module api.content {
             return mediaValue;
         }
 
-        setFileName(name: string) {
-            this.fileName = name;
+        setContentId(contentId: string) {
+            this.contentId = contentId;
         }
 
         createResultItem(value: string): api.dom.Element {
-
-            var link = new api.dom.AEl().setUrl(api.util.UriHelper.getRestUri('content/media/' + value), "_blank");
-            link.setHtml(this.fileName != null && this.fileName != "" ? this.fileName : value);
+            var link = new api.dom.AEl().setUrl(api.util.UriHelper.getRestUri('content/media/' + this.contentId), "_blank");
+            link.setHtml(value);
 
             return link;
         }

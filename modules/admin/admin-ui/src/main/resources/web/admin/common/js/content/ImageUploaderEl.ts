@@ -245,7 +245,7 @@ module api.content {
                 this.initialWidth = this.getParentElement().getEl().getWidth();
             }
 
-            var imageEditor = this.createImageEditor(value);
+            var imageEditor = this.createImageEditor(this.contentId);
 
             this.imageEditors.push(imageEditor);
 

@@ -48,15 +48,15 @@ module api.ui.uploader {
 
     export class UploaderEl<MODEL extends api.Equitable> extends api.dom.FormInputEl {
 
-        private config: UploaderElConfig;
-        private uploader;
-        private value;
+        protected config: UploaderElConfig;
+        protected uploader;
+        protected value;
         private uploadedItems: UploadItem<MODEL>[] = [];
 
         private input: api.ui.text.TextInput;
 
         private dropzoneContainer: api.dom.DivEl;
-        private dropzone: api.dom.AEl;
+        protected dropzone: api.dom.AEl;
 
         private progress: api.ui.ProgressBar;
         private cancelBtn: Button;
@@ -207,7 +207,7 @@ module api.ui.uploader {
             return this.resetBtn;
         }
 
-        private initHandler() {
+        protected initHandler() {
             if (this.config.disabled) {
                 if (UploaderEl.debug) {
                     console.log('Skipping init, because of config.disabled = true', this);
@@ -333,7 +333,7 @@ module api.ui.uploader {
             return this;
         }
 
-        private appendNewItems(newItemsToAppend: Element[]) {
+        protected appendNewItems(newItemsToAppend: Element[]) {
             newItemsToAppend.forEach((elem) => {
                 this.getResultContainer().appendChild(elem);
             });
@@ -389,7 +389,7 @@ module api.ui.uploader {
             return this;
         }
 
-        private setDropzoneVisible(visible: boolean = true) {
+        protected setDropzoneVisible(visible: boolean = true) {
             if (!visible && this.config.dropzoneAlwaysVisible) {
                 return;
             }
@@ -415,7 +415,7 @@ module api.ui.uploader {
             this.cancelBtn.setVisible(visible && this.config.showCancel);
         }
 
-        private setResultVisible(visible: boolean = true) {
+        protected setResultVisible(visible: boolean = true) {
             if (!visible && this.config.resultAlwaysVisisble) {
                 return;
             }
@@ -545,7 +545,7 @@ module api.ui.uploader {
             return files.length > 0;
         }
 
-        private initUploader(browseId: string, dropId: string) {
+        protected initUploader(browseId: string, dropId: string) {
 
             if (!plupload) {
                 throw new Error("Uploader: plupload not found, check if it is included in page.");

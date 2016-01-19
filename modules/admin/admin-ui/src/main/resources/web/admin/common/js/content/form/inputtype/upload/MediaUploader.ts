@@ -11,6 +11,7 @@ module api.content.form.inputtype.upload {
     import MediaUploaderEl = api.content.MediaUploaderEl;
     import Content = api.content.Content;
     import UploaderEl = api.ui.uploader.UploaderEl;
+    import FileUploaderEl = api.ui.uploader.FileUploaderEl;
 
 
     export class MediaUploader extends FileUploader {
@@ -30,10 +31,6 @@ module api.content.form.inputtype.upload {
 
             this.updateProperty(property);
 
-            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                this.updateProperty(event.getProperty(), true);
-            });
-
             mediaUploader.onUploadStarted(() => {
                 this.uploaderWrapper.removeClass("empty");
             });
@@ -44,14 +41,14 @@ module api.content.form.inputtype.upload {
                     value = mediaUploader.getMediaValue(content),
                     fileName = value.getString();
 
-                mediaUploader.setFileName(fileName);
+                mediaUploader.setValue(fileName);
 
-                switch (property.getType()) {
+                switch (this.getProperty().getType()) {
                 case ValueTypes.DATA:
-                    property.getPropertySet().setProperty('attachment', 0, value);
+                    this.getProperty().getPropertySet().setProperty('attachment', 0, value);
                     break;
                 case ValueTypes.STRING:
-                    property.setValue(ValueTypes.STRING.newValue(fileName));
+                    this.getProperty().setValue(ValueTypes.STRING.newValue(fileName));
                     break;
                 }
 
@@ -66,14 +63,14 @@ module api.content.form.inputtype.upload {
             });
 
             mediaUploader.onUploadReset(() => {
-                mediaUploader.setFileName('');
+                mediaUploader.setValue("");
 
-                switch (property.getType()) {
+                switch (this.getProperty().getType()) {
                 case ValueTypes.DATA:
-                    property.getPropertySet().setProperty('attachment', 0, ValueTypes.STRING.newNullValue());
+                    this.getProperty().getPropertySet().setProperty('attachment', 0, ValueTypes.STRING.newNullValue());
                     break;
                 case ValueTypes.STRING:
-                    property.setValue(ValueTypes.STRING.newNullValue());
+                    this.getProperty().setValue(ValueTypes.STRING.newNullValue());
                     break;
                 }
             });
@@ -87,10 +84,10 @@ module api.content.form.inputtype.upload {
         protected createUploader(property: Property): UploaderEl<any> {
 
             var predefinedAllowTypes,
-                attachmentFileName = this.getFileNameFromProperty(property);
+                attachmentFileNames = this.getFileNamesFromProperty(property);
 
             if (this.propertyAlreadyHasAttachment(property)) {
-                predefinedAllowTypes = this.getAllowTypeFromFileName(attachmentFileName);
+                predefinedAllowTypes = this.getAllowTypeFromFileName(attachmentFileNames[0]);
             }
 
             var allowTypesConfig: FileUploaderConfigAllowType[] = predefinedAllowTypes || (<any>(this.config.inputConfig)).allowTypes ||
@@ -100,8 +97,8 @@ module api.content.form.inputtype.upload {
             });
 
             var beforeUploadCallback = (files: PluploadFile[]) => {
-                if (attachmentFileName && files && files.length == 1) {
-                    files[0].name = attachmentFileName;
+                if (attachmentFileNames && files && files.length == 1) {
+                    files[0].name = attachmentFileNames[0];
                 }
             };
 
@@ -122,16 +119,16 @@ module api.content.form.inputtype.upload {
             });
         }
 
-        protected getFileNameFromProperty(property: Property): string {
+        protected getFileNamesFromProperty(property: Property): string[] {
             if (property.getValue() != null) {
                 switch (property.getType()) {
                 case ValueTypes.DATA:
-                    return property.getPropertySet().getString('attachment');
+                    return property.getPropertySet().getString('attachment').split(FileUploaderEl.FILE_NAME_DELIMITER);
                 case ValueTypes.STRING:
-                    return property.getValue().getString();
+                    return property.getValue().getString().split(FileUploaderEl.FILE_NAME_DELIMITER);
                 }
             }
-            return "";
+            return [];
         }
 
         protected propertyAlreadyHasAttachment(property: Property): boolean {
