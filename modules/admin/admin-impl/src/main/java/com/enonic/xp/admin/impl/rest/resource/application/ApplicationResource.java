@@ -3,7 +3,6 @@ package com.enonic.xp.admin.impl.rest.resource.application;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -20,7 +19,6 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -174,7 +172,6 @@ public final class ApplicationResource
         return new ApplicationInstalledJson( application );
     }
 
-
     @POST
     @Path("getMarketApplications")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -218,11 +215,8 @@ public final class ApplicationResource
         appJson.setApplicationUrl( "http://enonic.com/market/vendor/enonic/google-analytics" );
         appJson.setVersions( versions );
 
-        List<MarkedApplicationJson> list = Lists.newArrayList( appJson );
-
-        return new MarkedApplicationsJson( list );
+        return new MarkedApplicationsJson().add( "com.enonic.app.ga", appJson );
     }
-
 
     @Reference
     public void setApplicationService( final ApplicationService applicationService )

@@ -1,39 +1,33 @@
 package com.enonic.xp.admin.impl.rest.resource.application.json;
 
-import java.util.List;
+import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class MarkedApplicationsJson
 {
-    private final List<MarkedApplicationJson> hits;
-
-    public MarkedApplicationsJson( final @JsonProperty("hits") List<MarkedApplicationJson> hits )
-    {
-        this.hits = hits;
-    }
+    private Map<String, MarkedApplicationJson> hits;
 
     public MarkedApplicationsJson()
     {
-        this.hits = Lists.newArrayList();
+        hits = Maps.newHashMap();
     }
 
-    public void add( final MarkedApplicationJson markedApplicationJson )
-    {
-        this.hits.add( markedApplicationJson );
-    }
-
-    @SuppressWarnings("unused")
-    public List<MarkedApplicationJson> getHits()
+    public Map<String, MarkedApplicationJson> getHits()
     {
         return hits;
+    }
+
+    public MarkedApplicationsJson add( final String key, final MarkedApplicationJson markedApplicationJson )
+    {
+        this.hits.put( key, markedApplicationJson );
+        return this;
     }
 
     @SuppressWarnings("unused")
     public int getTotal()
     {
-        return this.hits.size();
+        return this.hits.keySet().size();
     }
 }
 

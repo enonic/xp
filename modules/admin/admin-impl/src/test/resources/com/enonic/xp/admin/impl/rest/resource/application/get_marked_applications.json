@@ -1,6 +1,6 @@
 {
-  "hits": [
-    {
+  "hits": {
+    "com.enonic.app.ga": {
       "applicationUrl": "http://enonic.com/market/vendor/enonic/google-analytics",
       "description": "Adds Google Analytics to your sites and provides in-context analytics graphs",
       "displayName": "Google Analytics",
@@ -15,6 +15,6 @@
         }
       }
     }
-  ],
+  },
   "total": 1
 }

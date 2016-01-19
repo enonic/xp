@@ -2,8 +2,6 @@ package com.enonic.xp.admin.impl.rest.resource.application.json;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class MarkedApplicationJson
 {
     private String displayName;
@@ -17,25 +15,6 @@ public class MarkedApplicationJson
     private String latestVersion;
 
     private Map<String, MarkedAppVersionInfoJson> versions;
-
-    public MarkedApplicationJson()
-    {
-    }
-
-    @SuppressWarnings("unused")
-    public MarkedApplicationJson( final @JsonProperty("displayName") String displayName, //
-                                  final @JsonProperty("description") String description, //
-                                  final @JsonProperty("iconUrl") String iconUrl, //
-                                  final @JsonProperty("latestVersion") String latestVersion, //
-                                  final @JsonProperty("applicationUrl") String applicationUrl, //
-                                  final @JsonProperty("versions") Map<String, MarkedAppVersionInfoJson> versions )
-    {
-        this.displayName = displayName;
-        this.description = description;
-        this.iconUrl = iconUrl;
-        this.latestVersion = latestVersion;
-        this.applicationUrl = applicationUrl;
-    }
 
     public void setDisplayName( final String displayName )
     {
