@@ -98,6 +98,11 @@ module api.ui.time {
                 this.addHour(+1);
                 this.startInterval(this.addHour, 1);
             });
+            this.nextHour.onClicked((e: MouseEvent) => {
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
+            });
             api.dom.Body.get().onMouseUp((e: MouseEvent) => {
                 this.stopInterval();
             });
@@ -110,7 +115,12 @@ module api.ui.time {
             this.prevHour = new api.dom.AEl('prev');
             this.prevHour.onMouseDown((e: MouseEvent) => {
                 this.addHour(-1);
-                this.startInterval(this.addHour, -1)
+                this.startInterval(this.addHour, -1);
+            });
+            this.prevHour.onClicked((e: MouseEvent) => {
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
             });
             this.prevHour.appendChild(new api.dom.SpanEl());
             hourContainer.appendChild(this.prevHour);
@@ -125,6 +135,11 @@ module api.ui.time {
                 this.addMinute(+1);
                 this.startInterval(this.addMinute, 1);
             });
+            this.nextMinute.onClicked((e: MouseEvent) => {
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
+            });
             this.nextMinute.appendChild(new api.dom.SpanEl());
             minuteContainer.appendChild(this.nextMinute);
 
@@ -136,6 +151,11 @@ module api.ui.time {
                 this.addMinute(-1);
                 this.startInterval(this.addMinute, -1);
             });
+            this.prevMinute.onClicked((e: MouseEvent) => {
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
+            });
             this.prevMinute.appendChild(new api.dom.SpanEl());
             minuteContainer.appendChild(this.prevMinute);
 
@@ -144,11 +164,11 @@ module api.ui.time {
 
             this.useLocalTimezoneIfNotPresent = builder.useLocalTimezoneIfNotPresent;
             this.timezone = builder.timezone;
-            if(!this.timezone && this.useLocalTimezoneIfNotPresent) {
+            if (!this.timezone && this.useLocalTimezoneIfNotPresent) {
                 this.timezone = Timezone.getLocalTimezone();
             }
 
-            if(this.timezone) {
+            if (this.timezone) {
                 var timezoneContainer = new api.dom.LiEl("timezone");
 
                 this.timezoneLocation = new api.dom.SpanEl("timezone-location").setHtml(this.timezone.getLocation());
@@ -157,7 +177,7 @@ module api.ui.time {
                 timezoneContainer.appendChild(this.timezoneLocation);
                 timezoneContainer.appendChild(this.timezoneOffset);
                 this.appendChild(timezoneContainer);
-           }
+            }
 
             this.hour.setHtml(this.padNumber(this.selectedHour || 0, 2));
             this.minute.setHtml(this.padNumber(this.selectedMinute || 0, 2));
@@ -205,7 +225,7 @@ module api.ui.time {
         }
 
         private getUTCString(value: number) {
-            if(!value && value != 0) {
+            if (!value && value != 0) {
                 return "";
             }
             var result = "UTC";

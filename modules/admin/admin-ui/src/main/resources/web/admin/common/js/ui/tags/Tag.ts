@@ -45,7 +45,12 @@ module api.ui.tags {
             if (this.removable) {
                 this.removeButtonEl = new api.dom.AEl("remove-button");
                 this.appendChild(this.removeButtonEl);
-                this.removeButtonEl.onClicked(() => this.notifyRemoveClicked());
+                this.removeButtonEl.onClicked((event: MouseEvent) => {
+                    this.notifyRemoveClicked();
+                    event.stopPropagation();
+                    event.preventDefault();
+                    return false;
+                });
             }
 
             // TODO: Display value and remove icon if removable

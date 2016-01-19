@@ -1,6 +1,5 @@
 module api.content.site.inputtype.siteconfigurator {
 
-    import AEl = api.dom.AEl;
     import PropertyTree = api.data.PropertyTree;
     import PropertySet = api.data.PropertySet;
     import Option = api.ui.selector.Option;
@@ -52,7 +51,12 @@ module api.content.site.inputtype.siteconfigurator {
             header.appendChild(namesAndIconView);
 
             var removeButton = new api.dom.AEl("remove-button icon-close");
-            removeButton.onClicked((event: MouseEvent) => this.notifyRemoveClicked());
+            removeButton.onClicked((event: MouseEvent) => {
+                this.notifyRemoveClicked();
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
+            });
             header.appendChild(removeButton);
 
             this.appendChild(header);
@@ -78,6 +82,9 @@ module api.content.site.inputtype.siteconfigurator {
             editButton.onClicked((event: MouseEvent) => {
                 this.notifyEditClicked(event);
                 this.initAndOpenConfigureDialog();
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
             });
 
             return editButton;
@@ -207,7 +214,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         unSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey): void;}) {
             this.siteConfigFormDisplayedListeners =
-            this.siteConfigFormDisplayedListeners.filter((curr) => (curr != listener));
+                this.siteConfigFormDisplayedListeners.filter((curr) => (curr != listener));
         }
 
         private notifySiteConfigFormDisplayed(applicationKey: ApplicationKey) {

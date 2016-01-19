@@ -9,7 +9,6 @@ module app.wizard {
 
     import DivEl = api.dom.DivEl;
     import LabelEl = api.dom.LabelEl;
-    import AEl = api.dom.AEl;
 
     export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -54,8 +53,7 @@ module app.wizard {
 
             this.comboBox.clearSelection();
 
-            if(defaultUserStore)
-            {
+            if (defaultUserStore) {
                 defaultUserStore.getPermissions().getEntries().forEach((item) => {
                     this.comboBox.select(item, true);
                 });

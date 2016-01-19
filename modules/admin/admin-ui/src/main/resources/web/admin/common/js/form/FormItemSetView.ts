@@ -158,7 +158,9 @@ module api.form {
                         this.collapseButton.setHtml("Expand");
                         this.formItemSetOccurrences.showOccurrences(false);
                     }
-
+                    event.stopPropagation();
+                    event.preventDefault();
+                    return false;
                 });
 
                 this.bottomButtonRow.appendChild(this.addButton);
