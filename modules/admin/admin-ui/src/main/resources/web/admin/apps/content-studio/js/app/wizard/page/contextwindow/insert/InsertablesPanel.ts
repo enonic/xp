@@ -130,6 +130,13 @@ module app.wizard.page.contextwindow.insert {
         }
 
         private handleDrag(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
+
+            if (!this.pageView) {
+                // page view is either not ready or there was an error
+                // so there is no point in handling drag inside it
+                return;
+            }
+
             var over = this.isOverIFrame(<JQueryEventObject>event);
             if (this.overIFrame != over) {
                 if (over) {
