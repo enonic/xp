@@ -129,7 +129,7 @@ module app.wizard.page {
             this.layoutInspectionPanel = new LayoutInspectionPanel();
 
             api.dom.WindowDOM.get().onBeforeUnload((event) => {
-                console.log("onbeforeunload " + this.liveEditModel.getContent().getDisplayName())
+                console.log("onbeforeunload " + this.liveEditModel.getContent().getDisplayName());
                 // the reload is triggered by the main frame,
                 // so let the live edit know it to skip the popup
                 this.liveEditPageProxy.skipNextReloadConfirmation(true);
@@ -371,12 +371,9 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {
                 this.pageView = event.getPageView();
+                this.contentWizardPanel.getComponentsViewToggler().setVisible(!!this.pageView);
                 if (this.pageView) {
                     this.insertablesPanel.setPageView(this.pageView);
-                }
-                else {
-                    this.contentWizardPanel.getContextWindowToggler().hide();
-                    this.contentWizardPanel.getComponentsViewToggler().hide();
                 }
             });
 
