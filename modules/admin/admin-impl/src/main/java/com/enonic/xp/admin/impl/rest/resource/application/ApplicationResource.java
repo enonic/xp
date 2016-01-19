@@ -133,7 +133,7 @@ public final class ApplicationResource
 
         final Application application = this.applicationService.installApplication( byteSource );
 
-        return new ApplicationInstalledJson( application );
+        return new ApplicationInstalledJson( application, this.siteService.getDescriptor( application.getKey() ) );
     }
 
     @POST
@@ -169,7 +169,7 @@ public final class ApplicationResource
         final Application application =
             this.applicationService.installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ) );
 
-        return new ApplicationInstalledJson( application );
+        return new ApplicationInstalledJson( application, this.siteService.getDescriptor( application.getKey() ) );
     }
 
     @POST
