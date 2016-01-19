@@ -75,6 +75,9 @@ module api.form {
             this.appendChild(this.removeButton);
             this.removeButton.onClicked((event: MouseEvent) => {
                 this.notifyRemoveButtonClicked();
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
             });
 
             this.label = new FormItemSetLabel(this.formItemSet);
