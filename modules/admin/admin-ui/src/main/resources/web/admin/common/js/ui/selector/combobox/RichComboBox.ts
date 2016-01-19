@@ -35,7 +35,7 @@ module api.ui.selector.combobox {
                 maximumOccurrences: builder.maximumOccurrences,
                 selectedOptionsView: this.selectedOptionsView,
                 optionDisplayValueViewer: builder.optionDisplayValueViewer,
-                hideComboBoxWhenMaxReached: true,
+                hideComboBoxWhenMaxReached: builder.hideComboBoxWhenMaxReached,
                 setNextInputFocusWhenMaxReached: builder.nextInputFocusWhenMaxReached,
                 delayedInputValueChangedHandling: builder.delayedInputValueChangedHandling,
                 minWidth: builder.minWidth,
@@ -404,6 +404,8 @@ module api.ui.selector.combobox {
 
         nextInputFocusWhenMaxReached: boolean = true;
 
+        hideComboBoxWhenMaxReached: boolean = true;
+
         minWidth: number;
 
         value: string;
@@ -445,6 +447,11 @@ module api.ui.selector.combobox {
 
         setNextInputFocusWhenMaxReached(value: boolean): RichComboBoxBuilder<T> {
             this.nextInputFocusWhenMaxReached = value;
+            return this;
+        }
+
+        setHideComboBoxWhenMaxReached(value: boolean): RichComboBoxBuilder<T> {
+            this.hideComboBoxWhenMaxReached = value;
             return this;
         }
 
