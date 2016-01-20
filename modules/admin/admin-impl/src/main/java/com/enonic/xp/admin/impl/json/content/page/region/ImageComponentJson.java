@@ -21,8 +21,8 @@ public class ImageComponentJson
     private final List<PropertyArrayJson> config;
 
     @JsonCreator
-    public ImageComponentJson( @JsonProperty("name") final String name, @JsonProperty("descriptor") final String descriptor,
-                               @JsonProperty("config") final List<PropertyArrayJson> config, @JsonProperty("image") final String image )
+    public ImageComponentJson( @JsonProperty("name") final String name, @JsonProperty("config") final List<PropertyArrayJson> config,
+                               @JsonProperty("image") final String image )
     {
         super( ImageComponent.create().
             name( name != null ? ComponentName.from( name ) : null ).

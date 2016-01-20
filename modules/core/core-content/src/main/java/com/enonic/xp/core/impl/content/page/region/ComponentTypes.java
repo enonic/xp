@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.region.ComponentType;
+import com.enonic.xp.region.FragmentComponentType;
 import com.enonic.xp.region.ImageComponentType;
 import com.enonic.xp.region.LayoutComponentType;
 import com.enonic.xp.region.PartComponentType;
@@ -23,6 +24,7 @@ final class ComponentTypes
         register( ImageComponentType.INSTANCE );
         register( PartComponentType.INSTANCE );
         register( TextComponentType.INSTANCE );
+        register( FragmentComponentType.INSTANCE );
     }
 
     private void register( final ComponentType type )
