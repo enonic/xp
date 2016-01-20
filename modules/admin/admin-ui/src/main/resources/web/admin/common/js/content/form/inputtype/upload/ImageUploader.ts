@@ -52,11 +52,11 @@ module api.content.form.inputtype.upload {
                 this.updateProperty(property);
             }
 
-            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
+         /*   property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
                 if (!this.ignorePropertyChange) {
                     this.updateProperty(property, true);
                 }
-            });
+            });*/
 
             this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
                 var content = event.getUploadItem().getModel(),
@@ -119,7 +119,7 @@ module api.content.form.inputtype.upload {
         updateProperty(property: api.data.Property, unchangedOnly?: boolean): Q.Promise<void> {
             if ((!unchangedOnly || !this.imageUploader.isDirty()) && this.getContext().contentId) {
 
-                this.imageUploader.setValue(this.getContext().contentId.toString());
+                this.imageUploader.setContentId(this.getContext().contentId.toString());
                 //TODO: should we pass Content.getId() instead of ContentId in property to spare this request ?
                 return new api.content.GetContentByIdRequest(this.getContext().contentId).
                     sendAndParse().

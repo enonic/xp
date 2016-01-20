@@ -12,9 +12,14 @@ module api.content.form.inputtype.upload {
     import Content = api.content.Content;
     import Attachment = api.content.attachment.Attachment;
     import UploaderEl = api.ui.uploader.UploaderEl;
+    import FileUploaderEl = api.ui.uploader.FileUploaderEl;
 
 
     export class AttachmentUploader extends FileUploader {
+
+        private attachmentNames: string[] = [];
+
+        private attachmentUploader: AttachmentUploaderEl;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super(config);
@@ -25,39 +30,48 @@ module api.content.form.inputtype.upload {
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
 
             this.uploaderEl = this.createUploader(property);
-            var attachmentUploader = <AttachmentUploaderEl>this.uploaderEl;
+            this.attachmentUploader = <AttachmentUploaderEl>this.uploaderEl;
 
             this.uploaderWrapper = this.createUploaderWrapper(property);
 
             this.updateProperty(property);
 
-            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                this.updateProperty(event.getProperty(), true);
-            });
-
-            attachmentUploader.onUploadStarted(() => {
+            this.attachmentUploader.onUploadStarted(() => {
                 this.uploaderWrapper.removeClass("empty");
+                this.attachmentNames = this.getProperty().getValue().isNotNull() ? this.getProperty().getString().split(FileUploaderEl.FILE_NAME_DELIMITER) : [];
             });
 
-            attachmentUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<Attachment>) => {
+            this.attachmentUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<Attachment>) => {
 
-                var attachment = event.getUploadItem().getModel();
-                attachmentUploader.setFileName(attachment.getName().toString());
-                property.setValue(ValueTypes.STRING.newValue(attachment.getName().toString()));
+                var attachment = <Attachment>event.getUploadItem().getModel();
+                this.attachmentNames.push(attachment.getName().toString());
 
                 api.notify.showFeedback('\"' + attachment.getName().toString() + '\" uploaded');
-                new ContentRequiresSaveEvent(this.getContext().contentId).fire();
-
             });
 
-            attachmentUploader.onUploadFailed(() => {
-                attachmentUploader.setProgressVisible(false);
+            this.attachmentUploader.onUploadCompleted(() => {
+
+                var unicalAttachmentNames = [];
+                this.attachmentNames.forEach(attachmentName => {
+                    if(unicalAttachmentNames.indexOf(attachmentName) == -1 ) {
+                        unicalAttachmentNames.push(attachmentName);
+                    }
+                });
+
+                var newValue = ValueTypes.STRING.newValue(unicalAttachmentNames.join(FileUploaderEl.FILE_NAME_DELIMITER));
+                this.getProperty().setValue(newValue);
+
+                new ContentRequiresSaveEvent(this.getContext().contentId).fire();
+            });
+
+            this.attachmentUploader.onUploadFailed(() => {
+                this.attachmentUploader.setProgressVisible(false);
                 this.uploaderWrapper.addClass("empty");
             });
 
-            attachmentUploader.onUploadReset(() => {
-                attachmentUploader.setFileName('');
-                property.setValue(ValueTypes.STRING.newNullValue());
+            this.attachmentUploader.onUploadReset(() => {
+                this.attachmentUploader.setValue("");
+                this.getProperty().setValue(ValueTypes.STRING.newNullValue());
 
 
             });
@@ -67,19 +81,19 @@ module api.content.form.inputtype.upload {
             return wemQ<void>(null);
         }
 
-        protected getFileNameFromProperty(property: Property): string {
-            return property.getValue().getString();
+        protected getFileNamesFromProperty(property: Property): string[] {
+
+            return property.getValue().getString() ? property.getValue().getString().split(FileUploaderEl.FILE_NAME_DELIMITER) : [];
         }
 
 
         protected createUploader(property: Property): UploaderEl<any> {
 
-            var attachmentFileName = this.getFileNameFromProperty(property);
-
+            var attachmentFileNames = this.getFileNamesFromProperty(property);
 
             var beforeUploadCallback = (files: PluploadFile[]) => {
-                if (attachmentFileName && files && files.length == 1) {
-                    files[0].name = attachmentFileName;
+                if (attachmentFileNames && files && files.length == 1) {
+                    files[0].name = attachmentFileNames[0];
                 }
             };
 
@@ -91,12 +105,21 @@ module api.content.form.inputtype.upload {
                 name: this.getContext().input.getName(),
                 showReset: false,
                 showCancel: false,
-                maximumOccurrences: 1,
-                allowMultiSelection: false,
+                allowMultiSelection: true,
                 hideDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
                 deferred: true,
-                beforeUploadCallback: beforeUploadCallback
+                attachmentRemoveCallback: this.removeItem.bind(this)
             });
+        }
+
+        private removeItem(itemName: string) {
+            var values = this.getProperty().getValue().getString().split(FileUploaderEl.FILE_NAME_DELIMITER);
+
+            var index = values.indexOf(itemName);
+            values.splice(index, 1);
+
+            this.attachmentUploader.removeAttachmentItem(itemName);
+            this.getProperty().setValue(ValueTypes.STRING.newValue(values.join(FileUploaderEl.FILE_NAME_DELIMITER)));
         }
 
     }

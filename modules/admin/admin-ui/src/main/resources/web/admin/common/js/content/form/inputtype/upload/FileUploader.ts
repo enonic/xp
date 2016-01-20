@@ -7,7 +7,8 @@ module api.content.form.inputtype.upload {
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
     import PluploadFile = api.ui.uploader.PluploadFile;
-    import UploaderEl = api.ui.uploader.UploaderEl;
+    import UploaderEl = api.ui.uploader.UploaderEl
+    import FileUploaderEl = api.ui.uploader.FileUploaderEl;
 
 
     export interface FileUploaderConfigAllowType {
@@ -51,22 +52,22 @@ module api.content.form.inputtype.upload {
         updateProperty(property: Property, unchangedOnly?: boolean): wemQ.Promise<void> {
             if ((!unchangedOnly || !this.uploaderEl.isDirty()) && this.getContext().contentId) {
 
-                this.uploaderEl.setValue(this.getContext().contentId.toString());
+                (<MediaUploaderEl>this.uploaderEl).setContentId(this.getContext().contentId.toString());
 
-                if (property.hasNonNullValue()) {
-                    (<MediaUploaderEl>this.uploaderEl).setFileName(this.getFileNameFromProperty(property));
-                }
+                var value = this.getFileNamesFromProperty(property);
+                this.uploaderEl.setValue(this.getFileNamesFromProperty(property).join(FileUploaderEl.FILE_NAME_DELIMITER));
+
             }
             return wemQ<void>(null);
         }
 
 
-        protected getFileNameFromProperty(property: Property): string {
+        protected getFileNamesFromProperty(property: Property): string[] {
             throw new Error("must be implemented in inheritors");
         }
 
         protected getFileExtensionFromFileName(fileName: string): string {
-            return fileName.split('.').pop();
+            return fileName ? fileName.split('.').pop() : "";
         }
 
 
