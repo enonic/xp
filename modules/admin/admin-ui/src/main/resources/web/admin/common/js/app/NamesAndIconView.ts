@@ -107,6 +107,10 @@ module api.app {
             return this;
         }
 
+        getNamesView(): api.app.NamesView {
+            return this.namesView;
+        }
+
         /**
          * protected, to be used by inheritors
          */
