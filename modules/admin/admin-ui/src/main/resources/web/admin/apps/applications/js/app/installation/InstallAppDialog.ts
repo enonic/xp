@@ -1,20 +1,25 @@
 module app.installation {
 
     import ApplicationKey = api.application.ApplicationKey;
-    import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import UploadItem = api.ui.uploader.UploadItem;
-    import Content = api.content.Content;
-    import InputEl = api.dom.InputEl;
+    import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import ApplicationUploaderEl = api.application.ApplicationUploaderEl;
     import Application = api.application.Application;
+
+    import DockedPanel = api.ui.panel.DockedPanel;
+
+    import MarketAppPanel = app.installation.view.MarketAppPanel;
+    import UploadAppPanel = app.installation.view.UploadAppPanel;
 
     export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
         private installAppDialogTitle: api.ui.dialog.ModalDialogHeader;
 
-        private applicationInput: ApplicationInput;
+        private installAppDockedPanel: DockedPanel;
 
-        private applicationUploaderEl: api.application.ApplicationUploaderEl;
+        private uploadAppPanel: UploadAppPanel;
+
+        private marketAppPanel: MarketAppPanel;
 
         constructor() {
 
@@ -26,86 +31,45 @@ module app.installation {
 
             this.addClass("install-application-dialog hidden");
 
-            this.initApplicationInput();
+            this.initUploadAppPanel();
 
-            this.initApplicationUploader();
+            this.initMarketAppPanel();
+
+            this.initAndAppendInstallAppsTabsPanel();
 
             api.dom.Body.get().appendChild(this);
         }
 
-        private initApplicationInput() {
-            this.applicationInput = new ApplicationInput('large').
-                setPlaceholder("Drop files here");
+        private initMarketAppPanel() {
+            this.marketAppPanel = new MarketAppPanel("market-app-panel");
+        }
 
-            this.applicationInput.onUploadStarted((event: FileUploadStartedEvent<Application>) => {
-                this.closeAndFireEventFromMediaUpload(event.getUploadItems());
-            });
+        private initUploadAppPanel() {
 
-            this.applicationInput.onInput((event: Event) => {
+            this.uploadAppPanel = new UploadAppPanel(this.getCancelAction(), "upload-app-panel");
 
-            });
-
-            this.applicationInput.onKeyUp((event: KeyboardEvent) => {
+            this.uploadAppPanel.getApplicationInput().onKeyUp((event: KeyboardEvent) => {
                 if (event.keyCode === 27) {
                     this.getCancelAction().execute();
                 }
             });
 
-            this.appendChildToContentPanel(this.applicationInput);
-        }
-
-        private initApplicationUploader() {
-
-            var uploaderContainer = new api.dom.DivEl('uploader-container');
-            this.appendChild(uploaderContainer);
-
-            var uploaderMask = new api.dom.DivEl('uploader-mask');
-            uploaderContainer.appendChild(uploaderMask);
-
-            this.applicationUploaderEl = new api.application.ApplicationUploaderEl({
-                params: {},
-                name: 'application-uploader',
-                showResult: false,
-                allowMultiSelection: false,
-                deferred: true  // wait till the window is shown
-            });
-            uploaderContainer.appendChild(this.applicationUploaderEl);
-
-            this.applicationUploaderEl.onUploadStarted((event: FileUploadStartedEvent<Application>) => {
+            this.uploadAppPanel.getApplicationInput().onUploadStarted((event: FileUploadStartedEvent<Application>) => {
                 this.closeAndFireEventFromMediaUpload(event.getUploadItems());
             });
 
-            var dragOverEl;
-            // make use of the fact that when dragging
-            // first drag enter occurs on the child element and after that
-            // drag leave occurs on the parent element that we came from
-            // meaning that to know when we left some element
-            // we need to compare it to the one currently dragged over
-            this.onDragEnter((event: DragEvent) => {
-                var target = <HTMLElement> event.target;
-
-                if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
-                    uploaderContainer.show();
-                }
-                dragOverEl = target;
-            });
-
-            this.onDragLeave((event: DragEvent) => {
-                var targetEl = <HTMLElement> event.target;
-
-                if (dragOverEl == targetEl) {
-                    uploaderContainer.hide();
-                }
-            });
-
-            this.onDrop((event: DragEvent) => {
-                uploaderContainer.hide();
+            this.uploadAppPanel.getApplicationUploaderEl().onUploadStarted((event: FileUploadStartedEvent<Application>) => {
+                this.closeAndFireEventFromMediaUpload(event.getUploadItems());
             });
         }
 
-        private closeAndFireEventFromMediaUpload(items: UploadItem<Application>[]) {
-            this.close();
-            new api.application.ApplicationUploadStartedEvent(items).fire();
+        private initAndAppendInstallAppsTabsPanel() {
+            this.installAppDockedPanel = new DockedPanel();
+            this.installAppDockedPanel.addClass("install-app-docked-panel");
+            this.installAppDockedPanel.addItem("Upload", true, this.uploadAppPanel);
+            this.installAppDockedPanel.addItem("Enonic Market", true, this.marketAppPanel);
+
+            this.appendChildToContentPanel(this.installAppDockedPanel);
         }
 
         open() {
@@ -115,94 +79,29 @@ module app.installation {
         show() {
             this.resetFileInputWithUploader();
             super.show();
-            this.applicationInput.giveFocus();
+            this.uploadAppPanel.getApplicationInput().giveFocus();
         }
 
         hide() {
             super.hide();
-            this.applicationUploaderEl.stop();
+            this.uploadAppPanel.getApplicationUploaderEl().stop();
             this.addClass("hidden");
             this.removeClass("animated");
         }
 
         close() {
-            this.applicationInput.reset();
+            this.uploadAppPanel.getApplicationInput().reset();
             super.close();
         }
 
         private resetFileInputWithUploader() {
-            this.applicationUploaderEl.reset();
-            this.applicationInput.reset();
-        }
-    }
-
-    export class ApplicationInput extends api.dom.CompositeFormInputEl {
-
-        private textInput: InputEl;
-        private applicationUploaderEl: ApplicationUploaderEl;
-
-        constructor(className?: string, originalValue?: string) {
-            this.textInput = new InputEl("text");
-
-            this.applicationUploaderEl = new ApplicationUploaderEl({
-                name: 'application-input-uploader',
-                allowDrop: false,
-                showResult: false,
-                allowMultiSelection: true,
-                deferred: true,  // wait till it's shown
-                value: originalValue
-            });
-
-            this.applicationUploaderEl.onUploadStarted((event: api.ui.uploader.FileUploadStartedEvent<Application>) => {
-                var names = event.getUploadItems().map((uploadItem: api.ui.uploader.UploadItem<Application>) => {
-                    return uploadItem.getName();
-                });
-                this.textInput.setValue(names.join(', '));
-            });
-
-            super(this.textInput, this.applicationUploaderEl);
-            this.addClass("file-input" + (className ? " " + className : ""));
+            this.uploadAppPanel.getApplicationUploaderEl().reset();
+            this.uploadAppPanel.getApplicationInput().reset();
         }
 
-        setUploaderParams(params: {[key: string]: any}): ApplicationInput {
-            this.applicationUploaderEl.setParams(params);
-            return this;
-        }
-
-        getUploaderParams(): {[key: string]: string} {
-            return this.applicationUploaderEl.getParams();
-        }
-
-        setPlaceholder(placeholder: string): ApplicationInput {
-            this.textInput.setPlaceholder(placeholder);
-            return this;
-        }
-
-        getPlaceholder(): string {
-            return this.textInput.getPlaceholder();
-        }
-
-        reset(): ApplicationInput {
-            this.textInput.reset();
-            this.applicationUploaderEl.reset();
-            return this;
-        }
-
-        stop(): ApplicationInput {
-            this.applicationUploaderEl.stop();
-            return this;
-        }
-
-        getUploader(): ApplicationUploaderEl {
-            return this.applicationUploaderEl;
-        }
-
-        onUploadStarted(listener: (event: FileUploadStartedEvent<Application>) => void) {
-            this.applicationUploaderEl.onUploadStarted(listener);
-        }
-
-        unUploadStarted(listener: (event: FileUploadStartedEvent<Application>) => void) {
-            this.applicationUploaderEl.unUploadStarted(listener);
+        private closeAndFireEventFromMediaUpload(items: UploadItem<Application>[]) {
+            this.close();
+            new api.application.ApplicationUploadStartedEvent(items).fire();
         }
     }
 }

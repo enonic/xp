@@ -1,5 +1,9 @@
 .install-application-dialog {
 
+  .modal-dialog-content-push {
+    display: none;
+  }
+
   @media screen and (max-height: 360px ) {
     .dialog-content {
       height: 65%;
@@ -15,17 +19,12 @@
     border: 2px solid @admin-medium-gray-border;
   }
 
-  .dialog-header {
-    margin-bottom: 60px;
-  }
-
   .url-input {
     width: 100%;
   }
 
   .file-input {
     width: 100%;
-    margin-bottom: 20px;
 
     @media screen and (max-height: 360px) {
       margin-bottom: 5px;
@@ -77,4 +76,88 @@
     }
   }
 
+  .upload-app-panel {
+    margin-top: 20px;
+  }
+
+  .install-app-docked-panel {
+    position: static !important;
+    box-shadow: none;
+    width: 100%;
+
+    .panel {
+      position: static;
+    }
+
+    .tab-bar-item {
+      display: inline-table;
+      width: 25%;
+    }
+
+    .market-app-panel {
+      .market-app-tree-grid {
+
+        .grid {
+          .slick-cell {
+            cursor: default;
+            * {
+              cursor: default;
+            }
+
+            .viewer {
+              .names-and-icon-view {
+                cursor: default;
+              }
+            }
+
+            &.app-name-and-icon {
+              .main-name {
+                font-size: 16px;
+                padding-bottom: 2px;
+                color: @admin-blue;
+                a {
+                  cursor: pointer !important;
+                  text-decoration: none;
+                }
+              }
+            }
+
+            .toggle.icon {
+              display: none;
+            }
+
+            .spinner {
+              font-family: 'xp-admin-font-icon';
+
+              &:after {
+                .animation(rotate360, .5s, .0s, linear);
+                content: "\e007";
+                color: @admin-green;
+                display: inline-block;
+                margin-left: 5px;
+              }
+            }
+
+          }
+        }
+
+        .version {
+          text-align: center;
+          color: @admin-black;
+          font-size: 14px;
+        }
+
+        .app-status {
+          text-align: center;
+          color: #777777;
+          font-size: 14px;
+
+          .install, .update {
+            color: @admin-green;
+            cursor: pointer !important;
+          }
+        }
+      }
+    }
+  }
 }

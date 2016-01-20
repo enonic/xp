@@ -169,7 +169,7 @@ module app.browse {
                     this.triggerSelectionChangedListeners();
                 }
 
-                api.notify.showFeedback("Application " + item.getName() + "\" uploaded successfully");
+                api.notify.showFeedback("Application " + item.getName() + "\" installed successfully");
             });
             item.onFailed(() => {
                 this.deleteNode(<any>appMock);

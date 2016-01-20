@@ -18,3 +18,6 @@
 ///<reference path='ApplicationBasedCache.ts' />
 ///<reference path='ApplicationUploaderEl.ts' />
 ///<reference path='ApplicationUploadStartedEvent.ts' />
+///<reference path='InstallUrlApplicationRequest.ts' />
+///<reference path='MarketApplication.ts' />
+///<reference path='ListMarketApplicationsRequest.ts' />
