@@ -95,9 +95,6 @@ module app {
             }
             this.authenticated = true;
             this.lostConnectionDetector.setAuthenticated(loginResult.isAuthenticated());
-            var allowedApps = app.launcher.Applications.getAppsByIds(loginResult.getApplications());
-            this.appSelector.setAllowedApps(allowedApps);
-            this.appLauncher.setAllowedApps(allowedApps);
             new app.home.LogInEvent(loginResult.getUser()).fire();
             this.homeMainContainer.showAppSelector();
             this.serverEventsListener.start();
