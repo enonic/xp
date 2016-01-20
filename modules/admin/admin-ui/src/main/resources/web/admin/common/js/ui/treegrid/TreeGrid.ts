@@ -55,6 +55,8 @@ module api.ui.treegrid {
 
         private dataChangeListeners: {(event: DataChangedEvent<DATA>):void}[] = [];
 
+        private activeChangedListeners: {(active: boolean): void}[] = [];
+
         private loadBufferSize: number;
 
         private scrollable: api.dom.Element;
@@ -107,18 +109,18 @@ module api.ui.treegrid {
                 this.contextMenu = builder.getContextMenu();
                 this.grid.subscribeOnContextMenu((event) => {
                     event.preventDefault();
-                    this.active = false;
+                    this.setActive(false);
                     var cell = this.grid.getCellFromEvent(event);
                     this.grid.selectRow(cell.row);
                     this.contextMenu.showAt(event.pageX, event.pageY);
                     this.notifyContextMenuShown(event.pageX, event.pageY);
-                    this.active = true;
+                    this.setActive(true);
                 });
             }
 
             this.grid.subscribeOnClick((event, data) => {
-                if (this.active) {
-                    this.active = false;
+                if (this.isActive()) {
+                    this.setActive(false);
                     var elem = new ElementHelper(event.target);
                     if (elem.hasClass("expand")) {
                         elem.removeClass("expand").addClass("collapse");
@@ -126,19 +128,19 @@ module api.ui.treegrid {
                         this.expandNode(node);
 
                     } else if (elem.hasClass("collapse")) {
-                        this.active = false;
+                        this.setActive(false);
                         elem.removeClass("collapse").addClass("expand");
                         var node = this.gridData.getItem(data.row);
                         this.collapseNode(node);
 
                     } else if (data.cell === 0) {
-                        this.active = true;
+                        this.setActive(true);
                         if (elem.getAttribute("type") === "checkbox") {
                             this.grid.toggleRow(data.row);
 
                         }
                     } else {
-                        this.active = true;
+                        this.setActive(true);
                         this.root.clearStashedSelection();
                         this.grid.selectRow(data.row);
                         if (!elem.hasClass("sort-dialog-trigger")) {
@@ -191,14 +193,14 @@ module api.ui.treegrid {
                     if (!this.gridOptions.isMultipleSelectionDisabled()) {
                         keyBindings = [
                             new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
-                                if (this.active) {
+                                if (this.isActive()) {
                                     this.scrollToRow(this.grid.addSelectedUp());
                                 }
                                 event.preventDefault();
                                 event.stopImmediatePropagation();
                             }),
                             new KeyBinding('shift+down', (event: ExtendedKeyboardEvent) => {
-                                if (this.active) {
+                                if (this.isActive()) {
                                     this.scrollToRow(this.grid.addSelectedDown());
                                 }
                                 event.preventDefault();
@@ -209,12 +211,12 @@ module api.ui.treegrid {
 
                     keyBindings = keyBindings.concat([
                         new KeyBinding('up', () => {
-                            if (this.active) {
+                            if (this.isActive()) {
                                 this.scrollToRow(this.grid.moveSelectedUp());
                             }
                         }),
                         new KeyBinding('down', () => {
-                            if (this.active) {
+                            if (this.isActive()) {
                                 this.scrollToRow(this.grid.moveSelectedDown());
                             }
                         }),
@@ -222,13 +224,13 @@ module api.ui.treegrid {
                             var selected = this.grid.getSelectedRows();
                             if (selected.length === 1) {
                                 var node = this.gridData.getItem(selected[0]);
-                                if (node && this.active) {
+                                if (node && this.isActive()) {
                                     if (node.isExpanded()) {
-                                        this.active = false;
+                                        this.setActive(false);
                                         this.collapseNode(node);
                                     } else if (node.getParent() !== this.root.getCurrentRoot()) {
                                         node = node.getParent();
-                                        this.active = false;
+                                        this.setActive(false);
                                         var row = this.gridData.getRowById(node.getId());
                                         this.grid.selectRow(row);
                                         this.collapseNode(node);
@@ -241,9 +243,9 @@ module api.ui.treegrid {
                             if (selected.length === 1) {
                                 var node = this.gridData.getItem(selected[0]);
                                 if (node && this.hasChildren(node.getData())
-                                    && !node.isExpanded() && this.active) {
+                                    && !node.isExpanded() && this.isActive()) {
 
-                                    this.active = false;
+                                    this.setActive(false);
                                     this.invalidate();
                                     this.expandNode(node);
                                 }
@@ -367,7 +369,26 @@ module api.ui.treegrid {
         }
 
         setActive(active: boolean = true) {
-            this.active = active;
+            if (this.active != active) {
+                this.active = active;
+                this.notifyActiveChanged(active);
+            }
+        }
+
+        onActiveChanged(listener: (active: boolean) => void) {
+            this.activeChangedListeners.push(listener);
+        }
+
+        unActiveChanged(listener: (active: boolean) => void) {
+            this.activeChangedListeners = this.activeChangedListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyActiveChanged(active: boolean) {
+            this.activeChangedListeners.forEach((listener) => {
+                listener(active);
+            })
         }
 
         getToolbar(): TreeGridToolbar {
@@ -540,22 +561,22 @@ module api.ui.treegrid {
         }
 
         filter(dataList: DATA[]) {
-            this.active = false;
+            this.setActive(false);
             this.root.setFiltered(true);
             this.root.getCurrentRoot().setChildren(this.dataToTreeNodes(dataList, this.root.getCurrentRoot()));
             this.initData(this.root.getCurrentRoot().treeToList());
             this.invalidate();
-            this.active = true;
+            this.setActive(true);
         }
 
         resetFilter() {
-            this.active = false;
+            this.setActive(false);
 
             if (this.root.isFiltered()) {
                 this.root.setFiltered(false);
                 this.initData(this.root.getCurrentRoot().treeToList());
                 this.invalidate();
-                this.active = true;
+                this.setActive(true);
                 this.notifyLoaded();
             } else {
                 // replace with refresh in future
@@ -692,7 +713,7 @@ module api.ui.treegrid {
 
         refreshNode(node?: TreeNode<DATA>): void {
             var root = this.root.getCurrentRoot();
-            this.active = false;
+            this.setActive(false);
 
             node = node || root;
             node.regenerateIds();
@@ -701,7 +722,7 @@ module api.ui.treegrid {
 
             this.invalidate();
 
-            this.active = true;
+            this.setActive(true);
 
             this.notifyLoaded();
         }
@@ -710,7 +731,7 @@ module api.ui.treegrid {
         refresh(): void {
             var root = this.root.getCurrentRoot();
 
-            this.active = false;
+            this.setActive(false);
 
             this.grid.invalidate();
 
@@ -718,7 +739,7 @@ module api.ui.treegrid {
             this.initData(root.treeToList());
             this.invalidate();
 
-            this.active = true;
+            this.setActive(true);
 
             this.notifyLoaded();
         }
@@ -988,7 +1009,7 @@ module api.ui.treegrid {
 
         protected updateExpanded() {
             this.invalidate();
-            this.active = true;
+            this.setActive(true);
         }
 
         private updateSelectedNode(node: TreeNode<DATA>) {
@@ -1007,7 +1028,7 @@ module api.ui.treegrid {
             this.gridData.refresh();
             this.invalidate();
             this.triggerSelectionChangedListeners();
-            this.active = true;
+            this.setActive(true);
         }
 
         notifyLoaded(): void {

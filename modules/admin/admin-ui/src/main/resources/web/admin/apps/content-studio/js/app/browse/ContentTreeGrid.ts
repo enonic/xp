@@ -94,15 +94,16 @@ module app.browse {
                     prependClasses("content-tree-grid")
             );
 
-            let updateColumns = (item: api.ui.responsive.ResponsiveItem) => {
-                if (item.isRangeSizeChanged()) {
+            let updateColumns = (force?: boolean) => {
+                if (force) {
+                    var width = this.getEl().getWidth();
 
-                    if (item.isInRangeOrSmaller(ResponsiveRanges._240_360)) {
+                    if (ResponsiveRanges._240_360.isFitOrSmaller(width)) {
                         this.getGrid().setColumns([nameColumn, orderColumn]);
-                    } else if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
+                    } else if (ResponsiveRanges._360_540.isFitOrSmaller(width)) {
                         this.getGrid().setColumns([nameColumn, orderColumn, compareStatusColumn]);
                     } else {
-                        if (item.isInRangeOrSmaller(ResponsiveRanges._540_720)) {
+                        if (ResponsiveRanges._540_720.isFitOrSmaller(width)) {
                             modifiedTimeColumn.setMaxWidth(90);
                             modifiedTimeColumn.setFormatter(DateTimeFormatter.formatNoTimestamp);
                         } else {
@@ -111,15 +112,23 @@ module app.browse {
                         }
                         this.getGrid().setColumns([nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn]);
                     }
-
                 } else {
                     this.getGrid().resizeCanvas();
                 }
             };
 
+            var onBecameActive = (active: boolean) => {
+                if (active) {
+                    updateColumns(true);
+                    this.unActiveChanged(onBecameActive);
+                }
+            };
+            // update columns when grid becomes active for the first time
+            this.onActiveChanged(onBecameActive);
+
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 if (this.isInRenderingView()) {
-                    updateColumns(item);
+                    updateColumns(item.isRangeSizeChanged());
                 }
             });
 
@@ -222,7 +231,7 @@ module app.browse {
 
                 statusEl.getEl().setText(status);
             } else if (!!data.getUploadItem()) {   // uploading node
-                status = new api.ui.ProgressBar(data.getUploadItem().getProgress())
+                status = new api.ui.ProgressBar(data.getUploadItem().getProgress());
                 statusEl.appendChild(status);
             }
 
