@@ -49,13 +49,13 @@ final class AssetHandlerWorker
 
     private void resolveResource()
     {
-        this.resource = this.resourceService.getResource( ResourceKey.from( applicationKey, ROOT_ASSET_PREFIX + this.name ) );
+        this.resource = this.resourceService.getResource( ResourceKey.from( this.applicationKey, ROOT_ASSET_PREFIX + this.name ) );
         if ( !this.resource.exists() )
         {
-            this.resource = this.resourceService.getResource( ResourceKey.from( applicationKey, SITE_ASSET_PREFIX + this.name ) );
+            this.resource = this.resourceService.getResource( ResourceKey.from( this.applicationKey, SITE_ASSET_PREFIX + this.name ) );
             if ( !this.resource.exists() )
             {
-                throw notFound( "Resource [%s] not found", ResourceKey.from( applicationKey, ROOT_ASSET_PREFIX + this.name ) );
+                throw notFound( "Resource [%s] not found", ResourceKey.from( this.applicationKey, ROOT_ASSET_PREFIX + this.name ) );
             }
         }
     }
