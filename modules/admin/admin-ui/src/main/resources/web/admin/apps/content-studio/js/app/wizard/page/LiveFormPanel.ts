@@ -404,7 +404,6 @@ module app.wizard.page {
                     this.inspectComponent(<ComponentView<Component>>itemView);
                 }
 
-                this.minimizeContentFormPanelIfNeeded();
             });
 
             this.liveEditPageProxy.onItemViewDeselected((event: ItemViewDeselectedEvent) => {
@@ -419,6 +418,9 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onComponentAdded((event: ComponentAddedEvent) => {
                 // do something when component is added
+                if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), ComponentView)) {
+                    this.minimizeContentFormPanelIfNeeded();
+                }
             });
 
             this.liveEditPageProxy.onComponentRemoved((event: ComponentRemovedEvent) => {
