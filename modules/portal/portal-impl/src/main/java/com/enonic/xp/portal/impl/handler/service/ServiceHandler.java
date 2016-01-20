@@ -13,7 +13,7 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.handler.PortalHandler;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
-import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 
 @Component(immediate = true, service = PortalHandler.class)
 public final class ServiceHandler
@@ -22,6 +22,8 @@ public final class ServiceHandler
     private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
 
     private ContentService contentService;
+
+    private ResourceService resourceService;
 
     private ControllerScriptFactory controllerScriptFactory;
 
@@ -42,12 +44,11 @@ public final class ServiceHandler
             throw notFound( "Not a valid service url pattern" );
         }
 
-        final ApplicationKey appKey = ApplicationKey.from( matcher.group( 1 ) );
-        final ResourceKey scriptDir = ResourceKey.from( appKey, "site/services/" + matcher.group( 2 ) );
-
         final ServiceHandlerWorker worker = new ServiceHandlerWorker();
-        worker.scriptDir = scriptDir;
+        worker.applicationKey = ApplicationKey.from( matcher.group( 1 ) );
+        worker.name = matcher.group( 2 );
         worker.setContentService( this.contentService );
+        worker.resourceService = this.resourceService;
         worker.controllerScriptFactory = this.controllerScriptFactory;
         return worker;
     }
@@ -56,6 +57,12 @@ public final class ServiceHandler
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Reference
+    public void setResourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
     }
 
     @Reference

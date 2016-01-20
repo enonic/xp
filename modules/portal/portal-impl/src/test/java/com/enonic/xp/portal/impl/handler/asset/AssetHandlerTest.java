@@ -113,10 +113,24 @@ public class AssetHandlerTest
     }
 
     @Test
-    public void testResourceFound()
+    public void testSiteResourceFound()
         throws Exception
     {
         final Resource resource = addResource( "demo:/site/assets/css/main.css" );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.CSS_UTF_8.withoutParameters(), res.getContentType() );
+        assertSame( resource, res.getBody() );
+    }
+
+    @Test
+    public void testRootResourceFound()
+        throws Exception
+    {
+        addResource( "demo:/site/assets/css/main.css" );
+        final Resource resource = addResource( "demo:/assets/css/main.css" );
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -137,7 +151,7 @@ public class AssetHandlerTest
         catch ( final PortalException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
-            assertEquals( "Resource [demo:/site/assets/css/main.css] not found", e.getMessage() );
+            assertEquals( "Resource [demo:/assets/css/main.css] not found", e.getMessage() );
         }
     }
 

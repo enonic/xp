@@ -19,6 +19,9 @@ import com.enonic.xp.portal.handler.BaseHandlerTest;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
@@ -31,6 +34,8 @@ public class ServiceHandlerTest
     extends BaseHandlerTest
 {
     protected ContentService contentService;
+
+    protected ResourceService resourceService;
 
     private ControllerScript controllerScript;
 
@@ -47,11 +52,20 @@ public class ServiceHandlerTest
         final PortalResponse portalResponse = PortalResponse.create().build();
         Mockito.when( this.controllerScript.execute( Mockito.anyObject() ) ).thenReturn( portalResponse );
 
+        this.resourceService = Mockito.mock( ResourceService.class );
+        final Resource resourceNotFound = Mockito.mock( Resource.class );
+        Mockito.when( resourceNotFound.exists() ).thenReturn( false );
+        final Resource resource = Mockito.mock( Resource.class );
+        Mockito.when( resource.exists() ).thenReturn( true );
+        Mockito.when( this.resourceService.getResource( ResourceKey.from( "demo:/services/test" ) ) ).thenReturn( resourceNotFound );
+        Mockito.when( this.resourceService.getResource( ResourceKey.from( "demo:/site/services/test" ) ) ).thenReturn( resource );
+
         this.contentService = Mockito.mock( ContentService.class );
 
         this.handler = new ServiceHandler();
         this.handler.setControllerScriptFactory( controllerScriptFactory );
         this.handler.setContentService( this.contentService );
+        this.handler.setResourceService( this.resourceService );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
