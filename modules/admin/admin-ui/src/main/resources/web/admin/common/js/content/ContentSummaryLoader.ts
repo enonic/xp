@@ -5,7 +5,7 @@ module api.content {
     import OrderDirection = api.query.expr.OrderDirection;
     import FieldExpr = api.query.expr.FieldExpr;
 
-    export class ContentSummaryLoader extends api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary> {
+    export class ContentSummaryLoader extends ContentSummaryPreLoader {
 
         public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("_modifiedTime"), OrderDirection.DESC);
 
@@ -21,6 +21,25 @@ module api.content {
             // Setting default order
             this.order = ContentSummaryLoader.ORDER_BY_MODIFIED_TIME_DESC;
             super(this.contentSummaryRequest);
+        }
+
+        preLoad(ids: string): wemQ.Promise<ContentSummary[]> {
+            this.notifyLoadingData(false);
+
+            let contentIds = ids.split(";").map((id) => {
+                return new api.content.ContentId(id);
+            });
+            return new GetContentSummaryByIds(contentIds).
+            get().
+            then((results: ContentSummary[]) => {
+                if (this.getComparator()) {
+                    this.setResults(results.sort(this.getComparator().compare));
+                } else {
+                    this.setResults(results);
+                }
+                this.notifyLoadedData(results);
+                return this.getResults();
+            });
         }
 
         setOrder(orderList: OrderExpr[]) {
