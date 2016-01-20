@@ -6,22 +6,15 @@ import com.enonic.xp.script.impl.executor.ScriptExecutor;
 public final class RequireFunction
     extends AbstractFunction
 {
-    private final static String SCRIPT_SUFFIX = ".js";
-
-    private final static String DEFAULT_RESOURCE = "/index.js";
-
-    private final ResourceKey script;
-
     private final ScriptExecutor executor;
 
-    private final String basePath;
+    private final ResourceResolver resolver;
 
     public RequireFunction( final ResourceKey script, final ScriptExecutor executor )
     {
         super( "require" );
-        this.script = script;
         this.executor = executor;
-        this.basePath = this.executor.getScriptSettings().getBasePath();
+        this.resolver = new ResourceResolver( this.executor.getResourceService(), script );
     }
 
     @Override
@@ -40,35 +33,6 @@ public final class RequireFunction
 
     private ResourceKey resolve( final String name )
     {
-        if ( !name.endsWith( SCRIPT_SUFFIX ) )
-        {
-            ResourceKey resolved = resolve( name + SCRIPT_SUFFIX );
-            if ( this.executor.getResourceService().getResource( resolved ).exists() )
-            {
-                return resolved;
-            }
-            else
-            {
-                return resolve( name + DEFAULT_RESOURCE );
-            }
-        }
-
-        if ( name.startsWith( "/" ) )
-        {
-            return this.script.resolve( this.basePath + name );
-        }
-
-        if ( name.startsWith( "./" ) )
-        {
-            return this.script.resolve( "../" + name );
-        }
-
-        final ResourceKey resolved = this.script.resolve( "../" + name );
-        if ( this.executor.getResourceService().getResource( resolved ).exists() )
-        {
-            return resolved;
-        }
-
-        return this.script.resolve( this.basePath + "/lib/" + name );
+        return this.resolver.resolveJs( name );
     }
 }

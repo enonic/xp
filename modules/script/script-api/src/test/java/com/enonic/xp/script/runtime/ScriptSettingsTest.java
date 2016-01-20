@@ -10,19 +10,7 @@ public class ScriptSettingsTest
     public void testEmpty()
     {
         final ScriptSettings settings = ScriptSettings.create().build();
-
-        assertEquals( "", settings.getBasePath() );
         assertNull( settings.getBinding( String.class ) );
-    }
-
-    @Test
-    public void testBasePath()
-    {
-        final ScriptSettings settings = ScriptSettings.create().
-            basePath( "/site" ).
-            build();
-
-        assertEquals( "/site", settings.getBasePath() );
     }
 
     @Test
