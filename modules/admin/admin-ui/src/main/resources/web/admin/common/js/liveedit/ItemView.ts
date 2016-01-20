@@ -118,7 +118,6 @@ module api.liveedit {
         private shaderClickedListener;
         private shaderMouseMoveListener;
         private pageItemViewAddedListener;
-        private pageClickedListener;
         private mouseEnterListener;
         private mouseLeaveListener;
         private mouseClickedListener;
@@ -226,17 +225,9 @@ module api.liveedit {
                 }
             });
 
-            // component shader allows mouse events through
-            // thus bind listener to pageView to know when shader was clicked in case of unlocked page
-            this.pageClickedListener = (event) => {
-                if (!pageView.isLocked() && this.shaded && !this.isEventOverItem(event)) {
-                    this.handleShaderClick(event);
-                }
-            };
-            pageView.onClicked(this.pageClickedListener);
-
-            // page shader catches mouse events
-            // so bind listener to it in case of the locked page
+            // Page shader catches mouse events
+            // so bind listener to it to know when a shader clicked
+            // in case of the locked or selected page
             this.shaderClickedListener = this.handleShaderClick.bind(this);
             Shader.get().onClicked(this.shaderClickedListener);
 
@@ -294,7 +285,6 @@ module api.liveedit {
 
             this.onRemoved(() => {
                 pageView.unItemViewAdded(this.pageItemViewAddedListener);
-                pageView.unClicked(this.pageClickedListener);
             });
         }
 
@@ -509,13 +499,18 @@ module api.liveedit {
                 // we prevented mouse events to bubble up so if parent view is selected
                 // it won't receive mouse event and won't be deselected
                 // therefore we deselect it manually
-                itemView.deselectParent();
-                itemView.getPageView().deselectChildViews();
-
-                var clickPosition = !itemView.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
-                event.which == 3 ?
-                itemView.select(clickPosition, null, false, true) :
-                itemView.select(clickPosition, ItemViewContextMenuPosition.NONE, false, true);
+                var selectedView = itemView.getPageView().getSelectedView();
+                if (selectedView) {
+                    selectedView.deselect();
+                }
+                // Allow selecting only component types if something is selected
+                // The rest will only deselect current selection
+                // Also allow selecting the same component again (i.e. to show context menu)
+                if (!selectedView || selectedView == itemView || itemView.getType().isComponentType()) {
+                    var clickPosition = !itemView.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
+                    var menuPosition = event.which == 3 ? null : ItemViewContextMenuPosition.NONE;
+                    itemView.select(clickPosition, menuPosition, false, true);
+                }
             } else {
                 itemView.deselect();
             }
@@ -565,15 +560,6 @@ module api.liveedit {
                    && x <= offset.left + offset.width
                    && y >= offset.top
                    && y <= offset.top + offset.height;
-        }
-
-        private deselectParent() {
-            for (var parent = this.parentItemView; parent; parent = parent.parentItemView) {
-                if (parent.isSelected()) {
-                    parent.deselect();
-                    return;
-                }
-            }
         }
 
         getItemViewIdProducer(): ItemViewIdProducer {
