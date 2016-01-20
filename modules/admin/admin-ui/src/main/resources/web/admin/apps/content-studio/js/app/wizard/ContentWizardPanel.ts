@@ -528,7 +528,7 @@ module app.wizard {
                         }
                     });
                 }
-            }
+            };
 
             var publishHandler = (event: api.content.event.ContentPublishedEvent) => {
                 if (this.isCurrentContentId(event.getContentId())) {
@@ -1228,12 +1228,7 @@ module app.wizard {
 
             this.subscribePublishButtonForMobileToPublishEvents();
 
-            var publishButtonContainer: api.ui.panel.Panel = this.getSplitPanel();
-            if (!publishButtonContainer) {
-                publishButtonContainer = this.getWizardStepsPanel();
-            }
-
-            publishButtonContainer.appendChild(this.publishButtonForMobile);
+            this.appendChild(this.publishButtonForMobile);
         }
 
         private managePublishButtonStateForMobile(compareStatus: CompareStatus) {

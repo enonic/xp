@@ -247,12 +247,12 @@ module api.ui.panel {
             this.firstPanel.setDoOffset(false);
             this.secondPanel.setDoOffset(false);
 
-            this.appendChild(this.firstPanel);
-            this.appendChild(this.splitter);
-            this.appendChild(this.secondPanel);
+            super.appendChild(this.firstPanel);
+            super.appendChild(this.splitter);
+            super.appendChild(this.secondPanel);
 
             this.mask = new api.ui.mask.DragMask(this);
-            this.appendChild(this.mask);
+            super.appendChild(this.mask);
             this.onRendered(() => this.onRenderedDragHandler());
 
             if (this.alignmentTreshold) {
@@ -315,7 +315,7 @@ module api.ui.panel {
             this.onMouseUp((e: MouseEvent) => {
                 if (this.ghostDragger.getHTMLElement().parentNode) {
                     this.stopDrag(e);
-                    this.removeChild(this.ghostDragger);
+                    super.removeChild(this.ghostDragger);
                 }
             });
         }
@@ -444,6 +444,17 @@ module api.ui.panel {
             this.distribute();
         }
 
+        appendChild<T extends api.dom.Element>(child: T): api.dom.Element {
+            throw Error('SplitPanel allows adding children in constructor only.');
+        }
+
+        appendChildren<T extends api.dom.Element>(...children): api.dom.Element {
+            throw Error('SplitPanel allows adding children in constructor only.');
+        }
+
+        prependChild(child: api.dom.Element): api.dom.Element {
+            throw Error('SplitPanel allows adding children in constructor only.');
+        }
 
         showSplitter() {
             this.splitter.show();
