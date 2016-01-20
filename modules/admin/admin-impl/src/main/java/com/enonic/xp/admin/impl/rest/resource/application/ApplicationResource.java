@@ -204,7 +204,7 @@ public final class ApplicationResource
         versions.put( "1.0.0", new MarkedAppVersionInfoJson(
             "https://repo.enonic.com/public/com/enonic/app/app-google-analytics/1.0.0/app-google-analytics-1.1.0.jar" ) );
         versions.put( "1.1.0", new MarkedAppVersionInfoJson(
-            "https://repo.enonic.com/public/com/enonic/app/app-google-analytics/1.0.0/app-google-analytics-1.1.0.jar" ) );
+            "https://repo.enonic.com/public/com/enonic/app/app-google-analytics/1.0.0/app-google-analytics-1.0.0.jar" ) );
 
         final MarkedApplicationJson appJson = new MarkedApplicationJson();
         appJson.setDisplayName( "Google Analytics" );
