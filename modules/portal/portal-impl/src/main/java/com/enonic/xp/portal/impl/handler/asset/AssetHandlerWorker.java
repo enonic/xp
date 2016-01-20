@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.handler.asset;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -13,10 +14,15 @@ import com.enonic.xp.web.HttpStatus;
 final class AssetHandlerWorker
     extends PortalHandlerWorker
 {
+    private final static String ROOT_ASSET_PREFIX = "assets/";
+
+    private final static String SITE_ASSET_PREFIX = "site/assets/";
 
     protected ResourceService resourceService;
 
-    protected ResourceKey resourceKey;
+    protected ApplicationKey applicationKey;
+
+    protected String name;
 
     protected boolean cacheable;
 
@@ -43,10 +49,14 @@ final class AssetHandlerWorker
 
     private void resolveResource()
     {
-        this.resource = this.resourceService.getResource( this.resourceKey );
+        this.resource = this.resourceService.getResource( ResourceKey.from( applicationKey, ROOT_ASSET_PREFIX + this.name ) );
         if ( !this.resource.exists() )
         {
-            throw notFound( "Resource [%s] not found", this.resourceKey );
+            this.resource = this.resourceService.getResource( ResourceKey.from( applicationKey, SITE_ASSET_PREFIX + this.name ) );
+            if ( !this.resource.exists() )
+            {
+                throw notFound( "Resource [%s] not found", ResourceKey.from( applicationKey, ROOT_ASSET_PREFIX + this.name ) );
+            }
         }
     }
 }
