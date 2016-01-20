@@ -70,7 +70,6 @@ public class ServiceHandlerTest
 
         this.serviceDescriptorService = Mockito.mock( ServiceDescriptorService.class );
         final DescriptorKey serviceDescriptorKey = DescriptorKey.from( "demo:test" );
-        //final Set<PrincipalKey> allowedPrincipals = Collections.singleton( PrincipalKey.from( "role:system.admin" ) );
         final ServiceDescriptor serviceDescriptor = ServiceDescriptor.create().
             key( serviceDescriptorKey ).
             build();
