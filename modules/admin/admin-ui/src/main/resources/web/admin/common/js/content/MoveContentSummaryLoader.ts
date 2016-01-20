@@ -7,7 +7,7 @@ module api.content {
     import ContentType = api.schema.content.ContentType;
     import ContentTypeName = api.schema.content.ContentTypeName;
 
-    export class MoveContentSummaryLoader extends api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary> {
+    export class MoveContentSummaryLoader extends ContentSummaryPreLoader {
 
         private preservedSearchString: string;
 
