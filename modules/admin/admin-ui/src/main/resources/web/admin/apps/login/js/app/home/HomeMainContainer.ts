@@ -4,17 +4,13 @@ module app.home {
 
         private brandingPanel: Branding;
 
-        private appSelector: app.launcher.AppSelector;
-
         private loginForm: app.login.LoginForm;
 
         private linksContainer: LinksContainer;
 
         private centerPanel: CenterPanel;
 
-        private headerPanel: HeaderPanel;
-
-        constructor(builder: HomeMainContainerBuilder) {
+        constructor(builder: LoginHomeMainContainerBuilder) {
             super('home-main-container');
 
             var lazyImage = new api.ui.image.LazyImage(api.util.UriHelper.getAdminUri("/common/images/image1x1.png"));
@@ -22,21 +18,13 @@ module app.home {
 
             this.getEl().setAttribute("tabindex", "100"); //Need tabindex to be able to focus element
 
-            this.appSelector = builder.appSelector;
             this.loginForm = builder.loginForm;
             this.linksContainer = builder.linksContainer;
-
-            this.headerPanel = new HeaderPanel();
-            this.headerPanel.hide();
 
             this.brandingPanel = new Branding();
 
             this.centerPanel = new CenterPanel();
-            this.centerPanel.prependChild(this.headerPanel);
             this.centerPanel.prependChild(this.brandingPanel);
-
-            this.centerPanel.addToAppSelectorPanel(this.appSelector);
-
             this.centerPanel.addToLoginPanel(this.loginForm);
             this.centerPanel.addToLoginPanel(this.linksContainer);
 
@@ -45,52 +33,11 @@ module app.home {
             this.onAdded(() => {
                 lazyImage.setSrc("/admin/common/images/background-1920.jpg");
             });
-
-            LogOutEvent.on(() => {
-                new api.security.auth.LogoutRequest().sendAndParse().then(() => {
-                    this.centerPanel.showLoginPanel();
-                    this.headerPanel.hide();
-                    this.brandingPanel.show();
-                }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                }).done();
-            });
-
-            LogInEvent.on(() => {
-                this.headerPanel.show();
-                this.disableBranding();
-            });
-
-            this.showBrowserWarningMessage();
-
-        }
-
-        setReturnAction(action: api.ui.Action) {
-            this.headerPanel.setReturnAction(action);
         }
 
         showLogin() {
             this.centerPanel.showLoginPanel();
             this.brandingPanel.show();
-            this.headerPanel.hide();
-        }
-
-        showAppSelector() {
-            this.centerPanel.showAppSelectorPanel();
-        }
-
-        show() {
-            this.appSelector.showAppsCount();
-            super.show();
-        }
-
-        hide() {
-            api.ui.KeyBindings.get().unbindKeys(this.appSelector.getKeyBindings());
-            super.hide();
-        }
-
-        enableReturnButton() {
-            this.headerPanel.enableReturnButton();
         }
 
         disableBranding() {
@@ -108,25 +55,18 @@ module app.home {
         }
     }
 
-    export class HomeMainContainerBuilder {
-
-        appSelector: app.launcher.AppSelector;
+    export class LoginHomeMainContainerBuilder {
 
         loginForm: app.login.LoginForm;
 
         linksContainer: app.home.LinksContainer;
 
-        setAppSelector(value: app.launcher.AppSelector): HomeMainContainerBuilder {
-            this.appSelector = value;
-            return this;
-        }
-
-        setLoginForm(value: app.login.LoginForm): HomeMainContainerBuilder {
+        setLoginForm(value: app.login.LoginForm): LoginHomeMainContainerBuilder {
             this.loginForm = value;
             return this;
         }
 
-        setLinksContainer(value: LinksContainer): HomeMainContainerBuilder {
+        setLinksContainer(value: LinksContainer): LoginHomeMainContainerBuilder {
             this.linksContainer = value;
             return this;
         }

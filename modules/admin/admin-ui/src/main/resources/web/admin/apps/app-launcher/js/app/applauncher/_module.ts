@@ -1,9 +1,0 @@
-///<reference path='Applications.ts' />
-///<reference path='AppTile.ts' />
-///<reference path='AppSelectorListener.ts' />
-///<reference path='AppSelector.ts' />
-///<reference path='AppLauncher.ts' />
-///<reference path='AppRouter.ts' />
-///<reference path='AppHighlightedEvent.ts' />
-///<reference path='AppUnhighlightedEvent.ts' />
-///<reference path='AppSelectedEvent.ts' />

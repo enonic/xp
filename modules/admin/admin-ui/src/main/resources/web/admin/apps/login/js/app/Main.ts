@@ -2,7 +2,7 @@ module app {
 
     export class Main {
 
-        private homeMainContainer: app.home.LoginHomeMainContainer;
+        private homeMainContainer: app.home.HomeMainContainer;
         private loginForm: app.login.LoginForm;
 
         start() {
@@ -11,7 +11,7 @@ module app {
             this.homeMainContainer.showLogin();
         }
 
-        private createHomeMainContainer(): app.home.LoginHomeMainContainer {
+        private createHomeMainContainer(): app.home.HomeMainContainer {
             var linksContainer = new app.home.LinksContainer().
                 addLink('Community', 'https://enonic.com/community').
                 addLink('Documentation', 'https://enonic.com/docs/latest/').
