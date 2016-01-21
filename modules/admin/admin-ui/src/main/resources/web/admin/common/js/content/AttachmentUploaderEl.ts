@@ -55,8 +55,8 @@ module api.content {
 
         getExistingItem(value: string) : api.dom.Element {
             var element = null;
-            this.attachmentItems.forEach((item) => {
-                if(item.getValue() == value) {
+            this.getResultContainer().getChildren().forEach((item) => {
+                if((<AttachmentItem>item).getValue() == value) {
                     element = item;
                 }
             });
