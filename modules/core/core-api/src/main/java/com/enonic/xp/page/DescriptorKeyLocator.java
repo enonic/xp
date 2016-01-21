@@ -1,8 +1,8 @@
-package com.enonic.xp.admin.impl.tool;
+package com.enonic.xp.page;
 
-import java.util.List;
+import java.util.Set;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -10,7 +10,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 
-public final class DescriptorKeyLocator2
+public final class DescriptorKeyLocator
 {
     private final ResourceService service;
 
@@ -18,16 +18,16 @@ public final class DescriptorKeyLocator2
 
     private final String pattern;
 
-    public DescriptorKeyLocator2( final ResourceService service, final String path, final boolean optional )
+    public DescriptorKeyLocator( final ResourceService service, final String path, final boolean optional )
     {
         this.service = service;
         this.path = path;
         this.pattern = this.path + "/.+\\.(xml" + ( optional ? "|js" : "" ) + ")";
     }
 
-    public List<DescriptorKey> findKeys( final ApplicationKey key )
+    public Set<DescriptorKey> findKeys( final ApplicationKey key )
     {
-        final List<DescriptorKey> keys = Lists.newArrayList();
+        final Set<DescriptorKey> keys = Sets.newLinkedHashSet();
         for ( final ResourceKey resource : this.service.findFiles( key, this.pattern ) )
         {
             final DescriptorKey descriptorKey = newDescriptorKey( key, resource );

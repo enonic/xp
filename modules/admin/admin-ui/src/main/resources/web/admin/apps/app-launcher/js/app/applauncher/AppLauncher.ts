@@ -89,8 +89,6 @@ module app.launcher {
             if (!this.isAllowedApp(application)) {
 
                 new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
-                    var allowedApps = app.launcher.Applications.getAppsByIds(loginResult.getApplications());
-                    this.setAllowedApps(allowedApps);
 
                     if (loginResult.isAuthenticated() && this.isAllowedApp(application)) {
                         return this.doLoadApplication(application);
