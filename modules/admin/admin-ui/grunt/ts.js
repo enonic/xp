@@ -9,7 +9,6 @@ module.exports = {
 };
 
 add('common', 'common', true);
-add('app_launcher', 'apps/app-launcher', false);
 add('content_manager', 'apps/content-studio', false);
 add('applications', 'apps/applications', false);
 add('user_manager', 'apps/user-manager', false);
