@@ -17,7 +17,7 @@ module api.ui.geo {
 
             this.layoutItems();
 
-            this.geoLocationInput.onKeyUp((event: KeyboardEvent) => {
+            this.geoLocationInput.onValueChanged((event: api.ui.ValueChangedEvent) => {
 
                 var typedGeoPoint = this.geoLocationInput.getValue();
                 this.validUserInput = api.util.StringHelper.isEmpty(typedGeoPoint) ||
