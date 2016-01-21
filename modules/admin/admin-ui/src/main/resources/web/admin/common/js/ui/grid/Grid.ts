@@ -223,12 +223,14 @@ module api.ui.grid {
             this.slickGrid.setSelectedRows(rows);
         }
 
-        selectRow(row: number) {
+        selectRow(row: number): number {
             // Prevent unnecessary render on the same row
             var rows = this.getSelectedRows();
             if (rows.length > 1 || (rows.length < 2 && rows.indexOf(row) < 0)) {
                 this.slickGrid.setSelectedRows([row]);
+                return row;
             }
+            return -1;
         }
 
         addSelectedRow(row: number) {
