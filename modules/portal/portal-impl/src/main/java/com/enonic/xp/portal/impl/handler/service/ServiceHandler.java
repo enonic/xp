@@ -14,6 +14,7 @@ import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.handler.PortalHandler;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.service.ServiceDescriptorService;
 
 @Component(immediate = true, service = PortalHandler.class)
 public final class ServiceHandler
@@ -24,6 +25,8 @@ public final class ServiceHandler
     private ContentService contentService;
 
     private ResourceService resourceService;
+
+    private ServiceDescriptorService serviceDescriptorService;
 
     private ControllerScriptFactory controllerScriptFactory;
 
@@ -49,6 +52,7 @@ public final class ServiceHandler
         worker.name = matcher.group( 2 );
         worker.setContentService( this.contentService );
         worker.resourceService = this.resourceService;
+        worker.serviceDescriptorService = this.serviceDescriptorService;
         worker.controllerScriptFactory = this.controllerScriptFactory;
         return worker;
     }
@@ -63,6 +67,12 @@ public final class ServiceHandler
     public void setResourceService( final ResourceService resourceService )
     {
         this.resourceService = resourceService;
+    }
+
+    @Reference
+    public void setServiceDescriptorService( final ServiceDescriptorService serviceDescriptorService )
+    {
+        this.serviceDescriptorService = serviceDescriptorService;
     }
 
     @Reference

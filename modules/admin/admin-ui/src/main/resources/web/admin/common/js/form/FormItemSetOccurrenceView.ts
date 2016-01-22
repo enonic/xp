@@ -159,6 +159,18 @@ module api.form {
             this.removeButton.setVisible(this.formItemSetOccurrence.isRemoveButtonRequired());
         }
 
+        onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                formItemView.onEditContentRequest(listener);
+            });
+        }
+
+        unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                formItemView.unEditContentRequest(listener);
+            });
+        }
+
         showContainer(show: boolean) {
             if (show) {
                 this.formItemSetOccurrencesContainer.show();

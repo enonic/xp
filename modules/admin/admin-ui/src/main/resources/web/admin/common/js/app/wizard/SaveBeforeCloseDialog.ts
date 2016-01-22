@@ -33,9 +33,6 @@ module api.app.wizard {
             this.addAction(this.noAction);
 
             this.getCancelAction().setMnemonic("c");
-            this.getCancelAction().onExecuted(() => {
-                this.close();
-            });
         }
 
         show() {

@@ -135,6 +135,9 @@ module api.form {
                     formItemSetOccurrenceView.onValidityChanged((event: RecordingValidityChangedEvent) => {
                         this.handleFormItemSetOccurrenceViewValidityChanged(event);
                     });
+                    formItemSetOccurrenceView.onEditContentRequest((summary: api.content.ContentSummary) => {
+                        this.notifyEditContentRequested(summary);
+                    })
                 });
                 this.bottomButtonRow = new api.dom.DivEl("bottom-button-row");
                 this.appendChild(this.bottomButtonRow);

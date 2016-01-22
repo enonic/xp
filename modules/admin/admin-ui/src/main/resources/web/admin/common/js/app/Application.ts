@@ -13,7 +13,6 @@ module api.app {
         private iconUrl: string;
         private fullSizeIcon: boolean;
         private openTabs: number;
-        private appFrame: api.dom.IFrameEl;
         private status: ApplicationShowStatus;
         private loaded: boolean;
         private path: api.rest.Path;
@@ -40,7 +39,7 @@ module api.app {
         }
 
         isLoaded(): boolean {
-            return this.loaded && !!this.appFrame && !!this.appFrame.getParentElement();
+            return this.loaded;
         }
 
         getId(): string {
@@ -67,18 +66,8 @@ module api.app {
             return this.openTabs;
         }
 
-        getAppFrame(): api.dom.IFrameEl {
-            if (!this.appFrame) {
-                this.appFrame = new api.dom.IFrameEl();
-                this.appFrame.getEl().setHeight('100%').setWidth('100%').getHTMLElement().style.border = '0';
-                this.appFrame.setSrc(this.getAppUrl());
-                this.appFrame.getEl().setAttribute('data-wem-app-id', this.id);
-            }
-            return this.appFrame;
-        }
-
         getWindow() {
-            return this.window == null ? this.getAppFrame().getHTMLElement()["contentWindow"] : this.window;
+            return this.window;
         }
 
         setWindow(window) {
@@ -90,16 +79,10 @@ module api.app {
         }
 
         hide() {
-            if (this.appFrame) {
-                this.appFrame.hide();
-            }
             this.status = ApplicationShowStatus.NOT_DISPLAYED;
         }
 
         show() {
-            if (this.appFrame) {
-                this.appFrame.show();
-            }
             this.status = ApplicationShowStatus.DISPLAYED;
         }
 

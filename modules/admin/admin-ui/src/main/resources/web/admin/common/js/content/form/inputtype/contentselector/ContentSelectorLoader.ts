@@ -1,6 +1,6 @@
 module api.content.form.inputtype.contentselector {
 
-    export class ContentSelectorLoader extends api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary> {
+    export class ContentSelectorLoader extends ContentSummaryPreLoader {
 
         private contentSelectorQueryRequest: ContentSelectorQueryRequest;
 
@@ -28,25 +28,6 @@ module api.content.form.inputtype.contentselector {
                 this.contentSelectorQueryRequest.resetParams();
             }
             return this.contentSelectorQueryRequest.sendAndParse();
-        }
-
-        preLoad(ids: string): wemQ.Promise<ContentSummary[]> {
-            this.notifyLoadingData(false);
-
-            let contentIds = ids.split(";").map((id) => {
-                return new api.content.ContentId(id);
-            });
-            return new GetContentSummaryByIds(contentIds).
-                get().
-                then((results: ContentSummary[]) => {
-                    if (this.getComparator()) {
-                        this.setResults(results.sort(this.getComparator().compare));
-                    } else {
-                        this.setResults(results);
-                    }
-                    this.notifyLoadedData(results);
-                    return this.getResults();
-                });
         }
 
         postLoad() {

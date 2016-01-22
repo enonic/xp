@@ -73,7 +73,7 @@ module api.content.site.inputtype.siteconfigurator {
                 this.toggleClass("invalid", !event.isValid())
             }
 
-            this.formView = this.createFormView(this.formContext, this.siteConfig);
+            this.formView = new FormView(this.formContext, this.application.getForm(), this.siteConfig.getConfig());
         }
 
         private createEditButton(): api.dom.AEl {
