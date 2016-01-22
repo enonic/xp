@@ -11,7 +11,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.core.impl.content.page.DescriptorKeyLocator;
+import com.enonic.xp.page.DescriptorKeyLocator;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;

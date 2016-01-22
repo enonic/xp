@@ -125,10 +125,6 @@ module api.liveedit {
 
         public static debug: boolean = false;
 
-        private static debouncedClickHandler: (itemView: ItemView,
-                                               event: MouseEvent) => void = api.util.AppHelper.debounce(ItemView.handleItemViewClickEvent,
-            300, false);
-
         constructor(builder: ItemViewBuilder) {
             api.util.assertNotNull(builder.type, "type cannot be null");
 
@@ -494,28 +490,6 @@ module api.liveedit {
             return this;
         }
 
-        private static handleItemViewClickEvent(itemView: ItemView, event: MouseEvent) {
-            if (!itemView.isSelected() || event.which == 3) {
-                // we prevented mouse events to bubble up so if parent view is selected
-                // it won't receive mouse event and won't be deselected
-                // therefore we deselect it manually
-                var selectedView = itemView.getPageView().getSelectedView();
-                if (selectedView) {
-                    selectedView.deselect();
-                }
-                // Allow selecting only component types if something is selected
-                // The rest will only deselect current selection
-                // Also allow selecting the same component again (i.e. to show context menu)
-                if (!selectedView || selectedView == itemView || itemView.getType().isComponentType()) {
-                    var clickPosition = !itemView.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
-                    var menuPosition = event.which == 3 ? null : ItemViewContextMenuPosition.NONE;
-                    itemView.select(clickPosition, menuPosition, false, true);
-                }
-            } else {
-                itemView.deselect();
-            }
-        }
-
         handleClick(event: MouseEvent) {
             event.stopPropagation();
 
@@ -523,8 +497,21 @@ module api.liveedit {
                 event.preventDefault();
             }
 
-            //ItemView.debouncedClickHandler(this, event); // Commented until XP-2638 is done
-            ItemView.handleItemViewClickEvent(this, event);
+            if (!this.isSelected() || event.which == 3) {
+                // we prevented mouse events to bubble up so if parent view is selected
+                // it won't receive mouse event and won't be deselected
+                // therefore we deselect it manually
+                this.deselectParent();
+                this.getPageView().deselectChildViews();
+
+                var clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
+                event.which == 3 ?
+                this.select(clickPosition, null, false, true) :
+                this.select(clickPosition, ItemViewContextMenuPosition.NONE, false, true);
+
+            } else {
+                this.deselect();
+            }
         }
 
         handleShaderClick(event: MouseEvent) {

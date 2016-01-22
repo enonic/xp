@@ -8,8 +8,6 @@ module api.security.auth {
 
         private principals: api.security.PrincipalKey[];
 
-        private applications: string[];
-
         private message: string;
 
         constructor(json: LoginResultJson) {
@@ -17,7 +15,6 @@ module api.security.auth {
             if (json.user) {
                 this.user = api.security.User.fromJson(json.user);
             }
-            this.applications = json.applications || [];
             this.principals = json.principals ?
                               json.principals.map((principal) => api.security.PrincipalKey.fromString(principal)) : [];
             this.message = json.message;
@@ -29,10 +26,6 @@ module api.security.auth {
 
         getUser(): api.security.User {
             return this.user;
-        }
-
-        getApplications(): string[] {
-            return this.applications;
         }
 
         getPrincipals(): api.security.PrincipalKey[] {

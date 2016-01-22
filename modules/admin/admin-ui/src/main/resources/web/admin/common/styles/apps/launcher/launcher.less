@@ -6,6 +6,7 @@
 @header-height: 44px;
 @footer-height: 60px;
 @panel-indent: 30px;
+@launcher-panel-z-index: 2500;
 
 @enonic-logo-img-width: 103px;
 @enonic-logo-img-height: 137px;
@@ -281,7 +282,7 @@ html, body {
   top: 15px;
   background-color: transparent;
   cursor: pointer;
-  z-index: 10000;
+  z-index: calc(@launcher-panel-z-index + 1);
 
   .line {
     display: inline-block;
@@ -369,13 +370,33 @@ html, body {
   }
 }
 
+.app-row-selected {
+  background-color: rgba(255, 255, 255, 0.3);
+  .application .app-info .app-description {
+    color: @admin-white;
+  }
+}
+
 .launcher-panel {
+
+  &.keyboard-navigation {
+    .launcher-app-container .app-row.selected {
+      .app-row-selected;
+    }
+  }
+
+  &:not(.keyboard-navigation) {
+    .launcher-app-container .app-row:hover {
+      .app-row-selected;
+    }
+  }
+
   position: fixed;
   overflow: hidden;
   top: 0;
   right: 0;
   height: 100%;
-  z-index: 3000;
+  z-index: @launcher-panel-z-index;
   width: @panel-outer-width;
 
   & > * {
@@ -400,20 +421,6 @@ html, body {
   &.visible, &.slideout {
     -webkit-transition: right 300ms ease-out;
     transition: right 300ms ease-out;
-  }
-
-  .launcher-panel-close {
-    .icon-close2;
-
-    position: absolute;
-    top: 8px;
-    right: 10px;
-    z-index: 1;
-    background-color: transparent;
-    border: none;
-    color: @admin-white;
-    cursor: pointer;
-    font-size: 25px;
   }
 
   .launcher-title {
@@ -460,14 +467,6 @@ html, body {
       &.active{
         border-left: 4px solid @admin-red;
         padding-left: 26px;
-      }
-
-
-      &:hover, &.selected {
-        background-color: rgba(255, 255, 255, 0.3);
-        .application .app-info .app-description {
-          color: @admin-white;
-        }
       }
 
       .application {
@@ -596,13 +595,6 @@ html, body {
     color: @admin-white;
     text-decoration: none;
   }
-  /** Center */
-
-  .app-selector-container,
-  .app-info {
-    position: absolute;
-    top: 40%;
-  }
 
   .center-panel {
     width: 100%;
@@ -619,164 +611,6 @@ html, body {
       height: 100%;
       top: 0;
     }
-
-    /** App selector */
-
-    .app-selector-container {
-      width: 100%;
-    }
-
-    .app-selector {
-      color: @admin-white;
-
-      opacity: 0;
-      .transition(all 300ms ease-out);
-      .scale(.25);
-
-      &.fade-in-and-scale-up {
-        opacity: 1 !important;
-
-        .scale(1) !important;
-      }
-
-      .search-input-container {
-        margin-bottom: 10px;
-        width: 470px;
-
-        input {
-          vertical-align: top;
-          height: 26px;
-          padding: 4px 9px;
-          border: 1px solid;
-          border-color: #aaaaaa;
-          width: 100%;
-        }
-      }
-
-    }
-
-    .app-info {
-      .app-info-name {
-        color: #ebebeb;
-      }
-
-      .app-info-description {
-        color: #ebebeb;
-      }
-    }
-
-    .app-tiles-placeholder {
-      width: (125*3)-10px;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-align-items: center;
-      align-items: center;
-      -webkit-flex-flow: row wrap;
-      flex-flow: row wrap;
-      -webkit-align-content: center;
-      align-content: center;
-      margin: 0 auto;
-      @media only screen and (max-width: @mobile-threshold) {
-        width: (90*3)+20px;
-      }
-      @media only screen and (max-width: @tablet-threshold) {
-        width: (110*3)-10px;
-      }
-      .notSelectable();
-
-      .app-tile {
-        cursor: pointer;
-        position: relative;
-        float: left;
-        width: 115px;
-        height: 100px;
-        margin: 0 10px 10px 0;
-        padding: 15px 0 0;
-        border-bottom: 4px solid transparent;
-        &:nth-child(3n+3) {
-          margin: 0 0 10px 0;
-        }
-        @media only screen and (max-width: @tablet-threshold) {
-          width: 100px;
-          height: 85px;
-        }
-
-        a {
-          > .icon-container {
-            position: absolute;
-            width: 100%;
-            text-align: center;
-            & > img {
-              width: 56px;
-              height: 56px;
-              @media only screen and (max-width: @tablet-threshold) {
-                width: 48px;
-                height: 48px;
-              }
-            }
-
-            & > i {
-              font-size: 56px;
-              color: white;
-              @media only screen and (max-width: @tablet-threshold) {
-                font-size: 48px;
-              }
-            }
-          }
-
-          > .name-container {
-            position: absolute;
-            bottom: 10px;
-            width: 100%;
-            text-align: center;
-          }
-
-          > .tab-count-container {
-            background-color: #DC143C;
-            color: @admin-white;
-            font-size: 13px;
-            padding: 2px 8px;
-            position: absolute;
-            right: 10px;
-            text-align: center;
-            top: 10px;
-            .border-radius(50%);
-          }
-        }
-        &.app-tile-over {
-          border-bottom: 4px solid @admin-red;
-          &.fullsize {
-            > .img-container {
-
-            }
-          }
-        }
-        &.fullsize {
-          a {
-            > .icon-container {
-              margin-top: 0px;
-              & > img {
-                width: 65px;
-                height: 65px;
-                margin: 10px auto;
-                display: block;
-                border-radius: 50%;
-                @media only screen and (max-width: @mobile-threshold) {
-                  width: 40px;
-                  height: 40px;
-                }
-                @media only screen and (max-width: @tablet-threshold) {
-                  width: 55px;
-                  height: 55px;
-                }
-              }
-            }
-          }
-        }
-
-      }
-    }
-
   }
 }
 
@@ -785,9 +619,6 @@ html, body {
     .user-name, .footer {
       display: none;
     }
-  }
-  .launcher-panel-close {
-    right: 0;
   }
 }
 

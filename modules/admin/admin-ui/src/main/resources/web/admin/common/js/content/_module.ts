@@ -7,6 +7,7 @@
 ///<reference path='ContentSummary.ts' />
 ///<reference path='ContentSummaryViewer.ts' />
 ///<reference path='ContentSummaryRequest.ts' />
+///<reference path='ContentSummaryPreLoader.ts' />
 ///<reference path='ContentSummaryLoader.ts' />
 ///<reference path='ContentIconUrlResolver.ts' />
 ///<reference path='ContentImageUrlResolver.ts' />

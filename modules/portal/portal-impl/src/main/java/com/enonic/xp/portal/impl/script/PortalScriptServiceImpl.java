@@ -28,7 +28,6 @@ public final class PortalScriptServiceImpl
     public void initialize()
     {
         final ScriptSettings settings = ScriptSettings.create().
-            basePath( "/site" ).
             binding( Context.class, ContextAccessor::current ).
             binding( PortalRequest.class, PortalRequestAccessor::get ).
             build();

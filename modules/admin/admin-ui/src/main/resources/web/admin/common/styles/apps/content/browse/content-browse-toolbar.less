@@ -18,3 +18,78 @@ button.icon-toolbar-settings {
   }
 
 }
+
+.browse-toolbar {
+  .details-panel-toggle-button, .non-mobile-details-panel-toggle-button {
+    // toggle button for medium screen sizes
+    z-index: 2;
+    float: right;
+    line-height: 24px;
+
+    overflow: hidden;
+    display: block;
+    background-color: transparent;
+    border: 1px transparent;
+
+    @media screen and (max-width: 540px) {
+      display: none !important;
+    }
+
+    &:focus {
+      box-shadow: none;
+      border: 0px transparent;
+    }
+
+    * {
+      vertical-align: top;
+    }
+
+    &:before {
+      font-size: 16px;
+    }
+    &.expanded {
+      top: 2px;
+      right: 0px;
+      &:before {
+        font-size: 21px;
+      }
+    }
+
+    .icon-list();
+
+    &.expanded {
+
+      @keyframes slide {
+        0% {
+          z-index: 2;
+          width: 0px;
+        }
+        50% {
+          z-index: 2;
+        }
+        100% {
+          z-index: 3;
+          width: auto;
+        }
+      }
+
+      animation-name: slide;
+      animation-duration: 0.5s;
+      animation-timing-function: linear;
+      animation-delay: 0s;
+
+      z-index: 3;
+      padding-top: 13px;
+      .icon-close2();
+
+      &.non-mobile-details-panel-toggle-button {
+        padding-top: 7px;
+        position: fixed;
+        top: 50px;
+        padding-right: 5px;
+        height: 40px;
+      }
+    }
+
+  }
+}

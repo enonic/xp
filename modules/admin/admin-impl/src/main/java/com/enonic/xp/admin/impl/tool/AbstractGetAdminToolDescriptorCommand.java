@@ -1,10 +1,11 @@
 package com.enonic.xp.admin.impl.tool;
 
-import java.util.List;
+import java.util.Set;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.DescriptorKeyLocator;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
@@ -22,9 +23,9 @@ abstract class AbstractGetAdminToolDescriptorCommand<T extends AbstractGetAdminT
         return (T) this;
     }
 
-    protected List<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
+    protected Set<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
     {
-        return new DescriptorKeyLocator2( this.resourceService, PATH, false ).findKeys( key );
+        return new DescriptorKeyLocator( this.resourceService, PATH, false ).findKeys( key );
     }
 
     protected ResourceProcessor<DescriptorKey, AdminToolDescriptor> createProcessor( final DescriptorKey key )

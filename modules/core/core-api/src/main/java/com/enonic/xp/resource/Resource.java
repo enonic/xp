@@ -31,7 +31,4 @@ public interface Resource
     List<String> readLines();
 
     ByteSource getBytes();
-
-    // TODO: Implement getBytes() -> ByteSource
-    // TODO: Remove openReader
 }

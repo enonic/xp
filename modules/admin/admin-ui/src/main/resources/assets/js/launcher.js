@@ -3,7 +3,7 @@
     var launcherPanel, bodyMask, launcherButton;
     var isHomeApp = (window.CONFIG && window.CONFIG.autoOpenLauncher);
 
-    function appendLauncherToolbar() {
+    function appendLauncherButton() {
         launcherButton = document.createElement("button");
         launcherButton.setAttribute("class", "launcher-button");
 
@@ -110,6 +110,7 @@
 
     function closeLauncherPanel(skipTransition) {
         unlistenToKeyboardEvents();
+        disableKeyboardNavigation();
         launcherPanel.classList.remove("visible");
         launcherPanel.classList.add((skipTransition == true) ? "hidden" : "slideout");
         hideBodyMask();
@@ -131,6 +132,16 @@
 
     function unlistenToKeyboardEvents() {
         window.removeEventListener("keydown", onKeyPressed, true);
+    }
+
+    function listenToMouseMove() {
+        window.addEventListener("mousemove", disableKeyboardNavigation, true);
+    }
+
+    function disableKeyboardNavigation() {
+        launcherPanel.classList.remove("keyboard-navigation");
+        unselectCurrentApp();
+        window.removeEventListener("mousemove", disableKeyboardNavigation, true);
     }
 
     function getSelectedApp() {
@@ -212,17 +223,25 @@
 
     }
 
+    function initKeyboardNavigation() {
+        if (!launcherPanel.classList.contains("keyboard-navigation")) {
+            listenToMouseMove();
+            launcherButton.blur();
+            launcherPanel.classList.add("keyboard-navigation");
+        }
+    }
+
     function onKeyPressed(e) {
         e.stopPropagation();
         switch(e.keyCode) {
             case 38:
                 // up key pressed
-                launcherButton.blur();
+                initKeyboardNavigation();
                 selectPreviousApp();
                 break;
             case 40:
                 // down key pressed
-                launcherButton.blur();
+                initKeyboardNavigation();
                 selectNextApp();
                 break;
             case 13:
@@ -241,7 +260,7 @@
 
     function init() {
         initBodyMask();
-        appendLauncherToolbar();
+        appendLauncherButton();
         appendLauncherPanel();
     }
 

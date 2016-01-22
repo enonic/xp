@@ -116,11 +116,15 @@ module api.app.browse {
         }
 
         protected initFilterAndContentGridAndBrowseSplitPanel() {
-            this.appendChild(this.contentGridAndBrowseSplitPanelAndBrowseToolbarPanel);
+            if (this.filterPanel) {
+                this.appendChild(this.filterAndContentGridAndBrowseSplitPanel);
+            } else {
+                this.appendChild(this.contentGridAndBrowseSplitPanelAndBrowseToolbarPanel);
+            }
         }
 
         getFilterAndContentGridAndBrowseSplitPanel(): api.ui.panel.Panel {
-            return this.contentGridAndBrowseSplitPanelAndBrowseToolbarPanel;
+            return this.filterAndContentGridAndBrowseSplitPanel;
         }
 
         getTreeGrid(): api.ui.treegrid.TreeGrid<Object> {
