@@ -233,10 +233,9 @@ module api.liveedit {
         }
 
         handleClick(event: MouseEvent) {
-            event.stopPropagation();
-
             var pageView = this.getPageView();
             if (pageView.isTextEditMode()) {
+                event.stopPropagation();
                 if (!pageView.hasTargetWithinTextComponent(this.mouseDownLastTarget)) {
                     pageView.setTextEditMode(false);
                 }
