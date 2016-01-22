@@ -498,17 +498,18 @@ module api.liveedit {
             }
 
             if (!this.isSelected() || event.which == 3) {
-                // we prevented mouse events to bubble up so if parent view is selected
-                // it won't receive mouse event and won't be deselected
-                // therefore we deselect it manually
-                this.deselectParent();
-                this.getPageView().deselectChildViews();
-
-                var clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
-                event.which == 3 ?
-                this.select(clickPosition, null, false, true) :
-                this.select(clickPosition, ItemViewContextMenuPosition.NONE, false, true);
-
+                var selectedView = this.getPageView().getSelectedView();
+                if (selectedView) {
+                    selectedView.deselect();
+                }
+                // Allow selecting only component types if something is selected
+                // The rest will only deselect current selection
+                // Also allow selecting the same component again (i.e. to show context menu)
+                if (!selectedView || selectedView == this || this.getType().isComponentType()) {
+                    var clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
+                    var menuPosition = event.which == 3 ? null : ItemViewContextMenuPosition.NONE;
+                    this.select(clickPosition, menuPosition, false, true);
+                }
             } else {
                 this.deselect();
             }
