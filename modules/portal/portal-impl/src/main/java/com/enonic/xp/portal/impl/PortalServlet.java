@@ -27,6 +27,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.PortalHandler;
 import com.enonic.xp.portal.impl.exception.ExceptionMapper;
@@ -93,6 +94,8 @@ public final class PortalServlet
         setParameters( req, result );
         setHeaders( req, result );
         setCookies( req, result );
+
+        PortalRequestAccessor.set( req, result );
 
         return result;
     }
