@@ -29,7 +29,7 @@ public final class GetAdminToolDescriptorsCommand
 
     public AdminToolDescriptors execute()
     {
-        final List<AdminToolDescriptor> applicationDescriptors = applicationService.getAllApplications().
+        final List<AdminToolDescriptor> applicationDescriptors = applicationService.getInstalledApplications().
             stream().
             flatMap( application -> findDescriptorKeys( application.getKey() ).stream() ).
             map( this::createProcessor ).
