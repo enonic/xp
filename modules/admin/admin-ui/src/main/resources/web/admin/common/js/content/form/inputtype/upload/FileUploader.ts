@@ -12,11 +12,6 @@ module api.content.form.inputtype.upload {
     import FileUploaderEl = api.ui.uploader.FileUploaderEl;
 
 
-    export interface FileUploaderConfigAllowType {
-        name: string;
-        extensions: string;
-    }
-
     export class FileUploader extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
         protected config: api.content.form.inputtype.ContentInputTypeViewContext;
@@ -37,7 +32,7 @@ module api.content.form.inputtype.upload {
         }
 
         newInitialValue(): Value {
-            return ValueTypes.STRING.newNullValue();
+            return null;
         }
 
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
