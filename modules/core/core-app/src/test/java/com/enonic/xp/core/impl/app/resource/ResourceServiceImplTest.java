@@ -44,7 +44,7 @@ public class ResourceServiceImplTest
         app.setStarted( true );
         app.setUrlResolver( ClassLoaderApplicationUrlResolver.create( this.appDir.toURI().toURL() ) );
 
-        Mockito.when( applicationService.getApplication( this.appKey ) ).thenReturn( app );
+        Mockito.when( applicationService.getInstalledApplication( this.appKey ) ).thenReturn( app );
 
         this.resourceService = new ResourceServiceImpl();
         this.resourceService.setApplicationService( applicationService );

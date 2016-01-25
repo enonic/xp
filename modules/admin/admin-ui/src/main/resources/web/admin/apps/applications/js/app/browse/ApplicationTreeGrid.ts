@@ -11,6 +11,8 @@ module app.browse {
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
     import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
 
+    import UploadItem = api.ui.uploader.UploadItem;
+
     export class ApplicationTreeGrid extends TreeGrid<Application> {
 
         constructor() {
@@ -40,6 +42,7 @@ module app.browse {
                             setCssClass("state").
                             setMinWidth(80).
                             setMaxWidth(100).
+                            setFormatter(this.stateFormatter).
                             build(),
 
                         new GridColumnBuilder<TreeNode<Application>>().
@@ -70,6 +73,21 @@ module app.browse {
                 node.setViewer("name", viewer);
             }
             return viewer.toString();
+        }
+
+        private stateFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<Application>) {
+            var data = node.getData(),
+                status,
+                statusEl = new api.dom.DivEl();
+
+            if (data instanceof Application) {   // default node
+                statusEl.getEl().setText(value);
+            } else if (data instanceof ApplicationUploadMock) {   // uploading node
+                status = new api.ui.ProgressBar((<any>data).getUploadItem().getProgress())
+                statusEl.appendChild(status);
+            }
+
+            return statusEl.toString();
         }
 
         getDataId(data: Application): string {
@@ -132,5 +150,65 @@ module app.browse {
             });
         }
 
+        appendUploadNode(item: api.ui.uploader.UploadItem<Application>) {
+
+            var appMock: ApplicationUploadMock = new ApplicationUploadMock(item);
+
+            this.appendNode(<any>appMock, false).then(() => {
+
+            }).done();
+
+            item.onProgress((progress: number) => {
+                this.invalidate();
+            });
+            item.onUploaded((model: Application) => {
+                var nodeToRemove = this.getRoot().getCurrentRoot().findNode(item.getId());
+                if (nodeToRemove) {
+                    this.deleteNode(nodeToRemove.getData());
+                    this.invalidate();
+                    this.triggerSelectionChangedListeners();
+                }
+
+                api.notify.showFeedback("Application " + item.getName() + "\" installed successfully");
+            });
+            item.onFailed(() => {
+                this.deleteNode(<any>appMock);
+                this.triggerSelectionChangedListeners();
+            })
+        }
+
+    }
+
+    export class ApplicationUploadMock {
+
+        private id: string;
+        private name: string;
+        private uploadItem: UploadItem<Application>;
+
+        constructor(uploadItem: UploadItem<Application>) {
+            this.id = uploadItem.getId();
+            this.name = uploadItem.getName();
+            this.uploadItem = uploadItem;
+        }
+
+        getId(): string {
+            return this.id;
+        }
+
+        getDisplayName(): string {
+            return this.name;
+        }
+
+        getName(): string {
+            return this.name;
+        }
+
+        getUploadItem(): UploadItem<Application> {
+            return this.uploadItem;
+        }
+
+        getApplicationKey(): string {
+            return this.name;
+        }
     }
 }

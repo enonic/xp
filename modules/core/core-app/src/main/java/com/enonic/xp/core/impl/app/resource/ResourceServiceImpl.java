@@ -91,7 +91,7 @@ public final class ResourceServiceImpl
     {
         try
         {
-            final Application application = this.applicationService.getApplication( key );
+            final Application application = this.applicationService.getInstalledApplication( key );
             return ( application != null ) && application.isStarted() ? application : null;
         }
         catch ( final ApplicationNotFoundException e )

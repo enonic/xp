@@ -150,7 +150,7 @@ public abstract class ScriptTestSupport
         final Application application = createApplication();
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getApplication( APP_KEY ) ).thenReturn( application );
+        Mockito.when( applicationService.getInstalledApplication( APP_KEY ) ).thenReturn( application );
         return applicationService;
     }
 

@@ -87,6 +87,16 @@ module app.browse {
                 }
             });
 
+            api.application.ApplicationUploadStartedEvent.on((event) => {
+                this.handleNewAppUpload(event);
+            });
+
+        }
+
+        private handleNewAppUpload(event: api.application.ApplicationUploadStartedEvent) {
+            event.getUploadItems().forEach((item: api.ui.uploader.UploadItem<Application>) => {
+                this.applicationTreeGrid.appendUploadNode(item);
+            });
         }
     }
 

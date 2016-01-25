@@ -32,31 +32,31 @@ public class MockApplication
     @Override
     public Version getVersion()
     {
-        return null;
+        return Version.parseVersion( "1.0.0" );
     }
 
     @Override
     public String getDisplayName()
     {
-        return null;
+        return "defaultDisplayName";
     }
 
     @Override
     public String getSystemVersion()
     {
-        return null;
+        return "1.0.1";
     }
 
     @Override
     public String getMaxSystemVersion()
     {
-        return null;
+        return "1.0.2";
     }
 
     @Override
     public String getMinSystemVersion()
     {
-        return null;
+        return "1.0.0";
     }
 
     @Override

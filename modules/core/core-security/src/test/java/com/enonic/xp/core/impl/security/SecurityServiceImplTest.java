@@ -41,7 +41,7 @@ import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.UpdateGroupParams;
 import com.enonic.xp.security.UpdateRoleParams;
 import com.enonic.xp.security.UpdateUserParams;
@@ -144,7 +144,7 @@ public class SecurityServiceImplTest
 
         runAsAdmin( () -> {
 
-            createRepository( SystemConstants.SYSTEM_REPO );
+            createRepository( SecurityConstants.SECURITY_REPO );
             waitForClusterHealth();
 
             final CreateUserStoreParams createParams = CreateUserStoreParams.create().
@@ -871,8 +871,8 @@ public class SecurityServiceImplTest
 
         return ContextBuilder.create().
             authInfo( authInfo ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-            branch( SystemConstants.BRANCH_SECURITY ).
+            repositoryId( SecurityConstants.SECURITY_REPO.getId() ).
+            branch( SecurityConstants.BRANCH_SECURITY ).
             build();
     }
 

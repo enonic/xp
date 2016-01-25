@@ -43,7 +43,7 @@ public abstract class AbstractPortalUrlServiceImplTest
         this.service.setContentService( this.contentService );
 
         this.applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( this.applicationService.getApplication( applicationKey ) ).thenReturn( application );
+        Mockito.when( this.applicationService.getInstalledApplication( applicationKey ) ).thenReturn( application );
         this.service.setApplicationService( this.applicationService );
     }
 }
