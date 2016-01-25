@@ -230,7 +230,10 @@ abstract class UserStoreNodeTranslator
                 nodeData.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, displayName );
                 if ( authConfig == null )
                 {
-                    nodeData.removeProperty( UserStorePropertyNames.AUTH_CONFIG_KEY );
+                    if ( nodeData.hasProperty( UserStorePropertyNames.AUTH_CONFIG_KEY ) )
+                    {
+                        nodeData.removeProperty( UserStorePropertyNames.AUTH_CONFIG_KEY );
+                    }
                 }
                 else
                 {

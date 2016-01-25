@@ -158,6 +158,7 @@ public class AuthResponseWrapper
             {
                 final PortalRequest portalRequest = new PortalRequest();
                 portalRequest.setMethod( HttpMethod.valueOf( request.getMethod().toUpperCase() ) );
+                portalRequest.setApplicationKey( authDescriptor.getKey() );
 
                 final PortalError portalError = PortalError.create().
                     status( HttpStatus.FORBIDDEN ).

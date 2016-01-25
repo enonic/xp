@@ -11,7 +11,7 @@ module app.wizard {
 
         private authApplicationCombobox: api.ui.security.auth.AuthApplicationComboBox;
         private authApplicationComboboxLoaded = false;
-        private authApplicationKey: string;
+        private authConfig: api.security.UserStoreAuthConfig;
 
         constructor() {
             super();
@@ -26,7 +26,7 @@ module app.wizard {
             this.authApplicationCombobox.getLoader().load();
 
             var authApplicationFormItem = new FormItemBuilder(this.authApplicationCombobox).
-                setLabel('Authentication').
+                setLabel('Application').
                 build();
 
             var fieldSet = new api.ui.form.Fieldset();
@@ -49,21 +49,24 @@ module app.wizard {
         }
 
         layout(userStore: api.security.UserStore) {
-            this.authApplicationKey = userStore.getAuthConfig() ? userStore.getAuthConfig().getApplicationKey().toString() : null;
+            this.authConfig = userStore.getAuthConfig();
             this.selectAuthApplication();
         }
 
         private selectAuthApplication(): void {
             if (this.authApplicationComboboxLoaded) {
-                if (this.authApplicationKey) {
+                if (this.authConfig) {
                     this.authApplicationCombobox.getDisplayValues().
                         filter((authApplication: api.application.Application) => {
-                            return this.authApplicationKey == authApplication.getApplicationKey().toString();
+                            return this.authConfig.getApplicationKey().equals(authApplication.getApplicationKey());
                         }).
                         forEach((selectedOption: api.application.Application) => {
                             this.authApplicationCombobox.select(selectedOption);
                         });
 
+                    var selectedOption = this.authApplicationCombobox.getSelectedOptions()[0];
+                    var selectedOptionView = <api.ui.security.auth.AuthApplicationSelectedOptionView> selectedOption.getOptionView();
+                    selectedOptionView.setAuthConfig(this.authConfig);
                 }
             }
         }
@@ -73,13 +76,9 @@ module app.wizard {
                 return null;
             }
 
-            var applicationKey = this.authApplicationCombobox.getSelectedDisplayValues()[0].
-                getApplicationKey()
-
-            return api.security.UserStoreAuthConfig.create().
-                setApplicationKey(applicationKey).
-                setConfig(new api.data.PropertyTree()).
-                build();
+            var selectedOption = this.authApplicationCombobox.getSelectedOptions()[0];
+            var selectedOptionView = <api.ui.security.auth.AuthApplicationSelectedOptionView> selectedOption.getOptionView();
+            return selectedOptionView.getAuthConfig();
         }
 
         giveFocus(): boolean {

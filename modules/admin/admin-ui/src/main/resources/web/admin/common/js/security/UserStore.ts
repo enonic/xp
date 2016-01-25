@@ -60,7 +60,7 @@ module api.security {
 
             return this.key.equals(other.key) &&
                    this.displayName === other.displayName &&
-                   this.authConfig.equals(other.authConfig) &&
+                   ((!this.authConfig && !other.authConfig) || (this.authConfig && this.authConfig.equals(other.authConfig))) &&
                    this.permissions.equals(other.permissions)
         }
 
