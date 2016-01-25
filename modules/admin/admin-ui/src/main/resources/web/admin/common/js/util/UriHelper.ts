@@ -37,6 +37,16 @@ module api.util {
         }
 
         /**
+         * Creates an URI to an admin tool.
+         *
+         * @param path path to append to base rest URI.
+         * @returns {string} the URI to a rest service.
+         */
+        static getToolUri(path: string): string {
+            return UriHelper.getAdminUri(UriHelper.joinPath('tool', UriHelper.relativePath(path)));
+        }
+
+        /**
          * Creates an URI to a portal path.
          *
          * @param path path to append to base portal URI.

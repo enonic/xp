@@ -34,7 +34,7 @@ module api.app.browse {
 
         private filterAndContentGridAndBrowseSplitPanel: api.ui.panel.SplitPanel;
 
-        private gridAndToolbarContainer: api.ui.panel.Panel;
+        private contentGridAndBrowseSplitPanelAndBrowseToolbarPanel: api.ui.panel.Panel;
 
         private filterPanelRefreshNeeded: boolean = false;
 
@@ -70,16 +70,13 @@ module api.app.browse {
                 }
             });
 
-            this.gridAndToolbarContainer = new api.ui.panel.Panel();
-
-            var gridPanel = new api.ui.panel.Panel();
-            gridPanel.appendChild(this.treeGrid);
-
-            this.gridAndToolbarContainer.appendChild(gridPanel);
-
-            this.contentGridAndBrowseSplitPanel = new api.ui.panel.SplitPanelBuilder(this.gridAndToolbarContainer, this.browseItemPanel)
+            this.contentGridAndBrowseSplitPanel = new api.ui.panel.SplitPanelBuilder(this.treeGrid, this.browseItemPanel)
                 .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD).build();
-            this.contentGridAndBrowseSplitPanel.prependChild(this.browseToolbar);
+
+            this.contentGridAndBrowseSplitPanelAndBrowseToolbarPanel = new api.ui.panel.Panel();
+            this.contentGridAndBrowseSplitPanelAndBrowseToolbarPanel.appendChildren<any>(this.browseToolbar,
+                this.contentGridAndBrowseSplitPanel);
+
             this.contentGridAndBrowseSplitPanel.setFirstPanelSize(38, api.ui.panel.SplitPanelUnit.PERCENT);
 
             this.browseToolbar.addClass("browse-toolbar");
@@ -119,10 +116,14 @@ module api.app.browse {
         }
 
         protected initFilterAndContentGridAndBrowseSplitPanel() {
-            this.appendChild(this.filterAndContentGridAndBrowseSplitPanel);
+            if (this.filterPanel) {
+                this.appendChild(this.filterAndContentGridAndBrowseSplitPanel);
+            } else {
+                this.appendChild(this.contentGridAndBrowseSplitPanelAndBrowseToolbarPanel);
+            }
         }
 
-        getFilterAndContentGridAndBrowseSplitPanel(): api.ui.panel.SplitPanel {
+        getFilterAndContentGridAndBrowseSplitPanel(): api.ui.panel.Panel {
             return this.filterAndContentGridAndBrowseSplitPanel;
         }
 
@@ -198,7 +199,7 @@ module api.app.browse {
 
         private setupFilterPanel() {
             this.filterAndContentGridAndBrowseSplitPanel =
-                new api.ui.panel.SplitPanelBuilder(this.filterPanel, this.contentGridAndBrowseSplitPanel).
+                new api.ui.panel.SplitPanelBuilder(this.filterPanel, this.contentGridAndBrowseSplitPanelAndBrowseToolbarPanel).
                     setFirstPanelSize(200, api.ui.panel.SplitPanelUnit.PIXEL).
                     setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).
                     setAnimationDelay(100).     // filter panel animation time

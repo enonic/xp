@@ -43,9 +43,13 @@ module api.util.loader {
                 if (this.comparator) {
                     this.results = results.sort(this.comparator.compare);
                 }
-                this.notifyLoadedData(results);
+                this.notifyLoadedData(results, postLoad);
                 return this.results;
             });
+        }
+
+        preLoad(searchString: string = ""): wemQ.Promise<OBJECT[]> {
+            return this.load();
         }
 
         isLoading(): boolean {
@@ -91,6 +95,18 @@ module api.util.loader {
             return deferred.promise;
         }
 
+        getResults(): OBJECT[] {
+            return this.results;
+        }
+
+        setResults(results: OBJECT[]) {
+            this.results = results;
+        }
+
+        getComparator(): Comparator<OBJECT> {
+            return this.comparator;
+        }
+
         getSearchString(): string {
             return this.searchString;
         }
@@ -99,16 +115,16 @@ module api.util.loader {
             throw Error("must be implemented");
         }
 
-        notifyLoadedData(results: OBJECT[]) {
+        notifyLoadedData(results: OBJECT[], postLoad?: boolean) {
             this.status = LoaderStatus.LOADED;
-            this.loadedDataListeners.forEach((listener: (event: LoadedDataEvent<OBJECT>)=>void)=> {
-                listener.call(this, new LoadedDataEvent<OBJECT>(results));
+            this.loadedDataListeners.forEach((listener: (event: LoadedDataEvent<OBJECT>) => void) => {
+                listener.call(this, new LoadedDataEvent<OBJECT>(results, postLoad));
             });
         }
 
-        notifyLoadingData(postLoad: boolean = false) {
+        notifyLoadingData(postLoad?: boolean) {
             this.status = LoaderStatus.LOADING;
-            this.loadingDataListeners.forEach((listener: (event: LoadingDataEvent)=>void)=> {
+            this.loadingDataListeners.forEach((listener: (event: LoadingDataEvent) => void) => {
                 listener.call(this, new LoadingDataEvent(postLoad));
             });
         }

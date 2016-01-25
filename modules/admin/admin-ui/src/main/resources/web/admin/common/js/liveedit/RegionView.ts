@@ -72,6 +72,8 @@ module api.liveedit {
 
         private mouseDownLastTarget: HTMLElement;
 
+        private mouseOverListener;
+
         public static debug: boolean;
 
         constructor(builder: RegionViewBuilder) {
@@ -131,6 +133,28 @@ module api.liveedit {
             this.parseComponentViews();
 
             this.onMouseDown(this.memorizeLastMouseDownTarget.bind(this));
+
+            this.mouseOverListener = (e: MouseEvent) => {
+                var isDragging = DragAndDrop.get().isDragging();
+
+                if (isDragging && this.isElementOverRegion((<HTMLElement>e.target))) {
+                    this.highlight();
+                }
+
+            };
+
+            this.onMouseOver(this.mouseOverListener);
+        }
+
+        /*
+            Checking if this region is where mouseover triggered to not highlight region's ancestor regions
+        */
+        private isElementOverRegion(element: HTMLElement): boolean {
+            while(!element.hasAttribute("data-portal-region")) {
+                element = element.parentElement;
+            }
+
+            return element === this.getHTMLElement();
         }
 
         memorizeLastMouseDownTarget(event: MouseEvent) {
@@ -197,8 +221,7 @@ module api.liveedit {
         }
 
         highlight() {
-            var isDragging = DragAndDrop.get().isDragging();
-            if (!this.getPageView().isTextEditMode() && !isDragging) {
+            if (!this.getPageView().isTextEditMode()) {
                 super.highlight();
             }
         }
@@ -210,10 +233,9 @@ module api.liveedit {
         }
 
         handleClick(event: MouseEvent) {
-            event.stopPropagation();
-
             var pageView = this.getPageView();
             if (pageView.isTextEditMode()) {
+                event.stopPropagation();
                 if (!pageView.hasTargetWithinTextComponent(this.mouseDownLastTarget)) {
                     pageView.setTextEditMode(false);
                 }
@@ -381,6 +403,12 @@ module api.liveedit {
             }
         }
 
+        remove(): RegionView {
+            this.unMouseOver(this.mouseOverListener);
+            super.remove();
+            return this;
+        }
+
         toItemViewArray(): ItemView[] {
 
             var array: ItemView[] = [];
@@ -430,10 +458,8 @@ module api.liveedit {
         }
 
         public createComponent(componentType: ComponentType): Component {
-            var shortName = api.util.StringHelper.capitalize(api.util.StringHelper.removeWhitespaces(componentType.getShortName()));
-            var componentName = new ComponentName(shortName);
 
-            var builder = componentType.newComponentBuilder().setName(componentName);
+            var builder = componentType.newComponentBuilder().setName(componentType.getDefaultName());
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedComponentBuilder)) {
                 var descriptorBuilder = <DescriptorBasedComponentBuilder<DescriptorBasedComponent>> builder;

@@ -2,6 +2,8 @@ module api.content.page.region {
 
     export class ImageComponentType extends ComponentType {
 
+        private static INSTANCE = new ImageComponentType();
+
         constructor() {
             super("image");
         }
@@ -9,8 +11,10 @@ module api.content.page.region {
         newComponentBuilder(): ImageComponentBuilder {
             return new ImageComponentBuilder();
         }
-    }
 
-    new ImageComponentType();
+        public static get(): ImageComponentType {
+            return ImageComponentType.INSTANCE;
+        }
+    }
 
 }

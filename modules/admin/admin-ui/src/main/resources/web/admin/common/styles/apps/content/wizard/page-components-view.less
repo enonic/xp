@@ -39,6 +39,10 @@
 
         .slick-row {
 
+          &:hover, &.odd:hover {
+            background-color: initial;
+          }
+
           .slick-cell {
             .toggle {
               cursor: move;
@@ -181,4 +185,14 @@
     line-height: 30px;
     font-size: 20px;
   }
+}
+
+svg.@{_CLS_PREFIX}highlight-border {
+  z-index: @z-index-shader;
+  pointer-events: none;
+  position: absolute;
+}
+
+svg.@{_CLS_PREFIX}highlight-border rect {
+  stroke-width: 4;
 }

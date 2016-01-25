@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.util.BinaryReferences;
 
 @Beta
 public final class UpdateContentParams
@@ -16,6 +17,10 @@ public final class UpdateContentParams
     private PrincipalKey modifier;
 
     private CreateAttachments createAttachments = null;
+
+    private BinaryReferences removeAttachments = null;
+
+    private boolean clearAttachments = false;
 
     private boolean requireValid;
 
@@ -49,6 +54,18 @@ public final class UpdateContentParams
         return this;
     }
 
+    public UpdateContentParams removeAttachments( final BinaryReferences removeAttachments )
+    {
+        this.removeAttachments = removeAttachments;
+        return this;
+    }
+
+    public UpdateContentParams clearAttachments( final boolean clearAttachments )
+    {
+        this.clearAttachments = clearAttachments;
+        return this;
+    }
+
     public void validate()
     {
         Preconditions.checkNotNull( contentId, "contentId cannot be null" );
@@ -79,5 +96,15 @@ public final class UpdateContentParams
     public boolean isRequireValid()
     {
         return requireValid;
+    }
+
+    public BinaryReferences getRemoveAttachments()
+    {
+        return removeAttachments;
+    }
+
+    public boolean isClearAttachments()
+    {
+        return clearAttachments;
     }
 }

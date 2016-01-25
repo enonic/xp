@@ -146,12 +146,15 @@ module api.liveedit {
                     if (!this.isTextEditMode()) {
                         this.setTextEditMode(true);
                     }
+                    else {
+                        (<api.liveedit.text.TextComponentView>itemView).setEditMode(true);
+                    }
                     itemView.giveFocus();
                 } else {
                     if (this.isTextEditMode()) {
                         this.setTextEditMode(false);
                     }
-                    itemView.select(null, ItemViewContextMenuPosition.NONE, event.isNew());
+                    itemView.select(null, ItemViewContextMenuPosition.NONE, event.isNew(), true);
                 }
             };
             this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => {
@@ -308,8 +311,9 @@ module api.liveedit {
                 else {
                     this.selectLocked({x: event.pageX, y: event.pageY});
                 }
-            }
-            else if (this.isSelected()) {
+            } else if (!this.isSelected() || event.which == 3) {
+                this.handleClick(event);
+            } else {
                 this.deselect();
             }
         }
@@ -596,7 +600,8 @@ module api.liveedit {
                         return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
                     }
                     else {
-                        var layoutView: api.liveedit.layout.LayoutComponentView = <api.liveedit.layout.LayoutComponentView>regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
+                        var layoutView: api.liveedit.layout.LayoutComponentView = <api.liveedit.layout.LayoutComponentView>regionView.getComponentViewByIndex(
+                            firstLevelOfPath.getComponentIndex());
                         return layoutView.getComponentViewByPath(path.removeFirstLevel());
                     }
                 }
@@ -650,15 +655,6 @@ module api.liveedit {
             this.toItemViewArray().forEach((itemView: ItemView) => {
                 this.registerItemView(itemView);
             });
-        }
-
-        deselectChildViews() {
-            for (var itemView in this.viewsById) {
-                var view = this.viewsById[itemView];
-                if (api.ObjectHelper.iFrameSafeInstanceOf(view, ItemView) && view.isSelected()) {
-                    view.deselect();
-                }
-            }
         }
 
         private doParseItemViews(parentElement?: api.dom.Element) {

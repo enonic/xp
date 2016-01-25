@@ -2,6 +2,8 @@ module api.content.page.region {
 
     export class TextComponentType extends ComponentType {
 
+        private static INSTANCE = new TextComponentType();
+
         constructor() {
             super("text");
         }
@@ -9,8 +11,10 @@ module api.content.page.region {
         newComponentBuilder(): TextComponentBuilder {
             return new TextComponentBuilder();
         }
-    }
 
-    new TextComponentType();
+        public static get(): TextComponentType {
+            return TextComponentType.INSTANCE;
+        }
+    }
 
 }

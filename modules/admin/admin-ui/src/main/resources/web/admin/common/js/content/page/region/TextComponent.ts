@@ -78,6 +78,8 @@ module api.content.page.region {
             if (source) {
                 this.text = source.getText();
             }
+
+            this.setType(TextComponentType.get());
         }
 
         public fromJson(json: TextComponentJson, region: Region): TextComponentBuilder {

@@ -67,10 +67,13 @@ public final class ApplicationResource
         final ListApplicationJson json = new ListApplicationJson();
         for ( final Application application : applications )
         {
-            final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( application.getKey() );
-            final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( application.getKey() );
+            if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( application.getKey() ) )//Remove after 7.0.0 refactoring
+            {
+                final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( application.getKey() );
+                final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( application.getKey() );
 
-            json.add( application, siteDescriptor, authDescriptor );
+                json.add( application, siteDescriptor, authDescriptor );
+            }
         }
 
         return json;

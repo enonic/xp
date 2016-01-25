@@ -130,7 +130,6 @@
         position: absolute;
         left: 38px !important;
         top: 0;
-        background: @admin-white;
         &:before {
           transform: rotate(0deg);
         }
@@ -158,6 +157,39 @@
 
       &:hover {
         color: @admin-bg-dark-gray;
+      }
+    }
+  }
+
+  .@{_COMMON_PREFIX}button.mobile-edit-publish-button {
+    display: none;
+  }
+
+  &._0-240, &._240-360, &._360-540 {
+    .@{_COMMON_PREFIX}button.mobile-edit-publish-button {
+      .button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 30%));
+      position: fixed;
+      bottom: 0px;
+      text-align: center;
+      height: 40px;
+      width: 100%;
+      opacity: 0.9;
+      display: none;
+
+      &.visible {
+        display: inherit;
+      }
+
+      &.spinner {
+        font-family: 'xp-admin-font-icon';
+
+        &:after {
+          .animation(rotate360, .5s, .0s, linear);
+          content: "\e007";
+          color: white;
+          display: inline-block;
+          margin-left: 5px;
+        }
       }
     }
   }

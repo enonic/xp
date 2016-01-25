@@ -48,12 +48,7 @@ class UpdatedAttachedBinariesResolver
         binaryAttachments = builder.binaryAttachments;
 
         final Set<BinaryReference> referencesInEditedNode = new ReferenceResolver().resolve( this.editableNode.data );
-
-        final BinaryReferences.Builder referenceBuilder = BinaryReferences.create();
-
-        referencesInEditedNode.forEach( referenceBuilder::add );
-
-        this.currentBinaryReferences = referenceBuilder.build();
+        this.currentBinaryReferences = BinaryReferences.from( referencesInEditedNode );
     }
 
     AttachedBinaries resolve()

@@ -12,7 +12,7 @@ module api.content.page {
         static get(): PageDescriptorCache {
 
             var w = api.dom.WindowDOM.get();
-            var topWindow: any = w.getTopParent().asWindow();
+            var topWindow: any = w.getTopParent() == null ? w.asWindow() : w.getTopParent().asWindow();
 
             if (!topWindow.api.content.page.PageDescriptorCache.instance) {
                 topWindow.api.content.page.PageDescriptorCache.instance = new PageDescriptorCache();

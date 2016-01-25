@@ -95,6 +95,8 @@ final class UpdateContentCommand
         final UpdateContentTranslatorParams updateContentTranslatorParams = UpdateContentTranslatorParams.create().
             editedContent( editedContent ).
             createAttachments( this.params.getCreateAttachments() ).
+            removeAttachments( this.params.getRemoveAttachments() ).
+            clearAttachments( this.params.isClearAttachments() ).
             modifier( getCurrentUser().getKey() ).
             build();
 

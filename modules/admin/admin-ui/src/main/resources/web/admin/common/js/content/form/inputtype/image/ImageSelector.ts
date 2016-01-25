@@ -361,8 +361,6 @@ module api.content.form.inputtype.image {
             /*
              * Drag N' Drop
              */
-
-            var iFrame = api.app.Application.getApplication().getAppFrame();
             var body = api.dom.Body.get();
 
             this.uploader.addClass("minimized");
@@ -373,30 +371,24 @@ module api.content.form.inputtype.image {
             // meaning that to know when we left some element
             // we need to compare it to the one currently dragged over
             this.onDragEnter((event: DragEvent) => {
-                if (iFrame.isVisible()) {
-                    var target = <HTMLElement> event.target;
-                    this.uploader.giveFocus();
-                    this.uploader.toggleClass("minimized", false);
-                    dragOverEl = target;
-                }
+                var target = <HTMLElement> event.target;
+                this.uploader.giveFocus();
+                this.uploader.toggleClass("minimized", false);
+                dragOverEl = target;
             });
 
             body.onDragLeave((event: DragEvent) => {
-                if (iFrame.isVisible()) {
-                    var targetEl = <HTMLElement> event.target;
-                    if (dragOverEl == targetEl) {
-                        this.uploader.giveBlur();
-                        this.uploader.toggleClass("minimized", true);
-                        dragOverEl = null;
-                    }
+                var targetEl = <HTMLElement> event.target;
+                if (dragOverEl == targetEl) {
+                    this.uploader.giveBlur();
+                    this.uploader.toggleClass("minimized", true);
+                    dragOverEl = null;
                 }
             });
 
             body.onDrop((event: DragEvent) => {
-                if (iFrame.isVisible()) {
-                    this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
-                    this.uploader.toggleClass("minimized", true);
-                }
+                this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
+                this.uploader.toggleClass("minimized", true);
             });
 
             return this.uploader;
@@ -414,7 +406,7 @@ module api.content.form.inputtype.image {
         }
 
         protected getNumberOfValids(): number {
-            return this.contentComboBox.countSelected();
+            return this.getPropertyArray().getSize();
         }
 
         giveFocus(): boolean {
@@ -425,18 +417,20 @@ module api.content.form.inputtype.image {
         }
 
         private setContentIdProperty(contentId: api.content.ContentId) {
-            this.ignorePropertyChange = true;
             var reference = api.util.Reference.from(contentId);
 
             var value = new Value(reference, ValueTypes.REFERENCE);
 
-            if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
-                this.getPropertyArray().set(0, value);
+            if (!this.getPropertyArray().containsValue(value)) {
+                this.ignorePropertyChange = true;
+                if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
+                    this.getPropertyArray().set(0, value);
+                }
+                else {
+                    this.getPropertyArray().add(value);
+                }
+                this.ignorePropertyChange = false;
             }
-            else {
-                this.getPropertyArray().add(value);
-            }
-            this.ignorePropertyChange = false;
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

@@ -1,5 +1,8 @@
 package com.enonic.xp.portal.impl.handler.service;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -8,6 +11,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
@@ -19,8 +23,13 @@ import com.enonic.xp.portal.handler.BaseHandlerTest;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.service.ServiceDescriptor;
+import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -31,6 +40,10 @@ public class ServiceHandlerTest
     extends BaseHandlerTest
 {
     protected ContentService contentService;
+
+    protected ResourceService resourceService;
+
+    protected ServiceDescriptorService serviceDescriptorService;
 
     private ControllerScript controllerScript;
 
@@ -47,11 +60,28 @@ public class ServiceHandlerTest
         final PortalResponse portalResponse = PortalResponse.create().build();
         Mockito.when( this.controllerScript.execute( Mockito.anyObject() ) ).thenReturn( portalResponse );
 
+        this.resourceService = Mockito.mock( ResourceService.class );
+        final Resource resourceNotFound = Mockito.mock( Resource.class );
+        Mockito.when( resourceNotFound.exists() ).thenReturn( false );
+        final Resource resource = Mockito.mock( Resource.class );
+        Mockito.when( resource.exists() ).thenReturn( true );
+        Mockito.when( this.resourceService.getResource( ResourceKey.from( "demo:/services/test" ) ) ).thenReturn( resourceNotFound );
+        Mockito.when( this.resourceService.getResource( ResourceKey.from( "demo:/site/services/test" ) ) ).thenReturn( resource );
+
+        this.serviceDescriptorService = Mockito.mock( ServiceDescriptorService.class );
+        final DescriptorKey serviceDescriptorKey = DescriptorKey.from( "demo:test" );
+        final ServiceDescriptor serviceDescriptor = ServiceDescriptor.create().
+            key( serviceDescriptorKey ).
+            build();
+        Mockito.when( this.serviceDescriptorService.getByKey( serviceDescriptorKey ) ).thenReturn( serviceDescriptor );
+
         this.contentService = Mockito.mock( ContentService.class );
 
         this.handler = new ServiceHandler();
         this.handler.setControllerScriptFactory( controllerScriptFactory );
         this.handler.setContentService( this.contentService );
+        this.handler.setResourceService( this.resourceService );
+        this.handler.setServiceDescriptorService( this.serviceDescriptorService );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
@@ -108,6 +138,35 @@ public class ServiceHandlerTest
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
             assertEquals( "Not a valid service url pattern", e.getMessage() );
         }
+    }
+
+    @Test
+    public void testFordiddenService()
+        throws Exception
+    {
+        final DescriptorKey serviceDescriptorKey = DescriptorKey.from( "demo:test" );
+        final Set<PrincipalKey> allowedPrincipals = Collections.singleton( PrincipalKey.from( "role:system.admin" ) );
+        final ServiceDescriptor serviceDescriptor = ServiceDescriptor.create().
+            key( serviceDescriptorKey ).
+            setAllowedPrincipals( allowedPrincipals ).
+            build();
+        Mockito.when( this.serviceDescriptorService.getByKey( serviceDescriptorKey ) ).thenReturn( serviceDescriptor );
+
+        this.request.setEndpointPath( "/_/service/demo/test" );
+
+        boolean forbiddenErrorThrown = false;
+        try
+        {
+            this.handler.handle( this.request );
+        }
+        catch ( PortalException e )
+        {
+            if ( HttpStatus.FORBIDDEN == e.getStatus() )
+            {
+                forbiddenErrorThrown = true;
+            }
+        }
+        assertTrue( forbiddenErrorThrown );
     }
 
     @Test

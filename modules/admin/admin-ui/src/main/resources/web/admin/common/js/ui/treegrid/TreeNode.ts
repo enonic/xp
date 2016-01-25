@@ -130,12 +130,17 @@ module api.ui.treegrid {
             return root;
         }
 
+        private removeDuplicates() {
+            this.children = api.util.ArrayHelper.removeDuplicates(this.children, (child) => child.getDataId());
+        }
+
         getChildren(): TreeNode<DATA>[] {
             return this.children;
         }
 
         setChildren(children: TreeNode<DATA>[]) {
             this.children = children;
+            this.removeDuplicates();
 
             this.children.forEach((child) => {
                 child.setParent(this);
@@ -160,6 +165,7 @@ module api.ui.treegrid {
         insertChild(child: TreeNode<DATA>, index: number = 0) {
             this.children = this.children || [];
             this.children.splice(index, 0, child);
+            this.removeDuplicates();
             this.clearViewers();
             child.setParent(this);
         }
@@ -176,6 +182,7 @@ module api.ui.treegrid {
             } else {
                 this.children.push(child);
             }
+            this.removeDuplicates();
             this.clearViewers();
             child.setParent(this);
         }

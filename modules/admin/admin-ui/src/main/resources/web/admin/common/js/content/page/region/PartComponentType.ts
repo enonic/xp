@@ -2,6 +2,8 @@ module api.content.page.region {
 
     export class PartComponentType extends ComponentType {
 
+        private static INSTANCE = new PartComponentType();
+
         constructor() {
             super("part");
         }
@@ -9,8 +11,10 @@ module api.content.page.region {
         newComponentBuilder(): PartComponentBuilder {
             return new PartComponentBuilder();
         }
-    }
 
-    new PartComponentType();
+        public static get(): PartComponentType {
+            return PartComponentType.INSTANCE;
+        }
+    }
 
 }

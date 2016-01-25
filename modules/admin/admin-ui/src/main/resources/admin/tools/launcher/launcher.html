@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+
+    <!-- Styles -->
+    <link rel="stylesheet" type="text/css" href="{{assetsUri}}/common/styles/_all.css">
+
+</head>
+<body>
+
+    <div class="launcher-main-container" tabindex="100" style="">
+        <div class="launcher-title">
+            <span class="container-title">Tools</span>
+        </div>
+
+        <div class="launcher-app-container">
+            <div class="scrollable-content">
+                <div class="app-row" tabindex="1" id="home">
+                    <a href="{{homeUrl}}" target="_blank">
+                        <div class="application">
+                            <div class="app-icon app-home-icon"></div>
+                            <div class="app-info">
+                                <p class="app-name">Home</p>
+                                <p class="app-description">Start page for Enonic XP</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {{#adminTools}}
+                <div class="app-row" tabindex="1" id="{{appId}}">
+                    <a href="{{uri}}" target="_blank">
+                        <div class="application">
+                            <img src="{{icon}}" class="app-icon">
+                            <div class="app-info">
+                                <p class="app-name">{{displayName}}</p>
+                                <p class="app-description">{{description}}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {{/adminTools}}
+            </div>
+        </div>
+
+        <div class="launcher-user">
+            <div class="user-info">
+                <img src="{{userIconUrl}}">
+                <span>{{user.displayName}}</span>
+            </div>
+            <a href="{{logoutServiceUrl}}" class="user-logout">Log out</a>
+        </div>
+
+    </div>
+</body>
+</html>

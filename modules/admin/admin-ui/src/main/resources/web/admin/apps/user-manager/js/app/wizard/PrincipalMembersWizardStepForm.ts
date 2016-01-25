@@ -16,8 +16,6 @@ module app.wizard {
 
         private principals: PrincipalComboBox;
 
-        private label: LabelEl;
-
         private principal: Principal;
 
         private loader: PrincipalLoader;
@@ -25,19 +23,22 @@ module app.wizard {
         constructor(loadedHandler?: Function) {
             super();
 
-            loadedHandler = loadedHandler || (() => {});
+            loadedHandler = loadedHandler || (() => {
+                });
             this.loader = new PrincipalLoader().setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER]).
-                skipPrincipals([PrincipalKey.ofAnonymous()]);
+            skipPrincipals([PrincipalKey.ofAnonymous()]);
 
             this.principals = new PrincipalComboBox(this.loader);
-            var handler = () => { this.selectMembers(); loadedHandler(); this.principals.unLoaded(handler); };
+            var handler = () => {
+                this.selectMembers();
+                loadedHandler();
+                this.principals.unLoaded(handler);
+            };
             this.principals.onLoaded(handler);
 
             var principalsFormItem = new FormItemBuilder(this.principals).
-                setLabel('Has Role').
-                build();
-
-            this.label = principalsFormItem.getLabel();// new LabelEl("", this.principals, "input-label");
+            setLabel('Members').
+            build();
 
             var fieldSet = new api.ui.form.Fieldset();
             fieldSet.add(principalsFormItem);
@@ -81,10 +82,6 @@ module app.wizard {
 
         getPrincipals(): PrincipalComboBox {
             return this.principals;
-        }
-
-        getLabel(): LabelEl {
-            return this.label;
         }
 
         getPrincipal(): Principal {

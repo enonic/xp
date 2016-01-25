@@ -1,10 +1,10 @@
 var baseDir = 'src/main/resources/web/admin';
 
 add('common', 'common', []);
-add('app_launcher', 'apps/app-launcher', ['common']);
-add('content_manager', 'apps/content-manager', ['common']);
+add('content_manager', 'apps/content-studio', ['common']);
 add('applications', 'apps/applications', ['common']);
 add('user_manager', 'apps/user-manager', ['common']);
+add('login', 'apps/login', ['common']);
 add('live_edit', 'live-edit', ['common']);
 
 function add(name, path, dependencies) {
@@ -18,7 +18,7 @@ function add(name, path, dependencies) {
         src: srcList,
         dest: baseDir + '/' + path + '/js/_all.js',
         options: {
-            tasks: [ "ts:" + name ]
+            tasks: ["ts:" + name]
         }
     };
 

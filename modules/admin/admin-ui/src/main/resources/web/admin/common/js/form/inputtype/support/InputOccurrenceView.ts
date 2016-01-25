@@ -75,6 +75,9 @@ module api.form.inputtype.support {
             this.appendChild(this.removeButtonEl);
             this.removeButtonEl.onClicked((event: MouseEvent) => {
                 this.notifyRemoveButtonClicked();
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
             });
 
             var inputWrapper = new api.dom.DivEl("input-wrapper");

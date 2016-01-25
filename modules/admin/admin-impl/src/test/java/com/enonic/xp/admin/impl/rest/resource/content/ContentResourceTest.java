@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.ws.rs.core.MediaType;
 
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
@@ -73,10 +74,12 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.util.BinaryReferences;
 
 import static com.enonic.xp.security.acl.Permission.READ;
 import static java.util.Arrays.asList;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 
 public class ContentResourceTest
@@ -949,6 +952,37 @@ public class ContentResourceTest
         String jsonString = request().path( "content/effectivePermissions" ).queryParam( "id", "/my_content" ).get().getAsString();
 
         assertJson( "get_effective_permissions_success.json", jsonString );
+    }
+
+    @Test
+    public void deleteAttachment()
+        throws Exception
+    {
+        Content content = Content.create().
+            id( ContentId.from( "123" ) ).
+            parentPath( ContentPath.ROOT ).
+            name( "one" ).
+            displayName( "one" ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final BinaryReferences attachmentNames = BinaryReferences.from( "file1.jpg", "file2.txt" );
+        class UpdateContentParamsMatcher
+            extends ArgumentMatcher<UpdateContentParams>
+        {
+            public boolean matches( Object param )
+            {
+                final UpdateContentParams upc = (UpdateContentParams) param;
+                return upc.getContentId().equals( content.getId() ) && upc.getRemoveAttachments().equals( attachmentNames );
+            }
+        }
+        Mockito.when( contentService.update( argThat( new UpdateContentParamsMatcher() ) ) ).thenReturn( content );
+
+        String jsonString = request().path( "content/deleteAttachment" ).
+            entity( readFromFile( "delete_attachments_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "delete_attachments_success.json", jsonString );
     }
 
     private User createUser( final String displayName )

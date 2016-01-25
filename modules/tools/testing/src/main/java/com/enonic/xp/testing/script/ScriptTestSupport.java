@@ -73,7 +73,6 @@ public abstract class ScriptTestSupport
         addService( ViewFunctionService.class, viewFunctionService );
 
         this.scriptSettings = ScriptSettings.create();
-        this.scriptSettings.basePath( "/site" );
         this.scriptSettings.binding( Context.class, ContextAccessor::current );
         this.scriptSettings.binding( PortalRequest.class, () -> this.portalRequest );
         this.scriptSettings.debug( new ScriptDebugSettings() );

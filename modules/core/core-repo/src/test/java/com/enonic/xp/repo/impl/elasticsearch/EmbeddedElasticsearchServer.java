@@ -16,7 +16,7 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 class EmbeddedElasticsearchServer
 {
 
-    private static final String ROOT_DATA_DIRECTORY = "target/elasticsearch-data";
+    private static final String ROOT_DATA_DIRECTORY = "elasticsearch-data";
 
     private final Node node;
 
@@ -26,23 +26,18 @@ class EmbeddedElasticsearchServer
 
     private final long now = System.currentTimeMillis();
 
-    public EmbeddedElasticsearchServer()
+    public EmbeddedElasticsearchServer( final File rootDirectory )
     {
-        this( ROOT_DATA_DIRECTORY );
-    }
-
-    private EmbeddedElasticsearchServer( String dataDirectory )
-    {
-
         LOG.info( " --- Starting ES integration test server instance" );
 
-        this.dataDirectory = dataDirectory;
+        this.dataDirectory = new File( rootDirectory, ROOT_DATA_DIRECTORY ).toString();
 
         ImmutableSettings.Builder testServerSetup = ImmutableSettings.settingsBuilder().
             put( "name", "repo-node-" + this.now ).
             put( "client", "false" ).
             put( "data", "true" ).
             put( "local", "true" ).
+            put( "path.repo", rootDirectory.toString() ).
             put( "path.data", dataDirectory + "-" + this.now ).
             put( "cluster.name", "repo-test-cluster-" + this.now ).
             put( "http.enabled", "false" ).

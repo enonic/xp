@@ -8,14 +8,7 @@ module app.wizard {
     export class GroupMembersWizardStepForm extends PrincipalMembersWizardStepForm {
 
         constructor() {
-            super(() => {
-                /*
-                 * TODO: May need more define logic for the displayed elements in the ComboBox
-                 * We may not need the edited element or it's parents to be present in combobox.
-                 */
-            });
-            this.getLabel().setValue("Members");
-
+            super();
             this.getLoader().load();
         }
 

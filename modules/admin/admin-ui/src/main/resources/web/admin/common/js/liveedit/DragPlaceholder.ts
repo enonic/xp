@@ -6,7 +6,7 @@ module api.liveedit {
 
         private itemType: ItemType;
 
-        private pattern: string = 'Drop {0} here';
+        private pattern: string = 'Drop here';
 
         private regionView: RegionView;
 
@@ -51,7 +51,7 @@ module api.liveedit {
         }
 
         private getDefaultText() {
-            return api.util.StringHelper.format(this.pattern, api.util.StringHelper.capitalize(this.itemType.getShortName()));
+            return this.pattern;
         }
 
         setDropAllowed(allowed: boolean): DragPlaceholder {

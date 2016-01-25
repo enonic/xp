@@ -29,7 +29,7 @@ module api.liveedit.text {
         constructor(builder: TextComponentViewBuilder) {
 
             this.lastClicked = 0;
-            this.liveEditModel = builder.parentRegionView.liveEditModel;
+            this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.textComponent = builder.component;
 
             super(builder.
@@ -119,7 +119,6 @@ module api.liveedit.text {
             }
 
             this.startPageTextEditMode();
-            this.selectText();
         }
 
         private doHandleClick(event: MouseEvent) {
@@ -130,7 +129,6 @@ module api.liveedit.text {
             super.handleClick(event);
         }
 
-
         handleClick(event: MouseEvent) {
             if (TextComponentView.debug) {
                 console.group('Handling click [' + this.getId() + '] at ' + new Date().getTime());
@@ -138,6 +136,9 @@ module api.liveedit.text {
             }
 
             event.stopPropagation();
+            if (event.which == 3) { // right click
+                event.preventDefault();
+            }
 
             if (this.isEditMode()) {
                 if (TextComponentView.debug) {
@@ -173,8 +174,11 @@ module api.liveedit.text {
             this.lastClicked = new Date().getTime();
         }
 
-        private handleKey() {
+        private handleKey(e: KeyboardEvent) {
             this.processChanges();
+            if (this.isEditMode() && e.keyCode == 27) {
+                this.closePageTextEditMode();
+            }
         }
 
         isEditMode(): boolean {
@@ -200,6 +204,7 @@ module api.liveedit.text {
 
                 if (this.textComponent.isEmpty()) {
                     this.rootElement.setHtml("<h2>Text</h2>", false);
+                    this.selectText();
                 }
             }
         }
@@ -290,6 +295,13 @@ module api.liveedit.text {
                 pageView.setTextEditMode(true);
             }
             this.giveFocus();
+        }
+
+        private closePageTextEditMode() {
+            var pageView = this.getPageView();
+            if (pageView.isTextEditMode()) {
+                pageView.setTextEditMode(false);
+            }
         }
 
         giveFocus() {

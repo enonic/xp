@@ -537,6 +537,9 @@ module api.liveedit {
             var helper = DragHelper.get();
             var placeholder = DragPlaceholder.get().setRegionView(enter ? regionView : null);
 
+            helper.setItemName(this._draggedComponentView ?
+                               this._draggedComponentView.getName() : api.util.StringHelper.capitalize(this.getItemType().getShortName()));
+
             if (!enter) {
                 helper.setDropAllowed(false);
             } else if (this.isDraggingLayoutOverLayout(regionView, this.getItemType())) {
