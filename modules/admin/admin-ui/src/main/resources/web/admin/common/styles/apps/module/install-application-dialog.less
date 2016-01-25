@@ -98,7 +98,10 @@
       .market-app-tree-grid {
 
         .grid {
+          padding-right: 15px;
           .slick-cell {
+            padding-top: 15px;
+            height: 52px;
             cursor: default;
             * {
               cursor: default;
@@ -111,6 +114,7 @@
             }
 
             &.app-name-and-icon {
+              margin-left: 10px;
               .main-name {
                 font-size: 16px;
                 padding-bottom: 2px;
@@ -144,17 +148,21 @@
         .version {
           text-align: center;
           color: @admin-black;
-          font-size: 14px;
+          font-size: 12px;
         }
 
         .app-status {
           text-align: center;
-          color: #777777;
-          font-size: 14px;
 
           .install, .update {
             color: @admin-green;
             cursor: pointer !important;
+            font-size: 16px;
+          }
+          .installed {
+            opacity: 0.6;
+            font-size: 13px;
+            color: #777777;
           }
         }
       }

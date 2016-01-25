@@ -35,7 +35,7 @@ module app.installation.view {
                 setId("displayName").
                 setField("displayName").
                 setCssClass("app-name-and-icon").
-                setMinWidth(130).
+                setMinWidth(170).
                 setFormatter(this.nameFormatter).
                 build();
             var versionColumn = new GridColumnBuilder<TreeNode<MarketApplication>>().
@@ -43,7 +43,7 @@ module app.installation.view {
                 setId("version").
                 setField("latestVersion").
                 setCssClass("version").
-                setMinWidth(80).
+                setMinWidth(40).
                 build();
             var appStatusColumns = new GridColumnBuilder<TreeNode<MarketApplication>>().
                 setName("AppStatus").
@@ -64,6 +64,7 @@ module app.installation.view {
                     setPartialLoadEnabled(false).
                     setCheckableRows(false).
                     setShowToolbar(false).
+                    setRowHeight(70).
                     disableMultipleSelection(true).
                     prependClasses("market-app-tree-grid").
                     setSelectedCellCssClass("selected-sort-row")

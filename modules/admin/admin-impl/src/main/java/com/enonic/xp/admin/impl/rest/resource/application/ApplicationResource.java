@@ -195,27 +195,60 @@ public final class ApplicationResource
         return doGetMarkedApplications( url );
     }
 
-    private MarkedApplicationsJson doGetMarkedApplications( final URL url )
-        throws java.io.IOException
-    {
-        //final MarkedApplicationsJson markedApplicationsJson = new ObjectMapper().readValue( url, MarkedApplicationsJson.class );
+    private MarkedApplicationJson getAppJson(final String appName, final String description, final String iconUrl,
+                                            final String appUrl, final String lastVersion, final Map<String, MarkedAppVersionInfoJson> versions) {
+        final MarkedApplicationJson appJson = new MarkedApplicationJson();
+        appJson.setDisplayName( appName );
+        appJson.setDescription( description );
+        appJson.setIconUrl( iconUrl );
+        appJson.setLatestVersion( lastVersion );
+        appJson.setApplicationUrl( appUrl );
+        appJson.setVersions( versions );
 
+        return appJson;
+    }
+
+    private MarkedApplicationJson getGaAppJson() {
         Map<String, MarkedAppVersionInfoJson> versions = Maps.newHashMap();
         versions.put( "1.0.0", new MarkedAppVersionInfoJson(
             "https://repo.enonic.com/public/com/enonic/app/app-google-analytics/1.0.0/app-google-analytics-1.1.0.jar" ) );
         versions.put( "1.1.0", new MarkedAppVersionInfoJson(
             "https://repo.enonic.com/public/com/enonic/app/app-google-analytics/1.0.0/app-google-analytics-1.0.0.jar" ) );
 
-        final MarkedApplicationJson appJson = new MarkedApplicationJson();
-        appJson.setDisplayName( "Google Analytics" );
-        appJson.setDescription( "Adds Google Analytics to your sites and provides in-context analytics graphs" );
-        appJson.setIconUrl(
-            "http://enonic.com/market/applications/_/asset/com.enonic.app.market:1452774231/img/software-type-application.svg" );
-        appJson.setLatestVersion( "1.1.0" );
-        appJson.setApplicationUrl( "http://enonic.com/market/vendor/enonic/google-analytics" );
-        appJson.setVersions( versions );
+        return getAppJson( "Google Analytics",
+                           "Adds Google Analytics to your sites and provides in-context analytics graphs",
+                           "http://enonic.com/market/applications/_/asset/com.enonic.app.market:1452774231/img/software-type-application.svg",
+                           "http://enonic.com/market/vendor/enonic/google-analytics",
+                           "1.1.0",
+                           versions
+                        );
+    }
 
-        return new MarkedApplicationsJson().add( "com.enonic.app.ga", appJson );
+    private MarkedApplicationJson getSuperheroAppJson() {
+        Map<String, MarkedAppVersionInfoJson> versions = Maps.newHashMap();
+        versions.put( "1.2.0", new MarkedAppVersionInfoJson(
+            "http://repo.enonic.com/public/com/enonic/app/superhero/1.2.0/superhero-1.2.0.jar" ) );
+
+        return getAppJson( "Superhero Blog",
+                           "Create your very own Superhero theme blog to run on Enonic XP",
+                           "http://enonic.com/market/applications/_/asset/com.enonic.app.market:1452774231/img/software-type-application.svg",
+                           "http://enonic.com/market/vendor/enonic/superhero-blog",
+                           "1.2.0",
+                           versions
+        );
+    }
+
+    private MarkedApplicationsJson doGetMarkedApplications( final URL url )
+        throws java.io.IOException
+    {
+        //final MarkedApplicationsJson markedApplicationsJson = new ObjectMapper().readValue( url, MarkedApplicationsJson.class );
+
+        MarkedApplicationsJson markedApplicationsJson = new MarkedApplicationsJson();
+
+        markedApplicationsJson.add( "com.enonic.app.ga", getGaAppJson() );
+        markedApplicationsJson.add( "com.enonic.app.superhero", getSuperheroAppJson() );
+
+        return markedApplicationsJson;
     }
 
     @Reference
