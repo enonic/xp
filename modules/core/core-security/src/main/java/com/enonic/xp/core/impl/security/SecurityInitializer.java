@@ -3,7 +3,9 @@ package com.enonic.xp.core.impl.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
@@ -17,6 +19,7 @@ import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.UserStoreAuthConfig;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -126,10 +129,18 @@ public final class SecurityInitializer
                                            UserStoreAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access(
                                                READ ).build() );
 
+        final PropertyTree config = new PropertyTree();
+        config.setString( "backgroundUrl", "/admin/common/images/background-1920.jpg" );
+        final UserStoreAuthConfig authConfig = UserStoreAuthConfig.create().
+            applicationKey( ApplicationKey.from( "com.enonic.xp.app.login" ) ).
+            config( config ).
+            build();
+
         final CreateUserStoreParams createParams = CreateUserStoreParams.create().
             key( UserStoreKey.system() ).
             displayName( SYSTEM_USER_STORE_DISPLAY_NAME ).
             permissions( permissions ).
+            authConfig( authConfig ).
             build();
         this.securityService.createUserStore( createParams );
     }
