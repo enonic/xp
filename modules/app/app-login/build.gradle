@@ -1,0 +1,9 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    include project( ":lib:lib-mustache" )
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP App - Login'
+}
