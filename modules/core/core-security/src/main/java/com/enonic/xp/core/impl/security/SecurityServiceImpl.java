@@ -70,6 +70,7 @@ import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.UpdateUserStoreParams;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStore;
+import com.enonic.xp.security.UserStoreAuthConfig;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.UserStoreNotFoundException;
 import com.enonic.xp.security.UserStores;
@@ -820,8 +821,16 @@ public final class SecurityServiceImpl
     @Override
     public UserStore createUserStore( final CreateUserStoreParams createUserStoreParams )
     {
+        final String displayName = createUserStoreParams.getDisplayName();
+        final UserStoreAuthConfig authConfig = createUserStoreParams.getAuthConfig();
+
         final PropertyTree data = new PropertyTree();
-        data.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, createUserStoreParams.getDisplayName() );
+        data.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, displayName );
+        if ( authConfig != null )
+        {
+            data.setString( UserStorePropertyNames.AUTH_APPLICATION_KEY, authConfig.getApplicationKey().toString() );
+            data.setSet( UserStorePropertyNames.AUTH_CONFIG_FORM_KEY, authConfig.getConfig().getRoot() );
+        }
 
         final Node node = callWithContext( () -> {
 

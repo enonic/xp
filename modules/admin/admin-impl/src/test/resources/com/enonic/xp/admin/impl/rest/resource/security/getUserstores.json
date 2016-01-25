@@ -1,10 +1,25 @@
 {
   "userStores": [
     {
+      "authConfig": {
+        "applicationKey": "com.enonic.app.ldap",
+        "config": [
+          {
+            "name": "propertyName",
+            "type": "String",
+            "values": [
+              {
+                "v": "propertyValue"
+              }
+            ]
+          }
+        ]
+      },
       "displayName": "Local LDAP",
       "key": "local"
     },
     {
+      "authConfig": null,
       "displayName": "File based user store",
       "key": "file-store"
     }

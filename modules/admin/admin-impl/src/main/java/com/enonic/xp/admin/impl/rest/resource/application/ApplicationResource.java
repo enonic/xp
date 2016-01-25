@@ -24,6 +24,8 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.auth.AuthDescriptor;
+import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.SiteDescriptor;
@@ -41,6 +43,8 @@ public final class ApplicationResource
     private ApplicationService applicationService;
 
     private SiteService siteService;
+
+    private AuthDescriptorService authDescriptorService;
 
     @GET
     @Path("list")
@@ -65,7 +69,10 @@ public final class ApplicationResource
         {
             if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( application.getKey() ) )//Remove after 7.0.0 refactoring
             {
-                json.add( application, this.siteService.getDescriptor( application.getKey() ) );
+                final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( application.getKey() );
+                final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( application.getKey() );
+
+                json.add( application, siteDescriptor, authDescriptor );
             }
         }
 
@@ -77,7 +84,8 @@ public final class ApplicationResource
     {
         final Application application = this.applicationService.getApplication( ApplicationKey.from( applicationKey ) );
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( ApplicationKey.from( applicationKey ) );
-        return new ApplicationJson( application, siteDescriptor );
+        final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( ApplicationKey.from( applicationKey ) );
+        return new ApplicationJson( application, siteDescriptor, authDescriptor );
     }
 
     @POST
@@ -112,5 +120,10 @@ public final class ApplicationResource
         this.siteService = siteService;
     }
 
+    @Reference
+    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
+    {
+        this.authDescriptorService = authDescriptorService;
+    }
 }
 

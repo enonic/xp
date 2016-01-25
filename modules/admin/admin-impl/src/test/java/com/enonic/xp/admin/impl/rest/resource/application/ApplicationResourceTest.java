@@ -13,6 +13,8 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.auth.AuthDescriptor;
+import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -26,6 +28,8 @@ public class ApplicationResourceTest
 
     private SiteService siteService;
 
+    private AuthDescriptorService authDescriptorService;
+
     @Test
     public void get_application_list()
         throws Exception
@@ -35,6 +39,8 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getAllApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
+        final AuthDescriptor authDescriptor = createAuthDescriptor();
+        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
 
         String response = request().
             path( "application/list" ).
@@ -51,6 +57,8 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getAllApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
+        final AuthDescriptor authDescriptor = createAuthDescriptor();
+        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
 
         String response = request().
             path( "application/list" ).
@@ -68,6 +76,8 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getAllApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
+        final AuthDescriptor authDescriptor = createAuthDescriptor();
+        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
 
         String response = request().
             path( "application/list" ).
@@ -84,6 +94,8 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getApplication( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( application );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
+        final AuthDescriptor authDescriptor = createAuthDescriptor();
+        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
 
         String response = request().
             path( "application" ).
@@ -150,15 +162,25 @@ public class ApplicationResourceTest
         return SiteDescriptor.create().form( config ).build();
     }
 
+    private AuthDescriptor createAuthDescriptor()
+    {
+        final Form config = Form.create().
+            addFormItem( Input.create().name( "some-name" ).label( "some-label" ).inputType( InputTypeName.TEXT_LINE ).build() ).
+            build();
+        return AuthDescriptor.create().config( config ).build();
+    }
+
     @Override
     protected Object getResourceInstance()
     {
         this.applicationService = Mockito.mock( ApplicationService.class );
         this.siteService = Mockito.mock( SiteService.class );
+        this.authDescriptorService = Mockito.mock( AuthDescriptorService.class );
 
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );
         resource.setSiteService( this.siteService );
+        resource.setAuthDescriptorService( this.authDescriptorService );
 
         return resource;
     }

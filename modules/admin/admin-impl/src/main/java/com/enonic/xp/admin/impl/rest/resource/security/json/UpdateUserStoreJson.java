@@ -18,6 +18,7 @@ public final class UpdateUserStoreJson
 
     @JsonCreator
     public UpdateUserStoreJson( @JsonProperty("key") final String userStoreKey, @JsonProperty("displayName") final String displayName,
+                                @JsonProperty("authConfig") final UserStoreAuthConfigJson authConfigJson,
                                 @JsonProperty("permissions") final List<UserStoreAccessControlEntryJson> aclEntries )
     {
         final UserStoreAccessControlEntry[] userStoreAclEntries = aclEntries == null ? null : aclEntries.stream().
@@ -28,6 +29,7 @@ public final class UpdateUserStoreJson
         this.updateUserStoreParams = UpdateUserStoreParams.create().
             key( UserStoreKey.from( userStoreKey ) ).
             displayName( displayName ).
+            authConfig( authConfigJson == null ? null : authConfigJson.getUserStoreAuthConfig() ).
             permissions( permissions ).
             build();
     }

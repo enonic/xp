@@ -14,12 +14,15 @@ public final class UpdateUserStoreParams
 
     private final String displayName;
 
+    private final UserStoreAuthConfig authConfig;
+
     private final UserStoreAccessControlList userStorePermissions;
 
     private UpdateUserStoreParams( final Builder builder )
     {
         this.userStoreKey = checkNotNull( builder.userStoreKey, "userStoreKey is required" );
         this.displayName = checkNotNull( builder.displayName, "displayName is required" );
+        this.authConfig = builder.authConfig;
         this.userStorePermissions = builder.userStorePermissions;
     }
 
@@ -31,6 +34,11 @@ public final class UpdateUserStoreParams
     public String getDisplayName()
     {
         return displayName;
+    }
+
+    public UserStoreAuthConfig getAuthConfig()
+    {
+        return authConfig;
     }
 
     public UserStoreAccessControlList getUserStorePermissions()
@@ -49,6 +57,8 @@ public final class UpdateUserStoreParams
 
         private String displayName;
 
+        private UserStoreAuthConfig authConfig;
+
         private UserStoreAccessControlList userStorePermissions;
 
         private Builder()
@@ -64,6 +74,12 @@ public final class UpdateUserStoreParams
         public Builder displayName( final String value )
         {
             this.displayName = value;
+            return this;
+        }
+
+        public Builder authConfig( final UserStoreAuthConfig value )
+        {
+            this.authConfig = value;
             return this;
         }
 

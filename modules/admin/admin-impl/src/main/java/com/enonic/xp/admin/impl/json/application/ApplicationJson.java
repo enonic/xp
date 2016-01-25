@@ -8,6 +8,8 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.app.Application;
+import com.enonic.xp.auth.AuthDescriptor;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.SiteDescriptor;
 
@@ -18,12 +20,17 @@ public class ApplicationJson
 
     private final FormJson config;
 
+    private final FormJson authConfig;
+
     private final ImmutableList<String> metaStepMixinNames;
 
-    public ApplicationJson( final Application application, final SiteDescriptor siteDescriptor )
+    public ApplicationJson( final Application application, final SiteDescriptor siteDescriptor, final AuthDescriptor authDescriptor )
     {
         this.application = application;
         this.config = siteDescriptor != null && siteDescriptor.getForm() != null ? new FormJson( siteDescriptor.getForm() ) : null;
+        this.authConfig = authDescriptor != null && authDescriptor.getConfig() != null
+            ? new FormJson( authDescriptor.getConfig() )
+            : new FormJson( Form.create().build() );
         ImmutableList.Builder<String> mixinNamesBuilder = new ImmutableList.Builder<>();
         if ( siteDescriptor != null && siteDescriptor.getMetaSteps() != null )
         {
@@ -88,6 +95,11 @@ public class ApplicationJson
     public FormJson getConfig()
     {
         return config;
+    }
+
+    public FormJson getAuthConfig()
+    {
+        return authConfig;
     }
 
     public List<String> getMetaSteps()

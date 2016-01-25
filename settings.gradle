@@ -13,6 +13,7 @@ include 'core:core-i18n'
 include 'core:core-media'
 include 'core:core-app'
 include 'core:core-service'
+include 'core:core-auth'
 
 include 'server:server-shell'
 include 'server:server-status'
@@ -91,4 +92,3 @@ def configureProject( p )
     p.projectDir = new File( (File) settingsDir, "modules/${dirName}" )
     assert p.projectDir.isDirectory()
 }
-

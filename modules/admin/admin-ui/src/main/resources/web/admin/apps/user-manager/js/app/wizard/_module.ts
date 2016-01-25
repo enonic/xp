@@ -22,3 +22,5 @@
 ///<reference path='SecurityWizardStepForm.ts' />
 ///<reference path='OpenChangePasswordDialogEvent.ts' />
 ///<reference path='ChangeUserPasswordDialog.ts' />
+///<reference path='AuthApplicationWizardStepForm.ts' />
+
