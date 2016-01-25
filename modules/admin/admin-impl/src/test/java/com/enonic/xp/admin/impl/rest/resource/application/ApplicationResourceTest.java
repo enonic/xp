@@ -117,7 +117,7 @@ public class ApplicationResourceTest
     }
 
     @Test
-    public void getMarkedApplications()
+    public void getMarketApplications()
         throws Exception
     {
         final String response = request().
