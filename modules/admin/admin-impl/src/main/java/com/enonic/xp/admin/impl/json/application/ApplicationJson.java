@@ -28,7 +28,7 @@ public class ApplicationJson
     {
         this.application = application;
         this.config = siteDescriptor != null && siteDescriptor.getForm() != null ? new FormJson( siteDescriptor.getForm() ) : null;
-        this.authConfig = authDescriptor != null && authDescriptor.getKey() != null
+        this.authConfig = authDescriptor != null && authDescriptor.getConfig() != null
             ? new FormJson( authDescriptor.getConfig() )
             : new FormJson( Form.create().build() );
         ImmutableList.Builder<String> mixinNamesBuilder = new ImmutableList.Builder<>();
