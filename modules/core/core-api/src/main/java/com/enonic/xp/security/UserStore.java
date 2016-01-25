@@ -2,8 +2,6 @@ package com.enonic.xp.security;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.app.ApplicationKey;
-
 @Beta
 public final class UserStore
 {
