@@ -227,10 +227,6 @@ module api.liveedit {
             this.shaderClickedListener = this.handleShaderClick.bind(this);
             Shader.get().onClicked(this.shaderClickedListener);
 
-            // page shader catches mouse events
-            // so bind listener to it to highlight underlying views
-            this.shaderMouseMoveListener = this.handleShaderMouseMove.bind(this);
-            Shader.get().onMouseMove(this.shaderMouseMoveListener);
 
             this.mouseOverViewListener = () => {
                 var isRegistered = !!this.getParentItemView();
@@ -293,7 +289,6 @@ module api.liveedit {
 
             api.ui.responsive.ResponsiveManager.unAvailableSizeChanged(this);
             Shader.get().unClicked(this.shaderClickedListener);
-            Shader.get().unMouseMove(this.shaderMouseMoveListener);
             this.unMouseOverView(this.mouseOverViewListener);
             this.unMouseLeaveView(this.mouseLeaveViewListener);
         }
