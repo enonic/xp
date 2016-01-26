@@ -5,11 +5,13 @@ module app.view {
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+    import UriHelper = api.util.UriHelper
 
     export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
 
         private image: api.dom.ImgEl;
         private item: ViewItem<ContentSummaryAndCompareStatus>;
+        private skipNextSetItemCall: boolean = false;
 
         constructor() {
             super("content-item-preview-panel");
@@ -50,10 +52,44 @@ module app.view {
                         if (pathname && pathname !== 'blank') {
                             new ContentPreviewPathChangedEvent(pathname).fire();
                         }
+                        frameWindow.addEventListener("click", this.frameClickHandler.bind(this));
                     }
                 } catch (reason) {}
-
             });
+        }
+
+        private frameClickHandler(event: UIEvent) {
+            if (this.isLinkClicked(event)) {
+                var href = (<any>event.target).href,
+                    frameWindow = this.frame.getHTMLElement()["contentWindow"];
+                if (!!frameWindow && !UriHelper.isNavigatingOutsideOfXP(href, frameWindow)) {
+                    var contentPreviewPath = UriHelper.trimUrlParams(UriHelper.trimAnchor(UriHelper.trimWindowProtocolAndPortFromHref(href,
+                        frameWindow)));
+                    if (!this.isNavigatingWithinSamePage(contentPreviewPath, frameWindow)) {
+                        event.preventDefault();
+                        var clickedLinkRelativePath = "/" + UriHelper.trimWindowProtocolAndPortFromHref(href, frameWindow);
+                        this.skipNextSetItemCall = true;
+                        new ContentPreviewPathChangedEvent(contentPreviewPath).fire();
+                        this.showMask();
+                        setTimeout(() => {
+                            this.skipNextSetItemCall = false;
+                            this.frame.setSrc(clickedLinkRelativePath);
+                            setTimeout(() => {
+                                this.mask.hide();
+                            }, 300);
+                        }, 500)
+                    }
+                }
+            }
+        }
+
+        private isLinkClicked(event: UIEvent): boolean {
+            return event.target && (<any>event.target).tagName.toLowerCase() === 'a';
+        }
+
+        private isNavigatingWithinSamePage(contentPreviewPath: string, frameWindow: Window): boolean {
+            var href = frameWindow.location.href;
+            return contentPreviewPath === UriHelper.trimAnchor(UriHelper.trimWindowProtocolAndPortFromHref(href, frameWindow));
         }
 
         private centerImage(imgWidth, imgHeight, myWidth, myHeight) {
@@ -76,7 +112,7 @@ module app.view {
         }
 
         public setItem(item: ViewItem<ContentSummaryAndCompareStatus>) {
-            if (item && !item.equals(this.item)) {
+            if (item && !item.equals(this.item) && !this.skipNextSetItemCall) {
                 if (typeof item.isRenderable() === "undefined") {
                     return;
                 }
