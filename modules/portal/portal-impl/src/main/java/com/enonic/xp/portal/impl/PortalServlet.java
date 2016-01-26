@@ -3,12 +3,9 @@ package com.enonic.xp.portal.impl;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Collections;
-import java.util.Map;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,32 +16,26 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.PortalRequestAdapter;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.PortalHandler;
 import com.enonic.xp.portal.impl.exception.ExceptionMapper;
 import com.enonic.xp.portal.impl.exception.ExceptionRenderer;
-import com.enonic.xp.portal.impl.serializer.RequestBodyReader;
 import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
-import com.enonic.xp.web.HttpMethod;
-import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Component(immediate = true, service = Servlet.class,
     property = {"osgi.http.whiteboard.servlet.pattern=/portal/*"})
 public final class PortalServlet
     extends HttpServlet
 {
-    private final static String BASE_URI = "/portal";
-
-    private final static String PATH_PREFIX = BASE_URI + "/";
+    private final static String PATH_PREFIX = PortalRequestAdapter.BASE_URI + "/";
 
     private final ExceptionMapper exceptionMapper;
 
@@ -72,84 +63,17 @@ public final class PortalServlet
     private PortalRequest newPortalRequest( final HttpServletRequest req )
         throws IOException
     {
-        final PortalRequest result = new PortalRequest();
-        result.setMethod( HttpMethod.valueOf( req.getMethod().toUpperCase() ) );
-        setBaseUri( req, result );
-        setRenderMode( req, result );
+        final PortalRequest result = new PortalRequestAdapter().
+            adapt( req );
 
         final String rawPath = decodeUrl( req.getRequestURI() );
         result.setBranch( findBranch( rawPath ) );
         result.setEndpointPath( findEndpointPath( rawPath ) );
         result.setContentPath( findContentPath( rawPath ) );
-        result.setRawRequest( req );
-        result.setContentType( req.getContentType() );
-        result.setBody( RequestBodyReader.readBody( req ) );
-
-        result.setScheme( ServletRequestUrlHelper.getScheme( req ) );
-        result.setHost( ServletRequestUrlHelper.getHost( req ) );
-        result.setPort( ServletRequestUrlHelper.getPort( req ) );
-        result.setPath( ServletRequestUrlHelper.getPath( req ) );
-        result.setUrl( ServletRequestUrlHelper.getFullUrl( req ) );
-
-        setParameters( req, result );
-        setHeaders( req, result );
-        setCookies( req, result );
 
         PortalRequestAccessor.set( req, result );
 
         return result;
-    }
-
-    private void setBaseUri( final HttpServletRequest from, final PortalRequest to )
-    {
-        final PortalAttributes portalAttributes = (PortalAttributes) from.getAttribute( PortalAttributes.class.getName() );
-        if ( portalAttributes != null && portalAttributes.getBaseUri() != null )
-        {
-            to.setBaseUri( portalAttributes.getBaseUri() );
-        }
-        else
-        {
-            to.setBaseUri( BASE_URI );
-        }
-    }
-
-    private void setRenderMode( final HttpServletRequest from, final PortalRequest to )
-    {
-        final PortalAttributes portalAttributes = (PortalAttributes) from.getAttribute( PortalAttributes.class.getName() );
-        if ( portalAttributes != null && portalAttributes.getRenderMode() != null )
-        {
-            to.setMode( portalAttributes.getRenderMode() );
-        }
-    }
-
-    private void setHeaders( final HttpServletRequest from, final PortalRequest to )
-    {
-        for ( final String key : Collections.list( from.getHeaderNames() ) )
-        {
-            to.getHeaders().put( key, from.getHeader( key ) );
-        }
-    }
-
-    private void setCookies( final HttpServletRequest from, final PortalRequest to )
-    {
-        final Cookie[] cookies = from.getCookies();
-        if ( cookies == null )
-        {
-            return;
-        }
-
-        for ( final Cookie cookie : cookies )
-        {
-            to.getCookies().put( cookie.getName(), cookie.getValue() );
-        }
-    }
-
-    private void setParameters( final HttpServletRequest from, final PortalRequest to )
-    {
-        for ( final Map.Entry<String, String[]> entry : from.getParameterMap().entrySet() )
-        {
-            to.getParams().putAll( entry.getKey(), Lists.newArrayList( entry.getValue() ) );
-        }
     }
 
     private PortalResponse doHandle( final PortalRequest req )

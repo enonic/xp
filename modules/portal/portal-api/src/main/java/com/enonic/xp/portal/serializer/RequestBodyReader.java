@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.serializer;
+package com.enonic.xp.portal.serializer;
 
 import java.io.IOException;
 

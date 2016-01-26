@@ -17,6 +17,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAdapter;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
@@ -29,7 +30,6 @@ import com.enonic.xp.security.UserStoreAuthConfig;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
-import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
 
@@ -156,22 +156,24 @@ public class AuthResponseWrapper
             final AuthDescriptor authDescriptor = retrieveAuthDescriptor();
             if ( authDescriptor != null )
             {
-                final PortalRequest portalRequest = new PortalRequest();
-                portalRequest.setMethod( HttpMethod.valueOf( request.getMethod().toUpperCase() ) );
-                portalRequest.setApplicationKey( authDescriptor.getKey() );
-
-                final PortalError portalError = PortalError.create().
-                    status( HttpStatus.FORBIDDEN ).
-                    message( "Forbidden" ).
-                    request( portalRequest ).
-                    build();
-
-                final ErrorHandlerScript errorHandlerScript = errorHandlerScriptFactory.errorScript( authDescriptor.getResourceKey() );
-                final PortalResponse portalResponse = errorHandlerScript.execute( portalError );
-
-                final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );
                 try
                 {
+                    final PortalRequest portalRequest = new PortalRequestAdapter().
+                        adapt( request );
+                    portalRequest.setBaseUri( "/portal" );
+                    portalRequest.setApplicationKey( authDescriptor.getKey() );
+
+                    final PortalError portalError = PortalError.create().
+                        status( HttpStatus.FORBIDDEN ).
+                        message( "Forbidden" ).
+                        request( portalRequest ).
+                        build();
+
+                    final ErrorHandlerScript errorHandlerScript = errorHandlerScriptFactory.errorScript( authDescriptor.getResourceKey() );
+                    final PortalResponse portalResponse = errorHandlerScript.execute( portalError );
+
+                    final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );
+
                     serializer.serialize( response );
                     errorHandled = true;
                 }
