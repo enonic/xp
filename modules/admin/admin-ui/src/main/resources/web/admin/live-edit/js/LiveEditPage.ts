@@ -120,6 +120,11 @@ module LiveEdit {
 
             ComponentViewDragStoppedEvent.on(() => {
                 Cursor.get().reset();
+
+                if(this.pageView.isLocked()) {
+                    Highlighter.get().hide();
+                    Shader.get().shade(this.pageView);
+                }
             });
 
         }
