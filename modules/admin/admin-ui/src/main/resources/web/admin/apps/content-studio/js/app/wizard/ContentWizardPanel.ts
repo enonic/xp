@@ -651,11 +651,11 @@ module app.wizard {
 
         private updateThumbnailWithContent(content: Content) {
             this.thumbnailUploader.
-                setValue(new ContentIconUrlResolver().setContent(content).resolve()).
-                setEnabled(!content.isImage()).
                 setParams({
                     id: content.getContentId().toString()
-                });
+                }).
+                setEnabled(!content.isImage()).
+                setValue(new ContentIconUrlResolver().setContent(content).resolve());
 
             this.thumbnailUploader.toggleClass("invalid", !content.isValid());
         }

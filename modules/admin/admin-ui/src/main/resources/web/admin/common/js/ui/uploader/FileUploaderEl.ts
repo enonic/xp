@@ -12,43 +12,27 @@ module api.ui.uploader {
 
         static FILE_NAME_DELIMITER = "/";
 
-        setValue(value: string): UploaderEl<MODEL> {
-
-            var newItemsToAppend: Element[] = [];
-            this.value = value;
+        doSetValue(value: string, silent?: boolean): UploaderEl<MODEL> {
 
             if (UploaderEl.debug) {
-                console.log('Setting uploader value', value, this);
+                console.log('Setting new uploader value', value, this);
             }
+            var result = this.getItems(value);
 
-            this.parseValues(value).forEach((parsedValue: string) => {
-                if (parsedValue) {
+            this.appendNewItems(result.newItems);
+            this.refreshVisibility();
 
-                    parsedValue.split(FileUploaderEl.FILE_NAME_DELIMITER).forEach((curValue) => {
-                        var existingItems:Element[] = [];
-
-                        var existingItem = this.getExistingItem(curValue);
-                        if (!existingItem) {
-                            newItemsToAppend.push(this.createResultItem(curValue));
-                        } else {
-                            existingItems.push(existingItem);
-                        }
-                    });
-
-                    if (this.config.showResult) {
-                        this.setResultVisible();
-                    } else {
-                        this.setDropzoneVisible();
-                    }
-                }
-            });
-
-            this.appendNewItems(newItemsToAppend);
-
-
-            this.getDropzoneContainer().setVisible(false);
-            this.getDropzone().setVisible(false);
             return this;
+        }
+
+         resetValues(value: string) {
+
+            var result = this.getItems(value);
+
+            this.removeAllChildrenExceptGiven(result.existingItems);
+            this.appendNewItems(result.newItems);
+
+            this.refreshVisibility();
         }
 
         setContentId(contentId: string) {
@@ -71,6 +55,39 @@ module api.ui.uploader {
                     );
                 }
             }
+        }
+
+        private refreshVisibility() {
+            if (this.config.showResult) {
+                this.setResultVisible();
+                this.getDropzoneContainer().setVisible(false);
+                this.getDropzone().setVisible(false);
+            } else {
+                this.setDropzoneVisible();
+            }
+        }
+
+        private getItems(value: string) : {existingItems:Element[], newItems:Element[]} {
+            var newItems: Element[] = [],
+                existingItems:Element[] = [];
+
+            this.parseValues(value).forEach((parsedValue: string) => {
+                if (parsedValue) {
+
+                    var newValues = parsedValue.split(FileUploaderEl.FILE_NAME_DELIMITER);
+                    newValues.forEach((curValue) => {
+
+                        var existingItem = this.getExistingItem(curValue);
+                        if (!existingItem) {
+                            newItems.push(this.createResultItem(curValue));
+                        } else {
+                            existingItems.push(existingItem);
+                        }
+                    });
+                }
+            });
+
+            return {existingItems, newItems};
         }
 
     }
