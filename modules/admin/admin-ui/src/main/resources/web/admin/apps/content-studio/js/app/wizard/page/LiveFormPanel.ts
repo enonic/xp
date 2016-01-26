@@ -62,6 +62,7 @@ module app.wizard.page {
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
+    import ComponentFragmentCreatedEvent = api.liveedit.ComponentFragmentCreatedEvent;
 
     import Panel = api.ui.panel.Panel;
 
@@ -454,6 +455,13 @@ module app.wizard.page {
                 this.contentWizardPanel.getContextWindowToggler().setActive(true);
                 this.contextWindow.slideIn();
                 this.inspectPage();
+            });
+
+            this.liveEditPageProxy.onComponentFragmentCreated((event: ComponentFragmentCreatedEvent) => {
+                var view = event.getComponentView();
+                var componentType = view.getType().getShortName();
+                var componentName = view.getComponent().getName().toString();
+                api.notify.showSuccess(`Fragment created from '${componentName}' ${componentType}.`);
             });
 
             this.liveEditPageProxy.onLiveEditPageInitializationError((event: LiveEditPageInitializationErrorEvent) => {

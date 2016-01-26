@@ -72,3 +72,6 @@
 ///<reference path='ComponentAddedEvent.ts' />
 ///<reference path='ComponentRemovedEvent.ts' />
 ///<reference path='Region.ts' />
+
+///<reference path='FragmentResourceRequest.ts' />
+///<reference path='CreateFragmentRequest.ts' />

@@ -6,7 +6,6 @@ module app.wizard {
     import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
-    import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
     import ComponentResetEvent = api.liveedit.ComponentResetEvent;
 

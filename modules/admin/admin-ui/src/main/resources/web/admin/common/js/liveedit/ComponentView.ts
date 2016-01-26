@@ -6,6 +6,7 @@ module api.liveedit {
     import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
     import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
     import ComponentResetEvent = api.content.page.region.ComponentResetEvent;
+    import Content = api.content.Content;
 
     export class ComponentViewBuilder<COMPONENT extends Component> {
 
@@ -197,6 +198,12 @@ module api.liveedit {
 
                 new ComponentDuplicatedEvent(this, duplicatedView).fire();
             }));
+            actions.push(new api.ui.Action("Save as Fragment").onExecuted(() => {
+                this.deselect();
+                this.createFragment().then((content: Content): void => {
+                    new ComponentFragmentCreatedEvent(this, content).fire();
+                });
+            }));
             return actions;
         }
 
@@ -277,7 +284,7 @@ module api.liveedit {
             return clone;
         }
 
-        duplicate(duplicate: COMPONENT): ComponentView<Component> {
+        private duplicate(duplicate: COMPONENT): ComponentView<Component> {
 
             var parentView = this.getParentItemView();
             var index = parentView.getComponentViewIndex(this);
@@ -293,6 +300,16 @@ module api.liveedit {
             parentView.addComponentView(duplicateView, index + 1);
 
             return duplicateView;
+        }
+
+        private createFragment(): wemQ.Promise<Content> {
+            var contentPath = this.getPageView().getLiveEditModel().getContent().getPath();
+            var config = this.getPageView().getLiveEditModel().getPageModel().getConfig();
+
+            var request = new api.content.page.region.CreateFragmentRequest(contentPath).setConfig(config).setComponent(
+                this.getComponent());
+
+            return request.sendAndParse();
         }
 
         toString() {

@@ -34,6 +34,7 @@ module app.wizard.page {
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
     import ComponentResetEvent = api.liveedit.ComponentResetEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
+    import ComponentFragmentCreatedEvent = api.liveedit.ComponentFragmentCreatedEvent;
     import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
     import RegionView = api.liveedit.RegionView;
@@ -97,7 +98,7 @@ module app.wizard.page {
 
         private liveEditPageInitErrorListeners: {(event: LiveEditPageInitializationErrorEvent): void;}[] = [];
 
-        private LIVE_EDIT_ERROR_PAGE_BODY_ID = "wem-error-page";
+        private fragmentCreatedListeners: {(event: ComponentFragmentCreatedEvent): void;}[] = [];
 
         private showLoadMaskHandler: () => void;
 
@@ -338,6 +339,8 @@ module app.wizard.page {
 
             PageInspectedEvent.un(null, contextWindow);
 
+            ComponentFragmentCreatedEvent.un(null, contextWindow);
+
             ComponentLoadedEvent.un(null, contextWindow);
 
             ComponentResetEvent.un(null, contextWindow);
@@ -395,6 +398,8 @@ module app.wizard.page {
             ComponentInspectedEvent.on(this.notifyComponentInspected.bind(this), contextWindow);
 
             PageInspectedEvent.on(this.notifyPageInspected.bind(this), contextWindow);
+
+            ComponentFragmentCreatedEvent.on(this.notifyFragmentCreated.bind(this), contextWindow);
 
             ComponentLoadedEvent.on(this.notifyComponentLoaded.bind(this), contextWindow);
 
@@ -671,6 +676,18 @@ module app.wizard.page {
 
         private notifyLiveEditPageInitializationError(event: LiveEditPageInitializationErrorEvent) {
             this.liveEditPageInitErrorListeners.forEach((listener) => listener(event));
+        }
+
+        onComponentFragmentCreated(listener: {(event: ComponentFragmentCreatedEvent): void;}) {
+            this.fragmentCreatedListeners.push(listener);
+        }
+
+        unComponentFragmentCreated(listener: {(event: ComponentFragmentCreatedEvent): void;}) {
+            this.fragmentCreatedListeners = this.fragmentCreatedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyFragmentCreated(event: ComponentFragmentCreatedEvent) {
+            this.fragmentCreatedListeners.forEach((listener) => listener(event));
         }
 
         private copyObjectsBeforeFrameReloadForIE() {
