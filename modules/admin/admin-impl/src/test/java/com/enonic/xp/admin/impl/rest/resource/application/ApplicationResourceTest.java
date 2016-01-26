@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Version;
 
+import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -25,6 +26,8 @@ public class ApplicationResourceTest
     private ApplicationService applicationService;
 
     private SiteService siteService;
+
+    private MarketService marketService;
 
     @Test
     public void get_application_list()
@@ -116,19 +119,6 @@ public class ApplicationResourceTest
         Mockito.verify( this.applicationService ).stopApplication( ApplicationKey.from( "testapplication" ), true );
     }
 
-    @Test
-    public void getMarkedApplications()
-        throws Exception
-    {
-        final String response = request().
-            path( "application/getMarketApplications" ).
-            entity( "{\"version\":\"6.3.0\"}", MediaType.APPLICATION_JSON_TYPE ).
-            post().
-            getAsString();
-
-        assertJson( "get_marked_applications.json", response );
-    }
-
     private Application createApplication()
     {
         final Application application = Mockito.mock( Application.class );
@@ -168,10 +158,12 @@ public class ApplicationResourceTest
     {
         this.applicationService = Mockito.mock( ApplicationService.class );
         this.siteService = Mockito.mock( SiteService.class );
+        this.marketService = Mockito.mock( MarketService.class );
 
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );
         resource.setSiteService( this.siteService );
+        resource.setMarketService( this.marketService );
 
         return resource;
     }

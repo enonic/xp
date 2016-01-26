@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.application.json;
 
 import java.util.Map;
 
-public class MarkedApplicationJson
+public class MarketApplicationJson
 {
     private String displayName;
 
@@ -14,7 +14,11 @@ public class MarkedApplicationJson
 
     private String latestVersion;
 
-    private Map<String, MarkedAppVersionInfoJson> versions;
+    private String name;
+
+    private String url;
+
+    private Map<String, MarketAppVersionInfoJson> versions;
 
     public void setDisplayName( final String displayName )
     {
@@ -41,9 +45,25 @@ public class MarkedApplicationJson
         this.applicationUrl = applicationUrl;
     }
 
-    public void setVersions( final Map<String, MarkedAppVersionInfoJson> versions )
+    public void setVersions( final Map<String, MarketAppVersionInfoJson> versions )
     {
         this.versions = versions;
+    }
+
+    public void setName( final String name )
+    {
+        this.name = name;
+    }
+
+    public void setUrl( final String url )
+    {
+        this.url = url;
+    }
+
+    @SuppressWarnings("unused")
+    public String getUrl()
+    {
+        return url;
     }
 
     @SuppressWarnings("unused")
@@ -77,8 +97,14 @@ public class MarkedApplicationJson
     }
 
     @SuppressWarnings("unused")
-    public Map<String, MarkedAppVersionInfoJson> getVersions()
+    public Map<String, MarketAppVersionInfoJson> getVersions()
     {
         return versions;
+    }
+
+    @SuppressWarnings("unused")
+    public String getName()
+    {
+        return name;
     }
 }

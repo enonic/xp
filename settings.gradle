@@ -63,6 +63,7 @@ include 'repack:repack-jparsec'
 include 'repack:repack-attoparser'
 include 'repack:repack-resteasy'
 include 'repack:repack-elasticsearch'
+include 'repack:repack-okhttp'
 
 include 'launcher:launcher-api'
 include 'launcher:launcher-impl'

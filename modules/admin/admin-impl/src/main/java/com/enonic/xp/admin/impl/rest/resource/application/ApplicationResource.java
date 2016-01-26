@@ -3,7 +3,6 @@ package com.enonic.xp.admin.impl.rest.resource.application;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -19,11 +18,11 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.admin.impl.json.application.ApplicationJson;
+import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstalledJson;
@@ -31,9 +30,7 @@ import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationListPa
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSuccessJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.GetMarketApplicationsJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ListApplicationJson;
-import com.enonic.xp.admin.impl.rest.resource.application.json.MarkedAppVersionInfoJson;
-import com.enonic.xp.admin.impl.rest.resource.application.json.MarkedApplicationJson;
-import com.enonic.xp.admin.impl.rest.resource.application.json.MarkedApplicationsJson;
+import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -54,12 +51,11 @@ import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 public final class ApplicationResource
     implements JaxRsComponent
 {
-
-    public static final String HTTPS_ENONIC_COM_MARKET_APPLICATIONS_XP_VERSION = "https://enonic.com/market/applications?xpVersion=";
-
     private ApplicationService applicationService;
 
     private SiteService siteService;
+
+    private MarketService marketService;
 
     @GET
     @Path("list")
@@ -164,58 +160,26 @@ public final class ApplicationResource
             throw new RuntimeException( "cannot fetch from URL " + urlString, e );
         }
 
-        final InputStream inputStream = url.openStream();
+        try (final InputStream inputStream = url.openStream())
+        {
 
-        final Application application =
-            this.applicationService.installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ) );
+            final Application application =
+                this.applicationService.installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ) );
 
-        return new ApplicationInstalledJson( application, this.siteService.getDescriptor( application.getKey() ) );
+            return new ApplicationInstalledJson( application, this.siteService.getDescriptor( application.getKey() ) );
+        }
+
     }
 
     @POST
     @Path("getMarketApplications")
     @Consumes(MediaType.APPLICATION_JSON)
-    public MarkedApplicationsJson getMarketApplications( final GetMarketApplicationsJson params )
+    public MarketApplicationsJson getMarketApplications( final GetMarketApplicationsJson params )
         throws Exception
     {
         String version = params.getVersion() != null ? params.getVersion() : "1.0.0";
-        final String spec = HTTPS_ENONIC_COM_MARKET_APPLICATIONS_XP_VERSION + "?" + version;
 
-        final URL url;
-
-        try
-        {
-            url = new URL( spec );
-        }
-        catch ( MalformedURLException e )
-        {
-            throw new RuntimeException( "cannot fetch from URL " + spec, e );
-        }
-
-        return doGetMarkedApplications( url );
-    }
-
-    private MarkedApplicationsJson doGetMarkedApplications( final URL url )
-        throws java.io.IOException
-    {
-        //final MarkedApplicationsJson markedApplicationsJson = new ObjectMapper().readValue( url, MarkedApplicationsJson.class );
-
-        Map<String, MarkedAppVersionInfoJson> versions = Maps.newHashMap();
-        versions.put( "1.0.0", new MarkedAppVersionInfoJson(
-            "https://repo.enonic.com/public/com/enonic/app/app-google-analytics/1.0.0/app-google-analytics-1.1.0.jar" ) );
-        versions.put( "1.1.0", new MarkedAppVersionInfoJson(
-            "https://repo.enonic.com/public/com/enonic/app/app-google-analytics/1.0.0/app-google-analytics-1.1.0.jar" ) );
-
-        final MarkedApplicationJson appJson = new MarkedApplicationJson();
-        appJson.setDisplayName( "Google Analytics" );
-        appJson.setDescription( "Adds Google Analytics to your sites and provides in-context analytics graphs" );
-        appJson.setIconUrl(
-            "http://enonic.com/market/applications/_/asset/com.enonic.app.market:1452774231/img/software-type-application.svg" );
-        appJson.setLatestVersion( "1.1.0" );
-        appJson.setApplicationUrl( "http://enonic.com/market/vendor/enonic/google-analytics" );
-        appJson.setVersions( versions );
-
-        return new MarkedApplicationsJson().add( "com.enonic.app.ga", appJson );
+        return this.marketService.get( version );
     }
 
     @Reference
@@ -230,5 +194,10 @@ public final class ApplicationResource
         this.siteService = siteService;
     }
 
+    @Reference
+    public void setMarketService( final MarketService marketService )
+    {
+        this.marketService = marketService;
+    }
 }
 
