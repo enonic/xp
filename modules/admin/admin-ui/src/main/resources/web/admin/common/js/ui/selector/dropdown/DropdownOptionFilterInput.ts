@@ -2,8 +2,8 @@ module api.ui.selector.dropdown {
 
     export class DropdownOptionFilterInput extends api.ui.selector.OptionFilterInput {
 
-        constructor() {
-            super();
+        constructor(placeholderText?: string) {
+            super(placeholderText);
         }
     }
 
