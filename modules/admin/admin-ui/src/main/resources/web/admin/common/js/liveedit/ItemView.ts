@@ -116,7 +116,6 @@ module api.liveedit {
         private mouseOverViewListener;
         private mouseLeaveViewListener;
         private shaderClickedListener;
-        private shaderMouseMoveListener;
         private pageItemViewAddedListener;
         private mouseEnterListener;
         private mouseLeaveListener;
@@ -217,7 +216,7 @@ module api.liveedit {
                 // because it is essential to resize them on window resize
                 if (this.isSelected()) {
                     this.highlight();
-                    this.shade();
+                    //this.shade();
                 }
             });
 
@@ -226,11 +225,6 @@ module api.liveedit {
             // in case of the locked or selected page
             this.shaderClickedListener = this.handleShaderClick.bind(this);
             Shader.get().onClicked(this.shaderClickedListener);
-
-            // page shader catches mouse events
-            // so bind listener to it to highlight underlying views
-            this.shaderMouseMoveListener = this.handleShaderMouseMove.bind(this);
-            Shader.get().onMouseMove(this.shaderMouseMoveListener);
 
             this.mouseOverViewListener = () => {
                 var isRegistered = !!this.getParentItemView();
@@ -293,7 +287,6 @@ module api.liveedit {
 
             api.ui.responsive.ResponsiveManager.unAvailableSizeChanged(this);
             Shader.get().unClicked(this.shaderClickedListener);
-            Shader.get().unMouseMove(this.shaderMouseMoveListener);
             this.unMouseOverView(this.mouseOverViewListener);
             this.unMouseLeaveView(this.mouseLeaveViewListener);
         }
@@ -346,7 +339,7 @@ module api.liveedit {
             }
 
             this.unhighlight();
-            this.unshade();
+            //this.unshade();
 
             this.unbindMouseListeners();
 
@@ -529,16 +522,6 @@ module api.liveedit {
             }
         }
 
-        handleShaderMouseMove(event: MouseEvent) {
-            var contains = this.isEventOverItem(event);
-
-            if (!this.mouseOver && contains) {
-                this.handleMouseEnter(event);
-            } else if (this.mouseOver && !contains) {
-                this.handleMouseLeave(event);
-            }
-        }
-
         protected isEventOverItem(event: MouseEvent): boolean {
             var offset = this.getEl().getDimensions(),
                 x = event.pageX,
@@ -692,7 +675,7 @@ module api.liveedit {
 
             this.hideTooltip();
             this.highlight();
-            this.shade();
+            //this.shade();
             this.showCursor();
 
             // selecting anything should exit the text edit mode
@@ -709,7 +692,7 @@ module api.liveedit {
 
             this.hideContextMenu();
             this.unhighlight();
-            this.unshade();
+            //this.unshade();
 
             if (this.isEmpty()) {
                 this.deselectPlaceholder();
