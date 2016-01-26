@@ -88,18 +88,15 @@ module app.browse {
             });
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-                if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
-                    this.browseActions.TOGGLE_SEARCH_PANEL.setVisible(true);
-                } else if (item.isInRangeOrBigger(ResponsiveRanges._540_720)) {
-                    this.browseActions.TOGGLE_SEARCH_PANEL.setVisible(false);
-                }
+                this.browseActions.TOGGLE_SEARCH_PANEL.setVisible(item.isInRangeOrSmaller(ResponsiveRanges._360_540));
             });
 
             ContentServerEventsHandler.getInstance().setContentBrowsePanelCreated();
             this.handleGlobalEvents();
         }
 
-        protected initFilterAndContentGridAndBrowseSplitPanel() {
+        doRender(): boolean {
+            super.doRender();
 
             var nonMobileDetailsPanelsManagerBuilder = NonMobileDetailsPanelsManager.create();
             this.initSplitPanelWithDockedDetails(nonMobileDetailsPanelsManagerBuilder);
@@ -123,6 +120,8 @@ module app.browse {
             });
 
             this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
+
+            return true;
         }
 
         private subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager) {
@@ -136,7 +135,7 @@ module app.browse {
                 this.updateDetailsPanel(item ? item.getModel() : null);
             });
 
-            ResponsiveManager.onAvailableSizeChanged(this.getFilterAndContentGridAndBrowseSplitPanel(), (item: ResponsiveItem) => {
+            ResponsiveManager.onAvailableSizeChanged(this.getFilterAndGridSplitPanel(), (item: ResponsiveItem) => {
                 nonMobileDetailsPanelsManager.handleResizeEvent();
             });
 
@@ -152,7 +151,7 @@ module app.browse {
 
         private initSplitPanelWithDockedDetails(nonMobileDetailsPanelsManagerBuilder: NonMobileDetailsPanelsManagerBuilder) {
 
-            var contentPanelsAndDetailPanel: api.ui.panel.SplitPanel = new api.ui.panel.SplitPanelBuilder(this.getFilterAndContentGridAndBrowseSplitPanel(),
+            var contentPanelsAndDetailPanel: api.ui.panel.SplitPanel = new api.ui.panel.SplitPanelBuilder(this.getFilterAndGridSplitPanel(),
                 this.defaultDockedDetailsPanel).
                 setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).
                 setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
@@ -262,7 +261,7 @@ module app.browse {
         private selectPreviewedContentInGrid(contentPreviewPath: string) {
             var path = this.getPathFromPreviewPath(contentPreviewPath);
             if (path) {
-                var contentPath = api.content.ContentPath.fromString(path)
+                var contentPath = api.content.ContentPath.fromString(path);
                 if (this.isSingleItemSelectedInGrid() && !this.isGivenPathSelectedInGrid(contentPath)) {
                     this.selectContentInGridByPath(contentPath);
                 }

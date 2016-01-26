@@ -26,15 +26,15 @@ module api.app.browse {
 
         private treeGrid: api.ui.treegrid.TreeGrid<Object>;
 
+        private gridAndToolbarPanel: api.ui.panel.Panel;
+
         private browseItemPanel: BrowseItemPanel<M>;
 
-        private contentGridAndBrowseSplitPanel: api.ui.panel.SplitPanel;
+        private gridAndItemsSplitPanel: api.ui.panel.SplitPanel;
 
         private filterPanel: api.app.browse.filter.BrowseFilterPanel;
 
-        private filterAndContentGridAndBrowseSplitPanel: api.ui.panel.SplitPanel;
-
-        private contentGridAndBrowseSplitPanelAndBrowseToolbarPanel: api.ui.panel.Panel;
+        private filterAndGridSplitPanel: api.ui.panel.SplitPanel;
 
         private filterPanelRefreshNeeded: boolean = false;
 
@@ -62,69 +62,63 @@ module api.app.browse {
                 let newSelectedCount = this.treeGrid.getGrid().getSelectedRows().length;
 
                 if (oldSelectedCount === newSelectedCount) {
-                    //
-                    this.treeGrid.getContextMenu().getActions().updateActionsEnabledState(this.browseItemPanel.getItems()).
-                        then(() => {
+                    this.treeGrid.getContextMenu().getActions()
+                        .updateActionsEnabledState(this.browseItemPanel.getItems())
+                        .then(() => {
                             this.browseItemPanel.updateDisplayedPanel();
                         });
                 }
             });
 
-            this.contentGridAndBrowseSplitPanel = new api.ui.panel.SplitPanelBuilder(this.treeGrid, this.browseItemPanel)
-                .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD).build();
-
-            this.contentGridAndBrowseSplitPanelAndBrowseToolbarPanel = new api.ui.panel.Panel();
-            this.contentGridAndBrowseSplitPanelAndBrowseToolbarPanel.appendChildren<any>(this.browseToolbar,
-                this.contentGridAndBrowseSplitPanel);
-
-            this.contentGridAndBrowseSplitPanel.setFirstPanelSize(38, api.ui.panel.SplitPanelUnit.PERCENT);
-
-            this.browseToolbar.addClass("browse-toolbar");
-            this.contentGridAndBrowseSplitPanel.addClass("content-grid-and-browse-split-panel");
-
-            if (this.filterPanel) {
-                this.setupFilterPanel();
-                if (this.filterPanelIsHiddenByDefault) {
-                    this.hideFilterPanel();
-                }
-            } else {
-                this.filterAndContentGridAndBrowseSplitPanel = this.contentGridAndBrowseSplitPanel;
-            }
-
             this.treeGrid.onSelectionChanged((currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
                 let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
                 this.browseItemPanel.setItems(browseItems);
-                this.treeGrid.getContextMenu().getActions().updateActionsEnabledState(this.browseItemPanel.getItems()).
-                    then(() => {
+                this.treeGrid.getContextMenu().getActions()
+                    .updateActionsEnabledState(this.browseItemPanel.getItems())
+                    .then(() => {
                         this.browseItemPanel.updateDisplayedPanel();
                     }).catch(api.DefaultErrorHandler.handle);
-            });
-
-            this.onRendered(() => {
-                this.initFilterAndContentGridAndBrowseSplitPanel();
             });
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.checkFilterPanelToBeShownFullScreen(item);
 
-                if (!this.filterPanelIsHiddenByDefault) { //not relevant if filter panel is hidden by default
-                    this.toggleFilterPanelDependingOnScreenSize(item);
+                if (this.isRendered()) {
+                    if (!this.filterPanelIsHiddenByDefault) { //not relevant if filter panel is hidden by default
+                        this.toggleFilterPanelDependingOnScreenSize(item);
+                    }
+                    this.togglePreviewPanelDependingOnScreenSize(item);
                 }
-
-                this.togglePreviewPanelDependingOnScreenSize(item);
             });
         }
 
-        protected initFilterAndContentGridAndBrowseSplitPanel() {
+        doRender(): boolean {
+            this.gridAndItemsSplitPanel = new api.ui.panel.SplitPanelBuilder(this.treeGrid, this.browseItemPanel)
+                .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD)
+                .build();
+
+            this.gridAndItemsSplitPanel.setFirstPanelSize(38, api.ui.panel.SplitPanelUnit.PERCENT);
+
+            this.browseToolbar.addClass("browse-toolbar");
+            this.gridAndItemsSplitPanel.addClass("content-grid-and-browse-split-panel");
+
             if (this.filterPanel) {
-                this.appendChild(this.filterAndContentGridAndBrowseSplitPanel);
+                this.gridAndToolbarPanel = new api.ui.panel.Panel();
+                this.gridAndToolbarPanel.appendChildren<any>(this.browseToolbar, this.gridAndItemsSplitPanel);
+
+                this.filterAndGridSplitPanel = this.setupFilterPanel();
+                this.appendChild(this.filterAndGridSplitPanel);
+                if (this.filterPanelIsHiddenByDefault) {
+                    this.hideFilterPanel();
+                }
             } else {
-                this.appendChild(this.contentGridAndBrowseSplitPanelAndBrowseToolbarPanel);
+                this.appendChildren<any>(this.browseToolbar, this.gridAndItemsSplitPanel);
             }
+            return true;
         }
 
-        getFilterAndContentGridAndBrowseSplitPanel(): api.ui.panel.Panel {
-            return this.filterAndContentGridAndBrowseSplitPanel;
+        getFilterAndGridSplitPanel(): api.ui.panel.Panel {
+            return this.filterAndGridSplitPanel;
         }
 
         getTreeGrid(): api.ui.treegrid.TreeGrid<Object> {
@@ -139,7 +133,6 @@ module api.app.browse {
             return this.browseToolbar.getActions();
         }
 
-        // TODO: ContentSummary must be replaced with an ContentSummaryAndCompareStatus after old grid is removed
         treeNodesToBrowseItems(nodes: TreeNode<Object>[]): BrowseItem<M>[] {
             return [];
         }
@@ -162,7 +155,7 @@ module api.app.browse {
         }
 
         toggleFilterPanel() {
-            this.filterAndContentGridAndBrowseSplitPanel.setFirstPanelIsFullScreen(this.filterPanelToBeShownFullScreen);
+            this.filterAndGridSplitPanel.setFirstPanelIsFullScreen(this.filterPanelToBeShownFullScreen);
 
             if (this.filterPanelIsHidden()) {
                 this.showFilterPanel();
@@ -172,7 +165,7 @@ module api.app.browse {
         }
 
         private filterPanelIsHidden(): boolean {
-            return this.filterAndContentGridAndBrowseSplitPanel.isFirstPanelHidden();
+            return this.filterAndGridSplitPanel.isFirstPanelHidden();
         }
 
         private showFilterPanel() {
@@ -180,10 +173,10 @@ module api.app.browse {
             this.filterPanelForcedHidden = false;
 
             if (this.filterPanelToBeShownFullScreen) {
-                this.filterAndContentGridAndBrowseSplitPanel.hideSecondPanel();
+                this.filterAndGridSplitPanel.hideSecondPanel();
             }
 
-            this.filterAndContentGridAndBrowseSplitPanel.showFirstPanel();
+            this.filterAndGridSplitPanel.showFirstPanel();
             this.filterPanel.giveFocusToSearch();
             this.toggleFilterPanelAction.setVisible(false);
         }
@@ -191,29 +184,24 @@ module api.app.browse {
         private hideFilterPanel() {
             this.filterPanelForcedShown = false;
             this.filterPanelForcedHidden = true;
-            this.filterAndContentGridAndBrowseSplitPanel.showSecondPanel();
-            this.filterAndContentGridAndBrowseSplitPanel.hideFirstPanel();
+            this.filterAndGridSplitPanel.showSecondPanel();
+            this.filterAndGridSplitPanel.hideFirstPanel();
 
             this.toggleFilterPanelAction.setVisible(true);
         }
 
         private setupFilterPanel() {
-            this.filterAndContentGridAndBrowseSplitPanel =
-                new api.ui.panel.SplitPanelBuilder(this.filterPanel, this.contentGridAndBrowseSplitPanelAndBrowseToolbarPanel).
-                    setFirstPanelSize(200, api.ui.panel.SplitPanelUnit.PIXEL).
-                    setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).
-                    setAnimationDelay(100).     // filter panel animation time
-                    build();
+            var splitPanel = new api.ui.panel.SplitPanelBuilder(this.filterPanel, this.gridAndToolbarPanel)
+                .setFirstPanelSize(200, api.ui.panel.SplitPanelUnit.PIXEL)
+                .setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL)
+                .setAnimationDelay(100)     // filter panel animation time
+                .build();
 
-            this.filterPanel.onHideFilterPanelButtonClicked(() => {
-                this.toggleFilterPanel();
-            });
-
-            this.filterPanel.onShowResultsButtonClicked(() => {
-                this.toggleFilterPanel();
-            });
+            this.filterPanel.onHideFilterPanelButtonClicked(this.toggleFilterPanel.bind(this));
+            this.filterPanel.onShowResultsButtonClicked(this.toggleFilterPanel.bind(this));
 
             this.addToggleFilterPanelButtonInToolbar();
+            return splitPanel;
         }
 
         private addToggleFilterPanelButtonInToolbar() {
@@ -226,25 +214,18 @@ module api.app.browse {
         }
 
         private checkFilterPanelToBeShownFullScreen(item: ResponsiveItem) {
-            if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
-                this.filterPanelToBeShownFullScreen = true;
-            }
-            else {
-                this.filterPanelToBeShownFullScreen = false;
-            }
+            this.filterPanelToBeShownFullScreen = item.isInRangeOrSmaller(ResponsiveRanges._360_540);
         }
 
         private toggleFilterPanelDependingOnScreenSize(item: ResponsiveItem) {
             if (item.isInRangeOrSmaller(ResponsiveRanges._1380_1620)) {
-                if (this.filterPanel && !this.filterAndContentGridAndBrowseSplitPanel.isFirstPanelHidden() &&
-                    !this.filterPanelForcedShown) {
-                    this.filterAndContentGridAndBrowseSplitPanel.hideFirstPanel();
+                if (this.filterPanel && !this.filterAndGridSplitPanel.isFirstPanelHidden() && !this.filterPanelForcedShown) {
+                    this.filterAndGridSplitPanel.hideFirstPanel();
                     this.toggleFilterPanelAction.setVisible(true);
                 }
             } else if (item.isInRangeOrBigger(ResponsiveRanges._1620_1920)) {
-                if (this.filterPanel && this.filterAndContentGridAndBrowseSplitPanel.isFirstPanelHidden() &&
-                    !this.filterPanelForcedHidden) {
-                    this.filterAndContentGridAndBrowseSplitPanel.showFirstPanel();
+                if (this.filterPanel && this.filterAndGridSplitPanel.isFirstPanelHidden() && !this.filterPanelForcedHidden) {
+                    this.filterAndGridSplitPanel.showFirstPanel();
                     this.toggleFilterPanelAction.setVisible(false);
                 }
             }
@@ -252,12 +233,12 @@ module api.app.browse {
 
         private togglePreviewPanelDependingOnScreenSize(item: ResponsiveItem) {
             if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
-                if (!this.contentGridAndBrowseSplitPanel.isSecondPanelHidden()) {
-                    this.contentGridAndBrowseSplitPanel.hideSecondPanel();
+                if (!this.gridAndItemsSplitPanel.isSecondPanelHidden()) {
+                    this.gridAndItemsSplitPanel.hideSecondPanel();
                 }
             } else if (item.isInRangeOrBigger(ResponsiveRanges._540_720)) {
-                if (this.contentGridAndBrowseSplitPanel.isSecondPanelHidden()) {
-                    this.contentGridAndBrowseSplitPanel.showSecondPanel();
+                if (this.gridAndItemsSplitPanel.isSecondPanelHidden()) {
+                    this.gridAndItemsSplitPanel.showSecondPanel();
                 }
             }
         }
