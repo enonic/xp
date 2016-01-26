@@ -65,7 +65,7 @@ module api.content {
 
         createResultItem(value: string): api.dom.Element {
 
-            var attachmentItem = new AttachmentItem(value, this.removeCallback);
+            var attachmentItem = new AttachmentItem(this.contentId, value, this.removeCallback);
             this.attachmentItems.push(attachmentItem);
 
             return attachmentItem;

@@ -1,33 +1,28 @@
 module api.content {
 
-    import Button = api.ui.button.Button;
-    import CloseButton = api.ui.button.CloseButton;
-    import ValueTypes = api.data.ValueTypes;
-
-    import Attachment = api.content.attachment.Attachment;
-    import AttachmentJson = api.content.attachment.AttachmentJson;
-    import AttachmentBuilder = api.content.attachment.AttachmentBuilder;
-    import SelectionItem = api.app.browse.SelectionItem;
-
-
     export class AttachmentItem extends api.dom.DivEl {
 
-        private view: api.app.NamesView;
+        private link: api.dom.AEl;
 
         private removeEl: api.dom.DivEl;
 
         private value: string;
 
-        constructor(value:string, removeCallback?: (value) => void) {
+        constructor(contentId: string, value: string, removeCallback?: (value) => void) {
             super("attachment-item");
+
             this.value = value;
-            this.view = new api.app.NamesView().setMainName(value);
+
+            this.link = new api.dom.AEl().
+                setUrl(api.util.UriHelper.getRestUri('content/media/' + contentId +'/'+ value));
+            this.link.setHtml(value);
 
             this.initRemoveButton(removeCallback);
         }
 
         private initRemoveButton(callback?: (value) => void) {
             this.removeEl = new api.dom.DivEl("icon remove");
+
             this.removeEl.onClicked(() => {
                 if (callback) {
                     callback(this.value);
@@ -42,9 +37,9 @@ module api.content {
 
         doRender(): boolean {
             this.removeChildren();
-            this.appendChild(this.removeEl);
-            this.appendChild(this.view);
 
+            this.appendChild(this.removeEl);
+            this.appendChild(this.link);
             return true;
         }
     }
