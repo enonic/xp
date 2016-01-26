@@ -465,6 +465,10 @@ module app.wizard.page {
                 new app.wizard.ShowContentFormEvent().fire();
                 this.contentWizardPanel.showForm();
             });
+
+            this.liveEditPageProxy.onPageUnloaded((event: api.liveedit.PageUnloadedEvent) => {
+                this.contentWizardPanel.close();
+            })
         }
 
         private minimizeContentFormPanelIfNeeded() {
