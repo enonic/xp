@@ -55,8 +55,8 @@ module api.content {
 
         getExistingItem(value: string) : api.dom.Element {
             var element = null;
-            this.attachmentItems.forEach((item) => {
-                if(item.getValue() == value) {
+            this.getResultContainer().getChildren().forEach((item) => {
+                if((<AttachmentItem>item).getValue() == value) {
                     element = item;
                 }
             });
@@ -65,7 +65,7 @@ module api.content {
 
         createResultItem(value: string): api.dom.Element {
 
-            var attachmentItem = new AttachmentItem(value, this.removeCallback);
+            var attachmentItem = new AttachmentItem(this.contentId, value, this.removeCallback);
             this.attachmentItems.push(attachmentItem);
 
             return attachmentItem;

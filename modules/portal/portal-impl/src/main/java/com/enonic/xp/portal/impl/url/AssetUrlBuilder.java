@@ -38,7 +38,7 @@ final class AssetUrlBuilder
             application( this.params.getApplication() ).
             resolve();
 
-        final Application application = this.applicationService.getApplication( applicationKey );
+        final Application application = this.applicationService.getInstalledApplication( applicationKey );
         if ( application == null )
         {
             throw new IllegalArgumentException( "Could not find application [" + applicationKey + "]" );

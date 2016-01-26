@@ -31,7 +31,7 @@ final class GetWidgetDescriptorsByInterfaceCommand
 
     public WidgetDescriptors execute()
     {
-        final ApplicationKeys keys = this.applicationService.getApplicationKeys();
+        final ApplicationKeys keys = this.applicationService.getInstalledApplicationKeys();
         final List<WidgetDescriptor> widgetDescriptorList = getDescriptorsFromModules( keys ).
             stream().
             filter( widgetDescriptor -> widgetDescriptor.getInterfaces().contains( interfaceName ) ).

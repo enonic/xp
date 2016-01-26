@@ -8,3 +8,4 @@
 ///<reference path='ApplicationBrowsePanel.ts' />
 ///<reference path='ApplicationBrowseToolbar.ts' />
 ///<reference path='ApplicationBrowseItemPanel.ts'/>
+///<reference path='InstallApplicationAction.ts'/>

@@ -5,7 +5,7 @@ module api.content {
     import OrderDirection = api.query.expr.OrderDirection;
     import FieldExpr = api.query.expr.FieldExpr;
 
-    export class ContentSummaryLoader extends api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary> {
+    export class ContentSummaryLoader extends ContentSummaryPreLoader {
 
         public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("_modifiedTime"), OrderDirection.DESC);
 

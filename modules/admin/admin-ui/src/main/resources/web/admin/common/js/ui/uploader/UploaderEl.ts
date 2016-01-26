@@ -291,11 +291,11 @@ module api.ui.uploader {
             return this.config.name;
         }
 
-        getValue(): string {
+        doGetValue(): string {
             return this.value;
         }
 
-        setValue(value: string): UploaderEl<MODEL> {
+        doSetValue(value: string, silent?: boolean): UploaderEl<MODEL> {
             if (UploaderEl.debug) {
                 console.log('Setting uploader value', value, this);
             }
@@ -334,17 +334,23 @@ module api.ui.uploader {
         }
 
         protected appendNewItems(newItemsToAppend: Element[]) {
-            newItemsToAppend.forEach((elem) => {
-                this.getResultContainer().appendChild(elem);
-            });
+            for(var key in newItemsToAppend) {
+                this.getResultContainer().appendChild(newItemsToAppend[key]);
+            };
         }
 
-        private removeAllChildrenExceptGiven(itemsToKeep: Element[]) {
-            this.getResultContainer().getChildren().forEach((elem) => {
+        protected removeAllChildrenExceptGiven(itemsToKeep: Element[]) {
+            var items = this.getResultContainer().getChildren(),
+                toRemove = [];
+
+            items.forEach((elem) => {
                 if (!itemsToKeep.some((itemToKeep) => itemToKeep == elem)) {
-                    elem.remove();
+                    toRemove.push(elem);
                 }
             });
+            for(var key in toRemove) {
+                toRemove[key].remove();
+            }
         }
 
         protected getExistingItem(value: string): Element {
@@ -532,7 +538,7 @@ module api.ui.uploader {
             }
 
             // Check for max allowed occurrences
-            if (this.config.maximumOccurrences > 0 && files.length > this.config.maximumOccurrences) {
+           /* if (this.config.maximumOccurrences > 0 && files.length > this.config.maximumOccurrences) {
                 if (UploaderEl.debug) {
                     console.log('Max ' + this.config.maximumOccurrences + ' files allowed, removing the rest', this);
                 }
@@ -540,7 +546,7 @@ module api.ui.uploader {
                 files.splice(this.config.maximumOccurrences);
                 up.splice(this.config.maximumOccurrences);
                 api.notify.NotifyManager.get().showWarning('Max ' + this.config.maximumOccurrences + ' files are allowed');
-            }
+            }*/
 
             return files.length > 0;
         }
@@ -686,7 +692,7 @@ module api.ui.uploader {
                 });
 
                 if (values.length > 0) {
-                    this.setValue(JSON.stringify(values));
+                    this.setValue(JSON.stringify(values), false, true);
                     this.notifyUploadCompleted(this.uploadedItems);
                 }
 

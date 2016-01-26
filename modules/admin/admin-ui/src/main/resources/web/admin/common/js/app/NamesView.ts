@@ -20,8 +20,8 @@ module api.app {
             this.appendChild(this.subNameEl);
         }
 
-        setMainName(value: string): NamesView {
-            this.mainNameEl.setHtml(value);
+        setMainName(value: string, escapeHtml: boolean = true): NamesView {
+            this.mainNameEl.setHtml(value, escapeHtml);
             if (this.addTitleAttribute) {
                 this.mainNameEl.getEl().setAttribute("title", value);
             }

@@ -37,7 +37,7 @@ public class PortalUrlServiceImpl_assetUrlTest
         final Application application = Mockito.mock( Application.class );
         Mockito.when( application.getKey() ).thenReturn( applicationKey );
         Mockito.when( application.getModifiedTime() ).thenReturn( Instant.MAX );
-        Mockito.when( this.applicationService.getApplication( applicationKey ) ).thenReturn( application );
+        Mockito.when( this.applicationService.getInstalledApplication( applicationKey ) ).thenReturn( application );
 
         final AssetUrlParams params = new AssetUrlParams().
             portalRequest( this.portalRequest ).

@@ -25,6 +25,7 @@
   <bundle level="10">${group}:repack-elasticsearch:${version}</bundle>
   <bundle level="10">${group}:repack-resteasy:${version}</bundle>
   <bundle level="10">${group}:repack-attoparser:${version}</bundle>
+  <bundle level="10">${group}:repack-okhttp:${version}</bundle>
 
   <!-- Core app bundles -->
   <bundle level="15">${group}:core-api:${version}</bundle>
@@ -41,6 +42,7 @@
   <bundle level="22">${group}:core-i18n:${version}</bundle>
   <bundle level="22">${group}:core-media:${version}</bundle>
   <bundle level="22">${group}:core-app:${version}</bundle>
+  <bundle level="22">${group}:core-service:${version}</bundle>
 
   <!-- Server bundles -->
   <bundle level="15">${group}:server-shell:${version}</bundle>

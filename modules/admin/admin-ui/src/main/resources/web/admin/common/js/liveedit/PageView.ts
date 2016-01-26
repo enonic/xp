@@ -302,7 +302,6 @@ module api.liveedit {
 
         handleShaderClick(event: MouseEvent) {
             if (this.isLocked()) {
-
                 if (!this.lockedContextMenu) {
                     this.lockedContextMenu = this.createLockedContextMenu();
                 }
@@ -312,12 +311,10 @@ module api.liveedit {
                 else {
                     this.selectLocked({x: event.pageX, y: event.pageY});
                 }
-            }
-            else if (this.isSelected()) {
-                this.deselect();
-            }
-            else if (!!event.type && (event.type == 'click' || event.type == 'contextmenu') && this.isEventOverItem(event)) {
+            } else if (!this.isSelected() || event.which == 3) {
                 this.handleClick(event);
+            } else {
+                this.deselect();
             }
         }
 
@@ -603,7 +600,8 @@ module api.liveedit {
                         return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
                     }
                     else {
-                        var layoutView: api.liveedit.layout.LayoutComponentView = <api.liveedit.layout.LayoutComponentView>regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
+                        var layoutView: api.liveedit.layout.LayoutComponentView = <api.liveedit.layout.LayoutComponentView>regionView.getComponentViewByIndex(
+                            firstLevelOfPath.getComponentIndex());
                         return layoutView.getComponentViewByPath(path.removeFirstLevel());
                     }
                 }
@@ -657,15 +655,6 @@ module api.liveedit {
             this.toItemViewArray().forEach((itemView: ItemView) => {
                 this.registerItemView(itemView);
             });
-        }
-
-        deselectChildViews() {
-            for (var itemView in this.viewsById) {
-                var view = this.viewsById[itemView];
-                if (api.ObjectHelper.iFrameSafeInstanceOf(view, ItemView) && view.isSelected()) {
-                    view.deselect();
-                }
-            }
         }
 
         private doParseItemViews(parentElement?: api.dom.Element) {

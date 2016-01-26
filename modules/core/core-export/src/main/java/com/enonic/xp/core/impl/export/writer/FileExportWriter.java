@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.export.writer;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,9 +51,9 @@ public class FileExportWriter
     {
         this.doCreateDirectories( itemPath.getParent() );
 
-        try
+        try (final InputStream in = source.openStream())
         {
-            Files.copy( source.openStream(), itemPath );
+            Files.copy( in, itemPath );
         }
         catch ( IOException e )
         {

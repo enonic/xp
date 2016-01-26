@@ -73,7 +73,6 @@ public abstract class ScriptTestSupport
         addService( ViewFunctionService.class, viewFunctionService );
 
         this.scriptSettings = ScriptSettings.create();
-        this.scriptSettings.basePath( "/site" );
         this.scriptSettings.binding( Context.class, ContextAccessor::current );
         this.scriptSettings.binding( PortalRequest.class, () -> this.portalRequest );
         this.scriptSettings.debug( new ScriptDebugSettings() );
@@ -151,7 +150,7 @@ public abstract class ScriptTestSupport
         final Application application = createApplication();
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getApplication( APP_KEY ) ).thenReturn( application );
+        Mockito.when( applicationService.getInstalledApplication( APP_KEY ) ).thenReturn( application );
         return applicationService;
     }
 

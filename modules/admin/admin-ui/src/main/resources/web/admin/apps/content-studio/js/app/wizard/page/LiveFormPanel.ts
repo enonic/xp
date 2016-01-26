@@ -420,6 +420,10 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onComponentAdded((event: ComponentAddedEvent) => {
                 // do something when component is added
+                // onItemViewSelected() is not called on adding TextComponentView thus calling minimizeContentFormPanelIfNeeded() for it from here
+                if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), TextComponentView)) {
+                    this.minimizeContentFormPanelIfNeeded();
+                }
             });
 
             this.liveEditPageProxy.onComponentRemoved((event: ComponentRemovedEvent) => {
@@ -469,6 +473,10 @@ module app.wizard.page {
                 new app.wizard.ShowContentFormEvent().fire();
                 this.contentWizardPanel.showForm();
             });
+
+            this.liveEditPageProxy.onPageUnloaded((event: api.liveedit.PageUnloadedEvent) => {
+                this.contentWizardPanel.close();
+            })
         }
 
         private minimizeContentFormPanelIfNeeded() {

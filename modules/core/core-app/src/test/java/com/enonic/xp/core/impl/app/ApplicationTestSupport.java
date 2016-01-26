@@ -35,10 +35,11 @@ public abstract class ApplicationTestSupport
         this.apps = Maps.newHashMap();
 
         this.applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( this.applicationService.getApplication( Mockito.any() ) ).then(
+        Mockito.when( this.applicationService.getInstalledApplication( Mockito.any() ) ).then(
             invocationOnMock -> apps.get( (ApplicationKey) invocationOnMock.getArguments()[0] ) );
-        Mockito.when( this.applicationService.getAllApplications() ).then( invocationOnMock -> Applications.from( apps.values() ) );
-        Mockito.when( this.applicationService.getApplicationKeys() ).then( invocationOnMock -> ApplicationKeys.from( apps.keySet() ) );
+        Mockito.when( this.applicationService.getInstalledApplications() ).then( invocationOnMock -> Applications.from( apps.values() ) );
+        Mockito.when( this.applicationService.getInstalledApplicationKeys() ).then(
+            invocationOnMock -> ApplicationKeys.from( apps.keySet() ) );
 
         this.resourceService = new ResourceServiceImpl();
         this.resourceService.setApplicationService( this.applicationService );

@@ -118,17 +118,12 @@ module api.liveedit {
         private shaderClickedListener;
         private shaderMouseMoveListener;
         private pageItemViewAddedListener;
-        private pageClickedListener;
         private mouseEnterListener;
         private mouseLeaveListener;
         private mouseClickedListener;
         private contextMenuListener;
 
         public static debug: boolean = false;
-
-        private static debouncedClickHandler: (itemView: ItemView,
-                                               event: MouseEvent) => void = api.util.AppHelper.debounce(ItemView.handleItemViewClickEvent,
-            300, false);
 
         constructor(builder: ItemViewBuilder) {
             api.util.assertNotNull(builder.type, "type cannot be null");
@@ -226,17 +221,9 @@ module api.liveedit {
                 }
             });
 
-            // component shader allows mouse events through
-            // thus bind listener to pageView to know when shader was clicked in case of unlocked page
-            this.pageClickedListener = (event) => {
-                if (!pageView.isLocked() && this.shaded && !this.isEventOverItem(event)) {
-                    this.handleShaderClick(event);
-                }
-            };
-            pageView.onClicked(this.pageClickedListener);
-
-            // page shader catches mouse events
-            // so bind listener to it in case of the locked page
+            // Page shader catches mouse events
+            // so bind listener to it to know when a shader clicked
+            // in case of the locked or selected page
             this.shaderClickedListener = this.handleShaderClick.bind(this);
             Shader.get().onClicked(this.shaderClickedListener);
 
@@ -294,7 +281,6 @@ module api.liveedit {
 
             this.onRemoved(() => {
                 pageView.unItemViewAdded(this.pageItemViewAddedListener);
-                pageView.unClicked(this.pageClickedListener);
             });
         }
 
@@ -504,23 +490,6 @@ module api.liveedit {
             return this;
         }
 
-        private static handleItemViewClickEvent(itemView: ItemView, event: MouseEvent) {
-            if (!itemView.isSelected() || event.which == 3) {
-                // we prevented mouse events to bubble up so if parent view is selected
-                // it won't receive mouse event and won't be deselected
-                // therefore we deselect it manually
-                itemView.deselectParent();
-                itemView.getPageView().deselectChildViews();
-
-                var clickPosition = !itemView.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
-                event.which == 3 ?
-                itemView.select(clickPosition, null, false, true) :
-                itemView.select(clickPosition, ItemViewContextMenuPosition.NONE, false, true);
-            } else {
-                itemView.deselect();
-            }
-        }
-
         handleClick(event: MouseEvent) {
             event.stopPropagation();
 
@@ -528,8 +497,22 @@ module api.liveedit {
                 event.preventDefault();
             }
 
-            //ItemView.debouncedClickHandler(this, event); // Commented until XP-2638 is done
-            ItemView.handleItemViewClickEvent(this, event);
+            if (!this.isSelected() || event.which == 3) {
+                var selectedView = this.getPageView().getSelectedView();
+                if (selectedView) {
+                    selectedView.deselect();
+                }
+                // Allow selecting only component types if something is selected
+                // The rest will only deselect current selection
+                // Also allow selecting the same component again (i.e. to show context menu)
+                if (!selectedView || selectedView == this || this.getType().isComponentType()) {
+                    var clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
+                    var menuPosition = event.which == 3 ? null : ItemViewContextMenuPosition.NONE;
+                    this.select(clickPosition, menuPosition, false, true);
+                }
+            } else {
+                this.deselect();
+            }
         }
 
         handleShaderClick(event: MouseEvent) {
@@ -565,15 +548,6 @@ module api.liveedit {
                    && x <= offset.left + offset.width
                    && y >= offset.top
                    && y <= offset.top + offset.height;
-        }
-
-        private deselectParent() {
-            for (var parent = this.parentItemView; parent; parent = parent.parentItemView) {
-                if (parent.isSelected()) {
-                    parent.deselect();
-                    return;
-                }
-            }
         }
 
         getItemViewIdProducer(): ItemViewIdProducer {

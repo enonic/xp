@@ -154,10 +154,10 @@ module api.content {
 
             var contentId = new api.content.ContentId(value),
                 imgUrl = new ContentImageUrlResolver().
-                    setContentId(contentId).
-                    setTimestamp(new Date()).
-                    setSource(true).
-                    resolve();
+                setContentId(contentId).
+                setTimestamp(new Date()).
+                setSource(true).
+                resolve();
 
             this.togglePlaceholder(true);
 
@@ -230,7 +230,7 @@ module api.content {
             var resultOffset = this.getResultContainer().getEl().getOffset();
 
             imageEditor.getEl().setTopPx(resultOffset.top).
-                setLeftPx(resultOffset.left);
+            setLeftPx(resultOffset.left);
         }
 
         protected getExistingItem(value: string): api.dom.Element {
@@ -245,7 +245,7 @@ module api.content {
                 this.initialWidth = this.getParentElement().getEl().getWidth();
             }
 
-            var imageEditor = this.createImageEditor(this.contentId);
+            var imageEditor = this.createImageEditor(value);
 
             this.imageEditors.push(imageEditor);
 

@@ -7,8 +7,6 @@ import com.google.common.collect.ImmutableMap;
 
 public final class ScriptSettings
 {
-    private final String basePath;
-
     private final ImmutableMap<Class, Supplier> bindings;
 
     private final ImmutableMap<String, Object> globalMap;
@@ -17,15 +15,9 @@ public final class ScriptSettings
 
     private ScriptSettings( final Builder builder )
     {
-        this.basePath = builder.basePath;
         this.globalMap = builder.globalMap.build();
         this.bindings = builder.attributes.build();
         this.debug = builder.debug;
-    }
-
-    public String getBasePath()
-    {
-        return this.basePath != null ? this.basePath : "";
     }
 
     public Map<String, Object> getGlobalVariables()
@@ -56,8 +48,6 @@ public final class ScriptSettings
 
     public final static class Builder
     {
-        private String basePath;
-
         private final ImmutableMap.Builder<Class, Supplier> attributes;
 
         private final ImmutableMap.Builder<String, Object> globalMap;
@@ -68,12 +58,6 @@ public final class ScriptSettings
         {
             this.attributes = ImmutableMap.builder();
             this.globalMap = ImmutableMap.builder();
-        }
-
-        public Builder basePath( final String basePath )
-        {
-            this.basePath = basePath;
-            return this;
         }
 
         public Builder globalVariable( final String name, final Object value )

@@ -74,7 +74,7 @@ final class ContentTypeRegistry
         final Set<ContentType> contentTypeList = Sets.newLinkedHashSet();
         contentTypeList.addAll( this.builtInTypes.getAll().getList() );
 
-        for ( final Application application : this.applicationService.getAllApplications() )
+        for ( final Application application : this.applicationService.getInstalledApplications() )
         {
             final ContentTypes contentTypes = getByApplication( application.getKey() );
             contentTypeList.addAll( contentTypes.getList() );

@@ -4,9 +4,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.repo.impl.blob.BlobKey;
 import com.enonic.xp.repo.impl.blob.BlobRecord;
 import com.enonic.xp.repo.impl.blob.BlobStore;
@@ -36,6 +38,11 @@ public class GetBinaryCommand
     {
         final Node node = doGetById( this.nodeId );
 
+        if ( node == null )
+        {
+            throw new NodeNotFoundException( "Cannot get binary reference, node with id: " + this.nodeId + " not found" );
+        }
+
         if ( binaryReference != null )
         {
             return getByBinaryReference( node );
@@ -48,7 +55,14 @@ public class GetBinaryCommand
 
     private ByteSource getByBinaryReference( final Node node )
     {
-        final AttachedBinary attachedBinary = node.getAttachedBinaries().getByBinaryReference( this.binaryReference );
+        final AttachedBinaries attachedBinaries = node.getAttachedBinaries();
+
+        if ( attachedBinaries == null )
+        {
+            return null;
+        }
+
+        final AttachedBinary attachedBinary = attachedBinaries.getByBinaryReference( this.binaryReference );
 
         if ( attachedBinary == null )
         {

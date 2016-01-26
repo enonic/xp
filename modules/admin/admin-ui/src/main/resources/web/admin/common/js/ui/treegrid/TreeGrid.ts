@@ -1028,6 +1028,10 @@ module api.ui.treegrid {
             return this;
         }
 
+        getItem(rowIndex: number): TreeNode<DATA> {
+            return this.gridData.getItem(rowIndex);
+        }
+
         private notifySelectionChanged(event: any, rows: number[]): void {
             var currentSelection: TreeNode<DATA>[] = [];
             if (rows) {

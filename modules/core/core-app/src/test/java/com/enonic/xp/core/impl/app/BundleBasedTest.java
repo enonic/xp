@@ -64,9 +64,19 @@ public abstract class BundleBasedTest
 
     protected final TinyBundle newBundle( final String name, final boolean isApp )
     {
+        return doCreateNewBundle( name, isApp, "1.0.0" );
+    }
+
+    protected final TinyBundle newBundle( final String name, final boolean isApp, final String version )
+    {
+        return doCreateNewBundle( name, isApp, version );
+    }
+
+    private TinyBundle doCreateNewBundle( final String name, final boolean isApp, final String version )
+    {
         final TinyBundle bundle = TinyBundles.bundle().
             set( Constants.BUNDLE_SYMBOLICNAME, name ).
-            set( Constants.BUNDLE_VERSION, "1.0.0" );
+            set( Constants.BUNDLE_VERSION, version );
 
         if ( isApp )
         {

@@ -178,6 +178,13 @@ module app.wizard {
                 this.dialogTitle.setPath('');
             }
             super.show();
+
+            if(this.comboBox.getComboBox().isVisible()) {
+                this.comboBox.giveFocus();
+            }
+            else {
+                this.inheritPermissionsCheck.giveFocus();
+            }
         }
     }
 

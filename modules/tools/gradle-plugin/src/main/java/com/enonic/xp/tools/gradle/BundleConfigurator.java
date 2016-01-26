@@ -16,6 +16,7 @@ import com.google.common.base.Joiner;
 
 final class BundleConfigurator
 {
+
     private final static String EXPORT_PACKAGE = "Export-Package";
 
     private final static String IMPORT_PACKAGE = "Import-Package";
@@ -23,6 +24,8 @@ final class BundleConfigurator
     private final static String PRIVATE_PACKAGE = "Private-Package";
 
     private final static String DEFAULT_IMPORT = "*;resolution:=optional";
+
+    public static final String APPLICATION_BUNDLE_TYPE = "application";
 
     private final Project project;
 
@@ -58,6 +61,7 @@ final class BundleConfigurator
         instruction( "X-Vendor-Name", application.getVendorName() );
         instruction( "X-Vendor-Url", application.getVendorUrl() );
         instruction( "X-System-Version", application.getSystemVersion() );
+        instruction( "X-Bundle-Type", APPLICATION_BUNDLE_TYPE );
 
         final Configuration libConfig = this.project.getConfigurations().getByName( "include" );
         final Configuration filteredConfig = new UnwantedJarFilter( libConfig ).filter();
