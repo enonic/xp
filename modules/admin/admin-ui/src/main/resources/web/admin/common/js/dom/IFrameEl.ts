@@ -20,26 +20,21 @@ module api.dom {
         }
 
         isSrcAlreadyShown(src: string): boolean {
-            var thisIFrameElement: HTMLIFrameElement = <HTMLIFrameElement>this.getHTMLElement();
+            var contentWindow = this.getFrameWindowObject();
 
             try {
-                if (!!src && !!thisIFrameElement.contentWindow && thisIFrameElement.contentWindow.location) {
-                    var href = thisIFrameElement.contentWindow.location.href;
-                    return this.trimAnchor(src) === this.trimAnchor(this.getRelativeHref(href));
+                if (!!src && !!contentWindow && contentWindow.location) {
+                    var href = contentWindow.location.href;
+                    return UriHelper.trimAnchor(src) ===
+                           UriHelper.trimAnchor(UriHelper.trimWindowProtocolAndPortFromHref(href, contentWindow));
                 }
             } catch (reason) {}
 
             return false;
         }
 
-        private getRelativeHref(href: string) {
-            var location: Location = (<HTMLIFrameElement>this.getHTMLElement()).contentWindow.location;
-            return UriHelper.relativePath(href.replace(location.protocol + "//" + location.host, ""));
-        }
-
-        private trimAnchor(trimMe: string): string {
-            var index = trimMe.lastIndexOf("#");
-            return index >= 0 ? UriHelper.relativePath(trimMe.substring(0, index)) : UriHelper.relativePath(trimMe);
+        private getFrameWindowObject(): Window {
+            return (<HTMLIFrameElement>this.getHTMLElement()).contentWindow;
         }
 
         isLoaded() {
