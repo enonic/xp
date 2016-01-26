@@ -472,6 +472,12 @@ module api.content.page {
             return this.customized;
         }
 
+        isModified(): boolean {
+            // default template regions differing from page regions means it has been modified
+            return !!this.getDefaultPageTemplate() && this.getDefaultPageTemplate().isPage() &&
+                !this.getDefaultPageTemplate().getRegions().equals(this.getRegions());
+        }
+
         private contentHasNonRenderableTemplateSet() {
             return !this.isPageTemplate() && (this.mode == PageMode.NO_CONTROLLER) &&
                    this.liveEditModel.getContent().getPage() &&
