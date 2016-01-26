@@ -678,6 +678,8 @@ module api.liveedit {
             //this.shade();
             this.showCursor();
 
+            api.liveedit.SelectHighlighter.get().highlightItemView(this);
+
             // selecting anything should exit the text edit mode
             this.stopTextEditMode();
 
@@ -693,6 +695,8 @@ module api.liveedit {
             this.hideContextMenu();
             this.unhighlight();
             //this.unshade();
+
+            api.liveedit.SelectHighlighter.get().hide();
 
             if (this.isEmpty()) {
                 this.deselectPlaceholder();
