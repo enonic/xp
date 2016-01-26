@@ -116,7 +116,6 @@ module api.liveedit {
         private mouseOverViewListener;
         private mouseLeaveViewListener;
         private shaderClickedListener;
-        private shaderMouseMoveListener;
         private pageItemViewAddedListener;
         private mouseEnterListener;
         private mouseLeaveListener;
@@ -229,8 +228,6 @@ module api.liveedit {
 
             // page shader catches mouse events
             // so bind listener to it to highlight underlying views
-            this.shaderMouseMoveListener = this.handleShaderMouseMove.bind(this);
-            Shader.get().onMouseMove(this.shaderMouseMoveListener);
 
             this.mouseOverViewListener = () => {
                 var isRegistered = !!this.getParentItemView();
@@ -293,7 +290,6 @@ module api.liveedit {
 
             api.ui.responsive.ResponsiveManager.unAvailableSizeChanged(this);
             Shader.get().unClicked(this.shaderClickedListener);
-            Shader.get().unMouseMove(this.shaderMouseMoveListener);
             this.unMouseOverView(this.mouseOverViewListener);
             this.unMouseLeaveView(this.mouseLeaveViewListener);
         }
@@ -526,16 +522,6 @@ module api.liveedit {
             }
             if (!!event.type && (event.type == 'click' || event.type == 'contextmenu') && this.isEventOverItem(event)) {
                 this.handleClick(event);
-            }
-        }
-
-        handleShaderMouseMove(event: MouseEvent) {
-            var contains = this.isEventOverItem(event);
-
-            if (!this.mouseOver && contains) {
-                this.handleMouseEnter(event);
-            } else if (this.mouseOver && !contains) {
-                this.handleMouseLeave(event);
             }
         }
 
