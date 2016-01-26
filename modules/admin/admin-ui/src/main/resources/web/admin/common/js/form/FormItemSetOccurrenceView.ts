@@ -75,6 +75,9 @@ module api.form {
             this.appendChild(this.removeButton);
             this.removeButton.onClicked((event: MouseEvent) => {
                 this.notifyRemoveButtonClicked();
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
             });
 
             this.label = new FormItemSetLabel(this.formItemSet);
@@ -154,6 +157,18 @@ module api.form {
             }
 
             this.removeButton.setVisible(this.formItemSetOccurrence.isRemoveButtonRequired());
+        }
+
+        onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                formItemView.onEditContentRequest(listener);
+            });
+        }
+
+        unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                formItemView.unEditContentRequest(listener);
+            });
         }
 
         showContainer(show: boolean) {

@@ -43,7 +43,7 @@ public class ContentServiceImplTest_push
         final PushContentsResult push = this.contentService.push( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
-            resolveDependencies( false ).
+            includeDependencies( false ).
             build() );
 
         assertEquals( 1, push.getPushedContents().getSize() );

@@ -10,6 +10,14 @@ bundle {
     instruction 'Bundle-Name', 'Enonic XP Admin'
 }
 
+dependencies {
+    compile project( ":admin:admin-api" )
+    compile project( ":script:script-api" )
+    include project( ":lib:lib-auth" )
+    include project( ":lib:lib-mustache" )
+    include project( ":lib:lib-portal" )
+}
+
 task cleanSourceFiles( type: Delete ) {
     description = 'Clean source files that is used by Grunt.'
     delete fileTree( dir: 'src/main/resources', includes: ['**/_all.*'] )

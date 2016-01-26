@@ -35,7 +35,7 @@ module api.ui.selector.combobox {
                 maximumOccurrences: builder.maximumOccurrences,
                 selectedOptionsView: this.selectedOptionsView,
                 optionDisplayValueViewer: builder.optionDisplayValueViewer,
-                hideComboBoxWhenMaxReached: true,
+                hideComboBoxWhenMaxReached: builder.hideComboBoxWhenMaxReached,
                 setNextInputFocusWhenMaxReached: builder.nextInputFocusWhenMaxReached,
                 delayedInputValueChangedHandling: builder.delayedInputValueChangedHandling,
                 minWidth: builder.minWidth,
@@ -234,7 +234,8 @@ module api.ui.selector.combobox {
 
             this.loader.onLoadedData((event: api.util.loader.event.LoadedDataEvent<OPTION_DISPLAY_VALUE>) => {
                 var options = this.createOptions(event.getData());
-                this.comboBox.setOptions(options);
+                // check if postLoad and save selection
+                this.comboBox.setOptions(options, event.isPostLoaded());
                 this.notifyLoaded(event.getData());
             });
         }
@@ -353,20 +354,20 @@ module api.ui.selector.combobox {
                     console.debug(this.toString() + '.doSetValue on loaded:', value);
                 }
                 super.doSetValue(value, silent);
-            });
+            }, value);
         }
 
-        private doWhenLoaded(func: Function) {
+        private doWhenLoaded(callback: Function, value: string) {
             if (this.loader.isLoaded()) {
-                func();
+                callback();
             } else {
                 var singleLoadListener = () => {
-                    func();
+                    callback();
                     this.loader.unLoadedData(singleLoadListener);
                 };
                 this.loader.onLoadedData(singleLoadListener);
                 if (this.loader.isNotStarted()) {
-                    this.loader.load();
+                    this.loader.preLoad(value);
                 }
             }
         }
@@ -402,6 +403,8 @@ module api.ui.selector.combobox {
         delayedInputValueChangedHandling: number;
 
         nextInputFocusWhenMaxReached: boolean = true;
+
+        hideComboBoxWhenMaxReached: boolean = true;
 
         minWidth: number;
 
@@ -444,6 +447,11 @@ module api.ui.selector.combobox {
 
         setNextInputFocusWhenMaxReached(value: boolean): RichComboBoxBuilder<T> {
             this.nextInputFocusWhenMaxReached = value;
+            return this;
+        }
+
+        setHideComboBoxWhenMaxReached(value: boolean): RichComboBoxBuilder<T> {
+            this.hideComboBoxWhenMaxReached = value;
             return this;
         }
 

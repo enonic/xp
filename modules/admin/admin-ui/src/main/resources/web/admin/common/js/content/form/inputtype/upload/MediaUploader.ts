@@ -8,51 +8,60 @@ module api.content.form.inputtype.upload {
     import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
     import PluploadFile = api.ui.uploader.PluploadFile;
 
-    import MediaUploaderEl = api.content.MediaUploaderEl;
-    import Content = api.content.Content;
-    import UploaderEl = api.ui.uploader.UploaderEl;
+    export interface MediaUploaderConfigAllowType {
+        name: string;
+        extensions: string;
+    }
 
-
-    export class MediaUploader extends FileUploader {
+    export class MediaUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
+        private config: api.content.form.inputtype.ContentInputTypeViewContext;
+        private mediaUploaderEl: api.content.MediaUploaderEl;
+        private uploaderWrapper: api.dom.DivEl;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super(config);
-            this.addClass("media-uploader");
+            super(config, "media-uploader");
             this.config = config;
+        }
+
+        getContext(): api.content.form.inputtype.ContentInputTypeViewContext {
+            return <api.content.form.inputtype.ContentInputTypeViewContext>super.getContext();
+        }
+
+        getValueType(): ValueType {
+            return ValueTypes.STRING;
+        }
+
+        newInitialValue(): Value {
+            return ValueTypes.STRING.newNullValue();
         }
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
 
-            this.uploaderEl = this.createUploader(property);
-            var mediaUploader = <MediaUploaderEl>this.uploaderEl;
+            this.mediaUploaderEl = this.createUploader(property);
 
             this.uploaderWrapper = this.createUploaderWrapper(property);
 
             this.updateProperty(property);
 
-            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                this.updateProperty(event.getProperty(), true);
-            });
-
-            mediaUploader.onUploadStarted(() => {
+            this.mediaUploaderEl.onUploadStarted(() => {
                 this.uploaderWrapper.removeClass("empty");
             });
 
-            mediaUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
+            this.mediaUploaderEl.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
 
                 var content = event.getUploadItem().getModel(),
-                    value = mediaUploader.getMediaValue(content),
+                    value = this.mediaUploaderEl.getMediaValue(content),
                     fileName = value.getString();
 
-                mediaUploader.setFileName(fileName);
+                this.mediaUploaderEl.setFileName(fileName);
 
                 switch (property.getType()) {
-                case ValueTypes.DATA:
-                    property.getPropertySet().setProperty('attachment', 0, value);
-                    break;
-                case ValueTypes.STRING:
-                    property.setValue(ValueTypes.STRING.newValue(fileName));
-                    break;
+                    case ValueTypes.DATA:
+                        property.getPropertySet().setProperty('attachment', 0, value);
+                        break;
+                    case ValueTypes.STRING:
+                        property.setValue(ValueTypes.STRING.newValue(fileName));
+                        break;
                 }
 
                 api.notify.showFeedback('\"' + fileName + '\" uploaded');
@@ -60,21 +69,21 @@ module api.content.form.inputtype.upload {
                 new ContentRequiresSaveEvent(content.getContentId()).fire();
             });
 
-            mediaUploader.onUploadFailed(() => {
-                mediaUploader.setProgressVisible(false);
+            this.mediaUploaderEl.onUploadFailed(() => {
+                this.mediaUploaderEl.setProgressVisible(false);
                 this.uploaderWrapper.addClass("empty");
             });
 
-            mediaUploader.onUploadReset(() => {
-                mediaUploader.setFileName('');
+            this.mediaUploaderEl.onUploadReset(() => {
+                this.mediaUploaderEl.setFileName('');
 
                 switch (property.getType()) {
-                case ValueTypes.DATA:
-                    property.getPropertySet().setProperty('attachment', 0, ValueTypes.STRING.newNullValue());
-                    break;
-                case ValueTypes.STRING:
-                    property.setValue(ValueTypes.STRING.newNullValue());
-                    break;
+                    case ValueTypes.DATA:
+                        property.getPropertySet().setProperty('attachment', 0, ValueTypes.STRING.newNullValue());
+                        break;
+                    case ValueTypes.STRING:
+                        property.setValue(ValueTypes.STRING.newNullValue());
+                        break;
                 }
             });
 
@@ -83,8 +92,93 @@ module api.content.form.inputtype.upload {
             return wemQ<void>(null);
         }
 
+        validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
+            return new api.form.inputtype.InputValidationRecording();
+        }
 
-        protected createUploader(property: Property): UploaderEl<any> {
+        updateProperty(property: Property, unchangedOnly?: boolean): wemQ.Promise<void> {
+            if ((!unchangedOnly || !this.mediaUploaderEl.isDirty()) && this.getContext().contentId) {
+
+                this.mediaUploaderEl.setValue(this.getContext().contentId.toString());
+
+                if (property.hasNonNullValue()) {
+                    this.mediaUploaderEl.setFileName(this.getFileNameFromProperty(property));
+                }
+            }
+            return wemQ<void>(null);
+        }
+
+        private deleteContent(property: Property) {
+            var contentId = this.getContext().contentId;
+
+            new api.content.GetContentByIdRequest(contentId).
+            sendAndParse().
+            then((content: api.content.Content) => {
+                var deleteRequest = new api.content.DeleteContentRequest();
+
+                deleteRequest.addContentPath(content.getPath());
+                deleteRequest.sendAndParse().then((result: api.content.DeleteContentResult) => {
+                    this.mediaUploaderEl.getResultContainer().removeChildren();
+                    this.uploaderWrapper.addClass("empty");
+                    property.setValue(this.newInitialValue());
+
+                    api.notify.showFeedback('\"' + result.getDeleted()[0].getName() + '\" deleted');
+                }).catch((reason: any) => {
+                    if (reason && reason.message) {
+                        api.notify.showError(reason.message);
+                    } else {
+                        api.notify.showError('Content could not be deleted.');
+                    }
+                }).done();
+            });
+        }
+
+        private getFileNameFromProperty(property: Property): string {
+            if (property.getValue() != null) {
+                switch (property.getType()) {
+                    case ValueTypes.DATA:
+                        return property.getPropertySet().getString('attachment');
+                    case ValueTypes.STRING:
+                        return property.getValue().getString();
+                }
+            }
+            return "";
+        }
+
+        private getFileExtensionFromFileName(fileName: string): string {
+            return fileName.split('.').pop();
+        }
+
+        private propertyAlreadyHasAttachment(property: Property): boolean {
+            return (property.getValue() != null &&
+            property.getType() == ValueTypes.DATA &&
+            !api.util.StringHelper.isEmpty(property.getPropertySet().getString('attachment')));
+        }
+
+        private getAllowTypeFromFileName(fileName: string): MediaUploaderConfigAllowType[] {
+            return [{name: "Media", extensions: this.getFileExtensionFromFileName(fileName)}];
+        }
+
+        private createUploaderWrapper(property: Property): api.dom.DivEl {
+            var wrapper = new api.dom.DivEl("uploader-wrapper");
+
+            var uploadButton = new api.ui.button.Button();
+            uploadButton.addClass('upload-button');
+
+            uploadButton.onClicked((event: MouseEvent) => {
+                if (property.hasNullValue()) {
+                    return;
+                }
+                wemjq(this.mediaUploaderEl.getDropzone().getEl().getHTMLElement()).simulate("click");
+            });
+
+            wrapper.appendChild(this.mediaUploaderEl);
+            wrapper.appendChild(uploadButton);
+
+            return wrapper;
+        }
+
+        private createUploader(property: Property): api.content.MediaUploaderEl {
 
             var predefinedAllowTypes,
                 attachmentFileName = this.getFileNameFromProperty(property);
@@ -93,9 +187,9 @@ module api.content.form.inputtype.upload {
                 predefinedAllowTypes = this.getAllowTypeFromFileName(attachmentFileName);
             }
 
-            var allowTypesConfig: FileUploaderConfigAllowType[] = predefinedAllowTypes || (<any>(this.config.inputConfig)).allowTypes ||
+            var allowTypesConfig: MediaUploaderConfigAllowType[] = predefinedAllowTypes || (<any>(this.config.inputConfig)).allowTypes ||
                 [];
-            var allowTypes = allowTypesConfig.map((allowType: FileUploaderConfigAllowType) => {
+            var allowTypes = allowTypesConfig.map((allowType: MediaUploaderConfigAllowType) => {
                 return {title: allowType.name, extensions: allowType.extensions};
             });
 
@@ -122,29 +216,21 @@ module api.content.form.inputtype.upload {
             });
         }
 
-        protected getFileNameFromProperty(property: Property): string {
-            if (property.getValue() != null) {
-                switch (property.getType()) {
-                case ValueTypes.DATA:
-                    return property.getPropertySet().getString('attachment');
-                case ValueTypes.STRING:
-                    return property.getValue().getString();
-                }
-            }
-            return "";
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.mediaUploaderEl.onFocus(listener);
         }
 
-        protected propertyAlreadyHasAttachment(property: Property): boolean {
-            return (property.getValue() != null &&
-                    property.getType() == ValueTypes.DATA &&
-                    !api.util.StringHelper.isEmpty(property.getPropertySet().getString('attachment')));
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.mediaUploaderEl.unFocus(listener);
         }
 
-
-        protected getAllowTypeFromFileName(fileName: string): FileUploaderConfigAllowType[] {
-            return [{name: "Media", extensions: this.getFileExtensionFromFileName(fileName)}];
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.mediaUploaderEl.onBlur(listener);
         }
 
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.mediaUploaderEl.unBlur(listener);
+        }
     }
     api.form.inputtype.InputTypeManager.register(new api.Class("MediaUploader", MediaUploader));
 }

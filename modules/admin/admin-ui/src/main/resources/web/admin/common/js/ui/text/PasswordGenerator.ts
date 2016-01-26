@@ -51,6 +51,9 @@ module api.ui.text {
                 var unlocked = this.hasClass('unlocked');
                 this.toggleClass('unlocked', !unlocked);
                 this.input.setType(unlocked ? 'password' : 'text');
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
             });
             this.appendChild(this.showLink);
 
@@ -61,6 +64,9 @@ module api.ui.text {
                 this.generatePassword();
                 this.assessComplexity(this.input.getValue());
                 this.notifyValidityChanged(this.input.isValid());
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
             });
             this.appendChild(this.generateLink);
         }

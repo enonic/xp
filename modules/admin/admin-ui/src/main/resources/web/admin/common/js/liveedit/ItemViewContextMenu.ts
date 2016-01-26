@@ -1,10 +1,18 @@
 module api.liveedit {
 
+    export enum ItemViewContextMenuOrientation {
+        UP,
+        DOWN
+    }
+
     export class ItemViewContextMenu extends api.dom.DivEl {
 
         private title: ItemViewContextMenuTitle;
         private menu: api.ui.menu.TreeContextMenu;
         private arrow: ItemViewContextMenuArrow;
+        private orientation: ItemViewContextMenuOrientation = ItemViewContextMenuOrientation.DOWN;
+
+        private orientationListeners: {(orientation: ItemViewContextMenuOrientation): void}[] = [];
 
         constructor(menuTitle: ItemViewContextMenuTitle, actions: api.ui.Action[], showArrow: boolean = true) {
             super('item-view-context-menu');
@@ -90,6 +98,36 @@ module api.liveedit {
             return this.menu;
         }
 
+        private getOrientation(): ItemViewContextMenuOrientation {
+            return this.orientation;
+        }
+
+        private setOrientation(orientation: ItemViewContextMenuOrientation) {
+            if (this.orientation != orientation) {
+                this.orientation = orientation;
+                if (this.arrow) {
+                    this.arrow.toggleVerticalPosition(orientation == ItemViewContextMenuOrientation.DOWN);
+                }
+                this.notifyOrientationChanged(orientation);
+            }
+        }
+
+        private notifyOrientationChanged(orientation: ItemViewContextMenuOrientation) {
+            this.orientationListeners.forEach((listener) => {
+                listener(orientation);
+            })
+        }
+
+        onOrientationChanged(listener: (orientation: ItemViewContextMenuOrientation) => void) {
+            this.orientationListeners.push(listener);
+        }
+
+        unOrientationChanged(listener: (orientation: ItemViewContextMenuOrientation) => void) {
+            this.orientationListeners = this.orientationListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
         private startDrag(dragListener: (e: MouseEvent) => void, upListener: (e: MouseEvent) => void) {
             api.dom.Body.get().onMouseMove(dragListener);
             api.dom.Body.get().onMouseUp(upListener);
@@ -130,10 +168,12 @@ module api.liveedit {
         }
 
         private restrainY(y: number, notClicked?: boolean): number {
-            var height = this.getEl().getHeight(),
+            var orientation = ItemViewContextMenuOrientation.DOWN,
                 arrowHeight = this.arrow ? this.arrow.getHeight() : 0,
-                bottomY = y + height + arrowHeight,
-                maxY;
+                height = this.getEl().getHeight(),
+                minY = 0,
+                maxY,
+                desiredY;
 
             if (notClicked) {
                 maxY = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
@@ -141,15 +181,22 @@ module api.liveedit {
                 maxY = Math.max(document.body.scrollTop, document.documentElement.scrollTop) + window.innerHeight;
             }
 
-            if (this.arrow) {
-                this.arrow.toggleVerticalPosition(bottomY <= maxY);
+            if (orientation == ItemViewContextMenuOrientation.DOWN) {
+                // account for arrow
+                desiredY = y + arrowHeight + (notClicked ? 0 : 1);
+                if (desiredY + height > maxY) {
+                    orientation = ItemViewContextMenuOrientation.UP;
+                }
             }
-            if (bottomY > maxY) {
-                return y - height - arrowHeight;
-            } else {
-                return y + arrowHeight;
+            if (orientation == ItemViewContextMenuOrientation.UP) {
+                // subtract my full height to display above target
+                desiredY = y - arrowHeight - height - (notClicked ? 0 : 1);
+                if (desiredY < minY) {
+                    orientation = ItemViewContextMenuOrientation.DOWN;
+                }
             }
-
+            this.setOrientation(orientation);
+            return desiredY;
         }
 
     }

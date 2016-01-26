@@ -49,6 +49,9 @@ module api.ui.time {
             this.prevYear = new api.dom.AEl('prev');
             this.prevYear.onClicked((e: MouseEvent) => {
                 this.calendar.previousYear();
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
             });
             yearContainer.appendChild(this.prevYear);
 
@@ -58,6 +61,9 @@ module api.ui.time {
             this.nextYear = new api.dom.AEl('next');
             this.nextYear.onClicked((e: MouseEvent) => {
                 this.calendar.nextYear();
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
             });
             yearContainer.appendChild(this.nextYear);
 
@@ -67,6 +73,9 @@ module api.ui.time {
             this.prevMonth = new api.dom.AEl('prev');
             this.prevMonth.onClicked((e: MouseEvent) => {
                 this.calendar.previousMonth();
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
             });
             monthContainer.appendChild(this.prevMonth);
 
@@ -76,6 +85,9 @@ module api.ui.time {
             this.nextMonth = new api.dom.AEl('next');
             this.nextMonth.onClicked((e: MouseEvent) => {
                 this.calendar.nextMonth();
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
             });
             monthContainer.appendChild(this.nextMonth);
 

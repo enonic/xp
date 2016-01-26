@@ -1,34 +1,30 @@
 module api.content.form.inputtype.upload {
 
     import Property = api.data.Property;
+    import PropertyArray = api.data.PropertyArray;
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
     import PluploadFile = api.ui.uploader.PluploadFile;
-    import UploaderEl = api.ui.uploader.UploaderEl;
+    import UploaderEl = api.ui.uploader.UploaderEl
+    import FileUploaderEl = api.ui.uploader.FileUploaderEl;
 
 
-    export interface FileUploaderConfigAllowType {
-        name: string;
-        extensions: string;
-    }
-
-    export class FileUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
+    export class FileUploader extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
         protected config: api.content.form.inputtype.ContentInputTypeViewContext;
-        protected uploaderEl: UploaderEl<any>;
+        protected uploaderEl: FileUploaderEl<any>;
         protected uploaderWrapper: api.dom.DivEl;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super(config);
+            super("file-uploader");
             this.config = config;
-            this.addClass("file-uploader");
         }
 
         getContext(): api.content.form.inputtype.ContentInputTypeViewContext {
-            return <api.content.form.inputtype.ContentInputTypeViewContext>super.getContext();
+            return this.config;
         }
 
         getValueType(): ValueType {
@@ -36,41 +32,46 @@ module api.content.form.inputtype.upload {
         }
 
         newInitialValue(): Value {
-            return ValueTypes.STRING.newNullValue();
+            return null;
         }
 
-        layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
+        update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
 
-            throw new Error("must be implemented in inheritors");
+            var superPromise = super.update(propertyArray, unchangedOnly);
+                this.uploaderEl.setContentId(this.getContext().contentId.toString());
+
+                return superPromise.then(() => {
+                    this.uploaderEl.resetValues(this.getValueFromPropertyArray(propertyArray));
+                    this.validate(false);
+                });
+
         }
 
-        validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
-            return new api.form.inputtype.InputValidationRecording();
-        }
+        protected setFileNameProperty(fileName: string) {
 
-        updateProperty(property: Property, unchangedOnly?: boolean): wemQ.Promise<void> {
-            if ((!unchangedOnly || !this.uploaderEl.isDirty()) && this.getContext().contentId) {
+            var value = new Value(fileName, ValueTypes.STRING);
 
-                this.uploaderEl.setValue(this.getContext().contentId.toString());
-
-                if (property.hasNonNullValue()) {
-                    (<MediaUploaderEl>this.uploaderEl).setFileName(this.getFileNameFromProperty(property));
-                }
+            if (!this.getPropertyArray().containsValue(value)) {
+                this.ignorePropertyChange = true;
+                this.getPropertyArray().add(value);
+                this.ignorePropertyChange = false;
             }
-            return wemQ<void>(null);
         }
 
-
-        protected getFileNameFromProperty(property: Property): string {
-            throw new Error("must be implemented in inheritors");
+        protected getValueFromPropertyArray(propertyArray: PropertyArray): string {
+            return this.getFileNamesFromProperty(propertyArray).
+                join(FileUploaderEl.FILE_NAME_DELIMITER);
         }
 
-        protected getFileExtensionFromFileName(fileName: string): string {
-            return fileName.split('.').pop();
+        protected getFileNamesFromProperty(propertyArray: PropertyArray): string[] {
+            return propertyArray.getProperties().map((property) => {
+                if (property.hasNonNullValue()) {
+                    return property.getString();
+                }
+            })
         }
 
-
-        protected createUploaderWrapper(property: Property): api.dom.DivEl {
+        protected createUploaderWrapper(): api.dom.DivEl {
             var wrapper = new api.dom.DivEl("uploader-wrapper");
 
             var uploadButton = new api.ui.button.Button();

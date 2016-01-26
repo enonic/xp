@@ -1,6 +1,6 @@
 module api.content.form.inputtype.contentselector {
 
-    export class ContentSelectorLoader extends api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary> {
+    export class ContentSelectorLoader extends ContentSummaryPreLoader {
 
         private contentSelectorQueryRequest: ContentSelectorQueryRequest;
 

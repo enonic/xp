@@ -1,6 +1,7 @@
 module api.content.form.inputtype.upload {
 
     import Property = api.data.Property;
+    import PropertyArray = api.data.PropertyArray;
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
@@ -12,9 +13,12 @@ module api.content.form.inputtype.upload {
     import Content = api.content.Content;
     import Attachment = api.content.attachment.Attachment;
     import UploaderEl = api.ui.uploader.UploaderEl;
+    import FileUploaderEl = api.ui.uploader.FileUploaderEl;
 
 
     export class AttachmentUploader extends FileUploader {
+
+        private attachmentNames: string[] = [];
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super(config);
@@ -22,66 +26,54 @@ module api.content.form.inputtype.upload {
             this.config = config;
         }
 
-        layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
+        layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
 
-            this.uploaderEl = this.createUploader(property);
-            var attachmentUploader = <AttachmentUploaderEl>this.uploaderEl;
+            return super.layout(input, propertyArray).then(() => {
+                this.uploaderEl = this.createUploader();
+                this.uploaderWrapper = this.createUploaderWrapper();
 
-            this.uploaderWrapper = this.createUploaderWrapper(property);
+                this.update(propertyArray);
 
-            this.updateProperty(property);
+                this.uploaderEl.onUploadStarted(() => {
+                    this.uploaderWrapper.removeClass("empty");
+                });
 
-            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                this.updateProperty(event.getProperty(), true);
+                this.uploaderEl.onFileUploaded((event:api.ui.uploader.FileUploadedEvent<Attachment>) => {
+
+                    var attachment = <Attachment>event.getUploadItem().getModel();
+
+                    this.setFileNameProperty(attachment.getName().toString());
+                    this.attachmentNames = this.getFileNamesFromProperty(this.getPropertyArray());
+
+                    api.notify.showFeedback('\"' + attachment.getName().toString() + '\" uploaded');
+                });
+
+                this.uploaderEl.onUploadCompleted(() => {
+
+                    this.validate(false);
+                    new ContentRequiresSaveEvent(this.getContext().contentId).fire();
+
+                });
+
+                this.uploaderEl.onUploadFailed(() => {
+                    this.uploaderEl.setProgressVisible(false);
+                    this.uploaderWrapper.addClass("empty");
+                });
+
+                this.appendChild(this.uploaderWrapper);
+
+                this.setLayoutInProgress(false);
+                this.validate(false);
+
+                return wemQ<void>(null);
             });
-
-            attachmentUploader.onUploadStarted(() => {
-                this.uploaderWrapper.removeClass("empty");
-            });
-
-            attachmentUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<Attachment>) => {
-
-                var attachment = event.getUploadItem().getModel();
-                attachmentUploader.setFileName(attachment.getName().toString());
-                property.setValue(ValueTypes.STRING.newValue(attachment.getName().toString()));
-
-                api.notify.showFeedback('\"' + attachment.getName().toString() + '\" uploaded');
-                new ContentRequiresSaveEvent(this.getContext().contentId).fire();
-
-            });
-
-            attachmentUploader.onUploadFailed(() => {
-                attachmentUploader.setProgressVisible(false);
-                this.uploaderWrapper.addClass("empty");
-            });
-
-            attachmentUploader.onUploadReset(() => {
-                attachmentUploader.setFileName('');
-                property.setValue(ValueTypes.STRING.newNullValue());
-
-
-            });
-
-            this.appendChild(this.uploaderWrapper);
-
-            return wemQ<void>(null);
         }
 
-        protected getFileNameFromProperty(property: Property): string {
-            return property.getValue().getString();
+        protected getNumberOfValids(): number {
+            return this.getPropertyArray().getProperties().length;
         }
 
-
-        protected createUploader(property: Property): UploaderEl<any> {
-
-            var attachmentFileName = this.getFileNameFromProperty(property);
-
-
-            var beforeUploadCallback = (files: PluploadFile[]) => {
-                if (attachmentFileName && files && files.length == 1) {
-                    files[0].name = attachmentFileName;
-                }
-            };
+        protected createUploader(): FileUploaderEl<any> {
 
             return new api.content.AttachmentUploaderEl({
                 params: {
@@ -91,12 +83,25 @@ module api.content.form.inputtype.upload {
                 name: this.getContext().input.getName(),
                 showReset: false,
                 showCancel: false,
-                maximumOccurrences: 1,
-                allowMultiSelection: false,
+                allowMultiSelection: true,
                 hideDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
                 deferred: true,
-                beforeUploadCallback: beforeUploadCallback
+                maximumOccurrences: this.getInput().getOccurrences().getMaximum(),
+                attachmentRemoveCallback: this.removeItem.bind(this)
             });
+        }
+
+        private removeItem(itemName: string) {
+            var values = this.getFileNamesFromProperty(this.getPropertyArray());
+
+            var index = values.indexOf(itemName);
+            values.splice(index, 1);
+
+            (<AttachmentUploaderEl>this.uploaderEl).removeAttachmentItem(itemName);
+            this.getPropertyArray().remove(index);
+            this.attachmentNames = this.getFileNamesFromProperty(this.getPropertyArray());
+
+            new ContentRequiresSaveEvent(this.getContext().contentId).fire();
         }
 
     }

@@ -41,7 +41,12 @@ module api.ui.locale {
             this.setOption(option);
             this.setClass("locale-selected-option-view");
             var removeButton = new api.dom.AEl("icon-close");
-            removeButton.onClicked((event: MouseEvent) => this.notifyRemoveClicked(event));
+            removeButton.onClicked((event: MouseEvent) => {
+                this.notifyRemoveClicked(event);
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
+            });
             this.appendChild(removeButton);
         }
 

@@ -17,7 +17,7 @@ module api.content {
 
     export class MediaUploaderEl extends api.ui.uploader.UploaderEl<Content> {
 
-        protected fileName: string;
+        private fileName: string;
 
         constructor(config: MediaUploaderElConfig) {
 
@@ -34,8 +34,8 @@ module api.content {
         createModel(serverResponse: api.content.json.ContentJson): Content {
             if (serverResponse) {
                 return new api.content.ContentBuilder().
-                    fromContentJson(<api.content.json.ContentJson> serverResponse).
-                    build();
+                fromContentJson(<api.content.json.ContentJson> serverResponse).
+                build();
             }
             else {
                 return null;
@@ -50,12 +50,12 @@ module api.content {
             var mediaProperty = item.getContentData().getProperty("media");
             var mediaValue;
             switch (mediaProperty.getType()) {
-            case ValueTypes.DATA:
-                mediaValue = mediaProperty.getPropertySet().getProperty('attachment').getValue();
-                break;
-            case ValueTypes.STRING:
-                mediaValue = mediaProperty.getValue();
-                break;
+                case ValueTypes.DATA:
+                    mediaValue = mediaProperty.getPropertySet().getProperty('attachment').getValue();
+                    break;
+                case ValueTypes.STRING:
+                    mediaValue = mediaProperty.getValue();
+                    break;
             }
             return mediaValue;
         }

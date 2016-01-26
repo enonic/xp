@@ -7,19 +7,25 @@ module api.content {
     import Attachment = api.content.attachment.Attachment;
     import AttachmentJson = api.content.attachment.AttachmentJson;
     import AttachmentBuilder = api.content.attachment.AttachmentBuilder;
+    import SelectionItem = api.app.browse.SelectionItem;
 
 
-    export class AttachmentUploaderEl extends api.ui.uploader.UploaderEl<Attachment> {
+    export class AttachmentUploaderEl extends api.ui.uploader.FileUploaderEl<Attachment> {
 
-        protected fileName: string;
-        protected contentId: string;
+        private attachmentItems: AttachmentItem[];
+
+        private removeCallback: (value:string) => void;
 
         constructor(config) {
 
             if (config.url == undefined) {
                 config.url = api.util.UriHelper.getRestUri("content/createAttachment");
             }
+            if (config.attachmentRemoveCallback) {
+                this.removeCallback = config.attachmentRemoveCallback;
+            }
 
+            this.attachmentItems = [];
             super(config);
 
             this.addClass('attachment-uploader-el');
@@ -37,18 +43,32 @@ module api.content {
             }
         }
 
-        getModelValue(): string {
-            return this.contentId;
+        getModelValue(item: Attachment): string {
+            return item.getName().toString();
         }
 
-        setFileName(name: string) {
-            this.fileName = name;
+        removeAttachmentItem(value: string) {
+            this.attachmentItems = this.attachmentItems.filter(
+                item => !(item.getValue() == value)
+            );
         }
 
-        createResultItem(contentId: string): api.dom.Element {
-            this.contentId = contentId;
-            var link = new api.dom.AEl().setUrl(api.util.UriHelper.getRestUri('content/media/' + contentId+'/'+this.fileName));
-            return link.setHtml(this.fileName != null && this.fileName != "" ? this.fileName : contentId);
+        getExistingItem(value: string) : api.dom.Element {
+            var element = null;
+            this.getResultContainer().getChildren().forEach((item) => {
+                if((<AttachmentItem>item).getValue() == value) {
+                    element = item;
+                }
+            });
+            return element;
+        }
+
+        createResultItem(value: string): api.dom.Element {
+
+            var attachmentItem = new AttachmentItem(this.contentId, value, this.removeCallback);
+            this.attachmentItems.push(attachmentItem);
+
+            return attachmentItem;
         }
     }
 }

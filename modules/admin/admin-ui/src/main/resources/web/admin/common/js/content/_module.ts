@@ -7,6 +7,7 @@
 ///<reference path='ContentSummary.ts' />
 ///<reference path='ContentSummaryViewer.ts' />
 ///<reference path='ContentSummaryRequest.ts' />
+///<reference path='ContentSummaryPreLoader.ts' />
 ///<reference path='ContentSummaryLoader.ts' />
 ///<reference path='ContentIconUrlResolver.ts' />
 ///<reference path='ContentImageUrlResolver.ts' />
@@ -87,6 +88,8 @@
 ///<reference path='ImageUploaderEl.ts' />
 ///<reference path='ThumbnailUploaderEl.ts' />
 ///<reference path='AttachmentUploaderEl.ts' />
+
+///<reference path='AttachmentItem.ts' />
 
 ///<reference path='TreeGridItemClickedEvent.ts' />
 ///<reference path='ContentRequiresSaveEvent.ts' />

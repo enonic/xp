@@ -23,7 +23,7 @@ module api.liveedit.part {
 
         constructor(builder: PartComponentViewBuilder) {
             this.contentViews = [];
-            this.liveEditModel = builder.parentRegionView.liveEditModel;
+            this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.partComponent = builder.component;
 
             this.partPlaceholder = new PartPlaceholder(this);

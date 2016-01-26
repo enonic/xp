@@ -22,9 +22,6 @@ module api.form.inputtype.text {
         static imagePrefix = "image://";
         static maxImageWidth = 640;
 
-        private previousScrollPos: number = 0; // fix for XP-736
-        private isScrollProhibited: boolean = false;
-
         private modalDialog: api.form.inputtype.text.htmlarea.ModalDialog;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
@@ -82,8 +79,6 @@ module api.form.inputtype.text {
         }
 
         private initEditor(id: string, property: Property, textAreaWrapper: Element): void {
-            this.previousScrollPos = wemjq(this.getHTMLElement()).closest(".form-panel").scrollTop(); // XP-736
-
             var focusedEditorCls = "html-area-focused";
             var baseUrl = CONFIG.assetsUri;
 
@@ -218,7 +213,6 @@ module api.form.inputtype.text {
                         this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper);
                     }
                     this.removeTooltipFromEditorArea(textAreaWrapper);
-                    this.temporarilyDisableScrolling(); // XP-736
                     this.updateImageAlignmentBehaviour(editor);
                 }
             });
@@ -240,10 +234,6 @@ module api.form.inputtype.text {
         private setupStickyEditorToolbarForInputOccurence(inputOccurence: Element) {
             wemjq(this.getHTMLElement()).closest(".form-panel").on("scroll", (event) => {
                 this.updateStickyEditorToolbar(inputOccurence);
-
-                if (this.isScrollProhibited) {
-                    wemjq(this.getHTMLElement()).closest(".form-panel").scrollTop(this.previousScrollPos);
-                }
             });
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, () => {
@@ -264,13 +254,6 @@ module api.form.inputtype.text {
                 this.resetInputHeight();
                 this.updateEditorToolbarWidth();
             });
-        }
-
-        private temporarilyDisableScrolling() {
-            this.isScrollProhibited = true;
-            setTimeout(() => {
-                this.isScrollProhibited = false;
-            }, 300);
         }
 
         private updateImageAlignmentBehaviour(editor) {

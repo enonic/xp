@@ -8,9 +8,22 @@
   z-index: @z-index-drag-helper !important;
   .border-radius(30px);
 
+  .drag-item-name {
+    font-family: @admin-font-family;
+    position: absolute;
+    top: 15px;
+    left: 60px;
+    width: 200px;
+    text-align: left;
+    font-size: 20px;
+    line-height: 32px;
+    color: @page-editor-message-blue;
+  }
+
   &:before {
     line-height: 48px;
     font-size: 24px;
+    color: white;
   }
 
   &.drop-allowed {
@@ -18,7 +31,6 @@
     .icon-checkmark;
 
     background-color: #558e28;
-    color: white;
   }
 
   &:not(.drop-allowed) {
@@ -26,7 +38,6 @@
     .icon-blocked;
 
     background-color: #d90b00;
-    color: white;
   }
 }
 

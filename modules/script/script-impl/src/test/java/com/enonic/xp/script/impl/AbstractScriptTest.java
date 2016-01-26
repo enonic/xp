@@ -51,7 +51,6 @@ public abstract class AbstractScriptTest
         scriptRuntimeFactory.setResourceService( resourceService );
 
         this.scriptRuntime = scriptRuntimeFactory.create( ScriptSettings.create().
-            basePath( "/site" ).
             build() );
     }
 

@@ -11,7 +11,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.handler.PortalHandler;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
-import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.web.HttpMethod;
 
@@ -20,8 +19,6 @@ public final class AssetHandler
     extends EndpointHandler
 {
     private final static Pattern PATTERN = Pattern.compile( "([^/^:]+)(:[^/]+)?/(.+)" );
-
-    private final static String ASSET_PREFIX = "site/assets/";
 
     private ResourceService resourceService;
 
@@ -47,7 +44,8 @@ public final class AssetHandler
         final AssetHandlerWorker worker = new AssetHandlerWorker();
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
         worker.cacheable = matcher.group( 2 ) != null;
-        worker.resourceKey = ResourceKey.from( applicationKey, ASSET_PREFIX + matcher.group( 3 ) );
+        worker.applicationKey = applicationKey;
+        worker.name = matcher.group( 3 );
         worker.resourceService = this.resourceService;
 
         return worker;

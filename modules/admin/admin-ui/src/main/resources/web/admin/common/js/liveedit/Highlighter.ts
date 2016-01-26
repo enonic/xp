@@ -42,19 +42,31 @@ module api.liveedit {
             this.show();
         }
 
+        highlightElement(dimensions: ElementDimensions, higlighterStyle: HighlighterStyle): void {
+            this.resize(dimensions, higlighterStyle);
+            this.show();
+
+        }
+
         private resizeToComponent(itemView: ItemView): void {
-            var itemDimensions = itemView.getElementDimensions();
-            var w = Math.round(itemDimensions.width),
-                h = Math.round(itemDimensions.height),
-                top = Math.round(itemDimensions.top),
-                left = Math.round(itemDimensions.left);
+            var itemDimensions = itemView.getEl().getDimensions();
+
+            // paint border
+            var style = itemView.getType().getConfig().getHighlighterStyle();
+
+            this.resize(itemDimensions, style);
+        }
+
+        private resize(dimensions: ElementDimensions, higlighterStyle: HighlighterStyle): void {
+            var w = Math.round(dimensions.width),
+                h = Math.round(dimensions.height),
+                top = Math.round(dimensions.top),
+                left = Math.round(dimensions.left);
 
             this.getEl().setWidthPx(w).setHeightPx(h).setTopPx(top).setLeftPx(left);
             this.rectangle.getEl().setAttribute('width', w + '').setAttribute('height', h + '');
 
-            // paint border
-            var style = itemView.getType().getConfig().getHighlighterStyle();
-            this.getEl().setStroke(style.stroke).setStrokeDasharray(style.strokeDasharray).setFill(style.fill);
+            this.getEl().setStroke(higlighterStyle.stroke).setStrokeDasharray(higlighterStyle.strokeDasharray).setFill(higlighterStyle.fill);
         }
 
     }

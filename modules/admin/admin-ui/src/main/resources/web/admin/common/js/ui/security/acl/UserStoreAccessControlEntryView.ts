@@ -35,10 +35,12 @@ module api.ui.security.acl {
 
             this.removeButton = new api.dom.AEl("icon-close");
             this.removeButton.onClicked((event: MouseEvent) => {
-                if(this.editable)
-                {
+                if (this.editable) {
                     this.notifyRemoveClicked(event);
                 }
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
             });
 
             this.setUserStoreAccessControlEntry(this.ace, true);
@@ -55,11 +57,10 @@ module api.ui.security.acl {
                 this.editable = editable;
             }
 
-            if(this.editable) {
+            if (this.editable) {
                 this.removeClass("readonly");
             }
-            else
-            {
+            else {
                 this.addClass("readonly");
             }
         }
