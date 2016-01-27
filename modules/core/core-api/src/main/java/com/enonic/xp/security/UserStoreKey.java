@@ -10,19 +10,23 @@ import com.enonic.xp.util.CharacterChecker;
 @Beta
 public final class UserStoreKey
 {
+    //TODO Remove PrincipalKey.APPLICATIONS_NODE_NAME after XP 7.0.0
+    public final static String[] RESERVED_USER_STORE_IDS = new String[]{PrincipalKey.ROLES_NODE_NAME, PrincipalKey.APPLICATIONS_NODE_NAME};
+
     private final static UserStoreKey SYSTEM = UserStoreKey.from( "system" );
 
     private final static UserStoreKey DEFAULT = UserStoreKey.from( "default" );
-
-    private final static String RESERVED_USER_STORE_ID = PrincipalKey.ROLES_NODE_NAME;
 
     private final String id;
 
     public UserStoreKey( final String id )
     {
         Preconditions.checkArgument( !StringUtils.isBlank( id ), "UserStoreKey cannot be blank: %s", id );
-        Preconditions.checkArgument( !RESERVED_USER_STORE_ID.equalsIgnoreCase( id ), "UserStoreKey id is reserved and cannot be used: %s",
-                                     id );
+        for ( String reservedUserStoreId : RESERVED_USER_STORE_IDS )
+        {
+            Preconditions.checkArgument( !reservedUserStoreId.equalsIgnoreCase( id ), "UserStoreKey id is reserved and cannot be used: %s",
+                                         id );
+        }
         this.id = CharacterChecker.check( id, "Invalid UserStoreKey [" + id + "]" );
     }
 

@@ -22,6 +22,8 @@ public final class PrincipalKey
 
     private static final PrincipalKey ANONYMOUS_PRINCIPAL = new PrincipalKey();
 
+    public final static String APPLICATIONS_NODE_NAME = "applications";
+
     public final static String ROLES_NODE_NAME = "roles";
 
     public final static String GROUPS_NODE_NAME = "groups";
