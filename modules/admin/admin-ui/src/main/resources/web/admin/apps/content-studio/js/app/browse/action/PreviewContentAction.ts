@@ -4,7 +4,7 @@ module app.browse.action {
     import RenderingMode = api.rendering.RenderingMode;
     import ContentSummary = api.content.ContentSummary;
 
-    export class PreviewContentAction extends Action {
+    export class PreviewContentAction extends app.action.BasePreviewAction {
 
         constructor(grid: ContentTreeGrid) {
             super("Preview", "");
@@ -13,14 +13,11 @@ module app.browse.action {
                 var contentSummaries: ContentSummary[]
                     = grid.getSelectedDataList().map((elem) => {
                     return elem.getContentSummary();
-                });
-                this.showPreviewDialog(contentSummaries[0]);
-            });
-        }
+                }),
+                previewContent = contentSummaries[0];
 
-        showPreviewDialog(content: api.content.ContentSummary) {
-            window.open(api.rendering.UriHelper.getPortalUri(content.getPath().toString(), RenderingMode.PREVIEW,
-                api.content.Branch.DRAFT), 'preview').focus();
+                this.openWindow(previewContent);
+            });
         }
     }
 }
