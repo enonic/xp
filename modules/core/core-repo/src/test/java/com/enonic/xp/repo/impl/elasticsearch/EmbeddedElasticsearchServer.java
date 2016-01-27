@@ -37,7 +37,6 @@ class EmbeddedElasticsearchServer
             put( "client", "false" ).
             put( "data", "true" ).
             put( "local", "true" ).
-            put( "path.repo", rootDirectory.toString() ).
             put( "path.data", dataDirectory + "-" + this.now ).
             put( "cluster.name", "repo-test-cluster-" + this.now ).
             put( "http.enabled", "false" ).
