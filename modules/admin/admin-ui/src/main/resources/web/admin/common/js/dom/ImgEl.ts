@@ -27,10 +27,7 @@ module api.dom {
                 this.notifyLoaded(event);
             });
             this.onImgElError((event: UIEvent) => {
-                this.loaded = true;
-                if (ImgEl.debug) {
-                    console.log('ImgEl.onLoaded', this.getSrc(), this.loaded.toString());
-                }
+                this.loaded = false;
                 this.notifyError(event);
             });
         }

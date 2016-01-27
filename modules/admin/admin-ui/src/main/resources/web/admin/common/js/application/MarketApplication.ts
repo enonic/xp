@@ -6,18 +6,20 @@ module api.application {
 
         private appKey: ApplicationKey;
         private displayName: string;
+        private name: string;
         private description: string;
         private iconUrl: string;
-        private applicationUrl: string;
+        private url: string;
         private latestVersion: string;
         private versions: Object;
         private status: MarketAppStatus = MarketAppStatus.NOT_INSTALLED;
 
         constructor(builder: MarketApplicationBuilder) {
             this.displayName = builder.displayName;
+            this.name = builder.name;
             this.description = builder.description;
             this.iconUrl = builder.iconUrl;
-            this.applicationUrl = builder.applicationUrl;
+            this.url = builder.url;
             this.latestVersion = builder.latestVersion;
             this.versions = builder.versions;
             this.appKey = builder.appKey;
@@ -35,9 +37,12 @@ module api.application {
             return array;
         }
 
-
         public getDisplayName(): string {
             return this.displayName;
+        }
+
+        public getName(): string {
+            return this.name;
         }
 
         public getDescription(): string {
@@ -48,8 +53,8 @@ module api.application {
             return this.iconUrl;
         }
 
-        public getApplicationUrl(): string {
-            return this.applicationUrl;
+        public getUrl(): string {
+            return this.url;
         }
 
         public getLatestVersion(): string {
@@ -57,7 +62,7 @@ module api.application {
         }
 
         public getLatestVersionDownloadUrl(): string {
-            return this.getVersions()[this.getLatestVersion()]["downloadUrl"];
+            return this.getVersions()[this.getLatestVersion()]["applicationUrl"];
         }
 
         public getVersions(): Object {
@@ -168,9 +173,10 @@ module api.application {
     export class MarketApplicationBuilder {
 
         displayName: string;
+        name: string;
         description: string;
         iconUrl: string;
-        applicationUrl: string;
+        url: string;
         latestVersion: string;
         versions: Object;
         status: string;
@@ -184,9 +190,10 @@ module api.application {
             this.displayName = json.displayName;
             this.description = json.description;
             this.iconUrl = json.iconUrl;
-            this.applicationUrl = json.applicationUrl;
+            this.url = json.url;
             this.latestVersion = json.latestVersion;
             this.versions = json.versions;
+            this.name = json.name;
             return this;
         }
 
