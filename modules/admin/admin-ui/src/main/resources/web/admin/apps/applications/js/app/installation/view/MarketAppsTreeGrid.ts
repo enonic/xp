@@ -182,7 +182,7 @@ module app.installation.view {
 
 
         getDataId(data: MarketApplication): string {
-            return data.getApplicationUrl();
+            return data.getUrl() + data.getLatestVersion();
         }
     }
 }

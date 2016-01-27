@@ -10,8 +10,6 @@ public class MarketApplicationJson
 
     private String iconUrl;
 
-    private String applicationUrl;
-
     private String latestVersion;
 
     private String name;
@@ -38,11 +36,6 @@ public class MarketApplicationJson
     public void setLatestVersion( final String latestVersion )
     {
         this.latestVersion = latestVersion;
-    }
-
-    public void setApplicationUrl( final String applicationUrl )
-    {
-        this.applicationUrl = applicationUrl;
     }
 
     public void setVersions( final Map<String, MarketAppVersionInfoJson> versions )
@@ -88,12 +81,6 @@ public class MarketApplicationJson
     public String getLatestVersion()
     {
         return latestVersion;
-    }
-
-    @SuppressWarnings("unused")
-    public String getApplicationUrl()
-    {
-        return applicationUrl;
     }
 
     @SuppressWarnings("unused")
