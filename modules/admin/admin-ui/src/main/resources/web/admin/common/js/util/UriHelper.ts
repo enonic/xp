@@ -63,6 +63,26 @@ module api.util {
             return path.charAt(0) == '/' ? path.substring(1) : path;
         }
 
+        static isNavigatingOutsideOfXP(href: string, contentWindow: Window): boolean {
+            // href should start with '/' or after replacing window's protocol and host not be equal to basic href value
+            return href.charAt(0) == '/' ? false : UriHelper.trimWindowProtocolAndPortFromHref(href, contentWindow) == href;
+        }
+
+        static trimWindowProtocolAndPortFromHref(href: string, contentWindow: Window) {
+            var location: Location = contentWindow.location;
+            return UriHelper.relativePath(href.replace(location.protocol + "//" + location.host, ""));
+        }
+
+        static trimAnchor(trimMe: string): string {
+            var index = trimMe.lastIndexOf("#");
+            return index >= 0 ? UriHelper.relativePath(trimMe.substring(0, index)) : UriHelper.relativePath(trimMe);
+        }
+
+        static trimUrlParams(trimMe: string): string {
+            var index = trimMe.lastIndexOf("?");
+            return index >= 0 ? UriHelper.relativePath(trimMe.substring(0, index)) : UriHelper.relativePath(trimMe);
+        }
+
         static joinPath(...paths: string[]): string {
             // using grouping here in order to not replace :// because js doesn't support lookbehinds
             return StringHelper.removeEmptyStrings(paths).join('/').replace(/(^|[^:])\/{2,}/g, '$1/');

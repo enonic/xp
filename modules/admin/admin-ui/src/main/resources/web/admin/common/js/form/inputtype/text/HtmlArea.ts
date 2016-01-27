@@ -415,7 +415,12 @@ module api.form.inputtype.text {
         private destroyEditor(id: string): void {
             var editor = this.getEditor(id)
             if (editor) {
-                editor.destroy(false);
+                try {
+                    editor.destroy(false);
+                }
+                catch(e) {
+                    //error thrown in FF on tab close - XP-2624
+                }
             }
         }
 
