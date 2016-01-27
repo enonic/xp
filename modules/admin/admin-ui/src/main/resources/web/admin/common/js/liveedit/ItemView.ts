@@ -368,8 +368,9 @@ module api.liveedit {
         }
 
         scrollComponentIntoView(): void {
-            if (!this.visibleInViewport()) {
-                wemjq("html,body").animate({scrollTop: this.getEl().getDimensions().top - 10}, 200);
+            var distance = this.calcDistanceToViewport();
+            if (distance != 0) {
+                wemjq("html,body").animate({scrollTop: (distance > 0 ? '+=' : '-=') + Math.abs(distance)}, 200);
             }
         }
 
@@ -837,13 +838,18 @@ module api.liveedit {
             return this.contextMenuTitle;
         }
 
-        private visibleInViewport(): boolean {
-            var dimensions = this.getEl().getDimensions();
-            var screenTopPosition: number = document.body.scrollTop != 0 ? document.body.scrollTop : document.documentElement.scrollTop;
+        private calcDistanceToViewport(): number {
+            var dimensions = this.getEl().getDimensions(),
+                menuHeight = this.contextMenu && this.contextMenu.isVisible() ? this.contextMenu.getEl().getHeight() : dimensions.height,
+                screenTopPosition: number = document.body.scrollTop != undefined
+                    ? document.body.scrollTop
+                    : document.documentElement.scrollTop,
+                padding = 10;
 
-            return !(dimensions.top != undefined && ((dimensions.top - 10 < screenTopPosition) ||
-                                                     (dimensions.top + dimensions.height > screenTopPosition + window.innerHeight)));
+            var top = (dimensions.top - padding) - screenTopPosition,
+                bottom = (dimensions.top + menuHeight + padding) - (screenTopPosition + window.innerHeight);
 
+            return top < 0 ? top : bottom > 0 ? bottom : 0;
         }
 
         protected addComponentView(componentView: ComponentView<Component>, index?: number, isNew: boolean = false) {

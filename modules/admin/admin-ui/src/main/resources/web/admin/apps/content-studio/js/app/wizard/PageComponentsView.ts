@@ -116,10 +116,6 @@ module app.wizard {
                     var selectedItemId = this.tree.getDataId(event.getItemView());
                     this.tree.selectNode(selectedItemId);
                     this.tree.getGrid().focus();
-
-                    if (!event.getPosition()) {
-                        this.scrollToItem(selectedItemId);
-                    }
                 }
             });
 
@@ -271,7 +267,7 @@ module app.wizard {
                 var treeNode = data[0];
 
                 if (treeNode && !treeNode.getData().isSelected()) {
-                    this.clicked ? treeNode.getData().selectWithoutMenu() : //immediate
+                    this.clicked ? this.selectItem(treeNode) : //immediate
                     this.selectionChangedHandler(treeNode); // with timeout
                     this.clicked = false;
                 }
@@ -314,6 +310,7 @@ module app.wizard {
 
         private selectItem(treeNode: TreeNode<ItemView>) {
             treeNode.getData().selectWithoutMenu();
+            this.scrollToItem(treeNode.getDataId());
         }
 
         isDraggable(): boolean {
