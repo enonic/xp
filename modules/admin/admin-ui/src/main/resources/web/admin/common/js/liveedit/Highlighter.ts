@@ -31,42 +31,40 @@ module api.liveedit {
         }
 
         highlightItemView(itemView: ItemView): void {
-
             if (!itemView) {
                 this.hide();
                 return;
             }
-
-            this.resizeToComponent(itemView);
-
-            this.show();
-        }
-
-        highlightElement(dimensions: ElementDimensions, higlighterStyle: HighlighterStyle): void {
-            this.resize(dimensions, higlighterStyle);
-            this.show();
-
-        }
-
-        private resizeToComponent(itemView: ItemView): void {
-            var itemDimensions = itemView.getEl().getDimensions();
-
-            // paint border
+            var dimensions = itemView.getEl().getDimensions();
             var style = itemView.getType().getConfig().getHighlighterStyle();
 
-            this.resize(itemDimensions, style);
+            this.resize(dimensions, this.preProcessStyle(style));
+            this.show();
         }
 
-        private resize(dimensions: ElementDimensions, higlighterStyle: HighlighterStyle): void {
+        highlightElement(dimensions: ElementDimensions, style: HighlighterStyle): void {
+            this.resize(dimensions, style);
+            this.show();
+        }
+
+        protected preProcessStyle(style: HighlighterStyle): HighlighterStyle {
+            return style;
+        }
+
+        private resize(dimensions: ElementDimensions, style: HighlighterStyle): void {
             var w = Math.round(dimensions.width),
                 h = Math.round(dimensions.height),
                 top = Math.round(dimensions.top),
                 left = Math.round(dimensions.left);
 
             this.getEl().setWidthPx(w).setHeightPx(h).setTopPx(top).setLeftPx(left);
-            this.rectangle.getEl().setAttribute('width', w + '').setAttribute('height', h + '');
 
-            this.getEl().setStroke(higlighterStyle.stroke).setStrokeDasharray(higlighterStyle.strokeDasharray).setFill(higlighterStyle.fill);
+            this.rectangle.getEl()
+                .setAttribute('width', w + '')
+                .setAttribute('height', h + '')
+                .setStroke(style.stroke)
+                .setStrokeDasharray(style.strokeDasharray)
+                .setFill(style.fill);
         }
 
     }
