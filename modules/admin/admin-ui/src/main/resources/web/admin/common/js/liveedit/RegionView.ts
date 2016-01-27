@@ -221,9 +221,14 @@ module api.liveedit {
         }
 
         highlight() {
-            if (!this.getPageView().isTextEditMode()) {
+            var isDragging = DragAndDrop.get().isDragging();
+            if (!this.getPageView().isTextEditMode() && isDragging) {
                 super.highlight();
             }
+        }
+
+        highlightSelected() {
+            // Don't highlight
         }
 
         showCursor() {

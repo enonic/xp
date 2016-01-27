@@ -218,6 +218,10 @@ module api.liveedit {
             }
         }
 
+        highlightSelected() {
+            // Don't highlight
+        }
+
         showCursor() {
             if (!this.isTextEditMode() && !this.isLocked()) {
                 super.showCursor();

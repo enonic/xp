@@ -212,10 +212,8 @@ module api.liveedit {
             this.onContextMenu(this.contextMenuListener);
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
-                // no need to check if the view manages shader and highlighter here
-                // because it is essential to resize them on window resize
                 if (this.isSelected()) {
-                    this.highlight();
+                    this.highlightSelected();
                     //this.shade();
                 }
             });
@@ -242,6 +240,10 @@ module api.liveedit {
                     this.showTooltip();
                     this.showCursor();
                     this.highlight();
+                    if (this.isSelected()) {
+                        // Remove selected hilighter to see the hover hilight
+                        this.unhighlightSelected();
+                    }
                 }
             };
             this.onMouseOverView(this.mouseOverViewListener);
@@ -262,6 +264,10 @@ module api.liveedit {
                     this.hideTooltip();
                     this.resetCursor();
                     this.unhighlight();
+                    if (this.isSelected()) {
+                        // Restore selected highlight after leaving
+                        this.highlightSelected();
+                    }
                 }
             };
             this.onMouseLeaveView(this.mouseLeaveViewListener);
@@ -297,6 +303,14 @@ module api.liveedit {
 
         unhighlight() {
             Highlighter.get().hide()
+        }
+
+        highlightSelected() {
+            SelectedHighlighter.get().highlightItemView(this);
+        }
+
+        unhighlightSelected() {
+            SelectedHighlighter.get().hide();
         }
 
         shade() {
@@ -674,11 +688,9 @@ module api.liveedit {
             this.getEl().setData("live-edit-selected", "true");
 
             this.hideTooltip();
-            this.highlight();
+            this.highlightSelected();
             //this.shade();
             this.showCursor();
-
-            api.liveedit.SelectHighlighter.get().highlightItemView(this);
 
             // selecting anything should exit the text edit mode
             this.stopTextEditMode();
@@ -693,10 +705,8 @@ module api.liveedit {
             this.getEl().removeAttribute("data-live-edit-selected");
 
             this.hideContextMenu();
-            this.unhighlight();
+            this.unhighlightSelected();
             //this.unshade();
-
-            api.liveedit.SelectHighlighter.get().hide();
 
             if (this.isEmpty()) {
                 this.deselectPlaceholder();
@@ -850,9 +860,9 @@ module api.liveedit {
                 newComponent = regionView.createComponent(componentItemType.toComponentType());
 
             return componentItemType.createView(new CreateItemViewConfig<RegionView,Component>().
-                setParentView(regionView).
-                setParentElement(regionView).
-                setData(newComponent));
+            setParentView(regionView).
+            setParentElement(regionView).
+            setData(newComponent));
         }
 
         getInsertActions(): api.ui.Action[] {
