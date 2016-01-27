@@ -446,6 +446,8 @@ module api.form.inputtype.text.htmlarea {
 
         private keepOriginalSizeCheckbox: api.ui.Checkbox;
 
+        private imageCroppingSelector: ImageCroppingSelector;
+
         constructor(image: api.dom.ImgEl) {
             super("image-toolbar");
 
@@ -456,6 +458,7 @@ module api.form.inputtype.text.htmlarea {
             super.addElement(this.centerButton = this.createCenteredButton());
             super.addElement(this.alignRightButton = this.createRightAlignedButton());
             super.addElement(this.keepOriginalSizeCheckbox = this.createKeepOriginalSizeCheckbox());
+            super.addElement(this.imageCroppingSelector = new ImageCroppingSelector());
 
             this.initActiveButton();
         }

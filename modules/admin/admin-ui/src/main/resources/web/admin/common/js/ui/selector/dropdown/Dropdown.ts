@@ -22,6 +22,8 @@ module api.ui.selector.dropdown {
         disableFilter?: boolean;
 
         skipExpandOnClick?: boolean;
+
+        inputPlaceholderText?: string;
     }
 
     export class Dropdown<OPTION_DISPLAY_VALUE> extends api.dom.FormInputEl {
@@ -67,7 +69,7 @@ module api.ui.selector.dropdown {
                 this.typeAhead = false;
             }
 
-            this.input = new DropdownOptionFilterInput();
+            this.input = new DropdownOptionFilterInput(config.inputPlaceholderText);
             this.input.setVisible(this.typeAhead);
             this.appendChild(this.input);
 
@@ -246,11 +248,12 @@ module api.ui.selector.dropdown {
         selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
 
             this.dropdownList.markSelections([option]);
+
+            this.selectedOptionView.setOption(option);
+
             if (!silent) {
                 this.notifyOptionSelected(option);
             }
-
-            this.selectedOptionView.setOption(option);
 
             this.hideDropdown();
         }

@@ -99,8 +99,10 @@
       margin-bottom: 0;
       padding: 0 !important;
 
-      .options-container {
-        position: fixed !important;
+      .content-combo-box {
+        .options-container {
+          position: fixed !important;
+        }
       }
 
       fieldset:not(:last-child) {
@@ -240,6 +242,42 @@
       }
 
     }
+
+    .image-cropping-selector {
+
+      width: 220px;
+      margin-left: 10px;
+      bottom: 4px;
+
+      .option-filter-input {
+        height: 26px;
+
+        .placeholder(1em, normal);
+      }
+
+      .selected-option {
+        min-height: 26px;
+        top: 4px;
+      }
+
+      .options-container {
+        .slick-cell {
+          padding-bottom: 4px;
+          padding-top: 4px;
+        }
+      }
+
+      .names-view {
+        .main-name {
+          font-size: 12px;
+        }
+      }
+
+      .selected-option:not([style*="display: none"]) + .dropdown-handle {
+          top: 4px;
+      }
+    }
+
   }
 
   img {
