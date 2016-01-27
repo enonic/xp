@@ -132,11 +132,11 @@ module app.browse {
             });
         }
 
-        appendApplicationNode(applicationKey: api.application.ApplicationKey) {
+        appendApplicationNode(applicationKey: api.application.ApplicationKey): wemQ.Promise<void> {
 
-            this.fetchByKey(applicationKey)
+            return this.fetchByKey(applicationKey)
                 .then((data: api.application.Application) => {
-                    this.appendNode(data, true);
+                    return this.appendNode(data, true);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 });

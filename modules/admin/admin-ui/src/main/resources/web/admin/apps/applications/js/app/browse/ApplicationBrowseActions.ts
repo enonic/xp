@@ -9,6 +9,7 @@ module app.browse {
         public START_APPLICATION: api.ui.Action;
         public STOP_APPLICATION: api.ui.Action;
         public INSTALL_APPLICATION: api.ui.Action;
+        public UNINSTALL_APPLICATION: api.ui.Action;
 
         private allActions: api.ui.Action[] = [];
 
@@ -28,6 +29,8 @@ module app.browse {
             this.START_APPLICATION = new StartApplicationAction(applicationTreeGrid);
             this.STOP_APPLICATION = new StopApplicationAction(applicationTreeGrid);
             this.INSTALL_APPLICATION = new InstallApplicationAction(applicationTreeGrid);
+            this.UNINSTALL_APPLICATION = new UninstallApplicationAction(applicationTreeGrid);
+
             this.INSTALL_APPLICATION.setEnabled(true);
 
             this.allActions.push(this.START_APPLICATION, this.STOP_APPLICATION, this.INSTALL_APPLICATION);
@@ -55,6 +58,7 @@ module app.browse {
 
             this.START_APPLICATION.setEnabled(anyStopped);
             this.STOP_APPLICATION.setEnabled(anyStarted);
+            this.UNINSTALL_APPLICATION.setEnabled(anySelected);
 
             var deferred = wemQ.defer<BrowseItem<Application>[]>();
             deferred.resolve(applicationBrowseItems);
