@@ -240,10 +240,6 @@ module api.liveedit {
                     this.showTooltip();
                     this.showCursor();
                     this.highlight();
-                    if (this.isSelected()) {
-                        // Remove selected hilighter to see the hover hilight
-                        this.unhighlightSelected();
-                    }
                 }
             };
             this.onMouseOverView(this.mouseOverViewListener);
@@ -264,10 +260,6 @@ module api.liveedit {
                     this.hideTooltip();
                     this.resetCursor();
                     this.unhighlight();
-                    if (this.isSelected()) {
-                        // Restore selected highlight after leaving
-                        this.highlightSelected();
-                    }
                 }
             };
             this.onMouseLeaveView(this.mouseLeaveViewListener);
@@ -299,10 +291,18 @@ module api.liveedit {
 
         highlight() {
             Highlighter.get().highlightItemView(this);
+            if (this.isSelected()) {
+                // Remove selected hilighter to see the hover hilight
+                this.unhighlightSelected();
+            }
         }
 
         unhighlight() {
-            Highlighter.get().hide()
+            Highlighter.get().hide();
+            if (this.isSelected()) {
+                // Restore selected highlight after leaving
+                this.highlightSelected();
+            }
         }
 
         highlightSelected() {
