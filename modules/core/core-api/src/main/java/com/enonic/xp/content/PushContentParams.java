@@ -1,5 +1,7 @@
 package com.enonic.xp.content;
 
+import java.util.Objects;
+
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.branch.Branch;
@@ -49,42 +51,27 @@ public class PushContentParams
     }
 
     @Override
-    public boolean equals( final Object obj )
+    public boolean equals( final Object o )
     {
-        PushContentParams other;
-        if ( obj instanceof PushContentParams )
-        {
-            other = (PushContentParams) obj;
-        }
-        else
-        {
-            return false;
-        }
-
-        if ( this.isIncludeChildren() != other.isIncludeChildren() )
-        {
-            return false;
-        }
-
-        if ( this.isIncludeDependencies() != other.isIncludeDependencies() )
-        {
-            return false;
-        }
-
-        if ( !this.getTarget().equals( other.getTarget() ) )
-        {
-            return false;
-        }
-
-        if ( this.getContentIds().equals( other.getContentIds() ) )
+        if ( this == o )
         {
             return true;
         }
-        else
+        if ( o == null || getClass() != o.getClass() )
         {
             return false;
         }
+        final PushContentParams that = (PushContentParams) o;
+        return includeChildren == that.includeChildren &&
+            includeDependencies == that.includeDependencies &&
+            Objects.equals( contentIds, that.contentIds ) &&
+            Objects.equals( target, that.target );
+    }
 
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( contentIds, target, includeChildren, includeDependencies );
     }
 
     public static final class Builder

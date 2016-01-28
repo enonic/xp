@@ -213,11 +213,12 @@ exports.modify = function (params) {
  * @example-ref examples/content/publish.js
  *
  * @param {object} params JSON with the parameters.
- * @param {string[]} params.keys Mandatory list of all keys of content that should be published.
- * @param {string} params.targetBranch This mandatory parameter is the branch to which the content should be published.  Technically, publishing is just a move from one branch
+ * @param {string[]} params.keys List of all content keys(path or id) that should be published.
+ * @param {string} params.sourceBranch The branch where the content to be published is stored.
+ * @param {string} params.targetBranch The branch to which the content should be published.  Technically, publishing is just a move from one branch
  * to another, and publishing user content from master to draft is therefore also valid usage of this function, which may be practical if user input to a web-page is stored on master.
- * @param {boolean} params.includeChildren Optional parameter, saying whether all children should be included when publishing content.  Default is true.
- * @param {boolean} params.includeDependencies Optional parameter, saying whether all related content should be included when publishing content.  Default is true.
+ * @param {boolean} [params.includeChildren=true] Whether all children should be included when publishing content.
+ * @param {boolean} [params.includeDependencies=true] Whether all related content should be included when publishing content.
  *
  * @returns {object} Modified content as JSON.
  */
@@ -225,6 +226,7 @@ exports.publish = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.PublishContentHandler');
     bean.keys = required(params, 'keys');
     bean.targetBranch = required(params, 'targetBranch');
+    bean.sourceBranch = required(params, 'sourceBranch');
     if (!nullOrValue(params.includeChildren)) {
         bean.includeChildren = params.includeChildren;
     }

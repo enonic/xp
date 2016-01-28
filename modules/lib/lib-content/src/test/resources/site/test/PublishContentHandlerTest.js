@@ -25,17 +25,19 @@ var expectedLimitedJson = {
 
 exports.publishById = function () {
     var result = content.publish({
-        keys : ['9f5b0db0-38f9-4e81-b92e-116f25476b1c', '45d67001-7f2b-4093-99ae-639be9fdd1f6', '79e21db0-5b43-45ce-b58c-6e1c420b22bd'],
-        targetBranch : 'draft'
+        keys: ['9f5b0db0-38f9-4e81-b92e-116f25476b1c', '45d67001-7f2b-4093-99ae-639be9fdd1f6', '79e21db0-5b43-45ce-b58c-6e1c420b22bd'],
+        sourceBranch: 'master',
+        targetBranch: 'draft'
     });
 
     assert.assertJsonEquals(expectedJson, result);
 };
 
-exports.publishByPath= function () {
+exports.publishByPath = function () {
     var result = content.publish({
-        keys : ['/myfolder/mycontent', '/yourfolder/yourcontent'],
-        targetBranch : 'master'
+        keys: ['/myfolder/mycontent', '/yourfolder/yourcontent'],
+        sourceBranch: 'draft',
+        targetBranch: 'master'
     });
 
     assert.assertJsonEquals(expectedJson, result);
@@ -43,10 +45,11 @@ exports.publishByPath= function () {
 
 exports.publishWithoutChildrenOrDependencies = function () {
     var result = content.publish({
-        keys : ['e1f57280-d672-4cd8-b674-98e26e5b69ae'],
-        targetBranch : 'master',
-        includeChildren : false,
-        includeDependencies : false
+        keys: ['e1f57280-d672-4cd8-b674-98e26e5b69ae'],
+        sourceBranch: 'draft',
+        targetBranch: 'master',
+        includeChildren: false,
+        includeDependencies: false
     });
 
     assert.assertJsonEquals(expectedLimitedJson, result);
