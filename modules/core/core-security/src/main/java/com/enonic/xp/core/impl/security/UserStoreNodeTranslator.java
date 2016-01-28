@@ -44,14 +44,18 @@ abstract class UserStoreNodeTranslator
 
     final static String GROUP_FOLDER_NODE_NAME = "groups";
 
+    protected final static NodePath USER_STORE_PARENT_PATH = NodePath.create( NodePath.ROOT ).
+        addElement( PrincipalKey.IDENTITY_NODE_NAME ).
+        build();
+
     static NodePath getRolesNodePath()
     {
-        return NodePath.create( NodePath.ROOT, PrincipalKey.ROLES_NODE_NAME ).build();
+        return NodePath.create( getUserStoresParentPath(), PrincipalKey.ROLES_NODE_NAME ).build();
     }
 
     static NodePath getUserStoresParentPath()
     {
-        return NodePath.ROOT;
+        return USER_STORE_PARENT_PATH;
     }
 
     static UserStoreKey toKey( final Node node )
