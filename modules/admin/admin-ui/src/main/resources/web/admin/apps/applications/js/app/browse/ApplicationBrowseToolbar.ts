@@ -7,6 +7,7 @@ module app.browse {
             super.addAction(actions.START_APPLICATION);
             super.addAction(actions.STOP_APPLICATION);
             super.addAction(actions.INSTALL_APPLICATION);
+            super.addAction(actions.UNINSTALL_APPLICATION);
         }
     }
 }
