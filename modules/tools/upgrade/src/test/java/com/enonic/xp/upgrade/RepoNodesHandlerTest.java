@@ -104,7 +104,7 @@ public class RepoNodesHandlerTest
     {
         assertTrue( Files.exists( Paths.get( targetRoot.toString(), "cms-repo", "draft", "_", "node.xml" ) ) );
         assertTrue( Files.exists( Paths.get( targetRoot.toString(), "cms-repo", "master", "_", "node.xml" ) ) );
-        assertTrue( Files.exists( Paths.get( targetRoot.toString(), "system-repo", "master", "_", "node.xml" ) ) );
+        assertTrue( Files.exists( Paths.get( targetRoot.toString(), "system-repo", "master", "identity", "_", "node.xml" ) ) );
     }
 
 

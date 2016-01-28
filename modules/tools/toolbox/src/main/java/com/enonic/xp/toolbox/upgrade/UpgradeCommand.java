@@ -31,4 +31,12 @@ public final class UpgradeCommand
             build().
             execute();
     }
+
+    public static void main( String[] args )
+        throws Exception
+    {
+        final UpgradeCommand upgradeCommand = new UpgradeCommand();
+        upgradeCommand.dump = "/Users/gri/Workspace/home/data/dump/before";
+        upgradeCommand.execute();
+    }
 }
