@@ -1,8 +1,13 @@
 package com.enonic.xp.lib.content;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.PushContentParams;
@@ -41,17 +46,32 @@ public final class PublishContentHandler
 
     private PushContentResultMapper publishContent()
     {
-        for ( int cnt = 0; cnt < this.keys.length; cnt++ )
+        final List<ContentPath> contentNotFound = new ArrayList<>();
+        final List<ContentId> contentIds = new ArrayList<>();
+
+        for ( final String key : this.keys )
         {
-            if ( keys[cnt].startsWith( "/" ) )
+            if ( key.startsWith( "/" ) )
             {
-                final Content content = this.contentService.getByPath( ContentPath.from( keys[cnt] ) );
-                keys[cnt] = content.getId().toString();
+                final ContentPath path = ContentPath.from( key );
+                final Content content = getByPath( path );
+                if ( content != null )
+                {
+                    contentIds.add( content.getId() );
+                }
+                else
+                {
+                    contentNotFound.add( path );
+                }
+            }
+            else
+            {
+                contentIds.add( ContentId.from( key ) );
             }
         }
 
         final PushContentParams.Builder builder = PushContentParams.create();
-        builder.contentIds( ContentIds.from( keys ) );
+        builder.contentIds( ContentIds.from( contentIds ) );
         builder.target( Branch.from( targetBranch ) );
         if ( this.includeChildren != null )
         {
@@ -62,7 +82,19 @@ public final class PublishContentHandler
             builder.includeDependencies( includeDependencies );
         }
         final PushContentsResult result = this.contentService.push( builder.build() );
-        return result != null ? new PushContentResultMapper( result ) : null;
+        return result != null ? new PushContentResultMapper( result, contentNotFound ) : null;
+    }
+
+    private Content getByPath( final ContentPath contentPath )
+    {
+        try
+        {
+            return this.contentService.getByPath( contentPath );
+        }
+        catch ( ContentNotFoundException e )
+        {
+            return null;
+        }
     }
 
     public void setKeys( final String[] keys )
