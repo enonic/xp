@@ -841,15 +841,26 @@ module api.liveedit {
         private calcDistanceToViewport(): number {
             var dimensions = this.getEl().getDimensions(),
                 menuHeight = this.contextMenu && this.contextMenu.isVisible() ? this.contextMenu.getEl().getHeight() : dimensions.height,
-                screenTopPosition: number = document.body.scrollTop != undefined
-                    ? document.body.scrollTop
-                    : document.documentElement.scrollTop,
+                scrollTop: number = this.getDocumentScrollTop(),
                 padding = 10;
 
-            var top = (dimensions.top - padding) - screenTopPosition,
-                bottom = (dimensions.top + menuHeight + padding) - (screenTopPosition + window.innerHeight);
+            var top = (dimensions.top - padding) - scrollTop,
+                bottom = (dimensions.top + menuHeight + padding) - (scrollTop + window.innerHeight),
+                tallerThanWindow = menuHeight > window.innerHeight;
 
-            return top < 0 ? top : bottom > 0 ? bottom : 0;
+            return top <= 0 ? top : (bottom > 0 && !tallerThanWindow) ? bottom : 0;
+        }
+
+        // http://stackoverflow.com/a/872537
+        private getDocumentScrollTop() {
+            if (typeof pageYOffset != 'undefined') {
+                //most browsers except IE before #9
+                return pageYOffset;
+            } else {
+                //IE 'quirks' and doctype
+                var doc = (document.documentElement.clientHeight) ? document.documentElement : document.body;
+                return doc.scrollTop;
+            }
         }
 
         protected addComponentView(componentView: ComponentView<Component>, index?: number, isNew: boolean = false) {

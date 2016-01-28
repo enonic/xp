@@ -139,11 +139,12 @@ module app.wizard {
                             }
 
                             if (this.tree.hasChildren(event.getComponentView())) {
-                                var componentNode = this.tree.getRoot().getCurrentRoot().findNode(this.tree.getDataId(event.getComponentView()));
+                                var componentNode = this.tree.getRoot().getCurrentRoot().findNode(
+                                    this.tree.getDataId(event.getComponentView()));
                                 this.tree.expandNode(componentNode, true);
                             }
 
-                            if(api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), TextComponentView)) {
+                            if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), TextComponentView)) {
                                 this.bindTreeTextNodeUpdateOnTextComponentModify(<TextComponentView>event.getComponentView());
                             }
 
@@ -182,7 +183,7 @@ module app.wizard {
                         this.scrollToItem(newDataId);
                     }
 
-                    if(api.ObjectHelper.iFrameSafeInstanceOf(event.getNewComponentView(), TextComponentView)) {
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(event.getNewComponentView(), TextComponentView)) {
                         this.bindTreeTextNodeUpdateOnTextComponentModify(<TextComponentView>event.getNewComponentView());
                     }
                 });
@@ -244,8 +245,8 @@ module app.wizard {
                 var rowElement = event.target,
                     selected = false;
 
-                while(!rowElement.classList.contains("slick-row")) {
-                    if(rowElement.classList.contains("selected")) {
+                while (!rowElement.classList.contains("slick-row")) {
+                    if (rowElement.classList.contains("selected")) {
                         selected = true;
                     }
 
@@ -482,7 +483,7 @@ module app.wizard {
 
             this.contextMenu.getMenu().onBeforeAction((action: api.ui.Action) => {
                 this.pageView.setDisabledContextMenu(true);
-                if (action.hasParentAction() && action.getParentAction().getLabel() == "Insert"){
+                if (action.hasParentAction() && action.getParentAction().getLabel() == "Insert") {
                     this.notifyBeforeInsertAction();
                 }
             });
@@ -525,7 +526,7 @@ module app.wizard {
         }
 
         private highlightRow(rowElement: HTMLElement, selected: boolean): void {
-            if(selected) {
+            if (selected) {
                 api.liveedit.Highlighter.get().hide();
             }
             else {
@@ -535,7 +536,10 @@ module app.wizard {
                     hoveredNode = nodes[new api.dom.ElementHelper(rowElement).getSiblingIndex()];
 
                 if (hoveredNode) {
-                    api.liveedit.Highlighter.get().highlightElement(dimensions, hoveredNode.getData().getType().getConfig().getHighlighterStyle());
+                    var data = hoveredNode.getData();
+                    if (data.getType().isComponentType()) {
+                        api.liveedit.Highlighter.get().highlightElement(dimensions, data.getType().getConfig().getHighlighterStyle());
+                    }
                 }
             }
         }
