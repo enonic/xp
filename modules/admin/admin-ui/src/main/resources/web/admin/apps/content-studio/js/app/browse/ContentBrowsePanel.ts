@@ -184,18 +184,28 @@ module app.browse {
             this.mobileBrowseActions = new app.browse.action.MobileContentTreeGridActions(this.contentTreeGrid);
             this.mobileContentItemStatisticsPanel = new app.view.MobileContentItemStatisticsPanel(this.mobileBrowseActions);
 
-            api.content.TreeGridItemClickedEvent.on((event) => {
+            let updateItem = () => {
                 if (ActiveDetailsPanelsManager.getActiveDetailsPanel() == this.mobileContentItemStatisticsPanel.getDetailsPanel()) {
                     var browseItems: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus>[] = this.getBrowseItemPanel().getItems();
                     if (browseItems.length == 1) {
                         new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItems[0].getId())).sendAndParse().
-                            then((renderable: boolean) => {
-                                var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItems[0].toViewItem();
-                                item.setRenderable(renderable);
-                                this.mobileContentItemStatisticsPanel.setItem(item);
-                                this.mobileBrowseActions.updateActionsEnabledState(browseItems);
-                            });
+                        then((renderable: boolean) => {
+                            var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItems[0].toViewItem();
+                            item.setRenderable(renderable);
+                            this.mobileContentItemStatisticsPanel.setItem(item);
+                            this.mobileBrowseActions.updateActionsEnabledState(browseItems);
+                        });
                     }
+                }
+            };
+
+            // new selection
+            this.contentTreeGrid.onSelectionChanged(updateItem);
+
+            // repeated selection
+            api.content.TreeGridItemClickedEvent.on((event) => {
+                if (event.isRepeatedSelection()) {
+                    updateItem();
                 }
             });
 

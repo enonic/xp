@@ -142,9 +142,9 @@ module api.ui.treegrid {
                     } else {
                         this.setActive(true);
                         this.root.clearStashedSelection();
-                        this.grid.selectRow(data.row);
+                        let repeatedSelection = this.grid.selectRow(data.row) === -1;
                         if (!elem.hasClass("sort-dialog-trigger")) {
-                            new api.content.TreeGridItemClickedEvent().fire();
+                            new api.content.TreeGridItemClickedEvent(repeatedSelection).fire();
                         }
                     }
                 }

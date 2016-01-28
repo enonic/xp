@@ -12,10 +12,7 @@ module app {
         }
 
         private createHomeMainContainer(): app.home.HomeMainContainer {
-            var linksContainer = new app.home.LinksContainer().
-                addLink('Community', 'https://enonic.com/community').
-                addLink('Documentation', 'https://enonic.com/docs/latest/').
-                addText('v' + CONFIG.xpVersion);
+            var linksContainer = new app.home.LinksContainer();
 
             this.loginForm = new app.login.LoginForm(new app.login.AuthenticatorImpl());
             this.loginForm.onUserAuthenticated(this.onUserAuthenticated.bind(this));

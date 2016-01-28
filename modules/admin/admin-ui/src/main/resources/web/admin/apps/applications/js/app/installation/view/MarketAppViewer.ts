@@ -21,21 +21,29 @@ module app.installation.view {
 
             this.namesAndIconView.getNamesView().setMainName(displayName, false).
                 setSubName(subName, subTitle);
-            this.namesAndIconView.getEl().setTitle(this.resolveSubTitle(object));
+            if (!!subTitle) {
+                this.namesAndIconView.getEl().setTitle(subTitle);
+            } else if (!!subName) {
+                this.namesAndIconView.getEl().setTitle(subName);
+            }
             if (!!iconUrl) {
                 this.namesAndIconView.setIconUrl(iconUrl);
             }
+            this.namesAndIconView.getIconImageEl().onError(() => {
+                this.namesAndIconView.setIconClass("icon-puzzle icon-large");
+                this.namesAndIconView.getIconImageEl().setSrc("");
+            });
 
             this.render();
         }
 
         resolveDisplayName(object: MarketApplication): string {
-            var appLink = new api.dom.AEl().setUrl(object.getApplicationUrl(), "_blank").setHtml(object.getDisplayName(), false);
+            var appLink = new api.dom.AEl().setUrl(object.getUrl(), "_blank").setHtml(object.getDisplayName(), false);
             return appLink.toString();
         }
 
         resolveSubName(object: MarketApplication, relativePath: boolean = false): string {
-            return object.getDescription();
+            return object.getName();
         }
 
         resolveSubTitle(object: MarketApplication): string {

@@ -4,7 +4,6 @@
 @panel-outer-width: 320px;
 @panel-inner-width: 280px;
 @header-height: 44px;
-@footer-height: 60px;
 @panel-indent: 30px;
 @launcher-panel-z-index: 2500;
 
@@ -282,7 +281,7 @@ html, body {
   top: 15px;
   background-color: transparent;
   cursor: pointer;
-  z-index: calc(@launcher-panel-z-index + 1);
+  z-index: 2501;
 
   .line {
     display: inline-block;
@@ -440,7 +439,7 @@ html, body {
     box-sizing: border-box;
     height: 100%;
     width: @panel-outer-width;
-    padding: calc(@header-height + 10) 0 @footer-height 0;
+    padding: calc(@header-height + 10) 0 @header-height 0;
     overflow: hidden;
     background-color: rgba(0, 0, 0, 0.9);
 
@@ -512,7 +511,7 @@ html, body {
     position: absolute;
     bottom: 0;
     display: table;
-    height: @footer-height;
+    height: @header-height;
     width: @panel-outer-width;
     background-color: rgba(255, 255, 255, 0.1);
     color: @admin-white;
@@ -520,7 +519,7 @@ html, body {
 
     .user-info {
       vertical-align: middle;
-      padding: 17px 15px 0 0;
+      padding: 10px 15px 0 0;
       width: 200px;
       overflow: hidden;
       white-space: nowrap;
@@ -550,13 +549,12 @@ html, body {
 
 .home-main-container, .launcher-panel {
   .container-title {
-    display: table-cell;
     color: @admin-white;
     font-size: 32px;
     font-family: sans-serif, "Open Sans";
     font-weight: 100;
-    line-height: 26px;
-    vertical-align: bottom;
+    position: absolute;
+    bottom: -7px;
   }
 }
 
@@ -577,9 +575,9 @@ html, body {
   .footer {
     position: absolute;
     display: table;
-    width: 400px;
+    width: 300px;
     left: 40px;
-    bottom: 23px;
+    bottom: 15px;
     text-align: left;
 
     a, span {
@@ -616,7 +614,7 @@ html, body {
 
 ._0-240, ._240-360, ._360-540, ._540-720 {
   .home-main-container {
-    .user-name, .footer {
+    .user-name {
       display: none;
     }
   }

@@ -26,7 +26,6 @@ function handleGet(req) {
                 application: adminTools[i].key.application
             });
         }
-        log.info(JSON.stringify(adminTools[i].key));
         adminTools[i].appId = adminTools[i].key.name;
         adminTools[i].uri =
             uriScriptHelper.generateAdminToolUri(adminTools[i].key.application, adminTools[i].key.name);

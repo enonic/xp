@@ -51,17 +51,9 @@
         <span class="container-title">{{installation}}</span>
     </div>
     <div class="footer">
-        <script type="text/javascript">
-            document.write("<span>Enonic XP v{{xpVersion}}".replace(".SNAPSHOT", "") + "</span>");
-        </script>
-
-        <a href="https://enonic.com/community" target="_blank">Community</a>
-        <a href="https://enonic.com/docs/latest/" target="_blank">Documentation</a>
-
-        <script type="text/javascript">
-            document.write("<a href='https://github.com/enonic/xp/releases/tag/v{{xpVersion}}".replace(".SNAPSHOT", "") + "' target='_blank'>Release notes</a>");
-        </script>
-
+        <a href="{{docLinkPrefix}}/appendix/changes/index.html" target="_blank">Enonic XP v{{xpVersion}}</a>
+        <a href="https://discuss.enonic.com/" target="_blank">Forum</a>
+        <a href="{{docLinkPrefix}}/index.html" target="_blank">Documentation</a>
     </div>
 </div>
 </body>
