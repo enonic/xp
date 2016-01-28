@@ -243,10 +243,14 @@ abstract class UserStoreNodeTranslator
 
     private static UserStore createUserStoreFromNode( final Node node )
     {
-        if ( node.name().toString().equalsIgnoreCase( PrincipalKey.ROLES_NODE_NAME ) )
+        for ( String reservedUserStoreId : UserStoreKey.RESERVED_USER_STORE_IDS )
         {
-            return null;
+            if ( reservedUserStoreId.equalsIgnoreCase( node.name().toString() ) )
+            {
+                return null;
+            }
         }
+
         final PropertySet nodeAsSet = node.data().getRoot();
 
         return UserStore.create().
