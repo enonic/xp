@@ -18,7 +18,9 @@ module api.content.site.inputtype.siteconfigurator {
             this.appendChildToContentPanel(formView);
 
             this.addOkButton(okCallback);
-            this.addCancelButton(cancelCallback);
+            this.getCancelAction().onExecuted(() => cancelCallback());
+
+            this.addCancelButtonToBottom();
         }
 
         private addOkButton(okCallback: () => void) {
@@ -30,18 +32,6 @@ module api.content.site.inputtype.siteconfigurator {
                 }
                 this.close();
             });
-        }
-
-        addCancelButton(cancelCallback: () => void) {
-            var cancelAction = new api.ui.Action("Cancel", "esc");
-            cancelAction.setIconClass("cancel-button-bottom");
-            cancelAction.onExecuted(()=> {
-                if (cancelCallback) {
-                    cancelCallback();
-                }
-                this.close();
-            });
-            this.addAction(cancelAction);
         }
 
         private initHeader(name: string, subName: string): ModalDialogHeader {

@@ -34,9 +34,8 @@ module api.ui.dialog {
             var wrapper = new api.dom.DivEl("modal-dialog-content-wrapper");
             this.appendChild(wrapper);
 
-            this.createDefaultCancelAction();
-            this.cancelButton = this.createCancelButton();
-
+            this.cancelAction = this.createDefaultCancelAction();
+            this.cancelButton = new DialogButton(this.cancelAction);
             wrapper.appendChild(this.cancelButton);
 
             this.title = this.config.title;
@@ -95,8 +94,8 @@ module api.ui.dialog {
             cancelAction.onExecuted(()=> {
                 this.close();
             });
-            this.cancelAction = cancelAction;
             this.actions.push(cancelAction);
+            return cancelAction;
         }
 
         getCancelAction(): api.ui.Action {
@@ -104,12 +103,10 @@ module api.ui.dialog {
         }
 
         addCancelButtonToBottom() {
-            var cancelAction = new api.ui.Action("Cancel", "esc");
+            var cancelAction = new api.ui.Action("Cancel");
             cancelAction.setIconClass("cancel-button-bottom");
-            cancelAction.onExecuted(()=> {
-                this.close();
-            });
-            this.addAction(cancelAction);
+            cancelAction.onExecuted(() => this.cancelAction.execute());
+            this.buttonRow.addAction(cancelAction);
         }
 
         setTitle(value: string) {
@@ -150,10 +147,6 @@ module api.ui.dialog {
                 el.setMarginLeft("0px");
                 el.removeClass("centered_horizontally");
             }
-        }
-
-        private createCancelButton(): api.ui.button.ActionButton {
-            return new DialogButton(this.getCancelAction());
         }
 
         protected getResponsiveItem(): api.ui.responsive.ResponsiveItem {
