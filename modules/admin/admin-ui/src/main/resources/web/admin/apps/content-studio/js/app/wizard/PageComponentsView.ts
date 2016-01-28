@@ -256,7 +256,9 @@ module app.wizard {
                     rowElement = rowElement.parentElement;
                 }
 
-                this.highlightRow(rowElement, selected);
+                if(!this.pageView.isLocked()) {
+                    this.highlightRow(rowElement, selected);
+                }
             });
 
             this.tree.getGrid().subscribeOnMouseLeave((event, data) => {
