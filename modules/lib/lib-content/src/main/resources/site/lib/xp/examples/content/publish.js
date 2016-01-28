@@ -5,6 +5,7 @@ var assert = require('/lib/xp/assert');
 // Publish content by path or key
 var result = contentLib.publish({
     keys: ['/mysite/somepage', '79e21db0-5b43-45ce-b58c-6e1c420b22bd'],
+    sourceBranch: 'draft',
     targetBranch: 'master',
     includeChildren: true,
     includeDependencies: false
