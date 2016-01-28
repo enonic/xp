@@ -159,11 +159,11 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
         final PropertyTree data = new PropertyTree();
 
-        final String path1 = "test.of.string.with.path";
+        final String path1 = "Test.Of.String.With.Path";
         final String value1 = "fisk ost pølse løk";
         data.setString( path1, value1 );
 
-        final String path2 = "mystring.with.path2";
+        final String path2 = "MyString.With.Path2";
         final String value2 = "vif rbk lsk sif";
         data.setString( path2, value2 );
 
@@ -367,7 +367,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "Levenshteins-algorithm" );
 
-        final Node node = createNode( CreateNodeParams.create().
+        createNode( CreateNodeParams.create().
             name( "my-node-1" ).
             parent( NodePath.ROOT ).
             data( data ).
@@ -389,7 +389,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "testing_delimiter" );
 
-        final Node node = createNode( CreateNodeParams.create().
+        createNode( CreateNodeParams.create().
             name( "my-node-1" ).
             parent( NodePath.ROOT ).
             data( data ).
@@ -410,7 +410,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "testing.delimiter" );
 
-        final Node node = createNode( CreateNodeParams.create().
+        createNode( CreateNodeParams.create().
             name( "my-node-1" ).
             parent( NodePath.ROOT ).
             data( data ).
