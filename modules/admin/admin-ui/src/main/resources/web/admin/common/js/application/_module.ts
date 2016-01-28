@@ -21,3 +21,4 @@
 ///<reference path='InstallUrlApplicationRequest.ts' />
 ///<reference path='MarketApplication.ts' />
 ///<reference path='ListMarketApplicationsRequest.ts' />
+///<reference path='UninstallApplicationRequest.ts' />
