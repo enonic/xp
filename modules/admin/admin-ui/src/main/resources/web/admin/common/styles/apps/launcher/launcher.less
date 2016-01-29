@@ -1,382 +1,32 @@
-@mobile-threshold: 540px;
-@tablet-threshold: 1380px;
-
 @panel-outer-width: 320px;
 @panel-inner-width: 280px;
 @header-height: 44px;
 @panel-indent: 30px;
 @launcher-panel-z-index: 2500;
 
-@enonic-logo-img-width: 103px;
-@enonic-logo-img-height: 137px;
-@enonic-logo-size: 0.9;
-@enonic-logo-width: @enonic-logo-img-width * @enonic-logo-size;
-@enonic-logo-height: @enonic-logo-img-height * @enonic-logo-size;
-@enonic-logo-center-left: @enonic-logo-width/2;
+@_COMMON_PREFIX: xp-admin-common-;
+@_CLS_PREFIX: xp-page-editor-;
 
-html, body {
-  height: 100%
-}
+//Variables
+@import "../../variables/color";
+@import "../../variables/font";
+@import "../../variables/animations";
+@import "../../variables/mixins";
+@import "../../variables/z-index";
+@import "../../variables/transitions";
+@import "../../variables/shadows";
 
-.applications-frame {
-  overflow-y: hidden;
-  height: 100%;
-  width: 100%;
-}
-
-.home-main-container {
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.45);
-  background-repeat: no-repeat;
-  background-position: center center;
-
-  background-attachment: fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-
-  h3,
-  .installation-info {
-    font-size: 24px;
-    color: @admin-white;
-  }
-
-  &.show-home {
-    animation: animation-show-home 100ms ease both;
-    animation-play-state: running;
-
-    -webkit-animation: animation-show-home 100ms ease both;
-    -webkit-animation-play-state: running;
-  }
-
-  &.hide-home {
-    animation: animation-hide-home 100ms ease both;
-    animation-play-state: running;
-
-    -webkit-animation: animation-hide-home 100ms ease both;
-    -webkit-animation-play-state: running;
-  }
-
-  .header-panel {
-    position: absolute;
-    width: 100%;
-    height: @header-height;
-    padding: 6px 10px;
-    background-size: cover;
-    text-align: center;
-    overflow-y: visible;
-    z-index: 1;
-    .box-sizing(border-box);
-
-    .installation-header {
-      float: left;
-      line-height: 20px;
-      padding: 5px 0 0 0;
-      color: @admin-font-gray;
-      font-size: 18px;
-      line-height: 24px;
-      text-transform: uppercase;
-    }
-    .user-name {
-      float: right;
-      line-height: 20px;
-      padding: 6px 10px;
-      color: @admin-font-gray;
-      font-size: 14px;
-    }
-
-    .logout {
-      float: right;
-      padding: 8px 10px 8px 0;
-      &:hover {
-        color: rgba(255, 255, 255, 0.5);
-      }
-    }
-
-    .return-button {
-      margin: 4px 3px 0 0;
-      padding: 2px 0px;
-      width: 24px;
-      height: 24px;
-      float: right;
-      box-sizing: border-box;
-      border: 2px solid @admin-white;
-      color: @admin-white;
-      font-size: 16px;
-      cursor: pointer;
-      .border-radius(24px);
-      &:hover {
-        color: rgba(255, 255, 255, 0.5);
-        border-color: rgba(255, 255, 255, 0.5);
-      }
-
-      .icon-close2();
-    }
-
-    .tab-menu-logon {
-      float: right;
-      margin-right: 10px;
-      margin-top: 0px;
-
-      .tab-menu-button {
-        background-color: transparent;
-      }
-
-      &.expanded {
-        .tab-menu-button {
-          background-color: @admin-bg-dark-gray;
-        }
-      }
-
-    }
-
-  }
-
-  /** Branding */
-
-  .branding {
-    .flexbox();
-    align-items: center;
-    -webkit-align-items: center;
-    width: 200px;
-    height: 100%;
-    left: calc(~"50% - @{enonic-logo-center-left}");
-    margin-top: -120px;
-    position: absolute;
-    text-align: center;
-    z-index: 0;
-
-    h1 {
-      color: white;
-      background: url("../images/enonic.svg") 0 0 no-repeat;
-      background-size: 100%;
-      height: @enonic-logo-height;
-      width: @enonic-logo-width;
-      text-indent: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      padding-bottom: 20px;
-    }
-
-    .installation-info {
-      font-size: 12px;
-      text-align: right;
-    }
-  }
-
-  .login-licensed-to {
-    text-align: center;
-    padding-top: 35px;
-  }
-
-  .links-container {
-    position: absolute;
-    width: 100%;
-    bottom: 15px;
-    left: 0;
-    text-align: center;
-    span {
-      color: @admin-white;
-    }
-  }
-
-  /** Common */
-
-  /** Login Form **/
-  .login-form {
-    position: static;
-    margin: -4px auto 0;
-
-    .message-container {
-      position: absolute;
-      width: 200px;
-      height: 28px;
-      line-height: 28px;
-      margin-top: 10px;
-      color: white;
-      text-align: center;
-
-      .ellipsis();
-    }
-
-    .input-view {
-      font-family: @admin-font-family;
-      font-size: 12px;
-      box-sizing: border-box;
-      margin-bottom: 10px;
-      border: 1px solid @admin-bg-light-gray;
-      vertical-align: top;
-      padding: 4px 9px;
-      background: none @admin-white !important;
-      width: 200px;
-
-      &.invalid {
-        &[type=password] {
-          color: @admin-red;
-        }
-        .animation(shake, .5s, 0s, linear, 1);
-      }
-    }
-
-    .password-input {
-      padding-right: 35px;
-    }
-
-    .@{_COMMON_PREFIX}text-input {
-      min-height: initial;
-      margin-bottom: 13px;
-    }
-
-    .login-button {
-      .icon-arrow-right3;
-      background-color: transparent;
-      position: absolute;
-      right: 0px;
-      top: 0px;
-      padding: 3px;
-      font-size: 20px;
-      color: @form-button-bg;
-
-      &.invalid {
-        .animation(shake, .5s, 0s, linear, 1);
-      }
-
-      &:hover:not(:disabled) {
-
-        &:before, span {
-          color: inherit;
-        }
-      }
-
-      &:focus:not(:disabled) {
-        box-shadow: none;
-        border: 1px solid transparent;
-      }
-
-      &:before {
-        color: inherit; // updates icons color
-      }
-
-      span {
-        display: none;
-      }
-    }
-
-    .password-container {
-      position: relative;
-    }
-  }
-
-}
-
-.launcher-button {
-  position: fixed;
-  border: none;
-  right: 6px;
-  top: 15px;
-  background-color: transparent;
-  cursor: pointer;
-  z-index: 2501;
-
-  .line {
-    display: inline-block;
-    width: 20px;
-    height: 3px;
-    background: @admin-white;
-    transition: 0.3s;
-
-    .dark & {
-      background: @admin-bg-light-gray;
-    }
-  }
-
-  .lines {
-    .line;
-    position: relative;
-    top: -4px;
-
-    &:before, &:after {
-      .line;
-      position: absolute;
-      left: 0;
-      content: '';
-      -webkit-transform-origin: 2rem/14 center;
-      transform-origin: 2rem/14 center;
-    }
-    &:before {
-      top: 6px;
-    }
-    &:after {
-      top: -6px;
-    }
-  }
-
-  &:hover {
-    opacity: 1;
-    background: none;
-    .lines {
-      &:before {
-        top: 8px;
-      }
-      &:after {
-        top: -8px;
-      }
-    }
-  }
-
-  &.toggled {
-    -webkit-transform: scale3d(.8, .8, .8);
-    transform: scale3d(.8, .8, .8);
-    padding: 6px 3px;
-    margin-top: -3px;
-
-    &:hover {
-      .lines {
-        &:before {
-          top: 0;
-        }
-        &:after {
-          top: 0;
-        }
-      }
-    }
-
-    .lines {
-      background: transparent !important;
-      &:before, &:after {
-        -webkit-transform-origin: 50% 50%;
-        transform-origin: 50% 50%;
-        top: 0;
-        width: 1.6rem;
-        left: -7px;
-      }
-      &:before {
-        background-color: #fff;
-        -webkit-transform: rotate3d(0, 0, 1, 45deg);
-        transform: rotate3d(0, 0, 1, 45deg);
-      }
-      &:after {
-        background-color: #fff;
-        -webkit-transform: rotate3d(0, 0, 1, -45deg);
-        transform: rotate3d(0, 0, 1, -45deg);
-      }
-    }
-  }
-}
-
-.app-row-selected {
-  background-color: rgba(255, 255, 255, 0.3);
-  .application .app-info .app-description {
-    color: @admin-white;
-  }
-}
+//Icons
+@import "../../../icons/icons";
 
 .launcher-panel {
+
+  .app-row-selected {
+    background-color: rgba(255, 255, 255, 0.3);
+    .application .app-info .app-description {
+      color: @admin-white;
+    }
+  }
 
   &.keyboard-navigation {
     .launcher-app-container .app-row.selected {
@@ -482,11 +132,13 @@ html, body {
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
+            margin: 0;
           }
           .app-description {
             width: 220px;
             font-size: 14px;
             color: darkgray;
+            margin: 0;
           }
         }
 
@@ -547,84 +199,97 @@ html, body {
   }
 }
 
-.home-main-container, .launcher-panel {
-  .container-title {
-    color: @admin-white;
-    font-size: 32px;
-    font-family: sans-serif, "Open Sans";
-    font-weight: 100;
-    position: absolute;
-    bottom: -7px;
-  }
-}
+.launcher-button {
+  position: fixed;
+  border: none;
+  right: 6px;
+  top: 15px;
+  background-color: transparent;
+  cursor: pointer;
+  z-index: 2501;
 
-.home-main-container {
-  .header {
-    position: absolute;
-    display: table;
-    top: 0;
-    height: @header-height;
-    width: 100%;
-    padding-left: @panel-indent;
-    z-index: 1;
-    text-transform: uppercase;
-    background-color: rgba(0, 0, 0, 0.3);
-    .box-sizing(border-box);
-  }
+  .line {
+    display: inline-block;
+    width: 20px;
+    height: 3px;
+    background: @admin-white;
+    transition: 0.3s;
 
-  .footer {
-    position: absolute;
-    display: table;
-    width: 300px;
-    left: 40px;
-    bottom: 15px;
-    text-align: left;
-
-    a, span {
-      display: table-cell;
-      color: @admin-white;
+    .dark & {
+      background: @admin-bg-light-gray;
     }
   }
-}
 
-.home-main-container {
+  .lines {
+    .line;
+    position: relative;
+    top: -4px;
 
-  a {
-    color: @admin-white;
-    text-decoration: none;
-  }
-
-  .center-panel {
-    width: 100%;
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.4);
-    top: 0;
-    bottom: 0;
-
-    .login-panel {
-      .flexbox();
-      .align-items(center);
+    &:before, &:after {
+      .line;
       position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
+      left: 0;
+      content: '';
+      -webkit-transform-origin: 2rem/14 center;
+      transform-origin: 2rem/14 center;
     }
-  }
-}
-
-._0-240, ._240-360, ._360-540, ._540-720 {
-  .home-main-container {
-    .user-name {
-      display: none;
+    &:before {
+      top: 6px;
     }
-  }
-}
-
-._240-360 {
-  .home-main-container {
-    .header {
-      padding-left: calc(~'100% - @{panel-outer-width}');
+    &:after {
+      top: -6px;
     }
   }
 
+  &:hover {
+    opacity: 1;
+    background: none;
+    .lines {
+      &:before {
+        top: 8px;
+      }
+      &:after {
+        top: -8px;
+      }
+    }
+  }
+
+  &.toggled {
+    -webkit-transform: scale3d(.8, .8, .8);
+    transform: scale3d(.8, .8, .8);
+    padding: 6px 3px;
+    margin-top: -3px;
+
+    &:hover {
+      .lines {
+        &:before {
+          top: 0;
+        }
+        &:after {
+          top: 0;
+        }
+      }
+    }
+
+    .lines {
+      background: transparent !important;
+      &:before, &:after {
+        -webkit-transform-origin: 50% 50%;
+        transform-origin: 50% 50%;
+        top: 0;
+        width: 1.6rem;
+        left: -7px;
+      }
+      &:before {
+        background-color: #fff;
+        -webkit-transform: rotate3d(0, 0, 1, 45deg);
+        transform: rotate3d(0, 0, 1, 45deg);
+      }
+      &:after {
+        background-color: #fff;
+        -webkit-transform: rotate3d(0, 0, 1, -45deg);
+        transform: rotate3d(0, 0, 1, -45deg);
+      }
+    }
+  }
 }
