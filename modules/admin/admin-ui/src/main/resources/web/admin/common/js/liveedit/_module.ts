@@ -10,6 +10,7 @@
 ///<reference path='ContentItemType.ts' />
 ///<reference path='Shader.ts' />
 ///<reference path='Highlighter.ts' />
+///<reference path='SelectedHighlighter.ts' />
 ///<reference path='Cursor.ts' />
 ///<reference path='ItemViewId.ts' />
 ///<reference path='ItemViewIdProducer.ts' />

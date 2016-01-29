@@ -116,7 +116,6 @@ module api.liveedit {
         private mouseOverViewListener;
         private mouseLeaveViewListener;
         private shaderClickedListener;
-        private shaderMouseMoveListener;
         private pageItemViewAddedListener;
         private mouseEnterListener;
         private mouseLeaveListener;
@@ -213,11 +212,9 @@ module api.liveedit {
             this.onContextMenu(this.contextMenuListener);
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
-                // no need to check if the view manages shader and highlighter here
-                // because it is essential to resize them on window resize
                 if (this.isSelected()) {
-                    this.highlight();
-                    this.shade();
+                    this.highlightSelected();
+                    //this.shade();
                 }
             });
 
@@ -226,11 +223,6 @@ module api.liveedit {
             // in case of the locked or selected page
             this.shaderClickedListener = this.handleShaderClick.bind(this);
             Shader.get().onClicked(this.shaderClickedListener);
-
-            // page shader catches mouse events
-            // so bind listener to it to highlight underlying views
-            this.shaderMouseMoveListener = this.handleShaderMouseMove.bind(this);
-            Shader.get().onMouseMove(this.shaderMouseMoveListener);
 
             this.mouseOverViewListener = () => {
                 var isRegistered = !!this.getParentItemView();
@@ -293,17 +285,32 @@ module api.liveedit {
 
             api.ui.responsive.ResponsiveManager.unAvailableSizeChanged(this);
             Shader.get().unClicked(this.shaderClickedListener);
-            Shader.get().unMouseMove(this.shaderMouseMoveListener);
             this.unMouseOverView(this.mouseOverViewListener);
             this.unMouseLeaveView(this.mouseLeaveViewListener);
         }
 
         highlight() {
             Highlighter.get().highlightItemView(this);
+            if (this.isSelected()) {
+                // Remove selected hilighter to see the hover hilight
+                this.unhighlightSelected();
+            }
         }
 
         unhighlight() {
-            Highlighter.get().hide()
+            Highlighter.get().hide();
+            if (this.isSelected()) {
+                // Restore selected highlight after leaving
+                this.highlightSelected();
+            }
+        }
+
+        highlightSelected() {
+            SelectedHighlighter.get().highlightItemView(this);
+        }
+
+        unhighlightSelected() {
+            SelectedHighlighter.get().hide();
         }
 
         shade() {
@@ -346,7 +353,7 @@ module api.liveedit {
             }
 
             this.unhighlight();
-            this.unshade();
+            //this.unshade();
 
             this.unbindMouseListeners();
 
@@ -361,8 +368,9 @@ module api.liveedit {
         }
 
         scrollComponentIntoView(): void {
-            if (!this.visibleInViewport()) {
-                wemjq("html,body").animate({scrollTop: this.getEl().getDimensions().top - 10}, 200);
+            var distance = this.calcDistanceToViewport();
+            if (distance != 0) {
+                wemjq("html,body").animate({scrollTop: (distance > 0 ? '+=' : '-=') + Math.abs(distance)}, 200);
             }
         }
 
@@ -529,16 +537,6 @@ module api.liveedit {
             }
         }
 
-        handleShaderMouseMove(event: MouseEvent) {
-            var contains = this.isEventOverItem(event);
-
-            if (!this.mouseOver && contains) {
-                this.handleMouseEnter(event);
-            } else if (this.mouseOver && !contains) {
-                this.handleMouseLeave(event);
-            }
-        }
-
         protected isEventOverItem(event: MouseEvent): boolean {
             var offset = this.getEl().getDimensions(),
                 x = event.pageX,
@@ -691,8 +689,8 @@ module api.liveedit {
             this.getEl().setData("live-edit-selected", "true");
 
             this.hideTooltip();
-            this.highlight();
-            this.shade();
+            this.highlightSelected();
+            //this.shade();
             this.showCursor();
 
             // selecting anything should exit the text edit mode
@@ -708,8 +706,8 @@ module api.liveedit {
             this.getEl().removeAttribute("data-live-edit-selected");
 
             this.hideContextMenu();
-            this.unhighlight();
-            this.unshade();
+            this.unhighlightSelected();
+            //this.unshade();
 
             if (this.isEmpty()) {
                 this.deselectPlaceholder();
@@ -840,13 +838,29 @@ module api.liveedit {
             return this.contextMenuTitle;
         }
 
-        private visibleInViewport(): boolean {
-            var dimensions = this.getEl().getDimensions();
-            var screenTopPosition: number = document.body.scrollTop != 0 ? document.body.scrollTop : document.documentElement.scrollTop;
+        private calcDistanceToViewport(): number {
+            var dimensions = this.getEl().getDimensions(),
+                menuHeight = this.contextMenu && this.contextMenu.isVisible() ? this.contextMenu.getEl().getHeight() : dimensions.height,
+                scrollTop: number = this.getDocumentScrollTop(),
+                padding = 10;
 
-            return !(dimensions.top != undefined && ((dimensions.top - 10 < screenTopPosition) ||
-                                                     (dimensions.top + dimensions.height > screenTopPosition + window.innerHeight)));
+            var top = (dimensions.top - padding) - scrollTop,
+                bottom = (dimensions.top + menuHeight + padding) - (scrollTop + window.innerHeight),
+                tallerThanWindow = menuHeight > window.innerHeight;
 
+            return top <= 0 ? top : (bottom > 0 && !tallerThanWindow) ? bottom : 0;
+        }
+
+        // http://stackoverflow.com/a/872537
+        private getDocumentScrollTop() {
+            if (typeof pageYOffset != 'undefined') {
+                //most browsers except IE before #9
+                return pageYOffset;
+            } else {
+                //IE 'quirks' and doctype
+                var doc = (document.documentElement.clientHeight) ? document.documentElement : document.body;
+                return doc.scrollTop;
+            }
         }
 
         protected addComponentView(componentView: ComponentView<Component>, index?: number, isNew: boolean = false) {
@@ -863,9 +877,9 @@ module api.liveedit {
                 newComponent = regionView.createComponent(componentItemType.toComponentType());
 
             return componentItemType.createView(new CreateItemViewConfig<RegionView,Component>().
-                setParentView(regionView).
-                setParentElement(regionView).
-                setData(newComponent));
+            setParentView(regionView).
+            setParentElement(regionView).
+            setData(newComponent));
         }
 
         getInsertActions(): api.ui.Action[] {

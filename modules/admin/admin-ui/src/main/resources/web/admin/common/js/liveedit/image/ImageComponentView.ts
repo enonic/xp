@@ -43,8 +43,8 @@ module api.liveedit.image {
                         // refresh shader and highlighter after image loaded
                         // if it's still selected
                         if (this.isSelected()) {
-                            this.highlight();
-                            this.shade();
+                            this.highlightSelected();
+                            //this.shade();
                         }
                     });
                 }
