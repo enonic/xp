@@ -102,10 +102,10 @@ public class PrincipalKeyTest
         final PrincipalKey group = PrincipalKey.from( "group:myUserStore:mygroup" );
         final PrincipalKey role = PrincipalKey.from( "role:myrole" );
 
-        assertEquals( new NodePath( "/system/users/anonymous" ), anonymous.toPath() );
-        assertEquals( new NodePath( "/roles/myrole" ), role.toPath() );
-        assertEquals( new NodePath( "/myUserStore/groups/mygroup" ), group.toPath() );
-        assertEquals( new NodePath( "/myUserStore/users/myUser" ), user.toPath() );
+        assertEquals( new NodePath( "/identity/system/users/anonymous" ), anonymous.toPath() );
+        assertEquals( new NodePath( "/identity/roles/myrole" ), role.toPath() );
+        assertEquals( new NodePath( "/identity/myUserStore/groups/mygroup" ), group.toPath() );
+        assertEquals( new NodePath( "/identity/myUserStore/users/myUser" ), user.toPath() );
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -12,7 +12,7 @@ public final class UpgradeHandler
 
     private final UpgradeTaskLocator upgradeTaskLocator;
 
-    public static final String XP_VERSION = "6.0.0";
+    public static final String XP_VERSION = "6.4.0";
 
     private final Logger LOG = Logger.getLogger( UpgradeHandler.class.getName() );
 
