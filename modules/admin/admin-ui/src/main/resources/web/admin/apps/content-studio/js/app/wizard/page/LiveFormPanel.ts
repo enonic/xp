@@ -481,6 +481,9 @@ module app.wizard.page {
                 var componentType = view.getType().getShortName();
                 var componentName = view.getComponent().getName().toString();
                 api.notify.showSuccess(`Fragment created from '${componentName}' ${componentType}.`);
+
+                var summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(event.getFragmentContent());
+                new api.content.event.EditContentEvent([summaryAndStatus]).fire();
             });
 
             this.liveEditPageProxy.onLiveEditPageInitializationError((event: LiveEditPageInitializationErrorEvent) => {
