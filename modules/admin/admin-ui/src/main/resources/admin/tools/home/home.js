@@ -23,7 +23,6 @@ function handleGet(req) {
         portalAssetsUrl: portal.assetUrl({path: ""}),
         xpVersion: app.version.replace('.SNAPSHOT', ''),
         docLinkPrefix: docLinkPrefix,
-        appId: 'home',
         installation: uriScriptHelper.getInstallation()
     };
     return {

@@ -144,6 +144,69 @@ public class FindNodesByQueryCommandTest_func_range
         queryAndAssert( 1, "range('version', '6.3.0', '6.4.0' )" );
     }
 
+    @Test
+    public void empty_to_string()
+        throws Exception
+    {
+        final PropertyTree node1 = new PropertyTree();
+        node1.addString( "myValue", "a" );
+
+        final PropertyTree node2 = new PropertyTree();
+        node2.addString( "myValue", "b" );
+
+        final PropertyTree node3 = new PropertyTree();
+        node3.addString( "myValue", "c" );
+
+        createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "node-1" ).
+            data( node1 ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "node-2" ).
+            data( node2 ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "node-3" ).
+            data( node3 ).
+            build() );
+
+        queryAndAssert( 3, "range('myValue', 'a', '', 'true', 'false')" );
+        queryAndAssert( 2, "range('myValue', 'b', '', 'true', 'false')" );
+        queryAndAssert( 1, "range('myValue', 'c', '', 'true', 'false')" );
+    }
+
+    @Test
+    public void empty_to_instant()
+        throws Exception
+    {
+        final PropertyTree node1 = new PropertyTree();
+        node1.addInstant( "publishFrom", Instant.parse( "2015-08-01T10:00:00Z" ) );
+
+        final PropertyTree node2 = new PropertyTree();
+        node2.addInstant( "publishFrom", Instant.parse( "2015-08-01T11:00:00Z" ) );
+
+        createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "node-1" ).
+            data( node1 ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "node-2" ).
+            data( node2 ).
+            build() );
+
+        queryAndAssert( 2, "range('publishfrom', instant('2015-08-01T09:00:00Z'), '')" );
+        queryAndAssert( 2, "range('publishfrom', '', instant('2017-08-01T09:00:00Z'))" );
+    }
+
+
     private void queryAndAssert( final int exptected, final String queryString )
     {
         final NodeQuery query = NodeQuery.create().

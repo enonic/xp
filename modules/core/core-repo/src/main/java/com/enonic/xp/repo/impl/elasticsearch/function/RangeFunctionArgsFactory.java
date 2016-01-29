@@ -2,6 +2,8 @@ package com.enonic.xp.repo.impl.elasticsearch.function;
 
 import java.util.List;
 
+import com.google.common.base.Strings;
+
 import com.enonic.xp.data.Value;
 import com.enonic.xp.query.QueryException;
 import com.enonic.xp.query.expr.ValueExpr;
@@ -81,21 +83,6 @@ public class RangeFunctionArgsFactory
         {
             throw new QueryException( "Needs at least 3 arguments for range-function, got: [" + size + "]" );
         }
-
-        assertTypes( arguments.get( FROM_INDEX ).getValue(), arguments.get( TO_INDEX ).getValue() );
-    }
-
-    private static void assertTypes( final Value value1, Value value2 )
-    {
-        if ( value1 == null || value2 == null )
-        {
-            return;
-        }
-
-        if ( value1.getType() != value2.getType() )
-        {
-            throw new QueryException( "Range arguments must be of same type, got: [" + value1.getType() + "], [" + value2.getType() + "]" );
-        }
     }
 
     private static RangeFunctionArg createStringArgs( final String fieldName, final ValueExpr from, final ValueExpr to,
@@ -103,8 +90,8 @@ public class RangeFunctionArgsFactory
     {
         final StringRangeFunctionArg args = new StringRangeFunctionArg();
         args.setFieldName( fieldName );
-        args.setFrom( from.getValue() != null ? from.getValue().asString() : null );
-        args.setTo( to.getValue() != null ? to.getValue().asString() : null );
+        args.setFrom( isNullOrEmpty( from ) ? null : from.getValue().asString() );
+        args.setTo( isNullOrEmpty( to ) ? null : to.getValue().asString() );
         args.setIncludeFrom( includeFrom );
         args.setIncludeTo( includeTo );
 
@@ -116,8 +103,8 @@ public class RangeFunctionArgsFactory
     {
         final NumericRangeFunctionArg args = new NumericRangeFunctionArg();
         args.setFieldName( fieldName );
-        args.setFrom( from.getValue() != null ? from.getValue().asDouble() : null );
-        args.setTo( to.getValue() != null ? to.getValue().asDouble() : null );
+        args.setFrom( isNullOrEmpty( from ) ? null : from.getValue().asDouble() );
+        args.setTo( isNullOrEmpty( to ) ? null : to.getValue().asDouble() );
         args.setIncludeFrom( includeFrom );
         args.setIncludeTo( includeTo );
 
@@ -129,13 +116,19 @@ public class RangeFunctionArgsFactory
     {
         final InstantRangeFunctionArg args = new InstantRangeFunctionArg();
         args.setFieldName( fieldName );
-        args.setFrom( from.getValue() != null ? from.getValue().asInstant() : null );
-        args.setTo( to.getValue() != null ? to.getValue().asInstant() : null );
+        args.setFrom( isNullOrEmpty( from ) ? null : from.getValue().asInstant() );
+        args.setTo( isNullOrEmpty( to ) ? null : to.getValue().asInstant() );
         args.setIncludeFrom( includeFrom );
         args.setIncludeTo( includeTo );
 
         return args;
     }
 
+
+    private static boolean isNullOrEmpty( final ValueExpr valueExpr )
+    {
+        return valueExpr == null || valueExpr.getValue() == null || Strings.isNullOrEmpty( valueExpr.getValue().asString() );
+
+    }
 
 }
