@@ -877,6 +877,7 @@ module api.liveedit {
             }
 
             actions.push(this.createInsertSubAction("Text"));
+            actions.push(this.createInsertSubAction("Fragment"));
 
             return actions;
         }

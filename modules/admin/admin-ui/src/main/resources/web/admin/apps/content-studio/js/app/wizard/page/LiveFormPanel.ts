@@ -49,6 +49,7 @@ module app.wizard.page {
     import PartComponentView = api.liveedit.part.PartComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import TextComponentView = api.liveedit.text.TextComponentView;
+    import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
     import ComponentViewDragStartedEvent = api.liveedit.ComponentViewDragStartedEvent;
     import ComponentViewDragDroppedEvent = api.liveedit.ComponentViewDragDroppedEvent;
     import ComponentViewDragCanceledEvent = api.liveedit.ComponentViewDragCanceledEvent;
@@ -531,6 +532,11 @@ module app.wizard.page {
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, TextComponentView)) {
 
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, FragmentComponentView)) {
+                // TODO
+                //this.layoutInspectionPanel.setLayoutComponent(<FragmentComponentView>componentView);
+                //this.contextWindow.showInspectionPanel(this.layoutInspectionPanel);
             }
             else {
                 throw new Error("ComponentView cannot be selected: " + api.ClassHelper.getClassName(componentView));

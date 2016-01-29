@@ -82,6 +82,8 @@ module api.content.page {
 
         private defaultTemplateDescriptor: PageDescriptor;
 
+        private defaultTypeDescriptor: PageDescriptor;
+
         private mode: PageMode;
 
         private controller: PageDescriptor;
@@ -91,6 +93,8 @@ module api.content.page {
         private templateDescriptor: PageDescriptor;
 
         private regions: api.content.page.region.Regions;
+
+        private fragment: api.content.page.region.Component;
 
         private config: PropertyTree;
 
@@ -119,6 +123,7 @@ module api.content.page {
             this.defaultTemplateDescriptor = defaultTemplateDescriptor;
             this.mode = pageMode;
             this.customized = liveEditModel.getContent().isPage() && liveEditModel.getContent().getPage().isCustomized();
+            this.fragment = liveEditModel.getContent().getPage() ? liveEditModel.getContent().getPage().getFragment() : null;
             this.configPropertyChangedHandler = (event) => {
                 if (!this.ignorePropertyChanges) {
                     //console.log("PageModel.config.onChanged: ", event.getPath().toString());
@@ -386,6 +391,7 @@ module api.content.page {
                     setRegions(regions).
                     setConfig(config).
                     setCustomized(this.isCustomized()).
+                    setFragment(this.fragment).
                     build();
             }
             else if (this.mode == PageMode.FORCED_CONTROLLER) {
@@ -394,17 +400,22 @@ module api.content.page {
                     setRegions(this.regions).
                     setConfig(this.config).
                     setCustomized(this.isCustomized()).
+                    setFragment(this.fragment).
                     build();
             }
             else if (this.mode == PageMode.NO_CONTROLLER) {
                 if (this.contentHasNonRenderableTemplateSet()) {
                     return new PageBuilder().
-                        setTemplate(this.liveEditModel.getContent().getPage().getTemplate()).
+                        setTemplate(this.liveEditModel.getContent().getPage().getTemplate()).setFragment(this.fragment).
                         build();
                 }
                 else {
                     return null;
                 }
+            }
+            else if (this.mode == PageMode.FRAGMENT) {
+                return new PageBuilder().setRegions(this.regions).setConfig(this.config).setCustomized(this.isCustomized()).setFragment(
+                    this.fragment).build();
             }
             else {
                 throw new Error("Page mode not supported: " + this.mode);

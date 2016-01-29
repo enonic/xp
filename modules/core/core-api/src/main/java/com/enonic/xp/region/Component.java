@@ -26,7 +26,7 @@ public abstract class Component
 
     public ComponentPath getPath()
     {
-        return ComponentPath.from( region.getRegionPath(), region.getIndex( this ) );
+        return region == null ? null : ComponentPath.from( region.getRegionPath(), region.getIndex( this ) );
     }
 
     public void setRegion( final Region region )

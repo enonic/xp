@@ -26,6 +26,9 @@
 ///<reference path='TextComponentType.ts' />
 ///<reference path='TextComponentJson.ts' />
 
+///<reference path='FragmentComponent.ts' />
+///<reference path='FragmentComponentType.ts' />
+///<reference path='FragmentComponentJson.ts' />
 
 ///<reference path='PartDescriptorJson.ts' />
 ///<reference path='PartComponentJson.ts' />
