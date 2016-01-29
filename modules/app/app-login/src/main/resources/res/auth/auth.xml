@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<auth>
+  <config>
+    <input type="TextLine" name="backgroundUrl">
+      <label>Background URL</label>
+      <occurrences minimum="1" maximum="1"/>
+      <config>
+        <regexp>\.</regexp>
+      </config>
+    </input>
+    <field-set name="links">
+      <label>Links</label>
+      <items>
+        <item-set name="links">
+          <label>Link</label>
+          <occurrences minimum="0" maximum="0"/>
+          <items>
+            <input name="name" type="TextLine">
+              <label>Display name</label>
+              <occurrences minimum="1" maximum="1"/>
+            </input>
+            <input name="url" type="TextLine">
+              <label>Url</label>
+              <occurrences minimum="1" maximum="1"/>
+              <config>
+                <regexp>\.</regexp>
+              </config>
+            </input>
+          </items>
+        </item-set>
+      </items>
+    </field-set>
+  </config>
+</auth>

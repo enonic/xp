@@ -75,4 +75,7 @@
   <bundle level="30">${group}:admin-ui:${version}</bundle>
   <bundle level="30">${group}:admin-impl:${version}</bundle>
 
+  <!-- Applications -->
+  <bundle level="40">${group}:app-login:${version}</bundle>
+
 </bundles>

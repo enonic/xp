@@ -41,6 +41,8 @@ include 'admin:admin-impl'
 include 'admin:admin-event'
 include 'admin:admin-ui'
 
+include 'app:app-login'
+
 include 'itest:itest-core'
 
 include 'tools:upgrade'
