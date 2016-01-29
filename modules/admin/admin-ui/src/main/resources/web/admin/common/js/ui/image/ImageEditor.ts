@@ -236,7 +236,7 @@ module api.ui.image {
 
         setSrc(src: string) {
             this.image.setSrc(src);
-            var image = this.clip.getHTMLElement().querySelector('image');
+            var image: HTMLElement = <HTMLElement> this.clip.getHTMLElement().querySelector('image');
             image.setAttribute('xlink:href', src);
         }
 
@@ -290,8 +290,8 @@ module api.ui.image {
          * @returns {SVGRect} normalized to 0-1 rectangle
          */
         private normalizeRect(rect: SVGRect): SVGRect {
-            var minW = Math.min(this.frameW, this.imgW);
-            var minH = Math.min(this.frameH, this.imgH);
+            var minW = this.frameW;
+            var minH = this.frameH;
             return {
                 x: rect.x / minW,
                 y: rect.y / minH,
@@ -306,8 +306,8 @@ module api.ui.image {
          * @returns {SVGRect} denormalized rectangle
          */
         private denormalizeRect(rect: SVGRect): SVGRect {
-            var minW = Math.min(this.frameW, this.imgW);
-            var minH = Math.min(this.frameH, this.imgH);
+            var minW = this.frameW;
+            var minH = this.frameH;
             return {
                 x: rect.x * minW,
                 y: rect.y * minH,

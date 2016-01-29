@@ -121,6 +121,11 @@
       overflow: visible; // to show drag handle
       .box-shadow(none);
 
+      // to show upscaled image same way both in html and svg
+      img, image {
+        image-rendering: pixelated;
+      }
+
       .image-bg {
         vertical-align: top; // to remove padding below the image
         width: 100%;
