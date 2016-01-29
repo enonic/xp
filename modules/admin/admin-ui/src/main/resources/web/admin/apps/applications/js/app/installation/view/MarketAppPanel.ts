@@ -4,32 +4,40 @@ module app.installation.view {
     export class MarketAppPanel extends api.ui.panel.Panel {
 
         private marketAppsTreeGrid: MarketAppsTreeGrid;
-        private gridInitialized: boolean = false;
-        public mask: api.ui.mask.LoadMask;
+        private gridDataLoaded: boolean = false;
+        private isGridLoadingData: boolean = false;
 
         constructor(className?: string) {
             super(className);
 
-            this.mask = new api.ui.mask.LoadMask(this);
-            this.appendChild(this.mask);
+            var gridInitialized = false;
 
             this.onShown(() => {
-                if (!this.gridInitialized) {
-                    this.mask.show();
+                if (!gridInitialized) {
                     this.marketAppsTreeGrid = new MarketAppsTreeGrid();
+                    this.marketAppsTreeGrid.onLoaded(this.dataLoadListener.bind(this));
                     this.appendChild(this.marketAppsTreeGrid);
-                    var loadListener: () => void = () => {
-                        this.gridInitialized = true;
-                        this.mask.hide();
-                        this.marketAppsTreeGrid.unLoaded(loadListener);
-                        setTimeout(() => {
-                            this.marketAppsTreeGrid.refresh();// this helps to show default app icon if one provided in json fails to upload
-                        }, 500);
-
-                    };
-                    this.marketAppsTreeGrid.onLoaded(loadListener);
+                    this.marketAppsTreeGrid.mask();
+                    this.isGridLoadingData = true;
+                    gridInitialized = true;
+                }
+                if (!this.gridDataLoaded && !this.isGridLoadingData) {
+                    this.marketAppsTreeGrid.reload();
+                    this.isGridLoadingData = true;
                 }
             });
+        }
+
+        private dataLoadListener() {
+            if (this.marketAppsTreeGrid.getGrid().getDataView().getLength() > 0) {
+                this.gridDataLoaded = true;
+                this.marketAppsTreeGrid.unLoaded(this.dataLoadListener);
+                setTimeout(() => {
+                    this.marketAppsTreeGrid.refresh();// this helps to show default app icon if one provided in json fails to upload
+                }, 500);
+            }
+            this.isGridLoadingData = false;
+            this.marketAppsTreeGrid.unmask();
         }
     }
 

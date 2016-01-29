@@ -6,6 +6,7 @@ module app.browse {
     import BrowseItem = api.app.browse.BrowseItem;
     import StartApplicationRequest = api.application.StartApplicationRequest;
     import StopApplicationRequest = api.application.StopApplicationRequest;
+    import UninstallApplicationRequest = api.application.UninstallApplicationRequest;
     import ApplicationEvent = api.application.ApplicationEvent;
     import ApplicationEventType = api.application.ApplicationEventType;
 
@@ -70,6 +71,7 @@ module app.browse {
                     .then(() => {
                     }).done();
             });
+
             StartApplicationEvent.on((event: StartApplicationEvent) => {
                 var applicationKeys = ApplicationKey.fromApplications(event.getApplications());
                 new StartApplicationRequest(applicationKeys).sendAndParse()
@@ -77,11 +79,33 @@ module app.browse {
                     }).done();
             });
 
+
+            UninstallApplicationEvent.on((event: UninstallApplicationEvent) => {
+                var applicationKeys = ApplicationKey.fromApplications(event.getApplications());
+                new UninstallApplicationRequest(applicationKeys).sendAndParse()
+                    .then(() => {
+                    }).done();
+            });
+
             api.application.ApplicationEvent.on((event: ApplicationEvent) => {
                 if (ApplicationEventType.INSTALLED == event.getEventType()) {
-                    this.applicationTreeGrid.appendApplicationNode(event.getApplicationKey());
+                    this.applicationTreeGrid.appendApplicationNode(event.getApplicationKey()).then(() => {
+                        setTimeout(() => { // timeout lets grid to remove UploadMockNode so that its not counted in the toolbar
+                            this.applicationTreeGrid.triggerSelectionChangedListeners();
+                        }, 200);
+                    });
                 } else if (ApplicationEventType.UNINSTALLED == event.getEventType()) {
+                    var uninstalledApp = this.applicationTreeGrid.getByApplicationKey(event.getApplicationKey()),
+                        uninstalledAppName = !!uninstalledApp ? uninstalledApp.getDisplayName() : event.getApplicationKey();
+                    api.notify.showFeedback("Application '" + uninstalledAppName + "' uninstalled successfully");
                     this.applicationTreeGrid.deleteApplicationNode(event.getApplicationKey());
+                } else if (ApplicationEventType.STOPPED == event.getEventType()) {
+                    setTimeout(() => { // as uninstall usually follows stop event, lets wait to check if app still exists
+                        var stoppedApp = this.applicationTreeGrid.getByApplicationKey(event.getApplicationKey());
+                        if (!!stoppedApp) { // seems to be present in the grid
+                            this.applicationTreeGrid.updateApplicationNode(event.getApplicationKey());
+                        }
+                    }, 400);
                 } else if (event.isNeedToUpdateApplication()) {
                     this.applicationTreeGrid.updateApplicationNode(event.getApplicationKey());
                 }

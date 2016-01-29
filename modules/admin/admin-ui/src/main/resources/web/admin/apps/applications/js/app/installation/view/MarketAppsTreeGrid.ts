@@ -26,6 +26,9 @@ module app.installation.view {
     import MarketAppStatus = api.application.MarketAppStatus;
     import MarketAppStatusFormatter = api.application.MarketAppStatusFormatter;
 
+    import ApplicationEvent = api.application.ApplicationEvent;
+    import ApplicationEventType = api.application.ApplicationEventType;
+
     export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
         constructor() {
@@ -71,6 +74,42 @@ module app.installation.view {
             );
 
             this.subsribeAndManageInstallClick();
+            this.subscribeOnUninstallEvent();
+            this.subscribeOnInstallEvent();
+        }
+
+        private subscribeOnUninstallEvent() { // set status of market app to NOT_INSTALLED if it was uninstalled
+            api.application.ApplicationEvent.on((event: ApplicationEvent) => {
+                if (ApplicationEventType.UNINSTALLED == event.getEventType()) {
+                    var nodeToUpdate = this.getRoot().getCurrentRoot().findNode(event.getApplicationKey().toString());
+                    if (!!nodeToUpdate) {
+                        (<MarketApplication>nodeToUpdate.getData()).setStatus(MarketAppStatus.NOT_INSTALLED);
+                        this.refresh();
+                    }
+                }
+            });
+        }
+
+        private subscribeOnInstallEvent() { // update status of market app
+            api.application.ApplicationEvent.on((event: ApplicationEvent) => {
+                if (ApplicationEventType.INSTALLED == event.getEventType()) {
+                    var nodeToUpdate = this.getRoot().getCurrentRoot().findNode(event.getApplicationKey().toString());
+                    if (!!nodeToUpdate) {
+                        new api.application.GetApplicationRequest(event.getApplicationKey(),
+                            true).sendAndParse().then((application: api.application.Application)=> {
+                                if (!!application) {
+                                    var marketApplication: MarketApplication = <MarketApplication>nodeToUpdate.getData();
+                                    if (this.installedAppCanBeUpdated(marketApplication, application)) {
+                                        marketApplication.setStatus(MarketAppStatus.OLDER_VERSION_INSTALLED);
+                                    } else {
+                                        marketApplication.setStatus(MarketAppStatus.INSTALLED);
+                                    }
+                                    this.refresh();
+                                }
+                            });
+                    }
+                }
+            });
         }
 
         private subsribeAndManageInstallClick() {
@@ -182,7 +221,7 @@ module app.installation.view {
 
 
         getDataId(data: MarketApplication): string {
-            return data.getUrl() + data.getLatestVersion();
+            return data.getAppKey().toString();
         }
     }
 }
