@@ -8,7 +8,7 @@ exports.handle403 = function (req) {
     var view = resolve('auth.html');
     var params = {
         backgroundUrl: portalLib.assetUrl({
-            path: "img/background-1920.jpg"
+            path: "img/background.jpg"
         })
     };
     var body = mustacheLib.render(view, params);
