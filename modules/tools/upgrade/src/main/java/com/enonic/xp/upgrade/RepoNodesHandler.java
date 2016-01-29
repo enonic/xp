@@ -3,6 +3,7 @@ package com.enonic.xp.upgrade;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
@@ -155,7 +156,30 @@ public final class RepoNodesHandler
 
     private Path createTargetPath( final Path path )
     {
-        return Paths.get( this.target.toString(), PathHelper.subtractPath( path, dumpFolder ).toString() );
+        final Path subTargetPath = PathHelper.subtractPath( path, dumpFolder );
+
+        // XP 6.4.0 adaptation
+        // BEGIN
+        if ( "system-repo".equals( subTargetPath.getName( 0 ).toString() ) &&
+            !"identity".equals( subTargetPath.getName( 2 ).toString() ) &&
+            !"applications".equals( subTargetPath.getName( 2 ).toString() ) )
+        {
+            List<String> pathElements = new ArrayList<>();
+            int subPathElementIndex = 0;
+            for ( Path subPathElement : subTargetPath )
+            {
+                if ( subPathElementIndex == 2 )
+                {
+                    pathElements.add( "identity" );
+                }
+                pathElements.add( subPathElement.toString() );
+                subPathElementIndex++;
+            }
+            return Paths.get( this.target.toString(), pathElements.toArray( new String[pathElements.size()] ) );
+        }
+        // END
+
+        return Paths.get( this.target.toString(), subTargetPath.toString() );
     }
 
     private void verifyRoot()

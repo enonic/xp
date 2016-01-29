@@ -107,6 +107,8 @@ module app.browse {
             new api.application.GetApplicationRequest(applicationKey,
                 true).sendAndParse().then((application: api.application.Application)=> {
                     deferred.resolve(application);
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
                 });
 
             return deferred.promise;
@@ -122,6 +124,18 @@ module app.browse {
             });
         }
 
+        getByApplicationKey(applicationKey: api.application.ApplicationKey): Application {
+            var root = this.getRoot().getCurrentRoot(),
+                result;
+            root.getChildren().forEach((child: TreeNode<Application>) => {
+                var curApplication: Application = child.getData();
+                if (curApplication.getApplicationKey().toString() == applicationKey.toString()) {
+                    result = curApplication;
+                }
+            });
+            return result;
+        }
+
         deleteApplicationNode(applicationKey: api.application.ApplicationKey) {
             var root = this.getRoot().getCurrentRoot();
             root.getChildren().forEach((child: TreeNode<Application>) => {
@@ -132,13 +146,11 @@ module app.browse {
             });
         }
 
-        appendApplicationNode(applicationKey: api.application.ApplicationKey) {
+        appendApplicationNode(applicationKey: api.application.ApplicationKey): wemQ.Promise<void> {
 
-            this.fetchByKey(applicationKey)
+            return this.fetchByKey(applicationKey)
                 .then((data: api.application.Application) => {
-                    this.appendNode(data, true);
-                }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
+                    return this.appendNode(data, true);
                 });
         }
 

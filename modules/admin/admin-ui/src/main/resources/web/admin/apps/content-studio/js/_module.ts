@@ -3,6 +3,7 @@
 ///<reference path='app/_module.ts' />
 ///<reference path='app/view/detail/_module.ts' />
 ///<reference path='app/browse/filter/_module.ts' />
+///<reference path='app/action/_module.ts' />
 ///<reference path='app/browse/action/_module.ts' />
 ///<reference path='app/browse/_module.ts' />
 ///<reference path='app/remove/_module.ts' />

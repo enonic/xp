@@ -12,7 +12,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
@@ -147,6 +146,11 @@ public class SecurityServiceImplTest
             createRepository( SecurityConstants.SECURITY_REPO );
             waitForClusterHealth();
 
+            nodeService.create( CreateNodeParams.create().
+                parent( UserStoreNodeTranslator.getUserStoresParentPath().getParentPath() ).
+                name( UserStoreNodeTranslator.getUserStoresParentPath().getLastElement().toString() ).
+                build() );
+
             final CreateUserStoreParams createParams = CreateUserStoreParams.create().
                 key( UserStoreKey.system() ).
                 displayName( SecurityInitializer.SYSTEM_USER_STORE_DISPLAY_NAME ).
@@ -154,7 +158,7 @@ public class SecurityServiceImplTest
             securityService.createUserStore( createParams );
 
             nodeService.create( CreateNodeParams.create().
-                parent( NodePath.ROOT ).
+                parent( UserStoreNodeTranslator.getUserStoresParentPath() ).
                 name( PrincipalKey.ROLES_NODE_NAME ).
                 build() );
         } );

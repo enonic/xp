@@ -58,6 +58,7 @@ final class SecurityInitializer
 
             LOG.info( "Initializing system-repo [security] layout" );
 
+            initializeUserStoreParentFolder();
             initializeRoleFolder();
             initializeSystemUserStore();
 
@@ -80,6 +81,18 @@ final class SecurityInitializer
         final User admin = User.create().key( SUPER_USER ).login( "su" ).build();
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( admin ).build();
         ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).authInfo( authInfo ).build().runWith( runnable );
+    }
+
+    private void initializeUserStoreParentFolder()
+    {
+        final NodePath userStoreParentNodePath = UserStoreNodeTranslator.getUserStoresParentPath();
+        LOG.info( "Initializing [" + userStoreParentNodePath.toString() + "] folder" );
+
+        nodeService.create( CreateNodeParams.create().
+            parent( userStoreParentNodePath.getParentPath() ).
+            name( userStoreParentNodePath.getLastElement().toString() ).
+            inheritPermissions( true ).
+            build() );
     }
 
 

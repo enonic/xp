@@ -212,9 +212,17 @@ module api.liveedit {
         }
 
         highlight() {
+            // Don't highlight page
+        }
+
+        unhighlight() {
+            // Don't highlight page on hover
+        }
+
+        highlightSelected() {
             var isDragging = DragAndDrop.get().isDragging();
             if (!this.isTextEditMode() && !this.isLocked() && !isDragging) {
-                super.highlight();
+                super.highlightSelected();
             }
         }
 

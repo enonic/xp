@@ -3,9 +3,11 @@
 ///<reference path='StopApplicationAction.ts' />
 ///<reference path='ApplicationBrowseActions.ts' />
 ///<reference path='StopApplicationEvent.ts' />
-///<reference path='StartApplciationEvent.ts' />
+///<reference path='StartApplicationEvent.ts' />
+///<reference path='UninstallApplicationEvent.ts' />
 ///<reference path='ApplicationBrowseItemsSelectionPanel.ts' />
 ///<reference path='ApplicationBrowsePanel.ts' />
 ///<reference path='ApplicationBrowseToolbar.ts' />
 ///<reference path='ApplicationBrowseItemPanel.ts'/>
 ///<reference path='InstallApplicationAction.ts'/>
+///<reference path='UninstallApplicationAction.ts'/>

@@ -72,8 +72,7 @@ module api.content.site.inputtype.siteconfigurator {
             this.formValidityChangedHandler = (event: api.form.FormValidityChangedEvent) => {
                 this.toggleClass("invalid", !event.isValid())
             }
-
-            this.formView = new FormView(this.formContext, this.application.getForm(), this.siteConfig.getConfig());
+            this.formView = this.createFormView(this.formContext, this.siteConfig);
         }
 
         private createEditButton(): api.dom.AEl {

@@ -22,6 +22,8 @@ public final class PrincipalKey
 
     private static final PrincipalKey ANONYMOUS_PRINCIPAL = new PrincipalKey();
 
+    public final static String IDENTITY_NODE_NAME = "identity";
+
     public final static String ROLES_NODE_NAME = "roles";
 
     public final static String GROUPS_NODE_NAME = "groups";
@@ -100,7 +102,8 @@ public final class PrincipalKey
     {
         if ( this.isRole() )
         {
-            return NodePath.create().
+            return NodePath.create( NodePath.ROOT ).
+                addElement( IDENTITY_NODE_NAME ).
                 addElement( ROLES_NODE_NAME ).
                 addElement( getId() ).
                 build();
@@ -108,7 +111,8 @@ public final class PrincipalKey
         else
         {
             final String folderName = this.isGroup() ? GROUPS_NODE_NAME : USERS_NODE_NAME;
-            return NodePath.create().
+            return NodePath.create( NodePath.ROOT ).
+                addElement( IDENTITY_NODE_NAME ).
                 addElement( getUserStore().toString() ).
                 addElement( folderName ).
                 addElement( getId() ).

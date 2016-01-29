@@ -150,31 +150,32 @@ public final class NodeImporter
 
     private void processNodeFolder( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings )
     {
+        Node node = null;
         try
         {
-            final Node node = processNodeSource( nodeFolder, processNodeSettings );
-
-            try
-            {
-                if ( !node.getChildOrder().isManualOrder() )
-                {
-                    importFromDirectoryLayout( nodeFolder );
-                }
-                else
-                {
-                    importFromManualOrder( nodeFolder );
-                }
-            }
-            catch ( Exception e )
-            {
-                result.addError( "Error when parsing children of " + node.path(), e );
-            }
-
+            node = processNodeSource( nodeFolder, processNodeSettings );
         }
         catch ( Exception e )
         {
             result.addError( "Could not import node in folder [" + nodeFolder.getPath().getPath() + "]: " + e.getMessage(), e );
         }
+
+        try
+        {
+            if ( node == null || !node.getChildOrder().isManualOrder() )
+            {
+                importFromDirectoryLayout( nodeFolder );
+            }
+            else
+            {
+                importFromManualOrder( nodeFolder );
+            }
+        }
+        catch ( Exception e )
+        {
+            result.addError( "Error when parsing children of " + node.path(), e );
+        }
+
     }
 
     private Node processNodeSource( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings )

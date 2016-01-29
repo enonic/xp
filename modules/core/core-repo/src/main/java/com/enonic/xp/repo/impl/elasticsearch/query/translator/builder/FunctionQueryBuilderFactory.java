@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.builder;
 
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 
 import com.google.common.base.Strings;
@@ -10,6 +11,8 @@ import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.repo.impl.elasticsearch.function.AbstractSimpleQueryStringFunction;
 import com.enonic.xp.repo.impl.elasticsearch.function.FulltextFunctionArguments;
 import com.enonic.xp.repo.impl.elasticsearch.function.NGramFunctionArguments;
+import com.enonic.xp.repo.impl.elasticsearch.function.RangeFunctionArg;
+import com.enonic.xp.repo.impl.elasticsearch.function.RangeFunctionArgsFactory;
 import com.enonic.xp.repo.impl.elasticsearch.function.WeightedQueryFieldName;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.QueryFieldNameResolver;
 
@@ -32,6 +35,10 @@ public class FunctionQueryBuilderFactory
         else if ( "ngram".equals( functionName ) )
         {
             return createNGram( function );
+        }
+        else if ( "range".equals( functionName ) )
+        {
+            return createRange( function );
         }
 
         throw new UnsupportedOperationException( "Function '" + functionName + "' is not supported" );
@@ -66,6 +73,18 @@ public class FunctionQueryBuilderFactory
         appendQueryFieldNames( arguments, builder );
 
         return builder;
+    }
+
+    private static QueryBuilder createRange( final FunctionExpr functionExpr )
+    {
+
+        final RangeFunctionArg arguments = RangeFunctionArgsFactory.create( functionExpr.getArguments() );
+
+        return new RangeQueryBuilder( arguments.getFieldName() ).
+            from( arguments.getFrom() ).
+            to( arguments.getTo() ).
+            includeLower( arguments.includeFrom() ).
+            includeUpper( arguments.includeTo() );
     }
 
     private static void appendQueryFieldNames( final AbstractSimpleQueryStringFunction arguments, final SimpleQueryStringBuilder builder )
