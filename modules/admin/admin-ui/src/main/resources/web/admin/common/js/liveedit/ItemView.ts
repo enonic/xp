@@ -677,7 +677,9 @@ module api.liveedit {
         }
 
         private selectItem() {
-            var selectedView = this.getPageView().getSelectedView();
+            var pageView = this.getPageView(),
+                selectedView = pageView.getSelectedView();
+
             if (selectedView == this) {
                 // view is already selected
                 return;
@@ -689,9 +691,12 @@ module api.liveedit {
             this.getEl().setData("live-edit-selected", "true");
 
             this.hideTooltip();
-            this.highlightSelected();
             //this.shade();
             this.showCursor();
+
+            if(!pageView.isLocked()) {
+                this.highlightSelected();
+            }
 
             // selecting anything should exit the text edit mode
             this.stopTextEditMode();

@@ -186,7 +186,7 @@ module api.liveedit {
 
             // lock page by default for every content that has not been modified except for page template
             var isCustomized = this.liveEditModel.getPageModel().isCustomized();
-            if (!this.liveEditModel.getContent().isPageTemplate() && !this.isPageModified(this.pageModel) && !isCustomized) {
+            if (!this.liveEditModel.getContent().isPageTemplate() && !this.pageModel.isModified() && !isCustomized) {
                 this.setLocked(true);
             }
 
@@ -197,12 +197,6 @@ module api.liveedit {
 
         private setIgnorePropertyChanges(value: boolean) {
             this.ignorePropertyChanges = value;
-        }
-
-        private isPageModified(pageModel: PageModel): boolean {
-            // default template regions differing from page regions means it has been modified
-            return !!pageModel.getDefaultPageTemplate() && pageModel.getDefaultPageTemplate().isPage() &&
-                   !pageModel.getDefaultPageTemplate().getRegions().equals(pageModel.getRegions());
         }
 
         showTooltip() {
