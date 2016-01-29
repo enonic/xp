@@ -35,6 +35,7 @@ module app.wizard.page {
     import ImageInspectionPanel = app.wizard.page.contextwindow.inspect.region.ImageInspectionPanel;
     import PartInspectionPanel = app.wizard.page.contextwindow.inspect.region.PartInspectionPanel;
     import LayoutInspectionPanel = app.wizard.page.contextwindow.inspect.region.LayoutInspectionPanel;
+    import FragmentInspectionPanel = app.wizard.page.contextwindow.inspect.region.FragmentInspectionPanel;
     import ContextWindow = app.wizard.page.contextwindow.ContextWindow;
     import ContextWindowConfig = app.wizard.page.contextwindow.ContextWindowConfig;
     import ContextWindowController = app.wizard.page.contextwindow.ContextWindowController;
@@ -107,6 +108,7 @@ module app.wizard.page {
         private imageInspectionPanel: ImageInspectionPanel;
         private partInspectionPanel: PartInspectionPanel;
         private layoutInspectionPanel: LayoutInspectionPanel;
+        private fragmentInspectionPanel: FragmentInspectionPanel;
 
         private contentWizardPanel: ContentWizardPanel;
 
@@ -129,6 +131,7 @@ module app.wizard.page {
             this.imageInspectionPanel = new ImageInspectionPanel();
             this.partInspectionPanel = new PartInspectionPanel();
             this.layoutInspectionPanel = new LayoutInspectionPanel();
+            this.fragmentInspectionPanel = new FragmentInspectionPanel();
 
             api.dom.WindowDOM.get().onBeforeUnload((event) => {
                 console.log("onbeforeunload " + this.liveEditModel.getContent().getDisplayName());
@@ -159,6 +162,7 @@ module app.wizard.page {
                 imageInspectionPanel: this.imageInspectionPanel,
                 partInspectionPanel: this.partInspectionPanel,
                 layoutInspectionPanel: this.layoutInspectionPanel,
+                fragmentInspectionPanel: this.fragmentInspectionPanel,
                 saveAction: saveAction
             });
 
@@ -231,6 +235,7 @@ module app.wizard.page {
             this.partInspectionPanel.setModel(liveEditModel);
             this.layoutInspectionPanel.setModel(liveEditModel);
             this.imageInspectionPanel.setModel(liveEditModel);
+            this.fragmentInspectionPanel.setModel(liveEditModel);
 
             this.pageModel.setIgnorePropertyChanges(false);
 
@@ -534,9 +539,8 @@ module app.wizard.page {
 
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, FragmentComponentView)) {
-                // TODO
-                //this.layoutInspectionPanel.setLayoutComponent(<FragmentComponentView>componentView);
-                //this.contextWindow.showInspectionPanel(this.layoutInspectionPanel);
+                this.fragmentInspectionPanel.setFragmentComponent(<FragmentComponentView>componentView);
+                this.contextWindow.showInspectionPanel(this.fragmentInspectionPanel);
             }
             else {
                 throw new Error("ComponentView cannot be selected: " + api.ClassHelper.getClassName(componentView));

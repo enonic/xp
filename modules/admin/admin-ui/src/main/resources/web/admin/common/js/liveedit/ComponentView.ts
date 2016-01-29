@@ -198,12 +198,16 @@ module api.liveedit {
 
                 new ComponentDuplicatedEvent(this, duplicatedView).fire();
             }));
-            actions.push(new api.ui.Action("Save as Fragment").onExecuted(() => {
-                this.deselect();
-                this.createFragment().then((content: Content): void => {
-                    new ComponentFragmentCreatedEvent(this, content).fire();
-                });
-            }));
+
+            var isFragment = this instanceof api.liveedit.fragment.FragmentComponentView;
+            if (!isFragment) {
+                actions.push(new api.ui.Action("Save as Fragment").onExecuted(() => {
+                    this.deselect();
+                    this.createFragment().then((content: Content): void => {
+                        new ComponentFragmentCreatedEvent(this, content).fire();
+                    });
+                }));
+            }
             return actions;
         }
 
