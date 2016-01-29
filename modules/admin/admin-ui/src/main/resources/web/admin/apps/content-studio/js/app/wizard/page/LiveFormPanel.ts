@@ -21,6 +21,7 @@ module app.wizard.page {
     import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
     import PartComponent = api.content.page.region.PartComponent;
     import LayoutComponent = api.content.page.region.LayoutComponent;
+    import FragmentComponent = api.content.page.region.FragmentComponent;
     import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
     import ComponentPropertyValueChangedEvent = api.content.page.region.ComponentPropertyValueChangedEvent;
 
@@ -288,6 +289,14 @@ module app.wizard.page {
                 }
                 else if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), ImageComponent)) {
                     if (event.getPropertyName() == ImageComponent.PROPERTY_IMAGE && !event.getComponent().isEmpty()) {
+                        var componentView = this.pageView.getComponentViewByPath(event.getPath());
+                        if (componentView) {
+                            this.saveAndReloadOnlyComponent(componentView);
+                        }
+                    }
+                }
+                else if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), FragmentComponent)) {
+                    if (event.getPropertyName() == FragmentComponent.PROPERTY_FRAGMENT && !event.getComponent().isEmpty()) {
                         var componentView = this.pageView.getComponentViewByPath(event.getPath());
                         if (componentView) {
                             this.saveAndReloadOnlyComponent(componentView);

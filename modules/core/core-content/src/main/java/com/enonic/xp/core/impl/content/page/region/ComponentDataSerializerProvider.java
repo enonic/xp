@@ -7,7 +7,7 @@ import com.enonic.xp.region.LayoutComponentType;
 import com.enonic.xp.region.PartComponentType;
 import com.enonic.xp.region.TextComponentType;
 
-final class ComponentDataSerializerProvider
+public final class ComponentDataSerializerProvider
 {
     private final PartComponentDataSerializer partDataSerializer = new PartComponentDataSerializer();
 

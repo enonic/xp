@@ -12,9 +12,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.region.CreateFragmentParams;
-import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.User;
 
@@ -48,12 +46,9 @@ final class CreateFragmentCommand
             build();
         final Content content = contentService.create( createContent );
 
-        final Region fragmentRegion = Region.create().add( this.params.getComponent() ).name( "_fragment" ).build();
-        final PageRegions regions = PageRegions.create().add( fragmentRegion ).build();
-
         final Page page = Page.create().
             config( this.params.getConfig() ).
-            regions( regions ).
+            fragment( this.params.getComponent() ).
             build();
 
         final UpdateContentParams params = new UpdateContentParams().

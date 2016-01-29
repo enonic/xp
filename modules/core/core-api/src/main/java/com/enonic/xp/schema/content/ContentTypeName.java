@@ -207,6 +207,11 @@ public final class ContentTypeName
         return SITE.equals( this );
     }
 
+    public boolean isFragment()
+    {
+        return FRAGMENT.equals( this );
+    }
+
     public boolean isShortcut()
     {
         return SHORTCUT.equals( this );

@@ -94,4 +94,32 @@ public class PageDataSerializerTest
         // verify
         assertEquals( page, parsedPage );
     }
+
+
+    @Test
+    public void fragmentPage()
+    {
+        PropertyTree myPartConfig = new PropertyTree();
+        myPartConfig.addString( "some", "config" );
+
+        PartComponent fragment = PartComponent.create().
+            name( "MyPart" ).
+            descriptor( "descriptor-x" ).
+            config( myPartConfig ).
+            build();
+
+        PropertyTree pageConfig = new PropertyTree();
+
+        Page page = Page.create().
+            config( pageConfig ).
+            fragment( fragment ).
+            build();
+
+        PropertyTree pageAsData = new PropertyTree();
+        pageDataSerializer.toData( page, pageAsData.getRoot() );
+        Page parsedPage = pageDataSerializer.fromData( pageAsData.getSet( "page" ) );
+
+        // verify
+        assertEquals( page, parsedPage );
+    }
 }
