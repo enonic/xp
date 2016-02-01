@@ -5,10 +5,13 @@ exports.handle403 = function (req) {
 
     log.info(JSON.stringify(req, null, 2));
 
+    var authConfig = portalLib.getAuthConfig();
+
     var view = resolve('auth.html');
     var params = {
         backgroundUrl: portalLib.assetUrl({
-            path: "img/background.jpg"
+            application: authConfig.background.application,
+            path: authConfig.background.path
         })
     };
     var body = mustacheLib.render(view, params);

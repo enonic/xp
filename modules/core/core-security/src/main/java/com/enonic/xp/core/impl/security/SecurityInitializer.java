@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
@@ -129,8 +130,12 @@ public final class SecurityInitializer
                                            UserStoreAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access(
                                                READ ).build() );
 
+        final PropertySet backgroundPropertySet = new PropertySet();
+        backgroundPropertySet.setString( "application", "com.enonic.xp.app.login" );
+        backgroundPropertySet.setString( "path", "img/background.jpg" );
         final PropertyTree config = new PropertyTree();
-        config.setString( "backgroundUrl", "/admin/common/images/background-1920.jpg" );
+        config.setSet( "background", backgroundPropertySet );
+
         final UserStoreAuthConfig authConfig = UserStoreAuthConfig.create().
             applicationKey( ApplicationKey.from( "com.enonic.xp.app.login" ) ).
             config( config ).
