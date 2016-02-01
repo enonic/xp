@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.auth;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
@@ -26,7 +27,8 @@ import com.enonic.xp.web.filter.OncePerRequestFilter;
 public final class AuthFilter
     extends OncePerRequestFilter
 {
-    private static final Pattern PATH_PATTERN = Pattern.compile( "^mapping\\.[^\\.]+\\.path" );
+    private static final Pattern PROPERTY_PATTERN = Pattern.compile( "^mapping\\.([^\\.]+)\\.(path|userstore)" );
+
 
     private SecurityService securityService;
 
@@ -34,39 +36,57 @@ public final class AuthFilter
 
     private ErrorHandlerScriptFactory errorHandlerScriptFactory;
 
-    private Map<String, String> config;
+    private Map<String, String> pathConfig;
+
+    private Map<String, String> userstoreConfig;
 
     @Activate
     public void configure( final Map<String, String> config )
     {
-        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+        ImmutableMap.Builder<String, String> pathConfigBuilder = ImmutableMap.builder();
+        ImmutableMap.Builder<String, String> userstoreConfigBuilder = ImmutableMap.builder();
+
         for ( Map.Entry<String, String> property : config.entrySet() )
         {
             final String propertyKey = property.getKey().trim();
-            if ( propertyKey.startsWith( "/" ) )
+            final Matcher matcher = PROPERTY_PATTERN.matcher( propertyKey );
+            if ( matcher.matches() )
             {
-                builder.put( propertyKey, property.getValue().trim() );
+                if ( "path".equals( matcher.group( 2 ) ) )
+                {
+                    pathConfigBuilder.put( matcher.group( 1 ), property.getValue().trim() );
+                }
+                else
+                {
+                    userstoreConfigBuilder.put( matcher.group( 1 ), property.getValue().trim() );
+                }
             }
         }
-        this.config = builder.build();
+        this.pathConfig = pathConfigBuilder.build();
+        this.userstoreConfig = userstoreConfigBuilder.build();
     }
 
     @Override
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
+        String userstoreName = null;
         final String requestURI = req.getRequestURI();
-
-        final Optional<Map.Entry<String, String>> foundMappingEntry = config.entrySet().
+        final Optional<Map.Entry<String, String>> foundMappingEntry = pathConfig.entrySet().
             stream().
-            filter( mappingEntry -> requestURI.startsWith( mappingEntry.getKey() ) ).
-            findFirst();
+            filter( mappingEntry -> requestURI.startsWith( mappingEntry.getValue() ) ).
+            max( ( entry1, entry2 ) -> entry1.getValue().length() - entry2.getValue().length() );
 
         if ( foundMappingEntry.isPresent() )
         {
+            final String mappingName = foundMappingEntry.get().getKey();
+            userstoreName = userstoreConfig.get( mappingName );
+        }
+
+        if ( userstoreName != null )
+        {
             final AuthResponseWrapper responseWrapper =
-                new AuthResponseWrapper( req, res, securityService, authDescriptorService, errorHandlerScriptFactory,
-                                         foundMappingEntry.get().getValue() );
+                new AuthResponseWrapper( req, res, securityService, authDescriptorService, errorHandlerScriptFactory, userstoreName );
             chain.doFilter( req, responseWrapper );
         }
         else
