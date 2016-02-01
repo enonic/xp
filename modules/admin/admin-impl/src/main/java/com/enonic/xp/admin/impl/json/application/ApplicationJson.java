@@ -9,7 +9,6 @@ import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.SiteDescriptor;
 
@@ -28,9 +27,7 @@ public class ApplicationJson
     {
         this.application = application;
         this.config = siteDescriptor != null && siteDescriptor.getForm() != null ? new FormJson( siteDescriptor.getForm() ) : null;
-        this.authConfig = authDescriptor != null && authDescriptor.getConfig() != null
-            ? new FormJson( authDescriptor.getConfig() )
-            : new FormJson( Form.create().build() );
+        this.authConfig = authDescriptor != null && authDescriptor.getConfig() != null ? new FormJson( authDescriptor.getConfig() ) : null;
         ImmutableList.Builder<String> mixinNamesBuilder = new ImmutableList.Builder<>();
         if ( siteDescriptor != null && siteDescriptor.getMetaSteps() != null )
         {

@@ -51,7 +51,7 @@ module api.ui.security.auth {
         }
 
         resolveIconUrl(content: api.application.Application): string {
-            return api.util.UriHelper.getAdminUri("common/images/icons/icoMoon/32x32/shield.png");
+            return api.util.UriHelper.getAdminUri("common/images/icons/icoMoon/32x32/puzzle.png");
         }
 
         resolveTitle(content: api.application.Application): string {
