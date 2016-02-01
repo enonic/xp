@@ -1,6 +1,13 @@
-@launcher-panel-z-index: 2500;
-
 .launcher-panel {
+
+  position: fixed;
+  overflow: hidden;
+  top: 0;
+  right: 0;
+  height: 100%;
+  z-index: @z-index-launcher-panel;
+  width: @panel-outer-width;
+  font-family: @admin-font-family;
 
   .app-row-selected {
     background-color: rgba(255, 255, 255, 0.3);
@@ -20,14 +27,6 @@
       .app-row-selected;
     }
   }
-
-  position: fixed;
-  overflow: hidden;
-  top: 0;
-  right: 0;
-  height: 100%;
-  z-index: @launcher-panel-z-index;
-  width: @panel-outer-width;
 
   & > * {
     -webkit-font-smoothing: antialiased;
@@ -51,6 +50,10 @@
   &.visible, &.slideout {
     -webkit-transition: right 300ms ease-out;
     transition: right 300ms ease-out;
+  }
+
+  .container-title {
+    .container-title-mixin();
   }
 
   .launcher-title {
@@ -106,7 +109,7 @@
         }
 
         .app-info {
-          vertical-align: top;
+          vertical-align: middle;
           .app-name {
             width: 220px;
             font-size: 18px;
@@ -125,7 +128,7 @@
 
         .app-icon {
           vertical-align: middle;
-          margin: 3px 15px 0 0;
+          margin-right: 15px;
           width: 40px;
           height: 40px;
 
@@ -187,7 +190,7 @@
   top: 15px;
   background-color: transparent;
   cursor: pointer;
-  z-index: 2501;
+  z-index: @z-index-launcher-button;
 
   .line {
     display: inline-block;

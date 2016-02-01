@@ -32,16 +32,11 @@ html, body {
   -o-background-size: cover;
   background-size: cover;
 
-  font-family: "Open Sans", sans-serif;
-  font-size: 12px;
+  font-family: @admin-font-family;
+  font-size: @admin-font-size;
 
   .container-title {
-    color: @admin-white;
-    font-size: 32px;
-    font-family: sans-serif, "Open Sans";
-    font-weight: 100;
-    position: absolute;
-    bottom: -7px;
+    .container-title-mixin();
   }
 
   a {

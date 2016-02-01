@@ -6,8 +6,6 @@ module app.home {
 
         private loginForm: app.login.LoginForm;
 
-        private linksContainer: LinksContainer;
-
         private centerPanel: CenterPanel;
 
         constructor(builder: LoginHomeMainContainerBuilder) {
@@ -19,14 +17,12 @@ module app.home {
             this.getEl().setAttribute("tabindex", "100"); //Need tabindex to be able to focus element
 
             this.loginForm = builder.loginForm;
-            this.linksContainer = builder.linksContainer;
 
             this.brandingPanel = new Branding();
 
             this.centerPanel = new CenterPanel();
             this.centerPanel.prependChild(this.brandingPanel);
             this.centerPanel.addToLoginPanel(this.loginForm);
-            this.centerPanel.addToLoginPanel(this.linksContainer);
 
             this.appendChild(this.centerPanel);
 
@@ -59,15 +55,8 @@ module app.home {
 
         loginForm: app.login.LoginForm;
 
-        linksContainer: app.home.LinksContainer;
-
         setLoginForm(value: app.login.LoginForm): LoginHomeMainContainerBuilder {
             this.loginForm = value;
-            return this;
-        }
-
-        setLinksContainer(value: LinksContainer): LoginHomeMainContainerBuilder {
-            this.linksContainer = value;
             return this;
         }
 

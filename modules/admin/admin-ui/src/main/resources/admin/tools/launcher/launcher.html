@@ -17,7 +17,7 @@
 
         <div class="launcher-app-container">
             <div class="scrollable-content">
-                <div class="app-row" tabindex="1" id="home">
+                <div class="app-row" id="home">
                     <a href="{{homeUrl}}" target="_blank">
                         <div class="application">
                             <div class="app-icon app-home-icon"></div>
@@ -29,7 +29,7 @@
                     </a>
                 </div>
                 {{#adminTools}}
-                <div class="app-row" tabindex="1" id="{{appId}}">
+                <div class="app-row" id="{{appId}}">
                     <a href="{{uri}}" target="_blank">
                         <div class="application">
                             <img src="{{assetsUri}}/apps/{{appId}}/icons/{{icon}}" class="app-icon">

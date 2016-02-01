@@ -12,13 +12,10 @@ module app {
         }
 
         private createHomeMainContainer(): app.home.HomeMainContainer {
-            var linksContainer = new app.home.LinksContainer();
-
             this.loginForm = new app.login.LoginForm(new app.login.AuthenticatorImpl());
             this.loginForm.onUserAuthenticated(this.onUserAuthenticated.bind(this));
 
             return new app.home.LoginHomeMainContainerBuilder().
-                setLinksContainer(linksContainer).
                 setLoginForm(this.loginForm).
                 build();
         }
