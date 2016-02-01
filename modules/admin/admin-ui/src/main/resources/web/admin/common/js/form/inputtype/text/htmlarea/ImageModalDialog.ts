@@ -9,6 +9,7 @@ module api.form.inputtype.text.htmlarea {
     import FileUploadProgressEvent = api.ui.uploader.FileUploadProgressEvent;
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
     import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
+    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import Content = api.content.Content;
     import Action = api.ui.Action;
 
@@ -113,37 +114,10 @@ module api.form.inputtype.text.htmlarea {
             dropDownElement.setLeftPx(inputPosition.left);
         }
 
-        private createImgEl(src: string, alt: string, contentId: string): api.dom.ImgEl {
-            var imageEl = new api.dom.ImgEl(src);
-            imageEl.getEl().setAttribute("alt", alt);
-            imageEl.getEl().setAttribute("data-src", HtmlArea.imagePrefix + contentId);
-
-            return imageEl;
-        }
-
         private previewImage(imageContent: api.content.ContentSummary, formItem: FormItem) {
-            var contentId = imageContent.getContentId().toString(),
-                imgUrl = new api.content.ContentImageUrlResolver().
-                    setContentId(new api.content.ContentId(contentId)).
-                    setScaleWidth(true).
-                    setSize(HtmlArea.maxImageWidth).
-                    resolve();
+            this.image = this.createImgElForPreview(imageContent);
 
-            this.image = this.createImgEl(imgUrl, imageContent.getDisplayName(), contentId);
-
-            if (this.imageElement) {
-                this.image.getHTMLElement().style["text-align"] =
-                    this.imageElement.parentElement.style.textAlign || this.imageElement.parentElement.style.cssFloat;
-
-                this.imageToolbar = new ImageToolbar(this.image);
-                if (this.imageToolbar.isImageInOriginalSize(new api.dom.ElementHelper(this.imageElement))) {
-                    this.imageToolbar.appendKeepSizeParamToImagePath();
-                }
-            }
-            else {
-                this.imageToolbar = new ImageToolbar(this.image);
-                this.image.getHTMLElement().style["text-align"] = "justify";
-            }
+            this.imageToolbar = new ImageToolbar(this.image);
 
             this.image.onLoaded(() => {
                 this.imagePreviewContainer.removeClass("upload");
@@ -164,6 +138,30 @@ module api.form.inputtype.text.htmlarea {
             this.imagePreviewContainer.insertChild(this.image, 0);
         }
 
+        private createImgElForPreview(imageContent: api.content.ContentSummary): api.dom.ImgEl {
+            var imgSrcAttr = this.imageElement
+                ? new api.dom.ElementHelper(this.imageElement).getAttribute("src")
+                : this.generateDefaultImgSrc(imageContent.getContentId().toString());
+            var imgDataSrcAttr = this.imageElement
+                ? new api.dom.ElementHelper(this.imageElement).getAttribute("data-src")
+                : HtmlArea.imagePrefix + imageContent.getContentId().toString();
+
+            var imageEl = new api.dom.ImgEl(imgSrcAttr);
+            imageEl.getEl().setAttribute("alt", imageContent.getDisplayName());
+            imageEl.getEl().setAttribute("data-src", imgDataSrcAttr);
+
+            var imageAlignment = this.imageElement ? (this.imageElement.parentElement.style.textAlign ||
+                                                      this.imageElement.parentElement.style.cssFloat) : "justify";
+            imageEl.getHTMLElement().style["text-align"] = imageAlignment;
+
+            return imageEl;
+        }
+
+        private generateDefaultImgSrc(contentId): string {
+            return new api.content.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)).setScaleWidth(true).setSize(
+                HtmlArea.maxImageWidth).resolve();
+        }
+
         private hideCaptionLabel() {
             this.imageCaptionField.getLabel().hide();
             this.imageCaptionField.getInput().getEl().setAttribute("placeholder", "Caption");
@@ -172,7 +170,7 @@ module api.form.inputtype.text.htmlarea {
 
         private showCaptionLabel() {
             this.imageCaptionField.getLabel().show();
-            this.imageCaptionField.getInput().getEl().removeAttribute("placeholder")
+            this.imageCaptionField.getInput().getEl().removeAttribute("placeholder");
             this.imageCaptionField.getInput().getParentElement().getEl().setMarginLeft("");
         }
 
@@ -326,7 +324,7 @@ module api.form.inputtype.text.htmlarea {
         }
 
         private setImageWidthConstraint() {
-            var keepImageSize = this.imageToolbar.isImageInOriginalSize(this.image.getEl());
+            var keepImageSize = this.isImageInOriginalSize(this.image.getEl());
             this.image.getHTMLElement().style["width"] = (this.isImageWiderThanEditor() || !keepImageSize) ? "100%" : "auto";
         }
 
@@ -349,7 +347,7 @@ module api.form.inputtype.text.htmlarea {
             }
 
             var styleFormat = "float: {0}; margin: {1};" +
-                              (this.imageToolbar.isImageInOriginalSize(this.image.getEl()) ? "" : "width: {2}%;");
+                              (this.isImageInOriginalSize(this.image.getEl()) ? "" : "width: {2}%;");
             var styleAttr = "text-align: " + alignment + ";";
 
             switch (alignment) {
@@ -430,6 +428,10 @@ module api.form.inputtype.text.htmlarea {
 
             observer.observe((<api.dom.ImgEl>this.image).getEl().getHTMLElement(), config);
         }
+
+        private isImageInOriginalSize(image: api.dom.ElementHelper) {
+            return image.getAttribute("data-src").indexOf("keepSize=true") > 0;
+        }
     }
 
     export class ImageToolbar extends api.ui.toolbar.Toolbar {
@@ -458,13 +460,11 @@ module api.form.inputtype.text.htmlarea {
             super.addElement(this.centerButton = this.createCenteredButton());
             super.addElement(this.alignRightButton = this.createRightAlignedButton());
             super.addElement(this.keepOriginalSizeCheckbox = this.createKeepOriginalSizeCheckbox());
-            super.addElement(this.imageCroppingSelector = new ImageCroppingSelector());
+            super.addElement(this.imageCroppingSelector = this.createImageCroppingSelector());
+
+            this.keepOriginalSizeCheckbox.setChecked(this.image.getEl().getAttribute("data-src").indexOf("keepSize=true") > 0);
 
             this.initActiveButton();
-        }
-
-        public isImageInOriginalSize(image: api.dom.ElementHelper) {
-            return image.getAttribute("data-src").indexOf("keepSize=true") > 0;
         }
 
         private createJustifiedButton(): api.ui.button.ActionButton {
@@ -501,36 +501,38 @@ module api.form.inputtype.text.htmlarea {
 
         private createKeepOriginalSizeCheckbox(): api.ui.Checkbox {
             var keepOriginalSizeCheckbox = new api.ui.Checkbox();
-            keepOriginalSizeCheckbox.setChecked(this.image.getEl().getAttribute("data-src").indexOf("keepSize=true") > 0);
             keepOriginalSizeCheckbox.addClass('keep-size-check');
             keepOriginalSizeCheckbox.onValueChanged(()=> {
-                this.keepOriginalSizeCheckbox.isChecked()
-                    ? this.appendKeepSizeParamToImagePath()
-                    : this.removeKeepSizeParamFromImagePath();
+                this.rebuildImgSrcParams();
+                this.rebuildImgDataSrcParams();
             });
             keepOriginalSizeCheckbox.setLabel('Keep original size');
 
             return keepOriginalSizeCheckbox;
         }
 
-        public appendKeepSizeParamToImagePath() {
-            if (!this.isImageInOriginalSize(this.image.getEl())) {
-                var pathAttr = this.image.getEl().getAttribute("data-src");
-                this.image.getEl().setAttribute("data-src", pathAttr + "?keepSize=true");
-            }
-            if (!this.keepOriginalSizeCheckbox.isChecked()) {
-                this.keepOriginalSizeCheckbox.setChecked(true);
-            }
+        private createImageCroppingSelector(): ImageCroppingSelector {
+            var imageCroppingSelector: ImageCroppingSelector = new ImageCroppingSelector();
+
+            this.initSelectedCropping(imageCroppingSelector);
+
+            imageCroppingSelector.onOptionSelected((event: OptionSelectedEvent<ImageCroppingOption>) => {
+                this.rebuildImgSrcParams();
+                this.rebuildImgDataSrcParams();
+            });
+
+            return imageCroppingSelector;
         }
 
-        private removeKeepSizeParamFromImagePath() {
-            if (this.isImageInOriginalSize(this.image.getEl())) {
-                var pathAttr = this.image.getEl().getAttribute("data-src");
-                var paramToRemoveIndex = this.image.getEl().getAttribute("data-src").indexOf("?keepSize=true");
-                this.image.getEl().setAttribute("data-src", pathAttr.substring(0, paramToRemoveIndex));
-            }
-            if (this.keepOriginalSizeCheckbox.isChecked()) {
-                this.keepOriginalSizeCheckbox.setChecked(false);
+        private initSelectedCropping(imageCroppingSelector: ImageCroppingSelector) {
+            var imgSrc: string = this.image.getEl().getAttribute("src");
+            var scalingApplied: boolean = imgSrc.indexOf("scale=") > 0;
+            if (scalingApplied) {
+                var scaleParamValue = api.util.UriHelper.decodeUrlParams(imgSrc.replace("&amp;", "&"))["scale"];
+                var scaleOption = ImageCroppingOptions.getOptionByProportion(scaleParamValue);
+                if (!!scaleOption) {
+                    imageCroppingSelector.selectOption(imageCroppingSelector.getOptionByValue(scaleOption.getName()));
+                }
             }
         }
 
@@ -581,6 +583,42 @@ module api.form.inputtype.text.htmlarea {
             }
 
             return "justify";
+        }
+
+        private rebuildImgSrcParams() {
+            var imgSrc = this.image.getEl().getAttribute("src"),
+                newSrc = api.util.UriHelper.trimUrlParams(imgSrc),
+                isCroppingSelected: boolean = !!this.imageCroppingSelector.getSelectedOption(),
+                keepOriginalSizeChecked: boolean = this.keepOriginalSizeCheckbox.isChecked();
+
+            if (isCroppingSelected) {
+                var imageCroppingOption: ImageCroppingOption = this.imageCroppingSelector.getSelectedOption().displayValue;
+                newSrc = newSrc + "?scale=" + imageCroppingOption.getProportionString() +
+                         (keepOriginalSizeChecked ? "" : "&size=640");
+            }
+            else {
+                newSrc = newSrc + (keepOriginalSizeChecked ? "?scaleWidth=true" : "?size=640&scaleWidth=true");
+            }
+
+            this.image.getEl().setAttribute("src", newSrc);
+        }
+
+        private rebuildImgDataSrcParams() {
+            var dataSrc = this.image.getEl().getAttribute("data-src"),
+                newDataSrc = api.util.UriHelper.trimUrlParams(dataSrc),
+                isCroppingSelected: boolean = !!this.imageCroppingSelector.getSelectedOption(),
+                keepOriginalSizeChecked: boolean = this.keepOriginalSizeCheckbox.isChecked();
+
+            if (isCroppingSelected) {
+                var imageCroppingOption: ImageCroppingOption = this.imageCroppingSelector.getSelectedOption().displayValue;
+                newDataSrc = newDataSrc + "?scale=" + imageCroppingOption.getProportionString() +
+                             (keepOriginalSizeChecked ? "&keepSize=true" : "&size=640");
+            }
+            else {
+                newDataSrc = newDataSrc + (keepOriginalSizeChecked ? "?keepSize=true" : "");
+            }
+
+            this.image.getEl().setAttribute("data-src", newDataSrc);
         }
 
     }

@@ -29,5 +29,9 @@ module api.form.inputtype.text.htmlarea {
             this.displayValue = value;
         }
 
+        getProportionString(): string {
+            return this.widthProportion + ":" + this.heightProportion;
+        }
+
     }
 }

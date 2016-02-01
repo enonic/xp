@@ -80,7 +80,7 @@ module api.util {
 
         static trimUrlParams(trimMe: string): string {
             var index = trimMe.lastIndexOf("?");
-            return index >= 0 ? UriHelper.relativePath(trimMe.substring(0, index)) : UriHelper.relativePath(trimMe);
+            return index >= 0 ? trimMe.substring(0, index) : trimMe;
         }
 
         static joinPath(...paths: string[]): string {
