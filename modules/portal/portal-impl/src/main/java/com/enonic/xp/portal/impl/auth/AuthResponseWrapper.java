@@ -153,7 +153,9 @@ public class AuthResponseWrapper
     {
         if ( 403 == sc || 401 == sc )
         {
-            final AuthDescriptor authDescriptor = retrieveAuthDescriptor();
+            final UserStoreAuthConfig authConfig = retrieveUserStoreAuthConfig();
+            final AuthDescriptor authDescriptor = retrieveAuthDescriptor( authConfig );
+
             if ( authDescriptor != null )
             {
                 try
@@ -162,6 +164,7 @@ public class AuthResponseWrapper
                         adapt( request );
                     portalRequest.setBaseUri( "/portal" );
                     portalRequest.setApplicationKey( authDescriptor.getKey() );
+                    portalRequest.setAuthConfig( authConfig );
 
                     final PortalError portalError = PortalError.create().
                         status( HttpStatus.FORBIDDEN ).
@@ -181,20 +184,26 @@ public class AuthResponseWrapper
                 {
                     throw Exceptions.unchecked( e );
                 }
+
             }
         }
     }
 
-    private AuthDescriptor retrieveAuthDescriptor()
+    private UserStoreAuthConfig retrieveUserStoreAuthConfig()
     {
         final UserStore userStore = runAsAuthenticated( () -> securityService.getUserStore( userStoreKey ) );
         if ( userStore != null )
         {
-            final UserStoreAuthConfig authConfig = userStore.getAuthConfig();
-            if ( authConfig != null )
-            {
-                return authDescriptorService.getDescriptor( authConfig.getApplicationKey() );
-            }
+            return userStore.getAuthConfig();
+        }
+        return null;
+    }
+
+    private AuthDescriptor retrieveAuthDescriptor( final UserStoreAuthConfig authConfig )
+    {
+        if ( authConfig != null )
+        {
+            return authDescriptorService.getDescriptor( authConfig.getApplicationKey() );
         }
         return null;
     }

@@ -5,6 +5,9 @@ exports.handle403 = function (req) {
 
     log.info(JSON.stringify(req, null, 2));
 
+    var authConfig = portalLib.getAuthConfig();
+    log.info("authConfig: " + JSON.stringify(authConfig, null, 2));
+
     var view = resolve('auth.html');
     var params = {
         backgroundUrl: portalLib.assetUrl({
