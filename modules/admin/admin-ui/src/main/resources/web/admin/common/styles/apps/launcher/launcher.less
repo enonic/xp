@@ -574,15 +574,13 @@ html, body {
 
   .footer {
     position: absolute;
-    display: table;
-    width: 300px;
-    left: 40px;
+    left: @panel-indent;
     bottom: 15px;
     text-align: left;
 
-    a, span {
-      display: table-cell;
+    a {
       color: @admin-white;
+      margin-right: 20px;
     }
   }
 }

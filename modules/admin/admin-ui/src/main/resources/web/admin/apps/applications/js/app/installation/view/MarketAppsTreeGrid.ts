@@ -70,7 +70,8 @@ module app.installation.view {
                     setRowHeight(70).
                     disableMultipleSelection(true).
                     prependClasses("market-app-tree-grid").
-                    setSelectedCellCssClass("selected-sort-row")
+                    setSelectedCellCssClass("selected-sort-row").
+                    setQuietErrorHandling(true)
             );
 
             this.subsribeAndManageInstallClick();
