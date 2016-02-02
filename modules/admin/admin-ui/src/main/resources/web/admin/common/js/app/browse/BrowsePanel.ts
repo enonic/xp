@@ -72,9 +72,9 @@ module api.app.browse {
 
             this.treeGrid.onSelectionChanged((currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
                 let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
-                this.browseItemPanel.setItems(browseItems);
+                let changes = this.browseItemPanel.setItems(browseItems);
                 this.treeGrid.getContextMenu().getActions()
-                    .updateActionsEnabledState(this.browseItemPanel.getItems())
+                    .updateActionsEnabledState(this.browseItemPanel.getItems(), changes)
                     .then(() => {
                         this.browseItemPanel.updateDisplayedPanel();
                     }).catch(api.DefaultErrorHandler.handle);

@@ -46,6 +46,12 @@ module app.browse.action {
                 this.PUBLISH_CONTENT
             );
 
+            let previewHandler = (<PreviewContentAction>this.PREVIEW_CONTENT).getPreviewHandler();
+
+            previewHandler.onPreviewStateChanged((value) => {
+                this.PREVIEW_CONTENT.setEnabled(value);
+            })
+
         }
 
         getAllActions(): api.ui.Action[] {
@@ -53,7 +59,7 @@ module app.browse.action {
         }
 
         updateActionsEnabledState(contentBrowseItems: ContentBrowseItem[],
-                                  changes?: BrowseItemsChanges): wemQ.Promise<BrowseItem<ContentSummaryAndCompareStatus>[]> {
+                                  changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<BrowseItem<ContentSummaryAndCompareStatus>[]> {
 
             this.TOGGLE_SEARCH_PANEL.setVisible(false);
 
@@ -63,6 +69,10 @@ module app.browse.action {
 
             let deferred = wemQ.defer<ContentBrowseItem[]>();
 
+            let parallelPromises: wemQ.Promise<any>[];
+
+            let previewHandler = (<PreviewContentAction>this.PREVIEW_CONTENT).getPreviewHandler();
+
             switch (contentBrowseItems.length) {
             case 0:
                 this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
@@ -71,12 +81,14 @@ module app.browse.action {
                 this.DUPLICATE_CONTENT.setEnabled(false);
                 this.MOVE_CONTENT.setEnabled(false);
                 this.SORT_CONTENT.setEnabled(false);
-                this.PREVIEW_CONTENT.setEnabled(false);
                 this.PUBLISH_CONTENT.setEnabled(false);
 
-                var promise = this.updateActionsEnabledStateByPermissions(contentBrowseItems);
+                parallelPromises = [
+                    previewHandler.updateState(contentBrowseItems, changes),
+                    this.updateActionsEnabledStateByPermissions(contentBrowseItems)
+                ];
 
-                promise.then<void>(() => {
+                wemQ.all(parallelPromises).spread<void>(() => {
                     deferred.resolve(contentBrowseItems);
                     return wemQ(null);
                 }).catch(api.DefaultErrorHandler.handle);
@@ -90,15 +102,9 @@ module app.browse.action {
                 this.MOVE_CONTENT.setEnabled(true);
                 this.PUBLISH_CONTENT.setEnabled(true);
                 this.SORT_CONTENT.setEnabled(true);
-                this.PREVIEW_CONTENT.setEnabled(false);
-                let parallelPromises: wemQ.Promise<any>[] = [
-                    new api.content.page.IsRenderableRequest(contentSummary.getContentId()).sendAndParse().
-                        then((renderable: boolean) => {
-                            this.PREVIEW_CONTENT.setEnabled(renderable);
-                            if (contentBrowseItems.length > 0) {
-                                contentBrowseItems[0].setRenderable(renderable);
-                            }
-                        }),
+               // this.PREVIEW_CONTENT.setEnabled(false);
+                parallelPromises = [
+                    previewHandler.updateState(contentBrowseItems, changes),
                     this.updateActionsEnabledStateByPermissions(contentBrowseItems)
                 ];
                 wemQ.all(parallelPromises).spread<void>(() => {
@@ -108,16 +114,18 @@ module app.browse.action {
                 break;
             default:
                 this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
-                this.PREVIEW_CONTENT.setEnabled(false);
+             //   this.PREVIEW_CONTENT.setEnabled(false);
                 this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
                 this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
                 this.DUPLICATE_CONTENT.setEnabled(false);
                 this.MOVE_CONTENT.setEnabled(true);
                 this.SORT_CONTENT.setEnabled(false);
                 this.PUBLISH_CONTENT.setEnabled(true);
-                var promise = this.updateActionsEnabledStateByPermissions(contentBrowseItems);
-
-                promise.then<void>(() => {
+                parallelPromises = [
+                    previewHandler.updateState(contentBrowseItems, changes),
+                    this.updateActionsEnabledStateByPermissions(contentBrowseItems)
+                ];
+                wemQ.all(parallelPromises).spread<void>(() => {
                     deferred.resolve(contentBrowseItems);
                     return wemQ(null);
                 }).catch(api.DefaultErrorHandler.handle);

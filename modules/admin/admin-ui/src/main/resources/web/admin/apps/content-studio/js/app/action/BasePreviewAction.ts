@@ -5,12 +5,18 @@ module app.action {
 
     export class BasePreviewAction extends Action {
 
-        protected openWindow(content: api.content.ContentSummary, focus: boolean = true) { // should be called only in async block
-            var targetWindow = this.openBlankWindow(content);
-            this.updateLocation(targetWindow, content, focus);
+        protected openWindows(contents: api.content.ContentSummary[]) { // should be called only in async block
+            var targetWindows = this.openBlankWindows(contents);
+            for(var key in targetWindows) {
+                this.updateLocation(targetWindows[key], contents[key], false);
+            }
         }
 
-        protected openBlankWindow(content: api.content.ContentSummary) { // should be called only in async block
+        protected openBlankWindows(contents: api.content.ContentSummary[]): any[] { // should be called only in async block
+            return contents.map(content => this.openBlankWindow(content));
+        }
+
+        protected openBlankWindow(content: api.content.ContentSummary): any { // should be called only in async block
             return window.open('', content.getId());
         }
 
