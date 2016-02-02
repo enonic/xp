@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -7,7 +8,11 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
@@ -17,6 +22,7 @@ import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.ServiceUrlParams;
+import com.enonic.xp.schema.mixin.MixinName;
 
 @Component(immediate = true)
 public final class PortalUrlServiceImpl
@@ -54,11 +60,15 @@ public final class PortalUrlServiceImpl
 
     private static final String IMAGE_SCALE = "width(768)";
 
+    private static final int DEFAULT_WIDTH = 768;
+
     private static final String IMAGE_NO_SCALING = "full";
 
     private static final String IMAGE_FORMAT = "jpeg";
 
-    private static final String KEEP_SIZE_TRUE = "?keepsize=true";
+    private static final String KEEP_SIZE = "keepSize";
+
+    private static final String SCALE = "scale";
 
     private ContentService contentService;
 
@@ -121,7 +131,7 @@ public final class PortalUrlServiceImpl
                 final String type = contentMatcher.group( TYPE_INDEX );
                 final String mode = contentMatcher.group( MODE_INDEX );
                 final String id = contentMatcher.group( ID_INDEX );
-                final String urlParams = contentMatcher.groupCount() == PARAMS_INDEX ? contentMatcher.group( PARAMS_INDEX ) : null;
+                final String urlParamsString = contentMatcher.groupCount() == PARAMS_INDEX ? contentMatcher.group( PARAMS_INDEX ) : null;
 
                 if ( CONTENT_TYPE.equals( type ) )
                 {
@@ -136,13 +146,10 @@ public final class PortalUrlServiceImpl
                 }
                 else if ( IMAGE_TYPE.equals( type ) )
                 {
-                    final boolean keepSize = KEEP_SIZE_TRUE.equalsIgnoreCase( urlParams );
-                    final String imageScale = keepSize ? IMAGE_NO_SCALING : IMAGE_SCALE;
-
                     ImageUrlParams imageUrlParams = new ImageUrlParams().
                         type( params.getType() ).
                         id( id ).
-                        scale( imageScale ).
+                        scale( getScale( id, urlParamsString ) ).
                         format( IMAGE_FORMAT ).
                         portalRequest( params.getPortalRequest() );
 
@@ -166,6 +173,49 @@ public final class PortalUrlServiceImpl
         }
 
         return processedHtml;
+    }
+
+    private String getScale( String id, String urlParamsString )
+    {
+        final Map<String, String> urlParams = UrlHelper.extractUrlParams( urlParamsString );
+
+        final boolean keepSize = urlParams.containsKey( KEEP_SIZE );
+
+        final String scaleParam = urlParams.get( SCALE );
+
+        if ( scaleParam != null )
+        {
+            final int pos = scaleParam.indexOf( ":" );
+            final String horizontalProportion = scaleParam.substring( 0, pos );
+            final String verticalProportion = scaleParam.substring( pos + 1 );
+
+            final int width = keepSize ? getImageOriginalWidth( id ) : DEFAULT_WIDTH;
+            final int height = width / Integer.parseInt( horizontalProportion ) * Integer.parseInt( verticalProportion );
+
+            return "block(" + width + "," + height + ")";
+        }
+        else
+        {
+            return keepSize ? IMAGE_NO_SCALING : IMAGE_SCALE;
+        }
+
+    }
+
+    private int getImageOriginalWidth( String id )
+    {
+        Content content = this.contentService.getById( ContentId.from( id ) );
+
+        if ( content instanceof Media )
+        {
+            ExtraData imageData = content.getAllExtraData().getMetadata( MixinName.from( "media:imageInfo" ) );
+
+            if ( imageData != null )
+            {
+                return imageData.getData().getProperty( "imageWidth" ).getValue().asLong().intValue();
+            }
+        }
+
+        return 0;
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )
