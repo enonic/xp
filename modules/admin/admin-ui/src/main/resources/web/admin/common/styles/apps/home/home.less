@@ -12,10 +12,6 @@
 @import "../../variables/transitions";
 @import "../../variables/shadows";
 
-html, body {
-  height: 100%;
-}
-
 .home-main-container {
   position: fixed;
   left: 0;
@@ -37,11 +33,6 @@ html, body {
 
   .container-title {
     .container-title-mixin();
-  }
-
-  a {
-    color: @admin-white;
-    text-decoration: none;
   }
 
   .center-panel {
@@ -83,18 +74,24 @@ html, body {
     .box-sizing(border-box);
   }
 
-  .footer {
-    position: absolute;
-    display: table;
-    left: 40px;
-    bottom: 15px;
-    text-align: left;
+}
 
-    a, span {
-      display: table-cell;
-      color: @admin-white;
-      padding-right: 20px;
-    }
+.home-main-footer {
+  position: absolute;
+  display: table;
+  left: 40px;
+  bottom: 15px;
+  text-align: left;
+  z-index: @z-index-launcher-panel;
+  background-color : transparent;
+  font-family: @admin-font-family;
+  font-size: @admin-font-size;
+
+  a {
+    display: table-cell;
+    color: @admin-white;
+    padding-right: 20px;
+    text-decoration: none;
   }
 }
 

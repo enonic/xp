@@ -97,6 +97,10 @@
       margin: 5px 0;
       padding: 10px 0 10px 30px;
 
+      a:focus {
+        outline: none;
+      }
+
       &.active{
         border-left: 4px solid @admin-red;
         padding-left: 26px;
@@ -131,6 +135,13 @@
           margin-right: 15px;
           width: 40px;
           height: 40px;
+          pointer-events: none;
+
+          svg {
+            width: inherit !important;
+            height: inherit !important;
+            margin-right: 15px;
+          }
 
           &.app-home-icon {
             float: left;
@@ -191,6 +202,10 @@
   background-color: transparent;
   cursor: pointer;
   z-index: @z-index-launcher-button;
+
+  &::-moz-focus-inner {
+    border: 0;
+  }
 
   .line {
     display: inline-block;
