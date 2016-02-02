@@ -22,25 +22,39 @@ module api.form.inputtype.text.htmlarea {
 
         }
 
-        getOptions(): Option<ImageCroppingOption>[] {
+        static getOptions(): Option<ImageCroppingOption>[] {
 
             var options: Option<ImageCroppingOption>[] = [];
 
-            this.getCroppingOptions().forEach((imageCroppingOption: ImageCroppingOption) => {
+            ImageCroppingOptions.getCroppingOptions().forEach((imageCroppingOption: ImageCroppingOption) => {
                 var option = {
                     value: imageCroppingOption.getName(),
                     displayValue: imageCroppingOption
                 };
 
                 options.push(option);
-            })
+            });
 
             return options;
         }
 
-        getCroppingOptions(): ImageCroppingOption[] {
+        static getCroppingOptions(): ImageCroppingOption[] {
             return [ImageCroppingOptions.SQUARE, ImageCroppingOptions.REGULAR, ImageCroppingOptions.WIDESCREEN, ImageCroppingOptions.CINEMA,
                 ImageCroppingOptions.PORTRAIT, ImageCroppingOptions.TALL, ImageCroppingOptions.SKYSCRAPER];
+        }
+
+        static getOptionByProportion(proportion: string): ImageCroppingOption {
+            var imageCroppingOption: ImageCroppingOption = null,
+                imageCroppingOptions: ImageCroppingOption[] = ImageCroppingOptions.getCroppingOptions();
+
+            for (let i = 0; i < imageCroppingOptions.length; i++) {
+                if (imageCroppingOptions[i].getProportionString() == proportion) {
+                    imageCroppingOption = imageCroppingOptions[i];
+                    break;
+                }
+            }
+
+            return imageCroppingOption;
         }
 
     }

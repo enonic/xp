@@ -413,7 +413,7 @@ module api.form.inputtype.text {
         }
 
         private destroyEditor(id: string): void {
-            var editor = this.getEditor(id)
+            var editor = this.getEditor(id);
             if (editor) {
                 editor.destroy(false);
             }
@@ -440,12 +440,18 @@ module api.form.inputtype.text {
         }
 
         private getConvertedImageSrc(imgSrc: string): string {
-            var contentId = imgSrc.replace(HtmlArea.imagePrefix, api.util.StringHelper.EMPTY_STRING),
-                imageUrl = new api.content.ContentImageUrlResolver().
-                    setContentId(new api.content.ContentId(contentId)).
-                    setScaleWidth(true).
-                    setSize(HtmlArea.maxImageWidth).
-                    resolve();
+            var contentId = api.util.UriHelper.trimUrlParams(imgSrc.replace(HtmlArea.imagePrefix, api.util.StringHelper.EMPTY_STRING)),
+                imageUrlResolver = new api.content.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)),
+                scalingApplied = imgSrc.indexOf("scale=") > 0,
+                urlParams = api.util.UriHelper.decodeUrlParams(imgSrc.replace("&amp;", "&"));
+
+            scalingApplied ? imageUrlResolver.setScale(urlParams["scale"]) : imageUrlResolver.setScaleWidth(true);
+
+            if (!urlParams["keepSize"]) {
+                imageUrlResolver.setSize(HtmlArea.maxImageWidth);
+            }
+
+            var imageUrl = imageUrlResolver.resolve();
 
             return "src=\"" + imageUrl + "\" data-src=\"" + imgSrc + "\"";
         }

@@ -52,7 +52,7 @@ module api.form.inputtype.text.htmlarea {
         }
 
         private addCroppingOptions() {
-            new ImageCroppingOptions().getOptions().forEach((option: Option<ImageCroppingOption>) => {
+            ImageCroppingOptions.getOptions().forEach((option: Option<ImageCroppingOption>) => {
                 this.addOption(option);
             });
         }
