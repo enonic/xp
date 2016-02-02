@@ -212,6 +212,9 @@ module api.liveedit {
             this.onContextMenu(this.contextMenuListener);
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+                if (this.mouseOver) {
+                    this.highlight();
+                }
                 if (this.isSelected()) {
                     this.highlightSelected();
                     //this.shade();
@@ -877,9 +880,9 @@ module api.liveedit {
                 newComponent = regionView.createComponent(componentItemType.toComponentType());
 
             return componentItemType.createView(new CreateItemViewConfig<RegionView,Component>().
-            setParentView(regionView).
-            setParentElement(regionView).
-            setData(newComponent));
+                setParentView(regionView).
+                setParentElement(regionView).
+                setData(newComponent));
         }
 
         getInsertActions(): api.ui.Action[] {
