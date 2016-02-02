@@ -10,7 +10,15 @@ import com.google.common.io.ByteStreams;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.AttachedBinaries;
+import com.enonic.xp.node.AttachedBinary;
+import com.enonic.xp.node.BinaryAttachment;
+import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.Assert.*;
@@ -18,7 +26,6 @@ import static org.junit.Assert.*;
 public class ApplicationNodeTransformerTest
     extends BundleBasedTest
 {
-
     @Test
     public void binary_reference_added()
         throws Exception
@@ -30,13 +37,53 @@ public class ApplicationNodeTransformerTest
         Mockito.when( app.getMinSystemVersion() ).thenReturn( "1.0.0." );
         Mockito.when( app.getDisplayName() ).thenReturn( "displayName" );
 
-        final CreateNodeParams myBundle = ApplicationNodeTransformer.toCreateNodeParams( app, ByteSource.wrap(
-            ByteStreams.toByteArray( newBundle( "myBundle", true ).build() ) ) );
+        final ByteSource appSource = ByteSource.wrap( ByteStreams.toByteArray( newBundle( "myBundle", true ).build() ) );
 
-        final PropertyTree data = myBundle.getData();
+        final CreateNodeParams createNodeParams = ApplicationNodeTransformer.toCreateNodeParams( app, appSource );
+
+        final PropertyTree data = createNodeParams.getData();
 
         final BinaryReference binaryReference = data.getBinaryReference( ApplicationNodeTransformer.APPLICATION_BINARY_REF );
 
         assertNotNull( binaryReference );
+
+        final BinaryAttachment binaryAttachment = createNodeParams.getBinaryAttachments().get( binaryReference );
+
+        assertEquals( appSource, binaryAttachment.getByteSource() );
+    }
+
+
+    @Test
+    public void app_binary_updated()
+        throws Exception
+    {
+
+        final PropertyTree data = new PropertyTree();
+        final BinaryReference appReference = BinaryReference.from( ApplicationNodeTransformer.APPLICATION_BINARY_REF );
+        data.addBinaryReference( ApplicationNodeTransformer.APPLICATION_BINARY_REF, appReference );
+
+        final Node existingNode = Node.create().
+            id( NodeId.from( "myNode" ) ).
+            parentPath( NodePath.ROOT ).
+            name( "myNode" ).
+            data( data ).
+            attachedBinaries( AttachedBinaries.create().
+                add( new AttachedBinary( appReference, "abc" ) ).
+                build() ).
+            build();
+
+        final Application app = Mockito.mock( Application.class );
+        Mockito.when( app.getKey() ).thenReturn( ApplicationKey.from( "myApp" ) );
+        Mockito.when( app.getVersion() ).thenReturn( Version.valueOf( "1.0.0" ) );
+        Mockito.when( app.getMaxSystemVersion() ).thenReturn( "1.0.0" );
+        Mockito.when( app.getMinSystemVersion() ).thenReturn( "1.0.0." );
+        Mockito.when( app.getDisplayName() ).thenReturn( "displayName" );
+
+        final ByteSource updatedSource = ByteSource.wrap( ByteStreams.toByteArray( newBundle( "myBundleUpdated", true ).build() ) );
+        final UpdateNodeParams updateNodeParams = ApplicationNodeTransformer.toUpdateNodeParams( app, updatedSource, existingNode );
+
+        final BinaryAttachments binaryAttachments = updateNodeParams.getBinaryAttachments();
+
+        assertEquals( updatedSource, binaryAttachments.get( appReference ).getByteSource() );
     }
 }
