@@ -5,8 +5,6 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.node.BinaryAttachment;
-import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -24,9 +22,7 @@ class ApplicationNodeTransformer
             parent( ApplicationRepoServiceImpl.APPLICATION_PATH ).
             name( app.getKey().getName() ).
             data( data ).
-            setBinaryAttachments( BinaryAttachments.create().
-                add( new BinaryAttachment( BinaryReference.from( APPLICATION_BINARY_REF ), source ) ).
-                build() ).
+            attachBinary( BinaryReference.from( APPLICATION_BINARY_REF ), source ).
             build();
     }
 
@@ -48,9 +44,7 @@ class ApplicationNodeTransformer
     {
         return UpdateNodeParams.create().
             id( existingNode.id() ).
-            setBinaryAttachments( BinaryAttachments.create().
-                add( new BinaryAttachment( BinaryReference.from( APPLICATION_BINARY_REF ), source ) ).
-                build() ).
+            attachBinary( BinaryReference.from( APPLICATION_BINARY_REF ), source ).
             editor( ( node ) -> createApplicationProperties( app ) ).
             build();
     }
