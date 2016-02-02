@@ -7,11 +7,11 @@ import javax.websocket.Endpoint;
 
 public interface WebSocketHandler
 {
-    String getPath();
-
     Endpoint newEndpoint();
 
     List<String> getSubProtocols();
+
+    boolean canHandle( HttpServletRequest req );
 
     boolean hasAccess( HttpServletRequest req );
 }

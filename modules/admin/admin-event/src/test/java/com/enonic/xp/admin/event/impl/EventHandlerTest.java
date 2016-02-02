@@ -7,6 +7,7 @@ import javax.websocket.Session;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.Assert.*;
 
@@ -25,8 +26,17 @@ public class EventHandlerTest
     public void testConfig()
         throws Exception
     {
-        assertEquals( "/admin/event", this.handler.getPath() );
         assertEquals( "[text]", this.handler.getSubProtocols().toString() );
+    }
+
+    @Test
+    public void testCanHandle()
+        throws Exception
+    {
+        final MockHttpServletRequest req = new MockHttpServletRequest();
+        req.setRequestURI( "/admin/event" );
+
+        assertEquals( true, this.handler.canHandle( req ) );
     }
 
     @Test

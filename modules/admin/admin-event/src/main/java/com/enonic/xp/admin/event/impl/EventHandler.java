@@ -28,7 +28,6 @@ public final class EventHandler
 
     public EventHandler()
     {
-        setPath( "/admin/event" );
         setSubProtocols( PROTOCOL );
     }
 
@@ -71,5 +70,10 @@ public final class EventHandler
             }
         }
     }
-}
 
+    @Override
+    public boolean canHandle( final HttpServletRequest req )
+    {
+        return req.getRequestURI().equals( "/admin/event" );
+    }
+}

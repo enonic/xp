@@ -12,10 +12,18 @@ public class TestWebSocketHandler
 
     protected boolean accesss;
 
+    protected boolean canHandle;
+
     @Override
     public boolean hasAccess( final HttpServletRequest req )
     {
         return this.accesss;
+    }
+
+    @Override
+    public boolean canHandle( final HttpServletRequest req )
+    {
+        return this.canHandle;
     }
 
     @Override
