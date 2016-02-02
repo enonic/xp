@@ -1,11 +1,8 @@
 package com.enonic.xp.web.jetty.impl.websocket;
 
+import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.websocket.Endpoint;
@@ -21,38 +18,27 @@ import org.eclipse.jetty.websocket.jsr356.server.JsrCreator;
 import org.eclipse.jetty.websocket.jsr356.server.SimpleServerEndpointMetadata;
 import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
 import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
-import com.enonic.xp.web.filter.OncePerRequestFilter;
 import com.enonic.xp.web.jetty.impl.JettyController;
-import com.enonic.xp.web.websocket.WebSocketHandler;
+import com.enonic.xp.web.websocket.EndpointFactory;
+import com.enonic.xp.web.websocket.WebSocketService;
 
-@Component(immediate = true, service = Filter.class,
-    property = {"osgi.http.whiteboard.filter.pattern=/", "service.ranking:Integer=50", "osgi.http.whiteboard.filter.dispatcher=FORWARD",
-        "osgi.http.whiteboard.filter.dispatcher=REQUEST"})
-public final class WebSocketFilter
-    extends OncePerRequestFilter
+@Component
+public final class WebSocketServiceImpl
+    implements WebSocketService
 {
     private JettyController controller;
 
     private WebSocketServerFactory serverFactory;
 
-    private final WebSocketEntryMap entries;
-
-    public WebSocketFilter()
+    @Activate
+    public void activate()
+        throws Exception
     {
-        this.entries = new WebSocketEntryMap();
-    }
-
-    @Override
-    public void init( final FilterConfig config )
-        throws ServletException
-    {
-        super.init( config );
-
         final WebSocketPolicy policy = WebSocketPolicy.newServerPolicy();
         this.serverFactory = new WebSocketServerFactory( policy );
         this.serverFactory.init( this.controller.getServletContext() );
@@ -60,49 +46,36 @@ public final class WebSocketFilter
         new ServerContainerImpl( this.serverFactory );
     }
 
+    @Deactivate
+    public void deactivate()
+    {
+        this.serverFactory.cleanup();
+    }
+
     @Override
-    protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
-        throws Exception
+    public boolean isUpgradeRequest( final HttpServletRequest req, final HttpServletResponse res )
     {
-        if ( !this.serverFactory.isUpgradeRequest( req, res ) )
-        {
-            chain.doFilter( req, res );
-            return;
-        }
-
-        final WebSocketEntry entry = this.entries.find( req );
-        if ( entry == null )
-        {
-            chain.doFilter( req, res );
-            return;
-        }
-
-        if ( !entry.handler.hasAccess( req ) )
-        {
-            res.sendError( HttpServletResponse.SC_FORBIDDEN );
-            return;
-        }
-
-        final WebSocketCreator creator = getCreator( entry );
-        this.serverFactory.acceptWebSocket( creator, req, res );
+        return this.serverFactory.isUpgradeRequest( req, res );
     }
 
-    private WebSocketCreator getCreator( final WebSocketEntry entry )
+    @Override
+    public boolean acceptWebSocket( final HttpServletRequest req, final HttpServletResponse res, final EndpointFactory factory )
+        throws IOException
     {
-        if ( entry.creator != null )
-        {
-            return entry.creator;
-        }
-
-        entry.creator = newCreator( entry.handler );
-        return entry.creator;
+        return this.serverFactory.acceptWebSocket( newCreator( factory ), req, res );
     }
 
-    private WebSocketCreator newCreator( final WebSocketHandler handler )
+    @Reference
+    public void setController( final JettyController controller )
+    {
+        this.controller = controller;
+    }
+
+    private WebSocketCreator newCreator( final EndpointFactory factory )
     {
         final ServerEndpointConfig.Builder builder = newEndpointConfigBuilder();
-        builder.configurator( newConfigurator( handler ) );
-        builder.subprotocols( handler.getSubProtocols() );
+        builder.configurator( newConfigurator( factory ) );
+        builder.subprotocols( factory.getSubProtocols() );
 
         final ServerEndpointConfig config = builder.build();
         final SimpleServerEndpointMetadata meta = new SimpleServerEndpointMetadata( Endpoint.class, config );
@@ -111,7 +84,7 @@ public final class WebSocketFilter
         return new JsrCreator( this.serverFactory, meta, ext );
     }
 
-    private ServerEndpointConfig.Configurator newConfigurator( final WebSocketHandler handler )
+    private ServerEndpointConfig.Configurator newConfigurator( final EndpointFactory factory )
     {
         final ContainerDefaultConfigurator defaultConfigurator = new ContainerDefaultConfigurator();
 
@@ -144,7 +117,7 @@ public final class WebSocketFilter
             @Override
             public <T> T getEndpointInstance( final Class<T> endpointClass )
             {
-                return endpointClass.cast( handler.newEndpoint() );
+                return endpointClass.cast( factory.newEndpoint() );
             }
         };
     }
@@ -152,22 +125,5 @@ public final class WebSocketFilter
     private ServerEndpointConfig.Builder newEndpointConfigBuilder()
     {
         return ServerEndpointConfig.Builder.create( Endpoint.class, "/" );
-    }
-
-    @Reference
-    public void setController( final JettyController controller )
-    {
-        this.controller = controller;
-    }
-
-    @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE)
-    public void addHandler( final WebSocketHandler handler )
-    {
-        this.entries.add( handler );
-    }
-
-    public void removeHandler( final WebSocketHandler handler )
-    {
-        this.entries.remove( handler );
     }
 }

@@ -8,6 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.web.websocket.WebSocketService;
 
 import static org.junit.Assert.*;
 
@@ -15,28 +19,29 @@ public class EventHandlerTest
 {
     private EventHandler handler;
 
+    private WebSocketService webSocketService;
+
+    private MockHttpServletRequest req;
+
+    private MockHttpServletResponse res;
+
     @Before
     public void setup()
         throws Exception
     {
         this.handler = new EventHandler();
+
+        this.webSocketService = Mockito.mock( WebSocketService.class );
+        this.handler.setWebSocketService( this.webSocketService );
+
+        this.req = new MockHttpServletRequest();
+        this.res = new MockHttpServletResponse();
     }
 
     @Test
-    public void testConfig()
-        throws Exception
+    public void testSubProtocols()
     {
         assertEquals( "[text]", this.handler.getSubProtocols().toString() );
-    }
-
-    @Test
-    public void testCanHandle()
-        throws Exception
-    {
-        final MockHttpServletRequest req = new MockHttpServletRequest();
-        req.setRequestURI( "/admin/event" );
-
-        assertEquals( true, this.handler.canHandle( req ) );
     }
 
     @Test
@@ -101,5 +106,41 @@ public class EventHandlerTest
         Mockito.when( session.isOpen() ).thenReturn( true );
         return session;
     }
-}
 
+    @Test
+    public void testNotAllowed()
+        throws Exception
+    {
+        this.req.setMethod( "GET" );
+        this.handler.service( this.req, this.res );
+
+        assertEquals( 403, this.res.getStatus() );
+    }
+
+    @Test
+    public void testNotUpgrade()
+        throws Exception
+    {
+        this.req.setMethod( "GET" );
+        this.req.addUserRole( RoleKeys.ADMIN_LOGIN.getId() );
+        Mockito.when( this.webSocketService.isUpgradeRequest( this.req, this.res ) ).thenReturn( false );
+
+        this.handler.service( this.req, this.res );
+
+        assertEquals( 404, this.res.getStatus() );
+    }
+
+    @Test
+    public void testUpgrade()
+        throws Exception
+    {
+        this.req.setMethod( "GET" );
+        this.req.addUserRole( RoleKeys.ADMIN_LOGIN.getId() );
+        Mockito.when( this.webSocketService.isUpgradeRequest( this.req, this.res ) ).thenReturn( true );
+
+        this.handler.service( this.req, this.res );
+
+        assertEquals( 200, this.res.getStatus() );
+        Mockito.verify( this.webSocketService, Mockito.times( 1 ) ).acceptWebSocket( this.req, this.res, this.handler );
+    }
+}

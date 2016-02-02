@@ -1,7 +1,5 @@
 package com.enonic.xp.web.jetty.impl.websocket;
 
-import javax.servlet.FilterChain;
-
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -16,20 +14,18 @@ import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 
 import static org.junit.Assert.*;
 
-public class WebSocketFilterTest
+public class WebSocketServiceImplTest
     extends JettyTestSupport
 {
-    private TestWebSocketHandler handler;
-
     private TestEndpoint endpoint;
 
-    private WebSocketFilter filter;
+    private TestWebSocketServlet servlet;
+
+    private WebSocketServiceImpl service;
 
     private MockHttpServletRequest req;
 
     private MockHttpServletResponse res;
-
-    private FilterChain chain;
 
     @Override
     protected void configure()
@@ -37,74 +33,28 @@ public class WebSocketFilterTest
     {
         this.endpoint = new TestEndpoint();
 
-        this.handler = new TestWebSocketHandler();
-        this.handler.endpoint = this.endpoint;
-        this.handler.accesss = true;
-        this.handler.canHandle = true;
-
         final JettyController controller = Mockito.mock( JettyController.class );
         Mockito.when( controller.getServletContext() ).thenReturn( this.server.getHandler().getServletContext() );
 
-        this.filter = new WebSocketFilter();
-        this.filter.setController( controller );
+        this.service = new WebSocketServiceImpl();
+        this.service.setController( controller );
+        this.service.activate();
 
-        addFilter( this.filter, "/*" );
-        this.filter.addHandler( this.handler );
+        this.servlet = new TestWebSocketServlet();
+        this.servlet.service = this.service;
+        this.servlet.endpoint = this.endpoint;
+
+        addServlet( this.servlet, "/ws" );
 
         this.req = new MockHttpServletRequest();
         this.res = new MockHttpServletResponse();
-        this.chain = Mockito.mock( FilterChain.class );
     }
 
-    private void mockSocketConnection()
-    {
-        this.req.setMethod( "GET" );
-        this.req.setProtocol( "HTTP/1.1" );
-        this.req.addHeader( "Connection", "Upgrade" );
-        this.req.addHeader( "Upgrade", "WebSocket" );
-    }
-
-    @Test
-    public void testNotSocket()
+    @Override
+    protected void destroy()
         throws Exception
     {
-        this.filter.removeHandler( this.handler );
-
-        this.filter.doFilter( this.req, this.res, this.chain );
-        Mockito.verify( this.chain, Mockito.times( 1 ) ).doFilter( this.req, this.res );
-    }
-
-    @Test
-    public void testHandlerNotFound()
-        throws Exception
-    {
-        this.filter.removeHandler( this.handler );
-        mockSocketConnection();
-
-        this.filter.doFilter( this.req, this.res, this.chain );
-        Mockito.verify( this.chain, Mockito.times( 1 ) ).doFilter( this.req, this.res );
-    }
-
-    @Test
-    public void testSecurity()
-        throws Exception
-    {
-        mockSocketConnection();
-        this.handler.accesss = false;
-
-        this.filter.doFilter( this.req, this.res, this.chain );
-        assertEquals( 403, this.res.getStatus() );
-    }
-
-    @Test
-    public void testCannotHandle()
-        throws Exception
-    {
-        mockSocketConnection();
-        this.handler.canHandle = false;
-
-        this.filter.doFilter( this.req, this.res, this.chain );
-        Mockito.verify( this.chain, Mockito.times( 1 ) ).doFilter( this.req, this.res );
+        this.service.deactivate();
     }
 
     private void newWebSocketRequest( final WebSocketListener listener )
@@ -114,6 +64,15 @@ public class WebSocketFilterTest
             build();
 
         WebSocketCall.create( this.client, request ).enqueue( listener );
+    }
+
+    @Test
+    public void testNotSocket()
+        throws Exception
+    {
+        this.req.setMethod( "GET" );
+        this.servlet.service( this.req, this.res );
+        assertEquals( 404, this.res.getStatus() );
     }
 
     @Test

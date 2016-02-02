@@ -1,24 +1,33 @@
 package com.enonic.xp.admin.event.impl;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.websocket.Endpoint;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.web.websocket.BaseWebSocketHandler;
-import com.enonic.xp.web.websocket.WebSocketHandler;
+import com.google.common.collect.Lists;
 
-@Component(immediate = true, service = {WebSocketHandler.class, WebSocketManager.class})
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.web.websocket.EndpointFactory;
+import com.enonic.xp.web.websocket.WebSocketService;
+
+@Component(immediate = true, service = {Servlet.class, WebSocketManager.class},
+    property = {"osgi.http.whiteboard.servlet.pattern=/admin/event"})
 public final class EventHandler
-    extends BaseWebSocketHandler
-    implements WebSocketManager
+    extends HttpServlet
+    implements WebSocketManager, EndpointFactory
 {
     private final static Logger LOG = LoggerFactory.getLogger( EventHandler.class );
 
@@ -26,21 +35,37 @@ public final class EventHandler
 
     private final Set<EventWebSocket> sockets = new CopyOnWriteArraySet<>();
 
-    public EventHandler()
-    {
-        setSubProtocols( PROTOCOL );
-    }
+    private WebSocketService webSocketService;
 
     @Override
-    public boolean hasAccess( final HttpServletRequest req )
+    protected void doGet( final HttpServletRequest req, final HttpServletResponse res )
+        throws ServletException, IOException
     {
-        return req.isUserInRole( RoleKeys.ADMIN_LOGIN.getId() );
+        if ( !req.isUserInRole( RoleKeys.ADMIN_LOGIN.getId() ) )
+        {
+            res.sendError( HttpServletResponse.SC_FORBIDDEN );
+            return;
+        }
+
+        if ( !this.webSocketService.isUpgradeRequest( req, res ) )
+        {
+            res.sendError( HttpServletResponse.SC_NOT_FOUND );
+            return;
+        }
+
+        this.webSocketService.acceptWebSocket( req, res, this );
     }
 
     @Override
     public Endpoint newEndpoint()
     {
         return new EventWebSocket( this );
+    }
+
+    @Override
+    public List<String> getSubProtocols()
+    {
+        return Lists.newArrayList( PROTOCOL );
     }
 
     @Override
@@ -71,9 +96,9 @@ public final class EventHandler
         }
     }
 
-    @Override
-    public boolean canHandle( final HttpServletRequest req )
+    @Reference
+    public void setWebSocketService( final WebSocketService webSocketService )
     {
-        return req.getRequestURI().equals( "/admin/event" );
+        this.webSocketService = webSocketService;
     }
 }
