@@ -149,7 +149,7 @@ public final class PortalUrlServiceImpl
                     ImageUrlParams imageUrlParams = new ImageUrlParams().
                         type( params.getType() ).
                         id( id ).
-                        scale( getScale( id, urlParamsString ) ).
+                        scale( (urlParamsString == null) ? IMAGE_NO_SCALING : getScale( id, urlParamsString ) ).
                         format( IMAGE_FORMAT ).
                         portalRequest( params.getPortalRequest() );
 
@@ -181,10 +181,9 @@ public final class PortalUrlServiceImpl
 
         final boolean keepSize = urlParams.containsKey( KEEP_SIZE );
 
-        final String scaleParam = urlParams.get( SCALE );
-
-        if ( scaleParam != null )
+        if ( urlParams.containsKey( SCALE ) )
         {
+            final String scaleParam = urlParams.get( SCALE );
             final int pos = scaleParam.indexOf( ":" );
             final String horizontalProportion = scaleParam.substring( 0, pos );
             final String verticalProportion = scaleParam.substring( pos + 1 );
