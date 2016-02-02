@@ -27,6 +27,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.image.Cropping;
+import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
@@ -125,6 +126,7 @@ public final class ContentImageResource
                         binaryReference( attachment.getBinaryReference() ).
                         cropping( cropping ).
                         scaleParams( scaleParams ).
+                        focalPoint( scaleParams == null ? new FocalPoint( 0, 0 ) : media.getFocalPoint() ).
                         scaleSize( size ).
                         scaleWidth( scaleWidth ).
                         format( format ).
