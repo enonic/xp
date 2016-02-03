@@ -57,7 +57,6 @@ public class AdminToolResource
         jsonEntry.key.name = adminToolDescriptor.getKey().getName();
         jsonEntry.displayName = adminToolDescriptor.getDisplayName();
         jsonEntry.description = adminToolDescriptor.getDescription();
-        jsonEntry.icon = adminToolDescriptor.getIcon();
         if ( mapAllowedPrincipals )
         {
             final ImmutableSet.Builder<String> allowedPrincipals = ImmutableSet.builder();

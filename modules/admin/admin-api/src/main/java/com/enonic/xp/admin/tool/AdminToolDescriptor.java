@@ -16,8 +16,6 @@ public class AdminToolDescriptor
 
     private final String description;
 
-    private final String icon;
-
     private final PrincipalKeys allowedPrincipals;
 
     private AdminToolDescriptor( final Builder builder )
@@ -25,7 +23,6 @@ public class AdminToolDescriptor
         key = builder.key;
         displayName = builder.displayName;
         description = builder.description;
-        icon = builder.icon;
         allowedPrincipals = PrincipalKeys.from( builder.allowedPrincipals );
     }
 
@@ -44,11 +41,6 @@ public class AdminToolDescriptor
         return description;
     }
 
-    public String getIcon()
-    {
-        return icon;
-    }
-
     public PrincipalKeys getAllowedPrincipals()
     {
         return allowedPrincipals;
@@ -62,12 +54,17 @@ public class AdminToolDescriptor
 
     public boolean isAppLauncherApplication()
     {
-        return displayName != null && icon != null && description != null;
+        return displayName != null && description != null;
     }
 
     public static ResourceKey toResourceKey( final DescriptorKey key )
     {
         return ResourceKey.from( key.getApplicationKey(), "admin/tools/" + key.getName() + "/" + key.getName() + ".xml" );
+    }
+
+    public static ResourceKey toIconResourceKey( final DescriptorKey key )
+    {
+        return ResourceKey.from( key.getApplicationKey(), "admin/tools/" + key.getName() + "/" + key.getName() + ".svg" );
     }
 
     public static Builder create()
@@ -83,8 +80,6 @@ public class AdminToolDescriptor
         private String displayName;
 
         private String description;
-
-        private String icon;
 
         private List<PrincipalKey> allowedPrincipals = new LinkedList<>();
 
@@ -107,12 +102,6 @@ public class AdminToolDescriptor
         public Builder description( final String description )
         {
             this.description = description;
-            return this;
-        }
-
-        public Builder icon( final String icon )
-        {
-            this.icon = icon;
             return this;
         }
 
