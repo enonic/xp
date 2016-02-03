@@ -54,7 +54,7 @@ public class AdminToolDescriptor
 
     public boolean isAppLauncherApplication()
     {
-        return displayName != null && description != null;
+        return displayName != null;
     }
 
     public static ResourceKey toResourceKey( final DescriptorKey key )
