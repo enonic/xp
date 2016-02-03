@@ -2,7 +2,6 @@
 <tool xmlns="urn:enonic:xp:model:1.0">
   <display-name>Users</display-name>
   <description>Manage users and roles</description>
-  <icon>icon-transparent.svg</icon>
   <allow>
     <principal>role:system.admin</principal>
     <principal>role:system.user.admin</principal>

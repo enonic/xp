@@ -52,7 +52,6 @@ public class XmlAdminToolDescriptorParserTest
         final AdminToolDescriptor result = this.builder.build();
         assertEquals( "myapplication:myadmintool", result.getKey().toString() );
         assertEquals( "My admin tool", result.getDisplayName() );
-        assertEquals( "/path/to/icon", result.getIcon() );
 
         final PrincipalKeys allowedPrincipals = result.getAllowedPrincipals();
         assertNotNull( allowedPrincipals );
