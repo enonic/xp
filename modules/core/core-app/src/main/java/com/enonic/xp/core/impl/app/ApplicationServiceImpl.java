@@ -147,40 +147,22 @@ public final class ApplicationServiceImpl
     public void uninstallApplication( final ApplicationKey key )
     {
         final Application application = this.registry.get( key );
-
         if ( application == null )
         {
             LOG.warn( "Trying to uninstall bundle with key: [{}] but no such bundle installed", key );
             return;
         }
 
-        final Bundle bundle = application.getBundle();
-
-        try
-        {
-            bundle.uninstall();
-        }
-        catch ( BundleException e )
-        {
-            throw new ApplicationInstallException( "Cannot uninstall bundle " + key, e );
-        }
-
-        this.registry.invalidate( application.getKey() );
-
-        this.repoService.deleteApplicationNode( application );
-
-        this.eventPublisher.publish( ApplicationEvents.uninstalled( application.getKey() ) );
-
+        doUninstallApplication( application, true );
     }
 
     private void doStartApplication( final ApplicationKey key, final boolean triggerEvent )
     {
         doStartApplication( this.registry.get( key ) );
 
-        ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, true ) );
-
         if ( triggerEvent )
         {
+            ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, true ) );
             this.eventPublisher.publish( ApplicationEvents.started( key ) );
         }
 
@@ -190,10 +172,9 @@ public final class ApplicationServiceImpl
     {
         doStopApplication( this.registry.get( key ) );
 
-        ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, false ) );
-
         if ( triggerEvent )
         {
+            ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, false ) );
             this.eventPublisher.publish( ApplicationEvents.stopped( key ) );
         }
     }
@@ -225,10 +206,10 @@ public final class ApplicationServiceImpl
     private Application doInstallApplication( final ByteSource byteSource, final boolean triggerEvent )
     {
         final Application application = installOrUpdateApplication( byteSource );
-        final Node node = this.repoService.getApplicationNode( application.getKey().getName() );
 
         if ( triggerEvent )
         {
+            final Node node = this.repoService.getApplicationNode( application.getKey().getName() );
             this.eventPublisher.publish( ApplicationEvents.installed( node ) );
         }
         return application;
@@ -239,6 +220,28 @@ public final class ApplicationServiceImpl
         final ByteSource byteSource = this.repoService.getApplicationSource( nodeId );
 
         return installOrUpdateApplication( byteSource );
+    }
+
+    private void doUninstallApplication( final Application application, final boolean triggerEvent )
+    {
+        final Bundle bundle = application.getBundle();
+
+        try
+        {
+            bundle.uninstall();
+        }
+        catch ( BundleException e )
+        {
+            throw new ApplicationInstallException( "Cannot uninstall bundle " + application.getKey(), e );
+        }
+
+        this.registry.invalidate( application.getKey() );
+
+        if ( triggerEvent )
+        {
+            this.repoService.deleteApplicationNode( application );
+            this.eventPublisher.publish( ApplicationEvents.uninstalled( application.getKey() ) );
+        }
     }
 
     private Application installOrUpdateApplication( final ByteSource byteSource )
