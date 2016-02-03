@@ -4,6 +4,36 @@
     display: none;
   }
 
+  .mce-content-body {
+    cursor: auto;
+    display: none;
+    padding: 5px;
+    min-height: 70px;
+
+    &.mce-edit-focus {
+      outline: none;
+    }
+  }
+
+  section {
+    min-height: 58px;
+  }
+
+  &.active {
+
+    .mce-content-body {
+      display: block;
+
+      .box-shadow(0px 0px 5px @admin-input-blue);
+      .input-border(@admin-input-blue);
+      box-sizing: border-box;
+    }
+
+    section {
+      display: none !important;
+    }
+  }
+
   &.edit-mode {
 
     > .@{_CLS_PREFIX}text-placeholder {
@@ -40,4 +70,14 @@
     content: "\e449";
   }
 
+}
+
+.mce-toolbar-container {
+  position: fixed;
+  top: 0;
+  z-index: @z-index-context-menu;
+}
+
+.docked-panel .tab-bar {
+  margin: 0;
 }
