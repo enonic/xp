@@ -195,6 +195,17 @@ module api.liveedit {
             this.onRemoved(event => this.unregisterPageModel(this.pageModel));
         }
 
+        appendContainerForTextToolbar() {
+            if (!this.hasToolbarContainer()) {
+                this.appendChild(new api.dom.DivEl("mce-toolbar-container"));
+                this.addClass("has-toolbar-container");
+            }
+        }
+
+        hasToolbarContainer(): boolean {
+            return this.hasClass("has-toolbar-container");
+        }
+
         private setIgnorePropertyChanges(value: boolean) {
             this.ignorePropertyChanges = value;
         }
@@ -330,10 +341,22 @@ module api.liveedit {
             event.stopPropagation();
 
             if (this.isTextEditMode()) {
-                this.setTextEditMode(false);
+                if (!this.isTextEditorToolbarClicked(event)) {
+                    this.setTextEditMode(false);
+                }
             } else {
                 super.handleClick(event);
             }
+        }
+
+        isTextEditorToolbarClicked(event: MouseEvent) {
+            var target = <HTMLElement> event.target;
+            if (!!target) {
+                var parent = <HTMLElement> target.parentElement;
+                return (target.id.indexOf("mce") >= 0 || target.className.indexOf("mce") >= 0 ||
+                        parent.id.indexOf("mce") >= 0 || parent.className.indexOf("mce") >= 0)
+            }
+            return false;
         }
 
         hideContextMenu() {

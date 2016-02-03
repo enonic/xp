@@ -1,8 +1,13 @@
 module api.liveedit.text {
 
+    declare var CONFIG;
+
     import ComponentView = api.liveedit.ComponentView;
     import RegionView = api.liveedit.RegionView;
     import TextComponent = api.content.page.region.TextComponent;
+
+    import LinkModalDialog = api.form.inputtype.text.htmlarea.LinkModalDialog;
+    import AnchorModalDialog = api.form.inputtype.text.htmlarea.AnchorModalDialog;
 
     export class TextComponentViewBuilder extends ComponentViewBuilder<TextComponent> {
         constructor() {
@@ -17,20 +22,27 @@ module api.liveedit.text {
 
         private rootElement: api.dom.Element;
 
-        private editor: MediumEditorType;
+        private tinyMceEditor: HtmlAreaEditor;
+
+        private initializingTinyMceEditor: boolean;
 
         public static debug = false;
+
+        private static DEFAULT_TEXT: string = "<h2>Text</h2>";
 
         // special handling for click to allow dblclick event without triggering 2 clicks before it
         public static DBL_CLICK_TIMEOUT = 250;
         private singleClickTimer: number;
         private lastClicked: number;
 
+        private modalDialog: api.form.inputtype.text.htmlarea.ModalDialog;
+
         constructor(builder: TextComponentViewBuilder) {
 
             this.lastClicked = 0;
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.textComponent = builder.component;
+            this.initializingTinyMceEditor = false;
 
             super(builder.
                 setContextMenuActions(this.createTextContextMenuActions()).
@@ -41,13 +53,25 @@ module api.liveedit.text {
 
             this.initializeRootElement();
 
-            this.onKeyDown(this.handleKey.bind(this));
-            this.onKeyUp(this.handleKey.bind(this));
-
             this.rootElement.getHTMLElement().onpaste = this.handlePasteEvent.bind(this);
+
+            this.onAdded(() => {
+                this.deactivateAllEditors();
+                this.addClass("active");
+                if (!this.tinyMceEditor && !this.initializingTinyMceEditor) {
+                    this.initEditor();
+                }
+            });
+
+            this.getPageView().appendContainerForTextToolbar();
+
+            this.onRemoved(() => {
+                this.destroyEditor();
+            });
         }
 
         private isAllTextSelected(): boolean {
+            this.tinyMceEditor.selection.getContent() == this.tinyMceEditor.getContent();
             return this.rootElement.getHTMLElement().innerText.trim() == window['getSelection']().toString();
         }
 
@@ -97,36 +121,46 @@ module api.liveedit.text {
             }
         }
 
-        private processChanges() {
-            var text = this.rootElement.getHtml();
-
-            if (TextComponentView.debug) {
-                console.log('Processing editor contents: \n', text);
-            }
-            // strip tags to see if there is content
-            var contentWithoutTags = text.replace(/(<([^>]+)>)/ig, "").trim();
-            //TODO: strip empty tags
-            this.textComponent.setText(contentWithoutTags.length == 0 ? undefined : text);
-        }
-
         isEmpty(): boolean {
             return !this.textComponent || this.textComponent.isEmpty();
         }
 
         private doHandleDbClick(event: MouseEvent) {
-            if (this.isEditMode()) {
+            if (this.isEditMode() && this.isActive()) {
                 return;
             }
 
+            this.deactivateAllEditors();
             this.startPageTextEditMode();
+            this.setEditorActiveAndFocus();
+            api.liveedit.Highlighter.get().hide();
         }
 
         private doHandleClick(event: MouseEvent) {
             if (this.isEditMode()) {
+                if (this.isActive()) {
+                    return;
+                }
+                this.deactivateAllEditors();
+                this.setEditorActiveAndFocus();
                 return;
             }
 
             super.handleClick(event);
+        }
+
+        private setEditorActiveAndFocus() {
+            this.addClass("active");
+            if (!!this.tinyMceEditor) {
+                this.tinyMceEditor.focus();
+            }
+        }
+
+        private deactivateAllEditors() {
+            var textItemViews = this.getPageView().getItemViewsByType(api.liveedit.text.TextItemType.get());
+            textItemViews.forEach((view: ItemView) => {
+                view.removeClass("active");
+            });
         }
 
         handleClick(event: MouseEvent) {
@@ -140,7 +174,7 @@ module api.liveedit.text {
                 event.preventDefault();
             }
 
-            if (this.isEditMode()) {
+            if (this.isEditMode() && this.isActive()) {
                 if (TextComponentView.debug) {
                     console.log('Is in text edit mode, not handling click');
                     console.groupEnd();
@@ -174,21 +208,21 @@ module api.liveedit.text {
             this.lastClicked = new Date().getTime();
         }
 
-        private handleKey(e: KeyboardEvent) {
-            this.processChanges();
-            if (this.isEditMode() && e.keyCode == 27) {
-                this.closePageTextEditMode();
-            }
-        }
-
         isEditMode(): boolean {
             return this.hasClass('edit-mode');
         }
 
+        isActive(): boolean {
+            return this.hasClass('active');
+        }
+
         setEditMode(flag: boolean) {
-            if (!flag && this.editor) {
-                this.deselectText();
-                this.editor.deactivate();
+            if (!flag) {
+                if (this.tinyMceEditor) {
+                    this.processMCEValue();
+                    this.closePageTextEditMode();
+                }
+                this.removeClass("active");
             }
 
             this.toggleClass('edit-mode', flag);
@@ -197,94 +231,195 @@ module api.liveedit.text {
             if (flag) {
                 this.hideTooltip();
 
-                if (!this.editor) {
-                    this.editor = this.createEditor();
+                if (!this.tinyMceEditor && !this.initializingTinyMceEditor) {
+                    this.initEditor();
                 }
-                this.editor.activate();
 
                 if (this.textComponent.isEmpty()) {
-                    this.rootElement.setHtml("<h2>Text</h2>", false);
+                    if (!!this.tinyMceEditor) {
+                        this.tinyMceEditor.setContent(TextComponentView.DEFAULT_TEXT);
+                    }
+                    this.rootElement.setHtml(TextComponentView.DEFAULT_TEXT, false);
                     this.selectText();
                 }
             }
         }
 
-        private createEditor(): MediumEditorType {
-            var headersExtension = new MediumHeadersDropdownExtension();
-            var editor = new MediumEditor([this.rootElement.getHTMLElement()], {
-                buttons: ['bold', 'italic', 'underline', 'strikethrough',
-                    'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull',
-                    'anchor',
-                    'headers',
-                    'orderedlist', 'unorderedlist',
-                    'quote'
+        private initEditor(): void {
+            this.initializingTinyMceEditor = true;
+            var assetsUri = CONFIG.assetsUri,
+                id = this.getId().replace(/\./g, '_');
+
+            this.addClass(id);
+            this.appendChild(new api.dom.DivEl("tiny-mce-here"));
+
+            tinymce.init({
+                selector: 'div.' + id + ' .tiny-mce-here',
+                document_base_url: assetsUri + '/common/lib/tinymce/',
+                skin_url: assetsUri + '/common/lib/tinymce/skins/lightgray',
+                content_css: assetsUri + '/common/styles/api/form/inputtype/text/tinymce-editor.css',
+                theme_url: 'modern',
+                inline: true,
+                fixed_toolbar_container: '.mce-toolbar-container',
+
+                toolbar: [
+                    "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor link unlink | code"
                 ],
-                buttonLabels: {
-                    'bold': '<i class="icon-bold"></i>',
-                    'italic': '<i class="icon-italic"></i>',
-                    'underline': '<i class="icon-underline"></i>',
-                    'strikethrough': '<i class="icon-strikethrough"></i>',
-                    'justifyCenter': '<i class="icon-justify-center"></i>',
-                    'justifyFull': '<i class="icon-justify-full"></i>',
-                    'justifyLeft': '<i class="icon-justify-left"></i>',
-                    'justifyRight': '<i class="icon-justify-right"></i>',
-                    'anchor': '<i class="icon-anchor"></i>',
-                    'header1': '<i class="icon-header1"></i>',
-                    'header2': '<i class="icon-header2"></i>',
-                    'orderedlist': '<i class="icon-ordered-list"></i>',
-                    'unorderedlist': '<i class="icon-unordered-list"></i>',
-                    'quote': '<i class="icon-quote"></i>'
+                formats: {
+                    alignleft: [
+                        {
+                            selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
+                            styles: {textAlign: 'left'},
+                            defaultBlock: 'div'
+                        },
+                        {selector: 'table', collapsed: false, styles: {'float': 'left'}}
+                    ],
+                    aligncenter: [
+                        {
+                            selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
+                            styles: {textAlign: 'center'},
+                            defaultBlock: 'div'
+                        },
+                        {selector: 'table', collapsed: false, styles: {marginLeft: 'auto', marginRight: 'auto'}}
+                    ],
+                    alignright: [
+                        {
+                            selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
+                            styles: {textAlign: 'right'},
+                            defaultBlock: 'div'
+                        },
+                        {selector: 'table', collapsed: false, styles: {'float': 'right'}}
+                    ],
+                    alignjustify: [
+                        {
+                            selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
+                            styles: {textAlign: 'justify'},
+                            defaultBlock: 'div'
+                        }
+                    ]
                 },
-                cleanPastedHTML: true,
-                targetBlank: true,
-                disablePlaceholders: true,
-                firstHeader: 'h1',
-                secondHeader: 'h2',
-                extensions: {
-                    'headers': headersExtension
+                menubar: false,
+                statusbar: false,
+                paste_as_text: true,
+                plugins: ['autoresize', 'table', 'paste', 'charmap', 'code'],
+                external_plugins: {
+                    "link": assetsUri + "/common/js/form/inputtype/text/plugins/link.js",
+                    "anchor": assetsUri + "/common/js/form/inputtype/text/plugins/anchor.js"
+                },
+                object_resizing: "table",
+                autoresize_min_height: 100,
+                autoresize_bottom_margin: 0,
+
+                setup: (editor) => {
+                    editor.addCommand("openLinkDialog", this.openLinkDialog, this);
+                    editor.addCommand("openAnchorDialog", this.openAnchorDialog, this);
+                    editor.on('change', (e) => {
+                    });
+                    editor.on('focus', (e) => {
+                    });
+                    editor.on('blur', (e) => {
+                        if (!(this.modalDialog && this.modalDialog.isVisible())) {
+
+                        }
+                        this.processMCEValue();
+                        this.removeClass("active");
+                    });
+
+                    editor.on('keydown', (e) => {
+
+                        if (e.keyCode == 46 || e.keyCode == 8) { // DELETE
+                            var selectedNode = editor.selection.getRng().startContainer;
+                            if (/^(FIGURE)$/.test(selectedNode.nodeName)) {
+                                var previousEl = selectedNode.previousSibling;
+                                e.preventDefault();
+                                selectedNode.remove();
+                                if (previousEl) {
+                                    editor.selection.setNode(previousEl);
+                                }
+                                else {
+                                    editor.focus();
+                                }
+                            }
+                        }
+
+                        if (e.keyCode == 27) { // esc
+                            this.processMCEValue();
+                            this.closePageTextEditMode();
+                            this.removeClass("active");
+                        }
+                    });
+
+                    var dragParentElement;
+                    editor.on('dragstart', (e) => {
+                        dragParentElement = e.target.parentElement || e.target.parentNode;
+                    });
+
+                    editor.on('drop', (e) => {
+                        if (dragParentElement) {
+                            // prevent browser from handling the drop
+                            e.preventDefault();
+
+                            e.target.appendChild(dragParentElement);
+                            dragParentElement = undefined;
+                        }
+                    });
+
+                },
+                init_instance_callback: (editor) => {
+                    this.tinyMceEditor = editor;
+                    if (!!this.textComponent.getText()) {
+                        this.tinyMceEditor.setContent(this.textComponent.getText());
+                    } else {
+                        this.tinyMceEditor.setContent(TextComponentView.DEFAULT_TEXT);
+                        this.tinyMceEditor.selection.select(this.tinyMceEditor.getBody(), true);
+                    }
+                    this.tinyMceEditor.focus();
+                    this.initializingTinyMceEditor = false;
                 }
             });
-            var checkActiveButtons = editor.checkActiveButtons.bind(editor);
-            editor.checkActiveButtons = () => {
-                headersExtension.beforeCheckState();
-                checkActiveButtons();
-                headersExtension.afterCheckState();
-            };
-            headersExtension.setEditor(editor);
+        }
 
-            editor.onHideToolbar = () => {
-                this.processChanges();
-                headersExtension.onHideToolbar();
-            };
-            editor.onShowToolbar = () => {
-                headersExtension.onShowToolbar();
-            };
-            return editor;
+        private openLinkDialog(config: api.form.inputtype.text.HtmlAreaAnchor) {
+            this.modalDialog = new LinkModalDialog(config);
+            this.modalDialog.open();
+        }
+
+        private openAnchorDialog(editor: HtmlAreaEditor) {
+            this.modalDialog = new AnchorModalDialog(editor);
+            this.modalDialog.open();
+        }
+
+        private processMCEValue() {
+            if (this.isMceEditorEmpty()) {
+                this.textComponent.setText(TextComponentView.DEFAULT_TEXT);
+                this.rootElement.getHTMLElement().innerHTML = TextComponentView.DEFAULT_TEXT;
+            } else {
+                var editorContent = this.tinyMceEditor.getContent();
+                this.textComponent.setText(editorContent);
+                this.rootElement.getHTMLElement().innerHTML = editorContent;
+            }
+        }
+
+        private isMceEditorEmpty(): boolean {
+            var editorContent = this.tinyMceEditor.getContent();
+            return editorContent.trim() === "" || editorContent == "<h2>&nbsp;</h2>";
+        }
+
+        private destroyEditor(): void {
+            var editor = this.tinyMceEditor;
+            if (editor) {
+                try {
+                    editor.destroy(false);
+                }
+                catch (e) {
+                    //error thrown in FF on tab close - XP-2624
+                }
+            }
         }
 
         private selectText() {
-            var doc = document;
-            var text = this.rootElement.getHTMLElement();
-
-            if (window['getSelection']) { // moz, opera, webkit
-                var selection = window['getSelection']();
-                var rangeOther = doc.createRange();
-                rangeOther.selectNodeContents(text);
-                selection.removeAllRanges();
-                selection.addRange(rangeOther);
-            } else if (doc.body['createTextRange']) { // ms
-                var rangeIE = doc.body['createTextRange']();
-                rangeIE.moveToElementText(text);
-                rangeIE.select();
-            }
-            text.click();  // for the medium editor to show toolbar
-        }
-
-        private deselectText() {
-            if (window['getSelection']) {  // moz, opera, webkit
-                window['getSelection']().removeAllRanges();
-            } else if (document["selection"]) {    // ms
-                document["selection"].empty();
+            if (!!this.tinyMceEditor) {
+                this.tinyMceEditor.selection.select(this.tinyMceEditor.getBody(), true);
             }
         }
 
