@@ -25,7 +25,8 @@ public class GetAdminToolsScriptBean
         return adminToolDescriptorService.getAllowedAdminToolDescriptors( principals ).
             stream().
             filter( AdminToolDescriptor::isAppLauncherApplication ).
-            map( adminToolDescriptor -> new AdminToolMapper( adminToolDescriptor ) ).
+            map( adminToolDescriptor -> new AdminToolMapper( adminToolDescriptor,
+                                                             adminToolDescriptorService.getIconByKey( adminToolDescriptor.getKey() ) ) ).
             collect( Collectors.toList() );
     }
 
