@@ -20,13 +20,17 @@ import com.google.common.io.Files;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.home.HomeDir;
+import com.enonic.xp.config.ConfigBuilder;
+import com.enonic.xp.config.ConfigInterpolator;
+import com.enonic.xp.config.Configuration;
 
-@Component(immediate = true)
+@Component(immediate = true, configurationPid = "com.enonic.enonic.xp.app.deploy")
 public class ApplicationDeployDirectoryWatcher
     implements FileAlterationListener
 {
-    private static final long DEPLOY_DIRECTORY_CHECK_INTERVAL = 1000l;
+    private static final String DEPLOY_PATH_PROPERTY_KEY = "deploy.path";
+
+    private static final String DEPLOY_INTERVAL_PROPERTY_KEY = "deploy.interval";
 
     private static final IOFileFilter FILTER =
         FileFilterUtils.and( FileFilterUtils.fileFileFilter(), FileFilterUtils.suffixFileFilter( ".jar" ) );
@@ -35,13 +39,21 @@ public class ApplicationDeployDirectoryWatcher
 
     private ApplicationService applicationService;
 
+    private Configuration config;
+
 
     @Activate
-    public void activate()
+    public void activate( final Map<String, String> map )
         throws Exception
     {
-        File deployFolder = new File( HomeDir.get().toFile(), "deploy" );
-        FileAlterationObserver observer = new FileAlterationObserver( deployFolder, FILTER );
+        config = ConfigBuilder.create().
+            load( getClass(), "default.properties" ).
+            addAll( map ).
+            build();
+        config = new ConfigInterpolator().interpolate( this.config );
+
+        final File deployFolder = new File( config.get( DEPLOY_PATH_PROPERTY_KEY ) );
+        final FileAlterationObserver observer = new FileAlterationObserver( deployFolder, FILTER );
         observer.addListener( this );
 
         if ( deployFolder.exists() )
@@ -52,7 +64,8 @@ public class ApplicationDeployDirectoryWatcher
             }
         }
 
-        new FileAlterationMonitor( DEPLOY_DIRECTORY_CHECK_INTERVAL, observer ).start();
+        final long interval = config.get( DEPLOY_INTERVAL_PROPERTY_KEY, Long.class );
+        new FileAlterationMonitor( interval, observer ).start();
     }
 
     @Override
