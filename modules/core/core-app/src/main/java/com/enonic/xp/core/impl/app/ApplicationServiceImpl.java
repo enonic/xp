@@ -72,7 +72,7 @@ public final class ApplicationServiceImpl
                 installedApp = doInstallApplication( application.id() );
                 if ( getStartedState( application ) )
                 {
-                    doStartApplication( installedApp.getKey() );
+                    doStartApplication( installedApp.getKey(), false );
                 }
 
                 LOG.info( "Application [{}] installed successfully", installedApp.getKey() );
@@ -111,38 +111,23 @@ public final class ApplicationServiceImpl
     @Override
     public void startApplication( final ApplicationKey key, final boolean triggerEvent )
     {
-        doStartApplication( key );
-        if ( triggerEvent )
-        {
-            this.eventPublisher.publish( ApplicationEvents.started( key ) );
-        }
+        doStartApplication( key, triggerEvent );
     }
 
     @Override
     public void stopApplication( final ApplicationKey key, final boolean triggerEvent )
     {
-        doStopApplication( key );
-
-        if ( triggerEvent )
-        {
-            this.eventPublisher.publish( ApplicationEvents.stopped( key ) );
-        }
+        doStopApplication( key, triggerEvent );
     }
 
 
     @Override
     public Application installApplication( final ByteSource byteSource )
     {
-        final Application application = ApplicationHelper.callWithContext( () -> installOrUpdateApplication( byteSource ) );
+        final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( byteSource, true ) );
         LOG.info( "Application [{}] installed successfully", application.getKey() );
 
-        final Node node = ApplicationHelper.callWithContext( () -> this.repoService.getApplicationNode( application.getKey().getName() ) );
-
-        this.eventPublisher.publish( ApplicationEvents.installed( node ) );
-
-        doStartApplication( application.getKey() );
-
-        this.eventPublisher.publish( ApplicationEvents.started( application.getKey() ) );
+        doStartApplication( application.getKey(), true );
 
         return application;
     }
@@ -153,7 +138,7 @@ public final class ApplicationServiceImpl
         final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( nodeId ) );
         LOG.info( "Application [{}] installed successfully", application.getKey() );
 
-        doStartApplication( application.getKey() );
+        doStartApplication( application.getKey(), false );
 
         return application;
     }
@@ -188,19 +173,29 @@ public final class ApplicationServiceImpl
 
     }
 
-    private void doStartApplication( final ApplicationKey key )
+    private void doStartApplication( final ApplicationKey key, final boolean triggerEvent )
     {
         doStartApplication( this.registry.get( key ) );
 
         ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, true ) );
 
+        if ( triggerEvent )
+        {
+            this.eventPublisher.publish( ApplicationEvents.started( key ) );
+        }
+
     }
 
-    private void doStopApplication( final ApplicationKey key )
+    private void doStopApplication( final ApplicationKey key, final boolean triggerEvent )
     {
         doStopApplication( this.registry.get( key ) );
 
         ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, false ) );
+
+        if ( triggerEvent )
+        {
+            this.eventPublisher.publish( ApplicationEvents.stopped( key ) );
+        }
     }
 
     private void doStartApplication( final Application application )
@@ -225,6 +220,18 @@ public final class ApplicationServiceImpl
         {
             throw Exceptions.unchecked( e );
         }
+    }
+
+    private Application doInstallApplication( final ByteSource byteSource, final boolean triggerEvent )
+    {
+        final Application application = installOrUpdateApplication( byteSource );
+        final Node node = this.repoService.getApplicationNode( application.getKey().getName() );
+
+        if ( triggerEvent )
+        {
+            this.eventPublisher.publish( ApplicationEvents.installed( node ) );
+        }
+        return application;
     }
 
     private Application doInstallApplication( final NodeId nodeId )
