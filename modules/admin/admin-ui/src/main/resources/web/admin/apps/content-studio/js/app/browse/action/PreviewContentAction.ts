@@ -24,8 +24,8 @@ module app.browse.action {
 
                     this.openWindows(contentSummaries);
                 } else {
-                    api.notify.showWarning("Number of selected items exceeds maximum number allowed for preview - "
-                                            + PreviewContentHandler.BLOCK_COUNT +". Please deselect some of the items.");
+                    api.notify.showWarning("Number of selected items exceeds maximum number allowed for preview ("
+                                            + PreviewContentHandler.BLOCK_COUNT +"). Please deselect some of the items.");
                 }
             });
         }
