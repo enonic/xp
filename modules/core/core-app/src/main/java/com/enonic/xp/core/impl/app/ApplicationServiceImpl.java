@@ -158,6 +158,17 @@ public final class ApplicationServiceImpl
             return;
         }
 
+        final Boolean local = localApplicationSet.remove( key.getName() );
+        if ( Boolean.TRUE.equals( local ) )
+        {
+            final Node applicationNode = this.repoService.getApplicationNode( key.getName() );
+            if ( applicationNode != null )
+            {
+                doInstallApplication( applicationNode.id() );
+                return;
+            }
+        }
+
         doUninstallApplication( application, triggerEvent );
     }
 
