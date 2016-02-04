@@ -8,6 +8,8 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.ControllerHandlerWorker;
+import com.enonic.xp.portal.websocket.WebSocketConfig;
+import com.enonic.xp.portal.websocket.WebSocketEndpoint;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -61,6 +63,13 @@ final class ServiceHandlerWorker
         final Site site = getSiteOrNull( content );
         this.request.setSite( site );
 
+        //Executes the service
+        final ControllerScript controllerScript = getScript();
+        this.response = PortalResponse.create( controllerScript.execute( this.request ) );
+    }
+
+    private ControllerScript getScript()
+    {
         //Retrieves the resource
         Resource resource = this.resourceService.getResource( ResourceKey.from( this.applicationKey, ROOT_SERVICE_PREFIX + this.name ) );
         if ( !resource.exists() )
@@ -69,7 +78,12 @@ final class ServiceHandlerWorker
         }
 
         //Executes the service
-        final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( resource.getKey() );
-        this.response = PortalResponse.create( controllerScript.execute( this.request ) );
+        return this.controllerScriptFactory.fromDir( resource.getKey() );
+    }
+
+    @Override
+    public WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config )
+    {
+        return new WebSocketEndpointImpl( config, this::getScript );
     }
 }

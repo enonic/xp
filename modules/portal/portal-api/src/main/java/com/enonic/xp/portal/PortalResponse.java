@@ -15,6 +15,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.postprocess.HtmlTag;
+import com.enonic.xp.portal.websocket.WebSocketConfig;
 import com.enonic.xp.web.HttpStatus;
 
 @Beta
@@ -36,6 +37,8 @@ public final class PortalResponse
 
     private final boolean applyFilters;
 
+    private final WebSocketConfig webSocket;
+
     private PortalResponse( final Builder builder )
     {
         this.status = builder.status;
@@ -46,6 +49,7 @@ public final class PortalResponse
         this.contributions = builder.contributions.build();
         this.cookies = builder.cookies.build();
         this.applyFilters = builder.applyFilters;
+        this.webSocket = builder.webSocket;
     }
 
     public HttpStatus getStatus()
@@ -114,6 +118,11 @@ public final class PortalResponse
         return cookies;
     }
 
+    public WebSocketConfig getWebSocket()
+    {
+        return this.webSocket;
+    }
+
     public boolean applyFilters()
     {
         return applyFilters;
@@ -142,6 +151,8 @@ public final class PortalResponse
 
         private boolean applyFilters = true;
 
+        private WebSocketConfig webSocket;
+
         private Builder()
         {
             clearHeaders();
@@ -159,6 +170,7 @@ public final class PortalResponse
             this.status = source.status;
             cookies( source.cookies );
             this.applyFilters = source.applyFilters;
+            this.webSocket = source.webSocket;
         }
 
         public Builder body( final Object body )
@@ -276,6 +288,12 @@ public final class PortalResponse
         public Builder applyFilters( final boolean applyFilters )
         {
             this.applyFilters = applyFilters;
+            return this;
+        }
+
+        public Builder webSocket( final WebSocketConfig webSocket )
+        {
+            this.webSocket = webSocket;
             return this;
         }
 

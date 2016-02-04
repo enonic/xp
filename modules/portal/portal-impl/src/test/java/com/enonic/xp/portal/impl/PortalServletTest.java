@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.google.common.base.Joiner;
 import com.squareup.okhttp.FormEncodingBuilder;
@@ -17,6 +18,7 @@ import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.exception.ExceptionRendererImpl;
+import com.enonic.xp.portal.impl.websocket.WebSocketContextFactory;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.filter.BaseWebFilter;
@@ -40,6 +42,7 @@ public class PortalServletTest
         this.servlet = new PortalServlet();
         this.servlet.addHandler( this.handler );
         this.servlet.setExceptionRenderer( new ExceptionRendererImpl() );
+        this.servlet.setWebSocketContextFactory( Mockito.mock( WebSocketContextFactory.class ) );
 
         this.handler.response = PortalResponse.create().
             status( HttpStatus.OK ).
@@ -223,7 +226,7 @@ public class PortalServletTest
 
         this.handler.verifier = req -> {
             assertEquals( HttpMethod.POST, req.getMethod() );
-            assertEquals( "application/json; charset=UTF-8", req.getContentType() );
+            assertEquals( "application/json; charset=utf-8", req.getContentType().toLowerCase() );
             assertEquals( "{}", req.getBodyAsString() );
         };
 
