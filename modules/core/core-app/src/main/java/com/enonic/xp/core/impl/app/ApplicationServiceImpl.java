@@ -205,7 +205,7 @@ public final class ApplicationServiceImpl
 
     private Application doInstallApplication( final ByteSource byteSource, final boolean triggerEvent )
     {
-        final Application application = installOrUpdateApplication( byteSource );
+        final Application application = installOrUpdateApplication( byteSource, triggerEvent );
 
         if ( triggerEvent )
         {
@@ -219,7 +219,7 @@ public final class ApplicationServiceImpl
     {
         final ByteSource byteSource = this.repoService.getApplicationSource( nodeId );
 
-        return installOrUpdateApplication( byteSource );
+        return installOrUpdateApplication( byteSource, false );
     }
 
     private void doUninstallApplication( final Application application, final boolean triggerEvent )
@@ -244,7 +244,7 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private Application installOrUpdateApplication( final ByteSource byteSource )
+    private Application installOrUpdateApplication( final ByteSource byteSource, final boolean triggerEvent )
     {
         final String applicationName = getApplicationName( byteSource );
 
@@ -253,12 +253,18 @@ public final class ApplicationServiceImpl
         if ( applicationExists( applicationName ) )
         {
             application = doUpdateApplication( applicationName, byteSource );
-            repoService.updateApplicationNode( application, byteSource );
+            if ( triggerEvent )
+            {
+                repoService.updateApplicationNode( application, byteSource );
+            }
         }
         else
         {
             application = doInstallApplication( byteSource, applicationName );
-            repoService.createApplicationNode( application, byteSource );
+            if ( triggerEvent )
+            {
+                repoService.createApplicationNode( application, byteSource );
+            }
         }
 
         return application;
