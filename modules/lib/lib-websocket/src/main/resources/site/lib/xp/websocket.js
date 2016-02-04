@@ -1,4 +1,13 @@
 /**
+ * Websocket functions.
+ *
+ * @example
+ * var contextLib = require('/lib/xp/websocket');
+ *
+ * @module lib/xp/websocket
+ */
+
+/**
  * Add an id to a socket group.
  *
  * @example-ref examples/websocket/addToGroup.js
