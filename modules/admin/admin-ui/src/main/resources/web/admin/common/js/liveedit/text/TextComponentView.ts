@@ -26,6 +26,8 @@ module api.liveedit.text {
 
         private initializingTinyMceEditor: boolean;
 
+        private focusOnInit: boolean;
+
         public static debug = false;
 
         private static DEFAULT_TEXT: string = "<h2>Text</h2>";
@@ -56,8 +58,7 @@ module api.liveedit.text {
             this.rootElement.getHTMLElement().onpaste = this.handlePasteEvent.bind(this);
 
             this.onAdded(() => {
-                this.deactivateAllEditors();
-                this.addClass("active");
+                this.addClass("editor-focused");
                 if (!this.tinyMceEditor && !this.initializingTinyMceEditor) {
                     this.initEditor();
                 }
@@ -130,9 +131,11 @@ module api.liveedit.text {
                 return;
             }
 
-            this.deactivateAllEditors();
+            this.focusOnInit = true;
             this.startPageTextEditMode();
-            this.setEditorActiveAndFocus();
+            if (!!this.tinyMceEditor) {
+                this.tinyMceEditor.focus();
+            }
             api.liveedit.Highlighter.get().hide();
         }
 
@@ -141,26 +144,13 @@ module api.liveedit.text {
                 if (this.isActive()) {
                     return;
                 }
-                this.deactivateAllEditors();
-                this.setEditorActiveAndFocus();
+                if (!!this.tinyMceEditor) {
+                    this.tinyMceEditor.focus();
+                }
                 return;
             }
 
             super.handleClick(event);
-        }
-
-        private setEditorActiveAndFocus() {
-            this.addClass("active");
-            if (!!this.tinyMceEditor) {
-                this.tinyMceEditor.focus();
-            }
-        }
-
-        private deactivateAllEditors() {
-            var textItemViews = this.getPageView().getItemViewsByType(api.liveedit.text.TextItemType.get());
-            textItemViews.forEach((view: ItemView) => {
-                view.removeClass("active");
-            });
         }
 
         handleClick(event: MouseEvent) {
@@ -222,7 +212,7 @@ module api.liveedit.text {
                     this.processMCEValue();
                     this.closePageTextEditMode();
                 }
-                this.removeClass("active");
+                this.removeClass("editor-focused");
             }
 
             this.toggleClass('edit-mode', flag);
@@ -316,13 +306,14 @@ module api.liveedit.text {
                     editor.on('change', (e) => {
                     });
                     editor.on('focus', (e) => {
+                        this.addClass("editor-focused");
                     });
                     editor.on('blur', (e) => {
                         if (!(this.modalDialog && this.modalDialog.isVisible())) {
 
                         }
                         this.processMCEValue();
-                        this.removeClass("active");
+                        this.removeClass("editor-focused");
                     });
 
                     editor.on('keydown', (e) => {
@@ -345,7 +336,7 @@ module api.liveedit.text {
                         if (e.keyCode == 27) { // esc
                             this.processMCEValue();
                             this.closePageTextEditMode();
-                            this.removeClass("active");
+                            this.removeClass("editor-focused");
                         }
                     });
 
@@ -373,7 +364,10 @@ module api.liveedit.text {
                         this.tinyMceEditor.setContent(TextComponentView.DEFAULT_TEXT);
                         this.tinyMceEditor.selection.select(this.tinyMceEditor.getBody(), true);
                     }
-                    this.tinyMceEditor.focus();
+                    if (this.focusOnInit) {
+                        this.tinyMceEditor.focus();
+                    }
+                    this.focusOnInit = false;
                     this.initializingTinyMceEditor = false;
                 }
             });
