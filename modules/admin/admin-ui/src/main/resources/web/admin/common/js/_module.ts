@@ -10,7 +10,6 @@
 ///<reference path='lib/crossroads.d.ts' />
 ///<reference path='lib/jquery.slimscroll.d.ts' />
 ///<reference path='lib/noconflict.d.ts' />
-///<reference path='lib/medium-editor.d.ts' />
 ///<reference path='lib/tinymce.d.ts' />
 
 ///<reference path='Equitable.ts' />

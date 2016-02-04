@@ -180,8 +180,6 @@ module api.liveedit {
 
             this.parseItemViews();
 
-            this.appendChild(this.createTextModeToolbar());
-
             this.refreshEmptyState();
 
             // lock page by default for every content that has not been modified except for page template
@@ -393,23 +391,6 @@ module api.liveedit {
                 new PageUnlockedEvent(this).fire();
             }
         }
-
-        private createTextModeToolbar() {
-            var toolbar = new api.dom.DivEl('text-edit-toolbar');
-            var wrapper = new api.dom.DivEl('wrapper');
-            wrapper.setHtml('Text Edit Mode');
-            var closeButton = new api.ui.button.CloseButton('transparent');
-            closeButton.onClicked((event: MouseEvent) => {
-                event.stopPropagation();
-                event.preventDefault();
-
-                this.setTextEditMode(false);
-            });
-            wrapper.appendChild(closeButton);
-            toolbar.appendChild(wrapper);
-            return toolbar;
-        }
-
 
         isTextEditMode(): boolean {
             return this.hasClass('text-edit-mode');
