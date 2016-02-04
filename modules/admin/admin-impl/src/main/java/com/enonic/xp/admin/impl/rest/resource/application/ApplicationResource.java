@@ -130,7 +130,7 @@ public final class ApplicationResource
 
         final ByteSource byteSource = appFile.getBytes();
 
-        final Application application = this.applicationService.installApplication( byteSource );
+        final Application application = this.applicationService.installApplication( byteSource, true, true );
 
         return new ApplicationInstalledJson( application );
     }
@@ -141,7 +141,7 @@ public final class ApplicationResource
     public ApplicationSuccessJson uninstall( final ApplicationListParams params )
         throws Exception
     {
-        params.getKeys().forEach( this.applicationService::uninstallApplication );
+        params.getKeys().forEach( applicationKey -> this.applicationService.uninstallApplication( applicationKey, true, true ) );
         return new ApplicationSuccessJson();
     }
 
@@ -167,7 +167,7 @@ public final class ApplicationResource
         {
 
             final Application application =
-                this.applicationService.installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ) );
+                this.applicationService.installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ), true, true );
 
             return new ApplicationInstalledJson( application );
         }
