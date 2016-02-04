@@ -96,13 +96,43 @@ module app.wizard {
         }
 
         setPageView(pageView: PageView) {
-            this.pageView = pageView;
-            if (!this.tree && this.content && this.pageView) {
-                this.createTree(this.content, this.pageView);
-            } else if (this.tree) {
-                this.tree.setPageView(pageView);
+
+            if(this.mask) {
+                this.destroyMask();
             }
 
+            this.pageView = pageView;
+            if (!this.tree && this.content && this.pageView) {
+
+                this.createTree(this.content, this.pageView);
+                this.initMask();
+
+            } else if (this.tree) {
+
+                this.tree.deselectAll();
+
+                this.tree.setPageView(pageView).then(() => {
+                    this.initMask();
+                });
+            }
+
+            this.pageView.onRemoved(() => {
+                ResponsiveManager.unAvailableSizeChangedByItem(this.responsiveItem);
+            });
+
+            this.pageView.onPageLocked(this.pageLockedHandler.bind(this));
+        }
+
+        private destroyMask() {
+            this.mask.remove();
+            this.mask = null;
+
+            if(this.pageView) {
+                this.pageView.unPageLocked(this.pageLockedHandler.bind(this));
+            }
+        }
+
+        private initMask() {
             this.mask = new Mask(this.tree);
             this.appendChild(this.mask);
 
@@ -110,21 +140,8 @@ module app.wizard {
                 this.mask.show();
             }
 
-            this.pageView.onRemoved(() => {
-                ResponsiveManager.unAvailableSizeChangedByItem(this.responsiveItem);
-            });
-
-            this.pageView.onPageLocked((value:boolean) => {
-                if(value) {
-                    this.mask.show();
-                } else {
-                    this.mask.hide();
-                }
-            });
-
             this.mask.onContextMenu((event: MouseEvent) => this.maskClickHandler(event));
             this.mask.onClicked((event: MouseEvent) => this.maskClickHandler(event));
-
         }
 
         setContent(content: Content) {
@@ -487,15 +504,24 @@ module app.wizard {
             }
         }
 
+        private pageLockedHandler(value: boolean) {
+            if(this.mask) {
+                if (value) {
+                    this.mask.show();
+                } else {
+                    this.mask.hide();
+                }
+            }
+        }
 
         private maskClickHandler(event: MouseEvent) {
             event.stopPropagation();
             event.preventDefault();
 
-            if (event.which == 3) {
-                this.showContextMenu(null, {x: event.pageX, y: event.pageY});
-            } else {
+            if (this.contextMenu && this.contextMenu.isVisible()  ) {
                 this.hideContextMenu();
+            } else {
+                this.showContextMenu(null, {x: event.pageX, y: event.pageY});
             }
         }
 
