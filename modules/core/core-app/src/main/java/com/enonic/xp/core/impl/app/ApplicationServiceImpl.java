@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.ConcurrentMap;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -12,6 +13,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.ApplicationInstallException;
@@ -33,6 +35,10 @@ import com.enonic.xp.util.Exceptions;
 public final class ApplicationServiceImpl
     implements ApplicationService, ApplicationInvalidator
 {
+    private final static Logger LOG = LoggerFactory.getLogger( ApplicationServiceImpl.class );
+
+    private final ConcurrentMap<String, Boolean> localApplicationSet = Maps.newConcurrentMap();
+
     private ApplicationRegistry registry;
 
     private BundleContext context;
@@ -40,8 +46,6 @@ public final class ApplicationServiceImpl
     private ApplicationRepoService repoService;
 
     private EventPublisher eventPublisher;
-
-    private final static Logger LOG = LoggerFactory.getLogger( ApplicationServiceImpl.class );
 
     @Activate
     public void activate( final BundleContext context )
@@ -124,7 +128,8 @@ public final class ApplicationServiceImpl
     @Override
     public Application installApplication( final ByteSource byteSource, final boolean cluster, final boolean triggerEvent )
     {
-        final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( byteSource, triggerEvent ) );
+        final Application application =
+            ApplicationHelper.callWithContext( () -> doInstallApplication( byteSource, cluster, triggerEvent ) );
         LOG.info( "Application [{}] installed successfully", application.getKey() );
 
         doStartApplication( application.getKey(), triggerEvent );
@@ -203,9 +208,9 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private Application doInstallApplication( final ByteSource byteSource, final boolean triggerEvent )
+    private Application doInstallApplication( final ByteSource byteSource, final boolean cluster, final boolean triggerEvent )
     {
-        final Application application = installOrUpdateApplication( byteSource, triggerEvent );
+        final Application application = installOrUpdateApplication( byteSource, cluster, triggerEvent );
 
         if ( triggerEvent )
         {
@@ -219,7 +224,7 @@ public final class ApplicationServiceImpl
     {
         final ByteSource byteSource = this.repoService.getApplicationSource( nodeId );
 
-        return installOrUpdateApplication( byteSource, false );
+        return installOrUpdateApplication( byteSource, false, false );
     }
 
     private void doUninstallApplication( final Application application, final boolean triggerEvent )
@@ -247,9 +252,22 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private Application installOrUpdateApplication( final ByteSource byteSource, final boolean triggerEvent )
+    private Application installOrUpdateApplication( final ByteSource byteSource, final boolean cluster, final boolean triggerEvent )
     {
         final String applicationName = getApplicationName( byteSource );
+
+        localApplicationSet.compute( applicationName, ( key, present ) -> {
+            if ( Boolean.TRUE.equals( present ) )
+            {
+                if ( cluster )
+                {
+                    throw new ApplicationInstallException(
+                        "Cannot install application : '" + applicationName + "'. Application already installed in development mode" );
+                }
+            }
+
+            return !cluster;
+        } );
 
         final Application application;
 
