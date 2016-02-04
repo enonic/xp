@@ -228,7 +228,7 @@ module app.wizard.page {
             if (liveEditWindow) {
                 if (liveEditWindow.wemjq) {
                     // Give loaded page same CONFIG.baseUri as in admin
-                    liveEditWindow.CONFIG = {baseUri: CONFIG.baseUri};
+                    liveEditWindow.CONFIG = {baseUri: CONFIG.baseUri, assetsUri: CONFIG.assetsUri};
 
                     this.livejq = <JQueryStatic>liveEditWindow.wemjq;
 
