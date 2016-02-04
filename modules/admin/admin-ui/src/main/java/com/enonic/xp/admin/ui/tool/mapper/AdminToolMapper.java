@@ -9,9 +9,12 @@ public final class AdminToolMapper
 {
     private final AdminToolDescriptor value;
 
-    public AdminToolMapper( final AdminToolDescriptor value )
+    private final String icon;
+
+    public AdminToolMapper( final AdminToolDescriptor value, final String icon )
     {
         this.value = value;
+        this.icon = icon;
     }
 
     private void serialize( final MapGenerator gen, final AdminToolDescriptor value )
@@ -23,7 +26,10 @@ public final class AdminToolMapper
 
         gen.value( "displayName", value.getDisplayName() );
         gen.value( "description", value.getDescription() );
-        gen.value( "icon", value.getIcon() );
+        if ( icon != null )
+        {
+            gen.value( "icon", icon );
+        }
     }
 
     @Override

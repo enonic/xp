@@ -60,8 +60,8 @@ module api.app.browse {
             return this.items;
         }
 
-        setItems(items: BrowseItem<M>[]): BrowseItemsChanges {
-            let changes = new BrowseItemsChanges();
+        setItems(items: BrowseItem<M>[]): BrowseItemsChanges<M> {
+            let changes = new BrowseItemsChanges<M>();
 
             let doFilter = (valueLeft: BrowseItem<M>, valueRight: BrowseItem<M>) => {
                 if (valueLeft.getPath() && valueLeft.getPath() === valueRight.getPath()) {

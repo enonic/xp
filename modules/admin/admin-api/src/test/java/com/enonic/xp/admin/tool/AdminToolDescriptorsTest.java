@@ -22,14 +22,12 @@ public class AdminToolDescriptorsTest
     {
         final AdminToolDescriptor adminToolDescriptor1 = AdminToolDescriptor.create().
             displayName( "My admin tool" ).
-            icon( "/path/to/icon" ).
             addAllowedPrincipals( PrincipalKey.from( "role:system.admin" ) ).
             key( DescriptorKey.from( "module:my-admin-tool" ) ).
             build();
 
         final AdminToolDescriptor adminToolDescriptor2 = AdminToolDescriptor.create().
             displayName( "My second admin tool 2" ).
-            icon( "/path/to/secondicon" ).
             key( DescriptorKey.from( "module:my-second-admin-tool" ) ).
             build();
 

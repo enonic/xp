@@ -2,7 +2,6 @@
 <tool xmlns="urn:enonic:xp:model:1.0">
   <allow>
     <principal>role:system.admin</principal>
-    <principal>role:cms.admin</principal>
-    <principal>role:cms.cm.app</principal>
+    <principal>role:system.admin.login</principal>
   </allow>
 </tool>

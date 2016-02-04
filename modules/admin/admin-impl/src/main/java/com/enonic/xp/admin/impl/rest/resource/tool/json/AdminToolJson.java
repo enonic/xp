@@ -10,7 +10,5 @@ public class AdminToolJson
 
     public String description;
 
-    public String icon;
-
     public Set<String> allow;
 }

@@ -2,7 +2,6 @@
 <tool xmlns="urn:enonic:xp:model:1.0">
   <display-name>Content Studio</display-name>
   <description>Manage content and sites</description>
-  <icon>icon-transparent.svg</icon>
   <allow>
     <principal>role:system.admin</principal>
     <principal>role:cms.admin</principal>

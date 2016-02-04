@@ -38,6 +38,16 @@ public final class AdminToolDescriptorServiceImpl
             execute();
     }
 
+
+    @Override
+    public String getIconByKey( final DescriptorKey descriptorKey )
+    {
+        return new GetAdminToolIconCommand().
+            resourceService( this.resourceService ).
+            descriptorKey( descriptorKey ).
+            execute();
+    }
+
     @Reference
     public void setApplicationService( final ApplicationService applicationService )
     {

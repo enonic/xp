@@ -8,7 +8,7 @@ module api.ui.treegrid.actions {
 
         getAllActions(): Action[];
 
-        updateActionsEnabledState(browseItems: BrowseItem<M>[], changes?: BrowseItemsChanges): wemQ.Promise<BrowseItem<M>[]>;
+        updateActionsEnabledState(browseItems: BrowseItem<M>[], changes?: BrowseItemsChanges<any>): wemQ.Promise<BrowseItem<M>[]>;
 
     }
 }

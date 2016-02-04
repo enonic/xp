@@ -1,28 +1,28 @@
 module api.app.browse {
 
-    export class BrowseItemsChanges {
+    export class BrowseItemsChanges<M extends api.Equitable> {
 
-        private added: BrowseItem<any>[];
-        private removed: BrowseItem<any>[];
+        private added: BrowseItem<M>[];
+        private removed: BrowseItem<M>[];
 
-        constructor(added?: BrowseItem<any>[], removed?: BrowseItem<any>[]) {
+        constructor(added?: BrowseItem<M>[], removed?: BrowseItem<M>[]) {
             this.added = added || [];
             this.removed = removed || [];
         }
 
-        setAdded(added: BrowseItem<any>[]) {
+        setAdded(added: BrowseItem<M>[]) {
             this.added = added;
         }
 
-        getAdded(): BrowseItem<any>[] {
+        getAdded(): BrowseItem<M>[] {
             return this.added;
         }
 
-        setRemoved(removed: BrowseItem<any>[]) {
+        setRemoved(removed: BrowseItem<M>[]) {
             this.removed = removed;
         }
 
-        getRemoved(): BrowseItem<any>[] {
+        getRemoved(): BrowseItem<M>[] {
             return this.removed;
         }
     }
