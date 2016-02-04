@@ -239,7 +239,10 @@ public final class ApplicationServiceImpl
 
         if ( triggerEvent )
         {
-            this.repoService.deleteApplicationNode( application );
+            ApplicationHelper.callWithContext( () -> {
+                this.repoService.deleteApplicationNode( application );
+                return null;
+            } );
             this.eventPublisher.publish( ApplicationEvents.uninstalled( application.getKey() ) );
         }
     }
