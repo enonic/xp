@@ -73,7 +73,7 @@ public final class ApplicationServiceImpl
             final Application installedApp;
             try
             {
-                installedApp = doInstallApplication( application.id() );
+                installedApp = doInstallApplication( application.id(), true, false );
                 if ( getStartedState( application ) )
                 {
                     doStartApplication( installedApp.getKey(), false );
@@ -140,7 +140,7 @@ public final class ApplicationServiceImpl
     @Override
     public Application installApplication( final NodeId nodeId )
     {
-        final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( nodeId ) );
+        final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( nodeId, true, true ) );
         LOG.info( "Application [{}] installed successfully", application.getKey() );
 
         doStartApplication( application.getKey(), false );
@@ -158,18 +158,21 @@ public final class ApplicationServiceImpl
             return;
         }
 
+        doUninstallApplication( application, triggerEvent );
+
         final Boolean local = localApplicationSet.remove( key.getName() );
         if ( Boolean.TRUE.equals( local ) )
         {
             final Node applicationNode = this.repoService.getApplicationNode( key.getName() );
             if ( applicationNode != null )
             {
-                doInstallApplication( applicationNode.id() );
+                doInstallApplication( applicationNode.id(), true, false );
+                LOG.info( "Application [{}] installed successfully", application.getKey() );
+                doStartApplication( application.getKey(), false );
                 return;
             }
         }
 
-        doUninstallApplication( application, triggerEvent );
     }
 
     private void doStartApplication( final ApplicationKey key, final boolean triggerEvent )
@@ -231,11 +234,11 @@ public final class ApplicationServiceImpl
         return application;
     }
 
-    private Application doInstallApplication( final NodeId nodeId )
+    private Application doInstallApplication( final NodeId nodeId, final boolean cluster, final boolean triggerEvent )
     {
         final ByteSource byteSource = this.repoService.getApplicationSource( nodeId );
 
-        return installOrUpdateApplication( byteSource, false, false );
+        return installOrUpdateApplication( byteSource, cluster, triggerEvent );
     }
 
     private void doUninstallApplication( final Application application, final boolean triggerEvent )
