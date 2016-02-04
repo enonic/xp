@@ -122,12 +122,12 @@ public final class ApplicationServiceImpl
 
 
     @Override
-    public Application installApplication( final ByteSource byteSource )
+    public Application installApplication( final ByteSource byteSource, final boolean cluster, final boolean triggerEvent )
     {
-        final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( byteSource, true ) );
+        final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( byteSource, triggerEvent ) );
         LOG.info( "Application [{}] installed successfully", application.getKey() );
 
-        doStartApplication( application.getKey(), true );
+        doStartApplication( application.getKey(), triggerEvent );
 
         return application;
     }
@@ -144,7 +144,7 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public void uninstallApplication( final ApplicationKey key )
+    public void uninstallApplication( final ApplicationKey key, final boolean cluster, final boolean triggerEvent )
     {
         final Application application = this.registry.get( key );
         if ( application == null )
@@ -153,7 +153,7 @@ public final class ApplicationServiceImpl
             return;
         }
 
-        doUninstallApplication( application, true );
+        doUninstallApplication( application, triggerEvent );
     }
 
     private void doStartApplication( final ApplicationKey key, final boolean triggerEvent )
@@ -278,9 +278,8 @@ public final class ApplicationServiceImpl
 
     private boolean applicationExists( final String applicationName )
     {
-        final Node existingNode = this.repoService.getApplicationNode( applicationName );
-
-        return existingNode != null;
+        final Application existingApp = this.registry.get( ApplicationKey.from( applicationName ) );
+        return existingApp != null;
     }
 
     private Application doInstallApplication( final ByteSource byteSource, final String applicationName )
