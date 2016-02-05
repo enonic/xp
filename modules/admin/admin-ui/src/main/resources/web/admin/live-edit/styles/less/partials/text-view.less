@@ -91,3 +91,18 @@
 .docked-panel .tab-bar {
   margin: 0;
 }
+
+.close-edit-mode-button.icon-close {
+  position: fixed;
+  top: 10px;
+  right: 5px;
+  z-index: @z-index-context-menu + 1;
+  pointer-events: auto;
+  color: @admin-shadow-gray;
+  font-size: 14px;
+  display: none;
+
+  &.active {
+    display: inline;
+  }
+}

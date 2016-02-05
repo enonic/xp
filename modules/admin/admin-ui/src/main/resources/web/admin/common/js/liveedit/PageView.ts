@@ -71,6 +71,8 @@ module api.liveedit {
 
         private disableContextMenu: boolean;
 
+        private closeTextEditModeButton: api.dom.Element;
+
         private registerPageModel(pageModel: PageModel, resetAction: api.ui.Action) {
             if (PageView.debug) {
                 console.log('PageView.registerPageModel', pageModel);
@@ -148,6 +150,7 @@ module api.liveedit {
                     }
                     else {
                         (<api.liveedit.text.TextComponentView>itemView).setEditMode(true);
+                        this.closeTextEditModeButton.toggleClass("active", true);
                     }
                     itemView.giveFocus();
                 } else {
@@ -180,6 +183,10 @@ module api.liveedit {
 
             this.parseItemViews();
 
+            this.closeTextEditModeButton = this.createCloseTextEditModeEl();
+
+            this.appendChild(this.closeTextEditModeButton);
+
             this.refreshEmptyState();
 
             // lock page by default for every content that has not been modified except for page template
@@ -191,6 +198,16 @@ module api.liveedit {
             this.listenToMouseEvents();
 
             this.onRemoved(event => this.unregisterPageModel(this.pageModel));
+        }
+
+        private createCloseTextEditModeEl(): api.dom.Element {
+            var closeButton = new api.dom.AEl("close-edit-mode-button icon-close");
+            closeButton.onClicked((event: MouseEvent) => {
+                this.setTextEditMode(false);
+                event.stopPropagation();
+                return false;
+            });
+            return closeButton;
         }
 
         appendContainerForTextToolbar() {
@@ -406,6 +423,7 @@ module api.liveedit {
                 textView = <api.liveedit.text.TextComponentView> view;
                 if (textView.isEditMode() != flag) {
                     textView.setEditMode(flag);
+                    this.closeTextEditModeButton.toggleClass("active", flag);
                 }
             });
 
