@@ -35,7 +35,8 @@
 <script type="text/javascript">
     var CONFIG = {
         autoOpenLauncher: true,
-        appId: 'home'
+        appId: 'home',
+        portalAssetsUrl: '{{portalAssetsUrl}}'
     };
 </script>
 
@@ -56,7 +57,7 @@
 </div>
 
 <script type="text/javascript">
-    document.getElementById("background-image").className = "lazy-image";
+    document.getElementById("background-image").classList.remove("empty");
 </script>
 </body>
 </html>

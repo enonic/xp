@@ -1,3 +1,33 @@
+//Variables
+@import "../../variables/color";
+@import "../../variables/font";
+@import "../../variables/mixins";
+@import "../../variables/z-index";
+
+@panel-outer-width: 320px;
+@panel-inner-width: 280px;
+@header-height: 44px;
+@panel-indent: 30px;
+
+
+.body-mask.launcher {
+  .reset(true);
+  .opacity(0.5);
+
+  background-color: @admin-white;
+  display: none;
+  z-index: @z-index-mask;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+
+  &.app-home {
+    .opacity(0);
+  }
+}
+
 .launcher-panel {
 
   position: fixed;
@@ -196,6 +226,10 @@
 
   &::-moz-focus-inner {
     border: 0;
+  }
+
+  &:focus {
+    outline: none;
   }
 
   .line {

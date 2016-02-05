@@ -631,3 +631,49 @@
   position: absolute;
   bottom: -8px;
 }
+
+.home-main-container-mixin() {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  background-repeat: no-repeat;
+  background-position: center center;
+
+  background-attachment: fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+
+  font-family: @admin-font-family;
+  font-size: @admin-font-size;
+
+  .center-panel {
+    width: 100%;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.4);
+    top: 0;
+    bottom: 0;
+  }
+
+  .lazy-image {
+    width: 100%;
+    height: 100%;
+
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+
+    transition: opacity 1s;
+    &.empty {
+      opacity: 0;
+    }
+  }
+}
