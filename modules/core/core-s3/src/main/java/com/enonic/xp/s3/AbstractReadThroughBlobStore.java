@@ -1,6 +1,7 @@
-package com.enonic.xp.repo.impl.blob.objectstore;
+package com.enonic.xp.s3;
 
-import com.enonic.xp.repo.impl.blob.BlobStore;
+
+import com.enonic.xp.blob.BlobStore;
 
 public abstract class AbstractReadThroughBlobStore
     implements BlobStore
@@ -15,7 +16,6 @@ public abstract class AbstractReadThroughBlobStore
     public static class Builder<B extends Builder>
     {
         private BlobStore localStore;
-
 
         public B localStore( BlobStore localStore )
         {

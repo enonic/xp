@@ -9,10 +9,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
-import com.enonic.xp.repo.impl.blob.BlobKey;
-import com.enonic.xp.repo.impl.blob.BlobRecord;
-import com.enonic.xp.repo.impl.blob.BlobStore;
-import com.enonic.xp.repo.impl.blob.BlobStoreException;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.blob.BlobStoreException;
 
 public final class FileBlobStore
     implements BlobStore

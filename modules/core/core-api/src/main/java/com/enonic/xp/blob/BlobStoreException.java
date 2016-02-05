@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.blob;
+package com.enonic.xp.blob;
 
 public final class BlobStoreException
     extends RuntimeException

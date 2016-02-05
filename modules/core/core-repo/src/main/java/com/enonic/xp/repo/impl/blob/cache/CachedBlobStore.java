@@ -4,10 +4,10 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.repo.impl.blob.BlobKey;
-import com.enonic.xp.repo.impl.blob.BlobRecord;
-import com.enonic.xp.repo.impl.blob.BlobStore;
-import com.enonic.xp.repo.impl.blob.BlobStoreException;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.blob.BlobStoreException;
 
 public final class CachedBlobStore
     implements BlobStore

@@ -5,8 +5,8 @@ import java.io.File;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
-import com.enonic.xp.repo.impl.blob.BlobKey;
-import com.enonic.xp.repo.impl.blob.BlobRecord;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
 
 final class FileBlobRecord
     implements BlobRecord

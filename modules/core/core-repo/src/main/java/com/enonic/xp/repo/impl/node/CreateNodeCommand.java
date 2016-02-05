@@ -5,6 +5,8 @@ import java.time.Instant;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -26,8 +28,6 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.repo.impl.blob.BlobRecord;
-import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;

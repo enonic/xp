@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.blob.objectstore;
+package com.enonic.xp.s3;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -7,9 +7,9 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.repo.impl.blob.BlobKey;
-import com.enonic.xp.repo.impl.blob.BlobRecord;
-import com.enonic.xp.repo.impl.blob.BlobStore;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.BlobStore;
 
 public class AmazonS3BlobStoreTest
 {

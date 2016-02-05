@@ -6,9 +6,9 @@ import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.repo.impl.blob.BlobKey;
-import com.enonic.xp.repo.impl.blob.BlobRecord;
-import com.enonic.xp.repo.impl.blob.BlobStore;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.BlobStore;
 
 import static org.junit.Assert.*;
 

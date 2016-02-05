@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.blob.objectstore;
+package com.enonic.xp.s3;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;

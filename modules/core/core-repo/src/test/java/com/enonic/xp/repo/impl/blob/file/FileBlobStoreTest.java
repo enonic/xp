@@ -7,8 +7,8 @@ import org.junit.rules.TemporaryFolder;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.repo.impl.blob.BlobKey;
-import com.enonic.xp.repo.impl.blob.BlobRecord;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
 
 import static org.junit.Assert.*;
 

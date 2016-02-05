@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.blob.objectstore;
+package com.enonic.xp.s3;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,9 +13,9 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
-import com.enonic.xp.repo.impl.blob.BlobKey;
-import com.enonic.xp.repo.impl.blob.BlobRecord;
-import com.enonic.xp.repo.impl.blob.BlobStoreException;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.BlobStoreException;
 
 public class AmazonS3BlobStore
     extends AbstractReadThroughBlobStore

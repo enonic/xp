@@ -2,8 +2,8 @@ package com.enonic.xp.repo.impl.blob.cache;
 
 import com.google.common.cache.Weigher;
 
-import com.enonic.xp.repo.impl.blob.BlobKey;
-import com.enonic.xp.repo.impl.blob.BlobRecord;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
 
 final class BlobRecordWeigher
     implements Weigher<BlobKey, BlobRecord>

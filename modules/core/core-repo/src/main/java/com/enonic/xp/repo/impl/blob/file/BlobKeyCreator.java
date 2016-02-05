@@ -5,8 +5,8 @@ import java.io.IOException;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.repo.impl.blob.BlobKey;
-import com.enonic.xp.repo.impl.blob.BlobStoreException;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobStoreException;
 
 final class BlobKeyCreator
 {
