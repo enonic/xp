@@ -56,7 +56,7 @@ module api.form {
                     var formItemSet: FormItemSet = <FormItemSet>formItem;
                     var propertyArray: PropertyArray = propertySet.getPropertyArray(formItemSet.getName());
 
-                    if (propertyArray && propertyArray.getSize() == 0) {
+                    if (!propertyArray || propertyArray.getSize() == 0) {
                         this.context = FormContext.create().setShowEmptyFormItemSetOccurrences(false).build();
                     }
                     var formItemSetView = new FormItemSetView(<FormItemSetViewConfig>{
