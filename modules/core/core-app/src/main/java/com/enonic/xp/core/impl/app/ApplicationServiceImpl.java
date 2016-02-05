@@ -113,6 +113,12 @@ public final class ApplicationServiceImpl
     }
 
     @Override
+    public boolean isLocalApplication( final ApplicationKey key )
+    {
+        return Boolean.TRUE.equals( localApplicationSet.get( key.getName() ) );
+    }
+
+    @Override
     public void startApplication( final ApplicationKey key, final boolean triggerEvent )
     {
         doStartApplication( key, triggerEvent );

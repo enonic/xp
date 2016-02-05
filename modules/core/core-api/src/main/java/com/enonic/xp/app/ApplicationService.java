@@ -15,6 +15,8 @@ public interface ApplicationService
 
     Applications getInstalledApplications();
 
+    boolean isLocalApplication( ApplicationKey key );
+
     void startApplication( ApplicationKey key, final boolean triggerEvent );
 
     void stopApplication( ApplicationKey key, final boolean triggerEvent );
