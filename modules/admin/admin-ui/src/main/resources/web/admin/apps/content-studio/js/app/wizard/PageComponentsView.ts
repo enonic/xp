@@ -17,6 +17,8 @@ module app.wizard {
     import ItemView = api.liveedit.ItemView;
     import TextComponentView = api.liveedit.text.TextComponentView;
 
+    import Mask = api.ui.mask.Mask;
+
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
@@ -36,6 +38,8 @@ module app.wizard {
         private floating: boolean;
         private draggable: boolean;
         private clicked: boolean;
+
+        private mask: Mask;
 
         private selectionChangedHandler: (treeNode: TreeNode<ItemView>) =>
             void = api.util.AppHelper.debounce(this.selectItem, 500, this.clicked);
@@ -75,6 +79,9 @@ module app.wizard {
             this.onShown((event) => {
                 this.constrainToParent();
                 this.getHTMLElement().style.display = "";
+                if (this.pageView.isLocked()) {
+                    this.mask.show();
+                }
             });
 
             this.responsiveItem = ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get(), (item: ResponsiveItem) => {
@@ -89,16 +96,52 @@ module app.wizard {
         }
 
         setPageView(pageView: PageView) {
+
+            if(this.mask) {
+                this.destroyMask();
+            }
+
             this.pageView = pageView;
             if (!this.tree && this.content && this.pageView) {
+
                 this.createTree(this.content, this.pageView);
+                this.initMask();
+
             } else if (this.tree) {
-                this.tree.setPageView(pageView);
+
+                this.tree.deselectAll();
+
+                this.tree.setPageView(pageView).then(() => {
+                    this.initMask();
+                });
             }
 
             this.pageView.onRemoved(() => {
                 ResponsiveManager.unAvailableSizeChangedByItem(this.responsiveItem);
-            })
+            });
+
+            this.pageView.onPageLocked(this.pageLockedHandler.bind(this));
+        }
+
+        private destroyMask() {
+            this.mask.remove();
+            this.mask = null;
+
+            if(this.pageView) {
+                this.pageView.unPageLocked(this.pageLockedHandler.bind(this));
+            }
+        }
+
+        private initMask() {
+            this.mask = new Mask(this.tree);
+            this.appendChild(this.mask);
+
+            if(this.pageView.isLocked()) {
+                this.mask.show();
+            }
+
+            this.mask.onContextMenu((event: MouseEvent) => this.maskClickHandler(event));
+            this.mask.onClicked((event: MouseEvent) => this.maskClickHandler(event));
         }
 
         setContent(content: Content) {
@@ -253,7 +296,9 @@ module app.wizard {
                     rowElement = rowElement.parentElement;
                 }
 
-                this.highlightRow(rowElement, selected);
+                if(!this.pageView.isLocked()) {
+                    this.highlightRow(rowElement, selected);
+                }
             });
 
             this.tree.getGrid().subscribeOnMouseLeave((event, data) => {
@@ -459,13 +504,41 @@ module app.wizard {
             }
         }
 
+        private pageLockedHandler(value: boolean) {
+            if(this.mask) {
+                if (value) {
+                    this.mask.show();
+                } else {
+                    this.mask.hide();
+                }
+            }
+        }
+
+        private maskClickHandler(event: MouseEvent) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            if (this.contextMenu && this.contextMenu.isVisible()  ) {
+                this.hideContextMenu();
+            } else {
+                this.showContextMenu(null, {x: event.pageX, y: event.pageY});
+            }
+        }
+
+
+
         private isMenuIconClicked(cellNumber: number): boolean {
             return cellNumber == 1;
         }
 
         private showContextMenu(row: number, clickPosition: api.liveedit.Position) {
-            var itemView: ItemView = this.tree.getGrid().getDataView().getItem(row).getData();
-            var pageView: api.liveedit.PageView = itemView.getPageView();
+            var node = this.tree.getGrid().getDataView().getItem(row);
+            if(node) {
+                var itemView: ItemView = node.getData(),
+                    pageView: api.liveedit.PageView = itemView.getPageView();
+            } else {
+                pageView = this.pageView;
+            }
             var contextMenuActions: api.ui.Action[];
 
             if (pageView.isLocked()) {
