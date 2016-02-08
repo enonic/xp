@@ -41,7 +41,7 @@
 
   .app-row-selected {
     background-color: rgba(255, 255, 255, 0.3);
-    .application .app-info .app-description {
+    .app-info .app-description {
       color: @admin-white;
     }
   }
@@ -82,9 +82,6 @@
     transition: right 300ms ease-out;
   }
 
-  .container-title {
-    .container-title-mixin();
-  }
 
   .launcher-title {
     position: absolute;
@@ -95,6 +92,15 @@
     color: @admin-white;
     font-size: 25px;
     display: table;
+
+    .container-title {
+      .ellipsis();
+      .container-title-mixin();
+      width: 65%;
+      &::first-letter {
+        text-transform: uppercase;
+      }
+    }
   }
 
   .launcher-app-container {
@@ -116,18 +122,18 @@
     a {
       color: @admin-white;
       text-decoration: none;
-    }
-
-    span, .app-icon {
-      color: @admin-white;
+      &:focus {
+        outline: none;
+      }
     }
 
     .app-row {
 
       padding: 10px 0 10px 30px;
+      display: table;
 
-      a:focus {
-        outline: none;
+      & > * {
+        display: table-cell;
       }
 
       &.active{
@@ -135,41 +141,34 @@
         padding-left: 26px;
       }
 
-      .application {
-        display: table;
-        & > * {
-          display: table-cell;
+      .app-info {
+        padding-left: 15px;
+        vertical-align: middle;
+        .app-name {
+          width: 220px;
+          font-size: 18px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          margin: 0;
         }
-
-        .app-info {
-          padding-left: 15px;
-          vertical-align: middle;
-          .app-name {
-            width: 220px;
-            font-size: 18px;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            margin: 0;
-          }
-          .app-description {
-            width: 220px;
-            font-size: 14px;
-            color: darkgray;
-            margin: 0;
-          }
+        .app-description {
+          width: 220px;
+          font-size: 14px;
+          color: darkgray;
+          margin: 0;
         }
+      }
 
-        .app-icon {
-          vertical-align: middle;
-          width: 40px;
-          height: 40px;
-          pointer-events: none;
+      .app-icon {
+        vertical-align: middle;
+        width: 40px;
+        height: 40px;
+        pointer-events: none;
 
-          svg {
-            width: inherit !important;
-            height: inherit !important;
-          }
+        svg {
+          width: inherit !important;
+          height: inherit !important;
         }
       }
     }

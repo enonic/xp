@@ -327,19 +327,19 @@
 .launcher-panel .app-row-selected {
   background-color: rgba(255, 255, 255, 0.3);
 }
-.launcher-panel .app-row-selected .application .app-info .app-description {
+.launcher-panel .app-row-selected .app-info .app-description {
   color: #ffffff;
 }
 .launcher-panel.keyboard-navigation .launcher-app-container .app-row.selected {
   background-color: rgba(255, 255, 255, 0.3);
 }
-.launcher-panel.keyboard-navigation .launcher-app-container .app-row.selected .application .app-info .app-description {
+.launcher-panel.keyboard-navigation .launcher-app-container .app-row.selected .app-info .app-description {
   color: #ffffff;
 }
 .launcher-panel:not(.keyboard-navigation) .launcher-app-container .app-row:hover {
   background-color: rgba(255, 255, 255, 0.3);
 }
-.launcher-panel:not(.keyboard-navigation) .launcher-app-container .app-row:hover .application .app-info .app-description {
+.launcher-panel:not(.keyboard-navigation) .launcher-app-container .app-row:hover .app-info .app-description {
   color: #ffffff;
 }
 .launcher-panel > * {
@@ -365,14 +365,6 @@
   -webkit-transition: right 300ms ease-out;
   transition: right 300ms ease-out;
 }
-.launcher-panel .container-title {
-  color: #ffffff;
-  font-family: "Open Sans", sans-serif;
-  font-size: 32px;
-  font-weight: 100;
-  position: absolute;
-  bottom: -8px;
-}
 .launcher-panel .launcher-title {
   position: absolute;
   top: 0;
@@ -382,6 +374,21 @@
   color: #ffffff;
   font-size: 25px;
   display: table;
+}
+.launcher-panel .launcher-title .container-title {
+  overflow: hidden;
+  white-space: pre;
+  text-overflow: ellipsis;
+  color: #ffffff;
+  font-family: "Open Sans", sans-serif;
+  font-size: 32px;
+  font-weight: 100;
+  position: absolute;
+  bottom: -8px;
+  width: 65%;
+}
+.launcher-panel .launcher-title .container-title::first-letter {
+  text-transform: uppercase;
 }
 .launcher-panel .launcher-app-container {
   -webkit-box-sizing: border-box;
@@ -402,31 +409,25 @@
   color: #ffffff;
   text-decoration: none;
 }
-.launcher-panel .launcher-app-container span,
-.launcher-panel .launcher-app-container .app-icon {
-  color: #ffffff;
+.launcher-panel .launcher-app-container a:focus {
+  outline: none;
 }
 .launcher-panel .launcher-app-container .app-row {
   padding: 10px 0 10px 30px;
+  display: table;
 }
-.launcher-panel .launcher-app-container .app-row a:focus {
-  outline: none;
+.launcher-panel .launcher-app-container .app-row > * {
+  display: table-cell;
 }
 .launcher-panel .launcher-app-container .app-row.active {
   border-left: 4px solid #cb0300;
   padding-left: 26px;
 }
-.launcher-panel .launcher-app-container .app-row .application {
-  display: table;
-}
-.launcher-panel .launcher-app-container .app-row .application > * {
-  display: table-cell;
-}
-.launcher-panel .launcher-app-container .app-row .application .app-info {
+.launcher-panel .launcher-app-container .app-row .app-info {
   padding-left: 15px;
   vertical-align: middle;
 }
-.launcher-panel .launcher-app-container .app-row .application .app-info .app-name {
+.launcher-panel .launcher-app-container .app-row .app-info .app-name {
   width: 220px;
   font-size: 18px;
   overflow: hidden;
@@ -434,19 +435,19 @@
   text-overflow: ellipsis;
   margin: 0;
 }
-.launcher-panel .launcher-app-container .app-row .application .app-info .app-description {
+.launcher-panel .launcher-app-container .app-row .app-info .app-description {
   width: 220px;
   font-size: 14px;
   color: darkgray;
   margin: 0;
 }
-.launcher-panel .launcher-app-container .app-row .application .app-icon {
+.launcher-panel .launcher-app-container .app-row .app-icon {
   vertical-align: middle;
   width: 40px;
   height: 40px;
   pointer-events: none;
 }
-.launcher-panel .launcher-app-container .app-row .application .app-icon svg {
+.launcher-panel .launcher-app-container .app-row .app-icon svg {
   width: inherit !important;
   height: inherit !important;
 }

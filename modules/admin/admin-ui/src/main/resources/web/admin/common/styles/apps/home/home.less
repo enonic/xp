@@ -10,24 +10,6 @@
 
 .home-main-container {
   .home-main-container-mixin();
-
-  .container-title {
-    .container-title-mixin();
-  }
-
-  .header {
-    position: absolute;
-    display: table;
-    top: 0;
-    height: @header-height;
-    width: 100%;
-    padding-left: @panel-indent;
-    z-index: 1;
-    text-transform: uppercase;
-    background-color: rgba(0, 0, 0, 0.3);
-    .box-sizing(border-box);
-  }
-
 }
 
 .home-main-footer {
@@ -37,9 +19,14 @@
   bottom: 15px;
   text-align: left;
   z-index: @z-index-launcher-panel;
-  background-color : transparent;
+  background-color: transparent;
   font-family: @admin-font-family;
-  font-size: @admin-font-size;
+  font-size: 14px;
+
+  & > * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
   a {
     display: table-cell;
