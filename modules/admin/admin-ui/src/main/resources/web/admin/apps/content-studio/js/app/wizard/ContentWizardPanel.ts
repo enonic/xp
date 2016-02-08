@@ -544,15 +544,25 @@ module app.wizard {
             };
 
             var updateHandler = (event: api.content.event.ContentUpdatedEvent) => {
+                var isCurrent = this.isCurrentContentId(event.getContentId());
 
-                if (this.isCurrentContentId(event.getContentId())) {
+                // Find all html areas in form
+                var htmlAreas = this.getHtmlAreasInForm(this.getContentType().getForm());
+                // And check if html area actually contains event.getContentId() that was updated
+                var areasContainId = this.doAreasContainId(htmlAreas, event.getContentId().toString());
 
-                    new GetContentByIdRequest(event.getContentId()).sendAndParse().done((content: Content) => {
-
+                if (isCurrent || areasContainId) {
+                    //
+                    new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
                         this.setPersistedItem(content);
                         this.updateWizardHeader(content);
                         this.updateWizardStepForms(content);
                         this.updateMetadataAndMetadataStepForms(content.clone());
+                        if (this.isContentRenderable()) {
+                            // also update live form panel for renderable content without asking
+                            this.liveFormPanel.skipNextReloadConfirmation(true);
+                            this.liveFormPanel.loadPage();
+                        }
                     });
                 }
             };
@@ -566,6 +576,36 @@ module app.wizard {
                 ContentPublishedEvent.un(publishHandler);
                 ContentDeletedEvent.un(deleteHandler);
             });
+        }
+
+        private doAreasContainId(areas: string[], id: string): boolean {
+            var data: api.data.PropertyTree = this.getPersistedItem().getContentData();
+
+            return areas.some((area) => {
+                var property = data.getProperty(area);
+                if (property && property.hasNonNullValue() && property.getType().equals(api.data.ValueTypes.STRING)) {
+                    return property.getString().indexOf(id) >= 0
+                }
+            });
+        }
+
+        private getHtmlAreasInForm(formItemContainer: api.form.FormItemContainer): string[] {
+            var result: string[] = [];
+
+            formItemContainer.getFormItems().forEach((item) => {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FieldSet)) {
+                    result = result.concat(this.getHtmlAreasInForm(<api.form.FieldSet> item));
+                } else if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormItemSet)) {
+                    result = result.concat(this.getHtmlAreasInForm(<api.form.FormItemSet> item));
+                } else if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.Input)) {
+                    var input = <api.form.Input> item;
+                    if (input.getInputType().getName() === "HtmlArea") {
+                        result.push(input.getPath().toString());
+                    }
+                }
+            })
+
+            return result;
         }
 
         layoutPersistedItem(persistedContent: Content): wemQ.Promise<void> {
