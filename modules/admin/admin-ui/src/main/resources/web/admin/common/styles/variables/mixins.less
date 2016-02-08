@@ -623,13 +623,13 @@
   }
 }
 
-.container-title-mixin() {
+.container-title-mixin(@font-size: 32px, @bottom: -6px) {
   color: @admin-white;
   font-family: @admin-font-family;
-  font-size: 32px;
+  font-size: @font-size;
   font-weight: 100;
   position: absolute;
-  bottom: -8px;
+  bottom: @bottom;
 }
 
 .home-main-container-mixin() {

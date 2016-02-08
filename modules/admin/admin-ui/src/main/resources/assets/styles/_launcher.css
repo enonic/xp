@@ -384,7 +384,7 @@
   font-size: 32px;
   font-weight: 100;
   position: absolute;
-  bottom: -8px;
+  bottom: -6px;
   width: 65%;
 }
 .launcher-panel .launcher-title .container-title::first-letter {
