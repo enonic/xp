@@ -1282,7 +1282,10 @@ module app.wizard {
         }
 
         private isContentRenderable(): boolean {
-            return this.liveEditModel && this.liveEditModel.isPageRenderable();
+            var isPageTemplateWithNoController = this.contentType.getContentTypeName().isPageTemplate() &&
+                                                 !this.liveEditModel.getPageModel().getController();
+
+            return this.liveEditModel && (this.liveEditModel.isPageRenderable() || isPageTemplateWithNoController);
         }
 
         private updatePreviewActionVisibility() {
