@@ -19,6 +19,8 @@ module api.application {
 
         private version: string;
 
+        private local: boolean;
+
         private config: api.form.Form;
 
         private applicationDependencies: api.application.ApplicationKey[] = [];
@@ -40,6 +42,7 @@ module api.application {
             this.url = builder.url;
             this.state = builder.state;
             this.version = builder.version;
+            this.local = builder.local;
             this.config = builder.config;
             this.applicationDependencies = builder.applicationDependencies;
             this.contentTypeDependencies = builder.contentTypeDependencies;
@@ -58,6 +61,10 @@ module api.application {
 
         getVersion(): string {
             return this.version;
+        }
+
+        isLocal(): boolean {
+            return this.local;
         }
 
         getName(): string {
@@ -137,6 +144,7 @@ module api.application {
                    this.url == other.url &&
                    this.state == other.state &&
                    this.version == other.version &&
+                   this.local == other.local &&
                    api.ObjectHelper.arrayEquals(this.applicationDependencies, other.applicationDependencies) &&
                    api.ObjectHelper.arrayEquals(this.contentTypeDependencies, other.contentTypeDependencies) &&
                    api.ObjectHelper.equals(this.metaSteps, other.metaSteps) &&
@@ -160,6 +168,8 @@ module api.application {
         state: string;
 
         version: string;
+
+        local: boolean;
 
         config: api.form.Form;
 
@@ -187,6 +197,7 @@ module api.application {
                 this.url = source.getUrl();
                 this.state = source.getState();
                 this.version = source.getVersion();
+                this.local = source.isLocal();
                 this.config = source.getForm();
                 this.applicationDependencies = source.getapplicationDependencies();
                 this.contentTypeDependencies = source.getContentTypeDependencies();
@@ -207,6 +218,7 @@ module api.application {
             this.url = json.url;
             this.state = json.state;
             this.version = json.version;
+            this.local = json.local;
 
             this.config = json.config != null ? api.form.Form.fromJson(json.config) : null;
             this.minSystemVersion = json.minSystemVersion;

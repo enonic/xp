@@ -1,4 +1,4 @@
-.tree-grid .grid .slick-row {
+.application-grid.tree-grid .grid .slick-row {
   .version, .state, .modified {
     text-align: right;
     font-size: 0.9em;
@@ -6,4 +6,19 @@
   .modified {
     padding-right: 25px;
   }
+
+  .slick-cell {
+    .toggle.icon {
+      display: none;
+    }
+  }
+
+  .application-viewer {
+    &.local .names-and-icon-view .wrapper:before {
+      content: "!";
+      background: @admin-red;
+      color: @admin-white;
+    }
+  }
+
 }

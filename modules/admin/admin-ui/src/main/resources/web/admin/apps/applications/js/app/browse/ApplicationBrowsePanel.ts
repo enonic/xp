@@ -66,14 +66,14 @@ module app.browse {
 
         private registerEvents() {
             StopApplicationEvent.on((event: StopApplicationEvent) => {
-                var applicationKeys = ApplicationKey.fromApplications(event.getApplications());
+                var applicationKeys = ApplicationKey.fromExternalApplications(event.getApplications());
                 new StopApplicationRequest(applicationKeys).sendAndParse()
                     .then(() => {
                     }).done();
             });
 
             StartApplicationEvent.on((event: StartApplicationEvent) => {
-                var applicationKeys = ApplicationKey.fromApplications(event.getApplications());
+                var applicationKeys = ApplicationKey.fromExternalApplications(event.getApplications());
                 new StartApplicationRequest(applicationKeys).sendAndParse()
                     .then(() => {
                     }).done();
@@ -81,7 +81,7 @@ module app.browse {
 
 
             UninstallApplicationEvent.on((event: UninstallApplicationEvent) => {
-                var applicationKeys = ApplicationKey.fromApplications(event.getApplications());
+                var applicationKeys = ApplicationKey.fromExternalApplications(event.getApplications());
                 new UninstallApplicationRequest(applicationKeys).sendAndParse()
                     .then(() => {
                     }).done();
