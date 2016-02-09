@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,12 +8,17 @@ import java.util.regex.Pattern;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.base.Splitter;
+
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.data.Property;
+import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
@@ -22,7 +28,9 @@ import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.ServiceUrlParams;
-import com.enonic.xp.schema.mixin.MixinName;
+
+import static org.apache.commons.lang.StringUtils.substringAfter;
+import static org.apache.commons.lang.StringUtils.substringBefore;
 
 @Component(immediate = true)
 public final class PortalUrlServiceImpl
@@ -149,7 +157,7 @@ public final class PortalUrlServiceImpl
                     ImageUrlParams imageUrlParams = new ImageUrlParams().
                         type( params.getType() ).
                         id( id ).
-                        scale( (urlParamsString == null) ? IMAGE_NO_SCALING : getScale( id, urlParamsString ) ).
+                        scale( getScale( id, urlParamsString ) ).
                         format( IMAGE_FORMAT ).
                         portalRequest( params.getPortalRequest() );
 
@@ -175,18 +183,25 @@ public final class PortalUrlServiceImpl
         return processedHtml;
     }
 
-    private String getScale( String id, String urlParamsString )
+    private String getScale( final String id, final String urlParamsString )
     {
-        final Map<String, String> urlParams = UrlHelper.extractUrlParams( urlParamsString );
+        final Map<String, String> urlParams = extractUrlParams( urlParamsString );
+        if ( urlParams.isEmpty() )
+        {
+            return IMAGE_NO_SCALING;
+        }
 
         final boolean keepSize = urlParams.containsKey( KEEP_SIZE );
 
         if ( urlParams.containsKey( SCALE ) )
         {
             final String scaleParam = urlParams.get( SCALE );
-            final int pos = scaleParam.indexOf( ":" );
-            final String horizontalProportion = scaleParam.substring( 0, pos );
-            final String verticalProportion = scaleParam.substring( pos + 1 );
+            if ( !scaleParam.contains( ":" ) )
+            {
+                throw new IllegalArgumentException( "Invalid scale parameter: " + scaleParam );
+            }
+            final String horizontalProportion = substringBefore( scaleParam, ":" );
+            final String verticalProportion = substringAfter( scaleParam, ":" );
 
             final int width = keepSize ? getImageOriginalWidth( id ) : DEFAULT_WIDTH;
             final int height = width / Integer.parseInt( horizontalProportion ) * Integer.parseInt( verticalProportion );
@@ -197,24 +212,49 @@ public final class PortalUrlServiceImpl
         {
             return keepSize ? IMAGE_NO_SCALING : IMAGE_SCALE;
         }
-
     }
 
-    private int getImageOriginalWidth( String id )
+    private int getImageOriginalWidth( final String id )
     {
-        Content content = this.contentService.getById( ContentId.from( id ) );
+        final Content content = this.getContent( ContentId.from( id ) );
 
         if ( content instanceof Media )
         {
-            ExtraData imageData = content.getAllExtraData().getMetadata( MixinName.from( "media:imageInfo" ) );
+            ExtraData imageData = content.getAllExtraData().getMetadata( MediaInfo.IMAGE_INFO_METADATA_NAME );
 
             if ( imageData != null )
             {
-                return imageData.getData().getProperty( "imageWidth" ).getValue().asLong().intValue();
+                final Property widthProperty = imageData.getData().getProperty( MediaInfo.IMAGE_INFO_IMAGE_WIDTH );
+                if ( widthProperty != null )
+                {
+                    return widthProperty.getValue().asLong().intValue();
+                }
             }
         }
 
         return 0;
+    }
+
+    private Content getContent( final ContentId contentId )
+    {
+        try
+        {
+            return this.contentService.getById( contentId );
+        }
+        catch ( ContentNotFoundException e )
+        {
+            return null;
+        }
+    }
+
+    private Map<String, String> extractUrlParams( final String urlQuery )
+    {
+        final String query = substringAfter( urlQuery, "?" );
+        if ( query == null )
+        {
+            return Collections.emptyMap();
+        }
+        return Splitter.on( '&' ).trimResults().withKeyValueSeparator( "=" ).split( query.replace( "&amp;", "&" ) );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )

@@ -27,7 +27,6 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    @Ignore
     public void process_empty_value()
     {
         //Checks the process for a null value
@@ -43,7 +42,6 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    @Ignore
     public void process_single_content()
     {
         //Creates a content
@@ -166,7 +164,6 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    @Ignore
     public void process_multiple_links()
     {
         //Creates a content with attachments
@@ -213,7 +210,6 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    @Ignore
     public void process_unknown_content()
     {
 
@@ -228,7 +224,6 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    @Ignore
     public void process_unknown_media()
     {
 
@@ -243,7 +238,6 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    @Ignore
     public void process_unknown_image()
     {
 
@@ -258,7 +252,6 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    @Ignore
     public void process_absolute()
     {
         //Creates a content
@@ -295,5 +288,27 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
         assertEquals( "<a href=\"/some/path\">Content</a>", processedHtml );
+    }
+
+    @Test
+    public void process_image_with_scale()
+    {
+        //Creates a content
+        final Media media = ContentFixtures.newMedia();
+        Mockito.when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+        Mockito.when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(
+            "binaryHash" );
+
+        //Process an html text containing a link to this content
+        final ProcessHtmlParams params = new ProcessHtmlParams().
+            portalRequest( this.portalRequest ).
+            value( "<a href=\"image://" + media.getId() + "?scale=21:9&amp;keepSize=true\">Image</a>" );
+
+        //Checks that the page URL of the content is returned
+        final String processedHtml = this.service.processHtml( params );
+        assertEquals( "<a href=\"/portal/draft/context/path/_/image/" + media.getId() + ":992a0004e50e58383fb909fea2b588dc714a7115/" +
+                          "block-300-126" +
+                          "/" + media.getName() +
+                          ".jpeg\">Image</a>", processedHtml );
     }
 }
