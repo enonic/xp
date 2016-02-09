@@ -58,5 +58,12 @@ module api.application {
             return applications.map<ApplicationKey>((mod: Application) => mod.getApplicationKey());
         }
 
+        static fromExternalApplications(applications: Application[]): ApplicationKey[] {
+            return applications
+                .filter((mod: Application) => {
+                    return !mod.isLocal();
+                })
+                .map<ApplicationKey>((mod: Application) => mod.getApplicationKey());
+        }
     }
 }
