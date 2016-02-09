@@ -1,7 +1,7 @@
-package com.enonic.xp.s3;
+package com.enonic.xp.blobstore.awss3;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.Providers;
 
 import com.google.common.io.ByteSource;
 
@@ -10,17 +10,15 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.Segment;
-import com.enonic.xp.s3.config.S3Configuration;
+import com.enonic.xp.blobstore.ClassLoaderHelper;
+import com.enonic.xp.blobstore.awss3.config.S3Configuration;
 
-@Component(immediate = true, configurationPid = "com.enonic.xp.amazonS3")
-public class AwsS3BlobStore
+class AwsS3BlobStore
     implements BlobStore
 {
-    private String bucketName;
-
-    @Activate
     public void activate( final S3Configuration config )
     {
+        final Iterable<ProviderMetadata> providers = ClassLoaderHelper.callWith( Providers::all, Providers.class );
 
     }
 

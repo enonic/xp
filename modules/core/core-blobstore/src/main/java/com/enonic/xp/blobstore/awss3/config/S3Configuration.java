@@ -1,4 +1,4 @@
-package com.enonic.xp.s3.config;
+package com.enonic.xp.blobstore.awss3.config;
 
 public @interface S3Configuration
 {

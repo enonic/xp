@@ -33,7 +33,6 @@ public class ApplicationRepoServiceImpl
     private IndexService indexService;
 
     @Activate
-    @SuppressWarnings("unused")
     public void activate( final BundleContext context )
     {
         if ( indexService.isMaster() )

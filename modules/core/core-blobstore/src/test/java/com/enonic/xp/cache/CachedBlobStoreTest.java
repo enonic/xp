@@ -10,6 +10,7 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
+import com.enonic.xp.blobstore.cache.CachedBlobStore;
 
 import static org.junit.Assert.*;
 

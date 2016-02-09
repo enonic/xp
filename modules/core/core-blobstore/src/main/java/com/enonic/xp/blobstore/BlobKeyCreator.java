@@ -1,4 +1,4 @@
-package com.enonic.xp.file;
+package com.enonic.xp.blobstore;
 
 import java.io.IOException;
 

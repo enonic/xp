@@ -1,4 +1,4 @@
-package com.enonic.xp.file;
+package com.enonic.xp.blobstore.local;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +14,7 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.Segment;
+import com.enonic.xp.blobstore.BlobKeyCreator;
 
 public final class FileBlobStore
     implements BlobStore

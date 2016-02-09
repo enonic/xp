@@ -1,4 +1,4 @@
-package com.enonic.xp.cache;
+package com.enonic.xp.blobstore.cache;
 
 import com.google.common.cache.Weigher;
 

@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.node.dao;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -32,17 +31,6 @@ public class NodeVersionDaoImpl
     private RepoConfiguration configuration;
 
     private BlobStore blobStore;
-
-    @Activate
-    public void initialize()
-    {
-       // final File blobStoreDir = new File( this.configuration.getBlobStoreDir(), NodeConstants.NODE_VERSION_BLOB_STORE_DIR );
-       // this.blobStore = CachedBlobStore.create().
-        //    blobStore( new FileBlobStore( blobStoreDir ) ).
-         //   sizeTreshold( Long.MAX_VALUE ).
-          //  build();
-
-    }
 
     @Override
     public NodeVersionId store( final Node node )
