@@ -19,6 +19,7 @@ import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.xp.repo.impl.elasticsearch.search.ElasticsearchSearchDao;
 import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchStorageDao;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
+import com.enonic.xp.repo.impl.node.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
@@ -86,6 +87,8 @@ public class SecurityServiceImplTest
     {
         super.setUp();
 
+        final MemoryBlobStore blobStore = new MemoryBlobStore();
+
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
         Mockito.when( repoConfig.getBlobStoreDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/blob" ) );
 
@@ -101,6 +104,7 @@ public class SecurityServiceImplTest
 
         final NodeVersionDaoImpl nodeDao = new NodeVersionDaoImpl();
         nodeDao.setConfiguration( repoConfig );
+        nodeDao.setBlobStore( blobStore );
         nodeDao.initialize();
 
         this.indexServiceInternal = new ElasticsearchIndexServiceInternal();
@@ -128,6 +132,8 @@ public class SecurityServiceImplTest
         this.nodeService.setSearchService( searchService );
         this.nodeService.setStorageService( storageService );
         this.nodeService.setConfiguration( repoConfig );
+
+        this.nodeService.setBlobStore( blobStore );
         this.nodeService.initialize();
 
         this.eventPublisher = Mockito.mock( EventPublisher.class );

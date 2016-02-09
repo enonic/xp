@@ -125,7 +125,7 @@ public final class CreateNodeCommand
                 throw new NodeBinaryReferenceException( "No binary with reference " + binaryRef + " attached in createNodeParams" );
             }
 
-            final BlobRecord blob = this.binaryBlobStore.addRecord( binaryAttachment.getByteSource() );
+            final BlobRecord blob = this.binaryBlobStore.addRecord( NodeConstants.BINARY_SEGMENT, binaryAttachment.getByteSource() );
             builder.add( new AttachedBinary( binaryAttachment.getReference(), blob.getKey().toString() ) );
         }
 

@@ -41,13 +41,13 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.repo.impl.blob.file.FileBlobStore;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.xp.repo.impl.elasticsearch.search.ElasticsearchSearchDao;
 import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchStorageDao;
+import com.enonic.xp.repo.impl.node.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
@@ -104,7 +104,7 @@ public class AbstractContentServiceTest
 
     protected NodeServiceImpl nodeService;
 
-    protected BlobStore binaryBlobStore;
+    protected BlobStore blobStore;
 
     protected MixinService mixinService;
 
@@ -137,8 +137,7 @@ public class AbstractContentServiceTest
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
-        final File blobStoreDir = new File( xpHome.getRoot(), "repo/blob/test" );
-        this.binaryBlobStore = new FileBlobStore( blobStoreDir );
+        this.blobStore = new MemoryBlobStore();
 
         final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
         storageDao.setClient( this.client );
@@ -158,6 +157,7 @@ public class AbstractContentServiceTest
 
         this.nodeDao = new NodeVersionDaoImpl();
         this.nodeDao.setConfiguration( repoConfig );
+        this.nodeDao.setBlobStore( blobStore );
         this.nodeDao.initialize();
 
         this.contentService = new ContentServiceImpl();
@@ -184,6 +184,7 @@ public class AbstractContentServiceTest
         this.nodeService.setSearchService( searchService );
         this.nodeService.setEventPublisher( eventPublisher );
         this.nodeService.setConfiguration( repoConfig );
+        this.nodeService.setBlobStore( blobStore );
         this.nodeService.initialize();
 
         this.mixinService = Mockito.mock( MixinService.class );

@@ -89,7 +89,7 @@ public class GetBinaryCommand
     private ByteSource doGetByteSource( final AttachedBinary attachedBinary )
     {
         final BlobKey blobKey = new BlobKey( attachedBinary.getBlobKey() );
-        final BlobRecord record = this.binaryBlobStore.getRecord( blobKey );
+        final BlobRecord record = this.binaryBlobStore.getRecord( NodeConstants.BINARY_SEGMENT, blobKey );
         return record != null ? record.getBytes() : null;
     }
 

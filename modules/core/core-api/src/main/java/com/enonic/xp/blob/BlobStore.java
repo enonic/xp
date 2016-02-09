@@ -4,9 +4,9 @@ import com.google.common.io.ByteSource;
 
 public interface BlobStore
 {
-    BlobRecord getRecord( BlobKey key )
+    BlobRecord getRecord( Segment segment, BlobKey key )
         throws BlobStoreException;
 
-    BlobRecord addRecord( ByteSource in )
+    BlobRecord addRecord( Segment segment, ByteSource in )
         throws BlobStoreException;
 }

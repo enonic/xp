@@ -125,7 +125,7 @@ class UpdatedAttachedBinariesResolver
 
     private void storeAndAttachBinary( final Map<BinaryReference, AttachedBinary> resolved, final BinaryAttachment newBinaryAttachment )
     {
-        final BlobRecord blob = this.blobStore.addRecord( newBinaryAttachment.getByteSource() );
+        final BlobRecord blob = this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, newBinaryAttachment.getByteSource() );
         resolved.put( newBinaryAttachment.getReference(),
                       new AttachedBinary( newBinaryAttachment.getReference(), blob.getKey().toString() ) );
     }
