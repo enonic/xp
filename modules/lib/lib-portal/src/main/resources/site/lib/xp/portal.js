@@ -143,6 +143,22 @@ exports.processHtml = function (params) {
 };
 
 /**
+ * This function sanitizes an HTML string by stripping all potentially unsafe tags and attributes.
+ *
+ * HTML sanitization can be used to protect against cross-site scripting (XSS) attacks by sanitizing any HTML code submitted by a user.
+ *
+ * @example-ref examples/portal/sanitizeHtml.js
+ *
+ * @param {string} html Html string value to process.
+ *
+ * @returns {string} The sanitized HTML.
+ */
+exports.sanitizeHtml = function (html) {
+    var bean = __.newBean('com.enonic.xp.lib.portal.SanitizeHtmlHandler');
+    return __.toNativeObject(bean.sanitizeHtml(html));
+};
+
+/**
  * This function returns the parent site of the content corresponding to the current execution context. It is meant to be
  * called from a page, layout or part controller.
  *
