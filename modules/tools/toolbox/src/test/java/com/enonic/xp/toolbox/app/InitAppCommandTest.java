@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -22,8 +22,8 @@ public class InitAppCommandTest
     @ClassRule
     public static TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    @BeforeClass
-    public static void before()
+    @Before
+    public void before()
         throws IOException
     {
         targetDirectory = temporaryFolder.newFolder();
@@ -33,13 +33,7 @@ public class InitAppCommandTest
     public void initApp()
         throws IOException, URISyntaxException
     {
-        final InitAppCommand command = new InitAppCommand();
-        command.name = "com.enonic.xp.toolbox.app.initCommandTest";
-        command.repository = getClass().getResource( "/starter-empty/.git-directory" ).toURI().toString();
-        command.destination = targetDirectory.getAbsolutePath();
-        command.version = "1.0.1";
-
-        command.run();
+        createInitAppCommand().run();
 
         Assert.assertEquals( 6, targetDirectory.list().length );
         Assert.assertTrue( !Files.exists( Paths.get( targetDirectory.getPath(), ".git" ) ) );
@@ -55,5 +49,31 @@ public class InitAppCommandTest
         Assert.assertTrue( gradlePropertiesContent.contains( "appName = com.enonic.xp.toolbox.app.initCommandTest" ) );
         Assert.assertTrue( gradlePropertiesContent.contains( "displayName = InitCommandTest" ) );
         Assert.assertTrue( gradlePropertiesContent.contains( "xpVersion = 6.1.0-SNAPSHOT" ) );
+    }
+
+    @Test
+    public void cloneAndCheckout()
+        throws URISyntaxException, IOException
+    {
+        final InitAppCommand command = createInitAppCommand();
+        command.checkout = "7440461f1651f64417dab7179a8c1ec91922d850";
+        command.run();
+
+        Assert.assertEquals( 6, targetDirectory.list().length );
+        final String gradlePropertiesContent =
+            com.google.common.io.Files.asCharSource( new File( targetDirectory, "gradle.properties" ), Charsets.UTF_8 ).read();
+        Assert.assertTrue( gradlePropertiesContent.isEmpty() );
+    }
+
+    private InitAppCommand createInitAppCommand()
+        throws URISyntaxException
+    {
+        final InitAppCommand command = new InitAppCommand();
+        command.name = "com.enonic.xp.toolbox.app.initCommandTest";
+        command.repository = getClass().getResource( "/starter-empty/.git-directory" ).toURI().toString();
+        command.destination = targetDirectory.getAbsolutePath();
+        command.version = "1.0.1";
+
+        return command;
     }
 }

@@ -99,14 +99,16 @@ public final class InitAppCommand
                 cloneCommand.setCredentialsProvider(
                     new UsernamePasswordCredentialsProvider( authentificationValues[0], authentificationValues[1] ) );
             }
-            Git clone = cloneCommand.call();
-            clone.getRepository().close();
+            Git git = cloneCommand.call();
 
             // Checks out the specified branch or commit if necessary
             if ( checkout != null )
             {
-                clone.checkout().setName( checkout ).call();
+                git.checkout().setName( checkout ).call();
             }
+
+            //Closes the repository
+            git.getRepository().close();
 
             // Removes the Git related content
             removeGitRelatedContent( temporaryDirectory );
