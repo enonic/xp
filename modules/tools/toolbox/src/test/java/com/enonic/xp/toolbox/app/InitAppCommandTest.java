@@ -17,10 +17,10 @@ import com.google.common.base.Charsets;
 public class InitAppCommandTest
 {
 
-    private static File targetDirectory;
-
     @ClassRule
     public static TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+    private File targetDirectory;
 
     @Before
     public void before()
