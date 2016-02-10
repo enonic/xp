@@ -172,10 +172,12 @@ public final class ApplicationServiceImpl
             final Node applicationNode = this.repoService.getApplicationNode( key.getName() );
             if ( applicationNode != null )
             {
-                doInstallApplication( applicationNode.id(), true, false );
+                final Application clusterApplication = doInstallApplication( applicationNode.id(), true, false );
                 LOG.info( "Application [{}] installed successfully", application.getKey() );
-                doStartApplication( application.getKey(), false );
-                return;
+                if ( clusterApplication.isStarted() )
+                {
+                    doStartApplication( application.getKey(), false );
+                }
             }
         }
 
