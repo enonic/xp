@@ -62,7 +62,7 @@ public abstract class RepoCommand
         return executeRequest( request );
     }
 
-    private String executeRequest( final Request request )
+    protected String executeRequest( final Request request )
         throws Exception
     {
         final OkHttpClient client = new OkHttpClient();
@@ -78,7 +78,7 @@ public abstract class RepoCommand
         return JsonHelper.prettifyJson( responseBody );
     }
 
-    private String authCredentials()
+    protected String authCredentials()
     {
         final String[] authParts = auth.split( ":" );
         final String userName = authParts.length > 0 ? authParts[0] : "";

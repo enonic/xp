@@ -6,6 +6,7 @@ import io.airlift.airline.Help;
 import io.airlift.airline.ParseException;
 
 import com.enonic.xp.toolbox.app.InitAppCommand;
+import com.enonic.xp.toolbox.application.InstallApplicationCommand;
 import com.enonic.xp.toolbox.repo.DeleteSnapshotsCommand;
 import com.enonic.xp.toolbox.repo.DumpCommand;
 import com.enonic.xp.toolbox.repo.ExportCommand;
@@ -40,6 +41,7 @@ public final class Main
         builder.withCommand( ReprocessContentCommand.class );
         builder.withCommand( UpgradeCommand.class );
         builder.withCommand( InitAppCommand.class );
+        builder.withCommand( InstallApplicationCommand.class );
 
         final Cli<Runnable> parser = builder.build();
 

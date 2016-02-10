@@ -26,7 +26,7 @@
     <link rel="mask-icon" href="{{assetsUri}}/apps/login/icons/icon-transparent-black.svg" color="#5bbad5">
 
     <!-- Styles -->
-    <link rel="stylesheet" type="text/css" href="{{assetsUri}}/common/styles/_all.css">
+    <link rel="stylesheet" type="text/css" href="{{assetsUri}}/common/styles/_home.css">
 
 </head>
 <body>
@@ -35,25 +35,32 @@
 <script type="text/javascript">
     var CONFIG = {
         autoOpenLauncher: true,
-        appId: 'login'
+        appId: 'home',
+        portalAssetsUrl: '{{portalAssetsUrl}}'
     };
 </script>
 
+<script type="text/javascript" src="{{assetsUri}}/common/lib/bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
 <script type="text/javascript" src="{{portalAssetsUrl}}/js/launcher.js"></script>
-<script type="text/javascript" src="{{assetsUri}}/common/lib/_all.js"></script>
-<script type="text/javascript" src="{{assetsUri}}/common/js/_all.js"></script>
 
 <div class="home-main-container" tabindex="100" style="">
-    <div class="lazy-image"
+    <div id="background-image" class="lazy-image empty"
          style="background-image: url(&quot;/admin/common/images/background-1920.jpg&quot;);"></div>
     <div class="header">
-        <span class="container-title">{{installation}}</span>
-    </div>
-    <div class="footer">
-        <a href="{{docLinkPrefix}}/appendix/changes/index.html" target="_blank">Enonic XP v{{xpVersion}}</a>
-        <a href="https://discuss.enonic.com/" target="_blank">Forum</a>
-        <a href="{{docLinkPrefix}}/index.html" target="_blank">Documentation</a>
+        <div class="welcome-text">
+            <span>Welcome to Enonic XP!</span>
+        </div>
+        <div class="welcome-tip"><span>Start here</span></div>
     </div>
 </div>
+<div class="home-main-footer">
+    <a href="{{docLinkPrefix}}/appendix/changes/index.html" target="_blank">Enonic XP v{{xpVersion}}</a>
+    <a href="https://discuss.enonic.com/" target="_blank">Forum</a>
+    <a href="{{docLinkPrefix}}/index.html" target="_blank">Documentation</a>
+</div>
+
+<script type="text/javascript">
+    document.getElementById("background-image").classList.remove("empty");
+</script>
 </body>
 </html>

@@ -72,23 +72,26 @@ public class UpdateNodeCommandTest
             parent( NodePath.ROOT ).
             name( "my-node" ).
             data( data ).
-            attachBinary( binaryRef, ByteSource.wrap( "my-car-image-source".getBytes() ) ).
+            attachBinary( binaryRef, originalBinaryData() ).
             build();
 
         final Node node = createNode( params );
 
+        // Update the binary source of the binary reference
+
+        final ByteSource updatedBinaryData = ByteSource.wrap( "my-car-image-updated-source".getBytes() );
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             editor( toBeEdited -> {
-                final PropertyTree nodeData = toBeEdited.data;
-                nodeData.addString( "newValue", "hepp" );
             } ).
-            attachBinary( binaryRef, ByteSource.wrap( "my-car-image-updated-source".getBytes() ) ).
+            attachBinary( binaryRef, updatedBinaryData ).
             id( node.id() ).
             build();
 
         final Node updatedNode = updateNode( updateNodeParams );
 
         assertEquals( 1, updatedNode.getAttachedBinaries().getSize() );
+
+        // Verify that the binary source for binary ref in the updated node is the updated version
 
         final ByteSource binary = GetBinaryCommand.create().
             nodeId( updatedNode.id() ).
@@ -103,6 +106,11 @@ public class UpdateNodeCommandTest
         final byte[] bytes = ByteStreams.toByteArray( binary.openStream() );
 
         assertEquals( "my-car-image-updated-source", new String( bytes, Charset.forName( "UTF-8" ) ) );
+    }
+
+    private ByteSource originalBinaryData()
+    {
+        return ByteSource.wrap( "my-car-image-source".getBytes() );
     }
 
     @Test
@@ -135,7 +143,7 @@ public class UpdateNodeCommandTest
     }
 
     @Test
-    public void keep_existing_binaries_also_when_new_Property_but_equal_BinaryReference()
+    public void keep_existing_binaries_also_when_new_property_but_equal_BinaryReference()
         throws Exception
     {
         final PropertyTree data = new PropertyTree();
@@ -305,4 +313,24 @@ public class UpdateNodeCommandTest
     }
 
 
+    @Test
+    public void unchanged_node_not_updated()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            name( "myNode" ).
+            data( new PropertyTree() ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        updateNode( UpdateNodeParams.create().
+            id( node.id() ).
+            editor( toBeEdited -> {
+            } ).
+            build() );
+
+        final Node updatedNode = getNodeById( node.id() );
+
+        assertTrue( updatedNode.getTimestamp().equals( node.getTimestamp() ) );
+    }
 }

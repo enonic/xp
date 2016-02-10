@@ -25,7 +25,7 @@ module api.app.browse {
             return new api.app.view.ItemStatisticsPanel<M>();
         }
 
-        setItems(items: api.app.browse.BrowseItem<M>[]): BrowseItemsChanges {
+        setItems(items: api.app.browse.BrowseItem<M>[]): BrowseItemsChanges<M> {
             let changes = this.itemsSelectionPanel.setItems(items);
             this.updateDisplayedPanel();
 

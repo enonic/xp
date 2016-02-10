@@ -19,16 +19,8 @@ function handleGet(req) {
         }
         return 1;
     });
-    log.info(portal.componentUrl({path: ""}));
-    log.info(portal.componentUrl({path: ""}));
+
     for (var i = 0; i < adminTools.length; i++) {
-        /*
-        if (adminTools[i].icon.indexOf("//") < 0) {
-            adminTools[i].icon = portal.assetUrl({
-                path: adminTools[i].icon,
-                application: adminTools[i].key.application
-            });
-        }*/
         adminTools[i].appId = adminTools[i].key.name;
         adminTools[i].uri =
             uriScriptHelper.generateAdminToolUri(adminTools[i].key.application, adminTools[i].key.name);
@@ -48,8 +40,10 @@ function handleGet(req) {
         userIconUrl: userIconUrl,
         user: user,
         logoutServiceUrl: logoutServiceUrl,
-        homeUrl: uriScriptHelper.generateHomeUri(adminTools[0].key.application)
+        homeUrl: uriScriptHelper.generateHomeUri(adminTools[0].key.application),
+        installation: uriScriptHelper.getInstallation() || "Tools"
     };
+
     return {
         contentType: 'text/html',
         body: mustache.render(view, params)

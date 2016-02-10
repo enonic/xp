@@ -33,10 +33,17 @@ public abstract class JettyTestSupport
     protected abstract void configure()
         throws Exception;
 
+    protected void destroy()
+        throws Exception
+    {
+        // Do nothing
+    }
+
     @After
     public final void stopServer()
         throws Exception
     {
+        destroy();
         this.server.stop();
     }
 

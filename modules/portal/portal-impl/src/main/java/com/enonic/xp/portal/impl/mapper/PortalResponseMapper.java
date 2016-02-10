@@ -14,7 +14,6 @@ import com.enonic.xp.script.serializer.MapSerializable;
 public final class PortalResponseMapper
     implements MapSerializable
 {
-
     private final PortalResponse response;
 
     public PortalResponseMapper( final PortalResponse response )
@@ -29,7 +28,7 @@ public final class PortalResponseMapper
         gen.value( "contentType", this.response.getContentType() );
         gen.value( "postProcess", this.response.isPostProcess() );
 
-        serializeMap( "headers", gen, this.response.getHeaders() );
+        MapperHelper.serializeMap( "headers", gen, this.response.getHeaders() );
         serializePageContributions( gen );
         serializeCookies( gen );
         gen.value( "body", this.response.getBody() );
@@ -111,22 +110,11 @@ public final class PortalResponseMapper
         final Object body = this.response.getBody();
         if ( body instanceof Map )
         {
-            serializeMap( "body", gen, (Map<String, String>) body );
+            MapperHelper.serializeMap( "body", gen, (Map<String, String>) body );
         }
         else
         {
             gen.value( "body", body );
         }
     }
-
-    private void serializeMap( final String name, final MapGenerator gen, final Map<String, String> params )
-    {
-        gen.map( name );
-        for ( final Map.Entry<String, String> entry : params.entrySet() )
-        {
-            gen.value( entry.getKey(), entry.getValue() );
-        }
-        gen.end();
-    }
-
 }

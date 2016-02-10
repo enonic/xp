@@ -1,5 +1,6 @@
 (function () {
     var adminUrl = "/admin/tool/com.enonic.xp.admin.ui/launcher";
+    var cssPath = window.CONFIG.portalAssetsUrl + "/styles/_launcher.css";
     var launcherPanel, bodyMask, launcherButton;
     var isHomeApp = (window.CONFIG && window.CONFIG.autoOpenLauncher);
 
@@ -39,6 +40,15 @@
         document.getElementsByTagName("body")[0].appendChild(div);
 
         launcherPanel = div;
+    }
+
+    function appendCssReference() {
+        var fileref = document.createElement("link");
+        fileref.setAttribute("rel", "stylesheet");
+        fileref.setAttribute("type", "text/css");
+        fileref.setAttribute("href", cssPath);
+
+        document.getElementsByTagName("body")[0].appendChild(fileref);
     }
 
     function createLauncherLink(container) {
@@ -260,6 +270,8 @@
 
     function init() {
         initBodyMask();
+
+        appendCssReference();
         appendLauncherButton();
         appendLauncherPanel();
     }

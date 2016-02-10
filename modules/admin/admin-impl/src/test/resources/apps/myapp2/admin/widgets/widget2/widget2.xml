@@ -1,5 +1,5 @@
 <widget>
-  <display-name>MyWidget</display-name>
+  <display-name>MyWidget2</display-name>
   <interfaces>
     <interface>com.enonic.xp.my-interface</interface>
   </interfaces>

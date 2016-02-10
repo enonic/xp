@@ -11,4 +11,6 @@ public interface AdminToolDescriptorService
     AdminToolDescriptors getAllowedAdminToolDescriptors( final PrincipalKeys principalKeys );
 
     AdminToolDescriptor getByKey( final DescriptorKey descriptorKey );
+
+    String getIconByKey( DescriptorKey descriptorKey );
 }

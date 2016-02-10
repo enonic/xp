@@ -132,11 +132,13 @@ final class BundleConfigurator
 
     private void includeWebJars()
     {
-        final File webjarsDir = new File( this.project.getBuildDir(), "webjars/META-INF/resources/webjars" );
-        if ( webjarsDir.exists() )
+        if ( this.project.getConfigurations().getByName( "webjar" ).isEmpty() )
         {
-            instruction( "Include-Resource", "/assets=" + webjarsDir.getAbsolutePath() );
+            return;
         }
+
+        final File webjarsDir = new File( this.project.getBuildDir(), "webjars/META-INF/resources/webjars" );
+        instruction( "Include-Resource", "/assets=" + webjarsDir.getAbsolutePath() );
     }
 
     private void addDevSourcePaths( final List<File> paths )

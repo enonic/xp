@@ -215,7 +215,8 @@
 }
 
 .@{_COMMON_PREFIX}button.icon-applications, .home-button:hover&.@{_COMMON_PREFIX}button.icon-applications,
-.@{_COMMON_PREFIX}button.icon-content-studio, .home-button:hover&.@{_COMMON_PREFIX}button.icon-content-studio {
+.@{_COMMON_PREFIX}button.icon-content-studio, .home-button:hover&.@{_COMMON_PREFIX}button.icon-content-studio,
+.@{_COMMON_PREFIX}button.icon-user-manager, .home-button:hover&.@{_COMMON_PREFIX}button.icon-user-manager {
   .icon;
   background-size: 28px 28px;
   padding: 8px 25px !important;
@@ -223,16 +224,24 @@
   background-repeat: no-repeat;
 }
 
+.@{_COMMON_PREFIX}button.icon-user-manager, .home-button:hover&.@{_COMMON_PREFIX}button.icon-user-manager {
+  background-size: 25px 25px;
+}
+
 .@{_COMMON_PREFIX}button.icon-applications, .home-button:hover&.@{_COMMON_PREFIX}button.icon-applications {
-  background-image: url("../../apps/applications/icons/icon-transparent.svg");
+  background-image: url("../../apps/applications/icons/icon-white.svg");
 }
 
 .@{_COMMON_PREFIX}button.icon-content-studio, .home-button:hover&.@{_COMMON_PREFIX}button.icon-content-studio {
-  background-image: url("../../apps/content-studio/icons/icon-transparent.svg");
+  background-image: url("../../apps/content-studio/icons/icon-white.svg");
+}
+
+.@{_COMMON_PREFIX}button.icon-user-manager, .home-button:hover&.@{_COMMON_PREFIX}button.icon-user-manager {
+  background-image: url("../../apps/user-manager/icons/icon-white.svg");
 }
 
 .home-button:hover&.@{_COMMON_PREFIX}button {
-  &.icon-applications, &.icon-content-studio {
+  &.icon-applications, &.icon-content-studio, &.icon-user-manager {
     opacity: 0.5;
     span {
       color: rgba(255, 255, 255, 1);

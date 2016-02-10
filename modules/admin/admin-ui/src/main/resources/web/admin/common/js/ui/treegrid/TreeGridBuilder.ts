@@ -30,6 +30,8 @@ module api.ui.treegrid {
 
         private loadBufferSize: number = 0;
 
+        private quietErrorHandling: boolean = false;
+
         constructor(grid?: TreeGrid<NODE>) {
             if (grid) {
                 this.showToolbar = grid.hasToolbar();
@@ -249,6 +251,14 @@ module api.ui.treegrid {
             return this;
         }
 
+        setQuietErrorHandling(value: boolean): TreeGridBuilder<NODE> {
+            this.quietErrorHandling = value;
+            return this;
+        }
+
+        getQuietErrorHandling(): boolean {
+            return this.quietErrorHandling;
+        }
         /**
          Should be overriden by child class.
          */

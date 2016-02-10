@@ -11,23 +11,28 @@ public final class HtmlSanitizerImpl
     implements HtmlSanitizer
 {
 
-    private static final PolicyFactory HTML_SANITIZE_POLICY = new HtmlPolicyBuilder().
-        allowCommonBlockElements().
-        allowCommonInlineFormattingElements().
-        allowElements( "a", "img", "pre" ).
-        allowElements( "table", "caption", "thead", "tbody", "tfoot", "tr", "th", "td", "col", "colgroup" ).
-        allowElements( "figure", "figcaption" ).
-        allowAttributes( "href" ).onElements( "a" ).
-        allowAttributes( "src" ).onElements( "img" ).
-        allowAttributes( "checked", "class", "id", "target", "title", "type" ).globally().
-        allowAttributes( "scope" ).onElements( "td", "th" ).
-        allowStandardUrlProtocols().
-        allowStyling().
-        toFactory();
+    private final PolicyFactory htmlSanitizePolicy;
+
+    public HtmlSanitizerImpl()
+    {
+        this.htmlSanitizePolicy = new HtmlPolicyBuilder().
+            allowCommonBlockElements().
+            allowCommonInlineFormattingElements().
+            allowElements( "a", "img", "pre" ).
+            allowElements( "table", "caption", "thead", "tbody", "tfoot", "tr", "th", "td", "col", "colgroup" ).
+            allowElements( "figure", "figcaption" ).
+            allowAttributes( "href" ).onElements( "a" ).
+            allowAttributes( "src" ).onElements( "img" ).
+            allowAttributes( "checked", "class", "id", "target", "title", "type" ).globally().
+            allowAttributes( "scope" ).onElements( "td", "th" ).
+            allowStandardUrlProtocols().
+            allowStyling().
+            toFactory();
+    }
 
     @Override
     public String sanitizeHtml( final String html )
     {
-        return HTML_SANITIZE_POLICY.sanitize( html ).replace( "\u00A0", "&nbsp;" );
+        return htmlSanitizePolicy.sanitize( html ).replace( "\u00A0", "&nbsp;" );
     }
 }

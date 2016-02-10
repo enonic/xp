@@ -4,6 +4,7 @@ module api.ui.treegrid {
 
     import Element = api.dom.Element;
     import ElementHelper = api.dom.ElementHelper;
+    import ValidationRecordingViewer = api.form.ValidationRecordingViewer;
 
     import Grid = api.ui.grid.Grid;
     import GridOptions = api.ui.grid.GridOptions;
@@ -61,11 +62,16 @@ module api.ui.treegrid {
 
         private scrollable: api.dom.Element;
 
+        private quietErrorHandling: boolean;
+
+        private errorPanel: ValidationRecordingViewer;
+
         constructor(builder: TreeGridBuilder<DATA>) {
 
             super(builder.getClasses());
 
             this.expandAll = builder.isExpandAll();
+            this.quietErrorHandling = builder.getQuietErrorHandling();
 
             // root node with undefined item
             this.root = new TreeRoot<DATA>();
@@ -152,6 +158,11 @@ module api.ui.treegrid {
                     this.contextMenu.hide();
                 }
             });
+
+            if (this.quietErrorHandling) {
+                this.appendChild(this.errorPanel = new api.form.ValidationRecordingViewer());
+                this.errorPanel.hide();
+            }
 
             if (builder.isShowToolbar()) {
                 this.toolbar = new TreeGridToolbar(this.actions, this);
@@ -438,7 +449,7 @@ module api.ui.treegrid {
                         this.select(fetchedChildren);
                     }
                 }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
+                    this.handleError(reason);
                 }).finally(() => {
                 }).done(() => this.notifyLoaded());
             }
@@ -665,10 +676,23 @@ module api.ui.treegrid {
                     this.initData(this.root.getCurrentRoot().treeToList());
                     this.updateExpanded();
                 }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
+                    this.handleError(reason);
                 }).then(() => {
                     this.updateExpanded();
                 }).then(() => this.notifyLoaded());
+        }
+
+        protected handleError(reason: any, message?: String) {
+            this.grid.show();
+            this.errorPanel.hide();
+            if (this.quietErrorHandling) {
+                this.errorPanel.setError(message || reason.getMessage());
+                this.grid.hide();
+                this.errorPanel.show();
+            }
+            else {
+                api.DefaultErrorHandler.handle(reason);
+            }
         }
 
         private reloadNode(parentNode?: TreeNode<DATA>, expandedNodesDataId?: String[]): wemQ.Promise<void> {
@@ -704,7 +728,7 @@ module api.ui.treegrid {
                     }).done();
                 }
             }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
+                this.handleError(reason);
                 deferred.reject(reason);
             }).done();
 
@@ -792,7 +816,7 @@ module api.ui.treegrid {
                     });
 
                 }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
+                    this.handleError(reason);
                 });
         }
 
@@ -894,7 +918,7 @@ module api.ui.treegrid {
                         }
                         deferred.resolve(null);
                     }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason);
+                        this.handleError(reason);
                         deferred.reject(reason);
                     });
             } else {
@@ -1000,7 +1024,7 @@ module api.ui.treegrid {
                                 });
                             }
                         }).catch((reason: any) => {
-                            api.DefaultErrorHandler.handle(reason);
+                            this.handleError(reason);
                         }).finally(() => {
                         }).done(() => this.notifyLoaded());
                 }

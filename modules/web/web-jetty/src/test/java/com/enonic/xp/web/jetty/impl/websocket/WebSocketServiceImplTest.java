@@ -1,6 +1,7 @@
 package com.enonic.xp.web.jetty.impl.websocket;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -8,18 +9,23 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.ws.WebSocketCall;
 import com.squareup.okhttp.ws.WebSocketListener;
 
+import com.enonic.xp.web.jetty.impl.JettyController;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 
 import static org.junit.Assert.*;
 
-public class WebSocketServletTest
+public class WebSocketServiceImplTest
     extends JettyTestSupport
 {
-    private TestWebSocketHandler handler;
-
     private TestEndpoint endpoint;
 
-    private WebSocketServlet servlet;
+    private TestWebSocketServlet servlet;
+
+    private WebSocketServiceImpl service;
+
+    private MockHttpServletRequest req;
+
+    private MockHttpServletResponse res;
 
     @Override
     protected void configure()
@@ -27,15 +33,28 @@ public class WebSocketServletTest
     {
         this.endpoint = new TestEndpoint();
 
-        this.handler = new TestWebSocketHandler();
-        this.handler.setPath( "/ws" );
-        this.handler.endpoint = this.endpoint;
-        this.handler.accesss = true;
+        final JettyController controller = Mockito.mock( JettyController.class );
+        Mockito.when( controller.getServletContext() ).thenReturn( this.server.getHandler().getServletContext() );
 
-        this.servlet = new WebSocketServlet( this.handler );
-        this.servlet.realContext = this.server.getHandler().getServletContext();
-        
-        addServlet( this.servlet, this.handler.getPath() );
+        this.service = new WebSocketServiceImpl();
+        this.service.setController( controller );
+        this.service.activate();
+
+        this.servlet = new TestWebSocketServlet();
+        this.servlet.service = this.service;
+        this.servlet.endpoint = this.endpoint;
+
+        addServlet( this.servlet, "/ws" );
+
+        this.req = new MockHttpServletRequest();
+        this.res = new MockHttpServletResponse();
+    }
+
+    @Override
+    protected void destroy()
+        throws Exception
+    {
+        this.service.deactivate();
     }
 
     private void newWebSocketRequest( final WebSocketListener listener )
@@ -48,21 +67,12 @@ public class WebSocketServletTest
     }
 
     @Test
-    public void testSecurity()
+    public void testNotSocket()
         throws Exception
     {
-        final MockHttpServletRequest req = new MockHttpServletRequest();
-        final MockHttpServletResponse res = new MockHttpServletResponse();
-
-        this.handler.accesss = false;
-
-        this.servlet.service( req, res );
-        assertEquals( 403, res.getStatus() );
-
-        this.handler.accesss = true;
-
-        this.servlet.service( req, res );
-        assertEquals( 501, res.getStatus() );
+        this.req.setMethod( "GET" );
+        this.servlet.service( this.req, this.res );
+        assertEquals( 404, this.res.getStatus() );
     }
 
     @Test

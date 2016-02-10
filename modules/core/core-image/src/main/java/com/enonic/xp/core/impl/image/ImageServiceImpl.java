@@ -137,6 +137,12 @@ public class ImageServiceImpl
 
         if ( bufferedImage != null )
         {
+            //Applies the rotation
+            if ( readImageParams.getOrientation() != ImageOrientation.TopLeft )
+            {
+                bufferedImage = applyRotation( bufferedImage, readImageParams.getOrientation() );
+            }
+
             //Apply the cropping
             if ( readImageParams.getCropping() != null )
             {
@@ -164,12 +170,6 @@ public class ImageServiceImpl
             if ( !ImageHelper.supportsAlphaChannel( readImageParams.getFormat() ) )
             {
                 bufferedImage = ImageHelper.removeAlphaChannel( bufferedImage, readImageParams.getBackgroundColor() );
-            }
-
-            //Applies the rotation
-            if ( readImageParams.getOrientation() != ImageOrientation.TopLeft )
-            {
-                bufferedImage = applyRotation( bufferedImage, readImageParams.getOrientation() );
             }
         }
 

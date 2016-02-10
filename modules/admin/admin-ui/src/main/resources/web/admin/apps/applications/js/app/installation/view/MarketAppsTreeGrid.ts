@@ -70,7 +70,8 @@ module app.installation.view {
                     setRowHeight(70).
                     disableMultipleSelection(true).
                     prependClasses("market-app-tree-grid").
-                    setSelectedCellCssClass("selected-sort-row")
+                    setSelectedCellCssClass("selected-sort-row").
+                    setQuietErrorHandling(true)
             );
 
             this.subsribeAndManageInstallClick();
@@ -167,9 +168,16 @@ module app.installation.view {
 
 
         fetchChildren(): wemQ.Promise<MarketApplication[]> {
-            return new api.application.ListMarketApplicationsRequest().sendAndParse().then((applications: MarketApplication[])=> {
-                return this.setMarketAppsStatuses(applications);
-            });
+            return new api.application.ListMarketApplicationsRequest().sendAndParse()
+                .then((applications: MarketApplication[])=> {
+                    return this.setMarketAppsStatuses(applications);
+                })
+                .catch((reason: any) => {
+                    var status500Message = "Failed to access the Market. Make sure you have an Internet connection.";
+                    var defaultErrorMessage = "The Market is temporarily unavailable. Please try again later.";
+                    this.handleError(reason, reason.getStatusCode() == 500 ? status500Message : defaultErrorMessage);
+                    return [];
+                });
         }
 
         private setMarketAppsStatuses(marketApplications: MarketApplication[]): wemQ.Promise<MarketApplication[]> {

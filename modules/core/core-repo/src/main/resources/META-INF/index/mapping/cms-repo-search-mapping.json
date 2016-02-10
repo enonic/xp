@@ -77,6 +77,7 @@
             "store": "no",
             "index": "analyzed",
             "analyzer": "keywordlowercase",
+            "ignore_above": 3072,
             "include_in_all": false
           }
         }
@@ -100,6 +101,7 @@
             "store": "no",
             "index": "analyzed",
             "analyzer": "keywordlowercase",
+            "ignore_above": 3072,
             "include_in_all": false
           }
         }
@@ -112,6 +114,7 @@
             "store": "no",
             "index": "analyzed",
             "analyzer": "keywordlowercase",
+            "ignore_above": 3072,
             "include_in_all": false
           }
         }

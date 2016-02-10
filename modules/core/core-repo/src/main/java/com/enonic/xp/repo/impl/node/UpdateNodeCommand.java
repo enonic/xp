@@ -73,7 +73,7 @@ public final class UpdateNodeCommand
 
         final Node editedNode = editableNode.build();
 
-        if ( editedNode.equals( persistedNode ) )
+        if ( editedNode.equals( persistedNode ) && updatedBinaries.equals( persistedNode.getAttachedBinaries() ) )
         {
             return persistedNode;
         }

@@ -22,9 +22,7 @@ function handleGet(req) {
         baseUri: '',
         portalAssetsUrl: portal.assetUrl({path: ""}),
         xpVersion: app.version.replace('.SNAPSHOT', ''),
-        docLinkPrefix: docLinkPrefix,
-        appId: 'home',
-        installation: uriScriptHelper.getInstallation()
+        docLinkPrefix: docLinkPrefix
     };
     return {
         contentType: 'text/html',

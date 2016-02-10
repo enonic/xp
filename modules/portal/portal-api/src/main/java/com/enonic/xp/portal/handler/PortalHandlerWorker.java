@@ -5,6 +5,8 @@ import com.google.common.net.HttpHeaders;
 import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.websocket.WebSocketConfig;
+import com.enonic.xp.portal.websocket.WebSocketEndpoint;
 import com.enonic.xp.web.HttpStatus;
 
 public abstract class PortalHandlerWorker
@@ -15,6 +17,12 @@ public abstract class PortalHandlerWorker
 
     public abstract void execute()
         throws Exception;
+
+    public WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config )
+        throws Exception
+    {
+        return null;
+    }
 
     protected final PortalException notFound( final String message, final Object... args )
     {

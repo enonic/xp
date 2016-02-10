@@ -15,6 +15,10 @@ module api.form {
             return this.showEmptyFormItemSetOccurrences;
         }
 
+        setShowEmptyFormItemSetOccurrences(value: boolean) {
+            this.showEmptyFormItemSetOccurrences = value;
+        }
+
         static create(): FormContextBuilder {
             return new FormContextBuilder();
         }

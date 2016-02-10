@@ -3,9 +3,6 @@ package com.enonic.xp.web.jetty.impl.websocket;
 import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.websocket.Endpoint;
@@ -21,77 +18,64 @@ import org.eclipse.jetty.websocket.jsr356.server.JsrCreator;
 import org.eclipse.jetty.websocket.jsr356.server.SimpleServerEndpointMetadata;
 import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
 import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.web.websocket.WebSocketHandler;
+import com.enonic.xp.web.jetty.impl.JettyController;
+import com.enonic.xp.web.websocket.EndpointFactory;
+import com.enonic.xp.web.websocket.WebSocketService;
 
-final class WebSocketServlet
-    extends HttpServlet
+@Component
+public final class WebSocketServiceImpl
+    implements WebSocketService
 {
-    private final WebSocketHandler handler;
-
-    protected ServletContext realContext;
+    private JettyController controller;
 
     private WebSocketServerFactory serverFactory;
 
-    private WebSocketCreator creator;
-
-    public WebSocketServlet( final WebSocketHandler handler )
-    {
-        this.handler = handler;
-    }
-
-    @Override
-    public void init()
-        throws ServletException
+    @Activate
+    public void activate()
+        throws Exception
     {
         final WebSocketPolicy policy = WebSocketPolicy.newServerPolicy();
         this.serverFactory = new WebSocketServerFactory( policy );
-        this.serverFactory.init( this.realContext );
+        this.serverFactory.init( this.controller.getServletContext() );
 
         new ServerContainerImpl( this.serverFactory );
-        this.creator = newCreator();
     }
 
-    @Override
-    public void destroy()
+    @Deactivate
+    public void deactivate()
     {
         this.serverFactory.cleanup();
     }
 
     @Override
-    protected void service( HttpServletRequest req, HttpServletResponse res )
-        throws ServletException, IOException
+    public boolean isUpgradeRequest( final HttpServletRequest req, final HttpServletResponse res )
     {
-        if ( !this.handler.hasAccess( req ) )
-        {
-            res.setStatus( HttpServletResponse.SC_FORBIDDEN );
-            return;
-        }
-
-        if ( !this.serverFactory.isUpgradeRequest( req, res ) )
-        {
-            super.service( req, res );
-            return;
-        }
-
-        if ( this.serverFactory.acceptWebSocket( this.creator, req, res ) )
-        {
-            return;
-        }
-
-        if ( res.isCommitted() )
-        {
-            return;
-        }
-
-        super.service( req, res );
+        return this.serverFactory.isUpgradeRequest( req, res );
     }
 
-    private WebSocketCreator newCreator()
+    @Override
+    public boolean acceptWebSocket( final HttpServletRequest req, final HttpServletResponse res, final EndpointFactory factory )
+        throws IOException
+    {
+        return this.serverFactory.acceptWebSocket( newCreator( factory ), req, res );
+    }
+
+    @Reference
+    public void setController( final JettyController controller )
+    {
+        this.controller = controller;
+    }
+
+    private WebSocketCreator newCreator( final EndpointFactory factory )
     {
         final ServerEndpointConfig.Builder builder = newEndpointConfigBuilder();
-        builder.configurator( newConfigurator() );
-        builder.subprotocols( this.handler.getSubProtocols() );
+        builder.configurator( newConfigurator( factory ) );
+        builder.subprotocols( factory.getSubProtocols() );
 
         final ServerEndpointConfig config = builder.build();
         final SimpleServerEndpointMetadata meta = new SimpleServerEndpointMetadata( Endpoint.class, config );
@@ -100,7 +84,7 @@ final class WebSocketServlet
         return new JsrCreator( this.serverFactory, meta, ext );
     }
 
-    private ServerEndpointConfig.Configurator newConfigurator()
+    private ServerEndpointConfig.Configurator newConfigurator( final EndpointFactory factory )
     {
         final ContainerDefaultConfigurator defaultConfigurator = new ContainerDefaultConfigurator();
 
@@ -133,7 +117,7 @@ final class WebSocketServlet
             @Override
             public <T> T getEndpointInstance( final Class<T> endpointClass )
             {
-                return endpointClass.cast( handler.newEndpoint() );
+                return endpointClass.cast( factory.newEndpoint() );
             }
         };
     }

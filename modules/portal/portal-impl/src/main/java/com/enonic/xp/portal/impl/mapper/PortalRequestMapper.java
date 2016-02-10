@@ -1,10 +1,6 @@
 package com.enonic.xp.portal.impl.mapper;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.Objects;
-
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -30,6 +26,7 @@ public final class PortalRequestMapper
         gen.value( "path", this.request.getPath() );
         gen.value( "url", this.request.getUrl() );
         gen.value( "mode", Objects.toString( this.request.getMode(), null ) );
+        gen.value( "webSocket", this.request.isWebSocket() );
 
         if ( this.request.getBranch() != null )
         {
@@ -37,39 +34,9 @@ public final class PortalRequestMapper
         }
 
         serializeBody( gen );
-        serializeMultimap( "params", gen, this.request.getParams() );
-        serializeMap( "headers", gen, this.request.getHeaders() );
-        serializeMap( "cookies", gen, this.request.getCookies() );
-    }
-
-    private void serializeMultimap( final String name, final MapGenerator gen, final Multimap<String, String> params )
-    {
-        gen.map( name );
-        for ( final String key : params.keySet() )
-        {
-            final Collection<String> values = params.get( key );
-            if ( values.size() == 1 )
-            {
-                gen.value( key, values.iterator().next() );
-            }
-            else
-            {
-                gen.array( key );
-                values.forEach( gen::value );
-                gen.end();
-            }
-        }
-        gen.end();
-    }
-
-    private void serializeMap( final String name, final MapGenerator gen, final Map<String, String> params )
-    {
-        gen.map( name );
-        for ( final Map.Entry<String, String> entry : params.entrySet() )
-        {
-            gen.value( entry.getKey(), entry.getValue() );
-        }
-        gen.end();
+        MapperHelper.serializeMultimap( "params", gen, this.request.getParams() );
+        MapperHelper.serializeMap( "headers", gen, this.request.getHeaders() );
+        MapperHelper.serializeMap( "cookies", gen, this.request.getCookies() );
     }
 
     private void serializeBody( final MapGenerator gen )

@@ -40,6 +40,9 @@ public final class InitAppCommand
     @Option(name = "-a", description = "Authentication token for basic authentication (user:password).")
     public String authentication;
 
+    @Option(name = {"-c", "--checkout"}, description = "Branch or commit to checkout.")
+    public String checkout;
+
     @Option(name = {"-d", "--destination"}, description = "Destination path.")
     public String destination = ".";
 
@@ -84,25 +87,40 @@ public final class InitAppCommand
         File temporaryDirectory = new File( destinationDirectory, ".InitAppTemporaryDirectory" );
         temporaryDirectory.mkdirs();
 
-        // Clones the Git repository
-        final CloneCommand cloneCommand = Git.cloneRepository().
-            setURI( gitRepositoryUri ).
-            setDirectory( temporaryDirectory );
-        if ( authentication != null )
+        try
         {
-            final String[] authentificationValues = authentication.split( ":" );
-            cloneCommand.setCredentialsProvider(
-                new UsernamePasswordCredentialsProvider( authentificationValues[0], authentificationValues[1] ) );
+            // Clones the Git repository
+            final CloneCommand cloneCommand = Git.cloneRepository().
+                setURI( gitRepositoryUri ).
+                setDirectory( temporaryDirectory );
+            if ( authentication != null )
+            {
+                final String[] authentificationValues = authentication.split( ":" );
+                cloneCommand.setCredentialsProvider(
+                    new UsernamePasswordCredentialsProvider( authentificationValues[0], authentificationValues[1] ) );
+            }
+            Git git = cloneCommand.call();
+
+            // Checks out the specified branch or commit if necessary
+            if ( checkout != null )
+            {
+                git.checkout().setName( checkout ).call();
+            }
+
+            //Closes the repository
+            git.getRepository().close();
+
+            // Removes the Git related content
+            removeGitRelatedContent( temporaryDirectory );
+
+            // Copies the content from the temporary folder
+            FileUtils.copyDirectory( temporaryDirectory, destinationDirectory );
         }
-        Git clone = cloneCommand.call();
-        clone.getRepository().close();
-
-        // Removes the Git related content
-        removeGitRelatedContent( temporaryDirectory );
-
-        //Copies the content from the temporary folder and remove it
-        FileUtils.copyDirectory( temporaryDirectory, destinationDirectory );
-        FileUtils.deleteDirectory( temporaryDirectory );
+        finally
+        {
+            // Removes the temporary folder
+            FileUtils.deleteDirectory( temporaryDirectory );
+        }
 
         LOGGER.info( "Git repository retrieved." );
     }
@@ -110,11 +128,11 @@ public final class InitAppCommand
     private void removeGitRelatedContent( File directory )
         throws IOException
     {
-        //Removes the .git directory and README.md file
+        // Removes the .git directory and README.md file
         FileUtils.deleteDirectory( new File( directory, ".git" ) );
         FileUtils.deleteQuietly( new File( directory, "README.md" ) );
 
-        //Remove the .gitkeep and .gitignore files
+        // Remove the .gitkeep and .gitignore files
         Files.walkFileTree( directory.toPath(), new SimpleFileVisitor<Path>()
         {
             @Override
@@ -136,19 +154,19 @@ public final class InitAppCommand
     {
         LOGGER.info( "Adapting Gradle properties file ..." );
 
-        //Creates the Gradle Properties file if it does not exist
+        // Creates the Gradle Properties file if it does not exist
         final File gradlePropertiesFile = new File( destination, "gradle.properties" );
         if ( !gradlePropertiesFile.exists() )
         {
             gradlePropertiesFile.createNewFile();
         }
 
-        //Process the content of the Gradle Properties file
+        // Process the content of the Gradle Properties file
         final List<String> originalGradlePropertiesContent = com.google.common.io.Files.readLines( gradlePropertiesFile, Charsets.UTF_8 );
         final GradlePropertiesProcessor gradlePropertiesProcessor = new GradlePropertiesProcessor( name, version );
         final List<String> processedGradlePropertiesContent = gradlePropertiesProcessor.process( originalGradlePropertiesContent );
 
-        //Write the processed content into the  Gradle Properties file
+        // Write the processed content into the  Gradle Properties file
         com.google.common.io.Files.asCharSink( gradlePropertiesFile, Charsets.UTF_8 ).writeLines( processedGradlePropertiesContent );
 
         LOGGER.info( "Gradle properties file adapted." );
