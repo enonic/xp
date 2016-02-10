@@ -214,6 +214,10 @@ module api.form.inputtype.text {
                     }
                     this.removeTooltipFromEditorArea(textAreaWrapper);
                     this.updateImageAlignmentBehaviour(editor);
+                    this.onShown((event) => {
+                        // invoke auto resize on shown in case contents have been updated while inactive
+                        editor.execCommand('mceAutoResize', false, null);
+                    })
                 }
             });
         }
@@ -441,7 +445,7 @@ module api.form.inputtype.text {
 
         private getConvertedImageSrc(imgSrc: string): string {
             var contentId = api.util.UriHelper.trimUrlParams(imgSrc.replace(HtmlArea.imagePrefix, api.util.StringHelper.EMPTY_STRING)),
-                imageUrlResolver = new api.content.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)),
+                imageUrlResolver = new api.content.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)).setTimestamp(new Date()),
                 scalingApplied = imgSrc.indexOf("scale=") > 0,
                 urlParams = api.util.UriHelper.decodeUrlParams(imgSrc.replace("&amp;", "&"));
 

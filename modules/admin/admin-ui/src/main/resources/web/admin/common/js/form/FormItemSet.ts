@@ -5,7 +5,7 @@ module api.form {
      *
      * The form items are kept in the order they where inserted.
      */
-    export class FormItemSet extends FormItem {
+    export class FormItemSet extends FormItem implements FormItemContainer {
 
         private label: string;
 
