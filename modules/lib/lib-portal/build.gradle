@@ -2,6 +2,5 @@ dependencies {
     provided project( ':core:core-api' )
     provided project( ':portal:portal-api' )
     compile project( ':lib:lib-content' )
-    compile project( ':portal:portal-owasp' )
     testCompile project( ':tools:testing' )
 }
