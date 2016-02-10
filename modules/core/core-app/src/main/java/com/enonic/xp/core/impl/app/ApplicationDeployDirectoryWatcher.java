@@ -12,6 +12,7 @@ import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
@@ -41,6 +42,8 @@ public class ApplicationDeployDirectoryWatcher
 
     private Configuration config;
 
+    private FileAlterationMonitor monitor;
+
 
     @Activate
     public void activate( final Map<String, String> map )
@@ -65,7 +68,18 @@ public class ApplicationDeployDirectoryWatcher
         }
 
         final long interval = config.get( DEPLOY_INTERVAL_PROPERTY_KEY, Long.class );
-        new FileAlterationMonitor( interval, observer ).start();
+        monitor = new FileAlterationMonitor( interval, observer );
+        monitor.start();
+    }
+
+    @Deactivate
+    public void deactivate()
+        throws Exception
+    {
+        if ( monitor != null )
+        {
+            monitor.stop();
+        }
     }
 
     @Override
