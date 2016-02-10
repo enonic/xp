@@ -130,6 +130,8 @@ module app.wizard {
 
         private contentCompareStatus: CompareStatus;
 
+        private dataChangedListener: (event: api.data.PropertyEvent) => void;
+
         /**
          * Whether constructor is being currently executed or not.
          */
@@ -200,6 +202,12 @@ module app.wizard {
             this.securityWizardStepForm = new SecurityWizardStepForm();
 
             ContentPermissionsAppliedEvent.on((event) => this.contentPermissionsUpdated(event.getContent()));
+
+            this.dataChangedListener = (event: api.data.PropertyEvent) => {
+                if (this.isContentFormValid && this.contentWizardToolbarPublishControls.isOnline()) {
+                    this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.NEWER);
+                }
+            };
 
             var isSiteOrWithinSite = this.site || this.createSite;
             var isPageTemplate = this.contentType.getContentTypeName().isPageTemplate();
@@ -660,6 +668,7 @@ module app.wizard {
             this.thumbnailUploader.toggleClass("invalid", !content.isValid());
         }
 
+        // Remember that content has been cloned here and it is not the persistedItem any more
         private doLayoutPersistedItem(content: Content): wemQ.Promise<void> {
             this.toggleClass("rendered", false);
 
@@ -691,11 +700,7 @@ module app.wizard {
 
                 var contentData = content.getContentData();
 
-                contentData.onChanged(() => {
-                    if (this.isContentFormValid && this.contentWizardToolbarPublishControls.isOnline()) {
-                        this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.NEWER);
-                    }
-                });
+                contentData.onChanged(this.dataChangedListener);
 
                 var formViewLayoutPromises: wemQ.Promise<void>[] = [];
                 formViewLayoutPromises.push(this.contentWizardStepForm.layout(formContext, contentData, this.contentType.getForm()));
@@ -1199,7 +1204,13 @@ module app.wizard {
 
         private updateWizardStepForms(content: Content) {
 
-            this.contentWizardStepForm.update(content.getContentData());
+            this.contentWizardStepForm.getData().unChanged(this.dataChangedListener);
+
+            // remember to copy data to have persistedItem pristine
+            var contentData = content.getContentData().copy();
+            contentData.onChanged(this.dataChangedListener);
+
+            this.contentWizardStepForm.update(contentData);
 
             this.settingsWizardStepForm.update(content);
 
