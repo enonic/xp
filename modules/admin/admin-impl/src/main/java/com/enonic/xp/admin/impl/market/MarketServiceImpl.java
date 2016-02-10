@@ -13,6 +13,7 @@ import com.squareup.okhttp.Response;
 
 import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
 import com.enonic.xp.json.ObjectMapperHelper;
+import com.enonic.xp.market.MarketException;
 import com.enonic.xp.web.HttpStatus;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.market")
@@ -49,18 +50,15 @@ public class MarketServiceImpl
                     return ObjectMapperHelper.create().
                         readValue( src, MarketApplicationsJson.class );
                 }
-
             }
             else
             {
                 throw new MarketException( "Cannot get applications from market [" + this.marketUrl + "], http status code " + code );
             }
-
-
         }
         catch ( IOException e )
         {
-            throw new MarketException( "Cannot get applications from market [" + this.marketUrl + "]", e );
+            throw new RuntimeException( "Illegal response from market [" + this.marketUrl + "]", e );
         }
 
     }
