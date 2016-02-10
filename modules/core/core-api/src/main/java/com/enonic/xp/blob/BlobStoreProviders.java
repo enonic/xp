@@ -1,11 +1,11 @@
-package com.enonic.xp.blobstore;
+package com.enonic.xp.blob;
 
 import java.util.Iterator;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-class BlobStoreProviders
+public class BlobStoreProviders
     implements Iterable<BlobStoreProvider>
 {
     private final Map<String, BlobStoreProvider> providers;

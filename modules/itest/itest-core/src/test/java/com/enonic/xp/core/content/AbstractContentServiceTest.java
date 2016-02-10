@@ -158,7 +158,6 @@ public class AbstractContentServiceTest
         this.nodeDao = new NodeVersionDaoImpl();
         this.nodeDao.setConfiguration( repoConfig );
         this.nodeDao.setBlobStore( blobStore );
-        this.nodeDao.initialize();
 
         this.contentService = new ContentServiceImpl();
 

@@ -1,12 +1,9 @@
-package com.enonic.xp.blobstore;
+package com.enonic.xp.blob;
 
 import java.io.IOException;
 
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteSource;
-
-import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.BlobStoreException;
 
 public final class BlobKeyCreator
 {

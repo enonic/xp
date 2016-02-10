@@ -1,6 +1,4 @@
-package com.enonic.xp.blobstore;
-
-import com.enonic.xp.blob.BlobStore;
+package com.enonic.xp.blob;
 
 public interface BlobStoreProvider
 {

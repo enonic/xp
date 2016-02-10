@@ -66,6 +66,8 @@ include 'launcher:launcher-impl'
 include 'launcher:launcher-ui'
 include 'launcher:launcher-main'
 
+include 'blobstore:blobstore-aws-s3'
+
 include 'distro'
 include 'docs'
 

@@ -10,11 +10,11 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobKeyCreator;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.Segment;
-import com.enonic.xp.blobstore.BlobKeyCreator;
 
 public final class FileBlobStore
     implements BlobStore

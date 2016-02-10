@@ -105,7 +105,6 @@ public class SecurityServiceImplTest
         final NodeVersionDaoImpl nodeDao = new NodeVersionDaoImpl();
         nodeDao.setConfiguration( repoConfig );
         nodeDao.setBlobStore( blobStore );
-        nodeDao.initialize();
 
         this.indexServiceInternal = new ElasticsearchIndexServiceInternal();
         this.indexServiceInternal.setClient( client );

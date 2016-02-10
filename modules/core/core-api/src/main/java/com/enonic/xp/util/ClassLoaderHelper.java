@@ -1,8 +1,6 @@
-package com.enonic.xp.blobstore;
+package com.enonic.xp.util;
 
 import java.util.concurrent.Callable;
-
-import com.enonic.xp.util.Exceptions;
 
 public class ClassLoaderHelper
 {

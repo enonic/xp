@@ -143,7 +143,6 @@ public abstract class AbstractNodeTest
         this.nodeDao = new NodeVersionDaoImpl();
         this.nodeDao.setConfiguration( repoConfig );
         this.nodeDao.setBlobStore( blobStore );
-        this.nodeDao.initialize();
 
         this.indexedDataService = new IndexedDataServiceImpl();
         this.indexedDataService.setStorageDao( storageDao );

@@ -10,8 +10,12 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.blob.BlobStoreProvider;
+import com.enonic.xp.blob.BlobStoreProviders;
 import com.enonic.xp.blobstore.config.BlobStoreConfig;
 
 @Component(immediate = true)
@@ -24,6 +28,8 @@ public class BlobStoreActivator
     private BlobStoreConfig config;
 
     private BundleContext context;
+
+    private final static Logger LOG = LoggerFactory.getLogger( BlobStoreActivator.class );
 
     public BlobStoreActivator()
     {
@@ -66,6 +72,8 @@ public class BlobStoreActivator
             }
 
             this.blobStoreReg = this.context.registerService( BlobStore.class, blobStore, new Hashtable<>() );
+
+            LOG.info( "Registered blobstore [" + this.config.providerName() + "] successfully" );
         }
     }
 

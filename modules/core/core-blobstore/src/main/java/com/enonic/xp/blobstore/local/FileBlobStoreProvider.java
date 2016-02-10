@@ -5,7 +5,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.blobstore.BlobStoreProvider;
+import com.enonic.xp.blob.BlobStoreProvider;
 import com.enonic.xp.blobstore.config.BlobStoreConfig;
 
 @Component
