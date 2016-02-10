@@ -19,6 +19,8 @@ module api.content {
 
         private fileName: string;
 
+        private link: api.dom.AEl;
+
         constructor(config: MediaUploaderElConfig) {
 
             if (config.url == undefined) {
@@ -29,7 +31,6 @@ module api.content {
 
             this.addClass('media-uploader-el');
         }
-
 
         createModel(serverResponse: api.content.json.ContentJson): Content {
             if (serverResponse) {
@@ -62,14 +63,16 @@ module api.content {
 
         setFileName(name: string) {
             this.fileName = name;
+            if (this.link && this.fileName != null && this.fileName != "") {
+                this.link.setHtml(this.fileName);
+            }
         }
 
         createResultItem(value: string): api.dom.Element {
+            this.link = new api.dom.AEl().setUrl(api.util.UriHelper.getRestUri('content/media/' + value), "_blank");
+            this.link.setHtml(this.fileName != null && this.fileName != "" ? this.fileName : value);
 
-            var link = new api.dom.AEl().setUrl(api.util.UriHelper.getRestUri('content/media/' + value), "_blank");
-            link.setHtml(this.fileName != null && this.fileName != "" ? this.fileName : value);
-
-            return link;
+            return this.link;
         }
     }
 }
