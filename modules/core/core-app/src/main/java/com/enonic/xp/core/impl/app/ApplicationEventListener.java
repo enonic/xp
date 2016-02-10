@@ -65,8 +65,12 @@ public class ApplicationEventListener
 
         if ( appKey.isPresent() )
         {
-            ApplicationHelper.runAsAdmin(
-                () -> this.applicationService.uninstallApplication( ApplicationKey.from( appKey.get() ), true, false ) );
+            final ApplicationKey applicationKey = ApplicationKey.from( appKey.get() );
+            if ( !( this.applicationService.isLocalApplication( applicationKey ) ) )
+            {
+                ApplicationHelper.runAsAdmin(
+                    () -> this.applicationService.uninstallApplication( ApplicationKey.from( appKey.get() ), false ) );
+            }
         }
     }
 
@@ -77,14 +81,18 @@ public class ApplicationEventListener
 
         if ( appKey.isPresent() && started.isPresent() )
         {
-            if ( started.get() )
+            final ApplicationKey applicationKey = ApplicationKey.from( appKey.get() );
+            if ( !( this.applicationService.isLocalApplication( applicationKey ) ) )
             {
-                ApplicationHelper.runAsAdmin(
-                    () -> this.applicationService.startApplication( ApplicationKey.from( appKey.get() ), false ) );
-            }
-            else
-            {
-                ApplicationHelper.runAsAdmin( () -> this.applicationService.stopApplication( ApplicationKey.from( appKey.get() ), false ) );
+                if ( started.get() )
+                {
+
+                    ApplicationHelper.runAsAdmin( () -> this.applicationService.startApplication( applicationKey, false ) );
+                }
+                else
+                {
+                    ApplicationHelper.runAsAdmin( () -> this.applicationService.stopApplication( applicationKey, false ) );
+                }
             }
         }
     }

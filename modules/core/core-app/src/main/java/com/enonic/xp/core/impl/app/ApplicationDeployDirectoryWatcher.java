@@ -125,7 +125,7 @@ public class ApplicationDeployDirectoryWatcher
         final ApplicationKey applicationKey = applicationKeyByFile.remove( file.getName() );
         if ( applicationKey != null )
         {
-            ApplicationHelper.runAsAdmin( () -> this.applicationService.uninstallApplication( applicationKey, false, false ) );
+            ApplicationHelper.runAsAdmin( () -> this.applicationService.uninstallApplication( applicationKey, false ) );
         }
     }
 

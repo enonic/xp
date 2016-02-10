@@ -121,13 +121,13 @@ public final class ApplicationServiceImpl
     @Override
     public void startApplication( final ApplicationKey key, final boolean triggerEvent )
     {
-        doStartApplication( key, triggerEvent );
+        doStartApplication( key, triggerEvent && !isLocalApplication( key ) );
     }
 
     @Override
     public void stopApplication( final ApplicationKey key, final boolean triggerEvent )
     {
-        doStopApplication( key, triggerEvent );
+        doStopApplication( key, triggerEvent && !isLocalApplication( key ) );
     }
 
 
@@ -146,7 +146,7 @@ public final class ApplicationServiceImpl
     @Override
     public Application installApplication( final NodeId nodeId )
     {
-        final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( nodeId, true, true ) );
+        final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( nodeId, true, false ) );
         LOG.info( "Application [{}] installed successfully", application.getKey() );
 
         doStartApplication( application.getKey(), false );
@@ -155,7 +155,7 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public void uninstallApplication( final ApplicationKey key, final boolean cluster, final boolean triggerEvent )
+    public void uninstallApplication( final ApplicationKey key, final boolean triggerEvent )
     {
         final Application application = this.registry.get( key );
         if ( application == null )
@@ -172,10 +172,12 @@ public final class ApplicationServiceImpl
             final Node applicationNode = this.repoService.getApplicationNode( key.getName() );
             if ( applicationNode != null )
             {
-                doInstallApplication( applicationNode.id(), true, false );
+                final Application clusterApplication = doInstallApplication( applicationNode.id(), true, false );
                 LOG.info( "Application [{}] installed successfully", application.getKey() );
-                doStartApplication( application.getKey(), false );
-                return;
+                if ( Boolean.TRUE.equals( getStartedState( applicationNode ) ) )
+                {
+                    doStartApplication( application.getKey(), false );
+                }
             }
         }
 
@@ -277,13 +279,10 @@ public final class ApplicationServiceImpl
         final String applicationName = getApplicationName( byteSource );
 
         localApplicationSet.compute( applicationName, ( key, present ) -> {
-            if ( Boolean.TRUE.equals( present ) )
+            if ( Boolean.TRUE.equals( present ) && cluster )
             {
-                if ( cluster )
-                {
-                    throw new ApplicationInstallException(
-                        "Cannot install application : '" + applicationName + "'. Application already installed in development mode" );
-                }
+                throw new ApplicationInstallException(
+                    "Cannot install application : '" + applicationName + "'. Application already installed in development mode" );
             }
 
             return !cluster;
