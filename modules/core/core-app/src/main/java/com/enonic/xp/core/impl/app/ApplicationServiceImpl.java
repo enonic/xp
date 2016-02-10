@@ -121,13 +121,13 @@ public final class ApplicationServiceImpl
     @Override
     public void startApplication( final ApplicationKey key, final boolean triggerEvent )
     {
-        doStartApplication( key, triggerEvent );
+        doStartApplication( key, triggerEvent && !isLocalApplication( key ) );
     }
 
     @Override
     public void stopApplication( final ApplicationKey key, final boolean triggerEvent )
     {
-        doStopApplication( key, triggerEvent );
+        doStopApplication( key, triggerEvent && !isLocalApplication( key ) );
     }
 
 
@@ -277,13 +277,10 @@ public final class ApplicationServiceImpl
         final String applicationName = getApplicationName( byteSource );
 
         localApplicationSet.compute( applicationName, ( key, present ) -> {
-            if ( Boolean.TRUE.equals( present ) )
+            if ( Boolean.TRUE.equals( present ) && cluster )
             {
-                if ( cluster )
-                {
-                    throw new ApplicationInstallException(
-                        "Cannot install application : '" + applicationName + "'. Application already installed in development mode" );
-                }
+                throw new ApplicationInstallException(
+                    "Cannot install application : '" + applicationName + "'. Application already installed in development mode" );
             }
 
             return !cluster;
