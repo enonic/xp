@@ -1,6 +1,6 @@
-package com.enonic.xp.admin.impl.market;
+package com.enonic.xp.market;
 
-class MarketException
+public class MarketException
     extends RuntimeException
 {
     public MarketException( final String message )
