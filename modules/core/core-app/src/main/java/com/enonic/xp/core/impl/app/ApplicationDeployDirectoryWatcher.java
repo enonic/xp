@@ -24,7 +24,7 @@ import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
 
-@Component(immediate = true, configurationPid = "com.enonic.enonic.xp.app.deploy")
+@Component(immediate = true, configurationPid = "com.enonic.xp.app.deploy")
 public class ApplicationDeployDirectoryWatcher
     implements FileAlterationListener
 {
