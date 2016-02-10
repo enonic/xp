@@ -146,7 +146,7 @@ public final class ApplicationServiceImpl
     @Override
     public Application installApplication( final NodeId nodeId )
     {
-        final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( nodeId, true, true ) );
+        final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( nodeId, true, false ) );
         LOG.info( "Application [{}] installed successfully", application.getKey() );
 
         doStartApplication( application.getKey(), false );
@@ -174,7 +174,7 @@ public final class ApplicationServiceImpl
             {
                 final Application clusterApplication = doInstallApplication( applicationNode.id(), true, false );
                 LOG.info( "Application [{}] installed successfully", application.getKey() );
-                if ( clusterApplication.isStarted() )
+                if ( Boolean.TRUE.equals( getStartedState( applicationNode ) ) )
                 {
                     doStartApplication( application.getKey(), false );
                 }
