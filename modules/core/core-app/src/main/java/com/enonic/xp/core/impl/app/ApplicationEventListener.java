@@ -66,7 +66,7 @@ public class ApplicationEventListener
         if ( appKey.isPresent() )
         {
             ApplicationHelper.runAsAdmin(
-                () -> this.applicationService.uninstallApplication( ApplicationKey.from( appKey.get() ), true, false ) );
+                () -> this.applicationService.uninstallApplication( ApplicationKey.from( appKey.get() ), false ) );
         }
     }
 

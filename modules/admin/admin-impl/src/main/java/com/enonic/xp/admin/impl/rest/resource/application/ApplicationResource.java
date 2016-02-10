@@ -144,7 +144,7 @@ public final class ApplicationResource
     public ApplicationSuccessJson uninstall( final ApplicationListParams params )
         throws Exception
     {
-        params.getKeys().forEach( applicationKey -> this.applicationService.uninstallApplication( applicationKey, true, true ) );
+        params.getKeys().forEach( applicationKey -> this.applicationService.uninstallApplication( applicationKey, true ) );
         return new ApplicationSuccessJson();
     }
 

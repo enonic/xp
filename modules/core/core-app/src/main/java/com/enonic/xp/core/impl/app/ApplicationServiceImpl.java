@@ -155,7 +155,7 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public void uninstallApplication( final ApplicationKey key, final boolean cluster, final boolean triggerEvent )
+    public void uninstallApplication( final ApplicationKey key, final boolean triggerEvent )
     {
         final Application application = this.registry.get( key );
         if ( application == null )

@@ -25,6 +25,6 @@ public interface ApplicationService
 
     Application installApplication( final NodeId nodeId );
 
-    void uninstallApplication( final ApplicationKey key, final boolean cluster, final boolean triggerEvent );
+    void uninstallApplication( final ApplicationKey key, final boolean triggerEvent );
 
 }
