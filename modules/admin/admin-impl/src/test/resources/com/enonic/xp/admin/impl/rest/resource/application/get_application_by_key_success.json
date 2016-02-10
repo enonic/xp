@@ -25,6 +25,7 @@
   "displayName": "application display name",
   "editable": false,
   "key": "testapplication",
+  "local": false,
   "maxSystemVersion": "5.1",
   "metaSteps": [],
   "minSystemVersion": "5.0",

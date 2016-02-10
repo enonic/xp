@@ -69,6 +69,10 @@ module api.ui {
             return 50;
         }
 
+        getNamesAndIconView(): api.app.NamesAndIconView {
+            return this.namesAndIconView;
+        }
+
         doRender() {
             this.removeChildren();
             this.appendChild(this.namesAndIconView);

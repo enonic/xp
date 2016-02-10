@@ -166,7 +166,7 @@ public class ApplicationServiceImplTest
             build();
 
         final ByteSource byteSource = ByteSource.wrap( ByteStreams.toByteArray( in ) );
-        final Application application = this.service.installApplication( byteSource );
+        final Application application = this.service.installApplication( byteSource, true, true );
 
         assertNotNull( application );
         assertEquals( "my-bundle", application.getKey().getName() );
@@ -198,14 +198,14 @@ public class ApplicationServiceImplTest
 
         final Application originalApplication =
             this.service.installApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.0" ).
-                build() ) ) );
+                build() ) ), true, true );
 
         Mockito.when( this.repoService.getApplicationNode( "my-bundle" ) ).
             thenReturn( node );
 
         final Application updatedApplication =
             this.service.installApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.1" ).
-                build() ) ) );
+                build() ) ), true, true );
 
         assertEquals( "1.0.0", originalApplication.getVersion().toString() );
         assertEquals( "1.0.1", updatedApplication.getVersion().toString() );
@@ -234,15 +234,10 @@ public class ApplicationServiceImplTest
             thenReturn( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.1" ).
                 build() ) ) );
 
-        Mockito.when( this.repoService.createApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
-            thenReturn( node );
-
         this.service.activate( getBundleContext() );
 
         Mockito.verify( this.repoService, Mockito.times( 1 ) ).getApplications();
         Mockito.verify( this.repoService, Mockito.times( 1 ) ).getApplicationSource( node.id() );
-        Mockito.verify( this.repoService, Mockito.times( 1 ) ).createApplicationNode( Mockito.isA( Application.class ),
-                                                                                      Mockito.isA( ByteSource.class ) );
 
         // One installed, one started event
         Mockito.verify( this.eventPublisher, Mockito.never() ).publish( Mockito.isA( Event.class ) );
