@@ -8,5 +8,9 @@ public interface BlobStoreConfig
 
     boolean cache();
 
+    long cacheSizeThreshold();
+
+    long memoryCapacity();
+
     File blobStoreDir();
 }

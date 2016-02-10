@@ -9,6 +9,7 @@ import org.osgi.service.component.annotations.Component;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
+import com.enonic.xp.util.ByteSizeFormatter;
 
 @Component(configurationPid = "com.enonic.xp.blobstore")
 public class BlobStoreConfigImpl
@@ -36,7 +37,20 @@ public class BlobStoreConfigImpl
     @Override
     public boolean cache()
     {
+
         return Boolean.valueOf( this.config.get( "cache.enabled" ) );
+    }
+
+    @Override
+    public long cacheSizeThreshold()
+    {
+        return getSizeProperty( "cache.sizeThreshold" );
+    }
+
+    @Override
+    public long memoryCapacity()
+    {
+        return getSizeProperty( "cache.memoryCapacity" );
     }
 
     @Override
@@ -45,6 +59,11 @@ public class BlobStoreConfigImpl
         return getFileProperty( "blobStore.dir" );
     }
 
+    private long getSizeProperty( final String key )
+    {
+        final String sizeValue = this.config.get( key );
+        return ByteSizeFormatter.parse( sizeValue );
+    }
 
     private File getFileProperty( final String name )
     {

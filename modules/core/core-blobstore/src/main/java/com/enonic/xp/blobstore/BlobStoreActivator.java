@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreProvider;
 import com.enonic.xp.blob.BlobStoreProviders;
+import com.enonic.xp.blobstore.cache.CachedBlobStore;
 import com.enonic.xp.blobstore.config.BlobStoreConfig;
 
 @Component(immediate = true)
@@ -64,17 +65,35 @@ public class BlobStoreActivator
     {
         if ( blobStoreProvider != null )
         {
-            final BlobStore blobStore = blobStoreProvider.get();
-
-            if ( blobStore == null )
-            {
-                throw new RuntimeException( "BlobStoreProvider " + config.providerName() + " returns null blobstore" );
-            }
+            final BlobStore blobStore = createBlobStore( blobStoreProvider );
 
             this.blobStoreReg = this.context.registerService( BlobStore.class, blobStore, new Hashtable<>() );
 
             LOG.info( "Registered blobstore [" + this.config.providerName() + "] successfully" );
         }
+    }
+
+    private BlobStore createBlobStore( final BlobStoreProvider blobStoreProvider )
+    {
+        final BlobStore providerStore = blobStoreProvider.get();
+
+        if ( providerStore == null )
+        {
+            throw new RuntimeException( "BlobStoreProvider " + config.providerName() + " returns null blobstore" );
+        }
+
+        BlobStore builtStore = providerStore;
+
+        if ( this.config.cache() )
+        {
+            return CachedBlobStore.create().
+                blobStore( providerStore ).
+                sizeTreshold( config.cacheSizeThreshold() ).
+                memoryCapacity( config.memoryCapacity() ).
+                build();
+        }
+
+        return builtStore;
     }
 
     private boolean isActivated()

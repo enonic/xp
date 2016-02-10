@@ -113,16 +113,12 @@ class AwsS3BlobStore
 
         try
         {
-            Stopwatch timer = Stopwatch.createStarted();
-
             final Blob blob = blobStore.blobBuilder( key.toString() ).
                 payload( in ).
                 contentLength( in.size() ).
                 build();
 
-            System.out.println( "Creating blob: " + timer.stop().toString() );
-
-            timer = Stopwatch.createStarted();
+            Stopwatch timer = Stopwatch.createStarted();
             blobStore.putBlob( this.bucketName, blob );
             System.out.println( "Pushing blob: " + timer.stop().toString() );
         }
