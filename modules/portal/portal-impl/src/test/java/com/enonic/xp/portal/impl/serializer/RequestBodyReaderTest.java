@@ -11,6 +11,8 @@ import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.portal.serializer.RequestBodyReader;
+
 import static org.junit.Assert.*;
 
 public class RequestBodyReaderTest

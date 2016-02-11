@@ -84,6 +84,7 @@
 ///<reference path='ui/image/_module.ts' />
 ///<reference path='ui/security/_module.ts' />
 ///<reference path='ui/security/acl/_module.ts' />
+///<reference path='ui/security/auth/_module.ts' />
 
 ///<reference path='ui/locale/_module.ts' />
 

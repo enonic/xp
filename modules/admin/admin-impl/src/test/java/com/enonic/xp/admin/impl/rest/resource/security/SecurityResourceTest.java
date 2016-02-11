@@ -21,6 +21,8 @@ import com.google.common.collect.Iterables;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
@@ -44,6 +46,7 @@ import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.UpdateUserStoreParams;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStore;
+import com.enonic.xp.security.UserStoreAuthConfig;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.acl.UserStoreAccess;
@@ -616,9 +619,16 @@ public class SecurityResourceTest
 
     private UserStores createUserStores()
     {
+        final PropertyTree config = new PropertyTree();
+        config.setString( "propertyName", "propertyValue" );
+        final UserStoreAuthConfig authConfig = UserStoreAuthConfig.create().
+            applicationKey( ApplicationKey.from( "com.enonic.app.ldap" ) ).
+            config( config ).
+            build();
         final UserStore userStore1 = UserStore.create().
             key( USER_STORE_1 ).
             displayName( "Local LDAP" ).
+            authConfig( authConfig ).
             build();
 
         final UserStore userStore2 = UserStore.create().

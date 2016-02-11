@@ -5,6 +5,7 @@
 ///<reference path='ApplicationResourceRequest.ts' />
 ///<reference path='GetApplicationRequest.ts' />
 ///<reference path='ListApplicationsRequest.ts' />
+///<reference path='ListAuthApplicationsRequest.ts' />
 ///<reference path='ApplicationListResult.ts' />
 ///<reference path='ApplicationLoader.ts' />
 ///<reference path='ApplicationViewer.ts' />

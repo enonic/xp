@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
@@ -18,6 +19,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.UpdateUserStoreParams;
 import com.enonic.xp.security.UserStore;
+import com.enonic.xp.security.UserStoreAuthConfig;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -223,11 +225,25 @@ abstract class UserStoreNodeTranslator
 
     static UpdateNodeParams toUpdateNodeParams( final UpdateUserStoreParams updateUserStoreParams, final NodeId nodeId )
     {
+        final String displayName = updateUserStoreParams.getDisplayName();
+        final UserStoreAuthConfig authConfig = updateUserStoreParams.getAuthConfig();
         return UpdateNodeParams.create().
             id( nodeId ).
             editor( editableNode -> {
                 final PropertyTree nodeData = editableNode.data;
-                nodeData.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, updateUserStoreParams.getDisplayName() );
+                nodeData.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, displayName );
+                if ( authConfig == null )
+                {
+                    if ( nodeData.hasProperty( UserStorePropertyNames.AUTH_CONFIG_KEY ) )
+                    {
+                        nodeData.removeProperty( UserStorePropertyNames.AUTH_CONFIG_KEY );
+                    }
+                }
+                else
+                {
+                    nodeData.setString( UserStorePropertyNames.AUTH_APPLICATION_KEY, authConfig.getApplicationKey().toString() );
+                    nodeData.setSet( UserStorePropertyNames.AUTH_CONFIG_FORM_KEY, authConfig.getConfig().getRoot() );
+                }
             } ).
             build();
     }
@@ -251,12 +267,26 @@ abstract class UserStoreNodeTranslator
         {
             return null;
         }
-        final PropertySet nodeAsSet = node.data().getRoot();
 
-        return UserStore.create().
-            displayName( nodeAsSet.getString( UserStorePropertyNames.DISPLAY_NAME_KEY ) ).
-            key( UserStoreNodeTranslator.toKey( node ) ).
-            build();
+        final PropertySet nodeAsSet = node.data().getRoot();
+        final String displayName = nodeAsSet.getString( UserStorePropertyNames.DISPLAY_NAME_KEY );
+
+        final UserStore.Builder builder = UserStore.create().
+            displayName( displayName ).
+            key( UserStoreNodeTranslator.toKey( node ) );
+
+        if ( nodeAsSet.hasProperty( UserStorePropertyNames.AUTH_CONFIG_KEY ) )
+        {
+            final String applicationKey = nodeAsSet.getString( UserStorePropertyNames.AUTH_APPLICATION_KEY );
+            final PropertySet config = nodeAsSet.getSet( UserStorePropertyNames.AUTH_CONFIG_FORM_KEY );
+            final UserStoreAuthConfig authConfig = UserStoreAuthConfig.create().
+                applicationKey( ApplicationKey.from( applicationKey ) ).
+                config( config.toTree() ).
+                build();
+            builder.authConfig( authConfig );
+        }
+
+        return builder.build();
     }
 
 }

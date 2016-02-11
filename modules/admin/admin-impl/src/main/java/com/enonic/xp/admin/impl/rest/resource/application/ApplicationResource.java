@@ -35,6 +35,8 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.auth.AuthDescriptor;
+import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.SiteDescriptor;
@@ -56,6 +58,8 @@ public final class ApplicationResource
     private SiteService siteService;
 
     private MarketService marketService;
+
+    private AuthDescriptorService authDescriptorService;
 
     @GET
     @Path("list")
@@ -81,8 +85,11 @@ public final class ApplicationResource
             final ApplicationKey applicationKey = application.getKey();
             if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( applicationKey ) )//Remove after 7.0.0 refactoring
             {
-                json.add( application, this.applicationService.isLocalApplication( applicationKey ),
-                          this.siteService.getDescriptor( applicationKey ) );
+                final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( application.getKey() );
+                final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( application.getKey() );
+                final boolean localApplication = this.applicationService.isLocalApplication( applicationKey )
+                
+                json.add( application, localApplication, siteDescriptor, authDescriptor );
             }
         }
 
@@ -95,7 +102,8 @@ public final class ApplicationResource
         final Application application = this.applicationService.getInstalledApplication( ApplicationKey.from( applicationKey ) );
         final boolean local = this.applicationService.isLocalApplication( ApplicationKey.from( applicationKey ) );
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( ApplicationKey.from( applicationKey ) );
-        return new ApplicationJson( application, local, siteDescriptor );
+        final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( ApplicationKey.from( applicationKey ) );
+        return new ApplicationJson( application, local, siteDescriptor, authDescriptor );
     }
 
     @POST
@@ -200,6 +208,11 @@ public final class ApplicationResource
         this.siteService = siteService;
     }
 
+    @Reference
+    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
+    {
+        this.authDescriptorService = authDescriptorService;
+    }
     @Reference
     public void setMarketService( final MarketService marketService )
     {
