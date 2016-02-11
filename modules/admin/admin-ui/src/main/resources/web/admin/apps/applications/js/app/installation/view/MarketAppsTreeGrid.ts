@@ -173,8 +173,8 @@ module app.installation.view {
                     return this.setMarketAppsStatuses(applications);
                 })
                 .catch((reason: any) => {
-                    var status500Message = "Failed to access the Market. Make sure you have an Internet connection.";
-                    var defaultErrorMessage = "The Market is temporarily unavailable. Please try again later.";
+                    var status500Message = "Woops... The server seems to be experiencing problems. Please try again later.";
+                    var defaultErrorMessage = "Enonic Market is temporarily unavailable. Please try again later.";
                     this.handleError(reason, reason.getStatusCode() == 500 ? status500Message : defaultErrorMessage);
                     return [];
                 });

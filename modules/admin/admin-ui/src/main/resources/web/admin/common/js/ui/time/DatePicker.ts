@@ -109,12 +109,19 @@ module api.ui.time {
 
             this.input = api.ui.text.TextInput.middle(undefined, value);
             this.input.onClicked((e: MouseEvent) => {
-                e.preventDefault();
-                this.popup.show();
+                this.togglePopupVisibility(e);
             });
+            this.input.onFocus((e: FocusEvent) =>
+                setTimeout(() => {
+                    if (!this.popup.isVisible()) {
+                        e.preventDefault();
+                        this.popup.show();
+                    }
+                }, 150)
+            );
 
             this.popupTrigger = new api.ui.button.Button();
-            this.popupTrigger.addClass('icon-calendar4');
+            this.popupTrigger.addClass('icon-calendar');
 
             var wrapper = new api.dom.DivEl('wrapper');
             wrapper.appendChildren<api.dom.Element>(this.input, this.popup, this.popupTrigger);
@@ -122,13 +129,7 @@ module api.ui.time {
             this.appendChild(wrapper);
 
             this.popupTrigger.onClicked((e: MouseEvent) => {
-                e.preventDefault();
-
-                if (this.popup.isVisible()) {
-                    this.popup.hide();
-                } else {
-                    this.popup.show();
-                }
+                this.togglePopupVisibility(e);
             });
 
             this.popup.onSelectedDateChanged((e: SelectedDateChangedEvent) => {
@@ -207,6 +208,16 @@ module api.ui.time {
             }
         }
 
+        private togglePopupVisibility(e: MouseEvent) {
+            e.preventDefault();
+
+            if (this.popup.isVisible()) {
+                this.popup.hide();
+            } else {
+                this.popup.show();
+            }
+        }
+
         // as popup blur and focus events behave incorrectly - we manually catch tab navigation event in popup below
         private popupTabListener(e: KeyboardEvent) {
             if (api.ui.KeyHelper.isTabKey(e) && !this.getEl().contains(<HTMLElement> e.target)) {
@@ -266,7 +277,7 @@ module api.ui.time {
         }
 
         private formatDate(date: Date): string {
-            return api.util.DateHelper.formatDate(date);
+            return date ? api.util.DateHelper.formatDate(date) : "";
         }
 
         private updateInputStyling() {
