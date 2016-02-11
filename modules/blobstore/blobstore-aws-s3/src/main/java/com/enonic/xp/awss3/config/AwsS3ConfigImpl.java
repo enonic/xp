@@ -1,4 +1,4 @@
-package com.enonic.xp.blobstore.config;
+package com.enonic.xp.awss3.config;
 
 import java.util.Map;
 
@@ -8,11 +8,10 @@ import org.osgi.service.component.annotations.Component;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
-import com.enonic.xp.util.ByteSizeParser;
 
-@Component(configurationPid = "com.enonic.xp.blobstore")
-public class BlobStoreConfigImpl
-    implements BlobStoreConfig
+@Component(configurationPid = "com.enonic.xp.blobstore.s3")
+public class AwsS3ConfigImpl
+    implements AwsS3Config
 {
     private Configuration config;
 
@@ -28,35 +27,38 @@ public class BlobStoreConfigImpl
     }
 
     @Override
-    public String providerName()
+    public String bucketName()
     {
-        return this.config.get( "provider" );
+        return this.config.get( "bucketName" );
     }
 
     @Override
-    public boolean cache()
+    public String accessKey()
     {
-
-        return Boolean.valueOf( this.config.get( "cache.enabled" ) );
+        return this.config.get( "accessKey" );
     }
 
     @Override
-    public long cacheSizeThreshold()
+    public String secretAccessKey()
     {
-        return getSizeProperty( "cache.sizeThreshold" );
+        return this.config.get( "secretAccessKey" );
     }
 
     @Override
-    public long memoryCapacity()
+    public String endpoint()
     {
-        return getSizeProperty( "cache.memoryCapacity" );
+        return this.config.get( "endpoint" );
     }
 
-
-    private long getSizeProperty( final String key )
+    @Override
+    public String readThroughProvider()
     {
-        final String sizeValue = this.config.get( key );
-        return ByteSizeParser.parse( sizeValue );
+        return this.config.get( "readThrough.provider" );
     }
 
+    @Override
+    public boolean readThroughEnabled()
+    {
+        return Boolean.valueOf( this.config.get( "readThrough.enabled" ) );
+    }
 }

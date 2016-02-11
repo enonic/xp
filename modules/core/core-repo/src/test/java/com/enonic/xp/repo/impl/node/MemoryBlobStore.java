@@ -37,11 +37,23 @@ public class MemoryBlobStore
         final BlobKey key = createKey( in );
 
         final MemoryBlobRecord record = new MemoryBlobRecord( key, in );
+
+        return doStoreRecord( key, record );
+    }
+
+    private BlobRecord doStoreRecord( final BlobKey key, final BlobRecord record )
+    {
         this.store.put( key, record );
 
         return record;
     }
 
+    @Override
+    public BlobRecord addRecord( final Segment segment, final BlobRecord record )
+        throws BlobStoreException
+    {
+        return doStoreRecord( record.getKey(), record );
+    }
 
     public BlobKey createKey( final ByteSource in )
     {

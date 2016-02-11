@@ -1,4 +1,4 @@
-package com.enonic.xp.blobstore.local;
+package com.enonic.xp.blobstore.file;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,12 +21,12 @@ public final class FileBlobStore
 {
     private final static Logger LOG = LoggerFactory.getLogger( FileBlobStore.class );
 
-    private final File dir;
+    private final File baseDir;
 
-    public FileBlobStore( final File dir )
+    public FileBlobStore( final File baseDir )
     {
-        this.dir = dir;
-        mkdirs( this.dir, true );
+        this.baseDir = baseDir;
+        mkdirs( this.baseDir, true );
     }
 
     @Override
@@ -58,6 +58,20 @@ public final class FileBlobStore
         }
     }
 
+    @Override
+    public BlobRecord addRecord( final Segment segment, final BlobRecord record )
+        throws BlobStoreException
+    {
+        try
+        {
+            return this.addRecord( segment, record.getKey(), record.getBytes() );
+        }
+        catch ( IOException e )
+        {
+            throw new BlobStoreException( "Failed to write blob", e );
+        }
+    }
+
     private BlobRecord addRecord( final Segment segment, final BlobKey key, final ByteSource in )
         throws IOException
     {
@@ -74,7 +88,7 @@ public final class FileBlobStore
     private File getBlobFile( final Segment segment, final BlobKey key )
     {
         final String id = key.toString();
-        File file = this.dir;
+        File file = this.baseDir;
         file = new File( file, segment.getValue() );
         file = new File( file, id.substring( 0, 2 ) );
         file = new File( file, id.substring( 2, 4 ) );

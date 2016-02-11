@@ -1,4 +1,4 @@
-package com.enonic.xp.blobstore.local;
+package com.enonic.xp.blobstore.file;
 
 import java.io.File;
 

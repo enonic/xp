@@ -10,7 +10,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
-import com.enonic.xp.blobstore.local.FileBlobStore;
+import com.enonic.xp.blobstore.file.FileBlobStore;
 
 import static org.junit.Assert.*;
 

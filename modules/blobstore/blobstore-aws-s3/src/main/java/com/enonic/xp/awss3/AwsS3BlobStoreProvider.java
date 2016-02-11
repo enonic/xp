@@ -3,24 +3,27 @@ package com.enonic.xp.awss3;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.awss3.config.AwsS3Config;
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.BlobStoreProvider;
+import com.enonic.xp.blob.ProviderConfig;
 
-@Component(configurationPid = "com.enonic.xp.blobstore.s3")
+@Component
 public class AwsS3BlobStoreProvider
     implements BlobStoreProvider
 {
     private AwsS3BlobStore blobStore;
 
+    private AwsS3Config config;
+
     @Activate
-    public void activate( final AwsS3Config config )
+    public void activate()
     {
-        if ( config == null )
+        if ( config.accessKey() == null )
         {
-            throw new BlobStoreException( "Config [com.enonic.xp.aws.s3] not found" );
+            return;
         }
 
         this.blobStore = AwsS3BlobStore.create().
@@ -47,5 +50,17 @@ public class AwsS3BlobStoreProvider
     public String name()
     {
         return "aws-s3";
+    }
+
+    @Override
+    public ProviderConfig config()
+    {
+        return this.config;
+    }
+
+    @Reference
+    public void setConfig( final AwsS3Config config )
+    {
+        this.config = config;
     }
 }

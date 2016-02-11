@@ -58,6 +58,16 @@ public final class CachedBlobStore
         return record;
     }
 
+
+    @Override
+    public BlobRecord addRecord( final Segment segment, final BlobRecord record )
+        throws BlobStoreException
+    {
+        this.store.addRecord( segment, record );
+        addToCache( record );
+        return record;
+    }
+
     private void addToCache( final BlobRecord record )
     {
         if ( record.getLength() > this.sizeTreshold )

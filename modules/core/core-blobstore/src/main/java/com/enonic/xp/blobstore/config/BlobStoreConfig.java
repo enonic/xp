@@ -1,7 +1,5 @@
 package com.enonic.xp.blobstore.config;
 
-import java.io.File;
-
 public interface BlobStoreConfig
 {
     String providerName();
@@ -11,6 +9,4 @@ public interface BlobStoreConfig
     long cacheSizeThreshold();
 
     long memoryCapacity();
-
-    File blobStoreDir();
 }

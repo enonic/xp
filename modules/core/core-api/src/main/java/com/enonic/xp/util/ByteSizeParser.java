@@ -2,7 +2,7 @@ package com.enonic.xp.util;
 
 import java.util.Locale;
 
-public class ByteSizeFormatter
+public class ByteSizeParser
 {
 
     private static final long BYTE_FACTOR = 1L;

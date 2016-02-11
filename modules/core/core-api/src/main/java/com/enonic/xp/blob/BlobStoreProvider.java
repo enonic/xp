@@ -5,4 +5,6 @@ public interface BlobStoreProvider
     BlobStore get();
 
     String name();
+
+    ProviderConfig config();
 }

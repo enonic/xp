@@ -87,15 +87,13 @@ class AwsS3BlobStore
         throws BlobStoreException
     {
 
-        Stopwatch timer = Stopwatch.createStarted();
-
         final Blob blob = this.blobStore.getBlob( this.bucketName, key.toString() );
 
         try (final InputStream inputStream = blob.getPayload().openStream())
         {
+            final Stopwatch timer = Stopwatch.createStarted();
             final ByteSource source = ByteSource.wrap( ByteStreams.toByteArray( inputStream ) );
-
-            System.out.println( "Fetching blob: " + timer.stop().toString() );
+            System.out.println( "S3-lookup: " + timer.stop().toString() );
 
             return new AwsS3BlobRecord( source, key );
         }
@@ -111,6 +109,11 @@ class AwsS3BlobStore
     {
         final BlobKey key = BlobKeyCreator.createKey( in );
 
+        return doAddRecord( in, key );
+    }
+
+    private BlobRecord doAddRecord( final ByteSource in, final BlobKey key )
+    {
         try
         {
             final Blob blob = blobStore.blobBuilder( key.toString() ).
@@ -118,9 +121,7 @@ class AwsS3BlobStore
                 contentLength( in.size() ).
                 build();
 
-            Stopwatch timer = Stopwatch.createStarted();
             blobStore.putBlob( this.bucketName, blob );
-            System.out.println( "Pushing blob: " + timer.stop().toString() );
         }
         catch ( IOException e )
         {
@@ -128,6 +129,13 @@ class AwsS3BlobStore
         }
 
         return new AwsS3BlobRecord( in, key );
+    }
+
+    @Override
+    public BlobRecord addRecord( final Segment segment, final BlobRecord record )
+        throws BlobStoreException
+    {
+        return doAddRecord( record.getBytes(), record.getKey() );
     }
 
     public static final class Builder

@@ -9,4 +9,7 @@ public interface BlobStore
 
     BlobRecord addRecord( Segment segment, ByteSource in )
         throws BlobStoreException;
+
+    BlobRecord addRecord( Segment segment, BlobRecord record )
+        throws BlobStoreException;
 }
