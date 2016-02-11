@@ -9,7 +9,7 @@ public class ApplicationInstalledJson
 
     public ApplicationInstalledJson( final Application application, final boolean local )
     {
-        this.application = new ApplicationJson( application, local, null );
+        this.application = new ApplicationJson( application, local, null, null );
     }
 
     @SuppressWarnings("unused")

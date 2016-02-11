@@ -17,7 +17,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
@@ -35,8 +34,6 @@ import com.enonic.xp.portal.impl.websocket.WebSocketContext;
 import com.enonic.xp.portal.impl.websocket.WebSocketContextFactory;
 import com.enonic.xp.portal.websocket.WebSocketConfig;
 import com.enonic.xp.portal.websocket.WebSocketEndpoint;
-import com.enonic.xp.web.HttpMethod;
-import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Component(immediate = true, service = Servlet.class,
     property = {"osgi.http.whiteboard.servlet.pattern=/portal/*"})

@@ -87,8 +87,8 @@ public final class ApplicationResource
             {
                 final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( application.getKey() );
                 final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( application.getKey() );
-                final boolean localApplication = this.applicationService.isLocalApplication( applicationKey )
-                
+                final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
+
                 json.add( application, localApplication, siteDescriptor, authDescriptor );
             }
         }
@@ -213,6 +213,7 @@ public final class ApplicationResource
     {
         this.authDescriptorService = authDescriptorService;
     }
+
     @Reference
     public void setMarketService( final MarketService marketService )
     {
