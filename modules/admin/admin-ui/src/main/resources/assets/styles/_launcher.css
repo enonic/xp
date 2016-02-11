@@ -316,7 +316,6 @@
 }
 .launcher-panel {
   position: fixed;
-  overflow: hidden;
   top: 0;
   right: 0;
   height: 100%;
@@ -325,18 +324,21 @@
   font-family: "Open Sans", sans-serif;
 }
 .launcher-panel .app-row-selected {
+  width: 100%;
   background-color: rgba(255, 255, 255, 0.3);
 }
 .launcher-panel .app-row-selected .app-info .app-description {
   color: #ffffff;
 }
 .launcher-panel.keyboard-navigation .launcher-app-container .app-row.selected {
+  width: 100%;
   background-color: rgba(255, 255, 255, 0.3);
 }
 .launcher-panel.keyboard-navigation .launcher-app-container .app-row.selected .app-info .app-description {
   color: #ffffff;
 }
 .launcher-panel:not(.keyboard-navigation) .launcher-app-container .app-row:hover {
+  width: 100%;
   background-color: rgba(255, 255, 255, 0.3);
 }
 .launcher-panel:not(.keyboard-navigation) .launcher-app-container .app-row:hover .app-info .app-description {
@@ -374,6 +376,7 @@
   color: #ffffff;
   font-size: 25px;
   display: table;
+  overflow: hidden;
 }
 .launcher-panel .launcher-title .container-title {
   overflow: hidden;
@@ -384,7 +387,7 @@
   font-size: 32px;
   font-weight: 100;
   position: absolute;
-  bottom: -6px;
+  bottom: -9px;
   width: 65%;
 }
 .launcher-panel .launcher-title .container-title::first-letter {
@@ -485,6 +488,73 @@
 }
 .launcher-panel .launcher-user span {
   vertical-align: middle;
+}
+.launcher-panel .launcher-tip {
+  display: none;
+  position: absolute;
+  padding: 0;
+  height: 37px;
+  left: -105px;
+  -webkit-animation: bounce 1s ease-out 5s 2;
+  /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: bounce 1s ease-out 5s 2;
+  /* Firefox < 16 */
+  -ms-animation: bounce 1s ease-out 5s 2;
+  /* Internet Explorer */
+  -o-animation: bounce 1s ease-out 5s 2;
+  /* Opera < 12.1 */
+  animation: bounce 1s ease-out 5s 2;
+}
+@keyframes bounce {
+  0% {
+    left: -105px;
+  }
+  50% {
+    left: -85px;
+  }
+  100% {
+    left: -105px;
+  }
+}
+.launcher-panel .launcher-tip span {
+  -webkit-animation: fadein 12s linear 2s;
+  /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadein 12s linear 2s;
+  /* Firefox < 16 */
+  -ms-animation: fadein 12s linear 2s;
+  /* Internet Explorer */
+  -o-animation: fadein 12s linear 2s;
+  /* Opera < 12.1 */
+  animation: fadein 12s linear 2s;
+  opacity: 0;
+  display: table-cell;
+  vertical-align: bottom;
+  color: #ffffff;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  white-space: nowrap;
+}
+.launcher-panel .launcher-tip span:after {
+  position: absolute;
+  font-size: 32px;
+  font-family: 'icomoon';
+  content: "\e3b5";
+  line-height: 14px;
+}
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 .launcher-button {
   position: fixed;
