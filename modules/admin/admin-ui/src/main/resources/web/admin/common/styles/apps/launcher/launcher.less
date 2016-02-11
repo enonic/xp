@@ -96,7 +96,11 @@
 
     .container-title {
       .ellipsis();
-      .container-title-mixin();
+      .container-title-mixin(32px, 0);
+      position: relative;
+      display: table-cell;
+      vertical-align: bottom;
+      line-height: 22px;
       width: 65%;
       &::first-letter {
         text-transform: uppercase;

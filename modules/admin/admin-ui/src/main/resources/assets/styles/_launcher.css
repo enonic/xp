@@ -387,7 +387,11 @@
   font-size: 32px;
   font-weight: 100;
   position: absolute;
-  bottom: -9px;
+  bottom: 0;
+  position: relative;
+  display: table-cell;
+  vertical-align: bottom;
+  line-height: 22px;
   width: 65%;
 }
 .launcher-panel .launcher-title .container-title::first-letter {
