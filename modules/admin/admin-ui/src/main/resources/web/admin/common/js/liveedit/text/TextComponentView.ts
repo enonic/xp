@@ -22,7 +22,7 @@ module api.liveedit.text {
 
         private rootElement: api.dom.Element;
 
-        private tinyMceEditor: HtmlAreaEditor;
+        private tinyMceEditor;
 
         private initializingTinyMceEditor: boolean;
 
@@ -58,6 +58,7 @@ module api.liveedit.text {
             this.rootElement.getHTMLElement().onpaste = this.handlePasteEvent.bind(this);
 
             this.onAdded(() => {
+                this.focusOnInit = true;
                 this.addClass("editor-focused");
                 if (!this.tinyMceEditor && !this.initializingTinyMceEditor) {
                     this.initEditor();
@@ -253,8 +254,9 @@ module api.liveedit.text {
                 fixed_toolbar_container: '.mce-toolbar-container',
 
                 toolbar: [
-                    "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor link unlink | code"
+                    "bold italic underline strikethrough formatselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor link unlink"
                 ],
+
                 formats: {
                     alignleft: [
                         {
@@ -291,7 +293,7 @@ module api.liveedit.text {
                 menubar: false,
                 statusbar: false,
                 paste_as_text: true,
-                plugins: ['autoresize', 'table', 'paste', 'charmap', 'code'],
+                plugins: ['autoresize', 'paste', 'charmap'],
                 external_plugins: {
                     "link": assetsUri + "/common/js/form/inputtype/text/plugins/link.js",
                     "anchor": assetsUri + "/common/js/form/inputtype/text/plugins/anchor.js"
@@ -314,6 +316,12 @@ module api.liveedit.text {
                         }
                         this.processMCEValue();
                         this.removeClass("editor-focused");
+
+                        setTimeout(() => {
+                            if (!this.anyEditorHasFocus()) {
+                                this.setEditMode(false);
+                            }
+                        }, 100);
                     });
 
                     editor.on('keydown', (e) => {
@@ -366,11 +374,28 @@ module api.liveedit.text {
                     }
                     if (this.focusOnInit) {
                         this.tinyMceEditor.focus();
+                        wemjq(this.tinyMceEditor.getElement()).simulate("click");
                     }
                     this.focusOnInit = false;
                     this.initializingTinyMceEditor = false;
                 }
             });
+        }
+
+        private anyEditorHasFocus(): boolean {
+            var textItemViews = this.getPageView().getItemViewsByType(api.liveedit.text.TextItemType.get());
+            var result: boolean = false;
+
+            var textView: api.liveedit.text.TextComponentView;
+            textItemViews.forEach((view: ItemView) => {
+                textView = <api.liveedit.text.TextComponentView> view;
+                if (textView.getEl().hasClass("editor-focused")) {
+                    result = true;
+                    return;
+                }
+            });
+
+            return result;
         }
 
         private openLinkDialog(config: api.form.inputtype.text.HtmlAreaAnchor) {

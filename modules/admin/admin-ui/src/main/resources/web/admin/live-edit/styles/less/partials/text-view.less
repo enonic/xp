@@ -28,9 +28,10 @@
 
     &.editor-focused {
       .box-shadow(0px 0px 5px @admin-input-blue);
+      .input-border(@admin-input-blue);
     }
 
-    .input-border(@admin-input-blue);
+    .input-border(#cccccc);
 
     section {
       display: none !important;
@@ -94,13 +95,14 @@
 
 .close-edit-mode-button.icon-close {
   position: fixed;
-  top: 10px;
-  right: 5px;
+  top: 12px;
+  right: 12px;
   z-index: @z-index-context-menu + 1;
   pointer-events: auto;
-  color: @admin-shadow-gray;
+  color: @admin-dark-gray;
   font-size: 14px;
   display: none;
+  text-decoration: none;
 
   &.active {
     display: inline;
