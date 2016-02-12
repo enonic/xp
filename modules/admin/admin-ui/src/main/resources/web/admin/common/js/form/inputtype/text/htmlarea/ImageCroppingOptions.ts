@@ -39,8 +39,15 @@ module api.form.inputtype.text.htmlarea {
         }
 
         static getCroppingOptions(): ImageCroppingOption[] {
-            return [ImageCroppingOptions.SQUARE, ImageCroppingOptions.REGULAR, ImageCroppingOptions.WIDESCREEN, ImageCroppingOptions.CINEMA,
-                ImageCroppingOptions.PORTRAIT, ImageCroppingOptions.TALL, ImageCroppingOptions.SKYSCRAPER];
+            return [
+                ImageCroppingOptions.CINEMA,
+                ImageCroppingOptions.WIDESCREEN,
+                ImageCroppingOptions.REGULAR,
+                ImageCroppingOptions.SQUARE,
+                ImageCroppingOptions.PORTRAIT,
+                ImageCroppingOptions.TALL,
+                ImageCroppingOptions.SKYSCRAPER
+            ];
         }
 
         static getOptionByProportion(proportion: string): ImageCroppingOption {
