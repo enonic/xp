@@ -75,6 +75,25 @@ module api.form {
             }
         }
 
+        removeUnreachedMinimumOccurrencesByEqualPath(path: ValidationRecordingPath) {
+
+            for (var i = this.breaksMinimumOccurrencesArray.length - 1; i >= 0; i--) {
+                if (this.breaksMinimumOccurrencesArray[i].toString() == path.toString()) {
+                    this.breaksMinimumOccurrencesArray.splice(i, 1);
+                }
+            }
+        }
+
+        removeBreachedMaximumOccurrencesByEqualPath(path: ValidationRecordingPath) {
+
+            for (var i = this.breaksMaximumOccurrencesArray.length - 1; i >= 0; i--) {
+                if (this.breaksMaximumOccurrencesArray[i].toString() == path.toString()) {
+                    this.breaksMaximumOccurrencesArray.splice(i, 1);
+                }
+            }
+        }
+
+
         equals(other: ValidationRecording): boolean {
 
             if (this.breaksMinimumOccurrencesArray.length != other.breaksMinimumOccurrencesArray.length) {
