@@ -17,7 +17,9 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.region.Component;
+import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.FragmentComponent;
+import com.enonic.xp.region.Regions;
 
 @org.osgi.service.component.annotations.Component(immediate = true, service = Renderer.class)
 public final class FragmentRenderer
@@ -46,30 +48,35 @@ public final class FragmentRenderer
         final String type = component.getType().toString();
 
         final Component fragmentComponent = getFragmentComponent( component );
-        if ( fragmentComponent != null )
+        if ( fragmentComponent == null )
         {
-            final Renderer<Component> renderer = this.rendererFactory.getRenderer( fragmentComponent );
-            if ( renderer == null )
-            {
-                throw new RenderException( "No Renderer found for: " + fragmentComponent.getClass().getSimpleName() );
-            }
-
-            final PortalResponse fragmentResponse = renderer.render( fragmentComponent, portalRequest );
-            if ( renderMode == RenderMode.EDIT && fragmentResponse != null )
-            {
-                return wrapFragmentForEditMode( fragmentResponse, type );
-            }
-            return fragmentResponse;
+            final String html = renderMode == RenderMode.EDIT ? MessageFormat.format( EMPTY_FRAGMENT_HTML, type ) : "";
+            return portalResponseBuilder.body( html ).contentType( MediaType.create( "text", "html" ) ).postProcess( false ).build();
         }
 
-        final StringBuilder html = new StringBuilder();
-        if ( renderMode == RenderMode.EDIT )
+        final Renderer<Component> renderer = this.rendererFactory.getRenderer( fragmentComponent );
+        if ( renderer == null )
         {
-            html.append( MessageFormat.format( EMPTY_FRAGMENT_HTML, type ) );
+            throw new RenderException( "No Renderer found for: " + fragmentComponent.getClass().getSimpleName() );
         }
 
-        portalResponseBuilder.body( html.toString() ).contentType( MediaType.create( "text", "html" ) ).postProcess( false );
-        return portalResponseBuilder.build();
+        // replace resolved fragment in current PortalRequest Page
+        final Page page = inlineFragmentInPage( portalRequest.getContent().getPage(), fragmentComponent, component.getPath() );
+        final Content content = Content.create( portalRequest.getContent() ).page( page ).build();
+        portalRequest.setContent( content );
+
+        final PortalResponse fragmentResponse = renderer.render( fragmentComponent, portalRequest );
+        if ( renderMode == RenderMode.EDIT && fragmentResponse != null )
+        {
+            return wrapFragmentForEditMode( fragmentResponse, type );
+        }
+        return fragmentResponse;
+    }
+
+    private Page inlineFragmentInPage( final Page page, final Component fragmentComponent, final ComponentPath path )
+    {
+        final Regions regions = page.getRegions().replace( path, fragmentComponent );
+        return Page.create( page ).regions( regions ).build();
     }
 
     private PortalResponse wrapFragmentForEditMode( final PortalResponse response, final String type )

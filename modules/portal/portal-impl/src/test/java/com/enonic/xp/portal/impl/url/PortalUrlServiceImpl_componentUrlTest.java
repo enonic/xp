@@ -106,7 +106,6 @@ public class PortalUrlServiceImpl_componentUrlTest
             add( component ).
             build();
 
-        component.setRegion( region );
         this.portalRequest.setComponent( component );
     }
 }

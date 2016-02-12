@@ -61,6 +61,56 @@ public final class Regions
         }
     }
 
+    public Regions replace( final ComponentPath path, final Component component )
+    {
+        final ComponentPath.RegionAndComponent regionCmp = path.getFirstLevel();
+        final Region region = getRegion( regionCmp.getRegionName() );
+        if ( region == null )
+        {
+            return this.copy();
+        }
+
+        final int componentIndex = regionCmp.getComponentIndex();
+        final Component existingCmp = region.getComponent( componentIndex );
+        if ( existingCmp == null )
+        {
+            return this.copy();
+        }
+
+        if ( path.numberOfLevels() == 1 )
+        {
+            final Region updatedRegion = Region.create( region ).set( componentIndex, component ).build();
+            Regions.Builder regions = Regions.create( this );
+
+            final int idx = regions.regions.indexOf( region );
+            if ( idx > -1 )
+            {
+                regions.regions.set( idx, updatedRegion );
+            }
+            return regions.build();
+        }
+        else
+        {
+            if ( !( existingCmp instanceof LayoutComponent ) )
+            {
+                return this.copy();
+            }
+            final LayoutComponent layoutComponent = (LayoutComponent) existingCmp;
+            final Regions layoutRegions = layoutComponent.getRegions().replace( path.removeFirstLevel(), component );
+            final LayoutComponent updatedLayout = LayoutComponent.create( layoutComponent ).regions( layoutRegions ).build();
+
+            final Region updatedRegion = Region.create( region ).set( componentIndex, updatedLayout ).build();
+            Regions.Builder regions = Regions.create( this );
+
+            final int idx = regions.regions.indexOf( region );
+            if ( idx > -1 )
+            {
+                regions.regions.set( idx, updatedRegion );
+            }
+            return regions.build();
+        }
+    }
+
     @Override
     public Iterator<Region> iterator()
     {
@@ -79,14 +129,14 @@ public final class Regions
             return false;
         }
 
-        final Regions regions1 = (Regions) o;
+        final Regions other = (Regions) o;
+        return regions.equals( other.regions );
+    }
 
-        if ( !regions.equals( regions1.regions ) )
-        {
-            return false;
-        }
-
-        return true;
+    @Override
+    public String toString()
+    {
+        return this.regions.toString();
     }
 
     @Override
@@ -131,11 +181,6 @@ public final class Regions
         {
             regions.add( region );
             return this;
-        }
-
-        public Iterable<Region> regions()
-        {
-            return regions;
         }
 
         public Regions build()

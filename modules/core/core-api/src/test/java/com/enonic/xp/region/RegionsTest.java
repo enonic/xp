@@ -1,4 +1,4 @@
-package com.enonic.xp.page;
+package com.enonic.xp.region;
 
 
 import java.util.Iterator;
@@ -7,17 +7,9 @@ import org.junit.Test;
 
 import com.google.common.collect.UnmodifiableIterator;
 
-import com.enonic.xp.region.Component;
-import com.enonic.xp.region.ComponentName;
-import com.enonic.xp.region.ComponentPath;
-import com.enonic.xp.region.LayoutComponent;
-import com.enonic.xp.region.PartComponent;
-import com.enonic.xp.region.Region;
-import com.enonic.xp.region.Regions;
-
 import static org.junit.Assert.*;
 
-public class PageRegionsTest
+public class RegionsTest
 {
     @Test
     public void iterator()
@@ -89,7 +81,7 @@ public class PageRegionsTest
     @Test
     public void componentPaths_two_levels()
     {
-        final Regions pageRegions = Regions.create().
+        final Regions regions = Regions.create().
             add( Region.create().name( "region-level-1" ).
                 add( LayoutComponent.create().name( ComponentName.from( "layout-level-1" ) ).
                     regions( Regions.create().
@@ -102,7 +94,7 @@ public class PageRegionsTest
             build();
 
         // verify
-        final Region regionLevel1 = pageRegions.iterator().next();
+        final Region regionLevel1 = regions.iterator().next();
         final UnmodifiableIterator<Component> componentsLevel1 = regionLevel1.getComponents().iterator();
         final LayoutComponent layoutLevel1 = (LayoutComponent) componentsLevel1.next();
         assertEquals( "region-level-1/0", layoutLevel1.getPath().toString() );
