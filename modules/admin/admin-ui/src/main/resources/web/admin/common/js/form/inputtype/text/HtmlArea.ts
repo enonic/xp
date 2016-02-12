@@ -143,7 +143,7 @@ module api.form.inputtype.text {
                     editor.addCommand("openLinkDialog", this.openLinkDialog, this);
                     editor.addCommand("openImageDialog", this.openImageDialog, this);
                     editor.addCommand("openAnchorDialog", this.openAnchorDialog, this);
-                    editor.on('change', (e) => {
+                    editor.on('NodeChange', (e) => {
                         this.notifyValueChanged(id, textAreaWrapper);
                     });
                     editor.on('focus', (e) => {
