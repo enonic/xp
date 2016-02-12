@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 
 public class MarketServiceImplTest
 {
-    private MarketDataProvider provider;
+    private MarketDataProviderImpl provider;
 
     private MarketConfig marketConfig;
 
@@ -33,7 +33,7 @@ public class MarketServiceImplTest
         Mockito.when( marketConfig.marketUrl() ).
             thenReturn( this.marketUrl );
 
-        this.provider = Mockito.mock( MarketDataProvider.class );
+        this.provider = Mockito.mock( MarketDataProviderImpl.class );
 
         this.marketService = new MarketServiceImpl();
         marketService.activate( marketConfig );
