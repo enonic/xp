@@ -9,7 +9,6 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
@@ -20,6 +19,7 @@ import com.enonic.xp.portal.handler.BaseHandlerTest;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
@@ -216,7 +216,7 @@ public class WidgetHandlerTest
 
         if ( withPage )
         {
-            PageRegions pageRegions = PageRegions.create().
+            Regions pageRegions = Regions.create().
                 add( Region.create().name( "main-region" ).
                     add( PartComponent.create().name( ComponentName.from( "mypart" ) ).
                         build() ).

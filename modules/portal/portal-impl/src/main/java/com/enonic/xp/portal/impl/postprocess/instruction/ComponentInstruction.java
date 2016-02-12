@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.RenderException;
@@ -21,6 +20,7 @@ import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ComponentService;
+import com.enonic.xp.region.Regions;
 
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
@@ -102,7 +102,7 @@ public final class ComponentInstruction
         }
 
         final Page page = content.getPage();
-        final PageRegions pageRegions = page.getRegions();
+        final Regions pageRegions = page.getRegions();
         Component component = pageRegions.getComponent( path );
         if ( component == null )
         {

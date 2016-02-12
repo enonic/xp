@@ -10,6 +10,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
@@ -62,7 +63,7 @@ public final class PageTemplate
         return getPage().hasRegions();
     }
 
-    public PageRegions getRegions()
+    public Regions getRegions()
     {
         return getPage().getRegions();
     }
@@ -133,7 +134,7 @@ public final class PageTemplate
             return this;
         }
 
-        public Builder regions( final PageRegions value )
+        public Builder regions( final Regions value )
         {
             if ( this.page == null )
             {

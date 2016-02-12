@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 
 import static org.junit.Assert.*;
 
@@ -58,7 +59,7 @@ public class EditablePageTest
         return Page.create().
             config( config1 ).
             template( PageTemplateKey.from( "template-x" ) ).
-            regions( PageRegions.create().add( region1 ).build() ).
+            regions( Regions.create().add( region1 ).build() ).
             build();
     }
 }

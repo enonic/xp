@@ -8,11 +8,11 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentType;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.util.Reference;
 
 import static com.enonic.xp.core.impl.content.page.region.ComponentsDataSerializer.TYPE;
@@ -99,7 +99,7 @@ public final class PageDataSerializer
         }
         if ( asData.hasProperty( REGION ) )
         {
-            final PageRegions.Builder pageRegionsBuilder = PageRegions.create();
+            final Regions.Builder pageRegionsBuilder = Regions.create();
             for ( final Property regionAsProp : asData.getProperties( REGION ) )
             {
                 if ( regionAsProp.hasNotNullValue() )

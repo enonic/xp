@@ -9,12 +9,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 @Beta
-public abstract class AbstractRegions
+public final class Regions
     implements Iterable<Region>
 {
     private final ImmutableList<Region> regions;
 
-    protected AbstractRegions( final Builder builder )
+    private Regions( final Builder builder )
     {
         this.regions = ImmutableList.copyOf( builder.regions );
     }
@@ -23,7 +23,7 @@ public abstract class AbstractRegions
     {
         return regions.isEmpty();
     }
-    
+
     public Region getRegion( final String name )
     {
         for ( final Region region : this.regions )
@@ -79,7 +79,7 @@ public abstract class AbstractRegions
             return false;
         }
 
-        final AbstractRegions regions1 = (AbstractRegions) o;
+        final Regions regions1 = (Regions) o;
 
         if ( !regions.equals( regions1.regions ) )
         {
@@ -95,16 +95,31 @@ public abstract class AbstractRegions
         return regions.hashCode();
     }
 
-    public static class Builder<BUILDER extends Builder>
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static Builder create( final Regions source )
+    {
+        return new Builder( source );
+    }
+
+    public Regions copy()
+    {
+        return Regions.create( this ).build();
+    }
+
+    public static class Builder
     {
         private final List<Region> regions = new ArrayList<>();
 
-        protected Builder()
+        private Builder()
         {
             // Default
         }
 
-        protected Builder( final AbstractRegions source )
+        private Builder( final Regions source )
         {
             for ( final Region sourceRegion : source.regions )
             {
@@ -112,21 +127,20 @@ public abstract class AbstractRegions
             }
         }
 
-        @SuppressWarnings("unchecked")
-        private BUILDER getThis()
-        {
-            return (BUILDER) this;
-        }
-
-        public BUILDER add( final Region region )
+        public Builder add( final Region region )
         {
             regions.add( region );
-            return getThis();
+            return this;
         }
 
         public Iterable<Region> regions()
         {
             return regions;
+        }
+
+        public Regions build()
+        {
+            return new Regions( this );
         }
     }
 }

@@ -13,7 +13,6 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
@@ -23,6 +22,7 @@ import com.enonic.xp.portal.handler.BaseHandlerTest;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -233,7 +233,7 @@ public class ServiceHandlerTest
 
         if ( withPage )
         {
-            PageRegions pageRegions = PageRegions.create().
+            Regions pageRegions = Regions.create().
                 add( Region.create().name( "main-region" ).
                     add( PartComponent.create().name( ComponentName.from( "mypart" ) ).
                         build() ).

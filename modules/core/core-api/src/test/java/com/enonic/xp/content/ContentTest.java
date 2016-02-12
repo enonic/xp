@@ -8,8 +8,8 @@ import org.junit.Test;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.region.Regions;
 
 import static org.junit.Assert.*;
 
@@ -66,7 +66,7 @@ public class ContentTest
                 controller( DescriptorKey.from( "abc:abc" ) ).
                 template( PageTemplateKey.from( "123" ) ).
                 config( new PropertyTree() ).
-                regions( PageRegions.create().build() ).
+                regions( Regions.create().build() ).
                 build() ).build();
     }
 }

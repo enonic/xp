@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.support.AbstractEqualsTest;
 
 import static org.junit.Assert.*;
@@ -56,7 +57,7 @@ public class PageTest
                 return Page.create().
                     config( config1 ).
                     template( PageTemplateKey.from( "template-x" ) ).
-                    regions( PageRegions.create().add( region1 ).build() ).
+                    regions( Regions.create().add( region1 ).build() ).
                     build();
             }
 
@@ -66,25 +67,25 @@ public class PageTest
                 Page notX1 = Page.create().
                     config( config1 ).
                     template( PageTemplateKey.from( "template-x" ) ).
-                    regions( PageRegions.create().add( region2 ).build() ).
+                    regions( Regions.create().add( region2 ).build() ).
                     build();
 
                 Page notX2 = Page.create().
                     config( config1 ).
                     template( PageTemplateKey.from( "template-x" ) ).
-                    regions( PageRegions.create().add( region1 ).add( region2 ).build() ).
+                    regions( Regions.create().add( region1 ).add( region2 ).build() ).
                     build();
 
                 Page notX3 = Page.create().
                     config( config2 ).
                     template( PageTemplateKey.from( "template-x" ) ).
-                    regions( PageRegions.create().add( region1 ).build() ).
+                    regions( Regions.create().add( region1 ).build() ).
                     build();
 
                 Page notX4 = Page.create().
                     config( config1 ).
                     template( PageTemplateKey.from( "template-y" ) ).
-                    regions( PageRegions.create().add( region1 ).build() ).
+                    regions( Regions.create().add( region1 ).build() ).
                     build();
 
                 return new Object[]{notX1, notX2, notX3, notX4, new Object()};
@@ -96,7 +97,7 @@ public class PageTest
                 return Page.create().
                     config( config1 ).
                     template( PageTemplateKey.from( "template-x" ) ).
-                    regions( PageRegions.create().add( region1 ).build() ).
+                    regions( Regions.create().add( region1 ).build() ).
                     build();
             }
 
@@ -106,7 +107,7 @@ public class PageTest
                 return Page.create().
                     config( config1 ).
                     template( PageTemplateKey.from( "template-x" ) ).
-                    regions( PageRegions.create().add( region1 ).build() ).
+                    regions( Regions.create().add( region1 ).build() ).
                     build();
             }
         };
@@ -136,7 +137,7 @@ public class PageTest
         final Page sourcePage = Page.create().
             config( config1 ).
             template( PageTemplateKey.from( "template-x" ) ).
-            regions( PageRegions.create().add( region1 ).build() ).
+            regions( Regions.create().add( region1 ).build() ).
             build();
 
         final Page copiedPage = sourcePage.copy();

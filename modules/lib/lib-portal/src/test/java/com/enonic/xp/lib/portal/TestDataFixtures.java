@@ -14,12 +14,11 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.LayoutComponent;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
@@ -114,9 +113,9 @@ public final class TestDataFixtures
         return builder.build();
     }
 
-    public static PageRegions newPageRegions()
+    public static Regions newPageRegions()
     {
-        final PageRegions.Builder builder = PageRegions.create();
+        final Regions.Builder builder = Regions.create();
         builder.add( newTopRegion() );
         return builder.build();
     }
@@ -161,9 +160,9 @@ public final class TestDataFixtures
         return layout;
     }
 
-    public static LayoutRegions newLayoutRegions()
+    public static Regions newLayoutRegions()
     {
-        final LayoutRegions.Builder builder = LayoutRegions.create();
+        final Regions.Builder builder = Regions.create();
         builder.add( newBottomRegion() );
         return builder.build();
     }

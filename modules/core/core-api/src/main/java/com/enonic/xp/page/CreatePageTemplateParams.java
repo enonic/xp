@@ -6,6 +6,7 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
 @Beta
@@ -21,7 +22,7 @@ public class CreatePageTemplateParams
 
     private ContentTypeNames supports;
 
-    private PageRegions pageRegions;
+    private Regions pageRegions;
 
     private PropertyTree pageConfig;
 
@@ -61,7 +62,7 @@ public class CreatePageTemplateParams
         return this;
     }
 
-    public CreatePageTemplateParams pageRegions( final PageRegions pageRegions )
+    public CreatePageTemplateParams pageRegions( final Regions pageRegions )
     {
         this.pageRegions = pageRegions;
         return this;
@@ -98,7 +99,7 @@ public class CreatePageTemplateParams
         return supports;
     }
 
-    public PageRegions getPageRegions()
+    public Regions getPageRegions()
     {
         return pageRegions;
     }

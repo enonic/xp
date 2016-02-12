@@ -10,7 +10,6 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalRequest;
@@ -22,6 +21,7 @@ import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.ComponentService;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
@@ -110,7 +110,7 @@ public class ComponentInstructionTest
                 build() ).
             build();
 
-        PageRegions pageRegions = PageRegions.create().add( region ).build();
+        Regions pageRegions = Regions.create().add( region ).build();
         Page page = Page.create().
             template( PageTemplateKey.from( "my-page" ) ).
             regions( pageRegions ).

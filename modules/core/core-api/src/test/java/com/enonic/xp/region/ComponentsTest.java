@@ -5,7 +5,6 @@ import org.junit.Test;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 
 import static org.junit.Assert.*;
@@ -22,7 +21,7 @@ public class ComponentsTest
         Page page = Page.create().
             template( PageTemplateKey.from( "pageTemplateName" ) ).
             config( pageConfig ).
-            regions( PageRegions.create().build() ).
+            regions( Regions.create().build() ).
             build();
 
         assertEquals( "pageTemplateName", page.getTemplate().toString() );

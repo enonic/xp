@@ -5,8 +5,8 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutComponent;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 
 public class LayoutComponentDataSerializer
     extends DescriptorBasedComponentDataSerializer<LayoutComponent, LayoutComponent>
@@ -33,7 +33,7 @@ public class LayoutComponentDataSerializer
         final LayoutComponent.Builder component = LayoutComponent.create();
         applyComponentFromData( component, asData );
 
-        final LayoutRegions.Builder pageRegionsBuilder = LayoutRegions.create();
+        final Regions.Builder pageRegionsBuilder = Regions.create();
         for ( final Property regionAsProp : asData.getProperties( "region" ) )
         {
             pageRegionsBuilder.add( regionDataSerializer.fromData( regionAsProp.getSet() ) );
