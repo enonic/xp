@@ -66,7 +66,9 @@
             if (window.CONFIG.autoOpenLauncher) {
                 openLauncherPanel();
                 launcherButton.focus();
-                setTipVisibility("table");
+                if (getBodyWidth() > 750) {
+                    setTipVisibility("table");
+                }
             }
             else {
                 var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
@@ -78,6 +80,10 @@
         };
 
         return link;
+    }
+
+    function getBodyWidth() {
+        return document.getElementsByTagName("body")[0].clientWidth;
     }
 
     function setTipVisibility(display) {
