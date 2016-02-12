@@ -229,8 +229,8 @@
     }
 
     function startApp(app) {
-        var anchorEl = app.querySelector("a");
-        if (anchorEl && anchorEl.click) {
+        var anchorEl = app.parentElement;
+        if (anchorEl && anchorEl.tagName == 'A' && anchorEl.click) {
             anchorEl.click();
         }
     }
@@ -273,6 +273,7 @@
                 // enter key pressed
                 var selectedApp = getSelectedApp();
                 if (selectedApp) {
+                    setTipVisibility("none");
                     startApp(selectedApp);
                 }
                 break;
