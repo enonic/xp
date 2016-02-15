@@ -349,8 +349,12 @@ module api.form.inputtype.text {
         }
 
         private setEditorContent(editorId: string, property: Property): void {
-            if (property.hasNonNullValue()) {
-                this.getEditor(editorId).setContent(this.processPropertyValue(property.getString()));
+            var editor = this.getEditor(editorId);
+            if (property.hasNonNullValue() && editor) {
+                editor.setContent(this.processPropertyValue(property.getString()));
+            }
+            else if (!editor) {
+                console.log("Editor with id '" + editorId + "' not found")
             }
         }
 
@@ -413,7 +417,7 @@ module api.form.inputtype.text {
         }
 
         private destroyEditor(id: string): void {
-            var editor = this.getEditor(id)
+            var editor = this.getEditor(id);
             if (editor) {
                 try {
                     editor.destroy(false);
