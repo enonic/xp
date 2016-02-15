@@ -12,7 +12,7 @@ module app.browse {
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
-    import ContentServerChange = api.content.event.ContentServerChange;
+    import ContentPath = api.content.ContentPath;
     import ContentServerChangeType = api.content.event.ContentServerChangeType;
     import BatchContentRequest = api.content.BatchContentRequest;
     import TreeNodesOfContentPath = api.content.TreeNodesOfContentPath;
@@ -91,7 +91,6 @@ module app.browse {
                 this.browseActions.TOGGLE_SEARCH_PANEL.setVisible(item.isInRangeOrSmaller(ResponsiveRanges._360_540));
             });
 
-            ContentServerEventsHandler.getInstance().setContentBrowsePanelCreated();
             this.handleGlobalEvents();
         }
 
@@ -189,12 +188,12 @@ module app.browse {
                     var browseItems: api.app.browse.BrowseItem<ContentSummaryAndCompareStatus>[] = this.getBrowseItemPanel().getItems();
                     if (browseItems.length == 1) {
                         new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItems[0].getId())).sendAndParse().
-                        then((renderable: boolean) => {
-                            var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItems[0].toViewItem();
-                            item.setRenderable(renderable);
-                            this.mobileContentItemStatisticsPanel.setItem(item);
-                            this.mobileBrowseActions.updateActionsEnabledState(browseItems);
-                        });
+                            then((renderable: boolean) => {
+                                var item: api.app.view.ViewItem<ContentSummaryAndCompareStatus> = browseItems[0].toViewItem();
+                                item.setRenderable(renderable);
+                                this.mobileContentItemStatisticsPanel.setItem(item);
+                                this.mobileBrowseActions.updateActionsEnabledState(browseItems);
+                            });
                     }
                 }
             };
@@ -297,157 +296,122 @@ module app.browse {
         }
 
         private subscribeOnContentEvents() {
+            var handler = ContentServerEventsHandler.getInstance();
 
-            ContentServerEventsHandler.getInstance().onContentCreated((changes: ContentServerChange[]) => {
-                this.handleContentCreated(changes);
+            handler.onContentCreated((data: ContentSummaryAndCompareStatus[]) => this.handleContentCreated(data));
+
+            handler.onContentUpdated((data: ContentSummaryAndCompareStatus[]) => this.handleContentUpdated(data));
+
+            handler.onContentRenamed((data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) => {
+                this.handleContentCreated(data, oldPaths)
             });
 
-            ContentServerEventsHandler.getInstance().onContentUpdated((changes: ContentServerChange[]) => {
-                this.handleContentUpdated(changes);
-            });
+            handler.onContentDeleted((data: ContentPath[]) => this.handleContentDeleted(data));
 
-            ContentServerEventsHandler.getInstance().onContentRenamed((changes: ContentServerChange[]) => {
-                this.handleContentCreated(changes, true, true)
-            });
+            handler.onContentPending((data: ContentSummaryAndCompareStatus[]) => this.handleContentPending(data));
 
-            ContentServerEventsHandler.getInstance().onContentDeleted((changes: ContentServerChange[]) => {
-                this.handleContentDeleted(changes);
-            });
+            handler.onContentDuplicated((data: ContentSummaryAndCompareStatus[]) => this.handleContentCreated(data));
 
-            ContentServerEventsHandler.getInstance().onContentPending((changes: ContentServerChange[]) => {
-                this.handleContentPending(changes);
-            });
+            handler.onContentPublished((data: ContentSummaryAndCompareStatus[]) => this.handleContentPublished(data));
 
-            ContentServerEventsHandler.getInstance().onContentDuplicated((changes: ContentServerChange[]) => {
-                this.handleContentCreated(changes);
-            });
-
-            ContentServerEventsHandler.getInstance().onContentPublished((changes: ContentServerChange[]) => {
-                this.handleContentPublished(changes);
-            });
-
-            ContentServerEventsHandler.getInstance().onContentMoved((changes: ContentServerChange[]) => {
+            handler.onContentMoved((data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) => {
                 // combination of delete and create
-                this.handleContentDeleted(changes);
-                this.handleContentCreated(changes, true);
+                this.handleContentDeleted(oldPaths);
+                this.handleContentCreated(data);
             });
 
-            ContentServerEventsHandler.getInstance().onContentSorted((changes: ContentServerChange[]) => {
-                this.handleContentSorted(changes);
-            });
+            handler.onContentSorted((data: ContentSummaryAndCompareStatus[]) => this.handleContentSorted(data));
         }
 
-        private concatContentPaths(changes: ContentServerChange[], useNewPaths: boolean = false): api.content.ContentPath[] {
-            var paths = [];
-            changes.forEach((change) => {
-                paths = paths.concat(useNewPaths ? change.getNewContentPaths() : change.getContentPaths());
-            });
-            return paths;
-        }
+        private handleContentCreated(data: ContentSummaryAndCompareStatus[], oldPaths?: ContentPath[]) {
+            if (ContentBrowsePanel.debug) {
+                console.debug("ContentBrowsePanel: created", data, oldPaths);
+            }
 
-        private handleContentCreated(changes: ContentServerChange[], useNewContentPaths: boolean = false,
-                                     triggeredByRename: boolean = false) {
-
-            // in case of move or rename, old paths are not relevant
-            var paths: api.content.ContentPath[] = this.concatContentPaths(changes, useNewContentPaths);
+            var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
             var createResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths, true);
 
-            return ContentSummaryAndCompareStatusFetcher.
-                fetchByPaths(createResult.map((el) => {
-                    return el.getAltPath();
-                })).
-                then((data: ContentSummaryAndCompareStatus[]) => {
-                    var isFiltered = this.contentTreeGrid.getRoot().isFiltered(),
-                        nodes: TreeNode<ContentSummaryAndCompareStatus>[] = [];
+            var isFiltered = this.contentTreeGrid.getRoot().isFiltered(),
+                nodes: TreeNode<ContentSummaryAndCompareStatus>[] = [];
 
-                    data.forEach((el) => {
-                        for (var i = 0; i < createResult.length; i++) {
-                            if (el.getContentSummary().getPath().isChildOf(createResult[i].getPath())) {
-                                if (triggeredByRename) {
-                                    var renameResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
-                                    var premerged = renameResult.map((el) => {
-                                        return el.getNodes();
-                                    });
-                                    // merge array of nodes arrays
-                                    nodes = nodes.concat.apply(nodes, premerged);
-                                    nodes.forEach((node) => {
-                                        if (node.getDataId() === el.getId()) {
-                                            node.setData(el);
-                                            node.clearViewers();
-                                            this.contentTreeGrid.xUpdatePathsInChildren(node);
-                                        }
-                                    });
-                                } else {
-                                    this.contentTreeGrid.xAppendContentNodes(
-                                        createResult[i].getNodes().map((node) => {
-                                            return new api.content.TreeNodeParentOfContent(el, node);
-                                        }),
-                                        !isFiltered
-                                    ).then((results) => {
-                                            nodes = nodes.concat(results);
-                                        });
+            data.forEach((el) => {
+                for (var i = 0; i < createResult.length; i++) {
+                    if (el.getContentSummary().getPath().isChildOf(createResult[i].getPath())) {
+                        if (oldPaths && oldPaths.length > 0) {
+                            var renameResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(oldPaths);
+                            var premerged = renameResult.map((el) => {
+                                return el.getNodes();
+                            });
+                            // merge array of nodes arrays
+                            nodes = nodes.concat.apply(nodes, premerged);
+                            nodes.forEach((node) => {
+                                if (node.getDataId() === el.getId()) {
+                                    node.setData(el);
+                                    node.clearViewers();
+                                    this.contentTreeGrid.xUpdatePathsInChildren(node);
                                 }
-                                break;
-                            }
+                            });
+                        } else {
+                            this.contentTreeGrid.xAppendContentNodes(
+                                createResult[i].getNodes().map((node) => {
+                                    return new api.content.TreeNodeParentOfContent(el, node);
+                                }),
+                                !isFiltered
+                            ).then((results) => {
+                                    nodes = nodes.concat(results);
+                                });
                         }
-                    });
-
-                    this.contentTreeGrid.initAndRender();
-
-                    isFiltered = true;
-                    if (isFiltered) {
-                        this.setFilterPanelRefreshNeeded(true);
-                        window.setTimeout(() => {
-                            this.refreshFilter();
-                        }, 1000);
+                        break;
                     }
-                });
+                }
+            });
+
+            this.contentTreeGrid.initAndRender();
+
+            isFiltered = true;
+            if (isFiltered) {
+                this.setFilterPanelRefreshNeeded(true);
+                window.setTimeout(() => {
+                    this.refreshFilter();
+                }, 1000);
+            }
+
         }
 
-        private handleContentUpdated(changes: ContentServerChange[]) {
-
-            var paths: api.content.ContentPath[] = this.concatContentPaths(changes);
+        private handleContentUpdated(data: ContentSummaryAndCompareStatus[]) {
+            if (ContentBrowsePanel.debug) {
+                console.debug("ContentBrowsePanel: updated", data);
+            }
+            var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
             var treeNodes: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
 
-            var ids: ContentId[] = [];
-            treeNodes.forEach((el) => {
-                ids = ids.concat(el.getNodes().map((node) => {
-                    return node.getData().getContentId();
-                }));
+            var results = [];
+            data.forEach((el) => {
+
+                for (var i = 0; i < treeNodes.length; i++) {
+                    if (treeNodes[i].getId() === el.getId()) {
+                        treeNodes[i].updateNodeData(el);
+
+                        this.updateStatisticsPreview(el); // update preview item
+
+                        this.updateItemInDetailsPanelIfNeeded(el);
+
+                        results.push(treeNodes[i]);
+                        break;
+                    }
+                }
             });
-            return ContentSummaryAndCompareStatusFetcher.
-                fetchByIds(ids).
-                then((data: ContentSummaryAndCompareStatus[]) => {
-                    var results = [];
-                    data.forEach((el) => {
-                        for (var i = 0; i < treeNodes.length; i++) {
-                            if (treeNodes[i].getId() === el.getId()) {
-                                treeNodes[i].updateNodeData(el);
+            // update actions state in case of permission changes
+            this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
+            this.mobileBrowseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
 
-                                this.updateStatisticsPreview(el); // update preview item
-
-                                this.updateItemInDetailsPanelIfNeeded(el);
-                                new api.content.event.ContentUpdatedEvent(el.getContentId()).fire();
-
-                                results.push(treeNodes[i]);
-                                break;
-                            }
-                        }
-                    });
-                    // update actions state in case of permission changes
-                    this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
-                    this.mobileBrowseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
-
-                    return this.contentTreeGrid.xPlaceContentNodes(results);
-                });
+            return this.contentTreeGrid.xPlaceContentNodes(results);
         }
 
-        private handleContentDeleted(changes: ContentServerChange[]) {
-
-            var paths = [];
-            changes.forEach(change => {
-                paths = paths.concat(change.getContentPaths());
-            });
+        private handleContentDeleted(paths: ContentPath[]) {
+            if (ContentBrowsePanel.debug) {
+                console.debug("ContentBrowsePanel: deleted", paths);
+            }
 
             var deleteResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
             var nodes = deleteResult.map((el) => {
@@ -457,16 +421,13 @@ module app.browse {
             // merge array of nodes arrays
             merged = merged.concat.apply(merged, nodes);
 
-            var contentDeletedEvent = new ContentDeletedEvent();
             merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
                 var contentSummary = node.getData().getContentSummary();
                 if (node.getData() && !!contentSummary) {
 
                     this.updateDetailsPanel(null);
-                    contentDeletedEvent.addItem(contentSummary.getContentId(), contentSummary.getPath());
                 }
             });
-            contentDeletedEvent.fire();
 
             this.contentTreeGrid.xDeleteContentNodes(merged);
 
@@ -476,69 +437,55 @@ module app.browse {
             }, 1000);
         }
 
-        private handleContentPending(changes: ContentServerChange[]) {
-
-            var paths: api.content.ContentPath[] = this.concatContentPaths(changes);
+        private handleContentPending(data: ContentSummaryAndCompareStatus[]) {
+            if (ContentBrowsePanel.debug) {
+                console.debug("ContentBrowsePanel: pending", data);
+            }
+            var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
             var treeNodes: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
 
-            return ContentSummaryAndCompareStatusFetcher.fetchByPaths(treeNodes.
-                    map((el) => {
-                        return (el.getNodes().length > 0 && el.getNodes()[0].getData())
-                            ? el.getNodes()[0].getData().getContentSummary().getPath()
-                            : null;
-                    }).
-                    filter((el) => {
-                        return el !== null;
-                    })
-            ).then((data: ContentSummaryAndCompareStatus[]) => {
-                    var contentDeletedEvent = new ContentDeletedEvent();
-                    data.forEach((el) => {
-                        for (var i = 0; i < treeNodes.length; i++) {
-                            if (treeNodes[i].getId() === el.getId()) {
-                                treeNodes[i].updateNodeData(el);
+            data.forEach((el) => {
+                for (var i = 0; i < treeNodes.length; i++) {
+                    if (treeNodes[i].getId() === el.getId()) {
 
-                                this.updateItemInDetailsPanelIfNeeded(el);
+                        treeNodes[i].updateNodeData(el);
 
-                                contentDeletedEvent.addPendingItem(el.getContentId(), el.getPath());
-                                break;
-                            }
-                        }
-                    });
-                    contentDeletedEvent.fire();
+                        this.updateItemInDetailsPanelIfNeeded(el);
 
-                    this.contentTreeGrid.invalidate();
-                });
+                        break;
+                    }
+                }
+            });
+
+            this.contentTreeGrid.invalidate();
         }
 
-        private handleContentPublished(changes: ContentServerChange[]) {
-
-            var paths: api.content.ContentPath[] = this.concatContentPaths(changes);
+        private handleContentPublished(data: ContentSummaryAndCompareStatus[]) {
+            if (ContentBrowsePanel.debug) {
+                console.debug("ContentBrowsePanel: published", data);
+            }
+            var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
             var treeNodes: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
 
-            return ContentSummaryAndCompareStatusFetcher.
-                fetchByPaths(treeNodes.map((el) => {
-                    return el.getPath();
-                })).
-                then((data: ContentSummaryAndCompareStatus[]) => {
-                    data.forEach((el) => {
-                        for (var i = 0; i < treeNodes.length; i++) {
-                            if (treeNodes[i].getId() === el.getId()) {
-                                treeNodes[i].updateNodeData(el);
+            data.forEach((el) => {
+                for (var i = 0; i < treeNodes.length; i++) {
+                    if (treeNodes[i].getId() === el.getId()) {
+                        treeNodes[i].updateNodeData(el);
 
-                                this.updateItemInDetailsPanelIfNeeded(el);
+                        this.updateItemInDetailsPanelIfNeeded(el);
 
-                                new api.content.event.ContentPublishedEvent(el.getContentId(), el.getCompareStatus()).fire();
-                                break;
-                            }
-                        }
-                    });
-                    this.contentTreeGrid.invalidate();
-                });
+                        break;
+                    }
+                }
+            });
+            this.contentTreeGrid.invalidate();
         }
 
-        private handleContentSorted(changes: ContentServerChange[]) {
-
-            var paths: api.content.ContentPath[] = this.concatContentPaths(changes);
+        private handleContentSorted(data: ContentSummaryAndCompareStatus[]) {
+            if (ContentBrowsePanel.debug) {
+                console.debug("ContentBrowsePanel: sorted", data);
+            }
+            var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
             var sortResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
 
             var nodes = sortResult.map((el) => {
