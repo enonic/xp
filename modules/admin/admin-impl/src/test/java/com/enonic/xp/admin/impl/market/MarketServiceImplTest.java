@@ -22,7 +22,7 @@ public class MarketServiceImplTest
 
     private MarketServiceImpl marketService;
 
-    private String marketUrl = "http://www.enonic.com/market/applications";
+    private String marketUrl = "https://market.enonic.com/applications";
 
     @Before
     public void setUp()
