@@ -155,7 +155,7 @@ module app.wizard {
             this.tree = new PageComponentsTreeGrid(content, pageView);
 
             this.liveEditPage.onItemViewSelected((event: ItemViewSelectedEvent) => {
-                if (!event.isNew()) {
+                if (!event.isNew() && !this.pageView.isLocked()) {
                     var selectedItemId = this.tree.getDataId(event.getItemView());
                     this.tree.selectNode(selectedItemId);
                     this.tree.getGrid().focus();
