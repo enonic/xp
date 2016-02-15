@@ -218,14 +218,14 @@ module api.form {
                 this.previousValidationRecording.breaksMinimumOccurrences(validationRecordingPath);
                 occurrenceRecording.breaksMinimumOccurrences(validationRecordingPath);
             } else {
-                this.previousValidationRecording.removeUnreachedMinimumOccurrencesByPath(validationRecordingPath);
+                this.previousValidationRecording.removeUnreachedMinimumOccurrencesByEqualPath(validationRecordingPath);
             }
 
             if (this.formItemSet.getOccurrences().maximumBreached(numberOfValids)) {
                 this.previousValidationRecording.breaksMaximumOccurrences(validationRecordingPath);
                 occurrenceRecording.breaksMaximumOccurrences(validationRecordingPath);
             } else {
-                this.previousValidationRecording.removeBreachedMaximumOccurrencesByPath(validationRecordingPath);
+                this.previousValidationRecording.removeBreachedMaximumOccurrencesByEqualPath(validationRecordingPath);
             }
 
             this.renderValidationErrors(occurrenceRecording);

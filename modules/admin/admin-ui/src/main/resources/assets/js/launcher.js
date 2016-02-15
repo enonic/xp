@@ -2,7 +2,7 @@
     var adminUrl = "/admin/tool/com.enonic.xp.admin.ui/launcher";
     var cssPath = window.CONFIG.portalAssetsUrl + "/styles/_launcher.css";
     var launcherPanel, bodyMask, launcherButton;
-    var isHomeApp = (window.CONFIG && window.CONFIG.autoOpenLauncher);
+    var isHomeApp = (window.CONFIG && window.CONFIG.appId == "home");
 
     function appendLauncherButton() {
         launcherButton = document.createElement("button");
@@ -63,9 +63,12 @@
                 container.appendChild(clonedDiv.childNodes[0]);
             }
 
-            if (isHomeApp) {
+            if (window.CONFIG.autoOpenLauncher) {
                 openLauncherPanel();
                 launcherButton.focus();
+                if (getBodyWidth() > 750) {
+                    setTipVisibility("table");
+                }
             }
             else {
                 var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
@@ -77,6 +80,17 @@
         };
 
         return link;
+    }
+
+    function getBodyWidth() {
+        return document.getElementsByTagName("body")[0].clientWidth;
+    }
+
+    function setTipVisibility(display) {
+        var launcherTip = document.querySelector('.launcher-tip');
+        if (launcherTip) {
+            launcherTip.style.display = display;
+        }
     }
 
     function getBodyMask() {
@@ -119,6 +133,7 @@
     }
 
     function closeLauncherPanel(skipTransition) {
+        setTipVisibility("none");
         unlistenToKeyboardEvents();
         disableKeyboardNavigation();
         launcherPanel.classList.remove("visible");
@@ -214,8 +229,8 @@
     }
 
     function startApp(app) {
-        var anchorEl = app.querySelector("a");
-        if (anchorEl && anchorEl.click) {
+        var anchorEl = app.parentElement;
+        if (anchorEl && anchorEl.tagName == 'A' && anchorEl.click) {
             anchorEl.click();
         }
     }
@@ -258,6 +273,7 @@
                 // enter key pressed
                 var selectedApp = getSelectedApp();
                 if (selectedApp) {
+                    setTipVisibility("none");
                     startApp(selectedApp);
                 }
                 break;

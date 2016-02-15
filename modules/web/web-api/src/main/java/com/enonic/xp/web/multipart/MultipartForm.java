@@ -9,6 +9,8 @@ public interface MultipartForm
 
     MultipartItem get( String name );
 
+    MultipartItem get( String name, int index );
+
     String getAsString( String name );
 
     void delete();

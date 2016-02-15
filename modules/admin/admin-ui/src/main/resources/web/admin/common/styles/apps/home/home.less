@@ -34,68 +34,9 @@
 
     .welcome-text {
       .container-title-mixin(28px, 6px);
+      font-weight: 400;
     }
 
-    .welcome-tip {
-      position: absolute;
-      right: calc(50px ~"+" @panel-outer-width);
-      bottom: 13px;
-      color: @admin-white;
-      font-size: 14px;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-
-      -webkit-animation: bounce 1s ease-out 5s 2; /* Safari, Chrome and Opera > 12.1 */
-      -moz-animation: bounce 1s ease-out 5s 2; /* Firefox < 16 */
-      -ms-animation: bounce 1s ease-out 5s 2; /* Internet Explorer */
-      -o-animation: bounce 1s ease-out 5s 2; /* Opera < 12.1 */
-      animation: bounce 1s ease-out 5s 2;
-
-      @keyframes bounce {
-        0% {
-          right: calc(50px ~"+" @panel-outer-width);
-        }
-        50% {
-          right: calc(30px ~"+" @panel-outer-width);
-        }
-        100% {
-          right: calc(50px ~"+" @panel-outer-width);
-        }
-      }
-
-      span {
-        -webkit-animation: fadein 12s linear 2s; /* Safari, Chrome and Opera > 12.1 */
-        -moz-animation: fadein 12s linear 2s; /* Firefox < 16 */
-        -ms-animation: fadein 12s linear 2s; /* Internet Explorer */
-        -o-animation: fadein 12s linear 2s; /* Opera < 12.1 */
-        animation: fadein 12s linear 2s;
-        opacity: 0;
-
-        &:after {
-          position: absolute;
-          bottom: -9px;
-          font-size: 32px;
-          font-family: 'icomoon';
-          content: "\e3b5";
-          line-height: 33px;
-        }
-
-        @keyframes fadein {
-          0% {
-            opacity: 0;
-          }
-          20% {
-            opacity: 1;
-          }
-          80% {
-            opacity: 1;
-          }
-          100% {
-            opacity: 0;
-          }
-        }
-      }
-    }
   }
 
 }
@@ -106,10 +47,11 @@
   left: 40px;
   bottom: 15px;
   text-align: left;
-  z-index: @z-index-launcher-panel;
+  z-index: calc(@z-index-launcher-panel - 1);
   background-color: transparent;
   font-family: @admin-font-family;
   font-size: @admin-font-size;
+  font-weight: 700;
 
   & > * {
     -webkit-font-smoothing: antialiased;
@@ -127,7 +69,13 @@
 ._240-360 {
   .home-main-container {
     .header {
-      padding-left: calc(~'100% - @{panel-outer-width}');
+      padding-left: 40px;
     }
+  }
+}
+
+._0-240, ._240-360, ._360-540 {
+  .home-main-container .header .welcome-text {
+    .container-title-mixin(22px, 8px);
   }
 }
