@@ -254,7 +254,7 @@ module api.liveedit.text {
                 fixed_toolbar_container: '.mce-toolbar-container',
 
                 toolbar: [
-                    "bold italic underline strikethrough formatselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor link unlink"
+                    "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor link unlink | code"
                 ],
 
                 formats: {
