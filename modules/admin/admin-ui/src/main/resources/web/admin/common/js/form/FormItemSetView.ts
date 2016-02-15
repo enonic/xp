@@ -225,8 +225,7 @@ module api.form {
                 this.previousValidationRecording.breaksMaximumOccurrences(validationRecordingPath);
                 occurrenceRecording.breaksMaximumOccurrences(validationRecordingPath);
             } else {
-                this.previousValidationRecording.
-                    (validationRecordingPath);
+                this.previousValidationRecording.removeBreachedMaximumOccurrencesByEqualPath(validationRecordingPath);
             }
 
             this.renderValidationErrors(occurrenceRecording);
