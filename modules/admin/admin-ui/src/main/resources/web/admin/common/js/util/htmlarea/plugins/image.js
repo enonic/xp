@@ -15,7 +15,7 @@ tinymce.PluginManager.add('image', function (editor) {
                 imgEl = wemjq(selectedNode).children("img")[0];
                 break;
             case 'FIGCAPTION':
-                imgEl = (wemjq(selectedNode).prev("img") || wemjq(selectedNode).next("img"))[0] ;
+                imgEl = (wemjq(selectedNode).prev("img") || wemjq(selectedNode).next("img"))[0];
                 break;
         }
 
