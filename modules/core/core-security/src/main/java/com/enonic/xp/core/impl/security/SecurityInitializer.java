@@ -64,10 +64,12 @@ final class SecurityInitializer
 
             initializeUserStoreParentFolder();
             initializeRoleFolder();
+            initializePathGuardFolder();
             initializeSystemUserStore();
 
             createRoles();
             createUsers();
+            //createAdminPathGuard();
 
             LOG.info( "System-repo [security] layout successfully initialized" );
 
@@ -139,6 +141,18 @@ final class SecurityInitializer
             authConfig( authConfig ).
             build();
         this.securityService.createUserStore( createParams );
+    }
+
+    private void initializePathGuardFolder()
+    {
+        final NodePath pathGuardsNodePath = PathGuardNodeTranslator.getPathGuardsNodePath();
+        LOG.info( "Initializing [" + pathGuardsNodePath.toString() + "] folder" );
+
+        nodeService.create( CreateNodeParams.create().
+            parent( pathGuardsNodePath.getParentPath() ).
+            name( pathGuardsNodePath.getLastElement().toString() ).
+            inheritPermissions( true ).
+            build() );
     }
 
     private void createRoles()
