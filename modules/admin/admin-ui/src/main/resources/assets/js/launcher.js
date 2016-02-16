@@ -66,7 +66,9 @@
             if (window.CONFIG.autoOpenLauncher) {
                 openLauncherPanel();
                 launcherButton.focus();
-                setTipVisibility("table");
+                if (getBodyWidth() > 750) {
+                    setTipVisibility("table");
+                }
             }
             else {
                 var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
@@ -78,6 +80,10 @@
         };
 
         return link;
+    }
+
+    function getBodyWidth() {
+        return document.getElementsByTagName("body")[0].clientWidth;
     }
 
     function setTipVisibility(display) {
@@ -223,8 +229,8 @@
     }
 
     function startApp(app) {
-        var anchorEl = app.querySelector("a");
-        if (anchorEl && anchorEl.click) {
+        var anchorEl = app.parentElement;
+        if (anchorEl && anchorEl.tagName == 'A' && anchorEl.click) {
             anchorEl.click();
         }
     }
@@ -267,6 +273,7 @@
                 // enter key pressed
                 var selectedApp = getSelectedApp();
                 if (selectedApp) {
+                    setTipVisibility("none");
                     startApp(selectedApp);
                 }
                 break;

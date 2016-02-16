@@ -71,8 +71,8 @@ module api.content.site.inputtype.siteconfigurator {
         private initFormView() {
             this.formValidityChangedHandler = (event: api.form.FormValidityChangedEvent) => {
                 this.toggleClass("invalid", !event.isValid())
-            }
-            this.formView = this.createFormView(this.formContext, this.siteConfig);
+            };
+            this.formView = this.createFormView(this.siteConfig);
         }
 
         private createEditButton(): api.dom.AEl {
@@ -98,7 +98,7 @@ module api.content.site.inputtype.siteconfigurator {
                 var formViewStateOnDialogOpen = this.formView;
                 this.unbindValidationEvent(formViewStateOnDialogOpen);
 
-                this.formView = this.createFormView(this.formContext, tempSiteConfig);
+                this.formView = this.createFormView(tempSiteConfig);
                 this.bindValidationEvent(this.formView);
 
                 var okCallback = () => {
@@ -153,8 +153,8 @@ module api.content.site.inputtype.siteconfigurator {
             return SiteConfig.create().setConfig(propSet).setApplicationKey(this.siteConfig.getApplicationKey()).build();
         }
 
-        private createFormView(formContext: api.content.form.ContentFormContext, siteConfig: SiteConfig): FormView {
-            var formView = new FormView(formContext, this.application.getForm(), siteConfig.getConfig());
+        private createFormView(siteConfig: SiteConfig): FormView {
+            var formView = new FormView(this.formContext, this.application.getForm(), siteConfig.getConfig());
             formView.addClass("site-form");
             formView.layout().then(() => {
                 this.formView.validate(false, true);

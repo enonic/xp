@@ -34,6 +34,7 @@
 
     .welcome-text {
       .container-title-mixin(28px, 6px);
+      font-weight: 400;
     }
 
   }
@@ -46,10 +47,11 @@
   left: 40px;
   bottom: 15px;
   text-align: left;
-  z-index: @z-index-launcher-panel;
+  z-index: calc(@z-index-launcher-panel - 1);
   background-color: transparent;
   font-family: @admin-font-family;
   font-size: @admin-font-size;
+  font-weight: 700;
 
   & > * {
     -webkit-font-smoothing: antialiased;
@@ -67,7 +69,13 @@
 ._240-360 {
   .home-main-container {
     .header {
-      padding-left: calc(~'100% - @{panel-outer-width}');
+      padding-left: 40px;
     }
+  }
+}
+
+._0-240, ._240-360, ._360-540 {
+  .home-main-container .header .welcome-text {
+    .container-title-mixin(22px, 8px);
   }
 }

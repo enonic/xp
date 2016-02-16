@@ -388,6 +388,8 @@
   font-weight: 100;
   position: absolute;
   bottom: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   position: relative;
   display: table-cell;
   vertical-align: bottom;

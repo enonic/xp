@@ -2,5 +2,5 @@ package com.enonic.xp.admin.impl.market;
 
 public @interface MarketConfig
 {
-    String marketUrl() default "https://enonic.com/market/applications";
+    String marketUrl() default "https://market.enonic.com/applications";
 }
