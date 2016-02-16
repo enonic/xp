@@ -28,12 +28,12 @@ public class AuthDescriptor
 
     public ResourceKey getResourceKey()
     {
-        return ResourceKey.from( key, "res/auth/auth.js" );
+        return ResourceKey.from( key, "auth/auth.js" );
     }
 
     public static ResourceKey toResourceKey( final ApplicationKey key )
     {
-        return ResourceKey.from( key, "res/auth/auth.xml" );
+        return ResourceKey.from( key, "auth/auth.xml" );
     }
 
     public static Builder create()
