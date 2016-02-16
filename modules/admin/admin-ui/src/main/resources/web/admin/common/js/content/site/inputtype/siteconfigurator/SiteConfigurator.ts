@@ -65,11 +65,10 @@ module api.content.site.inputtype.siteconfigurator {
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
             var superPromise = super.update(propertyArray, unchangedOnly);
 
+            this.siteConfigProvider.setPropertyArray(propertyArray);
+
             if (!unchangedOnly || !this.comboBox.isDirty()) {
                 return superPromise.then(() => {
-
-                    this.siteConfigProvider.setPropertyArray(propertyArray);
-
                     this.comboBox.setValue(this.getValueFromPropertyArray(propertyArray));
                 });
             } else {
