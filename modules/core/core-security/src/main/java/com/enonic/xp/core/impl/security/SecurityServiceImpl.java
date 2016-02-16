@@ -50,6 +50,7 @@ import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.CreateUserStoreParams;
 import com.enonic.xp.security.Group;
+import com.enonic.xp.security.PathGuard;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalAlreadyExistsException;
 import com.enonic.xp.security.PrincipalKey;
@@ -974,6 +975,16 @@ public final class SecurityServiceImpl
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
         return ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).authInfo( authInfo ).build();
+    }
+
+    @Override
+    public ImmutableList<PathGuard> getPathGuards()
+    {
+        final FindNodesByParentParams findByParent = FindNodesByParentParams.create().
+            parentPath( PathGuardNodeTranslator.getPathGuardsNodePath() ).build();
+        final FindNodesByParentResult result = callWithContext( () -> this.nodeService.findByParent( findByParent ) );
+
+        return PathGuardNodeTranslator.fromNodes( result.getNodes() );
     }
 
     @Reference

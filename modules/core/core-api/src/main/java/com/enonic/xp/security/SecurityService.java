@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -160,4 +161,5 @@ public interface SecurityService
 
     void removeRelationships( PrincipalKey from );
 
+    ImmutableList<PathGuard> getPathGuards();
 }
