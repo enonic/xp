@@ -3,6 +3,7 @@
     var cssPath = window.CONFIG.portalAssetsUrl + "/styles/_launcher.css";
     var launcherPanel, bodyMask, launcherButton;
     var isHomeApp = (window.CONFIG && window.CONFIG.appId == "home");
+    var minWidthForTip = 900;
 
     function appendLauncherButton() {
         launcherButton = document.createElement("button");
@@ -66,7 +67,7 @@
             if (window.CONFIG.autoOpenLauncher) {
                 openLauncherPanel();
                 launcherButton.focus();
-                if (getBodyWidth() > 750) {
+                if (getBodyWidth() > minWidthForTip) {
                     setTipVisibility("table");
                 }
             }
