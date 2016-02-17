@@ -46,10 +46,13 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.security.CreateGroupParams;
+import com.enonic.xp.security.CreatePathGuardParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.CreateUserStoreParams;
 import com.enonic.xp.security.Group;
+import com.enonic.xp.security.PathGuard;
+import com.enonic.xp.security.PathGuardAlreadyExistsException;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalAlreadyExistsException;
 import com.enonic.xp.security.PrincipalKey;
@@ -974,6 +977,57 @@ public final class SecurityServiceImpl
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
         return ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).authInfo( authInfo ).build();
+    }
+
+    @Override
+    public ImmutableList<PathGuard> getPathGuards()
+    {
+        final FindNodesByParentParams findByParent = FindNodesByParentParams.create().
+            parentPath( PathGuardNodeTranslator.getPathGuardsNodePath() ).build();
+        final FindNodesByParentResult result = callWithContext( () -> this.nodeService.findByParent( findByParent ) );
+
+        return PathGuardNodeTranslator.fromNodes( result.getNodes() );
+    }
+
+    @Override
+    public Optional<PathGuard> getPathGuard( final String key )
+    {
+        try
+        {
+            final Node node = callWithContext( () -> this.nodeService.getById( PathGuardNodeTranslator.getNodeId( key ) ) );
+            return Optional.ofNullable( PathGuardNodeTranslator.fromNode( node ) );
+        }
+        catch ( NodeNotFoundException e )
+        {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public PathGuard createPathGuard( final CreatePathGuardParams params )
+    {
+
+        final PathGuard pathGuard = PathGuard.create().key( params.getKey() ).
+            displayName( params.getDisplayName() ).
+            authConfig( params.getAuthConfig() ).
+            addAllPaths( params.getPaths() ).
+            build();
+
+        final CreateNodeParams createNodeParams = PathGuardNodeTranslator.toCreateNodeParams( pathGuard );
+        try
+        {
+            final Node node = callWithContext( () -> {
+                final Node createdNode = this.nodeService.create( createNodeParams );
+                this.nodeService.refresh( RefreshMode.SEARCH );
+                return createdNode;
+            } );
+
+            return PathGuardNodeTranslator.fromNode( node );
+        }
+        catch ( NodeAlreadyExistAtPathException e )
+        {
+            throw new PathGuardAlreadyExistsException( params.getKey() );
+        }
     }
 
     @Reference

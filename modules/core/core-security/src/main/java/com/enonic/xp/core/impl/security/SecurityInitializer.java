@@ -10,6 +10,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.security.CreatePathGuardParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.CreateUserStoreParams;
@@ -64,10 +65,12 @@ final class SecurityInitializer
 
             initializeUserStoreParentFolder();
             initializeRoleFolder();
+            initializePathGuardFolder();
             initializeSystemUserStore();
 
             createRoles();
             createUsers();
+            createPathGuards();
 
             LOG.info( "System-repo [security] layout successfully initialized" );
 
@@ -139,6 +142,18 @@ final class SecurityInitializer
             authConfig( authConfig ).
             build();
         this.securityService.createUserStore( createParams );
+    }
+
+    private void initializePathGuardFolder()
+    {
+        final NodePath pathGuardsNodePath = PathGuardNodeTranslator.getPathGuardsNodePath();
+        LOG.info( "Initializing [" + pathGuardsNodePath.toString() + "] folder" );
+
+        nodeService.create( CreateNodeParams.create().
+            parent( pathGuardsNodePath.getParentPath() ).
+            name( pathGuardsNodePath.getLastElement().toString() ).
+            inheritPermissions( true ).
+            build() );
     }
 
     private void createRoles()
@@ -213,6 +228,21 @@ final class SecurityInitializer
         addMember( RoleKeys.ADMIN_LOGIN, createSuperUser.getKey() );
     }
 
+    private void createPathGuards()
+    {
+        final UserStoreAuthConfig authConfig = UserStoreAuthConfig.create().
+            applicationKey( ApplicationKey.from( "com.enonic.xp.app.login" ) ).
+            config( new PropertyTree() ).
+            build();
+        final CreatePathGuardParams createPathGuardParams = CreatePathGuardParams.create().
+            key( "admin" ).
+            displayName( "Admin guard" ).
+            addPath( "/admin" ).
+            authConfig( authConfig ).
+            build();
+        addPathGuard( createPathGuardParams );
+    }
+
     private void addUser( final CreateUserParams createUser )
     {
         try
@@ -255,6 +285,22 @@ final class SecurityInitializer
         catch ( final Exception t )
         {
             LOG.error( "Unable to add member: " + container + " -> " + member, t );
+        }
+    }
+
+    private void addPathGuard( final CreatePathGuardParams createPathGuardParams )
+    {
+        try
+        {
+            if ( !securityService.getPathGuard( createPathGuardParams.getKey() ).isPresent() )
+            {
+                securityService.createPathGuard( createPathGuardParams );
+                LOG.info( "Path guard created: " + createPathGuardParams.getKey().toString() );
+            }
+        }
+        catch ( final Exception t )
+        {
+            LOG.error( "Unable to initialize path guard: " + createPathGuardParams.getKey().toString(), t );
         }
     }
 }

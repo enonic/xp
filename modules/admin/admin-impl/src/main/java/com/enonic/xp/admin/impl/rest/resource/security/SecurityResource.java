@@ -19,6 +19,8 @@ import org.codehaus.jparsec.util.Lists;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateGroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateRoleJson;
@@ -32,6 +34,7 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoreResul
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoresResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.EmailAvailabilityJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.GroupJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.PathGuardsJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalsJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.RoleJson;
@@ -46,6 +49,7 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.UserStoresJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.security.Group;
+import com.enonic.xp.security.PathGuard;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -386,6 +390,14 @@ public final class SecurityResource
             }
         } );
         return resultsJson;
+    }
+
+    @GET
+    @Path("pathguard/list")
+    public PathGuardsJson getPathGuards()
+    {
+        final ImmutableList<PathGuard> pathGuards = securityService.getPathGuards();
+        return new PathGuardsJson( pathGuards );
     }
 
     private void updateMemberships( final PrincipalKey target, PrincipalKeys membersToRemove, PrincipalKeys membersToAdd )
