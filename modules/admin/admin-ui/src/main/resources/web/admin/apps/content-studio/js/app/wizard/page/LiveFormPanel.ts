@@ -407,7 +407,9 @@ module app.wizard.page {
                     this.inspectComponent(<ComponentView<Component>>itemView);
                 }
 
-                this.minimizeContentFormPanelIfNeeded();
+                if (!this.pageView.isLocked()) {
+                    this.minimizeContentFormPanelIfNeeded();
+                }
             });
 
             this.liveEditPageProxy.onItemViewDeselected((event: ItemViewDeselectedEvent) => {
