@@ -2,13 +2,16 @@ module app.browse {
 
     import Principal = api.security.Principal;
     import UserStore = api.security.UserStore;
+    import PathGuard = api.security.PathGuard;
 
     export enum UserTreeGridItemType {
         USER_STORE,
         PRINCIPAL,
         GROUPS,
         USERS,
-        ROLES
+        ROLES,
+        PATH_GUARDS,
+        PATH_GUARD
     }
 
     export class UserTreeGridItem implements api.Equitable {
@@ -17,6 +20,8 @@ module app.browse {
 
         private principal: Principal;
 
+        private pathGuard: PathGuard;
+
         private type: UserTreeGridItemType;
 
         private modifiedTime: Date;
@@ -24,6 +29,7 @@ module app.browse {
         constructor(builder: UserTreeGridItemBuilder) {
             this.userStore = builder.userStore;
             this.principal = builder.principal;
+            this.pathGuard = builder.pathGuard;
             this.type = builder.type;
 
             if (this.type === UserTreeGridItemType.PRINCIPAL) {
@@ -55,6 +61,10 @@ module app.browse {
             return this.principal;
         }
 
+        getPathGuard(): PathGuard {
+            return this.pathGuard;
+        }
+
         getItemDisplayName(): string {
             switch (this.type) {
             case UserTreeGridItemType.USER_STORE:
@@ -62,6 +72,9 @@ module app.browse {
 
             case UserTreeGridItemType.PRINCIPAL:
                 return this.principal.getDisplayName();
+
+            case UserTreeGridItemType.PATH_GUARD:
+                return this.pathGuard.getDisplayName();
 
             case UserTreeGridItemType.ROLES:
                 return 'Roles';
@@ -71,6 +84,9 @@ module app.browse {
 
             case UserTreeGridItemType.GROUPS:
                 return 'Groups';
+
+            case UserTreeGridItemType.PATH_GUARDS:
+                return 'Path guards';
 
             }
 
@@ -84,6 +100,9 @@ module app.browse {
             case UserTreeGridItemType.PRINCIPAL:
                 return this.principal.getKey().toString();
 
+            case UserTreeGridItemType.PATH_GUARD:
+                return this.pathGuard.getKey().toString();
+
             case UserTreeGridItemType.GROUPS:
                 return this.userStore.getKey().toString() + '/groups';
 
@@ -93,13 +112,17 @@ module app.browse {
             case UserTreeGridItemType.USERS:
                 return this.userStore.getKey().toString() + '/users';
 
+            case UserTreeGridItemType.PATH_GUARDS:
+                return '/pathguard';
+
             }
 
         }
 
         hasChildren(): boolean {
             return (this.type === UserTreeGridItemType.USER_STORE || this.type === UserTreeGridItemType.GROUPS ||
-                    this.type === UserTreeGridItemType.ROLES || this.type === UserTreeGridItemType.USERS);
+                    this.type === UserTreeGridItemType.ROLES || this.type === UserTreeGridItemType.USERS ||
+                    this.type === UserTreeGridItemType.PATH_GUARDS);
         }
 
         equals(o: api.Equitable): boolean {
@@ -116,6 +139,7 @@ module app.browse {
     export class UserTreeGridItemBuilder {
         userStore: UserStore;
         principal: Principal;
+        pathGuard: PathGuard;
         type: UserTreeGridItemType;
 
         constructor() {
@@ -129,6 +153,11 @@ module app.browse {
 
         setPrincipal(principal: Principal): UserTreeGridItemBuilder {
             this.principal = principal;
+            return this;
+        }
+
+        setPathGuard(pathGuard: PathGuard): UserTreeGridItemBuilder {
+            this.pathGuard = pathGuard;
             return this;
         }
 

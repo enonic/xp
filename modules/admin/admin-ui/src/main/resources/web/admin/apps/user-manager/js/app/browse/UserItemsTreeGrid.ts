@@ -10,10 +10,12 @@ module app.browse {
 
     import ListUserStoresRequest = api.security.ListUserStoresRequest;
     import FindPrincipalsRequest = api.security.FindPrincipalsRequest;
+    import ListPathGuardsRequest = api.security.ListPathGuardsRequest;
     import UserStoreListResult = api.security.UserStoreListResult;
     import UserStoreJson = api.security.UserStoreJson;
     import Principal = api.security.Principal;
     import UserStore = api.security.UserStore;
+    import PathGuard = api.security.PathGuard;
     import PrincipalType = api.security.PrincipalType;
     import UserStoreKey = api.security.UserStoreKey;
 
@@ -226,9 +228,8 @@ module app.browse {
 
             // Creating a role with parent node pointing to another role may cause fetching to fail
             // We need to select a parent node first
-            if (level !== 0 && parentNode.getData().getPrincipal() &&
-                parentNode.getData().getType() === UserTreeGridItemType.PRINCIPAL &&
-                parentNode.getData().getPrincipal().isRole() && !!parentNode.getParent()) {
+            if (level !== 0 && parentNode.getData().getType() === UserTreeGridItemType.PRINCIPAL &&
+                parentNode.getData().getPrincipal() && parentNode.getData().getPrincipal().isRole() && !!parentNode.getParent()) {
 
                 parentNode = parentNode.getParent();
                 level--;
@@ -242,6 +243,7 @@ module app.browse {
                     });
 
                     gridItems.push(new UserTreeGridItemBuilder().setType(UserTreeGridItemType.ROLES).build());
+                    gridItems.push(new UserTreeGridItemBuilder().setType(UserTreeGridItemType.PATH_GUARDS).build());
 
                     deferred.resolve(gridItems);
                 }).catch((reason: any) => {
@@ -254,6 +256,18 @@ module app.browse {
                     then((principals: Principal[]) => {
                         principals.forEach((principal: Principal) => {
                             gridItems.push(new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build());
+                        });
+                        deferred.resolve(gridItems);
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    }).done();
+
+            } else if (parentNode.getData().getType() === UserTreeGridItemType.PATH_GUARDS) {
+                // fetch roles, if parent node 'Roles' was selected
+                new ListPathGuardsRequest().sendAndParse().
+                    then((pathGuards: PathGuard[]) => {
+                        pathGuards.forEach((pathGuard: PathGuard) => {
+                            gridItems.push(new UserTreeGridItemBuilder().setPathGuard(pathGuard).setType(UserTreeGridItemType.PATH_GUARD).build());
                         });
                         deferred.resolve(gridItems);
                     }).catch((reason: any) => {
