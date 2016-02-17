@@ -39,6 +39,10 @@ module app.installation.view {
             this.isGridLoadingData = false;
             this.marketAppsTreeGrid.unmask();
         }
+
+        public getMarketAppsTreeGrid(): MarketAppsTreeGrid {
+            return this.marketAppsTreeGrid;
+        }
     }
 
 }
