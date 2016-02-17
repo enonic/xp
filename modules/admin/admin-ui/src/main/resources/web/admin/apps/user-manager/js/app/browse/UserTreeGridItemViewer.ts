@@ -12,7 +12,7 @@ module app.browse {
 
         resolveUnnamedDisplayName(object: UserTreeGridItem): string {
             return object.getPrincipal() ? object.getPrincipal().getTypeName()
-                                         : object.getUserStore() ? "User Strore" : "";
+                                         : object.getUserStore() ? "User Store" : "";
         }
 
         resolveSubName(object: UserTreeGridItem, relativePath: boolean = false): string {
@@ -41,11 +41,9 @@ module app.browse {
                     } else { // object.getPrincipal().isUser()
                         return "icon-user icon-large";
                     }
-                case UserTreeGridItemType.GROUPS:
-                    return "icon-folder icon-large";
-                case UserTreeGridItemType.ROLES:
-                    return "icon-folder icon-large";
-                default: // UserTreeGridItemType.USERS:
+                case UserTreeGridItemType.PATH_GUARD:
+                    return "icon-shield icon-large";
+                default:
                     return "icon-folder icon-large";
             }
         }

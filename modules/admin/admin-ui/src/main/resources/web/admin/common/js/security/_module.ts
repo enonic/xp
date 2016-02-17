@@ -10,9 +10,12 @@
 ///<reference path="UserJson.ts"/>
 ///<reference path="GroupJson.ts"/>
 ///<reference path="RoleJson.ts"/>
+///<reference path="PathGuardJson.ts"/>
+///<reference path="PathGuardListJson.ts"/>
 ///<reference path="User.ts"/>
 ///<reference path="Group.ts"/>
 ///<reference path="Role.ts"/>
+///<reference path="PathGuard.ts"/>
 ///<reference path="UserStore.ts"/>
 ///<reference path="UserStoreJson.ts"/>
 ///<reference path="UserStoreListResult.ts"/>
@@ -22,6 +25,7 @@
 ///<reference path="GetDefaultUserStoreRequest.ts"/>
 ///<reference path="PrincipalListJson.ts"/>
 ///<reference path="FindPrincipalsRequest.ts"/>
+///<reference path="ListPathGuardsRequest.ts"/>
 ///<reference path="GetPrincipalByKeyRequest.ts"/>
 ///<reference path="GetPrincipalsByUserStoreRequest.ts"/>
 ///<reference path="CheckEmailAvailabilityRequest.ts"/>
