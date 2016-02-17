@@ -31,7 +31,8 @@ module app.browse {
         updateActionsEnabledState(userItemBrowseItems: BrowseItem<UserTreeGridItem>[]): wemQ.Promise<BrowseItem<UserTreeGridItem>[]> {
             var userStoresSelected: number = 0,
                 principalsSelected: number = 0,
-                directoriesSelected: number = 0;
+                directoriesSelected: number = 0,
+                pathGuardsSelected: number = 0;
 
             userItemBrowseItems.forEach((browseItem: BrowseItem<UserTreeGridItem>) => {
                 var item = <UserTreeGridItem>browseItem.getModel();
@@ -52,15 +53,22 @@ module app.browse {
                 case UserTreeGridItemType.USER_STORE:
                     userStoresSelected++;
                     break;
+                case UserTreeGridItemType.PATH_GUARDS:
+                    directoriesSelected++;
+                    break;
+                case UserTreeGridItemType.PATH_GUARD:
+                    pathGuardsSelected++;
+                    break;
                 }
             });
 
             var totalSelection = userStoresSelected + principalsSelected + directoriesSelected,
                 anyPrincipal = principalsSelected > 0,
-                anyUserStore = userStoresSelected > 0;
+                anyUserStore = userStoresSelected > 0,
+                anyPathGuard = pathGuardsSelected > 0;
 
             this.NEW.setEnabled((directoriesSelected <= 1) && (totalSelection <= 1));
-            this.EDIT.setEnabled(directoriesSelected < 1 && (anyUserStore || anyPrincipal));
+            this.EDIT.setEnabled(directoriesSelected < 1 && (anyUserStore || anyPrincipal || anyPathGuard));
 
             if (totalSelection == 1) {
                 if (principalsSelected == 1) {

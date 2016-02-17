@@ -89,15 +89,9 @@ module app.browse {
                 } else if (item.getPrincipal().isGroup()) {
                     return "icon-users icon-large";
                 }
-                break;
-
-            case UserTreeGridItemType.GROUPS:
-                return "icon-folder icon-large";
-
-            case UserTreeGridItemType.ROLES:
-                return "icon-folder icon-large";
-
-            case UserTreeGridItemType.USERS:
+            case UserTreeGridItemType.PATH_GUARD:
+                return "icon-shield icon-large";
+            default:
                 return "icon-folder icon-large";
             }
 

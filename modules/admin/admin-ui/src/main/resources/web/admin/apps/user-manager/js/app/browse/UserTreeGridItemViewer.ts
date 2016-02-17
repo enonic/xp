@@ -41,11 +41,9 @@ module app.browse {
                     } else { // object.getPrincipal().isUser()
                         return "icon-user icon-large";
                     }
-                case UserTreeGridItemType.GROUPS:
-                    return "icon-folder icon-large";
-                case UserTreeGridItemType.ROLES:
-                    return "icon-folder icon-large";
-                default: // UserTreeGridItemType.USERS:
+                case UserTreeGridItemType.PATH_GUARD:
+                    return "icon-shield icon-large";
+                default:
                     return "icon-folder icon-large";
             }
         }
