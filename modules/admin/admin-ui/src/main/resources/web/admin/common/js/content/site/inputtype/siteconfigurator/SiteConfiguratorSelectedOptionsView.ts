@@ -22,10 +22,21 @@ module api.content.site.inputtype.siteconfigurator {
 
         private formContext: api.content.form.ContentFormContext;
 
+        private items: SiteConfiguratorSelectedOptionView[] = [];
+
         constructor(siteConfigProvider: SiteConfigProvider, formContext: api.content.form.ContentFormContext) {
             super();
             this.siteConfigProvider = siteConfigProvider;
             this.formContext = formContext;
+
+            this.siteConfigProvider.onPropertyChanged(() => {
+
+                this.items.forEach((optionView) => {
+                    let newConfig = this.siteConfigProvider.getConfig(optionView.getSiteConfig().getApplicationKey());
+                    optionView.setSiteConfig(newConfig);
+                });
+
+            });
 
             this.setOccurrencesSortable(true);
         }
@@ -33,15 +44,22 @@ module api.content.site.inputtype.siteconfigurator {
         createSelectedOption(option: Option<Application>): SelectedOption<Application> {
             this.notifyBeforeOptionCreated();
 
-            var siteConfig = this.siteConfigProvider.getConfig(option.displayValue.getApplicationKey());
-            var optionView = new SiteConfiguratorSelectedOptionView(option, siteConfig, this.formContext);
+            let siteConfig = this.siteConfigProvider.getConfig(option.displayValue.getApplicationKey());
+            let optionView = new SiteConfiguratorSelectedOptionView(option, siteConfig, this.formContext);
 
             optionView.onSiteConfigFormDisplayed((applicationKey: ApplicationKey) => {
                 this.notifySiteConfigFormDisplayed(applicationKey, optionView.getFormView());
             });
+            this.items.push(optionView);
 
             this.notifyAfterOptionCreated();
             return new SelectedOption<Application>(optionView, this.count());
+        }
+
+        removeOption(optionToRemove: api.ui.selector.Option<Application>, silent: boolean = false) {
+            this.items = this.items.filter(item => !item.getSiteConfig().getApplicationKey().
+                                                equals(optionToRemove.displayValue.getApplicationKey()));
+            super.removeOption(optionToRemove,silent);
         }
 
         onSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey, formView: FormView): void;}) {

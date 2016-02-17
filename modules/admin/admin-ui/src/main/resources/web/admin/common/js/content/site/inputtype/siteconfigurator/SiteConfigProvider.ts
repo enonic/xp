@@ -9,12 +9,15 @@ module api.content.site.inputtype.siteconfigurator {
 
         private propertyArray: PropertyArray;
 
+        private arrayChangedListeners: {() : void}[] = [];
+
         constructor(propertyArray: PropertyArray) {
             this.setPropertyArray(propertyArray);
         }
 
         setPropertyArray(propertyArray: PropertyArray) {
             this.propertyArray = propertyArray;
+            this.notifyPropertyChanged();
         }
 
         getConfig(applicationKey: ApplicationKey): SiteConfig {
@@ -40,9 +43,24 @@ module api.content.site.inputtype.siteconfigurator {
                 return newSiteConfig;
 
             }
-            else {
-                return match;
-            }
+            return match;
+        }
+
+        onPropertyChanged(listener: ()=>void) {
+            this.arrayChangedListeners.push(listener);
+        }
+
+        unPropertyChanged(listener: ()=>void) {
+            this.arrayChangedListeners = this.arrayChangedListeners.filter((currentListener: ()=>void) => {
+                return currentListener != listener;
+            });
+
+        }
+
+        private notifyPropertyChanged() {
+            this.arrayChangedListeners.forEach((listener: ()=>void) => {
+                listener.call(this);
+            });
         }
     }
 }

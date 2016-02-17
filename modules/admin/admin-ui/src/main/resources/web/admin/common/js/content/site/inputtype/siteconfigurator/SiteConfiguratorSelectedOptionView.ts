@@ -68,6 +68,10 @@ module api.content.site.inputtype.siteconfigurator {
             }
         }
 
+        setSiteConfig(siteConfig: SiteConfig) {
+            this.siteConfig = siteConfig;
+        }
+
         private initFormView() {
             this.formValidityChangedHandler = (event: api.form.FormValidityChangedEvent) => {
                 this.toggleClass("invalid", !event.isValid())

@@ -66,6 +66,8 @@ module api.content.site.inputtype.siteconfigurator {
             var superPromise = super.update(propertyArray, unchangedOnly);
             this.siteConfigProvider.setPropertyArray(propertyArray);
 
+            this.siteConfigProvider.setPropertyArray(propertyArray);
+
             if (!unchangedOnly || !this.comboBox.isDirty()) {
                 return superPromise.then(() => {
                     this.comboBox.setValue(this.getValueFromPropertyArray(propertyArray));
