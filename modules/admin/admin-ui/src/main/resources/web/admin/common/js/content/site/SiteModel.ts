@@ -16,11 +16,17 @@ module api.content.site {
 
         private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
 
-        constructor(site: Site) {
-            this.site = site;
-            this.siteConfigs = site.getSiteConfigs();
+        private applicationPropertyAddedListener: (event: api.data.PropertyAddedEvent) => void;
 
-            this.site.getContentData().onPropertyAdded((event: api.data.PropertyAddedEvent) => {
+        private applicationPropertyRemovedListener: (event: api.data.PropertyRemovedEvent) => void;
+
+        constructor(site: Site) {
+            this.initApplicationPropertyListeners();
+            this.setup(site);
+        }
+
+        private initApplicationPropertyListeners() {
+            this.applicationPropertyAddedListener = (event: api.data.PropertyAddedEvent) => {
                 var property: api.data.Property = event.getProperty();
                 // TODO:? property.getPath().startsWith(PropertyPath.fromString(".siteConfig")) &&  property.getName( )=="config")
                 if (property.getPath().toString().indexOf(".siteConfig") == 0 && property.getName() == "config") {
@@ -31,23 +37,39 @@ module api.content.site {
                     this.siteConfigs.push(siteConfig);
                     this.notifyApplicationAdded(siteConfig);
                 }
-            });
+            };
 
-            this.site.getContentData().onPropertyRemoved((event: api.data.PropertyRemovedEvent) => {
+            this.applicationPropertyRemovedListener = (event: api.data.PropertyRemovedEvent) => {
                 var property: api.data.Property = event.getProperty();
                 if (property.getName() == "siteConfig") {
                     var applicationKey = ApplicationKey.fromString(property.getPropertySet().getString("applicationKey"));
                     this.siteConfigs = this.siteConfigs.filter((siteConfig: SiteConfig) =>
-                            !siteConfig.getApplicationKey().equals(applicationKey)
+                        !siteConfig.getApplicationKey().equals(applicationKey)
                     );
                     this.notifyApplicationRemoved(applicationKey);
                 }
-            });
-
-
+            };
         }
 
-        getSite(): api.content.site.Site {
+        private setup(site: Site) {
+            this.site = site;
+            this.siteConfigs = site.getSiteConfigs();
+            this.site.getContentData().onPropertyAdded(this.applicationPropertyAddedListener);
+            this.site.getContentData().onPropertyRemoved(this.applicationPropertyRemovedListener);
+        }
+
+        update(site: Site) {
+            if (this.site) {
+                this.site.getContentData().unPropertyAdded(this.applicationPropertyAddedListener);
+                this.site.getContentData().unPropertyRemoved(this.applicationPropertyRemovedListener);
+            }
+
+            if (site) {
+                this.setup(site);
+            }
+        }
+
+        getSite(): Site {
             return this.site;
         }
 

@@ -311,7 +311,7 @@ module app.wizard {
 
                 this.wizardActions.getShowSplitEditAction().onExecuted(() => {
                     if (!this.inMobileViewMode) {
-                        if (!this.isContentRenderable()) {
+                        if (!this.isContentRenderable() && !this.getPersistedItem().isSite()) {
                             this.closeLiveEdit();
                             this.contextWindowToggler.setEnabled(false);
                         } else {
@@ -320,7 +320,7 @@ module app.wizard {
                     }
                 });
 
-                if (this.isContentRenderable()) {
+                if (this.isContentRenderable() || this.getPersistedItem().isSite()) {
                     this.wizardActions.getShowSplitEditAction().execute();
                 }
                 else {
@@ -1207,15 +1207,19 @@ module app.wizard {
             this.contentWizardStepForm.getData().unChanged(this.dataChangedListener);
 
             // remember to copy data to have persistedItem pristine
-            var contentData = content.getContentData().copy();
-            contentData.onChanged(this.dataChangedListener);
+            var contentCopy = content.clone();
+            contentCopy.getContentData().onChanged(this.dataChangedListener);
 
-            this.contentWizardStepForm.update(contentData);
+            this.contentWizardStepForm.update(contentCopy.getContentData());
 
-            this.settingsWizardStepForm.update(content);
+            if (contentCopy.isSite()) {
+                this.siteModel.update(<Site>contentCopy);
+            }
+
+            this.settingsWizardStepForm.update(contentCopy);
 
             if (this.isSecurityWizardStepFormAllowed) {
-                this.securityWizardStepForm.update(content);
+                this.securityWizardStepForm.update(contentCopy);
             }
         }
 
