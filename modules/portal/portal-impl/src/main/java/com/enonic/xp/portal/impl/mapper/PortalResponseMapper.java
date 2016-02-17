@@ -31,7 +31,14 @@ public final class PortalResponseMapper
         MapperHelper.serializeMap( "headers", gen, this.response.getHeaders() );
         serializePageContributions( gen );
         serializeCookies( gen );
-        gen.value( "body", this.response.getBody() );
+        if ( this.response.getBody() instanceof Map )
+        {
+            MapperHelper.serializeMap( "body", gen, (Map) this.response.getBody(), true );
+        }
+        else
+        {
+            gen.value( "body", this.response.getBody() );
+        }
         gen.value( "applyFilters", this.response.applyFilters() );
         serializeBody( gen );
     }

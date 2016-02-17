@@ -35,12 +35,25 @@ public final class MapperHelper
         gen.end();
     }
 
-    public static void serializeMap( final String name, final MapGenerator gen, final Map<String, ?> params )
+    public static void serializeMap( final String name, final MapGenerator gen, final Map params )
+    {
+        serializeMap( name, gen, params, false );
+    }
+
+    public static void serializeMap( final String name, final MapGenerator gen, final Map<?, ?> params, final boolean nested )
     {
         gen.map( name );
-        for ( final Map.Entry<String, ?> entry : params.entrySet() )
+        for ( final Map.Entry entry : params.entrySet() )
         {
-            gen.value( entry.getKey(), entry.getValue() );
+            final Object value = entry.getValue();
+            if ( nested && value instanceof Map )
+            {
+                serializeMap( entry.getKey().toString(), gen, (Map) value );
+            }
+            else
+            {
+                gen.value( entry.getKey().toString(), value );
+            }
         }
         gen.end();
     }
