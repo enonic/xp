@@ -70,7 +70,7 @@ final class SecurityInitializer
 
             createRoles();
             createUsers();
-            createAdminPathGuard();
+            createPathGuards();
 
             LOG.info( "System-repo [security] layout successfully initialized" );
 
@@ -228,12 +228,17 @@ final class SecurityInitializer
         addMember( RoleKeys.ADMIN_LOGIN, createSuperUser.getKey() );
     }
 
-    private void createAdminPathGuard()
+    private void createPathGuards()
     {
+        final UserStoreAuthConfig authConfig = UserStoreAuthConfig.create().
+            applicationKey( ApplicationKey.from( "com.enonic.xp.app.login" ) ).
+            config( new PropertyTree() ).
+            build();
         final CreatePathGuardParams createPathGuardParams = CreatePathGuardParams.create().
             key( "admin" ).
             displayName( "Admin guard" ).
             addPath( "/admin" ).
+            authConfig( authConfig ).
             build();
         addPathGuard( createPathGuardParams );
     }
