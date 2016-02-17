@@ -86,6 +86,13 @@ public final class PathGuard
             return this;
         }
 
+        public Builder addAllPaths( final Iterable<String> value )
+        {
+            this.paths.addAll( value );
+            return this;
+        }
+
+
         public PathGuard build()
         {
             return new PathGuard( this );

@@ -162,4 +162,8 @@ public interface SecurityService
     void removeRelationships( PrincipalKey from );
 
     ImmutableList<PathGuard> getPathGuards();
+
+    Optional<PathGuard> getPathGuard( String key );
+
+    PathGuard createPathGuard( CreatePathGuardParams createPathGuardParams );
 }
