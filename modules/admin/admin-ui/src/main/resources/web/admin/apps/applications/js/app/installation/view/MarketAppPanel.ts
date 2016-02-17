@@ -30,10 +30,12 @@ module app.installation.view {
 
         private dataLoadListener() {
             if (this.marketAppsTreeGrid.getGrid().getDataView().getLength() > 0) {
-                this.gridDataLoaded = true;
                 this.marketAppsTreeGrid.unLoaded(this.dataLoadListener);
                 setTimeout(() => {
-                    this.marketAppsTreeGrid.refresh();// this helps to show default app icon if one provided in json fails to upload
+                    if (!this.gridDataLoaded) {
+                        this.marketAppsTreeGrid.refresh();// this helps to show default app icon if one provided in json fails to upload
+                    }
+                    this.gridDataLoaded = true;
                 }, 500);
             }
             this.isGridLoadingData = false;
