@@ -94,7 +94,7 @@ module api.dom {
 
         private rendered: boolean;
 
-        public static debug: boolean = true;
+        public static debug: boolean = false;
 
         private addedListeners: {(event: ElementAddedEvent) : void}[] = [];
         private removedListeners: {(event: ElementRemovedEvent) : void}[] = [];
