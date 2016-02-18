@@ -1,16 +1,16 @@
 package com.enonic.xp.core.impl.content.page.region;
 
-import java.util.UUID;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.region.CreateFragmentParams;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -35,11 +35,11 @@ final class CreateFragmentCommand
 
     public Content execute()
     {
-        final String displayName = "Fragment - " + params.getComponent().getName();
-        final String name = "fragment-" + UUID.randomUUID().toString();
+        final String componentName = params.getComponent().getName().toString();
+        final String name = generateUniqueContentName( params.getParent(), "fragment-" + componentName );
         final CreateContentParams createContent = CreateContentParams.create().
             parent( params.getParent() ).
-            displayName( displayName ).
+            displayName( componentName ).
             name( name ).
             type( ContentTypeName.fragment() ).
             contentData( new PropertyTree() ).
@@ -59,10 +59,25 @@ final class CreateFragmentCommand
         return this.contentService.update( params );
     }
 
-    User getCurrentUser()
+    private User getCurrentUser()
     {
         final Context context = ContextAccessor.current();
         return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
+    }
+
+    private String generateUniqueContentName( final ContentPath parent, final String displayName )
+    {
+        final String baseName = NamePrettyfier.create( displayName );
+
+        String name = baseName;
+        int counter = 1;
+        while ( this.contentService.contentExists( ContentPath.from( parent, name ) ) )
+        {
+            final String suffix = Integer.toString( ++counter );
+            name = NamePrettyfier.create( baseName + "-" + suffix );
+        }
+
+        return name;
     }
 
     public static final class Builder
