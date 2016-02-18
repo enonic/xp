@@ -20,28 +20,19 @@ module api.form.inputtype.text.htmlarea {
 
         private initDropdown() {
 
+            this.addNoneOption();
             this.addCroppingOptions();
 
             this.onOptionSelected((event: OptionSelectedEvent<ImageCroppingOption>) => {
                 if(event.getOption().displayValue.getName() == "none") {
                     this.reset();
-                    this.removeAllOptions();
-                    this.addCroppingOptions();
                 }
-                else {
-                    if(!this.getOptionByValue("none")) {
-                        this.removeAllOptions();
-                        this.addNoneOption();
-                        this.addCroppingOptions();
-                    }
-                }
-
             });
         }
 
         private addNoneOption() {
             var noneOption = new ImageCroppingOption("none", 0 , 0);
-            noneOption.setDisplayValue("None");
+            noneOption.setDisplayValue("<None>");
 
             var option =  {
                 value: noneOption.getName(),
