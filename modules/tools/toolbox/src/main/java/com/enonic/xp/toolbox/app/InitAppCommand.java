@@ -5,8 +5,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 
@@ -110,11 +113,11 @@ public final class InitAppCommand
             //Closes the repository
             git.getRepository().close();
 
-            // Removes the Git related content
-            removeGitRelatedContent( temporaryDirectory );
+            // Removes Git related content
+            removeFixGitContent( temporaryDirectory );
 
-            // Copies the content from the temporary folder
-            FileUtils.copyDirectory( temporaryDirectory, destinationDirectory );
+            // Copies the content from the temporary folder except git related content
+            copyGitUnrelatedContent( temporaryDirectory, destinationDirectory );
         }
         finally
         {
@@ -125,50 +128,85 @@ public final class InitAppCommand
         LOGGER.info( "Git repository retrieved." );
     }
 
-    private void removeGitRelatedContent( File directory )
+    private void removeFixGitContent( File directory )
         throws IOException
     {
         // Removes the .git directory and README.md file
         FileUtils.deleteDirectory( new File( directory, ".git" ) );
         FileUtils.deleteQuietly( new File( directory, "README.md" ) );
+    }
 
+    private void copyGitUnrelatedContent( File source, File target )
+        throws IOException
+    {
         // Remove the .gitkeep and .gitignore files
-        Files.walkFileTree( directory.toPath(), new SimpleFileVisitor<Path>()
-        {
-            @Override
-            public FileVisitResult visitFile( final Path file, final BasicFileAttributes attrs )
-                throws IOException
-            {
-                final String fileName = file.getFileName().toString();
-                if ( ".gitkeep".equals( fileName ) || ".gitignore".equals( fileName ) )
-                {
-                    Files.delete( file );
-                }
-                return FileVisitResult.CONTINUE;
-            }
-        } );
+        Files.walkFileTree( source.toPath(), new GitUnrelatedContentCopyFileVisitor( source.toPath(), target.toPath() ) );
     }
 
     private void processGradleProperties()
         throws IOException
     {
-        LOGGER.info( "Adapting Gradle properties file ..." );
-
-        // Creates the Gradle Properties file if it does not exist
         final File gradlePropertiesFile = new File( destination, "gradle.properties" );
-        if ( !gradlePropertiesFile.exists() )
+        if ( gradlePropertiesFile.exists() )
         {
-            gradlePropertiesFile.createNewFile();
+            LOGGER.info( "Adapting Gradle properties file ..." );
+            // Process the content of the Gradle Properties file
+            final List<String> originalGradlePropertiesContent =
+                com.google.common.io.Files.readLines( gradlePropertiesFile, Charsets.UTF_8 );
+            final GradlePropertiesProcessor gradlePropertiesProcessor = new GradlePropertiesProcessor( name, version );
+            final List<String> processedGradlePropertiesContent = gradlePropertiesProcessor.process( originalGradlePropertiesContent );
+
+            // Write the processed content into the  Gradle Properties file
+            com.google.common.io.Files.asCharSink( gradlePropertiesFile, Charsets.UTF_8 ).writeLines( processedGradlePropertiesContent );
+
+            LOGGER.info( "Gradle properties file adapted." );
+        }
+    }
+
+    private class GitUnrelatedContentCopyFileVisitor
+        extends SimpleFileVisitor<Path>
+    {
+        final Path sourcePath;
+
+        final Path targetPath;
+
+        private boolean rootFile = true;
+
+        private GitUnrelatedContentCopyFileVisitor( Path sourcePath, Path targetPath )
+        {
+            this.sourcePath = sourcePath;
+            this.targetPath = targetPath;
         }
 
-        // Process the content of the Gradle Properties file
-        final List<String> originalGradlePropertiesContent = com.google.common.io.Files.readLines( gradlePropertiesFile, Charsets.UTF_8 );
-        final GradlePropertiesProcessor gradlePropertiesProcessor = new GradlePropertiesProcessor( name, version );
-        final List<String> processedGradlePropertiesContent = gradlePropertiesProcessor.process( originalGradlePropertiesContent );
+        @Override
+        public FileVisitResult visitFile( final Path file, final BasicFileAttributes attrs )
+            throws IOException
+        {
+            final String fileName = file.getFileName().toString();
+            if ( !".gitkeep".equals( fileName ) && !".gitignore".equals( fileName ) )
+            {
+                final Path fileSubPath = sourcePath.relativize( file );
+                Files.move( file, Paths.get( targetPath.toString(), fileSubPath.toString() ), StandardCopyOption.REPLACE_EXISTING );
+            }
+            return FileVisitResult.CONTINUE;
+        }
 
-        // Write the processed content into the  Gradle Properties file
-        com.google.common.io.Files.asCharSink( gradlePropertiesFile, Charsets.UTF_8 ).writeLines( processedGradlePropertiesContent );
+        @Override
+        public FileVisitResult preVisitDirectory( final Path dir, final BasicFileAttributes attrs )
+            throws IOException
+        {
 
-        LOGGER.info( "Gradle properties file adapted." );
+            if ( rootFile )
+            {
+                rootFile = false;
+            }
+            else
+            {
+                final Path dirSubPath = sourcePath.relativize( dir );
+                Files.copy( dir, Paths.get( targetPath.toString(), dirSubPath.toString() ), StandardCopyOption.COPY_ATTRIBUTES,
+                            LinkOption.NOFOLLOW_LINKS );
+            }
+            return FileVisitResult.CONTINUE;
+        }
     }
 }
