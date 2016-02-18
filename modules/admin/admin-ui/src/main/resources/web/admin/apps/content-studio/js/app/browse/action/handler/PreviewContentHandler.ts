@@ -10,6 +10,8 @@ module app.browse.action {
 
         private renderableIds: ContentId[] = [];
 
+        private anyRenderable: boolean;
+
         private previewStateChangedListeners: {(active: boolean): void}[] = [];
 
         private blocked: boolean = false;
@@ -17,99 +19,126 @@ module app.browse.action {
         public static BLOCK_COUNT: number = 10;
 
         updateState(contentBrowseItems: ContentBrowseItem[],
-                    changes: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<any> {
+                    changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<any> {
 
             if (PreviewContentHandler.BLOCK_COUNT < contentBrowseItems.length) {
-                this.blocked = true;
-                this.notifyPreviewStateChanged(true);
+                this.setBlocked(true);
                 return;
             } else {
-                if (this.blocked) {
+                if (this.isBlocked()) {
                     this.setRenderableIds([]);
-                    changes.setAdded(contentBrowseItems);
+                    if (changes) {
+                        changes.setAdded(contentBrowseItems);
+                    }
                 }
-                this.blocked = false;
+                this.setBlocked(false);
             }
 
-            return this.getRenderablePromise(changes);
-
-
+            return this.getRenderablePromise(contentBrowseItems, changes);
         }
-        private getRenderablePromise(changes: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<any> {
-            var promises = this.processChanges(changes);
 
-            return wemQ.all(promises).
-                spread<void>(() => wemQ<void>(null)).
-                then(() => {
+        private getRenderablePromise(contentBrowseItems: ContentBrowseItem[],
+                                     changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<any> {
 
-                    let removedItems = changes.getRemoved();
-                    if (removedItems && removedItems.length > 0) {
-                        this.removeRenderableIds(changes.getRemoved().
-                            map(item => item.getModel().getContentSummary().getContentId()));
+            return wemQ.all(this.makeRenderableRequests(contentBrowseItems, changes))
+                .then((values: boolean[]) => {
 
-                        if (this.getRenderableIds().length > 0) {
-                            this.notifyPreviewStateChanged(true);
-                        } else {
-                            this.notifyPreviewStateChanged(false);
-                        }
+                    if (changes && changes.getRemoved().length > 0) {
+                        // items have been removed from selection
+                        this.removeRenderableIds(changes.getRemoved().map(item => item.getModel().getContentId()));
+                    } else {
+                        // fire the changed event if necessary after all requests complete
+                        // because remove was done silently
+                        this.notifyPreviewStateChangedIfNeeded();
                     }
 
-                }).
-                catch((reason: any) => api.DefaultErrorHandler.handle(reason));
+                }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
         }
 
-        private processChanges(changes: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<any>[] {
+        private makeRenderableRequests(contentBrowseItems: ContentBrowseItem[],
+                                       changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<any>[] {
 
-            return changes.getAdded().map((contentBrowseItem) => {
+            // check existing items if there are no changes
+            // because selected items might have become (not) renderable
+            var browseItems = changes && changes.getAdded().length > 0 ? changes.getAdded() : contentBrowseItems;
 
+            return browseItems.map((contentBrowseItem) => {
                 let contentSummary = contentBrowseItem.getModel().getContentSummary();
 
                 return new api.content.page.IsRenderableRequest(contentSummary.getContentId()).sendAndParse()
                     .then((value: boolean) => {
 
-                        var contentBrowseItem = changes.getAdded().filter(item => item.getId() == contentSummary.getId())[0];
                         contentBrowseItem.setRenderable(value);
 
                         if (value) {
-                            this.notifyPreviewStateChanged(value);
+                            // item started being renderable or was added to selection
+                            // add loudly to enable button as soon as first content is renderable
                             this.addRenderableIds([contentSummary.getContentId()]);
+                        } else {
+                            // item stopped being renderable
+                            // remove silently to avoid button to flickering, but keep renderableIds up to date
+                            this.removeRenderableIds([contentSummary.getContentId()], true);
                         }
 
+                        return value;
                     }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
             });
+        }
 
+
+        private setBlocked(blocked: boolean) {
+            this.blocked = blocked;
+
+            this.notifyPreviewStateChangedIfNeeded();
         }
 
         isBlocked(): boolean {
             return this.blocked;
         }
 
-        setRenderableIds(contentIds: ContentId[]) {
+        setRenderableIds(contentIds: ContentId[], silent?: boolean) {
             this.renderableIds = contentIds;
+            if (!silent) {
+                this.notifyPreviewStateChangedIfNeeded();
+            }
         }
 
         getRenderableIds() {
             return this.renderableIds;
         }
 
-        addRenderableIds(contentIds: ContentId[]) {
+        addRenderableIds(contentIds: ContentId[], silent ?: boolean) {
             if (contentIds) {
                 contentIds.forEach((contentId) => {
                     if (this.renderableIds.indexOf(contentId) == -1) {
                         this.renderableIds.push(contentId);
                     }
-                })
+                });
+                if (!silent) {
+                    this.notifyPreviewStateChangedIfNeeded();
+                }
             }
         }
 
-        removeRenderableIds(contentIds: ContentId[]) {
+        removeRenderableIds(contentIds: ContentId[], silent ?: boolean) {
             if (contentIds) {
                 contentIds.forEach((contentId) => {
                     var index = this.renderableIds.indexOf(contentId);
                     if (index >= 0) {
                         this.renderableIds.splice(index, 1);
                     }
-                })
+                });
+                if (!silent) {
+                    this.notifyPreviewStateChangedIfNeeded();
+                }
+            }
+        }
+
+        private notifyPreviewStateChangedIfNeeded() {
+            var newRenderable = this.isBlocked() || this.renderableIds.length > 0;
+            if (newRenderable != this.anyRenderable) {
+                this.notifyPreviewStateChanged(newRenderable);
+                this.anyRenderable = newRenderable;
             }
         }
 

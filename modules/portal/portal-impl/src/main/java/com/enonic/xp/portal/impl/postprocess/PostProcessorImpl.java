@@ -7,7 +7,9 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -20,6 +22,9 @@ import com.enonic.xp.web.HttpMethod;
 public final class PostProcessorImpl
     implements PostProcessor
 {
+    private final static ImmutableList<MediaType> HTML_CONTENT_TYPES =
+        ImmutableList.of( MediaType.create( "text", "html" ), MediaType.create( "application", "xhtml+xml" ) );
+
     private final List<PostProcessInstruction> instructions;
 
     private final List<PostProcessInjection> injections;
@@ -71,6 +76,10 @@ public final class PostProcessorImpl
         {
             return portalResponse;
         }
+        if ( !isHtmlResponse( portalResponse ) )
+        {
+            return portalResponse;
+        }
 
         final Object body = portalResponse.getBody();
         if ( !( body instanceof String ) )
@@ -79,6 +88,12 @@ public final class PostProcessorImpl
         }
 
         return postProcessEvaluator( portalRequest, portalResponse ).evaluateContributions();
+    }
+
+    private boolean isHtmlResponse( final PortalResponse portalResponse )
+    {
+        final MediaType contentType = portalResponse.getContentType();
+        return contentType != null && HTML_CONTENT_TYPES.stream().anyMatch( contentType::is );
     }
 
     private PostProcessEvaluator postProcessEvaluator( final PortalRequest portalRequest, final PortalResponse portalResponse )

@@ -78,6 +78,10 @@ public final class ApplicationResource
         final ListApplicationJson json = new ListApplicationJson();
         for ( final Application application : applications )
         {
+            if ( !application.hasSiteDescriptor() )
+            {
+                continue;
+            }
             if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( application.getKey() ) )//Remove after 7.0.0 refactoring
             {
                 json.add( application, this.siteService.getDescriptor( application.getKey() ) );

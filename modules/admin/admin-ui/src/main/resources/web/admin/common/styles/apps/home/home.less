@@ -32,9 +32,10 @@
     background-color: rgba(0, 0, 0, 0.3);
     .box-sizing(border-box);
 
-    .welcome-text {
-      .container-title-mixin(28px, 6px);
+    span {
+      .container-title-mixin(24px, 6px);
       font-weight: 400;
+      color: lightgray;
     }
 
   }
@@ -75,7 +76,7 @@
 }
 
 ._0-240, ._240-360, ._360-540 {
-  .home-main-container .header .welcome-text {
+  .home-main-container .header span {
     .container-title-mixin(22px, 8px);
   }
 }

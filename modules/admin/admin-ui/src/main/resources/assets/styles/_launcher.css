@@ -499,42 +499,39 @@
   display: none;
   position: absolute;
   padding: 0;
-  height: 37px;
-  left: -105px;
-  -webkit-animation: bounce 1s ease-out 5s 2;
+  height: 44px;
+  left: -87px;
+  -webkit-animation: bounce 2s ease-in-out 1.5s;
   /* Safari, Chrome and Opera > 12.1 */
-  -moz-animation: bounce 1s ease-out 5s 2;
+  -moz-animation: bounce 2s ease-in-out 1.5s;
   /* Firefox < 16 */
-  -ms-animation: bounce 1s ease-out 5s 2;
+  -ms-animation: bounce 2s ease-in-out 1.5s;
   /* Internet Explorer */
-  -o-animation: bounce 1s ease-out 5s 2;
+  -o-animation: bounce 2s ease-in-out 1.5s;
   /* Opera < 12.1 */
-  animation: bounce 1s ease-out 5s 2;
+  animation: bounce 2s ease-in-out 1.5s;
 }
 @keyframes bounce {
   0% {
-    left: -105px;
-  }
-  50% {
-    left: -85px;
+    left: -357px;
   }
   100% {
-    left: -105px;
+    left: -87px;
   }
 }
 .launcher-panel .launcher-tip span {
-  -webkit-animation: fadein 12s linear 2s;
+  -webkit-animation: fadein 5s linear 2s;
   /* Safari, Chrome and Opera > 12.1 */
-  -moz-animation: fadein 12s linear 2s;
+  -moz-animation: fadein 5s linear 2s;
   /* Firefox < 16 */
-  -ms-animation: fadein 12s linear 2s;
+  -ms-animation: fadein 5s linear 2s;
   /* Internet Explorer */
-  -o-animation: fadein 12s linear 2s;
+  -o-animation: fadein 5s linear 2s;
   /* Opera < 12.1 */
-  animation: fadein 12s linear 2s;
+  animation: fadein 5s linear 2s;
   opacity: 0;
   display: table-cell;
-  vertical-align: bottom;
+  vertical-align: middle;
   color: #ffffff;
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
@@ -543,10 +540,10 @@
 }
 .launcher-panel .launcher-tip span:after {
   position: absolute;
-  font-size: 32px;
+  font-size: 18px;
   font-family: 'icomoon';
   content: "\e3b5";
-  line-height: 14px;
+  line-height: 16px;
 }
 @keyframes fadein {
   0% {
