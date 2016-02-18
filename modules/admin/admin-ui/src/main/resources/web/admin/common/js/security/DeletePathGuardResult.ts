@@ -21,9 +21,9 @@ module api.security {
             return this.reason;
         }
 
-        static fromJson(json: api.security.DeletePrincipalResultJson): DeletePrincipalResult {
-            var result = new DeletePrincipalResult();
-            result.principalKey = PrincipalKey.fromString(json.principalKey);
+        static fromJson(json: api.security.DeletePathGuardResultJson): DeletePathGuardResult {
+            var result = new DeletePathGuardResult();
+            result.key = json.key;
             result.deleted = json.deleted;
             result.reason = json.reason;
             return result;

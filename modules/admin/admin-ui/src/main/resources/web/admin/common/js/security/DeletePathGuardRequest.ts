@@ -1,6 +1,6 @@
 module api.security {
 
-    export class DeletePathGuardRequest extends SecurityResourceRequest<DeletePrincipalResultsJson, DeletePrincipalResult[]> {
+    export class DeletePathGuardRequest extends SecurityResourceRequest<DeletePathGuardResultsJson, DeletePathGuardResult[]> {
 
         private keys: string[];
 
@@ -15,17 +15,19 @@ module api.security {
         }
 
         getParams(): Object {
-            return this.keys;
+            return {
+                keys: this.keys
+            }
         }
 
         getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), 'pathguard', 'delete');
         }
 
-        sendAndParse(): wemQ.Promise<DeletePrincipalResult[]> {
+        sendAndParse(): wemQ.Promise<DeletePathGuardResult[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<DeletePrincipalResultsJson>) => {
-                return response.getResult().results.map((resultJson) => DeletePrincipalResult.fromJson(resultJson));
+            return this.send().then((response: api.rest.JsonResponse<DeletePathGuardResultsJson>) => {
+                return response.getResult().results.map((resultJson) => DeletePathGuardResult.fromJson(resultJson));
             });
         }
 
