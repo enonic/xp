@@ -34,7 +34,7 @@ module api.form.inputtype.text.htmlarea {
             this.contentId = contentId;
             this.callback = config.callback;
 
-            super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Image"));
+            super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Image"), "image-modal-dialog");
         }
 
         private getImageContent(images: api.content.ContentSummary[]): api.content.ContentSummary {
@@ -198,6 +198,10 @@ module api.form.inputtype.text.htmlarea {
 
         private createImagePreviewContainer() {
             var imagePreviewContainer = new api.dom.DivEl("content-item-preview-panel");
+            //limiting image modal dialog height up to screen size except padding on top and bottom
+            //so 340 is 300px content of image modal dialog except preview container + 20*2 from top and bottom of screen
+            var maxImagePreviewHeight = wemjq(window).height() - 340;
+            new api.dom.ElementHelper(imagePreviewContainer.getHTMLElement()).setMaxHeightPx(maxImagePreviewHeight);
 
             this.progress = new api.ui.ProgressBar();
             imagePreviewContainer.appendChild(this.progress);
