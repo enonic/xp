@@ -179,20 +179,21 @@ public final class InitAppCommand
         }
 
         @Override
-        public FileVisitResult visitFile( final Path file, final BasicFileAttributes attrs )
+        public FileVisitResult visitFile( final Path sourceFilePath, final BasicFileAttributes attrs )
             throws IOException
         {
-            final String fileName = file.getFileName().toString();
+            final String fileName = sourceFilePath.getFileName().toString();
             if ( !".gitkeep".equals( fileName ) && !".gitignore".equals( fileName ) )
             {
-                final Path fileSubPath = sourcePath.relativize( file );
-                Files.move( file, Paths.get( targetPath.toString(), fileSubPath.toString() ), StandardCopyOption.REPLACE_EXISTING );
+                final Path sourceFileSubPath = sourcePath.relativize( sourceFilePath );
+                final Path targetFilePath = Paths.get( targetPath.toString(), sourceFileSubPath.toString() );
+                Files.move( sourceFilePath, targetFilePath, StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS );
             }
             return FileVisitResult.CONTINUE;
         }
 
         @Override
-        public FileVisitResult preVisitDirectory( final Path dir, final BasicFileAttributes attrs )
+        public FileVisitResult preVisitDirectory( final Path sourceFilePath, final BasicFileAttributes attrs )
             throws IOException
         {
 
@@ -202,9 +203,13 @@ public final class InitAppCommand
             }
             else
             {
-                final Path dirSubPath = sourcePath.relativize( dir );
-                Files.copy( dir, Paths.get( targetPath.toString(), dirSubPath.toString() ), StandardCopyOption.COPY_ATTRIBUTES,
-                            LinkOption.NOFOLLOW_LINKS );
+                final Path sourceFileSubPath = sourcePath.relativize( sourceFilePath );
+                final Path targetFilePath = Paths.get( targetPath.toString(), sourceFileSubPath.toString() );
+
+                if ( !Files.exists( targetFilePath ) )
+                {
+                    Files.copy( sourceFilePath, targetFilePath, StandardCopyOption.COPY_ATTRIBUTES, LinkOption.NOFOLLOW_LINKS );
+                }
             }
             return FileVisitResult.CONTINUE;
         }
