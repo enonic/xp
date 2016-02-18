@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -11,6 +13,10 @@ import com.enonic.xp.site.SiteService;
 class AbstractCreatingOrUpdatingContentCommand
     extends AbstractContentCommand
 {
+    private final static ImmutableList<MediaType> BINARY_CONTENT_TYPES =
+        ImmutableList.of( MediaType.OCTET_STREAM, MediaType.create( "application", "force-download" ),
+                          MediaType.create( "application", "x-force-download" ) );
+
     final MixinService mixinService;
 
     final SiteService siteService;
@@ -67,6 +73,12 @@ class AbstractCreatingOrUpdatingContentCommand
         final Context context = ContextAccessor.current();
 
         return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
+    }
+
+    protected boolean isBinaryContentType( final String contentType )
+    {
+        final MediaType mediaType = MediaType.parse( contentType );
+        return BINARY_CONTENT_TYPES.stream().anyMatch( mediaType::is );
     }
 }
 
