@@ -35,10 +35,9 @@ public class WidgetDescriptorResource
 
     @POST
     @Path("list/byinterfaces")
-    public List<WidgetDescriptorJson> getByInterfaces( final List<String> widgetInterfaces )
+    public List<WidgetDescriptorJson> getByInterfaces( final String[] widgetInterfaces )
     {
-        return widgetDescriptorsToJsonList(
-            widgetDescriptorService.getByInterfaces( widgetInterfaces.toArray( new String[widgetInterfaces.size()] ) ) );
+        return widgetDescriptorsToJsonList( widgetDescriptorService.getByInterfaces( widgetInterfaces ) );
     }
 
     @Reference
