@@ -5,11 +5,11 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.exception.BaseException;
 
 @Beta
-public class PathGuardAlreadyExistsException
+public class PathGuardNotFoundException
     extends BaseException
 {
-    public PathGuardAlreadyExistsException( final String key )
+    public PathGuardNotFoundException( final String key )
     {
-        super( "Path guard [{0}] already exists", key );
+        super( "PathGuard [{0}] not found", key );
     }
 }
