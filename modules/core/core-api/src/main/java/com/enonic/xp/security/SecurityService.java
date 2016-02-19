@@ -166,4 +166,6 @@ public interface SecurityService
     Optional<PathGuard> getPathGuard( String key );
 
     PathGuard createPathGuard( CreatePathGuardParams createPathGuardParams );
+
+    void deletePathGuard( String key );
 }

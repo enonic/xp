@@ -53,6 +53,7 @@ import com.enonic.xp.security.CreateUserStoreParams;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.PathGuard;
 import com.enonic.xp.security.PathGuardAlreadyExistsException;
+import com.enonic.xp.security.PathGuardNotFoundException;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalAlreadyExistsException;
 import com.enonic.xp.security.PrincipalKey;
@@ -1027,6 +1028,20 @@ public final class SecurityServiceImpl
         catch ( NodeAlreadyExistAtPathException e )
         {
             throw new PathGuardAlreadyExistsException( params.getKey() );
+        }
+    }
+
+    @Override
+    public void deletePathGuard( final String key )
+    {
+        final Node deletedNode = callWithContext( () -> {
+            final Node node = this.nodeService.deleteById( PathGuardNodeTranslator.getNodeId( key ) );
+            this.nodeService.refresh( RefreshMode.SEARCH );
+            return node;
+        } );
+        if ( deletedNode == null )
+        {
+            throw new PathGuardNotFoundException( key );
         }
     }
 

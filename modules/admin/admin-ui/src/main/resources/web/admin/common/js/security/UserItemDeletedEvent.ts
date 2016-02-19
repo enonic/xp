@@ -6,10 +6,13 @@ module api.security {
 
         private userStores: UserStore[];
 
+        private pathGuards: PathGuard[];
+
         constructor(builder: UserItemDeletedEventBuilder) {
             super();
             this.principals = builder.principals;
             this.userStores = builder.userStores;
+            this.pathGuards = builder.pathGuards;
         }
 
         public getPrincipals(): Principal[] {
@@ -18,6 +21,10 @@ module api.security {
 
         public getUserStores(): UserStore[] {
             return this.userStores;
+        }
+
+        public getPathGuards(): PathGuard[] {
+            return this.pathGuards;
         }
 
         public static create(): UserItemDeletedEventBuilder {
@@ -39,6 +46,8 @@ module api.security {
 
         userStores: UserStore[];
 
+        pathGuards: PathGuard[];
+
         setPrincipals(principals: Principal[]): UserItemDeletedEventBuilder {
             this.principals = principals;
             return this;
@@ -46,6 +55,11 @@ module api.security {
 
         setUserStores(userStores: UserStore[]): UserItemDeletedEventBuilder {
             this.userStores = userStores;
+            return this;
+        }
+
+        setPathGuards(pathGuards: PathGuard[]): UserItemDeletedEventBuilder {
+            this.pathGuards = pathGuards;
             return this;
         }
 

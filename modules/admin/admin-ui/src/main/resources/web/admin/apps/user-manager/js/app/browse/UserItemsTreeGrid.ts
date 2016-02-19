@@ -194,7 +194,7 @@ module app.browse {
             }
         }
 
-        deleteUserNodes(principals: api.security.Principal[], userStores: api.security.UserStore[]) {
+        deleteUserNodes(principals: api.security.Principal[], userStores: api.security.UserStore[], pathGuards: api.security.PathGuard[]) {
             if (principals) {
                 var principalItems = principals.map((principal) => {
                     return new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build();
@@ -205,6 +205,13 @@ module app.browse {
             if (userStores) {
                 var userStoreItems = userStores.map((userStore) => {
                     return new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.USER_STORE).build();
+                });
+
+                this.deleteNodes(userStoreItems);
+            }
+            if (pathGuards) {
+                var userStoreItems = pathGuards.map((pathGuard) => {
+                    return new UserTreeGridItemBuilder().setPathGuard(pathGuard).setType(UserTreeGridItemType.PATH_GUARD).build();
                 });
 
                 this.deleteNodes(userStoreItems);

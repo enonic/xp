@@ -44,6 +44,10 @@
 ///<reference path="DeleteUserStoreResultsJson.ts"/>
 ///<reference path="DeletePrincipalRequest.ts"/>
 ///<reference path="DeleteUserStoreRequest.ts"/>
+///<reference path="DeletePathGuardRequest.ts"/>
+///<reference path="DeletePathGuardResult.ts"/>
+///<reference path="DeletePathGuardResultJson.ts"/>
+///<reference path="DeletePathGuardResultsJson.ts"/>
 ///<reference path='PrincipalLoader.ts' />
 ///<reference path="PrincipalNamedEvent.ts"/>
 ///<reference path="CreateUserStoreRequest.ts"/>

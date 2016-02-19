@@ -18,13 +18,20 @@ module app.browse.action {
                             filter(userItem => UserTreeGridItemType.PRINCIPAL == userItem.getType()).
                             map((userItem: UserTreeGridItem) => {
                                 return userItem.getPrincipal();
-                        });
+                            });
 
                         var userStoreItems = grid.getSelectedDataList().
                             filter(userItem => UserTreeGridItemType.USER_STORE == userItem.getType()).
                             map((userItem: UserTreeGridItem) => {
                                 return userItem.getUserStore();
-                        });
+                            });
+
+                        var pathGuardItems = grid.getSelectedDataList().
+                            filter(userItem => UserTreeGridItemType.PATH_GUARD == userItem.getType()).
+                            map((userItem: UserTreeGridItem) => {
+                                return userItem.getPathGuard();
+                            });
+
 
                         var principalKeys = principalItems.
                             filter((userItem) => {
@@ -41,6 +48,8 @@ module app.browse.action {
                             map((userStore: api.security.UserStore) => {
                                 return userStore.getKey();
                             });
+
+                        var pathGuardKeys = pathGuardItems.map((pathGuard: api.security.PathGuard) => pathGuard.getKey());
 
 
                         if (principalKeys && principalKeys.length > 0) {
@@ -71,6 +80,22 @@ module app.browse.action {
 
                                         api.notify.showFeedback('UserStore [' + key + '] deleted!');
                                         api.security.UserItemDeletedEvent.create().setUserStores(userStoreItems).build().fire();
+                                    }
+                                });
+                        }
+
+                        if (pathGuardKeys && pathGuardKeys.length > 0) {
+                            new api.security.DeletePathGuardRequest()
+                                .setKeys(pathGuardKeys)
+                                .send()
+                                .done((jsonResponse: api.rest.JsonResponse<any>) => {
+                                    var json = jsonResponse.getJson();
+
+                                    if (json.results && json.results.length > 0) {
+                                        var key = json.results[0].ryjeth;
+
+                                        api.notify.showFeedback('Path guard [' + key + '] deleted!');
+                                        api.security.UserItemDeletedEvent.create().setPathGuards(pathGuardItems).build().fire();
                                     }
                                 });
                         }

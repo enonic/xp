@@ -62,7 +62,7 @@ module app.browse {
                 }
             });
 
-            var totalSelection = userStoresSelected + principalsSelected + directoriesSelected,
+            var totalSelection = userStoresSelected + principalsSelected + directoriesSelected + pathGuardsSelected,
                 anyPrincipal = principalsSelected > 0,
                 anyUserStore = userStoresSelected > 0,
                 anyPathGuard = pathGuardsSelected > 0;
@@ -71,7 +71,7 @@ module app.browse {
             this.EDIT.setEnabled(directoriesSelected < 1 && (anyUserStore || anyPrincipal || anyPathGuard));
 
             if (totalSelection == 1) {
-                if (principalsSelected == 1) {
+                if (principalsSelected == 1 || pathGuardsSelected == 1) {
                     this.DELETE.setEnabled(true);
                 } else {
                     this.establishDeleteActionState((<BrowseItem<UserTreeGridItem>>userItemBrowseItems[0]).getModel());

@@ -26,6 +26,8 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.CreateGroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateRoleJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserStoreJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.DeletePathGuardResultJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.DeletePathGuardsResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeletePrincipalJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeletePrincipalResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeletePrincipalsResultJson;
@@ -398,6 +400,25 @@ public final class SecurityResource
     {
         final ImmutableList<PathGuard> pathGuards = securityService.getPathGuards();
         return new PathGuardsJson( pathGuards );
+    }
+
+    @POST
+    @Path("pathguard/delete")
+    public DeletePathGuardsResultJson deletePathGuards( final DeletePrincipalJson deletePrincipalJson )
+    {
+        final DeletePathGuardsResultJson resultsJson = new DeletePathGuardsResultJson();
+        deletePrincipalJson.getKeys().stream().forEach( ( key ) -> {
+            try
+            {
+                securityService.deletePathGuard( key );
+                resultsJson.add( DeletePathGuardResultJson.success( key ) );
+            }
+            catch ( Exception e )
+            {
+                resultsJson.add( DeletePathGuardResultJson.failure( key, e.getMessage() ) );
+            }
+        } );
+        return resultsJson;
     }
 
     private void updateMemberships( final PrincipalKey target, PrincipalKeys membersToRemove, PrincipalKeys membersToAdd )
