@@ -82,9 +82,11 @@ public final class ApplicationResource
             {
                 continue;
             }
-            if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( application.getKey() ) )//Remove after 7.0.0 refactoring
+            final ApplicationKey applicationKey = application.getKey();
+            if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( applicationKey ) )//Remove after 7.0.0 refactoring
             {
-                json.add( application, this.siteService.getDescriptor( application.getKey() ) );
+                json.add( application, this.applicationService.isLocalApplication( applicationKey ),
+                          this.siteService.getDescriptor( applicationKey ) );
             }
         }
 
@@ -95,8 +97,9 @@ public final class ApplicationResource
     public ApplicationJson getByKey( @QueryParam("applicationKey") String applicationKey )
     {
         final Application application = this.applicationService.getInstalledApplication( ApplicationKey.from( applicationKey ) );
+        final boolean local = this.applicationService.isLocalApplication( ApplicationKey.from( applicationKey ) );
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( ApplicationKey.from( applicationKey ) );
-        return new ApplicationJson( application, siteDescriptor );
+        return new ApplicationJson( application, local, siteDescriptor );
     }
 
     @POST
@@ -134,9 +137,9 @@ public final class ApplicationResource
 
         final ByteSource byteSource = appFile.getBytes();
 
-        final Application application = this.applicationService.installApplication( byteSource );
+        final Application application = this.applicationService.installApplication( byteSource, true, true );
 
-        return new ApplicationInstalledJson( application );
+        return new ApplicationInstalledJson( application, false );
     }
 
     @POST
@@ -145,7 +148,7 @@ public final class ApplicationResource
     public ApplicationSuccessJson uninstall( final ApplicationListParams params )
         throws Exception
     {
-        params.getKeys().forEach( this.applicationService::uninstallApplication );
+        params.getKeys().forEach( applicationKey -> this.applicationService.uninstallApplication( applicationKey, true ) );
         return new ApplicationSuccessJson();
     }
 
@@ -171,9 +174,9 @@ public final class ApplicationResource
         {
 
             final Application application =
-                this.applicationService.installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ) );
+                this.applicationService.installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ), true, true );
 
-            return new ApplicationInstalledJson( application );
+            return new ApplicationInstalledJson( application, false );
         }
 
     }

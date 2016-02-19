@@ -16,13 +16,16 @@ public class ApplicationJson
 {
     final Application application;
 
+    final boolean local;
+
     private final FormJson config;
 
     private final ImmutableList<String> metaStepMixinNames;
 
-    public ApplicationJson( final Application application, final SiteDescriptor siteDescriptor )
+    public ApplicationJson( final Application application, final boolean local, final SiteDescriptor siteDescriptor )
     {
         this.application = application;
+        this.local = local;
         this.config = siteDescriptor != null && siteDescriptor.getForm() != null ? new FormJson( siteDescriptor.getForm() ) : null;
         ImmutableList.Builder<String> mixinNamesBuilder = new ImmutableList.Builder<>();
         if ( siteDescriptor != null && siteDescriptor.getMetaSteps() != null )
@@ -83,6 +86,11 @@ public class ApplicationJson
     public String getState()
     {
         return this.application.isStarted() ? "started" : "stopped";
+    }
+
+    public boolean getLocal()
+    {
+        return local;
     }
 
     public FormJson getConfig()

@@ -81,7 +81,7 @@ module app.browse {
 
 
             UninstallApplicationEvent.on((event: UninstallApplicationEvent) => {
-                var applicationKeys = ApplicationKey.fromApplications(event.getApplications());
+                var applicationKeys = ApplicationKey.fromClusterApplications(event.getApplications());
                 new UninstallApplicationRequest(applicationKeys).sendAndParse()
                     .then(() => {
                     }).done();
