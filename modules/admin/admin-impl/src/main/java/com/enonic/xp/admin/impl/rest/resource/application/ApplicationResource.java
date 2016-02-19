@@ -17,6 +17,8 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -25,6 +27,7 @@ import com.enonic.xp.admin.impl.json.application.ApplicationJson;
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallParams;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallResultJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstalledJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationListParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSuccessJson;
@@ -56,6 +59,8 @@ public final class ApplicationResource
     private SiteService siteService;
 
     private MarketService marketService;
+
+    private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
 
     @GET
     @Path("list")
@@ -155,10 +160,11 @@ public final class ApplicationResource
     @POST
     @Path("installUrl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public ApplicationInstalledJson installUrl( final ApplicationInstallParams params )
+    public ApplicationInstallResultJson installUrl( final ApplicationInstallParams params )
         throws Exception
     {
         final String urlString = params.getURL();
+        final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
 
         final URL url;
         try
@@ -167,7 +173,11 @@ public final class ApplicationResource
         }
         catch ( MalformedURLException e )
         {
-            throw new RuntimeException( "cannot fetch from URL " + urlString, e );
+            final String failure = "cannot fetch from URL " + urlString;
+            LOG.error( failure );
+            result.setFailure(failure);
+
+            return result;
         }
 
         try (final InputStream inputStream = url.openStream())
@@ -176,8 +186,10 @@ public final class ApplicationResource
             final Application application =
                 this.applicationService.installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ), true, true );
 
-            return new ApplicationInstalledJson( application, false );
+            result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
         }
+
+        return result;
 
     }
 
