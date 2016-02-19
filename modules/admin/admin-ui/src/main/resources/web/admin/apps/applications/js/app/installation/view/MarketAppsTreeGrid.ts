@@ -130,8 +130,6 @@ module app.installation.view {
                         elem.addClass(MarketAppStatusFormatter.getStatusCssClass(MarketAppStatus.INSTALLED));
                         elem.setInnerHtml(MarketAppStatusFormatter.formatStatus(MarketAppStatus.INSTALLED));
                         app.setStatus(MarketAppStatus.INSTALLED);
-                        api.notify.showFeedback("Application " + app.getDisplayName() + " " +
-                                                MarketAppStatusFormatter.formatPerformedAction(status) + " successfully");
                     }).catch((reason: any) => {
                         elem.removeClass("spinner");
                         elem.setInnerHtml(MarketAppStatusFormatter.formatStatus(status));
