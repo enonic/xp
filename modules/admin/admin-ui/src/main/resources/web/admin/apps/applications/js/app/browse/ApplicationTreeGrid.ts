@@ -180,8 +180,6 @@ module app.browse {
                     this.invalidate();
                     this.triggerSelectionChangedListeners();
                 }
-
-                api.notify.showFeedback("Application " + item.getName() + "\" installed successfully");
             });
             item.onFailed(() => {
                 this.deleteNode(<any>appMock);

@@ -92,8 +92,12 @@ module app.browse {
                     this.applicationTreeGrid.appendApplicationNode(event.getApplicationKey()).then(() => {
                         setTimeout(() => { // timeout lets grid to remove UploadMockNode so that its not counted in the toolbar
                             this.applicationTreeGrid.triggerSelectionChangedListeners();
+                            var installedApp = this.applicationTreeGrid.getByApplicationKey(event.getApplicationKey()),
+                                installedAppName = !!installedApp ? installedApp.getDisplayName() : event.getApplicationKey();
+                            api.notify.showFeedback("Application '" + installedAppName + "' installed successfully");
                         }, 200);
                     });
+
                 } else if (ApplicationEventType.UNINSTALLED == event.getEventType()) {
                     var uninstalledApp = this.applicationTreeGrid.getByApplicationKey(event.getApplicationKey()),
                         uninstalledAppName = !!uninstalledApp ? uninstalledApp.getDisplayName() : event.getApplicationKey();
