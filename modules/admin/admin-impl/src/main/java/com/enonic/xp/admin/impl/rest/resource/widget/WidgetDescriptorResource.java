@@ -3,10 +3,9 @@ package com.enonic.xp.admin.impl.rest.resource.widget;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.osgi.service.component.annotations.Component;
@@ -34,10 +33,11 @@ public class WidgetDescriptorResource
 
     private WidgetDescriptorService widgetDescriptorService;
 
-    @GET
-    public List<WidgetDescriptorJson> getByInterface( @QueryParam("interface") final String widgetInterface )
+    @POST
+    @Path("list/byinterfaces")
+    public List<WidgetDescriptorJson> getByInterfaces( final String[] widgetInterfaces )
     {
-        return widgetDescriptorsToJsonList( widgetDescriptorService.getByInterface( widgetInterface ) );
+        return widgetDescriptorsToJsonList( widgetDescriptorService.getByInterfaces( widgetInterfaces ) );
     }
 
     @Reference

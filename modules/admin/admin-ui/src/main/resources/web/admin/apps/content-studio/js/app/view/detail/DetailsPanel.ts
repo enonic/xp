@@ -226,8 +226,8 @@ module app.view.detail {
             return this.item;
         }
 
-        private getWidgetsInterfaceName(): string {
-            return "com.enonic.xp.content-manager.context-widget";
+        private getWidgetsInterfaceNames(): string[] {
+            return ["com.enonic.xp.content-manager.context-widget", "contentstudio.detailpanel"];
         }
 
         private updateWidgetsForItem(): wemQ.Promise<any> {
@@ -311,7 +311,7 @@ module app.view.detail {
         }
 
         private getAndInitCustomWidgetViews(): wemQ.Promise<any> {
-            var getWidgetsByInterfaceRequest = new api.content.GetWidgetsByInterfaceRequest(this.getWidgetsInterfaceName());
+            var getWidgetsByInterfaceRequest = new api.content.GetWidgetsByInterfaceRequest(this.getWidgetsInterfaceNames());
 
             return getWidgetsByInterfaceRequest.sendAndParse().then((widgets: Widget[]) => {
                 widgets.forEach((widget) => {

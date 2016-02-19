@@ -43,7 +43,7 @@ module app.installation.view {
         }
 
         resolveSubName(object: MarketApplication, relativePath: boolean = false): string {
-            return object.getName();
+            return object.getDescription();
         }
 
         resolveSubTitle(object: MarketApplication): string {

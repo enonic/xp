@@ -139,4 +139,10 @@ public class MockApplication
     {
         this.started = started;
     }
+
+    @Override
+    public boolean hasSiteDescriptor()
+    {
+        return true;
+    }
 }

@@ -21,6 +21,8 @@ module app.installation {
 
         private marketAppPanel: MarketAppPanel;
 
+        private onMarketLoaded;
+
         constructor() {
 
             this.installAppDialogTitle = new api.ui.dialog.ModalDialogHeader("Install Application");
@@ -37,11 +39,16 @@ module app.installation {
 
             this.initAndAppendInstallAppsTabsPanel();
 
+            this.onMarketLoaded = this.centerMyself.bind(this);
+
             api.dom.Body.get().appendChild(this);
         }
 
         private initMarketAppPanel() {
             this.marketAppPanel = new MarketAppPanel("market-app-panel");
+            this.marketAppPanel.onShown(() => {
+                this.marketAppPanel.getMarketAppsTreeGrid().onLoaded(this.onMarketLoaded)
+            });
         }
 
         private initUploadAppPanel() {
@@ -90,6 +97,9 @@ module app.installation {
         }
 
         close() {
+            if (!!this.marketAppPanel.getMarketAppsTreeGrid()) {
+                this.marketAppPanel.getMarketAppsTreeGrid().unLoaded(this.onMarketLoaded);
+            }
             this.uploadAppPanel.getApplicationInput().reset();
             super.close();
         }

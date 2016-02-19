@@ -59,10 +59,7 @@ public class InitAppCommandTest
         command.checkout = "7440461f1651f64417dab7179a8c1ec91922d850";
         command.run();
 
-        Assert.assertEquals( 6, targetDirectory.list().length );
-        final String gradlePropertiesContent =
-            com.google.common.io.Files.asCharSource( new File( targetDirectory, "gradle.properties" ), Charsets.UTF_8 ).read();
-        Assert.assertTrue( gradlePropertiesContent.isEmpty() );
+        Assert.assertEquals( 5, targetDirectory.list().length );
     }
 
     private InitAppCommand createInitAppCommand()

@@ -3,10 +3,21 @@
   .modal-dialog-content-push {
     display: none;
   }
+  .modal-dialog-footer {
+    height: 2em;
+  }
 
-  @media screen and (max-height: 360px ) {
-    .dialog-content {
-      height: 65%;
+  .dialog-content {
+    @media screen and (max-height: 720px) {
+      max-height: 308px;
+    }
+
+    @media screen and (max-height: 540px) {
+      max-height: 145px;
+    }
+
+    @media screen and (max-height: 360px) {
+      max-height: 78%;
     }
   }
 
@@ -84,6 +95,9 @@
     position: static !important;
     box-shadow: none;
     width: 100%;
+    max-height: inherit;
+    overflow-x: hidden;
+    overflow-y: auto;
 
     .panel {
       position: static;
@@ -180,8 +194,6 @@
         }
       }
 
-      .load-mask {
-      }
     }
   }
 }
