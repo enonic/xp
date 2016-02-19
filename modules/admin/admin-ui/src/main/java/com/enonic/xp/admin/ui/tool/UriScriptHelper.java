@@ -27,12 +27,6 @@ public class UriScriptHelper
         return rewriteUri( uri );
     }
 
-    public static final String generateHomeUri( String application )
-    {
-        String uri = ADMIN_TOOLS_URI_PREFIX + "/" + application + "/home";
-        return rewriteUri( uri );
-    }
-
     private static final String generateVersion()
     {
         final VersionInfo version = VersionInfo.get();

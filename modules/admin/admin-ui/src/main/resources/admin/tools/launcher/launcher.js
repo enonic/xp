@@ -40,7 +40,7 @@ function handleGet(req) {
         userIconUrl: userIconUrl,
         user: user,
         logoutServiceUrl: logoutServiceUrl,
-        homeUrl: uriScriptHelper.generateHomeUri(adminTools[0].key.application),
+        homeUrl: uriScriptHelper.generateAdminToolUri(),
         installation: uriScriptHelper.getInstallation() || "Tools"
     };
 
