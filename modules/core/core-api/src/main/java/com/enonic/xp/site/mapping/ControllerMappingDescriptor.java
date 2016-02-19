@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.mapping;
+package com.enonic.xp.site.mapping;
 
 import java.util.Objects;
 import java.util.regex.Pattern;

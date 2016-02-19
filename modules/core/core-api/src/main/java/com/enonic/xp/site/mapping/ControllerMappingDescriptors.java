@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.mapping;
+package com.enonic.xp.site.mapping;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;

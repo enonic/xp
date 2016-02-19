@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site xmlns="urn:enonic:xp:model:1.0">
+  <x-data mixin="system:menu-item"/>
+  <x-data mixin="myapplication:my-meta-mixin"/>
+  <config>
+    <input type="TextLine" name="some-name">
+      <label>Textline</label>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <custom-text/>
+      <help-text/>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+  </config>
+  <filters>
+    <response-filter name="filter1" order="10"/>
+    <response-filter name="filter2" order="10"/>
+  </filters>
+  <mappings>
+    <mapping controller="/site/page/person/person.js" pattern="/person/*" order="10"/>
+    <mapping controller="controller1.js" match="_path:'/*/fisk'"/>
+    <mapping controller="controller2.js" pattern="/.*" match="contentType:'portal:fragment'" order="5"/>
+  </mappings>
+</site>
