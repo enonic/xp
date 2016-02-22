@@ -2,7 +2,7 @@
  * Websocket functions.
  *
  * @example
- * var contextLib = require('/lib/xp/websocket');
+ * var webSocketLib = require('/lib/xp/websocket');
  *
  * @module lib/xp/websocket
  */
