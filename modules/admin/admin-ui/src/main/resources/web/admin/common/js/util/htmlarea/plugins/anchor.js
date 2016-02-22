@@ -1,4 +1,3 @@
-
 /*global tinymce:true */
 
 tinymce.PluginManager.add('anchor', function (editor) {

@@ -1,16 +1,16 @@
-module api.form.inputtype.text.htmlarea {
+module api.util.htmlarea.dialog {
 
     import FormItem = api.ui.form.FormItem;
     import Validators = api.ui.form.Validators;
 
     export class AnchorModalDialog extends ModalDialog {
 
-        constructor(editor: HtmlAreaEditor) {
+        constructor(editor:HtmlAreaEditor) {
 
             super(editor, new api.ui.dialog.ModalDialogHeader("Insert Anchor"));
         }
 
-        protected getMainFormItems(): FormItem[] {
+        protected getMainFormItems():FormItem[] {
             var nameField = this.createFormItem("name", "Name", Validators.required);
 
             this.setFirstFocusField(nameField.getInput());
@@ -34,7 +34,7 @@ module api.form.inputtype.text.htmlarea {
             super.initializeActions();
         }
 
-        private createAnchorEl(): api.dom.AEl {
+        private createAnchorEl():api.dom.AEl {
             var anchorEl = new api.dom.AEl();
 
             anchorEl.setId(this.getName());
@@ -43,11 +43,11 @@ module api.form.inputtype.text.htmlarea {
             return anchorEl;
         }
 
-        private getName(): string {
+        private getName():string {
             return (<api.ui.text.TextInput>this.getFieldById("name")).getValue();
         }
 
-        private insertAnchor(): void {
+        private insertAnchor():void {
             var anchorEl = this.createAnchorEl();
             this.getEditor().insertContent(anchorEl.toString());
         }

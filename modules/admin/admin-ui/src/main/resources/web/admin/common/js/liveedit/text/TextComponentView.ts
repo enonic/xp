@@ -6,8 +6,11 @@ module api.liveedit.text {
     import RegionView = api.liveedit.RegionView;
     import TextComponent = api.content.page.region.TextComponent;
 
-    import LinkModalDialog = api.form.inputtype.text.htmlarea.LinkModalDialog;
-    import AnchorModalDialog = api.form.inputtype.text.htmlarea.AnchorModalDialog;
+    import LinkModalDialog = api.util.htmlarea.dialog.LinkModalDialog;
+    import AnchorModalDialog = api.util.htmlarea.dialog.AnchorModalDialog;
+    import HtmlAreaAnchor = api.util.htmlarea.dialog.HtmlAreaAnchor;
+    import TinymceEditorBuilder = api.util.htmlarea.editor.TinymceEditorBuilder;
+    import TinymceContentHelper = api.util.htmlarea.editor.TinymceContentHelper;
 
     export class TextComponentViewBuilder extends ComponentViewBuilder<TextComponent> {
         constructor() {
@@ -37,7 +40,7 @@ module api.liveedit.text {
         private singleClickTimer: number;
         private lastClicked: number;
 
-        private modalDialog: api.form.inputtype.text.htmlarea.ModalDialog;
+        private modalDialog:api.util.htmlarea.dialog.ModalDialog;
 
         constructor(builder: TextComponentViewBuilder) {
 
@@ -67,9 +70,14 @@ module api.liveedit.text {
 
             this.getPageView().appendContainerForTextToolbar();
 
+
             this.onRemoved(() => {
                 this.destroyEditor();
             });
+        }
+
+        private getContentId():api.content.ContentId {
+            return this.getPageView().getLiveEditModel().getContent().getContentId();
         }
 
         private isAllTextSelected(): boolean {
@@ -236,6 +244,29 @@ module api.liveedit.text {
             }
         }
 
+        private onFocusHandler(e) {
+            this.addClass("editor-focused");
+        }
+
+        private onBlurHandler(e) {
+            this.processMCEValue();
+            this.removeClass("editor-focused");
+
+            setTimeout(() => {
+                if (!this.anyEditorHasFocus()) {
+                    this.setEditMode(false);
+                }
+            }, 100);
+        }
+
+        private onKeydownHandler(e) {
+            if (e.keyCode == 27) { // esc
+                this.processMCEValue();
+                this.closePageTextEditMode();
+                this.removeClass("editor-focused");
+            }
+        }
+
         private initEditor(): void {
             this.initializingTinyMceEditor = true;
             var assetsUri = CONFIG.assetsUri,
@@ -244,130 +275,21 @@ module api.liveedit.text {
             this.addClass(id);
             this.appendChild(new api.dom.DivEl("tiny-mce-here"));
 
-            tinymce.init({
-                selector: 'div.' + id + ' .tiny-mce-here',
-                document_base_url: assetsUri + '/common/lib/tinymce/',
-                skin_url: assetsUri + '/common/lib/tinymce/skins/lightgray',
-                content_css: assetsUri + '/common/styles/api/form/inputtype/text/tinymce-editor.css',
-                theme_url: 'modern',
-                inline: true,
-                fixed_toolbar_container: '.mce-toolbar-container',
-
-                toolbar: [
-                    "bold italic underline strikethrough formatselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor link unlink"
-                ],
-
-                formats: {
-                    alignleft: [
-                        {
-                            selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
-                            styles: {textAlign: 'left'},
-                            defaultBlock: 'div'
-                        },
-                        {selector: 'table', collapsed: false, styles: {'float': 'left'}}
-                    ],
-                    aligncenter: [
-                        {
-                            selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
-                            styles: {textAlign: 'center'},
-                            defaultBlock: 'div'
-                        },
-                        {selector: 'table', collapsed: false, styles: {marginLeft: 'auto', marginRight: 'auto'}}
-                    ],
-                    alignright: [
-                        {
-                            selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
-                            styles: {textAlign: 'right'},
-                            defaultBlock: 'div'
-                        },
-                        {selector: 'table', collapsed: false, styles: {'float': 'right'}}
-                    ],
-                    alignjustify: [
-                        {
-                            selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
-                            styles: {textAlign: 'justify'},
-                            defaultBlock: 'div'
-                        }
-                    ]
-                },
-                menubar: false,
-                statusbar: false,
-                paste_as_text: true,
-                plugins: ['autoresize', 'paste', 'charmap'],
-                external_plugins: {
-                    "link": assetsUri + "/common/js/form/inputtype/text/plugins/link.js",
-                    "anchor": assetsUri + "/common/js/form/inputtype/text/plugins/anchor.js"
-                },
-                object_resizing: "table",
-                autoresize_min_height: 100,
-                autoresize_bottom_margin: 0,
-
-                setup: (editor) => {
-                    editor.addCommand("openLinkDialog", this.openLinkDialog, this);
-                    editor.addCommand("openAnchorDialog", this.openAnchorDialog, this);
-                    editor.on('change', (e) => {
-                    });
-                    editor.on('focus', (e) => {
-                        this.addClass("editor-focused");
-                    });
-                    editor.on('blur', (e) => {
-                        if (!(this.modalDialog && this.modalDialog.isVisible())) {
-
-                        }
-                        this.processMCEValue();
-                        this.removeClass("editor-focused");
-
-                        setTimeout(() => {
-                            if (!this.anyEditorHasFocus()) {
-                                this.setEditMode(false);
-                            }
-                        }, 100);
-                    });
-
-                    editor.on('keydown', (e) => {
-
-                        if (e.keyCode == 46 || e.keyCode == 8) { // DELETE
-                            var selectedNode = editor.selection.getRng().startContainer;
-                            if (/^(FIGURE)$/.test(selectedNode.nodeName)) {
-                                var previousEl = selectedNode.previousSibling;
-                                e.preventDefault();
-                                selectedNode.remove();
-                                if (previousEl) {
-                                    editor.selection.setNode(previousEl);
-                                }
-                                else {
-                                    editor.focus();
-                                }
-                            }
-                        }
-
-                        if (e.keyCode == 27) { // esc
-                            this.processMCEValue();
-                            this.closePageTextEditMode();
-                            this.removeClass("editor-focused");
-                        }
-                    });
-
-                    var dragParentElement;
-                    editor.on('dragstart', (e) => {
-                        dragParentElement = e.target.parentElement || e.target.parentNode;
-                    });
-
-                    editor.on('drop', (e) => {
-                        if (dragParentElement) {
-                            // prevent browser from handling the drop
-                            e.preventDefault();
-
-                            e.target.appendChild(dragParentElement);
-                            dragParentElement = undefined;
-                        }
-                    });
-
-                },
-                init_instance_callback: (editor) => {
+            new TinymceEditorBuilder().
+                setSelector('div.' + id + ' .tiny-mce-here').
+                setAssetsUri(assetsUri).
+                setInline(true).
+                setOnFocusHandler(this.onFocusHandler.bind(this)).
+                setOnBlurHandler(this.onBlurHandler.bind(this)).
+                setOnKeydownHandler(this.onKeydownHandler.bind(this)).
+                setFixedToolbarContainer('.mce-toolbar-container').
+                setContentId(this.getContentId()).
+                setUseInsertImage(false). // uncomment to enable inserting images
+                createEditor().
+                then((editor:HtmlAreaEditor) => {
                     this.tinyMceEditor = editor;
                     if (!!this.textComponent.getText()) {
-                        this.tinyMceEditor.setContent(this.textComponent.getText());
+                        this.tinyMceEditor.setContent(TinymceContentHelper.prepareImgSrcsInValueForEdit(this.textComponent.getText()));
                     } else {
                         this.tinyMceEditor.setContent(TextComponentView.DEFAULT_TEXT);
                         this.tinyMceEditor.selection.select(this.tinyMceEditor.getBody(), true);
@@ -378,8 +300,7 @@ module api.liveedit.text {
                     }
                     this.focusOnInit = false;
                     this.initializingTinyMceEditor = false;
-                }
-            });
+                });
         }
 
         private anyEditorHasFocus(): boolean {
@@ -398,7 +319,7 @@ module api.liveedit.text {
             return result;
         }
 
-        private openLinkDialog(config: api.form.inputtype.text.HtmlAreaAnchor) {
+        private openLinkDialog(config:HtmlAreaAnchor) {
             this.modalDialog = new LinkModalDialog(config);
             this.modalDialog.open();
         }
@@ -413,7 +334,7 @@ module api.liveedit.text {
                 this.textComponent.setText(TextComponentView.DEFAULT_TEXT);
                 this.rootElement.getHTMLElement().innerHTML = TextComponentView.DEFAULT_TEXT;
             } else {
-                var editorContent = this.tinyMceEditor.getContent();
+                var editorContent = TinymceContentHelper.prepareEditorImageSrcsBeforeSave(this.tinyMceEditor);
                 this.textComponent.setText(editorContent);
                 this.rootElement.getHTMLElement().innerHTML = editorContent;
             }

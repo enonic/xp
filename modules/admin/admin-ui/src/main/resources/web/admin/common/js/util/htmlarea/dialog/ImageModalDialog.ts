@@ -1,4 +1,4 @@
-module api.form.inputtype.text.htmlarea {
+module api.util.htmlarea.dialog {
 
     import FormItemBuilder = api.ui.form.FormItemBuilder;
     import FormItem = api.ui.form.FormItem;
@@ -14,20 +14,23 @@ module api.form.inputtype.text.htmlarea {
 
     export class ImageModalDialog extends ModalDialog {
 
-        private imagePreviewContainer: api.dom.DivEl;
-        private imageCaptionField: FormItem;
-        private imageUploaderEl: api.content.ImageUploaderEl;
-        private imageElement: HTMLImageElement;
-        private contentId: api.content.ContentId;
-        private imageSelector: api.content.ContentComboBox;
-        private progress: api.ui.ProgressBar;
-        private error: api.dom.DivEl;
-        private image: api.dom.ImgEl;
-        private elementContainer: HTMLElement;
-        private callback: Function;
-        private imageToolbar: ImageToolbar;
+        private imagePreviewContainer:api.dom.DivEl;
+        private imageCaptionField:FormItem;
+        private imageUploaderEl:api.content.ImageUploaderEl;
+        private imageElement:HTMLImageElement;
+        private contentId:api.content.ContentId;
+        private imageSelector:api.content.ContentComboBox;
+        private progress:api.ui.ProgressBar;
+        private error:api.dom.DivEl;
+        private image:api.dom.ImgEl;
+        private elementContainer:HTMLElement;
+        private callback:Function;
+        private imageToolbar:ImageToolbar;
 
-        constructor(config: api.form.inputtype.text.HtmlAreaImage, contentId: api.content.ContentId) {
+        static imagePrefix = "image://";
+        static maxImageWidth = 640;
+
+        constructor(config:HtmlAreaImage, contentId:api.content.ContentId) {
             this.imageElement = <HTMLImageElement>config.element;
             this.elementContainer = config.container;
             this.contentId = contentId;
@@ -36,15 +39,15 @@ module api.form.inputtype.text.htmlarea {
             super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Image"));
         }
 
-        private getImageContent(images: api.content.ContentSummary[]): api.content.ContentSummary {
-            var filteredImages = images.filter((image: api.content.ContentSummary) => {
+        private getImageContent(images:api.content.ContentSummary[]):api.content.ContentSummary {
+            var filteredImages = images.filter((image:api.content.ContentSummary) => {
                 return this.imageElement.src.indexOf(image.getId()) > 0;
             });
 
             return filteredImages.length > 0 ? filteredImages[0] : null;
         }
 
-        private createImageSelector(id: string): FormItem {
+        private createImageSelector(id:string):FormItem {
             var loader = new api.content.ContentSummaryLoader(),
                 imageSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
                 formItem = this.createFormItem(id, "Image", Validators.required, api.util.StringHelper.EMPTY_STRING,
@@ -58,7 +61,7 @@ module api.form.inputtype.text.htmlarea {
             loader.setAllowedContentTypeNames([api.schema.content.ContentTypeName.IMAGE]);
 
             if (this.imageElement) {
-                var singleLoadListener = (event: api.util.loader.event.LoadedDataEvent<api.content.ContentSummary>) => {
+                var singleLoadListener = (event:api.util.loader.event.LoadedDataEvent<api.content.ContentSummary>) => {
                     var imageContent = this.getImageContent(event.getData());
                     if (imageContent) {
                         imageSelector.setValue(imageContent.getId());
@@ -70,7 +73,7 @@ module api.form.inputtype.text.htmlarea {
                 loader.load();
             }
 
-            imageSelectorComboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
+            imageSelectorComboBox.onOptionSelected((selectedOption:api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
                 var imageContent = selectedOption.getOption().displayValue;
                 if (!imageContent.getContentId()) {
                     return;
@@ -79,7 +82,7 @@ module api.form.inputtype.text.htmlarea {
                 this.previewImage(imageContent, formItem);
             });
 
-            imageSelectorComboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
+            imageSelectorComboBox.onExpanded((event:api.ui.selector.DropdownExpandedEvent) => {
                 if (event.isExpanded()) {
                     this.adjustSelectorDropDown(imageSelectorComboBox.getInput(), event.getDropdownElement().getEl());
                 }
@@ -94,7 +97,7 @@ module api.form.inputtype.text.htmlarea {
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
 
-            imageSelectorComboBox.onKeyDown((e: KeyboardEvent) => {
+            imageSelectorComboBox.onKeyDown((e:KeyboardEvent) => {
                 if (api.ui.KeyHelper.isEscKey(e) && !imageSelectorComboBox.isDropdownShown()) {
                     // Prevent modal dialog from closing on Esc key when dropdown is expanded
                     e.preventDefault();
@@ -105,7 +108,7 @@ module api.form.inputtype.text.htmlarea {
             return formItem;
         }
 
-        private adjustSelectorDropDown(inputElement: api.dom.Element, dropDownElement: api.dom.ElementHelper) {
+        private adjustSelectorDropDown(inputElement:api.dom.Element, dropDownElement:api.dom.ElementHelper) {
             var inputPosition = wemjq(inputElement.getHTMLElement()).offset();
 
             dropDownElement.setMaxWidthPx(inputElement.getEl().getWidthWithBorder() - 2);
@@ -113,20 +116,20 @@ module api.form.inputtype.text.htmlarea {
             dropDownElement.setLeftPx(inputPosition.left);
         }
 
-        private createImgEl(src: string, alt: string, contentId: string): api.dom.ImgEl {
+        private createImgEl(src:string, alt:string, contentId:string):api.dom.ImgEl {
             var imageEl = new api.dom.ImgEl(src);
             imageEl.getEl().setAttribute("alt", alt);
-            imageEl.getEl().setAttribute("data-src", HtmlArea.imagePrefix + contentId);
+            imageEl.getEl().setAttribute("data-src", ImageModalDialog.imagePrefix + contentId);
 
             return imageEl;
         }
 
-        private previewImage(imageContent: api.content.ContentSummary, formItem: FormItem) {
+        private previewImage(imageContent:api.content.ContentSummary, formItem:FormItem) {
             var contentId = imageContent.getContentId().toString(),
                 imgUrl = new api.content.ContentImageUrlResolver().
                     setContentId(new api.content.ContentId(contentId)).
                     setScaleWidth(true).
-                    setSize(HtmlArea.maxImageWidth).
+                    setSize(ImageModalDialog.maxImageWidth).
                     resolve();
 
             this.image = this.createImgEl(imgUrl, imageContent.getDisplayName(), contentId);
@@ -186,7 +189,7 @@ module api.form.inputtype.text.htmlarea {
             this.imageUploaderEl.show();
         }
 
-        protected getMainFormItems(): FormItem[] {
+        protected getMainFormItems():FormItem[] {
             var imageSelector = this.createImageSelector("imageId");
 
             this.addUploaderAndPreviewControls(imageSelector);
@@ -210,7 +213,7 @@ module api.form.inputtype.text.htmlarea {
             this.imagePreviewContainer = imagePreviewContainer;
         }
 
-        private getCaption(): string {
+        private getCaption():string {
             if (this.imageElement) {
                 return wemjq(this.imageElement.parentElement).children("figcaption").text();
             }
@@ -219,7 +222,7 @@ module api.form.inputtype.text.htmlarea {
             }
         }
 
-        private addUploaderAndPreviewControls(imageSelector: FormItem) {
+        private addUploaderAndPreviewControls(imageSelector:FormItem) {
             var imageSelectorContainer = imageSelector.getInput().getParentElement();
 
             imageSelectorContainer.appendChild(this.imageUploaderEl = this.createImageUploader());
@@ -229,7 +232,7 @@ module api.form.inputtype.text.htmlarea {
             wemjq(this.imagePreviewContainer.getHTMLElement()).insertAfter(imageSelectorContainer.getHTMLElement());
         }
 
-        private createImageUploader(): api.content.ImageUploaderEl {
+        private createImageUploader():api.content.ImageUploaderEl {
             var uploader = new api.content.ImageUploaderEl(<api.content.ImageUploaderElConfig>{
                 params: {
                     parent: this.contentId.toString()
@@ -247,19 +250,19 @@ module api.form.inputtype.text.htmlarea {
             uploader.addClass("minimized");
             uploader.hide();
 
-            uploader.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
+            uploader.onUploadStarted((event:FileUploadStartedEvent<Content>) => {
                 this.hideUploadMasks();
                 this.imagePreviewContainer.addClass("upload");
                 this.showProgress();
             });
 
-            uploader.onUploadProgress((event: FileUploadProgressEvent<Content>) => {
+            uploader.onUploadProgress((event:FileUploadProgressEvent<Content>) => {
                 var item = event.getUploadItem();
 
                 this.setProgress(item.getProgress());
             });
 
-            uploader.onFileUploaded((event: FileUploadedEvent<Content>) => {
+            uploader.onFileUploaded((event:FileUploadedEvent<Content>) => {
                 var item = event.getUploadItem();
                 var createdContent = item.getModel();
 
@@ -267,14 +270,14 @@ module api.form.inputtype.text.htmlarea {
                 this.imageSelector.setContent(createdContent);
             });
 
-            uploader.onUploadFailed((event: FileUploadFailedEvent<Content>) => {
+            uploader.onUploadFailed((event:FileUploadFailedEvent<Content>) => {
                 this.showError("Upload failed")
             });
 
             return uploader;
         }
 
-        private setProgress(value: number) {
+        private setProgress(value:number) {
             this.progress.setValue(value);
         }
 
@@ -288,7 +291,7 @@ module api.form.inputtype.text.htmlarea {
             this.error.hide();
         }
 
-        private showError(text: string) {
+        private showError(text:string) {
             this.progress.hide();
             this.error.setHtml(text).show();
             this.error.show();
@@ -307,7 +310,7 @@ module api.form.inputtype.text.htmlarea {
             super.initializeActions();
         }
 
-        private generateUUID(): string {
+        private generateUUID():string {
             var d = new Date().getTime();
             var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                 var r = (d + Math.random() * 16) % 16 | 0;
@@ -322,7 +325,9 @@ module api.form.inputtype.text.htmlarea {
         }
 
         private isImageWiderThanEditor() {
-            return (this.image.getHTMLElement()["width"] > this.getEditor()["editorContainer"].clientWidth);
+            if (!!this.getEditor()["editorContainer"])
+                return (this.image.getHTMLElement()["width"] > this.getEditor()["editorContainer"].clientWidth);
+            return true;
         }
 
         private setImageWidthConstraint() {
@@ -330,7 +335,7 @@ module api.form.inputtype.text.htmlarea {
             this.image.getHTMLElement().style["width"] = (this.isImageWiderThanEditor() || !keepImageSize) ? "100%" : "auto";
         }
 
-        private createFigureElement(figCaptionId: string) {
+        private createFigureElement(figCaptionId:string) {
 
             var figure = api.dom.ElementHelper.fromName("figure");
             var figCaption = api.dom.ElementHelper.fromName("figcaption");
@@ -343,30 +348,30 @@ module api.form.inputtype.text.htmlarea {
             return figure;
         }
 
-        private updateImageParentAlignment(element: HTMLElement, alignment?: string) {
+        private updateImageParentAlignment(element:HTMLElement, alignment?:string) {
             if (!alignment) {
                 alignment = this.image.getHTMLElement().style["text-align"];
             }
 
             var styleFormat = "float: {0}; margin: {1};" +
-                              (this.imageToolbar.isImageInOriginalSize(this.image.getEl()) ? "" : "width: {2}%;");
+                (this.imageToolbar.isImageInOriginalSize(this.image.getEl()) ? "" : "width: {2}%;");
             var styleAttr = "text-align: " + alignment + ";";
 
             switch (alignment) {
-            case 'left':
-            case 'right':
-                styleAttr = api.util.StringHelper.format(styleFormat, alignment, "15px", "40");
-                break;
-            case 'center':
-                styleAttr = styleAttr + api.util.StringHelper.format(styleFormat, "none", "auto", "60");
-                break;
+                case 'left':
+                case 'right':
+                    styleAttr = api.util.StringHelper.format(styleFormat, alignment, "15px", "40");
+                    break;
+                case 'center':
+                    styleAttr = styleAttr + api.util.StringHelper.format(styleFormat, "none", "auto", "60");
+                    break;
             }
 
             element.setAttribute("style", styleAttr);
             element.setAttribute("data-mce-style", styleAttr);
         }
 
-        private createImageTag(): void {
+        private createImageTag():void {
             var container = this.elementContainer,
                 isProperContainer = function () {
                     return container.nodeName !== "FIGCAPTION" && container.nodeName !== "#text"
@@ -418,7 +423,7 @@ module api.form.inputtype.text.htmlarea {
             }
         }
 
-        private changeImageParentAlignmentOnImageAlignmentChange(parent: HTMLElement) {
+        private changeImageParentAlignmentOnImageAlignmentChange(parent:HTMLElement) {
             var observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
                     var alignment = (<HTMLElement>mutation.target).style["text-align"];
@@ -434,19 +439,19 @@ module api.form.inputtype.text.htmlarea {
 
     export class ImageToolbar extends api.ui.toolbar.Toolbar {
 
-        private image: api.dom.ImgEl;
+        private image:api.dom.ImgEl;
 
-        private justifyButton: api.ui.button.ActionButton;
+        private justifyButton:api.ui.button.ActionButton;
 
-        private alignLeftButton: api.ui.button.ActionButton;
+        private alignLeftButton:api.ui.button.ActionButton;
 
-        private centerButton: api.ui.button.ActionButton;
+        private centerButton:api.ui.button.ActionButton;
 
-        private alignRightButton: api.ui.button.ActionButton;
+        private alignRightButton:api.ui.button.ActionButton;
 
-        private keepOriginalSizeCheckbox: api.ui.Checkbox;
+        private keepOriginalSizeCheckbox:api.ui.Checkbox;
 
-        constructor(image: api.dom.ImgEl) {
+        constructor(image:api.dom.ImgEl) {
             super("image-toolbar");
 
             this.image = image;
@@ -460,28 +465,28 @@ module api.form.inputtype.text.htmlarea {
             this.initActiveButton();
         }
 
-        public isImageInOriginalSize(image: api.dom.ElementHelper) {
+        public isImageInOriginalSize(image:api.dom.ElementHelper) {
             return image.getAttribute("data-src").indexOf("keepSize=true") > 0;
         }
 
-        private createJustifiedButton(): api.ui.button.ActionButton {
+        private createJustifiedButton():api.ui.button.ActionButton {
             return this.createAlignmentButton("icon-paragraph-justify");
         }
 
-        private createLeftAlignedButton(): api.ui.button.ActionButton {
+        private createLeftAlignedButton():api.ui.button.ActionButton {
             return this.createAlignmentButton("icon-paragraph-left");
         }
 
-        private createCenteredButton(): api.ui.button.ActionButton {
+        private createCenteredButton():api.ui.button.ActionButton {
             return this.createAlignmentButton("icon-paragraph-center");
         }
 
-        private createRightAlignedButton(): api.ui.button.ActionButton {
+        private createRightAlignedButton():api.ui.button.ActionButton {
             return this.createAlignmentButton("icon-paragraph-right");
         }
 
-        private createAlignmentButton(iconClass: string): api.ui.button.ActionButton {
-            var action: Action = new Action("");
+        private createAlignmentButton(iconClass:string):api.ui.button.ActionButton {
+            var action:Action = new Action("");
 
             action.setIconClass(iconClass);
 
@@ -496,7 +501,7 @@ module api.form.inputtype.text.htmlarea {
             return button;
         }
 
-        private createKeepOriginalSizeCheckbox(): api.ui.Checkbox {
+        private createKeepOriginalSizeCheckbox():api.ui.Checkbox {
             var keepOriginalSizeCheckbox = new api.ui.Checkbox();
             keepOriginalSizeCheckbox.setChecked(this.image.getEl().getAttribute("data-src").indexOf("keepSize=true") > 0);
             keepOriginalSizeCheckbox.addClass('keep-size-check');
@@ -535,21 +540,21 @@ module api.form.inputtype.text.htmlarea {
             var alignment = this.image.getHTMLElement().style["text-align"];
 
             switch (alignment) {
-            case 'justify':
-                this.justifyButton.addClass("active");
-                break;
-            case 'left':
-                this.alignLeftButton.addClass("active");
-                break;
-            case 'center':
-                this.centerButton.addClass("active");
-                break;
-            case 'right':
-                this.alignRightButton.addClass("active");
-                break;
-            default:
-                this.justifyButton.addClass("active");
-                break;
+                case 'justify':
+                    this.justifyButton.addClass("active");
+                    break;
+                case 'left':
+                    this.alignLeftButton.addClass("active");
+                    break;
+                case 'center':
+                    this.centerButton.addClass("active");
+                    break;
+                case 'right':
+                    this.alignRightButton.addClass("active");
+                    break;
+                default:
+                    this.justifyButton.addClass("active");
+                    break;
             }
         }
 
@@ -560,7 +565,7 @@ module api.form.inputtype.text.htmlarea {
             this.alignRightButton.removeClass("active");
         }
 
-        private getImageAlignment(): string {
+        private getImageAlignment():string {
             if (this.justifyButton.hasClass("active")) {
                 return "justify";
             }
