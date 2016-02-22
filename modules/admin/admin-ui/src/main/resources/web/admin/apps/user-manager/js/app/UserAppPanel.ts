@@ -191,6 +191,9 @@ module app {
                     principalPath = PrincipalKey.ofRole("none").toPath(true);
                     tabName = "Role";
                     break;
+                case UserTreeGridItemType.PATH_GUARDS:
+                    tabName = "Path guard";
+                    break;
                 case UserTreeGridItemType.PRINCIPAL:
                     principalType = userItem.getPrincipal().getType();
                     principalPath = userItem.getPrincipal().getKey().toPath(true);
@@ -215,7 +218,29 @@ module app {
                 this.selectPanel(tabMenuItem);
             } else {
                 this.mask.show();
-                if (userItem && userItem.getType() !== UserTreeGridItemType.USER_STORE) {
+                if (!userItem || userItem.getType() === UserTreeGridItemType.USER_STORE) {
+                    new app.wizard.UserStoreWizardPanelFactory().
+                        setAppBarTabId(tabId).createForNew().then((wizard: app.wizard.UserStoreWizardPanel) => {
+
+                            this.handleWizardCreated(wizard, tabName);
+
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                        }).finally(() => {
+                            this.mask.hide();
+                        }).done();
+                } else if (userItem.getType() === UserTreeGridItemType.PATH_GUARDS) {
+                    new app.wizard.UserStoreWizardPanelFactory().
+                        setAppBarTabId(tabId).createForNew().then((wizard: app.wizard.UserStoreWizardPanel) => {
+
+                            this.handleWizardCreated(wizard, tabName);
+
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                        }).finally(() => {
+                            this.mask.hide();
+                        }).done();
+                } else {
 
                     userStoreRequest.then((userStore: UserStore) => {
                         return new app.wizard.PrincipalWizardPanelFactory().
@@ -236,17 +261,6 @@ module app {
                     }).finally(() => {
                         this.mask.hide();
                     }).done();
-                } else {
-                    new app.wizard.UserStoreWizardPanelFactory().
-                        setAppBarTabId(tabId).createForNew().then((wizard: app.wizard.UserStoreWizardPanel) => {
-
-                            this.handleWizardCreated(wizard, tabName);
-
-                        }).catch((reason: any) => {
-                            api.DefaultErrorHandler.handle(reason);
-                        }).finally(() => {
-                            this.mask.hide();
-                        }).done();
                 }
             }
         }
