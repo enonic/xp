@@ -124,12 +124,21 @@ module app.installation.view {
                      elem.hasClass(MarketAppStatusFormatter.statusUpdateCssClass))) {
                     elem.setInnerHtml("");
                     elem.addClass("spinner");
-                    new api.application.InstallUrlApplicationRequest(node.getData().getLatestVersionDownloadUrl()).sendAndParse().then((application: api.application.Application)=> {
-                        elem.removeClass("spinner " + MarketAppStatusFormatter.statusInstallCssClass + " " +
-                                         MarketAppStatusFormatter.statusUpdateCssClass);
-                        elem.addClass(MarketAppStatusFormatter.getStatusCssClass(MarketAppStatus.INSTALLED));
-                        elem.setInnerHtml(MarketAppStatusFormatter.formatStatus(MarketAppStatus.INSTALLED));
-                        app.setStatus(MarketAppStatus.INSTALLED);
+                    new api.application.InstallUrlApplicationRequest(node.getData().getLatestVersionDownloadUrl()).sendAndParse().then((result: api.application.ApplicationInstallResult)=> {
+
+                        elem.removeClass("spinner");
+
+                        if(!result.getFailure()) {
+
+                            elem.removeClass(MarketAppStatusFormatter.statusInstallCssClass + " " +
+                                             MarketAppStatusFormatter.statusUpdateCssClass);
+                            elem.addClass(MarketAppStatusFormatter.getStatusCssClass(MarketAppStatus.INSTALLED));
+
+                            elem.setInnerHtml(MarketAppStatusFormatter.formatStatus(MarketAppStatus.INSTALLED));
+                            app.setStatus(MarketAppStatus.INSTALLED);
+                        } else {
+                            elem.setInnerHtml(MarketAppStatusFormatter.formatStatus(status));
+                        }
                     }).catch((reason: any) => {
                         elem.removeClass("spinner");
                         elem.setInnerHtml(MarketAppStatusFormatter.formatStatus(status));

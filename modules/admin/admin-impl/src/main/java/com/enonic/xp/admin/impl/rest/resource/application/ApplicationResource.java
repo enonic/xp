@@ -1,7 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.application;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.stream.Collectors;
 
@@ -17,6 +17,8 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -25,6 +27,7 @@ import com.enonic.xp.admin.impl.json.application.ApplicationJson;
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallParams;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallResultJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstalledJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationListParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSuccessJson;
@@ -56,6 +59,8 @@ public final class ApplicationResource
     private SiteService siteService;
 
     private MarketService marketService;
+
+    private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
 
     @GET
     @Path("list")
@@ -125,7 +130,7 @@ public final class ApplicationResource
     @POST
     @Path("install")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public ApplicationInstalledJson install( final MultipartForm form )
+    public ApplicationInstallResultJson install( final MultipartForm form )
         throws Exception
     {
         final MultipartItem appFile = form.get( "file" );
@@ -137,9 +142,7 @@ public final class ApplicationResource
 
         final ByteSource byteSource = appFile.getBytes();
 
-        final Application application = this.applicationService.installApplication( byteSource, true, true );
-
-        return new ApplicationInstalledJson( application, false );
+        return installApplication( byteSource, appFile.getFileName() );
     }
 
     @POST
@@ -155,30 +158,47 @@ public final class ApplicationResource
     @POST
     @Path("installUrl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public ApplicationInstalledJson installUrl( final ApplicationInstallParams params )
+    public ApplicationInstallResultJson installUrl( final ApplicationInstallParams params )
         throws Exception
     {
         final String urlString = params.getURL();
-
-        final URL url;
+        final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
+        String failure;
         try
         {
-            url = new URL( urlString );
+            final URL url = new URL( urlString );
+
+            try (final InputStream inputStream = url.openStream())
+            {
+                return installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ), urlString );
+            }
+
         }
-        catch ( MalformedURLException e )
+        catch ( IOException e )
         {
-            throw new RuntimeException( "cannot fetch from URL " + urlString, e );
+            LOG.error( failure = "Failed to upload application from " + urlString );
+            result.setFailure( failure );
+            return result;
         }
+    }
 
-        try (final InputStream inputStream = url.openStream())
+    private ApplicationInstallResultJson installApplication(final ByteSource byteSource, final String applicationName) {
+        final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
+
+        try
         {
+            final Application application = this.applicationService.installApplication(byteSource, true, true );
 
-            final Application application =
-                this.applicationService.installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ), true, true );
-
-            return new ApplicationInstalledJson( application, false );
+            result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
         }
+        catch ( Exception e )
+        {
+            final String failure = "Failed to process application " + applicationName;
+            LOG.error( failure );
 
+            result.setFailure( failure );
+        }
+        return result;
     }
 
     @POST

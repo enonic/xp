@@ -687,7 +687,12 @@ module api.ui.uploader {
                 var values = [];
                 this.uploadedItems.forEach((item) => {
                     if (item.getStatus() == PluploadStatus.DONE) {
-                        values.push(this.getModelValue(item.getModel()));
+                        if(item.getModel()) {
+                            values.push(this.getModelValue(item.getModel()));
+                        } else {
+                            item.notifyFailed();
+                           this.notifyUploadFailed(item);
+                        }
                     }
                 });
 

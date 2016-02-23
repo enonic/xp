@@ -99,6 +99,10 @@ module api.util {
             return StringHelper.EMPTY_STRING;
         }
 
+        static testRegex(regex:string, target:string) : boolean{
+            return new RegExp(regex).test(target);
+        }
+
         /**
          * Replaces given tokens in given string.
          * @param str
