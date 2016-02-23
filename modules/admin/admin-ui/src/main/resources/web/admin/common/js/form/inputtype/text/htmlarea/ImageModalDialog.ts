@@ -28,6 +28,11 @@ module api.form.inputtype.text.htmlarea {
         private callback: Function;
         private imageToolbar: ImageToolbar;
 
+        private scrollDownButton: api.dom.Element;
+        private scrollUpButton: api.dom.Element;
+        private scrollBarWidth: number;
+        private scrollBarRemoveTimeoutId: number;
+
         constructor(config: api.form.inputtype.text.HtmlAreaImage, contentId: api.content.ContentId) {
             this.imageElement = <HTMLImageElement>config.element;
             this.elementContainer = config.container;
@@ -37,12 +42,16 @@ module api.form.inputtype.text.htmlarea {
             super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Image"), "image-modal-dialog");
         }
 
-        private getImageContent(images: api.content.ContentSummary[]): api.content.ContentSummary {
-            var filteredImages = images.filter((image: api.content.ContentSummary) => {
-                return this.imageElement.src.indexOf(image.getId()) > 0;
-            });
+        protected getMainFormItems(): FormItem[] {
+            var imageSelector = this.createImageSelector("imageId");
 
-            return filteredImages.length > 0 ? filteredImages[0] : null;
+            this.addUploaderAndPreviewControls(imageSelector);
+            this.setFirstFocusField(imageSelector.getInput());
+
+            return [
+                imageSelector,
+                this.imageCaptionField = this.createFormItem("caption", "Caption", null, this.getCaption())
+            ];
         }
 
         private createImageSelector(id: string): FormItem {
@@ -92,6 +101,7 @@ module api.form.inputtype.text.htmlarea {
                 this.imageToolbar.remove();
                 this.showCaptionLabel();
                 this.imageUploaderEl.show();
+                this.scrollDownButton.hide();
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
 
@@ -104,6 +114,28 @@ module api.form.inputtype.text.htmlarea {
             });
 
             return formItem;
+        }
+
+        private addUploaderAndPreviewControls(imageSelector: FormItem) {
+            var imageSelectorContainer = imageSelector.getInput().getParentElement();
+
+            imageSelectorContainer.appendChild(this.imageUploaderEl = this.createImageUploader());
+
+            this.createImagePreviewContainer();
+
+            var scrollWrapperDiv = new api.dom.DivEl("preview-panel-scroll-wrapper");
+            scrollWrapperDiv.appendChild(this.imagePreviewContainer);
+            wemjq(scrollWrapperDiv.getHTMLElement()).insertAfter(imageSelectorContainer.getHTMLElement());
+
+            this.initializeImageScrollNavigation();
+        }
+
+        private getImageContent(images: api.content.ContentSummary[]): api.content.ContentSummary {
+            var filteredImages = images.filter((image: api.content.ContentSummary) => {
+                return this.imageElement.src.indexOf(image.getId()) > 0;
+            });
+
+            return filteredImages.length > 0 ? filteredImages[0] : null;
         }
 
         private adjustSelectorDropDown(inputElement: api.dom.Element, dropDownElement: api.dom.ElementHelper) {
@@ -121,20 +153,23 @@ module api.form.inputtype.text.htmlarea {
 
             this.image.onLoaded(() => {
                 this.imagePreviewContainer.removeClass("upload");
-                wemjq(this.imageToolbar.getHTMLElement()).insertBefore(this.imagePreviewContainer.getHTMLElement());
+                wemjq(this.imageToolbar.getHTMLElement()).insertBefore(this.imagePreviewContainer.getHTMLElement().parentElement);
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
                 if (this.getCaptionFieldValue() == "") {
                     this.imageCaptionField.getEl().scrollIntoView();
                     this.imageCaptionField.getInput().giveFocus();
                 }
+
+                if (this.isScrollBarVisible()) {
+                    this.scrollDownButton.show();
+                    this.imagePreviewContainer.getEl().setMarginRight("-" + this.scrollBarWidth + "px");
+                }
             });
 
             formItem.addClass("image-preview");
-
             this.hideUploadMasks();
             this.hideCaptionLabel();
             this.imageUploaderEl.hide();
-
             this.imagePreviewContainer.insertChild(this.image, 0);
         }
 
@@ -184,18 +219,6 @@ module api.form.inputtype.text.htmlarea {
             this.imageUploaderEl.show();
         }
 
-        protected getMainFormItems(): FormItem[] {
-            var imageSelector = this.createImageSelector("imageId");
-
-            this.addUploaderAndPreviewControls(imageSelector);
-            this.setFirstFocusField(imageSelector.getInput());
-
-            return [
-                imageSelector,
-                this.imageCaptionField = this.createFormItem("caption", "Caption", null, this.getCaption())
-            ];
-        }
-
         private createImagePreviewContainer() {
             var imagePreviewContainer = new api.dom.DivEl("content-item-preview-panel");
             //limiting image modal dialog height up to screen size except padding on top and bottom
@@ -209,6 +232,26 @@ module api.form.inputtype.text.htmlarea {
             this.error = new api.dom.DivEl("error");
             imagePreviewContainer.appendChild(this.error);
 
+            imagePreviewContainer.onScroll(() => {
+
+                if (this.isScrolledToBottom()) {
+                    this.scrollDownButton.hide();
+                }
+                else {
+                    this.scrollDownButton.show();
+                }
+
+                if (this.isScrolledToTop()) {
+                    this.scrollUpButton.hide();
+                }
+                else {
+                    this.scrollUpButton.show();
+                }
+
+                this.showScrollBar();
+                this.removeScrollBarOnTimeout();
+            });
+
             this.imagePreviewContainer = imagePreviewContainer;
         }
 
@@ -219,16 +262,6 @@ module api.form.inputtype.text.htmlarea {
             else {
                 return api.util.StringHelper.EMPTY_STRING;
             }
-        }
-
-        private addUploaderAndPreviewControls(imageSelector: FormItem) {
-            var imageSelectorContainer = imageSelector.getInput().getParentElement();
-
-            imageSelectorContainer.appendChild(this.imageUploaderEl = this.createImageUploader());
-
-            this.createImagePreviewContainer();
-
-            wemjq(this.imagePreviewContainer.getHTMLElement()).insertAfter(imageSelectorContainer.getHTMLElement());
         }
 
         private createImageUploader(): api.content.ImageUploaderEl {
@@ -436,6 +469,123 @@ module api.form.inputtype.text.htmlarea {
         private isImageInOriginalSize(image: api.dom.ElementHelper) {
             return image.getAttribute("data-src").indexOf("keepSize=true") > 0;
         }
+
+        private initializeImageScrollNavigation() {
+            this.initScrollDownButton();
+            this.initScrollUpButton();
+            this.scrollBarWidth = this.getScrollbarWidth();
+        }
+
+        private isScrollBarVisible(): boolean {
+            return this.imagePreviewContainer.getHTMLElement().scrollHeight > this.imagePreviewContainer.getHTMLElement().clientHeight;
+        }
+
+        private isScrolledToTop(): boolean {
+            var element = this.imagePreviewContainer.getHTMLElement();
+            return element.scrollTop === 0;
+        }
+
+        private isScrolledToBottom(): boolean {
+            var element = this.imagePreviewContainer.getHTMLElement();
+            return (element.scrollHeight - element.scrollTop) === element.clientHeight;
+        }
+
+        private initScrollDownButton() {
+            var myId = this.getId();
+            var clipHtml = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="' + myId +
+                           '-scrollDown" class="scrollDown" width="40" height="40">' +
+                           '    <defs>' +
+                           '        <polygon id="' + myId + '-scrollDownTriangle" class="scrollDown-triangle" points="8,0,16,8,0,8"/>' +
+                           '        <filter id="f1" x="-40%" y="-40%" height="200%" width="200%">' +
+                           '        <feOffset result="offOut" in="SourceAlpha" dx="0" dy="0" />' +
+                           '        <feGaussianBlur result="blurOut" in="offOut" stdDeviation="2" />' +
+                           '        <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />' +
+                           '        </filter>' +
+                           '    </defs>' +
+                           '    <circle cx="20" cy="20" r="16" filter="url(#f1)" fill="white"/>' +
+                           '    <use xlink:href="#' + myId + '-scrollDownTriangle" x="4" y="19" transform="rotate(180, 16, 22)"/>' +
+                           '</svg>';
+
+
+            this.scrollDownButton = api.dom.Element.fromString(clipHtml);
+
+            this.scrollDownButton.onClicked(() => {
+                wemjq(this.imagePreviewContainer.getHTMLElement()).animate({scrollTop: "+=50"}, 400);
+            });
+            wemjq(this.scrollDownButton.getHTMLElement()).insertAfter(this.imagePreviewContainer.getHTMLElement());
+
+            this.scrollDownButton.hide();
+        }
+
+        private initScrollUpButton() {
+            var myId = this.getId();
+            var clipHtml = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="' + myId +
+                           '-scrollUp" class="scrollUp" width="40" height="40">' +
+                           '    <defs>' +
+                           '        <polygon id="' + myId + '-scrollUpTriangle" class="scrollUp-triangle" points="8,0,16,8,0,8"/>' +
+                           '        <filter id="f1" x="-40%" y="-40%" height="200%" width="200%">' +
+                           '        <feOffset result="offOut" in="SourceAlpha" dx="0" dy="0" />' +
+                           '        <feGaussianBlur result="blurOut" in="offOut" stdDeviation="2" />' +
+                           '        <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />' +
+                           '        </filter>' +
+                           '    </defs>' +
+                           '    <circle cx="20" cy="20" r="16" filter="url(#f1)" fill="white"/>' +
+                           '    <use xlink:href="#' + myId + '-scrollUpTriangle" x="12" y="15" />' +
+                           '</svg>';
+
+
+            this.scrollUpButton = api.dom.Element.fromString(clipHtml);
+
+            this.scrollUpButton.onClicked(() => {
+                wemjq(this.imagePreviewContainer.getHTMLElement()).animate({scrollTop: "-=50"}, 400);
+            });
+            wemjq(this.scrollUpButton.getHTMLElement()).insertBefore(this.imagePreviewContainer.getHTMLElement());
+
+            this.scrollUpButton.hide();
+        }
+
+        private getScrollbarWidth(): number {
+            var outer = document.createElement("div");
+            outer.style.visibility = "hidden";
+            outer.style.width = "100px";
+            outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+
+            document.body.appendChild(outer);
+
+            var widthNoScroll = outer.offsetWidth;
+            // force scrollbars
+            outer.style.overflow = "scroll";
+
+            // add innerdiv
+            var inner = document.createElement("div");
+            inner.style.width = "100%";
+            outer.appendChild(inner);
+
+            var widthWithScroll = inner.offsetWidth;
+
+            // remove divs
+            outer.parentNode.removeChild(outer);
+
+            return widthNoScroll - widthWithScroll;
+        }
+
+        private showScrollBar() {
+            this.imagePreviewContainer.getHTMLElement().parentElement.style.marginRight = "-17px";
+            this.imagePreviewContainer.getEl().setMarginRight("");
+            this.imagePreviewContainer.getHTMLElement().style.overflowY = "auto";
+        }
+
+        private removeScrollBarOnTimeout() {
+            if (!!this.scrollBarRemoveTimeoutId) {
+                window.clearTimeout(this.scrollBarRemoveTimeoutId);
+            }
+
+            this.scrollBarRemoveTimeoutId = window.setTimeout(() => {
+                this.imagePreviewContainer.getHTMLElement().parentElement.style.marginRight = "";
+                this.imagePreviewContainer.getEl().setMarginRight("-" + this.scrollBarWidth + "px");
+                this.imagePreviewContainer.getHTMLElement().style.overflowY = "auto";
+            }, 500);
+        }
     }
 
     export class ImageToolbar extends api.ui.toolbar.Toolbar {
@@ -466,8 +616,7 @@ module api.form.inputtype.text.htmlarea {
             super.addElement(this.keepOriginalSizeCheckbox = this.createKeepOriginalSizeCheckbox());
             super.addElement(this.imageCroppingSelector = this.createImageCroppingSelector());
 
-            this.keepOriginalSizeCheckbox.setChecked(this.image.getEl().getAttribute("data-src").indexOf("keepSize=true") > 0);
-
+            this.initKeepSizeCheckbox();
             this.initActiveButton();
         }
 
@@ -567,6 +716,10 @@ module api.form.inputtype.text.htmlarea {
             this.alignLeftButton.removeClass("active");
             this.centerButton.removeClass("active");
             this.alignRightButton.removeClass("active");
+        }
+
+        private initKeepSizeCheckbox() {
+            this.keepOriginalSizeCheckbox.setChecked(this.image.getEl().getAttribute("data-src").indexOf("keepSize=true") > 0);
         }
 
         private getImageAlignment(): string {
