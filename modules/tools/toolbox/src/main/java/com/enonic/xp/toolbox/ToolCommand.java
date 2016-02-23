@@ -36,10 +36,7 @@ public abstract class ToolCommand
                 error( "Response error: %s", e.getMessage() );
             }
         }
-
-        error( "Response error before: %s", e.getMessage() );
         exception( "Unexpected error: %s", e );
-
     }
 
     private void error( final String message, final Object... args )
