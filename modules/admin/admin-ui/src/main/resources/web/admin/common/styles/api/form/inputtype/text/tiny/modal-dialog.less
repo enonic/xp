@@ -322,6 +322,27 @@
   &.image-modal-dialog {
     max-width: 640px;
     max-height: 100%;
+
+    svg {
+      position: absolute;
+      cursor: pointer;
+
+      &.scrollDown {
+        left: 48%;
+        top: 97%;
+      }
+
+      &.scrollUp {
+        left: 48%;
+        top: 10%;
+      }
+
+    }
+
+    .preview-panel-scroll-wrapper {
+      overflow: hidden;
+    }
+
   }
 
 }
