@@ -77,37 +77,36 @@ module app.installation {
         }
 
         private initUploaderListeners() {
-            this.uploadAppPanel.getApplicationInput().onUploadFailed((event: FileUploadFailedEvent<Application>) => {
+
+            let uploadFailedHandler = (event: FileUploadFailedEvent<Application>, uploader: ApplicationUploaderEl) => {
                 this.uploadAppPanel.getApplicationInput().showFailure(
-                    this.uploadAppPanel.getApplicationInput().getUploader().getFailure());
-                this.uploadAppPanel.getApplicationInput().reset();
+                    uploader.getFailure());
+                this.resetFileInputWithUploader();
+            };
+
+            this.uploadAppPanel.getApplicationInput().onUploadFailed((event) => {
+                uploadFailedHandler(event, this.uploadAppPanel.getApplicationInput().getUploader())
             });
 
-            this.uploadAppPanel.getApplicationUploaderEl().onUploadFailed((event: FileUploadFailedEvent<Application>) => {
-                this.uploadAppPanel.getApplicationInput().showFailure(
-                    this.uploadAppPanel.getApplicationUploaderEl().getFailure());
-                this.uploadAppPanel.getApplicationUploaderEl().reset();
+            this.uploadAppPanel.getApplicationUploaderEl().onUploadFailed((event) => {
+                uploadFailedHandler(event, this.uploadAppPanel.getApplicationUploaderEl())
             });
 
-            this.uploadAppPanel.getApplicationInput().onUploadCompleted((event: FileUploadCompleteEvent<Application>) => {
-                if(event.getUploadItems()) {
+            let uploadCompletedHandler = (event: FileUploadCompleteEvent<Application>) => {
+                if (event.getUploadItems()) {
                     this.close();
                 }
-            });
+            };
 
-            this.uploadAppPanel.getApplicationUploaderEl().onUploadCompleted((event: FileUploadCompleteEvent<Application>) => {
-                if(event.getUploadItems()) {
-                    this.close();
-                }
-            });
+            this.uploadAppPanel.getApplicationInput().onUploadCompleted(uploadCompletedHandler);
+            this.uploadAppPanel.getApplicationUploaderEl().onUploadCompleted(uploadCompletedHandler);
 
-            this.uploadAppPanel.getApplicationInput().onUploadStarted((event: FileUploadStartedEvent<Application>) => {
+            let uploadStartedHandler = (event: FileUploadStartedEvent<Application>) => {
                 new api.application.ApplicationUploadStartedEvent(event.getUploadItems()).fire();
-            });
+            };
 
-            this.uploadAppPanel.getApplicationUploaderEl().onUploadStarted((event: FileUploadStartedEvent<Application>) => {
-                new api.application.ApplicationUploadStartedEvent(event.getUploadItems()).fire();
-            });
+            this.uploadAppPanel.getApplicationInput().onUploadStarted(uploadStartedHandler);
+            this.uploadAppPanel.getApplicationUploaderEl().onUploadStarted(uploadStartedHandler);
         }
 
         open() {
