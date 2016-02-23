@@ -89,10 +89,11 @@ module app.installation.view {
         private mask: api.ui.mask.LoadMask;
         private cancelAction: Action;
 
+        private errorPanel: api.form.ValidationRecordingViewer;
+
         constructor(cancelAction: Action, className?: string, originalValue?: string) {
+
             this.textInput = new InputEl("text");
-            this.LAST_KEY_PRESS_TIMEOUT = 1500;
-            this.cancelAction = cancelAction;
 
             this.applicationUploaderEl = new ApplicationUploaderEl({
                 name: 'application-input-uploader',
@@ -103,6 +104,11 @@ module app.installation.view {
                 value: originalValue
             });
 
+            super(this.textInput, this.applicationUploaderEl);
+
+            this.LAST_KEY_PRESS_TIMEOUT = 1500;
+            this.cancelAction = cancelAction;
+
             this.applicationUploaderEl.onUploadStarted((event: api.ui.uploader.FileUploadStartedEvent<Application>) => {
                 var names = event.getUploadItems().map((uploadItem: api.ui.uploader.UploadItem<Application>) => {
                     return uploadItem.getName();
@@ -110,7 +116,14 @@ module app.installation.view {
                 this.textInput.setValue(names.join(', '));
             });
 
-            super(this.textInput, this.applicationUploaderEl);
+            this.errorPanel = new api.form.ValidationRecordingViewer();
+            this.appendChild(this.errorPanel);
+            this.errorPanel.hide();
+
+            this.onHidden(() => {
+                this.errorPanel.hide();
+            });
+
             this.addClass("file-input" + (className ? " " + className : ""));
             this.initUrlEnteredHandler();
         }
@@ -119,15 +132,17 @@ module app.installation.view {
             this.onKeyDown((event) => {
                 clearTimeout(this.lastTimeKeyPressedTimer);
 
-                if (event.keyCode !== 27) {
-                    this.lastTimeKeyPressedTimer = setTimeout(() => {
-                        if (!api.util.StringHelper.isEmpty(this.textInput.getValue())) {
-                            this.initMask();
-                            this.mask.show();
-                            this.installWithUrl(this.textInput.getValue());
-                            console.log("url: " + this.textInput.getValue());
-                        }
-                    }, this.LAST_KEY_PRESS_TIMEOUT);
+                switch (event.keyCode) {
+                    case 13: //enter
+                        this.startInstall();
+                        break;
+                    case 27: //esc
+                    break;
+                    default :
+                        this.lastTimeKeyPressedTimer = setTimeout(() => {
+                           this.startInstall();
+                        }, this.LAST_KEY_PRESS_TIMEOUT);
+                    break;
                 }
             });
         }
@@ -139,10 +154,31 @@ module app.installation.view {
             }
         }
 
+        private startInstall() {
+            if (!api.util.StringHelper.isEmpty(this.textInput.getValue())) {
+                this.initMask();
+                this.mask.show();
+                this.installWithUrl(this.textInput.getValue());
+                console.log("url: " + this.textInput.getValue());
+            }
+        }
+
         private installWithUrl(url: string) {
-            new api.application.InstallUrlApplicationRequest(url).sendAndParse().then((application: api.application.Application)=> {
+            this.mask.show();
+            new api.application.InstallUrlApplicationRequest(url).sendAndParse().then((result: api.application.ApplicationInstallResult)=> {
+
+                let failure = result.getFailure();
+
+                if (!failure) {
+                    this.errorPanel.hide();
+                    this.cancelAction.execute();
+                } else {
+                    this.errorPanel.setError(failure);
+                    this.errorPanel.show();
+                }
+
                 this.mask.hide();
-                this.cancelAction.execute();
+
             }).catch((reason: any) => {
                 this.mask.hide();
                 api.DefaultErrorHandler.handle(reason);
