@@ -172,6 +172,12 @@
     }
 
     function onKeyPressed(e) {
+        if (!isPanelExpanded()) {
+            return;
+        }
+
+        e.stopPropagation();
+
         switch(e.keyCode) {
         case 27:
             // esc key pressed
@@ -194,5 +200,7 @@
         appendLauncherPanel();
     }
 
-    init();
+    window.addEventListener("load", function () {
+        init();
+    });
 }());

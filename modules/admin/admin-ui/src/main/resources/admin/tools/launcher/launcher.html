@@ -10,6 +10,8 @@
 <body>
 
 <script type="text/javascript">
+(function () {
+    var launcherMainContainer;
 
     function listenToKeyboardEvents() {
         window.addEventListener("keydown", onKeyPressed, true);
@@ -20,13 +22,13 @@
     }
 
     function disableKeyboardNavigation() {
-        document.querySelector('.launcher-main-container').classList.remove("keyboard-navigation");
+        getLauncherMainContainer().classList.remove("keyboard-navigation");
         unselectCurrentApp();
         window.removeEventListener("mousemove", disableKeyboardNavigation, true);
     }
 
     function initKeyboardNavigation() {
-        var appContainer = document.querySelector('.launcher-main-container');
+        var appContainer = getLauncherMainContainer();
         if (!appContainer.classList.contains("keyboard-navigation")) {
             listenToMouseMove();
             appContainer.classList.add("keyboard-navigation");
@@ -34,7 +36,6 @@
     }
 
     function onKeyPressed(e) {
-        e.stopPropagation();
         switch(e.keyCode) {
         case 38:
             // up key pressed
@@ -57,11 +58,11 @@
     }
 
     function getSelectedApp() {
-        return document.querySelector('.app-row.selected');
+        return getLauncherMainContainer().querySelector('.app-row.selected');
     }
 
     function getSelectedAppIndex() {
-        var apps = document.querySelectorAll('.app-row');
+        var apps = getLauncherMainContainer().querySelectorAll('.app-row');
         for (var i=0; i<apps.length; i++) {
             if (apps[i].classList.contains("selected")) {
                 return i;
@@ -72,7 +73,7 @@
 
     function selectNextApp() {
         var selectedIndex = getSelectedAppIndex();
-        var apps = document.querySelectorAll('.app-row');
+        var apps = getLauncherMainContainer().querySelectorAll('.app-row');
 
         selectApp((selectedIndex + 1) == apps.length ? 0 : selectedIndex + 1);
     }
@@ -106,7 +107,7 @@
     }
 
     function getAppByIndex(index) {
-        var apps = document.querySelectorAll('.app-row');
+        var apps = getLauncherMainContainer().querySelectorAll('.app-row');
         for (var i=0; i<apps.length; i++) {
             if (i == index) {
                 return apps[i];
@@ -123,7 +124,16 @@
         }
     }
 
+    function getLauncherMainContainer() {
+        if (!launcherMainContainer) {
+            launcherMainContainer = document.querySelector('.launcher-main-container');
+        }
+
+        return launcherMainContainer;
+    }
+
     listenToKeyboardEvents();
+}());
 </script>
 
 <div class="launcher-main-container" tabindex="100">
