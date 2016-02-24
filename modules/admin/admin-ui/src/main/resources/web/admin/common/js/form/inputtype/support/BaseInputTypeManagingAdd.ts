@@ -112,12 +112,29 @@ module api.form.inputtype.support {
                 if (BaseInputTypeManagingAdd.debug) {
                     console.debug('BaseInputTypeManagingAdd.registerPropertyArray: register new one ', propertyArray);
                 }
+                this.ensureOccurrenceLimits(propertyArray);
+
                 propertyArray.onPropertyValueChanged(this.propertyArrayListener);
                 propertyArray.onPropertyAdded(this.propertyArrayListener);
                 propertyArray.onPropertyRemoved(this.propertyArrayListener);
                 propertyArray.onPropertyIndexChanged(this.propertyArrayListener);
             }
             this.propertyArray = propertyArray;
+        }
+
+        private ensureOccurrenceLimits(propertyArray: PropertyArray) {
+
+            var max = this.input.getOccurrences().getMaximum(),
+                actual = propertyArray.getSize();
+
+            if (max > 0 && max < actual) {
+                if (BaseInputTypeManagingAdd.debug) {
+                    console.info(`BaseInputTypeManagingAdd: expected max ${max} occurrences, but found ${actual}, dropping extra`);
+                }
+                for (var i = actual - 1; i > max - 1; i--) {
+                    propertyArray.remove(i);
+                }
+            }
         }
 
         hasValidUserInput(): boolean {
