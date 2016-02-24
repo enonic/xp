@@ -138,14 +138,16 @@ module app.browse {
             }
         }
 
-        updateUserNode(principal: api.security.Principal, userStore: api.security.UserStore) {
+        updateUserNode(principal: api.security.Principal, userStore: api.security.UserStore, pathGuard: api.security.PathGuard) {
             var userTreeGridItem,
                 builder = new UserTreeGridItemBuilder();
 
-            if (!principal) { // UserStore type
-                userTreeGridItem = builder.setUserStore(userStore).setType(UserTreeGridItemType.USER_STORE).build();
-            } else {         // Principal type
+            if (pathGuard) {
+                userTreeGridItem = builder.setPathGuard(pathGuard).setType(UserTreeGridItemType.PATH_GUARD).build();
+            } else if (principal) {
                 userTreeGridItem = builder.setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build();
+            } else { // UserStore type
+                userTreeGridItem = builder.setUserStore(userStore).setType(UserTreeGridItemType.USER_STORE).build();
             }
 
             var nodeList = this.getRoot().getCurrentRoot().treeToList();
@@ -161,8 +163,23 @@ module app.browse {
             this.invalidate();
         }
 
-        appendUserNode(principal: api.security.Principal, userStore: api.security.UserStore, parentOfSameType?: boolean) {
-            if (!principal) { // UserStore type
+        appendUserNode(principal: api.security.Principal, userStore: api.security.UserStore, pathGuard: api.security.PathGuard,
+                       parentOfSameType?: boolean) {
+            if (pathGuard) {
+                var userTreeGridItem = new UserTreeGridItemBuilder().
+                    setPathGuard(pathGuard).
+                    setType(UserTreeGridItemType.PATH_GUARD).
+                    build();
+
+                this.appendNode(userTreeGridItem, parentOfSameType, false);
+            } else if (principal) {
+                var userTreeGridItem = new UserTreeGridItemBuilder().
+                    setPrincipal(principal).
+                    setType(UserTreeGridItemType.PRINCIPAL).
+                    build();
+
+                this.appendNode(userTreeGridItem, parentOfSameType, false);
+            } else { // UserStore type
 
                 var userTreeGridItem = new UserTreeGridItemBuilder().
                     setUserStore(userStore).
@@ -181,15 +198,6 @@ module app.browse {
                     this.initData(this.getRoot().getDefaultRoot().treeToList());
                     this.invalidate();
                 }
-
-            } else { // Principal type
-
-                var userTreeGridItem = new UserTreeGridItemBuilder().
-                    setPrincipal(principal).
-                    setType(UserTreeGridItemType.PRINCIPAL).
-                    build();
-
-                this.appendNode(userTreeGridItem, parentOfSameType, false);
 
             }
         }

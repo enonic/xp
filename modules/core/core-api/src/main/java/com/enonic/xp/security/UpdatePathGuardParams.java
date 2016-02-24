@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableList;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Beta
-public final class CreatePathGuardParams
+public final class UpdatePathGuardParams
 {
     private final String key;
 
@@ -16,7 +16,7 @@ public final class CreatePathGuardParams
 
     private final ImmutableList<String> paths;
 
-    private CreatePathGuardParams( final Builder builder )
+    private UpdatePathGuardParams( final Builder builder )
     {
         this.key = checkNotNull( builder.key, "key is required" );
         this.displayName = checkNotNull( builder.displayName, "displayName is required" );
@@ -90,9 +90,9 @@ public final class CreatePathGuardParams
             return this;
         }
 
-        public CreatePathGuardParams build()
+        public UpdatePathGuardParams build()
         {
-            return new CreatePathGuardParams( this );
+            return new UpdatePathGuardParams( this );
         }
     }
 }

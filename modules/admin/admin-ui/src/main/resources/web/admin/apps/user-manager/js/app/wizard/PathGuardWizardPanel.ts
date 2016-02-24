@@ -204,7 +204,7 @@ module app.wizard {
                     this.wizardHeader.disableNameInput();
                     this.wizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('PathGuard was created!');
-                    new api.security.UserItemCreatedEvent(null, pathGuard).fire();
+                    new api.security.UserItemCreatedEvent(null, null, pathGuard).fire();
 
                     return pathGuard;
                 });
@@ -218,7 +218,7 @@ module app.wizard {
                         this.notifyPathGuardNamed(pathGuard);
                     }
                     api.notify.showFeedback('PathGuard was updated!');
-                    new api.security.UserItemUpdatedEvent(null, pathGuard).fire();
+                    new api.security.UserItemUpdatedEvent(null, null, pathGuard).fire();
 
                     return pathGuard;
                 });

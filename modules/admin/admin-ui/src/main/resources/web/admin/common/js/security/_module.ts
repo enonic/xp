@@ -22,6 +22,7 @@
 ///<reference path="SecurityResourceRequest.ts"/>
 ///<reference path="ListUserStoresRequest.ts"/>
 ///<reference path="GetUserStoreByKeyRequest.ts"/>
+///<reference path="GetPathGuardByKeyRequest.ts"/>
 ///<reference path="GetDefaultUserStoreRequest.ts"/>
 ///<reference path="PrincipalListJson.ts"/>
 ///<reference path="FindPrincipalsRequest.ts"/>
@@ -33,9 +34,11 @@
 ///<reference path="CreateUserRequest.ts"/>
 ///<reference path="CreateGroupRequest.ts"/>
 ///<reference path="CreateRoleRequest.ts"/>
+///<reference path="CreatePathGuardRequest.ts"/>
 ///<reference path="UpdateUserRequest.ts"/>
 ///<reference path="UpdateGroupRequest.ts"/>
 ///<reference path="UpdateRoleRequest.ts"/>
+///<reference path="UpdatePathGuardRequest.ts"/>
 ///<reference path="DeletePrincipalResult.ts"/>
 ///<reference path="DeleteUserStoreResult.ts"/>
 ///<reference path="DeletePrincipalResultJson.ts"/>
@@ -53,6 +56,7 @@
 ///<reference path="CreateUserStoreRequest.ts"/>
 ///<reference path="UpdateUserStoreRequest.ts"/>
 ///<reference path="UserStoreNamedEvent.ts"/>
+///<reference path="PathGuardNamedEvent.ts"/>
 ///<reference path="UserItemCreatedEvent.ts"/>
 ///<reference path="UserItemUpdatedEvent.ts"/>
 ///<reference path="UserItemDeletedEvent.ts"/>

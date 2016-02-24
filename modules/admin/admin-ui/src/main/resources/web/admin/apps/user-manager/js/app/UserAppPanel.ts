@@ -230,8 +230,8 @@ module app {
                             this.mask.hide();
                         }).done();
                 } else if (userItem.getType() === UserTreeGridItemType.PATH_GUARDS) {
-                    new app.wizard.UserStoreWizardPanelFactory().
-                        setAppBarTabId(tabId).createForNew().then((wizard: app.wizard.UserStoreWizardPanel) => {
+                    new app.wizard.PathGuardWizardPanelFactory().
+                        setAppBarTabId(tabId).createForNew().then((wizard: app.wizard.PathGuardWizardPanel) => {
 
                             this.handleWizardCreated(wizard, tabName);
 

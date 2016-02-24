@@ -201,7 +201,7 @@ module app.wizard {
             var deferred = wemQ.defer<void>();
 
             this.wizardHeader.initNames(existing.getDisplayName(), existing.getKey().getId(), false);
-            this.authApplicationWizardStepForm.layout(existing.clone());
+            this.authApplicationWizardStepForm.layout2(existing.clone());
             this.permissionsWizardStepForm.layout(existing.clone(), this.defaultUserStore);
 
             deferred.resolve(null);
@@ -214,7 +214,7 @@ module app.wizard {
                     this.wizardHeader.disableNameInput();
                     this.wizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('UserStore was created!');
-                    new api.security.UserItemCreatedEvent(null, userStore).fire();
+                    new api.security.UserItemCreatedEvent(null, userStore, null).fire();
 
                     return userStore;
                 });
@@ -228,7 +228,7 @@ module app.wizard {
                         this.notifyUserStoreNamed(userStore);
                     }
                     api.notify.showFeedback('UserStore was updated!');
-                    new api.security.UserItemUpdatedEvent(null, userStore).fire();
+                    new api.security.UserItemUpdatedEvent(null, userStore, null).fire();
 
                     return userStore;
                 });

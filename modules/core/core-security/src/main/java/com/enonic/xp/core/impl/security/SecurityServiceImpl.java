@@ -70,6 +70,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateGroupParams;
+import com.enonic.xp.security.UpdatePathGuardParams;
 import com.enonic.xp.security.UpdateRoleParams;
 import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.UpdateUserStoreParams;
@@ -1029,6 +1030,27 @@ public final class SecurityServiceImpl
         {
             throw new PathGuardAlreadyExistsException( params.getKey() );
         }
+    }
+
+    @Override
+    public PathGuard updatePathGuard( final UpdatePathGuardParams updatePathGuardParams )
+    {
+        return callWithContext( () -> {
+
+            final NodeId pathGuardNodeId = PathGuardNodeTranslator.getNodeId( updatePathGuardParams.getKey() );
+            final Node node = this.nodeService.getById( pathGuardNodeId );
+            if ( node == null )
+            {
+                return null;
+            }
+
+            final UpdateNodeParams updateNodeParams = PathGuardNodeTranslator.toUpdateNodeParams( updatePathGuardParams, node.id() );
+            final Node userStoreNode = nodeService.update( updateNodeParams );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
+            return PathGuardNodeTranslator.fromNode( userStoreNode );
+        } );
     }
 
     @Override

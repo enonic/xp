@@ -21,7 +21,7 @@ module app.wizard {
 
         constructor(params: PrincipalWizardPanelParams, callback: (wizard: PrincipalWizardPanel) => void) {
 
-            this.userEmailWizardStepForm = new UserEmailWizardStepForm(params.userStore ? params.userStore.getKey()  : null);
+            this.userEmailWizardStepForm = new UserEmailWizardStepForm(params.userStore ? params.userStore.getKey() : null);
             this.userPasswordWizardStepForm = new UserPasswordWizardStepForm();
             this.userMembershipsWizardStepForm = new UserMembershipsWizardStepForm();
 
@@ -143,7 +143,7 @@ module app.wizard {
                     this.wizardHeader.disableNameInput();
                     this.wizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('User was created!');
-                    new api.security.UserItemCreatedEvent(principal, this.getUserStore(), this.isParentOfSameType()).fire();
+                    new api.security.UserItemCreatedEvent(principal, this.getUserStore(), null, this.isParentOfSameType()).fire();
                     this.userPasswordWizardStepForm.updatePrincipal(principal);
                     this.notifyPrincipalNamed(principal);
                     return principal;
@@ -176,7 +176,7 @@ module app.wizard {
                     }
                     this.userEmailWizardStepForm.layout(principal);
                     api.notify.showFeedback('User was updated!');
-                    new api.security.UserItemUpdatedEvent(principal, this.getUserStore()).fire();
+                    new api.security.UserItemUpdatedEvent(principal, this.getUserStore(), null).fire();
 
                     return principal;
                 });

@@ -6,12 +6,16 @@
 ///<reference path='RoleWizardPanel.ts' />
 ///<reference path='GroupWizardPanel.ts' />
 ///<reference path='UserstoreWizardPanel.ts' />
+///<reference path='PathGuardWizardPanel.ts' />
 ///<reference path='PrincipalWizardPanelFactory.ts' />
 ///<reference path='UserStoreWizardPanelFactory.ts' />
+///<reference path='PathGuardWizardPanelFactory.ts' />
 ///<reference path='PrincipalWizardPanelParams.ts' />
 ///<reference path='UserStoreWizardPanelParams.ts' />
+///<reference path='PathGuardWizardPanelParams.ts' />
 ///<reference path='PrincipalWizardToolbar.ts' />
 ///<reference path='UserStoreWizardToolbar.ts' />
+///<reference path='PathGuardWizardToolbar.ts' />
 ///<reference path='PrincipalDescriptionWizardStepForm.ts' />
 ///<reference path='PrincipalMembersWizardStepForm.ts' />
 ///<reference path='UserEmailWizardStepForm.ts' />

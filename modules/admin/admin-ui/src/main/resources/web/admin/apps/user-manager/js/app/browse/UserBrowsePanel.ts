@@ -31,12 +31,13 @@ module app.browse {
             });
 
             api.security.UserItemCreatedEvent.on((event) => {
-                this.userTreeGrid.appendUserNode(event.getPrincipal(), event.getUserStore(), event.isParentOfSameType());
+                this.userTreeGrid.appendUserNode(event.getPrincipal(), event.getUserStore(), event.getPathGuard(),
+                    event.isParentOfSameType());
                 this.setFilterPanelRefreshNeeded(true);
             });
 
             api.security.UserItemUpdatedEvent.on((event) => {
-                this.userTreeGrid.updateUserNode(event.getPrincipal(), event.getUserStore());
+                this.userTreeGrid.updateUserNode(event.getPrincipal(), event.getUserStore(), event.getPathGuard());
             });
 
             api.security.UserItemDeletedEvent.on((event) => {

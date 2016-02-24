@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateGroupJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.CreatePathGuardJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateRoleJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserStoreJson;
@@ -36,12 +37,14 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoreResul
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoresResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.EmailAvailabilityJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.GroupJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.PathGuardJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PathGuardsJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalsJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.RoleJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateGroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePathGuardJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateRoleJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateUserJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateUserStoreJson;
@@ -400,6 +403,22 @@ public final class SecurityResource
     {
         final ImmutableList<PathGuard> pathGuards = securityService.getPathGuards();
         return new PathGuardsJson( pathGuards );
+    }
+
+    @POST
+    @Path("pathguard/create")
+    public PathGuardJson createPathGuard( final CreatePathGuardJson params )
+    {
+        final PathGuard userStore = securityService.createPathGuard( params.getCreatePathGuardParams() );
+        return new PathGuardJson( userStore );
+    }
+
+    @POST
+    @Path("pathguard/update")
+    public PathGuardJson updatePathGuard( final UpdatePathGuardJson params )
+    {
+        final PathGuard userStore = securityService.updatePathGuard( params.getUpdatePathGuardParams() );
+        return new PathGuardJson( userStore );
     }
 
     @POST

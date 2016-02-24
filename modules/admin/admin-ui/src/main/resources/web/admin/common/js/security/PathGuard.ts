@@ -42,6 +42,15 @@ module api.security {
                    this.paths === other.paths
         }
 
+        clone(): PathGuard {
+            return PathGuard.create().
+                setKey(this.key).
+                setDisplayName(this.displayName).
+                setAuthConfig(this.authConfig.clone()).
+                setPaths(this.paths.slice(0)).
+                build();
+        }
+
         static create(): PathGuardBuilder {
             return new PathGuardBuilder();
         }
