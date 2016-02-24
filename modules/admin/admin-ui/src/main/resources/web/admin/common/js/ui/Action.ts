@@ -177,7 +177,6 @@ module api.ui {
                 }
 
                 wemQ.all(promises).then(() => {
-                    debugger;
                     this.forceExecute = false;
                     this.notifyAfterExecute();
                 });
