@@ -6,7 +6,7 @@ module api.util.htmlarea.editor {
     import HtmlAreaAnchor = api.util.htmlarea.dialog.HtmlAreaAnchor;
     import HtmlAreaImage = api.util.htmlarea.dialog.HtmlAreaImage;
 
-    export class TinymceContentHelper {
+    export class HTMLAreaHelper {
 
         private static getConvertedImageSrc(imgSrc:string):string {
             var contentId = imgSrc.replace(ImageModalDialog.imagePrefix, api.util.StringHelper.EMPTY_STRING),
@@ -34,7 +34,7 @@ module api.util.htmlarea.editor {
                     imgSrcs.forEach((imgSrc:string) => {
                         if (imgSrc.indexOf(ImageModalDialog.imagePrefix) === 0) {
                             processedContent =
-                                processedContent.replace(" src=\"" + imgSrc + "\"", TinymceContentHelper.getConvertedImageSrc(imgSrc));
+                                processedContent.replace(" src=\"" + imgSrc + "\"", HTMLAreaHelper.getConvertedImageSrc(imgSrc));
                         }
                     });
                 }

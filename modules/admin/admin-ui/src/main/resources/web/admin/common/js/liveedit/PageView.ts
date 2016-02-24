@@ -356,7 +356,7 @@ module api.liveedit {
             event.stopPropagation();
 
             if (this.isTextEditMode()) {
-                if (!this.isTextEditorToolbarClicked(event)) {
+                if (!this.isTextEditorToolbarClicked(event) && !this.isTextEditorDialogClicked(event)) {
                     this.setTextEditMode(false);
                 }
             } else {
@@ -364,12 +364,23 @@ module api.liveedit {
             }
         }
 
-        isTextEditorToolbarClicked(event: MouseEvent) {
+        private isTextEditorToolbarClicked(event: MouseEvent) {
             var target = <HTMLElement> event.target;
             if (!!target) {
                 var parent = <HTMLElement> target.parentElement;
                 return (target.id.indexOf("mce") >= 0 || target.className.indexOf("mce") >= 0 ||
                         parent.id.indexOf("mce") >= 0 || parent.className.indexOf("mce") >= 0)
+            }
+            return false;
+        }
+
+        private isTextEditorDialogClicked(event: MouseEvent) {
+            var target = <HTMLElement> event.target;
+            while (target) {
+                if (target.classList.contains(api.util.htmlarea.dialog.ModalDialog.CLASS_NAME)) {
+                    return true;
+                }
+                target = target.parentElement;
             }
             return false;
         }
