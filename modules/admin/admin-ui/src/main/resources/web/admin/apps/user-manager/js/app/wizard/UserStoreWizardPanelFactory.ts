@@ -11,16 +11,9 @@ module app.wizard {
 
         private appBarTabId: api.app.bar.AppBarTabId;
 
-        private userStore: UserStore;
-
         private userStoreToEdit: UserStore;
 
         private defaultUserStore: UserStore;
-
-        setUserStore(value: UserStore): UserStoreWizardPanelFactory {
-            this.userStore = value;
-            return this;
-        }
 
         setUserStoreKey(value: UserStoreKey): UserStoreWizardPanelFactory {
             this.userStoreKey = value;

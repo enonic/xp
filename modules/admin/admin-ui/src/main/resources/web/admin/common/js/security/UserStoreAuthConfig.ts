@@ -34,6 +34,13 @@ module api.security {
             };
         }
 
+        clone(): UserStoreAuthConfig {
+            return UserStoreAuthConfig.create().
+                setApplicationKey(this.applicationKey).
+                setConfig(this.config.copy()).
+                build();
+        }
+
         static create(): UserStoreAuthConfigBuilder {
             return new UserStoreAuthConfigBuilder();
         }

@@ -4,12 +4,14 @@ module api.security {
 
         private principal: Principal;
         private userStore: UserStore;
+        private pathGuard: PathGuard;
         private parentOfSameType: boolean;
 
-        constructor(principal: Principal, userStore: UserStore, parentOfSameType?: boolean) {
+        constructor(principal: Principal, userStore: UserStore, pathGuard: PathGuard, parentOfSameType?: boolean) {
             super();
             this.principal = principal;
             this.userStore = userStore;
+            this.pathGuard = pathGuard;
             this.parentOfSameType = parentOfSameType;
         }
 
@@ -19,6 +21,10 @@ module api.security {
 
         public getUserStore(): UserStore {
             return this.userStore;
+        }
+
+        public getPathGuard(): PathGuard {
+            return this.pathGuard;
         }
 
         public isParentOfSameType(): boolean {

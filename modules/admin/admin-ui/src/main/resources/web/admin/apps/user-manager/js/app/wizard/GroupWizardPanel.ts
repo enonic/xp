@@ -61,7 +61,7 @@ module app.wizard {
                     this.getPrincipalWizardHeader().disableNameInput();
                     this.wizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('Group was created!');
-                    new api.security.UserItemCreatedEvent(principal, this.getUserStore(), this.isParentOfSameType()).fire();
+                    new api.security.UserItemCreatedEvent(principal, this.getUserStore(), null, this.isParentOfSameType()).fire();
                     this.notifyPrincipalNamed(principal);
                     (<PrincipalLoader>this.getMembersWizardStepForm().getLoader()).skipPrincipal(principal.getKey());
 
@@ -86,7 +86,7 @@ module app.wizard {
                         this.notifyPrincipalNamed(principal);
                     }
                     api.notify.showFeedback('Group was updated!');
-                    new api.security.UserItemUpdatedEvent(principal, this.getUserStore()).fire();
+                    new api.security.UserItemUpdatedEvent(principal, this.getUserStore(), null).fire();
 
                     return principal;
                 });

@@ -1,11 +1,10 @@
 module app.wizard {
 
-    import UserStore = api.security.UserStore;
-    import UserStoreKey = api.security.UserStoreKey;
-    import UserStoreNamedEvent = api.security.UserStoreNamedEvent;
-    import CreateUserStoreRequest = api.security.CreateUserStoreRequest;
-    import UpdateUserStoreRequest = api.security.UpdateUserStoreRequest;
-    import UserStoreBuilder = api.security.UserStoreBuilder;
+    import PathGuard = api.security.PathGuard;
+    import PathGuardNamedEvent = api.security.PathGuardNamedEvent;
+    import CreatePathGuardRequest = api.security.CreatePathGuardRequest;
+    import UpdatePathGuardRequest = api.security.UpdatePathGuardRequest;
+    import PathGuardBuilder = api.security.PathGuardBuilder;
 
     import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
@@ -15,37 +14,31 @@ module app.wizard {
     import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
     import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
 
-    export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
+    export class PathGuardWizardPanel extends UserItemWizardPanel<PathGuard> {
 
         private descriptionWizardStepForm: PrincipalDescriptionWizardStepForm;
 
         private authApplicationWizardStepForm: AuthApplicationWizardStepForm;
 
-        private permissionsWizardStepForm: SecurityWizardStepForm;
+        private persistedPathGuardKey: string;
 
-        private defaultUserStore: UserStore;
+        isPathGuardFormValid: boolean;
+        pathGuardPath: string;
 
-        private persistedUserStoreKey: UserStoreKey;
+        pathGuardNamedListeners: {(event: PathGuardNamedEvent): void}[];
 
-        isUserStoreFormValid: boolean;
-        userStorePath: string;
-
-        userStoreNamedListeners: {(event: UserStoreNamedEvent): void}[];
-
-        constructor(params: UserStoreWizardPanelParams, callback: (wizard: UserStoreWizardPanel) => void) {
+        constructor(params: PathGuardWizardPanelParams, callback: (wizard: PathGuardWizardPanel) => void) {
 
             this.descriptionWizardStepForm = new PrincipalDescriptionWizardStepForm();
             this.authApplicationWizardStepForm = new AuthApplicationWizardStepForm();
-            this.permissionsWizardStepForm = new SecurityWizardStepForm();
 
             this.constructing = true;
-            this.isUserStoreFormValid = false;
-            this.userStoreNamedListeners = [];
+            this.isPathGuardFormValid = false;
+            this.pathGuardNamedListeners = [];
 
-            this.userStorePath = params.persistedPath;
-            this.defaultUserStore = params.defaultUserStore;
-            if (params.userStore) {
-                this.persistedUserStoreKey = params.userStore.getKey();
+            this.pathGuardPath = params.persistedPath;
+            if (params.pathGuard) {
+                this.persistedPathGuardKey = params.pathGuard.getKey();
             }
 
             var iconUrl = api.dom.ImgEl.PLACEHOLDER;
@@ -53,23 +46,23 @@ module app.wizard {
             this.formIcon.addClass("icon icon-xlarge");
             this.formIcon.addClass("icon-shield");
 
-            this.wizardActions = new app.wizard.action.UserStoreWizardActions(this);
-            this.toolbar = new UserStoreWizardToolbar({
+            this.wizardActions = new app.wizard.action.PathGuardWizardActions(this);
+            this.toolbar = new PathGuardWizardToolbar({
                 saveAction: this.wizardActions.getSaveAction(),
                 deleteAction: this.wizardActions.getDeleteAction()
             });
 
             this.wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
 
-            this.wizardHeader.setPath(this.userStorePath);
+            this.wizardHeader.setPath(this.pathGuardPath);
 
-            if (params.userStore) {
+            if (params.pathGuard) {
                 this.wizardHeader.disableNameInput();
                 this.wizardHeader.setAutoGenerationEnabled(false);
             } else {
-                this.getUserStoreWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
+                this.getPathGuardWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
                     var updateStatus = event.getPropertyName() === "name" ||
-                                       (this.getUserStoreWizardHeader().isAutoGenerationEnabled() &&
+                                       (this.getPathGuardWizardHeader().isAutoGenerationEnabled() &&
                                         event.getPropertyName() === "displayName");
 
                     if (updateStatus) {
@@ -114,7 +107,7 @@ module app.wizard {
             return "User Store";
         }
 
-        getUserStoreWizardHeader(): WizardHeaderWithDisplayNameAndName {
+        getPathGuardWizardHeader(): WizardHeaderWithDisplayNameAndName {
             return this.wizardHeader;
         }
 
@@ -123,9 +116,9 @@ module app.wizard {
             this.startRememberFocus();
         }
 
-        saveChanges(): wemQ.Promise<UserStore> {
+        saveChanges(): wemQ.Promise<PathGuard> {
             if (!this.wizardHeader.getName()) {
-                var deferred = wemQ.defer<UserStore>();
+                var deferred = wemQ.defer<PathGuard>();
                 api.notify.showError("Name can not be empty");
                 // deferred.resolve(null);
                 deferred.reject(new Error("Name can not be empty"));
@@ -141,9 +134,8 @@ module app.wizard {
 
             var steps: WizardStep[] = [];
 
-            steps.push(new WizardStep("UserStore", this.descriptionWizardStepForm));
+            steps.push(new WizardStep("PathGuard", this.descriptionWizardStepForm));
             steps.push(new WizardStep("Authentication", this.authApplicationWizardStepForm));
-            steps.push(new WizardStep("Permissions", this.permissionsWizardStepForm));
 
             this.setSteps(steps);
 
@@ -164,16 +156,15 @@ module app.wizard {
         postLayoutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
-            this.wizardHeader.initNames("", this.userStorePath, false);
-            this.permissionsWizardStepForm.layoutReadOnly(this.defaultUserStore);
+            this.wizardHeader.initNames("", this.pathGuardPath, false);
 
             deferred.resolve(null);
             return deferred.promise;
         }
 
-        layoutPersistedItem(persistedUserStore: UserStore): wemQ.Promise<void> {
+        layoutPersistedItem(persistedPathGuard: PathGuard): wemQ.Promise<void> {
 
-            var viewedUserStore;
+            var viewedPathGuard;
             if (!this.constructing) {
 
                 var deferred = wemQ.defer<void>();
@@ -181,11 +172,11 @@ module app.wizard {
                 return deferred.promise;
             }
             else {
-                return this.doLayoutPersistedItem(persistedUserStore.clone());
+                return this.doLayoutPersistedItem(persistedPathGuard.clone());
             }
         }
 
-        doLayoutPersistedItem(userStore: UserStore): wemQ.Promise<void> {
+        doLayoutPersistedItem(pathGuard: PathGuard): wemQ.Promise<void> {
 
             var parallelPromises: wemQ.Promise<any>[] = [
                 // Load attachments?
@@ -197,58 +188,56 @@ module app.wizard {
             });
         }
 
-        postLayoutPersisted(existing: UserStore): wemQ.Promise<void> {
+        postLayoutPersisted(existing: PathGuard): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
-            this.wizardHeader.initNames(existing.getDisplayName(), existing.getKey().getId(), false);
-            this.authApplicationWizardStepForm.layout2(existing.clone());
-            this.permissionsWizardStepForm.layout(existing.clone(), this.defaultUserStore);
+            this.wizardHeader.initNames(existing.getDisplayName(), existing.getKey(), false);
+            this.authApplicationWizardStepForm.layout(existing.clone());
 
             deferred.resolve(null);
             return deferred.promise;
         }
 
-        persistNewItem(): wemQ.Promise<UserStore> {
-            return this.produceCreateUserStoreRequest().sendAndParse().
-                then((userStore: UserStore) => {
+        persistNewItem(): wemQ.Promise<PathGuard> {
+            return this.produceCreatePathGuardRequest().sendAndParse().
+                then((pathGuard: PathGuard) => {
                     this.wizardHeader.disableNameInput();
                     this.wizardHeader.setAutoGenerationEnabled(false);
-                    api.notify.showFeedback('UserStore was created!');
-                    new api.security.UserItemCreatedEvent(null, userStore, null).fire();
+                    api.notify.showFeedback('PathGuard was created!');
+                    new api.security.UserItemCreatedEvent(null, null, pathGuard).fire();
 
-                    return userStore;
+                    return pathGuard;
                 });
         }
 
-        updatePersistedItem(): wemQ.Promise<UserStore> {
-            return this.produceUpdateUserStoreRequest(this.assembleViewedUserStore()).
+        updatePersistedItem(): wemQ.Promise<PathGuard> {
+            return this.produceUpdatePathGuardRequest(this.assembleViewedPathGuard()).
                 sendAndParse().
-                then((userStore: UserStore) => {
-                    if (!this.getPersistedItem().getDisplayName() && !!userStore.getDisplayName()) {
-                        this.notifyUserStoreNamed(userStore);
+                then((pathGuard: PathGuard) => {
+                    if (!this.getPersistedItem().getDisplayName() && !!pathGuard.getDisplayName()) {
+                        this.notifyPathGuardNamed(pathGuard);
                     }
-                    api.notify.showFeedback('UserStore was updated!');
-                    new api.security.UserItemUpdatedEvent(null, userStore, null).fire();
+                    api.notify.showFeedback('PathGuard was updated!');
+                    new api.security.UserItemUpdatedEvent(null, null, pathGuard).fire();
 
-                    return userStore;
+                    return pathGuard;
                 });
         }
 
 
         hasUnsavedChanges(): boolean {
-            var persistedUserStore: UserStore = this.getPersistedItem();
-            if (persistedUserStore == undefined) {
+            var persistedPathGuard: PathGuard = this.getPersistedItem();
+            if (persistedPathGuard == undefined) {
                 return this.wizardHeader.getName() !== "" ||
                        this.wizardHeader.getDisplayName() !== "" ||
-                       this.authApplicationWizardStepForm.getAuthConfig() != null ||
-                       !this.permissionsWizardStepForm.getPermissions().equals(this.defaultUserStore.getPermissions());
+                       this.authApplicationWizardStepForm.getAuthConfig() != null;
             } else {
-                var viewedUserStore = this.assembleViewedUserStore();
-                return !this.getPersistedItem().equals(viewedUserStore);
+                var viewedPathGuard = this.assembleViewedPathGuard();
+                return !this.getPersistedItem().equals(viewedPathGuard);
             }
         }
 
-        resolveUserStoreNameForUpdateRequest(): string {
+        resolvePathGuardNameForUpdateRequest(): string {
             if (api.util.StringHelper.isEmpty(this.wizardHeader.getName())) {
                 return this.getPersistedItem().getDisplayName();
             } else {
@@ -256,52 +245,48 @@ module app.wizard {
             }
         }
 
-        getPersistedItemKey(): UserStoreKey {
-            return this.persistedUserStoreKey;
+        getPersistedItemKey(): string {
+            return this.persistedPathGuardKey;
         }
 
-        private assembleViewedUserStore(): UserStore {
-            return new UserStoreBuilder().
+        private assembleViewedPathGuard(): PathGuard {
+            return new PathGuardBuilder().
                 setDisplayName(this.wizardHeader.getDisplayName()).
                 setKey(this.getPersistedItem().getKey().toString()).
                 setAuthConfig(this.authApplicationWizardStepForm.getAuthConfig()).
-                setPermissions(this.permissionsWizardStepForm.getPermissions()).
+                setPaths([]). //TODO
                 build();
         }
 
-        private produceCreateUserStoreRequest(): CreateUserStoreRequest {
-            var key = new UserStoreKey(this.wizardHeader.getName()),
+        private produceCreatePathGuardRequest(): CreatePathGuardRequest {
+            var key = this.wizardHeader.getName(),
                 name = this.wizardHeader.getDisplayName(),
-                authConfig = this.authApplicationWizardStepForm.getAuthConfig(),
-                permissions = this.permissionsWizardStepForm.getPermissions();
-            return new CreateUserStoreRequest().
+                authConfig = this.authApplicationWizardStepForm.getAuthConfig();
+            return new CreatePathGuardRequest().
                 setDisplayName(name).
                 setKey(key).
-                setAuthConfig(authConfig).
-                setPermissions(permissions);
+                setAuthConfig(authConfig);
         }
 
-        private produceUpdateUserStoreRequest(viewedUserStore: UserStore): UpdateUserStoreRequest {
+        private produceUpdatePathGuardRequest(viewedPathGuard: PathGuard): UpdatePathGuardRequest {
             var key = this.getPersistedItem().getKey(),
-                name = viewedUserStore.getDisplayName(),
-                authConfig = viewedUserStore.getAuthConfig(),
-                permissions = viewedUserStore.getPermissions();
+                name = viewedPathGuard.getDisplayName(),
+                authConfig = viewedPathGuard.getAuthConfig();
 
-            return new UpdateUserStoreRequest().
+            return new UpdatePathGuardRequest().
                 setKey(key).
                 setDisplayName(name).
-                setAuthConfig(authConfig).
-                setPermissions(permissions);
+                setAuthConfig(authConfig);
         }
 
 
-        onUserStoreNamed(listener: (event: UserStoreNamedEvent)=>void) {
-            this.userStoreNamedListeners.push(listener);
+        onPathGuardNamed(listener: (event: PathGuardNamedEvent)=>void) {
+            this.pathGuardNamedListeners.push(listener);
         }
 
-        notifyUserStoreNamed(userStore: UserStore) {
-            this.userStoreNamedListeners.forEach((listener: (event: UserStoreNamedEvent)=>void)=> {
-                listener.call(this, new UserStoreNamedEvent(this, userStore));
+        notifyPathGuardNamed(pathGuard: PathGuard) {
+            this.pathGuardNamedListeners.forEach((listener: (event: PathGuardNamedEvent)=>void)=> {
+                listener.call(this, new PathGuardNamedEvent(this, pathGuard));
             });
         }
     }

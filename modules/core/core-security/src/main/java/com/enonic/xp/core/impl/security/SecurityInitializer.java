@@ -237,7 +237,7 @@ final class SecurityInitializer
         final CreatePathGuardParams createPathGuardParams = CreatePathGuardParams.create().
             key( "admin" ).
             displayName( "Admin guard" ).
-            addPath( "/admin" ).
+            addPaths( "/admin" ).
             authConfig( authConfig ).
             build();
         addPathGuard( createPathGuardParams );

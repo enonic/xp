@@ -10,7 +10,9 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.PathGuard;
+import com.enonic.xp.security.UpdatePathGuardParams;
 import com.enonic.xp.security.UserStoreAuthConfig;
 
 public class PathGuardNodeTranslator
@@ -82,10 +84,35 @@ public class PathGuardNodeTranslator
         if ( authConfig != null )
         {
             data.setString( PathGuardPropertyPaths.AUTH_CONFIG_APPLICATION_PATH, authConfig.getApplicationKey().toString() );
-            data.setSet( UserStorePropertyNames.AUTH_CONFIG_FORM_KEY, authConfig.getConfig().getRoot() );
+            data.setSet( PathGuardPropertyPaths.AUTH_CONFIG_FORM_PATH, authConfig.getConfig().getRoot() );
         }
 
         return builder.data( data ).
+            build();
+    }
+
+    static UpdateNodeParams toUpdateNodeParams( final UpdatePathGuardParams params, final NodeId nodeId )
+    {
+        final String displayName = params.getDisplayName();
+        final UserStoreAuthConfig authConfig = params.getAuthConfig();
+        return UpdateNodeParams.create().
+            id( nodeId ).
+            editor( editableNode -> {
+                final PropertyTree nodeData = editableNode.data;
+                nodeData.setString( PathGuardPropertyPaths.DISPLAY_NAME_PATH, displayName );
+                if ( authConfig == null )
+                {
+                    if ( nodeData.hasProperty( PathGuardPropertyPaths.AUTH_CONFIG_PATH ) )
+                    {
+                        nodeData.removeProperty( PathGuardPropertyPaths.AUTH_CONFIG_PATH );
+                    }
+                }
+                else
+                {
+                    nodeData.setString( PathGuardPropertyPaths.AUTH_CONFIG_APPLICATION_PATH, authConfig.getApplicationKey().toString() );
+                    nodeData.setSet( PathGuardPropertyPaths.AUTH_CONFIG_FORM_PATH, authConfig.getConfig().getRoot() );
+                }
+            } ).
             build();
     }
 }

@@ -63,7 +63,7 @@ module app.wizard {
                     this.getPrincipalWizardHeader().disableNameInput();
                     this.wizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('Role was created!');
-                    new api.security.UserItemCreatedEvent(principal, this.getUserStore(), this.isParentOfSameType()).fire();
+                    new api.security.UserItemCreatedEvent(principal, this.getUserStore(), null, this.isParentOfSameType()).fire();
                     this.notifyPrincipalNamed(principal);
 
                     return principal;
@@ -87,7 +87,7 @@ module app.wizard {
                         this.notifyPrincipalNamed(principal);
                     }
                     api.notify.showFeedback('Role was updated!');
-                    new api.security.UserItemUpdatedEvent(principal, this.getUserStore()).fire();
+                    new api.security.UserItemUpdatedEvent(principal, this.getUserStore(), null).fire();
 
                     return principal;
                 });

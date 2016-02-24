@@ -4,11 +4,13 @@ module api.security {
 
         private principal: Principal;
         private userStore: UserStore;
+        private pathGuard: PathGuard;
 
-        constructor(principal: Principal, userStore: UserStore) {
+        constructor(principal: Principal, userStore: UserStore, pathGuard: PathGuard) {
             super();
             this.principal = principal;
             this.userStore = userStore;
+            this.pathGuard = pathGuard;
         }
 
         public getPrincipal(): Principal {
@@ -17,6 +19,10 @@ module api.security {
 
         public getUserStore(): UserStore {
             return this.userStore;
+        }
+
+        public getPathGuard(): PathGuard {
+            return this.pathGuard;
         }
 
         static on(handler: (event: UserItemUpdatedEvent) => void) {

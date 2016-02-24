@@ -67,7 +67,7 @@ module app.browse {
                 anyUserStore = userStoresSelected > 0,
                 anyPathGuard = pathGuardsSelected > 0;
 
-            this.NEW.setEnabled((directoriesSelected <= 1) && (totalSelection <= 1));
+            this.NEW.setEnabled(totalSelection == 0 || (totalSelection == 1 && directoriesSelected == 1));
             this.EDIT.setEnabled(directoriesSelected < 1 && (anyUserStore || anyPrincipal || anyPathGuard));
 
             if (totalSelection == 1) {

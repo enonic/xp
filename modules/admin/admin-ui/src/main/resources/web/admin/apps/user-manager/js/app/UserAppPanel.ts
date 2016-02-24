@@ -191,6 +191,9 @@ module app {
                     principalPath = PrincipalKey.ofRole("none").toPath(true);
                     tabName = "Role";
                     break;
+                case UserTreeGridItemType.PATH_GUARDS:
+                    tabName = "Path guard";
+                    break;
                 case UserTreeGridItemType.PRINCIPAL:
                     principalType = userItem.getPrincipal().getType();
                     principalPath = userItem.getPrincipal().getKey().toPath(true);
@@ -215,7 +218,29 @@ module app {
                 this.selectPanel(tabMenuItem);
             } else {
                 this.mask.show();
-                if (userItem && userItem.getType() !== UserTreeGridItemType.USER_STORE) {
+                if (!userItem || userItem.getType() === UserTreeGridItemType.USER_STORE) {
+                    new app.wizard.UserStoreWizardPanelFactory().
+                        setAppBarTabId(tabId).createForNew().then((wizard: app.wizard.UserStoreWizardPanel) => {
+
+                            this.handleWizardCreated(wizard, tabName);
+
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                        }).finally(() => {
+                            this.mask.hide();
+                        }).done();
+                } else if (userItem.getType() === UserTreeGridItemType.PATH_GUARDS) {
+                    new app.wizard.PathGuardWizardPanelFactory().
+                        setAppBarTabId(tabId).createForNew().then((wizard: app.wizard.PathGuardWizardPanel) => {
+
+                            this.handleWizardCreated(wizard, tabName);
+
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                        }).finally(() => {
+                            this.mask.hide();
+                        }).done();
+                } else {
 
                     userStoreRequest.then((userStore: UserStore) => {
                         return new app.wizard.PrincipalWizardPanelFactory().
@@ -236,17 +261,6 @@ module app {
                     }).finally(() => {
                         this.mask.hide();
                     }).done();
-                } else {
-                    new app.wizard.UserStoreWizardPanelFactory().
-                        setAppBarTabId(tabId).createForNew().then((wizard: app.wizard.UserStoreWizardPanel) => {
-
-                            this.handleWizardCreated(wizard, tabName);
-
-                        }).catch((reason: any) => {
-                            api.DefaultErrorHandler.handle(reason);
-                        }).finally(() => {
-                            this.mask.hide();
-                        }).done();
                 }
             }
         }
@@ -274,6 +288,19 @@ module app {
                             setPrincipalPath(userItem.getPrincipal().getKey().toPath(true)).
                             setPrincipalToEdit(userItem.getPrincipal().getKey()).
                             createForEdit().then((wizard: app.wizard.PrincipalWizardPanel) => {
+
+                                this.handleWizardUpdated(wizard, tabMenuItem, closeViewPanelMenuItem);
+
+                            }).catch((reason: any) => {
+                                api.DefaultErrorHandler.handle(reason);
+                            }).finally(() => {
+                                this.mask.hide();
+                            }).done();
+                    } else if (userItem.getType() == UserTreeGridItemType.PATH_GUARD) {
+                        new app.wizard.PathGuardWizardPanelFactory().
+                            setAppBarTabId(tabId).
+                            setPathGuardKey(userItem.getPathGuard().getKey()).
+                            createForEdit().then((wizard: app.wizard.PathGuardWizardPanel) => {
 
                                 this.handleWizardUpdated(wizard, tabMenuItem, closeViewPanelMenuItem);
 
@@ -353,6 +380,8 @@ module app {
             var appBarTabId: AppBarTabId;
             if (UserTreeGridItemType.PRINCIPAL == userItem.getType()) {
                 appBarTabId = AppBarTabId.forEdit(userItem.getPrincipal().getKey().getId());
+            } else if (UserTreeGridItemType.PATH_GUARD == userItem.getType()) {
+                appBarTabId = AppBarTabId.forEdit(userItem.getPathGuard().getKey());
             } else if (UserTreeGridItemType.USER_STORE == userItem.getType()) {
                 appBarTabId = AppBarTabId.forEdit(userItem.getUserStore().getKey().getId());
             }

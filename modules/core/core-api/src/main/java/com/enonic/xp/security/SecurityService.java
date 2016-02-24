@@ -167,5 +167,7 @@ public interface SecurityService
 
     PathGuard createPathGuard( CreatePathGuardParams createPathGuardParams );
 
+    PathGuard updatePathGuard( UpdatePathGuardParams updatePathGuardParams );
+
     void deletePathGuard( String key );
 }
