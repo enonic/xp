@@ -129,7 +129,7 @@ public final class XmlSiteParser
         final String match = filterElement.getAttribute( MAPPING_DESCRIPTOR_MATCH_ATTRIBUTE );
         if ( isNotEmpty( match ) )
         {
-            builder.match( match );
+            builder.contentConstraint( match );
         }
 
         final String pattern = filterElement.getAttribute( MAPPING_DESCRIPTOR_PATTERN_ATTRIBUTE );

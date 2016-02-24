@@ -52,6 +52,11 @@ public final class SiteDescriptor
         return new Builder();
     }
 
+    public static SiteDescriptor.Builder copyOf( final SiteDescriptor siteDescriptor )
+    {
+        return new Builder( siteDescriptor );
+    }
+
     public static class Builder
     {
         private Form form;
@@ -64,6 +69,14 @@ public final class SiteDescriptor
 
         private Builder()
         {
+        }
+
+        private Builder( final SiteDescriptor siteDescriptor )
+        {
+            this.form = siteDescriptor.form != null ? siteDescriptor.form.copy() : null;
+            this.metaSteps = siteDescriptor.metaSteps;
+            this.filterDescriptors = siteDescriptor.filterDescriptors;
+            this.mappingDescriptors = siteDescriptor.mappingDescriptors;
         }
 
         public Builder form( final Form form )

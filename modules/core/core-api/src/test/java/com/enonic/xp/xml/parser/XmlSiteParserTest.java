@@ -92,17 +92,17 @@ public class XmlSiteParserTest
         final ControllerMappingDescriptor mapping2 = siteDescriptor.getMappingDescriptors().get( 1 );
         final ControllerMappingDescriptor mapping3 = siteDescriptor.getMappingDescriptors().get( 2 );
         assertEquals( "myapplication:/site/page/person/person.js", mapping1.getController().toString() );
-        assertNull( mapping1.getMatch() );
+        assertNull( mapping1.getContentConstraint() );
         assertEquals( "/person/*", mapping1.getPattern().toString() );
         assertEquals( 10, mapping1.getOrder() );
 
         assertEquals( "myapplication:/controller1.js", mapping2.getController().toString() );
-        assertEquals( "_path:'/*/fisk'", mapping2.getMatch().toString() );
+        assertEquals( "_path:'/*/fisk'", mapping2.getContentConstraint().toString() );
         assertEquals( "/.*", mapping2.getPattern().toString() );
         assertEquals( 50, mapping2.getOrder() );
 
         assertEquals( "myapplication:/controller2.js", mapping3.getController().toString() );
-        assertEquals( "contentType:'portal:fragment'", mapping3.getMatch().toString() );
+        assertEquals( "contentType:'portal:fragment'", mapping3.getContentConstraint().toString() );
         assertEquals( "/.*", mapping3.getPattern().toString() );
         assertEquals( 5, mapping3.getOrder() );
     }

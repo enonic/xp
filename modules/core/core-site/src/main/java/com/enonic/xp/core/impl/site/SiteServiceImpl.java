@@ -24,10 +24,8 @@ public class SiteServiceImpl
         if ( siteDescriptor != null )
         {
             final Form form = mixinService.inlineFormItems( siteDescriptor.getForm() );
-            return SiteDescriptor.create().
-                metaSteps( siteDescriptor.getMetaSteps() ).
+            return SiteDescriptor.copyOf( siteDescriptor ).
                 form( form ).
-                filterDescriptors( siteDescriptor.getFilterDescriptors() ).
                 build();
         }
         return null;

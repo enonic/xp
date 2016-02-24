@@ -26,14 +26,14 @@ public class ControllerMappingDescriptorsTest
         final ControllerMappingDescriptor descriptor1 = ControllerMappingDescriptor.create().
             controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/mycontroller.js" ) ).
             pattern( "/people/.*" ).
-            match( "type:'com.enonic.test.app:people'" ).
+            contentConstraint( "type:'com.enonic.test.app:people'" ).
             order( 5 ).
             build();
 
         final ControllerMappingDescriptor descriptor2 = ControllerMappingDescriptor.create().
             controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/something.js" ) ).
             pattern( "/path/.*" ).
-            match( "type:'com.enonic.test.app:thing'" ).
+            contentConstraint( "type:'com.enonic.test.app:thing'" ).
             order( 15 ).
             build();
 

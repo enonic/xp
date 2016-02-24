@@ -18,7 +18,7 @@ public class ControllerMappingDescriptorTest
         final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
             controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/mycontroller.js" ) ).
             pattern( "/people/.*" ).
-            match( "type:'com.enonic.test.app:people'" ).
+            contentConstraint( "type:'com.enonic.test.app:people'" ).
             order( 5 ).
             build();
         Assert.assertNotNull( descriptor );
@@ -32,14 +32,14 @@ public class ControllerMappingDescriptorTest
         final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
             controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/mycontroller.js" ) ).
             pattern( "/people/.*" ).
-            match( "type:'com.enonic.test.app:people'" ).
+            contentConstraint( "type:'com.enonic.test.app:people'" ).
             order( 5 ).
             build();
 
         Assert.assertEquals( "ControllerMappingDescriptor{" +
                                  "controller=com.enonic.test.app:/site/controllers/mycontroller.js, " +
                                  "pattern=/people/.*, " +
-                                 "match=type:'com.enonic.test.app:people', " +
+                                 "contentConstraint=type:'com.enonic.test.app:people', " +
                                  "order=5}", descriptor.toString() );
     }
 
@@ -50,7 +50,7 @@ public class ControllerMappingDescriptorTest
         final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
             controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/mycontroller.js" ) ).
             pattern( "/people/.*" ).
-            match( "type:'com.enonic.test.app:people'" ).
+            contentConstraint( "type:'com.enonic.test.app:people'" ).
             order( 5 ).
             build();
 
@@ -66,13 +66,13 @@ public class ControllerMappingDescriptorTest
         final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
             controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/mycontroller.js" ) ).
             pattern( "/people/.*" ).
-            match( "type:'com.enonic.test.app:people'" ).
+            contentConstraint( "type:'com.enonic.test.app:people'" ).
             order( 5 ).
             build();
 
         final ControllerMappingDescriptor copy = ControllerMappingDescriptor.copyOf( descriptor ).
             pattern( Pattern.compile( "/people/.*" ) ).
-            match( MappingConstraint.parse( "type:'com.enonic.test.app:people'" ) ).
+            contentConstraint( ContentMappingConstraint.parse( "type:'com.enonic.test.app:people'" ) ).
             build();
         Assert.assertEquals( descriptor, copy );
         Assert.assertEquals( descriptor.hashCode(), copy.hashCode() );
@@ -85,13 +85,13 @@ public class ControllerMappingDescriptorTest
         final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
             controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/mycontroller.js" ) ).
             pattern( "/people/.*" ).
-            match( "type:'com.enonic.test.app:people'" ).
+            contentConstraint( "type:'com.enonic.test.app:people'" ).
             order( 5 ).
             build();
         final ControllerMappingDescriptor descriptor2 = ControllerMappingDescriptor.create().
             controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/mycontroller.js" ) ).
             pattern( "/people/.*" ).
-            match( "type:'com.enonic.test.app:people'" ).
+            contentConstraint( "type:'com.enonic.test.app:people'" ).
             order( 10 ).
             build();
 

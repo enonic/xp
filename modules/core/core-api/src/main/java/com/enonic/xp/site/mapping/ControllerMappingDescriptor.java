@@ -22,7 +22,7 @@ public final class ControllerMappingDescriptor
 
     private final Pattern pattern;
 
-    private final MappingConstraint match;
+    private final ContentMappingConstraint contentConstraint;
 
     private final int order;
 
@@ -31,7 +31,7 @@ public final class ControllerMappingDescriptor
         Preconditions.checkNotNull( builder.controller, "controller cannot be null" );
         this.controller = builder.controller;
         this.pattern = builder.pattern != null ? builder.pattern : DEFAULT_PATTERN;
-        this.match = builder.match;
+        this.contentConstraint = builder.contentConstraint;
         this.order = builder.order;
     }
 
@@ -50,9 +50,9 @@ public final class ControllerMappingDescriptor
         return pattern;
     }
 
-    public MappingConstraint getMatch()
+    public ContentMappingConstraint getContentConstraint()
     {
-        return match;
+        return contentConstraint;
     }
 
     public int getOrder()
@@ -75,13 +75,13 @@ public final class ControllerMappingDescriptor
         return order == that.order &&
             Objects.equals( controller, that.controller ) &&
             Objects.equals( pattern.toString(), that.pattern.toString() ) &&
-            Objects.equals( match, that.match );
+            Objects.equals( contentConstraint, that.contentConstraint );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( controller, pattern.toString(), match, order );
+        return Objects.hash( controller, pattern.toString(), contentConstraint, order );
     }
 
     @Override
@@ -96,7 +96,7 @@ public final class ControllerMappingDescriptor
         return MoreObjects.toStringHelper( this ).
             add( "controller", controller ).
             add( "pattern", pattern ).
-            add( "match", match ).
+            add( "contentConstraint", contentConstraint ).
             add( "order", order ).toString();
     }
 
@@ -116,7 +116,7 @@ public final class ControllerMappingDescriptor
 
         private Pattern pattern;
 
-        private MappingConstraint match;
+        private ContentMappingConstraint contentConstraint;
 
         private int order = DEFAULT_ORDER;
 
@@ -124,7 +124,7 @@ public final class ControllerMappingDescriptor
         {
             this.controller = mappingDescriptor.getController();
             this.pattern = mappingDescriptor.getPattern();
-            this.match = mappingDescriptor.getMatch();
+            this.contentConstraint = mappingDescriptor.getContentConstraint();
             this.order = mappingDescriptor.getOrder();
         }
 
@@ -150,15 +150,15 @@ public final class ControllerMappingDescriptor
             return this;
         }
 
-        public Builder match( final MappingConstraint match )
+        public Builder contentConstraint( final ContentMappingConstraint contentConstraint )
         {
-            this.match = match;
+            this.contentConstraint = contentConstraint;
             return this;
         }
 
-        public Builder match( final String match )
+        public Builder contentConstraint( final String contentConstraint )
         {
-            this.match = match != null ? MappingConstraint.parse( match ) : null;
+            this.contentConstraint = contentConstraint != null ? ContentMappingConstraint.parse( contentConstraint ) : null;
             return this;
         }
 

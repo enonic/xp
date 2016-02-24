@@ -1,6 +1,8 @@
 package com.enonic.xp.site.mapping;
 
 import java.util.Objects;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -14,7 +16,7 @@ import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 
 @Beta
-public final class MappingConstraint
+public final class ContentMappingConstraint
 {
     private static final String SEPARATOR = ":";
 
@@ -24,11 +26,15 @@ public final class MappingConstraint
 
     private static final String PATH_PROPERTY = "_path";
 
+    private static final String TYPE_PROPERTY = "type";
+
+    private static final String DISPLAY_NAME_PROPERTY = "displayName";
+
     private final String id;
 
     private final String value;
 
-    private MappingConstraint( final String id, final String value )
+    private ContentMappingConstraint( final String id, final String value )
     {
         this.id = id;
         this.value = value;
@@ -36,17 +42,26 @@ public final class MappingConstraint
 
     public boolean matches( final Content content )
     {
+        final String val = trimQuotes( this.value );
         if ( ID_PROPERTY.equals( this.id ) )
         {
-            return content.getId().toString().equals( trimQuotes( this.value ) );
+            return valueMatches( val, content.getId().toString() );
         }
         else if ( NAME_PROPERTY.equals( this.id ) )
         {
-            return content.getName().toString().equals( trimQuotes( this.value ) );
+            return valueMatches( val, content.getName().toString() );
         }
         else if ( PATH_PROPERTY.equals( this.id ) )
         {
-            return content.getPath().toString().equals( trimQuotes( this.value ) );
+            return valueMatches( val, content.getPath().toString() );
+        }
+        else if ( TYPE_PROPERTY.equals( this.id ) )
+        {
+            return valueMatches( val, content.getType().toString() );
+        }
+        else if ( DISPLAY_NAME_PROPERTY.equals( this.id ) )
+        {
+            return valueMatches( val, content.getDisplayName() );
         }
         else
         {
@@ -56,8 +71,20 @@ public final class MappingConstraint
                 return false;
             }
 
-            final Value propertyValue = convert( trimQuotes( this.value ), prop.getValue().getType() );
+            final Value propertyValue = convert( val, prop.getValue().getType() );
             return propertyValue != null && prop.getValue().equals( propertyValue );
+        }
+    }
+
+    private boolean valueMatches( final String pattern, final String value )
+    {
+        try
+        {
+            return Pattern.compile( pattern ).matcher( value ).matches();
+        }
+        catch ( PatternSyntaxException e )
+        {
+            return false;
         }
     }
 
@@ -127,7 +154,7 @@ public final class MappingConstraint
         }
     }
 
-    public static MappingConstraint parse( final String expression )
+    public static ContentMappingConstraint parse( final String expression )
     {
         if ( !expression.contains( SEPARATOR ) )
         {
@@ -139,7 +166,7 @@ public final class MappingConstraint
         {
             throw new IllegalArgumentException( "Invalid match expression: " + expression );
         }
-        return new MappingConstraint( id, value );
+        return new ContentMappingConstraint( id, value );
     }
 
     @Override
@@ -153,7 +180,7 @@ public final class MappingConstraint
         {
             return false;
         }
-        final MappingConstraint that = (MappingConstraint) o;
+        final ContentMappingConstraint that = (ContentMappingConstraint) o;
         return Objects.equals( id, that.id ) && Objects.equals( value, that.value );
     }
 
