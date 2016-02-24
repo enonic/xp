@@ -23,8 +23,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
-import sun.net.util.URLUtil;
-
 import com.enonic.xp.admin.impl.json.application.ApplicationJson;
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -170,7 +168,6 @@ public final class ApplicationResource
         {
             final URL url = new URL( urlString );
 
-            if( URLUtil.Protocol)
             try (final InputStream inputStream = url.openStream())
             {
                 return installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ), urlString );
