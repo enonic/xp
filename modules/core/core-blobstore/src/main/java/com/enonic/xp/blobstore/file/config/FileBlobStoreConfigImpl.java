@@ -42,14 +42,12 @@ public class FileBlobStoreConfigImpl
     @Override
     public File baseDir()
     {
-        return getFileProperty( "blobStore.dir" );
+        return getFileProperty( "baseDir" );
     }
 
     private File getFileProperty( final String name )
     {
         return new File( this.config.get( name ) );
     }
-
-
 
 }

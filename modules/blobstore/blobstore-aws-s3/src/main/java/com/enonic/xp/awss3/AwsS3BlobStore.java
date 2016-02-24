@@ -8,7 +8,6 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -86,14 +85,16 @@ class AwsS3BlobStore
     public BlobRecord getRecord( final Segment segment, final BlobKey key )
         throws BlobStoreException
     {
-
         final Blob blob = this.blobStore.getBlob( this.bucketName, key.toString() );
+
+        if ( blob == null )
+        {
+            return null;
+        }
 
         try (final InputStream inputStream = blob.getPayload().openStream())
         {
-            final Stopwatch timer = Stopwatch.createStarted();
             final ByteSource source = ByteSource.wrap( ByteStreams.toByteArray( inputStream ) );
-            System.out.println( "S3-lookup: " + timer.stop().toString() );
 
             return new AwsS3BlobRecord( source, key );
         }
