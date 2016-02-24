@@ -5,8 +5,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 
@@ -39,6 +42,9 @@ public final class InitAppCommand
 
     @Option(name = "-a", description = "Authentication token for basic authentication (user:password).")
     public String authentication;
+
+    @Option(name = {"-c", "--checkout"}, description = "Branch or commit to checkout.")
+    public String checkout;
 
     @Option(name = {"-d", "--destination"}, description = "Destination path.")
     public String destination = ".";
@@ -84,73 +90,128 @@ public final class InitAppCommand
         File temporaryDirectory = new File( destinationDirectory, ".InitAppTemporaryDirectory" );
         temporaryDirectory.mkdirs();
 
-        // Clones the Git repository
-        final CloneCommand cloneCommand = Git.cloneRepository().
-            setURI( gitRepositoryUri ).
-            setDirectory( temporaryDirectory );
-        if ( authentication != null )
+        try
         {
-            final String[] authentificationValues = authentication.split( ":" );
-            cloneCommand.setCredentialsProvider(
-                new UsernamePasswordCredentialsProvider( authentificationValues[0], authentificationValues[1] ) );
+            // Clones the Git repository
+            final CloneCommand cloneCommand = Git.cloneRepository().
+                setURI( gitRepositoryUri ).
+                setDirectory( temporaryDirectory );
+            if ( authentication != null )
+            {
+                final String[] authentificationValues = authentication.split( ":" );
+                cloneCommand.setCredentialsProvider(
+                    new UsernamePasswordCredentialsProvider( authentificationValues[0], authentificationValues[1] ) );
+            }
+            Git git = cloneCommand.call();
+
+            // Checks out the specified branch or commit if necessary
+            if ( checkout != null )
+            {
+                git.checkout().setName( checkout ).call();
+            }
+
+            //Closes the repository
+            git.getRepository().close();
+
+            // Removes Git related content
+            removeFixGitContent( temporaryDirectory );
+
+            // Copies the content from the temporary folder except git related content
+            copyGitUnrelatedContent( temporaryDirectory, destinationDirectory );
         }
-        Git clone = cloneCommand.call();
-        clone.getRepository().close();
-
-        // Removes the Git related content
-        removeGitRelatedContent( temporaryDirectory );
-
-        //Copies the content from the temporary folder and remove it
-        FileUtils.copyDirectory( temporaryDirectory, destinationDirectory );
-        FileUtils.deleteDirectory( temporaryDirectory );
+        finally
+        {
+            // Removes the temporary folder
+            FileUtils.deleteDirectory( temporaryDirectory );
+        }
 
         LOGGER.info( "Git repository retrieved." );
     }
 
-    private void removeGitRelatedContent( File directory )
+    private void removeFixGitContent( File directory )
         throws IOException
     {
-        //Removes the .git directory and README.md file
+        // Removes the .git directory and README.md file
         FileUtils.deleteDirectory( new File( directory, ".git" ) );
         FileUtils.deleteQuietly( new File( directory, "README.md" ) );
+    }
 
-        //Remove the .gitkeep and .gitignore files
-        Files.walkFileTree( directory.toPath(), new SimpleFileVisitor<Path>()
-        {
-            @Override
-            public FileVisitResult visitFile( final Path file, final BasicFileAttributes attrs )
-                throws IOException
-            {
-                final String fileName = file.getFileName().toString();
-                if ( ".gitkeep".equals( fileName ) || ".gitignore".equals( fileName ) )
-                {
-                    Files.delete( file );
-                }
-                return FileVisitResult.CONTINUE;
-            }
-        } );
+    private void copyGitUnrelatedContent( File source, File target )
+        throws IOException
+    {
+        // Remove the .gitkeep and .gitignore files
+        Files.walkFileTree( source.toPath(), new GitUnrelatedContentCopyFileVisitor( source.toPath(), target.toPath() ) );
     }
 
     private void processGradleProperties()
         throws IOException
     {
-        LOGGER.info( "Adapting Gradle properties file ..." );
-
-        //Creates the Gradle Properties file if it does not exist
         final File gradlePropertiesFile = new File( destination, "gradle.properties" );
-        if ( !gradlePropertiesFile.exists() )
+        if ( gradlePropertiesFile.exists() )
         {
-            gradlePropertiesFile.createNewFile();
+            LOGGER.info( "Adapting Gradle properties file ..." );
+            // Process the content of the Gradle Properties file
+            final List<String> originalGradlePropertiesContent =
+                com.google.common.io.Files.readLines( gradlePropertiesFile, Charsets.UTF_8 );
+            final GradlePropertiesProcessor gradlePropertiesProcessor = new GradlePropertiesProcessor( name, version );
+            final List<String> processedGradlePropertiesContent = gradlePropertiesProcessor.process( originalGradlePropertiesContent );
+
+            // Write the processed content into the  Gradle Properties file
+            com.google.common.io.Files.asCharSink( gradlePropertiesFile, Charsets.UTF_8 ).writeLines( processedGradlePropertiesContent );
+
+            LOGGER.info( "Gradle properties file adapted." );
+        }
+    }
+
+    private class GitUnrelatedContentCopyFileVisitor
+        extends SimpleFileVisitor<Path>
+    {
+        final Path sourcePath;
+
+        final Path targetPath;
+
+        private boolean rootFile = true;
+
+        private GitUnrelatedContentCopyFileVisitor( Path sourcePath, Path targetPath )
+        {
+            this.sourcePath = sourcePath;
+            this.targetPath = targetPath;
         }
 
-        //Process the content of the Gradle Properties file
-        final List<String> originalGradlePropertiesContent = com.google.common.io.Files.readLines( gradlePropertiesFile, Charsets.UTF_8 );
-        final GradlePropertiesProcessor gradlePropertiesProcessor = new GradlePropertiesProcessor( name, version );
-        final List<String> processedGradlePropertiesContent = gradlePropertiesProcessor.process( originalGradlePropertiesContent );
+        @Override
+        public FileVisitResult visitFile( final Path sourceFilePath, final BasicFileAttributes attrs )
+            throws IOException
+        {
+            final String fileName = sourceFilePath.getFileName().toString();
+            if ( !".gitkeep".equals( fileName ) && !".gitignore".equals( fileName ) )
+            {
+                final Path sourceFileSubPath = sourcePath.relativize( sourceFilePath );
+                final Path targetFilePath = Paths.get( targetPath.toString(), sourceFileSubPath.toString() );
+                Files.move( sourceFilePath, targetFilePath, StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS );
+            }
+            return FileVisitResult.CONTINUE;
+        }
 
-        //Write the processed content into the  Gradle Properties file
-        com.google.common.io.Files.asCharSink( gradlePropertiesFile, Charsets.UTF_8 ).writeLines( processedGradlePropertiesContent );
+        @Override
+        public FileVisitResult preVisitDirectory( final Path sourceFilePath, final BasicFileAttributes attrs )
+            throws IOException
+        {
 
-        LOGGER.info( "Gradle properties file adapted." );
+            if ( rootFile )
+            {
+                rootFile = false;
+            }
+            else
+            {
+                final Path sourceFileSubPath = sourcePath.relativize( sourceFilePath );
+                final Path targetFilePath = Paths.get( targetPath.toString(), sourceFileSubPath.toString() );
+
+                if ( !Files.exists( targetFilePath ) )
+                {
+                    Files.copy( sourceFilePath, targetFilePath, StandardCopyOption.COPY_ATTRIBUTES, LinkOption.NOFOLLOW_LINKS );
+                }
+            }
+            return FileVisitResult.CONTINUE;
+        }
     }
 }

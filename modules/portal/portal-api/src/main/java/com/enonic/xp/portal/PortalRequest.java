@@ -73,6 +73,8 @@ public final class PortalRequest
 
     private HttpServletRequest rawRequest;
 
+    private boolean webSocket;
+
     public PortalRequest()
     {
         this.baseUri = "";
@@ -82,6 +84,7 @@ public final class PortalRequest
         this.params = HashMultimap.create();
         this.headers = Maps.newHashMap();
         this.cookies = Maps.newHashMap();
+        this.webSocket = false;
     }
 
     public HttpMethod getMethod()
@@ -307,5 +310,15 @@ public final class PortalRequest
     public void setRawRequest( final HttpServletRequest rawRequest )
     {
         this.rawRequest = rawRequest;
+    }
+
+    public boolean isWebSocket()
+    {
+        return this.webSocket;
+    }
+
+    public void setWebSocket( final boolean webSocket )
+    {
+        this.webSocket = webSocket;
     }
 }

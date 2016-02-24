@@ -60,6 +60,7 @@ include 'lib:lib-http-client'
 include 'lib:lib-io'
 include 'lib:lib-cache'
 include 'lib:lib-context'
+include 'lib:lib-websocket'
 
 include 'launcher:launcher-api'
 include 'launcher:launcher-impl'

@@ -4,7 +4,8 @@ import java.util.Iterator;
 
 import javax.servlet.http.Part;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableListMultimap;
 
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
@@ -12,11 +13,11 @@ import com.enonic.xp.web.multipart.MultipartItem;
 final class MultipartFormImpl
     implements MultipartForm
 {
-    private final ImmutableMap<String, MultipartItem> map;
+    private final ImmutableListMultimap<String, MultipartItem> map;
 
     public MultipartFormImpl( final Iterable<Part> parts )
     {
-        final ImmutableMap.Builder<String, MultipartItem> builder = ImmutableMap.builder();
+        final ImmutableListMultimap.Builder<String, MultipartItem> builder = ImmutableListMultimap.builder();
         for ( final Part part : parts )
         {
             final MultipartItemImpl item = new MultipartItemImpl( part );
@@ -41,7 +42,18 @@ final class MultipartFormImpl
     @Override
     public MultipartItem get( final String name )
     {
-        return this.map.get( name );
+        return this.get( name, 0 );
+    }
+
+    @Override
+    public MultipartItem get( final String name, final int index )
+    {
+        final ImmutableList<MultipartItem> values = this.map.get( name );
+        if ( values == null )
+        {
+            return null;
+        }
+        return values.size() > index ? values.get( index ) : null;
     }
 
     @Override

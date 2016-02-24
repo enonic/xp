@@ -212,15 +212,18 @@ module app.create {
 
         private filterList() {
             var inputValue = this.fileInput.getValue();
+            var inputValueLowerCase = inputValue ? inputValue.toLowerCase() : undefined;
 
             var filteredItems = this.listItems.filter((item: NewContentDialogListItem) => {
-                return (!inputValue || (item.getDisplayName().indexOf(inputValue) != -1) || (item.getName().indexOf(inputValue) != -1));
+                return (!inputValueLowerCase || (item.getDisplayName().toLowerCase().indexOf(inputValueLowerCase) != -1) ||
+                        (item.getName().toLowerCase().indexOf(inputValueLowerCase) != -1));
             });
 
             this.contentList.setItems(filteredItems);
         }
 
-        private filterByParentContent(items: NewContentDialogListItem[], siteApplicationKeys: ApplicationKey[]): NewContentDialogListItem[] {
+        private filterByParentContent(items: NewContentDialogListItem[],
+                                      siteApplicationKeys: ApplicationKey[]): NewContentDialogListItem[] {
             var createContentFilter = new api.content.CreateContentFilter().siteApplicationsFilter(siteApplicationKeys);
             return items.filter((item: NewContentDialogListItem) =>
                     createContentFilter.isCreateContentAllowed(this.parentContent, item.getContentType())
@@ -294,7 +297,8 @@ module app.create {
                          parentSite: Site) => {
 
                     this.listItems = this.createListOfContentTypeItems(contentTypes, parentSite);
-                    this.mostPopularItems = this.createMostPopularItemList(this.listItems.map((el) => el.getContentType()), directChilds.getContents());
+                    this.mostPopularItems =
+                        this.createMostPopularItemList(this.listItems.map((el) => el.getContentType()), directChilds.getContents());
 
                     this.resetNewContentDialogContent();
                     this.toggleMostPopularBlockShown();
@@ -502,7 +506,8 @@ module app.create {
                 aggregatedList: ContentTypeInfo[] = this.getAggregatedItemList(filteredList);
 
             for (var i = 0; i < aggregatedList.length && i < MostPopularItemsBlock.DEFAULT_MAX_ITEMS; i++) {
-                var contentType: ContentTypeSummary = this.findElementByFieldValue(allowedContentTypes, "name", aggregatedList[i].contentType);
+                var contentType: ContentTypeSummary = this.findElementByFieldValue(allowedContentTypes, "name",
+                    aggregatedList[i].contentType);
                 mostPopularItems.push(new MostPopularItem(contentType, aggregatedList[i].count));
             }
 
@@ -524,7 +529,8 @@ module app.create {
         }
 
         private isAllowedContentType(allowedContentTypes: ContentTypeSummary[], content: api.content.ContentSummary) {
-            return !content.getType().isMedia() && !content.getType().isDescendantOfMedia() && Boolean(this.findElementByFieldValue(allowedContentTypes, "id", content.getType().toString()));
+            return !content.getType().isMedia() && !content.getType().isDescendantOfMedia() &&
+                   Boolean(this.findElementByFieldValue(allowedContentTypes, "id", content.getType().toString()));
         }
 
         private alignDialogWindowVertically() {

@@ -132,6 +132,7 @@ public class ApplicationResourceTest
         Mockito.when( application.getMaxSystemVersion() ).thenReturn( "5.1" );
         Mockito.when( application.isStarted() ).thenReturn( true );
         Mockito.when( application.getModifiedTime() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ) );
+        Mockito.when( application.hasSiteDescriptor() ).thenReturn( true );
 
         return application;
     }
@@ -139,9 +140,9 @@ public class ApplicationResourceTest
     private Application createEmptyApplication()
     {
         final Application application = Mockito.mock( Application.class );
-        Mockito.when( application.getKey() ).thenReturn( ApplicationKey.from( "empty_testapplication" ) );
         Mockito.when( application.getDisplayName() ).thenReturn( "empty name" );
-
+        Mockito.when( application.getKey() ).thenReturn( ApplicationKey.from( "empty_testapplication" ) );
+        Mockito.when( application.hasSiteDescriptor() ).thenReturn( true );
         return application;
     }
 

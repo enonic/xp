@@ -23,6 +23,8 @@ public class MultipartFormImplTest
 
     private Part part1;
 
+    private Part part1B;
+
     private Part part2;
 
     @Before
@@ -33,11 +35,15 @@ public class MultipartFormImplTest
         Mockito.when( this.part1.getName() ).thenReturn( "upload1" );
         Mockito.when( this.part1.getInputStream() ).thenReturn( newStream( "hello1" ) );
 
+        this.part1B = Mockito.mock( Part.class );
+        Mockito.when( this.part1B.getName() ).thenReturn( "upload1" );
+        Mockito.when( this.part1B.getInputStream() ).thenReturn( newStream( "bye1" ) );
+
         this.part2 = Mockito.mock( Part.class );
         Mockito.when( this.part2.getName() ).thenReturn( "upload2" );
         Mockito.when( this.part2.getInputStream() ).thenReturn( newStream( "hello2" ) );
 
-        this.form = new MultipartFormImpl( Lists.newArrayList( this.part1, this.part2 ) );
+        this.form = new MultipartFormImpl( Lists.newArrayList( this.part1, this.part1B, this.part2 ) );
     }
 
     private InputStream newStream( final String text )
@@ -60,8 +66,8 @@ public class MultipartFormImplTest
     public void testIterate()
     {
         final List<MultipartItem> items = Lists.newArrayList( this.form );
-        assertEquals( 2, items.size() );
-        assertEquals( 2, this.form.getSize() );
+        assertEquals( 3, items.size() );
+        assertEquals( 3, this.form.getSize() );
         assertEquals( false, this.form.isEmpty() );
     }
 
@@ -81,6 +87,23 @@ public class MultipartFormImplTest
     }
 
     @Test
+    public void testGetWithIndex()
+    {
+        final MultipartItem item1 = this.form.get( "upload1", 0 );
+        assertNotNull( item1 );
+        assertEquals( "upload1", item1.getName() );
+        assertEquals( "hello1", item1.getAsString() );
+
+        final MultipartItem item1B = this.form.get( "upload1", 1 );
+        assertNotNull( item1B );
+        assertEquals( "upload1", item1B.getName() );
+        assertEquals( "bye1", item1B.getAsString() );
+
+        final MultipartItem item1C = this.form.get( "upload1", 2 );
+        assertNull( item1C );
+    }
+
+    @Test
     public void testGetAsString()
         throws Exception
     {
@@ -96,6 +119,7 @@ public class MultipartFormImplTest
         this.form.delete();
 
         Mockito.verify( this.part1, Mockito.times( 1 ) ).delete();
+        Mockito.verify( this.part1B, Mockito.times( 1 ) ).delete();
         Mockito.verify( this.part2, Mockito.times( 1 ) ).delete();
     }
 }

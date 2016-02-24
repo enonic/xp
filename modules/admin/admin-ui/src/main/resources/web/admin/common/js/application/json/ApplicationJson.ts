@@ -29,5 +29,7 @@ module api.application.json {
         minSystemVersion: string;
 
         maxSystemVersion: string;
+
+        local: boolean;
     }
 }

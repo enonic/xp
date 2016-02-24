@@ -56,8 +56,6 @@ public final class PortalUrlServiceImpl
 
     private static final String IMAGE_NO_SCALING = "full";
 
-    private static final String IMAGE_FORMAT = "jpeg";
-
     private static final String KEEP_SIZE_TRUE = "?keepsize=true";
 
     private ContentService contentService;
@@ -143,7 +141,6 @@ public final class PortalUrlServiceImpl
                         type( params.getType() ).
                         id( id ).
                         scale( imageScale ).
-                        format( IMAGE_FORMAT ).
                         portalRequest( params.getPortalRequest() );
 
                     final String imageUrl = imageUrl( imageUrlParams );

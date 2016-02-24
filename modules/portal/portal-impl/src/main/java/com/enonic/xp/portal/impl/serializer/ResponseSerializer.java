@@ -31,6 +31,11 @@ public final class ResponseSerializer
     public void serialize( final HttpServletResponse response )
         throws IOException
     {
+        if ( response.isCommitted() )
+        {
+            return;
+        }
+
         response.setStatus( this.portalResponse.getStatus().value() );
         response.setContentType( this.portalResponse.getContentType().toString() );
 

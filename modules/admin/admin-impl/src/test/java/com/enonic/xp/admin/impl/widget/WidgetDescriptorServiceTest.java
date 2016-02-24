@@ -27,11 +27,11 @@ public class WidgetDescriptorServiceTest
     public void getByInterface()
         throws Exception
     {
-        WidgetDescriptors result = this.service.getByInterface( "com.enonic.xp.my-interface" );
+        WidgetDescriptors result = this.service.getByInterfaces( "com.enonic.xp.my-interface" );
         Assert.assertNotNull( result );
         Assert.assertEquals( 2, result.getSize() );
 
-        result = this.service.getByInterface( "com.enonic.xp.unknown-interface" );
+        result = this.service.getByInterfaces( "com.enonic.xp.unknown-interface" );
         Assert.assertNotNull( result );
         Assert.assertEquals( 0, result.getSize() );
     }

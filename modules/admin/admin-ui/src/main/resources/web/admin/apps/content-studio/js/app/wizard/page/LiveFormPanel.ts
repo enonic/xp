@@ -371,9 +371,12 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {
                 this.pageView = event.getPageView();
-                this.contentWizardPanel.getComponentsViewToggler().setVisible(!!this.pageView);
                 if (this.pageView) {
                     this.insertablesPanel.setPageView(this.pageView);
+                }
+                else {
+                    this.contentWizardPanel.getContextWindowToggler().hide();
+                    this.contentWizardPanel.getComponentsViewToggler().hide();
                 }
             });
 
@@ -404,7 +407,9 @@ module app.wizard.page {
                     this.inspectComponent(<ComponentView<Component>>itemView);
                 }
 
-                this.minimizeContentFormPanelIfNeeded();
+                if (!this.pageView.isLocked()) {
+                    this.minimizeContentFormPanelIfNeeded();
+                }
             });
 
             this.liveEditPageProxy.onItemViewDeselected((event: ItemViewDeselectedEvent) => {

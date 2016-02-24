@@ -1,12 +1,17 @@
 package com.enonic.xp.portal.impl.controller;
 
+import java.util.Map;
+
 import javax.servlet.http.Cookie;
 import javax.ws.rs.core.Response;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.HtmlTag;
+import com.enonic.xp.portal.websocket.WebSocketConfig;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.web.HttpStatus;
 
@@ -78,6 +83,7 @@ public final class PortalResponseSerializer
         populateApplyFilters( builder, value.getMember( "applyFilters" ) );
         setRedirect( builder, value.getMember( "redirect" ) );
         populatePostProcess( builder, value.getMember( "postProcess" ) );
+        populateWebSocket( builder, value.getMember( "webSocket" ) );
 
         if ( this.forcePostProcess != null )
         {
@@ -301,5 +307,54 @@ public final class PortalResponseSerializer
     {
         final Boolean applyFilters = value != null ? value.getValue( Boolean.class ) : null;
         builder.applyFilters( applyFilters != null ? applyFilters : true );
+    }
+
+    private void populateWebSocket( final PortalResponse.Builder builder, final ScriptValue value )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+
+        final WebSocketConfig config = new WebSocketConfig();
+        populateWebSocketData( config, value.getMember( "data" ) );
+        populateWebSocketSubProtocols( config, value.getMember( "subProtocols" ) );
+
+        builder.webSocket( config );
+    }
+
+    private void populateWebSocketData( final WebSocketConfig config, final ScriptValue value )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+
+        final Map<String, Object> map = value.getMap();
+        final Map<String, String> result = Maps.newHashMap();
+
+        for ( final Map.Entry<String, Object> entry : map.entrySet() )
+        {
+            result.put( entry.getKey(), entry.getValue().toString() );
+        }
+
+        config.setData( result );
+    }
+
+    private void populateWebSocketSubProtocols( final WebSocketConfig config, final ScriptValue value )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+
+        if ( value.isArray() )
+        {
+            config.setSubProtocols( value.getArray( String.class ) );
+        }
+        else
+        {
+            config.setSubProtocols( Lists.newArrayList( value.getValue( String.class ) ) );
+        }
     }
 }

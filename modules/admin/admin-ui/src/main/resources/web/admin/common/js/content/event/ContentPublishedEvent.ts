@@ -2,18 +2,22 @@ module api.content.event {
 
     export class ContentPublishedEvent extends api.event.Event {
 
-        private contentId: api.content.ContentId;
+        private contentSummary: api.content.ContentSummary;
 
         private compareStatus: api.content.CompareStatus;
 
-        constructor(contentId: api.content.ContentId, compareStatus: api.content.CompareStatus) {
+        constructor(contentSummary: api.content.ContentSummary, compareStatus: api.content.CompareStatus) {
             super();
-            this.contentId = contentId;
+            this.contentSummary = contentSummary;
             this.compareStatus = compareStatus;
         }
 
         public getContentId(): api.content.ContentId {
-            return this.contentId;
+            return this.contentSummary.getContentId();
+        }
+
+        public getContentSummary(): api.content.ContentSummary {
+            return this.contentSummary;
         }
 
         public getCompareStatus(): api.content.CompareStatus {

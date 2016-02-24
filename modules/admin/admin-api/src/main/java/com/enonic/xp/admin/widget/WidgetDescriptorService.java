@@ -5,5 +5,5 @@ import com.google.common.annotations.Beta;
 @Beta
 public interface WidgetDescriptorService
 {
-    WidgetDescriptors getByInterface( final String interfaceName );
+    WidgetDescriptors getByInterfaces( final String... interfaceName );
 }

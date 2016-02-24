@@ -98,11 +98,13 @@ public final class ImageHelper
         throws IOException
     {
         final ImageWriter writer = getWriterByFormat( format );
-        writer.setOutput( new MemoryCacheImageOutputStream( out ) );
+        final MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream( out );
+        writer.setOutput( output );
         final ImageWriteParam params = writer.getDefaultWriteParam();
         setCompressionQuality( params, quality );
         writer.write( null, new IIOImage( image, null, null ), params );
         writer.dispose();
+        output.close();
     }
 
     private static void setCompressionQuality( ImageWriteParam params, int quality )

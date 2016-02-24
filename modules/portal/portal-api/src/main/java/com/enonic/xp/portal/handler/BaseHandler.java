@@ -9,6 +9,8 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.websocket.WebSocketConfig;
+import com.enonic.xp.portal.websocket.WebSocketEndpoint;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
@@ -62,12 +64,19 @@ public abstract class BaseHandler
             return handleOptions();
         }
 
-        final PortalHandlerWorker worker = newWorker( req );
-        worker.request = req;
-        worker.response = PortalResponse.create();
+        final PortalHandlerWorker worker = createWorker( req );
         worker.execute();
 
         return worker.response.build();
+    }
+
+    private PortalHandlerWorker createWorker( final PortalRequest req )
+        throws Exception
+    {
+        final PortalHandlerWorker worker = newWorker( req );
+        worker.request = req;
+        worker.response = PortalResponse.create();
+        return worker;
     }
 
     protected abstract PortalHandlerWorker newWorker( PortalRequest req )
@@ -99,5 +108,13 @@ public abstract class BaseHandler
             status( HttpStatus.OK ).
             header( "Allow", Joiner.on( "," ).join( this.methodsAllowed ) ).
             build();
+    }
+
+    @Override
+    public WebSocketEndpoint newWebSocketEndpoint( final PortalRequest req, final WebSocketConfig config )
+        throws Exception
+    {
+        final PortalHandlerWorker worker = createWorker( req );
+        return worker.newWebSocketEndpoint( config );
     }
 }

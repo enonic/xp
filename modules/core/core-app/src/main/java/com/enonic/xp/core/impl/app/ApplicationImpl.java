@@ -134,4 +134,10 @@ final class ApplicationImpl
     {
         return this.urlResolver.findUrl( path );
     }
+
+    @Override
+    public boolean hasSiteDescriptor()
+    {
+        return this.bundle.getEntry( ApplicationHelper.SITE_XML ) != null;
+    }
 }

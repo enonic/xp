@@ -245,7 +245,9 @@ module api.ui.selector.combobox {
             if (ComboBox.debug) {
                 console.debug('ComboBox.doSetValue:', value);
             }
-            this.clearSelection(false, false, true);
+            if (this.countSelectedOptions() > 0) {
+                this.clearSelection(false, false, true);
+            }
 
             value.split(';').forEach((val) => {
                 var option = this.getOptionByValue(val);

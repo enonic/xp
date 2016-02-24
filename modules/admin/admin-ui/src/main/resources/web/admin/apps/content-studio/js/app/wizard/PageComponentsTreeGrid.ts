@@ -80,9 +80,9 @@ module app.wizard {
             return this;
         }
 
-        setPageView(pageView: PageView) {
+        setPageView(pageView: PageView):wemQ.Promise<void> {
             this.pageView = pageView;
-            this.reload();
+            return this.reload();
         }
 
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ItemView>) {

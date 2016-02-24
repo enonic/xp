@@ -1,20 +1,20 @@
 module api.content.event {
 
-    export interface ContentUpdatedEventJson {
-        contentId: string;
-    }
-
     export class ContentUpdatedEvent extends api.event.Event {
 
-        private contentId: api.content.ContentId;
+        private contentSummary: api.content.ContentSummary;
 
-        constructor(contentId: api.content.ContentId) {
+        constructor(contentSummary: api.content.ContentSummary) {
             super();
-            this.contentId = contentId;
+            this.contentSummary = contentSummary;
         }
 
         public getContentId(): api.content.ContentId {
-            return this.contentId;
+            return this.contentSummary.getContentId();
+        }
+
+        public getContentSummary(): api.content.ContentSummary {
+            return this.contentSummary;
         }
 
         static on(handler: (event: ContentUpdatedEvent) => void) {
@@ -25,8 +25,5 @@ module api.content.event {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
 
-        static fromJson(json: ContentUpdatedEventJson): ContentUpdatedEvent {
-            return new ContentUpdatedEvent(new ContentId(json.contentId));
-        }
     }
 }

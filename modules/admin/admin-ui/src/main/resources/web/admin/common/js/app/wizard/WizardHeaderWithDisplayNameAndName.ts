@@ -27,8 +27,6 @@ module api.app.wizard {
 
         private pathEl: api.dom.SpanEl;
 
-        private nameElWrapper: api.dom.DivEl;
-
         private nameEl: api.ui.text.TextInput;
 
         private autoGenerateName: boolean = false;
@@ -56,14 +54,12 @@ module api.app.wizard {
             this.pathEl.hide();
             this.appendChild(this.pathEl);
 
-            this.nameElWrapper = new api.dom.DivEl("name-wrapper");
             this.nameEl = api.ui.text.AutosizeTextInput.middle().setForbiddenCharsRe(this.forbiddenChars);
             this.nameEl.setPlaceholder("<name>").setName('name');
             this.nameEl.onValueChanged((event: api.ValueChangedEvent) => {
                 this.notifyPropertyChanged("name", event.getOldValue(), event.getNewValue());
             });
-            this.nameElWrapper.appendChild(this.nameEl);
-            this.appendChild(this.nameElWrapper);
+            this.appendChild(this.nameEl);
 
             this.displayNameEl.onValueChanged((event: api.ValueChangedEvent) => {
 
@@ -211,14 +207,6 @@ module api.app.wizard {
         disableNameGeneration(value: boolean) {
             if (value) {
                 this.setAutoGenerationEnabled(false);
-                this.nameEl.getEl().setDisabled(true);
-                this.nameElWrapper.onClicked(() => {
-                    this.nameEl.getEl().setDisabled(false);
-                    this.nameEl.giveFocus();
-                });
-                this.nameEl.onBlur(() => {
-                    this.nameEl.getEl().setDisabled(true);
-                });
             }
             this.setIgnoreGenerateStatusForName(value);
         }
