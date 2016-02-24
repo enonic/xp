@@ -398,6 +398,24 @@ public final class SecurityResource
     }
 
     @GET
+    @Path("pathguard")
+    public PathGuardJson getPathGuard( @QueryParam("key") final String key )
+    {
+        if ( key == null )
+        {
+            return null;
+        }
+
+        final Optional<PathGuard> pathGuard = securityService.getPathGuard( key );
+        if ( !pathGuard.isPresent() )
+        {
+            throw JaxRsExceptions.notFound( String.format( "Path guard [%s] not found", pathGuard ) );
+        }
+
+        return new PathGuardJson( pathGuard.get() );
+    }
+
+    @GET
     @Path("pathguard/list")
     public PathGuardsJson getPathGuards()
     {

@@ -296,6 +296,19 @@ module app {
                             }).finally(() => {
                                 this.mask.hide();
                             }).done();
+                    } else if (userItem.getType() == UserTreeGridItemType.PATH_GUARD) {
+                        new app.wizard.PathGuardWizardPanelFactory().
+                            setAppBarTabId(tabId).
+                            setPathGuardKey(userItem.getPathGuard().getKey()).
+                            createForEdit().then((wizard: app.wizard.PathGuardWizardPanel) => {
+
+                                this.handleWizardUpdated(wizard, tabMenuItem, closeViewPanelMenuItem);
+
+                            }).catch((reason: any) => {
+                                api.DefaultErrorHandler.handle(reason);
+                            }).finally(() => {
+                                this.mask.hide();
+                            }).done();
                     } else if (userItem.getType() === UserTreeGridItemType.USER_STORE) {
 
                         new app.wizard.UserStoreWizardPanelFactory().
@@ -367,6 +380,8 @@ module app {
             var appBarTabId: AppBarTabId;
             if (UserTreeGridItemType.PRINCIPAL == userItem.getType()) {
                 appBarTabId = AppBarTabId.forEdit(userItem.getPrincipal().getKey().getId());
+            } else if (UserTreeGridItemType.PATH_GUARD == userItem.getType()) {
+                appBarTabId = AppBarTabId.forEdit(userItem.getPathGuard().getKey());
             } else if (UserTreeGridItemType.USER_STORE == userItem.getType()) {
                 appBarTabId = AppBarTabId.forEdit(userItem.getUserStore().getKey().getId());
             }
