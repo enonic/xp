@@ -1,7 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.application;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.stream.Collectors;
 
@@ -17,6 +17,8 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -25,6 +27,7 @@ import com.enonic.xp.admin.impl.json.application.ApplicationJson;
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallParams;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallResultJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstalledJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationListParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSuccessJson;
@@ -57,6 +60,8 @@ public final class ApplicationResource
 
     private MarketService marketService;
 
+    private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
+
     @GET
     @Path("list")
     public ListApplicationJson list( @QueryParam("query") final String query )
@@ -82,9 +87,11 @@ public final class ApplicationResource
             {
                 continue;
             }
-            if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( application.getKey() ) )//Remove after 7.0.0 refactoring
+            final ApplicationKey applicationKey = application.getKey();
+            if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( applicationKey ) )//Remove after 7.0.0 refactoring
             {
-                json.add( application, this.siteService.getDescriptor( application.getKey() ) );
+                json.add( application, this.applicationService.isLocalApplication( applicationKey ),
+                          this.siteService.getDescriptor( applicationKey ) );
             }
         }
 
@@ -95,8 +102,9 @@ public final class ApplicationResource
     public ApplicationJson getByKey( @QueryParam("applicationKey") String applicationKey )
     {
         final Application application = this.applicationService.getInstalledApplication( ApplicationKey.from( applicationKey ) );
+        final boolean local = this.applicationService.isLocalApplication( ApplicationKey.from( applicationKey ) );
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( ApplicationKey.from( applicationKey ) );
-        return new ApplicationJson( application, siteDescriptor );
+        return new ApplicationJson( application, local, siteDescriptor );
     }
 
     @POST
@@ -122,7 +130,7 @@ public final class ApplicationResource
     @POST
     @Path("install")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public ApplicationInstalledJson install( final MultipartForm form )
+    public ApplicationInstallResultJson install( final MultipartForm form )
         throws Exception
     {
         final MultipartItem appFile = form.get( "file" );
@@ -134,9 +142,7 @@ public final class ApplicationResource
 
         final ByteSource byteSource = appFile.getBytes();
 
-        final Application application = this.applicationService.installApplication( byteSource );
-
-        return new ApplicationInstalledJson( application );
+        return installApplication( byteSource, appFile.getFileName() );
     }
 
     @POST
@@ -145,37 +151,54 @@ public final class ApplicationResource
     public ApplicationSuccessJson uninstall( final ApplicationListParams params )
         throws Exception
     {
-        params.getKeys().forEach( this.applicationService::uninstallApplication );
+        params.getKeys().forEach( applicationKey -> this.applicationService.uninstallApplication( applicationKey, true ) );
         return new ApplicationSuccessJson();
     }
 
     @POST
     @Path("installUrl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public ApplicationInstalledJson installUrl( final ApplicationInstallParams params )
+    public ApplicationInstallResultJson installUrl( final ApplicationInstallParams params )
         throws Exception
     {
         final String urlString = params.getURL();
-
-        final URL url;
+        final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
+        String failure;
         try
         {
-            url = new URL( urlString );
+            final URL url = new URL( urlString );
+
+            try (final InputStream inputStream = url.openStream())
+            {
+                return installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ), urlString );
+            }
+
         }
-        catch ( MalformedURLException e )
+        catch ( IOException e )
         {
-            throw new RuntimeException( "cannot fetch from URL " + urlString, e );
+            LOG.error( failure = "Failed to upload application from " + urlString );
+            result.setFailure( failure );
+            return result;
         }
+    }
 
-        try (final InputStream inputStream = url.openStream())
+    private ApplicationInstallResultJson installApplication(final ByteSource byteSource, final String applicationName) {
+        final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
+
+        try
         {
+            final Application application = this.applicationService.installApplication(byteSource, true, true );
 
-            final Application application =
-                this.applicationService.installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ) );
-
-            return new ApplicationInstalledJson( application );
+            result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
         }
+        catch ( Exception e )
+        {
+            final String failure = "Failed to process application " + applicationName;
+            LOG.error( failure );
 
+            result.setFailure( failure );
+        }
+        return result;
     }
 
     @POST

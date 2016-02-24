@@ -3,10 +3,142 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, user-scalable=no">
+    <style type="text/css">
+        html,body { height: 100%; margin: 0px; padding: 0px; }
+    </style>
 </head>
 <body>
 
+<script type="text/javascript">
+(function () {
+    var launcherMainContainer;
+
+    function listenToKeyboardEvents() {
+        window.addEventListener("keydown", onKeyPressed, true);
+    }
+
+    function listenToMouseMove() {
+        window.addEventListener("mousemove", disableKeyboardNavigation, true);
+    }
+
+    function disableKeyboardNavigation() {
+        getLauncherMainContainer().classList.remove("keyboard-navigation");
+        unselectCurrentApp();
+        window.removeEventListener("mousemove", disableKeyboardNavigation, true);
+    }
+
+    function initKeyboardNavigation() {
+        var appContainer = getLauncherMainContainer();
+        if (!appContainer.classList.contains("keyboard-navigation")) {
+            listenToMouseMove();
+            appContainer.classList.add("keyboard-navigation");
+        }
+    }
+
+    function onKeyPressed(e) {
+        switch(e.keyCode) {
+        case 38:
+            // up key pressed
+            initKeyboardNavigation();
+            selectPreviousApp();
+            break;
+        case 40:
+            // down key pressed
+            initKeyboardNavigation();
+            selectNextApp();
+            break;
+        case 13:
+            // enter key pressed
+            var selectedApp = getSelectedApp();
+            if (selectedApp) {
+                startApp(selectedApp);
+            }
+            break;
+        }
+    }
+
+    function getSelectedApp() {
+        return getLauncherMainContainer().querySelector('.app-row.selected');
+    }
+
+    function getSelectedAppIndex() {
+        var apps = getLauncherMainContainer().querySelectorAll('.app-row');
+        for (var i=0; i<apps.length; i++) {
+            if (apps[i].classList.contains("selected")) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    function selectNextApp() {
+        var selectedIndex = getSelectedAppIndex();
+        var apps = getLauncherMainContainer().querySelectorAll('.app-row');
+
+        selectApp((selectedIndex + 1) == apps.length ? 0 : selectedIndex + 1);
+    }
+
+    function selectPreviousApp() {
+        var selectedIndex = getSelectedAppIndex();
+        var nextIndex;
+        if (selectedIndex == -1) {
+            nextIndex = 0;
+        }
+        else if (selectedIndex == 0) {
+            nextIndex = document.querySelectorAll('.app-row').length - 1;
+        }
+        else {
+            nextIndex = selectedIndex - 1;
+        }
+
+        selectApp(nextIndex);
+    }
+
+    function selectApp(index) {
+        unselectCurrentApp();
+        getAppByIndex(index).classList.add("selected");
+    }
+
+    function unselectCurrentApp() {
+        var selectedApp = getSelectedApp();
+        if (selectedApp) {
+            selectedApp.classList.remove("selected");
+        }
+    }
+
+    function getAppByIndex(index) {
+        var apps = getLauncherMainContainer().querySelectorAll('.app-row');
+        for (var i=0; i<apps.length; i++) {
+            if (i == index) {
+                return apps[i];
+            }
+        }
+        return null;
+    }
+
+    function startApp(app) {
+        var anchorEl = app.parentElement;
+        if (anchorEl && anchorEl.tagName == 'A' && anchorEl.click) {
+            unselectCurrentApp();
+            anchorEl.click();
+        }
+    }
+
+    function getLauncherMainContainer() {
+        if (!launcherMainContainer) {
+            launcherMainContainer = document.querySelector('.launcher-main-container');
+        }
+
+        return launcherMainContainer;
+    }
+
+    listenToKeyboardEvents();
+}());
+</script>
+
 <div class="launcher-main-container" tabindex="100">
+    <link rel="stylesheet" type="text/css" href="{{launcherCss}}">
+
     <div class="launcher-tip"><span>Start here</span></div>
     <div class="launcher-title">
         <span class="container-title">{{installation}}</span>
@@ -58,7 +190,9 @@
             <img src="{{userIconUrl}}">
             <span>{{user.displayName}}</span>
         </div>
-        <a href="{{logoutServiceUrl}}" class="user-logout">Log out</a>
+        <div class="user-logout">
+            <a href="{{logoutServiceUrl}}">Log out</a>
+        </div>
     </div>
 
 </div>

@@ -11,7 +11,9 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageInputStream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -57,6 +59,11 @@ public class ImageServiceImpl
         final ByteSource blob = contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
         if ( blob != null )
         {
+            if ( renderAsSourceGif( readImageParams ) && isGifImage( blob ) )
+            {
+                return blob;
+            }
+
             final BufferedImage bufferedImage = readBufferedImage( blob, readImageParams );
             if ( bufferedImage != null )
             {
@@ -64,6 +71,40 @@ public class ImageServiceImpl
             }
         }
         return null;
+    }
+
+    private boolean renderAsSourceGif( final ReadImageParams params )
+    {
+        final boolean noScale =
+            ( params.getScaleParams() == null || "full".equals( params.getScaleParams().getName() ) ) && !params.isScaleSquare() &&
+                !params.isScaleWidth();
+        final boolean noCropping = params.getCropping() == null;
+        final boolean noFilter = params.getFilterParam() == null;
+        final boolean isGifFormat = "gif".equals( params.getFormat() );
+
+        return isGifFormat && noScale && noCropping && noFilter;
+    }
+
+    private boolean isGifImage( final ByteSource blob )
+    {
+        try
+        {
+            final ImageInputStream iis = ImageIO.createImageInputStream( blob.openStream() );
+            final Iterator<ImageReader> imageReaders = ImageIO.getImageReaders( iis );
+            while ( imageReaders.hasNext() )
+            {
+                final ImageReader reader = imageReaders.next();
+                if ( "gif".equals( reader.getFormatName() ) )
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        catch ( IOException e )
+        {
+            return false;
+        }
     }
 
     @Override

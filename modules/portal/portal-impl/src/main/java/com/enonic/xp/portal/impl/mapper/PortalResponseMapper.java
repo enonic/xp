@@ -31,14 +31,6 @@ public final class PortalResponseMapper
         MapperHelper.serializeMap( "headers", gen, this.response.getHeaders() );
         serializePageContributions( gen );
         serializeCookies( gen );
-        if ( this.response.getBody() instanceof Map )
-        {
-            MapperHelper.serializeMap( "body", gen, (Map) this.response.getBody(), true );
-        }
-        else
-        {
-            gen.value( "body", this.response.getBody() );
-        }
         gen.value( "applyFilters", this.response.applyFilters() );
         serializeBody( gen );
     }
@@ -117,7 +109,7 @@ public final class PortalResponseMapper
         final Object body = this.response.getBody();
         if ( body instanceof Map )
         {
-            MapperHelper.serializeMap( "body", gen, (Map<String, String>) body );
+            MapperHelper.serializeMap( "body", gen, (Map) body, true );
         }
         else
         {

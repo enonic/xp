@@ -3,10 +3,14 @@ module api.application {
     export class ApplicationViewer extends api.ui.NamesAndIconViewer<Application> {
 
         constructor() {
-            super();
+            super("application-viewer");
         }
 
         resolveDisplayName(object: Application): string {
+            this.toggleClass("local", object.isLocal());
+            if (object.isLocal()) {
+                this.getNamesAndIconView().setIconToolTip("Local application");
+            }
             return object.getDisplayName();
         }
 
