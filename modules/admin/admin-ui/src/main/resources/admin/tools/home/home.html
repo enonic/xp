@@ -35,22 +35,19 @@
 <script type="text/javascript">
     var CONFIG = {
         autoOpenLauncher: true,
-        appId: 'home',
-        portalAssetsUrl: '{{portalAssetsUrl}}'
+        appId: 'home'
     };
 </script>
 
 <script type="text/javascript" src="{{assetsUri}}/common/lib/bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
 <script type="text/javascript" src="{{portalAssetsUrl}}/js/launcher.js"></script>
+<script type="text/javascript" src="{{portalAssetsUrl}}/js/home.js"></script>
 
 <div class="home-main-container" tabindex="100" style="">
     <div id="background-image" class="lazy-image empty"
          style="background-image: url(&quot;/admin/common/images/background-1920.jpg&quot;);"></div>
     <div class="header">
-        <div class="welcome-text">
-            <span>Welcome to Enonic XP!</span>
-        </div>
-        <div class="welcome-tip"><span>Start here</span></div>
+        <span>Welcome to Enonic XP</span>
     </div>
 </div>
 <div class="home-main-footer">
@@ -60,7 +57,9 @@
 </div>
 
 <script type="text/javascript">
-    document.getElementById("background-image").classList.remove("empty");
+    window.onload = function () {
+        document.getElementById("background-image").classList.remove("empty");
+    }
 </script>
 </body>
 </html>

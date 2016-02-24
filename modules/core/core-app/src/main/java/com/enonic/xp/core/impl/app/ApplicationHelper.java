@@ -30,7 +30,7 @@ public final class ApplicationHelper
 
     public final static String X_SOURCE_PATHS = "X-Source-Paths";
 
-    private static final String SITE_XML = "site/site.xml";
+    public static final String SITE_XML = "site/site.xml";
 
     public static final String BUNDLE_TYPE_HEADER = "X-Bundle-Type";
 

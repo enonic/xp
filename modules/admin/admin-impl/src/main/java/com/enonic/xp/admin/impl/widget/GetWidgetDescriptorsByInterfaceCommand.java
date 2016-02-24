@@ -23,7 +23,7 @@ final class GetWidgetDescriptorsByInterfaceCommand
 {
     private final static String PATH = "/admin/widgets/";
 
-    private String interfaceName;
+    private String[] interfaceNames;
 
     private ApplicationService applicationService;
 
@@ -34,15 +34,24 @@ final class GetWidgetDescriptorsByInterfaceCommand
         final ApplicationKeys keys = this.applicationService.getInstalledApplicationKeys();
         final List<WidgetDescriptor> widgetDescriptorList = getDescriptorsFromModules( keys ).
             stream().
-            filter( widgetDescriptor -> widgetDescriptor.getInterfaces().contains( interfaceName ) ).
+            filter( widgetDescriptor -> {
+                for ( String interfaceName : interfaceNames )
+                {
+                    if ( widgetDescriptor.getInterfaces().contains( interfaceName ) )
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            } ).
             collect( Collectors.toList() );
 
         return WidgetDescriptors.from( widgetDescriptorList );
     }
 
-    public GetWidgetDescriptorsByInterfaceCommand interfaceName( final String interfaceName )
+    public GetWidgetDescriptorsByInterfaceCommand interfaceNames( final String... interfaceNames )
     {
-        this.interfaceName = interfaceName;
+        this.interfaceNames = interfaceNames;
         return this;
     }
 

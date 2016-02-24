@@ -240,11 +240,14 @@ exports.getMultipartForm = function () {
  *
  * @example-ref examples/portal/getMultipartItem.js
  *
+ * @param {string} name Name of the multipart item.
+ * @param {number} [index] Optional zero-based index. It should be specified if there are multiple items with the same name.
+ *
  * @returns {object} The named multipart form item.
  */
-exports.getMultipartItem = function (name) {
+exports.getMultipartItem = function (name, index) {
     var bean = __.newBean('com.enonic.xp.lib.portal.multipart.MultipartHandler');
-    return __.toNativeObject(bean.getItem(name));
+    return __.toNativeObject(bean.getItem(name, index || 0));
 };
 
 /**
@@ -252,11 +255,14 @@ exports.getMultipartItem = function (name) {
  *
  * @example-ref examples/portal/getMultipartStream.js
  *
+ * @param {string} name Name of the multipart item.
+ * @param {number} [index] Optional zero-based index. It should be specified if there are multiple items with the same name.
+ *
  * @returns {*} Stream of multipart item data.
  */
-exports.getMultipartStream = function (name) {
+exports.getMultipartStream = function (name, index) {
     var bean = __.newBean('com.enonic.xp.lib.portal.multipart.MultipartHandler');
-    return bean.getBytes(name);
+    return bean.getBytes(name, index || 0);
 };
 
 /**
@@ -264,9 +270,12 @@ exports.getMultipartStream = function (name) {
  *
  * @example-ref examples/portal/getMultipartText.js
  *
+ * @param {string} name Name of the multipart item.
+ * @param {number} [index] Optional zero-based index. It should be specified if there are multiple items with the same name.
+ *
  * @returns {string} Text for multipart item data.
  */
-exports.getMultipartText = function (name) {
+exports.getMultipartText = function (name, index) {
     var bean = __.newBean('com.enonic.xp.lib.portal.multipart.MultipartHandler');
-    return bean.getText(name);
+    return bean.getText(name, index || 0);
 };

@@ -15,6 +15,8 @@ module api.ui.text {
          */
         private allowedKeyCodes: number[] = [8, 9, 46, 39, 37];
 
+        private previousValue: string;
+
         constructor(className?: string, size?: string, originalValue?: string) {
             super("text-input", 'text', api.StyleHelper.COMMON_PREFIX, originalValue);
             if (className) {
@@ -24,6 +26,17 @@ module api.ui.text {
             if (size) {
                 this.addClassEx(size);
             }
+
+            this.previousValue = this.getValue();
+
+            this.onKeyDown((event: KeyboardEvent) => {
+                if (event.keyCode == 27 || event.keyCode == 13) {
+                    if (event.keyCode == 27) {
+                        this.setPreviousValue();
+                    }
+                    this.getEl().blur();
+                }
+            });
 
             this.onKeyPressed((event: KeyboardEvent) => {
                 if (!this.stripCharsRe) {
@@ -39,6 +52,18 @@ module api.ui.text {
                     }
                 }
             });
+
+            this.onFocus((event: Event) => {
+                this.previousValue = this.doGetValue();
+            });
+
+            this.onBlur((event: Event) => {
+                this.previousValue = this.doGetValue();
+            });
+        }
+
+        private setPreviousValue() {
+            this.setValue(this.previousValue);
         }
 
         static large(className?: string, originalValue?: string): TextInput {

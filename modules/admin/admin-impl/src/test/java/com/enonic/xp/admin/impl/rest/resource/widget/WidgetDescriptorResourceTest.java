@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.widget;
 
+import javax.ws.rs.core.MediaType;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -46,9 +48,10 @@ public class WidgetDescriptorResourceTest
 
         WidgetDescriptors widgetDescriptors = WidgetDescriptors.from( widgetDescriptor1, widgetDescriptor2 );
 
-        Mockito.when( widgetDescriptorService.getByInterface( Mockito.any() ) ).thenReturn( widgetDescriptors );
+        Mockito.when( widgetDescriptorService.getByInterfaces( Mockito.any() ) ).thenReturn( widgetDescriptors );
 
-        String jsonString = request().path( "widget" ).queryParam( "interface", "someInterfaceName" ).get().getAsString();
+        String jsonString = request().path( "widget/list/byinterfaces" ).entity( "[\"someInterfaceName\"]",
+                                                                                 MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
 
         assertJson( "get_widgets_by_interface.json", jsonString );
     }

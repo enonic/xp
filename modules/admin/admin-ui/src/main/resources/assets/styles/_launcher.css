@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'Open Sans';
+  src: url("../fonts/opensans-regular.eot");
+  src: url("../fonts/opensans-regular.eot?#iefix") format("embedded-opentype"), url("../fonts/opensans-regular.woff") format("woff"), url("../fonts/opensans-regular.ttf") format("truetype"), url("../fonts/opensans-regular.svg#open_sansregular") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
 .body-mask.launcher {
   animation: none;
   animation-delay: 0;
@@ -316,43 +323,15 @@
 }
 .launcher-panel {
   position: fixed;
-  overflow: hidden;
   top: 0;
   right: 0;
-  height: 100%;
   z-index: 2500;
   width: 320px;
-  font-family: "Open Sans", sans-serif;
-}
-.launcher-panel .app-row-selected {
-  background-color: rgba(255, 255, 255, 0.3);
-}
-.launcher-panel .app-row-selected .app-info .app-description {
-  color: #ffffff;
-}
-.launcher-panel.keyboard-navigation .launcher-app-container .app-row.selected {
-  background-color: rgba(255, 255, 255, 0.3);
-}
-.launcher-panel.keyboard-navigation .launcher-app-container .app-row.selected .app-info .app-description {
-  color: #ffffff;
-}
-.launcher-panel:not(.keyboard-navigation) .launcher-app-container .app-row:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-}
-.launcher-panel:not(.keyboard-navigation) .launcher-app-container .app-row:hover .app-info .app-description {
-  color: #ffffff;
-}
-.launcher-panel > * {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-.launcher-panel > div {
-  padding: 0 30px;
-  display: table;
+  height: 100%;
 }
 .launcher-panel.hidden,
 .launcher-panel.slideout {
-  right: -375px;
+  right: calc(-320px);
 }
 .launcher-panel.visible {
   right: 0;
@@ -365,17 +344,130 @@
   -webkit-transition: right 300ms ease-out;
   transition: right 300ms ease-out;
 }
-.launcher-panel .launcher-title {
+.launcher-panel .launcher-main-container {
+  display: block;
+}
+.launcher-panel .launcher-main-container > div {
+  width: 320px;
+}
+.launcher-panel .launcher-main-container .launcher-title {
+  width: calc(260px);
+}
+.launcher-panel .launcher-tip {
+  position: absolute;
+  padding: 0;
+  height: 44px;
+  left: -87px;
+  -webkit-animation: bounce 2s ease-in-out 1.5s;
+  /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: bounce 2s ease-in-out 1.5s;
+  /* Firefox < 16 */
+  -ms-animation: bounce 2s ease-in-out 1.5s;
+  /* Internet Explorer */
+  -o-animation: bounce 2s ease-in-out 1.5s;
+  /* Opera < 12.1 */
+  animation: bounce 2s ease-in-out 1.5s;
+}
+@keyframes bounce {
+  0% {
+    left: -357px;
+  }
+  100% {
+    left: -87px;
+  }
+}
+.launcher-panel .launcher-tip span {
+  -webkit-animation: fadein 5s linear 2s;
+  /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadein 5s linear 2s;
+  /* Firefox < 16 */
+  -ms-animation: fadein 5s linear 2s;
+  /* Internet Explorer */
+  -o-animation: fadein 5s linear 2s;
+  /* Opera < 12.1 */
+  animation: fadein 5s linear 2s;
+  opacity: 0;
+  display: table-cell;
+  vertical-align: middle;
+  color: #ffffff;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  white-space: nowrap;
+}
+.launcher-panel .launcher-tip span:after {
+  position: absolute;
+  font-size: 18px;
+  font-family: 'icomoon';
+  content: "\e3b5";
+  line-height: 22px;
+}
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.launcher-main-container {
+  height: 100%;
+  font-family: "Open Sans", sans-serif;
+}
+.launcher-main-container:focus {
+  outline: none;
+}
+.launcher-main-container .launcher-tip {
+  display: none;
+}
+.launcher-main-container .app-row-selected {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.launcher-main-container .app-row-selected .app-info .app-description {
+  color: #ffffff;
+}
+ .launcher-main-container.keyboard-navigation .launcher-app-container .app-row.selected {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+ .launcher-main-container.keyboard-navigation .launcher-app-container .app-row.selected .app-info .app-description {
+  color: #ffffff;
+}
+.launcher-main-container:not(.keyboard-navigation) .launcher-app-container .app-row:hover {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.launcher-main-container:not(.keyboard-navigation) .launcher-app-container .app-row:hover .app-info .app-description {
+  color: #ffffff;
+}
+.launcher-main-container > * {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.launcher-main-container > div {
+  padding-left: 30px;
+  display: table;
+  width: calc(100% -  30px);
+}
+.launcher-main-container .launcher-title {
   position: absolute;
   top: 0;
   height: 44px;
-  width: 320px;
   background-color: #000000;
   color: #ffffff;
   font-size: 25px;
   display: table;
+  overflow: hidden;
+  table-layout: fixed;
 }
-.launcher-panel .launcher-title .container-title {
+.launcher-main-container .launcher-title .container-title {
   overflow: hidden;
   white-space: pre;
   text-overflow: ellipsis;
@@ -384,50 +476,54 @@
   font-size: 32px;
   font-weight: 100;
   position: absolute;
-  bottom: -6px;
-  width: 65%;
+  bottom: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  display: table-cell;
+  vertical-align: bottom;
+  line-height: 25px;
 }
-.launcher-panel .launcher-title .container-title::first-letter {
+.launcher-main-container .launcher-title .container-title::first-letter {
   text-transform: uppercase;
 }
-.launcher-panel .launcher-app-container {
+.launcher-main-container .launcher-app-container {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  width: 100%;
   height: 100%;
-  width: 320px;
   padding: calc(54px) 0 44px 0;
   overflow: hidden;
   background-color: rgba(0, 0, 0, 0.9);
 }
-.launcher-panel .launcher-app-container .scrollable-content {
-  height: 100%;
+.launcher-main-container .launcher-app-container .scrollable-content {
   overflow-x: hidden;
   overflow-y: auto;
 }
-.launcher-panel .launcher-app-container a {
+.launcher-main-container .launcher-app-container a {
   color: #ffffff;
   text-decoration: none;
 }
-.launcher-panel .launcher-app-container a:focus {
+.launcher-main-container .launcher-app-container a:focus {
   outline: none;
 }
-.launcher-panel .launcher-app-container .app-row {
+.launcher-main-container .launcher-app-container .app-row {
   padding: 10px 0 10px 30px;
   display: table;
 }
-.launcher-panel .launcher-app-container .app-row > * {
+.launcher-main-container .launcher-app-container .app-row > * {
   display: table-cell;
 }
-.launcher-panel .launcher-app-container .app-row.active {
+.launcher-main-container .launcher-app-container .app-row.active {
   border-left: 4px solid #cb0300;
   padding-left: 26px;
 }
-.launcher-panel .launcher-app-container .app-row .app-info {
+.launcher-main-container .launcher-app-container .app-row .app-info {
   padding-left: 15px;
   vertical-align: middle;
 }
-.launcher-panel .launcher-app-container .app-row .app-info .app-name {
+.launcher-main-container .launcher-app-container .app-row .app-info .app-name {
   width: 220px;
   font-size: 18px;
   overflow: hidden;
@@ -435,58 +531,61 @@
   text-overflow: ellipsis;
   margin: 0;
 }
-.launcher-panel .launcher-app-container .app-row .app-info .app-description {
+.launcher-main-container .launcher-app-container .app-row .app-info .app-description {
   width: 220px;
   font-size: 14px;
   color: darkgray;
   margin: 0;
 }
-.launcher-panel .launcher-app-container .app-row .app-icon {
+.launcher-main-container .launcher-app-container .app-row .app-icon {
   vertical-align: middle;
   width: 40px;
   height: 40px;
   pointer-events: none;
 }
-.launcher-panel .launcher-app-container .app-row .app-icon svg {
+.launcher-main-container .launcher-app-container .app-row .app-icon svg {
   width: inherit !important;
   height: inherit !important;
 }
-.launcher-panel .launcher-user {
+.launcher-main-container .launcher-user {
   position: absolute;
   bottom: 0;
   display: table;
   height: 44px;
-  width: 320px;
   background-color: rgba(255, 255, 255, 0.1);
   color: #ffffff;
   font-size: 14px;
 }
-.launcher-panel .launcher-user .user-info {
+.launcher-main-container .launcher-user .user-info {
   vertical-align: middle;
   padding: 10px 15px 0 0;
-  width: 200px;
+  width: 100%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.launcher-panel .launcher-user .user-info > * {
+.launcher-main-container .launcher-user .user-info > * {
   vertical-align: middle;
 }
-.launcher-panel .launcher-user a {
-  color: #ffffff;
-  text-decoration: none;
+.launcher-main-container .launcher-user .user-logout {
   display: table-cell;
   vertical-align: middle;
-  width: 100%;
+  width: 100px;
 }
-.launcher-panel .launcher-user img {
+.launcher-main-container .launcher-user .user-logout a {
+  color: #ffffff;
+  text-decoration: none;
+}
+.launcher-main-container .launcher-user img {
   width: 24px;
   margin-right: 10px;
 }
-.launcher-panel .launcher-user span {
+.launcher-main-container .launcher-user span {
   vertical-align: middle;
 }
 .launcher-button {
+  font-family: "Open Sans", sans-serif;
+  font-size: 12px;
   position: fixed;
   border: none;
   right: 6px;

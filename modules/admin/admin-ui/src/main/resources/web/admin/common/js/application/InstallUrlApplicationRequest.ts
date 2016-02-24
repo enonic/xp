@@ -1,6 +1,6 @@
 module api.application {
 
-    export class InstallUrlApplicationRequest extends ApplicationResourceRequest<json.ApplicationJson, Application> {
+    export class InstallUrlApplicationRequest extends ApplicationResourceRequest<json.ApplicationInstallResultJson, ApplicationInstallResult> {
 
         private applicationUrl: string;
 
@@ -20,9 +20,9 @@ module api.application {
             return api.rest.Path.fromParent(super.getResourcePath(), "installUrl");
         }
 
-        sendAndParse(): wemQ.Promise<Application> {
-            return this.send().then((response: api.rest.JsonResponse<json.ApplicationJson>) => {
-                return this.fromJsonToApplication(response.getResult());
+        sendAndParse(): wemQ.Promise<ApplicationInstallResult> {
+            return this.send().then((response: api.rest.JsonResponse<json.ApplicationInstallResultJson>) => {
+                return ApplicationInstallResult.fromJson(response.getResult());
             });
         }
     }

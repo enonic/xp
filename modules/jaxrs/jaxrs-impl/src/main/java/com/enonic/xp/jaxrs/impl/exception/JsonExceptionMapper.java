@@ -52,7 +52,7 @@ public final class JsonExceptionMapper
 
         if ( cause instanceof MarketException )
         {
-            return toErrorInfo( cause, Response.Status.NOT_FOUND.getStatusCode() );
+            return toErrorInfo( cause, ( (MarketException) cause ).getHttpErrorCode() );
         }
 
         return toErrorInfo( cause, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode() );
