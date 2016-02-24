@@ -39,7 +39,7 @@ module api.security {
             return this.key === other.key &&
                    this.displayName === other.displayName &&
                    ((!this.authConfig && !other.authConfig) || (this.authConfig && this.authConfig.equals(other.authConfig))) &&
-                   this.paths === other.paths
+                   ObjectHelper.anyArrayEquals(this.paths, other.paths)
         }
 
         clone(): PathGuard {

@@ -121,23 +121,6 @@ module app.browse {
             return this.treeGridActions;
         }
 
-        private resolveUserTreeGridItemType(principal: Principal) {
-            if (!principal) {
-                return UserTreeGridItemType.USER_STORE;
-            } else {
-                switch (principal.getType()) {
-                case PrincipalType.USER:
-                    return UserTreeGridItemType.USERS;
-                case PrincipalType.GROUP:
-                    return UserTreeGridItemType.GROUPS;
-                case PrincipalType.ROLE:
-                    return UserTreeGridItemType.ROLES;
-                default:
-                    return UserTreeGridItemType.PRINCIPAL;
-                }
-            }
-        }
-
         updateUserNode(principal: api.security.Principal, userStore: api.security.UserStore, pathGuard: api.security.PathGuard) {
             var userTreeGridItem,
                 builder = new UserTreeGridItemBuilder();

@@ -20,6 +20,8 @@ module app.browse {
             switch (object.getType()) {
                 case UserTreeGridItemType.USER_STORE:
                     return ('/' + object.getUserStore().getKey().toString());
+                case UserTreeGridItemType.PATH_GUARD:
+                    return ('/' + object.getPathGuard().getKey());
                 case UserTreeGridItemType.PRINCIPAL:
                     return relativePath ? object.getPrincipal().getKey().getId() :
                                           object.getPrincipal().getKey().toPath();

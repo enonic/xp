@@ -254,6 +254,7 @@ module app.wizard {
                 setDisplayName(this.wizardHeader.getDisplayName()).
                 setKey(this.getPersistedItem().getKey().toString()).
                 setAuthConfig(this.authApplicationWizardStepForm.getAuthConfig()).
+                setPaths([]). //TODO
                 build();
         }
 
