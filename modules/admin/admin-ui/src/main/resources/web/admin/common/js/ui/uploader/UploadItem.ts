@@ -166,7 +166,7 @@ module api.ui.uploader {
             })
         }
 
-        private notifyFailed() {
+        notifyFailed() {
             this.failedListeners.forEach((listener) => {
                 listener();
             })

@@ -3,6 +3,7 @@
 ///<reference path='ApplicationResourceKey.ts' />
 ///<reference path='Application.ts' />
 ///<reference path='ApplicationResourceRequest.ts' />
+///<reference path='ApplicationInstallResult.ts' />
 ///<reference path='GetApplicationRequest.ts' />
 ///<reference path='ListApplicationsRequest.ts' />
 ///<reference path='ApplicationListResult.ts' />

@@ -48,7 +48,7 @@ public final class MapperHelper
             final Object value = entry.getValue();
             if ( nested && value instanceof Map )
             {
-                serializeMap( entry.getKey().toString(), gen, (Map) value );
+                serializeMap( entry.getKey().toString(), gen, (Map) value, true );
             }
             else
             {
