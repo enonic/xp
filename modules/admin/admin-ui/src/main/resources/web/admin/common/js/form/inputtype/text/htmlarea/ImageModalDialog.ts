@@ -32,6 +32,7 @@ module api.form.inputtype.text.htmlarea {
         private scrollUpButton: api.dom.Element;
         private scrollBarWidth: number;
         private scrollBarRemoveTimeoutId: number;
+        private scrolling;
 
         constructor(config: api.form.inputtype.text.HtmlAreaImage, contentId: api.content.ContentId) {
             this.imageElement = <HTMLImageElement>config.element;
@@ -123,11 +124,19 @@ module api.form.inputtype.text.htmlarea {
 
             this.createImagePreviewContainer();
 
-            var scrollWrapperDiv = new api.dom.DivEl("preview-panel-scroll-wrapper");
-            scrollWrapperDiv.appendChild(this.imagePreviewContainer);
-            wemjq(scrollWrapperDiv.getHTMLElement()).insertAfter(imageSelectorContainer.getHTMLElement());
+            var scrollBarWrapperDiv = new api.dom.DivEl("preview-panel-scrollbar-wrapper");
+            scrollBarWrapperDiv.appendChild(this.imagePreviewContainer);
+            var scrollNavigationWrapperDiv = new api.dom.DivEl("preview-panel-scroll-navigation-wrapper");
+            scrollNavigationWrapperDiv.appendChild(scrollBarWrapperDiv);
+
+            wemjq(scrollNavigationWrapperDiv.getHTMLElement()).insertAfter(imageSelectorContainer.getHTMLElement());
 
             this.initializeImageScrollNavigation();
+
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+                this.resetPreviewContainerMaxHeight();
+                this.toggleScrollButtons();
+            });
         }
 
         private getImageContent(images: api.content.ContentSummary[]): api.content.ContentSummary {
@@ -153,7 +162,8 @@ module api.form.inputtype.text.htmlarea {
 
             this.image.onLoaded(() => {
                 this.imagePreviewContainer.removeClass("upload");
-                wemjq(this.imageToolbar.getHTMLElement()).insertBefore(this.imagePreviewContainer.getHTMLElement().parentElement);
+                wemjq(this.imageToolbar.getHTMLElement()).insertBefore(
+                    this.imagePreviewContainer.getHTMLElement().parentElement.parentElement);
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
                 if (this.getCaptionFieldValue() == "") {
                     this.imageCaptionField.getEl().scrollIntoView();
@@ -221,10 +231,6 @@ module api.form.inputtype.text.htmlarea {
 
         private createImagePreviewContainer() {
             var imagePreviewContainer = new api.dom.DivEl("content-item-preview-panel");
-            //limiting image modal dialog height up to screen size except padding on top and bottom
-            //so 340 is 300px content of image modal dialog except preview container + 20*2 from top and bottom of screen
-            var maxImagePreviewHeight = wemjq(window).height() - 340;
-            new api.dom.ElementHelper(imagePreviewContainer.getHTMLElement()).setMaxHeightPx(maxImagePreviewHeight);
 
             this.progress = new api.ui.ProgressBar();
             imagePreviewContainer.appendChild(this.progress);
@@ -233,27 +239,23 @@ module api.form.inputtype.text.htmlarea {
             imagePreviewContainer.appendChild(this.error);
 
             imagePreviewContainer.onScroll(() => {
-
-                if (this.isScrolledToBottom()) {
-                    this.scrollDownButton.hide();
-                }
-                else {
-                    this.scrollDownButton.show();
-                }
-
-                if (this.isScrolledToTop()) {
-                    this.scrollUpButton.hide();
-                }
-                else {
-                    this.scrollUpButton.show();
-                }
-
+                this.toggleScrollButtons();
                 this.showScrollBar();
                 this.removeScrollBarOnTimeout();
             });
 
             this.imagePreviewContainer = imagePreviewContainer;
+
+            this.resetPreviewContainerMaxHeight();
         }
+
+        private resetPreviewContainerMaxHeight() {
+            //limiting image modal dialog height up to screen size except padding on top and bottom
+            //so 340 is 300px content of image modal dialog except preview container + 20*2 from top and bottom of screen
+            var maxImagePreviewHeight = wemjq(window).height() - 340;
+            new api.dom.ElementHelper(this.imagePreviewContainer.getHTMLElement()).setMaxHeightPx(maxImagePreviewHeight);
+        }
+
 
         private getCaption(): string {
             if (this.imageElement) {
@@ -509,10 +511,23 @@ module api.form.inputtype.text.htmlarea {
 
             this.scrollDownButton = api.dom.Element.fromString(clipHtml);
 
-            this.scrollDownButton.onClicked(() => {
+            this.scrollDownButton.onClicked((event) => {
+                event.preventDefault();
                 wemjq(this.imagePreviewContainer.getHTMLElement()).animate({scrollTop: "+=50"}, 400);
             });
-            wemjq(this.scrollDownButton.getHTMLElement()).insertAfter(this.imagePreviewContainer.getHTMLElement());
+
+            this.scrolling = false;
+
+            this.scrollDownButton.onMouseOver(() => {
+                this.scrolling = true;
+                this.scrollImagePreview("down");
+            });
+
+            this.scrollDownButton.onMouseOut(() => {
+                this.scrolling = false;
+            });
+
+            wemjq(this.scrollDownButton.getHTMLElement()).insertAfter(this.imagePreviewContainer.getHTMLElement().parentElement);
 
             this.scrollDownButton.hide();
         }
@@ -536,12 +551,49 @@ module api.form.inputtype.text.htmlarea {
 
             this.scrollUpButton = api.dom.Element.fromString(clipHtml);
 
-            this.scrollUpButton.onClicked(() => {
+            this.scrollUpButton.onClicked((event) => {
+                event.preventDefault();
                 wemjq(this.imagePreviewContainer.getHTMLElement()).animate({scrollTop: "-=50"}, 400);
             });
-            wemjq(this.scrollUpButton.getHTMLElement()).insertBefore(this.imagePreviewContainer.getHTMLElement());
+
+            this.scrollUpButton.onMouseOver(() => {
+                this.scrolling = true;
+                this.scrollImagePreview("up");
+            });
+
+            this.scrollUpButton.onMouseOut(() => {
+                this.scrolling = false;
+            });
+
+            wemjq(this.scrollUpButton.getHTMLElement()).insertBefore(this.imagePreviewContainer.getHTMLElement().parentElement);
 
             this.scrollUpButton.hide();
+        }
+
+        private scrollImagePreview(direction) {
+            var amount = (direction === "up" ? "-=1px" : "+=1px");
+            wemjq(this.imagePreviewContainer.getHTMLElement()).animate({scrollTop: amount}, 1, () => {
+                if (this.scrolling) {
+                    // If we want to keep scrolling, call the scrollContent function again:
+                    this.scrollImagePreview(direction);
+                }
+            });
+        }
+
+        private toggleScrollButtons() {
+            if (this.isScrolledToBottom()) {
+                this.scrollDownButton.hide();
+            }
+            else {
+                this.scrollDownButton.show();
+            }
+
+            if (this.isScrolledToTop()) {
+                this.scrollUpButton.hide();
+            }
+            else {
+                this.scrollUpButton.show();
+            }
         }
 
         private getScrollbarWidth(): number {
@@ -570,7 +622,7 @@ module api.form.inputtype.text.htmlarea {
         }
 
         private showScrollBar() {
-            this.imagePreviewContainer.getHTMLElement().parentElement.style.marginRight = "-17px";
+            this.imagePreviewContainer.getHTMLElement().parentElement.style.marginRight = "-" + this.scrollBarWidth + "px";
             this.imagePreviewContainer.getEl().setMarginRight("");
             this.imagePreviewContainer.getHTMLElement().style.overflowY = "auto";
         }
@@ -647,6 +699,7 @@ module api.form.inputtype.text.htmlarea {
                 this.resetActiveButton();
                 button.addClass("active");
                 this.image.getHTMLElement().style["text-align"] = this.getImageAlignment();
+                api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
 
             return button;
@@ -658,6 +711,7 @@ module api.form.inputtype.text.htmlarea {
             keepOriginalSizeCheckbox.onValueChanged(()=> {
                 this.rebuildImgSrcParams();
                 this.rebuildImgDataSrcParams();
+                api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
             keepOriginalSizeCheckbox.setLabel('Keep original size');
 
@@ -672,6 +726,7 @@ module api.form.inputtype.text.htmlarea {
             imageCroppingSelector.onOptionSelected((event: OptionSelectedEvent<ImageCroppingOption>) => {
                 this.rebuildImgSrcParams();
                 this.rebuildImgDataSrcParams();
+                api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
 
             return imageCroppingSelector;
