@@ -2,6 +2,7 @@ package com.enonic.xp.blobstore.swift;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.blob.BlobStore;
@@ -20,7 +21,7 @@ public class SwiftBlobStoreProvider
     @Activate
     public void activate()
     {
-        if ( this.config.user() == null )
+        if ( !this.config.validate() )
         {
             return;
         }
@@ -33,6 +34,11 @@ public class SwiftBlobStoreProvider
             user( config.user() ).
             projectId( config.projectId() ).
             build();
+    }
+
+    @Deactivate
+    public void deactivate()
+    {
     }
 
     @Override
@@ -57,5 +63,11 @@ public class SwiftBlobStoreProvider
     public void setConfig( final SwiftConfig config )
     {
         this.config = config;
+    }
+
+    @Override
+    public boolean isActive()
+    {
+        return this.blobStore != null;
     }
 }

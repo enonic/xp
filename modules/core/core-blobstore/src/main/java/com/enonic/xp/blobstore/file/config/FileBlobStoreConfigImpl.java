@@ -50,4 +50,9 @@ public class FileBlobStoreConfigImpl
         return new File( this.config.get( name ) );
     }
 
+    @Override
+    public boolean validate()
+    {
+        return true;
+    }
 }

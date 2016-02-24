@@ -45,7 +45,7 @@ public class BlobStoreActivator
 
     private void registerBlobStore( final boolean force )
     {
-        if ( !isActivated() )
+        if ( !activatorHasBeenInitialized() )
         {
             return;
         }
@@ -62,7 +62,7 @@ public class BlobStoreActivator
 
     private void doRegister( final BlobStoreProvider blobStoreProvider )
     {
-        if ( blobStoreProvider != null )
+        if ( blobStoreProvider != null && blobStoreProvider.isActive() )
         {
             final BlobStore blobStore = BlobStoreFactory.create().
                 config( this.config ).
@@ -77,8 +77,7 @@ public class BlobStoreActivator
         }
     }
 
-
-    private boolean isActivated()
+    private boolean activatorHasBeenInitialized()
     {
         if ( this.context == null )
         {
@@ -105,8 +104,11 @@ public class BlobStoreActivator
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addProvider( final BlobStoreProvider provider )
     {
-        this.providers.add( provider );
-        this.registerBlobStore( false );
+        if ( provider.isActive() )
+        {
+            this.providers.add( provider );
+            this.registerBlobStore( false );
+        }
     }
 
     @SuppressWarnings("unused")

@@ -6,4 +6,6 @@ public interface ProviderConfig
 
     boolean readThroughEnabled();
 
+    boolean validate();
+
 }

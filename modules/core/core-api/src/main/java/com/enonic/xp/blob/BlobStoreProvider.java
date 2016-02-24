@@ -7,4 +7,6 @@ public interface BlobStoreProvider
     String name();
 
     ProviderConfig config();
+
+    boolean isActive();
 }

@@ -5,6 +5,8 @@ import java.util.Map;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
+import com.google.common.base.Strings;
+
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
@@ -61,4 +63,24 @@ public class AwsS3ConfigImpl
     {
         return Boolean.valueOf( this.config.get( "readThrough.enabled" ) );
     }
+
+    @Override
+    public boolean validate()
+    {
+        return checkNotEmpty( this.accessKey(), this.bucketName(), this.secretAccessKey() );
+    }
+
+    private boolean checkNotEmpty( final String... values )
+    {
+        for ( final String value : values )
+        {
+            if ( Strings.isNullOrEmpty( value ) )
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }

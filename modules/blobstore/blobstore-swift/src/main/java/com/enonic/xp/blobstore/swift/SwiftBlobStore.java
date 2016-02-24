@@ -2,13 +2,14 @@ package com.enonic.xp.blobstore.swift;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.DLPayload;
 import org.openstack4j.model.common.Identifier;
 import org.openstack4j.model.common.Payloads;
-import org.openstack4j.model.compute.ActionResponse;
 import org.openstack4j.model.identity.Access;
+import org.openstack4j.model.storage.object.options.CreateUpdateContainerOptions;
 import org.openstack4j.openstack.OSFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +29,6 @@ import com.enonic.xp.util.Exceptions;
 public class SwiftBlobStore
     implements BlobStore
 {
-    final OSClient client;
-
     final String container;
 
     final String endpoint;
@@ -54,8 +53,10 @@ public class SwiftBlobStore
         domain = builder.domain;
         endpoint = builder.endpoint;
         container = builder.container;
-        this.client = createClient();
-        this.access = this.client.getAccess();
+        this.access = connect();
+
+        createContainer();
+
     }
 
     public static Builder create()
@@ -63,7 +64,7 @@ public class SwiftBlobStore
         return new Builder();
     }
 
-    private OSClient createClient()
+    private Access connect()
     {
         Identifier domainIdentifier = Identifier.byName( this.domain );
 
@@ -73,25 +74,52 @@ public class SwiftBlobStore
             scopeToProject( Identifier.byId( this.projectId ), domainIdentifier ).
             authenticate(), OSFactory.class );
 
-        Access access = os.getAccess();
+        if ( os.getAccess() == null )
+        {
+            throw new BlobStoreException(
+                "Cannot connect to blobstore [" + this.endpoint + "] with user [" + access.getUser().getUsername() + "]" );
+        }
 
-        LOG.info( "Connected to blobstore [" + this.endpoint + "] successfully with user [" + access.getUser().getUsername() + "]" );
+        LOG.info(
+            "Connected to blobstore [" + this.endpoint + "] successfully with user [" + os.getAccess().getUser().getUsername() + "]" );
 
-        return os;
+        return os.getAccess();
     }
 
     private boolean createContainer()
     {
-        final ActionResponse response = this.client.objectStorage().containers().create( container );
+        if ( checkExists() )
+        {
+            return true;
+        }
 
-        return response.isSuccess();
+        final boolean success = getClient().objectStorage().containers().create( container, CreateUpdateContainerOptions.create().
+            accessRead( this.user ).
+            accessWrite( this.user ) ).
+            isSuccess();
+        return success;
+    }
+
+    private boolean checkExists()
+    {
+        final Map<String, String> metadata = getClient().objectStorage().containers().getMetadata( this.container );
+
+        final String timestamp = metadata.get( "X-Timestamp" );
+
+        if ( timestamp != null )
+        {
+            return true;
+        }
+        return false;
     }
 
     @Override
     public BlobRecord getRecord( final Segment segment, final BlobKey key )
         throws BlobStoreException
     {
-        final DLPayload blob = this.client.objectStorage().
+        final OSClient osClient = getClient();
+
+        final DLPayload blob = osClient.objectStorage().
             objects().
             get( this.container, key.toString() ).
             download();
@@ -100,8 +128,6 @@ public class SwiftBlobStore
         {
             return null;
         }
-
-        LOG.info( "Fetched resources with key [" + key + "] from swift blobstore" );
 
         try (final InputStream inputStream = blob.getInputStream())
         {
@@ -113,6 +139,11 @@ public class SwiftBlobStore
         {
             throw Exceptions.unchecked( e );
         }
+    }
+
+    private OSClient getClient()
+    {
+        return OSFactory.clientFromAccess( access );
     }
 
     @Override
@@ -135,12 +166,9 @@ public class SwiftBlobStore
     {
         try (InputStream stream = in.openStream())
         {
-            String etag = this.client.objectStorage().
+            this.getClient().objectStorage().
                 objects().
                 put( this.container, key.toString(), Payloads.create( stream ) );
-
-            LOG.info( "Fetched resources with key [" + key + "] and etag [" + etag + "] from swift blobstore" );
-
         }
         catch ( IOException e )
         {
@@ -149,7 +177,6 @@ public class SwiftBlobStore
 
         return new SwiftBlobRecord( in, key );
     }
-
 
     public static final class Builder
     {

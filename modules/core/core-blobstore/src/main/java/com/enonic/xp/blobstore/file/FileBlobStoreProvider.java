@@ -52,4 +52,10 @@ public class FileBlobStoreProvider
     {
         this.config = config;
     }
+
+    @Override
+    public boolean isActive()
+    {
+        return true;
+    }
 }

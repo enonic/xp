@@ -21,7 +21,7 @@ public class AwsS3BlobStoreProvider
     @Activate
     public void activate()
     {
-        if ( config.accessKey() == null )
+        if ( !this.config.validate() )
         {
             return;
         }
@@ -37,7 +37,10 @@ public class AwsS3BlobStoreProvider
     @Deactivate
     public void deactivate()
     {
-        this.blobStore.close();
+        if ( this.blobStore != null )
+        {
+            this.blobStore.close();
+        }
     }
 
     @Override
@@ -62,5 +65,11 @@ public class AwsS3BlobStoreProvider
     public void setConfig( final AwsS3Config config )
     {
         this.config = config;
+    }
+
+    @Override
+    public boolean isActive()
+    {
+        return this.blobStore != null;
     }
 }
