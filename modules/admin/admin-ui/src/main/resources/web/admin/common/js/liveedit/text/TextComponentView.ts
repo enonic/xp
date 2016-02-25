@@ -62,6 +62,7 @@ module api.liveedit.text {
             this.rootElement.getHTMLElement().onpaste = this.handlePasteEvent.bind(this);
 
             this.onAdded(() => {
+                //TODO: this seems to be never triggered because element is already in DOM when parsed!!!
                 this.focusOnInit = true;
                 this.addClass("editor-focused");
                 if (!this.htmlAreaEditor && !this.initializingTinyMceEditor) {
@@ -122,6 +123,8 @@ module api.liveedit.text {
                 var child = this.getChildren()[i];
                 if (child.getEl().getTagName().toUpperCase() == 'SECTION') {
                     this.rootElement = child;
+                    // convert image urls in text component for web
+                    child.setHtml(HTMLAreaHelper.prepareImgSrcsInValueForEdit(child.getHtml()), false);
                     break;
                 }
             }
@@ -219,8 +222,7 @@ module api.liveedit.text {
         setEditMode(flag: boolean) {
             if (!flag) {
                 if (this.htmlAreaEditor) {
-                    this.processMCEValue();
-                    this.closePageTextEditMode();
+                    this.processEditorValue();
                 }
                 this.removeClass("editor-focused");
             }
@@ -250,19 +252,17 @@ module api.liveedit.text {
         }
 
         private onBlurHandler(e) {
-            this.processMCEValue();
             this.removeClass("editor-focused");
 
             setTimeout(() => {
                 if (!this.anyEditorHasFocus()) {
-                    this.setEditMode(false);
+                    this.closePageTextEditMode();
                 }
             }, 100);
         }
 
         private onKeydownHandler(e) {
             if (e.keyCode == 27) { // esc
-                this.processMCEValue();
                 this.closePageTextEditMode();
                 this.removeClass("editor-focused");
             }
@@ -287,10 +287,11 @@ module api.liveedit.text {
                 setOnKeydownHandler(this.onKeydownHandler.bind(this)).
                 setFixedToolbarContainer('.mce-toolbar-container').
                 setContentId(this.getContentId()).
-                setUseInsertImage(false). // uncomment to enable inserting images
+                setUseInsertImage(true). // uncomment to enable inserting images
                 createEditor().
                 then((editor: HtmlAreaEditor) => {
                     this.htmlAreaEditor = editor;
+                    debugger;
                     if (!!this.textComponent.getText()) {
                         this.htmlAreaEditor.setContent(HTMLAreaHelper.prepareImgSrcsInValueForEdit(this.textComponent.getText()));
                     } else {
@@ -318,18 +319,21 @@ module api.liveedit.text {
             return editorFocused || dialogVisible;
         }
 
-        private processMCEValue() {
-            if (this.isMceEditorEmpty()) {
+        private processEditorValue() {
+            debugger;
+            if (this.isEditorEmpty()) {
                 this.textComponent.setText(TextComponentView.DEFAULT_TEXT);
+                // copy editor content over to the root html element
                 this.rootElement.getHTMLElement().innerHTML = TextComponentView.DEFAULT_TEXT;
             } else {
                 var editorContent = HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.htmlAreaEditor);
                 this.textComponent.setText(editorContent);
-                this.rootElement.getHTMLElement().innerHTML = editorContent;
+                // copy editor raw content (without any processing!) over to the root html element
+                this.rootElement.getHTMLElement().innerHTML = this.htmlAreaEditor.getContent({format : 'raw'});
             }
         }
 
-        private isMceEditorEmpty(): boolean {
+        private isEditorEmpty(): boolean {
             var editorContent = this.htmlAreaEditor.getContent();
             return editorContent.trim() === "" || editorContent == "<h2>&nbsp;</h2>";
         }
