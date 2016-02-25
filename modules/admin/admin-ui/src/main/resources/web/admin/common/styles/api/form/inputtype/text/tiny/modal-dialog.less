@@ -213,9 +213,10 @@
       position: relative;
       border-bottom-width: 0px;
 
-      .@{_COMMON_PREFIX}button {
-
-        padding: 7px 7px;
+      .@{_COMMON_PREFIX}button[class*="icon-paragraph-"] {
+        &[class*="icon-paragraph-"] {
+          padding: 7px 7px;
+        }
 
         &[class*="icon-"] {
           font-size: 24px;
@@ -242,6 +243,10 @@
         }
       }
 
+      .fold-button {
+        bottom: 3px;
+      }
+
     }
 
     .image-cropping-selector {
@@ -262,6 +267,8 @@
       }
 
       .options-container {
+        height: 210px !important;
+
         .slick-cell {
           padding-bottom: 4px;
           padding-top: 4px;
@@ -323,24 +330,45 @@
     max-width: 640px;
     max-height: 100%;
 
+    .image-selector {
+      .input-wrapper {
+        .flexbox();
+
+        .image-uploader-el {
+          max-width: 37px;
+          position: static;
+
+          .dropzone-container {
+            position: static;
+          }
+        }
+      }
+    }
+
+
     svg {
       position: absolute;
       cursor: pointer;
 
-      &.scrollDown {
+      &.scrolldown {
         left: 48%;
-        top: 97%;
+        bottom: -19px;
       }
 
-      &.scrollUp {
+      &.scrollup {
         left: 48%;
-        top: 10%;
+        top: -8px;
       }
 
     }
 
-    .preview-panel-scroll-wrapper {
-      overflow: hidden;
+    .preview-panel-scroll-navigation-wrapper {
+      position: relative;
+      margin-top: 5px;
+
+      .preview-panel-scrollbar-wrapper {
+        overflow: hidden;
+      }
     }
 
   }
