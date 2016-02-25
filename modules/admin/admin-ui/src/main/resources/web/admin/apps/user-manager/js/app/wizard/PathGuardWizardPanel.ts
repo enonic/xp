@@ -19,6 +19,7 @@ module app.wizard {
         private descriptionWizardStepForm: PrincipalDescriptionWizardStepForm;
 
         private authApplicationWizardStepForm: AuthApplicationWizardStepForm;
+        private pathGuardMappingWizardStepForm: PathGuardMappingWizardStepForm;
 
         private persistedPathGuardKey: string;
 
@@ -31,6 +32,7 @@ module app.wizard {
 
             this.descriptionWizardStepForm = new PrincipalDescriptionWizardStepForm();
             this.authApplicationWizardStepForm = new AuthApplicationWizardStepForm();
+            this.pathGuardMappingWizardStepForm = new PathGuardMappingWizardStepForm();
 
             this.constructing = true;
             this.isPathGuardFormValid = false;
@@ -100,7 +102,7 @@ module app.wizard {
                 callback(this);
             });
 
-            this.formIcon.addClass("icon-address-book");
+            this.formIcon.addClass("icon-shield");
         }
 
         getUserItemType(): string {
@@ -136,6 +138,7 @@ module app.wizard {
 
             steps.push(new WizardStep("PathGuard", this.descriptionWizardStepForm));
             steps.push(new WizardStep("Authentication", this.authApplicationWizardStepForm));
+            steps.push(new WizardStep("Mappings", this.pathGuardMappingWizardStepForm));
 
             this.setSteps(steps);
 
@@ -193,6 +196,7 @@ module app.wizard {
 
             this.wizardHeader.initNames(existing.getDisplayName(), existing.getKey(), false);
             this.authApplicationWizardStepForm.layout(existing.clone());
+            this.pathGuardMappingWizardStepForm.layout(existing.clone());
 
             deferred.resolve(null);
             return deferred.promise;
@@ -230,7 +234,8 @@ module app.wizard {
             if (persistedPathGuard == undefined) {
                 return this.wizardHeader.getName() !== "" ||
                        this.wizardHeader.getDisplayName() !== "" ||
-                       this.authApplicationWizardStepForm.getAuthConfig() != null;
+                       this.authApplicationWizardStepForm.getAuthConfig() != null ||
+                       this.pathGuardMappingWizardStepForm.getPaths().length > 0;
             } else {
                 var viewedPathGuard = this.assembleViewedPathGuard();
                 return !this.getPersistedItem().equals(viewedPathGuard);
@@ -254,29 +259,33 @@ module app.wizard {
                 setDisplayName(this.wizardHeader.getDisplayName()).
                 setKey(this.getPersistedItem().getKey().toString()).
                 setAuthConfig(this.authApplicationWizardStepForm.getAuthConfig()).
-                setPaths([]). //TODO
+                setPaths(this.pathGuardMappingWizardStepForm.getPaths()).
                 build();
         }
 
         private produceCreatePathGuardRequest(): CreatePathGuardRequest {
             var key = this.wizardHeader.getName(),
                 name = this.wizardHeader.getDisplayName(),
-                authConfig = this.authApplicationWizardStepForm.getAuthConfig();
+                authConfig = this.authApplicationWizardStepForm.getAuthConfig(),
+                paths = this.pathGuardMappingWizardStepForm.getPaths();
             return new CreatePathGuardRequest().
                 setDisplayName(name).
                 setKey(key).
-                setAuthConfig(authConfig);
+                setAuthConfig(authConfig).
+                setPaths(paths);
         }
 
         private produceUpdatePathGuardRequest(viewedPathGuard: PathGuard): UpdatePathGuardRequest {
             var key = this.getPersistedItem().getKey(),
                 name = viewedPathGuard.getDisplayName(),
-                authConfig = viewedPathGuard.getAuthConfig();
+                authConfig = viewedPathGuard.getAuthConfig(),
+                paths = viewedPathGuard.getPaths();
 
             return new UpdatePathGuardRequest().
                 setKey(key).
                 setDisplayName(name).
-                setAuthConfig(authConfig);
+                setAuthConfig(authConfig).
+                setPaths(paths);
         }
 
 
