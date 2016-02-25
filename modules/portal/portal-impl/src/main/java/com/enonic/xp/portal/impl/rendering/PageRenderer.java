@@ -21,6 +21,12 @@ import com.enonic.xp.site.filter.FilterDescriptor;
 import com.enonic.xp.site.filter.FilterDescriptors;
 import com.enonic.xp.web.HttpStatus;
 
+import static com.enonic.xp.portal.RenderMode.EDIT;
+import static com.enonic.xp.portal.RenderMode.PREVIEW;
+import static com.enonic.xp.portal.impl.postprocess.instruction.ComponentInstruction.COMPONENT_INSTRUCTION_PREFIX;
+import static com.enonic.xp.portal.impl.postprocess.instruction.ComponentInstruction.FRAGMENT_COMPONENT;
+import static com.enonic.xp.portal.impl.rendering.RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE;
+
 @Component(immediate = true, service = Renderer.class)
 public final class PageRenderer
     implements Renderer<Content>
@@ -43,6 +49,7 @@ public final class PageRenderer
     public PortalResponse render( final Content content, final PortalRequest portalRequest )
     {
         final PageDescriptor pageDescriptor = portalRequest.getPageDescriptor();
+        final RenderMode mode = portalRequest.getMode();
         PortalResponse portalResponse;
         if ( pageDescriptor != null )
         {
@@ -52,6 +59,10 @@ public final class PageRenderer
         else if ( portalRequest.getControllerScript() != null )
         {
             portalResponse = portalRequest.getControllerScript().execute( portalRequest );
+        }
+        else if ( ( mode == EDIT || mode == PREVIEW ) && portalRequest.getContent().getType().isFragment() )
+        {
+            portalResponse = renderDefaultFragmentPage( portalRequest, content );
         }
         else
         {
@@ -64,6 +75,32 @@ public final class PageRenderer
         return portalResponse;
     }
 
+    private PortalResponse renderDefaultFragmentPage( final PortalRequest portalRequest, final Content content )
+    {
+        String html = "<html>" +
+            "<head>" +
+            "<meta charset=\"utf-8\"/><title>" + content.getDisplayName() + "</title>" +
+            "</head>";
+        if ( portalRequest.getMode() == EDIT )
+        {
+            html += "<body " + PORTAL_COMPONENT_ATTRIBUTE + "=\"page\">";
+        }
+        else
+        {
+            html += "<body>";
+        }
+        html += "<!--#" + COMPONENT_INSTRUCTION_PREFIX + FRAGMENT_COMPONENT + "-->";
+        html += "</body></html>";
+
+        PortalResponse.Builder portalResponseBuilder = PortalResponse.create().
+            status( HttpStatus.OK ).
+            contentType( MediaType.HTML_UTF_8 ).
+            body( html ).
+            postProcess( true );
+
+        return this.postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
+    }
+
     private PortalResponse renderForNoPageDescriptor( final PortalRequest portalRequest, final Content content )
     {
         String html = "<html>" +
@@ -71,9 +108,9 @@ public final class PageRenderer
             "<meta charset=\"utf-8\"/>" +
             "<title>" + content.getDisplayName() + "</title>" +
             "</head>";
-        if ( RenderMode.EDIT.equals( portalRequest.getMode() ) )
+        if ( portalRequest.getMode() == EDIT )
         {
-            html += "<body " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE + "=\"page\"></body>";
+            html += "<body " + PORTAL_COMPONENT_ATTRIBUTE + "=\"page\"></body>";
         }
         else
         {
@@ -83,7 +120,7 @@ public final class PageRenderer
 
         PortalResponse.Builder portalResponseBuilder = PortalResponse.create().
             status( HttpStatus.OK ).
-            contentType( MediaType.create( "text", "html" ) ).
+            contentType( MediaType.HTML_UTF_8 ).
             body( html ).
             postProcess( true );
 

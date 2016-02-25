@@ -28,9 +28,11 @@ import static org.apache.commons.lang.StringUtils.substringAfter;
 public final class ComponentInstruction
     implements PostProcessInstruction
 {
-    static final String APPLICATION_COMPONENT_PREFIX = "module:";
+    private static final String APPLICATION_COMPONENT_PREFIX = "module:";
 
-    static final String FRAGMENT_COMPONENT = "fragment";
+    public static final String FRAGMENT_COMPONENT = "fragment";
+
+    public static final String COMPONENT_INSTRUCTION_PREFIX = "COMPONENT ";
 
     private RendererFactory rendererFactory;
 
@@ -51,7 +53,7 @@ public final class ComponentInstruction
     @Override
     public PortalResponse evaluate( final PortalRequest portalRequest, final String instruction )
     {
-        if ( !instruction.startsWith( "COMPONENT " ) )
+        if ( !instruction.startsWith( COMPONENT_INSTRUCTION_PREFIX ) )
         {
             return null;
         }

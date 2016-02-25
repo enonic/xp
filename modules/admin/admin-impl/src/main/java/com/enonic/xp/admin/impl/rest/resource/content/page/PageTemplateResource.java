@@ -22,6 +22,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentListMetaData;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.page.GetDefaultPageTemplateParams;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
@@ -33,7 +34,6 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.jaxrs.JaxRsComponent;
 
 @javax.ws.rs.Path(ResourceConstants.REST_ROOT + "content/page/template")
 @Produces(MediaType.APPLICATION_JSON)
@@ -116,6 +116,11 @@ public final class PageTemplateResource
         try
         {
             final Content content = this.contentService.getById( contentId );
+            if ( content.getType().isFragment() )
+            {
+                return true;
+            }
+
             final Content nearestSite = this.contentService.getNearestSite( contentId );
 
             if ( nearestSite != null )
