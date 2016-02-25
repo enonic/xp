@@ -285,8 +285,6 @@ module app {
                     this.mask.show();
                     var tabId = this.getTabIdForUserItem(userItem);
 
-                    console.log("handleEdit");
-
                     if (userItem.getType() == UserTreeGridItemType.PRINCIPAL) {
                         new app.wizard.PrincipalWizardPanelFactory().
                             setAppBarTabId(tabId).
