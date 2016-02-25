@@ -101,7 +101,7 @@ public final class ApplicationHelper
         }
     }
 
-    static <T> T runAsAdmin( final Callable<T> callable )
+    public static <T> T runAsAdmin( final Callable<T> callable )
     {
         return ContextBuilder.from( ApplicationConstants.CONTEXT_APPLICATIONS ).
             authInfo( ApplicationConstants.APPLICATION_SU_AUTH_INFO ).
@@ -109,7 +109,7 @@ public final class ApplicationHelper
             callWith( callable );
     }
 
-    static void runAsAdmin( final Runnable runnable )
+    public static void runAsAdmin( final Runnable runnable )
     {
         ContextBuilder.from( ApplicationConstants.CONTEXT_APPLICATIONS ).
             authInfo( ApplicationConstants.APPLICATION_SU_AUTH_INFO ).
@@ -117,7 +117,7 @@ public final class ApplicationHelper
             runWith( runnable );
     }
 
-    static <T> T callWithContext( Callable<T> runnable )
+    public static <T> T callWithContext( Callable<T> runnable )
     {
         return getContext().callWith( runnable );
     }

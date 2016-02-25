@@ -54,6 +54,9 @@ final class ApplicationEvents
 
     public static Event event( BundleEvent bundleEvent )
     {
+        System.out.println( "-------------- BundleEvent received: " + STATE_LOOKUP_TABLE.get( bundleEvent.getType() ) );
+        System.out.println( "-------------- Origin: " + bundleEvent.getOrigin().getSymbolicName() );
+
         return Event.create( EVENT_TYPE ).
             distributed( false ).
             value( APPLICATION_KEY_KEY, ApplicationKey.from( bundleEvent.getBundle() ) ).

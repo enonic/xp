@@ -182,12 +182,14 @@ public final class ApplicationResource
         }
     }
 
-    private ApplicationInstallResultJson installApplication(final ByteSource byteSource, final String applicationName) {
+    private ApplicationInstallResultJson installApplication( final ByteSource byteSource, final String applicationName )
+    {
+
         final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
 
         try
         {
-            final Application application = this.applicationService.installApplication(byteSource, true, true );
+            final Application application = this.applicationService.installClusterApplication( byteSource );
 
             result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
         }

@@ -1,9 +1,11 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 
@@ -15,6 +17,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
@@ -44,7 +47,7 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void testGetApplication()
+    public void get_application()
         throws Exception
     {
         Mockito.when( this.repoService.getApplications() ).
@@ -60,7 +63,7 @@ public class ApplicationServiceImplTest
     }
 
     @Test(expected = ApplicationNotFoundException.class)
-    public void testGetApplication_notFound()
+    public void get_application_not_found()
     {
         Mockito.when( this.repoService.getApplications() ).
             thenReturn( Nodes.empty() );
@@ -71,7 +74,7 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void testGetAllApplications()
+    public void get_all_applications()
         throws Exception
     {
         Mockito.when( this.repoService.getApplications() ).
@@ -89,7 +92,7 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void testGetApplicationKeys()
+    public void get_application_keys()
         throws Exception
     {
         Mockito.when( this.repoService.getApplications() ).
@@ -109,7 +112,7 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void testStartApplication()
+    public void start_application()
         throws Exception
     {
         Mockito.when( this.repoService.getApplications() ).
@@ -125,7 +128,7 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void testStopApplication()
+    public void stop_application()
         throws Exception
     {
         Mockito.when( this.repoService.getApplications() ).
@@ -142,7 +145,7 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void installApplication()
+    public void install_cluster()
         throws Exception
     {
         Mockito.when( this.repoService.getApplications() ).
@@ -156,24 +159,74 @@ public class ApplicationServiceImplTest
             name( "myNode" ).
             build();
 
-        Mockito.when( this.repoService.createApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
-            thenReturn( applicationNode );
+        mockRepoCreateNode( applicationNode );
+        mockRepoGetNode( applicationNode );
 
-        Mockito.when( this.repoService.getApplicationNode( "my-bundle" ) ).
-            thenReturn( applicationNode );
+        final ByteSource byteSource = createBundleSource();
 
-        final InputStream in = newBundle( "my-bundle", true ).
-            build();
-
-        final ByteSource byteSource = ByteSource.wrap( ByteStreams.toByteArray( in ) );
-        final Application application = this.service.installApplication( byteSource, true, true );
+        final Application application = this.service.installClusterApplication( byteSource );
 
         assertNotNull( application );
         assertEquals( "my-bundle", application.getKey().getName() );
+        assertFalse( this.service.isLocalApplication( application.getKey() ) );
+
+        Mockito.verify( this.eventPublisher, Mockito.times( 1 ) ).publish(
+            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.installed( applicationNode ) ) ) );
+
+        Mockito.verify( this.eventPublisher, Mockito.times( 1 ) ).publish(
+            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.started( application.getKey() ) ) ) );
+    }
+
+    private ByteSource createBundleSource()
+        throws IOException
+    {
+        final InputStream in = newBundle( "my-bundle", true ).
+            build();
+
+        return ByteSource.wrap( ByteStreams.toByteArray( in ) );
+    }
+
+    private void mockRepoGetNode( final Node applicationNode )
+    {
+        Mockito.when( this.repoService.getApplicationNode( "my-bundle" ) ).
+            thenReturn( applicationNode );
     }
 
     @Test
-    public void updateBundle()
+    public void install_local()
+        throws Exception
+    {
+        Mockito.when( this.repoService.getApplications() ).
+            thenReturn( Nodes.empty() );
+
+        this.service.activate( getBundleContext() );
+
+        final Node applicationNode = Node.create().
+            id( NodeId.from( "myNode" ) ).
+            parentPath( NodePath.ROOT ).
+            name( "myNode" ).
+            build();
+
+        mockRepoCreateNode( applicationNode );
+        mockRepoGetNode( applicationNode );
+
+        final ByteSource byteSource = createBundleSource();
+
+        final Application application = this.service.installLocalApplication( byteSource );
+
+        assertNotNull( application );
+        assertEquals( "my-bundle", application.getKey().getName() );
+        assertTrue( this.service.isLocalApplication( application.getKey() ) );
+
+        Mockito.verify( this.eventPublisher, Mockito.never() ).publish(
+            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.installed( applicationNode ) ) ) );
+
+        Mockito.verify( this.eventPublisher, Mockito.never() ).publish(
+            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.started( application.getKey() ) ) ) );
+    }
+
+    @Test
+    public void update_installed_application()
         throws Exception
     {
         Mockito.when( this.repoService.getApplications() ).
@@ -187,32 +240,72 @@ public class ApplicationServiceImplTest
             name( "myNode" ).
             build();
 
-        Mockito.when( this.repoService.createApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
-            thenReturn( node );
+        mockRepoCreateNode( node );
 
         Mockito.when( this.repoService.updateApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
             thenReturn( node );
 
-        Mockito.when( this.repoService.getApplicationNode( "my-bundle" ) ).
-            thenReturn( node );
+        mockRepoGetNode( node );
 
         final Application originalApplication =
-            this.service.installApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.0" ).
-                build() ) ), true, true );
+            this.service.installClusterApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.0" ).
+                build() ) ) );
 
-        Mockito.when( this.repoService.getApplicationNode( "my-bundle" ) ).
-            thenReturn( node );
+        mockRepoGetNode( node );
 
         final Application updatedApplication =
-            this.service.installApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.1" ).
-                build() ) ), true, true );
+            this.service.installClusterApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.1" ).
+                build() ) ) );
 
         assertEquals( "1.0.0", originalApplication.getVersion().toString() );
         assertEquals( "1.0.1", updatedApplication.getVersion().toString() );
+        assertFalse( this.service.isLocalApplication( updatedApplication.getKey() ) );
+    }
+
+    private void mockRepoCreateNode( final Node node )
+    {
+        Mockito.when( this.repoService.createApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
+            thenReturn( node );
     }
 
     @Test
-    public void install_applications_in_repo()
+    public void update_installed_local_application()
+        throws Exception
+    {
+        Mockito.when( this.repoService.getApplications() ).
+            thenReturn( Nodes.empty() );
+
+        this.service.activate( getBundleContext() );
+
+        final Node node = Node.create().
+            id( NodeId.from( "myNode" ) ).
+            parentPath( NodePath.ROOT ).
+            name( "myNode" ).
+            build();
+
+        mockRepoCreateNode( node );
+
+        Mockito.when( this.repoService.updateApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
+            thenReturn( node );
+
+        mockRepoGetNode( node );
+
+        final Application originalApplication =
+            this.service.installLocalApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.0" ).
+                build() ) ) );
+
+        final Application updatedApplication =
+            this.service.installLocalApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.1" ).
+                build() ) ) );
+
+        assertEquals( "1.0.0", originalApplication.getVersion().toString() );
+        assertEquals( "1.0.1", updatedApplication.getVersion().toString() );
+        assertTrue( this.service.isLocalApplication( updatedApplication.getKey() ) );
+    }
+
+
+    @Test
+    public void install_applications_stored_in_repo()
         throws Exception
     {
         final PropertyTree data = new PropertyTree();
@@ -238,10 +331,7 @@ public class ApplicationServiceImplTest
 
         Mockito.verify( this.repoService, Mockito.times( 1 ) ).getApplications();
         Mockito.verify( this.repoService, Mockito.times( 1 ) ).getApplicationSource( node.id() );
-
-        // One installed, one started event
         Mockito.verify( this.eventPublisher, Mockito.never() ).publish( Mockito.isA( Event.class ) );
-
     }
 
     private Bundle deployBundle( final String key, final boolean isApp )
@@ -252,4 +342,29 @@ public class ApplicationServiceImplTest
 
         return deploy( key, in );
     }
+
+    private class ApplicationEventMatcher
+        extends ArgumentMatcher<Event>
+    {
+        Event thisObject;
+
+        public ApplicationEventMatcher( Event thisObject )
+        {
+            this.thisObject = thisObject;
+        }
+
+        @Override
+        public boolean matches( Object argument )
+        {
+            if ( argument == null || thisObject.getClass() != argument.getClass() )
+            {
+                return false;
+            }
+
+            final Event event = (Event) argument;
+
+            return thisObject.getType().equals( event.getType() ) && this.thisObject.getData().equals( event.getData() );
+        }
+    }
+
 }

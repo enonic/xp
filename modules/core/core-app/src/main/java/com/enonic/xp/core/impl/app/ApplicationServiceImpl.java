@@ -24,6 +24,7 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
@@ -64,17 +65,17 @@ public final class ApplicationServiceImpl
     {
         LOG.info( "Searching for installed applications" );
 
-        final Nodes applications = repoService.getApplications();
+        final Nodes applicationNodes = repoService.getApplications();
 
-        LOG.info( "Found [" + applications.getSize() + "] installed applications" );
+        LOG.info( "Found [" + applicationNodes.getSize() + "] installed applications" );
 
-        for ( final Node application : applications )
+        for ( final Node applicationNode : applicationNodes )
         {
             final Application installedApp;
             try
             {
-                installedApp = doInstallApplication( application.id(), true, false );
-                if ( getStartedState( application ) )
+                installedApp = doInstallApplication( applicationNode.id(), true, false );
+                if ( getStartedState( applicationNode ) )
                 {
                     doStartApplication( installedApp.getKey(), false );
                 }
@@ -83,7 +84,7 @@ public final class ApplicationServiceImpl
             }
             catch ( Exception e )
             {
-                LOG.error( "Cannot install application [{}]", application.name(), e );
+                LOG.error( "Cannot install application [{}]", applicationNode.name(), e );
             }
         }
     }
@@ -132,21 +133,34 @@ public final class ApplicationServiceImpl
 
 
     @Override
-    public Application installApplication( final ByteSource byteSource, final boolean cluster, final boolean triggerEvent )
+    public Application installClusterApplication( final ByteSource byteSource )
     {
-        final Application application =
-            ApplicationHelper.callWithContext( () -> doInstallApplication( byteSource, cluster, triggerEvent ) );
+        final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( byteSource, true, true ) );
+
         LOG.info( "Application [{}] installed successfully", application.getKey() );
 
-        doStartApplication( application.getKey(), triggerEvent );
+        doStartApplication( application.getKey(), true );
 
         return application;
     }
 
     @Override
-    public Application installApplication( final NodeId nodeId )
+    public Application installLocalApplication( final ByteSource byteSource )
+    {
+        final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( byteSource, false, false ) );
+
+        LOG.info( "Application [{}] installed successfully", application.getKey() );
+
+        doStartApplication( application.getKey(), false );
+
+        return application;
+    }
+
+    @Override
+    public Application installStoredApplication( final NodeId nodeId )
     {
         final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( nodeId, true, false ) );
+
         LOG.info( "Application [{}] installed successfully", application.getKey() );
 
         doStartApplication( application.getKey(), false );
@@ -167,13 +181,17 @@ public final class ApplicationServiceImpl
         doUninstallApplication( application, triggerEvent );
 
         final Boolean local = localApplicationSet.remove( key.getName() );
+
         if ( Boolean.TRUE.equals( local ) )
         {
             final Node applicationNode = this.repoService.getApplicationNode( key.getName() );
+
             if ( applicationNode != null )
             {
                 final Application clusterApplication = doInstallApplication( applicationNode.id(), true, false );
+
                 LOG.info( "Application [{}] installed successfully", application.getKey() );
+
                 if ( Boolean.TRUE.equals( getStartedState( applicationNode ) ) )
                 {
                     doStartApplication( application.getKey(), false );
@@ -190,7 +208,7 @@ public final class ApplicationServiceImpl
         if ( triggerEvent )
         {
             ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, true ) );
-            this.eventPublisher.publish( ApplicationEvents.started( key ) );
+            this.eventPublisher.publish( ApplicationClusterEvents.started( key ) );
         }
 
     }
@@ -202,7 +220,7 @@ public final class ApplicationServiceImpl
         if ( triggerEvent )
         {
             ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, false ) );
-            this.eventPublisher.publish( ApplicationEvents.stopped( key ) );
+            this.eventPublisher.publish( ApplicationClusterEvents.stopped( key ) );
         }
     }
 
@@ -230,23 +248,23 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private Application doInstallApplication( final ByteSource byteSource, final boolean cluster, final boolean triggerEvent )
+    private Application doInstallApplication( final ByteSource byteSource, final boolean cluster, final boolean notifyCluster )
     {
-        final Application application = installOrUpdateApplication( byteSource, cluster, triggerEvent );
+        final Application application = installOrUpdateApplication( byteSource, cluster, notifyCluster );
 
-        if ( triggerEvent )
+        if ( notifyCluster )
         {
             final Node node = this.repoService.getApplicationNode( application.getKey().getName() );
-            this.eventPublisher.publish( ApplicationEvents.installed( node ) );
+            this.eventPublisher.publish( ApplicationClusterEvents.installed( node ) );
         }
         return application;
     }
 
-    private Application doInstallApplication( final NodeId nodeId, final boolean cluster, final boolean triggerEvent )
+    private Application doInstallApplication( final NodeId nodeId, final boolean cluster, final boolean notifyCluster )
     {
         final ByteSource byteSource = this.repoService.getApplicationSource( nodeId );
 
-        return installOrUpdateApplication( byteSource, cluster, triggerEvent );
+        return installOrUpdateApplication( byteSource, cluster, notifyCluster );
     }
 
     private void doUninstallApplication( final Application application, final boolean triggerEvent )
@@ -270,7 +288,8 @@ public final class ApplicationServiceImpl
                 this.repoService.deleteApplicationNode( application );
                 return null;
             } );
-            this.eventPublisher.publish( ApplicationEvents.uninstalled( application.getKey() ) );
+
+            this.eventPublisher.publish( ApplicationClusterEvents.uninstalled( application.getKey() ) );
         }
     }
 
