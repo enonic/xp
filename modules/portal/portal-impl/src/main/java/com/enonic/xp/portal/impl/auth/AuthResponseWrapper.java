@@ -23,11 +23,9 @@ import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.portal.impl.error.PortalError;
 import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
+import com.enonic.xp.security.PathGuard;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreAuthConfig;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.web.HttpStatus;
@@ -40,27 +38,24 @@ public class AuthResponseWrapper
 
     private final HttpServletResponse response;
 
-    private final SecurityService securityService;
-
     private final AuthDescriptorService authDescriptorService;
 
     private final ErrorHandlerScriptFactory errorHandlerScriptFactory;
 
-    private final UserStoreKey userStoreKey;
+    private final PathGuard pathGuard;
 
     private boolean errorHandled;
 
-    public AuthResponseWrapper( final HttpServletRequest request, final HttpServletResponse response, final SecurityService securityService,
+    public AuthResponseWrapper( final HttpServletRequest request, final HttpServletResponse response,
                                 final AuthDescriptorService authDescriptorService,
-                                final ErrorHandlerScriptFactory errorHandlerScriptFactory, final String userStoreKey )
+                                final ErrorHandlerScriptFactory errorHandlerScriptFactory, final PathGuard pathGuard )
     {
         super( response );
         this.request = request;
         this.response = response;
-        this.securityService = securityService;
         this.authDescriptorService = authDescriptorService;
         this.errorHandlerScriptFactory = errorHandlerScriptFactory;
-        this.userStoreKey = UserStoreKey.from( userStoreKey );
+        this.pathGuard = pathGuard;
     }
 
     @Override
@@ -153,7 +148,7 @@ public class AuthResponseWrapper
     {
         if ( 403 == sc || 401 == sc )
         {
-            final UserStoreAuthConfig authConfig = retrieveUserStoreAuthConfig();
+            final UserStoreAuthConfig authConfig = pathGuard.getAuthConfig();
             final AuthDescriptor authDescriptor = retrieveAuthDescriptor( authConfig );
 
             if ( authDescriptor != null )
@@ -187,16 +182,6 @@ public class AuthResponseWrapper
 
             }
         }
-    }
-
-    private UserStoreAuthConfig retrieveUserStoreAuthConfig()
-    {
-        final UserStore userStore = runAsAuthenticated( () -> securityService.getUserStore( userStoreKey ) );
-        if ( userStore != null )
-        {
-            return userStore.getAuthConfig();
-        }
-        return null;
     }
 
     private AuthDescriptor retrieveAuthDescriptor( final UserStoreAuthConfig authConfig )

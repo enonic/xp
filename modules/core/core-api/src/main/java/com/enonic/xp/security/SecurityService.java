@@ -163,7 +163,9 @@ public interface SecurityService
 
     ImmutableList<PathGuard> getPathGuards();
 
-    Optional<PathGuard> getPathGuard( String key );
+    Optional<PathGuard> getPathGuardByKey( String key );
+
+    Optional<PathGuard> getPathGuardByPath( String path );
 
     PathGuard createPathGuard( CreatePathGuardParams createPathGuardParams );
 

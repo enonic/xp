@@ -406,7 +406,7 @@ public final class SecurityResource
             return null;
         }
 
-        final Optional<PathGuard> pathGuard = securityService.getPathGuard( key );
+        final Optional<PathGuard> pathGuard = securityService.getPathGuardByKey( key );
         if ( !pathGuard.isPresent() )
         {
             throw JaxRsExceptions.notFound( String.format( "Path guard [%s] not found", pathGuard ) );

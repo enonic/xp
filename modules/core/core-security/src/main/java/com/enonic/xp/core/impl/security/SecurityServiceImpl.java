@@ -992,7 +992,7 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public Optional<PathGuard> getPathGuard( final String key )
+    public Optional<PathGuard> getPathGuardByKey( final String key )
     {
         try
         {
@@ -1003,6 +1003,26 @@ public final class SecurityServiceImpl
         {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Optional<PathGuard> getPathGuardByPath( final String path )
+    {
+        PathGuard matchingPathGuard = null;
+        int matchingPathLength = 0;
+        for ( PathGuard pathGuard : getPathGuards() )
+        {
+            for ( String protectedPath : pathGuard.getPaths() )
+            {
+                if ( path.startsWith( protectedPath ) && protectedPath.length() > matchingPathLength )
+                {
+                    matchingPathGuard = pathGuard;
+                    matchingPathLength = protectedPath.length();
+                }
+            }
+        }
+
+        return Optional.ofNullable( matchingPathGuard );
     }
 
     @Override
