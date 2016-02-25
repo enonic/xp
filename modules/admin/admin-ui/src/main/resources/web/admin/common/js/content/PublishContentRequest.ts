@@ -8,6 +8,7 @@ module api.content {
 
         constructor(contentId?: ContentId) {
             super();
+            this.setHeavyOperation(true);
             super.setMethod("POST");
             if (contentId) {
                 this.addId(contentId);

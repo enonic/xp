@@ -6,6 +6,7 @@ module api.content {
 
         constructor(contentPath?: ContentPath) {
             super();
+            this.setHeavyOperation(true);
             super.setMethod("POST");
             if (contentPath) {
                 this.addContentPath(contentPath);
