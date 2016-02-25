@@ -26,6 +26,10 @@ Other software licenses used by this product:
     Mozilla Public License - Version 2.0
     https://www.mozilla.org/MPL/2.0/
 
+    JavaMail
+    CDDL and others.
+    JavaMail is included in Java, but has some special licensing: https://java.net/projects/javamail/pages/License
+
 Javascript library licenses used by this product:
 
     CodeMirror
