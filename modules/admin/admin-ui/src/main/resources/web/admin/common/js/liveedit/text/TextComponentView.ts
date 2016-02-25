@@ -318,7 +318,6 @@ module api.liveedit.text {
         }
 
         private processEditorValue() {
-            debugger;
             if (this.isEditorEmpty()) {
                 this.textComponent.setText(TextComponentView.DEFAULT_TEXT);
                 // copy editor content over to the root html element
