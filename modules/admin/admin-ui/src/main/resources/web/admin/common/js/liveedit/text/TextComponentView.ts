@@ -287,11 +287,9 @@ module api.liveedit.text {
                 setOnKeydownHandler(this.onKeydownHandler.bind(this)).
                 setFixedToolbarContainer('.mce-toolbar-container').
                 setContentId(this.getContentId()).
-                setUseInsertImage(true). // uncomment to enable inserting images
                 createEditor().
                 then((editor: HtmlAreaEditor) => {
                     this.htmlAreaEditor = editor;
-                    debugger;
                     if (!!this.textComponent.getText()) {
                         this.htmlAreaEditor.setContent(HTMLAreaHelper.prepareImgSrcsInValueForEdit(this.textComponent.getText()));
                     } else {

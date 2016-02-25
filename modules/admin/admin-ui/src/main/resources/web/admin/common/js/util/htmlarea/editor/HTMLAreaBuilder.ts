@@ -24,7 +24,6 @@ module api.util.htmlarea.editor {
         private inline: boolean = false;
         private fixedToolbarContainer: string;
 
-        private useInsertImage: boolean = true;
         private dialogShownHandler;
         private dialogHiddenHandler;
 
@@ -104,18 +103,13 @@ module api.util.htmlarea.editor {
             return this;
         }
 
-        setUseInsertImage(useInsertImage: boolean): HTMLAreaBuilder {
-            this.useInsertImage = useInsertImage;
-            return this;
-        }
-
         setContentId(contentId: api.content.ContentId): HTMLAreaBuilder {
             this.contentId = contentId;
             return this;
         }
 
         private checkRequiredFieldsAreSet() {
-            if (!this.assetsUri || !this.selector || (this.useInsertImage && !this.contentId)) {
+            if (!this.assetsUri || !this.selector || !this.contentId) {
                 throw new Error("some reruired field(s) is(are) missing for tinymce editor");
             }
         }
@@ -125,7 +119,6 @@ module api.util.htmlarea.editor {
             this.checkRequiredFieldsAreSet();
 
             var deferred = wemQ.defer<HtmlAreaEditor>();
-            var image = this.useInsertImage ? "image " : " ";
 
             tinymce.init({
                 selector: this.selector,
@@ -137,8 +130,7 @@ module api.util.htmlarea.editor {
                 fixed_toolbar_container: this.fixedToolbarContainer,
 
                 toolbar: [
-                    "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor " + image +
-                    "link unlink | table | code"
+                    "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor image link unlink | table | code"
                 ],
 
                 formats: {
