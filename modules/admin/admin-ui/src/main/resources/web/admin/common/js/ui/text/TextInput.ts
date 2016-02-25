@@ -29,7 +29,7 @@ module api.ui.text {
 
             this.previousValue = this.getValue();
 
-            this.onKeyDown((event: KeyboardEvent) => {
+            this.onKeyUp((event: KeyboardEvent) => {
                 if (event.keyCode == 27 || event.keyCode == 13) {
                     if (event.keyCode == 27) {
                         this.setPreviousValue();
