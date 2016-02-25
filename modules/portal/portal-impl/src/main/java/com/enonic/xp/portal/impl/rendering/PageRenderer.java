@@ -49,6 +49,10 @@ public final class PageRenderer
             final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( pageDescriptor.getResourceKey() );
             portalResponse = controllerScript.execute( portalRequest );
         }
+        else if ( portalRequest.getControllerScript() != null )
+        {
+            portalResponse = portalRequest.getControllerScript().execute( portalRequest );
+        }
         else
         {
             portalResponse = renderForNoPageDescriptor( portalRequest, content );

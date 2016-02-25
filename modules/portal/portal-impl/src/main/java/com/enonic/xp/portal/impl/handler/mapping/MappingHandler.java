@@ -9,6 +9,7 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.BaseHandler;
 import com.enonic.xp.portal.handler.PortalHandler;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
+import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
@@ -24,6 +25,8 @@ public final class MappingHandler
     private ResourceService resourceService;
 
     private ControllerScriptFactory controllerScriptFactory;
+
+    private RendererFactory rendererFactory;
 
     public MappingHandler()
     {
@@ -46,6 +49,7 @@ public final class MappingHandler
         worker.mappingDescriptor = mapping;
         worker.resourceService = this.resourceService;
         worker.controllerScriptFactory = this.controllerScriptFactory;
+        worker.rendererFactory = rendererFactory;
         return worker;
     }
 
@@ -71,5 +75,11 @@ public final class MappingHandler
     public void setControllerScriptFactory( final ControllerScriptFactory controllerScriptFactory )
     {
         this.controllerScriptFactory = controllerScriptFactory;
+    }
+
+    @Reference
+    public void setRendererFactory( final RendererFactory rendererFactory )
+    {
+        this.rendererFactory = rendererFactory;
     }
 }

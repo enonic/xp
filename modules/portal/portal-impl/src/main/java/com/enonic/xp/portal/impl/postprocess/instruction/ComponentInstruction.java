@@ -30,6 +30,8 @@ public final class ComponentInstruction
 {
     static final String APPLICATION_COMPONENT_PREFIX = "module:";
 
+    static final String FRAGMENT_COMPONENT = "fragment";
+
     private RendererFactory rendererFactory;
 
     private ComponentService componentService;
@@ -67,7 +69,11 @@ public final class ComponentInstruction
     private PortalResponse renderComponent( final PortalRequest portalRequest, final String componentSelector )
     {
         final Component component;
-        if ( !componentSelector.startsWith( APPLICATION_COMPONENT_PREFIX ) )
+        if ( FRAGMENT_COMPONENT.equalsIgnoreCase( componentSelector ) )
+        {
+            component = getPageFragment( portalRequest );
+        }
+        else if ( !componentSelector.startsWith( APPLICATION_COMPONENT_PREFIX ) )
         {
             final ComponentPath componentPath = ComponentPath.from( componentSelector );
             component = resolveComponent( portalRequest, componentPath );
@@ -115,5 +121,22 @@ public final class ComponentInstruction
         }
 
         return component;
+    }
+
+    private Component getPageFragment( final PortalRequest portalRequest )
+    {
+        final Content content = portalRequest.getContent();
+        if ( content == null )
+        {
+            return null;
+        }
+
+        final Page page = content.getPage();
+        if ( page == null )
+        {
+            return null;
+        }
+        final Component fragment = page.getFragment();
+        return fragment == null ? null : fragment;
     }
 }

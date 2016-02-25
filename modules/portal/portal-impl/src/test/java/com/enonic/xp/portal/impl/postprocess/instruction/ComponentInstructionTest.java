@@ -79,6 +79,31 @@ public class ComponentInstructionTest
         assertEquals( "<b>part content</b>", outputHtml );
     }
 
+    @Test
+    public void testInstructionRenderFragment()
+        throws Exception
+    {
+        RendererFactory rendererFactory = newRendererFactory( "<b>part content</b>" );
+        ComponentService componentService = Mockito.mock( ComponentService.class );
+
+        Component component = createPartComponent();
+        doReturn( component ).when( componentService ).getByName( isA( ApplicationKey.class ), isA( ComponentName.class ) );
+        ComponentInstruction instruction = new ComponentInstruction();
+        instruction.setRendererFactory( rendererFactory );
+        instruction.setComponentService( componentService );
+
+        PortalRequest portalRequest = new PortalRequest();
+        Content content = createFragmentPage( "content-id", "content-name" );
+        portalRequest.setContent( content );
+        Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
+        portalRequest.setSite( site );
+        PageTemplate pageTemplate = createPageTemplate();
+        portalRequest.setPageTemplate( pageTemplate );
+
+        String outputHtml = instruction.evaluate( portalRequest, "COMPONENT fragment" ).getAsString();
+        assertEquals( "<b>part content</b>", outputHtml );
+    }
+
     private PageTemplate createPageTemplate()
     {
         return PageTemplate.newPageTemplate().
@@ -123,6 +148,32 @@ public class ComponentInstructionTest
             displayName( "My Content" ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
+            page( page ).
+            build();
+    }
+
+    private Content createFragmentPage( final String id, final String name )
+    {
+        PropertyTree rootDataSet = new PropertyTree();
+        rootDataSet.addString( "property1", "value1" );
+
+        PartComponent fragmentComponent = PartComponent.create().
+            name( "myPartComponent" ).
+            descriptor( DescriptorKey.from( "myapplication:myparttemplate" ) ).
+            build();
+
+        Page page = Page.create().
+            template( PageTemplateKey.from( "my-page" ) ).
+            fragment( fragmentComponent ).
+            build();
+
+        return Content.create().
+            id( ContentId.from( id ) ).
+            path( ContentPath.from( name ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
+            displayName( "My Content" ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            type( ContentTypeName.fragment() ).
             page( page ).
             build();
     }

@@ -8,23 +8,25 @@ import java.util.Objects;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 
-public final class ControllerMappingsResolver
+final class ControllerMappingsResolver
 {
     private final SiteService siteService;
 
     private final ContentService contentService;
 
-    public ControllerMappingsResolver( final SiteService siteService, final ContentService contentService )
+    ControllerMappingsResolver( final SiteService siteService, final ContentService contentService )
     {
         this.siteService = siteService;
         this.contentService = contentService;
@@ -93,7 +95,7 @@ public final class ControllerMappingsResolver
         Content content = request.getContent();
         if ( content == null )
         {
-            content = getContent( request.getContentPath() );
+            content = getContent( request );
             request.setContent( content );
         }
 
@@ -107,7 +109,46 @@ public final class ControllerMappingsResolver
         return site;
     }
 
-    private Content getContent( final ContentPath contentPath )
+    private Content getContent( final PortalRequest request )
+    {
+        final String contentSelector = getContentSelector( request );
+        if ( contentSelector == null || "/".equals( contentSelector ) )
+        {
+            return null;
+        }
+        final boolean inEditMode = ( request.getMode() == RenderMode.EDIT );
+        if ( inEditMode )
+        {
+            final ContentId contentId = ContentId.from( contentSelector.substring( 1 ) );
+            final Content contentById = getContentById( contentId );
+            if ( contentById != null )
+            {
+                return contentById;
+            }
+        }
+
+        final ContentPath contentPath = ContentPath.from( contentSelector ).asAbsolute();
+        return getContentByPath( contentPath );
+    }
+
+    private String getContentSelector( final PortalRequest request )
+    {
+        return request.getContentPath() != null ? request.getContentPath().toString().trim() : null;
+    }
+
+    private Content getContentById( final ContentId contentId )
+    {
+        try
+        {
+            return this.contentService.getById( contentId );
+        }
+        catch ( final Exception e )
+        {
+            return null;
+        }
+    }
+
+    private Content getContentByPath( final ContentPath contentPath )
     {
         try
         {
