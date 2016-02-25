@@ -137,6 +137,10 @@ module app {
                 displayName = (<api.security.Principal>wizard.getPersistedItem()).getDisplayName() ||
                               api.content.ContentUnnamed.prettifyUnnamed((<api.security.Principal>wizard.getPersistedItem()).getDisplayName());
                 id = (<api.security.Principal>wizard.getPersistedItem()).getKey().getId();
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(wizard.getPersistedItem(), api.security.PathGuard)) {
+                displayName = (<api.security.PathGuard>wizard.getPersistedItem()).getDisplayName() ||
+                              api.content.ContentUnnamed.prettifyUnnamed((<app.wizard.PathGuardWizardPanel>wizard).getUserItemType());
+                id = (<api.security.PathGuard>wizard.getPersistedItem()).getKey();
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(wizard.getPersistedItem(), api.security.UserStore)) {
                 displayName = (<api.security.UserStore>wizard.getPersistedItem()).getDisplayName() ||
                               api.content.ContentUnnamed.prettifyUnnamed((<app.wizard.UserStoreWizardPanel>wizard).getUserItemType());

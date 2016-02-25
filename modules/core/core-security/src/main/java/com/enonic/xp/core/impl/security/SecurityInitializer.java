@@ -230,9 +230,15 @@ final class SecurityInitializer
 
     private void createPathGuards()
     {
+        final PropertySet backgroundPropertySet = new PropertySet();
+        backgroundPropertySet.setString( "application", "com.enonic.xp.app.login" );
+        backgroundPropertySet.setString( "path", "img/background.jpg" );
+        final PropertyTree config = new PropertyTree();
+        config.setSet( "background", backgroundPropertySet );
+
         final UserStoreAuthConfig authConfig = UserStoreAuthConfig.create().
             applicationKey( ApplicationKey.from( "com.enonic.xp.app.login" ) ).
-            config( new PropertyTree() ).
+            config( config ).
             build();
         final CreatePathGuardParams createPathGuardParams = CreatePathGuardParams.create().
             key( "admin" ).
@@ -292,7 +298,7 @@ final class SecurityInitializer
     {
         try
         {
-            if ( !securityService.getPathGuard( createPathGuardParams.getKey() ).isPresent() )
+            if ( !securityService.getPathGuardByKey( createPathGuardParams.getKey() ).isPresent() )
             {
                 securityService.createPathGuard( createPathGuardParams );
                 LOG.info( "Path guard created: " + createPathGuardParams.getKey().toString() );

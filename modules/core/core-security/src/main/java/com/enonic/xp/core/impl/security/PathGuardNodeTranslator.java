@@ -95,22 +95,25 @@ public class PathGuardNodeTranslator
     {
         final String displayName = params.getDisplayName();
         final UserStoreAuthConfig authConfig = params.getAuthConfig();
+        final ImmutableList<String> paths = params.getPaths();
         return UpdateNodeParams.create().
             id( nodeId ).
             editor( editableNode -> {
-                final PropertyTree nodeData = editableNode.data;
-                nodeData.setString( PathGuardPropertyPaths.DISPLAY_NAME_PATH, displayName );
+                final PropertyTree data = editableNode.data;
+                data.setString( PathGuardPropertyPaths.DISPLAY_NAME_PATH, displayName );
+                data.removeProperty( PathGuardPropertyPaths.PATHS_PATH );
+                data.addStrings( PathGuardPropertyPaths.PATHS_PATH.toString(), paths );
                 if ( authConfig == null )
                 {
-                    if ( nodeData.hasProperty( PathGuardPropertyPaths.AUTH_CONFIG_PATH ) )
+                    if ( data.hasProperty( PathGuardPropertyPaths.AUTH_CONFIG_PATH ) )
                     {
-                        nodeData.removeProperty( PathGuardPropertyPaths.AUTH_CONFIG_PATH );
+                        data.removeProperty( PathGuardPropertyPaths.AUTH_CONFIG_PATH );
                     }
                 }
                 else
                 {
-                    nodeData.setString( PathGuardPropertyPaths.AUTH_CONFIG_APPLICATION_PATH, authConfig.getApplicationKey().toString() );
-                    nodeData.setSet( PathGuardPropertyPaths.AUTH_CONFIG_FORM_PATH, authConfig.getConfig().getRoot() );
+                    data.setString( PathGuardPropertyPaths.AUTH_CONFIG_APPLICATION_PATH, authConfig.getApplicationKey().toString() );
+                    data.setSet( PathGuardPropertyPaths.AUTH_CONFIG_FORM_PATH, authConfig.getConfig().getRoot() );
                 }
             } ).
             build();
