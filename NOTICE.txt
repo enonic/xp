@@ -60,6 +60,10 @@ Javascript library licenses used by this product:
     MIT License
     https://jquery.org/license/
 
+    Q.js
+    Very liberal license from Kristopher Michael Kowal
+    https://github.com/kriskowal/q/blob/v1/LICENSE
+
 Artwork licenses used by this product:
 
     IcoMoon icons (Ultimate Pack)
