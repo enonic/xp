@@ -10,7 +10,8 @@ function add(name, path) {
         src: baseDir + '/' + path + '/styles/_module.less',
         dest: baseDir + '/' + path + '/styles/_all.css',
         options: {
-            sourceMap: true
+            sourceMap: true,
+            relativeUrls: true
         }
     };
 }
@@ -21,7 +22,8 @@ function addHome() {
         src: baseDir + '/common/styles/apps/home/_module.less',
         dest: baseDir + '/common/styles/_home.css',
         options: {
-            sourceMap: false
+            sourceMap: false,
+            relativeUrls: true
         }
     };
 }

@@ -13,15 +13,16 @@ module api.form.inputtype.text {
     import LinkModalDialog = api.util.htmlarea.dialog.LinkModalDialog;
     import ImageModalDialog = api.util.htmlarea.dialog.ImageModalDialog;
     import AnchorModalDialog = api.util.htmlarea.dialog.AnchorModalDialog;
-    import TinymceEditorBuilder = api.util.htmlarea.editor.TinymceEditorBuilder;
-    import TinymceContentHelper = api.util.htmlarea.editor.TinymceContentHelper;
+    import HTMLAreaBuilder = api.util.htmlarea.editor.HTMLAreaBuilder;
+    import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
+    import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
 
     export class HtmlArea extends support.BaseInputTypeNotManagingAdd<string> {
 
         private editors: HtmlAreaOccurrenceInfo[];
         private contentId: api.content.ContentId;
 
-        private modalDialog:api.util.htmlarea.dialog.ModalDialog;
+        private modalDialog: ModalDialog;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
 
@@ -42,7 +43,7 @@ module api.form.inputtype.text {
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
 
-            var value = TinymceContentHelper.prepareImgSrcsInValueForEdit(property.getString());
+            var value = HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString());
             var textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
 
             var editorId = textAreaEl.getId();
@@ -84,18 +85,18 @@ module api.form.inputtype.text {
             var onFocusHandler = (e) => {
                 this.resetInputHeight();
                 textAreaWrapper.addClass(focusedEditorCls);
-            }
+            };
 
             var onChangeHandler = (e) => {
                 this.notifyValueChanged(id, textAreaWrapper);
-            }
+            };
 
             var onBlurHandler = (e) => {
                 this.setStaticInputHeight();
-                if (!(this.modalDialog && this.modalDialog.isVisible())) {
+                if (!this.modalDialog || !this.modalDialog.isVisible()) {
                     textAreaWrapper.removeClass(focusedEditorCls);
                 }
-            }
+            };
 
             var onKeydownHandler = (e) => {
                 if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {  // Cmd-S or Ctrl-S
@@ -115,19 +116,21 @@ module api.form.inputtype.text {
                         charCode: e.charCode
                     });
                 }
-            }
+            };
 
-            new TinymceEditorBuilder().
+            new HTMLAreaBuilder().
                 setSelector('textarea.' + id.replace(/\./g, '_')).
                 setAssetsUri(baseUrl).
                 setInline(false).
+                onDialogShown(dialog => this.modalDialog = dialog).
+                onDialogHidden(dialog => this.modalDialog = undefined).
                 setOnFocusHandler(onFocusHandler).
                 setOnBlurHandler(onBlurHandler).
                 setOnKeydownHandler(onKeydownHandler).
                 setOnChangeHandler(onChangeHandler).
                 setContentId(this.contentId).
                 createEditor().
-                then((editor:HtmlAreaEditor) => {
+                then((editor: HtmlAreaEditor) => {
                     this.setEditorContent(id, property);
                     if (this.notInLiveEdit()) {
                         this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper);
@@ -269,7 +272,7 @@ module api.form.inputtype.text {
 
         private setEditorContent(editorId: string, property: Property): void {
             if (property.hasNonNullValue()) {
-                this.getEditor(editorId).setContent(TinymceContentHelper.prepareImgSrcsInValueForEdit(property.getString()));
+                this.getEditor(editorId).setContent(HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()));
             }
         }
 
@@ -278,7 +281,7 @@ module api.form.inputtype.text {
         }
 
         private notifyValueChanged(id: string, occurrence: api.dom.Element) {
-            var value = ValueTypes.STRING.newValue(TinymceContentHelper.prepareEditorImageSrcsBeforeSave(this.getEditor(id)));
+            var value = ValueTypes.STRING.newValue(HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.getEditor(id)));
             this.notifyOccurrenceValueChanged(occurrence, value);
         }
 
@@ -322,7 +325,7 @@ module api.form.inputtype.text {
                 try {
                     editor.destroy(false);
                 }
-                catch(e) {
+                catch (e) {
                     //error thrown in FF on tab close - XP-2624
                 }
             }

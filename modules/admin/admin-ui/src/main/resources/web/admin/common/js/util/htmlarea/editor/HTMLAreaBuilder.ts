@@ -1,74 +1,115 @@
 module api.util.htmlarea.editor {
 
+    import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
     import AnchorModalDialog = api.util.htmlarea.dialog.AnchorModalDialog;
     import ImageModalDialog = api.util.htmlarea.dialog.ImageModalDialog;
     import LinkModalDialog = api.util.htmlarea.dialog.LinkModalDialog;
     import HtmlAreaAnchor = api.util.htmlarea.dialog.HtmlAreaAnchor;
     import HtmlAreaImage = api.util.htmlarea.dialog.HtmlAreaImage;
 
-    export class TinymceEditorBuilder {
+    export class HTMLAreaBuilder {
 
-        private modalDialog:api.util.htmlarea.dialog.ModalDialog;
+        private modalDialog: api.util.htmlarea.dialog.ModalDialog;
 
-        private contentId:api.content.ContentId; // used for image dialog
+        private contentId: api.content.ContentId; // used for image dialog
 
-        private assetsUri:string;
-        private selector:string;
-        private onFocusHandler:(e) => void;
-        private onBlurHandler:(e) => void;
-        private onKeydownHandler:(e) => void;
-        private onChangeHandler:(e) => void;
-        private inline:boolean = false;
-        private fixedToolbarContainer:string;
+        private assetsUri: string;
+        private selector: string;
+        private onFocusHandler: (e) => void;
+        private onBlurHandler: (e) => void;
+        private onKeydownHandler: (e) => void;
+        private onChangeHandler: (e) => void;
+        private dialogShownListeners: {(dialog: ModalDialog): void}[] = [];
+        private dialogHiddenListeners: {(dialog: ModalDialog): void}[] = [];
+        private inline: boolean = false;
+        private fixedToolbarContainer: string;
 
-        private useInsertImage:boolean = true;
+        private useInsertImage: boolean = true;
+        private dialogShownHandler;
+        private dialogHiddenHandler;
 
-        setAssetsUri(assetsUri:string):TinymceEditorBuilder {
+        setAssetsUri(assetsUri: string): HTMLAreaBuilder {
             this.assetsUri = assetsUri;
             return this;
         }
 
-        setSelector(selector:string):TinymceEditorBuilder {
+        setSelector(selector: string): HTMLAreaBuilder {
             this.selector = selector;
             return this;
         }
 
-        setOnFocusHandler(onFocusHandler:(e) => void):TinymceEditorBuilder {
+        onDialogShown(listener: (dialog: ModalDialog) => void) {
+            this.dialogShownListeners.push(listener);
+            return this;
+        }
+
+        unDialogShown(listener: (dialog: ModalDialog) => void) {
+            this.dialogShownListeners = this.dialogShownListeners.filter((curr) => {
+                return curr !== listener;
+            });
+            return this;
+        }
+
+        private notifyDialogShown(dialog: ModalDialog) {
+            this.dialogShownListeners.forEach((listener) => {
+                listener(dialog);
+            })
+        }
+
+        onDialogHidden(listener: (dialog: ModalDialog) => void) {
+            this.dialogHiddenListeners.push(listener);
+            return this;
+        }
+
+        unDialogHidden(listener: (dialog: ModalDialog) => void) {
+            this.dialogHiddenListeners = this.dialogHiddenListeners.filter((curr) => {
+                return curr !== listener;
+            });
+            return this;
+        }
+
+        private notifyDialogHidden(dialog: ModalDialog) {
+            this.dialogHiddenListeners.forEach((listener) => {
+                listener(dialog);
+            })
+        }
+
+        setOnFocusHandler(onFocusHandler: (e) => void): HTMLAreaBuilder {
             this.onFocusHandler = onFocusHandler;
             return this;
         }
 
-        setOnBlurHandler(onBlurHandler:(e) => void):TinymceEditorBuilder {
+        setOnBlurHandler(onBlurHandler: (e) => void): HTMLAreaBuilder {
             this.onBlurHandler = onBlurHandler;
             return this;
         }
 
-        setOnKeydownHandler(onKeydownHandler:(e) => void):TinymceEditorBuilder {
+        setOnKeydownHandler(onKeydownHandler: (e) => void): HTMLAreaBuilder {
             this.onKeydownHandler = onKeydownHandler;
             return this;
         }
 
-        setOnChangeHandler(onChangeHandler:(e) => void):TinymceEditorBuilder {
+        setOnChangeHandler(onChangeHandler: (e) => void): HTMLAreaBuilder {
             this.onChangeHandler = onChangeHandler;
             return this;
         }
 
-        setInline(inline:boolean):TinymceEditorBuilder {
+        setInline(inline: boolean): HTMLAreaBuilder {
             this.inline = inline;
             return this;
         }
 
-        setFixedToolbarContainer(fixedToolbarContainer:string):TinymceEditorBuilder {
+        setFixedToolbarContainer(fixedToolbarContainer: string): HTMLAreaBuilder {
             this.fixedToolbarContainer = fixedToolbarContainer;
             return this;
         }
 
-        setUseInsertImage(useInsertImage:boolean):TinymceEditorBuilder {
+        setUseInsertImage(useInsertImage: boolean): HTMLAreaBuilder {
             this.useInsertImage = useInsertImage;
             return this;
         }
 
-        setContentId(contentId:api.content.ContentId):TinymceEditorBuilder {
+        setContentId(contentId: api.content.ContentId): HTMLAreaBuilder {
             this.contentId = contentId;
             return this;
         }
@@ -79,7 +120,7 @@ module api.util.htmlarea.editor {
             }
         }
 
-        public createEditor():wemQ.Promise<HtmlAreaEditor> {
+        public createEditor(): wemQ.Promise<HtmlAreaEditor> {
 
             this.checkRequiredFieldsAreSet();
 
@@ -211,25 +252,47 @@ module api.util.htmlarea.editor {
             return deferred.promise;
         }
 
-        private openLinkDialog(config:HtmlAreaAnchor) {
+        private openLinkDialog(config: HtmlAreaAnchor) {
+            this.createAndOpenDialog(new LinkModalDialog(config));
+        }
+
+        private openImageDialog(config: HtmlAreaImage) {
+            this.createAndOpenDialog(new ImageModalDialog(config, this.contentId));
+        }
+
+        private openAnchorDialog(editor: HtmlAreaEditor) {
+            this.createAndOpenDialog(new AnchorModalDialog(editor));
+        }
+
+        private createAndOpenDialog(dialog: ModalDialog) {
             if (!!this.modalDialog) {
                 this.modalDialog.remove();
             }
-            this.modalDialog = new LinkModalDialog(config);
+            this.modalDialog = dialog;
+            this.bindDialogListeners(dialog);
+
             this.modalDialog.open();
         }
 
-        private openImageDialog(config:HtmlAreaImage) {
-            this.modalDialog = new ImageModalDialog(config, this.contentId);
-            this.modalDialog.open();
-        }
-
-        private openAnchorDialog(editor:HtmlAreaEditor) {
-            if (!!this.modalDialog) {
-                this.modalDialog.remove();
+        private bindDialogListeners(dialog: ModalDialog) {
+            if (!this.dialogShownHandler) {
+                this.dialogShownHandler = (event: api.dom.ElementShownEvent) => {
+                    this.notifyDialogShown(<ModalDialog> event.getElement());
+                }
             }
-            this.modalDialog = new AnchorModalDialog(editor);
-            this.modalDialog.open();
+            if (!this.dialogHiddenHandler) {
+                this.dialogHiddenHandler = (event: api.dom.ElementHiddenEvent) => {
+                    this.notifyDialogHidden(<ModalDialog> event.getElement());
+                }
+            }
+
+            dialog.onShown(this.dialogShownHandler);
+            dialog.onHidden(this.dialogHiddenHandler);
+
+            dialog.onRemoved(event => {
+                dialog.unShown(this.dialogShownHandler);
+                dialog.unHidden(this.dialogHiddenHandler);
+            })
         }
 
     }

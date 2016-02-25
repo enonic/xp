@@ -1,2 +1,2 @@
-///<reference path='TinymceContentHelper.ts'/>
-///<reference path='TinymceEditorBuilder.ts'/>
+///<reference path='HTMLAreaHelper.ts'/>
+///<reference path='HTMLAreaBuilder.ts'/>

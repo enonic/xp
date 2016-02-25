@@ -16,6 +16,8 @@ module api.util.htmlarea.dialog {
         private keyDownListener:{(KeyboardEvent): void};
         private submitAction:api.ui.Action;
 
+        public static CLASS_NAME = "html-area-modal-dialog";
+
         constructor(editor:HtmlAreaEditor, title:api.ui.dialog.ModalDialogHeader, cls?:string) {
             super({
                 title: title
@@ -23,7 +25,7 @@ module api.util.htmlarea.dialog {
 
             this.editor = editor;
 
-            this.getEl().addClass("html-area-modal-dialog" + (cls ? " " + cls : ""));
+            this.getEl().addClass(ModalDialog.CLASS_NAME + (cls ? " " + cls : ""));
 
             this.layout();
             this.initializeActions();
