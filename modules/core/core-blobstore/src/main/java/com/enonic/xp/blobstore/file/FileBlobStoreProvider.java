@@ -1,11 +1,9 @@
 package com.enonic.xp.blobstore.file;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.BlobStoreProvider;
 import com.enonic.xp.blob.ProviderConfig;
 import com.enonic.xp.blobstore.file.config.FileBlobStoreConfig;
@@ -18,12 +16,11 @@ public class FileBlobStoreProvider
 
     private FileBlobStoreConfig config;
 
-    @Activate
-    public void activate()
+    private void connect()
     {
-        if ( config == null )
+        if ( !this.config.isValid() )
         {
-            throw new BlobStoreException( "Config [com.enonic.xp.aws.s3] not found" );
+            return;
         }
 
         this.blobStore = new FileBlobStore( config.baseDir() );
@@ -32,6 +29,11 @@ public class FileBlobStoreProvider
     @Override
     public BlobStore get()
     {
+        if ( this.blobStore == null )
+        {
+            connect();
+        }
+
         return this.blobStore;
     }
 
@@ -51,11 +53,5 @@ public class FileBlobStoreProvider
     public void setConfig( final FileBlobStoreConfig config )
     {
         this.config = config;
-    }
-
-    @Override
-    public boolean isActive()
-    {
-        return true;
     }
 }

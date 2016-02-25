@@ -62,7 +62,7 @@ public class BlobStoreActivator
 
     private void doRegister( final BlobStoreProvider blobStoreProvider )
     {
-        if ( blobStoreProvider != null && blobStoreProvider.isActive() )
+        if ( blobStoreProvider != null && blobStoreProvider.get() != null )
         {
             final BlobStore blobStore = BlobStoreFactory.create().
                 config( this.config ).
@@ -104,11 +104,8 @@ public class BlobStoreActivator
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addProvider( final BlobStoreProvider provider )
     {
-        if ( provider.isActive() )
-        {
-            this.providers.add( provider );
-            this.registerBlobStore( false );
-        }
+        this.providers.add( provider );
+        this.registerBlobStore( false );
     }
 
     @SuppressWarnings("unused")

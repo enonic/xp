@@ -51,7 +51,7 @@ public class FileBlobStoreConfigImpl
     }
 
     @Override
-    public boolean validate()
+    public boolean isValid()
     {
         return true;
     }

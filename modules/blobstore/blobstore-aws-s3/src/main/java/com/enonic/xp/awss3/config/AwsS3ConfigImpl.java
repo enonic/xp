@@ -65,7 +65,7 @@ public class AwsS3ConfigImpl
     }
 
     @Override
-    public boolean validate()
+    public boolean isValid()
     {
         return checkNotEmpty( this.accessKey(), this.bucketName(), this.secretAccessKey() );
     }

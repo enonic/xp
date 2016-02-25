@@ -7,13 +7,19 @@ public interface SwiftConfig
 {
     String container();
 
-    String endpoint();
+    String authUrl();
 
-    String domain();
+    String domainId();
 
-    String user();
+    String domainName();
 
-    String password();
+    String authUser();
+
+    String authPassword();
+
+    Integer authVersion();
 
     String projectId();
+
+    public String projectName();
 }

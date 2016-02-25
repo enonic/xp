@@ -1,9 +1,10 @@
 package com.enonic.xp.awss3;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.awss3.config.AwsS3Config;
 import com.enonic.xp.blob.BlobStore;
@@ -18,21 +19,7 @@ public class AwsS3BlobStoreProvider
 
     private AwsS3Config config;
 
-    @Activate
-    public void activate()
-    {
-        if ( !this.config.validate() )
-        {
-            return;
-        }
-
-        this.blobStore = AwsS3BlobStore.create().
-            accessKey( config.accessKey() ).
-            secretAccessKey( config.secretAccessKey() ).
-            endpoint( config.endpoint() ).
-            bucketName( config.bucketName() ).
-            build();
-    }
+    private static final Logger LOG = LoggerFactory.getLogger( AwsS3BlobStoreProvider.class );
 
     @Deactivate
     public void deactivate()
@@ -46,13 +33,34 @@ public class AwsS3BlobStoreProvider
     @Override
     public BlobStore get()
     {
+        if ( this.blobStore == null )
+        {
+            connect();
+        }
+
         return this.blobStore;
+    }
+
+    private void connect()
+    {
+        if ( !this.config.isValid() )
+        {
+            LOG.error( "Cannot connect to blobstore [" + this.name() + "], invalid config" );
+            return;
+        }
+
+        this.blobStore = AwsS3BlobStore.create().
+            accessKey( config.accessKey() ).
+            secretAccessKey( config.secretAccessKey() ).
+            endpoint( config.endpoint() ).
+            bucketName( config.bucketName() ).
+            build();
     }
 
     @Override
     public String name()
     {
-        return "aws-s3";
+        return "s3";
     }
 
     @Override
@@ -65,11 +73,5 @@ public class AwsS3BlobStoreProvider
     public void setConfig( final AwsS3Config config )
     {
         this.config = config;
-    }
-
-    @Override
-    public boolean isActive()
-    {
-        return this.blobStore != null;
     }
 }

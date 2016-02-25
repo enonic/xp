@@ -35,33 +35,51 @@ public class SwiftConfigImpl
     }
 
     @Override
-    public String endpoint()
+    public String authUrl()
     {
-        return this.config.get( "endpoint" );
+        return this.config.get( "auth.url" );
     }
 
     @Override
-    public String domain()
+    public String domainId()
     {
-        return this.config.get( "domain" );
+        return this.config.get( "domain.id" );
     }
 
     @Override
-    public String user()
+    public String domainName()
     {
-        return this.config.get( "user" );
+        return this.config.get( "domain.name" );
     }
 
     @Override
-    public String password()
+    public String authUser()
     {
-        return this.config.get( "password" );
+        return this.config.get( "auth.user" );
+    }
+
+    @Override
+    public String authPassword()
+    {
+        return this.config.get( "auth.password" );
+    }
+
+    @Override
+    public Integer authVersion()
+    {
+        return Integer.valueOf( this.config.get( "auth.version" ) );
     }
 
     @Override
     public String projectId()
     {
-        return this.config.get( "projectId" );
+        return this.config.get( "project.id" );
+    }
+
+    @Override
+    public String projectName()
+    {
+        return this.config.get( "project.name" );
     }
 
     @Override
@@ -77,9 +95,25 @@ public class SwiftConfigImpl
     }
 
     @Override
-    public boolean validate()
+    public boolean isValid()
     {
-        return checkNotEmpty( this.user(), this.container(), this.domain(), this.password(), this.projectId(), this.endpoint() );
+        return checkNotEmpty( this.authUser(), this.authPassword(), this.container(), this.authUrl() ) &&
+            hasOneOf( projectId(), projectName() ) &&
+            hasOneOf( domainId(), domainName() ) &&
+            authVersion() != null;
+    }
+
+    private boolean hasOneOf( final String... values )
+    {
+        for ( final String value : values )
+        {
+            if ( !Strings.isNullOrEmpty( value ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private boolean checkNotEmpty( final String... values )

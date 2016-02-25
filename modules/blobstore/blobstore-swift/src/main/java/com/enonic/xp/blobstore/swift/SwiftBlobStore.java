@@ -6,10 +6,8 @@ import java.util.Map;
 
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.DLPayload;
-import org.openstack4j.model.common.Identifier;
 import org.openstack4j.model.common.Payloads;
 import org.openstack4j.model.identity.Access;
-import org.openstack4j.model.storage.object.options.CreateUpdateContainerOptions;
 import org.openstack4j.openstack.OSFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,67 +21,41 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.Segment;
-import com.enonic.xp.util.ClassLoaderHelper;
+import com.enonic.xp.blobstore.swift.config.SwiftConfig;
 import com.enonic.xp.util.Exceptions;
 
 public class SwiftBlobStore
     implements BlobStore
 {
-    final String container;
+    private final SwiftConfig config;
 
-    final String endpoint;
+    private final String container;
 
-    final String domain;
-
-    final String user;
-
-    final String password;
-
-    final String projectId;
-
-    final Access access;
+    private final Access access;
 
     private final static Logger LOG = LoggerFactory.getLogger( SwiftBlobStore.class );
 
-    private SwiftBlobStore( final Builder builder )
+    public SwiftBlobStore( final SwiftConfig config )
     {
-        projectId = builder.projectId;
-        password = builder.password;
-        user = builder.user;
-        domain = builder.domain;
-        endpoint = builder.endpoint;
-        container = builder.container;
+        this.config = config;
+        this.container = config.container();
         this.access = connect();
-
         createContainer();
-
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     private Access connect()
     {
-        Identifier domainIdentifier = Identifier.byName( this.domain );
+        final Access access = SwiftClientFactory.create( this.config );
 
-        final OSClient os = ClassLoaderHelper.callWith( () -> OSFactory.builderV3().
-            endpoint( this.endpoint ).
-            credentials( this.user, this.password, domainIdentifier ).
-            scopeToProject( Identifier.byId( this.projectId ), domainIdentifier ).
-            authenticate(), OSFactory.class );
-
-        if ( os.getAccess() == null )
+        if ( access == null )
         {
             throw new BlobStoreException(
-                "Cannot connect to blobstore [" + this.endpoint + "] with user [" + access.getUser().getUsername() + "]" );
+                "Cannot connect to blobstore [" + this.config.authUrl() + "] with user [" + this.config.authUser() + "]" );
         }
 
-        LOG.info(
-            "Connected to blobstore [" + this.endpoint + "] successfully with user [" + os.getAccess().getUser().getUsername() + "]" );
+        LOG.info( "Connected to blobstore [" + access.getEndpoint() + "] successfully with user [" + access.getUser().getUsername() + "]" );
 
-        return os.getAccess();
+        return access;
     }
 
     private boolean createContainer()
@@ -93,11 +65,7 @@ public class SwiftBlobStore
             return true;
         }
 
-        final boolean success = getClient().objectStorage().containers().create( container, CreateUpdateContainerOptions.create().
-            accessRead( this.user ).
-            accessWrite( this.user ) ).
-            isSuccess();
-        return success;
+        return getClient().objectStorage().containers().create( this.container ).isSuccess();
     }
 
     private boolean checkExists()
@@ -143,7 +111,7 @@ public class SwiftBlobStore
 
     private OSClient getClient()
     {
-        return OSFactory.clientFromAccess( access );
+        return OSFactory.clientFromAccess( this.access );
     }
 
     @Override
@@ -178,63 +146,4 @@ public class SwiftBlobStore
         return new SwiftBlobRecord( in, key );
     }
 
-    public static final class Builder
-    {
-        private String container;
-
-        private String endpoint;
-
-        private String domain;
-
-        private String user;
-
-        private String password;
-
-        private String projectId;
-
-        private Builder()
-        {
-        }
-
-        public Builder container( final String val )
-        {
-            container = val;
-            return this;
-        }
-
-        public Builder endpoint( final String val )
-        {
-            endpoint = val;
-            return this;
-        }
-
-        public Builder domain( final String val )
-        {
-            domain = val;
-            return this;
-        }
-
-        public Builder user( final String val )
-        {
-            user = val;
-            return this;
-        }
-
-        public Builder password( final String val )
-        {
-            password = val;
-            return this;
-        }
-
-        public SwiftBlobStore build()
-        {
-            return new SwiftBlobStore( this );
-        }
-
-        public Builder projectId( final String val )
-        {
-            projectId = val;
-            return this;
-        }
-    }
 }

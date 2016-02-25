@@ -1,9 +1,9 @@
 package com.enonic.xp.blobstore.swift;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreProvider;
@@ -18,33 +18,28 @@ public class SwiftBlobStoreProvider
 
     private SwiftConfig config;
 
-    @Activate
-    public void activate()
-    {
-        if ( !this.config.validate() )
-        {
-            return;
-        }
-
-        this.blobStore = SwiftBlobStore.create().
-            container( config.container() ).
-            domain( config.domain() ).
-            endpoint( config.endpoint() ).
-            password( config.password() ).
-            user( config.user() ).
-            projectId( config.projectId() ).
-            build();
-    }
-
-    @Deactivate
-    public void deactivate()
-    {
-    }
+    private static final Logger LOG = LoggerFactory.getLogger( SwiftBlobStoreProvider.class );
 
     @Override
     public BlobStore get()
     {
+        if ( this.blobStore == null )
+        {
+            connect();
+        }
+
         return this.blobStore;
+    }
+
+    private void connect()
+    {
+        if ( !this.config.isValid() )
+        {
+            LOG.error( "Cannot connect to blobstore [" + this.name() + "], invalid config" );
+            return;
+        }
+
+        this.blobStore = new SwiftBlobStore( this.config );
     }
 
     @Override
@@ -63,11 +58,5 @@ public class SwiftBlobStoreProvider
     public void setConfig( final SwiftConfig config )
     {
         this.config = config;
-    }
-
-    @Override
-    public boolean isActive()
-    {
-        return this.blobStore != null;
     }
 }

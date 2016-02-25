@@ -24,7 +24,7 @@ import com.enonic.xp.util.Exceptions;
 class AwsS3BlobStore
     implements BlobStore
 {
-    private BlobStoreContext context;
+    private final BlobStoreContext context;
 
     private final org.jclouds.blobstore.BlobStore blobStore;
 
@@ -54,7 +54,7 @@ class AwsS3BlobStore
     {
         try
         {
-            final boolean exists = blobStore.createContainerInLocation( null, this.bucketName );
+            blobStore.createContainerInLocation( null, this.bucketName );
 
         }
         catch ( Exception e )

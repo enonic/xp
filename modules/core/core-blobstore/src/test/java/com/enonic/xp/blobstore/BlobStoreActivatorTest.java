@@ -28,7 +28,7 @@ public class BlobStoreActivatorTest
         Mockito.when( fileBlobStoreConfig.baseDir() ).thenReturn( this.baseDir.getRoot() );
         final FileBlobStoreProvider fileBlobStore = new FileBlobStoreProvider();
         fileBlobStore.setConfig( fileBlobStoreConfig );
-        fileBlobStore.activate();
+        fileBlobStore.get();
 
         final BundleContext bundleContext = Mockito.mock( BundleContext.class );
 
