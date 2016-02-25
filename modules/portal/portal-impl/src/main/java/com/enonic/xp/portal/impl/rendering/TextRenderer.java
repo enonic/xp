@@ -100,7 +100,7 @@ public final class TextRenderer
     }
 
     @Reference
-    public void setService( final PortalUrlService service )
+    public void setPortalUrlService( final PortalUrlService service )
     {
         this.service = service;
     }
