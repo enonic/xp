@@ -16,7 +16,7 @@ module api.content.form.inputtype.contentselector {
 
         private comboboxLoaded = false;
 
-        private userStoreKey;
+        private userStoreKey: string;
 
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("userstore-selector");
@@ -33,6 +33,7 @@ module api.content.form.inputtype.contentselector {
         }
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
+            console.log("USS.layout");
 
             super.layout(input, propertyArray);
 
@@ -72,7 +73,7 @@ module api.content.form.inputtype.contentselector {
             if (this.comboBox && this.userStoreKey) {
                 this.comboBox.getDisplayValues().
                     filter((authApplication: api.application.Application) => {
-                        return this.userStoreKey.equals(authApplication.getApplicationKey());
+                        return this.userStoreKey === authApplication.getApplicationKey().toString();
                     }).
                     forEach((selectedOption: api.application.Application) => {
                         this.comboBox.select(selectedOption);

@@ -82,14 +82,16 @@ module api.ui.security.auth {
 
                 var okCallback = () => {
                     if (!tempSiteConfig.equals(this.authConfig)) {
-                        this.applyTemporaryConfig(tempSiteConfig);
+                        this.applyTemporaryConfig(tempSiteConfig); //TODO Save on apply?
                     }
                 };
 
                 var siteConfiguratorDialog = new api.content.site.inputtype.siteconfigurator.SiteConfiguratorDialog(this.application.getDisplayName(),
                     this.application.getName() + "-" + this.application.getVersion(),
                     this.formView,
-                    okCallback);
+                    okCallback,
+                    () => {
+                    });
                 siteConfiguratorDialog.open();
             }
         }
