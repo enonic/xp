@@ -20,10 +20,12 @@ module app.wizard {
                     setInputTypeConfig({}).
                     build());
 
-            this.propertySet = new api.data.PropertySet()
+            this.propertySet = new api.data.PropertySet();
             var paths = pathGuard.getPaths();
-            if (paths && paths.length > 0) {
-                this.propertySet.addString("paths", paths[0]);
+            if (paths) {
+                paths.forEach(path => {
+                    this.propertySet.addString("paths", path);
+                });
             }
 
 
