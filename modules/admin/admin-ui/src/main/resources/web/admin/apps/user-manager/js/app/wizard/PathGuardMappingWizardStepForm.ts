@@ -1,51 +1,62 @@
 module app.wizard {
     export class PathGuardMappingWizardStepForm extends api.app.wizard.WizardStepForm {
 
-        private textInput: api.ui.text.TextInput;
+        private formView: api.form.FormView;
+
+        private propertySet: api.data.PropertySet;
 
         constructor() {
             super();
-
-            this.textInput = new api.ui.text.TextInput("middle");
-
-            var formItem = new api.ui.form.FormItemBuilder(this.textInput).setLabel("Protected resources").
-                setValidator(api.ui.form.Validators.required).
-                build();
-
-            var fieldSet = new api.ui.form.Fieldset();
-            fieldSet.add(formItem);
-            var form = new api.ui.form.Form().add(fieldSet);
-            form.onFocus((event) => {
-                this.notifyFocused(event);
-            });
-            form.onBlur((event) => {
-                this.notifyBlurred(event);
-            });
-            form.onValidityChanged((event: api.ValidityChangedEvent) => {
-                this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(event.isValid()));
-            });
-            this.appendChild(form);
         }
 
         layout(pathGuard: api.security.PathGuard) {
-            var paths = pathGuard.getPaths();
-            if (paths && paths.length > 0) {
-                this.textInput.setValue(paths[0]);
-            } else {
-                this.textInput.reset();
-            }
-        }
 
-        isValid(): boolean {
-            return this.textInput.isValid();
+            var formBuilder = new api.form.FormBuilder().
+                addFormItem(new api.form.InputBuilder().
+                    setName("paths").
+                    setInputType(api.form.inputtype.text.TextLine.getName()).
+                    setLabel("Protected resources").
+                    setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(2).build()).
+                    setInputTypeConfig({}).
+                    build());
+
+            this.propertySet = new api.data.PropertySet();
+            var paths = pathGuard.getPaths();
+            if (paths) {
+                paths.forEach(path => {
+                    this.propertySet.addString("paths", path);
+                });
+            }
+
+
+            this.formView = new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
+            return this.formView.layout().then(() => {
+
+                this.formView.onFocus((event) => {
+                    this.notifyFocused(event);
+                });
+                this.formView.onBlur((event) => {
+                    this.notifyBlurred(event);
+                });
+
+                this.appendChild(this.formView);
+
+                this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
+                    this.previousValidation = event.getRecording();
+                    this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(event.isValid()));
+                });
+
+                var formViewValid = this.formView.isValid();
+                this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(formViewValid));
+            });
         }
 
         getPaths(): string[] {
-            return this.textInput.getValue() ? [this.textInput.getValue()] : []; //TODO
+            return this.propertySet ? this.propertySet.getStrings("paths") : [];
         }
 
         giveFocus(): boolean {
-            return this.textInput.giveFocus();
+            return this.formView.giveFocus();
         }
     }
 }
