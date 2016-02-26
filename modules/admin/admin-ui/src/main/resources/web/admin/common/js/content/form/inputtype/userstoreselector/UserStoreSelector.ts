@@ -39,7 +39,7 @@ module api.content.form.inputtype.contentselector {
 
             this.userStoreKey = this.getValueFromPropertyArray(propertyArray);
 
-            this.comboBox = new api.ui.security.UserStoreComboBox();
+            this.comboBox = new api.ui.security.UserStoreComboBox(input.getOccurrences().getMaximum());
             var appComboboxLoadingListener = () => {
                 this.comboBox.unLoaded(appComboboxLoadingListener);
                 this.comboboxLoaded = true;
