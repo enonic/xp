@@ -32,6 +32,7 @@ module api.ui.security.auth {
 
         private formView;
 
+
         constructor(option: api.ui.selector.Option<api.application.Application>) {
             super(option);
             this.application = option.displayValue;

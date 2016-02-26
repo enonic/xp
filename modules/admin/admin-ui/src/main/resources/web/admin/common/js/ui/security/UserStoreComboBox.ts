@@ -18,31 +18,23 @@ module api.ui.security {
         }
     }
 
-    class UserStoreSelectedOptionView extends UserStoreViewer implements api.ui.selector.combobox.SelectedOptionView<UserStore> {
+    export class UserStoreSelectedOptionView extends api.ui.selector.combobox.RichSelectedOptionView<UserStore> {
 
-        private option: Option<UserStore>;
 
-        constructor(option: Option<UserStore>) {
-            super();
-            this.setOption(option);
-            this.setClass("userstore-selected-option-view");
-            var removeButton = new api.dom.AEl("icon-close");
-            removeButton.onClicked((event: MouseEvent) => {
-                this.notifyRemoveClicked(event);
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
-            });
-            this.appendChild(removeButton);
+        constructor(option: api.ui.selector.Option<UserStore>) {
+            super(option);
         }
 
-        setOption(option: api.ui.selector.Option<UserStore>) {
-            this.option = option;
-            this.setObject(option.displayValue);
+        resolveIconClass(userStore: api.security.UserStore): string {
+            return "icon-shield";
         }
 
-        getOption(): api.ui.selector.Option<UserStore> {
-            return this.option;
+        resolveTitle(userStore: UserStore): string {
+            return userStore.getDisplayName();
+        }
+
+        resolveSubTitle(userStore: UserStore): string {
+            return userStore.getKey().toString();
         }
 
     }
