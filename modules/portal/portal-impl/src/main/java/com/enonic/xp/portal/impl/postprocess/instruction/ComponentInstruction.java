@@ -20,6 +20,7 @@ import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ComponentService;
+import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.Regions;
 
 import static org.apache.commons.lang.StringUtils.substringAfter;
@@ -108,20 +109,38 @@ public final class ComponentInstruction
         {
             return null;
         }
-
         final Page page = content.getPage();
+
+        if ( content.getType().isFragment() )
+        {
+            return resolveComponentInFragment( page, path );
+        }
+
         final Regions pageRegions = page.getRegions();
         Component component = pageRegions.getComponent( path );
         if ( component == null )
         {
-            // TODO: Hack: See if component still exist in page template
-            component = portalRequest.getPageTemplate().getRegions().getComponent( path );
-            if ( component == null )
-            {
-                throw new RenderException( "Component not found: [{0}]", path );
-            }
+            throw new RenderException( "Component not found: [{0}]", path );
         }
 
+        return component;
+    }
+
+    private Component resolveComponentInFragment( final Page page, final ComponentPath path )
+    {
+        final Component fragmentComponent = page.getFragment();
+        if ( !( fragmentComponent instanceof LayoutComponent ) )
+        {
+            throw new RenderException( "Component not found: [{0}]", path );
+        }
+        final LayoutComponent layout = (LayoutComponent) fragmentComponent;
+
+        final Regions pageRegions = layout.getRegions();
+        final Component component = pageRegions.getComponent( path );
+        if ( component == null )
+        {
+            throw new RenderException( "Component not found: [{0}]", path );
+        }
         return component;
     }
 
