@@ -15,17 +15,19 @@ module app.wizard {
                 addFormItem(new api.form.InputBuilder().
                     setName("paths").
                     setInputType(api.form.inputtype.text.TextLine.getName()).
-                    setLabel("Protected resources").
-                    setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(2).build()).
+                    setLabel("Protected paths").
+                    setOccurrences(new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(0).build()).
                     setInputTypeConfig({}).
                     build());
 
             this.propertySet = new api.data.PropertySet();
             var paths = pathGuard.getPaths();
-            if (paths) {
+            if (paths && paths.length > 0) {
                 paths.forEach(path => {
                     this.propertySet.addString("paths", path);
                 });
+            } else {
+                this.propertySet.setString("paths", "");
             }
 
 
