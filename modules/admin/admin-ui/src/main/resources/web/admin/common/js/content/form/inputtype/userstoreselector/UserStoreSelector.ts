@@ -81,7 +81,7 @@ module api.content.form.inputtype.contentselector {
 
                 var selectedOption = this.comboBox.getSelectedOptions()[0];
                 var selectedOptionView = <api.ui.security.auth.AuthApplicationSelectedOptionView> selectedOption.getOptionView();
-                selectedOptionView.setAuthConfig(this.userStoreKey);
+                //TODO selectedOptionView.setAuthConfig(this.userStoreKey);
 
             }
         }
