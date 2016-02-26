@@ -36,6 +36,10 @@
     }
 
     function onKeyPressed(e) {
+        if (getLauncherMainContainer().getAttribute("hidden")) {
+            return;
+        }
+
         switch(e.keyCode) {
         case 38:
             // up key pressed
