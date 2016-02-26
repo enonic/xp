@@ -6,7 +6,7 @@ module api.ui.security.auth {
             builder.
                 setMaximumOccurrences(1).
                 setComboBoxName("authApplicationSelector").
-                setLoader(new AuthApplicationLoader()).
+                setLoader(new api.security.auth.AuthApplicationLoader()).
                 setSelectedOptionsView(new AuthApplicationSelectedOptionsView()).
                 setOptionDisplayValueViewer(new AuthApplicationViewer()).
                 setDelayedInputValueChangedHandling(500);

@@ -24,6 +24,7 @@
 ///<reference path="GetUserStoreByKeyRequest.ts"/>
 ///<reference path="GetPathGuardByKeyRequest.ts"/>
 ///<reference path="GetDefaultUserStoreRequest.ts"/>
+///<reference path="UserStoreLoader.ts"/>
 ///<reference path="PrincipalListJson.ts"/>
 ///<reference path="FindPrincipalsRequest.ts"/>
 ///<reference path="ListPathGuardsRequest.ts"/>
