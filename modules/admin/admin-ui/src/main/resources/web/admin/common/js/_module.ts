@@ -50,6 +50,8 @@
 
 ///<reference path='icon/_module.ts' />
 
+///<reference path='item/_module.ts' />
+
 ///<reference path='security/_module.ts' />
 ///<reference path='security/acl/_module.ts' />
 ///<reference path='security/auth/_module.ts' />
@@ -105,8 +107,6 @@
 ///<reference path='site/json/_module.ts' />
 ///<reference path='site/_module.ts' />
 
-///<reference path='item/_module.ts' />
-
 ///<reference path='query/expr/_module.ts' />
 ///<reference path='query/_module.ts' />
 ///<reference path='query/aggregation/_module.ts' />
@@ -136,6 +136,7 @@
 ///<reference path='content/form/inputtype/_module.ts' />
 ///<reference path='content/form/inputtype/upload/_module.ts' />
 ///<reference path='content/form/inputtype/contentselector/_module.ts' />
+///<reference path='content/form/inputtype/userstoreselector/_module.ts' />
 ///<reference path='content/form/inputtype/image/_module.ts' />
 ///<reference path='content/form/inputtype/tag/_module.ts' />
 ///<reference path='content/form/inputtype/geo/_module.ts' />

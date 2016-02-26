@@ -6,7 +6,7 @@ module api.ui.security.auth {
             builder.
                 setMaximumOccurrences(1).
                 setComboBoxName("authApplicationSelector").
-                setLoader(new AuthApplicationLoader()).
+                setLoader(new api.security.auth.AuthApplicationLoader()).
                 setSelectedOptionsView(new AuthApplicationSelectedOptionsView()).
                 setOptionDisplayValueViewer(new AuthApplicationViewer()).
                 setDelayedInputValueChangedHandling(500);
@@ -31,6 +31,7 @@ module api.ui.security.auth {
         private formContext: api.form.FormContext;
 
         private formView;
+
 
         constructor(option: api.ui.selector.Option<api.application.Application>) {
             super(option);
@@ -82,14 +83,16 @@ module api.ui.security.auth {
 
                 var okCallback = () => {
                     if (!tempSiteConfig.equals(this.authConfig)) {
-                        this.applyTemporaryConfig(tempSiteConfig);
+                        this.applyTemporaryConfig(tempSiteConfig); //TODO Save on apply?
                     }
                 };
 
                 var siteConfiguratorDialog = new api.content.site.inputtype.siteconfigurator.SiteConfiguratorDialog(this.application.getDisplayName(),
                     this.application.getName() + "-" + this.application.getVersion(),
                     this.formView,
-                    okCallback);
+                    okCallback,
+                    () => {
+                    });
                 siteConfiguratorDialog.open();
             }
         }

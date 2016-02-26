@@ -1,4 +1,4 @@
-module api.ui.security.auth {
+module api.security.auth {
 
     export class AuthApplicationLoader extends api.util.loader.BaseLoader<api.application.ApplicationListResult, api.application.Application> {
 

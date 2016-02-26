@@ -1,12 +1,13 @@
 module api.security {
 
-    export class UserStore implements api.Equitable {
+    export class UserStore extends api.item.BaseItem {
         private displayName: string;
         private key: UserStoreKey;
         private authConfig: UserStoreAuthConfig;
         private permissions: api.security.acl.UserStoreAccessControlList;
 
         constructor(builder: UserStoreBuilder) {
+            super(builder);
             this.displayName = builder.displayName;
             this.key = builder.key;
             this.authConfig = builder.authConfig;
@@ -21,6 +22,10 @@ module api.security {
             return this.key;
         }
 
+        getId(): string {
+            return this.key.getId();
+        }
+
         getAuthConfig(): UserStoreAuthConfig {
             return this.authConfig;
         }
@@ -29,7 +34,11 @@ module api.security {
             return this.permissions;
         }
 
-        isDeletable(): wemQ.Promise<boolean> {
+        static checkOnDeletable(key: UserStoreKey): wemQ.Promise<boolean> {
+            return !!key ? UserStore.create().setKey(key.toString()).build().checkIsDeletable() : null;
+        }
+
+        private checkIsDeletable(): wemQ.Promise<boolean> {
             var deferred = wemQ.defer<boolean>();
             new GetPrincipalsByUserStoreRequest(this.key,
                 [PrincipalType.USER, PrincipalType.GROUP]).
@@ -45,10 +54,6 @@ module api.security {
                 }).done();
             ;
             return deferred.promise;
-        }
-
-        static checkOnDeletable(key: UserStoreKey): wemQ.Promise<boolean> {
-            return !!key ? UserStore.create().setKey(key.toString()).build().isDeletable() : null;
         }
 
         equals(o: api.Equitable): boolean {
@@ -82,13 +87,14 @@ module api.security {
         }
     }
 
-    export class UserStoreBuilder {
+    export class UserStoreBuilder extends api.item.BaseItemBuilder {
         displayName: string;
         key: UserStoreKey;
         authConfig: UserStoreAuthConfig;
         permissions: api.security.acl.UserStoreAccessControlList;
 
         constructor() {
+            super();
         }
 
         fromJson(json: api.security.UserStoreJson): UserStoreBuilder {
