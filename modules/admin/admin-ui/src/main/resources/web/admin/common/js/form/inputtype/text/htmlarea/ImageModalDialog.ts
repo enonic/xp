@@ -28,6 +28,7 @@ module api.form.inputtype.text.htmlarea {
         private callback: Function;
         private imageToolbar: ImageToolbar;
         private imagePreviewScrollHandler: ImagePreviewScrollHandler;
+        private imageLoadMask: api.ui.mask.LoadMask;
 
         constructor(config: api.form.inputtype.text.HtmlAreaImage, contentId: api.content.ContentId) {
             this.imageElement = <HTMLImageElement>config.element;
@@ -84,6 +85,7 @@ module api.form.inputtype.text.htmlarea {
                     return;
                 }
 
+                this.imageLoadMask.show();
                 this.createImgElForNewImage(imageContent);
                 this.previewImage();
                 formItem.addClass("image-preview");
@@ -132,6 +134,9 @@ module api.form.inputtype.text.htmlarea {
 
             this.imagePreviewScrollHandler = new ImagePreviewScrollHandler(this.imagePreviewContainer);
 
+            this.imageLoadMask = new api.ui.mask.LoadMask(this.imagePreviewContainer);
+            this.imagePreviewContainer.appendChild(this.imageLoadMask);
+
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
                 this.resetPreviewContainerMaxHeight();
                 this.imagePreviewScrollHandler.toggleScrollButtons();
@@ -163,9 +168,10 @@ module api.form.inputtype.text.htmlarea {
         }
 
         private previewImage() {
-            this.imageToolbar = new ImageToolbar(this.image);
+            this.imageToolbar = new ImageToolbar(this.image, this.imageLoadMask);
 
             this.image.onLoaded(() => {
+                this.imageLoadMask.hide();
                 this.imagePreviewContainer.removeClass("upload");
                 wemjq(this.imageToolbar.getHTMLElement()).insertBefore(
                     this.imagePreviewContainer.getHTMLElement().parentElement.parentElement);
@@ -482,10 +488,13 @@ module api.form.inputtype.text.htmlarea {
 
         private imageCroppingSelector: ImageCroppingSelector;
 
-        constructor(image: api.dom.ImgEl) {
+        private imageLoadMask: api.ui.mask.LoadMask;
+
+        constructor(image: api.dom.ImgEl, imageLoadMask: api.ui.mask.LoadMask) {
             super("image-toolbar");
 
             this.image = image;
+            this.imageLoadMask = imageLoadMask;
 
             super.addElement(this.justifyButton = this.createJustifiedButton());
             super.addElement(this.alignLeftButton = this.createLeftAlignedButton());
@@ -534,7 +543,8 @@ module api.form.inputtype.text.htmlarea {
         private createKeepOriginalSizeCheckbox(): api.ui.Checkbox {
             var keepOriginalSizeCheckbox = new api.ui.Checkbox();
             keepOriginalSizeCheckbox.addClass('keep-size-check');
-            keepOriginalSizeCheckbox.onValueChanged(()=> {
+            keepOriginalSizeCheckbox.onValueChanged(() => {
+                this.imageLoadMask.show();
                 this.rebuildImgSrcParams();
                 this.rebuildImgDataSrcParams();
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
@@ -550,6 +560,7 @@ module api.form.inputtype.text.htmlarea {
             this.initSelectedCropping(imageCroppingSelector);
 
             imageCroppingSelector.onOptionSelected((event: OptionSelectedEvent<ImageCroppingOption>) => {
+                this.imageLoadMask.show();
                 this.rebuildImgSrcParams();
                 this.rebuildImgDataSrcParams();
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
