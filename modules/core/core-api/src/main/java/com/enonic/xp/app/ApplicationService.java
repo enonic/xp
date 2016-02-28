@@ -21,7 +21,7 @@ public interface ApplicationService
 
     void stopApplication( ApplicationKey key, final boolean triggerEvent );
 
-    Application installClusterApplication( final ByteSource byteSource );
+    Application installGlobalApplication( final ByteSource byteSource );
 
     Application installLocalApplication( final ByteSource byteSource );
 

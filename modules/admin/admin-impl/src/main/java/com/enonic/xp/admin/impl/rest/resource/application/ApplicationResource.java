@@ -36,6 +36,7 @@ import com.enonic.xp.admin.impl.rest.resource.application.json.ListApplicationJs
 import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.jaxrs.JaxRsComponent;
@@ -101,9 +102,16 @@ public final class ApplicationResource
     @GET
     public ApplicationJson getByKey( @QueryParam("applicationKey") String applicationKey )
     {
-        final Application application = this.applicationService.getInstalledApplication( ApplicationKey.from( applicationKey ) );
-        final boolean local = this.applicationService.isLocalApplication( ApplicationKey.from( applicationKey ) );
-        final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( ApplicationKey.from( applicationKey ) );
+        final ApplicationKey appKey = ApplicationKey.from( applicationKey );
+        final Application application = this.applicationService.getInstalledApplication( appKey );
+
+        if ( application == null )
+        {
+            throw new ApplicationNotFoundException( appKey );
+        }
+
+        final boolean local = this.applicationService.isLocalApplication( appKey );
+        final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( appKey );
         return new ApplicationJson( application, local, siteDescriptor );
     }
 
@@ -189,7 +197,7 @@ public final class ApplicationResource
 
         try
         {
-            final Application application = this.applicationService.installClusterApplication( byteSource );
+            final Application application = this.applicationService.installGlobalApplication( byteSource );
 
             result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
         }

@@ -38,6 +38,11 @@ public class ApplicationClusterEventListener
 
         if ( type.equals( ApplicationClusterEvents.EVENT_TYPE ) )
         {
+            if ( event.isLocalOrigin() )
+            {
+                return;
+            }
+
             final String eventSubType = event.getValueAs( String.class, ApplicationClusterEvents.EVENT_TYPE_KEY ).get();
 
             switch ( eventSubType )
