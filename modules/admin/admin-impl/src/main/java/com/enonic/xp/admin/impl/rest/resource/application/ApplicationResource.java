@@ -185,7 +185,9 @@ public final class ApplicationResource
                 {
                     return installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ), urlString );
                 }
-            } else {
+            }
+            else
+            {
                 failure = "Illegal protocol: " + url.getProtocol();
                 result.setFailure( failure );
                 return result;
@@ -206,7 +208,7 @@ public final class ApplicationResource
 
         try
         {
-            final Application application = this.applicationService.installApplication( byteSource, true, true );
+            final Application application = this.applicationService.installGlobalApplication( byteSource );
 
             result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
         }
