@@ -23,7 +23,6 @@ public abstract class ToolCommand
         if ( e instanceof ConnectException )
         {
             error( "Unable to connect to XP server: %s", e.getMessage() );
-            return;
         }
 
         if ( e instanceof ResponseException )
@@ -37,8 +36,7 @@ public abstract class ToolCommand
                 error( "Response error: %s", e.getMessage() );
             }
         }
-
-        error( "Unexpected error: %s", e.getMessage() );
+        exception( "Unexpected error: %s", e );
     }
 
     private void error( final String message, final Object... args )
@@ -52,6 +50,13 @@ public abstract class ToolCommand
             System.err.println( String.format( message, args ) );
         }
 
+        System.exit( -1 );
+    }
+
+    private void exception( final String message, final Exception e )
+    {
+        System.err.println( String.format( message, e.getMessage() ) );
+        e.printStackTrace( System.err );
         System.exit( -1 );
     }
 
