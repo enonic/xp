@@ -413,10 +413,7 @@ module app.browse {
                 console.debug("ContentBrowsePanel: deleted", paths);
             }
 
-            var deleteResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
-            var nodes = deleteResult.map((el) => {
-                return el.getNodes();
-            });
+            var nodes = this.contentTreeGrid.findByPaths(paths).map(el => el.getNodes());
             var merged = [];
             // merge array of nodes arrays
             merged = merged.concat.apply(merged, nodes);
@@ -430,6 +427,21 @@ module app.browse {
             });
 
             this.contentTreeGrid.xDeleteContentNodes(merged);
+
+            // now get unique parents and update their hasChildren
+            var uniqueParents = paths.map(path => path.getParentPath()).filter((parent, index, self) => {
+                return self.indexOf(parent) === index;
+            });
+            let parentNodes = this.contentTreeGrid.findByPaths(uniqueParents).map(parentNode => parentNode.getNodes());
+            let mergedParentNodes = [];
+            mergedParentNodes = mergedParentNodes.concat.apply(mergedParentNodes, parentNodes);
+
+            mergedParentNodes.forEach((parentNode: TreeNode<ContentSummaryAndCompareStatus>) => {
+                if (parentNode.getChildren().length == 0) {
+                    // update parent if all children were deleted
+                    this.contentTreeGrid.refreshNodeData(parentNode);
+                }
+            });
 
             this.setFilterPanelRefreshNeeded(true);
             window.setTimeout(() => {

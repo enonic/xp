@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -60,6 +61,8 @@ public final class ApplicationResource
     private SiteService siteService;
 
     private MarketService marketService;
+
+    private final static String[] ALLOWED_PROTOCOLS = {"http", "https"};
 
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
 
@@ -176,9 +179,16 @@ public final class ApplicationResource
         {
             final URL url = new URL( urlString );
 
-            try (final InputStream inputStream = url.openStream())
+            if ( ArrayUtils.contains( ALLOWED_PROTOCOLS, url.getProtocol() ) )
             {
-                return installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ), urlString );
+                try (final InputStream inputStream = url.openStream())
+                {
+                    return installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ), urlString );
+                }
+            } else {
+                failure = "Illegal protocol: " + url.getProtocol();
+                result.setFailure( failure );
+                return result;
             }
 
         }
@@ -192,12 +202,11 @@ public final class ApplicationResource
 
     private ApplicationInstallResultJson installApplication( final ByteSource byteSource, final String applicationName )
     {
-
         final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
 
         try
         {
-            final Application application = this.applicationService.installGlobalApplication( byteSource );
+            final Application application = this.applicationService.installApplication( byteSource, true, true );
 
             result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
         }

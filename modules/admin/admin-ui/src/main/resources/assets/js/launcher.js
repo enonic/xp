@@ -1,6 +1,6 @@
 (function () {
     var adminUrl = "/admin/tool/com.enonic.xp.admin.ui/launcher";
-    var launcherPanel, bodyMask, launcherButton;
+    var launcherPanel, bodyMask, launcherButton, launcherMainContainer;
     var isHomeApp = window.CONFIG && window.CONFIG.appId == "home";
     var autoOpenLauncher = window.CONFIG && window.CONFIG.autoOpenLauncher;
     var appId = window.CONFIG ? window.CONFIG.appId : "";
@@ -51,7 +51,9 @@
         link.setAttribute("href", adminUrl);
 
         link.onload = function () {
-            container.appendChild(link.import.querySelector('.launcher-main-container'));
+            launcherMainContainer = link.import.querySelector('.launcher-main-container');
+            launcherMainContainer.setAttribute("hidden", "true");
+            container.appendChild(launcherMainContainer);
 
             if (autoOpenLauncher) {
                 openLauncherPanel();
@@ -115,6 +117,7 @@
     }
 
     function openLauncherPanel() {
+        launcherMainContainer.removeAttribute("hidden");
         listenToKeyboardEvents();
         toggleButton();
         showBodyMask();
@@ -123,6 +126,7 @@
     }
 
     function closeLauncherPanel(skipTransition) {
+        launcherMainContainer.setAttribute("hidden", "true");
         setTipVisibility("none");
         unlistenToKeyboardEvents();
         launcherPanel.classList.remove("visible");
@@ -172,6 +176,12 @@
     }
 
     function onKeyPressed(e) {
+        if (!isPanelExpanded()) {
+            return;
+        }
+
+        e.stopPropagation();
+
         switch(e.keyCode) {
         case 27:
             // esc key pressed
@@ -194,5 +204,7 @@
         appendLauncherPanel();
     }
 
-    init();
+    window.addEventListener("load", function () {
+        init();
+    });
 }());

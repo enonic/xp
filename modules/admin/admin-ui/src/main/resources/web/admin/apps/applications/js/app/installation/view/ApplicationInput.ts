@@ -19,7 +19,7 @@ module app.installation.view {
 
         private errorPanel: api.form.ValidationRecordingViewer;
 
-        private static APPLICATION_ADDRESS_MASK: string = "^(http|https)://";
+        private static APPLICATION_ADDRESS_MASK: string = "^(http|https)://\\S+";
 
         constructor(cancelAction: Action, className?: string, originalValue?: string) {
 

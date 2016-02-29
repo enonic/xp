@@ -11,3 +11,4 @@
 ///<reference path='ApplicationBrowseItemPanel.ts'/>
 ///<reference path='InstallApplicationAction.ts'/>
 ///<reference path='UninstallApplicationAction.ts'/>
+///<reference path='UninstallApplicationDialog.ts'/>
