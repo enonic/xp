@@ -30,6 +30,8 @@ module api.liveedit.text {
 
         private initializingTinyMceEditor: boolean;
 
+        private initializedTinyMceEditor: boolean;
+
         private focusOnInit: boolean;
 
         public static debug = false;
@@ -49,6 +51,7 @@ module api.liveedit.text {
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.textComponent = builder.component;
             this.initializingTinyMceEditor = false;
+            this.initializedTinyMceEditor = false;
 
             super(builder.
                 setContextMenuActions(this.createTextContextMenuActions()).
@@ -302,6 +305,9 @@ module api.liveedit.text {
                     }
                     this.focusOnInit = false;
                     this.initializingTinyMceEditor = false;
+                this.initializedTinyMceEditor = true;
+
+                this.addVerticalSpaceForHtmlAreaToolbar();
                 });
         }
 
@@ -360,10 +366,15 @@ module api.liveedit.text {
                 pageView.setTextEditMode(true);
             }
             this.giveFocus();
+
+            if (this.initializedTinyMceEditor) {
+                this.addVerticalSpaceForHtmlAreaToolbar();
+            }
         }
 
         private closePageTextEditMode() {
             var pageView = this.getPageView();
+            this.removeVerticalSpaceForHtmlAreaToolbar();
             if (pageView.isTextEditMode()) {
                 pageView.setTextEditMode(false);
             }
@@ -383,5 +394,20 @@ module api.liveedit.text {
             }));
             return actions;
         }
+
+        private addVerticalSpaceForHtmlAreaToolbar() {
+            this.getPageView().getEl().setPosition("relative");
+            this.getPageView().getEl().setTop(this.getTinyMceToolbarWidth() + "px");
+        }
+
+        private removeVerticalSpaceForHtmlAreaToolbar() {
+            this.getPageView().getEl().setPosition("");
+            this.getPageView().getEl().setTop("");
+        }
+
+        private getTinyMceToolbarWidth(): number {
+            return wemjq(".mce-toolbar-grp").outerHeight();
+        }
+
     }
 }
