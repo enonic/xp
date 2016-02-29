@@ -122,6 +122,11 @@ public final class ApplicationHelper
         return getContext().callWith( runnable );
     }
 
+    public static void runWithContext( Runnable runnable )
+    {
+        getContext().runWith( runnable );
+    }
+
     private static Context getContext()
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();

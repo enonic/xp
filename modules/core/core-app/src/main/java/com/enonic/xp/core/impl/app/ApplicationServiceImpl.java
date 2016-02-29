@@ -38,7 +38,7 @@ public final class ApplicationServiceImpl
 {
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationServiceImpl.class );
 
-    private final ConcurrentMap<String, Boolean> localApplicationSet = Maps.newConcurrentMap();
+    private final ConcurrentMap<ApplicationKey, Boolean> localApplicationSet = Maps.newConcurrentMap();
 
     private ApplicationRegistry registry;
 
@@ -78,28 +78,39 @@ public final class ApplicationServiceImpl
     @Override
     public boolean isLocalApplication( final ApplicationKey key )
     {
-        return Boolean.TRUE.equals( localApplicationSet.get( key.getName() ) );
+        return doIsLocalApplication( key );
+    }
+
+    private boolean doIsLocalApplication( final ApplicationKey key )
+    {
+        return Boolean.TRUE.equals( localApplicationSet.get( key ) );
     }
 
     @Override
     public void startApplication( final ApplicationKey key, final boolean triggerEvent )
     {
-        doStartApplication( key, triggerEvent && !isLocalApplication( key ) );
+        ApplicationHelper.runWithContext( () -> doStartApplication( key, triggerEvent && !doIsLocalApplication( key ) ) );
     }
 
     @Override
     public void stopApplication( final ApplicationKey key, final boolean triggerEvent )
     {
-        doStopApplication( key, triggerEvent && !isLocalApplication( key ) );
+        ApplicationHelper.runWithContext( () -> doStopApplication( key, triggerEvent && !doIsLocalApplication( key ) ) );
     }
-
 
     @Override
     public Application installGlobalApplication( final ByteSource byteSource )
     {
-        final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( byteSource, true, true ) );
+        return ApplicationHelper.callWithContext( () -> doInstallGlobalApplication( byteSource ) );
+    }
+
+    private Application doInstallGlobalApplication( final ByteSource byteSource )
+    {
+        final Application application = installOrUpdateApplication( byteSource, true );
 
         LOG.info( "Application [{}] installed successfully", application.getKey() );
+
+        publishInstalledEvent( application );
 
         doStartApplication( application.getKey(), true );
 
@@ -109,7 +120,12 @@ public final class ApplicationServiceImpl
     @Override
     public Application installLocalApplication( final ByteSource byteSource )
     {
-        final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( byteSource, false, false ) );
+        return ApplicationHelper.callWithContext( () -> doInstallLocalApplication( byteSource ) );
+    }
+
+    private Application doInstallLocalApplication( final ByteSource byteSource )
+    {
+        final Application application = installOrUpdateApplication( byteSource, false );
 
         LOG.info( "Application [{}] installed successfully", application.getKey() );
 
@@ -121,7 +137,12 @@ public final class ApplicationServiceImpl
     @Override
     public Application installStoredApplication( final NodeId nodeId )
     {
-        final Application application = ApplicationHelper.callWithContext( () -> doInstallApplication( nodeId, true, false ) );
+        return ApplicationHelper.callWithContext( () -> doInstallStoredApplication( nodeId ) );
+    }
+
+    private Application doInstallStoredApplication( final NodeId nodeId )
+    {
+        final Application application = doInstallApplication( nodeId, true );
 
         LOG.info( "Application [{}] installed successfully", application.getKey() );
 
@@ -143,8 +164,9 @@ public final class ApplicationServiceImpl
             final Application installedApp;
             try
             {
-                installedApp = doInstallApplication( applicationNode.id(), true, false );
-                if ( getStartedState( applicationNode ) )
+                installedApp = doInstallApplication( applicationNode.id(), true );
+
+                if ( storedApplicationIsStarted( applicationNode ) )
                 {
                     doStartApplication( installedApp.getKey(), false );
                 }
@@ -161,6 +183,11 @@ public final class ApplicationServiceImpl
     @Override
     public void uninstallApplication( final ApplicationKey key, final boolean triggerEvent )
     {
+        ApplicationHelper.runWithContext( () -> doUninstallApplication( key, triggerEvent ) );
+    }
+
+    private void doUninstallApplication( final ApplicationKey key, final boolean triggerEvent )
+    {
         final Application application = this.registry.get( key );
         if ( application == null )
         {
@@ -168,32 +195,39 @@ public final class ApplicationServiceImpl
             return;
         }
 
-        doUninstallApplication( application, triggerEvent );
+        doUninstallApplication( application );
 
-        ifUninstalledLocalReplaceWithGlobal( key, application );
-    }
+        final Boolean local = localApplicationSet.remove( key );
 
-    private void ifUninstalledLocalReplaceWithGlobal( final ApplicationKey key, final Application application )
-    {
-        final Boolean local = localApplicationSet.remove( key.getName() );
-
-        if ( Boolean.TRUE.equals( local ) )
+        if ( local )
         {
             reinstallGlobalApplicationIfExists( key, application );
         }
+
+        if ( triggerEvent )
+        {
+            this.eventPublisher.publish( ApplicationClusterEvents.uninstalled( application.getKey() ) );
+        }
+
+    }
+
+    private void publishInstalledEvent( final Application application )
+    {
+        final Node node = this.repoService.getApplicationNode( application.getKey() );
+        this.eventPublisher.publish( ApplicationClusterEvents.installed( node ) );
     }
 
     private void reinstallGlobalApplicationIfExists( final ApplicationKey key, final Application application )
     {
-        final Node applicationNode = this.repoService.getApplicationNode( key.getName() );
+        final Node applicationNode = this.repoService.getApplicationNode( key );
 
         if ( applicationNode != null )
         {
-            doInstallApplication( applicationNode.id(), true, false );
+            doInstallApplication( applicationNode.id(), true );
 
             LOG.info( "Application [{}] installed successfully", application.getKey() );
 
-            if ( Boolean.TRUE.equals( getStartedState( applicationNode ) ) )
+            if ( Boolean.TRUE.equals( storedApplicationIsStarted( applicationNode ) ) )
             {
                 doStartApplication( application.getKey(), false );
             }
@@ -206,7 +240,7 @@ public final class ApplicationServiceImpl
 
         if ( triggerEvent )
         {
-            ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, true ) );
+            this.repoService.updateStartedState( key, true );
             this.eventPublisher.publish( ApplicationClusterEvents.started( key ) );
         }
 
@@ -218,7 +252,7 @@ public final class ApplicationServiceImpl
 
         if ( triggerEvent )
         {
-            ApplicationHelper.callWithContext( () -> this.repoService.updateStartedState( key, false ) );
+            this.repoService.updateStartedState( key, false );
             this.eventPublisher.publish( ApplicationClusterEvents.stopped( key ) );
         }
     }
@@ -247,19 +281,7 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private Application doInstallApplication( final ByteSource byteSource, final boolean global, final boolean notifyCluster )
-    {
-        final Application application = installOrUpdateApplication( byteSource, global );
-
-        if ( notifyCluster )
-        {
-            final Node node = this.repoService.getApplicationNode( application.getKey().getName() );
-            this.eventPublisher.publish( ApplicationClusterEvents.installed( node ) );
-        }
-        return application;
-    }
-
-    private Application doInstallApplication( final NodeId nodeId, final boolean global, final boolean notifyCluster )
+    private Application doInstallApplication( final NodeId nodeId, final boolean global )
     {
         final ByteSource byteSource = this.repoService.getApplicationSource( nodeId );
 
@@ -271,7 +293,7 @@ public final class ApplicationServiceImpl
         return installOrUpdateApplication( byteSource, global );
     }
 
-    private void doUninstallApplication( final Application application, final boolean triggerEvent )
+    private void doUninstallApplication( final Application application )
     {
         final Bundle bundle = application.getBundle();
 
@@ -286,37 +308,32 @@ public final class ApplicationServiceImpl
 
         this.registry.invalidate( application.getKey() );
 
-        if ( triggerEvent )
-        {
-            ApplicationHelper.callWithContext( () -> {
-                this.repoService.deleteApplicationNode( application );
-                return null;
-            } );
+        final boolean localApp = this.doIsLocalApplication( application.getKey() );
 
-            this.eventPublisher.publish( ApplicationClusterEvents.uninstalled( application.getKey() ) );
+        if ( !localApp )
+        {
+            this.repoService.deleteApplicationNode( application );
         }
     }
 
     private Application installOrUpdateApplication( final ByteSource byteSource, final boolean global )
     {
-        final String applicationName = getApplicationName( byteSource );
+        final ApplicationKey applicationKey = getApplicationKey( byteSource );
 
-        final boolean update = applicationBundleInstalled( applicationName );
+        final boolean update = applicationBundleInstalled( applicationKey );
 
         final Application application;
 
         if ( update )
         {
-            application = doUpdateApplication( applicationName, byteSource, global );
+            application = handleUpdate( applicationKey, byteSource, global );
         }
         else
         {
-            application = doInstallApplication( byteSource, applicationName );
+            application = handleInstall( byteSource, applicationKey, global );
         }
 
-        localApplicationSet.compute( applicationName, ( key, present ) -> !global );
-
-        if ( global && alreadyInRepo( applicationName ) )
+        if ( global && alreadyInRepo( applicationKey ) )
         {
             repoService.updateApplicationNode( application, byteSource );
         }
@@ -328,68 +345,59 @@ public final class ApplicationServiceImpl
         return application;
     }
 
-    private boolean alreadyInRepo( final String applicationName )
+    private boolean alreadyInRepo( final ApplicationKey applicationKey )
     {
-        return repoService.getApplicationNode( applicationName ) != null;
+        return repoService.getApplicationNode( applicationKey ) != null;
     }
 
-    private Boolean getStartedState( final Node node )
+    private boolean storedApplicationIsStarted( final Node node )
     {
         final PropertyTree data = node.data();
         return data.getBoolean( ApplicationPropertyNames.STARTED );
     }
 
-    private boolean applicationBundleInstalled( final String applicationName )
+    private boolean applicationBundleInstalled( final ApplicationKey applicationKey )
     {
-        return this.localApplicationSet.containsKey( applicationName );
-
-        // final Application existingApp = this.registry.get( ApplicationKey.from( applicationName ) );
-        // return existingApp != null;
+        return this.localApplicationSet.containsKey( applicationKey );
     }
 
-    private Application doInstallApplication( final ByteSource byteSource, final String applicationName )
+    private Application handleInstall( final ByteSource byteSource, final ApplicationKey applicationKey, final boolean global )
     {
-        //final Application existingApp = this.registry.get( ApplicationKey.from( applicationName ) );
+        final Bundle bundle = doInstallBundle( byteSource, applicationKey );
 
-        //if ( existingApp != null )
-        //{
-        //    LOG.info( "Application [" + applicationName + "] exists in registry but not in repo, uninstalling existing" );
-        //    uninstallBundle( existingApp.getKey().getName() );
-        // }
-
-        final Bundle bundle = doInstallBundle( byteSource, applicationName );
+        localApplicationSet.compute( applicationKey, ( key, present ) -> !global );
 
         return this.registry.get( ApplicationKey.from( bundle ) );
     }
 
-    private Application doUpdateApplication( final String applicationName, final ByteSource source, final boolean global )
+    private Application handleUpdate( final ApplicationKey applicationKey, final ByteSource source, final boolean global )
     {
-        final Boolean installedLocally = localApplicationSet.get( applicationName );
-
-        final boolean ignoreLocalUpdate = installedLocally && global;
+        final boolean ignoreLocalUpdate = doIsLocalApplication( applicationKey ) && global;
 
         if ( ignoreLocalUpdate )
         {
-            LOG.warn( "Application : '" + applicationName + "' installed locally, installed version will be overrided by local" );
-            return this.registry.get( ApplicationKey.from( applicationName ) );
+            LOG.warn( "Application : '" + applicationKey + "' installed locally, installed version will be overrided by local" );
+            return this.registry.get( applicationKey );
         }
         else
         {
-            uninstallBundle( applicationName );
+            uninstallBundle( applicationKey );
 
-            this.registry.invalidate( ApplicationKey.from( applicationName ) );
+            this.registry.invalidate( applicationKey );
 
-            final Bundle bundle = doInstallBundle( source, applicationName );
+            final Bundle bundle = doInstallBundle( source, applicationKey );
+
+            localApplicationSet.compute( applicationKey, ( key, present ) -> !global );
 
             return this.registry.get( ApplicationKey.from( bundle ) );
         }
     }
 
-    private void uninstallBundle( final String applicationName )
+    private void uninstallBundle( final ApplicationKey applicationKey )
     {
         try
         {
-            final Bundle bundle = this.context.getBundle( applicationName );
+            final Bundle bundle = this.context.getBundle( applicationKey.getName() );
 
             if ( bundle != null )
             {
@@ -402,7 +410,7 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private String getApplicationName( final ByteSource byteSource )
+    private ApplicationKey getApplicationKey( final ByteSource byteSource )
     {
         final String applicationName;
 
@@ -414,18 +422,18 @@ public final class ApplicationServiceImpl
         {
             throw new ApplicationInstallException( "Cannot install application: " + e.getMessage(), e );
         }
-        return applicationName;
+        return ApplicationKey.from( applicationName );
     }
 
-    private Bundle doInstallBundle( final ByteSource source, final String symbolicName )
+    private Bundle doInstallBundle( final ByteSource source, final ApplicationKey applicationKey )
     {
         try (final InputStream in = source.openStream())
         {
-            return this.context.installBundle( symbolicName, in );
+            return this.context.installBundle( applicationKey.getName(), in );
         }
         catch ( BundleException e )
         {
-            throw new ApplicationInstallException( "Could not install application bundle:   '" + symbolicName + "'", e );
+            throw new ApplicationInstallException( "Could not install application bundle:   '" + applicationKey + "'", e );
         }
         catch ( IOException e )
         {

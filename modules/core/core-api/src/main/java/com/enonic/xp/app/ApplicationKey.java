@@ -36,18 +36,6 @@ public final class ApplicationKey
     }
 
     @Override
-    public boolean equals( final Object o )
-    {
-        return ( o instanceof ApplicationKey ) && ( (ApplicationKey) o ).name.equals( this.name );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return name.hashCode();
-    }
-
-    @Override
     public String toString()
     {
         return name;
@@ -66,5 +54,29 @@ public final class ApplicationKey
     public static ApplicationKey from( final Class<?> clzz )
     {
         return from( FrameworkUtil.getBundle( clzz ) );
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final ApplicationKey that = (ApplicationKey) o;
+
+        return name != null ? name.equals( that.name ) : that.name == null;
+
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return name != null ? name.hashCode() : 0;
     }
 }

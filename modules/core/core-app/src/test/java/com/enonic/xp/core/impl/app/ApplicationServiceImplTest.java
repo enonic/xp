@@ -428,10 +428,14 @@ public class ApplicationServiceImplTest
     {
         activateWithNoStoredApplications();
 
+        PropertyTree data = new PropertyTree();
+        data.setBoolean( ApplicationPropertyNames.STARTED, true );
+
         final Node node = Node.create().
             id( NodeId.from( "myNode" ) ).
             parentPath( NodePath.ROOT ).
             name( "myNode" ).
+            data( data ).
             build();
 
         final String bundleName = "my-bundle";
@@ -447,24 +451,28 @@ public class ApplicationServiceImplTest
             this.service.installGlobalApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.0" ).
                 build() ) ) );
 
-        assertFalse( this.service.isLocalApplication( originalApplication.getKey() ) );
+        final ApplicationKey applicationKey = originalApplication.getKey();
+
+        assertFalse( this.service.isLocalApplication( applicationKey ) );
+        assertEquals( "1.0.0", originalApplication.getVersion().toString() );
 
         final Application updatedApplication =
             this.service.installLocalApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.1" ).
                 build() ) ) );
 
-        assertEquals( "1.0.0", originalApplication.getVersion().toString() );
         assertEquals( "1.0.1", updatedApplication.getVersion().toString() );
-        assertTrue( this.service.isLocalApplication( updatedApplication.getKey() ) );
-        assertEquals( updatedApplication, this.service.getInstalledApplication( updatedApplication.getKey() ) );
-        assertTrue( this.service.isLocalApplication( updatedApplication.getKey() ) );
+
+        assertTrue( this.service.isLocalApplication( applicationKey ) );
+        assertEquals( updatedApplication, this.service.getInstalledApplication( applicationKey ) );
+        assertTrue( this.service.isLocalApplication( applicationKey ) );
 
         Mockito.when( this.repoService.getApplicationSource( node.id() ) ).
             thenReturn( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.0" ).
                 build() ) ) );
 
         this.service.uninstallApplication( updatedApplication.getKey(), false );
-        assertEquals( originalApplication.getVersion(), this.service.getInstalledApplication( originalApplication.getKey() ).getVersion() );
+
+        assertEquals( originalApplication.getVersion(), this.service.getInstalledApplication( applicationKey ).getVersion() );
         assertFalse( this.service.isLocalApplication( updatedApplication.getKey() ) );
     }
 
@@ -487,12 +495,15 @@ public class ApplicationServiceImplTest
         final ByteSource byteSource = createBundleSource( bundleName );
 
         final Application application = this.service.installLocalApplication( byteSource );
+        assertTrue( this.service.isLocalApplication( application.getKey() ) );
 
-        Mockito.when( this.repoService.getApplicationNode( bundleName ) ).
+        Mockito.when( this.repoService.getApplicationNode( application.getKey() ) ).
             thenReturn( null ).
             thenReturn( applicationNode );
 
         this.service.installGlobalApplication( byteSource );
+
+        assertTrue( this.service.isLocalApplication( application.getKey() ) );
 
         verifyInstalledEvents( applicationNode, Mockito.times( 1 ) );
     }
@@ -526,7 +537,7 @@ public class ApplicationServiceImplTest
 
     private void mockRepoGetNode( final Node applicationNode, final String appName )
     {
-        Mockito.when( this.repoService.getApplicationNode( appName ) ).
+        Mockito.when( this.repoService.getApplicationNode( ApplicationKey.from( appName ) ) ).
             thenReturn( applicationNode );
     }
 
