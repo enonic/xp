@@ -152,6 +152,7 @@ module api.liveedit {
                         (<api.liveedit.text.TextComponentView>itemView).setEditMode(true);
                         this.closeTextEditModeButton.toggleClass("active", true);
                     }
+                    new ItemViewSelectedEvent(itemView, null, event.isNew(), true).fire();
                     itemView.giveFocus();
                 } else {
                     if (this.isTextEditMode()) {
