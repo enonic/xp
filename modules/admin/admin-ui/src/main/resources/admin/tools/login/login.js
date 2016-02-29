@@ -2,7 +2,7 @@ var mustache = require('/lib/xp/mustache');
 var portal = require('/lib/xp/portal');
 
 function handleGet(req) {
-    var assetsUri = Java.type("com.enonic.xp.admin.ui.tool.UriScriptHelper").ADMIN_ASSETS_URI_PREFIX;
+    var assetsUri = Java.type("com.enonic.xp.admin.ui.tool.UriScriptHelper").generateAdminAssetsUri();
     var view = resolve('../common/admin-app.html');
 
     var config = [];
