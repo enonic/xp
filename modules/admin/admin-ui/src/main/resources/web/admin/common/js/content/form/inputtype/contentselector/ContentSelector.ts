@@ -31,6 +31,10 @@ module api.content.form.inputtype.contentselector {
             this.readConfig(config.inputConfig);
         }
 
+        public getContentComboBox(): ContentComboBox {
+            return this.contentComboBox;
+        }
+
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
             var relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
             this.relationshipType = relationshipTypeConfig['value'];
