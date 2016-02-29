@@ -183,7 +183,7 @@ module api.util.htmlarea.editor {
                     editor.addCommand("openLinkDialog", this.openLinkDialog, this);
                     editor.addCommand("openAnchorDialog", this.openAnchorDialog, this);
                     editor.addCommand("openImageDialog", this.openImageDialog, this);
-                    editor.on('change', (e) => {
+                    editor.on('NodeChange', (e) => {
                         if (!!this.onChangeHandler) {
                             this.onChangeHandler(e);
                         }

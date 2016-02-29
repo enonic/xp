@@ -34,7 +34,7 @@ module api.liveedit.text {
 
         public static debug = false;
 
-        private static DEFAULT_TEXT: string = "<h2>Text</h2>";
+        private static DEFAULT_TEXT: string = "";
 
         // special handling for click to allow dblclick event without triggering 2 clicks before it
         public static DBL_CLICK_TIMEOUT = 250;
