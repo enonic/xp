@@ -195,7 +195,7 @@ module app.wizard.page.contextwindow {
             this.animationTimer = setTimeout(() => {
                 this.contextWindowState = ContextWindowState.SHOWN;
                 this.updateFrameSize();
-                this.animationTimer = null
+                this.animationTimer = null;
             }, 100);
         }
 
@@ -246,8 +246,8 @@ module app.wizard.page.contextwindow {
         }
 
         unDisplayModeChanged(listener: () => void) {
-            this.displayModeChangedListeners.filter((currentListener: () => void) => {
-                return listener == currentListener;
+            this.displayModeChangedListeners = this.displayModeChangedListeners.filter((currentListener: () => void) => {
+                return listener != currentListener;
             });
         }
 

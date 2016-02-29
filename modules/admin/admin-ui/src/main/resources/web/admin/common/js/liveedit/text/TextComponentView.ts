@@ -12,6 +12,8 @@ module api.liveedit.text {
     import HTMLAreaBuilder = api.util.htmlarea.editor.HTMLAreaBuilder;
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
     import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
+    import LiveEditPageDialogShownEvent = api.liveedit.LiveEditPageDialogShownEvent;
+    import LiveEditPageDialogHiddenEvent = api.liveedit.LiveEditPageDialogHiddenEvent;
 
     export class TextComponentViewBuilder extends ComponentViewBuilder<TextComponent> {
         constructor() {
@@ -280,8 +282,14 @@ module api.liveedit.text {
                 setSelector('div.' + id + ' .tiny-mce-here').
                 setAssetsUri(assetsUri).
                 setInline(true).
-                onDialogShown(dialog => this.modalDialog = dialog).
-                onDialogHidden(dialog => this.modalDialog = undefined).
+                onDialogShown(dialog => {
+                    this.modalDialog = dialog;
+                    new LiveEditPageDialogShownEvent(this.modalDialog).fire();
+                }).
+                onDialogHidden(dialog => {
+                    this.modalDialog = undefined;
+                    new LiveEditPageDialogHiddenEvent(this.modalDialog).fire();
+                }).
                 setOnFocusHandler(this.onFocusHandler.bind(this)).
                 setOnBlurHandler(this.onBlurHandler.bind(this)).
                 setOnKeydownHandler(this.onKeydownHandler.bind(this)).
