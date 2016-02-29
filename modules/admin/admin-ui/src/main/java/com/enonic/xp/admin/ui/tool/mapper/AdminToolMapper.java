@@ -26,10 +26,7 @@ public final class AdminToolMapper
 
         gen.value( "displayName", value.getDisplayName() );
         gen.value( "description", value.getDescription() );
-        if ( icon != null )
-        {
-            gen.value( "icon", icon );
-        }
+        gen.value( "icon", icon );
     }
 
     @Override

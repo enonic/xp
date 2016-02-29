@@ -7,13 +7,18 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 public class UriScriptHelper
 {
-    public static final String ADMIN_ASSETS_URI_PREFIX = "/admin/assets/" + generateVersion();
+    private static final String ADMIN_ASSETS_URI_PREFIX = "/admin/assets/" + generateVersion();
 
-    public static final String ADMIN_TOOLS_URI_PREFIX = "/admin/tool";
+    private static final String ADMIN_TOOLS_URI_PREFIX = "/admin/tool";
 
     public static final String rewriteUri( final String uri )
     {
         return ServletRequestUrlHelper.createUri( uri );
+    }
+
+    public static final String generateAdminAssetsUri()
+    {
+        return rewriteUri( ADMIN_ASSETS_URI_PREFIX );
     }
 
     public static final String generateAdminToolUri()

@@ -12,6 +12,8 @@ import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.ResteasyUriInfo;
 
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+
 final class RequestFactoryImpl
     implements HttpRequestFactory
 {
@@ -29,8 +31,15 @@ final class RequestFactoryImpl
                                                   final ResteasyHttpHeaders headers, final ResteasyUriInfo uriInfo,
                                                   final HttpResponse theResponse, final HttpServletResponse response )
     {
-        return new HttpServletInputMessage( request, response, this.context, theResponse, headers, uriInfo, httpMethod.toUpperCase(),
-                                            this.dispatcher );
+        final ResteasyUriInfo resteasyUriInfo = extractUriInfo( request );
+        return new HttpServletInputMessage( request, response, this.context, theResponse, headers, resteasyUriInfo,
+                                            httpMethod.toUpperCase(), this.dispatcher );
+    }
+
+    private static ResteasyUriInfo extractUriInfo( HttpServletRequest request )
+    {
+        final String absoluteUri = ServletRequestUrlHelper.getServerUrl() + request.getRequestURI();
+        return new ResteasyUriInfo( absoluteUri, request.getQueryString(), request.getContextPath() );
     }
 
     public void setDispatcher( final SynchronousDispatcher dispatcher )

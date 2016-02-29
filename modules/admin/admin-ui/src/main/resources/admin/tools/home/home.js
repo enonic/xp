@@ -4,7 +4,7 @@ var portal = require('/lib/xp/portal');
 
 function handleGet(req) {
     var uriScriptHelper = Java.type("com.enonic.xp.admin.ui.tool.UriScriptHelper");
-    var assetsUri = uriScriptHelper.ADMIN_ASSETS_URI_PREFIX;
+    var assetsUri = uriScriptHelper.generateAdminAssetsUri();
     var view = resolve('home.html');
 
     var isLatestSnapshot = app.version.endsWith('.0.SNAPSHOT');
