@@ -3,6 +3,8 @@ package com.enonic.xp.portal.impl;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.PortalHandler;
+import com.enonic.xp.portal.websocket.WebSocketConfig;
+import com.enonic.xp.portal.websocket.WebSocketEndpoint;
 
 public final class TestPortalHandler
     implements PortalHandler
@@ -30,5 +32,12 @@ public final class TestPortalHandler
     {
         this.verifier.verify( req );
         return this.response;
+    }
+
+    @Override
+    public WebSocketEndpoint newWebSocketEndpoint( final PortalRequest req, final WebSocketConfig config )
+        throws Exception
+    {
+        return null;
     }
 }

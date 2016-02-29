@@ -5,6 +5,8 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
+import com.enonic.xp.portal.impl.mapper.WebSocketEventMapper;
+import com.enonic.xp.portal.websocket.WebSocketEvent;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.web.HttpMethod;
@@ -41,7 +43,7 @@ final class ControllerScriptImpl
         final boolean isHead = method == HttpMethod.HEAD;
         final String runMethod = isHead ? "get" : method.toString().toLowerCase();
 
-        boolean exists = this.scriptExports.hasMethod( runMethod );
+        final boolean exists = this.scriptExports.hasMethod( runMethod );
         if ( !exists )
         {
             return new PortalResponseSerializer( null, HttpStatus.METHOD_NOT_ALLOWED ).serialize();
@@ -51,5 +53,17 @@ final class ControllerScriptImpl
         final ScriptValue result = this.scriptExports.executeMethod( runMethod, requestMapper );
 
         return new PortalResponseSerializer( result ).serialize();
+    }
+
+    @Override
+    public void onSocketEvent( final WebSocketEvent event )
+    {
+        final boolean exists = this.scriptExports.hasMethod( "webSocketEvent" );
+        if ( !exists )
+        {
+            return;
+        }
+
+        this.scriptExports.executeMethod( "webSocketEvent", new WebSocketEventMapper( event ) );
     }
 }

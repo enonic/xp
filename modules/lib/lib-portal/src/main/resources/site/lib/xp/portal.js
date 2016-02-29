@@ -143,6 +143,22 @@ exports.processHtml = function (params) {
 };
 
 /**
+ * This function sanitizes an HTML string by stripping all potentially unsafe tags and attributes.
+ *
+ * HTML sanitization can be used to protect against cross-site scripting (XSS) attacks by sanitizing any HTML code submitted by a user.
+ *
+ * @example-ref examples/portal/sanitizeHtml.js
+ *
+ * @param {string} html Html string value to process.
+ *
+ * @returns {string} The sanitized HTML.
+ */
+exports.sanitizeHtml = function (html) {
+    var bean = __.newBean('com.enonic.xp.lib.portal.SanitizeHtmlHandler');
+    return __.toNativeObject(bean.sanitizeHtml(html));
+};
+
+/**
  * This function returns the parent site of the content corresponding to the current execution context. It is meant to be
  * called from a page, layout or part controller.
  *
@@ -211,11 +227,14 @@ exports.getMultipartForm = function () {
  *
  * @example-ref examples/portal/getMultipartItem.js
  *
+ * @param {string} name Name of the multipart item.
+ * @param {number} [index] Optional zero-based index. It should be specified if there are multiple items with the same name.
+ *
  * @returns {object} The named multipart form item.
  */
-exports.getMultipartItem = function (name) {
+exports.getMultipartItem = function (name, index) {
     var bean = __.newBean('com.enonic.xp.lib.portal.multipart.MultipartHandler');
-    return __.toNativeObject(bean.getItem(name));
+    return __.toNativeObject(bean.getItem(name, index || 0));
 };
 
 /**
@@ -223,11 +242,14 @@ exports.getMultipartItem = function (name) {
  *
  * @example-ref examples/portal/getMultipartStream.js
  *
+ * @param {string} name Name of the multipart item.
+ * @param {number} [index] Optional zero-based index. It should be specified if there are multiple items with the same name.
+ *
  * @returns {*} Stream of multipart item data.
  */
-exports.getMultipartStream = function (name) {
+exports.getMultipartStream = function (name, index) {
     var bean = __.newBean('com.enonic.xp.lib.portal.multipart.MultipartHandler');
-    return bean.getBytes(name);
+    return bean.getBytes(name, index || 0);
 };
 
 /**
@@ -235,9 +257,12 @@ exports.getMultipartStream = function (name) {
  *
  * @example-ref examples/portal/getMultipartText.js
  *
+ * @param {string} name Name of the multipart item.
+ * @param {number} [index] Optional zero-based index. It should be specified if there are multiple items with the same name.
+ *
  * @returns {string} Text for multipart item data.
  */
-exports.getMultipartText = function (name) {
+exports.getMultipartText = function (name, index) {
     var bean = __.newBean('com.enonic.xp.lib.portal.multipart.MultipartHandler');
-    return bean.getText(name);
+    return bean.getText(name, index || 0);
 };

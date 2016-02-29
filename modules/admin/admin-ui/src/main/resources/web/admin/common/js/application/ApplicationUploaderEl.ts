@@ -4,6 +4,8 @@ module api.application {
 
     export class ApplicationUploaderEl extends api.ui.uploader.UploaderEl<Application> {
 
+        private failure: string;
+
         constructor(config: api.ui.uploader.UploaderElConfig) {
 
             if (config.url == undefined) {
@@ -20,15 +22,22 @@ module api.application {
         }
 
 
-        createModel(serverResponse: api.application.json.ApplicationJson): Application {
+        createModel(serverResponse: api.application.json.ApplicationInstallResultJson): Application {
             if (serverResponse) {
-                return new api.application.ApplicationBuilder().
-                    fromJson(<api.application.json.ApplicationJson> serverResponse).
-                    build();
+
+                let result = ApplicationInstallResult.fromJson(serverResponse);
+
+                this.failure = result.getFailure();
+
+                return result.getApplication();
             }
             else {
                 return null;
             }
+        }
+
+        getFailure() : string {
+            return this.failure;
         }
 
         getModelValue(item: Application): string {

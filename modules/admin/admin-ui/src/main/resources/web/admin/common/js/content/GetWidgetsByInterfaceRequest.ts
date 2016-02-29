@@ -2,22 +2,20 @@ module api.content {
 
     export class GetWidgetsByInterfaceRequest extends WidgetDescriptorResourceRequest<api.content.json.WidgetDescriptorJson[], any> {
 
-        private widgetInterface: string;
+        private widgetInterfaces: string[];
 
-        constructor(widgetInterface: string) {
+        constructor(widgetInterfaces: string[]) {
             super();
-            super.setMethod("GET");
-            this.widgetInterface = widgetInterface;
+            super.setMethod("POST");
+            this.widgetInterfaces = widgetInterfaces;
         }
 
         getParams(): Object {
-            return {
-                "interface": this.widgetInterface
-            };
+            return this.widgetInterfaces;
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath());
+            return api.rest.Path.fromParent(super.getResourcePath(), "list/byinterfaces");
         }
 
         sendAndParse(): wemQ.Promise<Widget[]> {

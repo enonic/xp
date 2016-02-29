@@ -2,28 +2,30 @@ package com.enonic.xp.admin.impl.market;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.TimeUnit;
+import java.io.InputStreamReader;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.common.base.Charsets;
+import com.google.common.io.CharStreams;
 import com.squareup.okhttp.Response;
 
 import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
 import com.enonic.xp.json.ObjectMapperHelper;
+import com.enonic.xp.market.MarketException;
 import com.enonic.xp.web.HttpStatus;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.market")
 public class MarketServiceImpl
     implements MarketService
 {
-    private static final int connectionTimeout = 10_000;
-
-    private static final int readTimeout = 10_000;
-
     private String marketUrl;
+
+    private MarketDataProvider provider;
 
     @Activate
     public void activate( final MarketConfig config )
@@ -34,45 +36,63 @@ public class MarketServiceImpl
     @Override
     public MarketApplicationsJson get( final String version )
     {
-        final Request request = MarketRequestFactory.create( this.marketUrl, version );
+        final Response response = this.provider.fetch( this.marketUrl, version );
 
-        try
+        return parseResponse( response );
+    }
+
+    private MarketApplicationsJson parseResponse( final Response response )
+    {
+        final int code = response.code();
+
+        if ( code == HttpStatus.OK.value() )
         {
-            final Response response = sendRequest( request );
+            return parseJson( response );
+        }
+        else if ( code == HttpStatus.INTERNAL_SERVER_ERROR.value() )
+        {
+            return throwExceptionAttachBody( response, code );
+        }
+        else
+        {
+            throw new MarketException( "Cannot get applications from market", code );
+        }
+    }
 
-            final int code = response.code();
+    private MarketApplicationsJson throwExceptionAttachBody( final Response response, final int code )
+    {
+        try (final InputStream bodyStream = response.body().byteStream())
+        {
+            final String body = CharStreams.toString( new InputStreamReader( bodyStream, Charsets.UTF_8 ) );
 
-            if ( code == HttpStatus.OK.value() )
-            {
-                try (final InputStream src = response.body().byteStream())
-                {
-                    return ObjectMapperHelper.create().
-                        readValue( src, MarketApplicationsJson.class );
-                }
-
-            }
-            else
-            {
-                throw new MarketException( "Cannot get applications from market [" + this.marketUrl + "], http status code " + code );
-            }
-
-
+            throw new MarketException( "Cannot get applications from marked, server response : [body = " + body + "]", code );
         }
         catch ( IOException e )
         {
-            throw new MarketException( "Cannot get applications from market [" + this.marketUrl + "]", e );
+            throw new MarketException( "Cannot get applications from marked", code );
         }
-
     }
 
-    private static Response sendRequest( final Request request )
-        throws IOException
+    private MarketApplicationsJson parseJson( final Response response )
     {
-        final OkHttpClient client = new OkHttpClient();
-        client.setReadTimeout( readTimeout, TimeUnit.MILLISECONDS );
-        client.setConnectTimeout( connectionTimeout, TimeUnit.MILLISECONDS );
-        return client.newCall( request ).execute();
+        try (final InputStream src = response.body().byteStream())
+        {
+            return ObjectMapperHelper.create().
+                readValue( src, MarketApplicationsJson.class );
+        }
+        catch ( JsonParseException | JsonMappingException e )
+        {
+            throw new MarketException( "Failed to parse response from market", e );
+        }
+        catch ( IOException e )
+        {
+            throw new MarketException( "Failed to get response from market", e );
+        }
     }
 
-
+    @Reference
+    public void setProvider( final MarketDataProvider provider )
+    {
+        this.provider = provider;
+    }
 }

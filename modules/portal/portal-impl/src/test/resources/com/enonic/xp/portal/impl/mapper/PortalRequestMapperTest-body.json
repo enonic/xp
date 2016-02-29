@@ -6,6 +6,7 @@
   "path": "/portal/live/master/a/b",
   "url": "http://localhost/portal/live/master/a/b?param1=value1",
   "mode": "live",
+  "webSocket": false,
   "branch": "draft",
   "contentType": "text/plain",
   "body": "Hello World",

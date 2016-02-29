@@ -17,9 +17,9 @@ public final class ListApplicationJson
         this.list = Lists.newArrayList();
     }
 
-    public void add( final Application application, final SiteDescriptor siteDescriptor )
+    public void add( final Application application, final boolean local, final SiteDescriptor siteDescriptor )
     {
-        this.list.add( new ApplicationJson( application, siteDescriptor ) );
+        this.list.add( new ApplicationJson( application, local, siteDescriptor ) );
     }
 
     public int getTotal()

@@ -7,9 +7,10 @@ module app.browse {
         constructor(applicationTreeGrid: ApplicationTreeGrid) {
             super("Uninstall");
             this.setEnabled(false);
+
             this.onExecuted(() => {
                 var applications: Application[] = applicationTreeGrid.getSelectedDataList();
-                new UninstallApplicationEvent(applications).fire();
+                new UninstallApplicationDialog(applications).open();
             });
         }
     }

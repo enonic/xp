@@ -56,8 +56,12 @@ module api.form {
                     var formItemSet: FormItemSet = <FormItemSet>formItem;
                     var propertyArray: PropertyArray = propertySet.getPropertyArray(formItemSet.getName());
 
-                    if (propertyArray && propertyArray.getSize() == 0) {
-                        this.context = FormContext.create().setShowEmptyFormItemSetOccurrences(false).build();
+                    if (!propertyArray || propertyArray.getSize() == 0) {
+                        if (!this.context) {
+                            this.context = FormContext.create().setShowEmptyFormItemSetOccurrences(false).build();
+                        } else {
+                            this.context.setShowEmptyFormItemSetOccurrences(false);
+                        }
                     }
                     var formItemSetView = new FormItemSetView(<FormItemSetViewConfig>{
                         context: this.context,

@@ -16,7 +16,7 @@ module api.form.inputtype.text {
     import HTMLAreaBuilder = api.util.htmlarea.editor.HTMLAreaBuilder;
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
     import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
-
+    
     export class HtmlArea extends support.BaseInputTypeNotManagingAdd<string> {
 
         private editors: HtmlAreaOccurrenceInfo[];
@@ -271,8 +271,12 @@ module api.form.inputtype.text {
         }
 
         private setEditorContent(editorId: string, property: Property): void {
-            if (property.hasNonNullValue()) {
-                this.getEditor(editorId).setContent(HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()));
+            var editor = this.getEditor(editorId);
+            if (property.hasNonNullValue() && editor) {
+                editor.setContent(HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()));
+            }
+            else if (!editor) {
+                console.log("Editor with id '" + editorId + "' not found")
             }
         }
 

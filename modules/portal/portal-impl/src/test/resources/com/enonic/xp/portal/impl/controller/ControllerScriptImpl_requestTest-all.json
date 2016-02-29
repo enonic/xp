@@ -6,6 +6,7 @@
   "path": "/my/page",
   "url": "http://enonic.com/my/page?debug=true",
   "mode": "edit",
+  "webSocket": false,
   "branch": "master",
   "params": {
     "debug": "true"

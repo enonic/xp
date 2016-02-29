@@ -125,5 +125,9 @@ module api.app {
             return this.wrapperDivEl;
         }
 
+        setIconToolTip(toolTip: string) {
+            this.wrapperDivEl.getEl().setTitle(toolTip);
+        }
+
     }
 }

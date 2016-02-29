@@ -1,7 +1,10 @@
 (function () {
     var adminUrl = "/admin/tool/com.enonic.xp.admin.ui/launcher";
-    var launcherPanel, bodyMask, launcherButton;
-    var isHomeApp = (window.CONFIG && window.CONFIG.autoOpenLauncher);
+    var launcherPanel, bodyMask, launcherButton, launcherMainContainer;
+    var isHomeApp = window.CONFIG && window.CONFIG.appId == "home";
+    var autoOpenLauncher = window.CONFIG && window.CONFIG.autoOpenLauncher;
+    var appId = window.CONFIG ? window.CONFIG.appId : "";
+    var minWidthForTip = 900;
 
     function appendLauncherButton() {
         launcherButton = document.createElement("button");
@@ -48,14 +51,16 @@
         link.setAttribute("href", adminUrl);
 
         link.onload = function () {
-            var clonedDiv = link.import.querySelector('.launcher-main-container').cloneNode(true);
-            while (clonedDiv.childNodes.length > 0) {
-                container.appendChild(clonedDiv.childNodes[0]);
-            }
+            launcherMainContainer = link.import.querySelector('.launcher-main-container');
+            launcherMainContainer.setAttribute("hidden", "true");
+            container.appendChild(launcherMainContainer);
 
-            if (isHomeApp) {
+            if (autoOpenLauncher) {
                 openLauncherPanel();
                 launcherButton.focus();
+                if (getBodyWidth() > minWidthForTip) {
+                    setTipVisibility("table");
+                }
             }
             else {
                 var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
@@ -67,6 +72,17 @@
         };
 
         return link;
+    }
+
+    function getBodyWidth() {
+        return document.getElementsByTagName("body")[0].clientWidth;
+    }
+
+    function setTipVisibility(display) {
+        var launcherTip = document.querySelector('.launcher-tip');
+        if (launcherTip) {
+            launcherTip.style.display = display;
+        }
     }
 
     function getBodyMask() {
@@ -101,6 +117,7 @@
     }
 
     function openLauncherPanel() {
+        launcherMainContainer.removeAttribute("hidden");
         listenToKeyboardEvents();
         toggleButton();
         showBodyMask();
@@ -109,8 +126,9 @@
     }
 
     function closeLauncherPanel(skipTransition) {
+        launcherMainContainer.setAttribute("hidden", "true");
+        setTipVisibility("none");
         unlistenToKeyboardEvents();
-        disableKeyboardNavigation();
         launcherPanel.classList.remove("visible");
         launcherPanel.classList.add((skipTransition == true) ? "hidden" : "slideout");
         hideBodyMask();
@@ -134,56 +152,8 @@
         window.removeEventListener("keydown", onKeyPressed, true);
     }
 
-    function listenToMouseMove() {
-        window.addEventListener("mousemove", disableKeyboardNavigation, true);
-    }
-
-    function disableKeyboardNavigation() {
-        launcherPanel.classList.remove("keyboard-navigation");
-        unselectCurrentApp();
-        window.removeEventListener("mousemove", disableKeyboardNavigation, true);
-    }
-
     function getSelectedApp() {
         return launcherPanel.querySelector('.app-row.selected');
-    }
-
-    function getSelectedAppIndex() {
-        var apps = launcherPanel.querySelectorAll('.app-row');
-        for (var i=0; i<apps.length; i++) {
-            if (apps[i].classList.contains("selected")) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    function selectNextApp() {
-        var selectedIndex = getSelectedAppIndex();
-        var apps = launcherPanel.querySelectorAll('.app-row');
-
-        selectApp((selectedIndex + 1) == apps.length ? 0 : selectedIndex + 1);
-    }
-
-    function selectPreviousApp() {
-        var selectedIndex = getSelectedAppIndex();
-        var nextIndex;
-        if (selectedIndex == -1) {
-            nextIndex = 0;
-        }
-        else if (selectedIndex == 0) {
-            nextIndex = launcherPanel.querySelectorAll('.app-row').length - 1;
-        }
-        else {
-            nextIndex = selectedIndex - 1;
-        }
-
-        selectApp(nextIndex);
-    }
-
-    function selectApp(index) {
-        unselectCurrentApp();
-        getAppByIndex(index).classList.add("selected");
     }
 
     function unselectCurrentApp() {
@@ -193,76 +163,48 @@
         }
     }
 
-    function getAppByIndex(index) {
-        var apps = launcherPanel.querySelectorAll('.app-row');
-        for (var i=0; i<apps.length; i++) {
-            if (i == index) {
-                return apps[i];
-            }
-        }
-        return null;
-    }
-
-    function startApp(app) {
-        var anchorEl = app.querySelector("a");
-        if (anchorEl && anchorEl.click) {
-            anchorEl.click();
-        }
-    }
-
     function highlightActiveApp() {
-        if (!window.CONFIG.appId) {
+        if (!appId) {
             return;
         }
         var appRows = launcherPanel.querySelectorAll('.app-row');
         for (var i = 0; i < appRows.length; i++) {
-            if (appRows[i].id == window.CONFIG.appId ) {
+            if (appRows[i].id == appId ) {
                 appRows[i].classList.add("active");
             }
-        }
-
-    }
-
-    function initKeyboardNavigation() {
-        if (!launcherPanel.classList.contains("keyboard-navigation")) {
-            listenToMouseMove();
-            launcherButton.blur();
-            launcherPanel.classList.add("keyboard-navigation");
         }
     }
 
     function onKeyPressed(e) {
-        e.stopPropagation();
-        switch(e.keyCode) {
-            case 38:
-                // up key pressed
-                initKeyboardNavigation();
-                selectPreviousApp();
-                break;
-            case 40:
-                // down key pressed
-                initKeyboardNavigation();
-                selectNextApp();
-                break;
-            case 13:
-                // enter key pressed
-                var selectedApp = getSelectedApp();
-                if (selectedApp) {
-                    startApp(selectedApp);
-                }
-                break;
-            case 27:
-                // esc key pressed
-                closeLauncherPanel();
-                break;
+        if (!isPanelExpanded()) {
+            return;
         }
+
+        e.stopPropagation();
+
+        switch(e.keyCode) {
+        case 27:
+            // esc key pressed
+            closeLauncherPanel();
+            break;
+        case 13:
+            // enter key pressed
+            var selectedApp = getSelectedApp();
+            if (selectedApp) {
+                setTipVisibility("none");
+            }
+            break;
+         }
     }
 
     function init() {
         initBodyMask();
+
         appendLauncherButton();
         appendLauncherPanel();
     }
 
-    init();
+    window.addEventListener("load", function () {
+        init();
+    });
 }());

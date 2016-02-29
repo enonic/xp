@@ -55,6 +55,8 @@ module api.liveedit {
 
         private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
 
+        private pageLockedListeners: {(locked: boolean): void}[];
+
         private unlockedScreenActions: api.ui.Action[];
 
         private itemViewAddedListener: (event: ItemViewAddedEvent) => void;
@@ -113,6 +115,7 @@ module api.liveedit {
             this.viewsById = {};
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
+            this.pageLockedListeners = [];
             this.ignorePropertyChanges = false;
             this.disableContextMenu = false;
 
@@ -192,7 +195,7 @@ module api.liveedit {
 
             // lock page by default for every content that has not been modified except for page template
             var isCustomized = this.liveEditModel.getPageModel().isCustomized();
-            if (!this.liveEditModel.getContent().isPageTemplate() && !this.isPageModified(this.pageModel) && !isCustomized) {
+            if (!this.liveEditModel.getContent().isPageTemplate() && !this.pageModel.isModified() && !isCustomized) {
                 this.setLocked(true);
             }
 
@@ -224,12 +227,6 @@ module api.liveedit {
 
         private setIgnorePropertyChanges(value: boolean) {
             this.ignorePropertyChanges = value;
-        }
-
-        private isPageModified(pageModel: PageModel): boolean {
-            // default template regions differing from page regions means it has been modified
-            return !!pageModel.getDefaultPageTemplate() && pageModel.getDefaultPageTemplate().isPage() &&
-                   !pageModel.getDefaultPageTemplate().getRegions().equals(pageModel.getRegions());
         }
 
         showTooltip() {
@@ -419,6 +416,8 @@ module api.liveedit {
 
                 new PageUnlockedEvent(this).fire();
             }
+
+            this.notifyPageLockChanged(locked);
         }
 
         isTextEditMode(): boolean {
@@ -768,6 +767,20 @@ module api.liveedit {
         private notifyItemViewRemoved(itemView: ItemView) {
             var event = new ItemViewRemovedEvent(itemView);
             this.itemViewRemovedListeners.forEach((listener) => listener(event));
+        }
+
+        onPageLocked(listener: (event) => void) {
+            this.pageLockedListeners.push(listener);
+        }
+
+        unPageLocked(listener: (event) => void) {
+            this.pageLockedListeners = this.pageLockedListeners.filter((current) => (current != listener));
+        }
+
+        private notifyPageLockChanged(value) {
+            this.pageLockedListeners.forEach((listener) => {
+                listener(value);
+            });
         }
 
         setDisabledContextMenu(value: boolean) {

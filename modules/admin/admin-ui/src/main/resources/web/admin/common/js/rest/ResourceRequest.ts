@@ -6,6 +6,8 @@ module api.rest {
 
         private method: string = "GET";
 
+        private heavyOperation: boolean;
+
         private timeoutMillis: number;
 
         constructor() {
@@ -32,6 +34,10 @@ module api.rest {
             this.timeoutMillis = timeoutMillis;
         }
 
+        setHeavyOperation(value: boolean) {
+            this.heavyOperation = value;
+        }
+
         /*
          * Override to ensure any validation of ResourceRequest before sending.
          */
@@ -47,7 +53,7 @@ module api.rest {
                 setMethod(this.method).
                 setParams(this.getParams()).
                 setPath(this.getRequestPath()).
-                setTimeout(this.timeoutMillis);
+                setTimeout(!this.heavyOperation ? this.timeoutMillis : -1);
             return jsonRequest.send();
         }
 

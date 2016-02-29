@@ -623,11 +623,47 @@
   }
 }
 
-.container-title-mixin() {
+.container-title-mixin(@font-size: 32px, @bottom: -9px) {
   color: @admin-white;
   font-family: @admin-font-family;
-  font-size: 32px;
+  font-size: @font-size;
   font-weight: 100;
   position: absolute;
-  bottom: -8px;
+  bottom: @bottom;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.home-main-container-mixin() {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+
+  .center-panel {
+    width: 100%;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.4);
+    top: 0;
+    bottom: 0;
+  }
+
+  .lazy-image {
+    width: 100%;
+    min-height: 100%;
+
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-attachment: fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+
+    transition: opacity 1s;
+    &.empty {
+      opacity: 0;
+    }
+  }
 }

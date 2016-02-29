@@ -3,10 +3,21 @@
   .modal-dialog-content-push {
     display: none;
   }
+  .modal-dialog-footer {
+    height: 2em;
+  }
 
-  @media screen and (max-height: 360px ) {
-    .dialog-content {
-      height: 65%;
+  .dialog-content {
+    @media screen and (max-height: 720px) {
+      max-height: 308px;
+    }
+
+    @media screen and (max-height: 540px) {
+      max-height: 145px;
+    }
+
+    @media screen and (max-height: 360px) {
+      max-height: 78%;
     }
   }
 
@@ -80,10 +91,26 @@
     margin-top: 20px;
   }
 
+  .validation-viewer {
+    width: inherit;
+    padding: 20px 10px 20px 0;
+    background-color: @input-light-red;
+    color: @input-red-text;
+    display: table;
+    ul {
+      display: table-cell;
+      vertical-align: middle;
+      text-align: center;
+    }
+  }
+
   .install-app-docked-panel {
     position: static !important;
     box-shadow: none;
     width: 100%;
+    max-height: inherit;
+    overflow-x: hidden;
+    overflow-y: auto;
 
     .panel {
       position: static;
@@ -97,18 +124,7 @@
     .market-app-panel {
       .market-app-tree-grid {
 
-        .validation-viewer {
-          width: inherit;
-          padding: 20px 10px 20px 0;
-          background-color: @input-light-red;
-          color: @input-red-text;
-          display: table;
-          ul {
-            display: table-cell;
-            vertical-align: middle;
-            text-align: center;
-          }
-        }
+
 
         .grid {
           padding-right: 15px;
@@ -180,8 +196,6 @@
         }
       }
 
-      .load-mask {
-      }
     }
   }
 }

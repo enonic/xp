@@ -15,14 +15,16 @@ public interface ApplicationService
 
     Applications getInstalledApplications();
 
+    boolean isLocalApplication( ApplicationKey key );
+
     void startApplication( ApplicationKey key, final boolean triggerEvent );
 
     void stopApplication( ApplicationKey key, final boolean triggerEvent );
 
-    Application installApplication( final ByteSource byteSource );
+    Application installApplication( final ByteSource byteSource, final boolean cluster, final boolean triggerEvent );
 
     Application installApplication( final NodeId nodeId );
 
-    void uninstallApplication( final ApplicationKey key );
+    void uninstallApplication( final ApplicationKey key, final boolean triggerEvent );
 
 }

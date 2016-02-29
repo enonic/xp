@@ -17,12 +17,12 @@ public final class WidgetDescriptorServiceImpl
     private ResourceService resourceService;
 
     @Override
-    public WidgetDescriptors getByInterface( final String interfaceName )
+    public WidgetDescriptors getByInterfaces( final String... interfaceNames )
     {
         return new GetWidgetDescriptorsByInterfaceCommand().
             applicationService( this.applicationService ).
             resourceService( this.resourceService ).
-            interfaceName( interfaceName ).
+            interfaceNames( interfaceNames ).
             execute();
     }
 

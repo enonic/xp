@@ -1,28 +1,35 @@
 module api.content.event {
 
+    import ContentPath = api.content.ContentPath;
+
+    /**
+     * Class that listens to server events and fires UI events
+     */
     export class ContentServerEventsHandler {
 
         private static instance: ContentServerEventsHandler = new ContentServerEventsHandler();
 
-        private contentBrowsePanelExists: boolean = false;
+        private handler: (event: BatchContentServerEvent) => void;
 
-        private contentCreatedListeners: {(changes: ContentServerChange[]):void}[] = [];
+        private contentCreatedListeners: {(data: ContentSummaryAndCompareStatus[]):void}[] = [];
 
-        private contentUpdatedListeners: {(changes: ContentServerChange[]):void}[] = [];
+        private contentUpdatedListeners: {(data: ContentSummaryAndCompareStatus[]):void}[] = [];
 
-        private contentDeletedListeners: {(changes: ContentServerChange[]):void}[] = [];
+        private contentDeletedListeners: {(paths: ContentPath[], pending?: boolean):void}[] = [];
 
-        private contentMovedListeners: {(changes: ContentServerChange[]):void}[] = [];
+        private contentMovedListeners: {(data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]):void}[] = [];
 
-        private contentRenamedListeners: {(changes: ContentServerChange[]):void}[] = [];
+        private contentRenamedListeners: {(data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]):void}[] = [];
 
-        private contentPublishListeners: {(changes: ContentServerChange[]):void}[] = [];
+        private contentPublishListeners: {(data: ContentSummaryAndCompareStatus[]):void}[] = [];
 
-        private contentPendingListeners: {(changes: ContentServerChange[]):void}[] = [];
+        private contentPendingListeners: {(data: ContentSummaryAndCompareStatus[]):void}[] = [];
 
-        private contentDuplicateListeners: {(changes: ContentServerChange[]):void}[] = [];
+        private contentDuplicateListeners: {(data: ContentSummaryAndCompareStatus[]):void}[] = [];
 
-        private contentSortListeners: {(changes: ContentServerChange[]):void}[] = [];
+        private contentSortListeners: {(data: ContentSummaryAndCompareStatus[]):void}[] = [];
+
+        private static debug: boolean = false;
 
         constructor() {
             // if(instance)
@@ -33,279 +40,330 @@ module api.content.event {
             return this.instance;
         }
 
-        setContentBrowsePanelCreated() {
-            this.contentBrowsePanelExists = true;
-        }
-
         start() {
-            var handler = this.contentServerEventHandler.bind(this);
-
-            BatchContentServerEvent.on(handler);
-            this.subscribeOwnListeners();
+            if (!this.handler) {
+                this.handler = this.contentServerEventHandler.bind(this);
+            }
+            BatchContentServerEvent.on(this.handler);
         }
 
-        private subscribeOwnListeners() {
-            this.onContentUpdated((changes: ContentServerChange[]) => {
-                this.handleContentUpdated(changes);
-            });
-
-            this.onContentDeleted((changes: ContentServerChange[]) => {
-                this.handleContentDeleted(changes);
-            });
-
-            this.onContentPublished((changes: ContentServerChange[]) => {
-                this.handleContentPublished(changes);
-            });
-
-            this.onContentPending((changes: ContentServerChange[]) => {
-                this.handleContentPending(changes);
-            });
+        stop() {
+            if (this.handler) {
+                BatchContentServerEvent.un(this.handler);
+                this.handler = null;
+            }
         }
+
 
         private contentServerEventHandler(event: BatchContentServerEvent) {
+            if (ContentServerEventsHandler.debug) {
+                console.debug("ContentServerEventsHandler: received server event", event);
+            }
 
-            var changes = [];
-            event.getEvents().forEach((event) => {
-                changes = changes.concat(event.getContentChange());
+            var changes = event.getEvents().map((change) => change.getContentChange());
+            // use new paths in case content was renamed or moved
+            var useNewPaths = ContentServerChangeType.RENAME === event.getType() ||
+                              ContentServerChangeType.MOVE == event.getType();
+
+            if (event.getType() == ContentServerChangeType.DELETE) {
+                // content has already been deleted so no need to fetch summaries
+                this.handleContentDeleted(this.extractContentPaths(changes));
+
+            } else {
+                ContentSummaryAndCompareStatusFetcher.fetchByPaths(this.extractContentPaths(changes, useNewPaths))
+                    .then((summaries) => {
+                        if (ContentServerEventsHandler.debug) {
+                            console.debug("ContentServerEventsHandler: fetched summaries", summaries);
+                        }
+                        switch (event.getType()) {
+                        case ContentServerChangeType.CREATE:
+                            this.handleContentCreated(summaries);
+                            break;
+                        case ContentServerChangeType.UPDATE:
+                            this.handleContentUpdated(summaries);
+                            break;
+                        case ContentServerChangeType.RENAME:
+                            // also supply old paths in case of rename
+                            this.handleContentRenamed(summaries, this.extractContentPaths(changes));
+                            break;
+                        case ContentServerChangeType.DELETE:
+                            // has been handled without fetching summaries
+                            break;
+                        case ContentServerChangeType.PENDING:
+                            this.handleContentPending(summaries);
+                            break;
+                        case ContentServerChangeType.DUPLICATE:
+                            this.handleContentDuplicated(summaries);
+                            break;
+                        case ContentServerChangeType.PUBLISH:
+                            this.handleContentPublished(summaries);
+                            break;
+                        case ContentServerChangeType.MOVE:
+                            // also supply old paths in case of move
+                            this.handleContentMoved(summaries, this.extractContentPaths(changes));
+                            break;
+                        case ContentServerChangeType.SORT:
+                            this.handleContentSorted(summaries);
+                            break;
+                        case ContentServerChangeType.UNKNOWN:
+                            break;
+                        default:
+                            //
+                        }
+                    });
+            }
+        }
+
+        private extractContentPaths(changes: ContentServerChange[], useNewPaths?: boolean): ContentPath[] {
+            return changes.reduce<ContentPath[]>((prev, curr) => {
+                return prev.concat(useNewPaths ? curr.getNewContentPaths() : curr.getContentPaths());
+            }, []);
+        }
+
+
+        private handleContentCreated(data: ContentSummaryAndCompareStatus[]) {
+            if (ContentServerEventsHandler.debug) {
+                console.debug("ContentServerEventsHandler: created", data);
+            }
+            this.notifyContentCreated(data);
+        }
+
+        private handleContentUpdated(data: ContentSummaryAndCompareStatus[]) {
+            if (ContentServerEventsHandler.debug) {
+                console.debug("ContentServerEventsHandler: updated", data);
+            }
+            // TODO: refactor update event to contain multiple contents ?
+            data.forEach((el) => {
+                new api.content.event.ContentUpdatedEvent(el.getContentSummary()).fire()
             });
 
-            switch (event.getType()) {
-            case ContentServerChangeType.CREATE:
-                this.notifyContentCreated(changes);
-                break;
-            case ContentServerChangeType.UPDATE:
-                this.notifyContentUpdated(changes);
-                break;
-            case ContentServerChangeType.RENAME:
-                this.notifyContentRenamed(changes);
-                break;
-            case ContentServerChangeType.DELETE:
-                this.notifyContentDeleted(changes);
-            case ContentServerChangeType.PENDING:
-                this.notifyContentPending(changes);
-                break;
-            case ContentServerChangeType.DUPLICATE:
-                this.notifyContentDuplicated(changes);
-                break;
-            case ContentServerChangeType.PUBLISH:
-                this.notifyContentPublished(changes);
-                break;
-            case ContentServerChangeType.MOVE:
-                this.notifyContentMoved(changes);
-                break;
-            case ContentServerChangeType.SORT:
-                this.notifyContentSorted(changes);
-                break;
-            case ContentServerChangeType.UNKNOWN:
-                break;
-            default:
-                //
-            }
+            this.notifyContentUpdated(data);
         }
 
-        private concatContentPaths(changes: ContentServerChange[]): api.content.ContentPath[] {
-            var paths = [];
-            changes.forEach((change) => {
-                paths = paths.concat(change.getContentPaths());
+        private handleContentRenamed(data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) {
+            if (ContentServerEventsHandler.debug) {
+                console.debug("ContentServerEventsHandler: renamed", data, oldPaths);
+            }
+            this.notifyContentRenamed(data, oldPaths);
+        }
+
+        private handleContentDeleted(oldPaths: ContentPath[]) {
+            if (ContentServerEventsHandler.debug) {
+                console.debug("ContentServerEventsHandler: deleted", oldPaths);
+            }
+            var contentDeletedEvent = new ContentDeletedEvent();
+
+            oldPaths.filter((path) => {
+                return !!path;        // not sure if this check is necessary
+            }).forEach((path) => {
+                contentDeletedEvent.addItem(null, path);
             });
-            return paths;
+            contentDeletedEvent.fire();
+
+            this.notifyContentDeleted(oldPaths);
         }
 
-        private handleContentUpdated(changes: ContentServerChange[]) {
-            if (!this.contentBrowsePanelExists) {
-                ContentSummaryAndCompareStatusFetcher.fetchByPaths(this.concatContentPaths(changes)).
-                    then((data: ContentSummaryAndCompareStatus[]) => {
-                        data.forEach((el) => {
-                            new api.content.event.ContentUpdatedEvent(el.getContentId()).fire();
-                        });
-                    });
+        private handleContentPending(data: ContentSummaryAndCompareStatus[]) {
+            if (ContentServerEventsHandler.debug) {
+                console.debug("ContentServerEventsHandler: pending", data);
             }
+            var contentDeletedEvent = new ContentDeletedEvent();
+
+            data.filter((el) => {
+                return !!el;        // not sure if this check is necessary
+            }).forEach((el) => {
+                contentDeletedEvent.addPendingItem(el.getContentId(), el.getPath());
+            });
+            contentDeletedEvent.fire();
+
+            this.notifyContentPending(data);
         }
 
-        private handleContentDeleted(changes: ContentServerChange[]) {
-            if (!this.contentBrowsePanelExists) {
-                var contentDeletedEvent = new ContentDeletedEvent();
-                this.concatContentPaths(changes).forEach((path) => {
-                    contentDeletedEvent.addItem(null, path);
-                });
-                contentDeletedEvent.fire();
+        private handleContentDuplicated(data: ContentSummaryAndCompareStatus[]) {
+            if (ContentServerEventsHandler.debug) {
+                console.debug("ContentServerEventsHandler: duplicated", data);
             }
+            this.notifyContentDuplicated(data);
         }
 
-        private handleContentPending(changes: ContentServerChange[]) {
-            if (!this.contentBrowsePanelExists) {
-                var contentDeletedEvent = new ContentDeletedEvent();
-                ContentSummaryAndCompareStatusFetcher.fetchByPaths(this.concatContentPaths(changes)).
-                    then((data: ContentSummaryAndCompareStatus[]) => {
-                        data.filter((el) => {
-                            return !!el;
-                        }).forEach((el) => {
-                            contentDeletedEvent.addPendingItem(el.getContentId(), el.getPath());
-                        });
-                        contentDeletedEvent.fire();
-                    });
+        private handleContentPublished(data: ContentSummaryAndCompareStatus[]) {
+            if (ContentServerEventsHandler.debug) {
+                console.debug("ContentServerEventsHandler: published", data);
             }
+            // TODO: refactor publish event to contain multiple contents ?
+            data.forEach((el) => {
+                new ContentPublishedEvent(el.getContentSummary(), el.getCompareStatus()).fire();
+            });
+            this.notifyContentPublished(data);
         }
 
-        private handleContentPublished(changes: ContentServerChange[]) {
-            if (!this.contentBrowsePanelExists) {
-                ContentSummaryAndCompareStatusFetcher.fetchByPaths(this.concatContentPaths(changes)).
-                    then((data: ContentSummaryAndCompareStatus[]) => {
-                        data.forEach((el) => {
-                            new ContentPublishedEvent(el.getContentId(), el.getCompareStatus()).fire();
-                        });
-                    });
+        private handleContentMoved(data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) {
+            if (ContentServerEventsHandler.debug) {
+                console.debug("ContentServerEventsHandler: moved", data, oldPaths);
             }
+            this.notifyContentMoved(data, oldPaths);
         }
 
-        onContentCreated(listener: (changes: ContentServerChange[])=>void) {
+        private handleContentSorted(data: ContentSummaryAndCompareStatus[]) {
+            if (ContentServerEventsHandler.debug) {
+                console.debug("ContentServerEventsHandler: sorted", data);
+            }
+            this.notifyContentSorted(data);
+        }
+
+
+        onContentCreated(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentCreatedListeners.push(listener);
         }
 
-        unContentCreated(listener: (changes: ContentServerChange[])=>void) {
+        unContentCreated(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentCreatedListeners =
-                this.contentCreatedListeners.filter((currentListener: (changes: ContentServerChange[])=>void) => {
+                this.contentCreatedListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
                     return currentListener != listener;
                 });
         }
 
-        private notifyContentCreated(changes: ContentServerChange[]) {
-            this.contentCreatedListeners.forEach((listener: (changes: ContentServerChange[])=>void) => {
-                listener.call(this, changes);
+        private notifyContentCreated(data: ContentSummaryAndCompareStatus[]) {
+            this.contentCreatedListeners.forEach((listener: (data: ContentSummaryAndCompareStatus[])=>void) => {
+                listener(data);
             });
         }
 
-        onContentUpdated(listener: (changes: ContentServerChange[])=>void) {
+        onContentUpdated(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentUpdatedListeners.push(listener);
         }
 
-        unContentUpdated(listener: (changes: ContentServerChange[])=>void) {
+        unContentUpdated(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentUpdatedListeners =
-                this.contentUpdatedListeners.filter((currentListener: (changes: ContentServerChange[])=>void) => {
+                this.contentUpdatedListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
                     return currentListener != listener;
                 });
         }
 
-        private notifyContentUpdated(changes: ContentServerChange[]) {
-            this.contentUpdatedListeners.forEach((listener: (changes: ContentServerChange[])=>void) => {
-                listener.call(this, changes);
+        private notifyContentUpdated(data: ContentSummaryAndCompareStatus[]) {
+            this.contentUpdatedListeners.forEach((listener: (data: ContentSummaryAndCompareStatus[])=>void) => {
+                listener(data);
             });
         }
 
-        onContentDeleted(listener: (changes: ContentServerChange[])=>void) {
+        onContentDeleted(listener: (paths: ContentPath[], pending?: boolean)=>void) {
             this.contentDeletedListeners.push(listener);
         }
 
-        unContentDeleted(listener: (changes: ContentServerChange[])=>void) {
+        unContentDeleted(listener: (paths: ContentPath[], pending?: boolean)=>void) {
             this.contentDeletedListeners =
-                this.contentDeletedListeners.filter((currentListener: (changes: ContentServerChange[])=>void) => {
+                this.contentDeletedListeners.filter((currentListener: (paths: ContentPath[], pending?: boolean)=>void) => {
                     return currentListener != listener;
                 });
         }
 
-        private notifyContentDeleted(changes: ContentServerChange[]) {
-            this.contentDeletedListeners.forEach((listener: (changes: ContentServerChange[])=>void) => {
-                listener.call(this, changes);
+        private notifyContentDeleted(paths: ContentPath[], pending?: boolean) {
+            this.contentDeletedListeners.forEach((listener: (paths: ContentPath[], pending?: boolean)=>void) => {
+                listener(paths, pending);
             });
         }
 
-        onContentMoved(listener: (changes: ContentServerChange[])=>void) {
+        onContentMoved(listener: (data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[])=>void) {
             this.contentMovedListeners.push(listener);
         }
 
-        unContentMoved(listener: (changes: ContentServerChange[])=>void) {
-            this.contentMovedListeners = this.contentMovedListeners.filter((currentListener: (changes: ContentServerChange[])=>void) => {
-                return currentListener != listener;
+        unContentMoved(listener: (data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[])=>void) {
+            this.contentMovedListeners =
+                this.contentMovedListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[],
+                                                                     oldPaths: ContentPath[])=>void) => {
+                    return currentListener != listener;
+                });
+        }
+
+        private notifyContentMoved(data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) {
+            this.contentMovedListeners.forEach((listener: (data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[])=>void) => {
+                listener(data, oldPaths);
             });
         }
 
-        private notifyContentMoved(changes: ContentServerChange[]) {
-            this.contentMovedListeners.forEach((listener: (changes: ContentServerChange[])=>void) => {
-                listener.call(this, changes);
-            });
-        }
-
-        onContentRenamed(listener: (changes: ContentServerChange[])=>void) {
+        onContentRenamed(listener: (data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[])=>void) {
             this.contentRenamedListeners.push(listener);
         }
 
-        unContentRenamed(listener: (changes: ContentServerChange[])=>void) {
+        unContentRenamed(listener: (data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[])=>void) {
             this.contentRenamedListeners =
-                this.contentRenamedListeners.filter((currentListener: (changes: ContentServerChange[])=>void) => {
+                this.contentRenamedListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[],
+                                                                       oldPaths: ContentPath[])=>void) => {
                     return currentListener != listener;
                 });
         }
 
-        private notifyContentRenamed(changes: ContentServerChange[]) {
-            this.contentRenamedListeners.forEach((listener: (changes: ContentServerChange[])=>void) => {
-                listener.call(this, changes);
+        private notifyContentRenamed(data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) {
+            this.contentRenamedListeners.forEach((listener: (data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[])=>void) => {
+                listener(data, oldPaths);
             });
         }
 
-        onContentDuplicated(listener: (changes: ContentServerChange[])=>void) {
+        onContentDuplicated(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentDuplicateListeners.push(listener);
         }
 
-        unContentDuplicated(listener: (changes: ContentServerChange[])=>void) {
+        unContentDuplicated(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentDuplicateListeners =
-                this.contentDuplicateListeners.filter((currentListener: (changes: ContentServerChange[])=>void) => {
+                this.contentDuplicateListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
                     return currentListener != listener;
                 });
         }
 
-        private notifyContentDuplicated(changes: ContentServerChange[]) {
-            this.contentDuplicateListeners.forEach((listener: (changes: ContentServerChange[])=>void) => {
-                listener.call(this, changes);
+        private notifyContentDuplicated(data: ContentSummaryAndCompareStatus[]) {
+            this.contentDuplicateListeners.forEach((listener: (data: ContentSummaryAndCompareStatus[])=>void) => {
+                listener(data);
             });
         }
 
-        onContentPublished(listener: (changes: ContentServerChange[])=>void) {
+        onContentPublished(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentPublishListeners.push(listener);
         }
 
-        unContentPublished(listener: (changes: ContentServerChange[])=>void) {
+        unContentPublished(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentPublishListeners =
-                this.contentPublishListeners.filter((currentListener: (changes: ContentServerChange[])=>void) => {
+                this.contentPublishListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
                     return currentListener != listener;
                 });
         }
 
-        private notifyContentPublished(changes: ContentServerChange[]) {
-            this.contentPublishListeners.forEach((listener: (changes: ContentServerChange[])=>void) => {
-                listener.call(this, changes);
+        private notifyContentPublished(data: ContentSummaryAndCompareStatus[]) {
+            this.contentPublishListeners.forEach((listener: (data: ContentSummaryAndCompareStatus[])=>void) => {
+                listener(data);
             });
         }
 
-        onContentPending(listener: (changes: ContentServerChange[])=>void) {
+        onContentPending(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentPendingListeners.push(listener);
         }
 
-        unContentPending(listener: (changes: ContentServerChange[])=>void) {
+        unContentPending(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentPendingListeners =
-                this.contentPendingListeners.filter((currentListener: (changes: ContentServerChange[])=>void) => {
+                this.contentPendingListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
                     return currentListener != listener;
                 });
         }
 
-        private notifyContentPending(changes: ContentServerChange[]) {
-            this.contentPendingListeners.forEach((listener: (changes: ContentServerChange[])=>void) => {
-                listener.call(this, changes);
+        private notifyContentPending(data: ContentSummaryAndCompareStatus[]) {
+            this.contentPendingListeners.forEach((listener: (data: ContentSummaryAndCompareStatus[])=>void) => {
+                listener(data);
             });
         }
 
-        onContentSorted(listener: (changes: ContentServerChange[])=>void) {
+        onContentSorted(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentSortListeners.push(listener);
         }
 
-        unContentSorted(listener: (changes: ContentServerChange[])=>void) {
-            this.contentSortListeners = this.contentSortListeners.filter((currentListener: (changes: ContentServerChange[])=>void) => {
-                return currentListener != listener;
-            });
+        unContentSorted(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
+            this.contentSortListeners =
+                this.contentSortListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
+                    return currentListener != listener;
+                });
         }
 
-        private notifyContentSorted(changes: ContentServerChange[]) {
-            this.contentSortListeners.forEach((listener: (changes: ContentServerChange[])=>void) => {
-                listener.call(this, changes);
+        private notifyContentSorted(data: ContentSummaryAndCompareStatus[]) {
+            this.contentSortListeners.forEach((listener: (data: ContentSummaryAndCompareStatus[])=>void) => {
+                listener(data);
             });
         }
 

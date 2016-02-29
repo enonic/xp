@@ -19,6 +19,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
@@ -34,6 +35,10 @@ import com.enonic.xp.portal.impl.exception.ExceptionMapper;
 import com.enonic.xp.portal.impl.exception.ExceptionRenderer;
 import com.enonic.xp.portal.impl.serializer.RequestBodyReader;
 import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
+import com.enonic.xp.portal.impl.websocket.WebSocketContext;
+import com.enonic.xp.portal.impl.websocket.WebSocketContextFactory;
+import com.enonic.xp.portal.websocket.WebSocketConfig;
+import com.enonic.xp.portal.websocket.WebSocketEndpoint;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
@@ -52,6 +57,8 @@ public final class PortalServlet
 
     private ExceptionRenderer exceptionRenderer;
 
+    private WebSocketContextFactory webSocketContextFactory;
+
     public PortalServlet()
     {
         this.exceptionMapper = new ExceptionMapper();
@@ -63,10 +70,41 @@ public final class PortalServlet
         throws ServletException, IOException
     {
         final PortalRequest portalRequest = newPortalRequest( req );
+        final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
+        portalRequest.setWebSocket( webSocketContext != null );
+
         final PortalResponse portalResponse = doHandle( portalRequest );
+        final WebSocketConfig config = portalResponse.getWebSocket();
+
+        if ( ( webSocketContext != null ) && ( config != null ) )
+        {
+            applyWebSocket( portalRequest, webSocketContext, config );
+            return;
+        }
 
         final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );
         serializer.serialize( res );
+    }
+
+    private void applyWebSocket( final PortalRequest req, final WebSocketContext context, final WebSocketConfig config )
+    {
+        try
+        {
+            if ( req.getBranch() == null )
+            {
+                throw PortalException.notFound( "Branch needs to be specified" );
+            }
+
+            final PortalHandler handler = this.registry.find( req );
+            ContextAccessor.current().getLocalScope().setAttribute( req.getBranch() );
+
+            final WebSocketEndpoint endpoint = handler.newWebSocketEndpoint( req, config );
+            context.apply( endpoint );
+        }
+        catch ( final Exception e )
+        {
+            throw Throwables.propagate( e );
+        }
     }
 
     private PortalRequest newPortalRequest( final HttpServletRequest req )
@@ -240,5 +278,11 @@ public final class PortalServlet
     public void setExceptionRenderer( final ExceptionRenderer exceptionRenderer )
     {
         this.exceptionRenderer = exceptionRenderer;
+    }
+
+    @Reference
+    public void setWebSocketContextFactory( final WebSocketContextFactory webSocketContextFactory )
+    {
+        this.webSocketContextFactory = webSocketContextFactory;
     }
 }

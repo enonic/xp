@@ -17,17 +17,18 @@
     font-size: 14px;
     border-width: 0;
     color: @admin-font-gray3;
+    cursor: pointer;
 
     padding: 5px;
     margin: 0;
 
-    &:hover:not(.context-menu-item-disabled) {
-      cursor: pointer;
+    &:hover:not(.disabled) {
       background-color: @admin-bg-light-gray;
     }
 
     &:disabled, &.disabled {
       opacity: 0.5;
+      cursor: default;
     }
   }
 

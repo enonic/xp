@@ -107,8 +107,8 @@ module app.browse {
             new api.application.GetApplicationRequest(applicationKey,
                 true).sendAndParse().then((application: api.application.Application)=> {
                     deferred.resolve(application);
-            }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
                 });
 
             return deferred.promise;
@@ -180,8 +180,6 @@ module app.browse {
                     this.invalidate();
                     this.triggerSelectionChangedListeners();
                 }
-
-                api.notify.showFeedback("Application " + item.getName() + "\" installed successfully");
             });
             item.onFailed(() => {
                 this.deleteNode(<any>appMock);
@@ -221,6 +219,10 @@ module app.browse {
 
         getApplicationKey(): string {
             return this.name;
+        }
+
+        isLocal(): boolean {
+            return false;
         }
     }
 }

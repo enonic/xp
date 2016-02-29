@@ -7,8 +7,16 @@ module api.app.wizard {
 
             this.onExecuted(() => {
 
-                new SaveAction(wizardPanel).execute();
-                new CloseAction(wizardPanel).execute();
+                var deferred = wemQ.defer();
+
+                let saveAction = new SaveAction(wizardPanel);
+                saveAction.onAfterExecute(() => {
+                    new CloseAction(wizardPanel).execute();
+                    deferred.resolve(null);
+                });
+                saveAction.execute();
+
+                return deferred.promise;
             });
         }
     }

@@ -682,11 +682,11 @@ module api.ui.treegrid {
                 }).then(() => this.notifyLoaded());
         }
 
-        private handleError(reason: any) {
+        protected handleError(reason: any, message?: String) {
             this.grid.show();
             this.errorPanel.hide();
             if (this.quietErrorHandling) {
-                this.errorPanel.setError(reason.getMessage());
+                this.errorPanel.setError(message || reason.getMessage());
                 this.grid.hide();
                 this.errorPanel.show();
             }
