@@ -11,7 +11,7 @@ module api.rest {
         private timeoutMillis: number;
 
         constructor() {
-            this.restPath = Path.fromString(CONFIG.adminUri + "/rest");
+            this.restPath = Path.fromString(api.util.UriHelper.getRestUri(""));
         }
 
         setMethod(value: string) {
