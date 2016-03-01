@@ -1,5 +1,6 @@
 (function () {
-    var adminUrl = (window.CONFIG.adminUri || "/admin") + "/tool/com.enonic.xp.admin.ui/launcher";
+    var adminUrl = window.CONFIG && window.CONFIG.adminUri || "/admin";
+    var launcherUrl = adminUrl + (adminUrl.slice(-1) == '/' ? "" : "/" ) + "tool/com.enonic.xp.admin.ui/launcher";
     var launcherPanel, bodyMask, launcherButton, launcherMainContainer;
     var isHomeApp = window.CONFIG && window.CONFIG.appId == "home";
     var autoOpenLauncher = window.CONFIG && window.CONFIG.autoOpenLauncher;
@@ -48,7 +49,7 @@
         var link = document.createElement("link");
 
         link.setAttribute("rel", "import");
-        link.setAttribute("href", adminUrl);
+        link.setAttribute("href", launcherUrl);
 
         link.onload = function () {
             launcherMainContainer = link.import.querySelector('.launcher-main-container');

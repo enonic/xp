@@ -27,6 +27,7 @@ module app.home {
             this.appendChild(this.centerPanel);
 
             this.onAdded(() => {
+                console.log("this.onAdded");
                 lazyImage.setSrc(api.util.UriHelper.getAdminUri("common/images/background-1920.jpg"));
             });
         }
