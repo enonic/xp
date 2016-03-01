@@ -96,6 +96,14 @@ module api.data {
             }
         }
 
+        switchLocalDateTimeTypeToDateTimeOfPropertyArray() {
+            this.array.switchLocalDateTimeTypeToDateTime();
+        }
+
+        switchDateTimeTypeToLocalDateTimeOfPropertyArray() {
+            this.array.switchDateTimeTypeToLocalDateTime();
+        }
+
         /**
          * Detach this Property from it's array and parent. Should be called when removed from the array.
          */
