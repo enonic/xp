@@ -89,6 +89,10 @@ module api.content.form.inputtype.image {
 
         }
 
+        public getContentComboBox(): ImageContentComboBox {
+            return this.contentComboBox;
+        }
+
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
             var relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
             this.relationshipType = relationshipTypeConfig['value'];

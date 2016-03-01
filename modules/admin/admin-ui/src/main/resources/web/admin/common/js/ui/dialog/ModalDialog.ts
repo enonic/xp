@@ -157,10 +157,6 @@ module api.ui.dialog {
             return this.buttonRow;
         }
 
-        protected getContentPanel(): ModalDialogContentPanel {
-            return this.contentPanel;
-        }
-
         hide() {
             super.hide();
         }
