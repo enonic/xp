@@ -129,14 +129,15 @@ public class ApplicationDeployDirectoryWatcher
     {
         final ByteSource byteSource = Files.asByteSource( file );
 
-        final Application application =
-            ApplicationHelper.runAsAdmin( () -> applicationService.installApplication( byteSource, false, false ) );
+        final Application application = ApplicationHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource ) );
+
         applicationKeyByFile.put( file.getName(), application.getKey() );
     }
 
     private void uninstallApplication( final File file )
     {
         final ApplicationKey applicationKey = applicationKeyByFile.remove( file.getName() );
+
         if ( applicationKey != null )
         {
             ApplicationHelper.runAsAdmin( () -> this.applicationService.uninstallApplication( applicationKey, false ) );

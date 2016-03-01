@@ -7,16 +7,18 @@ import org.mockito.Mockito;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.core.impl.app.event.ApplicationClusterEventListener;
+import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 
-public class ApplicationEventListenerTest
+public class ApplicationClusterEventListenerTest
     extends BundleBasedTest
 {
 
-    private ApplicationEventListener applicationEventListener;
+    private ApplicationClusterEventListener applicationClusterEventListener;
 
     private ApplicationService applicationService;
 
@@ -24,9 +26,9 @@ public class ApplicationEventListenerTest
     public void setUp()
         throws Exception
     {
-        applicationEventListener = new ApplicationEventListener();
+        applicationClusterEventListener = new ApplicationClusterEventListener();
         applicationService = Mockito.mock( ApplicationService.class );
-        applicationEventListener.setApplicationService( applicationService );
+        applicationClusterEventListener.setApplicationService( applicationService );
     }
 
     @Test
@@ -43,14 +45,15 @@ public class ApplicationEventListenerTest
         Mockito.when( application.getKey() ).
             thenReturn( ApplicationKey.from( "appKey" ) );
 
-        Mockito.when( applicationService.installApplication( node.id() ) ).
+        Mockito.when( applicationService.installStoredApplication( node.id() ) ).
             thenReturn( application );
 
-        this.applicationEventListener.onEvent( Event.create( ApplicationEvents.APPLICATION_INSTALLED_EVENT ).
+        this.applicationClusterEventListener.onEvent( Event.create( ApplicationClusterEvents.EVENT_TYPE ).
             localOrigin( false ).
-            value( ApplicationEvents.NODE_ID_PARAM, node.id() ).
+            value( ApplicationClusterEvents.NODE_ID_PARAM, node.id() ).
+            value( ApplicationClusterEvents.EVENT_TYPE_KEY, ApplicationClusterEvents.INSTALLED ).
             build() );
 
-        Mockito.verify( this.applicationService, Mockito.times( 1 ) ).installApplication( node.id() );
+        Mockito.verify( this.applicationService, Mockito.times( 1 ) ).installStoredApplication( node.id() );
     }
 }

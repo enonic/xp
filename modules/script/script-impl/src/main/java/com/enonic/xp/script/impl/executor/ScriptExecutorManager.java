@@ -8,6 +8,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.impl.service.ServiceRegistryImpl;
@@ -38,6 +39,12 @@ public final class ScriptExecutorManager
     private ScriptExecutor createExecutor( final ApplicationKey key )
     {
         final Application application = this.applicationService.getInstalledApplication( key );
+
+        if ( application == null )
+        {
+            throw new ApplicationNotFoundException( key );
+        }
+
         final ClassLoader classLoader = application.getClassLoader();
         final ScriptEngine engine = NashornHelper.getScriptEngine( classLoader, "-strict" );
 

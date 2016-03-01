@@ -221,7 +221,7 @@ module api.app.wizard {
             if (this.minimized) {
                 navigationWidth = this.splitPanel.getEl().getHeight();
             } else {
-                navigationWidth = this.stepsPanel.getEl().getWidth();
+                navigationWidth = this.stepsPanel.getEl().getWidth() - this.stepNavigatorAndToolbarContainer.getEl().getPaddingLeft();
             }
             this.stepNavigatorAndToolbarContainer.getEl().setWidthPx(navigationWidth);
         }
