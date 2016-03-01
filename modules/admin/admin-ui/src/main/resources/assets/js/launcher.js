@@ -1,5 +1,5 @@
 (function () {
-    var adminUrl = "/admin/tool/com.enonic.xp.admin.ui/launcher";
+    var adminUrl = (window.CONFIG.adminUri || "/admin") + "/tool/com.enonic.xp.admin.ui/launcher";
     var launcherPanel, bodyMask, launcherButton, launcherMainContainer;
     var isHomeApp = window.CONFIG && window.CONFIG.appId == "home";
     var autoOpenLauncher = window.CONFIG && window.CONFIG.autoOpenLauncher;
@@ -169,7 +169,7 @@
         }
         var appRows = launcherPanel.querySelectorAll('.app-row');
         for (var i = 0; i < appRows.length; i++) {
-            if (appRows[i].id == appId ) {
+            if (appRows[i].id == appId) {
                 appRows[i].classList.add("active");
             }
         }
@@ -182,7 +182,7 @@
 
         e.stopPropagation();
 
-        switch(e.keyCode) {
+        switch (e.keyCode) {
         case 27:
             // esc key pressed
             closeLauncherPanel();
@@ -194,7 +194,7 @@
                 setTipVisibility("none");
             }
             break;
-         }
+        }
     }
 
     function init() {
