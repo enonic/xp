@@ -35,7 +35,7 @@ module api.liveedit {
                 this.hide();
                 return;
             }
-            var dimensions = itemView.getEl().getDimensions();
+            var dimensions = itemView.getEl().getDimensionsRelativeToParent();
             var style = itemView.getType().getConfig().getHighlighterStyle();
 
             this.resize(dimensions, this.preProcessStyle(style));
