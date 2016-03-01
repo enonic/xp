@@ -139,7 +139,7 @@ module api.form.inputtype.text.htmlarea {
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
                 this.resetPreviewContainerMaxHeight();
-                this.imagePreviewScrollHandler.toggleScrollButtons();
+                this.imagePreviewScrollHandler.toggleScrollButtons(true);
             });
         }
 
@@ -794,7 +794,7 @@ module api.form.inputtype.text.htmlarea {
             });
         }
 
-        toggleScrollButtons() {
+        toggleScrollButtons(updateAlignment?: boolean) {
             if (this.isScrolledToBottom()) {
                 this.scrollDownButton.hide();
             }
@@ -807,6 +807,33 @@ module api.form.inputtype.text.htmlarea {
             }
             else {
                 this.scrollUpButton.show();
+            }
+
+            if (updateAlignment) {
+                this.updateScrollButtonsAlignment();
+            }
+        }
+
+        private updateScrollButtonsAlignment() {
+            var img: api.dom.ElementHelper = this.imagePreviewContainer.getFirstChild().getEl();
+
+            var textAlign = img.getComputedProperty("text-align"),
+                containerWidth = this.imagePreviewContainer.getEl().getWidth() - this.scrollBarWidth,
+                imgWidth = img.getWidth();
+
+            if (imgWidth < containerWidth && textAlign === "left") {
+                let left = imgWidth / 2 - 20;
+                this.scrollUpButton.getEl().setLeftPx(left);
+                this.scrollDownButton.getEl().setLeftPx(left);
+            }
+            else if (imgWidth < containerWidth && textAlign === "right") {
+                let left = containerWidth - (imgWidth / 2 + 20);
+                this.scrollUpButton.getEl().setLeftPx(left);
+                this.scrollDownButton.getEl().setLeftPx(left);
+            }
+            else {
+                this.scrollUpButton.getEl().setLeft("48%");
+                this.scrollDownButton.getEl().setLeft("48%");
             }
         }
 
