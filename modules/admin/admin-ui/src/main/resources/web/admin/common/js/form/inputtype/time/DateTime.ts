@@ -74,14 +74,10 @@ module api.content.form.inputtype.time {
         private createInputAsLocalDateTime(property: Property, index: number) {
             var dateTimeBuilder = new DateTimePickerBuilder();
             if (property.hasNonNullValue()) {
-                var date = property.getLocalDateTime();
-
-                dateTimeBuilder.
-                    setYear(date.getFullYear()).
-                    setMonth(date.getMonth()).
-                    setSelectedDate(date).
-                    setHours(date.getHours()).
-                    setMinutes(date.getMinutes());
+                if (api.ObjectHelper.iFrameSafeInstanceOf(property.getDateTime(), api.util.DateTime)) {
+                    this.convertDateTimeValueToLocalDateTimeValueOfProperty(property);
+                }
+                this.populateBuilderWithLocalDateTimeValues(property, dateTimeBuilder);
             }
 
             var dateTimePicker = dateTimeBuilder.build();
@@ -98,14 +94,10 @@ module api.content.form.inputtype.time {
             var dateTimeBuilder = new DateTimePickerBuilder();
             dateTimeBuilder.setUseLocalTimezoneIfNotPresent(true);
             if (property.hasNonNullValue()) {
-                var date: api.util.DateTime = property.getDateTime();
-                dateTimeBuilder.
-                    setYear(date.getYear()).
-                    setMonth(date.getMonth()).
-                    setSelectedDate(date.toDate()).
-                    setHours(date.getHours()).
-                    setMinutes(date.getMinutes()).
-                    setTimezone(date.getTimezone());
+                if (!api.ObjectHelper.iFrameSafeInstanceOf(property.getDateTime(), api.util.DateTime)) {
+                    this.convertLocalDateTimeValueToDateTimeValueOfProperty(property);
+                }
+                this.populateBuilderWithDateTimeValues(property, dateTimeBuilder);
             }
 
             var dateTimePicker = new DateTimePicker(dateTimeBuilder);
@@ -115,6 +107,44 @@ module api.content.form.inputtype.time {
                 this.notifyOccurrenceValueChanged(dateTimePicker, value);
             });
             return dateTimePicker;
+        }
+
+        private convertLocalDateTimeValueToDateTimeValueOfProperty(property: Property) {
+            var date = property.getLocalDateTime();
+            if (!!date) {
+                property.switchLocalDateTimeTypeToDateTimeOfPropertyArray();
+                property.setValue(new Value(api.util.DateTime.fromDate(date), ValueTypes.DATE_TIME));
+            }
+        }
+
+        private convertDateTimeValueToLocalDateTimeValueOfProperty(property: Property) {
+            var date: api.util.DateTime = property.getDateTime();
+            if (!!date) {
+                property.switchDateTimeTypeToLocalDateTimeOfPropertyArray();
+                property.setValue(new Value(date.toDate(), ValueTypes.LOCAL_DATE_TIME));
+            }
+        }
+
+        private populateBuilderWithLocalDateTimeValues(property: Property, dateTimeBuilder: DateTimePickerBuilder) {
+            var date = property.getLocalDateTime();
+
+            dateTimeBuilder.
+                setYear(date.getFullYear()).
+                setMonth(date.getMonth()).
+                setSelectedDate(date).
+                setHours(date.getHours()).
+                setMinutes(date.getMinutes());
+        }
+
+        private populateBuilderWithDateTimeValues(property: Property, dateTimeBuilder: DateTimePickerBuilder) {
+            var date: api.util.DateTime = property.getDateTime();
+            dateTimeBuilder.
+                setYear(date.getYear()).
+                setMonth(date.getMonth()).
+                setSelectedDate(date.toDate()).
+                setHours(date.getHours()).
+                setMinutes(date.getMinutes()).
+                setTimezone(date.getTimezone());
         }
     }
     api.form.inputtype.InputTypeManager.register(new api.Class("DateTime", DateTime));

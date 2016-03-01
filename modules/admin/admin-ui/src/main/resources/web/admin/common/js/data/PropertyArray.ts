@@ -96,6 +96,20 @@ module api.data {
             return this.type;
         }
 
+        switchLocalDateTimeTypeToDateTime() {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(this.type, ValueTypeLocalDateTime)) {
+                throw new Error("Current PropertyArrayType must be LocalDateTime");
+            }
+            this.type = ValueTypes.DATE_TIME;
+        }
+
+        switchDateTimeTypeToLocalDateTime() {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(this.type, ValueTypeDateTime)) {
+                throw new Error("Current PropertyArrayType must be DateTime");
+            }
+            this.type = ValueTypes.LOCAL_DATE_TIME;
+        }
+
         private checkType(type: ValueType) {
 
             if (!this.type.equals(type)) {
