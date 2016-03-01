@@ -12,6 +12,8 @@ import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.ResteasyUriInfo;
 
+import com.google.common.base.Strings;
+
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 final class RequestFactoryImpl
@@ -38,7 +40,8 @@ final class RequestFactoryImpl
 
     private static ResteasyUriInfo extractUriInfo( HttpServletRequest request )
     {
-        final String absoluteUri = ServletRequestUrlHelper.getServerUrl() + request.getRequestURI();
+        final String requestURI = request.getRequestURI();
+        final String absoluteUri = ServletRequestUrlHelper.getServerUrl() + ( Strings.isNullOrEmpty( requestURI ) ? "/" : requestURI );
         return new ResteasyUriInfo( absoluteUri, request.getQueryString(), request.getContextPath() );
     }
 
