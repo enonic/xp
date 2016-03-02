@@ -441,6 +441,11 @@ module api.liveedit {
             if (flag) {
                 new PageTextModeStartedEvent(this).fire();
             }
+            else {
+                api.liveedit.Highlighter.get().updateLastHighlightedItemView();
+                api.liveedit.SelectedHighlighter.get().updateLastHighlightedItemView();
+            }
+
         }
 
         hasTargetWithinTextComponent(target: HTMLElement) {

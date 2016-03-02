@@ -482,10 +482,18 @@ module app.wizard.page {
                 let modalDialog = HTMLAreaDialogHandler.createAndOpenDialog(event);
                 this.liveEditPageProxy.notifyLiveEditPageDialogCreated(modalDialog, event.getConfig());
             });
+
+            this.liveEditPageProxy.onPageTextModeStarted(() => {
+                // Collapse the panel with a delay to give HTML editor time to initialize
+                setTimeout(() => {
+                    this.minimizeContentFormPanelIfNeeded();
+                }, 200);
+            });
         }
 
         private shade() {
             api.liveedit.Shader.get().shade(this);
+            });            
         }
 
         private minimizeContentFormPanelIfNeeded() {
