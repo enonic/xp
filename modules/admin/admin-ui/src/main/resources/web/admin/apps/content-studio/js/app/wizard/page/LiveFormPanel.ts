@@ -473,7 +473,14 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onPageUnloaded((event: api.liveedit.PageUnloadedEvent) => {
                 this.contentWizardPanel.close();
-            })
+            });
+
+            this.liveEditPageProxy.onPageTextModeStarted(() => {
+                // Collapse the panel with a delay to give HTML editor time to initialize
+                setTimeout(() => {
+                    this.minimizeContentFormPanelIfNeeded();
+                }, 200);
+            });
         }
 
         private minimizeContentFormPanelIfNeeded() {
