@@ -194,7 +194,7 @@ public final class ServletRequestUrlHelper
         if ( uri.startsWith( targetPath ) )
         {
             final String result = uri.substring( targetPath.length() );
-            final String newUri = normalizePath( vhost.getSource() + "/" + result );
+            final String newUri = normalizePath( vhost.getSource() + ( "/".equals( targetPath ) ? "/" : "" ) + result );
             return resultBuilder.rewrittenUri( newUri ).
                 deletedUriPrefix( targetPath ).
                 newUriPrefix( normalizePath( vhost.getSource() ) ).
