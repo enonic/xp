@@ -612,12 +612,13 @@ module api.dom {
             };
         }
 
-        getDimensionsRelativeToParent(): ElementDimensions {
-            var offset = this.getOffsetToParent();
+        getDimensionsTopRelativeToParent(): ElementDimensions {
+            var offsetToParent = this.getOffsetToParent();
+            var offsetToDocument = this.getOffset();
 
             return {
-                top: offset.top,
-                left: offset.left,
+                top: offsetToParent.top,
+                left: offsetToDocument.left,
                 width: this.getWidthWithBorder(),
                 height: this.getHeightWithBorder()
             };
