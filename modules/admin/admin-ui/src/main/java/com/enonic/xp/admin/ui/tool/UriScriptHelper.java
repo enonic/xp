@@ -39,6 +39,13 @@ public class UriScriptHelper
         return rewriteUri( uri );
     }
 
+    public static final String generateBackgroundUri()
+    {
+        String uri = ADMIN_URI_PREFIX + "/common/images/background-1920.jpg";
+        return rewriteUri( uri );
+    }
+
+
     private static final String generateVersion()
     {
         final VersionInfo version = VersionInfo.get();

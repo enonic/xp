@@ -30,7 +30,7 @@ module api.app {
                 console.warn('ServerEventsConnection: WebSockets not supported. Server events disabled.');
                 return;
             }
-            var wsUrl = api.util.UriHelper.joinPath(this.getWebSocketUriPrefix(), 'admin', 'event');
+            var wsUrl = api.util.UriHelper.joinPath(this.getWebSocketUriPrefix(), api.util.UriHelper.getAdminUriPrefix(), 'event');
             this.keepConnected = true;
             this.doConnect(wsUrl);
         }

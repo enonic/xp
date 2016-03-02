@@ -58,10 +58,6 @@ module api.app {
             return this.iconUrl;
         }
 
-        getAppUrl(): string {
-            return api.util.UriHelper.getUri('admin?app=' + this.id);
-        }
-
         getOpenTabs(): number {
             return this.openTabs;
         }
