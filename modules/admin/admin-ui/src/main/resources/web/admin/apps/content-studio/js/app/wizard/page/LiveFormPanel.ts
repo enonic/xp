@@ -493,7 +493,6 @@ module app.wizard.page {
 
         private shade() {
             api.liveedit.Shader.get().shade(this);
-            });            
         }
 
         private minimizeContentFormPanelIfNeeded() {
