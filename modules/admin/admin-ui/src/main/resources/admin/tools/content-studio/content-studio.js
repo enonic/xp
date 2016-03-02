@@ -3,12 +3,12 @@ var portal = require('/lib/xp/portal');
 
 function handleGet(req) {
     var uriScriptHelper = Java.type("com.enonic.xp.admin.ui.tool.UriScriptHelper");
-    var adminUri = uriScriptHelper.generateAdminUri();
+    var adminUrl = uriScriptHelper.generateAdminUri();
     var assetsUri = uriScriptHelper.generateAdminAssetsUri();
     var view = resolve('../common/admin-app.html');
 
     var params = {
-        adminUri: adminUri,
+        adminUrl: adminUrl,
         assetsUri: assetsUri,
         baseUri: '',
         portalAssetsUrl: portal.assetUrl({path: ""}),

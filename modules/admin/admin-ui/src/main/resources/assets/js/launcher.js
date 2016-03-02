@@ -1,5 +1,5 @@
 (function () {
-    var adminUrl = window.CONFIG && window.CONFIG.adminUri || "/admin";
+    var adminUrl = window.CONFIG && window.CONFIG.adminUrl || "/admin";
     var launcherUrl = adminUrl + (adminUrl.slice(-1) == '/' ? "" : "/" ) + "tool/com.enonic.xp.admin.ui/launcher";
     var launcherPanel, bodyMask, launcherButton, launcherMainContainer;
     var isHomeApp = window.CONFIG && window.CONFIG.appId == "home";

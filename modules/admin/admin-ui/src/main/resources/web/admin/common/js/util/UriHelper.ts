@@ -35,7 +35,7 @@ module api.util {
          * @returns {string} the URI to a admin path.
          */
         static getAdminUriPrefix(): string {
-            return window['CONFIG'] && window['CONFIG']['adminUri'] || UriHelper.DEFAULT_ADMIN_URI;
+            return window['CONFIG'] && window['CONFIG']['adminUrl'] || UriHelper.DEFAULT_ADMIN_URI;
         }
 
         /**
