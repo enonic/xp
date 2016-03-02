@@ -21,7 +21,7 @@ module api.content.form.inputtype.checkbox {
         }
 
         newInitialValue(): Value {
-            return ValueTypes.BOOLEAN.newFalse();
+            return ValueTypes.BOOLEAN.newBoolean(false);
         }
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {

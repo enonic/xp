@@ -1,12 +1,19 @@
 package com.enonic.xp.jaxrs.impl;
 
+import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import com.enonic.xp.web.filter.BaseWebFilter;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
+import com.enonic.xp.web.servlet.ServletRequestHolder;
+
+import static org.junit.Assert.*;
 
 public class JaxRsServletTest
     extends JettyTestSupport
@@ -20,6 +27,17 @@ public class JaxRsServletTest
         this.servlet = new JaxRsServlet();
         addServlet( this.servlet, "/*" );
         this.servlet.addComponent( new TestErrorHandler() );
+
+        addFilter( new BaseWebFilter()
+        {
+            @Override
+            protected void doFilter( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
+                throws Exception
+            {
+                ServletRequestHolder.setRequest( req );
+                chain.doFilter( req, res );
+            }
+        }, "/*" );
     }
 
     @Test

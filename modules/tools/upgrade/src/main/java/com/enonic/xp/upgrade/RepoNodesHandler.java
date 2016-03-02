@@ -85,9 +85,11 @@ public final class RepoNodesHandler
             throw new com.enonic.xp.upgrade.UpgradeException( "Expected repositories directory, found '" + path + "'" );
         }
 
-        final Stream<Path> repositories = com.enonic.xp.upgrade.IOHelper.getChildren( path ).filter( IGNORE_FILES_FILTER );
+        try (final Stream<Path> repositories = com.enonic.xp.upgrade.IOHelper.getChildren( path ).filter( IGNORE_FILES_FILTER ))
+        {
+            repositories.forEach( this::processRepository );
+        }
 
-        repositories.forEach( this::processRepository );
     }
 
     private void processRepository( final Path repository )
@@ -101,9 +103,11 @@ public final class RepoNodesHandler
             throw new UpgradeException( "Expected repository directory, found '" + repository + "'" );
         }
 
-        final Stream<Path> branches = IOHelper.getChildren( repository ).filter( IGNORE_FILES_FILTER );
+        try (final Stream<Path> branches = IOHelper.getChildren( repository ).filter( IGNORE_FILES_FILTER ))
+        {
+            branches.forEach( ( branch ) -> this.processBranch( branch, repoName ) );
+        }
 
-        branches.forEach( ( branch ) -> this.processBranch( branch, repoName ) );
     }
 
     private void processBranch( final Path branch, final String repositoryName )
@@ -112,16 +116,21 @@ public final class RepoNodesHandler
 
         LOG.info( "Process branch '" + branchName + "'" );
 
-        final Stream<Path> nodes = IOHelper.getChildren( branch );
+        try (final Stream<Path> nodes = IOHelper.getChildren( branch ))
+        {
+            nodes.forEach( ( node ) -> processBranchNodes( node, repositoryName, branchName ) );
+        }
 
-        nodes.forEach( ( node ) -> processBranchNodes( node, repositoryName, branchName ) );
     }
 
     private void processBranchNodes( final Path path, final String repositoryName, final String branchName )
     {
         if ( Files.isDirectory( path ) )
         {
-            IOHelper.getChildren( path ).forEach( ( child ) -> processBranchNodes( child, repositoryName, branchName ) );
+            try (final Stream<Path> children = IOHelper.getChildren( path ))
+            {
+                children.forEach( ( child ) -> processBranchNodes( child, repositoryName, branchName ) );
+            }
         }
         else
         {

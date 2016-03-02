@@ -18,7 +18,7 @@ module api.ui {
 
         protected forceExecute: boolean = false;
 
-        private executionListeners: Function[] = [];
+        private executionListeners: {(action:Action): wemQ.Promise<any>|void}[] = [];
 
         private propertyChangedListeners: Function[] = [];
 
@@ -170,20 +170,27 @@ module api.ui {
             if (this.enabled) {
                 this.notifyBeforeExecute();
                 this.forceExecute = forceExecute;
+
+                var promises = [];
                 for (var i in this.executionListeners) {
-                    this.executionListeners[i](this);
+                    promises.push(this.executionListeners[i](this));
                 }
-                this.forceExecute = false;
-                this.notifyAfterExecute();
+
+                wemQ.all(promises).then(() => {
+                    this.forceExecute = false;
+                    this.notifyAfterExecute();
+                });
+
+
             }
         }
 
-        onExecuted(listener: (action: Action) => void): Action {
+        onExecuted(listener: (action:Action) => wemQ.Promise<any>|void): Action {
             this.executionListeners.push(listener);
             return this;
         }
 
-        unExecuted(listener: (action: Action) => void): Action {
+        unExecuted(listener: (action:Action) => wemQ.Promise<any>|void): Action {
             this.executionListeners = this.executionListeners.filter((curr) => {
                 return curr != listener;
             });

@@ -11,6 +11,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Path("/")
 @Component(immediate = true)
@@ -29,7 +30,8 @@ public final class MainResource
     public Response redirectToLoginPage()
         throws Exception
     {
-        return Response.temporaryRedirect( new URI( "/admin/tool" ) ).build();
+        final URI uri = new URI( ServletRequestUrlHelper.createUri( "/admin/tool" ) );
+        return Response.temporaryRedirect( uri ).build();
     }
 
     @GET

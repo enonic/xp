@@ -131,7 +131,6 @@
 ///<reference path='content/page/_module.ts' />
 ///<reference path='content/page/region/_module.ts' />
 ///<reference path='content/site/_module.ts' />
-///<reference path='content/site/inputtype/siteconfigurator/_module.ts' />
 ///<reference path='content/form/_module.ts' />
 ///<reference path='content/form/inputtype/_module.ts' />
 ///<reference path='content/form/inputtype/upload/_module.ts' />
@@ -140,6 +139,7 @@
 ///<reference path='content/form/inputtype/image/_module.ts' />
 ///<reference path='content/form/inputtype/tag/_module.ts' />
 ///<reference path='content/form/inputtype/geo/_module.ts' />
+///<reference path='content/site/inputtype/siteconfigurator/_module.ts' />
 
 ///<reference path='aggregation/_module.ts' />
 

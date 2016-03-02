@@ -1,6 +1,7 @@
 (function () {
-    var adminUrl = "/admin/tool/com.enonic.xp.admin.ui/launcher";
-    var launcherPanel, bodyMask, launcherButton;
+    var adminUrl = window.CONFIG && window.CONFIG.adminUrl || "/admin";
+    var launcherUrl = adminUrl + (adminUrl.slice(-1) == '/' ? "" : "/" ) + "tool/com.enonic.xp.admin.ui/launcher";
+    var launcherPanel, bodyMask, launcherButton, launcherMainContainer;
     var isHomeApp = window.CONFIG && window.CONFIG.appId == "home";
     var autoOpenLauncher = window.CONFIG && window.CONFIG.autoOpenLauncher;
     var appId = window.CONFIG ? window.CONFIG.appId : "";
@@ -48,10 +49,12 @@
         var link = document.createElement("link");
 
         link.setAttribute("rel", "import");
-        link.setAttribute("href", adminUrl);
+        link.setAttribute("href", launcherUrl);
 
         link.onload = function () {
-            container.appendChild(link.import.querySelector('.launcher-main-container'));
+            launcherMainContainer = link.import.querySelector('.launcher-main-container');
+            launcherMainContainer.setAttribute("hidden", "true");
+            container.appendChild(launcherMainContainer);
 
             if (autoOpenLauncher) {
                 openLauncherPanel();
@@ -115,6 +118,7 @@
     }
 
     function openLauncherPanel() {
+        launcherMainContainer.removeAttribute("hidden");
         listenToKeyboardEvents();
         toggleButton();
         showBodyMask();
@@ -123,6 +127,7 @@
     }
 
     function closeLauncherPanel(skipTransition) {
+        launcherMainContainer.setAttribute("hidden", "true");
         setTipVisibility("none");
         unlistenToKeyboardEvents();
         launcherPanel.classList.remove("visible");
@@ -165,7 +170,7 @@
         }
         var appRows = launcherPanel.querySelectorAll('.app-row');
         for (var i = 0; i < appRows.length; i++) {
-            if (appRows[i].id == appId ) {
+            if (appRows[i].id == appId) {
                 appRows[i].classList.add("active");
             }
         }
@@ -178,7 +183,7 @@
 
         e.stopPropagation();
 
-        switch(e.keyCode) {
+        switch (e.keyCode) {
         case 27:
             // esc key pressed
             closeLauncherPanel();
@@ -190,7 +195,7 @@
                 setTipVisibility("none");
             }
             break;
-         }
+        }
     }
 
     function init() {

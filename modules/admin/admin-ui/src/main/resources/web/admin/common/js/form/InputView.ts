@@ -153,6 +153,10 @@ module api.form {
             return this.inputTypeView.update(this.propertyArray, unchangedOnly);
         }
 
+        public getInputTypeView(): api.form.inputtype.InputTypeView<any> {
+            return this.inputTypeView;
+        }
+
         private createInputTypeView(): api.form.inputtype.InputTypeView<any> {
             var inputType: api.form.InputTypeName = this.input.getInputType();
             var inputTypeViewContext = this.getContext().createInputTypeViewContext(this.input.getInputTypeConfig(),
