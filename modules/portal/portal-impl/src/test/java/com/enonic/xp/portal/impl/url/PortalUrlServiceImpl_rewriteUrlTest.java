@@ -20,7 +20,7 @@ public class PortalUrlServiceImpl_rewriteUrlTest
     {
         final RewriteUrlParams params = new RewriteUrlParams().
             portalRequest( this.portalRequest ).
-            url( "/admin/tool/a.b.c/mytool" ).
+            url( "/admin" ).
             param( "a", 3 );
 
         final String url = this.service.rewriteUrl( params );
