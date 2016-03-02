@@ -48,12 +48,6 @@ module app.wizard {
             this.appendChild(form);
         }
 
-        //TODO remove
-        layout2(userStore: api.security.UserStore) {
-            this.authConfig = userStore.getAuthConfig();
-            this.selectAuthApplication();
-        }
-
         layout(pathGuard: api.security.PathGuard) {
             this.authConfig = pathGuard.getAuthConfig();
             this.selectAuthApplication();

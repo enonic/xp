@@ -19,8 +19,6 @@ module app.wizard {
 
         private descriptionWizardStepForm: PrincipalDescriptionWizardStepForm;
 
-        private authApplicationWizardStepForm: AuthApplicationWizardStepForm;
-
         private permissionsWizardStepForm: SecurityWizardStepForm;
 
         private defaultUserStore: UserStore;
@@ -35,7 +33,6 @@ module app.wizard {
         constructor(params: UserStoreWizardPanelParams, callback: (wizard: UserStoreWizardPanel) => void) {
 
             this.descriptionWizardStepForm = new PrincipalDescriptionWizardStepForm();
-            this.authApplicationWizardStepForm = new AuthApplicationWizardStepForm();
             this.permissionsWizardStepForm = new SecurityWizardStepForm();
 
             this.constructing = true;
@@ -142,7 +139,6 @@ module app.wizard {
             var steps: WizardStep[] = [];
 
             steps.push(new WizardStep("UserStore", this.descriptionWizardStepForm));
-            steps.push(new WizardStep("Authentication", this.authApplicationWizardStepForm));
             steps.push(new WizardStep("Permissions", this.permissionsWizardStepForm));
 
             this.setSteps(steps);
@@ -201,7 +197,6 @@ module app.wizard {
             var deferred = wemQ.defer<void>();
 
             this.wizardHeader.initNames(existing.getDisplayName(), existing.getKey().getId(), false);
-            this.authApplicationWizardStepForm.layout2(existing.clone());
             this.permissionsWizardStepForm.layout(existing.clone(), this.defaultUserStore);
 
             deferred.resolve(null);
@@ -240,7 +235,6 @@ module app.wizard {
             if (persistedUserStore == undefined) {
                 return this.wizardHeader.getName() !== "" ||
                        this.wizardHeader.getDisplayName() !== "" ||
-                       this.authApplicationWizardStepForm.getAuthConfig() != null ||
                        !this.permissionsWizardStepForm.getPermissions().equals(this.defaultUserStore.getPermissions());
             } else {
                 var viewedUserStore = this.assembleViewedUserStore();
@@ -264,7 +258,6 @@ module app.wizard {
             return new UserStoreBuilder().
                 setDisplayName(this.wizardHeader.getDisplayName()).
                 setKey(this.getPersistedItem().getKey().toString()).
-                setAuthConfig(this.authApplicationWizardStepForm.getAuthConfig()).
                 setPermissions(this.permissionsWizardStepForm.getPermissions()).
                 build();
         }
@@ -272,25 +265,21 @@ module app.wizard {
         private produceCreateUserStoreRequest(): CreateUserStoreRequest {
             var key = new UserStoreKey(this.wizardHeader.getName()),
                 name = this.wizardHeader.getDisplayName(),
-                authConfig = this.authApplicationWizardStepForm.getAuthConfig(),
                 permissions = this.permissionsWizardStepForm.getPermissions();
             return new CreateUserStoreRequest().
                 setDisplayName(name).
                 setKey(key).
-                setAuthConfig(authConfig).
                 setPermissions(permissions);
         }
 
         private produceUpdateUserStoreRequest(viewedUserStore: UserStore): UpdateUserStoreRequest {
             var key = this.getPersistedItem().getKey(),
                 name = viewedUserStore.getDisplayName(),
-                authConfig = viewedUserStore.getAuthConfig(),
                 permissions = viewedUserStore.getPermissions();
 
             return new UpdateUserStoreRequest().
                 setKey(key).
                 setDisplayName(name).
-                setAuthConfig(authConfig).
                 setPermissions(permissions);
         }
 

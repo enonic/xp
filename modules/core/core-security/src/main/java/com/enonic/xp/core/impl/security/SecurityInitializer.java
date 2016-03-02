@@ -124,22 +124,10 @@ final class SecurityInitializer
                                            UserStoreAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access(
                                                READ ).build() );
 
-        final PropertySet backgroundPropertySet = new PropertySet();
-        backgroundPropertySet.setString( "application", "com.enonic.xp.app.login" );
-        backgroundPropertySet.setString( "path", "img/background.jpg" );
-        final PropertyTree config = new PropertyTree();
-        config.setSet( "background", backgroundPropertySet );
-
-        final UserStoreAuthConfig authConfig = UserStoreAuthConfig.create().
-            applicationKey( ApplicationKey.from( "com.enonic.xp.app.login" ) ).
-            config( config ).
-            build();
-
         final CreateUserStoreParams createParams = CreateUserStoreParams.create().
             key( UserStoreKey.system() ).
             displayName( SYSTEM_USER_STORE_DISPLAY_NAME ).
             permissions( permissions ).
-            authConfig( authConfig ).
             build();
         this.securityService.createUserStore( createParams );
     }

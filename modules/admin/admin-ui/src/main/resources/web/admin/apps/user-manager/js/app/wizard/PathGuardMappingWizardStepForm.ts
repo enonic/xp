@@ -27,7 +27,7 @@ module app.wizard {
                     this.propertySet.addString("paths", path);
                 });
             } else {
-                this.propertySet.setString("paths", "");
+                this.propertySet.setString("paths", 0, "");
             }
 
 
