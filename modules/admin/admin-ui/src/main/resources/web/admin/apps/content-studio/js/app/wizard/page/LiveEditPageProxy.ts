@@ -34,6 +34,8 @@ module app.wizard.page {
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
     import ComponentResetEvent = api.liveedit.ComponentResetEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
+    import LiveEditPageDialogShownEvent = api.liveedit.LiveEditPageDialogShownEvent;
+    import LiveEditPageDialogHiddenEvent = api.liveedit.LiveEditPageDialogHiddenEvent;
     import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
     import RegionView = api.liveedit.RegionView;
@@ -96,6 +98,10 @@ module app.wizard.page {
         private liveEditPageViewReadyListeners: {(event: LiveEditPageViewReadyEvent): void;}[] = [];
 
         private liveEditPageInitErrorListeners: {(event: LiveEditPageInitializationErrorEvent): void;}[] = [];
+
+        private liveEditPageDialogShownListeners: {(event: LiveEditPageDialogShownEvent): void;}[] = [];
+
+        private liveEditPageDialogHiddenListeners: {(event: LiveEditPageDialogHiddenEvent): void;}[] = [];
 
         private LIVE_EDIT_ERROR_PAGE_BODY_ID = "wem-error-page";
 
@@ -403,6 +409,10 @@ module app.wizard.page {
             LiveEditPageViewReadyEvent.on(this.notifyLiveEditPageViewReady.bind(this), contextWindow);
 
             LiveEditPageInitializationErrorEvent.on(this.notifyLiveEditPageInitializationError.bind(this), contextWindow);
+
+            LiveEditPageDialogShownEvent.on(this.notifyLiveEditPageDialogShown.bind(this), contextWindow);
+
+            LiveEditPageDialogHiddenEvent.on(this.notifyLiveEditPageDialogHidden.bind(this), contextWindow);
         }
 
         onLoaded(listener: {(): void;}) {
@@ -671,6 +681,30 @@ module app.wizard.page {
 
         private notifyLiveEditPageInitializationError(event: LiveEditPageInitializationErrorEvent) {
             this.liveEditPageInitErrorListeners.forEach((listener) => listener(event));
+        }
+
+        onLiveEditPageDialogShown(listener: {(event: LiveEditPageDialogShownEvent): void;}) {
+            this.liveEditPageDialogShownListeners.push(listener);
+        }
+
+        unLiveEditPageDialogShown(listener: {(event: LiveEditPageDialogShownEvent): void;}) {
+            this.liveEditPageDialogShownListeners = this.liveEditPageDialogShownListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyLiveEditPageDialogShown(event: LiveEditPageDialogShownEvent) {
+            this.liveEditPageDialogShownListeners.forEach((listener) => listener(event));
+        }
+
+        onLiveEditPageDialogHidden(listener: {(event: LiveEditPageDialogHiddenEvent): void;}) {
+            this.liveEditPageDialogHiddenListeners.push(listener);
+        }
+
+        unLiveEditPageDialogHidden(listener: {(event: LiveEditPageDialogHiddenEvent): void;}) {
+            this.liveEditPageDialogHiddenListeners = this.liveEditPageDialogHiddenListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyLiveEditPageDialogHidden(event: LiveEditPageDialogHiddenEvent) {
+            this.liveEditPageDialogHiddenListeners.forEach((listener) => listener(event));
         }
 
         private copyObjectsBeforeFrameReloadForIE() {

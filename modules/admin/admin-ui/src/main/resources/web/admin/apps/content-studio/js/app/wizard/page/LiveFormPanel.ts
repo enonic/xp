@@ -473,7 +473,26 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onPageUnloaded((event: api.liveedit.PageUnloadedEvent) => {
                 this.contentWizardPanel.close();
-            })
+            });
+
+            this.liveEditPageProxy.onLiveEditPageDialogShown((event: api.liveedit.LiveEditPageDialogShownEvent) => {
+
+                if(this.contentWizardPanel.getContextWindowToggler().isActive()) {
+                    this.contentWizardPanel.getContextWindowToggler().setActive(false);
+                }
+                this.shade();
+
+                api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, this.shade);
+            });
+
+            this.liveEditPageProxy.onLiveEditPageDialogHidden((event: api.liveedit.LiveEditPageDialogHiddenEvent) => {
+                api.ui.responsive.ResponsiveManager.unAvailableSizeChanged(this);
+                api.liveedit.Shader.get().hide();
+            });
+        }
+
+        private shade() {
+            api.liveedit.Shader.get().shade(this);
         }
 
         private minimizeContentFormPanelIfNeeded() {
