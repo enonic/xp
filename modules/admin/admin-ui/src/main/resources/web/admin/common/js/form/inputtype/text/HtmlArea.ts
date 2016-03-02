@@ -122,8 +122,9 @@ module api.form.inputtype.text {
                 setSelector('textarea.' + id.replace(/\./g, '_')).
                 setAssetsUri(baseUrl).
                 setInline(false).
-                onDialogShown(dialog => this.modalDialog = dialog).
-                onDialogHidden(dialog => this.modalDialog = undefined).
+                onCreateDialog(event => {
+                    this.modalDialog = api.util.htmlarea.dialog.HTMLAreaDialogHandler.createAndOpenDialog(event)
+                }).
                 setOnFocusHandler(onFocusHandler).
                 setOnBlurHandler(onBlurHandler).
                 setOnKeydownHandler(onKeydownHandler).

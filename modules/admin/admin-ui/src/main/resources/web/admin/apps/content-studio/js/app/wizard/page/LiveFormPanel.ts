@@ -63,6 +63,9 @@ module app.wizard.page {
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
 
+    import HtmlAreaDialogShownEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
+    import HTMLAreaDialogHandler = api.util.htmlarea.dialog.HTMLAreaDialogHandler;
+
     import Panel = api.ui.panel.Panel;
 
     export interface LiveFormPanelConfig {
@@ -473,7 +476,16 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onPageUnloaded((event: api.liveedit.PageUnloadedEvent) => {
                 this.contentWizardPanel.close();
-            })
+            });
+
+            this.liveEditPageProxy.onLiveEditPageDialogCreate((event: HtmlAreaDialogShownEvent) => {
+                let modalDialog = HTMLAreaDialogHandler.createAndOpenDialog(event);
+                this.liveEditPageProxy.notifyLiveEditPageDialogCreated(modalDialog, event.getConfig());
+            });
+        }
+
+        private shade() {
+            api.liveedit.Shader.get().shade(this);
         }
 
         private minimizeContentFormPanelIfNeeded() {

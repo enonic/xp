@@ -38,6 +38,8 @@ module app.wizard.page {
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
     import RegionView = api.liveedit.RegionView;
 
+    import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
+    import LiveEditPageDialogCreatedEvent = api.liveedit.LiveEditPageDialogCreatedEvent;
 
     export class LiveEditPageProxy {
 
@@ -96,6 +98,8 @@ module app.wizard.page {
         private liveEditPageViewReadyListeners: {(event: LiveEditPageViewReadyEvent): void;}[] = [];
 
         private liveEditPageInitErrorListeners: {(event: LiveEditPageInitializationErrorEvent): void;}[] = [];
+
+        private createHtmlAreaDialogListeners: {(event: CreateHtmlAreaDialogEvent): void;}[] = [];
 
         private LIVE_EDIT_ERROR_PAGE_BODY_ID = "wem-error-page";
 
@@ -345,6 +349,8 @@ module app.wizard.page {
             LiveEditPageViewReadyEvent.un(null, contextWindow);
 
             LiveEditPageInitializationErrorEvent.un(null, contextWindow);
+
+            CreateHtmlAreaDialogEvent.un(null, contextWindow);
         }
 
         public listenToPage(contextWindow: any) {
@@ -403,6 +409,8 @@ module app.wizard.page {
             LiveEditPageViewReadyEvent.on(this.notifyLiveEditPageViewReady.bind(this), contextWindow);
 
             LiveEditPageInitializationErrorEvent.on(this.notifyLiveEditPageInitializationError.bind(this), contextWindow);
+
+            CreateHtmlAreaDialogEvent.on(this.notifyLiveEditPageDialogCreate.bind(this), contextWindow);
         }
 
         onLoaded(listener: {(): void;}) {
@@ -671,6 +679,22 @@ module app.wizard.page {
 
         private notifyLiveEditPageInitializationError(event: LiveEditPageInitializationErrorEvent) {
             this.liveEditPageInitErrorListeners.forEach((listener) => listener(event));
+        }
+
+        onLiveEditPageDialogCreate(listener: {(event: CreateHtmlAreaDialogEvent): void;}) {
+            this.createHtmlAreaDialogListeners.push(listener);
+        }
+
+        unLiveEditPageDialogCreate(listener: {(event: CreateHtmlAreaDialogEvent): void;}) {
+            this.createHtmlAreaDialogListeners = this.createHtmlAreaDialogListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyLiveEditPageDialogCreate(event: CreateHtmlAreaDialogEvent) {
+            this.createHtmlAreaDialogListeners.forEach((listener) => listener(event));
+        }
+
+        notifyLiveEditPageDialogCreated(modalDialog: api.util.htmlarea.dialog.ModalDialog, config:any) {
+            new LiveEditPageDialogCreatedEvent(modalDialog, config).fire(this.liveEditWindow);
         }
 
         private copyObjectsBeforeFrameReloadForIE() {
