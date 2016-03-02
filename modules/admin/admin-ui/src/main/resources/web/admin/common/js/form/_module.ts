@@ -1,5 +1,6 @@
 ///<reference path='FormItemPath.ts' />
 ///<reference path='FormItem.ts' />
+///<reference path='FormItemContainer.ts' />
 ///<reference path='Occurrences.ts' />
 ///<reference path='InputTypeName.ts' />
 ///<reference path='Input.ts' />
