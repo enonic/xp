@@ -16,6 +16,7 @@ import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
+import com.enonic.xp.portal.url.RewriteUrlParams;
 import com.enonic.xp.portal.url.ServiceUrlParams;
 
 @Component(immediate = true)
@@ -96,6 +97,12 @@ public final class PortalUrlServiceImpl
     public String attachmentUrl( final AttachmentUrlParams params )
     {
         return build( new AttachmentUrlBuilder(), params );
+    }
+
+    @Override
+    public String rewriteUrl( final RewriteUrlParams params )
+    {
+        return build( new RewriteUrlBuilder(), params );
     }
 
     @Override
