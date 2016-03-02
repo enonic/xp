@@ -59,7 +59,6 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    @Ignore
     public void process_single_image()
     {
         //Creates a content
@@ -76,7 +75,7 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
-            "<a href=\"/portal/draft/context/path/_/image/" + media.getId() + ":992a0004e50e58383fb909fea2b588dc714a7115/" + "width-768" +
+            "<a href=\"/portal/draft/context/path/_/image/" + media.getId() + ":992a0004e50e58383fb909fea2b588dc714a7115/" + "full" +
                 "/" + media.getName() +
                 "\">Image</a>", processedHtml );
     }
@@ -98,7 +97,7 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
-            "<a href=\"/portal/draft/context/path/_/image/" + media.getId() + ":992a0004e50e58383fb909fea2b588dc714a7115/" + "full" +
+            "<a href=\"/portal/draft/context/path/_/image/" + media.getId() + ":992a0004e50e58383fb909fea2b588dc714a7115/" + "width-768" +
                 "/" + media.getName() + "\">Image</a>", processedHtml );
     }
 
@@ -306,6 +305,6 @@ public class PortalUrlServiceImpl_processHtmlTest
         assertEquals( "<a href=\"/portal/draft/context/path/_/image/" + media.getId() + ":992a0004e50e58383fb909fea2b588dc714a7115/" +
                           "block-300-126" +
                           "/" + media.getName() +
-                          ".jpeg\">Image</a>", processedHtml );
+                          "\">Image</a>", processedHtml );
     }
 }
