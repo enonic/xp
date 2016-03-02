@@ -44,6 +44,7 @@ module api.liveedit.text {
         private lastClicked: number;
 
         private modalDialog: ModalDialog;
+        private currentDialogConfig;
 
         constructor(builder: TextComponentViewBuilder) {
 
@@ -79,6 +80,14 @@ module api.liveedit.text {
             this.onRemoved(() => {
                 this.destroyEditor();
             });
+
+            var handleDialogCreated = (event) => {
+                if(this.currentDialogConfig == event.getConfig()) {
+                    this.modalDialog = event.getModalDialog();
+                }
+            };
+
+            api.liveedit.LiveEditPageDialogCreatedEvent.on(handleDialogCreated.bind(this));
         }
 
         private getContentId(): api.content.ContentId {
@@ -283,8 +292,9 @@ module api.liveedit.text {
                 setSelector('div.' + id + ' .tiny-mce-here').
                 setAssetsUri(assetsUri).
                 setInline(true).
-                onDialogShown(dialog => this.modalDialog = dialog).
-                onDialogHidden(dialog => this.modalDialog = undefined).
+                onCreateDialog(event => {
+                    this.currentDialogConfig = event.getConfig();
+                }).
                 setOnFocusHandler(this.onFocusHandler.bind(this)).
                 setOnBlurHandler(this.onBlurHandler.bind(this)).
                 setOnKeydownHandler(this.onKeydownHandler.bind(this)).

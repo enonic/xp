@@ -7,9 +7,9 @@ module api.util.htmlarea.editor {
     import HtmlAreaAnchor = api.util.htmlarea.dialog.HtmlAreaAnchor;
     import HtmlAreaImage = api.util.htmlarea.dialog.HtmlAreaImage;
 
-    export class HTMLAreaBuilder {
+    import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
 
-        private modalDialog: api.util.htmlarea.dialog.ModalDialog;
+    export class HTMLAreaBuilder {
 
         private contentId: api.content.ContentId; // used for image dialog
 
@@ -19,13 +19,9 @@ module api.util.htmlarea.editor {
         private onBlurHandler: (e) => void;
         private onKeydownHandler: (e) => void;
         private onChangeHandler: (e) => void;
-        private dialogShownListeners: {(dialog: ModalDialog): void}[] = [];
-        private dialogHiddenListeners: {(dialog: ModalDialog): void}[] = [];
+        private createDialogListeners: {(event: CreateHtmlAreaDialogEvent): void}[] = [];
         private inline: boolean = false;
         private fixedToolbarContainer: string;
-
-        private dialogShownHandler;
-        private dialogHiddenHandler;
 
         setAssetsUri(assetsUri: string): HTMLAreaBuilder {
             this.assetsUri = assetsUri;
@@ -37,39 +33,21 @@ module api.util.htmlarea.editor {
             return this;
         }
 
-        onDialogShown(listener: (dialog: ModalDialog) => void) {
-            this.dialogShownListeners.push(listener);
+        onCreateDialog(listener: (event: CreateHtmlAreaDialogEvent) => void) {
+            this.createDialogListeners.push(listener);
             return this;
         }
 
-        unDialogShown(listener: (dialog: ModalDialog) => void) {
-            this.dialogShownListeners = this.dialogShownListeners.filter((curr) => {
+        unCreateDialog(listener: (event: CreateHtmlAreaDialogEvent) => void) {
+            this.createDialogListeners = this.createDialogListeners.filter((curr) => {
                 return curr !== listener;
             });
             return this;
         }
 
-        private notifyDialogShown(dialog: ModalDialog) {
-            this.dialogShownListeners.forEach((listener) => {
-                listener(dialog);
-            })
-        }
-
-        onDialogHidden(listener: (dialog: ModalDialog) => void) {
-            this.dialogHiddenListeners.push(listener);
-            return this;
-        }
-
-        unDialogHidden(listener: (dialog: ModalDialog) => void) {
-            this.dialogHiddenListeners = this.dialogHiddenListeners.filter((curr) => {
-                return curr !== listener;
-            });
-            return this;
-        }
-
-        private notifyDialogHidden(dialog: ModalDialog) {
-            this.dialogHiddenListeners.forEach((listener) => {
-                listener(dialog);
+        private notifyCreateDialog(event: CreateHtmlAreaDialogEvent) {
+            this.createDialogListeners.forEach((listener) => {
+                listener(event);
             })
         }
 
@@ -180,10 +158,10 @@ module api.util.htmlarea.editor {
                 autoresize_bottom_margin: 0,
 
                 setup: (editor) => {
-                    editor.addCommand("openLinkDialog", this.openLinkDialog, this);
-                    editor.addCommand("openAnchorDialog", this.openAnchorDialog, this);
-                    editor.addCommand("openImageDialog", this.openImageDialog, this);
-                    editor.on('NodeChange', (e) => {
+                    editor.addCommand("openLinkDialog", this.notifyLinkDialog, this);
+                    editor.addCommand("openAnchorDialog", this.notifyAnchorDialog, this);
+                    editor.addCommand("openImageDialog", this.notifyImageDialog, this) ;
+                    editor.on('NodeChange', (e) => {                   
                         if (!!this.onChangeHandler) {
                             this.onChangeHandler(e);
                         }
@@ -244,48 +222,34 @@ module api.util.htmlarea.editor {
             return deferred.promise;
         }
 
-        private openLinkDialog(config: HtmlAreaAnchor) {
-            this.createAndOpenDialog(new LinkModalDialog(config));
+        private notifyLinkDialog(config) {
+            let event = CreateHtmlAreaDialogEvent.create().
+                setConfig(config).
+                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.LINK).
+                build();
+            this.publishCreateDialogEvent(event);
         }
 
-        private openImageDialog(config: HtmlAreaImage) {
-            this.createAndOpenDialog(new ImageModalDialog(config, this.contentId));
+        private notifyImageDialog(config) {
+            let event = CreateHtmlAreaDialogEvent.create().
+                setConfig(config).
+                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.IMAGE).
+                setContentId(this.contentId).
+                build();
+            this.publishCreateDialogEvent(event);
         }
 
-        private openAnchorDialog(editor: HtmlAreaEditor) {
-            this.createAndOpenDialog(new AnchorModalDialog(editor));
+        private notifyAnchorDialog(config) {
+            let event = CreateHtmlAreaDialogEvent.create().
+                setConfig(config).
+                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.ANCHOR).
+                build();
+            this.publishCreateDialogEvent(event);
         }
 
-        private createAndOpenDialog(dialog: ModalDialog) {
-            if (!!this.modalDialog) {
-                this.modalDialog.remove();
-            }
-            this.modalDialog = dialog;
-            this.bindDialogListeners(dialog);
-
-            this.modalDialog.open();
+        private publishCreateDialogEvent(event: CreateHtmlAreaDialogEvent) {
+            this.notifyCreateDialog(event);
+            event.fire();
         }
-
-        private bindDialogListeners(dialog: ModalDialog) {
-            if (!this.dialogShownHandler) {
-                this.dialogShownHandler = (event: api.dom.ElementShownEvent) => {
-                    this.notifyDialogShown(<ModalDialog> event.getElement());
-                }
-            }
-            if (!this.dialogHiddenHandler) {
-                this.dialogHiddenHandler = (event: api.dom.ElementHiddenEvent) => {
-                    this.notifyDialogHidden(<ModalDialog> event.getElement());
-                }
-            }
-
-            dialog.onShown(this.dialogShownHandler);
-            dialog.onHidden(this.dialogHiddenHandler);
-
-            dialog.onRemoved(event => {
-                dialog.unShown(this.dialogShownHandler);
-                dialog.unHidden(this.dialogHiddenHandler);
-            })
-        }
-
     }
 }
