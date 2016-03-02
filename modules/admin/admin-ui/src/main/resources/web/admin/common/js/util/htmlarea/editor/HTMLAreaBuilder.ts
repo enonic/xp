@@ -11,8 +11,6 @@ module api.util.htmlarea.editor {
 
     export class HTMLAreaBuilder {
 
-        private modalDialog: api.util.htmlarea.dialog.ModalDialog;
-
         private contentId: api.content.ContentId; // used for image dialog
 
         private assetsUri: string;
@@ -21,8 +19,6 @@ module api.util.htmlarea.editor {
         private onBlurHandler: (e) => void;
         private onKeydownHandler: (e) => void;
         private onChangeHandler: (e) => void;
-        private dialogShownListeners: {(dialog: ModalDialog): void}[] = [];
-        private dialogHiddenListeners: {(dialog: ModalDialog): void}[] = [];
         private createDialogListeners: {(event: CreateHtmlAreaDialogEvent): void}[] = [];
         private inline: boolean = false;
         private fixedToolbarContainer: string;

@@ -22,8 +22,6 @@ module api.form.inputtype.text {
         private editors: HtmlAreaOccurrenceInfo[];
         private contentId: api.content.ContentId;
 
-        private modalDialog: ModalDialog;
-
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
 
             super(config);
@@ -93,9 +91,7 @@ module api.form.inputtype.text {
 
             var onBlurHandler = (e) => {
                 this.setStaticInputHeight();
-                if (!this.modalDialog || !this.modalDialog.isVisible()) {
                     textAreaWrapper.removeClass(focusedEditorCls);
-                }
             };
 
             var onKeydownHandler = (e) => {
@@ -118,13 +114,16 @@ module api.form.inputtype.text {
                 }
             };
 
+            var onCreateDialogHandler = event => {
+                api.util.htmlarea.dialog.HTMLAreaDialogHandler.createAndOpenDialog(event);
+                textAreaWrapper.addClass(focusedEditorCls);
+            };
+
             new HTMLAreaBuilder().
                 setSelector('textarea.' + id.replace(/\./g, '_')).
                 setAssetsUri(baseUrl).
                 setInline(false).
-                onCreateDialog(event => {
-                    this.modalDialog = api.util.htmlarea.dialog.HTMLAreaDialogHandler.createAndOpenDialog(event)
-                }).
+                onCreateDialog(onCreateDialogHandler).
                 setOnFocusHandler(onFocusHandler).
                 setOnBlurHandler(onBlurHandler).
                 setOnKeydownHandler(onKeydownHandler).
