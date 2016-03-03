@@ -202,6 +202,12 @@ module api.liveedit {
             this.listenToMouseEvents();
 
             this.onRemoved(event => this.unregisterPageModel(this.pageModel));
+
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+                if (this.isTextEditMode()) {
+                    this.updateVerticalSpaceForTinyMceToolbar();
+                }
+            });
         }
 
         private createCloseTextEditModeEl(): api.dom.Element {
@@ -439,13 +445,60 @@ module api.liveedit {
             });
 
             if (flag) {
+                this.addVerticalSpaceForTinyMceToolbar();
                 new PageTextModeStartedEvent(this).fire();
             }
             else {
+                this.removeVerticalSpaceForTinyMceToolbar();
                 api.liveedit.Highlighter.get().updateLastHighlightedItemView();
                 api.liveedit.SelectedHighlighter.get().updateLastHighlightedItemView();
             }
 
+        }
+
+        private addVerticalSpaceForTinyMceToolbar() {
+            this.getPageView().getEl().setPosition("relative");
+            this.updateVerticalSpaceForTinyMceToolbar()
+        }
+
+        private updateVerticalSpaceForTinyMceToolbar() {
+            var result = this.getTinyMceToolbarWidth();
+
+            if (!!result) {
+                this.getPageView().getEl().setTop(this.getTinyMceToolbarWidth() + "px");
+            }
+            else {
+                this.waitUntilTinyMceToolbarShown();
+            }
+
+        }
+
+        private waitUntilTinyMceToolbarShown() {
+            var intevalId,
+                toolbarHeight,
+                attempts = 0;
+
+            intevalId = setInterval(()=> {
+                attempts++;
+                toolbarHeight = this.getTinyMceToolbarWidth();
+                if (!!toolbarHeight) {
+                    this.getPageView().getEl().setTop(toolbarHeight + "px");
+                    clearInterval(intevalId);
+                }
+                else if (attempts > 10) {
+                    clearInterval(intevalId);
+                }
+            }, 50);
+
+        }
+
+        private removeVerticalSpaceForTinyMceToolbar() {
+            this.getEl().setPosition("");
+            this.getEl().setTop("");
+        }
+
+        private getTinyMceToolbarWidth(): number {
+            return wemjq(".mce-toolbar-container .mce-tinymce-inline:not([style*='display: none'])").outerHeight();
         }
 
         hasTargetWithinTextComponent(target: HTMLElement) {

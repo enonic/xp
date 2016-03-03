@@ -22,3 +22,28 @@
 .mce-content-body strong {
     font-family: "Open Sans Bold", "Open Sans", sans-serif;
 }
+
+.xp-page-editor-page-view .mce-abs-layout, .mce-toolbar-grp, .mce-flow-layout, .mce-container-body.mce-stack-layout {
+    width: auto !important;
+}
+
+.xp-page-editor-page-view .mce-toolbar-grp, .mce-tinymce-inline, .mce-container-body.mce-stack-layout, .mce-container-body.mce-abs-layout {
+    height: auto !important;
+}
+
+.xp-page-editor-page-view .mce-tinymce-inline .mce-flow-layout {
+    white-space: normal;
+    padding-right: 30px;
+}
+
+.xp-page-editor-page-view .mce-container-body.mce-abs-layout {
+    overflow: initial;
+}
+
+.xp-page-editor-page-view .mce-abs-layout-item, .mce-abs-end {
+    position: static;
+}
+
+.xp-page-editor-page-view .mce-toolbar {
+    display: flex;
+}
