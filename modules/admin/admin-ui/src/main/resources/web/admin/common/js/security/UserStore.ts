@@ -20,10 +20,6 @@ module api.security {
             return this.key;
         }
 
-        getId(): string {
-            return this.key.getId();
-        }
-
         getPermissions(): api.security.acl.UserStoreAccessControlList {
             return this.permissions;
         }
@@ -63,10 +59,7 @@ module api.security {
         }
 
         clone(): UserStore {
-            return UserStore.create().
-                setDisplayName(this.displayName).
-                setKey(this.key.toString()).
-                setPermissions(this.permissions.clone()).
+            return new UserStoreBuilder(this).
                 build();
         }
 
@@ -84,11 +77,18 @@ module api.security {
         key: UserStoreKey;
         permissions: api.security.acl.UserStoreAccessControlList;
 
-        constructor() {
-            super();
+        constructor(source?: UserStore) {
+            super(source);
+
+            if (source) {
+                this.setDisplayName(source.getDisplayName());
+                this.setKey(source.getKey().toString());
+                this.setPermissions(source.getPermissions().clone());
+            }
         }
 
         fromJson(json: api.security.UserStoreJson): UserStoreBuilder {
+            super.fromBaseItemJson(json, 'key');
             this.key = new UserStoreKey(json.key);
             this.displayName = json.displayName;
             this.permissions = json.permissions ? api.security.acl.UserStoreAccessControlList.fromJson(json.permissions) : null;
