@@ -21,9 +21,11 @@ public interface ApplicationService
 
     void stopApplication( ApplicationKey key, final boolean triggerEvent );
 
-    Application installApplication( final ByteSource byteSource, final boolean cluster, final boolean triggerEvent );
+    Application installGlobalApplication( final ByteSource byteSource );
 
-    Application installApplication( final NodeId nodeId );
+    Application installLocalApplication( final ByteSource byteSource );
+
+    Application installStoredApplication( final NodeId nodeId );
 
     void uninstallApplication( final ApplicationKey key, final boolean triggerEvent );
 

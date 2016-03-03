@@ -20,7 +20,14 @@ public class SimpleAuthFilter
         throws Exception
     {
         //Executes the rest of the filters with a wrapped response
-        final SimpleAuthResponseWrapper auth0ResponseWrapper = new SimpleAuthResponseWrapper( req, res );
-        chain.doFilter( req, auth0ResponseWrapper );
+        if ( req.getRequestURI().startsWith( "/admin/rest" ) )
+        {
+            chain.doFilter( req, res );
+        }
+        else
+        {
+            final SimpleAuthResponseWrapper auth0ResponseWrapper = new SimpleAuthResponseWrapper( req, res );
+            chain.doFilter( req, auth0ResponseWrapper );
+        }
     }
 }

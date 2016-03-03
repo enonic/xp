@@ -11,7 +11,7 @@ module app.wizard {
 
         private authApplicationCombobox: api.ui.security.auth.AuthApplicationComboBox;
         private authApplicationComboboxLoaded = false;
-        private authConfig: api.security.UserStoreAuthConfig;
+        private authConfig: api.security.AuthConfig;
 
         constructor() {
             super();
@@ -48,12 +48,6 @@ module app.wizard {
             this.appendChild(form);
         }
 
-        //TODO remove
-        layout2(userStore: api.security.UserStore) {
-            this.authConfig = userStore.getAuthConfig();
-            this.selectAuthApplication();
-        }
-
         layout(pathGuard: api.security.PathGuard) {
             this.authConfig = pathGuard.getAuthConfig();
             this.selectAuthApplication();
@@ -77,7 +71,7 @@ module app.wizard {
             }
         }
 
-        getAuthConfig(): api.security.UserStoreAuthConfig {
+        getAuthConfig(): api.security.AuthConfig {
             if (this.authApplicationCombobox.countSelected() == 0) {
                 return null;
             }

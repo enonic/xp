@@ -4,7 +4,7 @@ module app.wizard {
 
         pathGuard: api.security.PathGuard;
 
-        pathGuardKey: string;
+        pathGuardKey: api.security.PathGuardKey;
 
         setPathGuard(value: api.security.PathGuard): PathGuardWizardPanelParams {
             this.pathGuard = value;
@@ -16,7 +16,7 @@ module app.wizard {
             return this;
         }
 
-        setPathGuardKey(value: string): PathGuardWizardPanelParams {
+        setPathGuardKey(value: api.security.PathGuardKey): PathGuardWizardPanelParams {
             this.pathGuardKey = value;
             return this;
         }

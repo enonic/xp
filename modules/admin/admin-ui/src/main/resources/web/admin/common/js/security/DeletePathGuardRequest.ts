@@ -2,21 +2,21 @@ module api.security {
 
     export class DeletePathGuardRequest extends SecurityResourceRequest<DeletePathGuardResultsJson, DeletePathGuardResult[]> {
 
-        private keys: string[];
+        private keys: api.security.PathGuardKey[];
 
         constructor() {
             super();
             super.setMethod("POST");
         }
 
-        setKeys(keys: string[]): DeletePathGuardRequest {
+        setKeys(keys: api.security.PathGuardKey[]): DeletePathGuardRequest {
             this.keys = keys;
             return this;
         }
 
         getParams(): Object {
             return {
-                keys: this.keys
+                keys: this.keys.map(pathGuardKey => pathGuardKey.toString())
             }
         }
 

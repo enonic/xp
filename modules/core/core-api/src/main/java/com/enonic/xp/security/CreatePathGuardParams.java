@@ -8,11 +8,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Beta
 public final class CreatePathGuardParams
 {
-    private final String key;
+    private final PathGuardKey key;
 
     private final String displayName;
 
-    private final UserStoreAuthConfig authConfig;
+    private final AuthConfig authConfig;
 
     private final ImmutableList<String> paths;
 
@@ -24,7 +24,7 @@ public final class CreatePathGuardParams
         this.paths = builder.paths.build();
     }
 
-    public String getKey()
+    public PathGuardKey getKey()
     {
         return key;
     }
@@ -34,7 +34,7 @@ public final class CreatePathGuardParams
         return displayName;
     }
 
-    public UserStoreAuthConfig getAuthConfig()
+    public AuthConfig getAuthConfig()
     {
         return authConfig;
     }
@@ -51,11 +51,11 @@ public final class CreatePathGuardParams
 
     public static class Builder
     {
-        private String key;
+        private PathGuardKey key;
 
         private String displayName;
 
-        private UserStoreAuthConfig authConfig;
+        private AuthConfig authConfig;
 
         private ImmutableList.Builder<String> paths = ImmutableList.builder();
 
@@ -63,7 +63,7 @@ public final class CreatePathGuardParams
         {
         }
 
-        public Builder key( final String value )
+        public Builder key( final PathGuardKey value )
         {
             this.key = value;
             return this;
@@ -75,7 +75,7 @@ public final class CreatePathGuardParams
             return this;
         }
 
-        public Builder authConfig( final UserStoreAuthConfig value )
+        public Builder authConfig( final AuthConfig value )
         {
             this.authConfig = value;
             return this;

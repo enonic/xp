@@ -7,13 +7,25 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 public class UriScriptHelper
 {
-    public static final String ADMIN_ASSETS_URI_PREFIX = "/admin/assets/" + generateVersion();
+    private static final String ADMIN_URI_PREFIX = "/admin";
 
-    public static final String ADMIN_TOOLS_URI_PREFIX = "/admin/tool";
+    private static final String ADMIN_ASSETS_URI_PREFIX = "/admin/assets/" + generateVersion();
+
+    private static final String ADMIN_TOOLS_URI_PREFIX = "/admin/tool";
 
     public static final String rewriteUri( final String uri )
     {
         return ServletRequestUrlHelper.createUri( uri );
+    }
+
+    public static final String generateAdminUri()
+    {
+        return rewriteUri( ADMIN_URI_PREFIX );
+    }
+
+    public static final String generateAdminAssetsUri()
+    {
+        return rewriteUri( ADMIN_ASSETS_URI_PREFIX );
     }
 
     public static final String generateAdminToolUri()
@@ -26,6 +38,13 @@ public class UriScriptHelper
         String uri = ADMIN_TOOLS_URI_PREFIX + "/" + application + "/" + adminTool;
         return rewriteUri( uri );
     }
+
+    public static final String generateBackgroundUri()
+    {
+        String uri = ADMIN_URI_PREFIX + "/common/images/background-1920.jpg";
+        return rewriteUri( uri );
+    }
+
 
     private static final String generateVersion()
     {

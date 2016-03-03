@@ -1,6 +1,6 @@
 module api.security {
 
-    export interface UserStoreAuthConfigJson {
+    export interface AuthConfigJson {
         applicationKey: string;
         config: api.data.PropertyArrayJson[];
     }

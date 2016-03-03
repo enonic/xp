@@ -114,6 +114,12 @@ public class UrlServiceScriptTest
     }
 
     @Test
+    public void testExample_rewriteUrl()
+    {
+        runScript( "/site/lib/xp/examples/portal/rewriteUrl.js" );
+    }
+
+    @Test
     public void testExample_processHtml()
     {
         runScript( "/site/lib/xp/examples/portal/processHtml.js" );

@@ -287,7 +287,8 @@ module app.wizard {
                         if (this.isMinimized()) {
                             this.toggleMinimize();
                         }
-                        this.cycleViewModeButton.executePrevAction();
+                        this.showForm();
+                        this.cycleViewModeButton.selectActiveAction(this.wizardActions.getShowFormAction());
                     }
                 } else {
                     if (this.inMobileViewMode && this.isLiveView()) {

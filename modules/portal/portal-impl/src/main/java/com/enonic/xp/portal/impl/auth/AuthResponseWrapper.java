@@ -25,7 +25,7 @@ import com.enonic.xp.portal.impl.error.PortalError;
 import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
 import com.enonic.xp.security.PathGuard;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.UserStoreAuthConfig;
+import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.web.HttpStatus;
@@ -148,7 +148,7 @@ public class AuthResponseWrapper
     {
         if ( 403 == sc || 401 == sc )
         {
-            final UserStoreAuthConfig authConfig = pathGuard.getAuthConfig();
+            final AuthConfig authConfig = pathGuard.getAuthConfig();
             final AuthDescriptor authDescriptor = retrieveAuthDescriptor( authConfig );
 
             if ( authDescriptor != null )
@@ -184,7 +184,7 @@ public class AuthResponseWrapper
         }
     }
 
-    private AuthDescriptor retrieveAuthDescriptor( final UserStoreAuthConfig authConfig )
+    private AuthDescriptor retrieveAuthDescriptor( final AuthConfig authConfig )
     {
         if ( authConfig != null )
         {

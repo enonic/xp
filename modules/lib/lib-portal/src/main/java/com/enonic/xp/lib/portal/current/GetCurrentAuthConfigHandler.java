@@ -5,7 +5,7 @@ import com.enonic.xp.lib.content.mapper.PropertyTreeMapper;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
-import com.enonic.xp.security.UserStoreAuthConfig;
+import com.enonic.xp.security.AuthConfig;
 
 public final class GetCurrentAuthConfigHandler
     implements ScriptBean
@@ -14,7 +14,7 @@ public final class GetCurrentAuthConfigHandler
 
     public PropertyTreeMapper execute()
     {
-        final UserStoreAuthConfig authConfig = this.request.getAuthConfig();
+        final AuthConfig authConfig = this.request.getAuthConfig();
         if ( authConfig != null )
         {
             final PropertyTree configPropertyTree = authConfig.getConfig();

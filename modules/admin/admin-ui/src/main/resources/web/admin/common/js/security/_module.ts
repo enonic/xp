@@ -1,7 +1,7 @@
 ///<reference path="PrincipalType.ts"/>
 ///<reference path="UserStoreKey.ts"/>
-///<reference path="UserStoreAuthConfig.ts"/>
-///<reference path="UserStoreAuthConfigJson.ts"/>
+///<reference path="AuthConfig.ts"/>
+///<reference path="AuthConfigJson.ts"/>
 ///<reference path="PrincipalKey.ts"/>
 ///<reference path="RoleKeys.ts"/>
 ///<reference path="Principal.ts"/>
@@ -15,6 +15,7 @@
 ///<reference path="User.ts"/>
 ///<reference path="Group.ts"/>
 ///<reference path="Role.ts"/>
+///<reference path="PathGuardKey.ts"/>
 ///<reference path="PathGuard.ts"/>
 ///<reference path="UserStore.ts"/>
 ///<reference path="UserStoreJson.ts"/>

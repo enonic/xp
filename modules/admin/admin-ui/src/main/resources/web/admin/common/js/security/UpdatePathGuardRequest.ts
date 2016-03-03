@@ -2,9 +2,9 @@ module api.security {
 
     export class UpdatePathGuardRequest extends SecurityResourceRequest<PathGuardJson, PathGuard> {
 
-        private key: string;
+        private key: PathGuardKey;
         private displayName: string;
-        private authConfig: UserStoreAuthConfig;
+        private authConfig: AuthConfig;
         private paths: string[];
 
         constructor() {
@@ -14,14 +14,14 @@ module api.security {
 
         getParams(): Object {
             return {
-                key: this.key,
+                key: this.key.toString(),
                 displayName: this.displayName,
                 authConfig: this.authConfig ? this.authConfig.toJson() : undefined,
                 paths: this.paths ? this.paths : []
             };
         }
 
-        setKey(key: string): UpdatePathGuardRequest {
+        setKey(key: PathGuardKey): UpdatePathGuardRequest {
             this.key = key;
             return this;
         }
@@ -31,7 +31,7 @@ module api.security {
             return this;
         }
 
-        setAuthConfig(authConfig: UserStoreAuthConfig): UpdatePathGuardRequest {
+        setAuthConfig(authConfig: AuthConfig): UpdatePathGuardRequest {
             this.authConfig = authConfig;
             return this;
         }

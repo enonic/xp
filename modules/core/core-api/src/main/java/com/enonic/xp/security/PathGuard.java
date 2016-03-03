@@ -6,11 +6,11 @@ import com.google.common.collect.ImmutableSet;
 @Beta
 public final class PathGuard
 {
-    private final String key;
+    private final PathGuardKey key;
 
     private final String displayName;
 
-    private final UserStoreAuthConfig authConfig;
+    private final AuthConfig authConfig;
 
     private final ImmutableSet<String> paths;
 
@@ -22,7 +22,7 @@ public final class PathGuard
         this.paths = builder.paths.build();
     }
 
-    public String getKey()
+    public PathGuardKey getKey()
     {
         return key;
     }
@@ -32,7 +32,7 @@ public final class PathGuard
         return displayName;
     }
 
-    public UserStoreAuthConfig getAuthConfig()
+    public AuthConfig getAuthConfig()
     {
         return authConfig;
     }
@@ -49,11 +49,11 @@ public final class PathGuard
 
     public static class Builder
     {
-        private String key;
+        private PathGuardKey key;
 
         private String displayName;
 
-        private UserStoreAuthConfig authConfig;
+        private AuthConfig authConfig;
 
         private ImmutableSet.Builder<String> paths = ImmutableSet.builder();
 
@@ -61,7 +61,7 @@ public final class PathGuard
         {
         }
 
-        public Builder key( final String value )
+        public Builder key( final PathGuardKey value )
         {
             this.key = value;
             return this;
@@ -74,7 +74,7 @@ public final class PathGuard
             return this;
         }
 
-        public Builder authConfig( final UserStoreAuthConfig value )
+        public Builder authConfig( final AuthConfig value )
         {
             this.authConfig = value;
             return this;

@@ -46,7 +46,7 @@ import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.UpdateUserStoreParams;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreAuthConfig;
+import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.acl.UserStoreAccess;
@@ -621,14 +621,13 @@ public class SecurityResourceTest
     {
         final PropertyTree config = new PropertyTree();
         config.setString( "propertyName", "propertyValue" );
-        final UserStoreAuthConfig authConfig = UserStoreAuthConfig.create().
+        final AuthConfig authConfig = AuthConfig.create().
             applicationKey( ApplicationKey.from( "com.enonic.app.ldap" ) ).
             config( config ).
             build();
         final UserStore userStore1 = UserStore.create().
             key( USER_STORE_1 ).
             displayName( "Local LDAP" ).
-            authConfig( authConfig ).
             build();
 
         final UserStore userStore2 = UserStore.create().

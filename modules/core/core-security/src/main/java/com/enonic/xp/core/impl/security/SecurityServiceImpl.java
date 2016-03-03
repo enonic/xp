@@ -53,6 +53,7 @@ import com.enonic.xp.security.CreateUserStoreParams;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.PathGuard;
 import com.enonic.xp.security.PathGuardAlreadyExistsException;
+import com.enonic.xp.security.PathGuardKey;
 import com.enonic.xp.security.PathGuardNotFoundException;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalAlreadyExistsException;
@@ -76,7 +77,6 @@ import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.UpdateUserStoreParams;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreAuthConfig;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.UserStoreNotFoundException;
 import com.enonic.xp.security.UserStores;
@@ -826,16 +826,8 @@ public final class SecurityServiceImpl
     @Override
     public UserStore createUserStore( final CreateUserStoreParams createUserStoreParams )
     {
-        final String displayName = createUserStoreParams.getDisplayName();
-        final UserStoreAuthConfig authConfig = createUserStoreParams.getAuthConfig();
-
         final PropertyTree data = new PropertyTree();
-        data.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, displayName );
-        if ( authConfig != null )
-        {
-            data.setString( UserStorePropertyNames.AUTH_APPLICATION_KEY, authConfig.getApplicationKey().toString() );
-            data.setSet( UserStorePropertyNames.AUTH_CONFIG_FORM_KEY, authConfig.getConfig().getRoot() );
-        }
+        data.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, createUserStoreParams.getDisplayName() );
 
         final Node node = callWithContext( () -> {
 
@@ -992,7 +984,7 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public Optional<PathGuard> getPathGuardByKey( final String key )
+    public Optional<PathGuard> getPathGuardByKey( final PathGuardKey key )
     {
         try
         {
@@ -1029,7 +1021,8 @@ public final class SecurityServiceImpl
     public PathGuard createPathGuard( final CreatePathGuardParams params )
     {
 
-        final PathGuard pathGuard = PathGuard.create().key( params.getKey() ).
+        final PathGuard pathGuard = PathGuard.create().
+            key( params.getKey() ).
             displayName( params.getDisplayName() ).
             authConfig( params.getAuthConfig() ).
             addAllPaths( params.getPaths() ).
@@ -1074,7 +1067,7 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public void deletePathGuard( final String key )
+    public void deletePathGuard( final PathGuardKey key )
     {
         final Node deletedNode = callWithContext( () -> {
             final Node node = this.nodeService.deleteById( PathGuardNodeTranslator.getNodeId( key ) );

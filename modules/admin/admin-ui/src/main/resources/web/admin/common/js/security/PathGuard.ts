@@ -1,9 +1,9 @@
 module api.security {
 
     export class PathGuard implements api.Equitable {
-        private key: string;
+        private key: PathGuardKey;
         private displayName: string;
-        private authConfig: UserStoreAuthConfig;
+        private authConfig: AuthConfig;
         private paths: string[];
 
         constructor(builder: PathGuardBuilder) {
@@ -13,7 +13,7 @@ module api.security {
             this.paths = builder.paths;
         }
 
-        getKey(): string {
+        getKey(): PathGuardKey {
             return this.key;
         }
 
@@ -21,7 +21,7 @@ module api.security {
             return this.displayName;
         }
 
-        getAuthConfig(): UserStoreAuthConfig {
+        getAuthConfig(): AuthConfig {
             return this.authConfig;
         }
 
@@ -62,22 +62,22 @@ module api.security {
 
     export class PathGuardBuilder {
         displayName: string;
-        key: string;
-        authConfig: UserStoreAuthConfig;
+        key: PathGuardKey;
+        authConfig: AuthConfig;
         paths: string[];
 
         constructor() {
         }
 
         fromJson(json: PathGuardJson): PathGuardBuilder {
-            this.key = json.key;
+            this.key = PathGuardKey.fromString(json.key);
             this.displayName = json.displayName;
-            this.authConfig = json.authConfig ? UserStoreAuthConfig.fromJson(json.authConfig) : null;
+            this.authConfig = json.authConfig ? AuthConfig.fromJson(json.authConfig) : null;
             this.paths = json.paths;
             return this;
         }
 
-        setKey(key: string): PathGuardBuilder {
+        setKey(key: PathGuardKey): PathGuardBuilder {
             this.key = key;
             return this;
         }
@@ -87,7 +87,7 @@ module api.security {
             return this;
         }
 
-        setAuthConfig(authConfig: UserStoreAuthConfig): PathGuardBuilder {
+        setAuthConfig(authConfig: AuthConfig): PathGuardBuilder {
             this.authConfig = authConfig;
             return this;
         }

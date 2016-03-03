@@ -18,7 +18,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.region.Component;
-import com.enonic.xp.security.UserStoreAuthConfig;
+import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
@@ -56,7 +56,7 @@ public final class PortalRequest
 
     private Site site;
 
-    private UserStoreAuthConfig authConfig;
+    private AuthConfig authConfig;
 
     private Content content;
 
@@ -190,7 +190,7 @@ public final class PortalRequest
         return site;
     }
 
-    public UserStoreAuthConfig getAuthConfig()
+    public AuthConfig getAuthConfig()
     {
         return authConfig;
     }
@@ -200,7 +200,7 @@ public final class PortalRequest
         this.site = site;
     }
 
-    public void setAuthConfig( final UserStoreAuthConfig authConfig )
+    public void setAuthConfig( final AuthConfig authConfig )
     {
         this.authConfig = authConfig;
     }

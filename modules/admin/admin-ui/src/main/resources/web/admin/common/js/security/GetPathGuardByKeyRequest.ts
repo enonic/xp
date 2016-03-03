@@ -2,9 +2,9 @@ module api.security {
 
     export class GetPathGuardByKeyRequest extends SecurityResourceRequest<PathGuardJson, PathGuard> {
 
-        private key: string;
+        private key: api.security.PathGuardKey;
 
-        constructor(key: string) {
+        constructor(key: api.security.PathGuardKey) {
             super();
             super.setMethod("GET");
             this.key = key;
@@ -12,7 +12,7 @@ module api.security {
 
         getParams(): Object {
             return {
-                key: this.key
+                key: this.key.toString()
             };
         }
 

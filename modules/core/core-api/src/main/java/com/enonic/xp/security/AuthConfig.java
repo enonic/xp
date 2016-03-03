@@ -10,13 +10,13 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 
 @Beta
-public final class UserStoreAuthConfig
+public final class AuthConfig
 {
     private final ApplicationKey applicationKey;
 
     private final PropertyTree config;
 
-    private UserStoreAuthConfig( final Builder builder )
+    private AuthConfig( final Builder builder )
     {
         Preconditions.checkNotNull( builder.applicationKey, "applicationKey cannot be null" );
         Preconditions.checkNotNull( builder.config, "config cannot be null" );
@@ -46,7 +46,7 @@ public final class UserStoreAuthConfig
             return false;
         }
 
-        final UserStoreAuthConfig that = (UserStoreAuthConfig) o;
+        final AuthConfig that = (AuthConfig) o;
 
         return Objects.equals( this.applicationKey, that.applicationKey ) && Objects.equals( this.config, that.config );
     }
@@ -80,9 +80,9 @@ public final class UserStoreAuthConfig
             return this;
         }
 
-        public UserStoreAuthConfig build()
+        public AuthConfig build()
         {
-            return new UserStoreAuthConfig( this );
+            return new AuthConfig( this );
         }
     }
 }

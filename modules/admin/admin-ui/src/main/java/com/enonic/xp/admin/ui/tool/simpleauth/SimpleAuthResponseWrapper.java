@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import com.google.common.base.Strings;
 
 import com.enonic.xp.admin.ui.tool.UriScriptHelper;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 public class SimpleAuthResponseWrapper
     extends HttpServletResponseWrapper
@@ -130,7 +131,7 @@ public class SimpleAuthResponseWrapper
     private void redirect()
         throws IOException
     {
-        StringBuffer uri = new StringBuffer( request.getRequestURI() );
+        StringBuffer uri = new StringBuffer( ServletRequestUrlHelper.createUri( request.getRequestURI()) );
         if ( !Strings.isNullOrEmpty( request.getQueryString() ) )
         {
             uri.append( "?" ).

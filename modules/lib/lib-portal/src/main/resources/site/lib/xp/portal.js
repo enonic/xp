@@ -125,6 +125,23 @@ exports.serviceUrl = function (params) {
 };
 
 /**
+ * This function rewrites a server-relative URL.
+ *
+ * @example-ref examples/portal/rewriteUrl.js
+ *
+ * @param {object} params Input parameters as JSON.
+ * @param {string} params.url Server-relative URL to rewrite.
+ * @param {string} [params.type=server] URL returned type. Either  server  (server-relative URL) or absolute .
+ * @param {object} [params.params] Custom parameters to append to the url.
+ *
+ * @returns {string} The rewritten URL.
+ */
+exports.rewriteUrl = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.portal.url.RewriteUrlHandler');
+    return bean.createUrl(__.toScriptValue(params));
+};
+
+/**
  * This function replaces abstract internal links contained in an HTML text by generated URLs.
  *
  * When outputting processed HTML in Thymeleaf, use attribute `data-th-utext="${processedHtml}"`.

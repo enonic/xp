@@ -1,5 +1,4 @@
 {
-  "authConfig": null,
   "displayName": "Enonic User Store",
   "key": "enonic",
   "permissions": [

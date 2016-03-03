@@ -163,7 +163,7 @@ public interface SecurityService
 
     ImmutableList<PathGuard> getPathGuards();
 
-    Optional<PathGuard> getPathGuardByKey( String key );
+    Optional<PathGuard> getPathGuardByKey( PathGuardKey key );
 
     Optional<PathGuard> getPathGuardByPath( String path );
 
@@ -171,5 +171,5 @@ public interface SecurityService
 
     PathGuard updatePathGuard( UpdatePathGuardParams updatePathGuardParams );
 
-    void deletePathGuard( String key );
+    void deletePathGuard( PathGuardKey key );
 }

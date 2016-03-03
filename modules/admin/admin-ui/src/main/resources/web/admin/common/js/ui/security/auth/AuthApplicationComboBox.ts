@@ -26,7 +26,7 @@ module api.ui.security.auth {
 
         private application: api.application.Application;
 
-        private authConfig: api.security.UserStoreAuthConfig;
+        private authConfig: api.security.AuthConfig;
 
         private formView;
 
@@ -34,17 +34,17 @@ module api.ui.security.auth {
         constructor(option: api.ui.selector.Option<api.application.Application>) {
             super(option);
             this.application = option.displayValue;
-            this.authConfig = api.security.UserStoreAuthConfig.create().
+            this.authConfig = api.security.AuthConfig.create().
                 setConfig(new api.data.PropertyTree(undefined)).
                 setApplicationKey(this.application.getApplicationKey()).
                 build();
         }
 
-        getAuthConfig(): api.security.UserStoreAuthConfig {
+        getAuthConfig(): api.security.AuthConfig {
             return this.authConfig;
         }
 
-        setAuthConfig(authConfig: api.security.UserStoreAuthConfig) {
+        setAuthConfig(authConfig: api.security.AuthConfig) {
             this.authConfig = authConfig;
         }
 
@@ -74,7 +74,7 @@ module api.ui.security.auth {
         initAndOpenConfigureDialog() {
             if (this.application.getAuthForm().getFormItems().length > 0) {
 
-                var tempSiteConfig: api.security.UserStoreAuthConfig = this.makeTemporaryAuthConfig();
+                var tempSiteConfig: api.security.AuthConfig = this.makeTemporaryAuthConfig();
                 var formViewStateOnDialogOpen = this.formView;
                 this.formView = this.createFormView(tempSiteConfig);
 
@@ -94,13 +94,13 @@ module api.ui.security.auth {
             }
         }
 
-        private makeTemporaryAuthConfig(): api.security.UserStoreAuthConfig {
-            return api.security.UserStoreAuthConfig.create().
+        private makeTemporaryAuthConfig(): api.security.AuthConfig {
+            return api.security.AuthConfig.create().
                 setConfig(this.authConfig.getConfig().copy()).
                 setApplicationKey(this.authConfig.getApplicationKey()).build();
         }
 
-        private createFormView(authConfig: api.security.UserStoreAuthConfig): api.form.FormView {
+        private createFormView(authConfig: api.security.AuthConfig): api.form.FormView {
             var formView = new api.form.FormView(api.form.FormContext.create().build(), this.application.getAuthForm(),
                 authConfig.getConfig().getRoot());
             formView.addClass("site-form");
@@ -114,7 +114,7 @@ module api.ui.security.auth {
             return formView;
         }
 
-        private applyTemporaryConfig(tempSiteConfig: api.security.UserStoreAuthConfig) {
+        private applyTemporaryConfig(tempSiteConfig: api.security.AuthConfig) {
             tempSiteConfig.getConfig().getRoot().forEach((property) => {
                 this.authConfig.getConfig().setProperty(property.getName(), property.getIndex(), property.getValue());
             });

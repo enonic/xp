@@ -10,17 +10,18 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.CreatePathGuardParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.CreateUserStoreParams;
+import com.enonic.xp.security.PathGuardKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreAuthConfig;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
@@ -124,22 +125,10 @@ final class SecurityInitializer
                                            UserStoreAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access(
                                                READ ).build() );
 
-        final PropertySet backgroundPropertySet = new PropertySet();
-        backgroundPropertySet.setString( "application", "com.enonic.xp.app.login" );
-        backgroundPropertySet.setString( "path", "img/background.jpg" );
-        final PropertyTree config = new PropertyTree();
-        config.setSet( "background", backgroundPropertySet );
-
-        final UserStoreAuthConfig authConfig = UserStoreAuthConfig.create().
-            applicationKey( ApplicationKey.from( "com.enonic.xp.app.login" ) ).
-            config( config ).
-            build();
-
         final CreateUserStoreParams createParams = CreateUserStoreParams.create().
             key( UserStoreKey.system() ).
             displayName( SYSTEM_USER_STORE_DISPLAY_NAME ).
             permissions( permissions ).
-            authConfig( authConfig ).
             build();
         this.securityService.createUserStore( createParams );
     }
@@ -236,12 +225,12 @@ final class SecurityInitializer
         final PropertyTree config = new PropertyTree();
         config.setSet( "background", backgroundPropertySet );
 
-        final UserStoreAuthConfig authConfig = UserStoreAuthConfig.create().
+        final AuthConfig authConfig = AuthConfig.create().
             applicationKey( ApplicationKey.from( "com.enonic.xp.app.login" ) ).
             config( config ).
             build();
         final CreatePathGuardParams createPathGuardParams = CreatePathGuardParams.create().
-            key( "admin" ).
+            key( PathGuardKey.admin() ).
             displayName( "Admin guard" ).
             addPaths( "/admin" ).
             authConfig( authConfig ).

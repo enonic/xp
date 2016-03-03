@@ -34,6 +34,7 @@
 <!-- Configuration -->
 <script type="text/javascript">
     var CONFIG = {
+        adminUrl: '{{adminUrl}}',
         autoOpenLauncher: true,
         appId: 'home'
     };
@@ -45,7 +46,7 @@
 
 <div class="home-main-container" tabindex="100" style="">
     <div id="background-image" class="lazy-image empty"
-         style="background-image: url(&quot;/admin/common/images/background-1920.jpg&quot;);"></div>
+         style="background-image: url(&quot;{{backgroundUri}}&quot;);"></div>
     <div class="header">
         <span>Welcome to Enonic XP</span>
     </div>

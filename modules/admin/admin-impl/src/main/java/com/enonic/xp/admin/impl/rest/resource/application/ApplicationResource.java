@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -36,6 +37,7 @@ import com.enonic.xp.admin.impl.rest.resource.application.json.ListApplicationJs
 import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.auth.AuthDescriptor;
@@ -63,6 +65,8 @@ public final class ApplicationResource
     private MarketService marketService;
 
     private AuthDescriptorService authDescriptorService;
+
+    private final static String[] ALLOWED_PROTOCOLS = {"http", "https"};
 
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
 
@@ -108,10 +112,17 @@ public final class ApplicationResource
     @GET
     public ApplicationJson getByKey( @QueryParam("applicationKey") String applicationKey )
     {
-        final Application application = this.applicationService.getInstalledApplication( ApplicationKey.from( applicationKey ) );
-        final boolean local = this.applicationService.isLocalApplication( ApplicationKey.from( applicationKey ) );
-        final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( ApplicationKey.from( applicationKey ) );
-        final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( ApplicationKey.from( applicationKey ) );
+        final ApplicationKey appKey = ApplicationKey.from( applicationKey );
+        final Application application = this.applicationService.getInstalledApplication( appKey );
+
+        if ( application == null )
+        {
+            throw new ApplicationNotFoundException( appKey );
+        }
+
+        final boolean local = this.applicationService.isLocalApplication( appKey );
+        final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( appKey );
+        final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( appKey );
         return new ApplicationJson( application, local, siteDescriptor, authDescriptor );
     }
 
@@ -176,9 +187,18 @@ public final class ApplicationResource
         {
             final URL url = new URL( urlString );
 
-            try (final InputStream inputStream = url.openStream())
+            if ( ArrayUtils.contains( ALLOWED_PROTOCOLS, url.getProtocol() ) )
             {
-                return installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ), urlString );
+                try (final InputStream inputStream = url.openStream())
+                {
+                    return installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ), urlString );
+                }
+            }
+            else
+            {
+                failure = "Illegal protocol: " + url.getProtocol();
+                result.setFailure( failure );
+                return result;
             }
 
         }
@@ -190,12 +210,13 @@ public final class ApplicationResource
         }
     }
 
-    private ApplicationInstallResultJson installApplication(final ByteSource byteSource, final String applicationName) {
+    private ApplicationInstallResultJson installApplication( final ByteSource byteSource, final String applicationName )
+    {
         final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
 
         try
         {
-            final Application application = this.applicationService.installApplication(byteSource, true, true );
+            final Application application = this.applicationService.installGlobalApplication( byteSource );
 
             result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
         }
