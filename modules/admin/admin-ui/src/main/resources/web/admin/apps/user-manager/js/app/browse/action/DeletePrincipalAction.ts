@@ -88,11 +88,11 @@ module app.browse.action {
                             new api.security.DeletePathGuardRequest()
                                 .setKeys(pathGuardKeys)
                                 .send()
-                                .done((jsonResponse: api.rest.JsonResponse<any>) => {
+                                .done((jsonResponse: api.rest.JsonResponse<api.security.DeletePathGuardResultsJson>) => {
                                     var json = jsonResponse.getJson();
 
                                     if (json.results && json.results.length > 0) {
-                                        var key = json.results[0].ryjeth;
+                                        var key = json.results[0].getKey();
 
                                         api.notify.showFeedback('Path guard [' + key + '] deleted!');
                                         api.security.UserItemDeletedEvent.create().setPathGuards(pathGuardItems).build().fire();

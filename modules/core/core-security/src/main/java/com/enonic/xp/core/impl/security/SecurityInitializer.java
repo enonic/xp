@@ -10,17 +10,18 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.CreatePathGuardParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.CreateUserStoreParams;
+import com.enonic.xp.security.PathGuardKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
@@ -229,7 +230,7 @@ final class SecurityInitializer
             config( config ).
             build();
         final CreatePathGuardParams createPathGuardParams = CreatePathGuardParams.create().
-            key( "admin" ).
+            key( PathGuardKey.admin() ).
             displayName( "Admin guard" ).
             addPaths( "/admin" ).
             authConfig( authConfig ).

@@ -15,6 +15,7 @@
 ///<reference path="User.ts"/>
 ///<reference path="Group.ts"/>
 ///<reference path="Role.ts"/>
+///<reference path="PathGuardKey.ts"/>
 ///<reference path="PathGuard.ts"/>
 ///<reference path="UserStore.ts"/>
 ///<reference path="UserStoreJson.ts"/>

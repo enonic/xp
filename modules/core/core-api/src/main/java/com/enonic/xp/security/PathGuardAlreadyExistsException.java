@@ -8,8 +8,8 @@ import com.enonic.xp.exception.BaseException;
 public class PathGuardAlreadyExistsException
     extends BaseException
 {
-    public PathGuardAlreadyExistsException( final String key )
+    public PathGuardAlreadyExistsException( final PathGuardKey key )
     {
-        super( "Path guard [{0}] already exists", key );
+        super( "Path guard [{0}] already exists", key.toString() );
     }
 }

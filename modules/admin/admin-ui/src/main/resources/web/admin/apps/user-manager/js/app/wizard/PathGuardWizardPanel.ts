@@ -21,7 +21,7 @@ module app.wizard {
         private authApplicationWizardStepForm: AuthApplicationWizardStepForm;
         private pathGuardMappingWizardStepForm: PathGuardMappingWizardStepForm;
 
-        private persistedPathGuardKey: string;
+        private persistedPathGuardKey: api.security.PathGuardKey;
 
         isPathGuardFormValid: boolean;
         pathGuardPath: string;
@@ -194,7 +194,7 @@ module app.wizard {
         postLayoutPersisted(existing: PathGuard): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
-            this.wizardHeader.initNames(existing.getDisplayName(), existing.getKey(), false);
+            this.wizardHeader.initNames(existing.getDisplayName(), existing.getKey().toString(), false);
             this.authApplicationWizardStepForm.layout(existing.clone());
             this.pathGuardMappingWizardStepForm.layout(existing.clone());
 
@@ -250,21 +250,21 @@ module app.wizard {
             }
         }
 
-        getPersistedItemKey(): string {
+        getPersistedItemKey(): api.security.PathGuardKey {
             return this.persistedPathGuardKey;
         }
 
         private assembleViewedPathGuard(): PathGuard {
             return new PathGuardBuilder().
                 setDisplayName(this.wizardHeader.getDisplayName()).
-                setKey(this.getPersistedItem().getKey().toString()).
+                setKey(this.getPersistedItem().getKey()).
                 setAuthConfig(this.authApplicationWizardStepForm.getAuthConfig()).
                 setPaths(this.pathGuardMappingWizardStepForm.getPaths()).
                 build();
         }
 
         private produceCreatePathGuardRequest(): CreatePathGuardRequest {
-            var key = this.wizardHeader.getName(),
+            var key = api.security.PathGuardKey.fromString(this.wizardHeader.getName()),
                 name = this.wizardHeader.getDisplayName(),
                 authConfig = this.authApplicationWizardStepForm.getAuthConfig(),
                 paths = this.pathGuardMappingWizardStepForm.getPaths();

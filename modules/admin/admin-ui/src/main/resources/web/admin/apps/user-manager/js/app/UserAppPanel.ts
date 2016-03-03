@@ -140,7 +140,7 @@ module app {
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(wizard.getPersistedItem(), api.security.PathGuard)) {
                 displayName = (<api.security.PathGuard>wizard.getPersistedItem()).getDisplayName() ||
                               api.content.ContentUnnamed.prettifyUnnamed((<app.wizard.PathGuardWizardPanel>wizard).getUserItemType());
-                id = (<api.security.PathGuard>wizard.getPersistedItem()).getKey();
+                id = (<api.security.PathGuard>wizard.getPersistedItem()).getKey().getId();
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(wizard.getPersistedItem(), api.security.UserStore)) {
                 displayName = (<api.security.UserStore>wizard.getPersistedItem()).getDisplayName() ||
                               api.content.ContentUnnamed.prettifyUnnamed((<app.wizard.UserStoreWizardPanel>wizard).getUserItemType());
@@ -385,7 +385,7 @@ module app {
             if (UserTreeGridItemType.PRINCIPAL == userItem.getType()) {
                 appBarTabId = AppBarTabId.forEdit(userItem.getPrincipal().getKey().getId());
             } else if (UserTreeGridItemType.PATH_GUARD == userItem.getType()) {
-                appBarTabId = AppBarTabId.forEdit(userItem.getPathGuard().getKey());
+                appBarTabId = AppBarTabId.forEdit(userItem.getPathGuard().getKey().getId());
             } else if (UserTreeGridItemType.USER_STORE == userItem.getType()) {
                 appBarTabId = AppBarTabId.forEdit(userItem.getUserStore().getKey().getId());
             }

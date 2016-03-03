@@ -53,6 +53,7 @@ import com.enonic.xp.security.CreateUserStoreParams;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.PathGuard;
 import com.enonic.xp.security.PathGuardAlreadyExistsException;
+import com.enonic.xp.security.PathGuardKey;
 import com.enonic.xp.security.PathGuardNotFoundException;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalAlreadyExistsException;
@@ -983,7 +984,7 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public Optional<PathGuard> getPathGuardByKey( final String key )
+    public Optional<PathGuard> getPathGuardByKey( final PathGuardKey key )
     {
         try
         {
@@ -1020,7 +1021,8 @@ public final class SecurityServiceImpl
     public PathGuard createPathGuard( final CreatePathGuardParams params )
     {
 
-        final PathGuard pathGuard = PathGuard.create().key( params.getKey() ).
+        final PathGuard pathGuard = PathGuard.create().
+            key( params.getKey() ).
             displayName( params.getDisplayName() ).
             authConfig( params.getAuthConfig() ).
             addAllPaths( params.getPaths() ).
@@ -1065,7 +1067,7 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public void deletePathGuard( final String key )
+    public void deletePathGuard( final PathGuardKey key )
     {
         final Node deletedNode = callWithContext( () -> {
             final Node node = this.nodeService.deleteById( PathGuardNodeTranslator.getNodeId( key ) );

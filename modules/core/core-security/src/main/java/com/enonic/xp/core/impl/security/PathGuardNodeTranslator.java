@@ -11,9 +11,10 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.security.PathGuard;
-import com.enonic.xp.security.UpdatePathGuardParams;
 import com.enonic.xp.security.AuthConfig;
+import com.enonic.xp.security.PathGuard;
+import com.enonic.xp.security.PathGuardKey;
+import com.enonic.xp.security.UpdatePathGuardParams;
 
 public class PathGuardNodeTranslator
 {
@@ -26,9 +27,9 @@ public class PathGuardNodeTranslator
         return PARENT_NODE_PATH;
     }
 
-    static NodeId getNodeId( final String key )
+    static NodeId getNodeId( final PathGuardKey key )
     {
-        return NodeId.from( "pathguard:" + key );
+        return NodeId.from( "pathguard:" + key.toString() );
     }
 
     static ImmutableList<PathGuard> fromNodes( final Nodes nodes )
@@ -42,7 +43,7 @@ public class PathGuardNodeTranslator
 
     static PathGuard fromNode( final Node node )
     {
-        final String key = node.name().toString();
+        final PathGuardKey key = PathGuardKey.from( node.name().toString() );
         final PropertySet data = node.data().getRoot();
         final String displayName = data.getString( PathGuardPropertyPaths.DISPLAY_NAME_PATH );
 
@@ -71,7 +72,7 @@ public class PathGuardNodeTranslator
     {
         final CreateNodeParams.Builder builder = CreateNodeParams.create().
             setNodeId( getNodeId( pathGuard.getKey() ) ).
-            name( pathGuard.getKey() ).
+            name( pathGuard.getKey().toString() ).
             parent( getPathGuardsNodePath() ).
             inheritPermissions( true ).
             indexConfigDocument( PrincipalIndexConfigFactory.create() );

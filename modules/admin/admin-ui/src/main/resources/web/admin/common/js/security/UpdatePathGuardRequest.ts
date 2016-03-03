@@ -2,7 +2,7 @@ module api.security {
 
     export class UpdatePathGuardRequest extends SecurityResourceRequest<PathGuardJson, PathGuard> {
 
-        private key: string;
+        private key: PathGuardKey;
         private displayName: string;
         private authConfig: AuthConfig;
         private paths: string[];
@@ -14,14 +14,14 @@ module api.security {
 
         getParams(): Object {
             return {
-                key: this.key,
+                key: this.key.toString(),
                 displayName: this.displayName,
                 authConfig: this.authConfig ? this.authConfig.toJson() : undefined,
                 paths: this.paths ? this.paths : []
             };
         }
 
-        setKey(key: string): UpdatePathGuardRequest {
+        setKey(key: PathGuardKey): UpdatePathGuardRequest {
             this.key = key;
             return this;
         }

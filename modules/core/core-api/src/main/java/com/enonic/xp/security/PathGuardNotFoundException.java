@@ -8,8 +8,8 @@ import com.enonic.xp.exception.BaseException;
 public class PathGuardNotFoundException
     extends BaseException
 {
-    public PathGuardNotFoundException( final String key )
+    public PathGuardNotFoundException( final PathGuardKey key )
     {
-        super( "PathGuard [{0}] not found", key );
+        super( "PathGuard [{0}] not found", key.toString() );
     }
 }

@@ -6,13 +6,13 @@ module app.wizard {
 
         private creatingForNew: boolean;
 
-        private pathGuardKey: string;
+        private pathGuardKey: api.security.PathGuardKey;
 
         private appBarTabId: api.app.bar.AppBarTabId;
 
         private pathGuardToEdit: PathGuard;
 
-        setPathGuardKey(value: string): PathGuardWizardPanelFactory {
+        setPathGuardKey(value: api.security.PathGuardKey): PathGuardWizardPanelFactory {
             this.pathGuardKey = value;
             return this;
         }

@@ -55,6 +55,7 @@ import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.PathGuard;
+import com.enonic.xp.security.PathGuardKey;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -406,7 +407,7 @@ public final class SecurityResource
             return null;
         }
 
-        final Optional<PathGuard> pathGuard = securityService.getPathGuardByKey( key );
+        final Optional<PathGuard> pathGuard = securityService.getPathGuardByKey( PathGuardKey.from( key ) );
         if ( !pathGuard.isPresent() )
         {
             throw JaxRsExceptions.notFound( String.format( "Path guard [%s] not found", pathGuard ) );
@@ -447,7 +448,7 @@ public final class SecurityResource
         deletePrincipalJson.getKeys().stream().forEach( ( key ) -> {
             try
             {
-                securityService.deletePathGuard( key );
+                securityService.deletePathGuard( PathGuardKey.from( key ) );
                 resultsJson.add( DeletePathGuardResultJson.success( key ) );
             }
             catch ( Exception e )

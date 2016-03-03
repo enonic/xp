@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.security.CreatePathGuardParams;
+import com.enonic.xp.security.PathGuardKey;
 
 public final class CreatePathGuardJson
 {
@@ -17,7 +18,7 @@ public final class CreatePathGuardJson
                                 @JsonProperty("paths") final String[] paths )
     {
         this.createPathGuardParams = CreatePathGuardParams.create().
-            key( key ).
+            key( PathGuardKey.from( key ) ).
             displayName( displayName ).
             authConfig( authConfigJson == null ? null : authConfigJson.getAuthConfig() ).
             addPaths( paths ).

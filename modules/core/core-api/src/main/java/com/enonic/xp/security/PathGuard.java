@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableSet;
 @Beta
 public final class PathGuard
 {
-    private final String key;
+    private final PathGuardKey key;
 
     private final String displayName;
 
@@ -22,7 +22,7 @@ public final class PathGuard
         this.paths = builder.paths.build();
     }
 
-    public String getKey()
+    public PathGuardKey getKey()
     {
         return key;
     }
@@ -49,7 +49,7 @@ public final class PathGuard
 
     public static class Builder
     {
-        private String key;
+        private PathGuardKey key;
 
         private String displayName;
 
@@ -61,7 +61,7 @@ public final class PathGuard
         {
         }
 
-        public Builder key( final String value )
+        public Builder key( final PathGuardKey value )
         {
             this.key = value;
             return this;

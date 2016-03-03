@@ -8,7 +8,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Beta
 public final class CreatePathGuardParams
 {
-    private final String key;
+    private final PathGuardKey key;
 
     private final String displayName;
 
@@ -24,7 +24,7 @@ public final class CreatePathGuardParams
         this.paths = builder.paths.build();
     }
 
-    public String getKey()
+    public PathGuardKey getKey()
     {
         return key;
     }
@@ -51,7 +51,7 @@ public final class CreatePathGuardParams
 
     public static class Builder
     {
-        private String key;
+        private PathGuardKey key;
 
         private String displayName;
 
@@ -63,7 +63,7 @@ public final class CreatePathGuardParams
         {
         }
 
-        public Builder key( final String value )
+        public Builder key( final PathGuardKey value )
         {
             this.key = value;
             return this;
