@@ -343,9 +343,9 @@ public final class SecurityServiceImpl
         {
             Thread.sleep( secureRandom.nextInt( 130 ) + 20 );
         }
-        catch ( Exception e )
+        catch ( InterruptedException e )
         {
-            e.printStackTrace();
+            // Thread interrupted during sleep, nothing to do
         }
     }
 
