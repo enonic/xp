@@ -1,5 +1,4 @@
 {
-  "authConfig": null,
   "displayName": "Enonic User Store",
   "key": "enonic",
   "permissions": [
@@ -8,7 +7,7 @@
       "principal": {
         "displayName": "User 1",
         "key": "user:system:user1",
-        "modifiedTime": "1970-01-01T00:00:00Z"
+        "modifiedTime" : "1970-01-01T00:00:00Z"
       }
     }
   ]

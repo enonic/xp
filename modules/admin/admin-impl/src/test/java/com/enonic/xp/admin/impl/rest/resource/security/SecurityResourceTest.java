@@ -628,7 +628,6 @@ public class SecurityResourceTest
         final UserStore userStore1 = UserStore.create().
             key( USER_STORE_1 ).
             displayName( "Local LDAP" ).
-            authConfig( authConfig ).
             build();
 
         final UserStore userStore2 = UserStore.create().
