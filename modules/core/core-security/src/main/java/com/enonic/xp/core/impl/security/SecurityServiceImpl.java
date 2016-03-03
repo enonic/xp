@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.security;
 
+import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
@@ -104,6 +105,8 @@ public final class SecurityServiceImpl
     }
 
     private final PasswordEncoder passwordEncoder = new PBKDF2Encoder();
+
+    private final SecureRandom secureRandom = new SecureRandom();
 
     @Activate
     public void initialize()
@@ -312,6 +315,8 @@ public final class SecurityServiceImpl
     @Override
     public AuthenticationInfo authenticate( final AuthenticationToken token )
     {
+        addRandomDelay();
+
         if ( token.getUserStore() != null )
         {
             return doAuthenticate( token );
@@ -329,6 +334,18 @@ public final class SecurityServiceImpl
                 }
             }
             return AuthenticationInfo.unAuthenticated();
+        }
+    }
+
+    private void addRandomDelay()
+    {
+        try
+        {
+            Thread.sleep( secureRandom.nextInt( 130 ) + 20 );
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
         }
     }
 
