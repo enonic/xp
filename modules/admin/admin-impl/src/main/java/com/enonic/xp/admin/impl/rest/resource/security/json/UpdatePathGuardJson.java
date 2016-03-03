@@ -13,13 +13,13 @@ public final class UpdatePathGuardJson
 
     @JsonCreator
     public UpdatePathGuardJson( @JsonProperty("key") final String key, @JsonProperty("displayName") final String displayName,
-                                @JsonProperty("authConfig") final UserStoreAuthConfigJson authConfigJson,
+                                @JsonProperty("authConfig") final AuthConfigJson authConfigJson,
                                 @JsonProperty("paths") final String[] paths )
     {
         this.updatePathGuardParams = UpdatePathGuardParams.create().
             key( key ).
             displayName( displayName ).
-            authConfig( authConfigJson == null ? null : authConfigJson.getUserStoreAuthConfig() ).
+            authConfig( authConfigJson == null ? null : authConfigJson.getAuthConfig() ).
             addPaths( paths ).
             build();
     }

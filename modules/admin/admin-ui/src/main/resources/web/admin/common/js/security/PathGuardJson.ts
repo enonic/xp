@@ -4,7 +4,7 @@ module api.security {
 
         key: string;
         displayName: string;
-        authConfig?: UserStoreAuthConfigJson;
+        authConfig?: AuthConfigJson;
         paths: string[];
     }
 }

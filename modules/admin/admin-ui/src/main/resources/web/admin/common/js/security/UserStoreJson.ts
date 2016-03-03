@@ -4,7 +4,7 @@ module api.security {
 
         displayName: string;
         key: string;
-        authConfig?: UserStoreAuthConfigJson;
+        authConfig?: AuthConfigJson;
         permissions?: api.security.acl.UserStoreAccessControlEntryJson[];
     }
 }

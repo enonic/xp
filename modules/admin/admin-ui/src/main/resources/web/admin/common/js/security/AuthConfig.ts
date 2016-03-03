@@ -1,9 +1,9 @@
 module api.security {
-    export class UserStoreAuthConfig implements api.Equitable {
+    export class AuthConfig implements api.Equitable {
         private applicationKey: api.application.ApplicationKey;
         private config: api.data.PropertyTree;
 
-        constructor(builder: UserStoreAuthConfigBuilder) {
+        constructor(builder: AuthConfigBuilder) {
             this.applicationKey = builder.applicationKey;
             this.config = builder.config;
         }
@@ -17,66 +17,66 @@ module api.security {
         }
 
         equals(o: api.Equitable): boolean {
-            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, UserStoreAuthConfig)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, AuthConfig)) {
                 return false;
             }
 
-            var other = <UserStoreAuthConfig> o;
+            var other = <AuthConfig> o;
 
             return this.applicationKey.equals(other.applicationKey) &&
                    this.config.equals(other.config)
         }
 
-        toJson(): UserStoreAuthConfigJson {
+        toJson(): AuthConfigJson {
             return {
                 "applicationKey": this.applicationKey.toString(),
                 "config": this.config.toJson()
             };
         }
 
-        clone(): UserStoreAuthConfig {
-            return UserStoreAuthConfig.create().
+        clone(): AuthConfig {
+            return AuthConfig.create().
                 setApplicationKey(this.applicationKey).
                 setConfig(this.config.copy()).
                 build();
         }
 
-        static create(): UserStoreAuthConfigBuilder {
-            return new UserStoreAuthConfigBuilder();
+        static create(): AuthConfigBuilder {
+            return new AuthConfigBuilder();
         }
 
-        static fromJson(json: UserStoreAuthConfigJson): UserStoreAuthConfig {
-            return new UserStoreAuthConfigBuilder().fromJson(json).build();
+        static fromJson(json: AuthConfigJson): AuthConfig {
+            return new AuthConfigBuilder().fromJson(json).build();
         }
 
     }
 
-    export class UserStoreAuthConfigBuilder {
+    export class AuthConfigBuilder {
         applicationKey: api.application.ApplicationKey;
         config: api.data.PropertyTree;
 
         constructor() {
         }
 
-        setApplicationKey(applicationKey: api.application.ApplicationKey): UserStoreAuthConfigBuilder {
+        setApplicationKey(applicationKey: api.application.ApplicationKey): AuthConfigBuilder {
             this.applicationKey = applicationKey;
             return this;
         }
 
-        setConfig(config: api.data.PropertyTree): UserStoreAuthConfigBuilder {
+        setConfig(config: api.data.PropertyTree): AuthConfigBuilder {
             this.config = config;
             return this;
         }
 
 
-        fromJson(json: api.security.UserStoreAuthConfigJson): UserStoreAuthConfigBuilder {
+        fromJson(json: api.security.AuthConfigJson): AuthConfigBuilder {
             this.applicationKey = api.application.ApplicationKey.fromString(json.applicationKey);
             this.config = json.config != null ? api.data.PropertyTree.fromJson(json.config) : null;
             return this;
         }
 
-        build(): UserStoreAuthConfig {
-            return new UserStoreAuthConfig(this);
+        build(): AuthConfig {
+            return new AuthConfig(this);
         }
     }
 }

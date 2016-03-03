@@ -20,7 +20,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreAuthConfig;
+import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
@@ -224,7 +224,7 @@ final class SecurityInitializer
         final PropertyTree config = new PropertyTree();
         config.setSet( "background", backgroundPropertySet );
 
-        final UserStoreAuthConfig authConfig = UserStoreAuthConfig.create().
+        final AuthConfig authConfig = AuthConfig.create().
             applicationKey( ApplicationKey.from( "com.enonic.xp.app.login" ) ).
             config( config ).
             build();

@@ -12,7 +12,7 @@ public final class CreatePathGuardParams
 
     private final String displayName;
 
-    private final UserStoreAuthConfig authConfig;
+    private final AuthConfig authConfig;
 
     private final ImmutableList<String> paths;
 
@@ -34,7 +34,7 @@ public final class CreatePathGuardParams
         return displayName;
     }
 
-    public UserStoreAuthConfig getAuthConfig()
+    public AuthConfig getAuthConfig()
     {
         return authConfig;
     }
@@ -55,7 +55,7 @@ public final class CreatePathGuardParams
 
         private String displayName;
 
-        private UserStoreAuthConfig authConfig;
+        private AuthConfig authConfig;
 
         private ImmutableList.Builder<String> paths = ImmutableList.builder();
 
@@ -75,7 +75,7 @@ public final class CreatePathGuardParams
             return this;
         }
 
-        public Builder authConfig( final UserStoreAuthConfig value )
+        public Builder authConfig( final AuthConfig value )
         {
             this.authConfig = value;
             return this;

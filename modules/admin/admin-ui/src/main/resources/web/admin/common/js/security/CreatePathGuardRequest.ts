@@ -4,7 +4,7 @@ module api.security {
 
         private key: string;
         private displayName: string;
-        private authConfig: UserStoreAuthConfig;
+        private authConfig: AuthConfig;
         private paths: string[];
 
         constructor() {
@@ -31,7 +31,7 @@ module api.security {
             return this;
         }
 
-        setAuthConfig(authConfig: UserStoreAuthConfig): CreatePathGuardRequest {
+        setAuthConfig(authConfig: AuthConfig): CreatePathGuardRequest {
             this.authConfig = authConfig;
             return this;
         }

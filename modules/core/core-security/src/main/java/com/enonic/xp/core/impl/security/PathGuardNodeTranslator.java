@@ -13,7 +13,7 @@ import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.PathGuard;
 import com.enonic.xp.security.UpdatePathGuardParams;
-import com.enonic.xp.security.UserStoreAuthConfig;
+import com.enonic.xp.security.AuthConfig;
 
 public class PathGuardNodeTranslator
 {
@@ -52,7 +52,7 @@ public class PathGuardNodeTranslator
         {
             final String applicationKey = data.getString( PathGuardPropertyPaths.AUTH_CONFIG_APPLICATION_PATH );
             final PropertySet config = data.getSet( PathGuardPropertyPaths.AUTH_CONFIG_FORM_PATH );
-            final UserStoreAuthConfig authConfig = UserStoreAuthConfig.create().
+            final AuthConfig authConfig = AuthConfig.create().
                 applicationKey( ApplicationKey.from( applicationKey ) ).
                 config( config.toTree() ).
                 build();
@@ -80,7 +80,7 @@ public class PathGuardNodeTranslator
         data.setString( PathGuardPropertyPaths.DISPLAY_NAME_PATH, pathGuard.getDisplayName() );
         data.addStrings( PathGuardPropertyPaths.PATHS_PATH.toString(), pathGuard.getPaths() );
 
-        final UserStoreAuthConfig authConfig = pathGuard.getAuthConfig();
+        final AuthConfig authConfig = pathGuard.getAuthConfig();
         if ( authConfig != null )
         {
             data.setString( PathGuardPropertyPaths.AUTH_CONFIG_APPLICATION_PATH, authConfig.getApplicationKey().toString() );
@@ -94,7 +94,7 @@ public class PathGuardNodeTranslator
     static UpdateNodeParams toUpdateNodeParams( final UpdatePathGuardParams params, final NodeId nodeId )
     {
         final String displayName = params.getDisplayName();
-        final UserStoreAuthConfig authConfig = params.getAuthConfig();
+        final AuthConfig authConfig = params.getAuthConfig();
         final ImmutableList<String> paths = params.getPaths();
         return UpdateNodeParams.create().
             id( nodeId ).

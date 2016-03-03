@@ -11,7 +11,7 @@ module app.wizard {
 
         private authApplicationCombobox: api.ui.security.auth.AuthApplicationComboBox;
         private authApplicationComboboxLoaded = false;
-        private authConfig: api.security.UserStoreAuthConfig;
+        private authConfig: api.security.AuthConfig;
 
         constructor() {
             super();
@@ -71,7 +71,7 @@ module app.wizard {
             }
         }
 
-        getAuthConfig(): api.security.UserStoreAuthConfig {
+        getAuthConfig(): api.security.AuthConfig {
             if (this.authApplicationCombobox.countSelected() == 0) {
                 return null;
             }

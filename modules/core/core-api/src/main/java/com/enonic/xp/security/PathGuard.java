@@ -10,7 +10,7 @@ public final class PathGuard
 
     private final String displayName;
 
-    private final UserStoreAuthConfig authConfig;
+    private final AuthConfig authConfig;
 
     private final ImmutableSet<String> paths;
 
@@ -32,7 +32,7 @@ public final class PathGuard
         return displayName;
     }
 
-    public UserStoreAuthConfig getAuthConfig()
+    public AuthConfig getAuthConfig()
     {
         return authConfig;
     }
@@ -53,7 +53,7 @@ public final class PathGuard
 
         private String displayName;
 
-        private UserStoreAuthConfig authConfig;
+        private AuthConfig authConfig;
 
         private ImmutableSet.Builder<String> paths = ImmutableSet.builder();
 
@@ -74,7 +74,7 @@ public final class PathGuard
             return this;
         }
 
-        public Builder authConfig( final UserStoreAuthConfig value )
+        public Builder authConfig( final AuthConfig value )
         {
             this.authConfig = value;
             return this;

@@ -3,7 +3,7 @@ module api.security {
     export class PathGuard implements api.Equitable {
         private key: string;
         private displayName: string;
-        private authConfig: UserStoreAuthConfig;
+        private authConfig: AuthConfig;
         private paths: string[];
 
         constructor(builder: PathGuardBuilder) {
@@ -21,7 +21,7 @@ module api.security {
             return this.displayName;
         }
 
-        getAuthConfig(): UserStoreAuthConfig {
+        getAuthConfig(): AuthConfig {
             return this.authConfig;
         }
 
@@ -63,7 +63,7 @@ module api.security {
     export class PathGuardBuilder {
         displayName: string;
         key: string;
-        authConfig: UserStoreAuthConfig;
+        authConfig: AuthConfig;
         paths: string[];
 
         constructor() {
@@ -72,7 +72,7 @@ module api.security {
         fromJson(json: PathGuardJson): PathGuardBuilder {
             this.key = json.key;
             this.displayName = json.displayName;
-            this.authConfig = json.authConfig ? UserStoreAuthConfig.fromJson(json.authConfig) : null;
+            this.authConfig = json.authConfig ? AuthConfig.fromJson(json.authConfig) : null;
             this.paths = json.paths;
             return this;
         }
@@ -87,7 +87,7 @@ module api.security {
             return this;
         }
 
-        setAuthConfig(authConfig: UserStoreAuthConfig): PathGuardBuilder {
+        setAuthConfig(authConfig: AuthConfig): PathGuardBuilder {
             this.authConfig = authConfig;
             return this;
         }

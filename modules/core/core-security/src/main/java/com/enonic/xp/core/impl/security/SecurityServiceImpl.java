@@ -76,7 +76,6 @@ import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.UpdateUserStoreParams;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreAuthConfig;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.UserStoreNotFoundException;
 import com.enonic.xp.security.UserStores;
