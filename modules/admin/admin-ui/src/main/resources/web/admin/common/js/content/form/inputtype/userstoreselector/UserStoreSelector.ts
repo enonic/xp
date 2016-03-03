@@ -33,12 +33,14 @@ module api.content.form.inputtype.contentselector {
         }
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
-            console.log("USS.layout");
-
             super.layout(input, propertyArray);
 
             this.userStoreKey = this.getValueFromPropertyArray(propertyArray);
+            this.createComboBox(input);
+            return wemQ<void>(null);
+        }
 
+        private createComboBox(input: api.form.Input) {
             this.comboBox = new api.ui.security.UserStoreComboBox(input.getOccurrences().getMaximum());
             var appComboboxLoadingListener = () => {
                 this.comboBox.unLoaded(appComboboxLoadingListener);
@@ -65,8 +67,6 @@ module api.content.form.inputtype.contentselector {
             };
             this.comboBox.onLoaded(appComboboxLoadingListener);
             this.comboBox.getLoader().load();
-
-            return wemQ<void>(null);
         }
 
         private selectUserStore(): void {
