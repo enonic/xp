@@ -36,7 +36,7 @@ module api.form {
      * * A [[FormItemSet]] groups a set of [[FormItem]]s, both visually and the data.
      * * A [[FieldSet]] is a [[Layout]] which only visually groups [[FormItem]]s.
      */
-    export class Form implements api.Equitable {
+    export class Form implements api.Equitable, FormItemContainer {
 
         private formItems: FormItem[] = [];
 

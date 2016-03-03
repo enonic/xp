@@ -9,6 +9,7 @@ module api.form.inputtype.text.htmlarea {
     import FileUploadProgressEvent = api.ui.uploader.FileUploadProgressEvent;
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
     import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
+    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import Content = api.content.Content;
     import Action = api.ui.Action;
 
@@ -26,6 +27,8 @@ module api.form.inputtype.text.htmlarea {
         private elementContainer: HTMLElement;
         private callback: Function;
         private imageToolbar: ImageToolbar;
+        private imagePreviewScrollHandler: ImagePreviewScrollHandler;
+        private imageLoadMask: api.ui.mask.LoadMask;
 
         constructor(config: api.form.inputtype.text.HtmlAreaImage, contentId: api.content.ContentId) {
             this.imageElement = <HTMLImageElement>config.element;
@@ -33,15 +36,19 @@ module api.form.inputtype.text.htmlarea {
             this.contentId = contentId;
             this.callback = config.callback;
 
-            super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Image"));
+            super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Image"), "image-modal-dialog");
         }
 
-        private getImageContent(images: api.content.ContentSummary[]): api.content.ContentSummary {
-            var filteredImages = images.filter((image: api.content.ContentSummary) => {
-                return this.imageElement.src.indexOf(image.getId()) > 0;
-            });
+        protected getMainFormItems(): FormItem[] {
+            var imageSelector = this.createImageSelector("imageId");
 
-            return filteredImages.length > 0 ? filteredImages[0] : null;
+            this.addUploaderAndPreviewControls(imageSelector);
+            this.setFirstFocusField(imageSelector.getInput());
+
+            return [
+                imageSelector,
+                this.imageCaptionField = this.createFormItem("caption", "Caption", null, this.getCaption())
+            ];
         }
 
         private createImageSelector(id: string): FormItem {
@@ -62,7 +69,9 @@ module api.form.inputtype.text.htmlarea {
                     var imageContent = this.getImageContent(event.getData());
                     if (imageContent) {
                         imageSelector.setValue(imageContent.getId());
-                        this.previewImage(imageContent, formItem);
+                        this.createImgElForExistingImage(imageContent);
+                        this.previewImage();
+                        formItem.addClass("image-preview");
                     }
                     loader.unLoadedData(singleLoadListener);
                 };
@@ -76,7 +85,10 @@ module api.form.inputtype.text.htmlarea {
                     return;
                 }
 
-                this.previewImage(imageContent, formItem);
+                this.imageLoadMask.show();
+                this.createImgElForNewImage(imageContent);
+                this.previewImage();
+                formItem.addClass("image-preview");
             });
 
             imageSelectorComboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
@@ -91,6 +103,7 @@ module api.form.inputtype.text.htmlarea {
                 this.imageToolbar.remove();
                 this.showCaptionLabel();
                 this.imageUploaderEl.show();
+                this.imagePreviewScrollHandler.toggleScrollButtons();
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
 
@@ -105,6 +118,39 @@ module api.form.inputtype.text.htmlarea {
             return formItem;
         }
 
+        private addUploaderAndPreviewControls(imageSelector: FormItem) {
+            var imageSelectorContainer = imageSelector.getInput().getParentElement();
+
+            imageSelectorContainer.appendChild(this.imageUploaderEl = this.createImageUploader());
+
+            this.createImagePreviewContainer();
+
+            var scrollBarWrapperDiv = new api.dom.DivEl("preview-panel-scrollbar-wrapper");
+            scrollBarWrapperDiv.appendChild(this.imagePreviewContainer);
+            var scrollNavigationWrapperDiv = new api.dom.DivEl("preview-panel-scroll-navigation-wrapper");
+            scrollNavigationWrapperDiv.appendChild(scrollBarWrapperDiv);
+
+            wemjq(scrollNavigationWrapperDiv.getHTMLElement()).insertAfter(imageSelectorContainer.getHTMLElement());
+
+            this.imagePreviewScrollHandler = new ImagePreviewScrollHandler(this.imagePreviewContainer);
+
+            this.imageLoadMask = new api.ui.mask.LoadMask(this.imagePreviewContainer);
+            this.imagePreviewContainer.appendChild(this.imageLoadMask);
+
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+                this.resetPreviewContainerMaxHeight();
+                this.imagePreviewScrollHandler.toggleScrollButtons(true);
+            });
+        }
+
+        private getImageContent(images: api.content.ContentSummary[]): api.content.ContentSummary {
+            var filteredImages = images.filter((image: api.content.ContentSummary) => {
+                return this.imageElement.src.indexOf(image.getId()) > 0;
+            });
+
+            return filteredImages.length > 0 ? filteredImages[0] : null;
+        }
+
         private adjustSelectorDropDown(inputElement: api.dom.Element, dropDownElement: api.dom.ElementHelper) {
             var inputPosition = wemjq(inputElement.getHTMLElement()).offset();
 
@@ -113,41 +159,22 @@ module api.form.inputtype.text.htmlarea {
             dropDownElement.setLeftPx(inputPosition.left);
         }
 
-        private createImgEl(src: string, alt: string, contentId: string): api.dom.ImgEl {
-            var imageEl = new api.dom.ImgEl(src);
-            imageEl.getEl().setAttribute("alt", alt);
-            imageEl.getEl().setAttribute("data-src", HtmlArea.imagePrefix + contentId);
-
-            return imageEl;
+        private createImgElForExistingImage(imageContent: api.content.ContentSummary) {
+            this.image = this.createImgElForPreview(imageContent, true);
         }
 
-        private previewImage(imageContent: api.content.ContentSummary, formItem: FormItem) {
-            var contentId = imageContent.getContentId().toString(),
-                imgUrl = new api.content.ContentImageUrlResolver().
-                    setContentId(new api.content.ContentId(contentId)).
-                    setScaleWidth(true).
-                    setSize(HtmlArea.maxImageWidth).
-                    resolve();
+        private createImgElForNewImage(imageContent: api.content.ContentSummary) {
+            this.image = this.createImgElForPreview(imageContent, false);
+        }
 
-            this.image = this.createImgEl(imgUrl, imageContent.getDisplayName(), contentId);
-
-            if (this.imageElement) {
-                this.image.getHTMLElement().style["text-align"] =
-                    this.imageElement.parentElement.style.textAlign || this.imageElement.parentElement.style.cssFloat;
-
-                this.imageToolbar = new ImageToolbar(this.image);
-                if (this.imageToolbar.isImageInOriginalSize(new api.dom.ElementHelper(this.imageElement))) {
-                    this.imageToolbar.appendKeepSizeParamToImagePath();
-                }
-            }
-            else {
-                this.imageToolbar = new ImageToolbar(this.image);
-                this.image.getHTMLElement().style["text-align"] = "justify";
-            }
+        private previewImage() {
+            this.imageToolbar = new ImageToolbar(this.image, this.imageLoadMask);
 
             this.image.onLoaded(() => {
+                this.imageLoadMask.hide();
                 this.imagePreviewContainer.removeClass("upload");
-                wemjq(this.imageToolbar.getHTMLElement()).insertBefore(this.imagePreviewContainer.getHTMLElement());
+                wemjq(this.imageToolbar.getHTMLElement()).insertBefore(
+                    this.imagePreviewContainer.getHTMLElement().parentElement.parentElement);
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
                 if (this.getCaptionFieldValue() == "") {
                     this.imageCaptionField.getEl().scrollIntoView();
@@ -155,13 +182,34 @@ module api.form.inputtype.text.htmlarea {
                 }
             });
 
-            formItem.addClass("image-preview");
-
             this.hideUploadMasks();
             this.hideCaptionLabel();
             this.imageUploaderEl.hide();
-
             this.imagePreviewContainer.insertChild(this.image, 0);
+        }
+
+        private createImgElForPreview(imageContent: api.content.ContentSummary, isExistingImg: boolean = false): api.dom.ImgEl {
+            var imgSrcAttr = isExistingImg
+                ? new api.dom.ElementHelper(this.imageElement).getAttribute("src")
+                : this.generateDefaultImgSrc(imageContent.getContentId().toString());
+            var imgDataSrcAttr = isExistingImg
+                ? new api.dom.ElementHelper(this.imageElement).getAttribute("data-src")
+                : HtmlArea.imagePrefix + imageContent.getContentId().toString();
+
+            var imageEl = new api.dom.ImgEl(imgSrcAttr);
+            imageEl.getEl().setAttribute("alt", imageContent.getDisplayName());
+            imageEl.getEl().setAttribute("data-src", imgDataSrcAttr);
+
+            var imageAlignment = isExistingImg ? (this.imageElement.parentElement.style.textAlign ||
+                                                  this.imageElement.parentElement.style.cssFloat) : "justify";
+            imageEl.getHTMLElement().style["text-align"] = imageAlignment;
+
+            return imageEl;
+        }
+
+        private generateDefaultImgSrc(contentId): string {
+            return new api.content.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)).setScaleWidth(true).setSize(
+                HtmlArea.maxImageWidth).resolve();
         }
 
         private hideCaptionLabel() {
@@ -172,7 +220,7 @@ module api.form.inputtype.text.htmlarea {
 
         private showCaptionLabel() {
             this.imageCaptionField.getLabel().show();
-            this.imageCaptionField.getInput().getEl().removeAttribute("placeholder")
+            this.imageCaptionField.getInput().getEl().removeAttribute("placeholder");
             this.imageCaptionField.getInput().getParentElement().getEl().setMarginLeft("");
         }
 
@@ -186,18 +234,6 @@ module api.form.inputtype.text.htmlarea {
             this.imageUploaderEl.show();
         }
 
-        protected getMainFormItems(): FormItem[] {
-            var imageSelector = this.createImageSelector("imageId");
-
-            this.addUploaderAndPreviewControls(imageSelector);
-            this.setFirstFocusField(imageSelector.getInput());
-
-            return [
-                imageSelector,
-                this.imageCaptionField = this.createFormItem("caption", "Caption", null, this.getCaption())
-            ];
-        }
-
         private createImagePreviewContainer() {
             var imagePreviewContainer = new api.dom.DivEl("content-item-preview-panel");
 
@@ -208,7 +244,17 @@ module api.form.inputtype.text.htmlarea {
             imagePreviewContainer.appendChild(this.error);
 
             this.imagePreviewContainer = imagePreviewContainer;
+
+            this.resetPreviewContainerMaxHeight();
         }
+
+        private resetPreviewContainerMaxHeight() {
+            //limiting image modal dialog height up to screen size except padding on top and bottom
+            //so 340 is 300px content of image modal dialog except preview container + 20*2 from top and bottom of screen
+            var maxImagePreviewHeight = wemjq(window).height() - 340;
+            new api.dom.ElementHelper(this.imagePreviewContainer.getHTMLElement()).setMaxHeightPx(maxImagePreviewHeight);
+        }
+
 
         private getCaption(): string {
             if (this.imageElement) {
@@ -217,16 +263,6 @@ module api.form.inputtype.text.htmlarea {
             else {
                 return api.util.StringHelper.EMPTY_STRING;
             }
-        }
-
-        private addUploaderAndPreviewControls(imageSelector: FormItem) {
-            var imageSelectorContainer = imageSelector.getInput().getParentElement();
-
-            imageSelectorContainer.appendChild(this.imageUploaderEl = this.createImageUploader());
-
-            this.createImagePreviewContainer();
-
-            wemjq(this.imagePreviewContainer.getHTMLElement()).insertAfter(imageSelectorContainer.getHTMLElement());
         }
 
         private createImageUploader(): api.content.ImageUploaderEl {
@@ -307,27 +343,8 @@ module api.form.inputtype.text.htmlarea {
             super.initializeActions();
         }
 
-        private generateUUID(): string {
-            var d = new Date().getTime();
-            var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                var r = (d + Math.random() * 16) % 16 | 0;
-                d = Math.floor(d / 16);
-                return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-            });
-            return uuid;
-        }
-
         private getCaptionFieldValue() {
             return (<api.dom.InputEl>this.imageCaptionField.getInput()).getValue().trim();
-        }
-
-        private isImageWiderThanEditor() {
-            return (this.image.getHTMLElement()["width"] > this.getEditor()["editorContainer"].clientWidth);
-        }
-
-        private setImageWidthConstraint() {
-            var keepImageSize = this.imageToolbar.isImageInOriginalSize(this.image.getEl());
-            this.image.getHTMLElement().style["width"] = (this.isImageWiderThanEditor() || !keepImageSize) ? "100%" : "auto";
         }
 
         private createFigureElement(figCaptionId: string) {
@@ -341,29 +358,6 @@ module api.form.inputtype.text.htmlarea {
             figure.appendChildren([(<api.dom.ImgEl>this.image).getEl().getHTMLElement(), figCaption.getHTMLElement()]);
 
             return figure;
-        }
-
-        private updateImageParentAlignment(element: HTMLElement, alignment?: string) {
-            if (!alignment) {
-                alignment = this.image.getHTMLElement().style["text-align"];
-            }
-
-            var styleFormat = "float: {0}; margin: {1};" +
-                              (this.imageToolbar.isImageInOriginalSize(this.image.getEl()) ? "" : "width: {2}%;");
-            var styleAttr = "text-align: " + alignment + ";";
-
-            switch (alignment) {
-            case 'left':
-            case 'right':
-                styleAttr = api.util.StringHelper.format(styleFormat, alignment, "15px", "40");
-                break;
-            case 'center':
-                styleAttr = styleAttr + api.util.StringHelper.format(styleFormat, "none", "auto", "60");
-                break;
-            }
-
-            element.setAttribute("style", styleAttr);
-            element.setAttribute("data-mce-style", styleAttr);
         }
 
         private createImageTag(): void {
@@ -408,16 +402,6 @@ module api.form.inputtype.text.htmlarea {
             }
         }
 
-        private removeExtraIndentFromContainer(container) {
-            var elements = <Element[]>new api.dom.ElementHelper(container).getChildren();
-
-            for (let i = 0; i < elements.length; i++) {
-                if (elements[i].tagName.toLowerCase() === "br" && elements[i].hasAttribute("data-mce-bogus")) {
-                    container.removeChild(elements[i]);
-                }
-            }
-        }
-
         private changeImageParentAlignmentOnImageAlignmentChange(parent: HTMLElement) {
             var observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
@@ -429,6 +413,62 @@ module api.form.inputtype.text.htmlarea {
             var config = {attributes: true, childList: false, characterData: false, attributeFilter: ["style"]};
 
             observer.observe((<api.dom.ImgEl>this.image).getEl().getHTMLElement(), config);
+        }
+
+        private updateImageParentAlignment(element: HTMLElement, alignment?: string) {
+            if (!alignment) {
+                alignment = this.image.getHTMLElement().style["text-align"];
+            }
+
+            var styleFormat = "float: {0}; margin: {1};" +
+                              (this.isImageInOriginalSize(this.image.getEl()) ? "" : "width: {2}%;");
+            var styleAttr = "text-align: " + alignment + ";";
+
+            switch (alignment) {
+            case 'left':
+            case 'right':
+                styleAttr = api.util.StringHelper.format(styleFormat, alignment, "15px", "40");
+                break;
+            case 'center':
+                styleAttr = styleAttr + api.util.StringHelper.format(styleFormat, "none", "auto", "60");
+                break;
+            }
+
+            element.setAttribute("style", styleAttr);
+            element.setAttribute("data-mce-style", styleAttr);
+        }
+
+        private setImageWidthConstraint() {
+            var keepImageSize = this.isImageInOriginalSize(this.image.getEl());
+            this.image.getHTMLElement().style["width"] = (this.isImageWiderThanEditor() || !keepImageSize) ? "100%" : "auto";
+        }
+
+        private isImageInOriginalSize(image: api.dom.ElementHelper) {
+            return image.getAttribute("data-src").indexOf("keepSize=true") > 0;
+        }
+
+        private isImageWiderThanEditor() {
+            return (this.image.getHTMLElement()["width"] > this.getEditor()["editorContainer"].clientWidth);
+        }
+
+        private removeExtraIndentFromContainer(container) {
+            var elements = <Element[]>new api.dom.ElementHelper(container).getChildren();
+
+            for (let i = 0; i < elements.length; i++) {
+                if (elements[i].tagName.toLowerCase() === "br" && elements[i].hasAttribute("data-mce-bogus")) {
+                    container.removeChild(elements[i]);
+                }
+            }
+        }
+
+        private generateUUID(): string {
+            var d = new Date().getTime();
+            var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = (d + Math.random() * 16) % 16 | 0;
+                d = Math.floor(d / 16);
+                return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+            return uuid;
         }
     }
 
@@ -446,22 +486,25 @@ module api.form.inputtype.text.htmlarea {
 
         private keepOriginalSizeCheckbox: api.ui.Checkbox;
 
-        constructor(image: api.dom.ImgEl) {
+        private imageCroppingSelector: ImageCroppingSelector;
+
+        private imageLoadMask: api.ui.mask.LoadMask;
+
+        constructor(image: api.dom.ImgEl, imageLoadMask: api.ui.mask.LoadMask) {
             super("image-toolbar");
 
             this.image = image;
+            this.imageLoadMask = imageLoadMask;
 
             super.addElement(this.justifyButton = this.createJustifiedButton());
             super.addElement(this.alignLeftButton = this.createLeftAlignedButton());
             super.addElement(this.centerButton = this.createCenteredButton());
             super.addElement(this.alignRightButton = this.createRightAlignedButton());
             super.addElement(this.keepOriginalSizeCheckbox = this.createKeepOriginalSizeCheckbox());
+            super.addElement(this.imageCroppingSelector = this.createImageCroppingSelector());
 
+            this.initKeepSizeCheckbox();
             this.initActiveButton();
-        }
-
-        public isImageInOriginalSize(image: api.dom.ElementHelper) {
-            return image.getAttribute("data-src").indexOf("keepSize=true") > 0;
         }
 
         private createJustifiedButton(): api.ui.button.ActionButton {
@@ -491,6 +534,7 @@ module api.form.inputtype.text.htmlarea {
                 this.resetActiveButton();
                 button.addClass("active");
                 this.image.getHTMLElement().style["text-align"] = this.getImageAlignment();
+                api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
 
             return button;
@@ -498,36 +542,42 @@ module api.form.inputtype.text.htmlarea {
 
         private createKeepOriginalSizeCheckbox(): api.ui.Checkbox {
             var keepOriginalSizeCheckbox = new api.ui.Checkbox();
-            keepOriginalSizeCheckbox.setChecked(this.image.getEl().getAttribute("data-src").indexOf("keepSize=true") > 0);
             keepOriginalSizeCheckbox.addClass('keep-size-check');
-            keepOriginalSizeCheckbox.onValueChanged(()=> {
-                this.keepOriginalSizeCheckbox.isChecked()
-                    ? this.appendKeepSizeParamToImagePath()
-                    : this.removeKeepSizeParamFromImagePath();
+            keepOriginalSizeCheckbox.onValueChanged(() => {
+                this.imageLoadMask.show();
+                this.rebuildImgSrcParams();
+                this.rebuildImgDataSrcParams();
+                api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
             keepOriginalSizeCheckbox.setLabel('Keep original size');
 
             return keepOriginalSizeCheckbox;
         }
 
-        public appendKeepSizeParamToImagePath() {
-            if (!this.isImageInOriginalSize(this.image.getEl())) {
-                var pathAttr = this.image.getEl().getAttribute("data-src");
-                this.image.getEl().setAttribute("data-src", pathAttr + "?keepSize=true");
-            }
-            if (!this.keepOriginalSizeCheckbox.isChecked()) {
-                this.keepOriginalSizeCheckbox.setChecked(true);
-            }
+        private createImageCroppingSelector(): ImageCroppingSelector {
+            var imageCroppingSelector: ImageCroppingSelector = new ImageCroppingSelector();
+
+            this.initSelectedCropping(imageCroppingSelector);
+
+            imageCroppingSelector.onOptionSelected((event: OptionSelectedEvent<ImageCroppingOption>) => {
+                this.imageLoadMask.show();
+                this.rebuildImgSrcParams();
+                this.rebuildImgDataSrcParams();
+                api.ui.responsive.ResponsiveManager.fireResizeEvent();
+            });
+
+            return imageCroppingSelector;
         }
 
-        private removeKeepSizeParamFromImagePath() {
-            if (this.isImageInOriginalSize(this.image.getEl())) {
-                var pathAttr = this.image.getEl().getAttribute("data-src");
-                var paramToRemoveIndex = this.image.getEl().getAttribute("data-src").indexOf("?keepSize=true");
-                this.image.getEl().setAttribute("data-src", pathAttr.substring(0, paramToRemoveIndex));
-            }
-            if (this.keepOriginalSizeCheckbox.isChecked()) {
-                this.keepOriginalSizeCheckbox.setChecked(false);
+        private initSelectedCropping(imageCroppingSelector: ImageCroppingSelector) {
+            var imgSrc: string = this.image.getEl().getAttribute("src");
+            var scalingApplied: boolean = imgSrc.indexOf("scale=") > 0;
+            if (scalingApplied) {
+                var scaleParamValue = api.util.UriHelper.decodeUrlParams(imgSrc.replace("&amp;", "&"))["scale"];
+                var scaleOption = ImageCroppingOptions.getOptionByProportion(scaleParamValue);
+                if (!!scaleOption) {
+                    imageCroppingSelector.selectOption(imageCroppingSelector.getOptionByValue(scaleOption.getName()));
+                }
             }
         }
 
@@ -560,6 +610,10 @@ module api.form.inputtype.text.htmlarea {
             this.alignRightButton.removeClass("active");
         }
 
+        private initKeepSizeCheckbox() {
+            this.keepOriginalSizeCheckbox.setChecked(this.image.getEl().getAttribute("data-src").indexOf("keepSize=true") > 0);
+        }
+
         private getImageAlignment(): string {
             if (this.justifyButton.hasClass("active")) {
                 return "justify";
@@ -580,5 +634,225 @@ module api.form.inputtype.text.htmlarea {
             return "justify";
         }
 
+        private rebuildImgSrcParams() {
+            var imgSrc = this.image.getEl().getAttribute("src"),
+                newSrc = api.util.UriHelper.trimUrlParams(imgSrc),
+                isCroppingSelected: boolean = !!this.imageCroppingSelector.getSelectedOption(),
+                keepOriginalSizeChecked: boolean = this.keepOriginalSizeCheckbox.isChecked();
+
+            if (isCroppingSelected) {
+                var imageCroppingOption: ImageCroppingOption = this.imageCroppingSelector.getSelectedOption().displayValue;
+                newSrc = newSrc + "?scale=" + imageCroppingOption.getProportionString() +
+                         (keepOriginalSizeChecked ? "" : "&size=640");
+            }
+            else {
+                newSrc = newSrc + (keepOriginalSizeChecked ? "?scaleWidth=true" : "?size=640&scaleWidth=true");
+            }
+
+            this.image.getEl().setAttribute("src", newSrc);
+        }
+
+        private rebuildImgDataSrcParams() {
+            var dataSrc = this.image.getEl().getAttribute("data-src"),
+                newDataSrc = api.util.UriHelper.trimUrlParams(dataSrc),
+                isCroppingSelected: boolean = !!this.imageCroppingSelector.getSelectedOption(),
+                keepOriginalSizeChecked: boolean = this.keepOriginalSizeCheckbox.isChecked();
+
+            if (isCroppingSelected) {
+                var imageCroppingOption: ImageCroppingOption = this.imageCroppingSelector.getSelectedOption().displayValue;
+                newDataSrc = newDataSrc + "?scale=" + imageCroppingOption.getProportionString() +
+                             (keepOriginalSizeChecked ? "&keepSize=true" : "&size=640");
+            }
+            else {
+                newDataSrc = newDataSrc + (keepOriginalSizeChecked ? "?keepSize=true" : "");
+            }
+
+            this.image.getEl().setAttribute("data-src", newDataSrc);
+        }
+
+    }
+
+    export class ImagePreviewScrollHandler {
+
+        private imagePreviewContainer: api.dom.DivEl;
+
+        private scrollDownButton: api.dom.Element;
+        private scrollUpButton: api.dom.Element;
+        private scrollBarWidth: number;
+        private scrollBarRemoveTimeoutId: number;
+        private scrolling;
+
+        constructor(imagePreviewContainer: api.dom.DivEl) {
+            this.imagePreviewContainer = imagePreviewContainer;
+
+            this.initializeImageScrollNavigation();
+
+            this.imagePreviewContainer.getEl().setMarginRight("-" + this.scrollBarWidth + "px");
+
+            this.imagePreviewContainer.onScroll(() => {
+                this.toggleScrollButtons();
+                this.showScrollBar();
+                this.removeScrollBarOnTimeout();
+            });
+        }
+
+        private initializeImageScrollNavigation() {
+            this.scrollDownButton = this.createScrollButton("down");
+            this.scrollUpButton = this.createScrollButton("up");
+            this.initScrollbarWidth();
+        }
+
+        private isScrolledToTop(): boolean {
+            var element = this.imagePreviewContainer.getHTMLElement();
+            return element.scrollTop === 0;
+        }
+
+        private isScrolledToBottom(): boolean {
+            var element = this.imagePreviewContainer.getHTMLElement();
+            return (element.scrollHeight - element.scrollTop) === element.clientHeight;
+        }
+
+        private createScrollButton(direction: string): api.dom.Element {
+            var myId = "img-preview",
+                scrollDirection = "scroll" + direction,
+                xlinkCoordinates = (direction === "up" ? 'x="12" y="15"' : 'x="4" y="19" transform="rotate(180, 16, 22)"/>'),
+                clipHtml = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="' + myId + '-' + scrollDirection + '" class="' +
+                           scrollDirection + '" width="40" height="40">' +
+                           '    <defs>'                                                                                              +
+                           '        <polygon id="'                                                                                   +                                                                                 myId                                                                            + '-' + scrollDirection + 'Triangle" class="' + scrollDirection +
+                           '-triangle" points="8,0,16,8,0,8"/>'                                                                      +
+                           '        <filter id="filter-'                                                                             +                                                                           scrollDirection +                                                         '" x="-40%" y="-40%" height="200%" width="200%">'       +
+                           '        <feOffset result="offOut" in="SourceAlpha" dx="0" dy="0" />'                                     +
+                           '        <feGaussianBlur result="blurOut" in="offOut" stdDeviation="2" />'                                +
+                           '        <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />'                                      +
+                           '        </filter>'                                                                                       +
+                           '    </defs>'                                                                                             +
+                           '    <circle cx="20" cy="20" r="16" filter="url(#filter-'                                                 +                                               scrollDirection                               +                             ')" fill="white"/>' +
+                           '    <use xlink:href="#'                                                                                  + myId +                                                                         '-'                                                                     + scrollDirection +                                                 'Triangle" ' + xlinkCoordinates +               ' />' +
+                           '</svg>';
+
+
+            var scrollButton = api.dom.Element.fromString(clipHtml),
+                scrollTop = (direction === "up" ? "-=50" : "+=50");
+
+
+            scrollButton.onClicked((event) => {
+                event.preventDefault();
+                wemjq(this.imagePreviewContainer.getHTMLElement()).animate({scrollTop: scrollTop}, 400);
+            });
+
+            scrollButton.onMouseOver(() => {
+                this.scrolling = true;
+                this.scrollImagePreview(direction);
+            });
+
+            scrollButton.onMouseOut(() => {
+                this.scrolling = false;
+            });
+
+            direction === "up"
+                ? wemjq(scrollButton.getHTMLElement()).insertBefore(this.imagePreviewContainer.getHTMLElement().parentElement)
+                : wemjq(scrollButton.getHTMLElement()).insertAfter(this.imagePreviewContainer.getHTMLElement().parentElement);
+
+            scrollButton.hide();
+
+            return scrollButton;
+        }
+
+        private initScrollbarWidth() {
+            var outer = document.createElement("div");
+            outer.style.visibility = "hidden";
+            outer.style.width = "100px";
+            outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+
+            document.body.appendChild(outer);
+
+            var widthNoScroll = outer.offsetWidth;
+            // force scrollbars
+            outer.style.overflow = "scroll";
+
+            // add innerdiv
+            var inner = document.createElement("div");
+            inner.style.width = "100%";
+            outer.appendChild(inner);
+
+            var widthWithScroll = inner.offsetWidth;
+
+            // remove divs
+            outer.parentNode.removeChild(outer);
+
+            this.scrollBarWidth = widthNoScroll - widthWithScroll;
+        }
+
+        private scrollImagePreview(direction) {
+            var amount = (direction === "up" ? "-=2px" : "+=2px");
+            wemjq(this.imagePreviewContainer.getHTMLElement()).animate({scrollTop: amount}, 1, () => {
+                if (this.scrolling) {
+                    // If we want to keep scrolling, call the scrollContent function again:
+                    this.scrollImagePreview(direction);
+                }
+            });
+        }
+
+        toggleScrollButtons(updateAlignment?: boolean) {
+            if (this.isScrolledToBottom()) {
+                this.scrollDownButton.hide();
+            }
+            else {
+                this.scrollDownButton.show();
+            }
+
+            if (this.isScrolledToTop()) {
+                this.scrollUpButton.hide();
+            }
+            else {
+                this.scrollUpButton.show();
+            }
+
+            if (updateAlignment) {
+                this.updateScrollButtonsAlignment();
+            }
+        }
+
+        private updateScrollButtonsAlignment() {
+            var img: api.dom.ElementHelper = this.imagePreviewContainer.getFirstChild().getEl();
+
+            var textAlign = img.getComputedProperty("text-align"),
+                containerWidth = this.imagePreviewContainer.getEl().getWidth() - this.scrollBarWidth,
+                imgWidth = img.getWidth();
+
+            if (imgWidth < containerWidth && textAlign === "left") {
+                let left = imgWidth / 2 - 20;
+                this.scrollUpButton.getEl().setLeftPx(left);
+                this.scrollDownButton.getEl().setLeftPx(left);
+            }
+            else if (imgWidth < containerWidth && textAlign === "right") {
+                let left = containerWidth - (imgWidth / 2 + 20);
+                this.scrollUpButton.getEl().setLeftPx(left);
+                this.scrollDownButton.getEl().setLeftPx(left);
+            }
+            else {
+                this.scrollUpButton.getEl().setLeft("48%");
+                this.scrollDownButton.getEl().setLeft("48%");
+            }
+        }
+
+        private showScrollBar() {
+            this.imagePreviewContainer.getHTMLElement().parentElement.style.marginRight = "-" + this.scrollBarWidth + "px";
+            this.imagePreviewContainer.getEl().setMarginRight("");
+            this.imagePreviewContainer.getHTMLElement().style.overflowY = "auto";
+        }
+
+        private removeScrollBarOnTimeout() {
+            if (!!this.scrollBarRemoveTimeoutId) {
+                window.clearTimeout(this.scrollBarRemoveTimeoutId);
+            }
+
+            this.scrollBarRemoveTimeoutId = window.setTimeout(() => {
+                this.imagePreviewContainer.getHTMLElement().parentElement.style.marginRight = "";
+                this.imagePreviewContainer.getEl().setMarginRight("-" + this.scrollBarWidth + "px");
+                this.imagePreviewContainer.getHTMLElement().style.overflowY = "auto";
+            }, 500);
+        }
     }
 }

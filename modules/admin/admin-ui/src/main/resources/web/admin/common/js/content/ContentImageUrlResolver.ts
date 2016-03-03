@@ -12,6 +12,8 @@ module api.content {
 
         private source: string = null; // parameter states if the source image should be used (without source cropping)
 
+        private scale: string = null; //scale params applied to image
+
         setContentId(value: ContentId): ContentImageUrlResolver {
             this.contentId = value;
             return this;
@@ -37,6 +39,11 @@ module api.content {
             return this;
         }
 
+        setScale(value: string): ContentImageUrlResolver {
+            this.scale = "" + value;
+            return this;
+        }
+
         resolve(): string {
 
             var url = "content/image/" + this.contentId.toString();
@@ -51,6 +58,9 @@ module api.content {
             }
             if (this.source) {
                 url = this.appendParam("source", this.source, url);
+            }
+            if (this.scale) {
+                url = this.appendParam("scale", this.scale, url);
             }
 
             return api.util.UriHelper.getRestUri(url);

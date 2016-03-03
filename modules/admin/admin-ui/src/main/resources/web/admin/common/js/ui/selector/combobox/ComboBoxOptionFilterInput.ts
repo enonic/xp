@@ -2,8 +2,8 @@ module api.ui.selector.combobox {
 
     export class ComboBoxOptionFilterInput extends api.ui.selector.OptionFilterInput {
 
-        constructor() {
-            super();
+        constructor(placeholderText?: string) {
+            super(placeholderText);
         }
 
         setMaximumReached() {

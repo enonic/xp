@@ -15,6 +15,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
@@ -32,6 +33,11 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
+import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
 
 public final class ContentFixtures
 {
@@ -64,6 +70,14 @@ public final class ContentFixtures
         final PropertyTree data = newPropertyTree();
         data.addString( "media", attachment.getName() );
 
+        final PropertyTree mediaData = newPropertyTree();
+        mediaData.setLong( IMAGE_INFO_PIXEL_SIZE, 300L * 200L );
+        mediaData.setLong( IMAGE_INFO_IMAGE_HEIGHT, 200L );
+        mediaData.setLong( IMAGE_INFO_IMAGE_WIDTH, 300L );
+        mediaData.setLong( MEDIA_INFO_BYTE_SIZE, 100000L );
+
+        final ExtraData mediaExtraData = new ExtraData( MediaInfo.IMAGE_INFO_METADATA_NAME, mediaData );
+
         final Media.Builder builder = Media.create();
         builder.id( ContentId.from( "123456" ) );
         builder.type( ContentTypeName.imageMedia() );
@@ -78,6 +92,7 @@ public final class ContentFixtures
         builder.data( data );
 
         builder.addExtraData( new ExtraData( MixinName.from( "myapplication:myschema" ), newTinyPropertyTree() ) );
+        builder.addExtraData( mediaExtraData );
         builder.page( newPage() );
 
         return builder.build();
