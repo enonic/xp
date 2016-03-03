@@ -9,80 +9,79 @@ module app.wizard {
 
     export class AuthApplicationWizardStepForm extends api.app.wizard.WizardStepForm {
 
-        private authApplicationCombobox: api.ui.security.auth.AuthApplicationComboBox;
-        private authApplicationComboboxLoaded = false;
-        private authConfig: api.security.AuthConfig;
+        private formView: api.form.FormView;
+
+        private propertySet: api.data.PropertySet;
 
         constructor() {
             super();
-
-            this.authApplicationCombobox = new api.ui.security.auth.AuthApplicationComboBox();
-            var appComboboxLoadingListener = () => {
-                this.authApplicationComboboxLoaded = true;
-                this.selectAuthApplication();
-                this.authApplicationCombobox.unLoaded(appComboboxLoadingListener);
-            };
-            this.authApplicationCombobox.onLoaded(appComboboxLoadingListener);
-            this.authApplicationCombobox.getLoader().load();
-
-            var authApplicationFormItem = new FormItemBuilder(this.authApplicationCombobox).
-                setLabel('Application').
-                build();
-
-            var fieldSet = new api.ui.form.Fieldset();
-            fieldSet.add(authApplicationFormItem);
-
-            var form = new api.ui.form.Form().add(fieldSet);
-
-            form.onFocus((event) => {
-                this.notifyFocused(event);
-            });
-            form.onBlur((event) => {
-                this.notifyBlurred(event);
-            });
-
-            form.onValidityChanged((event: api.ValidityChangedEvent) => {
-                this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(event.isValid()));
-            });
-
-            this.appendChild(form);
         }
 
         layout(pathGuard: api.security.PathGuard) {
-            this.authConfig = pathGuard.getAuthConfig();
-            this.selectAuthApplication();
+
+            this.formView = this.createFormView(pathGuard);
+
+            return this.formView.layout().then(() => {
+
+                this.formView.onFocus((event) => {
+                    this.notifyFocused(event);
+                });
+                this.formView.onBlur((event) => {
+                    this.notifyBlurred(event);
+                });
+
+                this.appendChild(this.formView);
+
+                this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
+                    this.previousValidation = event.getRecording();
+                    this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(event.isValid()));
+                });
+
+                var formViewValid = this.formView.isValid();
+                this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(formViewValid));
+            });
         }
 
-        private selectAuthApplication(): void {
-            if (this.authApplicationComboboxLoaded) {
-                if (this.authConfig) {
-                    this.authApplicationCombobox.getDisplayValues().
-                        filter((authApplication: api.application.Application) => {
-                            return this.authConfig.getApplicationKey().equals(authApplication.getApplicationKey());
-                        }).
-                        forEach((selectedOption: api.application.Application) => {
-                            this.authApplicationCombobox.select(selectedOption);
-                        });
+        private createFormView(pathGuard: api.security.PathGuard): api.form.FormView {
+            console.log("createFormView");
+            var formBuilder = new api.form.FormBuilder().
+                addFormItem(new api.form.InputBuilder().
+                    setName("authConfig").
+                    setInputType(new api.form.InputTypeName("SiteConfigurator", false)).
+                    setLabel("Application").
+                    setOccurrences(new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(1).build()).
+                    setInputTypeConfig({}).
+                    setMaximizeUIInputWidth(true).
+                    build());
 
-                    var selectedOption = this.authApplicationCombobox.getSelectedOptions()[0];
-                    var selectedOptionView = <api.ui.security.auth.AuthApplicationSelectedOptionView> selectedOption.getOptionView();
-                    selectedOptionView.setAuthConfig(this.authConfig);
-                }
+            this.propertySet = new api.data.PropertyTree().getRoot();
+            var authConfig = pathGuard.getAuthConfig();
+            if (authConfig) {
+                var authConfigPropertySet = new api.data.PropertySet();
+                authConfigPropertySet.addString("applicationKey", authConfig.getApplicationKey().toString())
+                authConfigPropertySet.addPropertySet("config", authConfig.getConfig().getRoot())
+                this.propertySet.addPropertySet("authConfig", authConfigPropertySet);
             }
+
+            return new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
         }
 
         getAuthConfig(): api.security.AuthConfig {
-            if (this.authApplicationCombobox.countSelected() == 0) {
-                return null;
+            var authConfigPropertySet = this.propertySet.getPropertySet("authConfig");
+            if (authConfigPropertySet) {
+                var applicationKey = api.application.ApplicationKey.fromString(authConfigPropertySet.getString("applicationKey"));
+                var config = new api.data.PropertyTree(authConfigPropertySet.getPropertySet("config"))
+                return api.security.AuthConfig.create().
+                    setApplicationKey(applicationKey).
+                    setConfig(config).
+                    build();
             }
 
-            var selectedOption = this.authApplicationCombobox.getSelectedOptions()[0];
-            var selectedOptionView = <api.ui.security.auth.AuthApplicationSelectedOptionView> selectedOption.getOptionView();
-            return selectedOptionView.getAuthConfig();
+            return null;
         }
 
         giveFocus(): boolean {
-            return this.authApplicationCombobox.giveFocus();
+            return this.formView.giveFocus();
         }
     }
 }
