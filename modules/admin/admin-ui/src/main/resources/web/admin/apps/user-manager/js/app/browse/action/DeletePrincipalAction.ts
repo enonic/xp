@@ -92,7 +92,7 @@ module app.browse.action {
                                     var json = jsonResponse.getJson();
 
                                     if (json.results && json.results.length > 0) {
-                                        var key = json.results[0].getKey();
+                                        var key = json.results[0].key;
 
                                         api.notify.showFeedback('Path guard [' + key + '] deleted!');
                                         api.security.UserItemDeletedEvent.create().setPathGuards(pathGuardItems).build().fire();
