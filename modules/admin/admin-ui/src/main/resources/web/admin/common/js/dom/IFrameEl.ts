@@ -19,20 +19,6 @@ module api.dom {
             return this;
         }
 
-        isSrcAlreadyShown(src: string): boolean {
-            var contentWindow = this.getFrameWindowObject();
-
-            try {
-                if (!!src && !!contentWindow && contentWindow.location) {
-                    var href = contentWindow.location.href;
-                    return UriHelper.trimAnchor(src) ===
-                           UriHelper.trimAnchor(UriHelper.trimWindowProtocolAndPortFromHref(href, contentWindow));
-                }
-            } catch (reason) {}
-
-            return false;
-        }
-
         private getFrameWindowObject(): Window {
             return (<HTMLIFrameElement>this.getHTMLElement()).contentWindow;
         }

@@ -20,7 +20,7 @@ module app.browse.action {
                     var contentSummaries: ContentSummary[] = grid.getSelectedDataList().
                         map(data => data.getContentSummary()).
                         filter(contentSummary => this.previewContentHandler.getRenderableIds().
-                                                     indexOf(contentSummary.getContentId()) >= 0);
+                                                     indexOf(contentSummary.getContentId().toString()) >= 0);
 
                     this.openWindows(contentSummaries);
                 } else {
