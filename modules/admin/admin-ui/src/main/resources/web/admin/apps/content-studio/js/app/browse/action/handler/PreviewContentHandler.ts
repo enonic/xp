@@ -8,7 +8,7 @@ module app.browse.action {
 
     export class PreviewContentHandler {
 
-        private renderableIds: ContentId[] = [];
+        private renderableIds: string[] = [];
 
         private anyRenderable: boolean;
 
@@ -81,7 +81,7 @@ module app.browse.action {
                         }
 
                         return value;
-                    }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
+                    }).catch((reason: any) => api.DefaultErrorHandler.handle(reason))
             });
         }
 
@@ -97,7 +97,8 @@ module app.browse.action {
         }
 
         setRenderableIds(contentIds: ContentId[], silent?: boolean) {
-            this.renderableIds = contentIds;
+
+            this.renderableIds = contentIds ? contentIds.map(contentId => contentId.toString()) : null;
             if (!silent) {
                 this.notifyPreviewStateChangedIfNeeded();
             }
@@ -110,8 +111,8 @@ module app.browse.action {
         addRenderableIds(contentIds: ContentId[], silent ?: boolean) {
             if (contentIds) {
                 contentIds.forEach((contentId) => {
-                    if (this.renderableIds.indexOf(contentId) == -1) {
-                        this.renderableIds.push(contentId);
+                    if (this.renderableIds.indexOf(contentId.toString()) == -1) {
+                        this.renderableIds.push(contentId.toString());
                     }
                 });
                 if (!silent) {
@@ -123,7 +124,7 @@ module app.browse.action {
         removeRenderableIds(contentIds: ContentId[], silent ?: boolean) {
             if (contentIds) {
                 contentIds.forEach((contentId) => {
-                    var index = this.renderableIds.indexOf(contentId);
+                    var index = this.renderableIds.indexOf(contentId.toString());
                     if (index >= 0) {
                         this.renderableIds.splice(index, 1);
                     }

@@ -127,11 +127,7 @@ module app.view {
                         this.getEl().removeClass("image-preview no-preview").addClass('page-preview');
                         var src = api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW,
                             api.content.Branch.DRAFT);
-                        if (!this.frame.isSrcAlreadyShown(src)) {
-                            this.frame.setSrc(src);
-                        } else {
-                            this.mask.hide();
-                        }
+                        this.frame.setSrc(src);
                     } else {
                         this.setNoPreview();
                     }
