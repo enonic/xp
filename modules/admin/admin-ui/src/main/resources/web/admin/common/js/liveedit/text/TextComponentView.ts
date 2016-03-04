@@ -28,7 +28,7 @@ module api.liveedit.text {
 
         private htmlAreaEditor;
 
-        private initializingTinyMceEditor: boolean;
+        private isInitializingEditor: boolean;
 
         private focusOnInit: boolean;
 
@@ -49,7 +49,7 @@ module api.liveedit.text {
             this.lastClicked = 0;
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.textComponent = builder.component;
-            this.initializingTinyMceEditor = false;
+            this.isInitializingEditor = false;
 
             super(builder.
                 setContextMenuActions(this.createTextContextMenuActions()).
@@ -66,7 +66,7 @@ module api.liveedit.text {
                 //TODO: this seems to be never triggered because element is already in DOM when parsed!!!
                 this.focusOnInit = true;
                 this.addClass("editor-focused");
-                if (!this.htmlAreaEditor && !this.initializingTinyMceEditor) {
+                if (!this.htmlAreaEditor && !this.isInitializingEditor) {
                     this.initEditor();
                 }
             });
@@ -242,7 +242,7 @@ module api.liveedit.text {
             if (flag) {
                 this.hideTooltip();
 
-                if (!this.htmlAreaEditor && !this.initializingTinyMceEditor) {
+                if (!this.htmlAreaEditor && !this.isInitializingEditor) {
                     this.initEditor();
                 }
 
@@ -278,7 +278,7 @@ module api.liveedit.text {
         }
 
         private initEditor(): void {
-            this.initializingTinyMceEditor = true;
+            this.isInitializingEditor = true;
             var assetsUri = CONFIG.assetsUri,
                 id = this.getId().replace(/\./g, '_');
 
@@ -311,7 +311,7 @@ module api.liveedit.text {
                         wemjq(this.htmlAreaEditor.getElement()).simulate("click");
                     }
                     this.focusOnInit = false;
-                    this.initializingTinyMceEditor = false;
+                    this.isInitializingEditor = false;
                 });
         }
 

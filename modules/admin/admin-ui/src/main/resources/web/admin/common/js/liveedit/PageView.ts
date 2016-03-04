@@ -205,7 +205,7 @@ module api.liveedit {
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
                 if (this.isTextEditMode()) {
-                    this.updateVerticalSpaceForTinyMceToolbar();
+                    this.updateVerticalSpaceForEditorToolbar();
                 }
             });
         }
@@ -445,59 +445,59 @@ module api.liveedit {
             });
 
             if (flag) {
-                this.addVerticalSpaceForTinyMceToolbar();
+                this.addVerticalSpaceForEditorToolbar();
                 new PageTextModeStartedEvent(this).fire();
             }
             else {
-                this.removeVerticalSpaceForTinyMceToolbar();
+                this.removeVerticalSpaceForEditorToolbar();
                 api.liveedit.Highlighter.get().updateLastHighlightedItemView();
                 api.liveedit.SelectedHighlighter.get().updateLastHighlightedItemView();
             }
 
         }
 
-        private addVerticalSpaceForTinyMceToolbar() {
+        private addVerticalSpaceForEditorToolbar() {
             this.getPageView().getEl().setPosition("relative");
-            this.updateVerticalSpaceForTinyMceToolbar()
+            this.updateVerticalSpaceForEditorToolbar()
         }
 
-        private updateVerticalSpaceForTinyMceToolbar() {
-            var result = this.getTinyMceToolbarWidth();
+        private updateVerticalSpaceForEditorToolbar() {
+            var result = this.getEditorToolbarWidth();
 
             if (!!result) {
-                this.getPageView().getEl().setTop(this.getTinyMceToolbarWidth() + "px");
+                this.getPageView().getEl().setTop(this.getEditorToolbarWidth() + "px");
             }
             else {
-                this.waitUntilTinyMceToolbarShown();
+                this.waitUntilEditorToolbarShown();
             }
 
         }
 
-        private waitUntilTinyMceToolbarShown() {
-            var intevalId,
+        private waitUntilEditorToolbarShown() {
+            var intervalId,
                 toolbarHeight,
                 attempts = 0;
 
-            intevalId = setInterval(()=> {
+            intervalId = setInterval(()=> {
                 attempts++;
-                toolbarHeight = this.getTinyMceToolbarWidth();
+                toolbarHeight = this.getEditorToolbarWidth();
                 if (!!toolbarHeight) {
                     this.getPageView().getEl().setTop(toolbarHeight + "px");
-                    clearInterval(intevalId);
+                    clearInterval(intervalId);
                 }
                 else if (attempts > 10) {
-                    clearInterval(intevalId);
+                    clearInterval(intervalId);
                 }
             }, 50);
 
         }
 
-        private removeVerticalSpaceForTinyMceToolbar() {
+        private removeVerticalSpaceForEditorToolbar() {
             this.getEl().setPosition("");
             this.getEl().setTop("");
         }
 
-        private getTinyMceToolbarWidth(): number {
+        private getEditorToolbarWidth(): number {
             return wemjq(".mce-toolbar-container .mce-tinymce-inline:not([style*='display: none'])").outerHeight();
         }
 
