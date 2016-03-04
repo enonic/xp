@@ -59,7 +59,7 @@ public final class ClientTestListener
         this.socket = null;
     }
 
-    public void sendMessage( final String message )
+    void sendMessage( final String message )
         throws Exception
     {
         if ( this.socket != null )
@@ -68,15 +68,21 @@ public final class ClientTestListener
         }
     }
 
-    public void waitForConnect()
+    void waitForConnect()
         throws Exception
     {
-        this.connectLatch.await( 10, TimeUnit.SECONDS );
+        if ( !this.connectLatch.await( 30, TimeUnit.SECONDS ) )
+        {
+            throw new RuntimeException( "Timeout waiting for Connect" );
+        }
     }
 
-    public void waitForMessage()
+    void waitForMessage()
         throws Exception
     {
-        this.messageLatch.await( 20, TimeUnit.SECONDS );
+        if ( !this.messageLatch.await( 30, TimeUnit.SECONDS ) )
+        {
+            throw new RuntimeException( "Timeout waiting for Message" );
+        }
     }
 }
