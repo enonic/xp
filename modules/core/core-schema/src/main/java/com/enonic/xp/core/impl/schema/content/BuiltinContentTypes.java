@@ -160,7 +160,7 @@ final class BuiltinContentTypes
         build();
 
     private static final ContentType FRAGMENT = createSystemType( ContentTypeName.fragment() ).
-        allowChildContent( false ).
+        allowChildContent( true ).
         setFinal( true ).
         setAbstract( false ).
         form( FRAGMENT_FORM ).
