@@ -48,7 +48,11 @@ final class UpdateMediaCommand
         Preconditions.checkNotNull( params.getMimeType(), "Unable to resolve media type" );
 
         final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( params.getMimeType() );
-        final ContentTypeName type = resolvedTypeFromMimeType != null ? resolvedTypeFromMimeType : ContentTypeName.unknownMedia();
+        final ContentTypeName type = resolvedTypeFromMimeType != null
+            ? resolvedTypeFromMimeType
+            : isExecutableContentType( params.getMimeType(), params.getName() )
+                ? ContentTypeName.executableMedia()
+                : ContentTypeName.unknownMedia();
 
         final CreateAttachment mediaAttachment = CreateAttachment.create().
             name( params.getName() ).
