@@ -103,11 +103,27 @@
         text-decoration: line-through;
       }
     }
-    &.invalid .names-and-icon-view .wrapper {
-      &:before {
-        content: "!";
-        background: #cb0300;
-        color: #ffffff;
+
+    &.invalid {
+
+      &:hover {
+        background-color: #eeeeee;
+      }
+
+      .names-and-icon-view {
+        cursor: pointer;
+
+        .wrapper {
+          &:before {
+            content: "!";
+            background: #cb0300;
+            color: #ffffff;
+          }
+        }
+
+        .main-name, .sub-name {
+          cursor: pointer;
+        }
       }
     }
   }
@@ -130,6 +146,12 @@
       padding: 4px 0px 4px 0px;
       margin: 0px;
       overflow: hidden;
+
+      &.invalid {
+        &:hover {
+          background-color: #eeeeee;
+        }
+      }
 
       .viewer {
         overflow: hidden;

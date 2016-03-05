@@ -216,6 +216,11 @@ module app.publish {
                     }).
                     build();
                 this.selectionItems.push(item);
+
+                if(this.isInvalidContentPublishItem(content)) {
+                    this.setupClickListenerForPublishItem(item);
+                    item.addClass("invalid");
+                }
             });
         }
 
@@ -324,6 +329,10 @@ module app.publish {
                     build();
 
                 this.dependenciesItemsView.appendDependency(dependencyView);
+
+                if(this.isInvalidContentPublishItem(dependency)) {
+                    this.setupClickListenerForPublishItem(dependencyView);
+                }
             });
 
             if (this.extendsWindowHeightSize()) {
@@ -331,6 +340,19 @@ module app.publish {
             }
         }
 
+        private setupClickListenerForPublishItem(dependencyView: SelectionPublishItem<ContentPublishItem>) {
+            dependencyView.onClicked(() => {
+                var contentId = new api.content.ContentId(dependencyView.getBrowseItem().getId());
+                api.content.ContentSummaryAndCompareStatusFetcher.fetch(contentId).then((contentSummary: ContentSummaryAndCompareStatus) => {
+                    this.close();
+                    new api.content.event.EditContentEvent([contentSummary]).fire();
+                });
+            });
+        }
+
+        private isInvalidContentPublishItem(item: ContentPublishItem): boolean {
+            return !item.isValid() || !item.getDisplayName() || item.getName().isUnnamed();
+        }
         private extendsWindowHeightSize(): boolean {
             if (this.getResponsiveItem().isInRangeOrBigger(api.ui.responsive.ResponsiveRanges._540_720)) {
                 var el = this.getEl(),
