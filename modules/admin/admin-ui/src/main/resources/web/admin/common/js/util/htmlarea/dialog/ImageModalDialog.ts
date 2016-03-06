@@ -136,7 +136,7 @@ module api.util.htmlarea.dialog {
 
             if (this.imageElement) {
                 this.image.getHTMLElement().style["text-align"] =
-                    this.imageElement.parentElement.style.textAlign || this.imageElement.parentElement.style.cssFloat;
+                    this.imageElement.parentElement.style.textAlign;
 
                 this.imageToolbar = new ImageToolbar(this.image);
                 if (this.imageToolbar.isImageInOriginalSize(new api.dom.ElementHelper(this.imageElement))) {
@@ -349,26 +349,33 @@ module api.util.htmlarea.dialog {
         }
 
         private updateImageParentAlignment(element:HTMLElement, alignment?:string) {
+
             if (!alignment) {
                 alignment = this.image.getHTMLElement().style["text-align"];
             }
 
-            var styleFormat = "float: {0}; margin: {1};" +
-                (this.imageToolbar.isImageInOriginalSize(this.image.getEl()) ? "" : "width: {2}%;");
-            var styleAttr = "text-align: " + alignment + ";";
+            var defaultMargin = "15px",
+                marginStyle, widthStyle, style,
+                alignmentStyle = "text-align: " + alignment + ";",
+                widthFormat = this.imageToolbar.isImageInOriginalSize(this.image.getEl()) ? "" : "width: {0}%;";
 
             switch (alignment) {
                 case 'left':
+                    marginStyle = api.util.StringHelper.format("margin: {0} auto {0} {0};", defaultMargin);
+                    widthStyle = api.util.StringHelper.format(widthFormat, "40");
+                    break;
                 case 'right':
-                    styleAttr = api.util.StringHelper.format(styleFormat, alignment, "15px", "40");
+                    marginStyle = api.util.StringHelper.format("margin: {0} {0} {0} auto;", defaultMargin);
+                    widthStyle = api.util.StringHelper.format(widthFormat, "40");
                     break;
                 case 'center':
-                    styleAttr = styleAttr + api.util.StringHelper.format(styleFormat, "none", "auto", "60");
+                    marginStyle = "margin: auto;";
+                    widthStyle = api.util.StringHelper.format(widthFormat, "60");
                     break;
             }
-
-            element.setAttribute("style", styleAttr);
-            element.setAttribute("data-mce-style", styleAttr);
+            style = alignmentStyle + widthStyle + marginStyle;
+            element.setAttribute("style", style);
+            element.setAttribute("data-mce-style", style);
         }
 
         private createImageTag():void {
