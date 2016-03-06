@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.schema;
 
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -61,9 +62,23 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
 
     protected final Icon loadIcon( final N name )
     {
-        final ResourceKey resourceKey = toResourceKey( name, "png" );
+        final Optional<Icon> svgIcon = Optional.ofNullable( loadIcon( name, "image/svg+xml", "svg" ) );
+
+        if ( svgIcon.isPresent() )
+        {
+            return svgIcon.get();
+        }
+        else
+        {
+            return loadIcon( name, "image/png", "png" );
+        }
+    }
+
+    private final Icon loadIcon( final N name, final String mimeType, final String ext )
+    {
+        final ResourceKey resourceKey = toResourceKey( name, ext );
         final Resource resource = this.resourceService.getResource( resourceKey );
-        return SchemaHelper.loadIcon( resource );
+        return SchemaHelper.loadIcon( resource, mimeType );
     }
 
     public final Set<N> findNames( final ApplicationKey key )
