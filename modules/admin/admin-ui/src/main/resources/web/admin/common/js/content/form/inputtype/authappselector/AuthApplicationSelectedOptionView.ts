@@ -93,7 +93,7 @@ module api.content.site.inputtype.siteconfigurator {
             return editButton;
         }
 
-        initAndOpenConfigureDialog(comboBoxToUndoSelectionOnCancel?: SiteConfiguratorComboBox) {
+        initAndOpenConfigureDialog(comboBoxToUndoSelectionOnCancel?: AuthApplicationComboBox) {
 
             if (this.application.getAuthForm().getFormItems().length > 0) {
 
@@ -108,7 +108,6 @@ module api.content.site.inputtype.siteconfigurator {
                 var okCallback = () => {
                     if (!tempSiteConfig.equals(this.siteConfig)) {
                         this.applyTemporaryConfig(tempSiteConfig);
-                        new ContentRequiresSaveEvent(this.formContext.getPersistedContent().getContentId()).fire();
                     }
                 };
 
@@ -135,7 +134,7 @@ module api.content.site.inputtype.siteconfigurator {
             this.toggleClass("invalid", !this.formView.isValid())
         }
 
-        private undoSelectionOnCancel(comboBoxToUndoSelectionOnCancel: SiteConfiguratorComboBox) {
+        private undoSelectionOnCancel(comboBoxToUndoSelectionOnCancel: AuthApplicationComboBox) {
             comboBoxToUndoSelectionOnCancel.deselect(this.application);
         }
 

@@ -43,7 +43,6 @@ module app.wizard {
         }
 
         private createFormView(pathGuard: api.security.PathGuard): api.form.FormView {
-            console.log("createFormView");
             var formBuilder = new api.form.FormBuilder().
                 addFormItem(new api.form.InputBuilder().
                     setName("authConfig").

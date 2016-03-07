@@ -16,7 +16,7 @@ module api.content.site.inputtype.siteconfigurator {
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Application = api.application.Application;
     import ApplicationKey = api.application.ApplicationKey;
-    import SiteConfig = api.content.site.SiteConfig
+    import SiteConfig = api.content.site.SiteConfig;
     import GetApplicationRequest = api.application.GetApplicationRequest;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
@@ -128,7 +128,7 @@ module api.content.site.inputtype.siteconfigurator {
                 if (!key) {
                     return;
                 }
-                var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView>selectedOption.getOptionView();
+                var selectedOptionView: AuthApplicationSelectedOptionView = <AuthApplicationSelectedOptionView>selectedOption.getOptionView();
                 this.saveToSet(selectedOptionView.getSiteConfig(), selectedOption.getIndex());
 
                 this.ignorePropertyChange = false;
@@ -138,7 +138,7 @@ module api.content.site.inputtype.siteconfigurator {
             comboBox.onOptionMoved((selectedOption: SelectedOption<Application>) => {
                 this.ignorePropertyChange = true;
 
-                var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView> selectedOption.getOptionView();
+                var selectedOptionView: AuthApplicationSelectedOptionView = <AuthApplicationSelectedOptionView> selectedOption.getOptionView();
                 this.saveToSet(selectedOptionView.getSiteConfig(), selectedOption.getIndex());
 
                 this.ignorePropertyChange = false;
@@ -163,7 +163,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         displayValidationErrors(value: boolean) {
             this._displayValidationErrors = value;
-            this.comboBox.getSelectedOptionViews().forEach((view: SiteConfiguratorSelectedOptionView) => {
+            this.comboBox.getSelectedOptionViews().forEach((view: AuthApplicationSelectedOptionView) => {
                 view.getFormView().displayValidationErrors(value);
             });
         }
@@ -175,7 +175,7 @@ module api.content.site.inputtype.siteconfigurator {
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
             var recording = new api.form.inputtype.InputValidationRecording();
 
-            this.comboBox.getSelectedOptionViews().forEach((view: SiteConfiguratorSelectedOptionView) => {
+            this.comboBox.getSelectedOptionViews().forEach((view: AuthApplicationSelectedOptionView) => {
 
                 var validationRecording = view.getFormView().validate(true);
                 if (!validationRecording.isMinimumOccurrencesValid()) {

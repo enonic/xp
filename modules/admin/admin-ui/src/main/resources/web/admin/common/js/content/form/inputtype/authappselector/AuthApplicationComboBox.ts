@@ -14,19 +14,19 @@ module api.content.site.inputtype.siteconfigurator {
 
     export class AuthApplicationComboBox extends api.ui.selector.combobox.RichComboBox<Application> {
 
-        private siteConfiguratorSelectedOptionsView: AuthApplicationSelectedOptionsView;
+        private authApplicationSelectedOptionsView: AuthApplicationSelectedOptionsView;
 
         constructor(maxOccurrences: number, siteConfigProvider: SiteConfigProvider,
                     formContext: api.content.form.ContentFormContext, value?: string) {
 
-            this.siteConfiguratorSelectedOptionsView = new AuthApplicationSelectedOptionsView(siteConfigProvider, formContext);
+            this.authApplicationSelectedOptionsView = new AuthApplicationSelectedOptionsView(siteConfigProvider, formContext);
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Application>();
             builder.
                 setMaximumOccurrences(maxOccurrences).
                 setIdentifierMethod('getApplicationKey').
                 setComboBoxName("applicationSelector").
                 setLoader(new api.security.auth.AuthApplicationLoader()).
-                setSelectedOptionsView(this.siteConfiguratorSelectedOptionsView).
+                setSelectedOptionsView(this.authApplicationSelectedOptionsView).
                 setOptionDisplayValueViewer(new ApplicationViewer()).
                 setValue(value).
                 setDelayedInputValueChangedHandling(500);
@@ -34,36 +34,36 @@ module api.content.site.inputtype.siteconfigurator {
             super(builder);
         }
 
-        getSelectedOptionViews(): SiteConfiguratorSelectedOptionView[] {
-            var views: SiteConfiguratorSelectedOptionView[] = [];
+        getSelectedOptionViews(): AuthApplicationSelectedOptionView[] {
+            var views: AuthApplicationSelectedOptionView[] = [];
             this.getSelectedOptions().forEach((selectedOption: SelectedOption<Application>) => {
-                views.push(<SiteConfiguratorSelectedOptionView>selectedOption.getOptionView());
+                views.push(<AuthApplicationSelectedOptionView>selectedOption.getOptionView());
             });
             return views;
         }
 
         onSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey, formView: FormView): void;}) {
-            this.siteConfiguratorSelectedOptionsView.onSiteConfigFormDisplayed(listener);
+            this.authApplicationSelectedOptionsView.onSiteConfigFormDisplayed(listener);
         }
 
         unSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey, formView: FormView): void;}) {
-            this.siteConfiguratorSelectedOptionsView.unSiteConfigFormDisplayed(listener);
+            this.authApplicationSelectedOptionsView.unSiteConfigFormDisplayed(listener);
         }
 
         onBeforeOptionCreated(listener: () => void) {
-            this.siteConfiguratorSelectedOptionsView.onBeforeOptionCreated(listener);
+            this.authApplicationSelectedOptionsView.onBeforeOptionCreated(listener);
         }
 
         unBeforeOptionCreated(listener: () => void) {
-            this.siteConfiguratorSelectedOptionsView.unBeforeOptionCreated(listener);
+            this.authApplicationSelectedOptionsView.unBeforeOptionCreated(listener);
         }
 
         onAfterOptionCreated(listener: () => void) {
-            this.siteConfiguratorSelectedOptionsView.onAfterOptionCreated(listener);
+            this.authApplicationSelectedOptionsView.onAfterOptionCreated(listener);
         }
 
         unAfterOptionCreated(listener: () => void) {
-            this.siteConfiguratorSelectedOptionsView.unAfterOptionCreated(listener);
+            this.authApplicationSelectedOptionsView.unAfterOptionCreated(listener);
         }
     }
 
