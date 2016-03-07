@@ -47,7 +47,7 @@ module app.wizard {
             var formBuilder = new api.form.FormBuilder().
                 addFormItem(new api.form.InputBuilder().
                     setName("authConfig").
-                    setInputType(new api.form.InputTypeName("SiteConfigurator", false)).
+                    setInputType(new api.form.InputTypeName("AuthApplicationSelector", false)).
                     setLabel("Application").
                     setOccurrences(new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(1).build()).
                     setInputTypeConfig({}).
