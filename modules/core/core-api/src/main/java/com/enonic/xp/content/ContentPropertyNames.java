@@ -9,6 +9,8 @@ public class ContentPropertyNames
 {
     public static final String PAGE = "page";
 
+    public static final String PAGE_TEXT_COMPONENT = "page.region.component.textcomponent.text";
+
     public static final String FORM = "form";
 
     public static final String SITE = "site";

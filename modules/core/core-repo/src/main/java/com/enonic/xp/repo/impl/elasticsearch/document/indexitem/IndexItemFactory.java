@@ -47,10 +47,13 @@ public class IndexItemFactory
     {
         final List<IndexItem> items = Lists.newArrayList();
 
-        items.addAll( BaseTypeFactory.create( indexPath, processedPropertyValue ) );
-        items.addAll( FulltextTypeFactory.create( indexPath, processedPropertyValue, indexConfig ) );
-        items.add( OrderByTypeFactory.create( indexPath, processedPropertyValue ) );
-        items.addAll( AllTextTypeFactory.create( processedPropertyValue, indexConfig ) );
+        if ( indexConfig.isEnabled() )
+        {
+            items.addAll( BaseTypeFactory.create( indexPath, processedPropertyValue ) );
+            items.addAll( FulltextTypeFactory.create( indexPath, processedPropertyValue, indexConfig ) );
+            items.add( OrderByTypeFactory.create( indexPath, processedPropertyValue ) );
+            items.addAll( AllTextTypeFactory.create( processedPropertyValue, indexConfig ) );
+        }
 
         return items;
     }

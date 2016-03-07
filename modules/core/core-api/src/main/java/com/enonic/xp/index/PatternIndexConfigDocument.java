@@ -16,7 +16,7 @@ public class PatternIndexConfigDocument
 {
     private final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs;
 
-    private final Map<String, PathIndexConfig> pathIndexConfigMap = Maps.newHashMap();
+    private final Map<String, PathIndexConfig> pathIndexConfigMap;
 
     private final IndexConfig defaultConfig;
 
@@ -28,8 +28,9 @@ public class PatternIndexConfigDocument
     private PatternIndexConfigDocument( final Builder builder )
     {
         super( builder );
-        pathIndexConfigs = ImmutableSortedSet.copyOf( builder.pathIndexConfigs );
-        defaultConfig = builder.defaultConfig;
+        this.pathIndexConfigs = ImmutableSortedSet.copyOf( builder.pathIndexConfigs );
+        this.pathIndexConfigMap = builder.stringPathIndexConfigMap;
+        this.defaultConfig = builder.defaultConfig;
     }
 
     public static Builder create()
@@ -45,7 +46,7 @@ public class PatternIndexConfigDocument
     @Override
     public IndexConfig getConfigForPath( final PropertyPath dataPath )
     {
-        final PathIndexConfig exactMatch = pathIndexConfigMap.get( dataPath.resetAllIndexesTo( 0 ).toString() );
+        final PathIndexConfig exactMatch = pathIndexConfigMap.get( dataPath.resetAllIndexesTo( 0 ).toString().toLowerCase() );
 
         if ( exactMatch != null )
         {
@@ -79,12 +80,12 @@ public class PatternIndexConfigDocument
         public Builder add( final String path, final IndexConfig indexConfig )
         {
             final PathIndexConfig pathIndexConfig = PathIndexConfig.create().
-
                 path( PropertyPath.from( path ) ).
                 indexConfig( indexConfig ).
                 build();
+
             this.pathIndexConfigs.add( pathIndexConfig );
-            this.stringPathIndexConfigMap.put( path, pathIndexConfig );
+            this.stringPathIndexConfigMap.put( path.toLowerCase(), pathIndexConfig );
 
             return this;
         }
@@ -96,7 +97,7 @@ public class PatternIndexConfigDocument
                 indexConfig( indexConfig ).
                 build();
             this.pathIndexConfigs.add( pathIndexConfig );
-            this.stringPathIndexConfigMap.put( path.resetAllIndexesTo( 0 ).toString(), pathIndexConfig );
+            this.stringPathIndexConfigMap.put( path.resetAllIndexesTo( 0 ).toString().toLowerCase(), pathIndexConfig );
 
             return this;
         }
@@ -104,7 +105,7 @@ public class PatternIndexConfigDocument
         public Builder addPattern( final PathIndexConfig pathIndexConfig )
         {
             this.pathIndexConfigs.add( pathIndexConfig );
-            this.stringPathIndexConfigMap.put( pathIndexConfig.getPath().resetAllIndexesTo( 0 ).toString(), pathIndexConfig );
+            this.stringPathIndexConfigMap.put( pathIndexConfig.getPath().resetAllIndexesTo( 0 ).toString().toLowerCase(), pathIndexConfig );
             return this;
         }
 

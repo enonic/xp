@@ -19,6 +19,7 @@ import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIER;
 import static com.enonic.xp.content.ContentPropertyNames.OWNER;
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;
+import static com.enonic.xp.content.ContentPropertyNames.PAGE_TEXT_COMPONENT;
 import static com.enonic.xp.content.ContentPropertyNames.SITE;
 import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 
@@ -43,7 +44,8 @@ class ContentIndexConfigFactory
             add( CREATED_TIME, IndexConfig.MINIMAL ).
             add( MODIFIED_TIME, IndexConfig.MINIMAL ).
             add( OWNER, IndexConfig.MINIMAL ).
-            add( PAGE, IndexConfig.MINIMAL ).
+            add( PAGE, IndexConfig.NONE ).
+            add( PAGE_TEXT_COMPONENT, IndexConfig.FULLTEXT ).
             add( PropertyPath.from( PAGE, "regions" ), IndexConfig.NONE ).
             add( SITE, IndexConfig.NONE ).
             add( DATA, IndexConfig.BY_TYPE ).
