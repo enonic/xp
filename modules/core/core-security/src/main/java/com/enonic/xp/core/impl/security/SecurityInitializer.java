@@ -222,8 +222,10 @@ final class SecurityInitializer
         final PropertySet backgroundPropertySet = new PropertySet();
         backgroundPropertySet.setString( "application", "com.enonic.xp.app.login" );
         backgroundPropertySet.setString( "path", "img/background.jpg" );
+
         final PropertyTree config = new PropertyTree();
         config.setSet( "background", backgroundPropertySet );
+        config.setString( "userstore", UserStoreKey.system().toString() );
 
         final AuthConfig authConfig = AuthConfig.create().
             applicationKey( ApplicationKey.from( "com.enonic.xp.app.login" ) ).
@@ -232,6 +234,7 @@ final class SecurityInitializer
         final CreatePathGuardParams createPathGuardParams = CreatePathGuardParams.create().
             key( PathGuardKey.admin() ).
             displayName( "Admin guard" ).
+            description( "Admin guard" ).
             addPaths( "/admin" ).
             authConfig( authConfig ).
             build();

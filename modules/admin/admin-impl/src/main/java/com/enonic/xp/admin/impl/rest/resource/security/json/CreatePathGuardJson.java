@@ -14,12 +14,14 @@ public final class CreatePathGuardJson
 
     @JsonCreator
     public CreatePathGuardJson( @JsonProperty("key") final String key, @JsonProperty("displayName") final String displayName,
+                                @JsonProperty("description") final String description,
                                 @JsonProperty("authConfig") final AuthConfigJson authConfigJson,
                                 @JsonProperty("paths") final String[] paths )
     {
         this.createPathGuardParams = CreatePathGuardParams.create().
             key( PathGuardKey.from( key ) ).
             displayName( displayName ).
+            description( description ).
             authConfig( authConfigJson == null ? null : authConfigJson.getAuthConfig() ).
             addPaths( paths ).
             build();

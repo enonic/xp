@@ -10,6 +10,8 @@ public final class PathGuard
 
     private final String displayName;
 
+    private final String description;
+
     private final AuthConfig authConfig;
 
     private final ImmutableSet<String> paths;
@@ -18,6 +20,7 @@ public final class PathGuard
     {
         this.key = builder.key;
         this.displayName = builder.displayName;
+        this.description = builder.description;
         this.authConfig = builder.authConfig;
         this.paths = builder.paths.build();
     }
@@ -30,6 +33,11 @@ public final class PathGuard
     public String getDisplayName()
     {
         return displayName;
+    }
+
+    public String getDescription()
+    {
+        return description;
     }
 
     public AuthConfig getAuthConfig()
@@ -53,6 +61,8 @@ public final class PathGuard
 
         private String displayName;
 
+        private String description;
+
         private AuthConfig authConfig;
 
         private ImmutableSet.Builder<String> paths = ImmutableSet.builder();
@@ -71,6 +81,13 @@ public final class PathGuard
 
         {
             this.displayName = value;
+            return this;
+        }
+
+        public Builder description( final String value )
+
+        {
+            this.description = value;
             return this;
         }
 

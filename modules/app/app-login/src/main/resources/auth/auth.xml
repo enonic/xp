@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <auth>
   <config>
-    <input name="myRelationship" type="UserStoreSelector">
+    <input name="userstore" type="UserStoreSelector">
       <label>Userstore</label>
       <occurrences minimum="0" maximum="1"/>
       <config>

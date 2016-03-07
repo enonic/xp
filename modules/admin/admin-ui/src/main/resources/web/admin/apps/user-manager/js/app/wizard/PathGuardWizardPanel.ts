@@ -15,7 +15,7 @@ module app.wizard {
     import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
 
     export class PathGuardWizardPanel extends UserItemWizardPanel<PathGuard> {
-        private authApplicationWizardStepForm: AuthApplicationWizardStepForm;
+        private pathGuardWizardStepForm: PathGuardWizardStepForm;
         private pathGuardMappingWizardStepForm: PathGuardMappingWizardStepForm;
 
         private persistedPathGuardKey: api.security.PathGuardKey;
@@ -27,7 +27,7 @@ module app.wizard {
 
         constructor(params: PathGuardWizardPanelParams, callback: (wizard: PathGuardWizardPanel) => void) {
 
-            this.authApplicationWizardStepForm = new AuthApplicationWizardStepForm();
+            this.pathGuardWizardStepForm = new PathGuardWizardStepForm();
             this.pathGuardMappingWizardStepForm = new PathGuardMappingWizardStepForm();
 
             this.constructing = true;
@@ -132,7 +132,7 @@ module app.wizard {
 
             var steps: WizardStep[] = [];
 
-            steps.push(new WizardStep("Guard", this.authApplicationWizardStepForm));
+            steps.push(new WizardStep("Guard", this.pathGuardWizardStepForm));
             steps.push(new WizardStep("Mappings", this.pathGuardMappingWizardStepForm));
 
             this.setSteps(steps);
@@ -190,7 +190,7 @@ module app.wizard {
             var deferred = wemQ.defer<void>();
 
             this.wizardHeader.initNames(existing.getDisplayName(), existing.getKey().toString(), false);
-            this.authApplicationWizardStepForm.layout(existing.clone());
+            this.pathGuardWizardStepForm.layout(existing.clone());
             this.pathGuardMappingWizardStepForm.layout(existing.clone());
 
             deferred.resolve(null);
@@ -229,7 +229,8 @@ module app.wizard {
             if (persistedPathGuard == undefined) {
                 return this.wizardHeader.getName() !== "" ||
                        this.wizardHeader.getDisplayName() !== "" ||
-                       this.authApplicationWizardStepForm.getAuthConfig() != null ||
+                       this.pathGuardWizardStepForm.getAuthConfig() != null ||
+                       this.pathGuardWizardStepForm.getDescription() != null ||
                        this.pathGuardMappingWizardStepForm.getPaths().length > 0;
             } else {
                 var viewedPathGuard = this.assembleViewedPathGuard();
@@ -251,9 +252,10 @@ module app.wizard {
 
         private assembleViewedPathGuard(): PathGuard {
             return new PathGuardBuilder().
-                setDisplayName(this.wizardHeader.getDisplayName()).
                 setKey(this.getPersistedItem().getKey()).
-                setAuthConfig(this.authApplicationWizardStepForm.getAuthConfig()).
+                setDisplayName(this.wizardHeader.getDisplayName()).
+                setDescription(this.pathGuardWizardStepForm.getDescription()).
+                setAuthConfig(this.pathGuardWizardStepForm.getAuthConfig()).
                 setPaths(this.pathGuardMappingWizardStepForm.getPaths()).
                 build();
         }
@@ -261,11 +263,13 @@ module app.wizard {
         private produceCreatePathGuardRequest(): CreatePathGuardRequest {
             var key = api.security.PathGuardKey.fromString(this.wizardHeader.getName()),
                 name = this.wizardHeader.getDisplayName(),
-                authConfig = this.authApplicationWizardStepForm.getAuthConfig(),
+                description = this.pathGuardWizardStepForm.getDescription(),
+                authConfig = this.pathGuardWizardStepForm.getAuthConfig(),
                 paths = this.pathGuardMappingWizardStepForm.getPaths();
             return new CreatePathGuardRequest().
-                setDisplayName(name).
                 setKey(key).
+                setDisplayName(name).
+                setDescription(description).
                 setAuthConfig(authConfig).
                 setPaths(paths);
         }
@@ -273,12 +277,14 @@ module app.wizard {
         private produceUpdatePathGuardRequest(viewedPathGuard: PathGuard): UpdatePathGuardRequest {
             var key = this.getPersistedItem().getKey(),
                 name = viewedPathGuard.getDisplayName(),
+                description = viewedPathGuard.getDescription(),
                 authConfig = viewedPathGuard.getAuthConfig(),
                 paths = viewedPathGuard.getPaths();
 
             return new UpdatePathGuardRequest().
                 setKey(key).
                 setDisplayName(name).
+                setDescription(description).
                 setAuthConfig(authConfig).
                 setPaths(paths);
         }

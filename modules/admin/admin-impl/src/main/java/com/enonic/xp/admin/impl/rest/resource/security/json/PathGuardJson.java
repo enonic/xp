@@ -2,8 +2,8 @@ package com.enonic.xp.admin.impl.rest.resource.security.json;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.security.PathGuard;
 import com.enonic.xp.security.AuthConfig;
+import com.enonic.xp.security.PathGuard;
 
 @SuppressWarnings("UnusedDeclaration")
 public class PathGuardJson
@@ -19,6 +19,11 @@ public class PathGuardJson
     public String getDisplayName()
     {
         return pathGuard.getDisplayName();
+    }
+
+    public String getDescription()
+    {
+        return pathGuard.getDescription();
     }
 
     public String getKey()

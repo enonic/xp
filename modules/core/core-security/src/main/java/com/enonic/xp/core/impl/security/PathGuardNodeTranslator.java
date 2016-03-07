@@ -46,8 +46,12 @@ public class PathGuardNodeTranslator
         final PathGuardKey key = PathGuardKey.from( node.name().toString() );
         final PropertySet data = node.data().getRoot();
         final String displayName = data.getString( PathGuardPropertyPaths.DISPLAY_NAME_PATH );
+        final String description = data.getString( PathGuardPropertyPaths.DESCRIPTION_PATH );
 
-        final PathGuard.Builder pathGuard = PathGuard.create().key( key ).displayName( displayName );
+        final PathGuard.Builder pathGuard = PathGuard.create().
+            key( key ).
+            displayName( displayName ).
+            description( description );
 
         if ( data.hasProperty( PathGuardPropertyPaths.AUTH_CONFIG_PATH ) )
         {
@@ -79,6 +83,7 @@ public class PathGuardNodeTranslator
 
         final PropertyTree data = new PropertyTree();
         data.setString( PathGuardPropertyPaths.DISPLAY_NAME_PATH, pathGuard.getDisplayName() );
+        data.setString( PathGuardPropertyPaths.DESCRIPTION_PATH, pathGuard.getDescription() );
         data.addStrings( PathGuardPropertyPaths.PATHS_PATH.toString(), pathGuard.getPaths() );
 
         final AuthConfig authConfig = pathGuard.getAuthConfig();
@@ -95,6 +100,7 @@ public class PathGuardNodeTranslator
     static UpdateNodeParams toUpdateNodeParams( final UpdatePathGuardParams params, final NodeId nodeId )
     {
         final String displayName = params.getDisplayName();
+        final String description = params.getDescription();
         final AuthConfig authConfig = params.getAuthConfig();
         final ImmutableList<String> paths = params.getPaths();
         return UpdateNodeParams.create().
@@ -102,6 +108,7 @@ public class PathGuardNodeTranslator
             editor( editableNode -> {
                 final PropertyTree data = editableNode.data;
                 data.setString( PathGuardPropertyPaths.DISPLAY_NAME_PATH, displayName );
+                data.setString( PathGuardPropertyPaths.DESCRIPTION_PATH, description );
                 data.removeProperty( PathGuardPropertyPaths.PATHS_PATH );
                 data.addStrings( PathGuardPropertyPaths.PATHS_PATH.toString(), paths );
                 if ( authConfig == null )
