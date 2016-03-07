@@ -4,6 +4,7 @@ module api.security {
 
         key: string;
         displayName: string;
+        description: string;
         authConfig?: AuthConfigJson;
         paths: string[];
     }

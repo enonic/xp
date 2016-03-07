@@ -7,7 +7,7 @@ module app.wizard {
     import LabelEl = api.dom.LabelEl;
 
 
-    export class AuthApplicationWizardStepForm extends api.app.wizard.WizardStepForm {
+    export class PathGuardWizardStepForm extends api.app.wizard.WizardStepForm {
 
         private formView: api.form.FormView;
 
@@ -45,6 +45,14 @@ module app.wizard {
         private createFormView(pathGuard: api.security.PathGuard): api.form.FormView {
             var formBuilder = new api.form.FormBuilder().
                 addFormItem(new api.form.InputBuilder().
+                    setName("description").
+                    setInputType(api.form.inputtype.text.TextLine.getName()).
+                    setLabel("Description").
+                    setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
+                    setInputTypeConfig({}).
+                    setMaximizeUIInputWidth(true).
+                    build()).
+                addFormItem(new api.form.InputBuilder().
                     setName("authConfig").
                     setInputType(new api.form.InputTypeName("AuthApplicationSelector", false)).
                     setLabel("Application").
@@ -54,6 +62,7 @@ module app.wizard {
                     build());
 
             this.propertySet = new api.data.PropertyTree().getRoot();
+            this.propertySet.addString("description", pathGuard.getDescription());
             var authConfig = pathGuard.getAuthConfig();
             if (authConfig) {
                 var authConfigPropertySet = new api.data.PropertySet();
@@ -77,6 +86,10 @@ module app.wizard {
             }
 
             return null;
+        }
+
+        getDescription(): string {
+            return this.propertySet.getString("description");
         }
 
         giveFocus(): boolean {

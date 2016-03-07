@@ -12,6 +12,8 @@ public final class CreatePathGuardParams
 
     private final String displayName;
 
+    private final String description;
+
     private final AuthConfig authConfig;
 
     private final ImmutableList<String> paths;
@@ -20,6 +22,7 @@ public final class CreatePathGuardParams
     {
         this.key = checkNotNull( builder.key, "key is required" );
         this.displayName = checkNotNull( builder.displayName, "displayName is required" );
+        this.description = builder.description;
         this.authConfig = builder.authConfig;
         this.paths = builder.paths.build();
     }
@@ -32,6 +35,11 @@ public final class CreatePathGuardParams
     public String getDisplayName()
     {
         return displayName;
+    }
+
+    public String getDescription()
+    {
+        return description;
     }
 
     public AuthConfig getAuthConfig()
@@ -55,6 +63,8 @@ public final class CreatePathGuardParams
 
         private String displayName;
 
+        private String description;
+
         private AuthConfig authConfig;
 
         private ImmutableList.Builder<String> paths = ImmutableList.builder();
@@ -72,6 +82,12 @@ public final class CreatePathGuardParams
         public Builder displayName( final String value )
         {
             this.displayName = value;
+            return this;
+        }
+
+        public Builder description( final String value )
+        {
+            this.description = value;
             return this;
         }
 

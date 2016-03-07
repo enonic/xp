@@ -4,6 +4,7 @@ module api.security {
 
         private key: PathGuardKey;
         private displayName: string;
+        private description: string;
         private authConfig: AuthConfig;
         private paths: string[];
 
@@ -16,6 +17,7 @@ module api.security {
             return {
                 key: this.key.toString(),
                 displayName: this.displayName,
+                description: this.description,
                 authConfig: this.authConfig ? this.authConfig.toJson() : undefined,
                 paths: this.paths ? this.paths : []
             };
@@ -28,6 +30,11 @@ module api.security {
 
         setDisplayName(displayName: string): UpdatePathGuardRequest {
             this.displayName = displayName;
+            return this;
+        }
+
+        setDescription(description: string): UpdatePathGuardRequest {
+            this.description = description;
             return this;
         }
 

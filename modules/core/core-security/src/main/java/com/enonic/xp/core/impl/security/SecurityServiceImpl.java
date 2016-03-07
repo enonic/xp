@@ -1024,6 +1024,7 @@ public final class SecurityServiceImpl
         final PathGuard pathGuard = PathGuard.create().
             key( params.getKey() ).
             displayName( params.getDisplayName() ).
+            description( params.getDescription() ).
             authConfig( params.getAuthConfig() ).
             addAllPaths( params.getPaths() ).
             build();

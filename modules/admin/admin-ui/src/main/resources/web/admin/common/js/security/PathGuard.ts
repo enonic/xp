@@ -3,12 +3,14 @@ module api.security {
     export class PathGuard implements api.Equitable {
         private key: PathGuardKey;
         private displayName: string;
+        private description: string;
         private authConfig: AuthConfig;
         private paths: string[];
 
         constructor(builder: PathGuardBuilder) {
             this.key = builder.key;
             this.displayName = builder.displayName;
+            this.description = builder.description;
             this.authConfig = builder.authConfig;
             this.paths = builder.paths;
         }
@@ -19,6 +21,10 @@ module api.security {
 
         getDisplayName(): string {
             return this.displayName;
+        }
+
+        getDescription(): string {
+            return this.description;
         }
 
         getAuthConfig(): AuthConfig {
@@ -38,6 +44,7 @@ module api.security {
 
             return this.key === other.key &&
                    this.displayName === other.displayName &&
+                   this.description === other.description &&
                    ((!this.authConfig && !other.authConfig) || (this.authConfig && this.authConfig.equals(other.authConfig))) &&
                    ObjectHelper.anyArrayEquals(this.paths, other.paths)
         }
@@ -46,6 +53,7 @@ module api.security {
             return PathGuard.create().
                 setKey(this.key).
                 setDisplayName(this.displayName).
+                setDescription(this.description).
                 setAuthConfig(this.authConfig ? this.authConfig.clone() : this.authConfig).
                 setPaths(this.paths.slice(0)).
                 build();
@@ -61,8 +69,9 @@ module api.security {
     }
 
     export class PathGuardBuilder {
-        displayName: string;
         key: PathGuardKey;
+        displayName: string;
+        description: string;
         authConfig: AuthConfig;
         paths: string[];
 
@@ -72,6 +81,7 @@ module api.security {
         fromJson(json: PathGuardJson): PathGuardBuilder {
             this.key = PathGuardKey.fromString(json.key);
             this.displayName = json.displayName;
+            this.description = json.description;
             this.authConfig = json.authConfig ? AuthConfig.fromJson(json.authConfig) : null;
             this.paths = json.paths;
             return this;
@@ -84,6 +94,11 @@ module api.security {
 
         setDisplayName(displayName: string): PathGuardBuilder {
             this.displayName = displayName;
+            return this;
+        }
+
+        setDescription(description: string): PathGuardBuilder {
+            this.description = description;
             return this;
         }
 
