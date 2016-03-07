@@ -15,9 +15,6 @@ module app.wizard {
     import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
 
     export class PathGuardWizardPanel extends UserItemWizardPanel<PathGuard> {
-
-        private descriptionWizardStepForm: PrincipalDescriptionWizardStepForm;
-
         private authApplicationWizardStepForm: AuthApplicationWizardStepForm;
         private pathGuardMappingWizardStepForm: PathGuardMappingWizardStepForm;
 
@@ -30,7 +27,6 @@ module app.wizard {
 
         constructor(params: PathGuardWizardPanelParams, callback: (wizard: PathGuardWizardPanel) => void) {
 
-            this.descriptionWizardStepForm = new PrincipalDescriptionWizardStepForm();
             this.authApplicationWizardStepForm = new AuthApplicationWizardStepForm();
             this.pathGuardMappingWizardStepForm = new PathGuardMappingWizardStepForm();
 
@@ -136,8 +132,7 @@ module app.wizard {
 
             var steps: WizardStep[] = [];
 
-            steps.push(new WizardStep("PathGuard", this.descriptionWizardStepForm));
-            steps.push(new WizardStep("Authentication", this.authApplicationWizardStepForm));
+            steps.push(new WizardStep("Guard", this.authApplicationWizardStepForm));
             steps.push(new WizardStep("Mappings", this.pathGuardMappingWizardStepForm));
 
             this.setSteps(steps);

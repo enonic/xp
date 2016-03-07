@@ -11,27 +11,8 @@ module app.wizard {
 
         layout(pathGuard: api.security.PathGuard) {
 
-            var formBuilder = new api.form.FormBuilder().
-                addFormItem(new api.form.InputBuilder().
-                    setName("paths").
-                    setInputType(api.form.inputtype.text.TextLine.getName()).
-                    setLabel("Protected paths").
-                    setOccurrences(new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(0).build()).
-                    setInputTypeConfig({}).
-                    build());
+            this.formView = this.createFormView(pathGuard);
 
-            this.propertySet = new api.data.PropertySet();
-            var paths = pathGuard.getPaths();
-            if (paths && paths.length > 0) {
-                paths.forEach(path => {
-                    this.propertySet.addString("paths", path);
-                });
-            } else {
-                this.propertySet.setString("paths", 0, "");
-            }
-
-
-            this.formView = new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
             return this.formView.layout().then(() => {
 
                 this.formView.onFocus((event) => {
@@ -51,6 +32,30 @@ module app.wizard {
                 var formViewValid = this.formView.isValid();
                 this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(formViewValid));
             });
+        }
+
+        private createFormView(pathGuard: api.security.PathGuard): api.form.FormView {
+            var formBuilder = new api.form.FormBuilder().
+                addFormItem(new api.form.InputBuilder().
+                    setName("paths").
+                    setInputType(api.form.inputtype.text.TextLine.getName()).
+                    setLabel("Protected resources").
+                    setOccurrences(new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(0).build()).
+                    setInputTypeConfig({}).
+                    setMaximizeUIInputWidth(true).
+                    build());
+
+            this.propertySet = new api.data.PropertySet();
+            var paths = pathGuard.getPaths();
+            if (paths && paths.length > 0) {
+                paths.forEach(path => {
+                    this.propertySet.addString("paths", path);
+                });
+            } else {
+                this.propertySet.setString("paths", 0, "");
+            }
+
+            return new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
         }
 
         getPaths(): string[] {

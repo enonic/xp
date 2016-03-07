@@ -140,6 +140,7 @@
 ///<reference path='content/form/inputtype/tag/_module.ts' />
 ///<reference path='content/form/inputtype/geo/_module.ts' />
 ///<reference path='content/site/inputtype/siteconfigurator/_module.ts' />
+///<reference path='content/form/inputtype/authappselector/_module.ts' />
 
 ///<reference path='aggregation/_module.ts' />
 
