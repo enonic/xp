@@ -46,13 +46,15 @@ module app.wizard {
                     build());
 
             this.propertySet = new api.data.PropertySet();
-            var paths = pathGuard.getPaths();
-            if (paths && paths.length > 0) {
-                paths.forEach(path => {
-                    this.propertySet.addString("paths", path);
-                });
-            } else {
-                this.propertySet.setString("paths", 0, "");
+            if (pathGuard) {
+                var paths = pathGuard.getPaths();
+                if (paths && paths.length > 0) {
+                    paths.forEach(path => {
+                        this.propertySet.addString("paths", path);
+                    });
+                } else {
+                    this.propertySet.setString("paths", 0, "");
+                }
             }
 
             return new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);

@@ -5,5 +5,9 @@ module api.security.auth {
         constructor() {
             super(new api.application.ListAuthApplicationsRequest());
         }
+
+        filterFn(application: api.application.Application) {
+            return application.getDisplayName().toString().toLowerCase().indexOf(this.getSearchString().toLowerCase()) != -1;
+        }
     }
 }

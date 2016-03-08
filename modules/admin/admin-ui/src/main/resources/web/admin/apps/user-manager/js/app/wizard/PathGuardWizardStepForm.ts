@@ -62,13 +62,15 @@ module app.wizard {
                     build());
 
             this.propertySet = new api.data.PropertyTree().getRoot();
-            this.propertySet.addString("description", pathGuard.getDescription());
-            var authConfig = pathGuard.getAuthConfig();
-            if (authConfig) {
-                var authConfigPropertySet = new api.data.PropertySet();
-                authConfigPropertySet.addString("applicationKey", authConfig.getApplicationKey().toString())
-                authConfigPropertySet.addPropertySet("config", authConfig.getConfig().getRoot())
-                this.propertySet.addPropertySet("authConfig", authConfigPropertySet);
+            if (pathGuard) {
+                this.propertySet.addString("description", pathGuard.getDescription());
+                var authConfig = pathGuard.getAuthConfig();
+                if (authConfig) {
+                    var authConfigPropertySet = new api.data.PropertySet();
+                    authConfigPropertySet.addString("applicationKey", authConfig.getApplicationKey().toString())
+                    authConfigPropertySet.addPropertySet("config", authConfig.getConfig().getRoot())
+                    this.propertySet.addPropertySet("authConfig", authConfigPropertySet);
+                }
             }
 
             return new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);

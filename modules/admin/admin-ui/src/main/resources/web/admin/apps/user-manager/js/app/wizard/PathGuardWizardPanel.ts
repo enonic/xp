@@ -155,6 +155,8 @@ module app.wizard {
             var deferred = wemQ.defer<void>();
 
             this.wizardHeader.initNames("", this.pathGuardPath, false);
+            this.pathGuardWizardStepForm.layout(null);
+            this.pathGuardMappingWizardStepForm.layout(null);
 
             deferred.resolve(null);
             return deferred.promise;
