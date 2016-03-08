@@ -21,6 +21,9 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.impl.content.processor.ContentProcessor;
+import com.enonic.xp.core.impl.content.processor.ProcessCreateParams;
+import com.enonic.xp.core.impl.content.processor.ProxyContentProcessor;
 import com.enonic.xp.core.impl.content.validate.DataValidationError;
 import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
@@ -240,6 +243,14 @@ final class CreateContentCommand
 
     private CreateContentParams runContentProcessors( final CreateContentParams createContentParams, final ContentType contentType )
     {
+        for ( final ContentProcessor contentProcessor : this.contentProcessors )
+        {
+            if ( contentProcessor.supports( contentType ) )
+            {
+                contentProcessor.processCreate( new ProcessCreateParams( createContentParams, mediaInfo ) );
+            }
+        }
+
         return ProxyContentProcessor.create().
             mediaInfo( mediaInfo ).
             contentType( contentType ).

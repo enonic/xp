@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.content;
+package com.enonic.xp.core.impl.content.processor;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -49,7 +49,7 @@ import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
 import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
 
-final class ImageContentProcessor
+public final class ImageContentProcessor
 {
     private static final ImmutableMap<String, String> FIELD_CONFORMITY_MAP = ImmutableMap.<String, String>builder().
         put( "tiffImagelength", "imageHeight" ).

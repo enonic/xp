@@ -20,6 +20,7 @@ import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
 import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
+import static com.enonic.xp.media.MediaInfo.TEXT_CONTENT_METADATA_NAME;
 
 final class BuiltinMixinsTypes
 {
@@ -43,7 +44,13 @@ final class BuiltinMixinsTypes
         form( createGpsInfoMixinForm() ).
         build();
 
-    private static final Mixins MIXINS = Mixins.from( IMAGE_METADATA, CAMERA_METADATA, GPS_METADATA );
+    private static final Mixin MEDIA_CONTENT_METADATA = Mixin.create().
+        name( TEXT_CONTENT_METADATA_NAME ).
+        displayName( "Media content" ).
+        form( createMediaContentMixinForm() ).
+        build();
+
+    private static final Mixins MIXINS = Mixins.from( IMAGE_METADATA, CAMERA_METADATA, GPS_METADATA, MEDIA_CONTENT_METADATA );
 
     private static Form createImageInfoMixinForm()
     {
@@ -67,6 +74,13 @@ final class BuiltinMixinsTypes
         form.addFormItem( createTextLine( "altitude", "Altitude" ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "direction", "Direction" ).occurrences( 0, 1 ).build() );
 
+        return form.build();
+    }
+
+    private static Form createMediaContentMixinForm()
+    {
+        final Form.Builder form = Form.create();
+        form.addFormItem( createTextArea( "media-content", "Media Content" ).occurrences( 0, 1 ).build() );
         return form.build();
     }
 
@@ -99,6 +113,11 @@ final class BuiltinMixinsTypes
     private static Input.Builder createTextLine( final String name, final String label )
     {
         return Input.create().inputType( InputTypeName.TEXT_LINE ).label( label ).name( name ).immutable( true );
+    }
+
+    private static Input.Builder createTextArea( final String name, final String label )
+    {
+        return Input.create().inputType( InputTypeName.TEXT_AREA ).label( label ).name( name ).immutable( true );
     }
 
     private static Input.Builder createLong( final String name, final String label )

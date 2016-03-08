@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.content;
+package com.enonic.xp.core.impl.content.processor;
 
 import com.google.common.base.Preconditions;
 
@@ -11,7 +11,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinService;
 
-class ProxyContentProcessor
+public class ProxyContentProcessor
 {
     private final ImageContentProcessor imageHandler;
 
@@ -30,7 +30,7 @@ class ProxyContentProcessor
         return new Builder();
     }
 
-    CreateContentParams processCreate( final CreateContentParams params )
+    public CreateContentParams processCreate( final CreateContentParams params )
     {
         if ( params.getType().isImageMedia() )
         {
@@ -42,7 +42,7 @@ class ProxyContentProcessor
         }
     }
 
-    ProcessUpdateResult processEdit( final ContentTypeName contentTypeName, final UpdateContentParams updateContentParams,
+    public ProcessUpdateResult processEdit( final ContentTypeName contentTypeName, final UpdateContentParams updateContentParams,
                                      final CreateAttachments createAttachments )
     {
         if ( contentTypeName.isImageMedia() )

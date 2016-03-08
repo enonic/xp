@@ -15,17 +15,13 @@ public final class MediaInfo
 
     private final ImmutableMultimap<String, String> metadata;
 
+    public final String textContent;
+
     public static final String CAMERA_INFO = "cameraInfo";
 
     public static final String GPS_INFO = "gpsInfo";
 
     public static final String IMAGE_INFO = "imageInfo";
-
-    public static final MixinName IMAGE_INFO_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, IMAGE_INFO );
-
-    public static final MixinName CAMERA_INFO_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, CAMERA_INFO );
-
-    public static final MixinName GPS_INFO_METADATA_NAME = MixinName.from( ApplicationKey.BASE, GPS_INFO );
 
     public static final String IMAGE_INFO_PIXEL_SIZE = "pixelSize";
 
@@ -35,16 +31,30 @@ public final class MediaInfo
 
     public static final String MEDIA_INFO_BYTE_SIZE = "byteSize";
 
+    public static final MixinName IMAGE_INFO_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, IMAGE_INFO );
+
+    public static final MixinName CAMERA_INFO_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, CAMERA_INFO );
+
+    public static final MixinName GPS_INFO_METADATA_NAME = MixinName.from( ApplicationKey.BASE, GPS_INFO );
+
+    public static final MixinName TEXT_CONTENT_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, "textContent" );
+
     private MediaInfo( final Builder builder )
     {
         this.mediaType = builder.mediaType;
         this.metadata = builder.metadata.build();
+        this.textContent = builder.textContent;
         Preconditions.checkNotNull( this.metadata, "metadata cannot be null" );
     }
 
     public String getMediaType()
     {
         return mediaType;
+    }
+
+    public String getTextContent()
+    {
+        return textContent;
     }
 
     public ImmutableMultimap<String, String> getMetadata()
@@ -63,6 +73,8 @@ public final class MediaInfo
 
         private ImmutableMultimap.Builder<String, String> metadata = ImmutableMultimap.builder();
 
+        private String textContent;
+
         public Builder mediaType( final String value )
         {
             this.mediaType = value;
@@ -72,6 +84,13 @@ public final class MediaInfo
         public Builder addMetadata( final String name, final String value )
         {
             this.metadata.put( FormItemName.safeName( name ), value );
+            return this;
+        }
+
+
+        public Builder setContent( final String textContent )
+        {
+            this.textContent = textContent;
             return this;
         }
 

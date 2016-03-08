@@ -292,6 +292,11 @@ public final class ContentTypeName
         return MEDIA_UNKNOWN.equals( this );
     }
 
+    public boolean isTextContainingMedia()
+    {
+        return isTextMedia() || isDocumentMedia() || isPresentationMedia() || isSpreadsheetMedia();
+    }
+
     @Override
     public int compareTo( final ContentTypeName that )
     {

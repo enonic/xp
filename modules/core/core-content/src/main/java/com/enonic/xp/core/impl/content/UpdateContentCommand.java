@@ -16,6 +16,8 @@ import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
+import com.enonic.xp.core.impl.content.processor.ProcessUpdateResult;
+import com.enonic.xp.core.impl.content.processor.ProxyContentProcessor;
 import com.enonic.xp.core.impl.content.validate.DataValidationError;
 import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
@@ -120,11 +122,11 @@ final class UpdateContentCommand
             proxyContentProcessor.processEdit( contentBeforeChange.getType(), params, params.getCreateAttachments() );
         if ( processUpdateResult != null )
         {
-            if ( processUpdateResult.editor != null )
+            if ( processUpdateResult.getEditor() != null )
             {
-                editedContent = editContent( processUpdateResult.editor, editedContent );
+                editedContent = editContent( processUpdateResult.getEditor(), editedContent );
             }
-            this.params.createAttachments( processUpdateResult.createAttachments );
+            this.params.createAttachments( processUpdateResult.getCreateAttachments() );
         }
         return editedContent;
     }
