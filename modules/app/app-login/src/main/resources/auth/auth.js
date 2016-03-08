@@ -9,6 +9,7 @@ exports.handle403 = function (req) {
 
     var view = resolve('auth.html');
     var params = {
+        userStore: authConfig.userStore,
         backgroundUrl: portalLib.assetUrl({
             application: authConfig.background.application,
             path: authConfig.background.path
