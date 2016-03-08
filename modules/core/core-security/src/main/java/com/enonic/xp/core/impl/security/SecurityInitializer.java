@@ -225,7 +225,7 @@ final class SecurityInitializer
 
         final PropertyTree config = new PropertyTree();
         config.setSet( "background", backgroundPropertySet );
-        config.setString( "userstore", UserStoreKey.system().toString() );
+        config.setString( "userStore", UserStoreKey.system().toString() );
 
         final AuthConfig authConfig = AuthConfig.create().
             applicationKey( ApplicationKey.from( "com.enonic.xp.app.login" ) ).

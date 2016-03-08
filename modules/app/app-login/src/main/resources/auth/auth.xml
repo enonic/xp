@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <auth>
   <config>
-    <input name="userstore" type="UserStoreSelector">
+    <input name="userStore" type="UserStoreSelector">
       <label>Userstore</label>
-      <occurrences minimum="0" maximum="1"/>
+      <occurrences minimum="1" maximum="1"/>
       <config>
         <relationship-type>system:reference</relationship-type>
       </config>
