@@ -15,7 +15,7 @@ public class BuiltinMixinsTypesTest
     public void testGetAll()
     {
         final Mixins mixins = new BuiltinMixinsTypes().getAll();
-        assertEquals( 3, mixins.getSize() );
+        assertEquals( 4, mixins.getSize() );
 
         assertSchema( mixins.get( 0 ), MixinName.from( ApplicationKey.MEDIA_MOD + ":imageInfo" ), false );
         assertSchema( mixins.get( 1 ), MixinName.from( ApplicationKey.MEDIA_MOD + ":cameraInfo" ), false );
@@ -26,7 +26,7 @@ public class BuiltinMixinsTypesTest
     public void getGetByApplication()
     {
         Mixins mixins = new BuiltinMixinsTypes().getByApplication( ApplicationKey.MEDIA_MOD );
-        assertEquals( 2, mixins.getSize() );
+        assertEquals( 3, mixins.getSize() );
 
         assertSchema( mixins.get( 0 ), MixinName.from( ApplicationKey.MEDIA_MOD + ":imageInfo" ), false );
         assertSchema( mixins.get( 1 ), MixinName.from( ApplicationKey.MEDIA_MOD + ":cameraInfo" ), false );

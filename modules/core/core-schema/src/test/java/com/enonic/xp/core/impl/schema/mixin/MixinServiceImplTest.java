@@ -38,7 +38,7 @@ public class MixinServiceImplTest
     {
         final Mixins types1 = this.service.getAll();
         assertNotNull( types1 );
-        assertEquals( 3, types1.getSize() );
+        assertEquals( 4, types1.getSize() );
 
         final Mixins types2 = this.service.getByApplication( ApplicationKey.from( "other" ) );
         assertNotNull( types2 );
@@ -53,11 +53,11 @@ public class MixinServiceImplTest
     {
         Mixins mixins = service.getAll();
         assertNotNull( mixins );
-        assertEquals( 3, mixins.getSize() );
+        assertEquals( 4, mixins.getSize() );
 
         mixins = service.getByApplication( ApplicationKey.MEDIA_MOD );
         assertNotNull( mixins );
-        assertEquals( 2, mixins.getSize() );
+        assertEquals( 3, mixins.getSize() );
 
         Mixin mixin = service.getByName( MediaInfo.GPS_INFO_METADATA_NAME );
         assertNotNull( mixin );
