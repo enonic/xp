@@ -32,6 +32,7 @@ public final class InputTypes
         add( LongType.INSTANCE ).
         add( ContentTypeFilterType.INSTANCE ).
         add( SiteConfiguratorType.INSTANCE ).
+        add( VectorUploaderType.INSTANCE ).
         build();
 
     private final ImmutableMap<String, InputType> map;

@@ -1016,7 +1016,7 @@ public final class ContentResource
         final ContentId contentId = ContentId.from( id );
         final Content content = contentService.getById( contentId );
 
-        if ( content.getType().equals( ContentTypeName.vectorMedia() ) )
+        if ( content != null && content.getType().equals( ContentTypeName.vectorMedia() ) )
         {
             final Attachment attachment = ( (Media) content ).getSourceAttachment();
 

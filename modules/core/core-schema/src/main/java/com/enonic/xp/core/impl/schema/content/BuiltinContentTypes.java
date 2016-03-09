@@ -117,6 +117,17 @@ final class BuiltinContentTypes
             build() ).
         build();
 
+    private static final Form MEDIA_VECTOR_FORM = Form.create().
+        addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
+            label( "Vector" ).
+            inputType( InputTypeName.MEDIA_VECTOR ).build() ).
+        addFormItem( Input.create().name( "tags" ).
+            inputType( InputTypeName.TAG ).
+            label( "Tags" ).
+            occurrences( 0, 0 ).
+            build() ).
+        build();
+
     private static final ContentType SITE = createSystemType( ContentTypeName.site() ).
         description( "Root content for sites" ).
         setFinal( true ).
@@ -178,7 +189,7 @@ final class BuiltinContentTypes
                                    MediaInfo.GPS_INFO_METADATA_NAME ) ).build();
 
     private static final ContentType MEDIA_VECTOR = createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() ).
-        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_VECTOR_FORM ).build();
 
     private static final ContentType MEDIA_ARCHIVE =
         createSystemType( ContentTypeName.archiveMedia() ).superType( ContentTypeName.media() ).
