@@ -10,7 +10,7 @@ import com.enonic.xp.image.ImageHelper;
 
 public abstract class BaseImageHelper
 {
-    protected final BufferedImage toBufferedImage( final InputStream dataStream )
+    public final BufferedImage toBufferedImage( final InputStream dataStream )
     {
         try
         {
