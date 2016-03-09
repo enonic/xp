@@ -56,6 +56,11 @@ public final class Icon
         return this.modifiedTime;
     }
 
+    public boolean isSvg()
+    {
+        return this.mimeType.equals( "image/svg+xml" );
+    }
+
     @Override
     public boolean equals( final Object o )
     {

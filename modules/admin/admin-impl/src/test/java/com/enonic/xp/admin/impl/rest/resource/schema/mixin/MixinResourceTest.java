@@ -142,6 +142,28 @@ public class MixinResourceTest
         assertImage( mixinIcon, 20 );
     }
 
+    @Test
+    public void getIconIsSvg()
+        throws Exception
+    {
+        byte[] data = Resources.toByteArray( getClass().getResource( "icon-black.svg" ) );
+        final Icon icon = Icon.from( data, "image/svg+xml", Instant.now() );
+
+        Mixin mixin = Mixin.create().
+                name( "myapplication:icon_svg_test" ).
+                displayName( "My content type" ).
+                icon( icon ).
+                addFormItem( Input.create().name( "icon_svg_test" ).label( "SVG icon test" ).inputType( InputTypeName.TEXT_LINE ).build() ).
+                build();
+        setupMixin( mixin );
+
+        final Response response = this.resource.getIcon( "myapplication:icon_svg_test", 20, null );
+
+        assertNotNull( response.getEntity() );
+        assertEquals( icon.getMimeType(), response.getMediaType().toString() );
+        org.junit.Assert.assertArrayEquals( data, ( byte[] )response.getEntity() );
+    }
+
     private void setupMixin( final Mixin mixin )
     {
         Mockito.when( mixinService.getByName( mixin.getName() ) ).thenReturn( mixin );

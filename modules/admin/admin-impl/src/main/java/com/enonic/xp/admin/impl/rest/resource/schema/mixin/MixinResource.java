@@ -97,7 +97,7 @@ public final class MixinResource
         }
         else
         {
-            final BufferedImage image = HELPER.resizeImage( icon.asInputStream(), size );
+            final Object image = icon.isSvg() ? icon.toByteArray() : HELPER.resizeImage( icon.asInputStream(), size );
             responseBuilder = Response.ok( image, icon.getMimeType() );
             if ( StringUtils.isNotEmpty( hash ) )
             {
