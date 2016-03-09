@@ -105,7 +105,7 @@ public final class ContentTypeResource
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
 
-        final BufferedImage image = HELPER.resizeImage( icon.asInputStream(), size );
+        final BufferedImage image = icon.isSvg() ? HELPER.toBufferedImage( icon.asInputStream() ) : HELPER.resizeImage( icon.asInputStream(), size );
         final Response.ResponseBuilder responseBuilder = Response.ok( image, icon.getMimeType() );
 
         if ( StringUtils.isNotEmpty( hash ) )

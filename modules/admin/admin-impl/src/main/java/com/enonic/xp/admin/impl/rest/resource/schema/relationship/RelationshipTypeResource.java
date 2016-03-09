@@ -105,7 +105,7 @@ public final class RelationshipTypeResource
         }
         else
         {
-            final BufferedImage image = HELPER.resizeImage( icon.asInputStream(), size );
+            final BufferedImage image = icon.isSvg() ? HELPER.toBufferedImage( icon.asInputStream() ) : HELPER.resizeImage( icon.asInputStream(), size );
             responseBuilder = Response.ok( image, icon.getMimeType() );
             if ( StringUtils.isNotEmpty( hash ) )
             {
