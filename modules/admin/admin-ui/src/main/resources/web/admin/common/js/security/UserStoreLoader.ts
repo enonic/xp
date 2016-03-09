@@ -5,5 +5,9 @@ module api.security {
         constructor() {
             super(new ListUserStoresRequest());
         }
+
+        filterFn(userstore: UserStore) {
+            return userstore.getDisplayName().toString().toLowerCase().indexOf(this.getSearchString().toLowerCase()) != -1;
+        }
     }
 }
