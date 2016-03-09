@@ -48,21 +48,22 @@ public class TextContentProcessor
 
         if ( params.getMediaInfo() != null )
         {
-            extraDatas = extractMetadata( params.getMediaInfo(), contentMixins, sourceAttachment );
+            extraDatas = extractMetadata( params.getMediaInfo(), contentMixins );
         }
 
         final CreateAttachments.Builder builder = CreateAttachments.create();
         builder.add( sourceAttachment );
 
         final CreateContentParams newCreateContentParams = CreateContentParams.create( params.getCreateContentParams() ).
-            createAttachments( builder.build() ).extraDatas( extraDatas ).
+            createAttachments( builder.build() ).
+            extraDatas( extraDatas ).
             build();
 
         return new ProcessCreateResult( newCreateContentParams );
 
     }
 
-    private ExtraDatas extractMetadata( MediaInfo mediaInfo, Mixins mixins, CreateAttachment sourceAttachment )
+    private ExtraDatas extractMetadata( MediaInfo mediaInfo, Mixins mixins )
     {
         final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
 
@@ -76,7 +77,7 @@ public class TextContentProcessor
 
     private void handleMixin( final ExtraDatas.Builder extradatasBuilder, final Mixin mixin, final String textContent )
     {
-        final String formItemName = "textContent";
+        final String formItemName = MediaInfo.EXTRACTED_TEXT_CONTENT;
 
         final FormItem formItem = mixin.getForm().getFormItems().getItemByName( formItemName );
 

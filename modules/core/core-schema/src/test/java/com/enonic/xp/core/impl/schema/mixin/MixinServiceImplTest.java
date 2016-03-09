@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 public class MixinServiceImplTest
     extends AbstractSchemaTest
 {
-    protected MixinServiceImpl service;
+    private MixinServiceImpl service;
 
     @Override
     protected void initialize()
@@ -92,7 +92,7 @@ public class MixinServiceImplTest
 
         final Mixins types1 = this.service.getAll();
         assertNotNull( types1 );
-        assertEquals( 9, types1.getSize() );
+        assertEquals( 10, types1.getSize() );
 
         final Mixins types2 = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
         assertNotNull( types2 );

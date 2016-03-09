@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.CreateContentTranslatorParams;
@@ -8,6 +9,7 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PatternIndexConfigDocument;
+import com.enonic.xp.media.MediaInfo;
 
 import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT;
 import static com.enonic.xp.content.ContentPropertyNames.CREATED_TIME;
@@ -51,6 +53,8 @@ class ContentIndexConfigFactory
             add( DATA, IndexConfig.BY_TYPE ).
             add( TYPE, IndexConfig.MINIMAL ).
             add( ATTACHMENT, IndexConfig.MINIMAL ).
+            add( PropertyPath.from( EXTRA_DATA, ApplicationKey.MEDIA_MOD.getName(), MediaInfo.EXTRACTED_TEXT_INFO,
+                                    MediaInfo.EXTRACTED_TEXT_CONTENT ), IndexConfig.FULLTEXT ).
             add( PropertyPath.from( EXTRA_DATA ), IndexConfig.MINIMAL ).
             defaultConfig( IndexConfig.BY_TYPE );
 

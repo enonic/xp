@@ -191,6 +191,7 @@ public class AbstractContentServiceTest
         final MediaInfoServiceImpl mediaInfoService = new MediaInfoServiceImpl();
         mediaInfoService.setDetector( new DefaultDetector() );
         mediaInfoService.setParser( new DefaultParser() );
+        mediaInfoService.activate();
 
         final SiteDescriptorRegistry siteDescriptorRegistry = Mockito.mock( SiteDescriptorRegistry.class );
         final SiteServiceImpl siteService = new SiteServiceImpl();

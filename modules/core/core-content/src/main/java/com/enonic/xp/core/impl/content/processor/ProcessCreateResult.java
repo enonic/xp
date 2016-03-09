@@ -11,4 +11,9 @@ public class ProcessCreateResult
     {
         this.createContentParams = createContentParams;
     }
+
+    public CreateContentParams getCreateContentParams()
+    {
+        return createContentParams;
+    }
 }

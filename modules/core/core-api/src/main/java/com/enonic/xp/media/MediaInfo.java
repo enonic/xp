@@ -15,13 +15,17 @@ public final class MediaInfo
 
     private final ImmutableMultimap<String, String> metadata;
 
-    public final String textContent;
+    private final String textContent;
 
     public static final String CAMERA_INFO = "cameraInfo";
 
     public static final String GPS_INFO = "gpsInfo";
 
     public static final String IMAGE_INFO = "imageInfo";
+
+    public static final String EXTRACTED_TEXT_INFO = "extractedText";
+
+    public static final String EXTRACTED_TEXT_CONTENT = "content";
 
     public static final String IMAGE_INFO_PIXEL_SIZE = "pixelSize";
 
@@ -37,7 +41,7 @@ public final class MediaInfo
 
     public static final MixinName GPS_INFO_METADATA_NAME = MixinName.from( ApplicationKey.BASE, GPS_INFO );
 
-    public static final MixinName TEXT_CONTENT_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, "textContent" );
+    public static final MixinName EXTRACTED_TEXT_MIXIN_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, EXTRACTED_TEXT_INFO );
 
     private MediaInfo( final Builder builder )
     {
@@ -71,7 +75,7 @@ public final class MediaInfo
     {
         private String mediaType;
 
-        private ImmutableMultimap.Builder<String, String> metadata = ImmutableMultimap.builder();
+        private final ImmutableMultimap.Builder<String, String> metadata = ImmutableMultimap.builder();
 
         private String textContent;
 

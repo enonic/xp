@@ -23,6 +23,7 @@ import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ProcessCreateParams;
+import com.enonic.xp.core.impl.content.processor.ProcessCreateResult;
 import com.enonic.xp.core.impl.content.processor.ProxyContentProcessor;
 import com.enonic.xp.core.impl.content.validate.DataValidationError;
 import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
@@ -243,11 +244,17 @@ final class CreateContentCommand
 
     private CreateContentParams runContentProcessors( final CreateContentParams createContentParams, final ContentType contentType )
     {
+        CreateContentParams updatedParams = createContentParams;
+
         for ( final ContentProcessor contentProcessor : this.contentProcessors )
         {
             if ( contentProcessor.supports( contentType ) )
             {
-                contentProcessor.processCreate( new ProcessCreateParams( createContentParams, mediaInfo ) );
+                final ProcessCreateResult processCreateResult =
+                    contentProcessor.processCreate( new ProcessCreateParams( createContentParams, mediaInfo ) );
+
+                updatedParams = CreateContentParams.create( processCreateResult.getCreateContentParams() ).
+                    build();
             }
         }
 
@@ -256,7 +263,7 @@ final class CreateContentCommand
             contentType( contentType ).
             mixinService( mixinService ).
             build().
-            processCreate( createContentParams );
+            processCreate( updatedParams );
     }
 
     private void populateLanguage( final CreateContentTranslatorParams.Builder builder )
@@ -346,7 +353,8 @@ final class CreateContentCommand
         {
             if ( params.isRequireValid() )
             {
-                throw new ContentDataValidationException( dataValidationErrors.getFirst().getErrorMessage() );
+                throw new ContentDataValidationException(
+                    dataValidationErrors.getFirst() != null ? dataValidationErrors.getFirst().getErrorMessage() : "Unknown" );
             }
             else
             {

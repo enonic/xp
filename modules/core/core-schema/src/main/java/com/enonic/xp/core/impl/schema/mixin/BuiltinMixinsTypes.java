@@ -10,17 +10,18 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.Mixins;
 
 import static com.enonic.xp.media.MediaInfo.CAMERA_INFO_METADATA_NAME;
+import static com.enonic.xp.media.MediaInfo.EXTRACTED_TEXT_MIXIN_NAME;
 import static com.enonic.xp.media.MediaInfo.GPS_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
 import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
-import static com.enonic.xp.media.MediaInfo.TEXT_CONTENT_METADATA_NAME;
 
 final class BuiltinMixinsTypes
 {
@@ -44,13 +45,15 @@ final class BuiltinMixinsTypes
         form( createGpsInfoMixinForm() ).
         build();
 
-    private static final Mixin MEDIA_CONTENT_METADATA = Mixin.create().
-        name( TEXT_CONTENT_METADATA_NAME ).
-        displayName( "Media content" ).
-        form( createMediaContentMixinForm() ).
+    private static final Mixin EXTRACTED_TEXT = Mixin.create().
+        name( EXTRACTED_TEXT_MIXIN_NAME ).
+        displayName( "Text Content" ).
+        form( createExtractedTextMixinForm() ).
         build();
 
-    private static final Mixins MIXINS = Mixins.from( IMAGE_METADATA, CAMERA_METADATA, GPS_METADATA, MEDIA_CONTENT_METADATA );
+    private static final Mixins MIXINS = Mixins.from( IMAGE_METADATA, CAMERA_METADATA, GPS_METADATA, EXTRACTED_TEXT );
+
+    public static final String EXTRACTED_TEXT_FORMITEM_NAME = "extractedText";
 
     private static Form createImageInfoMixinForm()
     {
@@ -77,10 +80,10 @@ final class BuiltinMixinsTypes
         return form.build();
     }
 
-    private static Form createMediaContentMixinForm()
+    private static Form createExtractedTextMixinForm()
     {
         final Form.Builder form = Form.create();
-        form.addFormItem( createTextArea( "media-content", "Media Content" ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextArea( MediaInfo.EXTRACTED_TEXT_CONTENT, "Content" ).occurrences( 0, 1 ).build() );
         return form.build();
     }
 
