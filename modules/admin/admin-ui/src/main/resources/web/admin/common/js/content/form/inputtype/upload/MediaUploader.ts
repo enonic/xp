@@ -7,6 +7,7 @@ module api.content.form.inputtype.upload {
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import ContentRequiresSaveEvent = api.content.ContentRequiresSaveEvent;
     import PluploadFile = api.ui.uploader.PluploadFile;
+    import ContentInputTypeViewContext = api.content.form.inputtype.ContentInputTypeViewContext;
 
     export interface MediaUploaderConfigAllowType {
         name: string;
@@ -14,12 +15,12 @@ module api.content.form.inputtype.upload {
     }
 
     export class MediaUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
-        private config: api.content.form.inputtype.ContentInputTypeViewContext;
+        private config: ContentInputTypeViewContext;
         private mediaUploaderEl: api.content.MediaUploaderEl;
         private uploaderWrapper: api.dom.DivEl;
 
-        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super(config, "media-uploader");
+        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext, className?: string) {
+            super(config, "media-uploader" + ( className ? " " + className : ""));
             this.config = config;
         }
 
@@ -106,6 +107,14 @@ module api.content.form.inputtype.upload {
                 }
             }
             return wemQ<void>(null);
+        }
+
+        protected getConfig(): ContentInputTypeViewContext {
+            return this.config;
+        }
+
+        protected getMediaUploaderEl(): api.content.MediaUploaderEl {
+            return this.mediaUploaderEl;
         }
 
         private deleteContent(property: Property) {

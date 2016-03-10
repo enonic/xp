@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -13,11 +14,15 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CountItemsWithChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -35,6 +40,7 @@ import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
@@ -983,6 +989,47 @@ public class ContentResourceTest
             post().getAsString();
 
         assertJson( "delete_attachments_success.json", jsonString );
+    }
+
+    @Test
+    public void getSVGContentSource()
+        throws Exception
+    {
+        final Attachment attachment = Attachment.create().
+            name( "image.svg" ).
+            mimeType( "image/svg+xml" ).
+            label( "source" ).
+            build();
+
+        final PropertyTree data = new PropertyTree();
+        data.addString( "media", attachment.getName() );
+
+        final Media testMedia = Media.create().
+            id( ContentId.from( "123" ) ).
+            type( ContentTypeName.vectorMedia() ).
+            name( "testMedia" ).
+            parentPath( ContentPath.ROOT ).
+            displayName( "My Content" ).
+            data( data ).
+            attachments( Attachments.from( attachment ) ).
+            build();
+
+        Mockito.when( contentService.getById( ContentId.from( "123" ) ) ).thenReturn( testMedia );
+        Mockito.when( contentService.getBinary( ContentId.from( "123" ), attachment.getBinaryReference() ) ).thenReturn(
+            ByteSource.wrap( "svg content".getBytes( StandardCharsets.UTF_8 ) ) );
+
+        String jsonString = request().
+            path( "content/getSvgContentSource" ).
+            queryParam( "id", "123" ).
+            get().getAsString();
+
+        String badIdString = request().
+            path( "content/getSvgContentSource" ).
+            queryParam( "id", "124" ).
+            get().getAsString();
+
+        assertJson( "get_svg_content.json", jsonString );
+        assertJson( "get_svg_content_null.json", badIdString );
     }
 
     private User createUser( final String displayName )

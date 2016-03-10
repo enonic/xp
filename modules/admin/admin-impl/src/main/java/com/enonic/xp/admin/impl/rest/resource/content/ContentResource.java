@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,6 +25,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -50,6 +52,7 @@ import com.enonic.xp.admin.impl.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
+import com.enonic.xp.admin.impl.json.content.SvgContentSourceJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -115,6 +118,7 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PushContentParams;
@@ -138,6 +142,7 @@ import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.security.Principal;
@@ -1003,6 +1008,35 @@ public final class ContentResource
         return new ReprocessContentResultJson( ContentPaths.from( updated ), errors );
     }
 
+    @GET
+    @Path("getSvgContentSource")
+    public SvgContentSourceJson getSVGContentSource( @QueryParam("id") final String id )
+    {
+
+        final ContentId contentId = ContentId.from( id );
+        final Content content = contentService.getById( contentId );
+
+        if ( content != null && content.getType().equals( ContentTypeName.vectorMedia() ) )
+        {
+            final Attachment attachment = ( (Media) content ).getSourceAttachment();
+
+            if ( attachment != null )
+            {
+                final ByteSource binary = contentService.getBinary( contentId, attachment.getBinaryReference() );
+                try
+                {
+                    return new SvgContentSourceJson( IOUtils.toString( binary.openStream() ) );
+                }
+                catch ( final IOException e )
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return new SvgContentSourceJson( null );
+    }
+
     private void reprocessContent( final Content content, final boolean skipChildren, final List<ContentPath> updated,
                                    final List<String> errors )
     {
@@ -1135,7 +1169,7 @@ public final class ContentResource
 
     private boolean contentNameIsOccupied( final RenameContentParams renameParams )
     {
-        Content content = contentService.getById( renameParams.getContentId() );
+        final Content content = contentService.getById( renameParams.getContentId() );
         if ( content.getName().equals( renameParams.getNewName() ) )
         {
             return false;
