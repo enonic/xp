@@ -160,8 +160,13 @@ public class ApplicationDeployDirectoryWatcher
 
         pathsByApplicationKey.computeIfPresent( applicationKey, ( applicationKeyParam, fileNameStack ) -> {
 
+            if ( fileNameStack == null )
+            {
+                return null;
+            }
+
             //Retrieve the file name for the currently installed application
-            final String lastInstalledFile = fileNameStack.peek();
+            final String lastInstalledFile = fileNameStack.isEmpty() ? null : fileNameStack.peek();
 
             //If the file removed is currently installed
             if ( path.equals( lastInstalledFile ) )
@@ -171,10 +176,10 @@ public class ApplicationDeployDirectoryWatcher
                 fileNameStack.pop();
 
                 // If there is a previous file with the same applicationKey
-                final String previousInstalledFile = fileNameStack.peek();
-                if ( previousInstalledFile != null )
+                if ( !fileNameStack.isEmpty() )
                 {
                     //Installs this previous application
+                    final String previousInstalledFile = fileNameStack.peek();
                     final ByteSource byteSource = Files.asByteSource( new File( previousInstalledFile ) );
                     ApplicationHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource ) );
                 }
