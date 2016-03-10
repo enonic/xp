@@ -1,15 +1,13 @@
 package com.enonic.xp.admin.impl.rest.resource.schema;
 
-import java.awt.image.BufferedImage;
-
 import com.enonic.xp.admin.impl.rest.resource.BaseImageHelper;
 
 public final class SchemaImageHelper
     extends BaseImageHelper
 {
-    private final BufferedImage defaultMixinImage;
+    private final byte[] defaultMixinImage;
 
-    private final BufferedImage defaultRelationshipTypeImage;
+    private final byte[] defaultRelationshipTypeImage;
 
     public SchemaImageHelper()
     {
@@ -17,13 +15,13 @@ public final class SchemaImageHelper
         defaultRelationshipTypeImage = loadDefaultImage( "relationshiptype" );
     }
 
-    public BufferedImage getDefaultMixinImage( final int size )
+    public byte[] getDefaultMixinImage()
     {
-        return resizeImage( defaultMixinImage, size );
+        return defaultMixinImage;
     }
 
-    public BufferedImage getDefaultRelationshipTypeImage( final int size )
+    public byte[] getDefaultRelationshipTypeImage()
     {
-        return resizeImage( defaultRelationshipTypeImage, size );
+        return defaultRelationshipTypeImage;
     }
 }

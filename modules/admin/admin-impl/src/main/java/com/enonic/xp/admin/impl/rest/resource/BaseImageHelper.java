@@ -1,15 +1,14 @@
 package com.enonic.xp.admin.impl.rest.resource;
 
+import com.enonic.xp.icon.Icon;
+import com.enonic.xp.image.ImageHelper;
+import com.google.common.io.ByteStreams;
+import com.google.common.net.MediaType;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-
-import javax.imageio.ImageIO;
-
-import com.google.common.net.MediaType;
-
-import com.enonic.xp.icon.Icon;
-import com.enonic.xp.image.ImageHelper;
 
 public abstract class BaseImageHelper
 {
@@ -33,17 +32,16 @@ public abstract class BaseImageHelper
         return ImageHelper.scaleSquare( image, size );
     }
 
-    protected final BufferedImage loadDefaultImage( final String imageName )
+    protected final byte[] loadDefaultImage( final String imageName )
     {
-        final InputStream in = getClass().getResourceAsStream( imageName + ".png" );
-        if ( in == null )
+        try( final InputStream in = getClass().getResourceAsStream( imageName + ".svg" ) )
         {
-            throw new IllegalArgumentException( "Image [" + imageName + "] not found" );
-        }
+            if ( in == null )
+            {
+                throw new IllegalArgumentException( "Image [" + imageName + "] not found" );
+            }
 
-        try
-        {
-            return ImageIO.read( in );
+            return ByteStreams.toByteArray( in );
         }
         catch ( IOException e )
         {
