@@ -1,7 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.content;
 
-import java.awt.image.BufferedImage;
-
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -105,7 +103,7 @@ public final class ContentTypeResource
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
 
-        final BufferedImage image = HELPER.resizeImage( icon.asInputStream(), size );
+        final Object image = icon.isSvg() ? icon.toByteArray() : HELPER.resizeImage( icon.asInputStream(), size );
         final Response.ResponseBuilder responseBuilder = Response.ok( image, icon.getMimeType() );
 
         if ( StringUtils.isNotEmpty( hash ) )

@@ -117,6 +117,30 @@ public class RelationshipTypeResourceTest
     }
 
     @Test
+    public void testRelationshipTypeIconSvg()
+            throws Exception
+    {
+        byte[] data = Resources.toByteArray( getClass().getResource( "relationshipicon.png" ) );
+        final Icon icon = Icon.from( data, "image/svg+xml", Instant.now() );
+
+        RelationshipType relationshipType = RelationshipType.create().
+                name( "myapplication:like" ).
+                fromSemantic( "likes" ).
+                toSemantic( "liked by" ).
+                addAllowedFromType( ContentTypeName.from( "myapplication:person" ) ).
+                addAllowedToType( ContentTypeName.from( "myapplication:person" ) ).
+                icon( icon ).
+                build();
+        setupRelationshipType( relationshipType );
+
+        final Response response = this.resource.getIcon( "myapplication:like", 20, null );
+
+        assertNotNull( response.getEntity() );
+        assertEquals( icon.getMimeType(), response.getMediaType().toString() );
+        org.junit.Assert.assertArrayEquals( data, ( byte[] )response.getEntity() );
+    }
+
+    @Test
     public void testRelationshipTypeIcon_default_image()
         throws Exception
     {
