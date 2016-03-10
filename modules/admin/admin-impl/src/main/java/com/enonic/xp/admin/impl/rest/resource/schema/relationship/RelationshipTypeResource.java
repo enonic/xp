@@ -24,12 +24,12 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "schema/relationship")
 @Produces(MediaType.APPLICATION_JSON)
@@ -105,7 +105,7 @@ public final class RelationshipTypeResource
         }
         else
         {
-            final Object image = icon.isSvg() ? icon.toByteArray() : HELPER.resizeImage( icon.asInputStream(), size );
+            final Object image = HELPER.isSvg( icon ) ? icon.toByteArray() : HELPER.resizeImage( icon.asInputStream(), size );
             responseBuilder = Response.ok( image, icon.getMimeType() );
             if ( StringUtils.isNotEmpty( hash ) )
             {

@@ -24,12 +24,12 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "schema/mixin")
 @Produces(MediaType.APPLICATION_JSON)
@@ -97,7 +97,7 @@ public final class MixinResource
         }
         else
         {
-            final Object image = icon.isSvg() ? icon.toByteArray() : HELPER.resizeImage( icon.asInputStream(), size );
+            final Object image = HELPER.isSvg( icon ) ? icon.toByteArray() : HELPER.resizeImage( icon.asInputStream(), size );
             responseBuilder = Response.ok( image, icon.getMimeType() );
             if ( StringUtils.isNotEmpty( hash ) )
             {

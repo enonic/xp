@@ -6,10 +6,16 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
+import com.google.common.net.MediaType;
+
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.image.ImageHelper;
 
 public abstract class BaseImageHelper
 {
+
+    private static final MediaType IMAGE_SVG = MediaType.SVG_UTF_8.withoutParameters();
+
     public final BufferedImage toBufferedImage( final InputStream dataStream )
     {
         try
@@ -49,4 +55,10 @@ public abstract class BaseImageHelper
     {
         return resizeImage( toBufferedImage( is ), size );
     }
+
+    public final boolean isSvg( final Icon icon )
+    {
+        return IMAGE_SVG.is( MediaType.parse( icon.getMimeType() ).withoutParameters() );
+    }
+
 }
