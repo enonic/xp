@@ -139,7 +139,6 @@ public final class InitAppCommand
     private void copyGitUnrelatedContent( File source, File target )
         throws IOException
     {
-        // Remove the .gitkeep and .gitignore files
         Files.walkFileTree( source.toPath(), new GitUnrelatedContentCopyFileVisitor( source.toPath(), target.toPath() ) );
     }
 
@@ -183,12 +182,9 @@ public final class InitAppCommand
             throws IOException
         {
             final String fileName = sourceFilePath.getFileName().toString();
-            if ( !".gitkeep".equals( fileName ) && !".gitignore".equals( fileName ) )
-            {
-                final Path sourceFileSubPath = sourcePath.relativize( sourceFilePath );
-                final Path targetFilePath = Paths.get( targetPath.toString(), sourceFileSubPath.toString() );
-                Files.move( sourceFilePath, targetFilePath, StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS );
-            }
+            final Path sourceFileSubPath = sourcePath.relativize( sourceFilePath );
+            final Path targetFilePath = Paths.get( targetPath.toString(), sourceFileSubPath.toString() );
+            Files.move( sourceFilePath, targetFilePath, StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS );
             return FileVisitResult.CONTINUE;
         }
 
