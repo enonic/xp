@@ -31,14 +31,15 @@ module api.content.form.inputtype.time {
             if (!property.hasNullValue()) {
                 var date = property.getLocalDate();
                 datePickerBuilder.
-                    setSelectedDate(date).
-                    setYear(date.getFullYear()).
+                    setSelectedDate(date.toDate()).
+                    setYear(date.getYear()).
                     setMonth(date.getMonth());
             }
             var datePicker = datePickerBuilder.build();
 
             datePicker.onSelectedDateChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-                var value = new Value(event.getDate(), ValueTypes.LOCAL_DATE);
+                var value = new Value(event.getDate() != null ? api.util.LocalDate.fromDate(event.getDate()) : null,
+                    ValueTypes.LOCAL_DATE);
                 this.notifyOccurrenceValueChanged(datePicker, value);
             });
 
@@ -52,7 +53,7 @@ module api.content.form.inputtype.time {
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly?: boolean) {
             var datePicker = <api.ui.time.DatePicker> occurrence;
             if (!unchangedOnly || !datePicker.isDirty()) {
-                datePicker.setSelectedDate(property.getLocalDate());
+                datePicker.setSelectedDate(property.getLocalDate().toDate());
             }
         }
 

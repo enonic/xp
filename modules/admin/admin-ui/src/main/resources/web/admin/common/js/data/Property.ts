@@ -5,6 +5,8 @@ module api.data {
     import GeoPoint = api.util.GeoPoint;
     import LocalTime = api.util.LocalTime;
     import DateTime = api.util.DateTime;
+    import LocalDateTime = api.util.LocalDateTime;
+    import LocalDate = api.util.LocalDate;
     
     /**
      * A Property has a [[name]] and a [[value]],
@@ -175,11 +177,11 @@ module api.data {
             return this.value.getDateTime();
         }
 
-        getLocalDate(): Date {
+        getLocalDate(): LocalDate {
             return this.value.getLocalDate();
         }
 
-        getLocalDateTime(): Date {
+        getLocalDateTime(): LocalDateTime {
             return this.value.getLocalDateTime();
         }
 
