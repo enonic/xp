@@ -28,13 +28,10 @@ module api.content.site.inputtype.siteconfigurator {
 
         private siteConfigProvider: SiteConfigProvider;
 
-        private _displayValidationErrors: boolean;
-
         private formContext: api.content.form.ContentFormContext;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("site-configurator");
-            this._displayValidationErrors = false;
             this.context = config;
             this.formContext = config.formContext;
         }
@@ -162,7 +159,6 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         displayValidationErrors(value: boolean) {
-            this._displayValidationErrors = value;
             this.comboBox.getSelectedOptionViews().forEach((view: AuthApplicationSelectedOptionView) => {
                 view.getFormView().displayValidationErrors(value);
             });
