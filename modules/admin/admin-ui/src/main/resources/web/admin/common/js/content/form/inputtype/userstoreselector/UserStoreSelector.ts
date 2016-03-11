@@ -64,6 +64,7 @@ module api.content.form.inputtype.contentselector {
                 });
 
                 this.appendChild(this.comboBox);
+                this.setLayoutInProgress(false);
             };
             this.comboBox.onLoaded(appComboboxLoadingListener);
             this.comboBox.getLoader().load();
@@ -78,13 +79,11 @@ module api.content.form.inputtype.contentselector {
                     forEach((selectedOption: api.security.UserStore) => {
                         this.comboBox.select(selectedOption);
                     });
-
-                //TODO?
-                //var selectedOption = this.comboBox.getSelectedOptions()[0];
-                //var selectedOptionView = <api.ui.security.UserStoreSelectedOptionView> selectedOption.getOptionView();
-                //selectedOptionView.setOption(selectedOption);
-
             }
+        }
+
+        protected getNumberOfValids(): number {
+            return this.comboBox.countSelected();
         }
 
         giveFocus(): boolean {
