@@ -89,6 +89,7 @@ public final class XmlFormMapper
         builder.inputType( inputTypeName );
         builder.name( root.getAttribute( "name" ) );
         builder.label( root.getChildValue( "label" ) );
+        builder.defaultValue( root.getChildValue( "default" ) );
         builder.customText( root.getChildValue( "custom-text" ) );
         builder.helpText( root.getChildValue( "help-text" ) );
         builder.occurrences( buildOccurrence( root.getChild( "occurrences" ) ) );
