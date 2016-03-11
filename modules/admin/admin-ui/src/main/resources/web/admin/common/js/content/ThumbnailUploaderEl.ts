@@ -30,7 +30,7 @@ module api.content {
             }
             if (config.allowTypes == undefined) {
                 config.allowTypes = [
-                    {title: 'Image files', extensions: 'jpg,gif,png'}
+                    {title: 'Image files', extensions: 'jpg,gif,png,svg'}
                 ];
             }
             if (config.allowMultiSelection == undefined) {
