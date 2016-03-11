@@ -10,12 +10,10 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.Mixins;
 
 import static com.enonic.xp.media.MediaInfo.CAMERA_INFO_METADATA_NAME;
-import static com.enonic.xp.media.MediaInfo.EXTRACTED_TEXT_MIXIN_NAME;
 import static com.enonic.xp.media.MediaInfo.GPS_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
@@ -23,7 +21,7 @@ import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
 import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
 
-final class BuiltinMixinsTypes
+class BuiltinMixinsTypes
 {
     private static final String MIXINS_FOLDER = "mixins";
 
@@ -45,15 +43,9 @@ final class BuiltinMixinsTypes
         form( createGpsInfoMixinForm() ).
         build();
 
-    private static final Mixin EXTRACTED_TEXT = Mixin.create().
-        name( EXTRACTED_TEXT_MIXIN_NAME ).
-        displayName( "Text Content" ).
-        form( createExtractedTextMixinForm() ).
-        build();
 
-    private static final Mixins MIXINS = Mixins.from( IMAGE_METADATA, CAMERA_METADATA, GPS_METADATA, EXTRACTED_TEXT );
-
-    public static final String EXTRACTED_TEXT_FORMITEM_NAME = "extractedText";
+    private static final Mixins MIXINS =
+        Mixins.from( IMAGE_METADATA, CAMERA_METADATA, GPS_METADATA, ExtractedTextMixin.EXTRACTED_TEXT_INFO_MIXIN );
 
     private static Form createImageInfoMixinForm()
     {
@@ -77,13 +69,6 @@ final class BuiltinMixinsTypes
         form.addFormItem( createTextLine( "altitude", "Altitude" ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "direction", "Direction" ).occurrences( 0, 1 ).build() );
 
-        return form.build();
-    }
-
-    private static Form createExtractedTextMixinForm()
-    {
-        final Form.Builder form = Form.create();
-        form.addFormItem( createTextArea( MediaInfo.EXTRACTED_TEXT_CONTENT, "Content" ).occurrences( 0, 1 ).build() );
         return form.build();
     }
 
@@ -113,27 +98,27 @@ final class BuiltinMixinsTypes
         return form.build();
     }
 
-    private static Input.Builder createTextLine( final String name, final String label )
+    protected static Input.Builder createTextLine( final String name, final String label )
     {
         return Input.create().inputType( InputTypeName.TEXT_LINE ).label( label ).name( name ).immutable( true );
     }
 
-    private static Input.Builder createTextArea( final String name, final String label )
+    protected static Input.Builder createTextArea( final String name, final String label )
     {
         return Input.create().inputType( InputTypeName.TEXT_AREA ).label( label ).name( name ).immutable( true );
     }
 
-    private static Input.Builder createLong( final String name, final String label )
+    protected static Input.Builder createLong( final String name, final String label )
     {
         return Input.create().inputType( InputTypeName.LONG ).label( label ).name( name ).immutable( true );
     }
 
-    private static Input.Builder createDate( final String name, final String label )
+    protected static Input.Builder createDate( final String name, final String label )
     {
         return Input.create().inputType( InputTypeName.DATE_TIME ).label( label ).name( name ).immutable( true );
     }
 
-    private static Input.Builder createGeoPoint( final String name, final String label )
+    protected static Input.Builder createGeoPoint( final String name, final String label )
     {
         return Input.create().inputType( InputTypeName.GEO_POINT ).label( label ).name( name ).immutable( true );
     }

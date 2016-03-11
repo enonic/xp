@@ -7,4 +7,6 @@ public interface ContentProcessor
     boolean supports( final ContentType contentType );
 
     ProcessCreateResult processCreate( final ProcessCreateParams params );
+
+    ProcessUpdateResult processUpdate( final ProcessUpdateParams params );
 }
