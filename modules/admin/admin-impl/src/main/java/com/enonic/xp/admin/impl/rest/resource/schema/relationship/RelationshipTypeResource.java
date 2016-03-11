@@ -1,23 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.relationship;
 
-import java.awt.image.BufferedImage;
-
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.lang.StringUtils;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -30,6 +12,15 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
 import com.enonic.xp.security.RoleKeys;
+import org.apache.commons.lang.StringUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.*;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path(ResourceConstants.REST_ROOT + "schema/relationship")
 @Produces(MediaType.APPLICATION_JSON)
@@ -38,7 +29,7 @@ import com.enonic.xp.security.RoleKeys;
 public final class RelationshipTypeResource
     implements JaxRsComponent
 {
-    private static final String DEFAULT_MIME_TYPE = "image/png";
+    private static final String DEFAULT_MIME_TYPE = "image/svg+xml";
 
     private static final SchemaImageHelper HELPER = new SchemaImageHelper();
 
@@ -99,7 +90,7 @@ public final class RelationshipTypeResource
         final Response.ResponseBuilder responseBuilder;
         if ( icon == null )
         {
-            final BufferedImage defaultRelationshipTypeImage = HELPER.getDefaultRelationshipTypeImage( size );
+            final byte[] defaultRelationshipTypeImage = HELPER.getDefaultRelationshipTypeImage();
             responseBuilder = Response.ok( defaultRelationshipTypeImage, DEFAULT_MIME_TYPE );
             applyMaxAge( Integer.MAX_VALUE, responseBuilder );
         }
