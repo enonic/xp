@@ -63,14 +63,15 @@ module api.util {
         }
 
         dateToString(): string {
-            return this.year + LocalDateTime.DATE_SEPARATOR + this.padNumber(this.month) + LocalDateTime.DATE_SEPARATOR + this.padNumber(this.day);
+            return this.year + LocalDateTime.DATE_SEPARATOR + this.padNumber(this.month + 1) + LocalDateTime.DATE_SEPARATOR +
+                   this.padNumber(this.day);
         }
 
         timeToString(): string {
-            var seconds = this.seconds ? LocalDateTime.TIME_SEPARATOR + this.padNumber(this.seconds) : StringHelper.EMPTY_STRING;
             var fractions = this.fractions ? LocalDateTime.FRACTION_SEPARATOR + this.padNumber(this.fractions, 3) : StringHelper.EMPTY_STRING;
 
-            return this.padNumber(this.hours) + LocalDateTime.TIME_SEPARATOR + this.padNumber(this.minutes) + seconds + fractions;
+            return this.padNumber(this.hours) + LocalDateTime.TIME_SEPARATOR + this.padNumber(this.minutes) + LocalDateTime.TIME_SEPARATOR +
+                   this.padNumber(this.seconds ? this.seconds : 0) + fractions;
         }
 
         toString(): string {
@@ -89,6 +90,11 @@ module api.util {
             }
 
             return true;
+        }
+
+        toDate(): Date {
+            return DateHelper.parseLongDateTime(this.toString(), LocalDateTime.DATE_TIME_SEPARATOR, LocalDateTime.DATE_SEPARATOR,
+                LocalDateTime.TIME_SEPARATOR, LocalDateTime.FRACTION_SEPARATOR);
         }
 
         private padNumber(num: number, length: number = 2): string {
@@ -131,6 +137,18 @@ module api.util {
                 .setFractions(date.getMilliseconds())
                 .build();
          }
+
+        static fromDate(s: Date): LocalDateTime {
+            return LocalDateTime.create()
+                .setYear(s.getFullYear())
+                .setMonth(s.getMonth())
+                .setDay(s.getDate())
+                .setHours(s.getHours())
+                .setMinutes(s.getMinutes())
+                .setSeconds(s.getSeconds())
+                .setFractions(s.getMilliseconds())
+                .build();
+        }
 
 
         public static create(): LocalDateTimeBuilder {

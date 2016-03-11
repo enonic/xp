@@ -53,7 +53,7 @@ module api.content.form.inputtype.time {
             var dateTimePicker = <DateTimePicker> occurrence;
 
             if (!unchangedOnly || !dateTimePicker.isDirty()) {
-                var date = this.valueType == ValueTypes.DATE_TIME ? property.getDateTime().toDate() : property.getLocalDateTime();
+                var date = this.valueType == ValueTypes.DATE_TIME ? property.getDateTime().toDate() : property.getLocalDateTime().toDate();
                 dateTimePicker.setSelectedDateTime(date);
             }
         }
@@ -74,12 +74,12 @@ module api.content.form.inputtype.time {
         private createInputAsLocalDateTime(property: Property, index: number) {
             var dateTimeBuilder = new DateTimePickerBuilder();
             if (property.hasNonNullValue()) {
-                var date = property.getLocalDateTime();
+                var date: api.util.LocalDateTime = property.getLocalDateTime();
 
                 dateTimeBuilder.
-                    setYear(date.getFullYear()).
+                    setYear(date.getYear()).
                     setMonth(date.getMonth()).
-                    setSelectedDate(date).
+                    setSelectedDate(date.toDate()).
                     setHours(date.getHours()).
                     setMinutes(date.getMinutes());
             }
@@ -87,7 +87,8 @@ module api.content.form.inputtype.time {
             var dateTimePicker = dateTimeBuilder.build();
 
             dateTimePicker.onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-                var value = new Value(event.getDate(), ValueTypes.LOCAL_DATE_TIME);
+                var value = new Value(event.getDate() != null ? api.util.LocalDateTime.fromDate(event.getDate()) : null,
+                    ValueTypes.LOCAL_DATE_TIME);
                 this.notifyOccurrenceValueChanged(dateTimePicker, value);
             });
 

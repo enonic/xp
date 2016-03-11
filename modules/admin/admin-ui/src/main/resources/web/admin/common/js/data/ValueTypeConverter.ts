@@ -141,9 +141,8 @@ module api.data {
             if (value.getType() === ValueTypes.STRING && ValueTypes.LOCAL_DATE_TIME.isConvertible(value.getString())) { // from string
                 return ValueTypes.LOCAL_DATE_TIME.newValue(value.getString());
             } else if (value.getType() === ValueTypes.LOCAL_DATE && value.isNotNull()) { // from LocalDate
-                var localDate = <Date>value.getObject();
-                localDate.setHours(0, 0, 0);
-                return new Value(localDate, ValueTypes.LOCAL_DATE_TIME);
+                var localDate = <api.util.LocalDate>value.getObject();
+                return new Value(api.util.LocalDateTime.fromString(localDate.toString() + "T00:00:00"), ValueTypes.LOCAL_DATE_TIME);
             } else if (value.getType() === ValueTypes.DATE_TIME && value.isNotNull()) { // from DateTime
                 var dateTime = value.getString();
                 return ValueTypes.LOCAL_DATE_TIME.newValue(dateTime.substr(0, 19));

@@ -122,6 +122,13 @@ describe("api.data.ValueTypeConverterTest", function () {
             expect(converted.getString()).toBe("2011-04-11T00:00:00");
         });
 
+        it("bad localdate value should be converted to local datetime", function () {
+            var convertableValue = ValueTypes.LOCAL_DATE.newValue("bad");
+            var converted = (new ValueTypeConverter(convertableValue)).convertTo(ValueTypes.LOCAL_DATE_TIME);
+
+            expect(converted.getString()).toBeNull();
+        });
+
         it("datetime value should be converted to local datetime", function () {
             var convertableValue = ValueTypes.DATE_TIME.newValue("2011-04-11T11:51:00");
             var converted = (new ValueTypeConverter(convertableValue)).convertTo(ValueTypes.LOCAL_DATE_TIME);
