@@ -25,3 +25,4 @@
 ///<reference path='EffectivePermissionJson.ts' />
 ///<reference path='EffectivePermissionAccessJson.ts' />
 ///<reference path='EffectivePermissionMemberJson.ts' />
+///<reference path='SvgContentSource.ts' />
