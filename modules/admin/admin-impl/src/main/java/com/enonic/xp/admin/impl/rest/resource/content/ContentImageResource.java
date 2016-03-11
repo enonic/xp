@@ -84,7 +84,14 @@ public final class ContentImageResource
 
         if ( content instanceof Media )
         {
-            resolvedImage = resolveResponseFromContentImageAttachment( (Media) content, size, scaleWidth, source, scale );
+            if ( content.getType().isVectorMedia() )
+            {
+                resolvedImage = resolveResponseFromContentSVGAttachment( (Media) content );
+            }
+            else
+            {
+                resolvedImage = resolveResponseFromContentImageAttachment( (Media) content, size, scaleWidth, source, scale );
+            }
             if ( resolvedImage.isOK() )
             {
                 final CacheControl cacheControl = new CacheControl();
@@ -104,6 +111,26 @@ public final class ContentImageResource
         }
     }
 
+    private ResolvedImage resolveResponseFromContentSVGAttachment( final Media media )
+    {
+        final Attachment attachment = media.getMediaAttachment();
+        if ( attachment != null )
+        {
+            final ByteSource binary = contentService.getBinary( media.getId(), attachment.getBinaryReference() );
+            if ( binary != null )
+            {
+                try
+                {
+                    return new ResolvedImage( binary.read(), attachment.getMimeType() );
+                }
+                catch ( final IOException e )
+                {
+                    throw Exceptions.unchecked( e );
+                }
+            }
+        }
+        return ResolvedImage.unresolved();
+    }
 
     private ResolvedImage resolveResponseFromContentImageAttachment( final Media media, final int size, final boolean scaleWidth,
                                                                      final boolean source, final String scale )
