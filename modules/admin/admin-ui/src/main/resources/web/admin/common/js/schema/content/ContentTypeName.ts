@@ -78,6 +78,10 @@ module api.schema.content {
             return ContentTypeName.MEDIA.equals(this);
         }
 
+        isVectorMedia(): boolean {
+            return ContentTypeName.MEDIA_VECTOR.equals(this);
+        }
+
         static getMediaTypes(): ContentTypeName[] {
             return [
                 ContentTypeName.MEDIA_ARCHIVE,
