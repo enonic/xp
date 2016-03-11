@@ -127,7 +127,7 @@ module api.liveedit {
                     setParentView(builder.parentRegionView).
                     setParentElement(builder.parentElement).
                     setContextMenuActions(this.createComponentContextMenuActions(builder.contextMenuActions,
-                        builder.inspectActionRequired)).
+                builder.inspectActionRequired, this.parentRegionView.getLiveEditModel())).
                     setContextMenuTitle(new ComponentViewContextMenuTitle(builder.component, builder.type))
             );
 
@@ -169,11 +169,18 @@ module api.liveedit {
             component.unReset(this.resetListener);
         }
 
-        private createComponentContextMenuActions(actions: api.ui.Action[], inspectActionRequired: boolean): api.ui.Action[] {
+        private createComponentContextMenuActions(actions: api.ui.Action[], inspectActionRequired: boolean,
+                                                  liveEditModel: LiveEditModel): api.ui.Action[] {
+            var isFragmentContent = liveEditModel.getContent().getType().isFragment();
+            var parentIsPage = api.ObjectHelper.iFrameSafeInstanceOf(this.getRegionView(), PageView);
+            var isTopFragmentComponent = parentIsPage && isFragmentContent;
+
             var actions = actions || [];
 
-            actions.push(this.createSelectParentAction());
-            actions.push(this.createInsertAction());
+            if (!isTopFragmentComponent) {
+                actions.push(this.createSelectParentAction());
+            }
+            actions.push(this.createInsertAction(liveEditModel));
 
             if (inspectActionRequired) {
                 actions.push(new api.ui.Action("Inspect").onExecuted(() => {
@@ -184,10 +191,12 @@ module api.liveedit {
             actions.push(new api.ui.Action("Reset").onExecuted(() => {
                 this.component.reset();
             }));
-            actions.push(new api.ui.Action("Remove").onExecuted(() => {
-                this.deselect();
-                this.remove();
-            }));
+            if (!isTopFragmentComponent) {
+                actions.push(new api.ui.Action("Remove").onExecuted(() => {
+                    this.deselect();
+                    this.remove();
+                }));
+            }
             actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
                 this.deselect();
 
@@ -199,8 +208,8 @@ module api.liveedit {
                 new ComponentDuplicatedEvent(this, duplicatedView).fire();
             }));
 
-            var isFragment = this instanceof api.liveedit.fragment.FragmentComponentView;
-            if (!isFragment) {
+            var isFragmentComponent = this instanceof api.liveedit.fragment.FragmentComponentView;
+            if (!isFragmentComponent && !isFragmentContent) {
                 actions.push(new api.ui.Action("Save as Fragment").onExecuted(() => {
                     this.deselect();
                     this.createFragment().then((content: Content): void => {

@@ -890,16 +890,20 @@ module api.liveedit {
                 setData(newComponent));
         }
 
-        getInsertActions(): api.ui.Action[] {
+        private getInsertActions(liveEditModel: LiveEditModel): api.ui.Action[] {
+            var isFragmentContent = liveEditModel.getContent().getType().isFragment();
+
             var actions = [this.createInsertSubAction("Image"),
                 this.createInsertSubAction("Part")];
 
-            if (!this.getRegionView().hasParentLayoutComponentView()) {
+            var isInRegion = api.ObjectHelper.iFrameSafeInstanceOf(this.getRegionView(), RegionView);
+            if (isInRegion && !this.getRegionView().hasParentLayoutComponentView() && !isFragmentContent) {
                 actions.push(this.createInsertSubAction("Layout"));
             }
-
             actions.push(this.createInsertSubAction("Text"));
-            actions.push(this.createInsertSubAction("Fragment"));
+            if (!isFragmentContent) {
+                actions.push(this.createInsertSubAction("Fragment"));
+            }
 
             return actions;
         }
@@ -908,8 +912,8 @@ module api.liveedit {
             throw new Error("Must be implemented by inheritors");
         }
 
-        protected createInsertAction(): api.ui.Action {
-            return new api.ui.Action('Insert').setChildActions(this.getInsertActions());
+        protected createInsertAction(liveEditModel: LiveEditModel): api.ui.Action {
+            return new api.ui.Action('Insert').setChildActions(this.getInsertActions(liveEditModel));
         }
 
         protected createSelectParentAction(): api.ui.Action {

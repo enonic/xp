@@ -515,7 +515,8 @@ module app.wizard.page {
         private clearSelection(): void {
             var pageModel = this.liveEditModel.getPageModel();
             var customizedWithController = pageModel.isCustomized() && pageModel.hasController();
-            if (pageModel.hasDefaultPageTemplate() || customizedWithController) {
+            var isFragmentContent = pageModel.getMode() === PageMode.FRAGMENT;
+            if (pageModel.hasDefaultPageTemplate() || customizedWithController || isFragmentContent) {
                 this.contextWindow.clearSelection();
             } else {
                 this.inspectPage();

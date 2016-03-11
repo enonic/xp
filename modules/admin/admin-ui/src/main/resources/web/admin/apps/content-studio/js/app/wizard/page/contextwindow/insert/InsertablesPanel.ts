@@ -4,6 +4,7 @@ module app.wizard.page.contextwindow.insert {
     import PageView = api.liveedit.PageView;
     import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
     import Content = api.content.Content;
+    import PageMode = api.content.page.PageMode;
 
     export interface ComponentTypesPanelConfig {
 
@@ -61,6 +62,9 @@ module app.wizard.page.contextwindow.insert {
 
             this.liveEditPageProxy.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {
                 this.pageView = event.getPageView();
+                if (this.pageView.getLiveEditModel().getPageModel().getMode() === PageMode.FRAGMENT) {
+                    this.insertablesDataView.setItems(Insertables.ALLOWED_IN_FRAGMENT, "name");
+                }
             });
 
             this.liveEditPageProxy.onComponentViewDragStopped(() => {
