@@ -3,6 +3,7 @@ package com.enonic.xp.security;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.mail.EmailValidator;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -21,6 +22,8 @@ public final class CreateUserParams
 
     private final String password;
 
+    private final PropertyTree profile;
+
     private CreateUserParams( final Builder builder )
     {
         this.key = checkNotNull( builder.principalKey, "userKey is required for a user" );
@@ -32,6 +35,7 @@ public final class CreateUserParams
         this.email = builder.email;
         this.login = checkNotNull( builder.login, "login is required for a user" );
         this.password = builder.password;
+        this.profile = builder.profile == null ? new PropertyTree() : builder.profile;
     }
 
     public PrincipalKey getKey()
@@ -59,6 +63,11 @@ public final class CreateUserParams
         return login;
     }
 
+    public PropertyTree getProfile()
+    {
+        return profile;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -75,6 +84,8 @@ public final class CreateUserParams
         private String login;
 
         private String password;
+
+        private PropertyTree profile;
 
         private Builder()
         {
@@ -108,6 +119,12 @@ public final class CreateUserParams
         public Builder password( final String value )
         {
             this.password = value;
+            return this;
+        }
+
+        public Builder profile( final PropertyTree value )
+        {
+            this.profile = value;
             return this;
         }
 
