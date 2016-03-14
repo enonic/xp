@@ -24,7 +24,10 @@ module api.content.form.inputtype.time {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
-
+            if (!ValueTypes.LOCAL_TIME.equals(property.getType())) {
+                property.convertValueType(ValueTypes.LOCAL_TIME);
+            }
+            
             var value = this.getValueFromProperty(property);
             var timePicker = new api.ui.time.TimePickerBuilder().setHours(value.hours).setMinutes(value.minutes).build();
 

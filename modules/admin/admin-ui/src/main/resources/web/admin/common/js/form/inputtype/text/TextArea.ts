@@ -21,6 +21,9 @@ module api.form.inputtype.text {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
+            if (!ValueTypes.STRING.equals(property.getType())) {
+                property.convertValueType(ValueTypes.STRING);
+            }
 
             var value = property.hasNonNullValue() ? property.getString() : undefined;
             var inputEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
