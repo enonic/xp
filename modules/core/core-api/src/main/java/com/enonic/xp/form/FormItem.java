@@ -86,6 +86,22 @@ public abstract class FormItem
         return (Layout) this;
     }
 
+    public boolean isInput() {
+        return FormItemType.INPUT.equals(this.getType());
+    }
+
+    public boolean isFormItemSet() {
+        return FormItemType.FORM_ITEM_SET.equals(this.getType());
+    }
+
+    public boolean isLayout() {
+        return FormItemType.LAYOUT.equals(this.getType());
+    }
+
+    public boolean isMixinReference() {
+        return FormItemType.MIXIN_REFERENCE.equals(this.getType());
+    }
+
     @Override
     public boolean equals( final Object o )
     {

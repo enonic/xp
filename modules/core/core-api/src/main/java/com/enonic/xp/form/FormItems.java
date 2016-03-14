@@ -3,6 +3,7 @@ package com.enonic.xp.form;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.stream.Stream;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
@@ -133,6 +134,12 @@ public final class FormItems
     {
         return typeCast( getFormItem( path ), Layout.class );
     }
+
+    public final Stream<FormItem> streamFormItems()
+    {
+        return this.formItemByName.values().stream();
+    }
+
 
     @Override
     public Iterator<FormItem> iterator()

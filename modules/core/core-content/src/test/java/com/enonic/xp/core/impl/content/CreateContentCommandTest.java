@@ -18,7 +18,9 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.form.Input;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -132,6 +134,31 @@ public class CreateContentCommandTest
         final Content createdContent = command.execute();
         assertTrue( createdContent.getName().isUnnamed() );
         assertEquals( "", createdContent.getDisplayName() );
+    }
+
+    @Test
+    public void defaultValue()
+    {
+        final CreateContentParams params = createContentParams().name( ContentName.from( "name" ) ).displayName( "" ).build();
+        final CreateContentCommand command = createContentCommand( params );
+
+        Input input = Input.create().
+            name( "testInput" ).
+            label( "testInput" ).
+            inputType( InputTypeName.COMBO_BOX ).
+            defaultValue( "testValue" ).
+            build();
+
+        final ContentType contentType = ContentType.create().
+            superType( ContentTypeName.documentMedia() ).
+            name( ContentTypeName.dataMedia() ).
+            addFormItem(input).
+            build();
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+
+        final Content createdContent = command.execute();
+        assertTrue( createdContent.getData().getString("testInput").equals( "testValue" ) );
     }
 
     @Test

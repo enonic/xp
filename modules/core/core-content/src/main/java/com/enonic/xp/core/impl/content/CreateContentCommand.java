@@ -24,6 +24,10 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.validate.DataValidationError;
 import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
+import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.form.FormItems;
+import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.name.NamePrettyfier;
@@ -69,6 +73,8 @@ final class CreateContentCommand
 
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams );
 
+        final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
+        initializeDefaultValue( contentType.getForm().getFormItems(), PropertyPath.from( "" ) );
         try
         {
             final Node createdNode = nodeService.create( createNodeParams );
@@ -307,6 +313,29 @@ final class CreateContentCommand
                 builder.name( ContentName.unnamed() );
             }
         }
+    }
+
+    private void initializeDefaultValue( final FormItems formItems, final PropertyPath parentPath )
+    {
+        formItems.streamFormItems().forEach( formItem -> {
+            if ( formItem.isInput() )
+            {
+                Input input = formItem.toInput();
+                if ( StringUtils.isNotEmpty( input.getDefaultValue() ) )
+                {
+                    params.getData().setProperty( PropertyPath.from( parentPath, input.getName() ),
+                                                  ValueFactory.newString( input.getDefaultValue() ) );
+                }
+            }
+            else if ( formItem.isFormItemSet() )
+            {
+                initializeDefaultValue( formItem.toFormItemSet().getFormItems(), PropertyPath.from( parentPath, formItem.getName() ) );
+            }
+            else if ( formItem.isLayout() )
+            {
+                initializeDefaultValue( formItem.toLayout().getFormItems(), parentPath );
+            }
+        } );
     }
 
     private void populateCreator( final CreateContentTranslatorParams.Builder builder )
