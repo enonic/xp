@@ -66,7 +66,8 @@ abstract class PrincipalNodeTranslator
         final PropertySet nodeAsSet = node.data().getRoot();
         if ( nodeAsSet.isNull( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) )
         {
-            throw new IllegalArgumentException( "Property " + PrincipalPropertyNames.PRINCIPAL_TYPE_KEY + " not found on node with id " + node.id() );
+            throw new IllegalArgumentException(
+                "Property " + PrincipalPropertyNames.PRINCIPAL_TYPE_KEY + " not found on node with id " + node.id() );
         }
 
         final PrincipalType principalType = PrincipalType.valueOf( nodeAsSet.getString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) );
@@ -215,6 +216,7 @@ abstract class PrincipalNodeTranslator
         data.setString( PrincipalPropertyNames.EMAIL_KEY, user.getEmail() );
         data.setString( PrincipalPropertyNames.LOGIN_KEY, user.getLogin() );
         data.setString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, user.getAuthenticationHash() );
+        data.setSet( PrincipalPropertyNames.PROFILE_KEY, user.getProfile().getRoot() );
     }
 
     private static User createUserFromNode( final Node node )
@@ -222,6 +224,7 @@ abstract class PrincipalNodeTranslator
         Preconditions.checkNotNull( node );
 
         final PropertyTree nodeAsTree = node.data();
+        final PropertySet profilePropertySet = nodeAsTree.getPropertySet( PrincipalPropertyNames.PROFILE_KEY );
 
         return User.create().
             email( nodeAsTree.getString( PrincipalPropertyNames.EMAIL_KEY ) ).
@@ -229,6 +232,7 @@ abstract class PrincipalNodeTranslator
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
             displayName( nodeAsTree.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) ).
             authenticationHash( nodeAsTree.getString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY ) ).
+            profile( profilePropertySet == null ? null : profilePropertySet.toTree() ).
             build();
     }
 
