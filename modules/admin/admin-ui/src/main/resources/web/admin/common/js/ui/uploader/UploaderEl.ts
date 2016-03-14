@@ -421,7 +421,7 @@ module api.ui.uploader {
             this.cancelBtn.setVisible(visible && this.config.showCancel);
         }
 
-        protected setResultVisible(visible: boolean = true) {
+        setResultVisible(visible: boolean = true) {
             if (!visible && this.config.resultAlwaysVisisble) {
                 return;
             }
