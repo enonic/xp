@@ -17,6 +17,7 @@ module api.content.form.inputtype.upload {
         private config: api.content.form.inputtype.ContentInputTypeViewContext;
         private mediaUploaderEl: api.content.MediaUploaderEl;
         private uploaderWrapper: api.dom.DivEl;
+        private svgImage: api.dom.ImgEl;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super(config, "media-uploader");
@@ -66,6 +67,8 @@ module api.content.form.inputtype.upload {
 
                 api.notify.showFeedback('\"' + fileName + '\" uploaded');
 
+                this.manageSVGImageIfPresent(content);
+
                 new ContentRequiresSaveEvent(content.getContentId()).fire();
             });
 
@@ -89,6 +92,8 @@ module api.content.form.inputtype.upload {
 
             this.appendChild(this.uploaderWrapper);
 
+            this.createSvgImageWrapperIfNeeded();
+
             return wemQ<void>(null);
         }
 
@@ -106,6 +111,20 @@ module api.content.form.inputtype.upload {
                 }
             }
             return wemQ<void>(null);
+        }
+
+        private manageSVGImageIfPresent(content: api.content.Content) {
+            if (content.getType().isVectorMedia()) {
+                this.addClass("with-svg-image");
+                var imgUrl = new api.content.ContentImageUrlResolver().
+                    setContentId(this.getContext().contentId).
+                    setTimestamp(content.getModifiedTime()).
+                    resolve();
+
+                this.svgImage.setSrc(imgUrl);
+            } else {
+                this.removeClass("with-svg-image");
+            }
         }
 
         private deleteContent(property: Property) {
@@ -157,6 +176,30 @@ module api.content.form.inputtype.upload {
 
         private getAllowTypeFromFileName(fileName: string): MediaUploaderConfigAllowType[] {
             return [{name: "Media", extensions: this.getFileExtensionFromFileName(fileName)}];
+        }
+
+        private createSvgImageWrapperIfNeeded() {
+            if (this.config.formContext.getContentTypeName().isVectorMedia()) {
+                this.svgImage = new api.dom.ImgEl();
+                this.addClass("with-svg-image");
+
+                new api.content.GetContentByIdRequest(this.getContext().contentId).
+                    sendAndParse().
+                    then((content: api.content.Content) => {
+                        var imgUrl = new api.content.ContentImageUrlResolver().
+                            setContentId(this.getContext().contentId).
+                            setTimestamp(content.getModifiedTime()).
+                            resolve();
+
+                        this.svgImage.setSrc(imgUrl);
+
+                        this.appendChild(new api.dom.DivEl("svg-image-wrapper").appendChild(this.svgImage));
+                    });
+
+                this.svgImage.onLoaded((event: UIEvent) => {
+                    this.mediaUploaderEl.setResultVisible(true); // need to call it manually as svg images are uploaded too quickly
+                });
+            }
         }
 
         private createUploaderWrapper(property: Property): api.dom.DivEl {
