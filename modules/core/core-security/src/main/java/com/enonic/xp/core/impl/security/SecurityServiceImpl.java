@@ -508,6 +508,7 @@ public final class SecurityServiceImpl
             email( createUser.getEmail() ).
             displayName( createUser.getDisplayName() ).
             modifiedTime( Instant.now( clock ) ).
+            profile( createUser.getProfile() ).
             build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
