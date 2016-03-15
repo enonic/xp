@@ -116,8 +116,9 @@ public final class InitAppCommand
             // Removes Git related content
             removeFixGitContent( temporaryDirectory );
 
-            // Copies the content from the temporary folder except git related content
-            copyGitUnrelatedContent( temporaryDirectory, destinationDirectory );
+            // Copies the content from the temporary folder
+            final CopyFileVisitor copyFileVisitor = new CopyFileVisitor( temporaryDirectory.toPath(), destinationDirectory.toPath() );
+            Files.walkFileTree( temporaryDirectory.toPath(), copyFileVisitor );
         }
         finally
         {
@@ -134,13 +135,6 @@ public final class InitAppCommand
         // Removes the .git directory and README.md file
         FileUtils.deleteDirectory( new File( directory, ".git" ) );
         FileUtils.deleteQuietly( new File( directory, "README.md" ) );
-    }
-
-    private void copyGitUnrelatedContent( File source, File target )
-        throws IOException
-    {
-        // Remove the .gitkeep and .gitignore files
-        Files.walkFileTree( source.toPath(), new GitUnrelatedContentCopyFileVisitor( source.toPath(), target.toPath() ) );
     }
 
     private void processGradleProperties()
@@ -163,7 +157,7 @@ public final class InitAppCommand
         }
     }
 
-    private class GitUnrelatedContentCopyFileVisitor
+    private class CopyFileVisitor
         extends SimpleFileVisitor<Path>
     {
         final Path sourcePath;
@@ -172,7 +166,7 @@ public final class InitAppCommand
 
         private boolean rootFile = true;
 
-        private GitUnrelatedContentCopyFileVisitor( Path sourcePath, Path targetPath )
+        private CopyFileVisitor( Path sourcePath, Path targetPath )
         {
             this.sourcePath = sourcePath;
             this.targetPath = targetPath;
@@ -183,12 +177,9 @@ public final class InitAppCommand
             throws IOException
         {
             final String fileName = sourceFilePath.getFileName().toString();
-            if ( !".gitkeep".equals( fileName ) && !".gitignore".equals( fileName ) )
-            {
-                final Path sourceFileSubPath = sourcePath.relativize( sourceFilePath );
-                final Path targetFilePath = Paths.get( targetPath.toString(), sourceFileSubPath.toString() );
-                Files.move( sourceFilePath, targetFilePath, StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS );
-            }
+            final Path sourceFileSubPath = sourcePath.relativize( sourceFilePath );
+            final Path targetFilePath = Paths.get( targetPath.toString(), sourceFileSubPath.toString() );
+            Files.move( sourceFilePath, targetFilePath, StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS );
             return FileVisitResult.CONTINUE;
         }
 
