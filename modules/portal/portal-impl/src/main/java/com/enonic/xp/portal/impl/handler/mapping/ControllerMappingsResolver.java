@@ -34,6 +34,10 @@ final class ControllerMappingsResolver
 
     public ControllerMappingDescriptor resolve( final PortalRequest request )
     {
+        if ( request.getMode() == RenderMode.ADMIN )
+        {
+            return null;
+        }
         final Site site = getCurrentSite( request );
         if ( site == null )
         {
