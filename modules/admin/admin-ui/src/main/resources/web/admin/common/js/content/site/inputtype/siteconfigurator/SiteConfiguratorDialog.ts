@@ -6,6 +6,10 @@ module api.content.site.inputtype.siteconfigurator {
     import DivEl = api.dom.DivEl;
     import FormView = api.form.FormView;
     import ModalDialogHeader = api.ui.dialog.ModalDialogHeader;
+    import InputView = api.form.InputView;
+    import ContentSelector = api.content.form.inputtype.contentselector.ContentSelector;
+    import ImageSelector = api.content.form.inputtype.image.ImageSelector;
+    import ComboBox = api.ui.selector.combobox.ComboBox;
 
     export class SiteConfiguratorDialog extends api.ui.dialog.ModalDialog {
 
@@ -16,11 +20,13 @@ module api.content.site.inputtype.siteconfigurator {
 
             this.getEl().addClass("site-configurator-dialog");
             this.appendChildToContentPanel(formView);
+            this.handleSelectorsDropdowns(formView);
 
             this.addOkButton(okCallback);
             this.getCancelAction().onExecuted(() => cancelCallback());
 
             this.addCancelButtonToBottom();
+
         }
 
         private addOkButton(okCallback: () => void) {
@@ -47,38 +53,60 @@ module api.content.site.inputtype.siteconfigurator {
             return dialogHeader;
         }
 
-        private subscribeOnDropdownExpand() {
-
-            wemjq.each(wemjq(this.getHTMLElement()).find('.dropdown-handle'), (key, value) => {
-                wemjq(value).click(() => {
-                    if (wemjq(value).hasClass("down")) {
-                        var optionsContainer = wemjq(value).nextAll(".options-container").get(0);
-                        this.scrollToExpandedDropdownIfNotVisible(optionsContainer);
+        private handleSelectorsDropdowns(formView: FormView) {
+            var comboboxArray = [];
+            formView.getChildren().forEach((element: api.dom.Element) => {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(element, InputView)) {
+                    var inputView: InputView = <InputView> element;
+                    if (this.isContentOrImageSelector(inputView)) {
+                        var combobox = this.getComboboxFromSelectorInputView(inputView);
+                        if (!!combobox) {
+                            comboboxArray.push(combobox);
+                        }
+                        this.subscribeCombobox(combobox);
                     }
+                }
+            });
+            this.getContentPanel().onScroll((event) => {
+                comboboxArray.forEach((comboBox: ComboBox<any>) => {
+                    comboBox.hideDropdown();
                 });
             });
         }
 
-        private scrollToExpandedDropdownIfNotVisible(dropdown: HTMLElement) {
-            if (dropdown) {
-                var optionsContainerElement: api.dom.Element = api.dom.Element.fromHtmlElement(dropdown);
-                setTimeout(() => {
-                    var expandedDropdownBottomPosition = this.getAbsoluteBottomPosition(optionsContainerElement),
-                        siteDialogBottomPosition = this.getAbsoluteBottomPosition(this),
-                        dialogBottomAreaHeight = this.getButtonRow().getEl().getHeightWithMargin() + this.getEl().getMarginBottom();
-                    if (expandedDropdownBottomPosition > (siteDialogBottomPosition - dialogBottomAreaHeight)) {
-                        this.getContentPanel().getEl().setScrollTop(this.getContentPanel().getEl().getScrollTop() +
-                                                                    optionsContainerElement.getEl().getHeightWithBorder());
+        private subscribeCombobox(comboBox: ComboBox<any>) {
+            if (!!comboBox) {
+                comboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
+                    if (event.isExpanded()) {
+                        this.adjustSelectorDropDown(comboBox.getInput(), event.getDropdownElement().getEl());
                     }
-                }, 100);
+                });
             }
         }
 
-        private getAbsoluteBottomPosition(element: api.dom.Element): number {
-            var el = element.getEl(),
-                bottomPosition: number = (el.getOffset().top +
-                                          el.getHeightWithBorder());
-            return bottomPosition;
+        private adjustSelectorDropDown(inputElement: api.dom.Element, dropDownElement: api.dom.ElementHelper) {
+            var inputPosition = wemjq(inputElement.getHTMLElement()).offset();
+
+            dropDownElement.setMaxWidthPx(inputElement.getEl().getWidthWithBorder() - 2);
+            dropDownElement.setTopPx(inputPosition.top + inputElement.getEl().getHeightWithBorder() - 1);
+            dropDownElement.setLeftPx(inputPosition.left);
+        }
+
+        private getComboboxFromSelectorInputView(inputView: InputView): ComboBox<any> {
+            var contentComboBox,
+                inputTypeView = inputView.getInputTypeView();
+            if (api.ObjectHelper.iFrameSafeInstanceOf(inputTypeView, ContentSelector)) {
+                contentComboBox = (<ContentSelector> inputTypeView).getContentComboBox();
+            } else {
+                contentComboBox = (<ImageSelector> inputTypeView).getContentComboBox();
+            }
+            return !!contentComboBox ? contentComboBox.getComboBox() : null;
+        }
+
+        private isContentOrImageSelector(inputView: InputView): boolean {
+            return !!inputView &&
+                   (api.ObjectHelper.iFrameSafeInstanceOf(inputView.getInputTypeView(), ContentSelector) ||
+                    api.ObjectHelper.iFrameSafeInstanceOf(inputView.getInputTypeView(), ImageSelector));
         }
 
         show() {
@@ -89,10 +117,6 @@ module api.content.site.inputtype.siteconfigurator {
                 this.centerMyself();
                 wemjq(this.getHTMLElement()).find('input[type=text],textarea,select').first().focus();
             }, 100);
-
-            setTimeout(() => {
-                this.subscribeOnDropdownExpand();
-            }, 1500);
         }
 
         close() {

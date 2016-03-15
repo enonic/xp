@@ -5,15 +5,16 @@ module api.data {
     import GeoPoint = api.util.GeoPoint;
     import LocalTime = api.util.LocalTime;
     import DateTime = api.util.DateTime;
+    import LocalDateTime = api.util.LocalDateTime;
+    import LocalDate = api.util.LocalDate;
     
     /**
      * A Property has a [[name]] and a [[value]],
      * but also:
      * *  an [[index]], since it's a part of an [[array]]
      * *  a [[parent]], since it's also a part of a [[PropertySet]]
-     * *  and finally an unique [[id]] within the [[PropertyTree]].
      *
-     * A Property is mutable, both it's [[index]] and [[value]] can change, but never it's [[id]].
+     * A Property is mutable, both it's [[index]] and [[value]] can change.
      */
     export class Property implements api.Equitable {
 
@@ -96,6 +97,10 @@ module api.data {
             }
         }
 
+        convertValueType(type: ValueType) {
+            this.array.convertValues(type);
+        }
+
         /**
          * Detach this Property from it's array and parent. Should be called when removed from the array.
          */
@@ -175,11 +180,11 @@ module api.data {
             return this.value.getDateTime();
         }
 
-        getLocalDate(): Date {
+        getLocalDate(): LocalDate {
             return this.value.getLocalDate();
         }
 
-        getLocalDateTime(): Date {
+        getLocalDateTime(): LocalDateTime {
             return this.value.getLocalDateTime();
         }
 

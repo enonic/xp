@@ -5,12 +5,8 @@ describe("api.data.type.LocalDateTimeValueTypeTest", function () {
 
     describe("when isValid", function () {
 
-        it("given a date time as Date then true is returned", function () {
-            expect(ValueTypes.LOCAL_DATE_TIME.isValid(new Date(2000, 0, 1, 12, 30, 0))).toBe(true);
-        });
-
-        it("given a date time as string then false is returned", function () {
-            expect(ValueTypes.LOCAL_DATE_TIME.isValid("2000-01-01T12:30:00")).toBe(false);
+        it("given a valid date time as string then true is returned", function () {
+            expect(ValueTypes.LOCAL_DATE_TIME.isValid("2000-01-01T12:30:00")).toBe(true);
         });
 
         it("given a letter as string then false is returned", function () {

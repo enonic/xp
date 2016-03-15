@@ -8,6 +8,7 @@ module api.application {
             super();
             super.setMethod("POST");
             this.applicationUrl = applicationUrl;
+            this.setHeavyOperation(true);
         }
 
         getParams(): Object {

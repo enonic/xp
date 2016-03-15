@@ -1,21 +1,19 @@
 module api.data {
 
+    import LocalDateTime = api.util.LocalDateTime;
+
     export class ValueTypeLocalDateTime extends ValueType {
 
         constructor() {
             super("LocalDateTime");
         }
 
-        isValid(value: any): boolean {
-            if (!(typeof value === 'object')) {
-                // Date has object as typeof
-                return false;
+        isValid(value: string): boolean {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(value, LocalDateTime)) {
+                return true;
             }
-            if (!api.ObjectHelper.iFrameSafeInstanceOf(value, Date)) {
-                return false;
-            }
-            var valueAsDate = <Date>value;
-            return !api.util.DateHelper.isInvalidDate(valueAsDate);
+
+            return LocalDateTime.isValidDateTime(value);
         }
 
         isConvertible(value: string): boolean {
@@ -26,8 +24,8 @@ module api.data {
             if (value.length != 19) {
                 return false;
             }
-            var valueAsDate = api.util.DateHelper.parseUTCDateTime(value, true);
-            return this.isValid(valueAsDate);
+
+            return this.isValid(value);
         }
 
         newValue(value: string): Value {
@@ -37,20 +35,20 @@ module api.data {
             if (!this.isConvertible(value)) {
                 return this.newNullValue();
             }
-            var date = api.util.DateHelper.parseUTCDateTime(value, true);
+            var date: LocalDateTime = LocalDateTime.fromString(value);
             return new Value(date, this);
         }
 
         toJsonValue(value: Value): string {
-            return value.isNull() ? null : api.util.DateHelper.formatDateTime(value.getLocalDateTime());
+            return value.isNull() ? null : value.getLocalDateTime().toString();
         }
 
         valueToString(value: Value): string {
-            return api.util.DateHelper.formatUTCDateTime((<Date>value.getObject()));
+            return value.getLocalDateTime().toString();
         }
 
-        valueEquals(a: Date, b: Date): boolean {
-            return api.ObjectHelper.dateEquals(a, b);
+        valueEquals(a: LocalDateTime, b: LocalDateTime): boolean {
+            return api.ObjectHelper.equals(a, b);
         }
     }
 }

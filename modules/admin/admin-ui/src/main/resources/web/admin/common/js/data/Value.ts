@@ -86,18 +86,18 @@ module api.data {
             return <api.util.DateTime>this.value;
         }
 
-        getLocalDate(): Date {
+        getLocalDate(): api.util.LocalDate {
             if (this.isNull()) {
                 return null;
             }
-            return <Date>this.value;
+            return <api.util.LocalDate>this.value;
         }
 
-         getLocalDateTime(): Date {
+         getLocalDateTime(): api.util.LocalDateTime {
             if (this.isNull()) {
                 return null;
             }
-            return <Date>this.value;
+            return <api.util.LocalDateTime>this.value;
         }
 
         getLocalTime(): api.util.LocalTime {

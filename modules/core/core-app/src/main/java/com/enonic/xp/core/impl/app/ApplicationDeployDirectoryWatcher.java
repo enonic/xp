@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.app;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Map;
+import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -36,7 +37,9 @@ public class ApplicationDeployDirectoryWatcher
     private static final IOFileFilter FILTER =
         FileFilterUtils.and( FileFilterUtils.fileFileFilter(), FileFilterUtils.suffixFileFilter( ".jar" ) );
 
-    private Map<String, ApplicationKey> applicationKeyByFile = new ConcurrentHashMap<>();
+    private Map<String, ApplicationKey> applicationKeyByPath = new ConcurrentHashMap<>();
+
+    private Map<ApplicationKey, Stack<String>> pathsByApplicationKey = new ConcurrentHashMap<>();
 
     private ApplicationService applicationService;
 
@@ -127,21 +130,67 @@ public class ApplicationDeployDirectoryWatcher
 
     private void installApplication( final File file )
     {
+        //Installs the application
         final ByteSource byteSource = Files.asByteSource( file );
-
         final Application application = ApplicationHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource ) );
+        final ApplicationKey applicationKey = application.getKey();
+        final String path = file.getPath();
 
-        applicationKeyByFile.put( file.getName(), application.getKey() );
+        //Stores a mapping fileName -> applicationKey. Needed for uninstallation
+        applicationKeyByPath.put( path, applicationKey );
+
+        //Updates the mapping applicationKey -> stack<fileName>. Needed in some particular case for uninstallatioon
+        pathsByApplicationKey.compute( applicationKey, ( applicationKeyParam, fileNameStack ) -> {
+            if ( fileNameStack == null )
+            {
+                fileNameStack = new Stack<>();
+            }
+            fileNameStack.remove( path );
+            fileNameStack.push( path );
+
+            return fileNameStack;
+        } );
     }
 
     private void uninstallApplication( final File file )
     {
-        final ApplicationKey applicationKey = applicationKeyByFile.remove( file.getName() );
+        // Removes the mapping fileName -> applicationKey
+        final String path = file.getPath();
+        final ApplicationKey applicationKey = applicationKeyByPath.remove( path );
 
-        if ( applicationKey != null )
-        {
-            ApplicationHelper.runAsAdmin( () -> this.applicationService.uninstallApplication( applicationKey, false ) );
-        }
+        pathsByApplicationKey.computeIfPresent( applicationKey, ( applicationKeyParam, fileNameStack ) -> {
+
+            if ( fileNameStack == null )
+            {
+                return null;
+            }
+
+            //Retrieve the file name for the currently installed application
+            final String lastInstalledFile = fileNameStack.isEmpty() ? null : fileNameStack.peek();
+
+            //If the file removed is currently installed
+            if ( path.equals( lastInstalledFile ) )
+            {
+                //Uninstall the corresponding application
+                ApplicationHelper.runAsAdmin( () -> this.applicationService.uninstallApplication( applicationKey, false ) );
+                fileNameStack.pop();
+
+                // If there is a previous file with the same applicationKey
+                if ( !fileNameStack.isEmpty() )
+                {
+                    //Installs this previous application
+                    final String previousInstalledFile = fileNameStack.peek();
+                    final ByteSource byteSource = Files.asByteSource( new File( previousInstalledFile ) );
+                    ApplicationHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource ) );
+                }
+            }
+            else
+            {
+                fileNameStack.remove( path );
+            }
+
+            return fileNameStack.isEmpty() ? null : fileNameStack;
+        } );
     }
 
     @Reference

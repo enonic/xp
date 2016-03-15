@@ -3,6 +3,7 @@ module api.util {
     export class UriHelper {
 
         private static DEFAULT_URI = '/';
+        private static DEFAULT_ADMIN_URI = '/admin';
 
         /**
          * Creates an URI from supplied path.
@@ -23,7 +24,18 @@ module api.util {
          * @returns {string} the URI to a admin path.
          */
         static getAdminUri(path: string): string {
-            return UriHelper.getUri(UriHelper.joinPath('admin', UriHelper.relativePath(path)));
+            var adminUri = UriHelper.getAdminUriPrefix();
+            return UriHelper.getUri(UriHelper.joinPath(adminUri, UriHelper.relativePath(path)));
+        }
+
+        /**
+         * Gets the URI prefix of an admin path.
+         *
+         * @param path path to append to base admin URI.
+         * @returns {string} the URI to a admin path.
+         */
+        static getAdminUriPrefix(): string {
+            return window['CONFIG'] && window['CONFIG']['adminUrl'] || UriHelper.DEFAULT_ADMIN_URI;
         }
 
         /**
@@ -53,7 +65,7 @@ module api.util {
          * @returns {string} the URI to a portal path.
          */
         static getPortalUri(path: string): string {
-            return UriHelper.getUri(UriHelper.joinPath('admin', '/portal', UriHelper.relativePath(path)));
+            return UriHelper.getAdminUri(UriHelper.joinPath('portal', UriHelper.relativePath(path)));
         }
 
         static relativePath(path: string): string {
@@ -80,7 +92,7 @@ module api.util {
 
         static trimUrlParams(trimMe: string): string {
             var index = trimMe.lastIndexOf("?");
-            return index >= 0 ? UriHelper.relativePath(trimMe.substring(0, index)) : UriHelper.relativePath(trimMe);
+            return index >= 0 ? trimMe.substring(0, index) : trimMe;
         }
 
         static joinPath(...paths: string[]): string {

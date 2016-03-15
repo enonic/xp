@@ -1,21 +1,19 @@
 module api.data {
 
+    import LocalDate = api.util.LocalDate;
+
     export class ValueTypeLocalDate extends ValueType {
 
         constructor() {
             super("LocalDate");
         }
 
-        isValid(value: any): boolean {
-            if (!(typeof value === 'object')) {
-                // Date has object as typeof
-                return false;
+        isValid(value: string): boolean {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(value, LocalDate)) {
+                return true;
             }
-            if (!api.ObjectHelper.iFrameSafeInstanceOf(value, Date)) {
-                return false;
-            }
-            var valueAsDate = <Date>value;
-            return !api.util.DateHelper.isInvalidDate(valueAsDate);
+
+            return LocalDate.isValidDate(value);
         }
 
         isConvertible(value: string): boolean {
@@ -29,7 +27,7 @@ module api.data {
             if (!(value.charAt(4) == '-' && value.charAt(7) == '-')) {
                 return false;
             }
-            return this.isValid(new Date(value));
+            return this.isValid(value);
         }
 
         newValue(value: string): Value {
@@ -39,20 +37,20 @@ module api.data {
             if (!this.isConvertible(value)) {
                 return this.newNullValue();
             }
-            var date = api.util.DateHelper.parseDate(value);
+            var date = LocalDate.parseDate(value);
             return new Value(date, this);
         }
 
         toJsonValue(value: Value): string {
-            return value.isNull() ? null : api.util.DateHelper.formatDate(value.getLocalDate());
+            return value.isNull() ? null : value.getLocalDate().toString();
         }
 
         valueToString(value: Value): string {
-            return api.util.DateHelper.formatDate((<Date>value.getObject()));
+            return value.getLocalDate().toString();
         }
 
-        valueEquals(a: Date, b: Date): boolean {
-            return api.ObjectHelper.dateEquals(a, b);
+        valueEquals(a: LocalDate, b: LocalDate): boolean {
+            return api.ObjectHelper.equals(a, b);
         }
     }
 }
