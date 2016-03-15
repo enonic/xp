@@ -25,7 +25,6 @@ import com.enonic.xp.core.impl.content.validate.DataValidationError;
 import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.data.PropertyPath;
-import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypes;
@@ -67,14 +66,15 @@ final class CreateContentCommand
     {
         validateBlockingChecks();
 
+        final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
+        initializeDefaultValue( contentType.getForm().getFormItems(), PropertyPath.from( "" ) );
+
         CreateContentParams processedParams = processCreateContentParams();
 
         final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedParams );
 
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams );
 
-        final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
-        initializeDefaultValue( contentType.getForm().getFormItems(), PropertyPath.from( "" ) );
         try
         {
             final Node createdNode = nodeService.create( createNodeParams );
@@ -324,7 +324,8 @@ final class CreateContentCommand
                 if ( StringUtils.isNotEmpty( input.getDefaultValue() ) )
                 {
                     params.getData().setProperty( PropertyPath.from( parentPath, input.getName() ),
-                                                  ValueFactory.newString( input.getDefaultValue() ) );
+                                                  InputTypes.BUILTIN.resolve( input.getInputType() ).
+                                                      createValue( input.getDefaultValue(), input.getInputTypeConfig() ) );
                 }
             }
             else if ( formItem.isFormItemSet() )
