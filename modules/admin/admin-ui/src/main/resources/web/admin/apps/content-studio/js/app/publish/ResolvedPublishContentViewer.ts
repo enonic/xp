@@ -128,7 +128,7 @@ module app.publish {
                 this.wrapperDivEl.appendChild(this.iconDivEl);
             }
 
-            this.namesView = new api.app.NamesView();
+            this.namesView = new api.app.NamesView(false);
             this.appendChild(this.namesView);
         }
 

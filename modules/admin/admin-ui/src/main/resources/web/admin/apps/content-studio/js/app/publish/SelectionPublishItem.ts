@@ -101,6 +101,9 @@ module app.publish {
             if (this.removable) {
                 this.removeEl = new api.dom.DivEl("icon remove");
                 this.removeEl.onClicked((event: MouseEvent) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+
                     if (callback) {
                         callback();
                     }
