@@ -175,6 +175,7 @@ module app.wizard.page {
             this.frameContainer = new Panel("frame-container");
             this.appendChild(this.frameContainer);
             this.frameContainer.appendChild(this.liveEditPageProxy.getIFrame());
+            this.frameContainer.appendChild(this.liveEditPageProxy.getDragMask());
 
             // append it here in order for the context window to be above
             this.appendChild(this.liveEditPageProxy.getLoadMask());
