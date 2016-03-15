@@ -42,6 +42,9 @@ module api.data {
         }
 
         private static convertToString(value: Value): Value {
+            if (value.getType() === ValueTypes.DATA) {
+                return ValueTypes.STRING.newNullValue();
+            }
             return ValueTypes.STRING.newValue(value.getString());
         }
 
