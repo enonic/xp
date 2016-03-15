@@ -10,21 +10,18 @@ module api.security {
 
         private modifiedTime: Date;
 
-        constructor(principalKey: PrincipalKey, displayName: string, modifiedTime?: Date) {
-            this.key = principalKey;
-            this.displayName = displayName || "";
-            this.type = principalKey.getType();
-            this.modifiedTime = modifiedTime;
-        }
+        private description: string;
 
-        static fromJson(json: PrincipalJson): Principal {
-            var key = PrincipalKey.fromString(json.key);
-            var date = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
-            return new Principal(key, json.displayName, date);
+        constructor(builder: PrincipalBuilder) {
+            this.key = builder.key;
+            this.displayName = builder.displayName || "";
+            this.type = builder.key.getType();
+            this.modifiedTime = builder.modifiedTime;
+            this.description = builder.description;
         }
 
         static fromPrincipal(principal: Principal): Principal {
-            return new Principal(principal.getKey(), principal.getDisplayName(), principal.getModifiedTime());
+            return new PrincipalBuilder(principal).build();
         }
 
         toJson(): PrincipalJson {
@@ -40,6 +37,10 @@ module api.security {
 
         getDisplayName(): string {
             return this.displayName;
+        }
+
+        getDescription(): string {
+            return this.description;
         }
 
         getType(): PrincipalType {
@@ -106,11 +107,78 @@ module api.security {
                 return false;
             }
 
+            if(!api.ObjectHelper.stringEquals(this.description, other.description)) {
+                return false;
+            }
+
             return true;
         }
 
         clone(): Principal {
-            return new Principal(this.key, this.displayName, this.modifiedTime);
+            return this.newBuilder().build();
+        }
+
+        newBuilder(): PrincipalBuilder {
+            return new PrincipalBuilder(this);
+        }
+
+        static create(): PrincipalBuilder {
+            return new PrincipalBuilder();
+        }
+
+        static fromJson(json: api.security.PrincipalJson): Principal {
+            return new PrincipalBuilder().fromJson(json).build();
+        }
+    }
+
+    export class PrincipalBuilder {
+        key: PrincipalKey;
+
+        displayName: string;
+
+        modifiedTime: Date;
+
+        description: string;
+
+        constructor(source?: Principal) {
+            if(source) {
+                this.key = source.getKey();
+                this.displayName = source.getDisplayName();
+                this.modifiedTime = source.getModifiedTime();
+                this.description = source.getDescription();
+            }
+        }
+
+        fromJson(json: api.security.PrincipalJson): PrincipalBuilder {
+            this.key = PrincipalKey.fromString(json.key);
+            this.displayName = json.displayName;
+            this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
+            this.description = json.description;
+            return this;
+        }
+
+        setKey(key: PrincipalKey): PrincipalBuilder {
+            this.key = key;
+            return this;
+        }
+
+        setDisplayName(displayName: string): PrincipalBuilder {
+            this.displayName = displayName;
+            return this;
+        }
+
+        setModifiedTime(modifiedTime: Date): PrincipalBuilder {
+            this.modifiedTime = modifiedTime;
+            return this;
+        }
+
+        setDescription(description: string): PrincipalBuilder {
+            this.description = description;
+            return this;
+        }
+
+        build(): Principal {
+            return new Principal(this);
         }
     }
 }

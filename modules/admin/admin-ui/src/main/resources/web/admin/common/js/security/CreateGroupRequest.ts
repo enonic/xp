@@ -5,6 +5,7 @@ module api.security {
         private key: PrincipalKey;
         private displayName: string;
         private members: PrincipalKey[] = [];
+        private description: string;
 
         constructor() {
             super();
@@ -26,11 +27,17 @@ module api.security {
             return this;
         }
 
+        setDescription(description: string): CreateGroupRequest {
+            this.description = description;
+            return this;
+        }
+
         getParams(): Object {
             return {
                 key: this.key.toString(),
                 displayName: this.displayName,
-                members: this.members.map((memberKey) => memberKey.toString())
+                members: this.members.map((memberKey) => memberKey.toString()),
+                description: this.description
             };
         }
 
