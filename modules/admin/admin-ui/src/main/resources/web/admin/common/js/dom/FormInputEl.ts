@@ -30,6 +30,8 @@ module api.dom {
                     }
                     // use doSetValue because descendants might override setValue method (i.e. CheckBox, RadioGroup)
                     this.doSetValue(originalValue, true);
+                    // doGetValue instead of value in case input trims/modifies value (i.e. textarea strips \r chars)
+                    this.originalValue = this.doGetValue();
                 });
             }
 
@@ -67,7 +69,8 @@ module api.dom {
             if (FormInputEl.debug) {
                 console.groupCollapsed(this.toString() + '.setValue(' + value + ')');
             }
-            if (this.oldValue != value) {
+            // let userInput force value update
+            if (this.oldValue != value || userInput) {
                 if (FormInputEl.debug) {
                     console.debug('update value from "' + this.oldValue + '" to "' + value + '"');
                 }
@@ -81,7 +84,8 @@ module api.dom {
                         console.debug('not dirty and not user input, update original value from "' + this.originalValue + '" to "' + value +
                                       '"');
                     }
-                    this.originalValue = value;
+                    // doGetValue instead of value in case input trims/modifies value (i.e. textarea strips \r chars)
+                    this.originalValue = this.doGetValue();
                 } else {
                     // update dirty according to new value and original value
                     // to keep dirty state consistent

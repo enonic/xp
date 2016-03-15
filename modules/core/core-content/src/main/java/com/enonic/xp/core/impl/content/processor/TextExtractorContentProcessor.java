@@ -65,8 +65,15 @@ public class TextExtractorContentProcessor
     @Override
     public ProcessUpdateResult processUpdate( final ProcessUpdateParams params )
     {
-        //final Mixins contentTypeMixins = getMixins( params.getUpdateContentParams(). );
-        return null;
+        final ContentType contentType = params.getContentType();
+
+        final Mixins contentTypeMixins = getMixins( contentType.getName() );
+
+        ExtraDatas extraDatas = params.getMediaInfo() != null ? extractMetadata( params.getMediaInfo(), contentTypeMixins ) : null;
+
+        return new ProcessUpdateResult( null, extraDatas == null ? null : edit -> {
+            edit.extraDatas = extraDatas;
+        } );
     }
 
     private ExtraDatas extractMetadata( final MediaInfo mediaInfo, final Mixins mixins )
