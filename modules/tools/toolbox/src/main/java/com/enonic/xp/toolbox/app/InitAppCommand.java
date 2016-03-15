@@ -116,8 +116,9 @@ public final class InitAppCommand
             // Removes Git related content
             removeFixGitContent( temporaryDirectory );
 
-            // Copies the content from the temporary folder except git related content
-            copyGitUnrelatedContent( temporaryDirectory, destinationDirectory );
+            // Copies the content from the temporary folder
+            final CopyFileVisitor copyFileVisitor = new CopyFileVisitor( temporaryDirectory.toPath(), destinationDirectory.toPath() );
+            Files.walkFileTree( temporaryDirectory.toPath(), copyFileVisitor );
         }
         finally
         {
@@ -134,12 +135,6 @@ public final class InitAppCommand
         // Removes the .git directory and README.md file
         FileUtils.deleteDirectory( new File( directory, ".git" ) );
         FileUtils.deleteQuietly( new File( directory, "README.md" ) );
-    }
-
-    private void copyGitUnrelatedContent( File source, File target )
-        throws IOException
-    {
-        Files.walkFileTree( source.toPath(), new GitUnrelatedContentCopyFileVisitor( source.toPath(), target.toPath() ) );
     }
 
     private void processGradleProperties()
@@ -162,7 +157,7 @@ public final class InitAppCommand
         }
     }
 
-    private class GitUnrelatedContentCopyFileVisitor
+    private class CopyFileVisitor
         extends SimpleFileVisitor<Path>
     {
         final Path sourcePath;
@@ -171,7 +166,7 @@ public final class InitAppCommand
 
         private boolean rootFile = true;
 
-        private GitUnrelatedContentCopyFileVisitor( Path sourcePath, Path targetPath )
+        private CopyFileVisitor( Path sourcePath, Path targetPath )
         {
             this.sourcePath = sourcePath;
             this.targetPath = targetPath;
