@@ -139,7 +139,7 @@ module api.form.inputtype.text.htmlarea {
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
                 this.resetPreviewContainerMaxHeight();
-                this.imagePreviewScrollHandler.toggleScrollButtons(true);
+                this.imagePreviewScrollHandler.toggleScrollButtons();
             });
         }
 
@@ -713,50 +713,33 @@ module api.form.inputtype.text.htmlarea {
         }
 
         private createScrollButton(direction: string): api.dom.Element {
-            var myId = "img-preview",
-                scrollDirection = "scroll" + direction,
-                xlinkCoordinates = (direction === "up" ? 'x="12" y="15"' : 'x="4" y="19" transform="rotate(180, 16, 22)"/>'),
-                clipHtml = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="' + myId + '-' + scrollDirection + '" class="' +
-                           scrollDirection + '" width="40" height="40">' +
-                           '    <defs>'                                                                                              +
-                           '        <polygon id="'                                                                                   +                                                                                 myId                                                                            + '-' + scrollDirection + 'Triangle" class="' + scrollDirection +
-                           '-triangle" points="8,0,16,8,0,8"/>'                                                                      +
-                           '        <filter id="filter-'                                                                             +                                                                           scrollDirection +                                                         '" x="-40%" y="-40%" height="200%" width="200%">'       +
-                           '        <feOffset result="offOut" in="SourceAlpha" dx="0" dy="0" />'                                     +
-                           '        <feGaussianBlur result="blurOut" in="offOut" stdDeviation="2" />'                                +
-                           '        <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />'                                      +
-                           '        </filter>'                                                                                       +
-                           '    </defs>'                                                                                             +
-                           '    <circle cx="20" cy="20" r="16" filter="url(#filter-'                                                 +                                               scrollDirection                               +                             ')" fill="white"/>' +
-                           '    <use xlink:href="#'                                                                                  + myId +                                                                         '-'                                                                     + scrollDirection +                                                 'Triangle" ' + xlinkCoordinates +               ' />' +
-                           '</svg>';
-
-
-            var scrollButton = api.dom.Element.fromString(clipHtml),
+            var scrollAreaDiv = new api.dom.DivEl(direction === "up" ? "scroll-up-div" : "scroll-down-div"),
+                imageEl = new api.dom.ImgEl(api.util.UriHelper.getAdminUri("common/images/icons/512x512/arrow_" + direction + ".png")),
                 scrollTop = (direction === "up" ? "-=50" : "+=50");
 
+            scrollAreaDiv.appendChild(imageEl);
 
-            scrollButton.onClicked((event) => {
+            imageEl.onClicked((event) => {
                 event.preventDefault();
                 wemjq(this.imagePreviewContainer.getHTMLElement()).animate({scrollTop: scrollTop}, 400);
             });
 
-            scrollButton.onMouseOver(() => {
+            imageEl.onMouseOver(() => {
                 this.scrolling = true;
                 this.scrollImagePreview(direction);
             });
 
-            scrollButton.onMouseOut(() => {
+            imageEl.onMouseOut(() => {
                 this.scrolling = false;
             });
 
             direction === "up"
-                ? wemjq(scrollButton.getHTMLElement()).insertBefore(this.imagePreviewContainer.getHTMLElement().parentElement)
-                : wemjq(scrollButton.getHTMLElement()).insertAfter(this.imagePreviewContainer.getHTMLElement().parentElement);
+                ? wemjq(scrollAreaDiv.getHTMLElement()).insertBefore(this.imagePreviewContainer.getHTMLElement().parentElement)
+                : wemjq(scrollAreaDiv.getHTMLElement()).insertAfter(this.imagePreviewContainer.getHTMLElement().parentElement);
 
-            scrollButton.hide();
+            scrollAreaDiv.hide();
 
-            return scrollButton;
+            return scrollAreaDiv;
         }
 
         private initScrollbarWidth() {
@@ -784,17 +767,19 @@ module api.form.inputtype.text.htmlarea {
             this.scrollBarWidth = widthNoScroll - widthWithScroll;
         }
 
-        private scrollImagePreview(direction) {
-            var amount = (direction === "up" ? "-=2px" : "+=2px");
-            wemjq(this.imagePreviewContainer.getHTMLElement()).animate({scrollTop: amount}, 1, () => {
+        private scrollImagePreview(direction, scrollBy: number = 2) {
+            var scrollByPx = (direction === "up" ? "-=" : "+=") + Math.round(scrollBy) + "px";
+            var delta = 0.05;
+            wemjq(this.imagePreviewContainer.getHTMLElement()).animate({scrollTop: scrollByPx}, 1, () => {
                 if (this.scrolling) {
                     // If we want to keep scrolling, call the scrollContent function again:
-                    this.scrollImagePreview(direction);
+                    this.scrollImagePreview(direction, scrollBy + delta);   // Increase scroll height by delta on each iteration
+                                                                            // to emulate scrolling speed up effect
                 }
             });
         }
 
-        toggleScrollButtons(updateAlignment?: boolean) {
+        toggleScrollButtons() {
             if (this.isScrolledToBottom()) {
                 this.scrollDownButton.hide();
             }
@@ -807,33 +792,6 @@ module api.form.inputtype.text.htmlarea {
             }
             else {
                 this.scrollUpButton.show();
-            }
-
-            if (updateAlignment) {
-                this.updateScrollButtonsAlignment();
-            }
-        }
-
-        private updateScrollButtonsAlignment() {
-            var img: api.dom.ElementHelper = this.imagePreviewContainer.getFirstChild().getEl();
-
-            var textAlign = img.getComputedProperty("text-align"),
-                containerWidth = this.imagePreviewContainer.getEl().getWidth() - this.scrollBarWidth,
-                imgWidth = img.getWidth();
-
-            if (imgWidth < containerWidth && textAlign === "left") {
-                let left = imgWidth / 2 - 20;
-                this.scrollUpButton.getEl().setLeftPx(left);
-                this.scrollDownButton.getEl().setLeftPx(left);
-            }
-            else if (imgWidth < containerWidth && textAlign === "right") {
-                let left = containerWidth - (imgWidth / 2 + 20);
-                this.scrollUpButton.getEl().setLeftPx(left);
-                this.scrollDownButton.getEl().setLeftPx(left);
-            }
-            else {
-                this.scrollUpButton.getEl().setLeft("48%");
-                this.scrollDownButton.getEl().setLeft("48%");
             }
         }
 
