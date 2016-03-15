@@ -455,6 +455,12 @@ module app.wizard {
             });
         }
 
+
+        close(checkCanClose: boolean = false) {
+            this.liveFormPanel.skipNextReloadConfirmation(true);
+            super.close(checkCanClose);
+        }
+
         private fetchMixin(name: MixinName): wemQ.Promise<Mixin> {
             var deferred = wemQ.defer<Mixin>();
             new GetMixinByQualifiedNameRequest(name).sendAndParse().
