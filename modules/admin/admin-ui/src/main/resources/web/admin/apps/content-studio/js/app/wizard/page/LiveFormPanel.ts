@@ -491,6 +491,10 @@ module app.wizard.page {
                 new api.content.event.EditContentEvent([summaryAndStatus]).fire();
             });
 
+            this.liveEditPageProxy.onEditContent((event: api.content.event.EditContentEvent) => {
+                new api.content.event.EditContentEvent(event.getModels()).fire();
+            });
+
             this.liveEditPageProxy.onLiveEditPageInitializationError((event: LiveEditPageInitializationErrorEvent) => {
                 api.notify.showError(event.getMessage(), false);
                 new app.wizard.ShowContentFormEvent().fire();

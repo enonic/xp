@@ -35,6 +35,7 @@ module app.wizard.page {
     import ComponentResetEvent = api.liveedit.ComponentResetEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
     import ComponentFragmentCreatedEvent = api.liveedit.ComponentFragmentCreatedEvent;
+    import EditContentEvent = api.content.event.EditContentEvent;
     import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
     import RegionView = api.liveedit.RegionView;
@@ -99,6 +100,8 @@ module app.wizard.page {
         private liveEditPageInitErrorListeners: {(event: LiveEditPageInitializationErrorEvent): void;}[] = [];
 
         private fragmentCreatedListeners: {(event: ComponentFragmentCreatedEvent): void;}[] = [];
+
+        private editContentListeners: {(event: EditContentEvent): void;}[] = [];
 
         private showLoadMaskHandler: () => void;
 
@@ -401,6 +404,8 @@ module app.wizard.page {
 
             ComponentFragmentCreatedEvent.on(this.notifyFragmentCreated.bind(this), contextWindow);
 
+            EditContentEvent.on(this.notifyEditContent.bind(this), contextWindow);
+
             ComponentLoadedEvent.on(this.notifyComponentLoaded.bind(this), contextWindow);
 
             ComponentResetEvent.on(this.notifyComponentReset.bind(this), contextWindow);
@@ -690,6 +695,18 @@ module app.wizard.page {
             this.fragmentCreatedListeners.forEach((listener) => listener(event));
         }
 
+        onEditContent(listener: {(event: EditContentEvent): void;}) {
+            this.editContentListeners.push(listener);
+        }
+
+        unEditContent(listener: {(event: EditContentEvent): void;}) {
+            this.editContentListeners = this.editContentListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyEditContent(event: EditContentEvent) {
+            this.editContentListeners.forEach((listener) => listener(event));
+        }
+        
         private copyObjectsBeforeFrameReloadForIE() {
             this.copyControllerForIE();
             this.copyRegionsForIE();

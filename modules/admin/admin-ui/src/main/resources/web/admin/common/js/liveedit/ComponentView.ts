@@ -217,6 +217,11 @@ module api.liveedit {
                     });
                 }));
             }
+
+            return this.getComponentContextMenuActions(actions, liveEditModel);
+        }
+
+        protected getComponentContextMenuActions(actions: api.ui.Action[], liveEditModel: LiveEditModel): api.ui.Action[] {
             return actions;
         }
 
