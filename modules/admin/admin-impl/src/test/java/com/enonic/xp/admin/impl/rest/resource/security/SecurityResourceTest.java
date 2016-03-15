@@ -1,5 +1,20 @@
 package com.enonic.xp.admin.impl.rest.resource.security;
 
+import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
+import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
+import com.enonic.xp.security.*;
+import com.enonic.xp.security.acl.UserStoreAccess;
+import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
+import com.enonic.xp.security.acl.UserStoreAccessControlList;
+import com.google.common.collect.Iterables;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import java.net.URLEncoder;
 import java.time.Clock;
 import java.time.Instant;
@@ -7,48 +22,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
-
-import com.google.common.collect.Iterables;
-
-import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
-import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
-import com.enonic.xp.security.CreateGroupParams;
-import com.enonic.xp.security.CreateRoleParams;
-import com.enonic.xp.security.CreateUserParams;
-import com.enonic.xp.security.CreateUserStoreParams;
-import com.enonic.xp.security.Group;
-import com.enonic.xp.security.Principal;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.security.PrincipalNotFoundException;
-import com.enonic.xp.security.PrincipalQuery;
-import com.enonic.xp.security.PrincipalQueryResult;
-import com.enonic.xp.security.PrincipalRelationship;
-import com.enonic.xp.security.PrincipalRelationships;
-import com.enonic.xp.security.PrincipalType;
-import com.enonic.xp.security.Principals;
-import com.enonic.xp.security.Role;
-import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UpdateGroupParams;
-import com.enonic.xp.security.UpdateRoleParams;
-import com.enonic.xp.security.UpdateUserParams;
-import com.enonic.xp.security.UpdateUserStoreParams;
-import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.UserStores;
-import com.enonic.xp.security.acl.UserStoreAccess;
-import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
-import com.enonic.xp.security.acl.UserStoreAccessControlList;
 
 import static com.enonic.xp.security.PrincipalRelationship.from;
 import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
@@ -111,6 +84,7 @@ public class SecurityResourceTest
         final Group group1 = Group.create().
             key( PrincipalKey.from( "group:local:mygroup" ) ).
             displayName( "My Group" ).
+            description( "my group" ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
@@ -139,8 +113,8 @@ public class SecurityResourceTest
             UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "role:system.admin" ) ).access( ADMINISTRATOR ).build() );
 
         final Principals principals =
-            Principals.from( Role.create().displayName( "Authenticated" ).key( PrincipalKey.from( "role:system.authenticated" ) ).build(),
-                             Role.create().displayName( "Administrator" ).key( PrincipalKey.from( "role:system.admin" ) ).build() );
+            Principals.from( Role.create().displayName( "Authenticated" ).key( PrincipalKey.from( "role:system.authenticated" ) ).description( "authenticated" ).build(),
+                             Role.create().displayName( "Administrator" ).key( PrincipalKey.from( "role:system.admin" ) ).description( "admin" ).build() );
 
         Mockito.when( securityService.getDefaultUserStorePermissions() ).thenReturn( userStoreAccessControlList );
         Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn( principals );
@@ -294,10 +268,12 @@ public class SecurityResourceTest
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
             displayName( "Group A" ).
             modifiedTime( Instant.now( clock ) ).
+            description( "group a" ).
             build();
         final Group group2 = Group.create().
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-b" ) ).
             displayName( "Group B" ).
+            description( "group b" ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
@@ -324,6 +300,7 @@ public class SecurityResourceTest
         final Group group = Group.create().
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
             displayName( "Group A" ).
+            description( "group a" ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
@@ -351,6 +328,7 @@ public class SecurityResourceTest
             key( PrincipalKey.ofRole( "superuser" ) ).
             displayName( "Super user role" ).
             modifiedTime( Instant.now( clock ) ).
+            description( "super u").
             build();
 
         final Optional<? extends Principal> userRes = Optional.of( role );
@@ -439,6 +417,7 @@ public class SecurityResourceTest
         final Group group = Group.create().
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
             displayName( "Group A" ).
+            description("group a").
             modifiedTime( Instant.now( clock ) ).
             build();
 
@@ -460,6 +439,7 @@ public class SecurityResourceTest
             key( PrincipalKey.ofRole( "superuser" ) ).
             displayName( "Super user role" ).
             modifiedTime( Instant.now( clock ) ).
+            description( "role" ).
             build();
 
         Mockito.when( securityService.createRole( Mockito.any( CreateRoleParams.class ) ) ).thenReturn( role );
@@ -501,6 +481,7 @@ public class SecurityResourceTest
         final Group group = Group.create().
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
             displayName( "Group A" ).
+            description("group a").
             modifiedTime( Instant.now( clock ) ).
             build();
 
@@ -526,6 +507,7 @@ public class SecurityResourceTest
             key( PrincipalKey.ofRole( "superuser" ) ).
             displayName( "Super user role" ).
             modifiedTime( Instant.now( clock ) ).
+            description( "role" ).
             build();
 
         Mockito.when( securityService.updateRole( Mockito.any( UpdateRoleParams.class ) ) ).thenReturn( role );
