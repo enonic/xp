@@ -767,12 +767,14 @@ module api.form.inputtype.text.htmlarea {
             this.scrollBarWidth = widthNoScroll - widthWithScroll;
         }
 
-        private scrollImagePreview(direction) {
-            var amount = (direction === "up" ? "-=2px" : "+=2px");
-            wemjq(this.imagePreviewContainer.getHTMLElement()).animate({scrollTop: amount}, 1, () => {
+        private scrollImagePreview(direction, scrollBy: number = 2) {
+            var scrollByPx = (direction === "up" ? "-=" : "+=") + Math.round(scrollBy) + "px";
+            var delta = 0.05;
+            wemjq(this.imagePreviewContainer.getHTMLElement()).animate({scrollTop: scrollByPx}, 1, () => {
                 if (this.scrolling) {
                     // If we want to keep scrolling, call the scrollContent function again:
-                    this.scrollImagePreview(direction);
+                    this.scrollImagePreview(direction, scrollBy + delta);   // Increase scroll height by delta on each iteration
+                                                                            // to emulate scrolling speed up effect
                 }
             });
         }
