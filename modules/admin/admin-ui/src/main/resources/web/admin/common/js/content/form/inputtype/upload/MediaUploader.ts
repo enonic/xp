@@ -65,8 +65,6 @@ module api.content.form.inputtype.upload {
                 }
 
                 api.notify.showFeedback('\"' + fileName + '\" uploaded');
-
-                new ContentRequiresSaveEvent(content.getContentId()).fire();
             });
 
             this.mediaUploaderEl.onUploadFailed(() => {

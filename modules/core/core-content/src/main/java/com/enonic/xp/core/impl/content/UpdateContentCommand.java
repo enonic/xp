@@ -16,6 +16,8 @@ import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
+import com.enonic.xp.core.impl.content.processor.ContentProcessor;
+import com.enonic.xp.core.impl.content.processor.ProcessUpdateParams;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateResult;
 import com.enonic.xp.core.impl.content.processor.ProxyContentProcessor;
 import com.enonic.xp.core.impl.content.validate.DataValidationError;
@@ -110,6 +112,20 @@ final class UpdateContentCommand
     private Content processContent( final Content contentBeforeChange, Content editedContent )
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( editedContent.getType() ) );
+
+        for ( final ContentProcessor contentProcessor : this.contentProcessors )
+        {
+            if ( contentProcessor.supports( contentType ) )
+            {
+                final ProcessUpdateResult processUpdateResult =
+                    contentProcessor.processUpdate( new ProcessUpdateParams( params, mediaInfo, contentType ) );
+
+                if ( processUpdateResult.getEditor() != null )
+                {
+                    editedContent = editContent( processUpdateResult.getEditor(), editedContent );
+                }
+            }
+        }
 
         final ProxyContentProcessor proxyContentProcessor = ProxyContentProcessor.create().
             mediaInfo( this.mediaInfo ).
