@@ -1,5 +1,26 @@
 .@{_CLS_PREFIX}text-view {
 
+  // tiny mce style enforcing
+  ul, ol {
+    margin: 0 0 12px 40px;
+  }
+
+  li {
+    list-style: inherit;
+  }
+
+  strong, b {
+    font-weight: bold;
+    font-style: inherit;
+  }
+
+  em {
+    font-style: italic;
+    font-weight: inherit;
+  }
+
+  // end of tiny mce style enforcing
+
   &.empty > section {
     display: none;
   }

@@ -116,7 +116,7 @@ module api.util.htmlarea.editor {
                         {
                             selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
                             styles: {textAlign: 'left'},
-                            defaultBlock: 'div'
+                            block: 'div'
                         },
                         {selector: 'table', collapsed: false, styles: {'float': 'left'}}
                     ],
@@ -124,7 +124,7 @@ module api.util.htmlarea.editor {
                         {
                             selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
                             styles: {textAlign: 'center'},
-                            defaultBlock: 'div'
+                            block: 'div'
                         },
                         {selector: 'table', collapsed: false, styles: {marginLeft: 'auto', marginRight: 'auto'}}
                     ],
@@ -132,7 +132,7 @@ module api.util.htmlarea.editor {
                         {
                             selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
                             styles: {textAlign: 'right'},
-                            defaultBlock: 'div'
+                            block: 'div'
                         },
                         {selector: 'table', collapsed: false, styles: {'float': 'right'}}
                     ],
@@ -140,14 +140,14 @@ module api.util.htmlarea.editor {
                         {
                             selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
                             styles: {textAlign: 'justify'},
-                            defaultBlock: 'div'
+                            block: 'div'
                         }
                     ]
                 },
                 menubar: false,
                 statusbar: false,
                 paste_as_text: true,
-                plugins: ['autoresize', 'table', 'paste', 'charmap', 'code'],
+                plugins: ['autoresize', 'table', 'paste', 'charmap', 'code', 'anchor'],
                 external_plugins: {
                     "link": this.assetsUri + "/common/js/util/htmlarea/plugins/link.js",
                     "anchor": this.assetsUri + "/common/js/util/htmlarea/plugins/anchor.js",
