@@ -18,7 +18,7 @@ module api.util.htmlarea.editor {
         private onFocusHandler: (e) => void;
         private onBlurHandler: (e) => void;
         private onKeydownHandler: (e) => void;
-        private onChangeHandler: (e) => void;
+        private onNodeChangeHandler: (e) => void;
         private createDialogListeners: {(event: CreateHtmlAreaDialogEvent): void}[] = [];
         private inline: boolean = false;
         private fixedToolbarContainer: string;
@@ -66,8 +66,8 @@ module api.util.htmlarea.editor {
             return this;
         }
 
-        setOnChangeHandler(onChangeHandler: (e) => void): HTMLAreaBuilder {
-            this.onChangeHandler = onChangeHandler;
+        setOnNodeChangeHandler(onChangeHandler: (e) => void): HTMLAreaBuilder {
+            this.onNodeChangeHandler = onChangeHandler;
             return this;
         }
 
@@ -116,7 +116,7 @@ module api.util.htmlarea.editor {
                         {
                             selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
                             styles: {textAlign: 'left'},
-                            defaultBlock: 'div'
+                            inline: 'span'
                         },
                         {selector: 'table', collapsed: false, styles: {'float': 'left'}}
                     ],
@@ -124,7 +124,7 @@ module api.util.htmlarea.editor {
                         {
                             selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
                             styles: {textAlign: 'center'},
-                            defaultBlock: 'div'
+                            inline: 'span'
                         },
                         {selector: 'table', collapsed: false, styles: {marginLeft: 'auto', marginRight: 'auto'}}
                     ],
@@ -132,7 +132,7 @@ module api.util.htmlarea.editor {
                         {
                             selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
                             styles: {textAlign: 'right'},
-                            defaultBlock: 'div'
+                            inline: 'span'
                         },
                         {selector: 'table', collapsed: false, styles: {'float': 'right'}}
                     ],
@@ -140,7 +140,7 @@ module api.util.htmlarea.editor {
                         {
                             selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
                             styles: {textAlign: 'justify'},
-                            defaultBlock: 'div'
+                            inline: 'span'
                         }
                     ]
                 },
@@ -161,9 +161,9 @@ module api.util.htmlarea.editor {
                     editor.addCommand("openLinkDialog", this.notifyLinkDialog, this);
                     editor.addCommand("openAnchorDialog", this.notifyAnchorDialog, this);
                     editor.addCommand("openImageDialog", this.notifyImageDialog, this) ;
-                    editor.on('NodeChange', (e) => {                   
-                        if (!!this.onChangeHandler) {
-                            this.onChangeHandler(e);
+                    editor.on('NodeChange', (e) => {
+                        if (!!this.onNodeChangeHandler) {
+                            this.onNodeChangeHandler(e);
                         }
                     });
                     editor.on('focus', (e) => {

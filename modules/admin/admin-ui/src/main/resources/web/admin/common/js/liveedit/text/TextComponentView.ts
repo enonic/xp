@@ -84,6 +84,12 @@ module api.liveedit.text {
                 }
             };
 
+            this.onMouseLeave(() => {
+                if (this.getEl().hasClass("editor-focused")) {
+                    this.processEditorValue();
+                }
+            });
+
             api.liveedit.LiveEditPageDialogCreatedEvent.on(handleDialogCreated.bind(this));
         }
 
@@ -263,11 +269,12 @@ module api.liveedit.text {
         private onBlurHandler(e) {
             this.removeClass("editor-focused");
 
+
             setTimeout(() => {
                 if (!this.anyEditorHasFocus()) {
                     this.closePageTextEditMode();
                 }
-            }, 100);
+            }, 50);
         }
 
         private onKeydownHandler(e) {
@@ -312,6 +319,7 @@ module api.liveedit.text {
                     }
                     this.focusOnInit = false;
                     this.isInitializingEditor = false;
+                    HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
                 });
         }
 

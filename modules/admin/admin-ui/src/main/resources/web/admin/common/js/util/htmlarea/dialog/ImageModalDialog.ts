@@ -325,8 +325,12 @@ module api.util.htmlarea.dialog {
         }
 
         private isImageWiderThanEditor() {
-            if (!!this.getEditor()["editorContainer"])
+            if (!!this.getEditor()["editorContainer"]) {
                 return (this.image.getHTMLElement()["width"] > this.getEditor()["editorContainer"].clientWidth);
+            }
+            else if (!!this.getEditor() && this.getEditor()["inline"] === true) {
+                return (this.image.getHTMLElement()["width"] > this.getEditor()["bodyElement"].clientWidth);
+            }
             return true;
         }
 
