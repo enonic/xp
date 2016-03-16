@@ -1,4 +1,6 @@
 {
+  "authConfig": null,
+  "description": null,
   "displayName": "Local LDAP",
   "key": "local",
   "permissions": [

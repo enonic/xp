@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
@@ -14,6 +15,7 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.UpdateUserStoreParams;
@@ -228,6 +230,21 @@ abstract class UserStoreNodeTranslator
             editor( editableNode -> {
                 final PropertyTree nodeData = editableNode.data;
                 nodeData.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, updateUserStoreParams.getDisplayName() );
+                nodeData.setString( UserStorePropertyNames.DESCRIPTION_KEY, updateUserStoreParams.getDescription() );
+
+                final AuthConfig authConfig = updateUserStoreParams.getAuthConfig();
+                if ( authConfig == null )
+                {
+                    if ( nodeData.hasProperty( UserStorePropertyNames.AUTH_CONFIG_KEY ) )
+                    {
+                        nodeData.removeProperty( UserStorePropertyNames.AUTH_CONFIG_KEY );
+                    }
+                }
+                else
+                {
+                    nodeData.setString( UserStorePropertyNames.AUTH_CONFIG_APPLICATION_KEY, authConfig.getApplicationKey().toString() );
+                    nodeData.setSet( UserStorePropertyNames.AUTH_CONFIG_FORM_KEY, authConfig.getConfig().getRoot() );
+                }
             } ).
             build();
     }
@@ -253,10 +270,23 @@ abstract class UserStoreNodeTranslator
         }
         final PropertySet nodeAsSet = node.data().getRoot();
 
-        return UserStore.create().
+        final UserStore.Builder userStore = UserStore.create().
             displayName( nodeAsSet.getString( UserStorePropertyNames.DISPLAY_NAME_KEY ) ).
             key( UserStoreNodeTranslator.toKey( node ) ).
-            build();
+            description( nodeAsSet.getString( UserStorePropertyNames.DESCRIPTION_KEY ) );
+
+        if ( nodeAsSet.hasProperty( PathGuardPropertyPaths.AUTH_CONFIG_PATH ) )
+        {
+            final String applicationKey = nodeAsSet.getString( PathGuardPropertyPaths.AUTH_CONFIG_APPLICATION_PATH );
+            final PropertySet config = nodeAsSet.getSet( PathGuardPropertyPaths.AUTH_CONFIG_FORM_PATH );
+            final AuthConfig authConfig = AuthConfig.create().
+                applicationKey( ApplicationKey.from( applicationKey ) ).
+                config( config.toTree() ).
+                build();
+            userStore.authConfig( authConfig );
+        }
+
+        return userStore.build();
     }
 
 }

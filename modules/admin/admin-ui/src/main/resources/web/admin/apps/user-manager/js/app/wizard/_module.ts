@@ -18,6 +18,7 @@
 ///<reference path='PathGuardWizardToolbar.ts' />
 ///<reference path='PrincipalDescriptionWizardStepForm.ts' />
 ///<reference path='PrincipalMembersWizardStepForm.ts' />
+///<reference path='UserStoreWizardStepForm.ts' />
 ///<reference path='UserEmailWizardStepForm.ts' />
 ///<reference path='UserPasswordWizardStepForm.ts' />
 ///<reference path='UserMembershipsWizardStepForm.ts' />
