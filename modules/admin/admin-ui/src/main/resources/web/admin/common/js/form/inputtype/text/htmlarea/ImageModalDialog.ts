@@ -169,6 +169,9 @@ module api.form.inputtype.text.htmlarea {
 
         private previewImage() {
             this.imageToolbar = new ImageToolbar(this.image, this.imageLoadMask);
+            this.imageToolbar.onCroppingChanged(() => {
+               this.imagePreviewScrollHandler.resetScrollPosition();
+            });
 
             this.image.onLoaded(() => {
                 this.imageLoadMask.hide();
@@ -670,6 +673,10 @@ module api.form.inputtype.text.htmlarea {
             this.image.getEl().setAttribute("data-src", newDataSrc);
         }
 
+        onCroppingChanged(listener: (event: OptionSelectedEvent<ImageCroppingOption>) => void) {
+            this.imageCroppingSelector.onOptionSelected(listener);
+        }
+
     }
 
     export class ImagePreviewScrollHandler {
@@ -793,6 +800,10 @@ module api.form.inputtype.text.htmlarea {
             else {
                 this.scrollUpButton.show();
             }
+        }
+
+        resetScrollPosition() {
+            this.imagePreviewContainer.getEl().setScrollTop(0);
         }
 
         private showScrollBar() {
