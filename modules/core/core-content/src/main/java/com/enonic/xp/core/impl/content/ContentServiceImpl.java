@@ -526,10 +526,9 @@ public class ContentServiceImpl
     @Override
     public SetActiveContentVersionResult setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
     {
-        final NodeVersionId nodeVersionId =
-            nodeService.setActiveVersion( NodeId.from( contentId.toString() ), NodeVersionId.from( versionId.toString() ) );
+        nodeService.setActiveVersion( NodeId.from( contentId.toString() ), NodeVersionId.from( versionId.toString() ) );
 
-        return new SetActiveContentVersionResult( ContentVersionId.from( nodeVersionId.toString() ) );
+        return new SetActiveContentVersionResult( contentId, versionId );
     }
 
     @Override

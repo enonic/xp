@@ -103,7 +103,6 @@ import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ContentState;
-import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
@@ -883,12 +882,12 @@ public final class ContentResource
 
     @POST
     @Path("setActiveVersion")
-    public ContentVersionId setActiveVersion( final SetActiveVersionJson params )
+    public ContentId setActiveVersion( final SetActiveVersionJson params )
     {
         final SetActiveContentVersionResult setActiveContentVersionResult =
             this.contentService.setActiveContentVersion( params.getContentId(), params.getContentVersionId() );
 
-        return setActiveContentVersionResult.getContentVersionId();
+        return setActiveContentVersionResult.getContentId();
     }
 
     @GET
