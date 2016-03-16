@@ -7,6 +7,8 @@ module api.liveedit {
     import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
     import ComponentResetEvent = api.content.page.region.ComponentResetEvent;
     import Content = api.content.Content;
+    import FragmentComponent = api.content.page.region.FragmentComponent;
+    import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
 
     export class ComponentViewBuilder<COMPONENT extends Component> {
 
@@ -213,7 +215,13 @@ module api.liveedit {
                 actions.push(new api.ui.Action("Save as Fragment").onExecuted(() => {
                     this.deselect();
                     this.createFragment().then((content: Content): void => {
-                        new ComponentFragmentCreatedEvent(this, content).fire();
+                        // replace created fragment in place of source component
+                        var fragmentCmpView = <FragmentComponentView> this.createComponentView(
+                            api.liveedit.fragment.FragmentItemType.get());
+                        fragmentCmpView.getComponent().setFragment(content.getContentId(), content.getDisplayName());
+                        this.addComponentView(fragmentCmpView, this.getNewItemIndex());
+                        this.remove();
+                        new ComponentFragmentCreatedEvent(fragmentCmpView, content).fire();
                     });
                 }));
             }

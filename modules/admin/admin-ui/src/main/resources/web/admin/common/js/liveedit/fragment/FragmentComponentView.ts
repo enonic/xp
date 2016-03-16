@@ -23,8 +23,10 @@ module api.liveedit.fragment {
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.fragmentComponent = builder.component;
 
-            super(builder.setPlaceholder(
-                new FragmentPlaceholder(this)).setTooltipViewer(new FragmentComponentViewer()).setInspectActionRequired(true));
+            super(builder.setPlaceholder(new FragmentPlaceholder(this)).setTooltipViewer(
+                new FragmentComponentViewer()).setInspectActionRequired(true));
+
+            this.parseContentViews(this);
         }
 
         isEmpty(): boolean {
@@ -42,5 +44,16 @@ module api.liveedit.fragment {
             return actions;
         }
 
+        private parseContentViews(parentElement?: api.dom.Element) {
+            // remove component-type attributes to avoid inner components of fragment to be affected by d&d sorting
+            var children = parentElement.getChildren();
+            children.forEach((childElement: api.dom.Element) => {
+                var itemType = ItemType.fromElement(childElement);
+                if (itemType) {
+                    childElement.getHTMLElement().removeAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
+                }
+                this.parseContentViews(childElement);
+            });
+        }
     }
 }
