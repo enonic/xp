@@ -6,7 +6,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.mail.EmailValidator;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -32,8 +31,6 @@ public final class User
 
     private final boolean loginDisabled;
 
-    private final PropertyTree profile;
-
     private User( final Builder builder )
     {
         super( builder );
@@ -48,7 +45,6 @@ public final class User
         this.login = requireNonNull( builder.login );
         this.loginDisabled = builder.loginDisabled;
         this.authenticationHash = builder.authenticationHash;
-        this.profile = builder.profile == null ? new PropertyTree() : builder.profile;
     }
 
     public String getEmail()
@@ -69,11 +65,6 @@ public final class User
     public boolean isDisabled()
     {
         return loginDisabled;
-    }
-
-    public PropertyTree getProfile()
-    {
-        return profile;
     }
 
     public static Builder create()
@@ -97,11 +88,8 @@ public final class User
 
         private boolean loginDisabled;
 
-        private PropertyTree profile;
-
         private Builder()
         {
-
             super();
         }
 
@@ -112,7 +100,6 @@ public final class User
             this.login = user.getLogin();
             this.authenticationHash = user.getAuthenticationHash();
             this.loginDisabled = user.isDisabled();
-            this.profile = user.profile == null ? null : user.profile.copy();
         }
 
         public Builder login( final String value )
@@ -133,12 +120,6 @@ public final class User
             return this;
         }
 
-        public Builder profile( final PropertyTree value )
-        {
-            this.profile = value;
-            return this;
-        }
-
         @Override
         public boolean equals( final Object o )
         {
@@ -156,9 +137,9 @@ public final class User
             return super.equals( o ) &&
                 Objects.equals( email, other.email ) &&
                 Objects.equals( authenticationHash, other.authenticationHash ) &&
-                Objects.equals( profile, other.profile ) &&
-                Objects.equals( loginDisabled, other.loginDisabled ) &&
-                Objects.equals( login, other.login );
+                Objects.equals( login, other.login ) &&
+                Objects.equals( loginDisabled, other.loginDisabled );
+
         }
 
         @Override
