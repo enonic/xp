@@ -457,7 +457,9 @@ module app.wizard {
 
 
         close(checkCanClose: boolean = false) {
-            this.liveFormPanel.skipNextReloadConfirmation(true);
+            if (this.liveFormPanel) {
+                this.liveFormPanel.skipNextReloadConfirmation(true);
+            }
             super.close(checkCanClose);
         }
 
