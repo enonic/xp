@@ -67,6 +67,8 @@ public interface ContentService
 
     GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
 
+    SetActiveContentVersionResult setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId );
+
     ByteSource getBinary( ContentId contentId, BinaryReference binaryReference );
 
     @Deprecated
