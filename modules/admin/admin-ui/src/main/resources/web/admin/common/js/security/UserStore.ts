@@ -3,12 +3,17 @@ module api.security {
     export class UserStore extends api.item.BaseItem {
         private displayName: string;
         private key: UserStoreKey;
+        private description: string;
+        private authConfig: AuthConfig;
         private permissions: api.security.acl.UserStoreAccessControlList;
+
 
         constructor(builder: UserStoreBuilder) {
             super(builder);
             this.displayName = builder.displayName;
             this.key = builder.key;
+            this.description = builder.description;
+            this.authConfig = builder.authConfig;
             this.permissions = builder.permissions || new api.security.acl.UserStoreAccessControlList();
         }
 
@@ -18,6 +23,14 @@ module api.security {
 
         getKey(): UserStoreKey {
             return this.key;
+        }
+
+        getDescription(): string {
+            return this.description;
+        }
+
+        getAuthConfig(): AuthConfig {
+            return this.authConfig;
         }
 
         getPermissions(): api.security.acl.UserStoreAccessControlList {
@@ -55,7 +68,9 @@ module api.security {
 
             return this.key.equals(other.key) &&
                    this.displayName === other.displayName &&
-                   this.permissions.equals(other.permissions)
+                   this.description === other.description &&
+                   ((!this.authConfig && !other.authConfig) || (this.authConfig && this.authConfig.equals(other.authConfig))) &&
+                   this.permissions.equals(other.permissions);
         }
 
         clone(): UserStore {
@@ -75,6 +90,8 @@ module api.security {
     export class UserStoreBuilder extends api.item.BaseItemBuilder {
         displayName: string;
         key: UserStoreKey;
+        description: string;
+        authConfig: AuthConfig;
         permissions: api.security.acl.UserStoreAccessControlList;
 
         constructor(source?: UserStore) {
@@ -83,6 +100,8 @@ module api.security {
             if (source) {
                 this.setDisplayName(source.getDisplayName());
                 this.setKey(source.getKey().toString());
+                this.setDescription(source.getDescription());
+                this.setAuthConfig(source.getAuthConfig());
                 this.setPermissions(source.getPermissions().clone());
             }
         }
@@ -91,6 +110,8 @@ module api.security {
             super.fromBaseItemJson(json, 'key');
             this.key = new UserStoreKey(json.key);
             this.displayName = json.displayName;
+            this.description = json.description;
+            this.authConfig = json.authConfig ? AuthConfig.fromJson(json.authConfig) : null;
             this.permissions = json.permissions ? api.security.acl.UserStoreAccessControlList.fromJson(json.permissions) : null;
             return this;
         }
@@ -102,6 +123,16 @@ module api.security {
 
         setDisplayName(displayName: string): UserStoreBuilder {
             this.displayName = displayName;
+            return this;
+        }
+
+        setDescription(description: string): UserStoreBuilder {
+            this.description = description;
+            return this;
+        }
+
+        setAuthConfig(authConfig: AuthConfig): UserStoreBuilder {
+            this.authConfig = authConfig;
             return this;
         }
 

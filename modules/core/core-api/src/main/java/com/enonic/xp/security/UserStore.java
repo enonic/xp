@@ -9,10 +9,16 @@ public final class UserStore
 
     private final String displayName;
 
+    private final String description;
+
+    private final AuthConfig authConfig;
+
     public UserStore( final Builder builder )
     {
         this.key = builder.key;
         this.displayName = builder.displayName;
+        this.description = builder.description;
+        this.authConfig = builder.authConfig;
     }
 
     public UserStoreKey getKey()
@@ -25,14 +31,19 @@ public final class UserStore
         return displayName;
     }
 
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public AuthConfig getAuthConfig()
+    {
+        return authConfig;
+    }
+
     public static Builder create()
     {
         return new Builder();
-    }
-
-    public static Builder create( final UserStore userStore )
-    {
-        return new Builder( userStore );
     }
 
     public static class Builder
@@ -41,14 +52,12 @@ public final class UserStore
 
         private String displayName;
 
+        private String description;
+
+        private AuthConfig authConfig;
+
         private Builder()
         {
-        }
-
-        private Builder( final UserStore userStore )
-        {
-            this.key = userStore.key;
-            this.displayName = userStore.displayName;
         }
 
         public Builder displayName( final String value )
@@ -60,6 +69,19 @@ public final class UserStore
         public Builder key( final UserStoreKey value )
         {
             this.key = value;
+            return this;
+        }
+
+        public Builder description( final String value )
+
+        {
+            this.description = value;
+            return this;
+        }
+
+        public Builder authConfig( final AuthConfig value )
+        {
+            this.authConfig = value;
             return this;
         }
 
