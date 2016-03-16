@@ -85,7 +85,7 @@ module api.form.inputtype.text {
                 textAreaWrapper.addClass(focusedEditorCls);
             };
 
-            var onChangeHandler = (e) => {
+            var onNodeChangeHandler = (e) => {
                 this.notifyValueChanged(id, textAreaWrapper);
             };
 
@@ -127,7 +127,7 @@ module api.form.inputtype.text {
                 setOnFocusHandler(onFocusHandler).
                 setOnBlurHandler(onBlurHandler).
                 setOnKeydownHandler(onKeydownHandler).
-                setOnChangeHandler(onChangeHandler).
+                setOnNodeChangeHandler(onNodeChangeHandler).
                 setContentId(this.contentId).
                 createEditor().
                 then((editor: HtmlAreaEditor) => {
@@ -136,7 +136,7 @@ module api.form.inputtype.text {
                         this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper);
                     }
                     this.removeTooltipFromEditorArea(textAreaWrapper);
-                    this.updateImageAlignmentBehaviour(editor);
+                    HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
                 });
         }
 
@@ -176,44 +176,6 @@ module api.form.inputtype.text {
                 this.resetInputHeight();
                 this.updateEditorToolbarWidth();
             });
-        }
-
-        private updateImageAlignmentBehaviour(editor) {
-            var imgs = editor.getBody().querySelectorAll('img');
-
-            for (let i = 0; i < imgs.length; i++) {
-                this.changeImageParentAlignmentOnImageAlignmentChange(imgs[i]);
-            }
-        }
-
-        private changeImageParentAlignmentOnImageAlignmentChange(img: HTMLImageElement) {
-            var observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    var alignment = (<HTMLElement>mutation.target).style["text-align"];
-                    var keepOriginalSize = img.getAttribute("data-src").indexOf("keepSize=true") > 0;
-
-                    var styleAttr;
-                    switch (alignment) {
-                    case 'justify':
-                    case 'center':
-                        styleAttr = "text-align: " + alignment;
-                        break;
-                    case 'left':
-                        styleAttr = "float: left; margin: 15px;" + (keepOriginalSize ? "" : "width: 40%");
-                        break;
-                    case 'right':
-                        styleAttr = "float: right; margin: 15px;" + (keepOriginalSize ? "" : "width: 40%");
-                        break;
-                    }
-
-                    img.parentElement.setAttribute("style", styleAttr);
-                    img.parentElement.setAttribute("data-mce-style", styleAttr);
-                });
-            });
-
-            var config = {attributes: true, childList: false, characterData: false, attributeFilter: ["style"]};
-
-            observer.observe(img, config);
         }
 
         private updateStickyEditorToolbar(inputOccurence: Element) {
