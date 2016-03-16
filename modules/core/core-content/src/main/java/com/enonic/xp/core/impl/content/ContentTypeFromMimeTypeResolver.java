@@ -82,7 +82,20 @@ final class ContentTypeFromMimeTypeResolver
         MAP.put( "application/msword", ContentTypeName.documentMedia() );
 
         // Executable
-        // TODO
+        MAP.put( "application/x-tika-msoffice", ContentTypeName.executableMedia() ); // .msi
+        MAP.put( "application/x-msi", ContentTypeName.executableMedia() ); // .msi
+        MAP.put( "application/x-msdownload", ContentTypeName.executableMedia() ); // .exe
+        MAP.put( "application/exe", ContentTypeName.executableMedia() ); // .exe
+        MAP.put( "application/x-exe", ContentTypeName.executableMedia() ); // .exe
+        MAP.put( "application/dos-exe", ContentTypeName.executableMedia() ); // .exe
+        MAP.put( "vms/exe", ContentTypeName.executableMedia() ); // .exe
+        MAP.put( "application/x-winexe", ContentTypeName.executableMedia() ); // .exe
+        MAP.put( "application/msdos-windows", ContentTypeName.executableMedia() );  // .exe
+        MAP.put( "application/x-apple-diskimage", ContentTypeName.executableMedia() );  // .dmg
+        MAP.put( "application/x-sh", ContentTypeName.executableMedia() ); // .sh
+        MAP.put( "application/x-shar", ContentTypeName.executableMedia() ); // .sh
+        MAP.put( "application/bat", ContentTypeName.executableMedia() ); // .bat
+        MAP.put( "application/x-bat", ContentTypeName.executableMedia() ); // .bat
 
         // Presentation
         MAP.put( "application/vnd.openxmlformats-officedocument.presentationml.presentation", ContentTypeName.presentationMedia() );

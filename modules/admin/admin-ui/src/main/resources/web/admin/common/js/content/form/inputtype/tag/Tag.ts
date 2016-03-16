@@ -49,6 +49,9 @@ module api.content.form.inputtype.tag {
         }
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
+            if (!ValueTypes.STRING.equals(propertyArray.getType())) {
+                propertyArray.convertValues(ValueTypes.STRING);
+            }
             super.layout(input, propertyArray);
 
             var tagsBuilder = new api.ui.tags.TagsBuilder().
@@ -56,7 +59,10 @@ module api.content.form.inputtype.tag {
                 setMaxTags(this.context.input.getOccurrences().getMaximum());
 
             propertyArray.forEach((property) => {
-                tagsBuilder.addTag(property.getString());
+                var value = property.getString();
+                if (value) {
+                    tagsBuilder.addTag(value);
+                }
             });
 
             this.tags = tagsBuilder.build();

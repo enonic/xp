@@ -503,29 +503,29 @@ module api.data {
 
         // local date methods
 
-        addLocalDate(name: string, value: Date): Property {
+        addLocalDate(name: string, value: api.util.LocalDate): Property {
             return this.root.addLocalDate(name, value);
         }
 
-        addLocalDates(name: string, values: Date[]): Property[] {
+        addLocalDates(name: string, values: api.util.LocalDate[]): Property[] {
             return this.root.addLocalDates(name, values);
         }
 
-        setLocalDate(name: string, index: number, value: Date): Property {
+        setLocalDate(name: string, index: number, value: api.util.LocalDate): Property {
             return this.root.setLocalDate(name, index, value);
         }
 
-        setLocalDateByPath(path: any, value: Date): Property {
+        setLocalDateByPath(path: any, value: api.util.LocalDate): Property {
             return this.root.setLocalDateByPath(path, value)
         }
 
-        getLocalDate(identifier: string, index?: number): Date {
+        getLocalDate(identifier: string, index?: number): api.util.LocalDate {
             var property = this.getProperty(identifier, index);
             return !property ? null : property.getLocalDate();
         }
 
-        getLocalDates(name: string): Date[] {
-            var values: Date[] = [];
+        getLocalDates(name: string): api.util.LocalDate[] {
+            var values: api.util.LocalDate[] = [];
             var array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getLocalDate());
@@ -535,29 +535,29 @@ module api.data {
 
         // local date time methods
 
-        addLocalDateTime(name: string, value: Date): Property {
+        addLocalDateTime(name: string, value: api.util.LocalDateTime): Property {
             return this.root.addLocalDateTime(name, value);
         }
 
-        addLocalDateTimes(name: string, values: Date[]): Property[] {
+        addLocalDateTimes(name: string, values: api.util.LocalDateTime[]): Property[] {
             return this.root.addLocalDateTimes(name, values);
         }
 
-        setLocalDateTime(name: string, index: number, value: Date): Property {
+        setLocalDateTime(name: string, index: number, value: api.util.LocalDateTime): Property {
             return this.root.setLocalDateTime(name, index, value);
         }
 
-        setLocalDateTimeByPath(path: any, value: Date): Property {
+        setLocalDateTimeByPath(path: any, value: api.util.LocalDateTime): Property {
             return this.root.setLocalDateTimeByPath(path, value)
         }
 
-        getLocalDateTime(identifier: string, index?: number): Date {
+        getLocalDateTime(identifier: string, index?: number): api.util.LocalDateTime {
             var property = this.getProperty(identifier, index);
             return !property ? null : property.getLocalDateTime();
         }
 
-        getLocalDateTimes(name: string): Date[] {
-            var values: Date[] = [];
+        getLocalDateTimes(name: string): api.util.LocalDateTime[] {
+            var values: api.util.LocalDateTime[] = [];
             var array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getLocalDateTime());
@@ -607,7 +607,7 @@ module api.data {
             return this.root.addDateTimes(name, values);
         }
 
-        setDateTime(name: string, index: number, value: Date): Property {
+        setDateTime(name: string, index: number, value: api.util.DateTime): Property {
             return this.root.setDateTime(name, index, value);
         }
 

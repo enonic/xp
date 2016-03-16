@@ -36,7 +36,9 @@ module api.content.form.inputtype.upload {
         }
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
-
+            if (!ValueTypes.STRING.equals(property.getType()) && !ValueTypes.DATA.equals(property.getType())) {
+                property.convertValueType(ValueTypes.STRING);
+            }
             this.mediaUploaderEl = this.createUploader(property);
 
             this.uploaderWrapper = this.createUploaderWrapper(property);
@@ -193,12 +195,6 @@ module api.content.form.inputtype.upload {
                 return {title: allowType.name, extensions: allowType.extensions};
             });
 
-            var beforeUploadCallback = (files: PluploadFile[]) => {
-                if (attachmentFileName && files && files.length == 1) {
-                    files[0].name = attachmentFileName;
-                }
-            };
-
             return new api.content.MediaUploaderEl({
                 params: {
                     content: this.getContext().contentId.toString()
@@ -211,8 +207,7 @@ module api.content.form.inputtype.upload {
                 maximumOccurrences: 1,
                 allowMultiSelection: false,
                 hideDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
-                deferred: true,
-                beforeUploadCallback: beforeUploadCallback
+                deferred: true
             });
         }
 

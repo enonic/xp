@@ -69,6 +69,6 @@ public final class ElasticsearchActivator
         this.clusterServiceReg.unregister();
         this.adminClientReg.unregister();
         this.clusterAdminClientReg.unregister();
-        this.node.stop();
+        this.node.close();
     }
 }

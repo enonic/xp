@@ -47,7 +47,7 @@ tinymce.PluginManager.add('link', function (editor) {
         editor.execCommand("openLinkDialog", {
             editor: editor,
             element: anchorElm,
-            text: editor.selection.getContent(),
+            text: editor.selection.getContent({format: 'text'}),
             anchorList: getAnchorList(),
             onlyTextSelected: onlyTextSelected
         });

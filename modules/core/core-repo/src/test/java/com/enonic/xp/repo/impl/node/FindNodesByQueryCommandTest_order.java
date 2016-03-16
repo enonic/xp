@@ -105,18 +105,6 @@ public class FindNodesByQueryCommandTest_order
 
     }
 
-    @Test
-    public void testByBooleanAndLongSorting()
-    {
-        String[] orders = {FIELD_BOOL + " " + ORDER_DESC, FIELD_LONG + " " + ORDER_DESC};
-        FindNodesByQueryResult result = sort( orders );
-
-        Iterator<Node> iterator = result.getNodes().iterator();
-        Assert.assertEquals( "node2", iterator.next().name().toString() );
-        Assert.assertEquals( "node3", iterator.next().name().toString() );
-        Assert.assertEquals( "node1", iterator.next().name().toString() );
-
-    }
 
     @Test
     public void testByStringAndLongSorting()
@@ -169,7 +157,6 @@ public class FindNodesByQueryCommandTest_order
         Assert.assertEquals( "node3", iterator.next().name().toString() );
 
     }
-
 
     private Map<String, Object> createPropertyMap( Long longValue, String stringValue, Boolean booleanValue )
     {

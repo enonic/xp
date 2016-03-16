@@ -31,6 +31,9 @@ module api.form.inputtype.text {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
+            if (!ValueTypes.STRING.equals(property.getType())) {
+                property.convertValueType(ValueTypes.STRING);
+            }
 
             var inputEl = api.ui.text.TextInput.middle(undefined, property.getString());
             inputEl.setName(this.getInput().getName() + "-" + index);

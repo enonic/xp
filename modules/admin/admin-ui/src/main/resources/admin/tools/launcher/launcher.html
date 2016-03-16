@@ -10,6 +10,8 @@
 <body>
 
 <script type="text/javascript">
+(function () {
+    var launcherMainContainer;
 
     function listenToKeyboardEvents() {
         window.addEventListener("keydown", onKeyPressed, true);
@@ -20,13 +22,13 @@
     }
 
     function disableKeyboardNavigation() {
-        document.querySelector('.launcher-main-container').classList.remove("keyboard-navigation");
+        getLauncherMainContainer().classList.remove("keyboard-navigation");
         unselectCurrentApp();
         window.removeEventListener("mousemove", disableKeyboardNavigation, true);
     }
 
     function initKeyboardNavigation() {
-        var appContainer = document.querySelector('.launcher-main-container');
+        var appContainer = getLauncherMainContainer();
         if (!appContainer.classList.contains("keyboard-navigation")) {
             listenToMouseMove();
             appContainer.classList.add("keyboard-navigation");
@@ -34,7 +36,10 @@
     }
 
     function onKeyPressed(e) {
-        e.stopPropagation();
+        if (getLauncherMainContainer().getAttribute("hidden")) {
+            return;
+        }
+
         switch(e.keyCode) {
         case 38:
             // up key pressed
@@ -57,11 +62,11 @@
     }
 
     function getSelectedApp() {
-        return document.querySelector('.app-row.selected');
+        return getLauncherMainContainer().querySelector('.app-row.selected');
     }
 
     function getSelectedAppIndex() {
-        var apps = document.querySelectorAll('.app-row');
+        var apps = getLauncherMainContainer().querySelectorAll('.app-row');
         for (var i=0; i<apps.length; i++) {
             if (apps[i].classList.contains("selected")) {
                 return i;
@@ -72,7 +77,7 @@
 
     function selectNextApp() {
         var selectedIndex = getSelectedAppIndex();
-        var apps = document.querySelectorAll('.app-row');
+        var apps = getLauncherMainContainer().querySelectorAll('.app-row');
 
         selectApp((selectedIndex + 1) == apps.length ? 0 : selectedIndex + 1);
     }
@@ -106,7 +111,7 @@
     }
 
     function getAppByIndex(index) {
-        var apps = document.querySelectorAll('.app-row');
+        var apps = getLauncherMainContainer().querySelectorAll('.app-row');
         for (var i=0; i<apps.length; i++) {
             if (i == index) {
                 return apps[i];
@@ -123,7 +128,16 @@
         }
     }
 
+    function getLauncherMainContainer() {
+        if (!launcherMainContainer) {
+            launcherMainContainer = document.querySelector('.launcher-main-container');
+        }
+
+        return launcherMainContainer;
+    }
+
     listenToKeyboardEvents();
+}());
 </script>
 
 <div class="launcher-main-container" tabindex="100">
@@ -139,7 +153,8 @@
             <a href="{{homeUrl}}" target="_blank">
                 <div class="app-row" id="home">
                     <div class="app-icon">
-                        <svg width="103px" height="137px" viewBox="0 0 103 137" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                        <svg width="103px" height="137px" viewBox="0 0 103 137" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                             xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                             <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
                                 <g id="enonic" sketch:type="MSLayerGroup">
                                     <g id="Page-1" sketch:type="MSShapeGroup">

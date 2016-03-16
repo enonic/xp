@@ -46,6 +46,10 @@ module api.util {
                    this.padNumber(this.day);
         }
 
+        toDate(): Date {
+            return DateHelper.parseDate(this.toString(), LocalDate.DATE_SEPARATOR);
+        }
+
         private padNumber(num: number, length: number = 2): string {
             var numAsString = String(num);
 
@@ -62,12 +66,12 @@ module api.util {
 
         static fromDate(date: Date) {
             if (date) {
-                return LocalDate.parseDate(date.getFullYear() + LocalDate.DATE_SEPARATOR + (date.getMonth()+1) + LocalDate.DATE_SEPARATOR +
-                                           date.getDate(), false);
+                return LocalDate.parseDate(date.getFullYear() + LocalDate.DATE_SEPARATOR + (date.getMonth() + 1) +
+                                           LocalDate.DATE_SEPARATOR + date.getDate(), false);
             }
         }
 
-        private static parseDate(s: string, isNeedToCheck: boolean = true): LocalDate {
+        static parseDate(s: string, isNeedToCheck: boolean = true): LocalDate {
             if (isNeedToCheck && !LocalDate.isValidDate(s)) {
                 throw new Error("Cannot parse LocalDate from string: " + s);
             }

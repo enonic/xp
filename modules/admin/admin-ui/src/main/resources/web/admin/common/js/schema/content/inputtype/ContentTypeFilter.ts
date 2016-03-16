@@ -89,6 +89,9 @@ module api.schema.content.inputtype {
         }
 
         layout(input: Input, propertyArray: PropertyArray): wemQ.Promise<void> {
+            if (!ValueTypes.STRING.equals(propertyArray.getType())) {
+                propertyArray.convertValues(ValueTypes.STRING);
+            }
             super.layout(input, propertyArray);
 
             this.appendChild(this.combobox = this.createComboBox());

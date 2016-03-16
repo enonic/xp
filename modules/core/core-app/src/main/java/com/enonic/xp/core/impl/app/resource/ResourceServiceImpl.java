@@ -10,7 +10,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -89,15 +88,8 @@ public final class ResourceServiceImpl
 
     private Application findApplication( final ApplicationKey key )
     {
-        try
-        {
-            final Application application = this.applicationService.getInstalledApplication( key );
-            return ( application != null ) && application.isStarted() ? application : null;
-        }
-        catch ( final ApplicationNotFoundException e )
-        {
-            return null;
-        }
+        final Application application = this.applicationService.getInstalledApplication( key );
+        return ( application != null ) && application.isStarted() ? application : null;
     }
 
     @Override

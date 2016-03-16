@@ -77,9 +77,9 @@ public class ApplicationRepoServiceImpl
     }
 
     @Override
-    public Node getApplicationNode( final String applicationName )
+    public Node getApplicationNode( final ApplicationKey applicationKey )
     {
-        return doGetNodeByName( applicationName );
+        return doGetNodeByName( applicationKey.getName() );
     }
 
     @Override

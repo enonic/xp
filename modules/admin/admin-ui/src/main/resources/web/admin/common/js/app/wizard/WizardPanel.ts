@@ -221,7 +221,7 @@ module api.app.wizard {
             if (this.minimized) {
                 navigationWidth = this.splitPanel.getEl().getHeight();
             } else {
-                navigationWidth = this.stepsPanel.getEl().getWidth();
+                navigationWidth = this.stepsPanel.getEl().getWidth() - this.stepNavigatorAndToolbarContainer.getEl().getPaddingLeft();
             }
             this.stepNavigatorAndToolbarContainer.getEl().setWidthPx(navigationWidth);
         }
@@ -240,13 +240,13 @@ module api.app.wizard {
                 this.stepNavigator.setScrollEnabled(false);
 
                 this.scrollPosition = scroll;
-                this.splitPanel.saveFirstPanelSizeAndDistribute(40, 0, api.ui.panel.SplitPanelUnit.PIXEL);
+                this.splitPanel.savePanelSizesAndDistribute(40, 0, api.ui.panel.SplitPanelUnit.PIXEL);
                 this.splitPanel.hideSplitter();
                 this.minimizeEditButton.getEl().setLeftPx(this.stepsPanel.getEl().getWidth());
 
                 this.stepNavigator.onNavigationItemActivated(this.toggleMinimizeListener);
             } else {
-                this.splitPanel.loadFirstPanelSizeAndDistribute();
+                this.splitPanel.loadPanelSizesAndDistribute();
                 this.splitPanel.showSplitter();
                 this.stepsPanel.setScroll(this.scrollPosition);
 

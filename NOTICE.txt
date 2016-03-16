@@ -26,6 +26,10 @@ Other software licenses used by this product:
     Mozilla Public License - Version 2.0
     https://www.mozilla.org/MPL/2.0/
 
+    JavaMail
+    CDDL and others.
+    JavaMail is included in Java, but has some special licensing: https://java.net/projects/javamail/pages/License
+
 Javascript library licenses used by this product:
 
     CodeMirror
@@ -59,6 +63,10 @@ Javascript library licenses used by this product:
     JQuery
     MIT License
     https://jquery.org/license/
+
+    Q.js
+    Very liberal license from Kristopher Michael Kowal
+    https://github.com/kriskowal/q/blob/v1/LICENSE
 
 Artwork licenses used by this product:
 

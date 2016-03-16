@@ -21,13 +21,17 @@ module api.content.form.inputtype.checkbox {
         }
 
         newInitialValue(): Value {
-            return ValueTypes.BOOLEAN.newFalse();
+            return ValueTypes.BOOLEAN.newBoolean(false);
         }
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
             var checked = property.hasNonNullValue() ? property.getBoolean() : false;
             this.checkbox = new api.ui.Checkbox(undefined, checked);
             this.appendChild(this.checkbox);
+
+            if (!ValueTypes.BOOLEAN.equals(property.getType())) {
+                property.convertValueType(ValueTypes.BOOLEAN);
+            }
 
             this.checkbox.onValueChanged((event: api.ValueChangedEvent) => {
                 var newValue = ValueTypes.BOOLEAN.newValue(event.getNewValue());

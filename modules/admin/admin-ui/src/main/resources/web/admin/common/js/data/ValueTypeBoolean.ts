@@ -52,12 +52,8 @@ module api.data {
             return api.ObjectHelper.booleanEquals(a, b);
         }
 
-        newFalse(): Value {
-            return new Value(false, this);
-        }
-
-        newTrue(): Value {
-            return new Value(true, this);
+        newBoolean(value: boolean): Value {
+            return new Value(value, this);
         }
     }
 }
