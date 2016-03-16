@@ -234,17 +234,6 @@ module api.app.wizard {
                 if (pathWidth + nameMinWidth > headerWidth) {
                     pathEl.setWidthPx(headerWidth - nameMinWidth - pathEl.getMarginLeft() - pathEl.getMarginRight());
                 }
-            } else {
-                var pathClone = new api.dom.SpanEl('path');
-                pathClone.setHtml(pathEl.getInnerHtml());
-                pathClone.getEl().setHeight('0px');
-                pathClone.insertAfterEl(this.pathEl);
-                var pathCloneWidth = pathClone.getEl().getWidth();
-
-                if (pathEl.getWidth() < pathCloneWidth) {
-                    pathEl.setWidthPx(Math.min(pathCloneWidth, headerWidth - nameWidth - pathEl.getMarginLeft() - pathEl.getMarginRight()));
-                }
-                pathClone.remove();
             }
         }
 

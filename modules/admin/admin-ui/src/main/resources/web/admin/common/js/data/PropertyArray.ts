@@ -96,11 +96,21 @@ module api.data {
             return this.type;
         }
 
+        convertValues(newType: ValueType) {
+            this.type = newType;
+            this.array.forEach((property: Property) => {
+                var source = property.getValue();
+                if (!newType.equals(source.getType())) {
+                    var converted = ValueTypeConverter.convertTo(source, newType);
+                    property.setValue(converted);
+                }
+            });
+        }
+
         private checkType(type: ValueType) {
 
             if (!this.type.equals(type)) {
-                throw new Error("This PropertyArray expects only properties with value of type '" + this.type + "', got: " +
-                                type);
+                throw new Error("This PropertyArray expects only properties with value of type '" + this.type + "', got: " + type);
             }
         }
 

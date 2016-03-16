@@ -48,7 +48,9 @@ module api.form.inputtype.combobox {
         }
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
-
+            if (!ValueTypes.STRING.equals(propertyArray.getType())) {
+                propertyArray.convertValues(ValueTypes.STRING);
+            }
             super.layout(input, propertyArray);
 
             this.selectedOptionsView = new api.ui.selector.combobox.BaseSelectedOptionsView<string>();

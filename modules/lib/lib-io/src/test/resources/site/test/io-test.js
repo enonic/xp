@@ -36,12 +36,12 @@ exports.testGetMimeType = function () {
 exports.testGetResource = function () {
     var res = io.getResource('/site/test/sample.txt');
     assert.assertEquals(true, res.exists());
-    assert.assertEquals(12, res.getSize());
+    assert.assertEquals(11, res.getSize());
     assert.assertEquals('sample text', io.readText(res.getStream()).trim());
 
     res = io.getResource(resolve('./sample.txt'));
     assert.assertEquals(true, res.exists());
-    assert.assertEquals(12, res.getSize());
+    assert.assertEquals(11, res.getSize());
     assert.assertEquals('sample text', io.readText(res.getStream()).trim());
 
     res = io.getResource('/unknown.txt');

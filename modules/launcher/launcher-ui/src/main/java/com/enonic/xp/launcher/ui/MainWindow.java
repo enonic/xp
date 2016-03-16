@@ -69,6 +69,7 @@ public final class MainWindow
     {
         this.launcher.stop();
         dispose();
+        System.exit( 0 );
     }
 
     private void startServer()

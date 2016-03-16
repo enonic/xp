@@ -165,7 +165,8 @@ exports.getWithConnectTimeout = function (mockServer) {
         assert.assertTrue('Expected exception', false);
 
     } catch (e) {
-        assert.assertEquals('Expected exception', 'timeout', e.message);
+        var expectedResult = ("timeout" == e.message) || ("Read timed out" == e.message);
+        assert.assertTrue('Expected exception', expectedResult);
     }
 
 };

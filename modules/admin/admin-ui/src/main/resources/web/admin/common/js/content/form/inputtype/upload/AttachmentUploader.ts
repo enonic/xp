@@ -27,6 +27,9 @@ module api.content.form.inputtype.upload {
         }
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
+            if (!ValueTypes.STRING.equals(propertyArray.getType())) {
+                propertyArray.convertValues(ValueTypes.STRING);
+            }
 
             return super.layout(input, propertyArray).then(() => {
                 this.uploaderEl = this.createUploader();

@@ -212,6 +212,12 @@ module api.ui.panel {
 
         private savedFirstPanelUnit: SplitPanelUnit;
 
+        private savedSecondPanelSize: number;
+
+        private savedSecondPanelMinSize: number;
+
+        private savedSecondPanelUnit: SplitPanelUnit;
+
         private animationDelay: number;
 
         private secondPanelShouldSlideRight: boolean;
@@ -231,7 +237,7 @@ module api.ui.panel {
             this.firstPanelIsFullScreen = false;
             this.splitterIsHidden = false;
 
-            this.saveFirstPanelSize();
+            this.savePanelSizes();
 
             if (builder.isFirstPanelDecidingPanel()) {
                 this.setFirstPanelSize(builder.getFirstPanelSize(), this.firstPanelUnit);
@@ -417,30 +423,37 @@ module api.ui.panel {
             }
         }
 
-        saveFirstPanelSize() {
+        savePanelSizes() {
             this.savedFirstPanelSize = this.firstPanelSize;
             this.savedFirstPanelMinSize = this.firstPanelMinSize;
             this.savedFirstPanelUnit = this.firstPanelUnit;
+
+            this.savedSecondPanelSize = this.secondPanelSize;
+            this.savedSecondPanelMinSize = this.secondPanelMinSize;
+            this.savedSecondPanelUnit = this.secondPanelUnit;
         }
 
-        loadFirstPanelSize() {
+        loadPanelSizes() {
             this.firstPanelSize = this.savedFirstPanelSize;
             this.firstPanelMinSize = this.savedFirstPanelMinSize;
             this.firstPanelUnit = this.savedFirstPanelUnit;
 
-            this.secondPanelSize = -1;
+            this.secondPanelSize = this.savedSecondPanelSize;
+            this.secondPanelMinSize = this.savedSecondPanelMinSize;
+            this.secondPanelUnit = this.savedSecondPanelUnit;
         }
 
-        saveFirstPanelSizeAndDistribute(size: number, minSize: number = -1, unit?: SplitPanelUnit) {
-            this.saveFirstPanelSize();
-            this.firstPanelSize = size < 0 ? this.firstPanelSize : size;
+        savePanelSizesAndDistribute(newFirstPanelSize: number, minSize: number = -1, unit?: SplitPanelUnit) {
+            this.savePanelSizes();
+            this.firstPanelSize = newFirstPanelSize < 0 ? this.firstPanelSize : newFirstPanelSize;
             this.firstPanelUnit = minSize < 0 ? this.firstPanelUnit : minSize;
             this.firstPanelMinSize = unit ? unit : this.firstPanelMinSize;
+            this.secondPanelSize = -1;
             this.distribute();
         }
 
-        loadFirstPanelSizeAndDistribute() {
-            this.loadFirstPanelSize();
+        loadPanelSizesAndDistribute() {
+            this.loadPanelSizes();
             this.distribute();
         }
 

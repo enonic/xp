@@ -42,6 +42,9 @@ module api.form.inputtype.text {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
+            if (!ValueTypes.STRING.equals(property.getType())) {
+                property.convertValueType(ValueTypes.STRING);
+            }
 
             var value = this.processPropertyValue(property.getString());
             var textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
@@ -214,6 +217,10 @@ module api.form.inputtype.text {
                     }
                     this.removeTooltipFromEditorArea(textAreaWrapper);
                     this.updateImageAlignmentBehaviour(editor);
+                    this.onShown((event) => {
+                        // invoke auto resize on shown in case contents have been updated while inactive
+                        editor.execCommand('mceAutoResize', false, null);
+                    })
                 }
             });
         }
@@ -449,12 +456,18 @@ module api.form.inputtype.text {
         }
 
         private getConvertedImageSrc(imgSrc: string): string {
-            var contentId = imgSrc.replace(HtmlArea.imagePrefix, api.util.StringHelper.EMPTY_STRING),
-                imageUrl = new api.content.ContentImageUrlResolver().
-                    setContentId(new api.content.ContentId(contentId)).
-                    setScaleWidth(true).
-                    setSize(HtmlArea.maxImageWidth).
-                    resolve();
+            var contentId = api.util.UriHelper.trimUrlParams(imgSrc.replace(HtmlArea.imagePrefix, api.util.StringHelper.EMPTY_STRING)),
+                imageUrlResolver = new api.content.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)).setTimestamp(new Date()),
+                scalingApplied = imgSrc.indexOf("scale=") > 0,
+                urlParams = api.util.UriHelper.decodeUrlParams(imgSrc.replace("&amp;", "&"));
+
+            scalingApplied ? imageUrlResolver.setScale(urlParams["scale"]) : imageUrlResolver.setScaleWidth(true);
+
+            if (!urlParams["keepSize"]) {
+                imageUrlResolver.setSize(HtmlArea.maxImageWidth);
+            }
+
+            var imageUrl = imageUrlResolver.resolve();
 
             return "src=\"" + imageUrl + "\" data-src=\"" + imgSrc + "\"";
         }

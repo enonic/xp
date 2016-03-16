@@ -24,19 +24,23 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.image.Cropping;
+import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
+import com.enonic.xp.image.ScaleParams;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.Exceptions;
-import com.enonic.xp.jaxrs.JaxRsComponent;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/image")
@@ -60,7 +64,8 @@ public final class ContentImageResource
     @Path("{contentId}")
     public Response getContentImage( @PathParam("contentId") final String contentIdAsString, @QueryParam("size") final int size,
                                      @QueryParam("scaleWidth") @DefaultValue("false") final boolean scaleWidth,
-                                     @QueryParam("source") @DefaultValue("false") final boolean source )
+                                     @QueryParam("source") @DefaultValue("false") final boolean source,
+                                     @QueryParam("scale") final String scale )
         throws Exception
     {
         if ( contentIdAsString == null )
@@ -79,7 +84,7 @@ public final class ContentImageResource
 
         if ( content instanceof Media )
         {
-            resolvedImage = resolveResponseFromContentImageAttachment( (Media) content, size, scaleWidth, source );
+            resolvedImage = resolveResponseFromContentImageAttachment( (Media) content, size, scaleWidth, source, scale );
             if ( resolvedImage.isOK() )
             {
                 final CacheControl cacheControl = new CacheControl();
@@ -101,7 +106,7 @@ public final class ContentImageResource
 
 
     private ResolvedImage resolveResponseFromContentImageAttachment( final Media media, final int size, final boolean scaleWidth,
-                                                                     final boolean source )
+                                                                     final boolean source, final String scale )
     {
         final Attachment attachment = media.getMediaAttachment();
         if ( attachment != null )
@@ -114,11 +119,14 @@ public final class ContentImageResource
                     final Cropping cropping = source ? null : media.getCropping();
                     final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
                     final String format = imageService.getFormatByMimeType( attachment.getMimeType() );
+                    final ScaleParams scaleParams = parseScaleParam( media, scale, size );
 
                     final ReadImageParams readImageParams = ReadImageParams.newImageParams().
                         contentId( media.getId() ).
                         binaryReference( attachment.getBinaryReference() ).
                         cropping( cropping ).
+                        scaleParams( scaleParams ).
+                        focalPoint( scaleParams == null ? new FocalPoint( 0, 0 ) : media.getFocalPoint() ).
                         scaleSize( size ).
                         scaleWidth( scaleWidth ).
                         format( format ).
@@ -168,6 +176,34 @@ public final class ContentImageResource
             return null;
         }
         return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
+    }
+
+    private ScaleParams parseScaleParam( final Media media, final String scale, final int size )
+    {
+        if ( scale != null )
+        {
+            final int pos = scale.indexOf( ":" );
+            final String horizontalProportion = scale.substring( 0, pos );
+            final String verticalProportion = scale.substring( pos + 1 );
+
+            final int width = size > 0 ? size : getOriginalWidth( media );
+            final int height = width / Integer.parseInt( horizontalProportion ) * Integer.parseInt( verticalProportion );
+
+            return new ScaleParams( "block", new Object[]{width, height} );
+        }
+
+        return null;
+    }
+
+    private int getOriginalWidth( final Media media )
+    {
+        ExtraData imageData = media.getAllExtraData().getMetadata( MixinName.from( "media:imageInfo" ) );
+        if ( imageData != null )
+        {
+            return imageData.getData().getProperty( "imageWidth" ).getValue().asLong().intValue();
+        }
+
+        return 0;
     }
 
     @Reference

@@ -23,6 +23,9 @@ module api.content.form.inputtype.geo {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
+            if (!ValueTypes.GEO_POINT.equals(property.getType())) {
+                property.convertValueType(ValueTypes.GEO_POINT);
+            }
 
             var geoPoint = new api.ui.geo.GeoPoint(property.getGeoPoint());
 
