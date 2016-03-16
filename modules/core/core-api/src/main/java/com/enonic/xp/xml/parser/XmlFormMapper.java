@@ -24,6 +24,8 @@ public final class XmlFormMapper
 {
     private final ApplicationKey currentApplication;
 
+    private XmlInputTypeConfigMapper configMapper;
+
     public XmlFormMapper( final ApplicationKey currentApplication )
     {
         this.currentApplication = currentApplication;
@@ -86,10 +88,12 @@ public final class XmlFormMapper
         final Input.Builder builder = Input.create();
         final InputTypeName inputTypeName = InputTypeName.from( root.getAttribute( "type" ) );
 
+        this.configMapper = new XmlInputTypeConfigMapper( this.currentApplication, inputTypeName );
+
         builder.inputType( inputTypeName );
         builder.name( root.getAttribute( "name" ) );
         builder.label( root.getChildValue( "label" ) );
-        builder.defaultValue( root.getChildValue( "default" ) );
+
         builder.customText( root.getChildValue( "custom-text" ) );
         builder.helpText( root.getChildValue( "help-text" ) );
         builder.occurrences( buildOccurrence( root.getChild( "occurrences" ) ) );
@@ -98,6 +102,10 @@ public final class XmlFormMapper
         builder.validationRegexp( root.getChildValue( "validation-regexp" ) );
         builder.maximizeUIInputWidth( root.getChildValueAs( "maximize", Boolean.class, true ) );
 
+        if(root.getChild( "default" ) != null)
+        {
+            builder.defaultValue(this.configMapper.build( root.getChild( "default" ), true )  );
+        }
         buildConfig( builder, root.getChild( "config" ), inputTypeName );
 
         return builder.build();
@@ -141,6 +149,6 @@ public final class XmlFormMapper
 
     private void buildConfig( final Input.Builder builder, final DomElement root, final InputTypeName inputTypeName )
     {
-        builder.inputTypeConfig( new XmlInputTypeConfigMapper( this.currentApplication, inputTypeName ).build( root ) );
+        builder.inputTypeConfig( this.configMapper.build( root, false ) );
     }
 }

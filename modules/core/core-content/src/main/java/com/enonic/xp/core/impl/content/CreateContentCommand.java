@@ -321,11 +321,11 @@ final class CreateContentCommand
             if ( formItem.isInput() )
             {
                 Input input = formItem.toInput();
-                if ( StringUtils.isNotEmpty( input.getDefaultValue() ) )
+                if ( input.getDefaultValue() != null )
                 {
                     params.getData().setProperty( PropertyPath.from( parentPath, input.getName() ),
-                                                  InputTypes.BUILTIN.resolve( input.getInputType() ).
-                                                      createValue( input.getDefaultValue(), input.getInputTypeConfig() ) );
+                              InputTypes.BUILTIN.resolve( input.getInputType() ).
+                                  createDefaultValue( input.getDefaultValue()) );
                 }
             }
             else if ( formItem.isFormItemSet() )
