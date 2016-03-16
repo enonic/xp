@@ -244,6 +244,8 @@ module app.wizard {
         }
 
         postPersistNewItem(persistedPrincipal: Principal): wemQ.Promise<void> {
+            app.Router.setHash("edit/" + persistedPrincipal.getKey());
+
             var deferred = wemQ.defer<void>();
             deferred.resolve(null);
             return deferred.promise;
