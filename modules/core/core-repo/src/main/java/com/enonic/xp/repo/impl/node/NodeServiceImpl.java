@@ -38,6 +38,7 @@ import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
@@ -399,6 +400,20 @@ public class NodeServiceImpl
         return GetActiveNodeVersionsCommand.create().
             nodeId( params.getNodeId() ).
             branches( params.getBranches() ).
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
+            build().
+            execute();
+    }
+
+
+    @Override
+    public NodeVersionId setActiveVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
+    {
+        return SetActiveVersionCommand.create().
+            nodeVersionId( nodeVersionId ).
+            nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
