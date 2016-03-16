@@ -50,7 +50,9 @@ module api.liveedit.fragment {
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
                 if (itemType) {
-                    childElement.getHTMLElement().removeAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
+                    var htmlElement = childElement.getHTMLElement();
+                    htmlElement.removeAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
+                    htmlElement.removeAttribute("data-" + ItemType.ATTRIBUTE_REGION_NAME);
                 }
                 this.parseContentViews(childElement);
             });
