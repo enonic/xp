@@ -22,7 +22,7 @@ public final class Input
 
     private final String label;
 
-    private final String defaultValue;
+    private final InputTypeConfig defaultValue;
 
     private final boolean immutable;
 
@@ -88,7 +88,7 @@ public final class Input
         return label;
     }
 
-    public String getDefaultValue()
+    public InputTypeConfig getDefaultValue()
     {
         return defaultValue;
     }
@@ -201,7 +201,7 @@ public final class Input
 
         private String label;
 
-        private String defaultValue;
+        private InputTypeConfig defaultValue;
 
         private boolean immutable = false;
 
@@ -261,7 +261,7 @@ public final class Input
             return this;
         }
 
-        public Builder defaultValue( String value )
+        public Builder defaultValue( InputTypeConfig value )
         {
             defaultValue = value;
             return this;

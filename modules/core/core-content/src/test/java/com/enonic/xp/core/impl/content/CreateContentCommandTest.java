@@ -20,7 +20,9 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -146,7 +148,7 @@ public class CreateContentCommandTest
             name( "testInput" ).
             label( "testInput" ).
             inputType( InputTypeName.COMBO_BOX ).
-            defaultValue( "testValue" ).
+            defaultValue( InputTypeConfig.create().property( InputTypeProperty.create( "default", "testValue" ).build() ).build() ).
             build();
 
         final ContentType contentType = ContentType.create().
