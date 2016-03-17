@@ -204,7 +204,6 @@ module app.wizard {
             ContentPermissionsAppliedEvent.on((event) => this.contentPermissionsUpdated(event.getContent()));
 
             this.dataChangedListener = () => {
-                debugger;
                 if (this.isContentFormValid && this.contentWizardToolbarPublishControls.isOnline()) {
                     this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.NEWER);
                 }
