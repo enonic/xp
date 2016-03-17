@@ -1050,7 +1050,8 @@ public final class SecurityServiceImpl
             key( params.getKey() ).
             displayName( params.getDisplayName() ).
             description( params.getDescription() ).
-            authConfig( params.getAuthConfig() ).
+            userStoreKey( params.getUserStoreKey() ).
+            passive( params.isPassive() ).
             addAllPaths( params.getPaths() ).
             build();
 

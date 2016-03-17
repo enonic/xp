@@ -138,7 +138,7 @@ module app.wizard {
 
             var steps: WizardStep[] = [];
 
-            steps.push(new WizardStep("UserStore", this.userStoreWizardStepForm));
+            steps.push(new WizardStep("User Store", this.userStoreWizardStepForm));
             steps.push(new WizardStep("Permissions", this.permissionsWizardStepForm));
 
             this.setSteps(steps);

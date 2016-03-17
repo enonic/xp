@@ -5,7 +5,8 @@ module api.security {
         key: string;
         displayName: string;
         description: string;
-        authConfig?: AuthConfigJson;
+        userStoreKey: string;
+        passive: boolean;
         paths: string[];
     }
 }

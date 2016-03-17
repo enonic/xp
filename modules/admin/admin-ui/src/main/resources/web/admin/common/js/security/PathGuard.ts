@@ -4,14 +4,16 @@ module api.security {
         private key: PathGuardKey;
         private displayName: string;
         private description: string;
-        private authConfig: AuthConfig;
+        private userStoreKey: UserStoreKey;
+        private passive: boolean;
         private paths: string[];
 
         constructor(builder: PathGuardBuilder) {
             this.key = builder.key;
             this.displayName = builder.displayName;
             this.description = builder.description;
-            this.authConfig = builder.authConfig;
+            this.userStoreKey = builder.userStoreKey;
+            this.passive = builder.passive;
             this.paths = builder.paths;
         }
 
@@ -27,8 +29,12 @@ module api.security {
             return this.description;
         }
 
-        getAuthConfig(): AuthConfig {
-            return this.authConfig;
+        getUserStoreKey(): UserStoreKey {
+            return this.userStoreKey;
+        }
+
+        isPassive(): boolean {
+            return this.passive;
         }
 
         getPaths(): string[] {
@@ -45,7 +51,8 @@ module api.security {
             return this.key === other.key &&
                    this.displayName === other.displayName &&
                    this.description === other.description &&
-                   ((!this.authConfig && !other.authConfig) || (this.authConfig && this.authConfig.equals(other.authConfig))) &&
+                   ((!this.userStoreKey && !other.userStoreKey) || (this.userStoreKey && this.userStoreKey.equals(other.userStoreKey))) &&
+                   this.passive === other.passive &&
                    ObjectHelper.anyArrayEquals(this.paths, other.paths)
         }
 
@@ -54,7 +61,8 @@ module api.security {
                 setKey(this.key).
                 setDisplayName(this.displayName).
                 setDescription(this.description).
-                setAuthConfig(this.authConfig ? this.authConfig.clone() : this.authConfig).
+                setUserStoreKey(this.userStoreKey).
+                setPassive(this.passive).
                 setPaths(this.paths.slice(0)).
                 build();
         }
@@ -72,7 +80,8 @@ module api.security {
         key: PathGuardKey;
         displayName: string;
         description: string;
-        authConfig: AuthConfig;
+        userStoreKey: UserStoreKey;
+        passive: boolean;
         paths: string[];
 
         constructor() {
@@ -82,7 +91,8 @@ module api.security {
             this.key = PathGuardKey.fromString(json.key);
             this.displayName = json.displayName;
             this.description = json.description;
-            this.authConfig = json.authConfig ? AuthConfig.fromJson(json.authConfig) : null;
+            this.userStoreKey = json.userStoreKey ? UserStoreKey.fromString(json.userStoreKey) : null;
+            this.passive = json.passive;
             this.paths = json.paths;
             return this;
         }
@@ -102,8 +112,13 @@ module api.security {
             return this;
         }
 
-        setAuthConfig(authConfig: AuthConfig): PathGuardBuilder {
-            this.authConfig = authConfig;
+        setUserStoreKey(userStoreKey: UserStoreKey): PathGuardBuilder {
+            this.userStoreKey = userStoreKey;
+            return this;
+        }
+
+        setPassive(passive: boolean): PathGuardBuilder {
+            this.passive = passive;
             return this;
         }
 

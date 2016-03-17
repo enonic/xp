@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.auth;
 
 import java.util.Optional;
+import java.util.concurrent.Callable;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -11,12 +12,13 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.security.PathGuard;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 
@@ -37,28 +39,18 @@ public final class AuthFilter
         throws Exception
     {
         final String requestURI = req.getRequestURI();
-
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().
-            user( User.ANONYMOUS ).
-            principals( RoleKeys.ADMIN ).
-            build();
-        final Optional<PathGuard> pathGuard = ContextBuilder.create().
-            authInfo( authInfo ).
-            build().
-            callWith( () -> securityService.getPathGuardByPath( requestURI ) );
+        final Optional<PathGuard> pathGuard = runWithAdminRole( () -> securityService.getPathGuardByPath( requestURI ) );
 
         if ( pathGuard.isPresent() )
         {
             final AuthResponseWrapper responseWrapper =
-                new AuthResponseWrapper( req, res, authDescriptorService, errorHandlerScriptFactory, pathGuard.get() );
+                new AuthResponseWrapper( req, res, securityService, authDescriptorService, errorHandlerScriptFactory, pathGuard.get() );
             chain.doFilter( req, responseWrapper );
         }
         else
         {
             chain.doFilter( req, res );
         }
-
-
     }
 
     @Reference
@@ -77,5 +69,17 @@ public final class AuthFilter
     public void setControllerScriptFactory( final ErrorHandlerScriptFactory errorHandlerScriptFactory )
     {
         this.errorHandlerScriptFactory = errorHandlerScriptFactory;
+    }
+
+    private <T> T runWithAdminRole( final Callable<T> callable )
+    {
+        final Context context = ContextAccessor.current();
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( context.getAuthInfo() ).
+            principals( RoleKeys.ADMIN ).
+            build();
+        return ContextBuilder.from( context ).
+            authInfo( authenticationInfo ).
+            build().
+            callWith( callable );
     }
 }

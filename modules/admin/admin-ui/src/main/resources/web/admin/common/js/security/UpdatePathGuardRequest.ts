@@ -5,7 +5,8 @@ module api.security {
         private key: PathGuardKey;
         private displayName: string;
         private description: string;
-        private authConfig: AuthConfig;
+        private userStoreKey: UserStoreKey;
+        private passive: boolean;
         private paths: string[];
 
         constructor() {
@@ -18,7 +19,8 @@ module api.security {
                 key: this.key.toString(),
                 displayName: this.displayName,
                 description: this.description,
-                authConfig: this.authConfig ? this.authConfig.toJson() : undefined,
+                userStoreKey: this.userStoreKey ? this.userStoreKey.getId() : null,
+                passive: this.passive,
                 paths: this.paths ? this.paths : []
             };
         }
@@ -38,8 +40,13 @@ module api.security {
             return this;
         }
 
-        setAuthConfig(authConfig: AuthConfig): UpdatePathGuardRequest {
-            this.authConfig = authConfig;
+        setUserStoreKey(userStoreKey: UserStoreKey): UpdatePathGuardRequest {
+            this.userStoreKey = userStoreKey;
+            return this;
+        }
+
+        setPassive(passive: boolean): UpdatePathGuardRequest {
+            this.passive = passive;
             return this;
         }
 

@@ -39,7 +39,7 @@ module app.wizard {
                 addFormItem(new api.form.InputBuilder().
                     setName("paths").
                     setInputType(api.form.inputtype.text.TextLine.getName()).
-                    setLabel("Protected resources").
+                    setLabel("Paths").
                     setOccurrences(new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(0).build()).
                     setInputTypeConfig({}).
                     setMaximizeUIInputWidth(true).

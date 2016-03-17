@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.security;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
@@ -11,10 +10,10 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.PathGuard;
 import com.enonic.xp.security.PathGuardKey;
 import com.enonic.xp.security.UpdatePathGuardParams;
+import com.enonic.xp.security.UserStoreKey;
 
 public class PathGuardNodeTranslator
 {
@@ -47,22 +46,15 @@ public class PathGuardNodeTranslator
         final PropertySet data = node.data().getRoot();
         final String displayName = data.getString( PathGuardPropertyPaths.DISPLAY_NAME_PATH );
         final String description = data.getString( PathGuardPropertyPaths.DESCRIPTION_PATH );
+        final String userStoreKey = data.getString( PathGuardPropertyPaths.USER_STORE_KEY_PATH );
+        final Boolean passive = data.getBoolean( PathGuardPropertyPaths.PASSIVE_PATH );
 
         final PathGuard.Builder pathGuard = PathGuard.create().
             key( key ).
             displayName( displayName ).
-            description( description );
-
-        if ( data.hasProperty( PathGuardPropertyPaths.AUTH_CONFIG_PATH ) )
-        {
-            final String applicationKey = data.getString( PathGuardPropertyPaths.AUTH_CONFIG_APPLICATION_PATH );
-            final PropertySet config = data.getSet( PathGuardPropertyPaths.AUTH_CONFIG_FORM_PATH );
-            final AuthConfig authConfig = AuthConfig.create().
-                applicationKey( ApplicationKey.from( applicationKey ) ).
-                config( config.toTree() ).
-                build();
-            pathGuard.authConfig( authConfig );
-        }
+            description( description ).
+            userStoreKey( userStoreKey == null ? null : UserStoreKey.from( userStoreKey ) ).
+            passive( passive == null ? false : passive.booleanValue() );
 
         for ( String path : data.getStrings( PathGuardPropertyPaths.PATHS_PATH.toString() ) )
         {
@@ -74,55 +66,35 @@ public class PathGuardNodeTranslator
 
     public static CreateNodeParams toCreateNodeParams( final PathGuard pathGuard )
     {
-        final CreateNodeParams.Builder builder = CreateNodeParams.create().
+        final PropertyTree data = new PropertyTree();
+        data.setString( PathGuardPropertyPaths.DISPLAY_NAME_PATH, pathGuard.getDisplayName() );
+        data.setString( PathGuardPropertyPaths.DESCRIPTION_PATH, pathGuard.getDescription() );
+        data.setString( PathGuardPropertyPaths.USER_STORE_KEY_PATH, pathGuard.getUserStoreKey().toString() );
+        data.setBoolean( PathGuardPropertyPaths.PASSIVE_PATH, pathGuard.isPassive() );
+        data.addStrings( PathGuardPropertyPaths.PATHS_PATH.toString(), pathGuard.getPaths() );
+
+        return CreateNodeParams.create().
             setNodeId( getNodeId( pathGuard.getKey() ) ).
             name( pathGuard.getKey().toString() ).
             parent( getPathGuardsNodePath() ).
             inheritPermissions( true ).
-            indexConfigDocument( PrincipalIndexConfigFactory.create() );
-
-        final PropertyTree data = new PropertyTree();
-        data.setString( PathGuardPropertyPaths.DISPLAY_NAME_PATH, pathGuard.getDisplayName() );
-        data.setString( PathGuardPropertyPaths.DESCRIPTION_PATH, pathGuard.getDescription() );
-        data.addStrings( PathGuardPropertyPaths.PATHS_PATH.toString(), pathGuard.getPaths() );
-
-        final AuthConfig authConfig = pathGuard.getAuthConfig();
-        if ( authConfig != null )
-        {
-            data.setString( PathGuardPropertyPaths.AUTH_CONFIG_APPLICATION_PATH, authConfig.getApplicationKey().toString() );
-            data.setSet( PathGuardPropertyPaths.AUTH_CONFIG_FORM_PATH, authConfig.getConfig().getRoot() );
-        }
-
-        return builder.data( data ).
+            indexConfigDocument( PrincipalIndexConfigFactory.create() ).
+            data( data ).
             build();
     }
 
     static UpdateNodeParams toUpdateNodeParams( final UpdatePathGuardParams params, final NodeId nodeId )
     {
-        final String displayName = params.getDisplayName();
-        final String description = params.getDescription();
-        final AuthConfig authConfig = params.getAuthConfig();
-        final ImmutableList<String> paths = params.getPaths();
         return UpdateNodeParams.create().
             id( nodeId ).
             editor( editableNode -> {
                 final PropertyTree data = editableNode.data;
-                data.setString( PathGuardPropertyPaths.DISPLAY_NAME_PATH, displayName );
-                data.setString( PathGuardPropertyPaths.DESCRIPTION_PATH, description );
+                data.setString( PathGuardPropertyPaths.DISPLAY_NAME_PATH, params.getDisplayName() );
+                data.setString( PathGuardPropertyPaths.DESCRIPTION_PATH, params.getDescription() );
+                data.setString( PathGuardPropertyPaths.USER_STORE_KEY_PATH, params.getUserStoreKey().toString() );
+                data.setBoolean( PathGuardPropertyPaths.PASSIVE_PATH, params.isPassive() );
                 data.removeProperty( PathGuardPropertyPaths.PATHS_PATH );
-                data.addStrings( PathGuardPropertyPaths.PATHS_PATH.toString(), paths );
-                if ( authConfig == null )
-                {
-                    if ( data.hasProperty( PathGuardPropertyPaths.AUTH_CONFIG_PATH ) )
-                    {
-                        data.removeProperty( PathGuardPropertyPaths.AUTH_CONFIG_PATH );
-                    }
-                }
-                else
-                {
-                    data.setString( PathGuardPropertyPaths.AUTH_CONFIG_APPLICATION_PATH, authConfig.getApplicationKey().toString() );
-                    data.setSet( PathGuardPropertyPaths.AUTH_CONFIG_FORM_PATH, authConfig.getConfig().getRoot() );
-                }
+                data.addStrings( PathGuardPropertyPaths.PATHS_PATH.toString(), params.getPaths() );
             } ).
             build();
     }

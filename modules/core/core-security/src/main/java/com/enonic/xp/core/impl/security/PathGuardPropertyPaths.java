@@ -8,11 +8,9 @@ public class PathGuardPropertyPaths
 
     public static final PropertyPath DESCRIPTION_PATH = PropertyPath.from( "description" );
 
-    public static final PropertyPath AUTH_CONFIG_PATH = PropertyPath.from( "authConfig" );
+    public static final PropertyPath USER_STORE_KEY_PATH = PropertyPath.from( "userStoreKey" );
 
-    public static final PropertyPath AUTH_CONFIG_APPLICATION_PATH = PropertyPath.from( AUTH_CONFIG_PATH, "applicationKey" );
-
-    public static final PropertyPath AUTH_CONFIG_FORM_PATH = PropertyPath.from( AUTH_CONFIG_PATH, "config" );
+    public static final PropertyPath PASSIVE_PATH = PropertyPath.from( "passive" );
 
     public static final PropertyPath PATHS_PATH = PropertyPath.from( "paths" );
 }

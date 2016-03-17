@@ -275,10 +275,10 @@ abstract class UserStoreNodeTranslator
             key( UserStoreNodeTranslator.toKey( node ) ).
             description( nodeAsSet.getString( UserStorePropertyNames.DESCRIPTION_KEY ) );
 
-        if ( nodeAsSet.hasProperty( PathGuardPropertyPaths.AUTH_CONFIG_PATH ) )
+        if ( nodeAsSet.hasProperty( UserStorePropertyNames.AUTH_CONFIG_KEY ) )
         {
-            final String applicationKey = nodeAsSet.getString( PathGuardPropertyPaths.AUTH_CONFIG_APPLICATION_PATH );
-            final PropertySet config = nodeAsSet.getSet( PathGuardPropertyPaths.AUTH_CONFIG_FORM_PATH );
+            final String applicationKey = nodeAsSet.getString( UserStorePropertyNames.AUTH_CONFIG_APPLICATION_KEY );
+            final PropertySet config = nodeAsSet.getSet( UserStorePropertyNames.AUTH_CONFIG_FORM_KEY );
             final AuthConfig authConfig = AuthConfig.create().
                 applicationKey( ApplicationKey.from( applicationKey ) ).
                 config( config.toTree() ).
