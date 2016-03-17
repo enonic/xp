@@ -214,6 +214,14 @@ module app.wizard {
                 });
         }
 
+        postPersistNewItem(userStore: UserStore): wemQ.Promise<void> {
+            app.Router.setHash("edit/" + userStore.getKey());
+
+            var deferred = wemQ.defer<void>();
+            deferred.resolve(null);
+            return deferred.promise;
+        }
+
         updatePersistedItem(): wemQ.Promise<UserStore> {
             return this.produceUpdateUserStoreRequest(this.assembleViewedUserStore()).
                 sendAndParse().
