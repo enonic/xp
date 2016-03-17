@@ -3,65 +3,29 @@ package com.enonic.xp.portal.impl.auth;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.concurrent.Callable;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.auth.AuthDescriptorService;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAdapter;
-import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
-import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
-import com.enonic.xp.portal.impl.error.PortalError;
-import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
-import com.enonic.xp.security.AuthConfig;
-import com.enonic.xp.security.PathGuard;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
-import com.enonic.xp.web.HttpStatus;
 
 
 public class AuthResponseWrapper
     extends HttpServletResponseWrapper
 {
-    private final HttpServletRequest request;
-
     private final HttpServletResponse response;
 
-    private final SecurityService securityService;
-
-    private final AuthDescriptorService authDescriptorService;
-
-    private final ErrorHandlerScriptFactory errorHandlerScriptFactory;
-
-    private final PathGuard pathGuard;
+    private final PathGuardResponseSerializer pathGuardResponseSerializer;
 
     private boolean errorHandled;
 
-    public AuthResponseWrapper( final HttpServletRequest request, final HttpServletResponse response, final SecurityService securityService,
-                                final AuthDescriptorService authDescriptorService,
-                                final ErrorHandlerScriptFactory errorHandlerScriptFactory, final PathGuard pathGuard )
+    public AuthResponseWrapper( final HttpServletResponse response, final PathGuardResponseSerializer pathGuardResponseSerializer )
     {
         super( response );
-        this.request = request;
         this.response = response;
-        this.securityService = securityService;
-        this.authDescriptorService = authDescriptorService;
-        this.errorHandlerScriptFactory = errorHandlerScriptFactory;
-        this.pathGuard = pathGuard;
+        this.pathGuardResponseSerializer = pathGuardResponseSerializer;
     }
 
     @Override
@@ -154,71 +118,18 @@ public class AuthResponseWrapper
     {
         if ( 403 == sc || 401 == sc )
         {
-            final UserStore userStore = retrieveUserStore();
-            final AuthConfig authConfig = userStore == null ? null : userStore.getAuthConfig();
-            final AuthDescriptor authDescriptor = retrieveAuthDescriptor( authConfig );
-
-            if ( authDescriptor != null )
+            try
             {
-                try
+                final boolean responseSerialized = pathGuardResponseSerializer.serialize( response );
+                if ( responseSerialized )
                 {
-                    final PortalRequest portalRequest = new PortalRequestAdapter().
-                        adapt( request );
-                    portalRequest.setBaseUri( "/portal" );
-                    portalRequest.setApplicationKey( authDescriptor.getKey() );
-                    portalRequest.setAuthConfig( authConfig );
-
-                    final PortalError portalError = PortalError.create().
-                        status( HttpStatus.FORBIDDEN ).
-                        message( "Forbidden" ).
-                        request( portalRequest ).
-                        build();
-
-                    final ErrorHandlerScript errorHandlerScript = errorHandlerScriptFactory.errorScript( authDescriptor.getResourceKey() );
-                    final PortalResponse portalResponse = errorHandlerScript.execute( portalError );
-
-                    final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );
-
-                    serializer.serialize( response );
                     errorHandled = true;
                 }
-                catch ( IOException e )
-                {
-                    throw Exceptions.unchecked( e );
-                }
-
+            }
+            catch ( IOException e )
+            {
+                throw Exceptions.unchecked( e );
             }
         }
-    }
-
-    private UserStore retrieveUserStore()
-    {
-        UserStoreKey userStoreKey = pathGuard == null ? null : pathGuard.getUserStoreKey();
-        if ( userStoreKey != null )
-        {
-            return runWithAdminRole( () -> securityService.getUserStore( userStoreKey ) );
-        }
-        return null;
-    }
-
-    private AuthDescriptor retrieveAuthDescriptor( final AuthConfig authConfig )
-    {
-        if ( authConfig != null )
-        {
-            return authDescriptorService.getDescriptor( authConfig.getApplicationKey() );
-        }
-        return null;
-    }
-
-    private <T> T runWithAdminRole( final Callable<T> callable )
-    {
-        final Context context = ContextAccessor.current();
-        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( context.getAuthInfo() ).
-            principals( RoleKeys.ADMIN ).
-            build();
-        return ContextBuilder.from( context ).
-            authInfo( authenticationInfo ).
-            build().
-            callWith( callable );
     }
 }
