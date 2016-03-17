@@ -4,27 +4,39 @@ tinymce.PluginManager.add('image', function (editor) {
 
     function showDialog() {
         var selectedNode = editor.selection.getNode(),
-            imgEl = null,
+            imgEl = figureEl = null,
+            dom = editor.dom,
             rng = editor.selection.getRng();
 
         switch (selectedNode.nodeName) {
             case 'IMG':
                 imgEl = editor.selection.getNode();
+                figureEl = wemjq(selectedNode).parent("figure")[0];
                 break;
             case 'FIGURE':
+                figureEl = editor.selection.getNode();
                 imgEl = wemjq(selectedNode).children("img")[0];
                 break;
             case 'FIGCAPTION':
+                figureEl = wemjq(selectedNode).parent("figure")[0];
                 imgEl = (wemjq(selectedNode).prev("img") || wemjq(selectedNode).next("img"))[0];
                 break;
         }
 
-        function setCursorToFigCaption(id) {
-            var figCaptionEl = editor.getBody().querySelector('figcaption[id="' + id + '"]');
-            if (figCaptionEl && !figCaptionEl.innerHTML) {
-                figCaptionEl.scrollIntoView(false);
-                editor.selection.placeCaretAt(figCaptionEl.offsetLeft, figCaptionEl.offsetTop + 10);
-                figCaptionEl.innerHTML = "";
+        function insertFigureElement(html) {
+            if (figureEl) {
+                dom.remove(figureEl);
+            }
+
+            editor.focus();
+            editor.selection.setContent(html);
+
+            var imgElm = dom.get('__mcenew');
+            dom.setAttrib(imgElm, 'id', null);
+
+            if (editor.selection) {
+                editor.selection.select(imgElm);
+                editor.nodeChanged();
             }
         }
 
@@ -32,7 +44,7 @@ tinymce.PluginManager.add('image', function (editor) {
             editor: editor,
             element: imgEl,
             container: rng.endContainer,
-            callback: setCursorToFigCaption
+            callback: insertFigureElement
         });
     }
 

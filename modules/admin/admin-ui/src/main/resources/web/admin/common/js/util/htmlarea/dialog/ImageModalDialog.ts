@@ -136,7 +136,7 @@ module api.util.htmlarea.dialog {
 
             if (this.imageElement) {
                 this.image.getHTMLElement().style["text-align"] =
-                    this.imageElement.parentElement.style.textAlign;
+                    this.imageElement.parentElement.style.textAlign || this.imageElement.parentElement.style.cssFloat;
 
                 this.imageToolbar = new ImageToolbar(this.image);
                 if (this.imageToolbar.isImageInOriginalSize(new api.dom.ElementHelper(this.imageElement))) {
@@ -310,16 +310,6 @@ module api.util.htmlarea.dialog {
             super.initializeActions();
         }
 
-        private generateUUID():string {
-            var d = new Date().getTime();
-            var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                var r = (d + Math.random() * 16) % 16 | 0;
-                d = Math.floor(d / 16);
-                return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-            });
-            return uuid;
-        }
-
         private getCaptionFieldValue() {
             return (<api.dom.InputEl>this.imageCaptionField.getInput()).getValue().trim();
         }
@@ -339,13 +329,13 @@ module api.util.htmlarea.dialog {
             this.image.getHTMLElement().style["width"] = (this.isImageWiderThanEditor() || !keepImageSize) ? "100%" : "auto";
         }
 
-        private createFigureElement(figCaptionId:string) {
+        private createFigureElement() {
 
             var figure = api.dom.ElementHelper.fromName("figure");
             var figCaption = api.dom.ElementHelper.fromName("figcaption");
-            figCaption.setId(figCaptionId);
             figCaption.setText(this.getCaptionFieldValue());
             figCaption.setAttribute("style", "text-align: center");
+            this.image.setId("__mcenew");
 
             figure.appendChildren([(<api.dom.ImgEl>this.image).getEl().getHTMLElement(), figCaption.getHTMLElement()]);
 
@@ -353,85 +343,36 @@ module api.util.htmlarea.dialog {
         }
 
         private updateImageParentAlignment(element:HTMLElement, alignment?:string) {
-
             if (!alignment) {
                 alignment = this.image.getHTMLElement().style["text-align"];
             }
 
-            var defaultMargin = "15px",
-                marginStyle, widthStyle, style,
-                alignmentStyle = "text-align: " + alignment + ";",
-                widthFormat = this.imageToolbar.isImageInOriginalSize(this.image.getEl()) ? "" : "width: {0}%;";
+            var styleFormat = "float: {0}; margin: {1};" +
+                              (this.imageToolbar.isImageInOriginalSize(this.image.getEl()) ? "" : "width: {2}%;");
+            var styleAttr = "text-align: " + alignment + ";";
 
             switch (alignment) {
                 case 'left':
-                    marginStyle = api.util.StringHelper.format("margin: {0} auto {0} {0};", defaultMargin);
-                    widthStyle = api.util.StringHelper.format(widthFormat, "40");
-                    break;
                 case 'right':
-                    marginStyle = api.util.StringHelper.format("margin: {0} {0} {0} auto;", defaultMargin);
-                    widthStyle = api.util.StringHelper.format(widthFormat, "40");
+                    styleAttr = api.util.StringHelper.format(styleFormat, alignment, "15px", "40");
                     break;
                 case 'center':
-                    marginStyle = "margin: auto;";
-                    widthStyle = api.util.StringHelper.format(widthFormat, "60");
+                    styleAttr = styleAttr + api.util.StringHelper.format(styleFormat, "none", "auto", "60");
                     break;
             }
-            style = alignmentStyle + widthStyle + marginStyle;
-            element.setAttribute("style", style);
-            element.setAttribute("data-mce-style", style);
+
+            element.setAttribute("style", styleAttr);
+            element.setAttribute("data-mce-style", styleAttr);
         }
 
-        private createImageTag():void {
-            var container = this.elementContainer,
-                isProperContainer = function () {
-                    return container.nodeName !== "FIGCAPTION" && container.nodeName !== "#text"
-                };
+        private createImageTag(): void {
+            var figure = this.createFigureElement();
 
-            if (this.imageElement) {
-                this.updateImageParentAlignment(this.imageElement.parentElement);
-                this.changeImageParentAlignmentOnImageAlignmentChange(this.imageElement.parentElement);
+            this.updateImageParentAlignment(figure.getHTMLElement());
+            this.changeImageParentAlignmentOnImageAlignmentChange(figure.getHTMLElement());
+            this.setImageWidthConstraint();
 
-                wemjq(this.imageElement.parentElement).children("figcaption").text(this.getCaptionFieldValue());
-                this.imageElement.parentElement.replaceChild((<api.dom.ImgEl>this.image).getEl().getHTMLElement(), this.imageElement);
-                this.setImageWidthConstraint();
-
-                setTimeout(() => {
-                    this.getEditor().nodeChanged({selectionChange: true})
-                }, 50);
-            }
-            else {
-                var figCaptionId = this.generateUUID(),
-                    figure = this.createFigureElement(figCaptionId);
-
-                this.updateImageParentAlignment(figure.getHTMLElement());
-                this.changeImageParentAlignmentOnImageAlignmentChange(figure.getHTMLElement());
-                this.setImageWidthConstraint();
-
-                if (!isProperContainer() || container.nodeName === "FIGURE") {
-                    while (!isProperContainer()) {
-                        container = container.parentElement;
-                    }
-                }
-
-                this.removeExtraIndentFromContainer(container);
-
-                new api.dom.ElementHelper(container).appendChild(figure.getHTMLElement());
-
-                this.getEditor().nodeChanged();
-
-                this.callback(figCaptionId);
-            }
-        }
-
-        private removeExtraIndentFromContainer(container) {
-            var elements = <Element[]>new api.dom.ElementHelper(container).getChildren();
-
-            for (let i = 0; i < elements.length; i++) {
-                if (elements[i].tagName.toLowerCase() === "br" && elements[i].hasAttribute("data-mce-bogus")) {
-                    container.removeChild(elements[i]);
-                }
-            }
+            this.callback(figure.getHTMLElement().outerHTML);
         }
 
         private changeImageParentAlignmentOnImageAlignmentChange(parent:HTMLElement) {
@@ -566,7 +507,7 @@ module api.util.htmlarea.dialog {
                 default:
                     this.justifyButton.addClass("active");
                     break;
-            }
+                }
         }
 
         private resetActiveButton() {
