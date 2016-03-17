@@ -13,6 +13,8 @@ final class CheckBoxType
 {
     public final static CheckBoxType INSTANCE = new CheckBoxType();
 
+    private final static String VALID_VALUE = "checked";
+
     private CheckBoxType()
     {
         super( InputTypeName.CHECK_BOX );
@@ -30,7 +32,7 @@ final class CheckBoxType
         if ( defaultConfig.getProperty( "default" ) != null )
         {
             final String defaultValue = defaultConfig.getProperty( "default" ).getValue();
-            return ValueFactory.newBoolean( "checked".equals( defaultValue ) ? true : false );
+            return ValueFactory.newBoolean( VALID_VALUE.equals( defaultValue ) ? true : false );
         }
         return super.createDefaultValue( defaultConfig );
     }
