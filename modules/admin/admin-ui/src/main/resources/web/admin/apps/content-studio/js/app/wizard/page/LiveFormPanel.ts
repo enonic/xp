@@ -66,6 +66,7 @@ module app.wizard.page {
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
     import ComponentFragmentCreatedEvent = api.liveedit.ComponentFragmentCreatedEvent;
+    import ShowWarningLiveEditEvent = api.liveedit.ShowWarningLiveEditEvent;
 
     import Panel = api.ui.panel.Panel;
 
@@ -488,6 +489,10 @@ module app.wizard.page {
                 api.notify.showSuccess(`Fragment created from '${componentName}' ${componentType}.`);
 
                 this.saveAndReloadOnlyComponent(event.getComponentView());
+            });
+
+            this.liveEditPageProxy.onShowWarning((event: ShowWarningLiveEditEvent) => {
+                api.notify.showWarning(event.getMessage());
             });
 
             this.liveEditPageProxy.onEditContent((event: api.content.event.EditContentEvent) => {

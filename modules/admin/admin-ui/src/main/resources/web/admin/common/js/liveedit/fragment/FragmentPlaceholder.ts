@@ -2,6 +2,9 @@ module api.liveedit.fragment {
 
     import ContentTypeName = api.schema.content.ContentTypeName;
     import FragmentComponent = api.content.page.region.FragmentComponent;
+    import GetContentByIdRequest = api.content.GetContentByIdRequest;
+    import Content = api.content.Content;
+    import LayoutComponentType = api.content.page.region.LayoutComponentType;
 
     export class FragmentPlaceholder extends api.liveedit.ItemViewPlaceholder {
 
@@ -31,10 +34,36 @@ module api.liveedit.fragment {
                 var component: FragmentComponent = this.fragmentComponentView.getComponent();
                 var fragmentContent = selectedOption.getOption().displayValue;
 
-                component.setFragment(fragmentContent.getContentId(), fragmentContent.getDisplayName());
-
-                this.fragmentComponentView.showLoadingSpinner();
+                if (this.isInsideLayout()) {
+                    new GetContentByIdRequest(fragmentContent.getContentId()).sendAndParse().done((content: Content) => {
+                        let fragmentComponent = content.getPage() ? content.getPage().getFragment() : null;
+                        
+                        if (fragmentComponent && api.ObjectHelper.iFrameSafeInstanceOf(fragmentComponent.getType(), LayoutComponentType)) {
+                            this.comboBox.clearSelection();
+                            new api.liveedit.ShowWarningLiveEditEvent("Layout within layout not allowed").fire();
+                            
+                        } else {
+                            component.setFragment(fragmentContent.getContentId(), fragmentContent.getDisplayName());
+                            this.fragmentComponentView.showLoadingSpinner();
+                        }
+                    });
+                } else {
+                    component.setFragment(fragmentContent.getContentId(), fragmentContent.getDisplayName());
+                    this.fragmentComponentView.showLoadingSpinner();
+                }
             });
+        }
+
+        private isInsideLayout(): boolean {
+            let parentRegion = this.fragmentComponentView.getParentItemView();
+            if (!parentRegion) {
+                return false;
+            }
+            let parent = parentRegion.getParentItemView();
+            if (!parent) {
+                return false;
+            }
+            return api.ObjectHelper.iFrameSafeInstanceOf(parent.getType(), api.liveedit.layout.LayoutItemType);
         }
 
         select() {

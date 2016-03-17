@@ -35,6 +35,7 @@ module app.wizard.page {
     import ComponentResetEvent = api.liveedit.ComponentResetEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
     import ComponentFragmentCreatedEvent = api.liveedit.ComponentFragmentCreatedEvent;
+    import ShowWarningLiveEditEvent = api.liveedit.ShowWarningLiveEditEvent;
     import EditContentEvent = api.content.event.EditContentEvent;
     import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
@@ -100,6 +101,8 @@ module app.wizard.page {
         private liveEditPageInitErrorListeners: {(event: LiveEditPageInitializationErrorEvent): void;}[] = [];
 
         private fragmentCreatedListeners: {(event: ComponentFragmentCreatedEvent): void;}[] = [];
+
+        private showWarningListeners: {(event: ShowWarningLiveEditEvent): void;}[] = [];
 
         private editContentListeners: {(event: EditContentEvent): void;}[] = [];
 
@@ -344,6 +347,8 @@ module app.wizard.page {
 
             ComponentFragmentCreatedEvent.un(null, contextWindow);
 
+            ShowWarningLiveEditEvent.un(null, contextWindow);
+
             ComponentLoadedEvent.un(null, contextWindow);
 
             ComponentResetEvent.un(null, contextWindow);
@@ -359,8 +364,7 @@ module app.wizard.page {
                 var imageUploadDialog = new ImageUploadDialog(this.liveEditModel.getContent().getContentId());
                 imageUploadDialog.onImageUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
                     new ImageUploadedEvent(event.getUploadItem().getModel(),
-                        openDialogEvent.getTargetImagePlaceholder()).
-                        fire(contextWindow);
+                        openDialogEvent.getTargetImagePlaceholder()).fire(contextWindow);
 
                     imageUploadDialog.close();
                     imageUploadDialog.remove();
@@ -403,6 +407,8 @@ module app.wizard.page {
             PageInspectedEvent.on(this.notifyPageInspected.bind(this), contextWindow);
 
             ComponentFragmentCreatedEvent.on(this.notifyFragmentCreated.bind(this), contextWindow);
+
+            ShowWarningLiveEditEvent.on(this.notifyShowWarning.bind(this), contextWindow);
 
             EditContentEvent.on(this.notifyEditContent.bind(this), contextWindow);
 
@@ -693,6 +699,18 @@ module app.wizard.page {
 
         private notifyFragmentCreated(event: ComponentFragmentCreatedEvent) {
             this.fragmentCreatedListeners.forEach((listener) => listener(event));
+        }
+
+        onShowWarning(listener: {(event: ShowWarningLiveEditEvent): void;}) {
+            this.showWarningListeners.push(listener);
+        }
+
+        unShowWarning(listener: {(event: ShowWarningLiveEditEvent): void;}) {
+            this.showWarningListeners = this.showWarningListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyShowWarning(event: ShowWarningLiveEditEvent) {
+            this.showWarningListeners.forEach((listener) => listener(event));
         }
 
         onEditContent(listener: {(event: EditContentEvent): void;}) {

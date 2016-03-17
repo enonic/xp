@@ -62,3 +62,4 @@
 ///<reference path='ComponentInspectedEvent.ts' />
 ///<reference path='PageInspectedEvent.ts' />
 ///<reference path='ComponentFragmentCreatedEvent.ts' />
+///<reference path='ShowWarningLiveEditEvent.ts' />

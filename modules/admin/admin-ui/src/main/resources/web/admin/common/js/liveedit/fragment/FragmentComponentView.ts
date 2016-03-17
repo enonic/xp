@@ -19,9 +19,12 @@ module api.liveedit.fragment {
 
         private fragmentComponent: FragmentComponent;
 
+        private fragmentContainsLayout: boolean;
+
         constructor(builder: FragmentComponentViewBuilder) {
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.fragmentComponent = builder.component;
+            this.fragmentContainsLayout = false;
 
             super(builder.setPlaceholder(new FragmentPlaceholder(this)).setTooltipViewer(
                 new FragmentComponentViewer()).setInspectActionRequired(true));
@@ -31,6 +34,10 @@ module api.liveedit.fragment {
 
         isEmpty(): boolean {
             return !this.fragmentComponent || this.fragmentComponent.isEmpty();
+        }
+
+        containsLayout(): boolean {
+            return this.fragmentContainsLayout;
         }
 
         protected getComponentContextMenuActions(actions: api.ui.Action[], liveEditModel: LiveEditModel): api.ui.Action[] {
@@ -45,11 +52,15 @@ module api.liveedit.fragment {
         }
 
         private parseContentViews(parentElement?: api.dom.Element) {
-            // remove component-type attributes to avoid inner components of fragment to be affected by d&d sorting
             var children = parentElement.getChildren();
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
                 if (itemType) {
+                    if (api.liveedit.layout.LayoutItemType.get().equals(itemType)) {
+                        this.fragmentContainsLayout = true;
+                    }
+
+                    // remove component-type attributes to avoid inner components of fragment to be affected by d&d sorting
                     var htmlElement = childElement.getHTMLElement();
                     htmlElement.removeAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
                     htmlElement.removeAttribute("data-" + ItemType.ATTRIBUTE_REGION_NAME);

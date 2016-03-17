@@ -78,7 +78,7 @@ module app.wizard {
             this.onShown((event) => {
                 this.constrainToParent();
                 this.getHTMLElement().style.display = "";
-                if (this.pageView.isLocked()) {
+                if (this.pageView && this.pageView.isLocked()) {
                     this.mask.show();
                 }
             });

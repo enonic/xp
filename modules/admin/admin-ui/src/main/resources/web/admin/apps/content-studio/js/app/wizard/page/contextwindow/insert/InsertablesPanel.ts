@@ -62,7 +62,7 @@ module app.wizard.page.contextwindow.insert {
 
             this.liveEditPageProxy.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {
                 this.pageView = event.getPageView();
-                if (this.pageView.getLiveEditModel().getPageModel().getMode() === PageMode.FRAGMENT) {
+                if (this.pageView && this.pageView.getLiveEditModel().getPageModel().getMode() === PageMode.FRAGMENT) {
                     this.insertablesDataView.setItems(Insertables.ALLOWED_IN_FRAGMENT, "name");
                 }
             });
