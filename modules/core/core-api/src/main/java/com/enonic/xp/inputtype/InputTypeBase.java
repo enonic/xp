@@ -33,9 +33,9 @@ public abstract class InputTypeBase
     public abstract Value createValue( final String value, final InputTypeConfig config );
 
     @Override
-    public Value createDefaultValue( final InputTypeConfig config )
+    public Value createDefaultValue( final InputTypeConfig defaultConfig )
     {
-        return ValueFactory.newString(config.getProperty( "default" ).getValue());
+        return ValueFactory.newString( defaultConfig.getProperty( "default" ).getValue() );
     }
 
     protected final void validateType( final Property property, final ValueType expectedType )
