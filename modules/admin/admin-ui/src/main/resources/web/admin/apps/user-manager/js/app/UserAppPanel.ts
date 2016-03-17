@@ -81,6 +81,9 @@ module app {
                     } else if (api.ObjectHelper.iFrameSafeInstanceOf(wizardPanel, app.wizard.PrincipalWizardPanel)) {
                         name = name ||
                                api.content.ContentUnnamed.prettifyUnnamed((<app.wizard.PrincipalWizardPanel>wizardPanel).getUserItemType());
+                    } else if (api.ObjectHelper.iFrameSafeInstanceOf(wizardPanel, app.wizard.PathGuardWizardPanel)) {
+                        name = name ||
+                               api.content.ContentUnnamed.prettifyUnnamed((<app.wizard.PathGuardWizardPanel>wizardPanel).getUserItemType());
                     }
                     tabMenuItem.setLabel(name, !<string>event.getNewValue());
                 }

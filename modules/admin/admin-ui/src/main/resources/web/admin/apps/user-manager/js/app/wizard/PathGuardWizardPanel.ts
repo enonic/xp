@@ -102,7 +102,7 @@ module app.wizard {
         }
 
         getUserItemType(): string {
-            return "User Store";
+            return "Guard";
         }
 
         getPathGuardWizardHeader(): WizardHeaderWithDisplayNameAndName {
