@@ -12,7 +12,9 @@ public final class PathGuard
 
     private final String description;
 
-    private final AuthConfig authConfig;
+    private final UserStoreKey userStoreKey;
+
+    private final boolean passive;
 
     private final ImmutableSet<String> paths;
 
@@ -21,7 +23,8 @@ public final class PathGuard
         this.key = builder.key;
         this.displayName = builder.displayName;
         this.description = builder.description;
-        this.authConfig = builder.authConfig;
+        this.userStoreKey = builder.userStoreKey;
+        this.passive = builder.passive;
         this.paths = builder.paths.build();
     }
 
@@ -40,9 +43,14 @@ public final class PathGuard
         return description;
     }
 
-    public AuthConfig getAuthConfig()
+    public UserStoreKey getUserStoreKey()
     {
-        return authConfig;
+        return userStoreKey;
+    }
+
+    public boolean isPassive()
+    {
+        return passive;
     }
 
     public ImmutableSet<String> getPaths()
@@ -63,7 +71,9 @@ public final class PathGuard
 
         private String description;
 
-        private AuthConfig authConfig;
+        private UserStoreKey userStoreKey;
+
+        private boolean passive;
 
         private ImmutableSet.Builder<String> paths = ImmutableSet.builder();
 
@@ -91,9 +101,15 @@ public final class PathGuard
             return this;
         }
 
-        public Builder authConfig( final AuthConfig value )
+        public Builder userStoreKey( final UserStoreKey value )
         {
-            this.authConfig = value;
+            this.userStoreKey = value;
+            return this;
+        }
+
+        public Builder passive( final boolean value )
+        {
+            this.passive = value;
             return this;
         }
 

@@ -2,7 +2,6 @@ package com.enonic.xp.admin.impl.rest.resource.security.json;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.PathGuard;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -31,10 +30,14 @@ public class PathGuardJson
         return pathGuard.getKey().toString();
     }
 
-    public AuthConfigJson getAuthConfig()
+    public String getUserStoreKey()
     {
-        final AuthConfig authConfig = pathGuard.getAuthConfig();
-        return AuthConfigJson.toJson( authConfig );
+        return pathGuard.getUserStoreKey() == null ? null : pathGuard.getUserStoreKey().toString();
+    }
+
+    public Boolean isPassive()
+    {
+        return pathGuard.isPassive();
     }
 
     public ImmutableSet<String> getPaths()

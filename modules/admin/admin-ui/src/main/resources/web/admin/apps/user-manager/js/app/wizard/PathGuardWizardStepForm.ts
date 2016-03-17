@@ -53,9 +53,17 @@ module app.wizard {
                     setMaximizeUIInputWidth(true).
                     build()).
                 addFormItem(new api.form.InputBuilder().
-                    setName("authConfig").
-                    setInputType(new api.form.InputTypeName("AuthApplicationSelector", false)).
-                    setLabel("Application").
+                    setName("userStoreKey").
+                    setInputType(new api.form.InputTypeName("UserStoreSelector", false)).
+                    setLabel("User Store").
+                    setOccurrences(new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(1).build()).
+                    setInputTypeConfig({}).
+                    setMaximizeUIInputWidth(true).
+                    build()).
+                addFormItem(new api.form.InputBuilder().
+                    setName("passive").
+                    setInputType(new api.form.InputTypeName("Checkbox", false)).
+                    setLabel("Passive (will only authenticate for protected resources)").
                     setOccurrences(new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(1).build()).
                     setInputTypeConfig({}).
                     setMaximizeUIInputWidth(true).
@@ -64,34 +72,26 @@ module app.wizard {
             this.propertySet = new api.data.PropertyTree().getRoot();
             if (pathGuard) {
                 this.propertySet.addString("description", pathGuard.getDescription());
-                var authConfig = pathGuard.getAuthConfig();
-                if (authConfig) {
-                    var authConfigPropertySet = new api.data.PropertySet();
-                    authConfigPropertySet.addString("applicationKey", authConfig.getApplicationKey().toString())
-                    authConfigPropertySet.addPropertySet("config", authConfig.getConfig().getRoot())
-                    this.propertySet.addPropertySet("authConfig", authConfigPropertySet);
+                if (pathGuard.getUserStoreKey()) {
+                    this.propertySet.addString("userStoreKey", pathGuard.getUserStoreKey().getId());
                 }
+                this.propertySet.addBoolean("passive", pathGuard.isPassive());
             }
 
             return new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
         }
 
-        getAuthConfig(): api.security.AuthConfig {
-            var authConfigPropertySet = this.propertySet.getPropertySet("authConfig");
-            if (authConfigPropertySet) {
-                var applicationKey = api.application.ApplicationKey.fromString(authConfigPropertySet.getString("applicationKey"));
-                var config = new api.data.PropertyTree(authConfigPropertySet.getPropertySet("config"))
-                return api.security.AuthConfig.create().
-                    setApplicationKey(applicationKey).
-                    setConfig(config).
-                    build();
-            }
-
-            return null;
-        }
-
         getDescription(): string {
             return this.propertySet.getString("description");
+        }
+
+        isPassive(): boolean {
+            return this.propertySet.getBoolean("passive");
+        }
+
+        getUserStoreKey(): api.security.UserStoreKey {
+            var userStoreKey = this.propertySet.getString("userStoreKey");
+            return userStoreKey ? api.security.UserStoreKey.fromString(userStoreKey) : null;
         }
 
         giveFocus(): boolean {

@@ -14,7 +14,10 @@ public final class CreatePathGuardParams
 
     private final String description;
 
-    private final AuthConfig authConfig;
+    private final UserStoreKey userStoreKey;
+
+    private final boolean passive;
+
 
     private final ImmutableList<String> paths;
 
@@ -23,7 +26,8 @@ public final class CreatePathGuardParams
         this.key = checkNotNull( builder.key, "key is required" );
         this.displayName = checkNotNull( builder.displayName, "displayName is required" );
         this.description = builder.description;
-        this.authConfig = builder.authConfig;
+        this.userStoreKey = builder.userStoreKey;
+        this.passive = builder.passive;
         this.paths = builder.paths.build();
     }
 
@@ -42,9 +46,14 @@ public final class CreatePathGuardParams
         return description;
     }
 
-    public AuthConfig getAuthConfig()
+    public UserStoreKey getUserStoreKey()
     {
-        return authConfig;
+        return userStoreKey;
+    }
+
+    public boolean isPassive()
+    {
+        return passive;
     }
 
     public ImmutableList<String> getPaths()
@@ -65,7 +74,9 @@ public final class CreatePathGuardParams
 
         private String description;
 
-        private AuthConfig authConfig;
+        private UserStoreKey userStoreKey;
+
+        private boolean passive;
 
         private ImmutableList.Builder<String> paths = ImmutableList.builder();
 
@@ -91,9 +102,15 @@ public final class CreatePathGuardParams
             return this;
         }
 
-        public Builder authConfig( final AuthConfig value )
+        public Builder userStoreKey( final UserStoreKey value )
         {
-            this.authConfig = value;
+            this.userStoreKey = value;
+            return this;
+        }
+
+        public Builder passive( final boolean value )
+        {
+            this.passive = value;
             return this;
         }
 

@@ -120,6 +120,17 @@ final class SecurityInitializer
     {
         LOG.info( "Initializing user store [" + UserStoreKey.system() + "]" );
 
+        final PropertySet backgroundPropertySet = new PropertySet();
+        backgroundPropertySet.setString( "application", "com.enonic.xp.app.login" );
+        backgroundPropertySet.setString( "path", "img/background.jpg" );
+        final PropertyTree config = new PropertyTree();
+        config.setSet( "background", backgroundPropertySet );
+        config.setString( "userStore", UserStoreKey.system().toString() );
+        final AuthConfig authConfig = AuthConfig.create().
+            applicationKey( ApplicationKey.from( "com.enonic.xp.app.login" ) ).
+            config( config ).
+            build();
+
         final UserStoreAccessControlList permissions =
             UserStoreAccessControlList.of( UserStoreAccessControlEntry.create().principal( RoleKeys.ADMIN ).access( ADMINISTRATOR ).build(),
                                            UserStoreAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access(
@@ -128,6 +139,7 @@ final class SecurityInitializer
         final CreateUserStoreParams createParams = CreateUserStoreParams.create().
             key( UserStoreKey.system() ).
             displayName( SYSTEM_USER_STORE_DISPLAY_NAME ).
+            authConfig( authConfig ).
             permissions( permissions ).
             build();
         this.securityService.createUserStore( createParams );
@@ -219,24 +231,13 @@ final class SecurityInitializer
 
     private void createPathGuards()
     {
-        final PropertySet backgroundPropertySet = new PropertySet();
-        backgroundPropertySet.setString( "application", "com.enonic.xp.app.login" );
-        backgroundPropertySet.setString( "path", "img/background.jpg" );
-
-        final PropertyTree config = new PropertyTree();
-        config.setSet( "background", backgroundPropertySet );
-        config.setString( "userStore", UserStoreKey.system().toString() );
-
-        final AuthConfig authConfig = AuthConfig.create().
-            applicationKey( ApplicationKey.from( "com.enonic.xp.app.login" ) ).
-            config( config ).
-            build();
         final CreatePathGuardParams createPathGuardParams = CreatePathGuardParams.create().
             key( PathGuardKey.admin() ).
             displayName( "Admin guard" ).
             description( "Admin guard" ).
+            userStoreKey( UserStoreKey.system() ).
+            passive( false ).
             addPaths( "/admin" ).
-            authConfig( authConfig ).
             build();
         addPathGuard( createPathGuardParams );
     }

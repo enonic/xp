@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.security.PathGuardKey;
 import com.enonic.xp.security.UpdatePathGuardParams;
+import com.enonic.xp.security.UserStoreKey;
 
 public final class UpdatePathGuardJson
 {
@@ -15,14 +16,15 @@ public final class UpdatePathGuardJson
     @JsonCreator
     public UpdatePathGuardJson( @JsonProperty("key") final String key, @JsonProperty("displayName") final String displayName,
                                 @JsonProperty("description") final String description,
-                                @JsonProperty("authConfig") final AuthConfigJson authConfigJson,
+                                @JsonProperty("userStoreKey") final String userStoreKey, @JsonProperty("passive") final Boolean passive,
                                 @JsonProperty("paths") final String[] paths )
     {
         this.updatePathGuardParams = UpdatePathGuardParams.create().
             key( PathGuardKey.from( key ) ).
             displayName( displayName ).
             description( description ).
-            authConfig( authConfigJson == null ? null : authConfigJson.getAuthConfig() ).
+            userStoreKey( userStoreKey == null ? null : UserStoreKey.from( userStoreKey ) ).
+            passive( passive == null ? false : passive.booleanValue() ).
             addPaths( paths ).
             build();
     }

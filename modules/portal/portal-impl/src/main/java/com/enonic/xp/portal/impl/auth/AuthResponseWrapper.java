@@ -23,9 +23,12 @@ import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.portal.impl.error.PortalError;
 import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
+import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.PathGuard;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.AuthConfig;
+import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.UserStore;
+import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.web.HttpStatus;
@@ -38,6 +41,8 @@ public class AuthResponseWrapper
 
     private final HttpServletResponse response;
 
+    private final SecurityService securityService;
+
     private final AuthDescriptorService authDescriptorService;
 
     private final ErrorHandlerScriptFactory errorHandlerScriptFactory;
@@ -46,13 +51,14 @@ public class AuthResponseWrapper
 
     private boolean errorHandled;
 
-    public AuthResponseWrapper( final HttpServletRequest request, final HttpServletResponse response,
+    public AuthResponseWrapper( final HttpServletRequest request, final HttpServletResponse response, final SecurityService securityService,
                                 final AuthDescriptorService authDescriptorService,
                                 final ErrorHandlerScriptFactory errorHandlerScriptFactory, final PathGuard pathGuard )
     {
         super( response );
         this.request = request;
         this.response = response;
+        this.securityService = securityService;
         this.authDescriptorService = authDescriptorService;
         this.errorHandlerScriptFactory = errorHandlerScriptFactory;
         this.pathGuard = pathGuard;
@@ -148,7 +154,8 @@ public class AuthResponseWrapper
     {
         if ( 403 == sc || 401 == sc )
         {
-            final AuthConfig authConfig = pathGuard.getAuthConfig();
+            final UserStore userStore = retrieveUserStore();
+            final AuthConfig authConfig = userStore == null ? null : userStore.getAuthConfig();
             final AuthDescriptor authDescriptor = retrieveAuthDescriptor( authConfig );
 
             if ( authDescriptor != null )
@@ -184,6 +191,16 @@ public class AuthResponseWrapper
         }
     }
 
+    private UserStore retrieveUserStore()
+    {
+        UserStoreKey userStoreKey = pathGuard == null ? null : pathGuard.getUserStoreKey();
+        if ( userStoreKey != null )
+        {
+            return runWithAdminRole( () -> securityService.getUserStore( userStoreKey ) );
+        }
+        return null;
+    }
+
     private AuthDescriptor retrieveAuthDescriptor( final AuthConfig authConfig )
     {
         if ( authConfig != null )
@@ -193,11 +210,11 @@ public class AuthResponseWrapper
         return null;
     }
 
-    private <T> T runAsAuthenticated( final Callable<T> callable )
+    private <T> T runWithAdminRole( final Callable<T> callable )
     {
         final Context context = ContextAccessor.current();
         final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( context.getAuthInfo() ).
-            principals( RoleKeys.AUTHENTICATED ).
+            principals( RoleKeys.ADMIN ).
             build();
         return ContextBuilder.from( context ).
             authInfo( authenticationInfo ).
