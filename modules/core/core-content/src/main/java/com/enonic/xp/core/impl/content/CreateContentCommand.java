@@ -25,6 +25,7 @@ import com.enonic.xp.core.impl.content.validate.DataValidationError;
 import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.data.Value;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypes;
@@ -323,9 +324,13 @@ final class CreateContentCommand
                 Input input = formItem.toInput();
                 if ( input.getDefaultValue() != null )
                 {
-                    params.getData().setProperty( PropertyPath.from( parentPath, input.getName() ),
-                              InputTypes.BUILTIN.resolve( input.getInputType() ).
-                                  createDefaultValue( input.getDefaultValue()) );
+                    final Value defaultValue = InputTypes.BUILTIN.resolve( input.getInputType() ).
+                        createDefaultValue( input.getDefaultValue() );
+
+                    if ( defaultValue != null )
+                    {
+                        params.getData().setProperty( PropertyPath.from( parentPath, input.getName() ), defaultValue );
+                    }
                 }
             }
             else if ( formItem.isFormItemSet() )
