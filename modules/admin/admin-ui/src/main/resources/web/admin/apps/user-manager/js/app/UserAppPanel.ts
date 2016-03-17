@@ -44,6 +44,17 @@ module app {
                                     build()
                             ]).fire();
                         });
+                } else if (id && id.startsWith("guard:")) {
+                    var pathGuardKey = api.security.PathGuardKey.fromString(id.substr("guard:".length));
+                    new api.security.GetPathGuardByKeyRequest(pathGuardKey).sendAndParse().
+                        done((pathGuard: api.security.PathGuard) => {
+                            new app.browse.EditPrincipalEvent([
+                                new app.browse.UserTreeGridItemBuilder().
+                                    setPathGuard(pathGuard).
+                                    setType(UserTreeGridItemType.PATH_GUARD).
+                                    build()
+                            ]).fire();
+                        });
                 } else {
                     new api.app.ShowBrowsePanelEvent().fire();
                 }
