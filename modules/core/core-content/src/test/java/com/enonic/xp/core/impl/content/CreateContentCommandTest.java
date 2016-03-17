@@ -147,20 +147,45 @@ public class CreateContentCommandTest
         Input input = Input.create().
             name( "testInput" ).
             label( "testInput" ).
-            inputType( InputTypeName.COMBO_BOX ).
-            defaultValue( InputTypeConfig.create().property( InputTypeProperty.create( "default", "testValue" ).build() ).build() ).
+            inputType( InputTypeName.CHECK_BOX ).
+            defaultValue( InputTypeConfig.create().property( InputTypeProperty.create( "default", "checked" ).build() ).build() ).
             build();
 
         final ContentType contentType = ContentType.create().
             superType( ContentTypeName.documentMedia() ).
             name( ContentTypeName.dataMedia() ).
-            addFormItem(input).
+            addFormItem( input ).
             build();
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         final Content createdContent = command.execute();
-        assertTrue( createdContent.getData().getString("testInput").equals( "testValue" ) );
+        assertTrue( createdContent.getData().getString( "testInput" ).equals( "true" ) );
+    }
+
+    @Test
+    public void defaultValue_invalid()
+    {
+        final CreateContentParams params = createContentParams().name( ContentName.from( "name" ) ).displayName( "" ).build();
+        final CreateContentCommand command = createContentCommand( params );
+
+        Input input = Input.create().
+            name( "testInput" ).
+            label( "testInput" ).
+            inputType( InputTypeName.CHECK_BOX ).
+            defaultValue( InputTypeConfig.create().property( InputTypeProperty.create( "default", "unchecked" ).build() ).build() ).
+            build();
+
+        final ContentType contentType = ContentType.create().
+            superType( ContentTypeName.documentMedia() ).
+            name( ContentTypeName.dataMedia() ).
+            addFormItem( input ).
+            build();
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+
+        final Content createdContent = command.execute();
+        assertNull( createdContent.getData().getString( "testInput" ) );
     }
 
     @Test
