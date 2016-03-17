@@ -196,7 +196,7 @@ module app {
                     tabName = "Role";
                     break;
                 case UserTreeGridItemType.PATH_GUARDS:
-                    tabName = "Path guard";
+                    tabName = "Guard";
                     break;
                 case UserTreeGridItemType.PRINCIPAL:
                     principalType = userItem.getPrincipal().getType();

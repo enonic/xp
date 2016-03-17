@@ -85,9 +85,9 @@ module app.wizard {
 
                 this.onShown((event: api.dom.ElementShownEvent) => {
                     if (this.getPersistedItem()) {
-                        app.Router.setHash("edit/" + this.getPersistedItem().getKey());
+                        app.Router.setHash("edit/guard:" + this.getPersistedItem().getKey());
                     } else {
-                        app.Router.setHash("new/");
+                        app.Router.setHash("new/guard");
                     }
 
                     responsiveItem.update();
@@ -154,7 +154,7 @@ module app.wizard {
         postLayoutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
-            this.wizardHeader.initNames("", this.pathGuardPath, false);
+            this.wizardHeader.initNames("", "", false);
             this.pathGuardWizardStepForm.layout(null);
             this.pathGuardMappingWizardStepForm.layout(null);
 

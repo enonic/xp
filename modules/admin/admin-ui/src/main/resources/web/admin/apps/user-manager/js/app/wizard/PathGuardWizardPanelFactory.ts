@@ -49,6 +49,7 @@ module app.wizard {
 
             var wizardParams = new app.wizard.PathGuardWizardPanelParams().
                 setPathGuardKey(this.pathGuardKey).
+                setPersistedPath("/guards/").
                 setAppBarTabId(this.appBarTabId);
 
             this.resolvePathGuardWizardPanel(deferred, wizardParams);
@@ -63,6 +64,7 @@ module app.wizard {
             var wizardParams = new PathGuardWizardPanelParams().
                 setPathGuardKey(this.pathGuardKey).
                 setPathGuard(this.pathGuardToEdit).
+                setPersistedPath("/guards/").
                 setAppBarTabId(this.appBarTabId);
 
             this.resolvePathGuardWizardPanel(deferred, wizardParams);

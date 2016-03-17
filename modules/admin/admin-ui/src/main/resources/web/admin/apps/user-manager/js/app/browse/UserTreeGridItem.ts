@@ -86,7 +86,7 @@ module app.browse {
                 return 'Groups';
 
             case UserTreeGridItemType.PATH_GUARDS:
-                return 'Path guards';
+                return 'Guards';
 
             }
 
