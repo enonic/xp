@@ -13,11 +13,11 @@ import com.enonic.xp.blobstore.readthrough.ReadThroughBlobStore;
 
 public class BlobStoreFactory
 {
-    private BlobStoreConfig config;
+    private final BlobStoreConfig config;
 
-    private BlobStoreProvider provider;
+    private final BlobStoreProvider provider;
 
-    private BlobStoreProviders providers;
+    private final BlobStoreProviders providers;
 
     private final static Logger LOG = LoggerFactory.getLogger( BlobStoreFactory.class );
 
@@ -33,7 +33,7 @@ public class BlobStoreFactory
         return new Builder();
     }
 
-    public BlobStore build()
+    public BlobStore execute()
     {
         final BlobStore providerStore = provider.get();
 
@@ -59,6 +59,8 @@ public class BlobStoreFactory
     {
         if ( config.readThroughEnabled() )
         {
+            LOG.info( "Setting up readthrough provider" );
+
             final String readThroughProviderName = config.readThroughProvider();
 
             final BlobStoreProvider readThroughProvider = this.providers.get( readThroughProviderName );
@@ -69,6 +71,8 @@ public class BlobStoreFactory
             }
             else
             {
+                LOG.info( "Readthrough provider [" + readThroughProviderName + "] registered successfully" );
+
                 return ReadThroughBlobStore.create().
                     store( providerStore ).
                     readThroughStore( readThroughProvider.get() ).

@@ -55,21 +55,37 @@ public class BlobStoreActivator
             return;
         }
 
-        final BlobStoreProvider blobStoreProvider = this.providers.get( config.providerName() );
-
-        doRegister( blobStoreProvider );
+        doRegister();
     }
 
-    private void doRegister( final BlobStoreProvider blobStoreProvider )
+    private void doRegister()
     {
-        if ( blobStoreProvider != null && blobStoreProvider.get() != null )
+        final BlobStoreProvider blobStoreProvider = this.providers.get( config.providerName() );
+
+        if ( blobStoreProvider == null )
+        {
+            return;
+        }
+
+        if ( blobStoreProvider.config().readThroughEnabled() )
+        {
+            final String readThroughProviderName = blobStoreProvider.config().readThroughProvider();
+
+            if ( this.providers.get( readThroughProviderName ) == null )
+            {
+                LOG.info( "Waiting for readThrough-provider [" + readThroughProviderName + "]" );
+                return;
+            }
+        }
+
+        if ( blobStoreProvider.get() != null )
         {
             final BlobStore blobStore = BlobStoreFactory.create().
                 config( this.config ).
                 provider( blobStoreProvider ).
                 providers( this.providers ).
                 build().
-                build();
+                execute();
 
             this.blobStoreReg = this.context.registerService( BlobStore.class, blobStore, new Hashtable<>() );
 
