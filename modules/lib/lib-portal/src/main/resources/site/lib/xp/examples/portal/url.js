@@ -11,4 +11,4 @@ var url = portalLib.url({
 });
 // END
 
-assert.assertEquals('UrlParams{type=server, params={a=[1], b=[2]}, url=/admin}', url);
+assert.assertEquals('GenerateUrlParams{type=server, params={a=[1], b=[2]}, path=/portal/master/mysite}', url);
