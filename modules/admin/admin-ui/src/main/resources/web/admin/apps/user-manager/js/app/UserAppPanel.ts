@@ -44,6 +44,17 @@ module app {
                                     build()
                             ]).fire();
                         });
+                } else if (id && id.startsWith("guard:")) {
+                    var pathGuardKey = api.security.PathGuardKey.fromString(id.substr("guard:".length));
+                    new api.security.GetPathGuardByKeyRequest(pathGuardKey).sendAndParse().
+                        done((pathGuard: api.security.PathGuard) => {
+                            new app.browse.EditPrincipalEvent([
+                                new app.browse.UserTreeGridItemBuilder().
+                                    setPathGuard(pathGuard).
+                                    setType(UserTreeGridItemType.PATH_GUARD).
+                                    build()
+                            ]).fire();
+                        });
                 } else {
                     new api.app.ShowBrowsePanelEvent().fire();
                 }
@@ -81,6 +92,9 @@ module app {
                     } else if (api.ObjectHelper.iFrameSafeInstanceOf(wizardPanel, app.wizard.PrincipalWizardPanel)) {
                         name = name ||
                                api.content.ContentUnnamed.prettifyUnnamed((<app.wizard.PrincipalWizardPanel>wizardPanel).getUserItemType());
+                    } else if (api.ObjectHelper.iFrameSafeInstanceOf(wizardPanel, app.wizard.PathGuardWizardPanel)) {
+                        name = name ||
+                               api.content.ContentUnnamed.prettifyUnnamed((<app.wizard.PathGuardWizardPanel>wizardPanel).getUserItemType());
                     }
                     tabMenuItem.setLabel(name, !<string>event.getNewValue());
                 }
@@ -196,7 +210,7 @@ module app {
                     tabName = "Role";
                     break;
                 case UserTreeGridItemType.PATH_GUARDS:
-                    tabName = "Path guard";
+                    tabName = "Guard";
                     break;
                 case UserTreeGridItemType.PRINCIPAL:
                     principalType = userItem.getPrincipal().getType();

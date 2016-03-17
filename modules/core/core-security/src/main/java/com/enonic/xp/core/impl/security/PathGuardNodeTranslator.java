@@ -66,10 +66,11 @@ public class PathGuardNodeTranslator
 
     public static CreateNodeParams toCreateNodeParams( final PathGuard pathGuard )
     {
+        final String userStoreKey = pathGuard.getUserStoreKey() == null ? null : pathGuard.getUserStoreKey().toString();
         final PropertyTree data = new PropertyTree();
         data.setString( PathGuardPropertyPaths.DISPLAY_NAME_PATH, pathGuard.getDisplayName() );
         data.setString( PathGuardPropertyPaths.DESCRIPTION_PATH, pathGuard.getDescription() );
-        data.setString( PathGuardPropertyPaths.USER_STORE_KEY_PATH, pathGuard.getUserStoreKey().toString() );
+        data.setString( PathGuardPropertyPaths.USER_STORE_KEY_PATH, userStoreKey );
         data.setBoolean( PathGuardPropertyPaths.PASSIVE_PATH, pathGuard.isPassive() );
         data.addStrings( PathGuardPropertyPaths.PATHS_PATH.toString(), pathGuard.getPaths() );
 
