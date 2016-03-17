@@ -50,7 +50,7 @@ module api.app.browse.filter {
             this.hitsCounterEl = new api.dom.SpanEl("hits-counter");
 
             var hitsCounterAndClearButtonWrapper = new api.dom.DivEl("hits-and-clear");
-            hitsCounterAndClearButtonWrapper.appendChildren(this.hitsCounterEl, this.clearFilter);
+            hitsCounterAndClearButtonWrapper.appendChildren(this.clearFilter, this.hitsCounterEl);
 
             this.aggregationContainer = new api.aggregation.AggregationContainer();
             this.appendChild(this.aggregationContainer);
