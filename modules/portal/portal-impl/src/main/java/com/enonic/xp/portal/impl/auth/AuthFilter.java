@@ -39,16 +39,38 @@ public final class AuthFilter
         throws Exception
     {
         final String requestURI = req.getRequestURI();
-        final Optional<PathGuard> pathGuard = runWithAdminRole( () -> securityService.getPathGuardByPath( requestURI ) );
+        final Optional<PathGuard> pathGuardOptional = runWithAdminRole( () -> securityService.getPathGuardByPath( requestURI ) );
 
-        if ( pathGuard.isPresent() )
+        //If there is a PathGuard for the current path
+        if ( pathGuardOptional.isPresent() )
         {
-            final AuthResponseWrapper responseWrapper =
-                new AuthResponseWrapper( req, res, securityService, authDescriptorService, errorHandlerScriptFactory, pathGuard.get() );
-            chain.doFilter( req, responseWrapper );
+            final PathGuard pathGuard = pathGuardOptional.get();
+            final PathGuardResponseSerializer pathGuardResponseSerializer =
+                new PathGuardResponseSerializer( req, securityService, errorHandlerScriptFactory, authDescriptorService, pathGuard );
+
+            //If the PathGuard is passive or the user is authenticated
+            if ( pathGuard.isPassive() || isAuthenticated() )
+            {
+                // Wraps the response to handle 401/403 errors
+                final AuthResponseWrapper responseWrapper = new AuthResponseWrapper( res, pathGuardResponseSerializer );
+                chain.doFilter( req, responseWrapper );
+            }
+            else
+            {
+                //Else, renders the auth controller
+                final boolean responseSerialized = pathGuardResponseSerializer.serialize( res );
+
+                //If the auth controller was not rendered
+                if ( !responseSerialized )
+                {
+                    //Forwards the unmodified request and response
+                    chain.doFilter( req, res );
+                }
+            }
         }
         else
         {
+            //Else, forwards the unmodified request and response
             chain.doFilter( req, res );
         }
     }
@@ -69,6 +91,17 @@ public final class AuthFilter
     public void setControllerScriptFactory( final ErrorHandlerScriptFactory errorHandlerScriptFactory )
     {
         this.errorHandlerScriptFactory = errorHandlerScriptFactory;
+    }
+
+    private boolean isAuthenticated()
+    {
+        final Context context = ContextAccessor.current();
+        if ( context != null )
+        {
+            final AuthenticationInfo authInfo = context.getAuthInfo();
+            return authInfo != null && authInfo.isAuthenticated();
+        }
+        return false;
     }
 
     private <T> T runWithAdminRole( final Callable<T> callable )
