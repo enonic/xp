@@ -23,11 +23,11 @@ import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.ComponentUrlParams;
+import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
-import com.enonic.xp.portal.url.RewriteUrlParams;
 import com.enonic.xp.portal.url.ServiceUrlParams;
 
 import static org.apache.commons.lang.StringUtils.substringAfter;
@@ -118,9 +118,9 @@ public final class PortalUrlServiceImpl
     }
 
     @Override
-    public String rewriteUrl( final RewriteUrlParams params )
+    public String generateUrl( final GenerateUrlParams params )
     {
-        return build( new RewriteUrlBuilder(), params );
+        return build( new GenerateUrlBuilder(), params );
     }
 
     @Override
