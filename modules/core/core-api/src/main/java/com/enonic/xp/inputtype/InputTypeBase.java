@@ -4,7 +4,6 @@ import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
-import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueType;
 
 @Beta
@@ -35,7 +34,7 @@ public abstract class InputTypeBase
     @Override
     public Value createDefaultValue( final InputTypeConfig defaultConfig )
     {
-        return ValueFactory.newString( defaultConfig.getProperty( "default" ).getValue() );
+        return null;
     }
 
     protected final void validateType( final Property property, final ValueType expectedType )

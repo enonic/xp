@@ -29,10 +29,13 @@ final class CheckBoxType
     @Override
     public Value createDefaultValue( final InputTypeConfig defaultConfig )
     {
-        if ( defaultConfig.getProperty( "default" ) != null )
+        final InputTypeProperty defaultProperty = defaultConfig.getProperty( "default" );
+        if ( defaultProperty != null )
         {
-            final String defaultValue = defaultConfig.getProperty( "default" ).getValue();
-            return ValueFactory.newBoolean( VALID_VALUE.equals( defaultValue ) ? true : false );
+            final String defaultValue = defaultProperty.getValue();
+
+            return VALID_VALUE.equals( defaultValue ) ? ValueFactory.newBoolean(true) :
+                super.createDefaultValue( defaultConfig );
         }
         return super.createDefaultValue( defaultConfig );
     }
