@@ -9,24 +9,13 @@ import org.osgi.service.component.annotations.Component;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
+import com.enonic.xp.util.ByteSizeParser;
 
 @Component(configurationPid = "com.enonic.xp.blobstore.file")
 public class FileBlobStoreConfigImpl
     implements FileBlobStoreConfig
 {
     private Configuration config;
-
-    @Override
-    public String readThroughProvider()
-    {
-        return null;
-    }
-
-    @Override
-    public boolean readThroughEnabled()
-    {
-        return false;
-    }
 
     @Activate
     public void activate( final Map<String, String> map )
@@ -38,6 +27,25 @@ public class FileBlobStoreConfigImpl
 
         this.config = new ConfigInterpolator().interpolate( this.config );
     }
+
+    @Override
+    public long readThroughSizeThreshold()
+    {
+        return ByteSizeParser.parse( this.config.get( "readThrough.sizeThreshold" ) );
+    }
+
+    @Override
+    public String readThroughProvider()
+    {
+        return this.config.get( "readThrough.provider" );
+    }
+
+    @Override
+    public boolean readThroughEnabled()
+    {
+        return Boolean.valueOf( this.config.get( "readThrough.enabled" ) );
+    }
+
 
     @Override
     public File baseDir()

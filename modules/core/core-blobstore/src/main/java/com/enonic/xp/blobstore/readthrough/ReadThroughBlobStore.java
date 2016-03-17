@@ -15,10 +15,13 @@ public class ReadThroughBlobStore
 
     private BlobStore readThroughStore;
 
+    private long sizeThreshold;
+
     private ReadThroughBlobStore( final Builder builder )
     {
-        store = builder.store;
-        readThroughStore = builder.readThroughStore;
+        this.sizeThreshold = builder.sizeThreshold;
+        this.store = builder.store;
+        this.readThroughStore = builder.readThroughStore;
     }
 
     public static Builder create()
@@ -53,9 +56,17 @@ public class ReadThroughBlobStore
     {
         final BlobRecord blobRecord = this.store.addRecord( segment, in );
 
-        this.readThroughStore.addRecord( segment, blobRecord );
+        if ( withinLimit( blobRecord ) )
+        {
+            this.readThroughStore.addRecord( segment, blobRecord );
+        }
 
         return blobRecord;
+    }
+
+    private boolean withinLimit( final BlobRecord blobRecord )
+    {
+        return blobRecord.getLength() <= this.sizeThreshold;
     }
 
     @Override
@@ -73,6 +84,8 @@ public class ReadThroughBlobStore
 
         private BlobStore readThroughStore;
 
+        private long sizeThreshold;
+
         private Builder()
         {
         }
@@ -86,6 +99,12 @@ public class ReadThroughBlobStore
         public Builder readThroughStore( final BlobStore val )
         {
             readThroughStore = val;
+            return this;
+        }
+
+        public Builder sizeThreshold( final long sizeThreshold )
+        {
+            this.sizeThreshold = sizeThreshold;
             return this;
         }
 

@@ -6,6 +6,8 @@ public interface ProviderConfig
 
     boolean readThroughEnabled();
 
+    long readThroughSizeThreshold();
+
     boolean isValid();
 
 }

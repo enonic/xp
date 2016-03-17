@@ -10,6 +10,7 @@ import com.google.common.base.Strings;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
+import com.enonic.xp.util.ByteSizeParser;
 
 @Component(configurationPid = "com.enonic.xp.blobstore.swift")
 public class SwiftConfigImpl
@@ -93,6 +94,13 @@ public class SwiftConfigImpl
     {
         return Boolean.valueOf( this.config.get( "readThrough.enabled" ) );
     }
+
+    @Override
+    public long readThroughSizeThreshold()
+    {
+        return ByteSizeParser.parse( this.config.get( "readThrough.sizeThreshold" ) );
+    }
+
 
     @Override
     public boolean isValid()

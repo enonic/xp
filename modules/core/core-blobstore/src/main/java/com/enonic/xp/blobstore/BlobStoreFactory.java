@@ -76,6 +76,7 @@ public class BlobStoreFactory
                 return ReadThroughBlobStore.create().
                     store( providerStore ).
                     readThroughStore( readThroughProvider.get() ).
+                    sizeThreshold( config.readThroughSizeThreshold() ).
                     build();
             }
         }
