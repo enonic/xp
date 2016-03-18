@@ -21,13 +21,26 @@ module api.liveedit.fragment {
 
         private fragmentContainsLayout: boolean;
 
+        private fragmentContent: Content;
+
+        private fragmentContentLoadedListeners: {(event: api.liveedit.FragmentComponentLoadedEvent): void}[];
+
         constructor(builder: FragmentComponentViewBuilder) {
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.fragmentComponent = builder.component;
             this.fragmentContainsLayout = false;
+            this.fragmentContent = null;
+            this.fragmentContentLoadedListeners = [];
 
             super(builder.setPlaceholder(new FragmentPlaceholder(this)).setTooltipViewer(
                 new FragmentComponentViewer()).setInspectActionRequired(true));
+
+            this.fragmentComponent.onPropertyValueChanged((e: api.content.page.region.ComponentPropertyValueChangedEvent) => {
+                if (e.getPropertyName() === FragmentComponent.PROPERTY_FRAGMENT) {
+                    this.loadFragmentContent();
+                }
+            });
+            this.loadFragmentContent();
 
             this.parseContentViews(this);
         }
@@ -38,6 +51,34 @@ module api.liveedit.fragment {
 
         containsLayout(): boolean {
             return this.fragmentContainsLayout;
+        }
+
+        getFragmentRootComponent(): api.content.page.region.Component {
+            if (this.fragmentContent) {
+                let page = this.fragmentContent.getPage();
+                if (page) {
+                    return page.getFragment();
+                }
+            }
+            return null;
+        }
+
+        private loadFragmentContent() {
+            var contentId = this.fragmentComponent.getFragment();
+            if (contentId) {
+                if (!this.fragmentContent || !contentId.equals(this.fragmentContent.getContentId())) {
+                    new GetContentByIdRequest(contentId).sendAndParse().then((content: Content)=> {
+                        this.fragmentContent = content;
+                        this.notifyFragmentContentLoaded();
+                    }).catch((reason: any) => {
+                        this.fragmentContent = null;
+                        this.notifyFragmentContentLoaded();
+                    }).done();
+                }
+            } else {
+                this.fragmentContent = null;
+                this.notifyFragmentContentLoaded();
+            }
         }
 
         protected getComponentContextMenuActions(actions: api.ui.Action[], liveEditModel: LiveEditModel): api.ui.Action[] {
@@ -68,5 +109,23 @@ module api.liveedit.fragment {
                 this.parseContentViews(childElement);
             });
         }
+
+        onFragmentContentLoaded(listener: (event: api.liveedit.FragmentComponentLoadedEvent) => void) {
+            this.fragmentContentLoadedListeners.push(listener);
+        }
+
+        unFragmentContentLoaded(listener: (event: api.liveedit.FragmentComponentLoadedEvent) => void) {
+            this.fragmentContentLoadedListeners = this.fragmentContentLoadedListeners.filter((curr) => {
+                return curr != listener;
+            })
+        }
+
+        notifyFragmentContentLoaded() {
+            var event = new api.liveedit.FragmentComponentLoadedEvent(this);
+            this.fragmentContentLoadedListeners.forEach((listener) => {
+                listener(event);
+            });
+        }
+
     }
 }

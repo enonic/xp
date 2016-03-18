@@ -55,6 +55,7 @@
 ///<reference path='ComponentResetEvent.ts' />
 ///<reference path='ComponentDuplicatedEvent.ts' />
 ///<reference path='ComponentLoadedEvent.ts' />
+///<reference path='FragmentComponentLoadedEvent.ts' />
 ///<reference path='Position.ts' />
 ///<reference path='LiveEditPageViewReadyEvent.ts' />
 ///<reference path='DragAndDrop.ts' />

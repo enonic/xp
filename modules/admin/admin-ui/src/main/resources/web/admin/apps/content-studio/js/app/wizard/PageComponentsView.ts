@@ -15,6 +15,7 @@ module app.wizard {
     import PageView = api.liveedit.PageView;
     import ItemView = api.liveedit.ItemView;
     import TextComponentView = api.liveedit.text.TextComponentView;
+    import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
 
     import Mask = api.ui.mask.Mask;
 
@@ -189,6 +190,9 @@ module app.wizard {
                             if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), TextComponentView)) {
                                 this.bindTreeTextNodeUpdateOnTextComponentModify(<TextComponentView>event.getComponentView());
                             }
+                            if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), FragmentComponentView)) {
+                                this.bindTreeFragmentNodeUpdateOnComponentLoaded(<FragmentComponentView>event.getComponentView());
+                            }
 
                             this.constrainToParent();
                         });
@@ -227,6 +231,9 @@ module app.wizard {
 
                     if (api.ObjectHelper.iFrameSafeInstanceOf(event.getNewComponentView(), TextComponentView)) {
                         this.bindTreeTextNodeUpdateOnTextComponentModify(<TextComponentView>event.getNewComponentView());
+                    }
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(event.getNewComponentView(), FragmentComponentView)) {
+                        this.bindTreeFragmentNodeUpdateOnComponentLoaded(<FragmentComponentView>event.getNewComponentView());
                     }
                 });
             });
@@ -351,6 +358,12 @@ module app.wizard {
 
             textComponentView.onKeyUp(handler);
             textComponentView.getHTMLElement().onpaste = handler;
+        }
+
+        private bindTreeFragmentNodeUpdateOnComponentLoaded(fragmentComponentView: FragmentComponentView) {
+            fragmentComponentView.onFragmentContentLoaded((e)=> {
+                this.tree.updateNode(e.getFragmentComponentView())
+            });
         }
 
         private selectItem(treeNode: TreeNode<ItemView>) {
