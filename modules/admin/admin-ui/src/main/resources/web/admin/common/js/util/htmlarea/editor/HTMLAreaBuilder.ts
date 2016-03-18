@@ -22,6 +22,7 @@ module api.util.htmlarea.editor {
         private createDialogListeners: {(event: CreateHtmlAreaDialogEvent): void}[] = [];
         private inline: boolean = false;
         private fixedToolbarContainer: string;
+        private convertUrls: boolean = false;
 
         setAssetsUri(assetsUri: string): HTMLAreaBuilder {
             this.assetsUri = assetsUri;
@@ -86,6 +87,11 @@ module api.util.htmlarea.editor {
             return this;
         }
 
+        setConvertUrls(convertUrls: boolean): HTMLAreaBuilder {
+            this.convertUrls = convertUrls;
+            return this;
+        }
+
         private checkRequiredFieldsAreSet() {
             if (!this.assetsUri || !this.selector || !this.contentId) {
                 throw new Error("some reruired field(s) is(are) missing for tinymce editor");
@@ -106,6 +112,7 @@ module api.util.htmlarea.editor {
                 theme_url: 'modern',
                 inline: this.inline,
                 fixed_toolbar_container: this.fixedToolbarContainer,
+                convert_urls: this.convertUrls,
 
                 toolbar: [
                     "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor image link unlink | table | code"
