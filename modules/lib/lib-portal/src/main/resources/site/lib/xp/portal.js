@@ -202,19 +202,6 @@ exports.getSiteConfig = function () {
 };
 
 /**
- * This function returns the auth configuration for this userstore.
- * It is meant to be called from an auth controller.
- *
- * @example-ref examples/portal/getAuthConfig.js
- *
- * @returns {object} The auth configuration for current userstore as JSON.
- */
-exports.getAuthConfig = function () {
-    var bean = __.newBean('com.enonic.xp.lib.portal.current.GetCurrentAuthConfigHandler');
-    return __.toNativeObject(bean.execute());
-};
-
-/**
  * This function returns the content corresponding to the current execution context. It is meant to be called from a page, layout or
  * part controller
  *

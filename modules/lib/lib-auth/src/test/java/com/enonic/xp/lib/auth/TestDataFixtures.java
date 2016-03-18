@@ -4,11 +4,16 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -67,6 +72,33 @@ public class TestDataFixtures
             modifiedTime( Instant.now( clock ) ).
             build();
     }
+
+    public static UserStore getTestUserStore()
+    {
+        return UserStore.create().
+            key( UserStoreKey.from( "userStoreTestKey" ) ).
+            description( "User store used for testing" ).
+            displayName( "User store test" ).
+            authConfig( getTestAuthConfig() ).
+            build();
+    }
+
+    private static AuthConfig getTestAuthConfig()
+    {
+        final PropertySet backgroundPropertySet = new PropertySet();
+        backgroundPropertySet.setString( "subString", "subStringValue" );
+        backgroundPropertySet.setLong( "subLong", 123l );
+
+        final PropertyTree config = new PropertyTree();
+        config.setSet( "set", backgroundPropertySet );
+        config.setString( "string", "stringValue" );
+
+        return AuthConfig.create().
+            applicationKey( ApplicationKey.from( "com.enonic.app.test" ) ).
+            config( config ).
+            build();
+    }
+
 
     public static AuthenticationInfo createAuthenticationInfo()
     {
