@@ -2,6 +2,7 @@ package com.enonic.xp.awss3;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -34,14 +35,15 @@ class AwsS3BlobStore
 
     private final String endpoint;
 
-    private final String bucketName;
+    private final Map<Segment, String> buckets;
+
 
     private AwsS3BlobStore( final Builder builder )
     {
         accessKey = builder.accessKey;
         secretAccessKey = builder.secretAccessKey;
         endpoint = builder.endpoint;
-        bucketName = builder.bucketName;
+        buckets = builder.buckets;
 
         this.context = ClassLoaderHelper.callWith( this::createContext, ContextBuilder.class );
 
@@ -52,14 +54,16 @@ class AwsS3BlobStore
 
     private void verifyOrCreateBucket()
     {
-        try
+        for ( final String bucketName : buckets.values() )
         {
-            blobStore.createContainerInLocation( null, this.bucketName );
-
-        }
-        catch ( Exception e )
-        {
-            throw new BlobStoreException( "Cannot create or verify bucket [" + bucketName + "]", e );
+            try
+            {
+                blobStore.createContainerInLocation( null, bucketName );
+            }
+            catch ( Exception e )
+            {
+                throw new BlobStoreException( "Cannot create or verify bucket [" + bucketName + "]", e );
+            }
         }
     }
 
@@ -81,11 +85,24 @@ class AwsS3BlobStore
         return new Builder();
     }
 
+    private String getBucketName( final Segment segment )
+    {
+        final String bucketName = this.buckets.get( segment );
+
+        if ( bucketName == null )
+        {
+            throw new BlobStoreException( "Bucket not found for segment [" + segment.getValue() + "]" );
+        }
+
+        return bucketName;
+    }
+
     @Override
     public BlobRecord getRecord( final Segment segment, final BlobKey key )
         throws BlobStoreException
     {
-        final Blob blob = this.blobStore.getBlob( this.bucketName, key.toString() );
+
+        final Blob blob = this.blobStore.getBlob( getBucketName( segment ), key.toString() );
 
         if ( blob == null )
         {
@@ -110,10 +127,10 @@ class AwsS3BlobStore
     {
         final BlobKey key = BlobKeyCreator.createKey( in );
 
-        return doAddRecord( in, key );
+        return doAddRecord( segment, in, key );
     }
 
-    private BlobRecord doAddRecord( final ByteSource in, final BlobKey key )
+    private BlobRecord doAddRecord( final Segment segment, final ByteSource in, final BlobKey key )
     {
         try
         {
@@ -122,21 +139,21 @@ class AwsS3BlobStore
                 contentLength( in.size() ).
                 build();
 
-            blobStore.putBlob( this.bucketName, blob );
+            blobStore.putBlob( getBucketName( segment ), blob );
+
+            return new AwsS3BlobRecord( in, key );
         }
         catch ( IOException e )
         {
             throw Exceptions.unchecked( e );
         }
-
-        return new AwsS3BlobRecord( in, key );
     }
 
     @Override
     public BlobRecord addRecord( final Segment segment, final BlobRecord record )
         throws BlobStoreException
     {
-        return doAddRecord( record.getBytes(), record.getKey() );
+        return doAddRecord( segment, record.getBytes(), record.getKey() );
     }
 
     public static final class Builder
@@ -147,7 +164,7 @@ class AwsS3BlobStore
 
         private String endpoint;
 
-        private String bucketName;
+        private Map<Segment, String> buckets;
 
 
         private Builder()
@@ -172,9 +189,9 @@ class AwsS3BlobStore
             return this;
         }
 
-        public Builder bucketName( final String val )
+        public Builder setBuckets( final Map<Segment, String> buckets )
         {
-            bucketName = val;
+            this.buckets = buckets;
             return this;
         }
 
@@ -182,7 +199,7 @@ class AwsS3BlobStore
         {
             Preconditions.checkNotNull( this.accessKey, "accessKey must be configured" );
             Preconditions.checkNotNull( this.secretAccessKey, "secretAccessKey must be configured" );
-            Preconditions.checkNotNull( this.bucketName, "bucketName must be configured" );
+            Preconditions.checkNotNull( this.buckets, "bucketName must be configured" );
         }
 
         public AwsS3BlobStore build()

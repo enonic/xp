@@ -53,7 +53,7 @@ public class AwsS3BlobStoreProvider
             accessKey( config.accessKey() ).
             secretAccessKey( config.secretAccessKey() ).
             endpoint( config.endpoint() ).
-            bucketName( config.bucketName() ).
+            setBuckets( config.segments() ).
             build();
     }
 
