@@ -63,6 +63,8 @@ module api.liveedit {
 
         private itemViewRemovedListener: (event: ItemViewRemovedEvent) => void;
 
+        private scrolledListener: (event: WheelEvent) => void;
+
         public static debug;
 
         private propertyChangedListener: (event: api.PropertyChangedEvent) => void;
@@ -74,6 +76,8 @@ module api.liveedit {
         private disableContextMenu: boolean;
 
         private closeTextEditModeButton: api.dom.Element;
+
+        private editorToolbar: api.dom.DivEl;
 
         private registerPageModel(pageModel: PageModel, resetAction: api.ui.Action) {
             if (PageView.debug) {
@@ -138,6 +142,10 @@ module api.liveedit {
             }
 
             this.registerPageModel(this.pageModel, resetAction);
+
+            this.scrolledListener = (event: WheelEvent) => {
+                this.toggleStickyToolbar();
+            }
 
             this.itemViewAddedListener = (event: ItemViewAddedEvent) => {
                 // register the view and all its child views (i.e layout with regions)
@@ -220,9 +228,23 @@ module api.liveedit {
             return closeButton;
         }
 
+        private isPageScrolled() {
+            return this.getEl().getParent().getScrollTop() > 0;
+        }
+
+        private toggleStickyToolbar() {
+            if (!this.isPageScrolled()) {
+                this.editorToolbar.removeClass("sticky-toolbar");
+            }
+            else if (!this.editorToolbar.hasClass("sticky-toolbar")) {
+                this.editorToolbar.addClass("sticky-toolbar");
+            }
+        }
+
         appendContainerForTextToolbar() {
             if (!this.hasToolbarContainer()) {
-                this.appendChild(new api.dom.DivEl("mce-toolbar-container"));
+                this.editorToolbar = new api.dom.DivEl("mce-toolbar-container");
+                this.appendChild(this.editorToolbar);
                 this.addClass("has-toolbar-container");
             }
         }
@@ -446,10 +468,14 @@ module api.liveedit {
 
             if (flag) {
                 this.addVerticalSpaceForEditorToolbar();
+
+                this.onScrolled(this.scrolledListener);
                 new PageTextModeStartedEvent(this).fire();
             }
             else {
                 this.removeVerticalSpaceForEditorToolbar();
+                this.unScrolled(this.scrolledListener);
+
                 api.liveedit.Highlighter.get().updateLastHighlightedItemView();
                 api.liveedit.SelectedHighlighter.get().updateLastHighlightedItemView();
             }
@@ -459,6 +485,7 @@ module api.liveedit {
         private addVerticalSpaceForEditorToolbar() {
             this.getPageView().getEl().setPosition("relative");
             this.updateVerticalSpaceForEditorToolbar()
+            this.toggleStickyToolbar();
         }
 
         private updateVerticalSpaceForEditorToolbar() {
