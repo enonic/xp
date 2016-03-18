@@ -1222,8 +1222,6 @@ module api.ui.image {
                 this.setImageClipPath(this.cropClipPath);
 
             } else {
-                // reset radius for it to be a quarter of the smallest side
-                this.resetFocusRadius();
 
                 if (this.focusData.auto) {
                     // reset focus position to calc new value
@@ -1303,6 +1301,11 @@ module api.ui.image {
                 if (this.isImageLoaded() && this.isCropEditMode()) {
                     this.updateCropMaskPosition();
                 }
+
+                // reset radius for it to be a quarter of the smallest side
+                this.resetFocusRadius();
+                // update focus position for it to stay in place in case focus radius has not been changed
+                this.updateFocusMaskPosition();
             }
 
             if (ImageEditor.debug) {
