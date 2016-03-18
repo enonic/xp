@@ -6,27 +6,27 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
 @Beta
-public final class RewriteUrlParams
-    extends AbstractUrlParams<RewriteUrlParams>
+public final class GenerateUrlParams
+    extends AbstractUrlParams<GenerateUrlParams>
 {
-    private String url;
+    private String path;
 
-    public String getUrl()
+    public String getPath()
     {
-        return url;
+        return path;
     }
 
-    public RewriteUrlParams url( final String url )
+    public GenerateUrlParams url( final String url )
     {
-        this.url = Strings.emptyToNull( url );
+        this.path = Strings.emptyToNull( url );
         return this;
     }
 
     @Override
-    public RewriteUrlParams setAsMap( final Multimap<String, String> map )
+    public GenerateUrlParams setAsMap( final Multimap<String, String> map )
     {
         super.setAsMap( map );
-        url( singleValue( map, "_url" ) );
+        url( singleValue( map, "_path" ) );
         getParams().putAll( map );
         return this;
     }
@@ -35,6 +35,6 @@ public final class RewriteUrlParams
     protected void buildToString( final MoreObjects.ToStringHelper helper )
     {
         super.buildToString( helper );
-        helper.add( "url", this.url );
+        helper.add( "path", this.path );
     }
 }

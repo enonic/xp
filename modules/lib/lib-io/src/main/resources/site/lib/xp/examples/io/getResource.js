@@ -18,8 +18,8 @@ if (res2.exists()) {
 // END
 
 assert.assertEquals(true, exists);
-assert.assertEquals(12, size);
+assert.assertEquals(11, size);
 assert.assertNotNull(stream);
 assert.assertEquals(true, res2.exists());
-assert.assertEquals(12, res2.getSize());
+assert.assertEquals(11, res2.getSize());
 assert.assertNotNull(res2.getStream());

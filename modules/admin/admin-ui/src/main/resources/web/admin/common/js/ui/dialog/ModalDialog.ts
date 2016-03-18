@@ -132,7 +132,6 @@ module api.ui.dialog {
 
         show() {
             super.show();
-            this.centerMyself();
             this.buttonRow.focusDefaultAction();
         }
 
