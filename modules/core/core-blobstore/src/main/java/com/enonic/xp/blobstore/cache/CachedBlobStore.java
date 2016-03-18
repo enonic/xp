@@ -75,7 +75,7 @@ public final class CachedBlobStore
             return;
         }
 
-        this.cache.put( record.getKey(), record );
+        this.cache.put( record.getKey(), new CacheBlobRecord( record.getKey(), record.getBytes() ) );
     }
 
     public static Builder create()

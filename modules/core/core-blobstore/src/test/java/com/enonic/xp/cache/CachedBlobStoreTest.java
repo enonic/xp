@@ -38,6 +38,7 @@ public class CachedBlobStoreTest
         final BlobRecord record = Mockito.mock( BlobRecord.class );
         Mockito.when( record.getKey() ).thenReturn( new BlobKey( key ) );
         Mockito.when( record.getLength() ).thenReturn( size );
+        Mockito.when( record.getBytes() ).thenReturn( ByteSource.wrap( "these are my bytes".getBytes() ) );
         return record;
     }
 
@@ -49,30 +50,13 @@ public class CachedBlobStoreTest
 
         Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
 
-        final BlobRecord result1 = this.cachedBlobStore.getRecord( segment, record.getKey() );
-        assertSame( record, result1 );
+        final BlobRecord record1 = this.cachedBlobStore.getRecord( segment, record.getKey() );
+        assertNotNull( record1 );
 
         final BlobRecord result2 = this.cachedBlobStore.getRecord( segment, record.getKey() );
-        assertSame( record, result2 );
+        assertNotNull( result2 );
 
         Mockito.verify( this.blobStore, Mockito.times( 2 ) ).getRecord( segment, record.getKey() );
-    }
-
-    @Test
-    public void getLargeRecord()
-    {
-        final BlobRecord record = newRecord( "0123", 20L );
-        assertNull( this.cachedBlobStore.getRecord( segment, record.getKey() ) );
-
-        Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
-
-        final BlobRecord result1 = this.cachedBlobStore.getRecord( segment, record.getKey() );
-        assertSame( record, result1 );
-
-        final BlobRecord result2 = this.cachedBlobStore.getRecord( segment, record.getKey() );
-        assertSame( record, result2 );
-
-        Mockito.verify( this.blobStore, Mockito.times( 3 ) ).getRecord( segment, record.getKey() );
     }
 
     @Test
@@ -84,10 +68,10 @@ public class CachedBlobStoreTest
         Mockito.when( this.blobStore.addRecord( segment, byteSource ) ).thenReturn( record );
 
         final BlobRecord result1 = this.cachedBlobStore.addRecord( segment, byteSource );
-        assertSame( record, result1 );
+        assertNotNull( result1 );
 
         final BlobRecord result2 = this.cachedBlobStore.getRecord( segment, record.getKey() );
-        assertSame( record, result2 );
+        assertNotNull( result2 );
 
         Mockito.verify( this.blobStore, Mockito.times( 0 ) ).getRecord( segment, record.getKey() );
     }
