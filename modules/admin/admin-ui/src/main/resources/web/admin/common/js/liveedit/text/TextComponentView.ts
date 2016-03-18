@@ -32,9 +32,13 @@ module api.liveedit.text {
 
         private focusOnInit: boolean;
 
+        private editorContainer:api.dom.DivEl;
+
         public static debug = false;
 
         private static DEFAULT_TEXT: string = "";
+
+        private static EDITOR_FOCUSED_CLASS:string = "editor-focused";
 
         // special handling for click to allow dblclick event without triggering 2 clicks before it
         public static DBL_CLICK_TIMEOUT = 250;
@@ -62,17 +66,17 @@ module api.liveedit.text {
 
             this.rootElement.getHTMLElement().onpaste = this.handlePasteEvent.bind(this);
 
-            this.onAdded(() => {
-                //TODO: this seems to be never triggered because element is already in DOM when parsed!!!
+            this.onAdded(() => { // is triggered on item insert or move
                 this.focusOnInit = true;
-                this.addClass("editor-focused");
+                this.addClass(TextComponentView.EDITOR_FOCUSED_CLASS);
                 if (!this.htmlAreaEditor && !this.isInitializingEditor) {
                     this.initEditor();
+                } else if (!!this.htmlAreaEditor) {
+                    this.reInitEditor(); // on added, inline editor losses its root element of the editable area
                 }
             });
 
             this.getPageView().appendContainerForTextToolbar();
-
 
             this.onRemoved(() => {
                 this.destroyEditor();
@@ -85,7 +89,7 @@ module api.liveedit.text {
             };
 
             this.onMouseLeave(() => {
-                if (this.getEl().hasClass("editor-focused")) {
+                if (this.getEl().hasClass(TextComponentView.EDITOR_FOCUSED_CLASS)) {
                     this.processEditorValue();
                 }
             });
@@ -93,8 +97,15 @@ module api.liveedit.text {
             api.liveedit.LiveEditPageDialogCreatedEvent.on(handleDialogCreated.bind(this));
         }
 
-        private getContentId(): api.content.ContentId {
-            return this.getPageView().getLiveEditModel().getContent().getContentId();
+        private reInitEditor() {
+            this.destroyEditor();
+            this.editorContainer.remove();
+            this.editorContainer = null;
+            this.htmlAreaEditor = null;
+        }
+
+        private getContentId():api.content.ContentId {
+            return this.liveEditModel.getContent().getContentId();
         }
 
         private isAllTextSelected(): boolean {
@@ -239,7 +250,7 @@ module api.liveedit.text {
                 if (this.htmlAreaEditor) {
                     this.processEditorValue();
                 }
-                this.removeClass("editor-focused");
+                this.removeClass(TextComponentView.EDITOR_FOCUSED_CLASS);
             }
 
             this.toggleClass('edit-mode', flag);
@@ -253,7 +264,7 @@ module api.liveedit.text {
                 }
 
                 if (this.textComponent.isEmpty()) {
-                    if (!!this.htmlAreaEditor) {
+                    if (!!this.htmlAreaEditor ) {
                         this.htmlAreaEditor.setContent(TextComponentView.DEFAULT_TEXT);
                     }
                     this.rootElement.setHtml(TextComponentView.DEFAULT_TEXT, false);
@@ -263,11 +274,11 @@ module api.liveedit.text {
         }
 
         private onFocusHandler(e) {
-            this.addClass("editor-focused");
+            this.addClass(TextComponentView.EDITOR_FOCUSED_CLASS);
         }
 
         private onBlurHandler(e) {
-            this.removeClass("editor-focused");
+            this.removeClass(TextComponentView.EDITOR_FOCUSED_CLASS);
 
 
             setTimeout(() => {
@@ -280,7 +291,7 @@ module api.liveedit.text {
         private onKeydownHandler(e) {
             if (e.keyCode == 27) { // esc
                 this.closePageTextEditMode();
-                this.removeClass("editor-focused");
+                this.removeClass(TextComponentView.EDITOR_FOCUSED_CLASS);
             }
         }
 
@@ -290,7 +301,11 @@ module api.liveedit.text {
                 id = this.getId().replace(/\./g, '_');
 
             this.addClass(id);
-            this.appendChild(new api.dom.DivEl("tiny-mce-here"));
+
+            if (!this.editorContainer) {
+                this.editorContainer = new api.dom.DivEl("tiny-mce-here");
+                this.appendChild(this.editorContainer);
+            }
 
             new HTMLAreaBuilder().
                 setSelector('div.' + id + ' .tiny-mce-here').
@@ -327,7 +342,7 @@ module api.liveedit.text {
             var textItemViews = this.getPageView().getItemViewsByType(api.liveedit.text.TextItemType.get());
 
             var editorFocused = textItemViews.some((view: ItemView) => {
-                return view.getEl().hasClass("editor-focused");
+                return view.getEl().hasClass(TextComponentView.EDITOR_FOCUSED_CLASS);
             });
 
             var dialogVisible = !!this.modalDialog && this.modalDialog.isVisible();
@@ -336,6 +351,9 @@ module api.liveedit.text {
         }
 
         private processEditorValue() {
+            if(!this.htmlAreaEditor)
+                return;
+
             if (this.isEditorEmpty()) {
                 this.textComponent.setText(TextComponentView.DEFAULT_TEXT);
                 // copy editor content over to the root html element
