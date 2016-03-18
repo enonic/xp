@@ -55,8 +55,7 @@ public class PathGuardResponseSerializer
         throws IOException
     {
         final UserStore userStore = retrieveUserStore();
-        final AuthConfig authConfig = userStore == null ? null : userStore.getAuthConfig();
-        final AuthDescriptor authDescriptor = retrieveAuthDescriptor( authConfig );
+        final AuthDescriptor authDescriptor = retrieveAuthDescriptor( userStore );
 
         if ( authDescriptor != null )
         {
@@ -65,7 +64,7 @@ public class PathGuardResponseSerializer
                 adapt( request );
             portalRequest.setBaseUri( "/portal" );
             portalRequest.setApplicationKey( authDescriptor.getKey() );
-            portalRequest.setAuthConfig( authConfig );
+            portalRequest.setUserStore( userStore );
 
             final PortalError portalError = PortalError.create().
                 status( HttpStatus.FORBIDDEN ).
@@ -95,11 +94,15 @@ public class PathGuardResponseSerializer
         return null;
     }
 
-    private AuthDescriptor retrieveAuthDescriptor( final AuthConfig authConfig )
+    private AuthDescriptor retrieveAuthDescriptor( final UserStore userStore )
     {
-        if ( authConfig != null )
+        if ( userStore != null )
         {
-            return authDescriptorService.getDescriptor( authConfig.getApplicationKey() );
+            final AuthConfig authConfig = userStore.getAuthConfig();
+            if ( authConfig != null )
+            {
+                return authDescriptorService.getDescriptor( authConfig.getApplicationKey() );
+            }
         }
         return null;
     }

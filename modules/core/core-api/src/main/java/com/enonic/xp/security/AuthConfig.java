@@ -19,9 +19,8 @@ public final class AuthConfig
     private AuthConfig( final Builder builder )
     {
         Preconditions.checkNotNull( builder.applicationKey, "applicationKey cannot be null" );
-        Preconditions.checkNotNull( builder.config, "config cannot be null" );
         this.applicationKey = builder.applicationKey;
-        this.config = builder.config;
+        this.config = builder.config == null ? new PropertyTree() : builder.config;
     }
 
     public ApplicationKey getApplicationKey()
