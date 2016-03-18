@@ -6,7 +6,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.AuthConfig;
-import com.enonic.xp.security.UserStore;
 
 public final class GetIdProviderConfigHandler
     implements ScriptBean
