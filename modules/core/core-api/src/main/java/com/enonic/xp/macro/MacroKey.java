@@ -4,12 +4,15 @@ import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.util.CharacterChecker;
 
-public class MacroKey
+@Beta
+public final class MacroKey
 {
-    protected static final String SEPARATOR = ":";
+    private static final String SEPARATOR = ":";
 
     private final ApplicationKey applicationKey;
 
@@ -17,10 +20,10 @@ public class MacroKey
 
     private final String refString;
 
-    public MacroKey( final ApplicationKey applicationKey, final String name )
+    private MacroKey( final ApplicationKey applicationKey, final String name )
     {
         this.applicationKey = applicationKey;
-        this.name = CharacterChecker.check( name, "Not a valid name for MacroKey [" + name + "]" );
+        this.name = CharacterChecker.check( name, "Not a valid Macro name [" + name + "]" );
         this.refString = applicationKey.toString() + SEPARATOR + name;
     }
 

@@ -1,21 +1,24 @@
 package com.enonic.xp;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.macro.MacroKey;
 
+import static org.junit.Assert.*;
+
 public class MacroKeyTest
 {
     @Test
-    public void testName() {
-        final MacroKey macroKey = new MacroKey( ApplicationKey.from( "my-app" ), "macros1" );
+    public void testName()
+    {
+        final MacroKey macroKey = MacroKey.from( ApplicationKey.from( "my-app" ), "macros1" );
         assertEquals( "my-app:macros1", macroKey.toString() );
     }
 
     @Test
-    public void testFrom() {
+    public void testFrom()
+    {
         final MacroKey macroKey1 = MacroKey.from( ApplicationKey.from( "my-app" ), "macros1" );
         assertEquals( "my-app:macros1", macroKey1.toString() );
 
@@ -24,7 +27,8 @@ public class MacroKeyTest
     }
 
     @Test
-    public void testEquals() {
+    public void testEquals()
+    {
         final MacroKey macroKey1 = MacroKey.from( ApplicationKey.from( "my-app" ), "macros1" );
         final MacroKey macroKey2 = MacroKey.from( "my-app:macros1" );
 
