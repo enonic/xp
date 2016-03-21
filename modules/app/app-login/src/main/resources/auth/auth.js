@@ -3,26 +3,29 @@ var portalLib = require('/lib/xp/portal');
 var authLib = require('/lib/xp/auth');
 
 exports.handle403 = function (req) {
-
-    log.info(JSON.stringify(req, null, 2));
-
     var userStore = authLib.getUserStore();
 
-    var idProviderConfig = authLib.getIdProviderConfig();
+    var jQueryUrl = portalLib.assetUrl({path: "js/jquery-2.2.0.min.js"});
+    var appLoginJsUrl = portalLib.assetUrl({path: "js/app-login.js"});
+    var appLoginCssUrl = portalLib.assetUrl({path: "css/app-login.css"});
+
     var backgroundUrl;
+    var idProviderConfig = authLib.getIdProviderConfig();
     if (idProviderConfig.background) {
         backgroundUrl = portalLib.assetUrl({
             application: idProviderConfig.background.application,
             path: idProviderConfig.background.path
         });
     } else {
-        //TODO merge master backgroundUrl = portalLib.url({path: "/admin/common/images/background-1920.jpg"});
-        backgroundUrl = "/admin/common/images/background-1920.jpg";
+        backgroundUrl = portalLib.assetUrl({path: "img/background-1920.jpg"});
     }
 
     var view = resolve('auth.html');
     var params = {
-        userStore: userStore.key,
+        userStoreKey: userStore.key,
+        jQueryUrl: jQueryUrl,
+        appLoginJsUrl: appLoginJsUrl,
+        appLoginCssUrl: appLoginCssUrl,
         backgroundUrl: backgroundUrl
     };
     var body = mustacheLib.render(view, params);

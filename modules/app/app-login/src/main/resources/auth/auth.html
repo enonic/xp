@@ -3,240 +3,20 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+
+    <link rel="stylesheet" type="text/css" href="{{appLoginCssUrl}}">
     <style>
-        body {
-            overflow-y: hidden;
-            font-family: "Open Sans", sans-serif;
-            font-size: 12px;
-        }
-
-        #container {
-            position: fixed;
-            left: 0;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.45);
-            background-repeat: no-repeat;
-            background-position: center center;
-            background-attachment: fixed;
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
-            background-size: cover;
-        }
-
         #background {
             background-image: url('{{backgroundUrl}}');
-
-            width: 100%;
-            height: 100%;
-            background-repeat: no-repeat;
-            background-position: center center;
-            background-attachment: fixed;
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
-            background-size: cover;
-            transition: opacity 1s;
-        }
-
-        #center-panel {
-            width: 100%;
-            position: absolute;
-            background-color: rgba(0, 0, 0, 0.4);
-            top: 0;
-            bottom: 0;
-        }
-
-        #branding {
-            display: -webkit-box;
-            display: -moz-box;
-            display: -ms-flexbox;
-            display: -webkit-flex;
-            display: flex;
-            align-items: center;
-            -webkit-align-items: center;
-            width: 200px;
-            height: 100%;
-            left: calc(50% - 46.35px);
-            margin-top: -120px;
-            position: absolute;
-            text-align: center;
-            z-index: 0;
-        }
-
-        #branding h1 {
-            color: white;
-            background: url('/admin/assets/0/common/images/enonic.svg') 0 0 no-repeat;
-            background-size: 100%;
-            height: 123.3px;
-            width: 92.7px;
-            text-indent: 100%;
-            overflow: hidden;
-            white-space: nowrap;
-            padding-bottom: 20px;
-        }
-
-        #login-panel {
-            display: -webkit-box;
-            display: -moz-box;
-            display: -ms-flexbox;
-            display: -webkit-flex;
-            display: flex;
-            -webkit-align-items: center;
-            -moz-align-items: center;
-            -ms-align-items: center;
-            -ms-flex-align: center;
-            align-items: center;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-
-        #login-form {
-            position: static;
-            margin: -4px auto 0;
-        }
-
-        #username-input {
-            min-height: initial;
-            margin-bottom: 13px;
-        }
-
-        .input-view {
-            font-family: "Open Sans", sans-serif;
-            font-size: 12px;
-            box-sizing: border-box;
-            margin-bottom: 10px;
-            border: 1px solid #eeeeee;
-            vertical-align: top;
-            padding: 4px 9px;
-            background: none #ffffff !important;
-            width: 200px;
-        }
-
-        .input-view:not(:last-child) {
-            margin-bottom: 15px;
-        }
-
-        input:not([type="radio"]), textarea, select {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            font-family: inherit;
-            font-size: inherit;
-            font-weight: inherit;
-        }
-
-        #password-container {
-            position: relative;
-        }
-
-        #password-input {
-            padding-right: 35px;
-            -webkit-text-security: disc;
-        }
-
-        #message-container {
-            position: absolute;
-            width: 200px;
-            height: 28px;
-            line-height: 28px;
-            margin-top: 10px;
-            color: white;
-            text-align: center;
-            overflow: hidden;
-            white-space: pre;
-            text-overflow: ellipsis;
-        }
-
-        #links-container {
-            position: absolute;
-            width: 100%;
-            bottom: 15px;
-            left: 0;
-            text-align: center;
-        }
-
-        a {
-            color: #ffffff;
-            text-decoration: none;
-        }
-
-        span {
-            color: #ffffff;
-        }
-
-        .input-view.invalid {
-            -webkit-animation: shake 0.5s 0s linear 1;
-            -moz-animation: shake 0.5s 0s linear 1;
-            -ms-animation: shake 0.5s 0s linear 1;
-            animation: shake 0.5s 0s linear 1;
-        }
-
-        .input-view.invalid[type=password] {
-            color: #cb0300;
-        }
-
-        #message-container {
-            position: absolute;
-            width: 200px;
-            height: 28px;
-            line-height: 28px;
-            margin-top: 10px;
-            color: white;
-            text-align: center;
-            overflow: hidden;
-            white-space: pre;
-            text-overflow: ellipsis;
         }
     </style>
-
-    <script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
     <script>
-        function handleAuthenticateResponse(loginResult) {
-            console.log("auth response: " + JSON.stringify(loginResult));
-
-            if (loginResult.authenticated) {
-                location.reload();
-            } else {
-                document.getElementById("message-container").innerHTML = 'Login failed!';
-                //document.getElementById("message-container").focus();
-                document.getElementById("username-input").classList.add('invalid');
-                document.getElementById("password-input").classList.add('invalid');
-                document.getElementById("login-button").classList.add('invalid');
-            }
-        }
-
-        function loginButtonClick() {
-            var userNameInput = document.getElementById("username-input");
-            var passwordInput = document.getElementById("password-input");
-            var loginButton = document.getElementById("login-button");
-            if (userNameInput.value === '' || passwordInput.value === '') {
-                return;
-            }
-
-            userNameInput.classList.remove("invalid");
-            passwordInput.classList.remove("invalid");
-            loginButton.classList.remove("invalid");
-
-            var data = {
-                user: userNameInput.value,
-                password: passwordInput.value,
-                userStore: '{{userStore}}',
-                rememberMe: false
-            }
-
-            $.ajax({
-                url: '/admin/rest/auth/login',
-                type: 'post',
-                dataType: 'json',
-                contentType: 'application/json',
-                success: handleAuthenticateResponse,
-                data: JSON.stringify(data)
-            });
-        }
+        var CONFIG = {
+            userStoreKey: "{{userStoreKey}}"
+        };
     </script>
+    <script src="{{jQueryUrl}}"></script>
+    <script src="{{appLoginJsUrl}}"></script>
 </head>
 <body>
 
@@ -258,16 +38,9 @@
                 </div>
                 <div id="message-container"></div>
             </form>
-            <div id="links-container">
-                <a href="https://enonic.com/community">Community</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <a href="https://enonic.com/docs/latest/">Documentation</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <span>v6.4.0-SNAPSHOT</span>
-            </div>
         </div>
     </div>
-
 </div>
-
 
 </body>
 </html>
