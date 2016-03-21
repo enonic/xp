@@ -34,4 +34,4 @@ exports.handle403 = function (req) {
         contentType: 'text/html',
         body: body
     };
-}
+};

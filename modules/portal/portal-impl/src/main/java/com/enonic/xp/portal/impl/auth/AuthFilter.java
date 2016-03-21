@@ -15,7 +15,7 @@ import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
+import com.enonic.xp.portal.auth.AuthControllerScriptFactory;
 import com.enonic.xp.security.PathGuard;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
@@ -32,7 +32,7 @@ public final class AuthFilter
 
     private AuthDescriptorService authDescriptorService;
 
-    private ErrorHandlerScriptFactory errorHandlerScriptFactory;
+    private AuthControllerScriptFactory authControllerScriptFactory;
 
     @Override
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
@@ -46,7 +46,7 @@ public final class AuthFilter
         {
             final PathGuard pathGuard = pathGuardOptional.get();
             final PathGuardResponseSerializer pathGuardResponseSerializer =
-                new PathGuardResponseSerializer( req, securityService, errorHandlerScriptFactory, authDescriptorService, pathGuard );
+                new PathGuardResponseSerializer( req, securityService, authControllerScriptFactory, authDescriptorService, pathGuard );
 
             //If the PathGuard is passive or the user is authenticated
             if ( pathGuard.isPassive() || isAuthenticated() )
@@ -88,9 +88,9 @@ public final class AuthFilter
     }
 
     @Reference
-    public void setControllerScriptFactory( final ErrorHandlerScriptFactory errorHandlerScriptFactory )
+    public void setAuthControllerScriptFactory( final AuthControllerScriptFactory authControllerScriptFactory )
     {
-        this.errorHandlerScriptFactory = errorHandlerScriptFactory;
+        this.authControllerScriptFactory = authControllerScriptFactory;
     }
 
     private boolean isAuthenticated()
