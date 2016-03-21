@@ -40,7 +40,7 @@ module app.view.detail {
                         this.setContent(this.detailsPanel.getItem(), true);
                     }
                 })
-            };
+            }
         }
 
         resetContainerWidth() {
@@ -98,7 +98,7 @@ module app.view.detail {
             this.widgetItemViews.forEach((itemView: WidgetItemView) => {
                 this.appendChild(itemView);
                 layoutTasks.push(itemView.layout());
-            })
+            });
 
             return wemQ.all(layoutTasks);
         }
@@ -126,7 +126,7 @@ module app.view.detail {
         }
 
         slideOut() {
-            this.getEl().setHeightPx(0);
+            this.getEl().setMaxHeightPx(0);
         }
 
         slideIn() {
@@ -134,7 +134,7 @@ module app.view.detail {
                 this.redoLayout();
             }
             else {
-                this.getEl().setHeightPx(this.calcHeight());
+                this.getEl().setMaxHeightPx(this.getParentElement().getEl().getHeight());
             }
         }
 
