@@ -50,50 +50,30 @@
         }
       }
 
-      .tree-grid {
-        .grid {
-          min-width: 240px; // to allow rendering of all columns when detail panel is collapsed
+      .all-content-versions {
+
+        * {
+          cursor: pointer;
         }
-        .grid-canvas {
-          width: calc(~'100% - 15px') !important;
-        }
-        .slick-row {
+
+        .content-version-item {
           .box-shadow(0px 1px 2px 1px rgba(0, 0, 0, 0.1));
-          margin: 5px 5px 0 7px;
-          height: 60px !important;
+          margin: 10px 5px 0 7px;
+          background-color: @admin-white;
 
-          &.odd {
-            background-color: @admin-white;
+          &:hover {
+            background-color: @admin-bg-light-gray;
           }
 
-          .slick-cell {
-            padding: 0;
-            span.icon:empty {
-              display: none;
-            }
-            &.description {
-              padding: 10px 7px 7px 7px;
-              width: 70%;
-            }
-            &.status {
-              position: static;
-              float: right;
-              margin: 7px 10px 0 7px;
-              width: 70px;
-            }
+          &.active {
+            .box-shadow(0px 0px 5px 2px @admin-input-blue);
           }
-        }
-        .description img {
-          background: lightgrey url("../../common/images/tsi-profil.jpg") center;
-          background-size: 32px 32px;
-          width: 32px !important;
-          height: 32px !important;
-          .border-radius(16px);
-        }
 
-        .status {
+          .description {
+            padding: 10px 7px 7px 7px;
+          }
 
-          .badge {
+          .status {
             line-height: 26px;
             text-align: center;
             margin-top: 9px;
@@ -109,11 +89,8 @@
               color: @admin-white;
               background-color: forestgreen;
             }
-
           }
-
         }
-
       }
 
     }
