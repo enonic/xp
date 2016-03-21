@@ -12,10 +12,8 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.auth.json.LoginResultJson;
 import com.enonic.xp.admin.impl.security.AuthHelper;
-import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.portal.auth.AuthControllerScriptFactory;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -30,21 +28,17 @@ public final class AuthResource
 
     private SecurityService securityService;
 
-    private AuthDescriptorService authDescriptorService;
-
-    private AuthControllerScriptFactory authControllerScriptFactory;
-
     @POST
     @Path("login")
     public LoginResultJson login( final LoginRequest request )
     {
-        final AuthHelper helper = new AuthHelper( securityService, authDescriptorService, authControllerScriptFactory );
+        final AuthHelper helper = new AuthHelper( this.securityService );
         final AuthenticationInfo authInfo =
             helper.login( request.getUser(), request.getPassword(), request.getUserStore(), request.isRememberMe() );
 
         if ( authInfo.isAuthenticated() && !authInfo.hasRole( RoleKeys.ADMIN_LOGIN ) )
         {
-            helper.logout();
+            AuthHelper.logout();
             return new LoginResultJson( AuthenticationInfo.unAuthenticated(), "Access Denied" );
         }
         if ( !authInfo.isAuthenticated() )
@@ -59,7 +53,7 @@ public final class AuthResource
     @Path("logout")
     public void logout()
     {
-        new AuthHelper( securityService, authDescriptorService, authControllerScriptFactory ).logout();
+        AuthHelper.logout();
     }
 
     @GET
@@ -80,17 +74,5 @@ public final class AuthResource
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;
-    }
-
-    @Reference
-    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
-    {
-        this.authDescriptorService = authDescriptorService;
-    }
-
-    @Reference
-    public void setAuthControllerScriptFactory( final AuthControllerScriptFactory authControllerScriptFactory )
-    {
-        this.authControllerScriptFactory = authControllerScriptFactory;
     }
 }
