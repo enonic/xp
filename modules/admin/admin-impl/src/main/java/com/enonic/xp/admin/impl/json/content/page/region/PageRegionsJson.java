@@ -6,17 +6,17 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.region.Region;
-import com.enonic.xp.region.Regions;
 
 @SuppressWarnings("UnusedDeclaration")
 public class PageRegionsJson
 {
-    private final Regions regions;
+    private final PageRegions regions;
 
     private final List<RegionJson> regionsJson;
 
-    public PageRegionsJson( final Regions regions )
+    public PageRegionsJson( final PageRegions regions )
     {
         this.regions = regions;
 
@@ -38,7 +38,7 @@ public class PageRegionsJson
     public PageRegionsJson( final List<RegionJson> regionJsons )
     {
         this.regionsJson = regionJsons;
-        final Regions.Builder builder = Regions.create();
+        final PageRegions.Builder builder = PageRegions.create();
         for ( RegionJson region : regionJsons )
         {
             builder.add( region.getRegion() );
@@ -52,7 +52,7 @@ public class PageRegionsJson
     }
 
     @JsonIgnore
-    public Regions getPageRegions()
+    public PageRegions getPageRegions()
     {
         return regions;
     }

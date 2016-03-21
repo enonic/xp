@@ -13,6 +13,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
@@ -25,7 +26,6 @@ import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
-import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.security.PrincipalKey;
@@ -143,7 +143,7 @@ public abstract class RenderBaseHandlerTest
 
         if ( withPage )
         {
-            Regions pageRegions = Regions.create().
+            PageRegions pageRegions = PageRegions.create().
                 add( Region.create().name( "main-region" ).
                     add( PartComponent.create().name( ComponentName.from( "mypart" ) ).
                         build() ).
@@ -186,7 +186,7 @@ public abstract class RenderBaseHandlerTest
         final PropertyTree pageTemplateConfig = new PropertyTree();
         pageTemplateConfig.addLong( "pause", 10000L );
 
-        Regions pageRegions = Regions.create().
+        PageRegions pageRegions = PageRegions.create().
             add( Region.create().name( "main-region" ).
                 add( PartComponent.create().name( ComponentName.from( "mypart" ) ).
                     build() ).

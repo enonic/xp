@@ -6,7 +6,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.region.Component;
-import com.enonic.xp.region.Regions;
 
 @Beta
 public final class CreatePageParams
@@ -17,7 +16,7 @@ public final class CreatePageParams
 
     private PageTemplateKey pageTemplate;
 
-    private Regions regions;
+    private PageRegions regions;
 
     private Component fragment;
 
@@ -43,7 +42,7 @@ public final class CreatePageParams
         return this;
     }
 
-    public CreatePageParams regions( Regions value )
+    public CreatePageParams regions( PageRegions value )
     {
         this.regions = value;
         return this;
@@ -82,7 +81,7 @@ public final class CreatePageParams
         return controller;
     }
 
-    public Regions getRegions()
+    public PageRegions getRegions()
     {
         return regions;
     }

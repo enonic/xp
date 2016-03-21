@@ -4,10 +4,10 @@ import org.junit.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
-import com.enonic.xp.region.Regions;
 
 import static org.junit.Assert.*;
 
@@ -31,7 +31,7 @@ public class PageDataSerializerTest
                 build() ).
             build();
 
-        Regions regions = Regions.create().
+        PageRegions regions = PageRegions.create().
             add( mainRegion ).
             build();
 
@@ -55,7 +55,7 @@ public class PageDataSerializerTest
     @Test
     public void page_with_empty_regions()
     {
-        Regions regions = Regions.create().
+        PageRegions regions = PageRegions.create().
             build();
 
         PropertyTree pageConfig = new PropertyTree();

@@ -13,14 +13,14 @@ import com.enonic.xp.page.DescriptorKey;
 public final class LayoutComponent
     extends DescriptorBasedComponent
 {
-    private Regions regions;
+    private LayoutRegions regions;
 
     public LayoutComponent( final Builder builder )
     {
         super( builder );
         if ( builder.regions == null )
         {
-            this.regions = Regions.create().build();
+            this.regions = LayoutRegions.create().build();
         }
         else
         {
@@ -65,7 +65,7 @@ public final class LayoutComponent
         return this.regions.getRegion( name );
     }
 
-    public Regions getRegions()
+    public LayoutRegions getRegions()
     {
         return regions;
     }
@@ -121,7 +121,7 @@ public final class LayoutComponent
     public static class Builder
         extends DescriptorBasedComponent.Builder
     {
-        private Regions regions;
+        private LayoutRegions regions;
 
         private Builder()
         {
@@ -167,7 +167,7 @@ public final class LayoutComponent
             return this;
         }
 
-        public Builder regions( final Regions value )
+        public Builder regions( final LayoutRegions value )
         {
             this.regions = value;
             return this;

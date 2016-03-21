@@ -19,13 +19,14 @@ import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
-import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
@@ -128,9 +129,9 @@ public final class ContentFixtures
         return builder.build();
     }
 
-    public static Regions newPageRegions()
+    public static PageRegions newPageRegions()
     {
-        final Regions.Builder builder = Regions.create();
+        final PageRegions.Builder builder = PageRegions.create();
         builder.add( newTopRegion() );
         return builder.build();
     }
@@ -171,9 +172,9 @@ public final class ContentFixtures
         return builder.build();
     }
 
-    public static Regions newLayoutRegions()
+    public static LayoutRegions newLayoutRegions()
     {
-        final Regions.Builder builder = Regions.create();
+        final LayoutRegions.Builder builder = LayoutRegions.create();
         builder.add( newBottomRegion() );
         return builder.build();
     }

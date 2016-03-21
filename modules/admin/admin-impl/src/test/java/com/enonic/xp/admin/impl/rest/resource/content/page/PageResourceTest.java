@@ -18,10 +18,10 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.page.CreatePageParams;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageService;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.UpdatePageParams;
-import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -108,7 +108,7 @@ public class PageResourceTest
         Page page = Page.create().
             template( PageTemplateKey.from( "my-page" ) ).
             config( rootDataSet ).
-            regions( Regions.create().build() ).
+            regions( PageRegions.create().build() ).
             build();
 
         return Content.create().

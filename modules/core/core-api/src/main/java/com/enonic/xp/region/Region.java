@@ -175,7 +175,7 @@ public final class Region
             return this;
         }
 
-        Builder set( final int index, final Component component )
+        public Builder set( final int index, final Component component )
         {
             this.components.set( index, component );
             return this;

@@ -5,7 +5,6 @@ import org.junit.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
@@ -24,7 +23,7 @@ public class PageTemplateTest
             canRender( ContentTypeNames.from( "mainmodule:article", "mainmodule:banner" ) ).
             controller( DescriptorKey.from( ApplicationKey.from( "mainmodule" ), "landing-page" ) ).
             config( pageTemplateConfig ).
-            regions( Regions.create().build() );
+            regions( PageRegions.create().build() );
         builder.displayName( "Main page template" );
         builder.name( "main-page-template" );
         builder.parentPath( ContentPath.ROOT );

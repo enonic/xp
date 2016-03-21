@@ -5,7 +5,6 @@ import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.region.Component;
-import com.enonic.xp.region.Regions;
 
 @Beta
 public final class EditablePage
@@ -14,7 +13,7 @@ public final class EditablePage
 
     public PageTemplateKey template;
 
-    public Regions regions;
+    public PageRegions regions;
 
     public Component fragment;
 

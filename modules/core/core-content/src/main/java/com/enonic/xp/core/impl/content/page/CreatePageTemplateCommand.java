@@ -10,9 +10,9 @@ import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.CreatePageParams;
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageService;
 import com.enonic.xp.page.PageTemplate;
-import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.security.PrincipalKey;
@@ -33,7 +33,7 @@ class CreatePageTemplateCommand
 
     private ContentTypeNames supports;
 
-    private Regions pageRegions;
+    private PageRegions pageRegions;
 
     private PropertyTree pageConfig;
 
@@ -79,7 +79,7 @@ class CreatePageTemplateCommand
         return this;
     }
 
-    public CreatePageTemplateCommand pageRegions( final Regions pageRegions )
+    public CreatePageTemplateCommand pageRegions( final PageRegions pageRegions )
     {
         this.pageRegions = pageRegions;
         return this;

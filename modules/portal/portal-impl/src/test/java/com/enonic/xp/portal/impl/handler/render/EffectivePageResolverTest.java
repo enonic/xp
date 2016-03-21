@@ -8,11 +8,11 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
-import com.enonic.xp.region.Regions;
 
 import static org.junit.Assert.*;
 
@@ -22,9 +22,9 @@ public class EffectivePageResolverTest
 
     private PropertyTree configB;
 
-    private Regions regionsA;
+    private PageRegions regionsA;
 
-    private Regions regionsB;
+    private PageRegions regionsB;
 
     @Before
     public void before()
@@ -35,13 +35,13 @@ public class EffectivePageResolverTest
         configB = new PropertyTree();
         configB.addString( "b", "1" );
 
-        regionsA = Regions.create().
+        regionsA = PageRegions.create().
             add( Region.create().name( "regionA" ).
                 add( PartComponent.create().name( "my-part" ).build() ).
                 build() ).
             build();
 
-        regionsB = Regions.create().
+        regionsB = PageRegions.create().
             add( Region.create().name( "regionB" ).
                 add( PartComponent.create().name( "my-part" ).build() ).
                 build() ).

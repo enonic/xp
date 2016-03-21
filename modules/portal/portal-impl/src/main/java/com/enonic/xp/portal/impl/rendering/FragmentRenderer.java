@@ -17,9 +17,7 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.region.Component;
-import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.FragmentComponent;
-import com.enonic.xp.region.Regions;
 
 @org.osgi.service.component.annotations.Component(immediate = true, service = Renderer.class)
 public final class FragmentRenderer
@@ -33,6 +31,8 @@ public final class FragmentRenderer
     private ContentService contentService;
 
     private RendererFactory rendererFactory;
+
+    private FragmentPageResolver fragmentPageResolver = new FragmentPageResolver();
 
     @Override
     public Class<FragmentComponent> getType()
@@ -61,7 +61,8 @@ public final class FragmentRenderer
         }
 
         // replace resolved fragment in current PortalRequest Page
-        final Page page = inlineFragmentInPage( portalRequest.getContent().getPage(), fragmentComponent, component.getPath() );
+        final Page sourcePage = portalRequest.getContent().getPage();
+        final Page page = fragmentPageResolver.inlineFragmentInPage( sourcePage, fragmentComponent, component.getPath() );
         final Content content = Content.create( portalRequest.getContent() ).page( page ).build();
         portalRequest.setContent( content );
 
@@ -71,12 +72,6 @@ public final class FragmentRenderer
             return wrapFragmentForEditMode( fragmentResponse, type );
         }
         return fragmentResponse;
-    }
-
-    private Page inlineFragmentInPage( final Page page, final Component fragmentComponent, final ComponentPath path )
-    {
-        final Regions regions = page.getRegions().replace( path, fragmentComponent );
-        return Page.create( page ).regions( regions ).build();
     }
 
     private PortalResponse wrapFragmentForEditMode( final PortalResponse response, final String type )

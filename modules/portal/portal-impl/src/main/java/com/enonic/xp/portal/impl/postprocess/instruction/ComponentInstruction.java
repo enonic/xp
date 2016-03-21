@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.RenderException;
@@ -21,7 +22,7 @@ import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ComponentService;
 import com.enonic.xp.region.LayoutComponent;
-import com.enonic.xp.region.Regions;
+import com.enonic.xp.region.LayoutRegions;
 
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
@@ -116,7 +117,7 @@ public final class ComponentInstruction
             return resolveComponentInFragment( page, path );
         }
 
-        final Regions pageRegions = page.getRegions();
+        final PageRegions pageRegions = page.getRegions();
         Component component = pageRegions.getComponent( path );
         if ( component == null )
         {
@@ -135,7 +136,7 @@ public final class ComponentInstruction
         }
         final LayoutComponent layout = (LayoutComponent) fragmentComponent;
 
-        final Regions pageRegions = layout.getRegions();
+        final LayoutRegions pageRegions = layout.getRegions();
         final Component component = pageRegions.getComponent( path );
         if ( component == null )
         {

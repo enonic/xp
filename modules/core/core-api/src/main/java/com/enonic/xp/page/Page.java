@@ -10,7 +10,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.Region;
-import com.enonic.xp.region.Regions;
 
 @Beta
 public final class Page
@@ -19,7 +18,7 @@ public final class Page
 
     private final PageTemplateKey template;
 
-    private final Regions regions;
+    private final PageRegions regions;
 
     private final Component fragment;
 
@@ -71,7 +70,7 @@ public final class Page
         return this.regions.getRegion( name );
     }
 
-    public Regions getRegions()
+    public PageRegions getRegions()
     {
         return regions;
     }
@@ -154,7 +153,7 @@ public final class Page
 
         private PageTemplateKey template;
 
-        private Regions regions;
+        private PageRegions regions;
 
         private Component fragment;
 
@@ -176,7 +175,7 @@ public final class Page
             this.fragment = source.fragment;
         }
 
-        public Builder regions( final Regions value )
+        public Builder regions( final PageRegions value )
         {
             this.regions = value;
             return this;
