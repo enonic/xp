@@ -39,10 +39,16 @@ module app.view {
                 itemEl.appendChild(statusDiv);
             }
 
-            var descriptionDiv = new api.content.ContentVersionViewer();
-            descriptionDiv.addClass("description");
-            descriptionDiv.setObject(item);
-            itemEl.appendChild(descriptionDiv);
+            var descriptionDiv = this.createDescriptionBlock(item),
+                versionInfoDiv = this.createVersionInfoBlock(item),
+                closeButton = this.createCloseButton(versionInfoDiv);
+
+            itemEl.appendChildren(closeButton, descriptionDiv, versionInfoDiv);
+
+            itemEl.onClicked(() => {
+               versionInfoDiv.removeClass("hidden");
+               closeButton.removeClass("hidden");
+            });
 
             return itemEl;
         }
@@ -124,8 +130,8 @@ module app.view {
             contentVersion.workspaces.some((workspace: string) => {
                 if (!hasMaster || workspace == AllContentVersionsView.branchMaster) {
                    result = { workspace: workspace, status: this.getState(workspace) };
+                   return true;
                 }
-                return true;
             });
 
             return result;
@@ -138,6 +144,42 @@ module app.view {
             else {
                 return api.content.CompareStatusFormatter.formatStatus(this.status);
             }
+        }
+
+        private createCloseButton(elementToHide: api.dom.Element): api.dom.Element {
+            var closeButton = new api.dom.DivEl("close-version-info-button hidden");
+            closeButton.onClicked((event) => {
+                elementToHide.addClass("hidden");
+                closeButton.addClass("hidden");
+                event.preventDefault();
+                event.stopPropagation();
+            });
+
+            return closeButton;
+        }
+
+        private createDescriptionBlock(item: ContentVersion): api.dom.Element {
+            var descriptionDiv = new api.content.ContentVersionViewer();
+            descriptionDiv.addClass("description");
+            descriptionDiv.setObject(item);
+            return descriptionDiv;
+        }
+
+        private createVersionInfoBlock(item: ContentVersion): api.dom.Element {
+            var versionInfoDiv = new api.dom.DivEl("version-info hidden");
+
+            var timestampDiv = new api.dom.DivEl("version-info-timestamp");
+            timestampDiv.appendChildren(new api.dom.SpanEl("label").setHtml("Timestamp: "), new api.dom.SpanEl().setHtml(api.util.DateHelper.formatUTCDateTime(item.modified)));
+
+            var versionIdDiv = new api.dom.DivEl("version-info-version-id");
+            versionIdDiv.appendChildren(new api.dom.SpanEl("label").setHtml("VersionId: "), new api.dom.SpanEl().setHtml(item.id));
+
+            var displayNameDiv = new api.dom.DivEl("version-info-display-name");
+            displayNameDiv.appendChildren(new api.dom.SpanEl("label").setHtml("Display Name: "), new api.dom.SpanEl().setHtml(item.displayName));
+
+            versionInfoDiv.appendChildren(timestampDiv, versionIdDiv, displayNameDiv);
+
+            return versionInfoDiv;
         }
     }
 
