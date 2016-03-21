@@ -102,6 +102,13 @@
   z-index: @z-index-context-menu;
   width: 100%;
 
+  .mce-toolbar-grp .mce-flow-layout-item {
+    margin-bottom: 2px;
+  }
+
+  .mce-btn-group {
+    border-right: 1px solid #CAC0C0;
+  }
 
   &.sticky-toolbar {
     .mce-toolbar-grp {
@@ -153,14 +160,14 @@
   margin: 0;
 }
 
-.close-edit-mode-button.icon-close {
+.close-edit-mode-button.icon-close2 {
   position: fixed;
-  top: 12px;
-  right: 14px;
+  top: 8px;
+  right: 10px;
   z-index: @z-index-context-menu + 1;
   pointer-events: auto;
   color: @admin-dark-gray;
-  font-size: 18px;
+  font-size: 26px;
   display: none;
   text-decoration: none;
 

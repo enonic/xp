@@ -219,7 +219,7 @@ module api.liveedit {
         }
 
         private createCloseTextEditModeEl(): api.dom.Element {
-            var closeButton = new api.dom.AEl("close-edit-mode-button icon-close");
+            var closeButton = new api.dom.AEl("close-edit-mode-button icon-close2");
             closeButton.onClicked((event: MouseEvent) => {
                 this.setTextEditMode(false);
                 event.stopPropagation();
