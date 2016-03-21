@@ -5,12 +5,8 @@ describe("api.data.type.LocalDateValueTypeTest", function () {
 
     describe("when isValid", function () {
 
-        it("given a date as Date then true is returned", function () {
-            expect(ValueTypes.LOCAL_DATE.isValid(new Date(2000, 0, 1, 0, 0, 0))).toBe(true);
-        });
-
-        it("given a date as string then false is returned", function () {
-            expect(ValueTypes.LOCAL_DATE.isValid("2000-01-01")).toBe(false);
+        it("given a valid date as string should return true", function () {
+            expect(ValueTypes.LOCAL_DATE.isValid("2000-01-01")).toBe(true);
         });
 
         it("given a letter as string then false is returned", function () {
@@ -67,12 +63,12 @@ describe("api.data.type.LocalDateValueTypeTest", function () {
         });
 
         it("given date 2000-01-02 then an equal date string is returned", function () {
-            expect(ValueTypes.LOCAL_DATE.toJsonValue(new Value(new Date(Date.UTC(2000, 0, 2)),
+            expect(ValueTypes.LOCAL_DATE.toJsonValue(new Value("2000-01-02",
                 ValueTypes.LOCAL_DATE))).toEqual("2000-01-02");
         });
 
         it("given date 2000-09-06 then an equal date string is returned", function () {
-            expect(ValueTypes.LOCAL_DATE.toJsonValue(new Value(new Date(Date.UTC(2000, 8, 6)),
+            expect(ValueTypes.LOCAL_DATE.toJsonValue(new Value("2000-09-06",
                 ValueTypes.LOCAL_DATE))).toEqual("2000-09-06");
         });
     });

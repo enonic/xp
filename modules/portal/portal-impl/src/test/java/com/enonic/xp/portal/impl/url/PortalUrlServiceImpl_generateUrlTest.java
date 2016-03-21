@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.enonic.xp.portal.url.RewriteUrlParams;
+import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -12,25 +12,25 @@ import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static org.junit.Assert.*;
 
-public class PortalUrlServiceImpl_rewriteUrlTest
+public class PortalUrlServiceImpl_generateUrlTest
     extends AbstractPortalUrlServiceImplTest
 {
     @Test
     public void createUrl()
     {
-        final RewriteUrlParams params = new RewriteUrlParams().
+        final GenerateUrlParams params = new GenerateUrlParams().
             portalRequest( this.portalRequest ).
             url( "/admin" ).
             param( "a", 3 );
 
-        final String url = this.service.rewriteUrl( params );
+        final String url = this.service.generateUrl( params );
         assertEquals( "/admin?a=3", url );
     }
 
     @Test
     public void createUrl_absolute()
     {
-        final RewriteUrlParams params = new RewriteUrlParams().
+        final GenerateUrlParams params = new GenerateUrlParams().
             type( UrlTypeConstants.ABSOLUTE ).
             portalRequest( this.portalRequest ).
             url( "/admin" ).
@@ -39,14 +39,14 @@ public class PortalUrlServiceImpl_rewriteUrlTest
         MockHttpServletRequest req = new MockHttpServletRequest();
         ServletRequestHolder.setRequest( req );
 
-        final String url = this.service.rewriteUrl( params );
+        final String url = this.service.generateUrl( params );
         assertEquals( "http://localhost/admin?a=3", url );
     }
 
     @Test
     public void createUrl_withVirtualHost()
     {
-        final RewriteUrlParams params = new RewriteUrlParams().
+        final GenerateUrlParams params = new GenerateUrlParams().
             type( UrlTypeConstants.ABSOLUTE ).
             portalRequest( this.portalRequest ).
             url( "/admin" ).
@@ -62,19 +62,19 @@ public class PortalUrlServiceImpl_rewriteUrlTest
         //Calls the method with a virtual mapping /main -> /
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/" );
-        String url = this.service.rewriteUrl( params );
+        String url = this.service.generateUrl( params );
         assertEquals( "http://localhost/main/admin?a=3", url );
 
         //Calls the method with a virtual mapping /main -> /portal/draft/context
         Mockito.when( virtualHost.getSource() ).thenReturn( "/studio" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/admin" );
-        url = this.service.rewriteUrl( params );
+        url = this.service.generateUrl( params );
         assertEquals( "http://localhost/studio?a=3", url );
 
         //Calls the method with a virtual mapping /main -> /portal/draft/context
         Mockito.when( virtualHost.getSource() ).thenReturn( "/" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/admin" );
-        url = this.service.rewriteUrl( params );
+        url = this.service.generateUrl( params );
         assertEquals( "http://localhost/?a=3", url );
 
         //Post treatment

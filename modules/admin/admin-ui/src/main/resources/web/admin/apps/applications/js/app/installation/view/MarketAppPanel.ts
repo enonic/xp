@@ -33,9 +33,9 @@ module app.installation.view {
                 this.marketAppsTreeGrid.unLoaded(this.dataLoadListener);
                 setTimeout(() => {
                     if (!this.gridDataLoaded) {
+                        this.gridDataLoaded = true;
                         this.marketAppsTreeGrid.refresh();// this helps to show default app icon if one provided in json fails to upload
                     }
-                    this.gridDataLoaded = true;
                 }, 500);
             }
             this.isGridLoadingData = false;

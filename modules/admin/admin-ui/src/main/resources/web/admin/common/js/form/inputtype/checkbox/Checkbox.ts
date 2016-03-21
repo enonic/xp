@@ -29,6 +29,10 @@ module api.content.form.inputtype.checkbox {
             this.checkbox = new api.ui.Checkbox(undefined, checked);
             this.appendChild(this.checkbox);
 
+            if (!ValueTypes.BOOLEAN.equals(property.getType())) {
+                property.convertValueType(ValueTypes.BOOLEAN);
+            }
+
             this.checkbox.onValueChanged((event: api.ValueChangedEvent) => {
                 var newValue = ValueTypes.BOOLEAN.newValue(event.getNewValue());
 

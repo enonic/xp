@@ -65,19 +65,19 @@ describe("api.util.LocalDateTimeTest", function () {
         it("should correctly convert without seconds and fractions", function () {
             localDateTime = api.util.LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).build();
 
-            expect(localDateTime.toString()).toEqual("2015-03-25T12:05");
+            expect(localDateTime.toString()).toEqual("2015-04-25T12:05:00");
         });
 
         it("should correctly convert with seconds and no fractions", function () {
             localDateTime = api.util.LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).build();
 
-            expect(localDateTime.toString()).toEqual("2015-03-25T12:05:37");
+            expect(localDateTime.toString()).toEqual("2015-04-25T12:05:37");
         });
 
         it("should correctly convert with seconds and fractions", function () {
             localDateTime = api.util.LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).setFractions(9).build();
 
-            expect(localDateTime.toString()).toEqual("2015-03-25T12:05:37.009");
+            expect(localDateTime.toString()).toEqual("2015-04-25T12:05:37.009");
         });
     });
 

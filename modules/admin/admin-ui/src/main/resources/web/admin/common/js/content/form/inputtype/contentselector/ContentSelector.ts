@@ -65,7 +65,9 @@ module api.content.form.inputtype.contentselector {
         }
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
-
+            if (!ValueTypes.REFERENCE.equals(propertyArray.getType())) {
+                propertyArray.convertValues(ValueTypes.REFERENCE);
+            }
             super.layout(input, propertyArray);
 
             var contentSelectorLoader = ContentSelectorLoader.create().

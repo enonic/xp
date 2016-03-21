@@ -161,7 +161,7 @@
         margin-top: 0px;
 
         label {
-          display: inline-block;
+          display: block;
         }
 
         &:first-child {
@@ -171,6 +171,10 @@
 
       form {
         margin: 0;
+      }
+
+      .input-view .form-input {
+        min-width: 100%;
       }
     }
 
@@ -254,6 +258,10 @@
         .input-glow();
       }
     }
+  }
+
+  .page-controller-form, .descriptor-based-dropdown-form, .page-template-form {
+    background-color: @admin-context-bg-grey-opal;
   }
 
   .field-set-view {

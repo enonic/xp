@@ -5,9 +5,9 @@ module api.app.wizard {
 
         private wizardPanel: api.app.wizard.WizardPanel<any>;
 
-        private yesAction = new api.ui.Action('Yes');
+        private yesAction = new api.ui.Action('Yes', 'y');
 
-        private noAction = new api.ui.Action('No');
+        private noAction = new api.ui.Action('No', 'n');
 
         constructor(wizardPanel: api.app.wizard.WizardPanel<any>) {
             super({
