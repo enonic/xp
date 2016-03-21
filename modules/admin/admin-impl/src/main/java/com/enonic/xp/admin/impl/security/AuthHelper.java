@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
@@ -40,6 +41,17 @@ public final class AuthHelper
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         if ( session != null )
         {
+            final AuthenticationInfo authenticationInfo = session.getAttribute( AuthenticationInfo.class );
+            if ( authenticationInfo != null )
+            {
+                final User user = authenticationInfo.getUser();
+                if ( user != null )
+                {
+                    final UserStoreKey userStoreKey = user.getKey().
+                        getUserStore();
+
+                }
+            }
             session.invalidate();
         }
     }

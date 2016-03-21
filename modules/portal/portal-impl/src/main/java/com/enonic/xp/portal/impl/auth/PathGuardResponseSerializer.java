@@ -15,9 +15,8 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAdapter;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
-import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
-import com.enonic.xp.portal.impl.error.PortalError;
+import com.enonic.xp.portal.auth.AuthControllerScript;
+import com.enonic.xp.portal.auth.AuthControllerScriptFactory;
 import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
 import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.PathGuard;
@@ -26,7 +25,6 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.web.HttpStatus;
 
 public class PathGuardResponseSerializer
 {
@@ -34,19 +32,19 @@ public class PathGuardResponseSerializer
 
     private final SecurityService securityService;
 
-    private final ErrorHandlerScriptFactory errorHandlerScriptFactory;
+    private final AuthControllerScriptFactory authControllerScriptFactory;
 
     private final AuthDescriptorService authDescriptorService;
 
     private final PathGuard pathGuard;
 
     public PathGuardResponseSerializer( final HttpServletRequest request, final SecurityService securityService,
-                                        final ErrorHandlerScriptFactory errorHandlerScriptFactory,
+                                        final AuthControllerScriptFactory authControllerScriptFactory,
                                         final AuthDescriptorService authDescriptorService, final PathGuard pathGuard )
     {
         this.request = request;
         this.securityService = securityService;
-        this.errorHandlerScriptFactory = errorHandlerScriptFactory;
+        this.authControllerScriptFactory = authControllerScriptFactory;
         this.authDescriptorService = authDescriptorService;
         this.pathGuard = pathGuard;
     }
@@ -66,17 +64,10 @@ public class PathGuardResponseSerializer
             portalRequest.setApplicationKey( authDescriptor.getKey() );
             portalRequest.setUserStore( userStore );
 
-            final PortalError portalError = PortalError.create().
-                status( HttpStatus.FORBIDDEN ).
-                message( "Forbidden" ).
-                request( portalRequest ).
-                build();
-
-            final ErrorHandlerScript errorHandlerScript = errorHandlerScriptFactory.errorScript( authDescriptor.getResourceKey() );
-            final PortalResponse portalResponse = errorHandlerScript.execute( portalError );
+            final AuthControllerScript authControllerScript = authControllerScriptFactory.fromScript( authDescriptor.getResourceKey() );
+            final PortalResponse portalResponse = authControllerScript.execute( "handle403", portalRequest );
 
             final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );
-
             serializer.serialize( response );
             return true;
         }
