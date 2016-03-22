@@ -379,10 +379,8 @@ module app.wizard {
 
         giveInitialFocus() {
 
-            console.log("ContentWizardPanel.giveInitialFocus");
             if (this.contentType.hasContentDisplayNameScript()) {
                 if (!this.contentWizardStepForm.giveFocus()) {
-                    console.log("ContentWizardPanel.giveInitialFocus() WARNING: Failed to give focus to contentWizardStepForm");
                     this.contentWizardHeader.giveFocus();
                 }
             } else {
@@ -780,7 +778,6 @@ module app.wizard {
 
                 return wemQ.all(formViewLayoutPromises).spread<void>(() => {
 
-                    console.log("ContentWizardPanel.doLayoutPersistedItem: all FormView-s layed out");
                     if (this.liveFormPanel) {
 
                         if (!this.liveEditModel) {
