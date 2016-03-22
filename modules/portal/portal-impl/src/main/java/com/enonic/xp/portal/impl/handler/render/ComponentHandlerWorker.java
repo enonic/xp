@@ -57,7 +57,11 @@ final class ComponentHandlerWorker
             pageTemplate = null;
             pageController = null;
             final Component fragmentComponent = content.getPage().getFragment();
-            if ( fragmentComponent instanceof LayoutComponent )
+            if ( this.componentPath.isEmpty() )
+            {
+                component = fragmentComponent;
+            }
+            else if ( fragmentComponent instanceof LayoutComponent )
             {
                 component = ( (LayoutComponent) fragmentComponent ).getComponent( this.componentPath );
             }

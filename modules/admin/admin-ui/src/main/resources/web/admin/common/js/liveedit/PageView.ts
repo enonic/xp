@@ -605,7 +605,10 @@ module api.liveedit {
         }
 
         getComponentViewByPath(path: ComponentPath): ComponentView<Component> {
-
+            if (!path) {
+                return this.fragmentView;
+            }
+            
             var firstLevelOfPath = path.getFirstLevel();
 
             for (var i = 0; i < this.regionViews.length; i++) {
@@ -739,21 +742,26 @@ module api.liveedit {
                         var itemViewConfig = new CreateItemViewConfig<PageView, Component>().setParentView(this).setData(
                             component).setElement(childElement).setParentElement(parentElement ? parentElement : this);
                         componentView = <ComponentView<Component>> itemType.createView(itemViewConfig);
-                        componentView.onItemViewAdded(this.itemViewAddedListener);
-                        componentView.onItemViewRemoved(this.itemViewRemovedListener);
 
-                        this.registerItemView(componentView);
-                        if (componentView instanceof api.liveedit.layout.LayoutComponentView) {
-                            componentView.getRegions().forEach((regionView) => {
-                                this.registerRegionView(regionView);
-                            });
-                        }
-                        this.fragmentView = componentView;
+                        this.registerFragmentComponentView(componentView);
                     }
                 } else {
                     this.doParseFragmentItemViews(childElement);
                 }
             });
+        }
+
+        registerFragmentComponentView(componentView: ComponentView<Component>) {
+            componentView.onItemViewAdded(this.itemViewAddedListener);
+            componentView.onItemViewRemoved(this.itemViewRemovedListener);
+
+            this.registerItemView(componentView);
+            if (componentView instanceof api.liveedit.layout.LayoutComponentView) {
+                componentView.getRegions().forEach((regionView) => {
+                    this.registerRegionView(regionView);
+                });
+            }
+            this.fragmentView = componentView;
         }
 
         onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {

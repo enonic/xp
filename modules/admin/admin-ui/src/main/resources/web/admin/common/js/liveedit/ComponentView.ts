@@ -352,14 +352,23 @@ module api.liveedit {
             }
             super.replaceWith(replacement);
 
-            var index = this.getParentItemView().getComponentViewIndex(this);
+            var parentIsPage = api.ObjectHelper.iFrameSafeInstanceOf(this.getParentItemView(), PageView);
+            if (parentIsPage) {
+                // unbind the old view from the component and bind the new one
+                this.unregisterComponentListeners(this.component);
 
-            // unbind the old view from the component and bind the new one
-            this.unregisterComponentListeners(this.component);
+                this.getPageView().registerFragmentComponentView(replacement);
 
-            var parentRegionView = this.parentRegionView;
-            this.parentRegionView.unregisterComponentView(this);
-            parentRegionView.registerComponentView(replacement, index);
+            } else {
+                var index = this.getParentItemView().getComponentViewIndex(this);
+
+                // unbind the old view from the component and bind the new one
+                this.unregisterComponentListeners(this.component);
+
+                var parentRegionView = this.parentRegionView;
+                this.parentRegionView.unregisterComponentView(this);
+                parentRegionView.registerComponentView(replacement, index);
+            }
         }
 
         moveToRegion(toRegionView: RegionView, toIndex: number) {

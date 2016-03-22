@@ -348,7 +348,7 @@ module app.wizard.page {
 
             this.pageSkipReload = true;
             var componentUrl = api.rendering.UriHelper.getComponentUri(this.content.getContentId().toString(),
-                componentView.getComponentPath().toString(),
+                componentView.getComponentPath(),
                 RenderingMode.EDIT,
                 api.content.Branch.DRAFT);
 
