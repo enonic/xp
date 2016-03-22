@@ -5,6 +5,7 @@ module app.wizard {
     import FormContextBuilder = api.form.FormContextBuilder;
     import ContentFormContext = api.content.form.ContentFormContext;
     import Content = api.content.Content;
+    import ContentId = api.content.ContentId;
     import ContentPath = api.content.ContentPath;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import CompareStatus = api.content.CompareStatus;
@@ -59,6 +60,7 @@ module app.wizard {
     import ContentPublishedEvent = api.content.event.ContentPublishedEvent;
     import ContentsPublishedEvent = api.content.event.ContentsPublishedEvent;
     import ContentNamedEvent = api.content.event.ContentNamedEvent;
+    import ActiveContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
 
     import DialogButton = api.ui.dialog.DialogButton;
 
@@ -560,13 +562,13 @@ module app.wizard {
                 }
             };
 
-            var updateHandler = (event: api.content.event.ContentUpdatedEvent) => {
-                var isCurrent = this.isCurrentContentId(event.getContentId());
+            var updateHandler = (contentId: ContentId) => {
+                var isCurrent = this.isCurrentContentId(contentId);
 
                 // Find all html areas in form
                 var htmlAreas = this.getHtmlAreasInForm(this.getContentType().getForm());
                 // And check if html area actually contains event.getContentId() that was updated
-                var areasContainId = this.doAreasContainId(htmlAreas, event.getContentId().toString());
+                var areasContainId = this.doAreasContainId(htmlAreas, contentId.toString());
 
                 if (isCurrent || areasContainId) {
                     //
@@ -584,12 +586,17 @@ module app.wizard {
                 }
             };
 
-            ContentUpdatedEvent.on(updateHandler);
+            var activeContentVersionSetHandler = (event: ActiveContentVersionSetEvent) => updateHandler(event.getContentId());
+            var contentUpdatedHanlder = (event: ContentUpdatedEvent) => updateHandler(event.getContentId());
+
+            ActiveContentVersionSetEvent.on(activeContentVersionSetHandler);
+            ContentUpdatedEvent.on(contentUpdatedHanlder);
             ContentPublishedEvent.on(publishHandler);
             ContentDeletedEvent.on(deleteHandler);
 
             this.onClosed(() => {
-                ContentUpdatedEvent.un(updateHandler);
+                ActiveContentVersionSetEvent.un(activeContentVersionSetHandler);
+                ContentUpdatedEvent.un(contentUpdatedHanlder);
                 ContentPublishedEvent.un(publishHandler);
                 ContentDeletedEvent.un(deleteHandler);
             });
