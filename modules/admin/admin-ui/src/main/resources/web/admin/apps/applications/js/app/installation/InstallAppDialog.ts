@@ -28,13 +28,13 @@ module app.installation {
 
             this.addClass("install-application-dialog hidden");
 
+            this.onMarketLoaded = this.centerMyself.bind(this);
+
             this.initUploadAppPanel();
 
             this.initMarketAppPanel();
 
             this.initAndAppendInstallAppsTabsPanel();
-
-            this.onMarketLoaded = this.centerMyself.bind(this);
 
             api.dom.Body.get().appendChild(this);
         }
