@@ -574,7 +574,7 @@ module api.liveedit {
                 var itemType = this.getItemType();
                 if (api.liveedit.fragment.FragmentItemType.get().equals(itemType)) {
                     var fragment = <api.liveedit.fragment.FragmentComponentView> this._draggedComponentView;
-                    isLayout = fragment.containsLayout();
+                    isLayout = fragment && fragment.containsLayout();
                     if (isLayout && DragAndDrop.debug) {
                         console.log('DragAndDrop.isDraggingLayoutOverLayout - Fragment contains layout');
                     }
