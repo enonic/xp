@@ -47,14 +47,12 @@ public class PathGuardNodeTranslator
         final String displayName = data.getString( PathGuardPropertyPaths.DISPLAY_NAME_PATH );
         final String description = data.getString( PathGuardPropertyPaths.DESCRIPTION_PATH );
         final String userStoreKey = data.getString( PathGuardPropertyPaths.USER_STORE_KEY_PATH );
-        final Boolean passive = data.getBoolean( PathGuardPropertyPaths.PASSIVE_PATH );
 
         final PathGuard.Builder pathGuard = PathGuard.create().
             key( key ).
             displayName( displayName ).
             description( description ).
-            userStoreKey( userStoreKey == null ? null : UserStoreKey.from( userStoreKey ) ).
-            passive( passive == null ? false : passive.booleanValue() );
+            userStoreKey( userStoreKey == null ? null : UserStoreKey.from( userStoreKey ) );
 
         for ( String path : data.getStrings( PathGuardPropertyPaths.PATHS_PATH.toString() ) )
         {
@@ -71,7 +69,6 @@ public class PathGuardNodeTranslator
         data.setString( PathGuardPropertyPaths.DISPLAY_NAME_PATH, pathGuard.getDisplayName() );
         data.setString( PathGuardPropertyPaths.DESCRIPTION_PATH, pathGuard.getDescription() );
         data.setString( PathGuardPropertyPaths.USER_STORE_KEY_PATH, userStoreKey );
-        data.setBoolean( PathGuardPropertyPaths.PASSIVE_PATH, pathGuard.isPassive() );
         data.addStrings( PathGuardPropertyPaths.PATHS_PATH.toString(), pathGuard.getPaths() );
 
         return CreateNodeParams.create().
@@ -93,7 +90,6 @@ public class PathGuardNodeTranslator
                 data.setString( PathGuardPropertyPaths.DISPLAY_NAME_PATH, params.getDisplayName() );
                 data.setString( PathGuardPropertyPaths.DESCRIPTION_PATH, params.getDescription() );
                 data.setString( PathGuardPropertyPaths.USER_STORE_KEY_PATH, params.getUserStoreKey().toString() );
-                data.setBoolean( PathGuardPropertyPaths.PASSIVE_PATH, params.isPassive() );
                 data.removeProperty( PathGuardPropertyPaths.PATHS_PATH );
                 data.addStrings( PathGuardPropertyPaths.PATHS_PATH.toString(), params.getPaths() );
             } ).

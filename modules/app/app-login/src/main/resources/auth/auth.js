@@ -36,6 +36,7 @@ exports.handle403 = function (req) {
     var body = mustacheLib.render(view, params);
 
     return {
+        status: 403,
         contentType: 'text/html',
         body: body
     };

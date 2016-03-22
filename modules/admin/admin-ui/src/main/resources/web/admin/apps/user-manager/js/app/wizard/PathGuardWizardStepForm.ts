@@ -59,14 +59,6 @@ module app.wizard {
                     setOccurrences(new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(1).build()).
                     setInputTypeConfig({}).
                     setMaximizeUIInputWidth(true).
-                    build()).
-                addFormItem(new api.form.InputBuilder().
-                    setName("passive").
-                    setInputType(new api.form.InputTypeName("Checkbox", false)).
-                    setLabel("Passive (will only authenticate for protected resources)").
-                    setOccurrences(new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(1).build()).
-                    setInputTypeConfig({}).
-                    setMaximizeUIInputWidth(true).
                     build());
 
             this.propertySet = new api.data.PropertyTree().getRoot();
@@ -75,7 +67,6 @@ module app.wizard {
                 if (pathGuard.getUserStoreKey()) {
                     this.propertySet.addString("userStoreKey", pathGuard.getUserStoreKey().getId());
                 }
-                this.propertySet.addBoolean("passive", pathGuard.isPassive());
             }
 
             return new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
@@ -83,10 +74,6 @@ module app.wizard {
 
         getDescription(): string {
             return this.propertySet.getString("description");
-        }
-
-        isPassive(): boolean {
-            return this.propertySet.getBoolean("passive");
         }
 
         getUserStoreKey(): api.security.UserStoreKey {

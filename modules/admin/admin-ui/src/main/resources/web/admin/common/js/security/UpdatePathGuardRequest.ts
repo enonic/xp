@@ -6,7 +6,6 @@ module api.security {
         private displayName: string;
         private description: string;
         private userStoreKey: UserStoreKey;
-        private passive: boolean;
         private paths: string[];
 
         constructor() {
@@ -20,7 +19,6 @@ module api.security {
                 displayName: this.displayName,
                 description: this.description,
                 userStoreKey: this.userStoreKey ? this.userStoreKey.getId() : null,
-                passive: this.passive,
                 paths: this.paths ? this.paths : []
             };
         }
@@ -42,11 +40,6 @@ module api.security {
 
         setUserStoreKey(userStoreKey: UserStoreKey): UpdatePathGuardRequest {
             this.userStoreKey = userStoreKey;
-            return this;
-        }
-
-        setPassive(passive: boolean): UpdatePathGuardRequest {
-            this.passive = passive;
             return this;
         }
 

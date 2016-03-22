@@ -1051,7 +1051,6 @@ public final class SecurityServiceImpl
             displayName( params.getDisplayName() ).
             description( params.getDescription() ).
             userStoreKey( params.getUserStoreKey() ).
-            passive( params.isPassive() ).
             addAllPaths( params.getPaths() ).
             build();
 

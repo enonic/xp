@@ -233,7 +233,6 @@ module app.wizard {
                        this.wizardHeader.getDisplayName() !== "" ||
                        this.pathGuardWizardStepForm.getDescription() != null ||
                        this.pathGuardWizardStepForm.getUserStoreKey() != null ||
-                       this.pathGuardWizardStepForm.isPassive() ||
                        this.pathGuardMappingWizardStepForm.getPaths().length > 0;
             } else {
                 var viewedPathGuard = this.assembleViewedPathGuard();
@@ -259,7 +258,6 @@ module app.wizard {
                 setDisplayName(this.wizardHeader.getDisplayName()).
                 setDescription(this.pathGuardWizardStepForm.getDescription()).
                 setUserStoreKey(this.pathGuardWizardStepForm.getUserStoreKey()).
-                setPassive(this.pathGuardWizardStepForm.isPassive()).
                 setPaths(this.pathGuardMappingWizardStepForm.getPaths()).
                 build();
         }
@@ -269,14 +267,12 @@ module app.wizard {
                 name = this.wizardHeader.getDisplayName(),
                 description = this.pathGuardWizardStepForm.getDescription(),
                 userStoreKey = this.pathGuardWizardStepForm.getUserStoreKey(),
-                passive = this.pathGuardWizardStepForm.isPassive(),
                 paths = this.pathGuardMappingWizardStepForm.getPaths();
             return new CreatePathGuardRequest().
                 setKey(key).
                 setDisplayName(name).
                 setDescription(description).
                 setUserStoreKey(userStoreKey).
-                setPassive(passive).
                 setPaths(paths);
         }
 
@@ -285,7 +281,6 @@ module app.wizard {
                 name = viewedPathGuard.getDisplayName(),
                 description = viewedPathGuard.getDescription(),
                 userStoreKey = viewedPathGuard.getUserStoreKey(),
-                passive = viewedPathGuard.isPassive(),
                 paths = viewedPathGuard.getPaths();
 
             return new UpdatePathGuardRequest().
@@ -293,7 +288,6 @@ module app.wizard {
                 setDisplayName(name).
                 setDescription(description).
                 setUserStoreKey(userStoreKey).
-                setPassive(passive).
                 setPaths(paths);
         }
 

@@ -16,15 +16,13 @@ public final class CreatePathGuardJson
     @JsonCreator
     public CreatePathGuardJson( @JsonProperty("key") final String key, @JsonProperty("displayName") final String displayName,
                                 @JsonProperty("description") final String description,
-                                @JsonProperty("userStoreKey") final String userStoreKey, @JsonProperty("passive") final Boolean passive,
-                                @JsonProperty("paths") final String[] paths )
+                                @JsonProperty("userStoreKey") final String userStoreKey, @JsonProperty("paths") final String[] paths )
     {
         this.createPathGuardParams = CreatePathGuardParams.create().
             key( PathGuardKey.from( key ) ).
             displayName( displayName ).
             description( description ).
             userStoreKey( userStoreKey == null ? null : UserStoreKey.from( userStoreKey ) ).
-            passive( passive == null ? false : passive.booleanValue() ).
             addPaths( paths ).
             build();
     }

@@ -227,7 +227,6 @@ final class SecurityInitializer
             displayName( "Admin guard" ).
             description( "Admin guard" ).
             userStoreKey( UserStoreKey.system() ).
-            passive( true ).
             addPaths( "/admin" ).
             build();
         addPathGuard( createPathGuardParams );

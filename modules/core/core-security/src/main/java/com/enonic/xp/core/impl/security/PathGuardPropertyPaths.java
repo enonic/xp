@@ -10,7 +10,5 @@ public class PathGuardPropertyPaths
 
     public static final PropertyPath USER_STORE_KEY_PATH = PropertyPath.from( "userStoreKey" );
 
-    public static final PropertyPath PASSIVE_PATH = PropertyPath.from( "passive" );
-
     public static final PropertyPath PATHS_PATH = PropertyPath.from( "paths" );
 }

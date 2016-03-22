@@ -35,11 +35,6 @@ public class PathGuardJson
         return pathGuard.getUserStoreKey() == null ? null : pathGuard.getUserStoreKey().toString();
     }
 
-    public Boolean isPassive()
-    {
-        return pathGuard.isPassive();
-    }
-
     public ImmutableSet<String> getPaths()
     {
         return pathGuard.getPaths();

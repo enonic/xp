@@ -6,7 +6,6 @@ module api.security {
         displayName: string;
         description: string;
         userStoreKey: string;
-        passive: boolean;
         paths: string[];
     }
 }

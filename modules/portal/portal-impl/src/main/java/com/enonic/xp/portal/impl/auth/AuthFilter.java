@@ -47,26 +47,10 @@ public final class AuthFilter
             final PathGuard pathGuard = pathGuardOptional.get();
             final PathGuardResponseSerializer pathGuardResponseSerializer =
                 new PathGuardResponseSerializer( req, securityService, authControllerScriptFactory, authDescriptorService, pathGuard );
+            final AuthResponseWrapper responseWrapper = new AuthResponseWrapper( res, pathGuardResponseSerializer );
 
-            //If the PathGuard is passive or the user is authenticated
-            if ( pathGuard.isPassive() || isAuthenticated() )
-            {
-                // Wraps the response to handle 401/403 errors
-                final AuthResponseWrapper responseWrapper = new AuthResponseWrapper( res, pathGuardResponseSerializer );
-                chain.doFilter( req, responseWrapper );
-            }
-            else
-            {
-                //Else, renders the auth controller
-                final boolean responseSerialized = pathGuardResponseSerializer.serialize( res );
-
-                //If the auth controller was not rendered
-                if ( !responseSerialized )
-                {
-                    //Forwards the unmodified request and response
-                    chain.doFilter( req, res );
-                }
-            }
+            //Wraps the response to handle 403 errors
+            chain.doFilter( req, responseWrapper );
         }
         else
         {
@@ -91,17 +75,6 @@ public final class AuthFilter
     public void setAuthControllerScriptFactory( final AuthControllerScriptFactory authControllerScriptFactory )
     {
         this.authControllerScriptFactory = authControllerScriptFactory;
-    }
-
-    private boolean isAuthenticated()
-    {
-        final Context context = ContextAccessor.current();
-        if ( context != null )
-        {
-            final AuthenticationInfo authInfo = context.getAuthInfo();
-            return authInfo != null && authInfo.isAuthenticated();
-        }
-        return false;
     }
 
     private <T> T runWithAdminRole( final Callable<T> callable )

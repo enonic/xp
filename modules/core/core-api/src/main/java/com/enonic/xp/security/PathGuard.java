@@ -14,8 +14,6 @@ public final class PathGuard
 
     private final UserStoreKey userStoreKey;
 
-    private final boolean passive;
-
     private final ImmutableSet<String> paths;
 
     public PathGuard( final Builder builder )
@@ -24,7 +22,6 @@ public final class PathGuard
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.userStoreKey = builder.userStoreKey;
-        this.passive = builder.passive;
         this.paths = builder.paths.build();
     }
 
@@ -48,11 +45,6 @@ public final class PathGuard
         return userStoreKey;
     }
 
-    public boolean isPassive()
-    {
-        return passive;
-    }
-
     public ImmutableSet<String> getPaths()
     {
         return paths;
@@ -72,8 +64,6 @@ public final class PathGuard
         private String description;
 
         private UserStoreKey userStoreKey;
-
-        private boolean passive;
 
         private ImmutableSet.Builder<String> paths = ImmutableSet.builder();
 
@@ -104,12 +94,6 @@ public final class PathGuard
         public Builder userStoreKey( final UserStoreKey value )
         {
             this.userStoreKey = value;
-            return this;
-        }
-
-        public Builder passive( final boolean value )
-        {
-            this.passive = value;
             return this;
         }
 

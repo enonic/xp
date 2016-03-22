@@ -5,7 +5,6 @@ module api.security {
         private displayName: string;
         private description: string;
         private userStoreKey: UserStoreKey;
-        private passive: boolean;
         private paths: string[];
 
         constructor(builder: PathGuardBuilder) {
@@ -13,7 +12,6 @@ module api.security {
             this.displayName = builder.displayName;
             this.description = builder.description;
             this.userStoreKey = builder.userStoreKey;
-            this.passive = builder.passive;
             this.paths = builder.paths;
         }
 
@@ -33,10 +31,6 @@ module api.security {
             return this.userStoreKey;
         }
 
-        isPassive(): boolean {
-            return this.passive;
-        }
-
         getPaths(): string[] {
             return this.paths;
         }
@@ -52,7 +46,6 @@ module api.security {
                    this.displayName === other.displayName &&
                    this.description === other.description &&
                    ((!this.userStoreKey && !other.userStoreKey) || (this.userStoreKey && this.userStoreKey.equals(other.userStoreKey))) &&
-                   this.passive === other.passive &&
                    ObjectHelper.anyArrayEquals(this.paths, other.paths)
         }
 
@@ -62,7 +55,6 @@ module api.security {
                 setDisplayName(this.displayName).
                 setDescription(this.description).
                 setUserStoreKey(this.userStoreKey).
-                setPassive(this.passive).
                 setPaths(this.paths.slice(0)).
                 build();
         }
@@ -81,7 +73,6 @@ module api.security {
         displayName: string;
         description: string;
         userStoreKey: UserStoreKey;
-        passive: boolean;
         paths: string[];
 
         constructor() {
@@ -92,7 +83,6 @@ module api.security {
             this.displayName = json.displayName;
             this.description = json.description;
             this.userStoreKey = json.userStoreKey ? UserStoreKey.fromString(json.userStoreKey) : null;
-            this.passive = json.passive;
             this.paths = json.paths;
             return this;
         }
@@ -114,11 +104,6 @@ module api.security {
 
         setUserStoreKey(userStoreKey: UserStoreKey): PathGuardBuilder {
             this.userStoreKey = userStoreKey;
-            return this;
-        }
-
-        setPassive(passive: boolean): PathGuardBuilder {
-            this.passive = passive;
             return this;
         }
 
