@@ -220,7 +220,7 @@ module api.form.inputtype.text {
                     this.updateImageAlignmentBehaviour(editor);
                     this.onShown((event) => {
                         // invoke auto resize on shown in case contents have been updated while inactive
-                        editor.execCommand('mceAutoResize', false, null);
+                        editor.execCommand('mceAutoResize', false, null, {skip_focus: true});
                     })
                 }
             });
