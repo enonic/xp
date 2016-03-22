@@ -66,7 +66,9 @@ public final class Macro
 
     public String toString()
     {
-        return this.key.toString() + "=" + this.body + "[" + Joiner.on( "," ).withKeyValueSeparator( "=" ).join( this.params ) + "]";
+        final String body =  this.body != null ? ( "=" + this.body ) : "";
+        return this.key.toString() + body + "[" +
+            Joiner.on( "," ).withKeyValueSeparator( "=" ).join( this.params ) + "]";
     }
 
     public static Builder create()
