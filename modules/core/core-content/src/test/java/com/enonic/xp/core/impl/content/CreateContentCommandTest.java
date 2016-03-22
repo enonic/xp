@@ -138,8 +138,47 @@ public class CreateContentCommandTest
         assertEquals( "", createdContent.getDisplayName() );
     }
 
+    private void defaultValue_string(final InputTypeName inputTypeName)
+    {
+        final CreateContentParams params = createContentParams().name( ContentName.from( "name" ) ).displayName( "" ).build();
+        final CreateContentCommand command = createContentCommand( params );
+
+        Input input = Input.create().
+            name( "testInput" ).
+            label( "testInput" ).
+            inputTypeProperty( InputTypeProperty.create( "one", "one" ).build() ).
+            inputTypeProperty( InputTypeProperty.create( "two", "two" ).build() ).
+            inputTypeProperty( InputTypeProperty.create( "three", "three" ).build() ).
+            inputType( inputTypeName ).
+            defaultValue( InputTypeConfig.create().property( InputTypeProperty.create( "default", "two" ).build() ).build() ).
+            build();
+
+        final ContentType contentType = ContentType.create().
+            superType( ContentTypeName.documentMedia() ).
+            name( ContentTypeName.dataMedia() ).
+            addFormItem( input ).
+            build();
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+
+        final Content createdContent = command.execute();
+        assertTrue( createdContent.getData().getString( "testInput" ).equals( "two" ) );
+    }
+
     @Test
-    public void defaultValue()
+    public void defaultValue_combobox()
+    {
+        this.defaultValue_string( InputTypeName.COMBO_BOX );
+    }
+
+    @Test
+    public void defaultValue_radio()
+    {
+        this.defaultValue_string( InputTypeName.RADIO_BUTTON );
+    }
+
+    @Test
+    public void defaultValue_checkbox()
     {
         final CreateContentParams params = createContentParams().name( ContentName.from( "name" ) ).displayName( "" ).build();
         final CreateContentCommand command = createContentCommand( params );
@@ -164,7 +203,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void defaultValue_invalid()
+    public void defaultValue_checkbox_invalid()
     {
         final CreateContentParams params = createContentParams().name( ContentName.from( "name" ) ).displayName( "" ).build();
         final CreateContentCommand command = createContentCommand( params );
