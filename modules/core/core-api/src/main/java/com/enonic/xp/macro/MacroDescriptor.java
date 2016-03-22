@@ -20,6 +20,14 @@ public class MacroDescriptor
         return key;
     }
 
+    public static MacroDescriptor from( final String macroKey ) {
+        return create().key( MacroKey.from( macroKey ) ).build();
+    }
+
+    public static MacroDescriptor from( final MacroKey macroKey ) {
+        return create().key( macroKey ).build();
+    }
+
     public ResourceKey toResourceKey( )
     {
         return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".xml" );
