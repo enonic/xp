@@ -8,17 +8,25 @@ public class AuthDescriptor
 {
     private final ApplicationKey key;
 
+    private final AuthDescriptorMode mode;
+
     private final Form config;
 
     private AuthDescriptor( final Builder builder )
     {
         key = builder.key;
+        mode = builder.mode;
         config = builder.config;
     }
 
     public ApplicationKey getKey()
     {
         return key;
+    }
+
+    public AuthDescriptorMode getMode()
+    {
+        return mode;
     }
 
     public Form getConfig()
@@ -28,12 +36,12 @@ public class AuthDescriptor
 
     public ResourceKey getResourceKey()
     {
-        return ResourceKey.from( key, "auth/auth.js" );
+        return ResourceKey.from( key, "id/id.js" );
     }
 
     public static ResourceKey toResourceKey( final ApplicationKey key )
     {
-        return ResourceKey.from( key, "auth/auth.xml" );
+        return ResourceKey.from( key, "id/id.xml" );
     }
 
     public static Builder create()
@@ -45,6 +53,8 @@ public class AuthDescriptor
     {
         private ApplicationKey key;
 
+        private AuthDescriptorMode mode;
+
         private Form config;
 
         private Builder()
@@ -54,6 +64,12 @@ public class AuthDescriptor
         public Builder key( final ApplicationKey key )
         {
             this.key = key;
+            return this;
+        }
+
+        public Builder mode( final AuthDescriptorMode mode )
+        {
+            this.mode = mode;
             return this;
         }
 

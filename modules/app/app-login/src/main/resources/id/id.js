@@ -23,7 +23,7 @@ exports.handle403 = function (req) {
     }
 
 
-    var view = resolve('auth.html');
+    var view = resolve('id.html');
     var params = {
         userStoreKey: userStore.key,
         jQueryUrl: jQueryUrl,
