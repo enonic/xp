@@ -82,6 +82,7 @@
             text-align: center;
             margin-top: 9px;
             overflow: hidden;
+            font-size: 14px;
             text-overflow: ellipsis;
 
             &.draft {
@@ -114,15 +115,18 @@
             }
 
             button {
-              width: 100%;
+              width: 80%;
               text-align: center;
-              margin-top: 10px;
+              margin: 10px auto 0px auto;
+              display: block;
 
               &:not(.active) {
                 background-color: @admin-button-blue2;
               }
 
               &.active {
+                opacity: 1;
+
                 span {
                   cursor: default;
                 }
@@ -131,11 +135,18 @@
           }
 
           .close-version-info-button {
-            .icon-close;
-
-            margin-top: 5px;
-            padding: 10px 7px 7px 7px;
+            cursor: pointer;
             float: right;
+            padding: 2px 16px 7px 7px;
+
+            &:after {
+              content: "";
+              border-left: 6px solid transparent;
+              border-right: 6px solid transparent;
+              border-top: 0px solid transparent;
+              border-bottom: 10px solid @admin-dark-gray;
+            }
+
             background-color: @admin-white;
 
             &:hover {

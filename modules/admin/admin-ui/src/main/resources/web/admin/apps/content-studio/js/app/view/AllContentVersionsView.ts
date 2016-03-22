@@ -46,8 +46,8 @@ module app.view {
             itemEl.appendChildren(closeButton, descriptionDiv, versionInfoDiv);
 
             itemEl.onClicked(() => {
-               versionInfoDiv.removeClass("hidden");
-               closeButton.removeClass("hidden");
+               versionInfoDiv.toggleClass("hidden");
+               closeButton.toggleClass("hidden");
             });
 
             return itemEl;
@@ -148,13 +148,6 @@ module app.view {
 
         private createCloseButton(elementToHide: api.dom.Element): api.dom.Element {
             var closeButton = new api.dom.DivEl("close-version-info-button hidden");
-            closeButton.onClicked((event) => {
-                elementToHide.addClass("hidden");
-                closeButton.addClass("hidden");
-                event.preventDefault();
-                event.stopPropagation();
-            });
-
             return closeButton;
         }
 
@@ -169,13 +162,13 @@ module app.view {
             var versionInfoDiv = new api.dom.DivEl("version-info hidden");
 
             var timestampDiv = new api.dom.DivEl("version-info-timestamp");
-            timestampDiv.appendChildren(new api.dom.SpanEl("label").setHtml("Timestamp: "), new api.dom.SpanEl().setHtml(api.util.DateHelper.formatUTCDateTime(item.modified)));
+            timestampDiv.appendChildren(new api.dom.SpanEl("label").setHtml("Timestamp: "), new api.dom.SpanEl().setHtml(api.ui.treegrid.DateTimeFormatter.createHtml(item.modified)));
 
             var versionIdDiv = new api.dom.DivEl("version-info-version-id");
-            versionIdDiv.appendChildren(new api.dom.SpanEl("label").setHtml("VersionId: "), new api.dom.SpanEl().setHtml(item.id));
+            versionIdDiv.appendChildren(new api.dom.SpanEl("label").setHtml("Version Id: "), new api.dom.SpanEl().setHtml(item.id));
 
             var displayNameDiv = new api.dom.DivEl("version-info-display-name");
-            displayNameDiv.appendChildren(new api.dom.SpanEl("label").setHtml("Display Name: "), new api.dom.SpanEl().setHtml(item.displayName));
+            displayNameDiv.appendChildren(new api.dom.SpanEl("label").setHtml("Display name: "), new api.dom.SpanEl().setHtml(item.displayName));
 
             var isActive = item.id === this.activeVersion.id;
             var restoreButton = new api.ui.button.ActionButton(new api.ui.Action( isActive ? "This version is active" : "Restore this version").onExecuted((action: api.ui.Action) => {
