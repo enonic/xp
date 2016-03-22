@@ -32,14 +32,14 @@ public final class MacroContext
         return body;
     }
 
-    public ImmutableMap<String, String> getParams()
+    public Iterable<String> getParamNames()
     {
-        return params;
+        return params.keySet();
     }
 
-    public String getParam( final String key )
+    public String getParam( final String name )
     {
-        return this.params.get( key );
+        return this.params.get( name );
     }
 
     @Override
@@ -74,9 +74,9 @@ public final class MacroContext
         return new Builder();
     }
 
-    public static Builder create( final String name, final String body )
+    public static Builder copyOf( final MacroContext macroContext )
     {
-        return new Builder( name, body );
+        return new Builder( macroContext );
     }
 
     public static class Builder
@@ -93,11 +93,12 @@ public final class MacroContext
             this.paramsBuilder = ImmutableMap.builder();
         }
 
-        private Builder( final String name, final String body )
+        private Builder( final MacroContext macroContext )
         {
-            this.name = name;
-            this.body = body;
+            this.name = macroContext.name;
+            this.body = macroContext.body;
             this.paramsBuilder = ImmutableMap.builder();
+            this.paramsBuilder.putAll( macroContext.params );
         }
 
         public Builder name( final String name )
@@ -112,9 +113,9 @@ public final class MacroContext
             return this;
         }
 
-        public Builder param( final String key, final String value )
+        public Builder param( final String name, final String value )
         {
-            this.paramsBuilder.put( key, value );
+            this.paramsBuilder.put( name, value );
             return this;
         }
 

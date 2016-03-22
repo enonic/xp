@@ -5,13 +5,14 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.resource.ResourceKey;
 
 @Beta
-public class MacroDescriptor
+public final class MacroDescriptor
 {
     private final static String SITE_MACROS_PREFIX = "site/macros/";
 
     private final MacroKey key;
 
-    private MacroDescriptor( final Builder builder ) {
+    private MacroDescriptor( final Builder builder )
+    {
         this.key = builder.key;
     }
 
@@ -20,17 +21,19 @@ public class MacroDescriptor
         return key;
     }
 
-    public static MacroDescriptor from( final String macroKey ) {
+    public static MacroDescriptor from( final String macroKey )
+    {
         return create().key( MacroKey.from( macroKey ) ).build();
     }
 
-    public static MacroDescriptor from( final MacroKey macroKey ) {
+    public static MacroDescriptor from( final MacroKey macroKey )
+    {
         return create().key( macroKey ).build();
     }
 
-    public ResourceKey toResourceKey( )
+    public ResourceKey toResourceKey()
     {
-        return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".xml" );
+        return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() );
     }
 
     public static Builder create()

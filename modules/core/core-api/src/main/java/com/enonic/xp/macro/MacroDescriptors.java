@@ -6,12 +6,13 @@ import java.util.stream.Stream;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import static java.util.stream.Collectors.toSet;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
+import static java.util.stream.Collectors.toSet;
+
 @Beta
-public class MacroDescriptors
+public final class MacroDescriptors
     extends AbstractImmutableEntitySet<MacroDescriptor>
 {
     private MacroDescriptors( final ImmutableSet<MacroDescriptor> list )
@@ -46,7 +47,7 @@ public class MacroDescriptors
 
     public static MacroDescriptors empty()
     {
-        return new MacroDescriptors( ImmutableSet.<MacroDescriptor>of() );
+        return new MacroDescriptors( ImmutableSet.of() );
     }
 
     private static ImmutableSet<MacroDescriptor> parsePrincipalKeys( final String... macroDescriptors )

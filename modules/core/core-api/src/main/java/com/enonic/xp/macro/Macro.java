@@ -1,12 +1,13 @@
 package com.enonic.xp.macro;
 
+import java.util.Objects;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
-import java.util.Objects;
 
 @Beta
-public class Macro
+public final class Macro
 {
     private final MacroKey key;
 
@@ -31,14 +32,14 @@ public class Macro
         return body;
     }
 
-    public ImmutableMap<String, String> getParams()
+    public Iterable<String> getParamNames()
     {
-        return params;
+        return params.keySet();
     }
 
-    public String getParam( final String key )
+    public String getParam( final String name )
     {
-        return this.params.get( key );
+        return this.params.get( name );
     }
 
     @Override
@@ -73,9 +74,9 @@ public class Macro
         return new Builder();
     }
 
-    public static Builder create( final MacroKey key, final String body )
+    public static Builder copyOf( final Macro macro )
     {
-        return new Builder( key, body );
+        return new Builder( macro );
     }
 
     public static class Builder
@@ -92,11 +93,12 @@ public class Macro
             this.paramsBuilder = ImmutableMap.builder();
         }
 
-        private Builder( final MacroKey key, final String body )
+        private Builder( final Macro macro )
         {
-            this.key = key;
-            this.body = body;
+            this.key = macro.key;
+            this.body = macro.body;
             this.paramsBuilder = ImmutableMap.builder();
+            this.paramsBuilder.putAll( macro.params );
         }
 
         public Builder key( final MacroKey key )
