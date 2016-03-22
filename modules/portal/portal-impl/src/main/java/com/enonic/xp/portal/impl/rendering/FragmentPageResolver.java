@@ -20,8 +20,19 @@ final class FragmentPageResolver
 
     public Page inlineFragmentInPage( final Page page, final Component fragmentComponent, final ComponentPath path )
     {
-        final PageRegions regions = this.replaceComponentInPage( page.getRegions(), path, fragmentComponent );
-        return Page.create( page ).regions( regions ).build();
+        if ( page.getRegions() != null )
+        {
+            final PageRegions regions = this.replaceComponentInPage( page.getRegions(), path, fragmentComponent );
+            return Page.create( page ).regions( regions ).build();
+        }
+        else if ( page.getFragment() != null && page.getFragment() instanceof LayoutComponent )
+        {
+            final LayoutComponent layoutComponent = (LayoutComponent) page.getFragment();
+            final LayoutRegions layoutRegions = this.replaceComponentInLayout( layoutComponent.getRegions(), path, fragmentComponent );
+            final LayoutComponent updatedLayout = LayoutComponent.create( layoutComponent ).regions( layoutRegions ).build();
+            return Page.create( page ).fragment( updatedLayout ).build();
+        }
+        return page;
     }
 
     private PageRegions replaceComponentInPage( final PageRegions pageRegions, final ComponentPath path, final Component component )
