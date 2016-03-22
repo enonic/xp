@@ -8,6 +8,7 @@ exports.handle403 = function (req) {
     var jQueryUrl = portalLib.assetUrl({path: "js/jquery-2.2.0.min.js"});
     var appLoginJsUrl = portalLib.assetUrl({path: "js/app-login.js"});
     var appLoginCssUrl = portalLib.assetUrl({path: "css/app-login.css"});
+    var appLoginServiceUrl = portalLib.serviceUrl({service: "login"});
 
     var backgroundUrl;
     var idProviderConfig = authLib.getIdProviderConfig();
@@ -26,6 +27,7 @@ exports.handle403 = function (req) {
         jQueryUrl: jQueryUrl,
         appLoginJsUrl: appLoginJsUrl,
         appLoginCssUrl: appLoginCssUrl,
+        appLoginServiceUrl: appLoginServiceUrl,
         backgroundUrl: backgroundUrl
     };
     var body = mustacheLib.render(view, params);

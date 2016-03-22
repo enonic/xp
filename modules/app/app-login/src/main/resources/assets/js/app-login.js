@@ -1,6 +1,4 @@
 function handleAuthenticateResponse(loginResult) {
-    console.log("auth response: " + JSON.stringify(loginResult));
-
     if (loginResult.authenticated) {
         location.reload();
     } else {
@@ -27,12 +25,11 @@ function loginButtonClick() {
     var data = {
         user: userNameInput.value,
         password: passwordInput.value,
-        userStore: CONFIG.userStoreKey,
-        rememberMe: false
+        userStore: CONFIG.userStoreKey
     }
 
     $.ajax({
-        url: '/admin/rest/auth/login',
+        url: CONFIG.appLoginServiceUrl,
         type: 'post',
         dataType: 'json',
         contentType: 'application/json',

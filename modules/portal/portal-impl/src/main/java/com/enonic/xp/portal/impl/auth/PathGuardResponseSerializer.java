@@ -60,7 +60,6 @@ public class PathGuardResponseSerializer
 
             final PortalRequest portalRequest = new PortalRequestAdapter().
                 adapt( request );
-            portalRequest.setBaseUri( "/portal" );
             portalRequest.setApplicationKey( authDescriptor.getKey() );
             portalRequest.setUserStore( userStore );
 
