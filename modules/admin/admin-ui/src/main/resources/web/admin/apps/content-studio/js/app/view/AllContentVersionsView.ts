@@ -177,7 +177,17 @@ module app.view {
             var displayNameDiv = new api.dom.DivEl("version-info-display-name");
             displayNameDiv.appendChildren(new api.dom.SpanEl("label").setHtml("Display Name: "), new api.dom.SpanEl().setHtml(item.displayName));
 
-            versionInfoDiv.appendChildren(timestampDiv, versionIdDiv, displayNameDiv);
+            var isActive = item.id === this.activeVersion.id;
+            var restoreButton = new api.ui.button.ActionButton(new api.ui.Action( isActive ? "This version is active" : "Restore this version").onExecuted((action: api.ui.Action) => {
+                //restore version
+            }), false);
+
+            if(isActive) {
+                restoreButton.addClass("active");
+                restoreButton.setEnabled(false);
+            }
+
+            versionInfoDiv.appendChildren(timestampDiv, versionIdDiv, displayNameDiv, restoreButton);
 
             return versionInfoDiv;
         }

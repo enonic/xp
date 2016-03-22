@@ -52,7 +52,7 @@
 
       .all-content-versions {
 
-        * {
+        *:not(:disabled) {
           cursor: pointer;
         }
 
@@ -111,6 +111,22 @@
             .label {
               width: 85px;
               float: left;
+            }
+
+            button {
+              width: 100%;
+              text-align: center;
+              margin-top: 10px;
+
+              &:not(.active) {
+                background-color: @admin-button-blue2;
+              }
+
+              &.active {
+                span {
+                  cursor: default;
+                }
+              }
             }
           }
 
