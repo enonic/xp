@@ -97,8 +97,6 @@ module app.wizard {
 
                 callback(this);
             });
-
-            this.formIcon.addClass("icon-shield");
         }
 
         getUserItemType(): string {

@@ -17,7 +17,7 @@ module api.ui.security {
         }
 
         resolveIconClass(object: api.security.UserStore): string {
-            return "icon-shield";
+            return "icon-address-book";
         }
 
         onRemoveClicked(listener: (event: MouseEvent) => void) {

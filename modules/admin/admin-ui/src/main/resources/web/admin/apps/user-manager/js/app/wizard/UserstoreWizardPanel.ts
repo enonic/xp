@@ -48,7 +48,7 @@ module app.wizard {
             var iconUrl = api.dom.ImgEl.PLACEHOLDER;
             this.formIcon = new FormIcon(iconUrl, "Click to upload icon");
             this.formIcon.addClass("icon icon-xlarge");
-            this.formIcon.addClass("icon-shield");
+            this.formIcon.addClass("icon-address-book");
 
             this.wizardActions = new app.wizard.action.UserStoreWizardActions(this);
             this.toolbar = new UserStoreWizardToolbar({
@@ -103,8 +103,6 @@ module app.wizard {
 
                 callback(this);
             });
-
-            this.formIcon.addClass("icon-address-book");
         }
 
         getUserItemType(): string {

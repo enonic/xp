@@ -26,7 +26,7 @@ module api.ui.security {
         }
 
         resolveIconClass(userStore: api.security.UserStore): string {
-            return "icon-shield";
+            return "icon-address-book";
         }
 
         resolveTitle(userStore: UserStore): string {

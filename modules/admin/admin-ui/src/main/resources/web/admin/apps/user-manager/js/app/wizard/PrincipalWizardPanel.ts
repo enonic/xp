@@ -62,7 +62,8 @@ module app.wizard {
             } else {
                 this.getPrincipalWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
                     var updateStatus = event.getPropertyName() === "name" ||
-                        (this.getPrincipalWizardHeader().isAutoGenerationEnabled() && event.getPropertyName() === "displayName");
+                                       (this.getPrincipalWizardHeader().isAutoGenerationEnabled() &&
+                                        event.getPropertyName() === "displayName");
 
                     if (updateStatus) {
                         this.wizardActions.getSaveAction().setEnabled(!!event.getNewValue());
@@ -82,7 +83,7 @@ module app.wizard {
                     this.formIcon.addClass("icon-users");
                     break;
                 case PrincipalType.ROLE:
-                    this.formIcon.addClass("icon-shield");
+                    this.formIcon.addClass("icon-masks");
                     break;
                 }
 
@@ -116,14 +117,14 @@ module app.wizard {
 
         getUserItemType(): string {
             switch (this.principalType) {
-                case PrincipalType.USER:
-                    return "User";
-                case PrincipalType.GROUP:
-                    return "Group";
-                case PrincipalType.ROLE:
-                    return "Role";
-                default:
-                    return "";
+            case PrincipalType.USER:
+                return "User";
+            case PrincipalType.GROUP:
+                return "Group";
+            case PrincipalType.ROLE:
+                return "Role";
+            default:
+                return "";
             }
         }
 
