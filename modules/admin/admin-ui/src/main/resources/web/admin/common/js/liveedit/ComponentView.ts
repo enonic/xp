@@ -181,8 +181,8 @@ module api.liveedit {
 
             if (!isTopFragmentComponent) {
                 actions.push(this.createSelectParentAction());
+                actions.push(this.createInsertAction(liveEditModel));
             }
-            actions.push(this.createInsertAction(liveEditModel));
 
             if (inspectActionRequired) {
                 actions.push(new api.ui.Action("Inspect").onExecuted(() => {
@@ -190,25 +190,25 @@ module api.liveedit {
                 }));
             }
 
-            actions.push(new api.ui.Action("Reset").onExecuted(() => {
-                this.component.reset();
-            }));
             if (!isTopFragmentComponent) {
+                actions.push(new api.ui.Action("Reset").onExecuted(() => {
+                    this.component.reset();
+                }));
                 actions.push(new api.ui.Action("Remove").onExecuted(() => {
                     this.deselect();
                     this.remove();
                 }));
+                actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
+                    this.deselect();
+
+                    var duplicatedComponent = <COMPONENT> this.getComponent().duplicate();
+                    var duplicatedView = this.duplicate(duplicatedComponent);
+
+                    duplicatedView.showLoadingSpinner();
+
+                    new ComponentDuplicatedEvent(this, duplicatedView).fire();
+                }));
             }
-            actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
-                this.deselect();
-
-                var duplicatedComponent = <COMPONENT> this.getComponent().duplicate();
-                var duplicatedView = this.duplicate(duplicatedComponent);
-
-                duplicatedView.showLoadingSpinner();
-
-                new ComponentDuplicatedEvent(this, duplicatedView).fire();
-            }));
 
             var isFragmentComponent = this instanceof api.liveedit.fragment.FragmentComponentView;
             if (!isFragmentComponent && !isFragmentContent) {
