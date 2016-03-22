@@ -103,20 +103,30 @@ public final class ContentIconResource
             {
                 try
                 {
-                    final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
-                    final String format = imageService.getFormatByMimeType( contentThumbnail.getMimeType() );
+                    final boolean isSVG = contentThumbnail.getMimeType().equals( "image/svg+xml" );
 
-                    final ReadImageParams readImageParams = ReadImageParams.newImageParams().
-                        contentId( content.getId() ).
-                        binaryReference( contentThumbnail.getBinaryReference() ).
-                        scaleSize( size ).
-                        scaleSquare( crop ).
-                        format( format ).
-                        orientation( imageOrientation ).
-                        build();
+                    if( isSVG )
+                    {
+                        return new ResolvedImage( binary.read(), contentThumbnail.getMimeType() );
+                    }
+                    else
+                    {
+                        final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
+                        final String format = imageService.getFormatByMimeType( contentThumbnail.getMimeType() );
 
-                    final ByteSource thumbnailImage = imageService.readImage( readImageParams );
-                    return new ResolvedImage( thumbnailImage.read(), contentThumbnail.getMimeType() );
+                        final ReadImageParams readImageParams = ReadImageParams.newImageParams().
+                                contentId( content.getId() ).
+                                binaryReference( contentThumbnail.getBinaryReference() ).
+                                scaleSize( size ).
+                                scaleSquare( crop ).
+                                format( format ).
+                                orientation( imageOrientation ).
+                                build();
+
+                        final ByteSource thumbnailImage = imageService.readImage( readImageParams );
+                        return new ResolvedImage( thumbnailImage.read(), contentThumbnail.getMimeType() );
+                    }
+
                 }
                 catch ( IOException e )
                 {
@@ -134,20 +144,31 @@ public final class ContentIconResource
         {
             try
             {
-                final String format = imageService.getFormatByMimeType( imageAttachment.getMimeType() );
+                final boolean isSVG = imageAttachment.getMimeType().equals( "image/svg+xml" );
 
-                final ReadImageParams readImageParams = ReadImageParams.newImageParams().
-                    contentId( media.getId() ).
-                    binaryReference( imageAttachment.getBinaryReference() ).
-                    cropping( media.getCropping() ).
-                    scaleSize( size ).
-                    scaleSquare( crop ).
-                    format( format ).
-                    orientation( getSourceAttachmentOrientation( media ) ).
-                    build();
+                if( isSVG )
+                {
+                    final ByteSource binary = contentService.getBinary( media.getId(), imageAttachment.getBinaryReference() );
+                    return new ResolvedImage( binary.read(), imageAttachment.getMimeType() );
+                }
+                else
+                {
+                    final String format = imageService.getFormatByMimeType( imageAttachment.getMimeType() );
 
-                final ByteSource contentImage = imageService.readImage( readImageParams );
-                return new ResolvedImage( contentImage.read(), imageAttachment.getMimeType() );
+                    final ReadImageParams readImageParams = ReadImageParams.newImageParams().
+                            contentId( media.getId() ).
+                            binaryReference( imageAttachment.getBinaryReference() ).
+                            cropping( media.getCropping() ).
+                            scaleSize( size ).
+                            scaleSquare( crop ).
+                            format( format ).
+                            orientation( getSourceAttachmentOrientation( media ) ).
+                            build();
+
+                    final ByteSource contentImage = imageService.readImage( readImageParams );
+                    return new ResolvedImage( contentImage.read(), imageAttachment.getMimeType() );
+                }
+
             }
             catch ( IOException e )
             {
