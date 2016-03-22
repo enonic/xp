@@ -2,6 +2,7 @@ package com.enonic.xp.lib.content.mapper;
 
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
+import com.enonic.xp.region.Component;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -22,7 +23,7 @@ public final class PageMapper
         serialize( gen, this.value );
     }
 
-    private static void serialize( final MapGenerator gen, final Page value )
+    private void serialize( final MapGenerator gen, final Page value )
     {
         gen.value( "template", value.getTemplate() );
         gen.value( "controller", value.getController() );
@@ -37,9 +38,20 @@ public final class PageMapper
         {
             serializeRegions( gen, value.getRegions() );
         }
+        if ( value.isFragment() )
+        {
+            serializeFragment( gen, value.getFragment() );
+        }
     }
 
-    private static void serializeRegions( final MapGenerator gen, final PageRegions values )
+    private void serializeFragment( final MapGenerator gen, final Component value )
+    {
+        gen.map( "fragment" );
+        new ComponentMapper( value ).serialize( gen );
+        gen.end();
+    }
+
+    private void serializeRegions( final MapGenerator gen, final PageRegions values )
     {
         gen.map( "regions" );
         if ( values != null )

@@ -252,7 +252,9 @@ module app.wizard.page.contextwindow.inspect.page {
             var pageMode = pageModel.getMode();
 
             this.pageTemplateForm.getSelector().setModel(liveEditModel);
-            this.pageTemplateForm.show();
+            if (pageMode !== PageMode.FRAGMENT) {
+                this.pageTemplateForm.show();
+            }
 
             if (pageMode == PageMode.AUTOMATIC) {
                 this.showDefaultPageTemplateConfig(pageModel, liveEditModel.getFormContext());

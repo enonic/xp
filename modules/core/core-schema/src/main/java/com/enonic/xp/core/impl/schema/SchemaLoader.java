@@ -1,10 +1,5 @@
 package com.enonic.xp.core.impl.schema;
 
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-import com.google.common.io.Files;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.resource.Resource;
@@ -13,6 +8,10 @@ import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
+import com.google.common.collect.Sets;
+import com.google.common.io.Files;
+
+import java.util.Set;
 
 public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchema>
 {
@@ -61,9 +60,23 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
 
     protected final Icon loadIcon( final N name )
     {
-        final ResourceKey resourceKey = toResourceKey( name, "png" );
+        final Icon svgIcon = loadIcon( name, "image/svg+xml", "svg" );
+
+        if ( svgIcon != null )
+        {
+            return svgIcon;
+        }
+        else
+        {
+            return loadIcon( name, "image/png", "png" );
+        }
+    }
+
+    private final Icon loadIcon( final N name, final String mimeType, final String ext )
+    {
+        final ResourceKey resourceKey = toResourceKey( name, ext );
         final Resource resource = this.resourceService.getResource( resourceKey );
-        return SchemaHelper.loadIcon( resource );
+        return SchemaHelper.loadIcon( resource, mimeType );
     }
 
     public final Set<N> findNames( final ApplicationKey key )

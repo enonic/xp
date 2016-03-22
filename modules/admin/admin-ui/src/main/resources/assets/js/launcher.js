@@ -55,6 +55,7 @@
             launcherMainContainer = link.import.querySelector('.launcher-main-container');
             launcherMainContainer.setAttribute("hidden", "true");
             container.appendChild(launcherMainContainer);
+            addLongClickHandler(container);
 
             if (autoOpenLauncher) {
                 openLauncherPanel();
@@ -73,6 +74,28 @@
         };
 
         return link;
+    }
+
+    function addLongClickHandler(container) {
+        var longpress = false;
+        var starttime, endtime;
+
+        var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
+        for (var i = 0; i < appTiles.length; i++) {
+            appTiles[i].addEventListener("click", function(e) {
+                if (longpress) {
+                    e.preventDefault();
+                    document.location.href = this.href;
+                }
+            });
+            appTiles[i].addEventListener("mousedown", function() {
+                startTime = new Date().getTime();
+            });
+            appTiles[i].addEventListener("mouseup", function() {
+                endTime = new Date().getTime();
+                longpress = (endTime - startTime < 500) ? false : true;
+            });
+        }
     }
 
     function getBodyWidth() {

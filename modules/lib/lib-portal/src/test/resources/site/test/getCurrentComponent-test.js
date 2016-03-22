@@ -3,7 +3,7 @@ var portal = require('/lib/xp/portal.js');
 
 var expectedJson = {
     "name": "mylayout",
-    "path": "main/-1",
+    "path": "main/0",
     "type": "layout",
     "descriptor": "myapplication:mylayout",
     "config": {
@@ -14,7 +14,7 @@ var expectedJson = {
             "components": [
                 {
                     "name": "mypart",
-                    "path": "main/-1/bottom/0",
+                    "path": "main/0/bottom/0",
                     "type": "part",
                     "descriptor": "myapplication:mypart",
                     "config": {

@@ -3,6 +3,8 @@ package com.enonic.xp.admin.impl.json.content.page;
 
 import java.util.List;
 
+import com.enonic.xp.admin.impl.json.content.page.region.ComponentJson;
+import com.enonic.xp.admin.impl.json.content.page.region.ComponentJsonSerializer;
 import com.enonic.xp.admin.impl.json.content.page.region.PageRegionsJson;
 import com.enonic.xp.admin.impl.json.content.page.region.RegionJson;
 import com.enonic.xp.data.PropertyArrayJson;
@@ -18,14 +20,11 @@ public final class PageJson
 
     private final List<PropertyArrayJson> configJson;
 
-    private final boolean customized;
-
     public PageJson( final Page page )
     {
         this.page = page;
         this.regionsJson = page.hasRegions() ? new PageRegionsJson( page.getRegions() ) : null;
         this.configJson = page.hasConfig() ? PropertyTreeJson.toJson( page.getConfig() ) : null;
-        this.customized = page.isCustomized();
     }
 
     public String getController()
@@ -48,8 +47,13 @@ public final class PageJson
         return configJson;
     }
 
-    public boolean isCustomized() {
+    public boolean isCustomized()
+    {
         return page.isCustomized();
     }
 
+    public ComponentJson getFragment()
+    {
+        return page.isFragment() ? ComponentJsonSerializer.toJson( page.getFragment() ) : null;
+    }
 }

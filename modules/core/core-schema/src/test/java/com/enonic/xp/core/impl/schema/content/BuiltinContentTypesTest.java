@@ -13,7 +13,7 @@ public class BuiltinContentTypesTest
     public void testBuiltin()
     {
         final ContentTypes types = new BuiltinContentTypes().getAll();
-        assertEquals( 21, types.getSize() );
+        assertEquals( 22, types.getSize() );
 
         assertType( types.get( 0 ), "base:unstructured", true );
         assertType( types.get( 1 ), "base:structured", true );
@@ -36,6 +36,7 @@ public class BuiltinContentTypesTest
         assertType( types.get( 18 ), "portal:site", true );
         assertType( types.get( 19 ), "portal:template-folder", true );
         assertType( types.get( 20 ), "portal:page-template", true );
+        assertType( types.get( 21 ), "portal:fragment", true );
     }
 
     private void assertType( final ContentType type, final String name, final boolean hasIcon )
