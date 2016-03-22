@@ -11,7 +11,7 @@ module app.wizard.page.contextwindow.inspect.region {
         iconClass: string;
     }
 
-    export class ComponentInspectionPanel<COMPONENT extends Component> extends app.wizard.page.contextwindow.inspect.BaseInspectionPanel {
+    export abstract class ComponentInspectionPanel<COMPONENT extends Component> extends app.wizard.page.contextwindow.inspect.BaseInspectionPanel {
 
         liveEditModel: LiveEditModel;
 

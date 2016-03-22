@@ -1,9 +1,12 @@
 package com.enonic.xp.region;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
@@ -21,7 +24,7 @@ public final class Region
         Preconditions.checkNotNull( builder.name, "name cannot be null" );
         this.name = builder.name;
         this.parent = builder.parent;
-        this.components = builder.components.build();
+        this.components = ImmutableList.copyOf( builder.components );
 
         for ( final Component component : this.components )
         {
@@ -93,11 +96,6 @@ public final class Region
         return this.components.get( index );
     }
 
-    public int numberOfComponents()
-    {
-        return this.components.size();
-    }
-
     public ImmutableList<Component> getComponents()
     {
         return components;
@@ -126,13 +124,23 @@ public final class Region
         return Objects.hash( name, components );
     }
 
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this ).
+            add( "name", name ).
+            add( "parent", parent == null ? null : parent.getName() ).
+            add( "components", components ).
+            toString();
+    }
+
     public static class Builder
     {
         private String name;
 
         private LayoutComponent parent;
 
-        private ImmutableList.Builder<Component> components = new ImmutableList.Builder<>();
+        private List<Component> components = new ArrayList<>();
 
         public Builder()
         {
@@ -164,6 +172,12 @@ public final class Region
         public Builder add( final Component component )
         {
             this.components.add( component );
+            return this;
+        }
+
+        public Builder set( final int index, final Component component )
+        {
+            this.components.set( index, component );
             return this;
         }
 

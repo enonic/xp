@@ -9,5 +9,7 @@ module api.content.page.region {
         TextComponent?:TextComponentJson;
 
         LayoutComponent?:LayoutComponentJson;
+
+        FragmentComponent?:FragmentComponentJson;
     }
 }

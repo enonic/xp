@@ -63,6 +63,11 @@ public final class ComponentPath
         return getLastLevel().getComponentIndex();
     }
 
+    public boolean isEmpty()
+    {
+        return this.regionAndComponentList.isEmpty();
+    }
+
     int numberOfLevels()
     {
         return this.regionAndComponentList.size();

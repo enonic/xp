@@ -109,10 +109,10 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
                 return renderEmptyComponentEditMode( component );
 
             case PREVIEW:
-                return renderEmptyComponentPreviewMode();
+                return renderEmptyComponentPreviewMode( component );
 
             case LIVE:
-                return renderEmptyComponentLiveMode();
+                return renderEmptyComponentPreviewMode( component );
 
             default:
                 throw new DescriptorNotFoundException( component.getDescriptor() );
@@ -129,20 +129,14 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
             build();
     }
 
-    private PortalResponse renderEmptyComponentPreviewMode()
+    private PortalResponse renderEmptyComponentPreviewMode( final DescriptorBasedComponent component )
     {
-        final String html = EMPTY_COMPONENT_PREVIEW_MODE_HTML;
+        final String html = MessageFormat.format( EMPTY_COMPONENT_PREVIEW_MODE_HTML, component.getType().toString() );
 
         return PortalResponse.create().
             contentType( MediaType.create( "text", "html" ) ).
             body( html ).
             build();
-    }
-
-    private PortalResponse renderEmptyComponentLiveMode()
-    {
-        // TODO: Should probably be different than preview.
-        return renderEmptyComponentPreviewMode();
     }
 
     private PortalResponse renderEmptyComponentPlaceHolder( final DescriptorBasedComponent component )

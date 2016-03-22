@@ -10,9 +10,10 @@ import com.enonic.xp.region.Component;
 @SuppressWarnings("UnusedDeclaration")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes({@JsonSubTypes.Type(value = ImageComponentJson.class, name = "ImageComponent"),
-                  @JsonSubTypes.Type(value = PartComponentJson.class, name = "PartComponent"),
-                  @JsonSubTypes.Type(value = LayoutComponentJson.class, name = "LayoutComponent"),
-                  @JsonSubTypes.Type(value = TextComponentJson.class, name = "TextComponent")})
+    @JsonSubTypes.Type(value = PartComponentJson.class, name = "PartComponent"),
+    @JsonSubTypes.Type(value = LayoutComponentJson.class, name = "LayoutComponent"),
+    @JsonSubTypes.Type(value = TextComponentJson.class, name = "TextComponent"),
+    @JsonSubTypes.Type(value = FragmentComponentJson.class, name = "FragmentComponent")})
 public abstract class ComponentJson<COMPONENT extends Component>
 {
     private final COMPONENT component;

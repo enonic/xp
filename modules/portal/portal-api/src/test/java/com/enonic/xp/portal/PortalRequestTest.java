@@ -3,6 +3,7 @@ package com.enonic.xp.portal;
 import org.junit.Test;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.web.HttpMethod;
 
 import static org.junit.Assert.*;
@@ -83,7 +84,7 @@ public class PortalRequestTest
         throws Exception
     {
         final PortalRequest request = new PortalRequest();
-        assertEquals( PortalRequest.DEFAULT_BRANCH, request.getBranch() );
+        assertEquals( ContentConstants.BRANCH_DRAFT, request.getBranch() );
 
         request.setBranch( Branch.from( "another" ) );
         assertEquals( Branch.from( "another" ), request.getBranch() );
