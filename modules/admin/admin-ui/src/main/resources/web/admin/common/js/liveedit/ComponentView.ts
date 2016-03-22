@@ -221,7 +221,7 @@ module api.liveedit {
                         fragmentCmpView.getComponent().setFragment(content.getContentId(), content.getDisplayName());
                         this.addComponentView(fragmentCmpView, this.getNewItemIndex());
                         this.remove();
-                        new ComponentFragmentCreatedEvent(fragmentCmpView, content).fire();
+                        new ComponentFragmentCreatedEvent(fragmentCmpView, this.getComponent().getType(), content).fire();
                     });
                 }));
             }

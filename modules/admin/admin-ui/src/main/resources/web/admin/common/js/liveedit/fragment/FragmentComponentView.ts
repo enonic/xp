@@ -82,13 +82,15 @@ module api.liveedit.fragment {
         }
 
         protected getComponentContextMenuActions(actions: api.ui.Action[], liveEditModel: LiveEditModel): api.ui.Action[] {
-            actions.push(new api.ui.Action("Edit in new tab").onExecuted(() => {
-                this.deselect();
-                new GetContentByIdRequest(this.fragmentComponent.getFragment()).sendAndParse().then((content: Content)=> {
-                    var contentAndSummary = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
-                    new api.content.event.EditContentEvent([contentAndSummary]).fire();
-                });
-            }));
+            if (this.fragmentComponent && !this.fragmentComponent.isEmpty()) {
+                actions.push(new api.ui.Action("Edit in new tab").onExecuted(() => {
+                    this.deselect();
+                    new GetContentByIdRequest(this.fragmentComponent.getFragment()).sendAndParse().then((content: Content)=> {
+                        var contentAndSummary = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
+                        new api.content.event.EditContentEvent([contentAndSummary]).fire();
+                    });
+                }));
+            }
             return actions;
         }
 

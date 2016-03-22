@@ -483,12 +483,15 @@ module app.wizard.page {
             });
 
             this.liveEditPageProxy.onComponentFragmentCreated((event: ComponentFragmentCreatedEvent) => {
-                var view = event.getComponentView();
-                var componentType = view.getType().getShortName();
-                var componentName = view.getComponent().getName().toString();
+                var fragmentView: FragmentComponentView = event.getComponentView();
+                var componentType = event.getSourceComponentType().getShortName();
+                var componentName = fragmentView.getComponent().getName().toString();
                 api.notify.showSuccess(`Fragment created from '${componentName}' ${componentType}.`);
 
                 this.saveAndReloadOnlyComponent(event.getComponentView());
+
+                var summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(event.getFragmentContent());
+                new api.content.event.EditContentEvent([summaryAndStatus]).fire();
             });
 
             this.liveEditPageProxy.onShowWarning((event: ShowWarningLiveEditEvent) => {
