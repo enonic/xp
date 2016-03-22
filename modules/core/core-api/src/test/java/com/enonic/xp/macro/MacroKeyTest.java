@@ -1,9 +1,8 @@
-package com.enonic.xp;
+package com.enonic.xp.macro;
 
 import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.macro.MacroKey;
 
 import static org.junit.Assert.*;
 
