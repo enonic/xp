@@ -9,6 +9,7 @@ exports.handle403 = function (req) {
     var appLoginJsUrl = portalLib.assetUrl({path: "js/app-login.js"});
     var appLoginCssUrl = portalLib.assetUrl({path: "css/app-login.css"});
     var appLoginServiceUrl = portalLib.serviceUrl({service: "login"});
+    var brandingUrl = portalLib.assetUrl({path: "img/enonic.svg"});
 
     var backgroundUrl;
     var idProviderConfig = authLib.getIdProviderConfig();
@@ -21,6 +22,7 @@ exports.handle403 = function (req) {
         backgroundUrl = portalLib.assetUrl({path: "img/background-1920.jpg"});
     }
 
+
     var view = resolve('auth.html');
     var params = {
         userStoreKey: userStore.key,
@@ -28,7 +30,8 @@ exports.handle403 = function (req) {
         appLoginJsUrl: appLoginJsUrl,
         appLoginCssUrl: appLoginCssUrl,
         appLoginServiceUrl: appLoginServiceUrl,
-        backgroundUrl: backgroundUrl
+        backgroundUrl: backgroundUrl,
+        brandingUrl: brandingUrl
     };
     var body = mustacheLib.render(view, params);
 
