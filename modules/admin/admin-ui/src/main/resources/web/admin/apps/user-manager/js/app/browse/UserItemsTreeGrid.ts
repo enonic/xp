@@ -100,7 +100,8 @@ module app.browse {
 
             var type: UserTreeGridItemType = userItem.getType();
 
-            if (type == UserTreeGridItemType.ROLES || type == UserTreeGridItemType.GROUPS || type == UserTreeGridItemType.USERS) {
+            if (type == UserTreeGridItemType.ROLES || type == UserTreeGridItemType.GROUPS || type == UserTreeGridItemType.USERS ||
+                type == UserTreeGridItemType.PATH_GUARDS) {
                 return false;
             }
 
@@ -169,13 +170,8 @@ module app.browse {
                     setType(UserTreeGridItemType.USER_STORE).
                     build();
 
-                // Remove roles from the end to add them lately
-                var children = this.getRoot().getDefaultRoot().getChildren(),
-                    roles = children.pop();
-
-                this.appendNode(userTreeGridItem, true, false);
-
-                children.push(roles);
+                var children = this.getRoot().getDefaultRoot().getChildren();
+                this.insertNode(userTreeGridItem, true, children.length - 2);
 
                 if (!this.getRoot().isFiltered()) {
                     this.initData(this.getRoot().getDefaultRoot().treeToList());
