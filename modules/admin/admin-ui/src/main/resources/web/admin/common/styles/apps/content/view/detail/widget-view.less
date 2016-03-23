@@ -127,8 +127,19 @@
               &.active {
                 opacity: 1;
 
+                &:hover {
+                  background-color: @form-button-bg;
+                  cursor: default;
+                }
+
+                &:focus {
+                  box-shadow: none;
+                  border: 1px solid @form-button-bg;
+                }
+
                 span {
                   cursor: default;
+                  color: @admin-white;
                 }
               }
             }
