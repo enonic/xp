@@ -9,14 +9,14 @@ public class SetActiveVersionJson
 {
     private final ContentId contentId;
 
-    private final ContentVersionId contentVersionId;
+    private final ContentVersionId versionId;
 
 
     public SetActiveVersionJson( @JsonProperty("contentId") final ContentId contentId, //
-                                 @JsonProperty("contentVersionId") final ContentVersionId contentVersionId )
+                                 @JsonProperty("versionId") final ContentVersionId versionId )
     {
         this.contentId = contentId;
-        this.contentVersionId = contentVersionId;
+        this.versionId = versionId;
     }
 
     public ContentId getContentId()
@@ -24,8 +24,8 @@ public class SetActiveVersionJson
         return contentId;
     }
 
-    public ContentVersionId getContentVersionId()
+    public ContentVersionId getVersionId()
     {
-        return contentVersionId;
+        return versionId;
     }
 }
