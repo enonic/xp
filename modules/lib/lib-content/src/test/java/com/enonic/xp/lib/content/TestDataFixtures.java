@@ -229,8 +229,7 @@ public final class TestDataFixtures
         builder.regions( newLayoutRegions() );
         final LayoutComponent layout = builder.build();
 
-        final Region parentRegion = Region.create().name( "main" ).build();
-        layout.setRegion( parentRegion );
+        Region.create().name( "main" ).add( layout ).build();
         return layout;
     }
 

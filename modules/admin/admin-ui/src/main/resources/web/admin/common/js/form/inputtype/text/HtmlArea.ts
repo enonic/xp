@@ -16,7 +16,7 @@ module api.form.inputtype.text {
     import HTMLAreaBuilder = api.util.htmlarea.editor.HTMLAreaBuilder;
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
     import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
-    
+
     export class HtmlArea extends support.BaseInputTypeNotManagingAdd<string> {
 
         private editors: HtmlAreaOccurrenceInfo[];
@@ -40,6 +40,9 @@ module api.form.inputtype.text {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
+            if (!ValueTypes.STRING.equals(property.getType())) {
+                property.convertValueType(ValueTypes.STRING);
+            }
 
             var value = HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString());
             var textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
@@ -137,6 +140,10 @@ module api.form.inputtype.text {
                     }
                     this.removeTooltipFromEditorArea(textAreaWrapper);
                     HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
+                    this.onShown((event) => {
+                        // invoke auto resize on shown in case contents have been updated while inactive
+                        editor.execCommand('mceAutoResize', false, null);
+                    });
                 });
         }
 
@@ -228,6 +235,10 @@ module api.form.inputtype.text {
             wemjq(this.getHTMLElement()).height(wemjq(this.getHTMLElement()).height());
         }
 
+        private hideDropdownMenu() {
+            wemjq(".mce-menu").hide();
+        }
+
         private getEditor(editorId: string): HtmlAreaEditor {
             return tinymce.get(editorId);
         }
@@ -291,7 +302,7 @@ module api.form.inputtype.text {
                 try {
                     editor.destroy(false);
                 }
-                catch (e) {
+                catch(e) {
                     //error thrown in FF on tab close - XP-2624
                 }
             }

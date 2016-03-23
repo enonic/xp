@@ -6,7 +6,7 @@
     }
 
     label + .form-input,
-    label + .input-wrapper, {
+    label + .input-wrapper {
       margin-left: @label-width;
     }
   }
@@ -99,8 +99,10 @@
       margin-bottom: 0;
       padding: 0 !important;
 
-      .options-container {
-        position: fixed !important;
+      .content-combo-box {
+        .options-container {
+          position: fixed !important;
+        }
       }
 
       fieldset:not(:last-child) {
@@ -177,6 +179,7 @@
 
         > img {
           display: block;
+          max-width: 640px;
         }
       }
 
@@ -210,9 +213,10 @@
       position: relative;
       border-bottom-width: 0px;
 
-      .@{_COMMON_PREFIX}button {
-
-        padding: 7px 7px;
+      .@{_COMMON_PREFIX}button[class*="icon-paragraph-"] {
+        &[class*="icon-paragraph-"] {
+          padding: 7px 7px;
+        }
 
         &[class*="icon-"] {
           font-size: 24px;
@@ -224,7 +228,7 @@
       .keep-size-check {
         display: inline-block;
         line-height: 25px;
-        margin: 0;
+        margin: 0 0 0 15px;
 
         input {
           width: 0;
@@ -239,7 +243,49 @@
         }
       }
 
+      .fold-button {
+        bottom: 3px;
+      }
+
     }
+
+    .image-cropping-selector {
+
+      width: 220px;
+      margin-left: 15px;
+      bottom: 4px;
+
+      .option-filter-input {
+        height: 26px;
+
+        .placeholder(1em, normal);
+      }
+
+      .selected-option {
+        min-height: 26px;
+        top: 4px;
+      }
+
+      .options-container {
+        height: 210px !important;
+
+        .slick-cell {
+          padding-bottom: 4px;
+          padding-top: 4px;
+        }
+      }
+
+      .names-view {
+        .main-name {
+          font-size: 12px;
+        }
+      }
+
+      .selected-option:not([style*="display: none"]) + .dropdown-handle {
+          top: 4px;
+      }
+    }
+
   }
 
   img {
@@ -278,6 +324,63 @@
         width: 40%;
       }
     }
+  }
+
+  &.image-modal-dialog {
+    max-width: 640px;
+    max-height: 100%;
+
+    .image-selector {
+      .input-wrapper {
+        .flexbox();
+
+        .image-uploader-el {
+          max-width: 37px;
+          position: static;
+
+          .dropzone-container {
+            position: static;
+          }
+        }
+      }
+    }
+
+    .scroll-up-div, .scroll-down-div {
+      position: absolute;
+      height: 50px;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.5);
+      text-align: center;
+
+      img {
+        max-width: 100%;
+        max-height: 100%;
+        opacity: 0.7;
+        .filter(invert(0.7));
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+
+    .scroll-up-div {
+      top: 0;
+    }
+
+    .scroll-down-div {
+      bottom: 0;
+    }
+
+    .preview-panel-scroll-navigation-wrapper {
+      position: relative;
+      margin-top: 10px;
+
+      .preview-panel-scrollbar-wrapper {
+        overflow: hidden;
+      }
+    }
+
   }
 
 }

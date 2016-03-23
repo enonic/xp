@@ -37,7 +37,7 @@ public class ContentTypeServiceTest
     {
         final ContentTypes types1 = this.service.getAll( new GetAllContentTypesParams() );
         assertNotNull( types1 );
-        assertEquals( 21, types1.getSize() );
+        assertEquals( 22, types1.getSize() );
 
         final ContentTypes types2 = this.service.getByApplication( ApplicationKey.from( "other" ) );
         assertNotNull( types2 );
@@ -55,7 +55,7 @@ public class ContentTypeServiceTest
 
         final ContentTypes types1 = this.service.getAll( new GetAllContentTypesParams() );
         assertNotNull( types1 );
-        assertEquals( 23, types1.getSize() );
+        assertEquals( 24, types1.getSize() );
 
         final ContentTypes types2 = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
         assertNotNull( types2 );
@@ -74,7 +74,7 @@ public class ContentTypeServiceTest
     {
         ContentTypes contentTypes = this.service.getAll( new GetAllContentTypesParams() );
         assertNotNull( contentTypes );
-        assertEquals( 21, contentTypes.getSize() );
+        assertEquals( 22, contentTypes.getSize() );
 
         ContentType contentType = service.getByName( new GetContentTypeParams().contentTypeName( ContentTypeName.folder() ) );
         assertNotNull( contentType );
@@ -85,7 +85,7 @@ public class ContentTypeServiceTest
 
         contentTypes = service.getByApplication( ApplicationKey.PORTAL );
         assertNotNull( contentTypes );
-        assertEquals( contentTypes.getSize(), 3 );
+        assertEquals( contentTypes.getSize(), 4 );
 
         contentTypes = service.getByApplication( ApplicationKey.MEDIA_MOD );
         assertNotNull( contentTypes );

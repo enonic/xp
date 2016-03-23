@@ -880,9 +880,8 @@ module api.liveedit {
             throw new Error("Must be implemented by inheritors");
         }
 
-        private createComponentView(typeAsString: string): ItemView {
-            var componentItemType = ItemType.byShortName(typeAsString),
-                regionView = this.getRegionView(),
+        protected createComponentView(componentItemType: ItemType): ItemView {
+            var regionView = this.getRegionView(),
                 newComponent = regionView.createComponent(componentItemType.toComponentType());
 
             return componentItemType.createView(new CreateItemViewConfig<RegionView,Component>().
@@ -891,15 +890,20 @@ module api.liveedit {
                 setData(newComponent));
         }
 
-        getInsertActions(): api.ui.Action[] {
-            var actions = [this.createInsertSubAction("Image"),
-                this.createInsertSubAction("Part")];
+        private getInsertActions(liveEditModel: LiveEditModel): api.ui.Action[] {
+            var isFragmentContent = liveEditModel.getContent().getType().isFragment();
 
-            if (!this.getRegionView().hasParentLayoutComponentView()) {
-                actions.push(this.createInsertSubAction("Layout"));
+            var actions = [this.createInsertSubAction("Image", api.liveedit.image.ImageItemType.get()),
+                this.createInsertSubAction("Part", api.liveedit.part.PartItemType.get())];
+
+            var isInRegion = api.ObjectHelper.iFrameSafeInstanceOf(this.getRegionView(), RegionView);
+            if (isInRegion && !this.getRegionView().hasParentLayoutComponentView() && !isFragmentContent) {
+                actions.push(this.createInsertSubAction("Layout", api.liveedit.layout.LayoutItemType.get()));
             }
-
-            actions.push(this.createInsertSubAction("Text"));
+            actions.push(this.createInsertSubAction("Text", api.liveedit.text.TextItemType.get()));
+            if (!isFragmentContent) {
+                actions.push(this.createInsertSubAction("Fragment", api.liveedit.fragment.FragmentItemType.get()));
+            }
 
             return actions;
         }
@@ -908,8 +912,8 @@ module api.liveedit {
             throw new Error("Must be implemented by inheritors");
         }
 
-        protected createInsertAction(): api.ui.Action {
-            return new api.ui.Action('Insert').setChildActions(this.getInsertActions());
+        protected createInsertAction(liveEditModel: LiveEditModel): api.ui.Action {
+            return new api.ui.Action('Insert').setChildActions(this.getInsertActions(liveEditModel));
         }
 
         protected createSelectParentAction(): api.ui.Action {
@@ -928,13 +932,13 @@ module api.liveedit {
             return action;
         }
 
-        private createInsertSubAction(type: string): api.ui.Action {
-            var action = new api.ui.Action(type).onExecuted(() => {
-                var componentView = this.createComponentView(type.toLowerCase());
+        private createInsertSubAction(label: string, componentItemType: ItemType): api.ui.Action {
+            var action = new api.ui.Action(label).onExecuted(() => {
+                var componentView = this.createComponentView(componentItemType);
                 this.addComponentView(<ComponentView<Component>>componentView, this.getNewItemIndex(), true);
             });
 
-            action.setIconClass(api.StyleHelper.getCommonIconCls(type.toLowerCase()));
+            action.setIconClass(api.StyleHelper.getCommonIconCls(label.toLowerCase()));
 
             return action;
         }

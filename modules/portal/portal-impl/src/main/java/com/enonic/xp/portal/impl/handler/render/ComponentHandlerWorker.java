@@ -10,6 +10,7 @@ import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentPath;
+import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.site.Site;
 
 final class ComponentHandlerWorker
@@ -30,6 +31,7 @@ final class ComponentHandlerWorker
 
         final PageTemplate pageTemplate;
         final DescriptorKey pageController;
+        Component component = null;
 
         if ( content.isPageTemplate() )
         {
@@ -49,6 +51,21 @@ final class ComponentHandlerWorker
             pageTemplate = null;
             pageController = content.getPage().getController();
         }
+        else if ( content.getType().isFragment() )
+        {
+            // fragment content, try resolving component path in Layout fragment
+            pageTemplate = null;
+            pageController = null;
+            final Component fragmentComponent = content.getPage().getFragment();
+            if ( this.componentPath.isEmpty() )
+            {
+                component = fragmentComponent;
+            }
+            else if ( fragmentComponent instanceof LayoutComponent )
+            {
+                component = ( (LayoutComponent) fragmentComponent ).getComponent( this.componentPath );
+            }
+        }
         else
         {
             // content with page-template assigned
@@ -62,7 +79,10 @@ final class ComponentHandlerWorker
             page( effectivePage ).
             build();
 
-        final Component component = effectiveContent.getPage().getRegions().getComponent( this.componentPath );
+        if ( component == null )
+        {
+            component = effectiveContent.getPage().getRegions().getComponent( this.componentPath );
+        }
         if ( component == null )
         {
             throw notFound( "Page component for [%s] not found", this.componentPath );

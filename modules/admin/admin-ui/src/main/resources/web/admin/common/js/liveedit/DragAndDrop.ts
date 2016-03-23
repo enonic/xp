@@ -581,6 +581,16 @@ module api.liveedit {
 
         private isDraggingLayoutOverLayout(regionView: RegionView, draggingItemType: ItemType): boolean {
             var isLayout = regionView.hasParentLayoutComponentView() && draggingItemType.getShortName() == 'layout';
+            if (!isLayout) {
+                var itemType = this.getItemType();
+                if (api.liveedit.fragment.FragmentItemType.get().equals(itemType)) {
+                    var fragment = <api.liveedit.fragment.FragmentComponentView> this._draggedComponentView;
+                    isLayout = fragment && fragment.containsLayout();
+                    if (isLayout && DragAndDrop.debug) {
+                        console.log('DragAndDrop.isDraggingLayoutOverLayout - Fragment contains layout');
+                    }
+                }
+            }
             if (DragAndDrop.debug) {
                 console.log('DragAndDrop.isDraggingLayoutOverLayout = ' + isLayout);
             }

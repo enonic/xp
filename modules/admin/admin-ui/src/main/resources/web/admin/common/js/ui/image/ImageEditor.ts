@@ -681,6 +681,7 @@ module api.ui.image {
 
             this.onFocusAutoPositionedChanged((auto) => {
                 this.editResetButton.setVisible(!auto);
+                this.toggleClass('autofocused', auto);
                 resetButton.setVisible(!auto || !this.cropData.auto);
             });
             this.onCropAutoPositionedChanged((auto) => {
@@ -1222,8 +1223,6 @@ module api.ui.image {
                 this.setImageClipPath(this.cropClipPath);
 
             } else {
-                // reset radius for it to be a quarter of the smallest side
-                this.resetFocusRadius();
 
                 if (this.focusData.auto) {
                     // reset focus position to calc new value
@@ -1291,6 +1290,7 @@ module api.ui.image {
                 oldW != this.cropData.w ||
                 oldH != this.cropData.h) {
 
+
                 var dx = this.cropData.x - oldX,
                     dy = this.cropData.y - oldY;
 
@@ -1303,6 +1303,16 @@ module api.ui.image {
                 if (this.isImageLoaded() && this.isCropEditMode()) {
                     this.updateCropMaskPosition();
                 }
+
+                // reset radius for it to be a quarter of the smallest side
+                this.resetFocusRadius();
+
+                // also restring focus position to be inside cropped area
+                this.focusData.x = this.restrainFocusX(this.focusData.x);
+                this.focusData.y = this.restrainFocusY(this.focusData.y);
+
+                // update focus position for it to stay in place
+                this.updateFocusMaskPosition();
             }
 
             if (ImageEditor.debug) {

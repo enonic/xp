@@ -37,6 +37,7 @@ public final class LauncherMain
         throws Exception
     {
         final MainWindow window = new MainWindow( this.launcher );
+        new ShutdownHook( this.launcher::stop ).register();
         window.showFrame();
     }
 

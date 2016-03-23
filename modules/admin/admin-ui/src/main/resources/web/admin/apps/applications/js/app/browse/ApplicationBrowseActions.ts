@@ -47,7 +47,7 @@ module app.browse {
             var anySelected = applicationsSelected > 0;
             var anyStarted = false;
             var anyStopped = false;
-            var clusterApplicationSelected = false;
+            var localAppSelected = false;
             applicationBrowseItems.forEach((applicationBrowseItem: BrowseItem<Application>) => {
                 var state = applicationBrowseItem.getModel().getState();
                 if (state === Application.STATE_STARTED) {
@@ -55,14 +55,14 @@ module app.browse {
                 } else if (state === Application.STATE_STOPPED) {
                     anyStopped = true;
                 }
-                if (!(<Application>applicationBrowseItem.getModel()).isLocal()) {
-                    clusterApplicationSelected = true;
+                if ((<Application>applicationBrowseItem.getModel()).isLocal()) {
+                    localAppSelected = true;
                 }
             });
 
             this.START_APPLICATION.setEnabled(anyStopped);
             this.STOP_APPLICATION.setEnabled(anyStarted);
-            this.UNINSTALL_APPLICATION.setEnabled(anySelected && clusterApplicationSelected);
+            this.UNINSTALL_APPLICATION.setEnabled(anySelected && !localAppSelected);
 
             var deferred = wemQ.defer<BrowseItem<Application>[]>();
             deferred.resolve(applicationBrowseItems);

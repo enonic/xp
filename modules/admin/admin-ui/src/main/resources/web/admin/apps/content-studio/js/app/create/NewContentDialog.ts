@@ -437,7 +437,7 @@ module app.create {
             contentTypes.forEach((contentType: ContentTypeSummary) => {
                 // filter media type descendants out
                 var contentTypeName = contentType.getContentTypeName();
-                if (!contentTypeName.isMedia() && !contentTypeName.isDescendantOfMedia()) {
+                if (!contentTypeName.isMedia() && !contentTypeName.isDescendantOfMedia() && !contentTypeName.isFragment()) {
                     contentTypesByName[contentType.getName()] = contentType;
                     items.push(NewContentDialogListItem.fromContentType(contentType))
                 }

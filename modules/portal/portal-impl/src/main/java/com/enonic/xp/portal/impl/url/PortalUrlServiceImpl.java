@@ -1,22 +1,37 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.base.Splitter;
+
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.Media;
+import com.enonic.xp.data.Property;
+import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.ComponentUrlParams;
+import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.ServiceUrlParams;
+
+import static org.apache.commons.lang.StringUtils.substringAfter;
+import static org.apache.commons.lang.StringUtils.substringBefore;
 
 @Component(immediate = true)
 public final class PortalUrlServiceImpl
@@ -54,9 +69,13 @@ public final class PortalUrlServiceImpl
 
     private static final String IMAGE_SCALE = "width(768)";
 
+    private static final int DEFAULT_WIDTH = 768;
+
     private static final String IMAGE_NO_SCALING = "full";
 
-    private static final String KEEP_SIZE_TRUE = "?keepsize=true";
+    private static final String KEEP_SIZE = "keepSize";
+
+    private static final String SCALE = "scale";
 
     private ContentService contentService;
 
@@ -99,6 +118,12 @@ public final class PortalUrlServiceImpl
     }
 
     @Override
+    public String generateUrl( final GenerateUrlParams params )
+    {
+        return build( new GenerateUrlBuilder(), params );
+    }
+
+    @Override
     public String processHtml( final ProcessHtmlParams params )
     {
         if ( params.getValue() == null || params.getValue().isEmpty() )
@@ -119,7 +144,7 @@ public final class PortalUrlServiceImpl
                 final String type = contentMatcher.group( TYPE_INDEX );
                 final String mode = contentMatcher.group( MODE_INDEX );
                 final String id = contentMatcher.group( ID_INDEX );
-                final String urlParams = contentMatcher.groupCount() == PARAMS_INDEX ? contentMatcher.group( PARAMS_INDEX ) : null;
+                final String urlParamsString = contentMatcher.groupCount() == PARAMS_INDEX ? contentMatcher.group( PARAMS_INDEX ) : null;
 
                 if ( CONTENT_TYPE.equals( type ) )
                 {
@@ -134,13 +159,10 @@ public final class PortalUrlServiceImpl
                 }
                 else if ( IMAGE_TYPE.equals( type ) )
                 {
-                    final boolean keepSize = KEEP_SIZE_TRUE.equalsIgnoreCase( urlParams );
-                    final String imageScale = keepSize ? IMAGE_NO_SCALING : IMAGE_SCALE;
-
                     ImageUrlParams imageUrlParams = new ImageUrlParams().
                         type( params.getType() ).
                         id( id ).
-                        scale( imageScale ).
+                        scale( getScale( id, urlParamsString ) ).
                         portalRequest( params.getPortalRequest() );
 
                     final String imageUrl = imageUrl( imageUrlParams );
@@ -163,6 +185,80 @@ public final class PortalUrlServiceImpl
         }
 
         return processedHtml;
+    }
+
+    private String getScale( final String id, final String urlParamsString )
+    {
+        final Map<String, String> urlParams = extractUrlParams( urlParamsString );
+        if ( urlParams.isEmpty() )
+        {
+            return IMAGE_NO_SCALING;
+        }
+
+        final boolean keepSize = urlParams.containsKey( KEEP_SIZE );
+
+        if ( urlParams.containsKey( SCALE ) )
+        {
+            final String scaleParam = urlParams.get( SCALE );
+            if ( !scaleParam.contains( ":" ) )
+            {
+                throw new IllegalArgumentException( "Invalid scale parameter: " + scaleParam );
+            }
+            final String horizontalProportion = substringBefore( scaleParam, ":" );
+            final String verticalProportion = substringAfter( scaleParam, ":" );
+
+            final int width = keepSize ? getImageOriginalWidth( id ) : DEFAULT_WIDTH;
+            final int height = width / Integer.parseInt( horizontalProportion ) * Integer.parseInt( verticalProportion );
+
+            return "block(" + width + "," + height + ")";
+        }
+        else
+        {
+            return keepSize ? IMAGE_NO_SCALING : IMAGE_SCALE;
+        }
+    }
+
+    private int getImageOriginalWidth( final String id )
+    {
+        final Content content = this.getContent( ContentId.from( id ) );
+
+        if ( content instanceof Media )
+        {
+            ExtraData imageData = content.getAllExtraData().getMetadata( MediaInfo.IMAGE_INFO_METADATA_NAME );
+
+            if ( imageData != null )
+            {
+                final Property widthProperty = imageData.getData().getProperty( MediaInfo.IMAGE_INFO_IMAGE_WIDTH );
+                if ( widthProperty != null )
+                {
+                    return widthProperty.getValue().asLong().intValue();
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    private Content getContent( final ContentId contentId )
+    {
+        try
+        {
+            return this.contentService.getById( contentId );
+        }
+        catch ( ContentNotFoundException e )
+        {
+            return null;
+        }
+    }
+
+    private Map<String, String> extractUrlParams( final String urlQuery )
+    {
+        final String query = substringAfter( urlQuery, "?" );
+        if ( query == null )
+        {
+            return Collections.emptyMap();
+        }
+        return Splitter.on( '&' ).trimResults().withKeyValueSeparator( "=" ).split( query.replace( "&amp;", "&" ) );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )

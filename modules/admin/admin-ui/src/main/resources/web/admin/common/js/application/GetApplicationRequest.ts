@@ -11,6 +11,7 @@ module api.application {
             super.setMethod("GET");
             this.applicationKey = applicationKey;
             this.skipCache = skipCache;
+            this.setHeavyOperation(true);
         }
 
         getParams(): Object {

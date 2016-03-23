@@ -46,6 +46,8 @@ module api.schema.content {
 
         static TEMPLATE_FOLDER = ContentTypeName.from(ApplicationKey.PORTAL, "template-folder");
 
+        static FRAGMENT = ContentTypeName.from(ApplicationKey.PORTAL, "fragment");
+
         static IMAGE = ContentTypeName.from(ApplicationKey.MEDIA, "image");
 
         constructor(name: string) {
@@ -70,12 +72,20 @@ module api.schema.content {
             return ContentTypeName.TEMPLATE_FOLDER.equals(this);
         }
 
+        isFragment(): boolean {
+            return ContentTypeName.FRAGMENT.equals(this);
+        }
+
         isImage(): boolean {
             return ContentTypeName.IMAGE.equals(this);
         }
 
         isMedia(): boolean {
             return ContentTypeName.MEDIA.equals(this);
+        }
+
+        isVectorMedia(): boolean {
+            return ContentTypeName.MEDIA_VECTOR.equals(this);
         }
 
         static getMediaTypes(): ContentTypeName[] {

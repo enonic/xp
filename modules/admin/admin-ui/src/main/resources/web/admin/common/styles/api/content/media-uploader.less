@@ -1,9 +1,15 @@
 .media-uploader {
 
-  .uploader-wrapper {
+  .svg-image-wrapper {
+    text-align: center;
+    margin-top: 15px;
+  }
 
+  .uploader-wrapper {
+    display: table;
     padding-left: 2px;
     line-height: 15px;
+    width: 100%;
 
     .label-wrapper {
       display: table-cell;
@@ -11,8 +17,9 @@
     }
 
     .uploader-el {
-      display: inline-block;
+      display: table-cell;
       white-space: nowrap;
+      vertical-align: middle;
     }
 
     .upload-button {

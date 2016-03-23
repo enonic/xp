@@ -20,6 +20,8 @@ public final class Page
 
     private final PageRegions regions;
 
+    private final Component fragment;
+
     private final PropertyTree config;
 
     private final boolean customized;
@@ -34,6 +36,7 @@ public final class Page
         this.config = builder.config;
         this.regions = builder.regions;
         this.customized = builder.customized;
+        this.fragment = builder.fragment;
     }
 
     public boolean hasController()
@@ -87,8 +90,19 @@ public final class Page
         return regions.getComponent( path );
     }
 
-    public boolean isCustomized() {
+    public boolean isCustomized()
+    {
         return customized;
+    }
+
+    public Component getFragment()
+    {
+        return fragment;
+    }
+
+    public boolean isFragment()
+    {
+        return fragment != null;
     }
 
     @Override
@@ -108,13 +122,14 @@ public final class Page
         return Objects.equals( template, other.template ) &&
             Objects.equals( controller, other.controller ) &&
             Objects.equals( config, other.config ) &&
-            Objects.equals( regions, other.regions );
+            Objects.equals( regions, other.regions ) &&
+            Objects.equals( fragment, other.fragment );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( controller, template, regions, config );
+        return Objects.hash( controller, template, regions, config, fragment );
     }
 
     public static Builder create()
@@ -140,13 +155,14 @@ public final class Page
 
         private PageRegions regions;
 
+        private Component fragment;
+
         private PropertyTree config;
 
         private boolean customized;
 
         private Builder()
         {
-            // Default
         }
 
         private Builder( final Page source )
@@ -156,6 +172,7 @@ public final class Page
             this.regions = source.regions != null ? source.regions.copy() : null;
             this.config = source.config != null ? source.config.copy() : null;
             this.customized = source.customized;
+            this.fragment = source.fragment;
         }
 
         public Builder regions( final PageRegions value )
@@ -185,6 +202,12 @@ public final class Page
         public Builder customized( final boolean customized )
         {
             this.customized = customized;
+            return this;
+        }
+
+        public Builder fragment( final Component fragment )
+        {
+            this.fragment = fragment;
             return this;
         }
 

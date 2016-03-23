@@ -101,13 +101,13 @@ module api.form.inputtype.support {
         private registerProperty(property: Property) {
             if (this.property) {
                 if (InputOccurrenceView.debug) {
-                    console.debug('InputOccurrenceView.registerPoperty: unregister old property', this.property);
+                    console.debug('InputOccurrenceView.registerProperty: unregister old property', this.property);
                 }
                 this.property.unPropertyValueChanged(this.propertyValueChangedHandler);
             }
             if (property) {
                 if (InputOccurrenceView.debug) {
-                    console.debug('InputOccurrenceView.registerPoperty: register new property', property);
+                    console.debug('InputOccurrenceView.registerProperty: register new property', property);
                 }
                 property.onPropertyValueChanged(this.propertyValueChangedHandler);
             }

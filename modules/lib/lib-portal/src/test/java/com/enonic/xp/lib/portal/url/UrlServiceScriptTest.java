@@ -114,6 +114,12 @@ public class UrlServiceScriptTest
     }
 
     @Test
+    public void testExample_generateUrl()
+    {
+        runScript( "/site/lib/xp/examples/portal/url.js" );
+    }
+
+    @Test
     public void testExample_processHtml()
     {
         runScript( "/site/lib/xp/examples/portal/processHtml.js" );

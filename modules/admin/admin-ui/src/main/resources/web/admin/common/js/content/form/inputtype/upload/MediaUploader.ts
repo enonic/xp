@@ -17,6 +17,7 @@ module api.content.form.inputtype.upload {
         private config: api.content.form.inputtype.ContentInputTypeViewContext;
         private mediaUploaderEl: api.content.MediaUploaderEl;
         private uploaderWrapper: api.dom.DivEl;
+        private svgImage: api.dom.ImgEl;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super(config, "media-uploader");
@@ -36,7 +37,9 @@ module api.content.form.inputtype.upload {
         }
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
-
+            if (!ValueTypes.STRING.equals(property.getType()) && !ValueTypes.DATA.equals(property.getType())) {
+                property.convertValueType(ValueTypes.STRING);
+            }
             this.mediaUploaderEl = this.createUploader(property);
 
             this.uploaderWrapper = this.createUploaderWrapper(property);
@@ -66,6 +69,8 @@ module api.content.form.inputtype.upload {
 
                 api.notify.showFeedback('\"' + fileName + '\" uploaded');
 
+                this.manageSVGImageIfPresent(content);
+
                 new ContentRequiresSaveEvent(content.getContentId()).fire();
             });
 
@@ -89,6 +94,8 @@ module api.content.form.inputtype.upload {
 
             this.appendChild(this.uploaderWrapper);
 
+            this.createSvgImageWrapperIfNeeded();
+
             return wemQ<void>(null);
         }
 
@@ -106,6 +113,20 @@ module api.content.form.inputtype.upload {
                 }
             }
             return wemQ<void>(null);
+        }
+
+        private manageSVGImageIfPresent(content: api.content.Content) {
+            if (content.getType().isVectorMedia()) {
+                this.addClass("with-svg-image");
+                var imgUrl = new api.content.ContentImageUrlResolver().
+                    setContentId(this.getContext().contentId).
+                    setTimestamp(content.getModifiedTime()).
+                    resolve();
+
+                this.svgImage.setSrc(imgUrl);
+            } else {
+                this.removeClass("with-svg-image");
+            }
         }
 
         private deleteContent(property: Property) {
@@ -159,6 +180,28 @@ module api.content.form.inputtype.upload {
             return [{name: "Media", extensions: this.getFileExtensionFromFileName(fileName)}];
         }
 
+        private createSvgImageWrapperIfNeeded() {
+            if (this.config.formContext.getContentTypeName().isVectorMedia()) {
+                this.svgImage = new api.dom.ImgEl();
+                this.addClass("with-svg-image");
+
+                var content = this.config.formContext.getPersistedContent();
+
+                var imgUrl = new api.content.ContentImageUrlResolver().
+                    setContentId(this.getContext().contentId).
+                    setTimestamp(content.getModifiedTime()).
+                    resolve();
+
+                this.svgImage.setSrc(imgUrl);
+
+                this.appendChild(new api.dom.DivEl("svg-image-wrapper").appendChild(this.svgImage));
+
+                this.svgImage.onLoaded((event: UIEvent) => {
+                    this.mediaUploaderEl.setResultVisible(true); // need to call it manually as svg images are uploaded too quickly
+                });
+            }
+        }
+
         private createUploaderWrapper(property: Property): api.dom.DivEl {
             var wrapper = new api.dom.DivEl("uploader-wrapper");
 
@@ -193,12 +236,6 @@ module api.content.form.inputtype.upload {
                 return {title: allowType.name, extensions: allowType.extensions};
             });
 
-            var beforeUploadCallback = (files: PluploadFile[]) => {
-                if (attachmentFileName && files && files.length == 1) {
-                    files[0].name = attachmentFileName;
-                }
-            };
-
             return new api.content.MediaUploaderEl({
                 params: {
                     content: this.getContext().contentId.toString()
@@ -211,8 +248,7 @@ module api.content.form.inputtype.upload {
                 maximumOccurrences: 1,
                 allowMultiSelection: false,
                 hideDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
-                deferred: true,
-                beforeUploadCallback: beforeUploadCallback
+                deferred: true
             });
         }
 

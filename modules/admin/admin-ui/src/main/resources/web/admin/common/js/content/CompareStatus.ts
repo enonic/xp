@@ -27,10 +27,7 @@ module api.content {
                 status = "Modified";
                 break;
             case CompareStatus.OLDER:
-                status = "Behind";
-                break;
-            case CompareStatus.UNKNOWN:
-                status = "Unknown";
+                status = "Out-of-date";
                 break;
             case CompareStatus.PENDING_DELETE:
                 status = "Pending delete";

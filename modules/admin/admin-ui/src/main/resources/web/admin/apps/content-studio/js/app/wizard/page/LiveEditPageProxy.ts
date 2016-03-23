@@ -34,6 +34,9 @@ module app.wizard.page {
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
     import ComponentResetEvent = api.liveedit.ComponentResetEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
+    import ComponentFragmentCreatedEvent = api.liveedit.ComponentFragmentCreatedEvent;
+    import ShowWarningLiveEditEvent = api.liveedit.ShowWarningLiveEditEvent;
+    import EditContentEvent = api.content.event.EditContentEvent;
     import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
     import RegionView = api.liveedit.RegionView;
@@ -99,9 +102,13 @@ module app.wizard.page {
 
         private liveEditPageInitErrorListeners: {(event: LiveEditPageInitializationErrorEvent): void;}[] = [];
 
-        private createHtmlAreaDialogListeners: {(event: CreateHtmlAreaDialogEvent): void;}[] = [];
+        private fragmentCreatedListeners: {(event: ComponentFragmentCreatedEvent): void;}[] = [];
 
-        private LIVE_EDIT_ERROR_PAGE_BODY_ID = "wem-error-page";
+        private showWarningListeners: {(event: ShowWarningLiveEditEvent): void;}[] = [];
+
+        private editContentListeners: {(event: EditContentEvent): void;}[] = [];
+
+        private createHtmlAreaDialogListeners: {(event: CreateHtmlAreaDialogEvent): void;}[] = [];
 
         private showLoadMaskHandler: () => void;
 
@@ -342,6 +349,10 @@ module app.wizard.page {
 
             PageInspectedEvent.un(null, contextWindow);
 
+            ComponentFragmentCreatedEvent.un(null, contextWindow);
+
+            ShowWarningLiveEditEvent.un(null, contextWindow);
+
             ComponentLoadedEvent.un(null, contextWindow);
 
             ComponentResetEvent.un(null, contextWindow);
@@ -359,8 +370,7 @@ module app.wizard.page {
                 var imageUploadDialog = new ImageUploadDialog(this.liveEditModel.getContent().getContentId());
                 imageUploadDialog.onImageUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
                     new ImageUploadedEvent(event.getUploadItem().getModel(),
-                        openDialogEvent.getTargetImagePlaceholder()).
-                        fire(contextWindow);
+                        openDialogEvent.getTargetImagePlaceholder()).fire(contextWindow);
 
                     imageUploadDialog.close();
                     imageUploadDialog.remove();
@@ -401,6 +411,12 @@ module app.wizard.page {
             ComponentInspectedEvent.on(this.notifyComponentInspected.bind(this), contextWindow);
 
             PageInspectedEvent.on(this.notifyPageInspected.bind(this), contextWindow);
+
+            ComponentFragmentCreatedEvent.on(this.notifyFragmentCreated.bind(this), contextWindow);
+
+            ShowWarningLiveEditEvent.on(this.notifyShowWarning.bind(this), contextWindow);
+
+            EditContentEvent.on(this.notifyEditContent.bind(this), contextWindow);
 
             ComponentLoadedEvent.on(this.notifyComponentLoaded.bind(this), contextWindow);
 
@@ -695,6 +711,42 @@ module app.wizard.page {
 
         notifyLiveEditPageDialogCreated(modalDialog: api.util.htmlarea.dialog.ModalDialog, config:any) {
             new LiveEditPageDialogCreatedEvent(modalDialog, config).fire(this.liveEditWindow);
+        }
+
+        onComponentFragmentCreated(listener: {(event: ComponentFragmentCreatedEvent): void;}) {
+            this.fragmentCreatedListeners.push(listener);
+        }
+
+        unComponentFragmentCreated(listener: {(event: ComponentFragmentCreatedEvent): void;}) {
+            this.fragmentCreatedListeners = this.fragmentCreatedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyFragmentCreated(event: ComponentFragmentCreatedEvent) {
+            this.fragmentCreatedListeners.forEach((listener) => listener(event));
+        }
+
+        onShowWarning(listener: {(event: ShowWarningLiveEditEvent): void;}) {
+            this.showWarningListeners.push(listener);
+        }
+
+        unShowWarning(listener: {(event: ShowWarningLiveEditEvent): void;}) {
+            this.showWarningListeners = this.showWarningListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyShowWarning(event: ShowWarningLiveEditEvent) {
+            this.showWarningListeners.forEach((listener) => listener(event));
+        }
+
+        onEditContent(listener: {(event: EditContentEvent): void;}) {
+            this.editContentListeners.push(listener);
+        }
+
+        unEditContent(listener: {(event: EditContentEvent): void;}) {
+            this.editContentListeners = this.editContentListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyEditContent(event: EditContentEvent) {
+            this.editContentListeners.forEach((listener) => listener(event));
         }
 
         private copyObjectsBeforeFrameReloadForIE() {

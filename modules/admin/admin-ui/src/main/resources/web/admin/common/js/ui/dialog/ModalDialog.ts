@@ -81,7 +81,7 @@ module api.ui.dialog {
         }
 
         private isIgnoredElementClicked(element: HTMLElement): boolean {
-            if (!!element && !!element.className) {
+            if (!!element && !!element.className && !!element.className.indexOf) {
                 return element.className.indexOf("mce-") > -1 || element.className.indexOf("html-area-modal-dialog") > -1;
             }
             return false;
@@ -132,7 +132,6 @@ module api.ui.dialog {
 
         show() {
             super.show();
-            this.centerMyself();
             this.buttonRow.focusDefaultAction();
         }
 

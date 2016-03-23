@@ -8,6 +8,7 @@ module app.wizard {
     import PageView = api.liveedit.PageView;
     import ComponentView = api.liveedit.ComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
+    import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
     import Component = api.content.page.region.Component;
 
     import DragHelper = api.ui.DragHelper;
@@ -144,6 +145,17 @@ module app.wizard {
                 }
 
                 if (api.ObjectHelper.iFrameSafeInstanceOf(parentComponentView, RegionView)) {
+
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(draggableComponentView, FragmentComponentView)) {
+                        if (api.ObjectHelper.iFrameSafeInstanceOf(parentComponentView.getParentItemView(), LayoutComponentView)) {
+                            if ((<FragmentComponentView> draggableComponentView).containsLayout()) {
+                                // Fragment with layout over Layout region
+                                DragHelper.get().setDropAllowed(false);
+                                return;
+                            }
+                        }
+                    }
+
                     DragHelper.get().setDropAllowed(true);
 
                     var draggableItem = this.getDraggableItem();

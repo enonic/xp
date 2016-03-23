@@ -79,6 +79,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
 import com.enonic.xp.attachment.Attachment;
@@ -125,6 +126,7 @@ import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
+import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
@@ -878,6 +880,15 @@ public final class ContentResource
         return AttachmentListJson.toJson( content.getAttachments() );
     }
 
+    @POST
+    @Path("setActiveVersion")
+    public ContentIdJson setActiveVersion( final SetActiveVersionJson params )
+    {
+        final SetActiveContentVersionResult setActiveContentVersionResult =
+            this.contentService.setActiveContentVersion( params.getContentId(), params.getVersionId() );
+
+        return new ContentIdJson( setActiveContentVersionResult.getContentId() );
+    }
 
     @GET
     @Path("locales")

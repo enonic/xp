@@ -125,6 +125,23 @@ exports.serviceUrl = function (params) {
 };
 
 /**
+ * This function generates a URL.
+ *
+ * @example-ref examples/portal/url.js
+ *
+ * @param {object} params Input parameters as JSON.
+ * @param {string} params.path Path of the resource.
+ * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
+ * @param {object} [params.params] Custom parameters to append to the url.
+ *
+ * @returns {string} The generated URL.
+ */
+exports.url = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.portal.url.UrlHandler');
+    return bean.createUrl(__.toScriptValue(params));
+};
+
+/**
  * This function replaces abstract internal links contained in an HTML text by generated URLs.
  *
  * When outputting processed HTML in Thymeleaf, use attribute `data-th-utext="${processedHtml}"`.

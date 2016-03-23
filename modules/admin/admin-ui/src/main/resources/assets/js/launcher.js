@@ -1,5 +1,6 @@
 (function () {
-    var adminUrl = "/admin/tool/com.enonic.xp.admin.ui/launcher";
+    var adminUrl = window.CONFIG && window.CONFIG.adminUrl || "/admin";
+    var launcherUrl = adminUrl + (adminUrl.slice(-1) == '/' ? "" : "/" ) + "tool/com.enonic.xp.admin.ui/launcher";
     var launcherPanel, bodyMask, launcherButton, launcherMainContainer;
     var isHomeApp = window.CONFIG && window.CONFIG.appId == "home";
     var autoOpenLauncher = window.CONFIG && window.CONFIG.autoOpenLauncher;
@@ -48,12 +49,13 @@
         var link = document.createElement("link");
 
         link.setAttribute("rel", "import");
-        link.setAttribute("href", adminUrl);
+        link.setAttribute("href", launcherUrl);
 
         link.onload = function () {
             launcherMainContainer = link.import.querySelector('.launcher-main-container');
             launcherMainContainer.setAttribute("hidden", "true");
             container.appendChild(launcherMainContainer);
+            addLongClickHandler(container);
 
             if (autoOpenLauncher) {
                 openLauncherPanel();
@@ -72,6 +74,28 @@
         };
 
         return link;
+    }
+
+    function addLongClickHandler(container) {
+        var longpress = false;
+        var starttime, endtime;
+
+        var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
+        for (var i = 0; i < appTiles.length; i++) {
+            appTiles[i].addEventListener("click", function(e) {
+                if (longpress) {
+                    e.preventDefault();
+                    document.location.href = this.href;
+                }
+            });
+            appTiles[i].addEventListener("mousedown", function() {
+                startTime = new Date().getTime();
+            });
+            appTiles[i].addEventListener("mouseup", function() {
+                endTime = new Date().getTime();
+                longpress = (endTime - startTime < 500) ? false : true;
+            });
+        }
     }
 
     function getBodyWidth() {
@@ -169,7 +193,7 @@
         }
         var appRows = launcherPanel.querySelectorAll('.app-row');
         for (var i = 0; i < appRows.length; i++) {
-            if (appRows[i].id == appId ) {
+            if (appRows[i].id == appId) {
                 appRows[i].classList.add("active");
             }
         }
@@ -182,7 +206,7 @@
 
         e.stopPropagation();
 
-        switch(e.keyCode) {
+        switch (e.keyCode) {
         case 27:
             // esc key pressed
             closeLauncherPanel();
@@ -194,7 +218,7 @@
                 setTipVisibility("none");
             }
             break;
-         }
+        }
     }
 
     function init() {
