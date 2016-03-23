@@ -12,6 +12,7 @@ module app.view {
         private activeVersion: ContentVersion;
 
         private static branchMaster = "master";
+        private static branchDraft = "draft";
 
         constructor() {
             super("all-content-versions");
@@ -33,7 +34,7 @@ module app.view {
             var itemEl = new api.dom.LiEl("content-version-item");
 
             var contentVersionStatus = this.getStatus(item);
-            if(!!contentVersionStatus) {
+            if (!!contentVersionStatus) {
                 var statusDiv = new api.dom.DivEl("status " + contentVersionStatus.workspace);
                 statusDiv.setHtml(contentVersionStatus.status);
                 itemEl.appendChild(statusDiv);
@@ -46,8 +47,8 @@ module app.view {
             itemEl.appendChildren(closeButton, descriptionDiv, versionInfoDiv);
 
             itemEl.onClicked(() => {
-               versionInfoDiv.toggleClass("hidden");
-               closeButton.toggleClass("hidden");
+                versionInfoDiv.toggleClass("hidden");
+                closeButton.toggleClass("hidden");
             });
 
             return itemEl;
@@ -76,11 +77,18 @@ module app.view {
 
         private loadData(): wemQ.Promise<ContentVersion[]> {
             if (this.contentId) {
-                var activePromise = new api.content.GetActiveContentVersionsRequest(this.contentId);
-                var allPromise = new api.content.GetContentVersionsRequest(this.contentId);
-                return wemQ.all([allPromise.sendAndParse(), activePromise.sendAndParse()]).
-                spread<ContentVersion[]>((allVersions: ContentVersion[], activeVersions: ContentVersion[]) => {
-                    this.activeVersion = activeVersions[0];
+                var activePromise = new api.content.GetActiveContentVersionsRequest(this.contentId).sendAndParse();
+                var allPromise = new api.content.GetContentVersionsRequest(this.contentId).sendAndParse();
+                return wemQ.all([allPromise, activePromise]).
+                    spread<ContentVersion[]>((allVersions: ContentVersion[], activeVersions: ContentVersion[]) => {
+                    // find the active version in draft branch
+                    for (var i = 0; i < activeVersions.length; i++) {
+                        var av = activeVersions[i];
+                        if (av.workspaces.indexOf(AllContentVersionsView.branchDraft) > -1) {
+                            this.activeVersion = av;
+                            break;
+                        }
+                    }
                     return this.enrichWithWorkspaces(allVersions, activeVersions);
                 });
             } else {
@@ -110,10 +118,6 @@ module app.view {
         private updateView(contentVersions: ContentVersion[]) {
             this.clearItems();
             this.setItems(contentVersions);
-            this.setActiveVersion();
-        }
-
-        private setActiveVersion() {
             this.getItemView(this.activeVersion).addClass("active");
         }
 
@@ -129,8 +133,8 @@ module app.view {
 
             contentVersion.workspaces.some((workspace: string) => {
                 if (!hasMaster || workspace == AllContentVersionsView.branchMaster) {
-                   result = { workspace: workspace, status: this.getState(workspace) };
-                   return true;
+                    result = {workspace: workspace, status: this.getState(workspace)};
+                    return true;
                 }
             });
 
@@ -147,8 +151,7 @@ module app.view {
         }
 
         private createCloseButton(elementToHide: api.dom.Element): api.dom.Element {
-            var closeButton = new api.dom.DivEl("close-version-info-button hidden");
-            return closeButton;
+            return new api.dom.DivEl("close-version-info-button hidden");
         }
 
         private createDescriptionBlock(item: ContentVersion): api.dom.Element {
@@ -162,20 +165,27 @@ module app.view {
             var versionInfoDiv = new api.dom.DivEl("version-info hidden");
 
             var timestampDiv = new api.dom.DivEl("version-info-timestamp");
-            timestampDiv.appendChildren(new api.dom.SpanEl("label").setHtml("Timestamp: "), new api.dom.SpanEl().setHtml(api.ui.treegrid.DateTimeFormatter.createHtml(item.modified)));
+            timestampDiv.appendChildren(new api.dom.SpanEl("label").setHtml("Timestamp: "),
+                new api.dom.SpanEl().setHtml(api.ui.treegrid.DateTimeFormatter.createHtml(item.modified)));
 
             var versionIdDiv = new api.dom.DivEl("version-info-version-id");
             versionIdDiv.appendChildren(new api.dom.SpanEl("label").setHtml("Version Id: "), new api.dom.SpanEl().setHtml(item.id));
 
             var displayNameDiv = new api.dom.DivEl("version-info-display-name");
-            displayNameDiv.appendChildren(new api.dom.SpanEl("label").setHtml("Display name: "), new api.dom.SpanEl().setHtml(item.displayName));
+            displayNameDiv.appendChildren(new api.dom.SpanEl("label").setHtml("Display name: "),
+                new api.dom.SpanEl().setHtml(item.displayName));
 
             var isActive = item.id === this.activeVersion.id;
-            var restoreButton = new api.ui.button.ActionButton(new api.ui.Action( isActive ? "This version is active" : "Restore this version").onExecuted((action: api.ui.Action) => {
-                //restore version
-            }), false);
+            var restoreButton = new api.ui.button.ActionButton(new api.ui.Action(isActive
+                ? "This version is active"
+                : "Restore this version").onExecuted((action: api.ui.Action) => {
+                    new api.content.SetActiveContentVersionRequest(item.id, this.contentId).sendAndParse().then((contentId: ContentId) => {
+                        api.notify.NotifyManager.get().showFeedback(`Version successfully changed to ${item.id}`);
+                        new api.content.event.ActiveContentVersionSetEvent(this.contentId, item.id).fire();
+                    });
+                }), false);
 
-            if(isActive) {
+            if (isActive) {
                 restoreButton.addClass("active");
                 restoreButton.setEnabled(false);
             }
