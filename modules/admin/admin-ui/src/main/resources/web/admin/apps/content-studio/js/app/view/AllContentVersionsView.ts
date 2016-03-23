@@ -179,16 +179,22 @@ module app.view {
             var restoreButton = new api.ui.button.ActionButton(new api.ui.Action(isActive
                 ? "This version is active"
                 : "Restore this version").onExecuted((action: api.ui.Action) => {
-                    new api.content.SetActiveContentVersionRequest(item.id, this.contentId).sendAndParse().then((contentId: ContentId) => {
-                        api.notify.NotifyManager.get().showFeedback(`Version successfully changed to ${item.id}`);
-                        new api.content.event.ActiveContentVersionSetEvent(this.contentId, item.id).fire();
-                    });
+                    if(!isActive) {
+                        new api.content.SetActiveContentVersionRequest(item.id, this.contentId).sendAndParse().then((contentId: ContentId) => {
+                            api.notify.NotifyManager.get().showFeedback(`Version successfully changed to ${item.id}`);
+                            new api.content.event.ActiveContentVersionSetEvent(this.contentId, item.id).fire();
+                        });
+                    }
                 }), false);
 
             if (isActive) {
                 restoreButton.addClass("active");
-                restoreButton.setEnabled(false);
             }
+
+            restoreButton.onClicked((event: MouseEvent) => {
+                event.preventDefault();
+                event.stopPropagation();
+            });
 
             versionInfoDiv.appendChildren(timestampDiv, versionIdDiv, displayNameDiv, restoreButton);
 
