@@ -35,6 +35,6 @@ module app.wizard.page.contextwindow.insert {
         public static ALL: Insertable[] = [Insertables.IMAGE, Insertables.PART, Insertables.LAYOUT,
             Insertables.TEXT, Insertables.FRAGMENT];
 
-        public static ALLOWED_IN_FRAGMENT: Insertable[] = [Insertables.IMAGE, Insertables.PART, Insertables.TEXT];
+        public static ALLOWED_IN_FRAGMENT: Insertable[] = [Insertables.IMAGE, Insertables.PART, Insertables.TEXT, Insertables.FRAGMENT];
     }
 }

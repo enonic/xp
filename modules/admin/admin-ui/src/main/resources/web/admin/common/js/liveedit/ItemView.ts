@@ -900,9 +900,7 @@ module api.liveedit {
                 actions.push(this.createInsertSubAction("Layout", api.liveedit.layout.LayoutItemType.get()));
             }
             actions.push(this.createInsertSubAction("Text", api.liveedit.text.TextItemType.get()));
-            if (!isFragmentContent) {
-                actions.push(this.createInsertSubAction("Fragment", api.liveedit.fragment.FragmentItemType.get()));
-            }
+            actions.push(this.createInsertSubAction("Fragment", api.liveedit.fragment.FragmentItemType.get()));
 
             return actions;
         }
