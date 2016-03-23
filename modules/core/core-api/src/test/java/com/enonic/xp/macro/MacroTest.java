@@ -17,6 +17,13 @@ public class MacroTest
     }
 
     @Test
+    public void testBodyNull()
+    {
+        final Macro macro = Macro.create().key( MacroKey.from( "my-app:macro" ) ).param( "param1", "value1" ).build();
+        assertEquals( "my-app:macro[param1=value1]", macro.toString() );
+    }
+
+    @Test
     public void testEquals()
     {
         final Macro macro1 = Macro.create().key( MacroKey.from( "my-app:macro" ) ).
