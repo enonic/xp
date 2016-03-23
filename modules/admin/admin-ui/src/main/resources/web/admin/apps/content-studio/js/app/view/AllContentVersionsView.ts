@@ -110,10 +110,6 @@ module app.view {
         private updateView(contentVersions: ContentVersion[]) {
             this.clearItems();
             this.setItems(contentVersions);
-            this.setActiveVersion();
-        }
-
-        private setActiveVersion() {
             this.getItemView(this.activeVersion).addClass("active");
         }
 
@@ -172,7 +168,11 @@ module app.view {
 
             var isActive = item.id === this.activeVersion.id;
             var restoreButton = new api.ui.button.ActionButton(new api.ui.Action( isActive ? "This version is active" : "Restore this version").onExecuted((action: api.ui.Action) => {
-                //restore version
+                new api.content.SetActiveContentVersionRequest(item.id, this.contentId).sendAndParse().then((contentId: ContentId) => {
+                    api.notify.NotifyManager.get().showFeedback(`Version successfully changed to ${item.id}`);
+                    this.activeVersion = item;
+                    new api.content.event.ActiveContentVersionSetEvent(this.contentId, item.id).fire();
+                });
             }), false);
 
             if(isActive) {

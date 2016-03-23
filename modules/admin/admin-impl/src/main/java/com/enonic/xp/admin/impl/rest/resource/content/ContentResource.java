@@ -882,12 +882,12 @@ public final class ContentResource
 
     @POST
     @Path("setActiveVersion")
-    public ContentId setActiveVersion( final SetActiveVersionJson params )
+    public ContentIdJson setActiveVersion( final SetActiveVersionJson params )
     {
         final SetActiveContentVersionResult setActiveContentVersionResult =
-            this.contentService.setActiveContentVersion( params.getContentId(), params.getContentVersionId() );
+            this.contentService.setActiveContentVersion( params.getContentId(), params.getVersionId() );
 
-        return setActiveContentVersionResult.getContentId();
+        return new ContentIdJson(setActiveContentVersionResult.getContentId());
     }
 
     @GET
