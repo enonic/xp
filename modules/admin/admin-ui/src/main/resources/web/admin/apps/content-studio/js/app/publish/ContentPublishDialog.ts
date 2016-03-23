@@ -535,7 +535,7 @@ module app.publish {
 
     export class ContentPublishDialogAction extends api.ui.Action {
         constructor() {
-            super("Publish", "enter");
+            super("Publish");
             this.setIconClass("publish-action");
         }
     }
