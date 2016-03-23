@@ -13,12 +13,12 @@ module api.content.event {
             return this.model;
         }
 
-        static on(handler: (event: EditContentEvent) => void) {
-            api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
+        static on(handler: (event: EditContentEvent) => void, contextWindow: Window = window) {
+            api.event.Event.bind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
 
-        static un(handler?: (event: EditContentEvent) => void) {
-            api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
+        static un(handler?: (event: EditContentEvent) => void, contextWindow: Window = window) {
+            api.event.Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
     }
 }

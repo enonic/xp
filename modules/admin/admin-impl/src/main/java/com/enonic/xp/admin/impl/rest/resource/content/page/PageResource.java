@@ -18,13 +18,13 @@ import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.page.CreatePageParams;
 import com.enonic.xp.page.PageService;
 import com.enonic.xp.page.UpdatePageParams;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "content/page")
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,9 +35,9 @@ public final class PageResource
 {
     private PageService pageService;
 
-    private ContentTypeService contentTypeService;
-
     private ContentPrincipalsResolver principalsResolver;
+
+    private ContentIconUrlResolver contentIconUrlResolver;
 
     @POST
     @Path("create")
@@ -47,7 +47,7 @@ public final class PageResource
         final CreatePageParams command = params.getCreatePage();
         final Content updatedContent = this.pageService.create( command );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), principalsResolver );
+        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
     }
 
     @POST
@@ -58,7 +58,7 @@ public final class PageResource
         final UpdatePageParams command = params.getUpdatePage();
         final Content updatedContent = this.pageService.update( command );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), principalsResolver );
+        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
     }
 
     @GET
@@ -69,12 +69,7 @@ public final class PageResource
         final ContentId contentId = ContentId.from( contentIdAsString );
         final Content updatedContent = this.pageService.delete( contentId );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), principalsResolver );
-    }
-
-    private ContentIconUrlResolver newContentIconUrlResolver()
-    {
-        return new ContentIconUrlResolver( this.contentTypeService );
+        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
     }
 
     @Reference
@@ -86,7 +81,7 @@ public final class PageResource
     @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
-        this.contentTypeService = contentTypeService;
+        this.contentIconUrlResolver = new ContentIconUrlResolver( contentTypeService );
     }
 
     @Reference

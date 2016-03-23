@@ -155,6 +155,7 @@ module api.form.inputtype.text {
                     });
                     editor.on('blur', (e) => {
                         this.setStaticInputHeight();
+                        this.hideDropdownMenu();
                         if (!(this.modalDialog && this.modalDialog.isVisible())) {
                             textAreaWrapper.removeClass(focusedEditorCls);
                         }
@@ -349,6 +350,10 @@ module api.form.inputtype.text {
 
         private setStaticInputHeight() {
             wemjq(this.getHTMLElement()).height(wemjq(this.getHTMLElement()).height());
+        }
+
+        private hideDropdownMenu() {
+            wemjq(".mce-menu").hide();
         }
 
         private getEditor(editorId: string): HtmlAreaEditor {

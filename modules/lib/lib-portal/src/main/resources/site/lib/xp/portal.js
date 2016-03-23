@@ -125,19 +125,19 @@ exports.serviceUrl = function (params) {
 };
 
 /**
- * This function rewrites a server-relative URL.
+ * This function generates a URL.
  *
- * @example-ref examples/portal/rewriteUrl.js
+ * @example-ref examples/portal/url.js
  *
  * @param {object} params Input parameters as JSON.
- * @param {string} params.url Server-relative URL to rewrite.
- * @param {string} [params.type=server] URL returned type. Either  server  (server-relative URL) or absolute .
+ * @param {string} params.path Path of the resource.
+ * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
- * @returns {string} The rewritten URL.
+ * @returns {string} The generated URL.
  */
-exports.rewriteUrl = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.portal.url.RewriteUrlHandler');
+exports.url = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.portal.url.UrlHandler');
     return bean.createUrl(__.toScriptValue(params));
 };
 

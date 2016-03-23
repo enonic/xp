@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.region.Component;
 
 @Beta
 public final class CreatePageParams
@@ -16,6 +17,8 @@ public final class CreatePageParams
     private PageTemplateKey pageTemplate;
 
     private PageRegions regions;
+
+    private Component fragment;
 
     private PropertyTree config;
 
@@ -45,13 +48,20 @@ public final class CreatePageParams
         return this;
     }
 
+    public CreatePageParams fragment( Component fragment )
+    {
+        this.fragment = fragment;
+        return this;
+    }
+
     public CreatePageParams config( PropertyTree value )
     {
         this.config = value;
         return this;
     }
 
-    public CreatePageParams customized( boolean value) {
+    public CreatePageParams customized( boolean value )
+    {
         this.customized = value;
         return this;
     }
@@ -81,7 +91,15 @@ public final class CreatePageParams
         return config;
     }
 
-    public boolean isCustomized() { return customized; }
+    public boolean isCustomized()
+    {
+        return customized;
+    }
+
+    public Component getFragment()
+    {
+        return fragment;
+    }
 
     public void validate()
     {

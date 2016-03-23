@@ -23,7 +23,7 @@ public abstract class AbstractRegions
     {
         return regions.isEmpty();
     }
-    
+
     public Region getRegion( final String name )
     {
         for ( final Region region : this.regions )
@@ -79,14 +79,14 @@ public abstract class AbstractRegions
             return false;
         }
 
-        final AbstractRegions regions1 = (AbstractRegions) o;
+        final AbstractRegions other = (AbstractRegions) o;
+        return regions.equals( other.regions );
+    }
 
-        if ( !regions.equals( regions1.regions ) )
-        {
-            return false;
-        }
-
-        return true;
+    @Override
+    public String toString()
+    {
+        return this.regions.toString();
     }
 
     @Override
@@ -94,6 +94,8 @@ public abstract class AbstractRegions
     {
         return regions.hashCode();
     }
+
+    public abstract AbstractRegions copy();
 
     public static class Builder<BUILDER extends Builder>
     {
@@ -106,7 +108,7 @@ public abstract class AbstractRegions
 
         protected Builder( final AbstractRegions source )
         {
-            for ( final Region sourceRegion : source.regions )
+            for ( final Region sourceRegion : source )
             {
                 regions.add( sourceRegion.copy() );
             }
@@ -122,11 +124,6 @@ public abstract class AbstractRegions
         {
             regions.add( region );
             return getThis();
-        }
-
-        public Iterable<Region> regions()
-        {
-            return regions;
         }
     }
 }

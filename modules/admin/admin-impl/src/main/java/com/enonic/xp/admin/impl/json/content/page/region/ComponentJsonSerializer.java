@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.json.content.page.region;
 
 import com.enonic.xp.region.Component;
+import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.ImageComponent;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.PartComponent;
@@ -30,6 +31,11 @@ public final class ComponentJsonSerializer
             return toJson( (ImageComponent) component );
         }
 
+        if ( component instanceof FragmentComponent )
+        {
+            return toJson( (FragmentComponent) component );
+        }
+
         throw new IllegalArgumentException( "Json for component " + component.getType().toString() + " not supported" );
     }
 
@@ -51,5 +57,10 @@ public final class ComponentJsonSerializer
     private static ImageComponentJson toJson( final ImageComponent component )
     {
         return new ImageComponentJson( component );
+    }
+
+    private static FragmentComponentJson toJson( final FragmentComponent component )
+    {
+        return new FragmentComponentJson( component );
     }
 }

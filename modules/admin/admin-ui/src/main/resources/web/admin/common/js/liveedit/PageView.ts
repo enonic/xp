@@ -1,6 +1,5 @@
 module api.liveedit {
 
-    import PropertyTree = api.data.PropertyTree;
     import Content = api.content.Content;
     import Page = api.content.page.Page;
     import PageModel = api.content.page.PageModel;
@@ -12,6 +11,8 @@ module api.liveedit {
     import Region = api.content.page.region.Region;
     import RegionPath = api.content.page.region.RegionPath;
     import ComponentPath = api.content.page.region.ComponentPath;
+    import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
+    import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
 
     export class PageViewBuilder {
 
@@ -46,6 +47,8 @@ module api.liveedit {
         private pageModel: PageModel;
 
         private regionViews: RegionView[];
+
+        private fragmentView: ComponentView<Component>;
 
         private viewsById: {[s:number] : ItemView;};
 
@@ -189,7 +192,8 @@ module api.liveedit {
 
             // lock page by default for every content that has not been modified except for page template
             var isCustomized = this.liveEditModel.getPageModel().isCustomized();
-            if (!this.liveEditModel.getContent().isPageTemplate() && !this.pageModel.isModified() && !isCustomized) {
+            var isFragment = !!this.fragmentView;
+            if (!this.liveEditModel.getContent().isPageTemplate() && !this.pageModel.isModified() && !isCustomized && !isFragment) {
                 this.setLocked(true);
             }
 
@@ -497,6 +501,10 @@ module api.liveedit {
             return this.regionViews;
         }
 
+        getFragmentView(): ComponentView<Component> {
+            return this.fragmentView;
+        }
+
         toItemViewArray(): ItemView[] {
 
             var array: ItemView[] = [];
@@ -597,7 +605,10 @@ module api.liveedit {
         }
 
         getComponentViewByPath(path: ComponentPath): ComponentView<Component> {
-
+            if (!path) {
+                return this.fragmentView;
+            }
+            
             var firstLevelOfPath = path.getFirstLevel();
 
             for (var i = 0; i < this.regionViews.length; i++) {
@@ -656,7 +667,11 @@ module api.liveedit {
             this.regionViews = [];
             this.viewsById = {};
 
-            this.doParseItemViews();
+            if (this.liveEditModel.getPageModel().getMode() === PageMode.FRAGMENT) {
+                this.doParseFragmentItemViews();
+            } else {
+                this.doParseItemViews();
+            }
 
             // register everything that was parsed
             this.toItemViewArray().forEach((itemView: ItemView) => {
@@ -707,6 +722,46 @@ module api.liveedit {
                     this.doParseItemViews(childElement);
                 }
             });
+        }
+
+        private doParseFragmentItemViews(parentElement?: api.dom.Element) {
+
+            var fragment = this.liveEditModel.getPageModel().getPage().getFragment();
+            if (!fragment) {
+                return;
+            }
+            var children = parentElement ? parentElement.getChildren() : this.getChildren();
+
+            children.forEach((childElement: api.dom.Element) => {
+                var itemType = ItemType.fromElement(childElement);
+                var component: Component = this.pageModel.getPage().getFragment();
+                var componentView: ComponentView<Component>;
+
+                if (itemType && itemType.isComponentType()) {
+                    if (component) {
+                        var itemViewConfig = new CreateItemViewConfig<PageView, Component>().setParentView(this).setData(
+                            component).setElement(childElement).setParentElement(parentElement ? parentElement : this);
+                        componentView = <ComponentView<Component>> itemType.createView(itemViewConfig);
+
+                        this.registerFragmentComponentView(componentView);
+                    }
+                } else {
+                    this.doParseFragmentItemViews(childElement);
+                }
+            });
+        }
+
+        registerFragmentComponentView(componentView: ComponentView<Component>) {
+            componentView.onItemViewAdded(this.itemViewAddedListener);
+            componentView.onItemViewRemoved(this.itemViewRemovedListener);
+
+            this.registerItemView(componentView);
+            if (componentView instanceof api.liveedit.layout.LayoutComponentView) {
+                componentView.getRegions().forEach((regionView) => {
+                    this.registerRegionView(regionView);
+                });
+            }
+            this.fragmentView = componentView;
         }
 
         onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {

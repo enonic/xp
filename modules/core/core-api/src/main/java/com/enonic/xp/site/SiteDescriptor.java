@@ -6,6 +6,7 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.site.filter.FilterDescriptors;
+import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 
 @Beta
 public final class SiteDescriptor
@@ -16,11 +17,14 @@ public final class SiteDescriptor
 
     private final FilterDescriptors filterDescriptors;
 
+    private final ControllerMappingDescriptors mappingDescriptors;
+
     private SiteDescriptor( final Builder builder )
     {
         this.form = builder.form;
         this.metaSteps = builder.metaSteps;
         this.filterDescriptors = builder.filterDescriptors != null ? builder.filterDescriptors : FilterDescriptors.empty();
+        this.mappingDescriptors = builder.mappingDescriptors != null ? builder.mappingDescriptors : ControllerMappingDescriptors.empty();
     }
 
     public Form getForm()
@@ -38,9 +42,19 @@ public final class SiteDescriptor
         return filterDescriptors;
     }
 
+    public ControllerMappingDescriptors getMappingDescriptors()
+    {
+        return mappingDescriptors;
+    }
+
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public static SiteDescriptor.Builder copyOf( final SiteDescriptor siteDescriptor )
+    {
+        return new Builder( siteDescriptor );
     }
 
     public static class Builder
@@ -51,8 +65,18 @@ public final class SiteDescriptor
 
         private FilterDescriptors filterDescriptors;
 
+        private ControllerMappingDescriptors mappingDescriptors;
+
         private Builder()
         {
+        }
+
+        private Builder( final SiteDescriptor siteDescriptor )
+        {
+            this.form = siteDescriptor.form != null ? siteDescriptor.form.copy() : null;
+            this.metaSteps = siteDescriptor.metaSteps;
+            this.filterDescriptors = siteDescriptor.filterDescriptors;
+            this.mappingDescriptors = siteDescriptor.mappingDescriptors;
         }
 
         public Builder form( final Form form )
@@ -70,6 +94,12 @@ public final class SiteDescriptor
         public Builder filterDescriptors( final FilterDescriptors filterDescriptors )
         {
             this.filterDescriptors = filterDescriptors;
+            return this;
+        }
+
+        public Builder mappingDescriptors( final ControllerMappingDescriptors mappingDescriptors )
+        {
+            this.mappingDescriptors = mappingDescriptors;
             return this;
         }
 

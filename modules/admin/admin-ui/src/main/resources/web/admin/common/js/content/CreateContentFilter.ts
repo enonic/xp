@@ -6,9 +6,9 @@ module api.content {
 
     var TYPES_ALLOWED_EVERYWHERE: {[key:string]: ContentTypeName} = {};
     [ContentTypeName.UNSTRUCTURED, ContentTypeName.FOLDER, ContentTypeName.SITE,
-        ContentTypeName.SHORTCUT].forEach((contentTypeName: ContentTypeName) => {
-            TYPES_ALLOWED_EVERYWHERE[contentTypeName.toString()] = contentTypeName;
-        });
+        ContentTypeName.SHORTCUT, ContentTypeName.FRAGMENT].forEach((contentTypeName: ContentTypeName) => {
+        TYPES_ALLOWED_EVERYWHERE[contentTypeName.toString()] = contentTypeName;
+    });
 
     export class CreateContentFilter {
 

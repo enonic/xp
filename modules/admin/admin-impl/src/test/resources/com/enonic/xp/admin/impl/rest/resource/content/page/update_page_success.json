@@ -35,6 +35,7 @@
         ],
         "controller": null,
         "customized" : false,
+        "fragment": null,
         "regions": [],
         "template": "my-page"
     },

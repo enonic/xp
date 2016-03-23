@@ -371,7 +371,7 @@ module api.dom {
             }
             this.el.focus();
             var gotFocus: boolean = document.activeElement == this.el.getHTMLElement();
-            if (!gotFocus) {
+            if (!gotFocus && Element.debug) {
                 console.log("Element.giveFocus(): Failed to give focus to Element: class = " + api.ClassHelper.getClassName(this) +
                             ", id = " +
                             this.getId());
@@ -388,7 +388,7 @@ module api.dom {
             }
             this.el.blur();
             var gotBlur: boolean = document.activeElement != this.el.getHTMLElement();
-            if (!gotBlur) {
+            if (!gotBlur && Element.debug) {
                 console.log("Element.giveBlur(): Failed to give blur to Element: class = " + api.ClassHelper.getClassName(this) +
                             ", id = " +
                             this.getId());

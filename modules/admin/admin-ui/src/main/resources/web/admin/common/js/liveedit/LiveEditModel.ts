@@ -150,7 +150,7 @@ module api.liveedit {
                 else if (pageMode == PageMode.AUTOMATIC) {
                     pageModel.setAutomaticTemplate(this);
                 }
-                else if (pageMode == PageMode.NO_CONTROLLER) {
+                else if (pageMode == PageMode.NO_CONTROLLER || pageMode == PageMode.FRAGMENT) {
                     var config = new PropertyTree();
 
                     var regions = Regions.create().build();
@@ -190,7 +190,10 @@ module api.liveedit {
         }
 
         private getPageMode(content: Content, defaultTemplatePresents: boolean): api.content.page.PageMode {
-            if (content.isPage()) {
+            if (content.getType().isFragment()) {
+                return api.content.page.PageMode.FRAGMENT;
+
+            } else if (content.isPage()) {
                 if (content.getPage().hasTemplate()) {
                     //in case content's template was deleted or updated to not support content's type
                     if (defaultTemplatePresents) {
