@@ -455,7 +455,11 @@ module app.publish {
             this.cleanPublishButtonText();
 
             this.publishButton.setLabel(count > 0 ? "Publish (" + count + ")" : "Publish");
-            this.publishButton.setEnabled(count > 0 && this.allResolvedItemsAreValid());
+            let canPublish = count > 0 && this.allResolvedItemsAreValid();
+            this.publishButton.setEnabled(canPublish);
+            if (canPublish) {
+                this.getButtonRow().focusDefaultAction();
+            }
         }
 
         private contentItemsAreValid(contentPublishItems: ContentsResolved<ContentPublishItem>): boolean {
