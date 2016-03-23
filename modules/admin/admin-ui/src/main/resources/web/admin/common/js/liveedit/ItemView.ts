@@ -691,6 +691,10 @@ module api.liveedit {
                 selectedView.deselect();
             }
 
+            // selecting anything should exit the text edit mode
+            // do this before highlighting as this might change text component dimensions
+            this.stopTextEditMode();
+
             this.getEl().setData("live-edit-selected", "true");
 
             this.hideTooltip();
@@ -700,9 +704,6 @@ module api.liveedit {
             if(!pageView.isLocked()) {
                 this.highlightSelected();
             }
-
-            // selecting anything should exit the text edit mode
-            this.stopTextEditMode();
 
             if (this.isEmpty()) {
                 this.selectPlaceholder();

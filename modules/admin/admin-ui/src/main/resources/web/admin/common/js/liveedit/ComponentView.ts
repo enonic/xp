@@ -395,6 +395,9 @@ module api.liveedit {
 
             // Register with new region...
             toRegionView.addComponentView(this, toIndex);
+            if (parentView && this.component) {
+                this.registerComponentListeners(this.component);
+            }
         }
 
         onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {

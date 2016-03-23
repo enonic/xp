@@ -75,6 +75,8 @@ module app.wizard.page.contextwindow.insert {
                     if (InsertablesPanel.debug) {
                         console.log('Simulating mouse up for', this.contextWindowDraggable);
                     }
+                    // draggable was appended to sortable, set it to null to prevent dragStop callback
+                    this.iFrameDraggable = null;
                     this.contextWindowDraggable.simulate('mouseup');
                 }
             });
@@ -163,8 +165,8 @@ module app.wizard.page.contextwindow.insert {
             this.contextWindowDraggable = null;
 
             if (this.iFrameDraggable) {
-                this.iFrameDraggable.simulate('mouseup');
                 this.liveEditPageProxy.destroyDraggable(this.iFrameDraggable);
+                this.iFrameDraggable.simulate('mouseup');
                 this.iFrameDraggable.remove();
                 this.iFrameDraggable = null;
             }

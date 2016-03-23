@@ -66,6 +66,8 @@ module api.liveedit {
 
         private itemViewRemovedListener: (event: ItemViewRemovedEvent) => void;
 
+        private scrolledListener: (event: WheelEvent) => void;
+
         public static debug;
 
         private propertyChangedListener: (event: api.PropertyChangedEvent) => void;
@@ -75,6 +77,10 @@ module api.liveedit {
         private lockedContextMenu: api.liveedit.ItemViewContextMenu;
 
         private disableContextMenu: boolean;
+
+        private closeTextEditModeButton: api.dom.Element;
+
+        private editorToolbar: api.dom.DivEl;
 
         private registerPageModel(pageModel: PageModel, resetAction: api.ui.Action) {
             if (PageView.debug) {
@@ -140,6 +146,10 @@ module api.liveedit {
 
             this.registerPageModel(this.pageModel, resetAction);
 
+            this.scrolledListener = (event: WheelEvent) => {
+                this.toggleStickyToolbar();
+            }
+
             this.itemViewAddedListener = (event: ItemViewAddedEvent) => {
                 // register the view and all its child views (i.e layout with regions)
                 var itemView = event.getView();
@@ -154,7 +164,9 @@ module api.liveedit {
                     }
                     else {
                         (<api.liveedit.text.TextComponentView>itemView).setEditMode(true);
+                        this.closeTextEditModeButton.toggleClass("active", true);
                     }
+                    new ItemViewSelectedEvent(itemView, null, event.isNew(), true).fire();
                     itemView.giveFocus();
                 } else {
                     if (this.isTextEditMode()) {
@@ -186,7 +198,9 @@ module api.liveedit {
 
             this.parseItemViews();
 
-            this.appendChild(this.createTextModeToolbar());
+            this.closeTextEditModeButton = this.createCloseTextEditModeEl();
+
+            this.appendChild(this.closeTextEditModeButton);
 
             this.refreshEmptyState();
 
@@ -200,6 +214,47 @@ module api.liveedit {
             this.listenToMouseEvents();
 
             this.onRemoved(event => this.unregisterPageModel(this.pageModel));
+
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+                if (this.isTextEditMode()) {
+                    this.updateVerticalSpaceForEditorToolbar();
+                }
+            });
+        }
+
+        private createCloseTextEditModeEl(): api.dom.Element {
+            var closeButton = new api.dom.AEl("close-edit-mode-button icon-close2");
+            closeButton.onClicked((event: MouseEvent) => {
+                this.setTextEditMode(false);
+                event.stopPropagation();
+                return false;
+            });
+            return closeButton;
+        }
+
+        private isPageScrolled() {
+            return this.getEl().getParent().getScrollTop() > 0;
+        }
+
+        private toggleStickyToolbar() {
+            if (!this.isPageScrolled()) {
+                this.editorToolbar.removeClass("sticky-toolbar");
+            }
+            else if (!this.editorToolbar.hasClass("sticky-toolbar")) {
+                this.editorToolbar.addClass("sticky-toolbar");
+            }
+        }
+
+        appendContainerForTextToolbar() {
+            if (!this.hasToolbarContainer()) {
+                this.editorToolbar = new api.dom.DivEl("mce-toolbar-container");
+                this.appendChild(this.editorToolbar);
+                this.addClass("has-toolbar-container");
+            }
+        }
+
+        hasToolbarContainer(): boolean {
+            return this.hasClass("has-toolbar-container");
         }
 
         private setIgnorePropertyChanges(value: boolean) {
@@ -331,10 +386,33 @@ module api.liveedit {
             event.stopPropagation();
 
             if (this.isTextEditMode()) {
-                this.setTextEditMode(false);
+                if (!this.isTextEditorToolbarClicked(event) && !this.isTextEditorDialogClicked(event)) {
+                    this.setTextEditMode(false);
+                }
             } else {
                 super.handleClick(event);
             }
+        }
+
+        private isTextEditorToolbarClicked(event: MouseEvent) {
+            var target = <HTMLElement> event.target;
+            if (!!target) {
+                var parent = <HTMLElement> target.parentElement;
+                return (target.id.indexOf("mce") >= 0 || target.className.indexOf("mce") >= 0 ||
+                        parent.id.indexOf("mce") >= 0 || parent.className.indexOf("mce") >= 0)
+            }
+            return false;
+        }
+
+        private isTextEditorDialogClicked(event: MouseEvent) {
+            var target = <HTMLElement> event.target;
+            while (target) {
+                if (target.classList.contains(api.util.htmlarea.dialog.ModalDialog.CLASS_NAME)) {
+                    return true;
+                }
+                target = target.parentElement;
+            }
+            return false;
         }
 
         hideContextMenu() {
@@ -374,23 +452,6 @@ module api.liveedit {
             this.notifyPageLockChanged(locked);
         }
 
-        private createTextModeToolbar() {
-            var toolbar = new api.dom.DivEl('text-edit-toolbar');
-            var wrapper = new api.dom.DivEl('wrapper');
-            wrapper.setHtml('Text Edit Mode');
-            var closeButton = new api.ui.button.CloseButton('transparent');
-            closeButton.onClicked((event: MouseEvent) => {
-                event.stopPropagation();
-                event.preventDefault();
-
-                this.setTextEditMode(false);
-            });
-            wrapper.appendChild(closeButton);
-            toolbar.appendChild(wrapper);
-            return toolbar;
-        }
-
-
         isTextEditMode(): boolean {
             return this.hasClass('text-edit-mode');
         }
@@ -405,12 +466,70 @@ module api.liveedit {
                 textView = <api.liveedit.text.TextComponentView> view;
                 if (textView.isEditMode() != flag) {
                     textView.setEditMode(flag);
+                    this.closeTextEditModeButton.toggleClass("active", flag);
                 }
             });
 
             if (flag) {
+                this.addVerticalSpaceForEditorToolbar();
+
+                this.onScrolled(this.scrolledListener);
                 new PageTextModeStartedEvent(this).fire();
             }
+            else {
+                this.removeVerticalSpaceForEditorToolbar();
+                this.unScrolled(this.scrolledListener);
+
+                api.liveedit.Highlighter.get().updateLastHighlightedItemView();
+                api.liveedit.SelectedHighlighter.get().updateLastHighlightedItemView();
+            }
+
+        }
+
+        private addVerticalSpaceForEditorToolbar() {
+            this.getPageView().getEl().setPosition("relative");
+            this.updateVerticalSpaceForEditorToolbar()
+            this.toggleStickyToolbar();
+        }
+
+        private updateVerticalSpaceForEditorToolbar() {
+            var result = this.getEditorToolbarWidth();
+
+            if (!!result) {
+                this.getPageView().getEl().setTop(this.getEditorToolbarWidth() + "px");
+            }
+            else {
+                this.waitUntilEditorToolbarShown();
+            }
+
+        }
+
+        private waitUntilEditorToolbarShown() {
+            var intervalId,
+                toolbarHeight,
+                attempts = 0;
+
+            intervalId = setInterval(()=> {
+                attempts++;
+                toolbarHeight = this.getEditorToolbarWidth();
+                if (!!toolbarHeight) {
+                    this.getPageView().getEl().setTop(toolbarHeight + "px");
+                    clearInterval(intervalId);
+                }
+                else if (attempts > 10) {
+                    clearInterval(intervalId);
+                }
+            }, 50);
+
+        }
+
+        private removeVerticalSpaceForEditorToolbar() {
+            this.getEl().setPosition("");
+            this.getEl().setTop("");
+        }
+
+        private getEditorToolbarWidth(): number {
+            return wemjq(".mce-toolbar-container .mce-tinymce-inline:not([style*='display: none'])").outerHeight();
         }
 
         hasTargetWithinTextComponent(target: HTMLElement) {

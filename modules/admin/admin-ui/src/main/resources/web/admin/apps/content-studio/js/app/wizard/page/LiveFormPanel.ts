@@ -68,6 +68,9 @@ module app.wizard.page {
     import ComponentFragmentCreatedEvent = api.liveedit.ComponentFragmentCreatedEvent;
     import ShowWarningLiveEditEvent = api.liveedit.ShowWarningLiveEditEvent;
 
+    import HtmlAreaDialogShownEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
+    import HTMLAreaDialogHandler = api.util.htmlarea.dialog.HTMLAreaDialogHandler;
+
     import Panel = api.ui.panel.Panel;
 
     export interface LiveFormPanelConfig {
@@ -180,6 +183,7 @@ module app.wizard.page {
             this.frameContainer = new Panel("frame-container");
             this.appendChild(this.frameContainer);
             this.frameContainer.appendChild(this.liveEditPageProxy.getIFrame());
+            this.frameContainer.appendChild(this.liveEditPageProxy.getDragMask());
 
             // append it here in order for the context window to be above
             this.appendChild(this.liveEditPageProxy.getLoadMask());
@@ -510,7 +514,23 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onPageUnloaded((event: api.liveedit.PageUnloadedEvent) => {
                 this.contentWizardPanel.close();
-            })
+            });
+
+            this.liveEditPageProxy.onLiveEditPageDialogCreate((event: HtmlAreaDialogShownEvent) => {
+                let modalDialog = HTMLAreaDialogHandler.createAndOpenDialog(event);
+                this.liveEditPageProxy.notifyLiveEditPageDialogCreated(modalDialog, event.getConfig());
+            });
+
+            this.liveEditPageProxy.onPageTextModeStarted(() => {
+                // Collapse the panel with a delay to give HTML editor time to initialize
+                setTimeout(() => {
+                    this.minimizeContentFormPanelIfNeeded();
+                }, 200);
+            });
+        }
+
+        private shade() {
+            api.liveedit.Shader.get().shade(this);
         }
 
         private minimizeContentFormPanelIfNeeded() {
