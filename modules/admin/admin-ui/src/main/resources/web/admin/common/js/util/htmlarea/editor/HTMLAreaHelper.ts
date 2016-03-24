@@ -74,7 +74,7 @@ module api.util.htmlarea.editor {
         private static changeImageParentAlignmentOnImageAlignmentChange(img: HTMLImageElement) {
             var observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
-                    var alignment = (<HTMLElement>mutation.target).style["text-align"];
+                    var alignment = (<HTMLElement>mutation.target).style.textAlign;
                     var keepOriginalSize = img.getAttribute("data-src").indexOf("keepSize=true") > 0;
 
                     var styleAttr;

@@ -38,6 +38,8 @@ tinymce.PluginManager.add('image', function (editor) {
                 editor.selection.select(imgElm);
                 editor.nodeChanged();
             }
+
+            return imgElm;
         }
 
         editor.execCommand("openImageDialog", {
