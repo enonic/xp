@@ -143,6 +143,7 @@ module api.util.htmlarea.dialog {
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
                 this.resetPreviewContainerMaxHeight();
                 this.imagePreviewScrollHandler.toggleScrollButtons();
+                this.imagePreviewScrollHandler.setMarginRight();
             });
         }
 
@@ -208,7 +209,7 @@ module api.util.htmlarea.dialog {
 
             var imageAlignment = isExistingImg ? (this.imageElement.parentElement.style.textAlign ||
                                                   this.imageElement.parentElement.style.cssFloat) : "justify";
-            imageEl.getHTMLElement().style["text-align"] = imageAlignment;
+            imageEl.getHTMLElement().style.textAlign = imageAlignment;
 
             return imageEl;
         }
@@ -379,33 +380,33 @@ module api.util.htmlarea.dialog {
         private createImageTag(): void {
             var figure = this.createFigureElement();
 
-            this.updateImageParentAlignment(figure.getHTMLElement());
-            this.changeImageParentAlignmentOnImageAlignmentChange(figure.getHTMLElement());
+            this.updateImageParentAlignment(this.image.getHTMLElement());
             this.setImageWidthConstraint();
 
-            this.callback(figure.getHTMLElement().outerHTML);
+            var img = this.callback(figure.getHTMLElement().outerHTML);
+            this.changeImageParentAlignmentOnImageAlignmentChange(img);
         }
 
-        private changeImageParentAlignmentOnImageAlignmentChange(parent:HTMLElement) {
+        private changeImageParentAlignmentOnImageAlignmentChange(image: HTMLElement) {
             var observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
-                    var alignment = (<HTMLElement>mutation.target).style["text-align"];
-                    this.updateImageParentAlignment(parent, alignment);
+                    var alignment = (<HTMLElement>mutation.target).style.textAlign;
+                    this.updateImageParentAlignment(image, alignment);
                 });
             });
 
             var config = {attributes: true, childList: false, characterData: false, attributeFilter: ["style"]};
 
-            observer.observe((<api.dom.ImgEl>this.image).getEl().getHTMLElement(), config);
+            observer.observe(image, config);
         }
 
-        private updateImageParentAlignment(element: HTMLElement, alignment?: string) {
+        private updateImageParentAlignment(image: HTMLElement, alignment?: string) {
             if (!alignment) {
-                alignment = this.image.getHTMLElement().style["text-align"];
+                alignment = image.style.textAlign;
             }
 
             var styleFormat = "float: {0}; margin: {1};" +
-                              (this.isImageInOriginalSize(this.image.getEl()) ? "" : "width: {2}%;");
+                              (this.isImageInOriginalSize(image) ? "" : "width: {2}%;");
             var styleAttr = "text-align: " + alignment + ";";
 
             switch (alignment) {
@@ -418,37 +419,17 @@ module api.util.htmlarea.dialog {
                 break;
             }
 
-            element.setAttribute("style", styleAttr);
-            element.setAttribute("data-mce-style", styleAttr);
+            image.parentElement.setAttribute("style", styleAttr);
+            image.parentElement.setAttribute("data-mce-style", styleAttr);
         }
 
         private setImageWidthConstraint() {
-            var keepImageSize = this.isImageInOriginalSize(this.image.getEl());
+            var keepImageSize = this.isImageInOriginalSize(this.image.getHTMLElement());
             this.image.getHTMLElement().style["width"] = (this.isImageWiderThanEditor() || !keepImageSize) ? "100%" : "auto";
         }
 
-        private isImageInOriginalSize(image: api.dom.ElementHelper) {
+        private isImageInOriginalSize(image: HTMLElement) {
             return image.getAttribute("data-src").indexOf("keepSize=true") > 0;
-        }
-
-        private removeExtraIndentFromContainer(container) {
-            var elements = <Element[]>new api.dom.ElementHelper(container).getChildren();
-
-            for (let i = 0; i < elements.length; i++) {
-                if (elements[i].tagName.toLowerCase() === "br" && elements[i].hasAttribute("data-mce-bogus")) {
-                    container.removeChild(elements[i]);
-                }
-            }
-        }
-
-        private generateUUID(): string {
-            var d = new Date().getTime();
-            var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                var r = (d + Math.random() * 16) % 16 | 0;
-                d = Math.floor(d / 16);
-                return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-            });
-            return uuid;
         }
     }
 
@@ -513,7 +494,7 @@ module api.util.htmlarea.dialog {
             action.onExecuted(() => {
                 this.resetActiveButton();
                 button.addClass("active");
-                this.image.getHTMLElement().style["text-align"] = this.getImageAlignment();
+                this.image.getHTMLElement().style.textAlign = this.getImageAlignment();
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
 
@@ -562,7 +543,7 @@ module api.util.htmlarea.dialog {
         }
 
         private initActiveButton() {
-            var alignment = this.image.getHTMLElement().style["text-align"];
+            var alignment = this.image.getHTMLElement().style.textAlign;
 
             switch (alignment) {
                 case 'justify':
@@ -671,8 +652,6 @@ module api.util.htmlarea.dialog {
 
             this.initializeImageScrollNavigation();
 
-            this.imagePreviewContainer.getEl().setMarginRight("-" + this.scrollBarWidth + "px");
-
             this.imagePreviewContainer.onScroll(() => {
                 this.toggleScrollButtons();
                 this.showScrollBar();
@@ -761,6 +740,13 @@ module api.util.htmlarea.dialog {
                                                                             // to emulate scrolling speed up effect
                 }
             });
+        }
+
+        setMarginRight() {
+            this.imagePreviewContainer.getEl().setMarginRight("");
+            if (this.scrollDownButton.isVisible() || this.scrollUpButton.isVisible()) {
+                this.imagePreviewContainer.getEl().setMarginRight("-" + this.scrollBarWidth + "px");
+            }
         }
 
         toggleScrollButtons() {
