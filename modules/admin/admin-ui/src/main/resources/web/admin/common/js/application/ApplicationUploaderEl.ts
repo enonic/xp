@@ -49,7 +49,7 @@ module api.application {
         }
 
         protected getErrorMessage(fileString: string): string {
-            return "Invalid application file";
+            return "The application could not be installed";
         }
     }
 }
