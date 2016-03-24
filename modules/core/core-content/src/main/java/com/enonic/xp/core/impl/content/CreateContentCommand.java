@@ -324,12 +324,18 @@ final class CreateContentCommand
                 Input input = formItem.toInput();
                 if ( input.getDefaultValue() != null )
                 {
-                    final Value defaultValue = InputTypes.BUILTIN.resolve( input.getInputType() ).
-                        createDefaultValue( input.getDefaultValue() );
-
-                    if ( defaultValue != null )
+                    try
                     {
-                        params.getData().setProperty( PropertyPath.from( parentPath, input.getName() ), defaultValue );
+                        final Value defaultValue = InputTypes.BUILTIN.resolve( input.getInputType() ).
+                            createDefaultValue( input.getDefaultValue() );
+                        if ( defaultValue != null )
+                        {
+                            params.getData().setProperty( PropertyPath.from( parentPath, input.getName() ), defaultValue );
+                        }
+                    }
+                    catch ( IllegalArgumentException ex )
+                    {
+                        LOG.warn( "Invalid default value", ex );
                     }
                 }
             }
