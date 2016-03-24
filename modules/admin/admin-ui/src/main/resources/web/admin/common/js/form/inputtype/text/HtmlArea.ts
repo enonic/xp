@@ -24,6 +24,10 @@ module api.form.inputtype.text {
 
         private modalDialog: api.form.inputtype.text.htmlarea.ModalDialog;
 
+        private focusListeners: {(event: FocusEvent): void}[] = [];
+
+        private blurListeners: {(event: FocusEvent): void}[] = [];
+
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
 
             super(config);
@@ -152,6 +156,8 @@ module api.form.inputtype.text {
                     editor.on('focus', (e) => {
                         this.resetInputHeight();
                         textAreaWrapper.addClass(focusedEditorCls);
+
+                        this.notifyFocused(e);
                     });
                     editor.on('blur', (e) => {
                         this.setStaticInputHeight();
@@ -159,6 +165,8 @@ module api.form.inputtype.text {
                         if (!(this.modalDialog && this.modalDialog.isVisible())) {
                             textAreaWrapper.removeClass(focusedEditorCls);
                         }
+
+                        this.notifyBlurred(e);
                     });
                     editor.on('keydown', (e) => {
                         if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {  // Cmd-S or Ctrl-S
@@ -426,6 +434,38 @@ module api.form.inputtype.text {
             tinymce.execCommand('mceAddEditor', false, editorId);
 
             this.getEditor(editorId).focus();
+        }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners.push(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners = this.focusListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners.push(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners = this.blurListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyFocused(event: FocusEvent) {
+            this.focusListeners.forEach((listener) => {
+                listener(event);
+            })
+        }
+
+        private notifyBlurred(event: FocusEvent) {
+            this.blurListeners.forEach((listener) => {
+                listener(event);
+            })
         }
 
         private destroyEditor(id: string): void {
