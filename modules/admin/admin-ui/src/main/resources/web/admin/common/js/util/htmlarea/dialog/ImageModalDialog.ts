@@ -143,6 +143,7 @@ module api.util.htmlarea.dialog {
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
                 this.resetPreviewContainerMaxHeight();
                 this.imagePreviewScrollHandler.toggleScrollButtons();
+                this.imagePreviewScrollHandler.setMarginRight();
             });
         }
 
@@ -651,8 +652,6 @@ module api.util.htmlarea.dialog {
 
             this.initializeImageScrollNavigation();
 
-            this.imagePreviewContainer.getEl().setMarginRight("-" + this.scrollBarWidth + "px");
-
             this.imagePreviewContainer.onScroll(() => {
                 this.toggleScrollButtons();
                 this.showScrollBar();
@@ -741,6 +740,13 @@ module api.util.htmlarea.dialog {
                                                                             // to emulate scrolling speed up effect
                 }
             });
+        }
+
+        setMarginRight() {
+            this.imagePreviewContainer.getEl().setMarginRight("");
+            if (this.scrollDownButton.isVisible() || this.scrollUpButton.isVisible()) {
+                this.imagePreviewContainer.getEl().setMarginRight("-" + this.scrollBarWidth + "px");
+            }
         }
 
         toggleScrollButtons() {
