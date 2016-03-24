@@ -164,19 +164,6 @@ module api.ui.dialog {
             super.hide();
         }
 
-        close() {
-
-            if (ModalDialog.openDialogsCounter == 1) {
-                api.ui.mask.BodyMask.get().hide();
-            }
-
-            this.hide();
-
-            api.ui.KeyBindings.get().unshelveBindings();
-
-            ModalDialog.openDialogsCounter--;
-        }
-
         open() {
 
             api.ui.mask.BodyMask.get().show();
@@ -188,6 +175,19 @@ module api.ui.dialog {
             api.ui.KeyBindings.get().bindKeys(api.ui.Action.getKeyBindings(this.actions));
 
             ModalDialog.openDialogsCounter++;
+        }
+
+        close() {
+
+            if (ModalDialog.openDialogsCounter == 1) {
+                api.ui.mask.BodyMask.get().hide();
+            }
+
+            this.hide();
+
+            api.ui.KeyBindings.get().unshelveBindings();
+
+            ModalDialog.openDialogsCounter--;
         }
     }
 
