@@ -92,7 +92,7 @@ module app.remove {
                 setPath(content.getPath().toString()).
                 setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve());
 
-            var selectionItem = new SelectionItem(deleteItemViewer, browseItem, () => {
+            var selectionItem = new ContentDeleteSelectionItem(deleteItemViewer, browseItem, () => {
                 var index = this.indexOf(selectionItem);
                 if (index < 0) {
                     return;
