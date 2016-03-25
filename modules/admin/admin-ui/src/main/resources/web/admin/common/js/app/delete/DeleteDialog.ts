@@ -13,6 +13,8 @@ module api.app.remove {
 
         private itemList: DeleteDialogItemList = new DeleteDialogItemList();
 
+        private subTitle: api.dom.Element;
+
         constructor(modelName: string) {
             super({
                 title: new api.ui.dialog.ModalDialogHeader("Delete " + modelName)
@@ -23,9 +25,9 @@ module api.app.remove {
             this.getEl().addClass("delete-dialog");
             this.appendChildToContentPanel(this.itemList);
 
-            var descMessage = new api.dom.H6El().addClass("desc-message").
+            this.subTitle = new api.dom.H6El().addClass("desc-message").
                 setHtml("Delete selected items and their children");
-            this.appendChildToTitle(descMessage);
+            this.appendChildToTitle(this.subTitle);
         }
 
         show() {
@@ -61,6 +63,10 @@ module api.app.remove {
                 var selectionItem: SelectionItem<ContentSummaryAndCompareStatus> = selectedItems[i];
                 this.itemList.appendChild(selectionItem);
             }
+        }
+
+        updateSubTitleText(text: string) {
+            this.subTitle.setHtml(text);
         }
     }
 
