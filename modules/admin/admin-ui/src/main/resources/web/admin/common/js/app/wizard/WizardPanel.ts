@@ -53,7 +53,7 @@ module api.app.wizard {
 
         protected formPanel: api.ui.panel.Panel;
 
-        private lastFocusedElement: JQuery;
+        private lastFocusedElement: HTMLElement;
 
         private stepNavigatorAndToolbarContainer: WizardStepNavigatorAndToolbar;
 
@@ -268,10 +268,11 @@ module api.app.wizard {
         }
 
         startRememberFocus() {
-            wemjq(this.getHTMLElement()).on("focus", "*", (e) => {
-                e.stopPropagation();
-                this.lastFocusedElement = wemjq(e.target);
-            });
+            this.steps.forEach((step) => {
+                step.getStepForm().onFocus((el) => {
+                    this.lastFocusedElement = <HTMLElement>el.target;
+                })
+            })
         }
 
         getTabId(): api.app.bar.AppBarTabId {
