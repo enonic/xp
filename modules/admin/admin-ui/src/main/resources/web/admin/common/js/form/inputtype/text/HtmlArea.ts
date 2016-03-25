@@ -22,6 +22,10 @@ module api.form.inputtype.text {
         private editors: HtmlAreaOccurrenceInfo[];
         private contentId: api.content.ContentId;
 
+        private focusListeners: {(event: FocusEvent): void}[] = [];
+
+        private blurListeners: {(event: FocusEvent): void}[] = [];
+
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
 
             super(config);
@@ -86,6 +90,8 @@ module api.form.inputtype.text {
             var onFocusHandler = (e) => {
                 this.resetInputHeight();
                 textAreaWrapper.addClass(focusedEditorCls);
+
+                this.notifyFocused(e);
             };
 
             var onNodeChangeHandler = (e) => {
@@ -94,7 +100,9 @@ module api.form.inputtype.text {
 
             var onBlurHandler = (e) => {
                 this.setStaticInputHeight();
-                    textAreaWrapper.removeClass(focusedEditorCls);
+                textAreaWrapper.removeClass(focusedEditorCls);
+
+                this.notifyBlurred(e);
             };
 
             var onKeydownHandler = (e) => {
@@ -142,7 +150,7 @@ module api.form.inputtype.text {
                     HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
                     this.onShown((event) => {
                         // invoke auto resize on shown in case contents have been updated while inactive
-                        editor.execCommand('mceAutoResize', false, null);
+                        editor.execCommand('mceAutoResize', false, null, {skip_focus: true});
                     });
                 });
         }
@@ -296,13 +304,46 @@ module api.form.inputtype.text {
             this.getEditor(editorId).focus();
         }
 
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners.push(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners = this.focusListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners.push(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners = this.blurListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyFocused(event: FocusEvent) {
+            this.focusListeners.forEach((listener) => {
+                listener(event);
+            })
+        }
+
+        private notifyBlurred(event: FocusEvent) {
+            this.blurListeners.forEach((listener) => {
+                listener(event);
+            })
+        }
+
+
         private destroyEditor(id: string): void {
             var editor = this.getEditor(id)
             if (editor) {
                 try {
                     editor.destroy(false);
                 }
-                catch(e) {
+                catch (e) {
                     //error thrown in FF on tab close - XP-2624
                 }
             }
