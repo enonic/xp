@@ -26,6 +26,12 @@ module api.ui.dialog {
 
         private static openDialogsCounter: number = 0;
 
+        private modalDialogIsFocused: boolean = false;
+
+        private buttonRowIsFocused: boolean = false;
+
+        private tabbable: api.dom.Element[];
+
         constructor(config: ModalDialogConfig) {
             super("modal-dialog", api.StyleHelper.COMMON_PREFIX);
 
@@ -66,10 +72,12 @@ module api.ui.dialog {
                 }
             };
 
-            api.dom.Body.get().onMouseDown(this.mouseClickListener);
-
-            this.onRemoved(() => api.dom.Body.get().unMouseDown(this.mouseClickListener));
-            this.onAdded(() => api.dom.Body.get().onMouseDown(this.mouseClickListener));
+            this.onRemoved(() => {
+                api.dom.Body.get().unMouseDown(this.mouseClickListener);
+            });
+            this.onAdded(() => {
+                api.dom.Body.get().onMouseDown(this.mouseClickListener);
+            });
             this.onShown(() => api.ui.responsive.ResponsiveManager.fireResizeEvent());
 
             this.responsiveItem =
@@ -77,6 +85,40 @@ module api.ui.dialog {
                 if (this.isVisible()) {
                     this.centerMyself();
                 }
+            });
+
+
+            let modalDialogFocusOutTimeout;
+            let buttonRowFocusOutTimeout;
+
+            this.onFocusIn((event) => {
+                this.modalDialogIsFocused = true;
+                clearTimeout(modalDialogFocusOutTimeout);
+            });
+
+            this.onFocusOut((event) => {
+                modalDialogFocusOutTimeout = setTimeout(() => {
+                    this.modalDialogIsFocused = false;
+
+                    // last focusable - Cancel
+                    // first focusable - X
+                    if (this.buttonRowIsFocused) { // last element lost focus
+                        this.cancelButton.giveFocus();
+                    } else {
+                        this.buttonRow.getLastButton().giveFocus();
+                    }
+                }, 10);
+            });
+
+            this.buttonRow.onFocusIn((event) => {
+                this.buttonRowIsFocused = true;
+                clearTimeout(buttonRowFocusOutTimeout);
+            });
+
+            this.buttonRow.onFocusOut((event) => {
+                buttonRowFocusOutTimeout = setTimeout(() => {
+                    this.buttonRowIsFocused = false;
+                }, 15); // timeout should be > timeout for modal dialog to trigger after
             });
         }
 
@@ -160,8 +202,22 @@ module api.ui.dialog {
             return this.contentPanel;
         }
 
-        hide() {
-            super.hide();
+        updateTabbable() {
+            this.tabbable = this.getTabbableElements();
+        }
+
+        getTabbedIndex(): number {
+            let activeElement = document.activeElement;
+            let tabbedIndex = 0;
+            if (this.tabbable.length > 0) {
+                for (let i = 0; i < this.tabbable.length; i++) {
+                    if (activeElement === this.tabbable[i].getHTMLElement()) {
+                        tabbedIndex = i;
+                        break;
+                    }
+                }
+            }
+            return tabbedIndex;
         }
 
         open() {
@@ -172,7 +228,34 @@ module api.ui.dialog {
 
             this.show();
 
-            api.ui.KeyBindings.get().bindKeys(api.ui.Action.getKeyBindings(this.actions));
+            let keyBindings = api.ui.Action.getKeyBindings(this.actions);
+
+            this.updateTabbable();
+
+            keyBindings = keyBindings.concat([
+                new KeyBinding("right", (event) => {
+                    if (this.tabbable.length > 0) {
+                        let tabbedIndex = this.getTabbedIndex();
+                        tabbedIndex = tabbedIndex + 1 >= this.tabbable.length ? 0 : tabbedIndex + 1;
+                        this.tabbable[tabbedIndex].giveFocus();
+                    }
+
+                    event.stopPropagation();
+                    event.preventDefault();
+                }),
+                new KeyBinding("left", (event) => {
+                    if (this.tabbable.length > 0) {
+                        let tabbedIndex = this.getTabbedIndex();
+                        tabbedIndex = tabbedIndex - 1 < 0 ? this.tabbable.length - 1 : tabbedIndex - 1;
+                        this.tabbable[tabbedIndex].giveFocus();
+                    }
+
+                    event.stopPropagation();
+                    event.preventDefault();
+                })
+            ]);
+
+            api.ui.KeyBindings.get().bindKeys(keyBindings);
 
             ModalDialog.openDialogsCounter++;
         }
@@ -250,6 +333,10 @@ module api.ui.dialog {
             if (this.defaultButton) {
                 this.defaultButton.giveFocus();
             }
+        }
+
+        getLastButton(): api.dom.Element {
+            return this.buttonContainer.getLastChild();
         }
     }
 

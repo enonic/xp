@@ -459,6 +459,7 @@ module app.publish {
             this.publishButton.setEnabled(canPublish);
             if (canPublish) {
                 this.getButtonRow().focusDefaultAction();
+                this.updateTabbable();
             }
         }
 

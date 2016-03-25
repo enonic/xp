@@ -634,6 +634,15 @@ module api.dom {
             return indexFromDOM;
         }
 
+        getTabbableElements(): Element[] {
+            let selected = wemjq(this.getHTMLElement()).find(":tabbable");
+            let elements = [];
+            for (let i = 0; i < selected.length; i++) {
+                elements.push(Element.fromHtmlElement(selected[i]));
+            }
+            return elements;
+        }
+
         toString(): string {
             return wemjq('<div>').append(wemjq(this.getHTMLElement()).clone()).html();
         }
@@ -933,6 +942,22 @@ module api.dom {
 
         unBlur(listener: (event: FocusEvent) => void) {
             this.getEl().removeEventListener("blur", listener);
+        }
+
+        onFocusIn(listener: (event: FocusEvent) => void) {
+            this.getEl().addEventListener("focusin", listener);
+        }
+
+        unFocusIn(listener: (event: FocusEvent) => void) {
+            this.getEl().removeEventListener("focusin", listener);
+        }
+
+        onFocusOut(listener: (event: FocusEvent) => void) {
+            this.getEl().addEventListener("focusout", listener);
+        }
+
+        unFocusOut(listener: (event: FocusEvent) => void) {
+            this.getEl().removeEventListener("focusout", listener);
         }
 
         onScroll(listener: (event: Event) => void) {
