@@ -48,6 +48,7 @@ module app.remove {
 
             this.showChildItemsCheckbox.setChecked(false);
             this.showChildItemsCheckbox.setVisible(this.atLeastOneInitialItemHasChild());
+            this.updateSubTitle();
 
             this.countItemsToDeleteAndUpdateButtonCounter();
         }
@@ -144,6 +145,7 @@ module app.remove {
                 else {
                     var atLeastOneItemHasChild = this.atLeastOneInitialItemHasChild();
                     this.showChildItemsCheckbox.setVisible(atLeastOneItemHasChild);
+                    this.updateSubTitle();
 
                     if(atLeastOneItemHasChild && this.showChildItemsCheckbox.isChecked()) {
                         this.descendantsContainer.loadData(this.selectedItems).then(() => {
@@ -194,7 +196,7 @@ module app.remove {
         }
 
         private updateDeleteButtonCounter(count: number) {
-            this.deleteButton.setLabel("Delete (" + count + ")");
+            this.deleteButton.setLabel("Delete" + (this.atLeastOneInitialItemHasChild() ? " (" + count + ")" : ""));
         }
 
         private showLoadingSpinner() {
@@ -213,6 +215,18 @@ module app.remove {
             return this.selectedItems.some((obj: SelectionItem<ContentSummaryAndCompareStatus>) => {
                 return obj.getBrowseItem().getModel().hasChildren();
             });
+        }
+
+        private updateSubTitle() {
+            if(!this.atLeastOneInitialItemHasChild()) {
+                this.updateSubTitleText("");
+            }
+            else if(this.selectedItems.length > 1) {
+                this.updateSubTitleText("Delete selected items and their child content");
+            }
+            else {
+                this.updateSubTitleText("Delete selected item and its child content");
+            }
         }
     }
 

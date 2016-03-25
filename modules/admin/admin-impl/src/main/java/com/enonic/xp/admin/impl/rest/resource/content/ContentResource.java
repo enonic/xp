@@ -1142,7 +1142,7 @@ public final class ContentResource
     private ContentSummaryListJson getDescendantsOfContents( final ContentPaths contentsPaths )
     {
         FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
-                contentQuery( ContentQuery.create().size( Integer.MAX_VALUE ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() ).
+                contentQuery( ContentQuery.create().queryExpr( constructExprToFindChildren( contentsPaths ) ).build() ).
                 build() );
 
         final ContentListMetaData metaData = ContentListMetaData.create().
