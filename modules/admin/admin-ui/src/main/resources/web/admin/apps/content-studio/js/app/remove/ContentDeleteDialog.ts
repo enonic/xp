@@ -49,6 +49,9 @@ module app.remove {
             this.showChildItemsCheckbox.setChecked(false);
             this.showChildItemsCheckbox.setVisible(this.atLeastOneInitialItemHasChild());
             this.updateSubTitle();
+            if(this.selectedItems.length === 1) {
+                this.selectedItems[0].hideRemoveButton();
+            }
 
             this.countItemsToDeleteAndUpdateButtonCounter();
         }
@@ -146,6 +149,9 @@ module app.remove {
                     var atLeastOneItemHasChild = this.atLeastOneInitialItemHasChild();
                     this.showChildItemsCheckbox.setVisible(atLeastOneItemHasChild);
                     this.updateSubTitle();
+                    if(this.selectedItems.length === 1) {
+                        this.selectedItems[0].hideRemoveButton();
+                    }
 
                     if(atLeastOneItemHasChild && this.showChildItemsCheckbox.isChecked()) {
                         this.descendantsContainer.loadData(this.selectedItems).then(() => {
@@ -196,7 +202,7 @@ module app.remove {
         }
 
         private updateDeleteButtonCounter(count: number) {
-            this.deleteButton.setLabel("Delete (" + count + ")");
+            this.deleteButton.setLabel("Delete" + (this.atLeastOneInitialItemHasChild() ? " (" + count + ")" : ""));
         }
 
         private showLoadingSpinner() {
