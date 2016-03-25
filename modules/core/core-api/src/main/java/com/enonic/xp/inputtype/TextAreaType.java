@@ -22,6 +22,17 @@ final class TextAreaType
     }
 
     @Override
+    public Value createDefaultValue( final InputTypeConfig defaultConfig )
+    {
+        final InputTypeProperty defaultProperty = defaultConfig.getProperty( "default" );
+        if ( defaultProperty != null )
+        {
+            return ValueFactory.newString( defaultProperty.getValue() );
+        }
+        return super.createDefaultValue( defaultConfig );
+    }
+
+    @Override
     public void validate( final Property property, final InputTypeConfig config )
     {
         validateType( property, ValueTypes.STRING );
