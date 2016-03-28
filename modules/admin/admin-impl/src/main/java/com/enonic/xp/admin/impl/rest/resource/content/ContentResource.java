@@ -47,6 +47,7 @@ import com.enonic.xp.admin.impl.json.content.ContentListJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryListJson;
 import com.enonic.xp.admin.impl.json.content.GetActiveContentVersionsResultJson;
+import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
@@ -868,6 +869,26 @@ public final class ContentResource
             build() );
 
         return new GetActiveContentVersionsResultJson( result, this.principalsResolver );
+    }
+
+    @POST
+    @Path("getVersionsForView")
+    public GetContentVersionsForViewResultJson getContentVersionsForView( final GetContentVersionsJson params )
+    {
+        final ContentId contentId = ContentId.from( params.getContentId() );
+
+        final FindContentVersionsResult allVersions = contentService.getVersions( FindContentVersionsParams.create().
+            contentId( contentId ).
+            from( params.getFrom() != null ? params.getFrom() : 0 ).
+            size( params.getSize() != null ? params.getSize() : 50 ).
+            build() );
+
+        final GetActiveContentVersionsResult activeVersions = contentService.getActiveVersions( GetActiveContentVersionsParams.create().
+            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+            contentId( contentId ).
+            build() );
+
+        return new GetContentVersionsForViewResultJson( allVersions, activeVersions, this.principalsResolver );
     }
 
     @GET
