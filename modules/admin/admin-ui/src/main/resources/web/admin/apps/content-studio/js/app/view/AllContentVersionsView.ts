@@ -74,45 +74,15 @@ module app.view {
             });
         }
 
-
         private loadData(): wemQ.Promise<ContentVersion[]> {
             if (this.contentId) {
-                var activePromise = new api.content.GetActiveContentVersionsRequest(this.contentId).sendAndParse();
-                var allPromise = new api.content.GetContentVersionsRequest(this.contentId).sendAndParse();
-                return wemQ.all([allPromise, activePromise]).
-                    spread<ContentVersion[]>((allVersions: ContentVersion[], activeVersions: ContentVersion[]) => {
-                    // find the active version in draft branch
-                    for (var i = 0; i < activeVersions.length; i++) {
-                        var av = activeVersions[i];
-                        if (av.workspaces.indexOf(AllContentVersionsView.branchDraft) > -1) {
-                            this.activeVersion = av;
-                            break;
-                        }
-                    }
-                    return this.enrichWithWorkspaces(allVersions, activeVersions);
+                return new api.content.GetContentVersionsForViewRequest(this.contentId).sendAndParse().then((contentVersions: api.content.ContentVersions) => {
+                    this.activeVersion = contentVersions.getActiveVersion();
+                    return contentVersions.getContentVersions();
                 });
             } else {
                 throw new Error("Required contentId not set for ActiveContentVersionsTreeGrid")
             }
-        }
-
-        private enrichWithWorkspaces(allVersions: ContentVersion[], activeVersions: ContentVersion[]): ContentVersion[] {
-            var filteredVersions: ContentVersion[] = allVersions.length ? [allVersions[0]] : [];
-
-            for (var i = 1; i < allVersions.length; i++) {
-                if (Math.abs(allVersions[i - 1].modified.getTime() - allVersions[i].modified.getTime()) > 500) {
-                    filteredVersions.push(allVersions[i]);
-                }
-            }
-
-            activeVersions.forEach((activeVersion: ContentVersion) => {
-                filteredVersions.filter((version: ContentVersion) => {
-                    return version.id == activeVersion.id;
-                }).forEach((version: ContentVersion) => {
-                    version.workspaces = activeVersion.workspaces;
-                });
-            });
-            return filteredVersions;
         }
 
         private updateView(contentVersions: ContentVersion[]) {
