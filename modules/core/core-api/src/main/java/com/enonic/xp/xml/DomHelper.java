@@ -107,6 +107,16 @@ public final class DomHelper
         return writer.toString();
     }
 
+    public static String serializeBody( final Node node )
+    {
+        final StringBuilder builder = new StringBuilder();
+        for ( final Node child : getChildElements( node ) )
+        {
+            builder.append( DomHelper.serialize( child ) );
+        }
+        return builder.toString();
+    }
+
     public static String getTextValue( final Element elem )
     {
         if ( elem == null )
@@ -129,7 +139,7 @@ public final class DomHelper
         return str.toString();
     }
 
-    public static List<Element> getChildElements( final Element elem )
+    public static List<Element> getChildElements( final Node elem )
     {
         final NodeList list = elem.getChildNodes();
         final List<Element> result = Lists.newArrayList();
