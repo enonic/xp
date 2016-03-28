@@ -36,7 +36,7 @@ module app.remove {
             this.addShowDescendantsCheckbox();
         }
 
-        setContentToDelete(contents: ContentSummaryAndCompareStatus[]) {
+        setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
 
             this.selectedItems = [];
 
@@ -54,14 +54,18 @@ module app.remove {
             }
 
             this.countItemsToDeleteAndUpdateButtonCounter();
+
+            return this;
         }
 
-        setYesCallback(callback: () => void) {
+        setYesCallback(callback: () => void): ContentDeleteDialog {
             this.yesCallback = callback;
+            return this;
         }
 
-        setNoCallback(callback: () => void) {
+        setNoCallback(callback: () => void): ContentDeleteDialog {
             this.noCallback = callback;
+            return this;
         }
 
         private addDescendantsContainer() {
@@ -102,7 +106,10 @@ module app.remove {
         private addDeleteActionHandler() {
             this.getDeleteAction().onExecuted(() => {
 
-                this.yesCallback();
+                if(!!this.yesCallback) {
+                    this.yesCallback();
+                }
+
                 this.deleteButton.setEnabled(false);
                 this.showLoadingSpinner();
 
@@ -202,7 +209,8 @@ module app.remove {
         }
 
         private updateDeleteButtonCounter(count: number) {
-            this.deleteButton.setLabel("Delete" + (this.atLeastOneInitialItemHasChild() ? " (" + count + ")" : ""));
+            var showCounter: boolean = this.selectedItems.length > 1 || this.atLeastOneInitialItemHasChild();
+            this.deleteButton.setLabel("Delete" + (showCounter ? " (" + count + ")" : ""));
         }
 
         private showLoadingSpinner() {
