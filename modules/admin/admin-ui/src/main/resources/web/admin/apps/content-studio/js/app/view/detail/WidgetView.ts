@@ -126,6 +126,7 @@ module app.view.detail {
         }
 
         slideOut() {
+            this.getEl().setMaxHeightPx(this.getEl().getHeight()); // enables transition
             this.getEl().setMaxHeightPx(0);
         }
 
@@ -135,6 +136,9 @@ module app.view.detail {
             }
             else {
                 this.getEl().setMaxHeightPx(this.getParentElement().getEl().getHeight());
+                setTimeout(() => {
+                    this.getEl().setMaxHeight("none");
+                }, 100);
             }
         }
 
