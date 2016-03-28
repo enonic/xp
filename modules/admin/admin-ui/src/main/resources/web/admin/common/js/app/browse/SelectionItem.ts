@@ -34,6 +34,10 @@ module api.app.browse {
             return this.item;
         }
 
+        hideRemoveButton() {
+            this.removeEl.hide();
+        }
+
         doRender(): boolean {
             this.removeChildren();
             this.appendChild(this.removeEl);

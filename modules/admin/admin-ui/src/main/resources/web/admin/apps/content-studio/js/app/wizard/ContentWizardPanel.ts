@@ -1165,6 +1165,10 @@ module app.wizard {
             return this;
         }
 
+        getContentCompareStatus(): CompareStatus {
+            return this.contentCompareStatus;
+        }
+
         private notifyContentNamed(content: api.content.Content) {
             this.contentNamedListeners.forEach((listener: (event: ContentNamedEvent)=>void)=> {
                 listener.call(this, new ContentNamedEvent(this, content));

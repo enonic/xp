@@ -36,7 +36,7 @@ module app.remove {
             this.addShowDescendantsCheckbox();
         }
 
-        setContentToDelete(contents: ContentSummaryAndCompareStatus[]) {
+        setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
 
             this.selectedItems = [];
 
@@ -48,16 +48,24 @@ module app.remove {
 
             this.showChildItemsCheckbox.setChecked(false);
             this.showChildItemsCheckbox.setVisible(this.atLeastOneInitialItemHasChild());
+            this.updateSubTitle();
+            if(this.selectedItems.length === 1) {
+                this.selectedItems[0].hideRemoveButton();
+            }
 
             this.countItemsToDeleteAndUpdateButtonCounter();
+
+            return this;
         }
 
-        setYesCallback(callback: () => void) {
+        setYesCallback(callback: () => void): ContentDeleteDialog {
             this.yesCallback = callback;
+            return this;
         }
 
-        setNoCallback(callback: () => void) {
+        setNoCallback(callback: () => void): ContentDeleteDialog {
             this.noCallback = callback;
+            return this;
         }
 
         private addDescendantsContainer() {
@@ -98,7 +106,10 @@ module app.remove {
         private addDeleteActionHandler() {
             this.getDeleteAction().onExecuted(() => {
 
-                this.yesCallback();
+                if(!!this.yesCallback) {
+                    this.yesCallback();
+                }
+
                 this.deleteButton.setEnabled(false);
                 this.showLoadingSpinner();
 
@@ -144,6 +155,10 @@ module app.remove {
                 else {
                     var atLeastOneItemHasChild = this.atLeastOneInitialItemHasChild();
                     this.showChildItemsCheckbox.setVisible(atLeastOneItemHasChild);
+                    this.updateSubTitle();
+                    if(this.selectedItems.length === 1) {
+                        this.selectedItems[0].hideRemoveButton();
+                    }
 
                     if(atLeastOneItemHasChild && this.showChildItemsCheckbox.isChecked()) {
                         this.descendantsContainer.loadData(this.selectedItems).then(() => {
@@ -194,7 +209,8 @@ module app.remove {
         }
 
         private updateDeleteButtonCounter(count: number) {
-            this.deleteButton.setLabel("Delete (" + count + ")");
+            var showCounter: boolean = this.selectedItems.length > 1 || this.atLeastOneInitialItemHasChild();
+            this.deleteButton.setLabel("Delete" + (showCounter ? " (" + count + ")" : ""));
         }
 
         private showLoadingSpinner() {
@@ -213,6 +229,18 @@ module app.remove {
             return this.selectedItems.some((obj: SelectionItem<ContentSummaryAndCompareStatus>) => {
                 return obj.getBrowseItem().getModel().hasChildren();
             });
+        }
+
+        private updateSubTitle() {
+            if(!this.atLeastOneInitialItemHasChild()) {
+                this.updateSubTitleText("");
+            }
+            else if(this.selectedItems.length > 1) {
+                this.updateSubTitleText("Delete selected items and their child content");
+            }
+            else {
+                this.updateSubTitleText("Delete selected item and its child content");
+            }
         }
     }
 
