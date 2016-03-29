@@ -17,6 +17,7 @@
 ///<reference path="Role.ts"/>
 ///<reference path="PathGuardKey.ts"/>
 ///<reference path="PathGuard.ts"/>
+///<reference path="IdProviderMode.ts"/>
 ///<reference path="UserStore.ts"/>
 ///<reference path="UserStoreJson.ts"/>
 ///<reference path="UserStoreListResult.ts"/>

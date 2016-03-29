@@ -6,6 +6,7 @@ module api.security {
         key: string;
         description: string;
         authConfig?: AuthConfigJson;
+        idProviderMode: string;
         permissions?: api.security.acl.UserStoreAccessControlEntryJson[];
     }
 }
