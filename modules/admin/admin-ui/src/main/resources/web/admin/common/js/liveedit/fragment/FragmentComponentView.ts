@@ -108,6 +108,12 @@ module api.liveedit.fragment {
                     htmlElement.removeAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
                     htmlElement.removeAttribute("data-" + ItemType.ATTRIBUTE_REGION_NAME);
                 }
+
+                if (childElement.getEl().getTagName().toUpperCase() == 'SECTION') {
+                    // convert image urls in text component for web
+                    childElement.setHtml(api.util.htmlarea.editor.HTMLAreaHelper.prepareImgSrcsInValueForEdit(childElement.getHtml()), false);
+                    return;
+                }
                 this.parseContentViews(childElement);
             });
         }
