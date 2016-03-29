@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.security;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -51,8 +52,13 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateUserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UserJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UserStoresJson;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.auth.AuthDescriptor;
+import com.enonic.xp.auth.AuthDescriptorMode;
+import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
+import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.PathGuard;
 import com.enonic.xp.security.PathGuardKey;
@@ -88,12 +94,21 @@ public final class SecurityResource
 {
     private SecurityService securityService;
 
+    private AuthDescriptorService authDescriptorService;
+
     @GET
     @Path("userstore/list")
     public UserStoresJson getUserStores()
     {
         final UserStores userStores = securityService.getUserStores();
-        return new UserStoresJson( userStores );
+        final List<UserStoreJson> userStoreJsonList = userStores.
+            stream().
+            map( userStore -> {
+                final AuthDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
+                return new UserStoreJson( userStore, idProviderMode );
+            } ).
+            collect( Collectors.toList() );
+        return new UserStoresJson( userStoreJsonList );
     }
 
     @GET
@@ -459,6 +474,14 @@ public final class SecurityResource
         return resultsJson;
     }
 
+    private AuthDescriptorMode retrieveIdProviderMode( UserStore userStore )
+    {
+        final AuthConfig authConfig = userStore.getAuthConfig();
+        final ApplicationKey idProviderKey = authConfig == null ? null : authConfig.getApplicationKey();
+        final AuthDescriptor idProvider = idProviderKey == null ? null : authDescriptorService.getDescriptor( idProviderKey );
+        return idProvider == null ? null : idProvider.getMode();
+    }
+
     private void updateMemberships( final PrincipalKey target, PrincipalKeys membersToRemove, PrincipalKeys membersToAdd )
     {
         for ( PrincipalKey memberToAdd : membersToAdd )
@@ -499,5 +522,11 @@ public final class SecurityResource
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;
+    }
+
+    @Reference
+    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
+    {
+        this.authDescriptorService = authDescriptorService;
     }
 }
