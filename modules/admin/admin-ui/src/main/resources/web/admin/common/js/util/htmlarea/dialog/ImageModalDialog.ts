@@ -380,47 +380,11 @@ module api.util.htmlarea.dialog {
         private createImageTag(): void {
             var figure = this.createFigureElement();
 
-            this.updateImageParentAlignment(this.image.getHTMLElement());
+            api.util.htmlarea.editor.HTMLAreaHelper.updateImageParentAlignment(this.image.getHTMLElement());
             this.setImageWidthConstraint();
 
             var img = this.callback(figure.getHTMLElement().outerHTML);
-            this.changeImageParentAlignmentOnImageAlignmentChange(img);
-        }
-
-        private changeImageParentAlignmentOnImageAlignmentChange(image: HTMLElement) {
-            var observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    var alignment = (<HTMLElement>mutation.target).style.textAlign;
-                    this.updateImageParentAlignment(image, alignment);
-                });
-            });
-
-            var config = {attributes: true, childList: false, characterData: false, attributeFilter: ["style"]};
-
-            observer.observe(image, config);
-        }
-
-        private updateImageParentAlignment(image: HTMLElement, alignment?: string) {
-            if (!alignment) {
-                alignment = image.style.textAlign;
-            }
-
-            var styleFormat = "float: {0}; margin: {1};" +
-                              (this.isImageInOriginalSize(image) ? "" : "width: {2}%;");
-            var styleAttr = "text-align: " + alignment + ";";
-
-            switch (alignment) {
-            case 'left':
-            case 'right':
-                styleAttr = api.util.StringHelper.format(styleFormat, alignment, "15px", "40");
-                break;
-            case 'center':
-                styleAttr = styleAttr + api.util.StringHelper.format(styleFormat, "none", "auto", "60");
-                break;
-            }
-
-            image.parentElement.setAttribute("style", styleAttr);
-            image.parentElement.setAttribute("data-mce-style", styleAttr);
+            api.util.htmlarea.editor.HTMLAreaHelper.changeImageParentAlignmentOnImageAlignmentChange(img);
         }
 
         private setImageWidthConstraint() {

@@ -71,34 +71,44 @@ module api.util.htmlarea.editor {
             }
         }
 
-        private static changeImageParentAlignmentOnImageAlignmentChange(img: HTMLImageElement) {
+        public static changeImageParentAlignmentOnImageAlignmentChange(img: HTMLImageElement) {
             var observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
                     var alignment = (<HTMLElement>mutation.target).style.textAlign;
-                    var keepOriginalSize = img.getAttribute("data-src").indexOf("keepSize=true") > 0;
-
-                    var styleAttr;
-                    switch (alignment) {
-                    case 'justify':
-                    case 'center':
-                        styleAttr = "text-align: " + alignment;
-                        break;
-                    case 'left':
-                        styleAttr = "float: left; margin: 15px;" + (keepOriginalSize ? "" : "width: 40%");
-                        break;
-                    case 'right':
-                        styleAttr = "float: right; margin: 15px;" + (keepOriginalSize ? "" : "width: 40%");
-                        break;
-                    }
-
-                    img.parentElement.setAttribute("style", styleAttr);
-                    img.parentElement.setAttribute("data-mce-style", styleAttr);
+                    HTMLAreaHelper.updateImageParentAlignment(img, alignment);
                 });
             });
 
             var config = {attributes: true, childList: false, characterData: false, attributeFilter: ["style"]};
 
             observer.observe(img, config);
+        }
+
+        public static updateImageParentAlignment(image: HTMLElement, alignment?: string) {
+            if (!alignment) {
+                alignment = image.style.textAlign;
+            }
+
+            var styleFormat = "float: {0}; margin: {1};" +
+                (HTMLAreaHelper.isImageInOriginalSize(image) ? "" : "width: {2}%;");
+            var styleAttr = "text-align: " + alignment + ";";
+
+            switch (alignment) {
+                case 'left':
+                case 'right':
+                    styleAttr = api.util.StringHelper.format(styleFormat, alignment, "15px", "40");
+                    break;
+                case 'center':
+                    styleAttr = styleAttr + api.util.StringHelper.format(styleFormat, "none", "auto", "60");
+                    break;
+            }
+
+            image.parentElement.setAttribute("style", styleAttr);
+            image.parentElement.setAttribute("data-mce-style", styleAttr);
+        }
+
+        private static isImageInOriginalSize(image: HTMLElement) {
+            return image.getAttribute("data-src").indexOf("keepSize=true") > 0;
         }
     }
 }
