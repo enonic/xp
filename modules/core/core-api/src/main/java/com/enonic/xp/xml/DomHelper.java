@@ -110,7 +110,8 @@ public final class DomHelper
     public static String serializeBody( final Node node )
     {
         final StringBuilder builder = new StringBuilder();
-        for ( final Node child : getChildElements( node ) )
+
+        for ( final Node child : getChildNodes( node ) )
         {
             builder.append( DomHelper.serialize( child ) );
         }
@@ -139,7 +140,21 @@ public final class DomHelper
         return str.toString();
     }
 
-    public static List<Element> getChildElements( final Node elem )
+    public static List<Node> getChildNodes( final Node node )
+    {
+        final NodeList list = node.getChildNodes();
+        final List<Node> result = Lists.newArrayList();
+
+        for ( int i = 0; i < list.getLength(); i++ )
+        {
+            final Node child = list.item( i );
+            result.add( child );
+        }
+
+        return result;
+    }
+
+    public static List<Element> getChildElements( final Element elem )
     {
         final NodeList list = elem.getChildNodes();
         final List<Element> result = Lists.newArrayList();
