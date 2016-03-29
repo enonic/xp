@@ -182,6 +182,8 @@ module app.publish {
             this.includeChildItemsCheck.addClass('include-child-check');
             this.includeChildItemsCheck.onValueChanged(this.includeChildrenCheckedListener);
             this.includeChildItemsCheck.setLabel('Include child items');
+
+            this.overwriteDefaultArrows(this.includeChildItemsCheck);
         }
 
         /**

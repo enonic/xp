@@ -1,5 +1,6 @@
 module api.ui.dialog {
 
+    import DivEl = api.dom.DivEl;
     export interface ModalDialogConfig {
         title: api.ui.dialog.ModalDialogHeader;
     }
@@ -22,7 +23,7 @@ module api.ui.dialog {
 
         private responsiveItem: api.ui.responsive.ResponsiveItem;
 
-        private cancelButton: api.ui.button.ActionButton;
+        private cancelButton: api.dom.DivEl;
 
         private static openDialogsCounter: number = 0;
 
@@ -41,7 +42,8 @@ module api.ui.dialog {
             this.appendChild(wrapper);
 
             this.cancelAction = this.createDefaultCancelAction();
-            this.cancelButton = new DialogButton(this.cancelAction);
+            this.cancelButton = new api.dom.DivEl("cancel-button-top");
+            this.cancelButton.onClicked(() => this.cancelAction.execute());
             wrapper.appendChild(this.cancelButton);
 
             this.title = this.config.title;
@@ -100,12 +102,14 @@ module api.ui.dialog {
                 modalDialogFocusOutTimeout = setTimeout(() => {
                     this.modalDialogIsFocused = false;
 
-                    // last focusable - Cancel
-                    // first focusable - X
-                    if (this.buttonRowIsFocused) { // last element lost focus
-                        this.cancelButton.giveFocus();
-                    } else {
-                        this.buttonRow.getLastButton().giveFocus();
+                    if (this.hasTabbable()) {
+                        // last focusable - Cancel
+                        // first focusable - X
+                        if (this.buttonRowIsFocused) { // last element lost focus
+                            this.tabbable[0].giveFocus();
+                        } else {
+                            this.tabbable[this.tabbable.length - 1].giveFocus();
+                        }
                     }
                 }, 10);
             });
@@ -202,6 +206,10 @@ module api.ui.dialog {
             return this.contentPanel;
         }
 
+        hasTabbable(): boolean {
+            return !!this.tabbable && this.tabbable.length > 0;
+        }
+
         updateTabbable() {
             this.tabbable = this.getTabbableElements();
         }
@@ -209,7 +217,7 @@ module api.ui.dialog {
         getTabbedIndex(): number {
             let activeElement = document.activeElement;
             let tabbedIndex = 0;
-            if (this.tabbable.length > 0) {
+            if (this.hasTabbable()) {
                 for (let i = 0; i < this.tabbable.length; i++) {
                     if (activeElement === this.tabbable[i].getHTMLElement()) {
                         tabbedIndex = i;
@@ -218,6 +226,38 @@ module api.ui.dialog {
                 }
             }
             return tabbedIndex;
+        }
+
+        focusNextTabbable() {
+            if (this.hasTabbable()) {
+                let tabbedIndex = this.getTabbedIndex();
+                tabbedIndex = tabbedIndex + 1 >= this.tabbable.length ? 0 : tabbedIndex + 1;
+                this.tabbable[tabbedIndex].giveFocus();
+            }
+        }
+
+        focusPreviousTabbable() {
+            if (this.hasTabbable()) {
+                let tabbedIndex = this.getTabbedIndex();
+                tabbedIndex = tabbedIndex - 1 < 0 ? this.tabbable.length - 1 : tabbedIndex - 1;
+                this.tabbable[tabbedIndex].giveFocus();
+            }
+        }
+
+        overwriteDefaultArrows(element: api.dom.Element) {
+            element.onKeyDown((event) => {
+
+
+                if (api.ui.KeyHelper.isArrowLeftKey(event)) {
+                    this.focusPreviousTabbable();
+                    event.stopPropagation();
+                    event.preventDefault();
+                } else if (api.ui.KeyHelper.isArrowRightKey(event)) {
+                    this.focusNextTabbable();
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+            });
         }
 
         open() {
@@ -234,21 +274,13 @@ module api.ui.dialog {
 
             keyBindings = keyBindings.concat([
                 new KeyBinding("right", (event) => {
-                    if (this.tabbable.length > 0) {
-                        let tabbedIndex = this.getTabbedIndex();
-                        tabbedIndex = tabbedIndex + 1 >= this.tabbable.length ? 0 : tabbedIndex + 1;
-                        this.tabbable[tabbedIndex].giveFocus();
-                    }
+                    this.focusNextTabbable();
 
                     event.stopPropagation();
                     event.preventDefault();
                 }),
                 new KeyBinding("left", (event) => {
-                    if (this.tabbable.length > 0) {
-                        let tabbedIndex = this.getTabbedIndex();
-                        tabbedIndex = tabbedIndex - 1 < 0 ? this.tabbable.length - 1 : tabbedIndex - 1;
-                        this.tabbable[tabbedIndex].giveFocus();
-                    }
+                    this.focusPreviousTabbable();
 
                     event.stopPropagation();
                     event.preventDefault();
