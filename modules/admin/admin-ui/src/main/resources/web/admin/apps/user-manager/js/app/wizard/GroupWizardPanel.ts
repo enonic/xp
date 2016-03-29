@@ -74,8 +74,9 @@ module app.wizard {
                 name = this.wizardHeader.getDisplayName(),
                 members = this.getMembersWizardStepForm().getMembers().map((el) => {
                     return el.getKey();
-                });
-            return new CreateGroupRequest().setKey(key).setDisplayName(name).setMembers(members);
+                }),
+                description = this.getDescriptionWizardStepForm().getDescription();
+            return new CreateGroupRequest().setKey(key).setDisplayName(name).setMembers(members).setDescription(description);
         }
 
         updatePersistedItem(): wemQ.Promise<Principal> {
@@ -96,6 +97,7 @@ module app.wizard {
             var group = viewedPrincipal.asGroup(),
                 key = group.getKey(),
                 displayName = group.getDisplayName(),
+                description = group.getDescription(),
                 oldMembers = this.getPersistedItem().asGroup().getMembers(),
                 oldMembersIds = oldMembers.map((el) => {
                     return el.getId();
@@ -115,15 +117,17 @@ module app.wizard {
                 setKey(key).
                 setDisplayName(displayName).
                 addMembers(addMembers).
-                removeMembers(removeMembers);
+                removeMembers(removeMembers).
+                setDescription(description);
         }
 
         assembleViewedItem(): Principal {
             return new GroupBuilder(this.getPersistedItem().asGroup()).
-                setDisplayName(this.wizardHeader.getDisplayName()).
                 setMembers(this.getMembersWizardStepForm().getMembers().map((el) => {
                     return el.getKey();
                 })).
+                setDisplayName(this.wizardHeader.getDisplayName()).
+                setDescription(this.getDescriptionWizardStepForm().getDescription()).
                 build();
         }
 

@@ -6,6 +6,7 @@ module api.security {
         private displayName: string;
         private membersToAdd: PrincipalKey[] = [];
         private membersToRemove: PrincipalKey[] = [];
+        private description: string;
 
         constructor() {
             super();
@@ -32,12 +33,18 @@ module api.security {
             return this;
         }
 
+        setDescription(description: string): UpdateGroupRequest {
+            this.description = description;
+            return this;
+        }
+
         getParams(): Object {
             return {
                 key: this.key.toString(),
                 displayName: this.displayName,
                 addMembers: this.membersToAdd.map((memberKey) => memberKey.toString()),
-                removeMembers: this.membersToRemove.map((memberKey) => memberKey.toString())
+                removeMembers: this.membersToRemove.map((memberKey) => memberKey.toString()),
+                description: this.description
             };
         }
 

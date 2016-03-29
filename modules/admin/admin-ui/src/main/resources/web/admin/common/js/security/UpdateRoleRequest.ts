@@ -6,6 +6,7 @@ module api.security {
         private displayName: string;
         private membersToAdd: PrincipalKey[] = [];
         private membersToRemove: PrincipalKey[] = [];
+        private description: string;
 
         constructor() {
             super();
@@ -19,6 +20,11 @@ module api.security {
 
         setDisplayName(displayName: string): UpdateRoleRequest {
             this.displayName = displayName;
+            return this;
+        }
+
+        setDescription(description: string): UpdateRoleRequest {
+            this.description = description;
             return this;
         }
 
@@ -37,7 +43,8 @@ module api.security {
                 key: this.key.toString(),
                 displayName: this.displayName,
                 addMembers: this.membersToAdd.map((memberKey) => memberKey.toString()),
-                removeMembers: this.membersToRemove.map((memberKey) => memberKey.toString())
+                removeMembers: this.membersToRemove.map((memberKey) => memberKey.toString()),
+                description: this.description
             };
         }
 

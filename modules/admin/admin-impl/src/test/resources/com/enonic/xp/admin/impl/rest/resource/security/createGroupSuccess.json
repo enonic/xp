@@ -1,4 +1,5 @@
 {
+  "description": "group a",
   "displayName": "Group A",
   "key": "group:system:group-a",
   "members": [

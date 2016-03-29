@@ -40,7 +40,8 @@ public class RequestLogConfiguratorTest
 
         final NCSARequestLog log = getRequestLog();
         assertNotNull( log );
-        assertTrue( log.getFilename().endsWith( "/jetty-yyyy_mm_dd.request.log" ) );
+        boolean endsWith = log.getFilename().endsWith( "/jetty-yyyy_mm_dd.request.log" ) || log.getFilename().endsWith( "\\jetty-yyyy_mm_dd.request.log" );
+        assertTrue( endsWith );
         assertEquals( "GMT", log.getLogTimeZone() );
         assertEquals( 31, log.getRetainDays() );
         assertEquals( true, log.isExtended() );
