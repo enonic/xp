@@ -8,8 +8,10 @@ module api.application {
             super();
 
             ApplicationEvent.on((event: ApplicationEvent) => {
-                console.log("ApplicationCache on ApplicationEvent, deleting: " + event.getApplicationKey().toString());
-                this.deleteByKey(event.getApplicationKey());
+                if (event.getEventType() != ApplicationEventType.PROGRESS) {
+                    console.log("ApplicationCache on ApplicationEvent, deleting: " + event.getApplicationKey().toString());
+                    this.deleteByKey(event.getApplicationKey());
+                }
             });
         }
 
