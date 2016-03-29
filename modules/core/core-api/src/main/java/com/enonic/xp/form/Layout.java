@@ -21,7 +21,8 @@ public abstract class Layout
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return this.name;
     }
 
@@ -38,6 +39,4 @@ public abstract class Layout
     }
 
     public abstract FormItem getFormItem( final String name );
-
-    public abstract FormItems getFormItems();
 }

@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Locale;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -26,7 +27,8 @@ import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.Value;
-import com.enonic.xp.form.FormItems;
+import com.enonic.xp.form.FieldSet;
+import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
@@ -41,6 +43,10 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+
+import static com.enonic.xp.form.FormItemType.FORM_ITEM_SET;
+import static com.enonic.xp.form.FormItemType.INPUT;
+import static com.enonic.xp.form.FormItemType.LAYOUT;
 
 final class CreateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -316,10 +322,10 @@ final class CreateContentCommand
         }
     }
 
-    private void initializeDefaultValue( final FormItems formItems, final PropertyPath parentPath )
+    private void initializeDefaultValue( final Iterable<FormItem> formItems, final PropertyPath parentPath )
     {
-        formItems.streamFormItems().forEach( formItem -> {
-            if ( formItem.isInput() )
+        StreamSupport.stream( formItems.spliterator(), false ).forEach( formItem -> {
+            if ( formItem.getType() == INPUT )
             {
                 Input input = formItem.toInput();
                 if ( input.getDefaultValue() != null )
@@ -339,13 +345,13 @@ final class CreateContentCommand
                     }
                 }
             }
-            else if ( formItem.isFormItemSet() )
+            else if ( formItem.getType() == FORM_ITEM_SET )
             {
                 initializeDefaultValue( formItem.toFormItemSet().getFormItems(), PropertyPath.from( parentPath, formItem.getName() ) );
             }
-            else if ( formItem.isLayout() )
+            else if ( formItem.getType() == LAYOUT && formItem.toLayout() instanceof FieldSet )
             {
-                initializeDefaultValue( formItem.toLayout().getFormItems(), parentPath );
+                initializeDefaultValue( (FieldSet) formItem.toLayout(), parentPath );
             }
         } );
     }
