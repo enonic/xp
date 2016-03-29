@@ -192,14 +192,25 @@ module app {
             if (userItem) {
                 userStoreDeferred.resolve(userItem.getUserStore());
                 userStoreRequest = userStoreDeferred.promise;
-
                 switch (userItem.getType()) {
                 case UserTreeGridItemType.USERS:
+                    var idProviderMode = userItem.getUserStore().getIdProviderMode();
+                    if (api.security.IdProviderMode.EXTERNAL == idProviderMode || api.security.IdProviderMode.MIXED == idProviderMode) {
+                        api.notify.showError("Cannot create a user - The ID Provider is in " +
+                                             api.security.IdProviderMode[idProviderMode] + " mode", false);
+                        return;
+                    }
                     principalType = PrincipalType.USER;
                     principalPath = PrincipalKey.ofUser(userItem.getUserStore().getKey(), "none").toPath(true);
                     tabName = "User";
                     break;
                 case UserTreeGridItemType.GROUPS:
+                    var idProviderMode = userItem.getUserStore().getIdProviderMode();
+                    if (api.security.IdProviderMode.EXTERNAL == idProviderMode) {
+                        api.notify.showError("Cannot create a group - The ID Provider is in " +
+                                             api.security.IdProviderMode[idProviderMode] + " mode", false);
+                        return;
+                    }
                     principalType = PrincipalType.GROUP;
                     principalPath = PrincipalKey.ofGroup(userItem.getUserStore().getKey(), "none").toPath(true);
                     tabName = "Group";
