@@ -24,6 +24,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.enonic.xp.query.expr.*;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -135,12 +136,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
-import com.enonic.xp.query.expr.CompareExpr;
-import com.enonic.xp.query.expr.ConstraintExpr;
-import com.enonic.xp.query.expr.FieldExpr;
-import com.enonic.xp.query.expr.LogicalExpr;
-import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.security.Principal;
@@ -787,6 +782,15 @@ public final class ContentResource
     }
 
     @POST
+    @Path("getDescendantsOfContents")
+    public ContentSummaryListJson getDescendantsOfContents( final CountItemsWithChildrenJson json )
+    {
+        final ContentPaths contentsPaths = this.filterChildrenIfParentPresents( ContentPaths.from( json.getContentPaths() ) );
+
+        return this.getDescendantsOfContents( contentsPaths );
+    }
+
+    @POST
     @Path("countContentsWithDescendants")
     public long countContentsWithDescendants( final CountItemsWithChildrenJson json )
     {
@@ -1142,27 +1146,43 @@ public final class ContentResource
     private long countChildren( final ContentPaths contentsPaths )
     {
         FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
-            contentQuery( ContentQuery.create().size( 0 ).queryExpr( constructExprToCountChildren( contentsPaths ) ).build() ).
+            contentQuery( ContentQuery.create().size( 0 ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() ).
             build() );
 
         return result.getTotalHits();
     }
 
-    private QueryExpr constructExprToCountChildren( final ContentPaths contentsPaths )
+    private QueryExpr constructExprToFindChildren(final ContentPaths contentsPaths )
     {
-        ConstraintExpr expr = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( "/content" + contentsPaths.first() + "/*" ) );
+        final FieldExpr fieldExpr = FieldExpr.from( "_path" );
+
+        ConstraintExpr expr = CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentsPaths.first() + "/*" ) );
 
         for ( ContentPath contentPath : contentsPaths )
         {
             if ( !contentPath.equals( contentsPaths.first() ) )
             {
                 ConstraintExpr likeExpr =
-                    CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( "/content" + contentPath + "/*" ) );
+                    CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentPath + "/*" ) );
                 expr = LogicalExpr.or( expr, likeExpr );
             }
         }
 
-        return QueryExpr.from( expr );
+        return QueryExpr.from( expr, new FieldOrderExpr( fieldExpr, OrderExpr.Direction.ASC ) );
+    }
+
+    private ContentSummaryListJson getDescendantsOfContents( final ContentPaths contentsPaths )
+    {
+        FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
+                contentQuery( ContentQuery.create().size( Integer.MAX_VALUE ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() ).
+                build() );
+
+        final ContentListMetaData metaData = ContentListMetaData.create().
+                totalHits( result.getTotalHits() ).
+                hits( result.getHits() ).
+                build();
+
+        return new ContentSummaryListJson( result.getContents(), metaData, contentIconUrlResolver );
     }
 
     private boolean contentNameIsOccupied( final RenameContentParams renameParams )
