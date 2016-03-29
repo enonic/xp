@@ -48,6 +48,49 @@ public class DateTimeTypeTest
     }
 
     @Test
+    public void testCreateDefaultValue()
+    {
+        final InputTypeConfig config = InputTypeConfig.create().
+            property( InputTypeProperty.create( "default", "2014-08-16T05:03:45" ).
+                build() ).
+            build();
+
+        final Value value = this.type.createDefaultValue( config );
+
+        assertNotNull( value );
+        assertSame( ValueTypes.LOCAL_DATE_TIME, value.getType() );
+        assertEquals( value.toString(), "2014-08-16T05:03:45" );
+
+    }
+
+    @Test
+    public void testCreateDefaultValue_withTimezone()
+    {
+        final InputTypeConfig config = InputTypeConfig.create().
+            property( InputTypeProperty.create( "default", "2014-08-16T10:03:45Z" ).
+                build() ).
+            build();
+
+        final Value value = this.type.createDefaultValue( config );
+
+        assertNotNull( value );
+        assertSame( ValueTypes.DATE_TIME, value.getType() );
+        assertEquals( value.toString(), "2014-08-16T10:03:45Z" );
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateDefaultValue_invalid()
+    {
+        final InputTypeConfig config = InputTypeConfig.create().
+            property( InputTypeProperty.create( "default", "2014-18-16T05:03:45" ).
+                build() ).
+            build();
+
+        this.type.createDefaultValue( config );
+    }
+
+    @Test
     public void testValidate_dateTime()
     {
         final InputTypeConfig config = newEmptyConfig();
