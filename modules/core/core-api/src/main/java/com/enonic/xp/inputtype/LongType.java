@@ -22,6 +22,19 @@ final class LongType
     }
 
     @Override
+    public Value createDefaultValue( final InputTypeConfig defaultConfig )
+    {
+        final InputTypeProperty defaultProperty = defaultConfig.getProperty( "default" );
+        if ( defaultProperty != null )
+        {
+            final String defaultValue = defaultProperty.getValue();
+
+            return ValueFactory.newLong( Long.valueOf( defaultValue ) );
+        }
+        return super.createDefaultValue( defaultConfig );
+    }
+
+    @Override
     public void validate( final Property property, final InputTypeConfig config )
     {
         validateType( property, ValueTypes.LONG );
