@@ -13,11 +13,11 @@ import com.enonic.xp.macro.MacroKey;
 public class MacroParser
 {
 
-    private final static Pattern VALID_MACRO_PATTERN = Pattern.compile( "^\\[\\w+(\\s(\\w*=.*))*\\s?(/|\\].*\\[/\\w*)\\]$" );
+    private final static Pattern VALID_MACRO_PATTERN = Pattern.compile( "^\\[(\\w+)(\\s(\\w*=.[^\\[\\]]*))*\\s?(/|\\].*\\[/\\1)\\]$" );
 
-    private final static Pattern MACRO_WITHOUT_BODY_PATTERN = Pattern.compile( "^\\[(\\w+)((\\s\\w*=.*)*)\\s?/\\]$" );
+    private final static Pattern MACRO_WITHOUT_BODY_PATTERN = Pattern.compile( "^\\[(\\w+)((\\s\\w*=.[^\\[\\]]*)*)\\s?/\\]$" );
 
-    private final static Pattern MACRO_WITH_BODY_PATTERN = Pattern.compile( "^\\[(\\w+)((\\s\\w*=.*)*)\\s?\\](.*)\\[/\\w*\\]$" );
+    private final static Pattern MACRO_WITH_BODY_PATTERN = Pattern.compile( "^\\[(\\w+)((\\s\\w*=.[^\\[\\]]*)*)\\s?\\](.*)\\[/\\1\\]$" );
 
     private final ApplicationKey applicationKey;
 
