@@ -13,7 +13,7 @@
   <xs:element name="service" type="serviceDescriptor"/>
   <xs:element name="widget" type="widgetDescriptor"/>
   <xs:element name="tool" type="adminToolDescriptor"/>
-  <xs:element name="id-provider" type="idProviderDescriptor"/>
+  <xs:element name="identity" type="idProviderDescriptor"/>
   <xs:element name="relationship-type" type="relationshipType"/>
 
   <xs:complexType name="site">

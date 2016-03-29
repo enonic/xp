@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<id-provider xmlns="urn:enonic:xp:model:1.0">
+<identity xmlns="urn:enonic:xp:model:1.0">
   <mode>LOCAL</mode>
   <config>
     <item-set name="background">
@@ -17,4 +17,4 @@
       </items>
     </item-set>
   </config>
-</id-provider>
+</identity>

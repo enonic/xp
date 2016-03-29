@@ -36,12 +36,12 @@ public class AuthDescriptor
 
     public ResourceKey getResourceKey()
     {
-        return ResourceKey.from( key, "id/id.js" );
+        return ResourceKey.from( key, "identity/identity.js" );
     }
 
     public static ResourceKey toResourceKey( final ApplicationKey key )
     {
-        return ResourceKey.from( key, "id/id.xml" );
+        return ResourceKey.from( key, "identity/identity.xml" );
     }
 
     public static Builder create()

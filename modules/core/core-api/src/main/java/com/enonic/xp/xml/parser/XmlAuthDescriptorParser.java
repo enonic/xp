@@ -22,7 +22,7 @@ public final class XmlAuthDescriptorParser
     protected void doParse( final DomElement root )
         throws Exception
     {
-        assertTagName( root, "id-provider" );
+        assertTagName( root, "identity" );
 
         final AuthDescriptorMode mode = AuthDescriptorMode.valueOf( root.getChildValue( "mode" ) );
         this.builder.mode( mode );
