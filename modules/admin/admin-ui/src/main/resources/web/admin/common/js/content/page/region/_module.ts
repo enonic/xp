@@ -26,6 +26,9 @@
 ///<reference path='TextComponentType.ts' />
 ///<reference path='TextComponentJson.ts' />
 
+///<reference path='FragmentComponent.ts' />
+///<reference path='FragmentComponentType.ts' />
+///<reference path='FragmentComponentJson.ts' />
 
 ///<reference path='PartDescriptorJson.ts' />
 ///<reference path='PartComponentJson.ts' />
@@ -72,3 +75,6 @@
 ///<reference path='ComponentAddedEvent.ts' />
 ///<reference path='ComponentRemovedEvent.ts' />
 ///<reference path='Region.ts' />
+
+///<reference path='FragmentResourceRequest.ts' />
+///<reference path='CreateFragmentRequest.ts' />

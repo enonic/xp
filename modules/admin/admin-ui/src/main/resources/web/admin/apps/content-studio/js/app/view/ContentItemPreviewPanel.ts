@@ -5,7 +5,8 @@ module app.view {
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-    import UriHelper = api.util.UriHelper
+    import UriHelper = api.util.UriHelper;
+    import ContentTypeName = api.schema.content.ContentTypeName;
 
     export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
 
@@ -113,10 +114,20 @@ module app.view {
                 if (typeof item.isRenderable() === "undefined") {
                     return;
                 }
-                if (item.getModel().getContentSummary().getType().isImage()) {
+                if (item.getModel().getContentSummary().getType().isImage() ||
+                    item.getModel().getContentSummary().getType().isVectorMedia()) {
                     this.getEl().removeClass("no-preview page-preview").addClass("image-preview");
                     if (this.isVisible()) {
-                        this.addImageSizeToUrl(item);
+                        if (item.getModel().getContentSummary().getType().equals(ContentTypeName.MEDIA_VECTOR)) {
+                            this.getEl().addClass("svg-preview");
+                            var imgUrl = new ContentImageUrlResolver().
+                                setContentId(item.getModel().getContentId()).
+                                setTimestamp(item.getModel().getContentSummary().getModifiedTime()).
+                                resolve();
+                            this.image.setSrc(imgUrl);
+                        } else {
+                            this.addImageSizeToUrl(item);
+                        }
                     }
                     if (!this.image.isLoaded()) {
                         this.showMask();
@@ -124,7 +135,7 @@ module app.view {
                 } else {
                     this.showMask();
                     if (item.isRenderable()) {
-                        this.getEl().removeClass("image-preview no-preview").addClass('page-preview');
+                        this.getEl().removeClass("image-preview no-preview svg-preview").addClass('page-preview');
                         var src = api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW,
                             api.content.Branch.DRAFT);
                         this.frame.setSrc(src);
@@ -141,7 +152,7 @@ module app.view {
         }
 
         private setNoPreview() {
-            this.getEl().removeClass("image-preview page-preview").addClass('no-preview');
+            this.getEl().removeClass("image-preview page-preview svg-preview").addClass('no-preview');
             this.frame.setSrc("about:blank");
             this.mask.hide();
         }

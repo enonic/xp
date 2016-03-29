@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.xp.admin.impl.json.content.page.region.ComponentJson;
 import com.enonic.xp.admin.impl.json.content.page.region.PageRegionsJson;
 import com.enonic.xp.admin.impl.json.content.page.region.RegionJson;
 import com.enonic.xp.content.ContentId;
@@ -24,8 +25,8 @@ public class UpdatePageJson
     public UpdatePageJson( @JsonProperty("contentId") final String contentId, @JsonProperty("controller") final String pageDescriptorKey,
                            @JsonProperty("template") final String pageTemplateKey,
                            @JsonProperty("config") final List<PropertyArrayJson> config,
-                           final @JsonProperty("regions") List<RegionJson> regions,
-                           @JsonProperty("customized") final boolean customized)
+                           @JsonProperty("regions") final List<RegionJson> regions, @JsonProperty("customized") final boolean customized,
+                           @JsonProperty("fragment") final ComponentJson fragment )
     {
         this.updatePage = new UpdatePageParams().
             content( ContentId.from( contentId ) ).
@@ -33,6 +34,7 @@ public class UpdatePageJson
                 toBeEdited.controller = pageDescriptorKey != null ? DescriptorKey.from( pageDescriptorKey ) : null;
                 toBeEdited.template = pageTemplateKey != null ? PageTemplateKey.from( pageTemplateKey ) : null;
                 toBeEdited.regions = regions != null ? new PageRegionsJson( regions ).getPageRegions() : null;
+                toBeEdited.fragment = fragment != null ? fragment.getComponent() : null;
                 toBeEdited.config = config != null ? PropertyTreeJson.fromJson( config ) : null;
                 toBeEdited.customized = customized;
             } );

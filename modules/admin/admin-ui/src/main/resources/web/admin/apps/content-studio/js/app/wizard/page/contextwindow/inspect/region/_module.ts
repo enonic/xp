@@ -6,3 +6,5 @@
 ///<reference path='RegionInspectionPanel.ts' />
 ///<reference path='DescriptorBasedDropdownForm.ts' />
 ///<reference path='ImageSelectorForm.ts' />
+///<reference path='FragmentInspectionPanel.ts' />
+///<reference path='FragmentSelectorForm.ts' />

@@ -117,7 +117,11 @@ module app.wizard {
 
         fetchRoot(): wemQ.Promise<ItemView[]> {
             var deferred = wemQ.defer<ItemView[]>();
-            deferred.resolve([this.pageView]);
+            if (this.pageView.getFragmentView()) {
+                deferred.resolve([this.pageView.getFragmentView()]);
+            } else {
+                deferred.resolve([this.pageView]);
+            }
             return deferred.promise;
         }
 
@@ -133,6 +137,12 @@ module app.wizard {
             if (PageItemType.get().equals(dataType)) {
                 var pageView = <PageView> data;
                 children = pageView.getRegions();
+                if (children.length === 0) {
+                    var fragmentRoot = pageView.getFragmentView();
+                    if (fragmentRoot) {
+                        return [fragmentRoot];
+                    }
+                }
             } else if (RegionItemType.get().equals(dataType)) {
                 var regionView = <RegionView> data;
                 children = regionView.getComponentViews();

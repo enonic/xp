@@ -4,9 +4,7 @@
 ///<reference path='ContentItemViewToolbar.ts' />
 ///<reference path='ContentPreviewPathChangedEvent.ts' />
 ///<reference path='ContentItemPreviewPanel.ts' />
-///<reference path='ContentVersionsTreeGrid.ts' />
-///<reference path='AllContentVersionsTreeGrid.ts' />
-///<reference path='ActiveContentVersionsTreeGrid.ts' />
+///<reference path='AllContentVersionsView.ts' />
 ///<reference path='ContentItemStatisticsPanel.ts' />
 ///<reference path='ContentItemViewPanel.ts' />
 ///<reference path='MobileContentItemStatisticsPanel.ts' />
