@@ -5,8 +5,6 @@ import com.enonic.xp.blob.ProviderConfig;
 public interface SwiftConfig
     extends ProviderConfig
 {
-    String container();
-
     String authUrl();
 
     String domainId();

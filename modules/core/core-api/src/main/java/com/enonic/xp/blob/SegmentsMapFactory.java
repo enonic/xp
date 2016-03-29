@@ -17,11 +17,19 @@ public class SegmentsMapFactory
 
     private final String configName;
 
+    private final String collectionPrefix;
+
     private SegmentsMapFactory( final Builder builder )
     {
         config = builder.config;
         requiredSegments = builder.requiredSegments;
         configName = builder.configName;
+        collectionPrefix = builder.collectionPrefix;
+    }
+
+    public static Builder newBuilder()
+    {
+        return new Builder();
     }
 
     public Map<Segment, String> execute()
@@ -56,7 +64,7 @@ public class SegmentsMapFactory
     {
         final Map<Segment, String> segmentsMap = Maps.newHashMap();
 
-        final Configuration bucketConfig = this.config.subConfig( configName );
+        final Configuration bucketConfig = this.config.subConfig( collectionPrefix );
 
         final Map<String, String> segmentMap = bucketConfig.asMap();
 
@@ -82,6 +90,8 @@ public class SegmentsMapFactory
 
         private String configName;
 
+        private String collectionPrefix;
+
         private Builder()
         {
         }
@@ -104,9 +114,21 @@ public class SegmentsMapFactory
             return this;
         }
 
+        public Builder collectionPrefix( final String val )
+        {
+            collectionPrefix = val;
+            return this;
+        }
+
         public SegmentsMapFactory build()
         {
             return new SegmentsMapFactory( this );
+        }
+
+        public Builder config( final Configuration val )
+        {
+            config = val;
+            return this;
         }
     }
 }

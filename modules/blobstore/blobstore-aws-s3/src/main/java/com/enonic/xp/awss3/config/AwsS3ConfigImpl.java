@@ -18,8 +18,6 @@ import com.enonic.xp.util.ByteSizeParser;
 public class AwsS3ConfigImpl
     implements AwsS3Config
 {
-    public static final Segment[] REQUIRED_SEGMENTS = new Segment[]{Segment.from( "node" ), Segment.from( "binary" )};
-
     public static final String COLLECTION_PROPERTY_NAME = "bucket";
 
     public static final String ACCESS_KEY = "accessKey";
@@ -47,7 +45,8 @@ public class AwsS3ConfigImpl
         return SegmentsMapFactory.create().
             configuration( this.config ).
             configName( COLLECTION_PROPERTY_NAME ).
-            requiredSegments( REQUIRED_SEGMENTS ).
+            collectionPrefix( COLLECTION_PROPERTY_NAME + "." ).
+            requiredSegments( DEFAULT_REQUIRED_SEGMENTS ).
             build().
             execute();
     }
@@ -98,7 +97,7 @@ public class AwsS3ConfigImpl
     {
         final Map<Segment, String> segments = this.segments();
 
-        for ( final Segment segment : REQUIRED_SEGMENTS )
+        for ( final Segment segment : DEFAULT_REQUIRED_SEGMENTS )
         {
             if ( !segments.containsKey( segment ) || segments.get( segment ) == null )
             {

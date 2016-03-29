@@ -17,8 +17,8 @@ public class AwsS3ConfigImplTest
         throws Exception
     {
         final Configuration config = ConfigBuilder.create().
-            add( AwsS3ConfigImpl.COLLECTION_PROPERTY_NAME + "node", "nodeBucket" ).
-            add( AwsS3ConfigImpl.COLLECTION_PROPERTY_NAME + "blob", "blobBucket" ).
+            add( AwsS3ConfigImpl.COLLECTION_PROPERTY_NAME + ".node", "nodeBucket" ).
+            add( AwsS3ConfigImpl.COLLECTION_PROPERTY_NAME + ".blob", "blobBucket" ).
             add( "other.property", "fisk" ).
             build();
 
@@ -38,13 +38,13 @@ public class AwsS3ConfigImplTest
     {
         final Configuration config = ConfigBuilder.create().
             add( AwsS3ConfigImpl.COLLECTION_PROPERTY_NAME, "defaultBucket" ).
-            add( AwsS3ConfigImpl.COLLECTION_PROPERTY_NAME + "fish", "fishBucket" ).
+            add( AwsS3ConfigImpl.COLLECTION_PROPERTY_NAME + ".fish", "fishBucket" ).
             build();
 
         AwsS3ConfigImpl awsS3Config = new AwsS3ConfigImpl();
         awsS3Config.setConfig( config );
 
-        for ( final Segment segment : AwsS3ConfigImpl.REQUIRED_SEGMENTS )
+        for ( final Segment segment : AwsS3ConfigImpl.DEFAULT_REQUIRED_SEGMENTS )
         {
             assertEquals( "defaultBucket", awsS3Config.segments().get( segment ) );
         }
@@ -74,8 +74,8 @@ public class AwsS3ConfigImplTest
     {
         final Configuration config = ConfigBuilder.create().
             add( AwsS3ConfigImpl.COLLECTION_PROPERTY_NAME, "" ).
-            add( AwsS3ConfigImpl.COLLECTION_PROPERTY_NAME + "binary", "binaryBucker" ).
-            add( AwsS3ConfigImpl.COLLECTION_PROPERTY_NAME + "node", "nodeBucket" ).
+            add( AwsS3ConfigImpl.COLLECTION_PROPERTY_NAME + ".binary", "binaryBucker" ).
+            add( AwsS3ConfigImpl.COLLECTION_PROPERTY_NAME + ".node", "nodeBucket" ).
             add( AwsS3ConfigImpl.ACCESS_KEY, "myAccessKey" ).
             add( AwsS3ConfigImpl.SECRET_ACCESS_KEY, "mySecretAccessKey" ).
             build();

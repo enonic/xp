@@ -10,6 +10,7 @@ import com.enonic.xp.awss3.config.AwsS3Config;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreProvider;
 import com.enonic.xp.blob.ProviderConfig;
+import com.enonic.xp.blob.SegmentsCollectionMap;
 
 @Component
 public class AwsS3BlobStoreProvider
@@ -54,6 +55,7 @@ public class AwsS3BlobStoreProvider
             secretAccessKey( config.secretAccessKey() ).
             endpoint( config.endpoint() ).
             setBuckets( config.segments() ).
+            segmentCollectionMap( new SegmentsCollectionMap( this.config.segments() ) ).
             build();
     }
 

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreProvider;
 import com.enonic.xp.blob.ProviderConfig;
+import com.enonic.xp.blob.SegmentsCollectionMap;
 import com.enonic.xp.blobstore.swift.config.SwiftConfig;
 
 @Component
@@ -39,7 +40,18 @@ public class SwiftBlobStoreProvider
             return;
         }
 
-        this.blobStore = new SwiftBlobStore( this.config );
+        this.blobStore = SwiftBlobStore.create().
+            projectId( this.config.projectId() ).
+            authPassword( this.config.authPassword() ).
+            authUrl( this.config.authUrl() ).
+            authUser( this.config.authUser() ).
+            authVersion( this.config.authVersion() ).
+            domainId( this.config.domainId() ).
+            domainName( this.config.domainName() ).
+            projectName( this.config.projectName() ).
+            projectId( this.config.projectId() ).
+            segmentCollectionMap( new SegmentsCollectionMap( this.config.segments() ) ).
+            build();
     }
 
     @Override

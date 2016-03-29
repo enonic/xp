@@ -13,6 +13,7 @@ import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
+import com.enonic.xp.blob.AbstractBlobStore;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeyCreator;
 import com.enonic.xp.blob.BlobRecord;
@@ -23,6 +24,7 @@ import com.enonic.xp.util.ClassLoaderHelper;
 import com.enonic.xp.util.Exceptions;
 
 class AwsS3BlobStore
+    extends AbstractBlobStore
     implements BlobStore
 {
     private final BlobStoreContext context;
@@ -35,15 +37,12 @@ class AwsS3BlobStore
 
     private final String endpoint;
 
-    private final Map<Segment, String> buckets;
-
-
     private AwsS3BlobStore( final Builder builder )
     {
+        super( builder );
         accessKey = builder.accessKey;
         secretAccessKey = builder.secretAccessKey;
         endpoint = builder.endpoint;
-        buckets = builder.buckets;
 
         this.context = ClassLoaderHelper.callWith( this::createContext, ContextBuilder.class );
 
@@ -54,7 +53,7 @@ class AwsS3BlobStore
 
     private void verifyOrCreateBucket()
     {
-        for ( final String bucketName : buckets.values() )
+        for ( final String bucketName : segmentsCollectionMap.getValues() )
         {
             try
             {
@@ -85,24 +84,12 @@ class AwsS3BlobStore
         return new Builder();
     }
 
-    private String getBucketName( final Segment segment )
-    {
-        final String bucketName = this.buckets.get( segment );
-
-        if ( bucketName == null )
-        {
-            throw new BlobStoreException( "Bucket not found for segment [" + segment.getValue() + "]" );
-        }
-
-        return bucketName;
-    }
-
     @Override
     public BlobRecord getRecord( final Segment segment, final BlobKey key )
         throws BlobStoreException
     {
 
-        final Blob blob = this.blobStore.getBlob( getBucketName( segment ), key.toString() );
+        final Blob blob = this.blobStore.getBlob( getCollectionName( segment ), key.toString() );
 
         if ( blob == null )
         {
@@ -139,7 +126,7 @@ class AwsS3BlobStore
                 contentLength( in.size() ).
                 build();
 
-            blobStore.putBlob( getBucketName( segment ), blob );
+            blobStore.putBlob( getCollectionName( segment ), blob );
 
             return new AwsS3BlobRecord( in, key );
         }
@@ -157,6 +144,7 @@ class AwsS3BlobStore
     }
 
     public static final class Builder
+        extends AbstractBlobStore.Builder<Builder>
     {
         private String accessKey;
 
