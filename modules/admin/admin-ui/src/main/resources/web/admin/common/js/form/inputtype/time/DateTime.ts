@@ -52,8 +52,12 @@ module api.content.form.inputtype.time {
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
             var dateTimePicker = <DateTimePicker> occurrence;
 
-            if ((!unchangedOnly || !dateTimePicker.isDirty()) && property.hasNonNullValue()) {
-                var date = this.valueType == ValueTypes.DATE_TIME ? property.getDateTime().toDate() : property.getLocalDateTime().toDate();
+            if (!unchangedOnly || !dateTimePicker.isDirty()) {
+                var date = property.hasNonNullValue()
+                    ? this.valueType == ValueTypes.DATE_TIME
+                               ? property.getDateTime().toDate()
+                               : property.getLocalDateTime().toDate()
+                    : null;
                 dateTimePicker.setSelectedDateTime(date);
             }
         }
@@ -106,7 +110,7 @@ module api.content.form.inputtype.time {
             if (!ValueTypes.DATE_TIME.equals(property.getType())) {
                 property.convertValueType(ValueTypes.DATE_TIME);
             }
-            
+
             if (property.hasNonNullValue()) {
                 var date: api.util.DateTime = property.getDateTime();
                 dateTimeBuilder.
