@@ -122,7 +122,12 @@ module app.view {
         }
 
         slideIn() {
+            this.calcAndSetDetailsPanelTopOffset();
             this.getEl().setRightPx(0);
+        }
+
+        private calcAndSetDetailsPanelTopOffset() {
+            this.detailsPanel.getEl().setTopPx(this.itemHeader.getEl().getHeightWithMargin());
         }
     }
 
