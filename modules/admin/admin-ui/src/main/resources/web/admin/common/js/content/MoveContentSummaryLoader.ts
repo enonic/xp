@@ -36,7 +36,7 @@ module api.content {
 
         search(searchString: string): wemQ.Promise<ContentSummary[]> {
 
-            this.contentSummaryRequest.setQueryExpr(searchString);
+            this.contentSummaryRequest.setSearchQueryExpr(searchString);
 
             return this.load();
         }

@@ -5,6 +5,10 @@ module api.liveedit.fragment {
     import GetContentByIdRequest = api.content.GetContentByIdRequest;
     import Content = api.content.Content;
     import LayoutComponentType = api.content.page.region.LayoutComponentType;
+    import QueryExpr = api.query.expr.QueryExpr;
+    import CompareExpr = api.query.expr.CompareExpr;
+    import FieldExpr = api.query.expr.FieldExpr;
+    import ValueExpr = api.query.expr.ValueExpr;
 
     export class FragmentPlaceholder extends api.liveedit.ItemViewPlaceholder {
 
@@ -23,6 +27,7 @@ module api.liveedit.fragment {
 
             var loader = new api.content.ContentSummaryLoader();
             loader.setAllowedContentTypeNames([ContentTypeName.FRAGMENT]);
+            loader.setQueryExpr(this.createParentSiteFragmentsOnlyQuery());
 
             this.comboBox = api.content.ContentComboBox.create().setMaximumOccurrences(1).setLoader(loader).setMinWidth(270).build();
 
@@ -64,6 +69,12 @@ module api.liveedit.fragment {
                 return false;
             }
             return api.ObjectHelper.iFrameSafeInstanceOf(parent.getType(), api.liveedit.layout.LayoutItemType);
+        }
+
+        private createParentSiteFragmentsOnlyQuery(): QueryExpr {
+            var sitePath = this.fragmentComponentView.getLiveEditModel().getContent().getPath().toString();
+            var compareExpr: CompareExpr = CompareExpr.eq(new FieldExpr("_parentpath"), ValueExpr.string("/content" + sitePath ));
+            return new QueryExpr(compareExpr);
         }
 
         select() {
