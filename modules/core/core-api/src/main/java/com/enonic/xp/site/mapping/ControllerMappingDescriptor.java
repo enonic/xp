@@ -83,14 +83,14 @@ public final class ControllerMappingDescriptor
         return order == that.order &&
             invertPattern == that.invertPattern &&
             Objects.equals( controller, that.controller ) &&
-            Objects.equals( pattern, that.pattern ) &&
+            Objects.equals( pattern.toString(), that.pattern.toString() ) &&
             Objects.equals( contentConstraint, that.contentConstraint );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( controller, pattern, invertPattern, contentConstraint, order );
+        return Objects.hash( controller, pattern.toString(), invertPattern, contentConstraint, order );
     }
 
     @Override
