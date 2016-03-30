@@ -108,9 +108,10 @@ module api.ui.security.acl {
         public setAccessControlEntry(ace: AccessControlEntry, silent?: boolean) {
             this.ace = ace;
 
-            var principal = new Principal(
-                ace.getPrincipalKey(),
-                ace.getPrincipalDisplayName());
+            var principal = Principal.create().
+                setKey(ace.getPrincipalKey()).
+                setDisplayName(ace.getPrincipalDisplayName()).
+                build();
             this.setObject(principal);
 
             this.accessSelector.setValue(AccessControlEntryView.getAccessValueFromEntry(ace), silent);

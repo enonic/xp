@@ -1,11 +1,13 @@
 {
   "principals": [
     {
+      "description" : null,
       "displayName": "Alice",
       "key": "user:local:a",
       "modifiedTime": "1970-01-01T00:00:00Z"
     },
     {
+      "description" : null,
       "displayName": "Bobby",
       "key": "user:file-store:b",
       "modifiedTime": "1970-01-01T00:00:00Z"
