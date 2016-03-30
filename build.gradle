@@ -1,6 +1,6 @@
 apply plugin: 'java-base'
 apply from: "$rootDir/gradle/check.gradle"
-apply from: "$rootDir/gradle/release.gradle"
+apply from: "$rootDir/gradle/sonar.gradle"
 apply plugin: 'build-dashboard'
 
 ext {
