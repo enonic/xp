@@ -31,45 +31,16 @@
     }
   }
 
-  &.text-edit-mode {
+  .html-area-modal-dialog {
+    .@{_COMMON_PREFIX}text-input {
+      color: inherit;
+      font-size: 12px;
+    }
 
-    .text-edit-toolbar {
-      display: block;
+    .input-wrapper .checkbox.form-input {
+      margin-top: 0px;
     }
   }
-
-  & > .text-edit-toolbar {
-    .reset(true);
-
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: @z-index-shader;
-    text-align: center;
-
-    .wrapper {
-      .opacity(.9);
-      .material-layer-shadow();
-      .border-radius(0 0 13px 13px);
-
-      line-height: 24px;
-      padding: 10px 10px 10px 16px;
-      display: inline-block;
-      color: @admin-almost-white;
-      background: @admin-bg-dark-gray;
-      font-size: 14px;
-
-      .close-button {
-        .button(@admin-font-gray2, transparent, @admin-almost-white, transparent);
-        padding: 0;
-        margin-left: 5px;
-        float: right;
-      }
-    }
-  }
-
 }
 
 .@{_CLS_PREFIX}page-placeholder {

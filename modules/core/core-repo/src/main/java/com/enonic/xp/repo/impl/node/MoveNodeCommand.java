@@ -63,7 +63,7 @@ public class MoveNodeCommand
         final Node movedNode = doMoveNode( newParentPath, newNodeName, nodeId );
 
         RefreshCommand.create().
-            refreshMode( RefreshMode.SEARCH ).
+            refreshMode( RefreshMode.ALL ).
             indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();

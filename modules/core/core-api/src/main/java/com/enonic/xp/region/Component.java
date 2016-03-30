@@ -3,6 +3,7 @@ package com.enonic.xp.region;
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 
 @Beta
 public abstract class Component
@@ -18,7 +19,6 @@ public abstract class Component
 
     public abstract ComponentType getType();
 
-
     public ComponentName getName()
     {
         return name;
@@ -26,10 +26,10 @@ public abstract class Component
 
     public ComponentPath getPath()
     {
-        return ComponentPath.from( region.getRegionPath(), region.getIndex( this ) );
+        return region == null ? null : ComponentPath.from( region.getRegionPath(), region.getIndex( this ) );
     }
 
-    public void setRegion( final Region region )
+    void setRegion( final Region region )
     {
         this.region = region;
     }
@@ -57,6 +57,16 @@ public abstract class Component
     public int hashCode()
     {
         return Objects.hash( name );
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this ).
+            add( "type", getType() ).
+            add( "name", name ).
+            add( "path", getPath() ).
+            toString();
     }
 
     public static class Builder

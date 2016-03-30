@@ -28,6 +28,8 @@ public final class ContentTypeName
 
     private static final ContentTypeName SITE = new ContentTypeName( ApplicationKey.PORTAL, "site" );
 
+    private static final ContentTypeName FRAGMENT = new ContentTypeName( ApplicationKey.PORTAL, "fragment" );
+
     // media:
     private static final ContentTypeName MEDIA_TEXT = new ContentTypeName( ApplicationKey.MEDIA_MOD, "text" );
 
@@ -93,6 +95,11 @@ public final class ContentTypeName
     public static ContentTypeName site()
     {
         return SITE;
+    }
+
+    public static ContentTypeName fragment()
+    {
+        return FRAGMENT;
     }
 
     public static ContentTypeName shortcut()
@@ -198,6 +205,11 @@ public final class ContentTypeName
     public boolean isSite()
     {
         return SITE.equals( this );
+    }
+
+    public boolean isFragment()
+    {
+        return FRAGMENT.equals( this );
     }
 
     public boolean isShortcut()

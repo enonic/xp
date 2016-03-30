@@ -15,10 +15,6 @@ module app.installation {
 
     export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
-        private installAppDialogTitle: api.ui.dialog.ModalDialogHeader;
-
-        private installAppDockedPanel: DockedPanel;
-
         private uploadAppPanel: UploadAppPanel;
 
         private marketAppPanel: MarketAppPanel;
@@ -26,22 +22,19 @@ module app.installation {
         private onMarketLoaded;
 
         constructor() {
-
-            this.installAppDialogTitle = new api.ui.dialog.ModalDialogHeader("Install Application");
-
             super({
-                title: this.installAppDialogTitle
+                title: new api.ui.dialog.ModalDialogHeader("Install Application")
             });
 
             this.addClass("install-application-dialog hidden");
+
+            this.onMarketLoaded = this.centerMyself.bind(this);
 
             this.initUploadAppPanel();
 
             this.initMarketAppPanel();
 
             this.initAndAppendInstallAppsTabsPanel();
-
-            this.onMarketLoaded = this.centerMyself.bind(this);
 
             api.dom.Body.get().appendChild(this);
         }
@@ -68,12 +61,12 @@ module app.installation {
         }
 
         private initAndAppendInstallAppsTabsPanel() {
-            this.installAppDockedPanel = new DockedPanel();
-            this.installAppDockedPanel.addClass("install-app-docked-panel");
-            this.installAppDockedPanel.addItem("Upload", true, this.uploadAppPanel);
-            this.installAppDockedPanel.addItem("Enonic Market", true, this.marketAppPanel);
+            let installAppDockedPanel = new DockedPanel();
+            installAppDockedPanel.addClass("install-app-docked-panel");
+            installAppDockedPanel.addItem("Enonic Market", true, this.marketAppPanel);
+            installAppDockedPanel.addItem("Upload", true, this.uploadAppPanel);
 
-            this.appendChildToContentPanel(this.installAppDockedPanel);
+            this.appendChildToContentPanel(installAppDockedPanel);
         }
 
         private initUploaderListeners() {

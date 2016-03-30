@@ -1,6 +1,7 @@
 module api.content.page {
 
     import PropertyTree = api.data.PropertyTree;
+    import Component = api.content.page.region.Component;
 
     export class Page implements api.Equitable, api.Cloneable {
 
@@ -10,6 +11,8 @@ module api.content.page {
 
         private regions: api.content.page.region.Regions;
 
+        private fragment: Component;
+
         private config: PropertyTree;
 
         private customized: boolean;
@@ -18,6 +21,7 @@ module api.content.page {
             this.controller = builder.controller;
             this.template = builder.template;
             this.regions = builder.regions;
+            this.fragment = builder.fragment;
             this.config = builder.config;
             this.customized = builder.customized;
         }
@@ -58,6 +62,14 @@ module api.content.page {
             return this.customized;
         }
 
+        getFragment(): Component {
+            return this.fragment;
+        }
+
+        isFragment(): boolean {
+            return this.fragment != null;
+        }
+
         equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Page)) {
@@ -73,6 +85,9 @@ module api.content.page {
                 return false;
             }
             if (!api.ObjectHelper.equals(this.regions, other.regions)) {
+                return false;
+            }
+            if (!api.ObjectHelper.equals(this.fragment, other.fragment)) {
                 return false;
             }
 
@@ -103,6 +118,8 @@ module api.content.page {
 
         customized: boolean;
 
+        fragment: Component;
+
         constructor(source?: Page) {
             if (source) {
                 this.controller = source.getController();
@@ -110,6 +127,7 @@ module api.content.page {
                 this.regions = source.getRegions() ? source.getRegions().clone() : null;
                 this.config = source.getConfig() ? source.getConfig().copy() : null;
                 this.customized = source.isCustomized();
+                this.fragment = source.isFragment() ? source.getFragment().clone() : null;
             }
         }
 
@@ -121,6 +139,12 @@ module api.content.page {
                 ? PropertyTree.fromJson(json.config)
                 : null);
             this.setCustomized(json.customized);
+
+            if (json.fragment) {
+                var component: Component = api.content.page.region.ComponentFactory.createFromJson(json.fragment, 0, null);
+                this.setFragment(component);
+            }
+
             return this;
         }
 
@@ -146,6 +170,11 @@ module api.content.page {
 
         public setCustomized(value: boolean): PageBuilder {
             this.customized = value;
+            return this;
+        }
+
+        public setFragment(value: Component): PageBuilder {
+            this.fragment = value;
             return this;
         }
 

@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.content.page;
 
+import com.enonic.xp.core.impl.content.page.region.ComponentDataSerializer;
+import com.enonic.xp.core.impl.content.page.region.ComponentDataSerializerProvider;
+import com.enonic.xp.core.impl.content.page.region.ComponentTypes;
 import com.enonic.xp.core.impl.content.page.region.RegionDataSerializer;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
@@ -7,10 +10,14 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.region.Component;
+import com.enonic.xp.region.ComponentType;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.util.Reference;
 
-public class PageDataSerializer
+import static com.enonic.xp.core.impl.content.page.region.ComponentsDataSerializer.TYPE;
+
+public final class PageDataSerializer
     extends AbstractDataSetSerializer<Page, Page>
 {
     private static final String CONTROLLER = "controller";
@@ -23,7 +30,11 @@ public class PageDataSerializer
 
     private static final String CUSTOMIZED = "customized";
 
+    private static final String FRAGMENT = "fragment";
+
     private final RegionDataSerializer regionDataSerializer = new RegionDataSerializer();
+
+    private final ComponentDataSerializerProvider componentDataSerializerProvider = new ComponentDataSerializerProvider();
 
     private final String propertyName;
 
@@ -61,6 +72,17 @@ public class PageDataSerializer
         }
 
         asSet.addBoolean( CUSTOMIZED, page.isCustomized() );
+
+        if ( page.isFragment() )
+        {
+            final PropertySet fragmentAsData = new PropertySet();
+            asSet.addSet( FRAGMENT, fragmentAsData );
+
+            final Component fragment = page.getFragment();
+            fragmentAsData.setString( TYPE, fragment.getType().getComponentClass().getSimpleName() );
+            final ComponentDataSerializer serializer = componentDataSerializerProvider.getDataSerializer( fragment.getType() );
+            serializer.toData( fragment, fragmentAsData );
+        }
     }
 
     @Override
@@ -95,6 +117,15 @@ public class PageDataSerializer
         if ( asData.isNotNull( CUSTOMIZED ) )
         {
             page.customized( asData.getBoolean( CUSTOMIZED ) );
+        }
+
+        if ( asData.isNotNull( FRAGMENT ) )
+        {
+            final PropertySet fragmentAsProperty = asData.getPropertySet( FRAGMENT );
+            final ComponentType type = ComponentTypes.bySimpleClassName( fragmentAsProperty.getString( TYPE ) );
+            final PropertySet componentSet = fragmentAsProperty.getSet( type.getComponentClass().getSimpleName() );
+            final Component component = componentDataSerializerProvider.getDataSerializer( type ).fromData( componentSet );
+            page.fragment( component );
         }
 
         return page.build();

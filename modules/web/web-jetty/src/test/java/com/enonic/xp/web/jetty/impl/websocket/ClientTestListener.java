@@ -71,7 +71,7 @@ public final class ClientTestListener
     void waitForConnect()
         throws Exception
     {
-        if ( !this.connectLatch.await( 30, TimeUnit.SECONDS ) )
+        if ( !this.connectLatch.await( 120, TimeUnit.SECONDS ) )
         {
             throw new RuntimeException( "Timeout waiting for Connect" );
         }
@@ -80,7 +80,7 @@ public final class ClientTestListener
     void waitForMessage()
         throws Exception
     {
-        if ( !this.messageLatch.await( 30, TimeUnit.SECONDS ) )
+        if ( !this.messageLatch.await( 120, TimeUnit.SECONDS ) )
         {
             throw new RuntimeException( "Timeout waiting for Message" );
         }

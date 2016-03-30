@@ -13,9 +13,8 @@ module api.data {
      * but also:
      * *  an [[index]], since it's a part of an [[array]]
      * *  a [[parent]], since it's also a part of a [[PropertySet]]
-     * *  and finally an unique [[id]] within the [[PropertyTree]].
      *
-     * A Property is mutable, both it's [[index]] and [[value]] can change, but never it's [[id]].
+     * A Property is mutable, both it's [[index]] and [[value]] can change.
      */
     export class Property implements api.Equitable {
 
@@ -96,6 +95,10 @@ module api.data {
             if (!value.equals(oldValue)) {
                 this.notifyPropertyValueChangedEvent(oldValue, value);
             }
+        }
+
+        convertValueType(type: ValueType) {
+            this.array.convertValues(type);
         }
 
         /**

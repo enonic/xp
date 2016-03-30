@@ -37,6 +37,82 @@ public class PageRendererTest
 
     private PageRenderer renderer;
 
+    @Before
+    public void before()
+    {
+        this.portalRequest = new PortalRequest();
+        this.portalRequest.setBranch( Branch.from( "draft" ) );
+        this.portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
+        this.portalRequest.setBaseUri( "/portal" );
+        this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
+        this.portalResponse = PortalResponse.create().build();
+        this.portalRequest.setMode( RenderMode.EDIT );
+    }
+
+    @Test
+    public void contentWithRenderModeEdit()
+    {
+        // setup
+        configureEmptyComponent( RenderMode.EDIT );
+        content = createContent( "aaa", "my_content", "myapplication:my_type" );
+        this.portalRequest.setContent( this.content );
+
+        // exercise
+        portalResponse = renderer.render( content, portalRequest );
+
+        // verify
+        final String response =
+            "<html><head><meta charset=\"utf-8\"/><title>My Content</title></head><body data-portal-component-type=\"page\"></body></html>";
+        assertEquals( response, portalResponse.getAsString() );
+    }
+
+    @Test
+    public void contentWithRenderModeNotEdit()
+    {
+        // setup
+        configureEmptyComponent( RenderMode.LIVE );
+        content = createContent( "aaa", "my_content", "myapplication:my_type" );
+        this.portalRequest.setContent( this.content );
+
+        // exercise
+        portalResponse = renderer.render( content, portalRequest );
+
+        // verify
+        final String response = "<html><head><meta charset=\"utf-8\"/><title>My Content</title></head><body></body></html>";
+        assertEquals( response, portalResponse.getAsString() );
+    }
+
+    @Test
+    public void defaultFragmentRendering()
+    {
+        // setup
+        configureEmptyComponent( RenderMode.EDIT );
+        content = createFragmentContent( "aaa", "my_content" );
+        this.portalRequest.setContent( this.content );
+
+        // exercise
+        portalResponse = renderer.render( content, portalRequest );
+
+        // verify
+        final String response =
+            "<html><head><meta charset=\"utf-8\"/><title>My Content</title></head><body data-portal-component-type=\"page\"><!--#COMPONENT fragment--></body></html>";
+        assertEquals( response, portalResponse.getAsString() );
+    }
+
+    private void configureEmptyComponent( RenderMode mode )
+    {
+        // setup
+        portalRequest.setMode( mode );
+        renderer = new PageRenderer();
+
+        final PostProcessorImpl postProcessor = new PostProcessorImpl();
+        postProcessor.addInjection( new TestPostProcessInjection() );
+        renderer.setPostProcessor( postProcessor );
+
+        final FilterChainResolver resolver = Mockito.mock( FilterChainResolver.class );
+        Mockito.when( resolver.resolve( this.portalRequest ) ).thenReturn( FilterDescriptors.empty() );
+        renderer.setFilterChainResolver( resolver );
+    }
 
     private Content createContent( final String id, final String name, final String contentTypeName )
     {
@@ -60,65 +136,25 @@ public class PageRendererTest
             build();
     }
 
-    private String configureEmptyComponent( RenderMode mode )
+    private Content createFragmentContent( final String id, final String name )
     {
-        // setup
-        portalRequest.setMode( mode );
-        content = createContent( "aaa", "my_content", "myapplication:my_type" );
-        renderer = new PageRenderer();
+        final PropertyTree metadata = new PropertyTree();
+        metadata.setLong( "myProperty", 1L );
 
-        final PostProcessorImpl postProcessor = new PostProcessorImpl();
-        postProcessor.addInjection( new TestPostProcessInjection() );
-        renderer.setPostProcessor( postProcessor );
-
-        final FilterChainResolver resolver = Mockito.mock( FilterChainResolver.class );
-        Mockito.when( resolver.resolve( this.portalRequest ) ).thenReturn( FilterDescriptors.empty() );
-        renderer.setFilterChainResolver( resolver );
-
-        // exercise
-        portalResponse = renderer.render( content, portalRequest );
-
-        return portalResponse.getAsString();
-    }
-
-    @Before
-    public void before()
-    {
-        this.portalRequest = new PortalRequest();
-        this.portalRequest.setBranch( Branch.from( "draft" ) );
-        this.portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
-        this.portalRequest.setBaseUri( "/portal" );
-        this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
-        this.portalResponse = PortalResponse.create().build();
-        this.portalRequest.setMode( RenderMode.EDIT );
-    }
-
-    @Test
-    public void contentWithRenderModeEdit()
-    {
-        // setup
-        configureEmptyComponent( RenderMode.EDIT );
-
-        // exercise
-        portalResponse = renderer.render( content, portalRequest );
-
-        // verify
-        final String response =
-            "<html><head><meta charset=\"utf-8\"/><title>My Content</title></head><body data-portal-component-type=\"page\"></body></html>";
-        assertEquals( response, portalResponse.getAsString() );
-    }
-
-    @Test
-    public void contentWithRenderModeNotEdit()
-    {
-        // setup
-        configureEmptyComponent( RenderMode.LIVE );
-
-        // exercise
-        portalResponse = renderer.render( content, portalRequest );
-
-        // verify
-        final String response = "<html><head><meta charset=\"utf-8\"/><title>My Content</title></head><body></body></html>";
-        assertEquals( response, portalResponse.getAsString() );
+        return Content.create().
+            id( ContentId.from( id ) ).
+            parentPath( ContentPath.ROOT ).
+            name( name ).
+            valid( true ).
+            createdTime( Instant.parse( "2013-08-23T12:55:09.162Z" ) ).
+            creator( PrincipalKey.from( "user:system:admin" ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
+            language( Locale.ENGLISH ).
+            displayName( "My Content" ).
+            modifiedTime( Instant.parse( "2013-08-23T12:55:09.162Z" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            type( ContentTypeName.fragment() ).
+            addExtraData( new ExtraData( MixinName.from( "myApplication:myField" ), metadata ) ).
+            build();
     }
 }

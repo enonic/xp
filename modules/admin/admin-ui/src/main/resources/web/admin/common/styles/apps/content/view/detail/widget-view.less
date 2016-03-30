@@ -50,54 +50,39 @@
         }
       }
 
-      .tree-grid {
-        .grid {
-          min-width: 240px; // to allow rendering of all columns when detail panel is collapsed
+      .all-content-versions {
+
+        *:not(:disabled) {
+          cursor: pointer;
         }
-        .grid-canvas {
-          width: calc(~'100% - 15px') !important;
-        }
-        .slick-row {
+
+        .content-version-item {
           .box-shadow(0px 1px 2px 1px rgba(0, 0, 0, 0.1));
-          margin: 5px 5px 0 7px;
-          height: 60px !important;
+          margin: 10px 5px 5px 7px;
+          background-color: @admin-white;
 
-          &.odd {
-            background-color: @admin-white;
-          }
+          &:hover {
+            background-color: @admin-bg-light-gray;
 
-          .slick-cell {
-            padding: 0;
-            span.icon:empty {
-              display: none;
-            }
-            &.description {
-              padding: 10px 7px 7px 7px;
-              width: 70%;
-            }
-            &.status {
-              position: static;
-              float: right;
-              margin: 7px 10px 0 7px;
-              width: 70px;
+            .close-version-info-button {
+              background-color: @admin-bg-light-gray;
             }
           }
-        }
-        .description img {
-          background: lightgrey url("../../common/images/tsi-profil.jpg") center;
-          background-size: 32px 32px;
-          width: 32px !important;
-          height: 32px !important;
-          .border-radius(16px);
-        }
 
-        .status {
+          &.active {
+            .box-shadow(0px 0px 5px 2px @admin-input-blue);
+          }
 
-          .badge {
+          .description {
+            padding: 10px 7px 7px 7px;
+          }
+
+          .status {
             line-height: 26px;
             text-align: center;
             margin-top: 9px;
             overflow: hidden;
+            font-size: 14px;
             text-overflow: ellipsis;
 
             &.draft {
@@ -109,11 +94,82 @@
               color: @admin-white;
               background-color: forestgreen;
             }
+          }
 
+          .version-info {
+            padding: 10px 7px 7px 7px;
+
+            &.hidden {
+              display: none;
+            }
+
+            .version-info-version-id, .version-info-display-name {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            .label {
+              width: 85px;
+              float: left;
+            }
+
+            button {
+              width: 80%;
+              text-align: center;
+              margin: 10px auto 0px auto;
+              display: block;
+
+              &:not(.active) {
+                background-color: @admin-button-blue2;
+              }
+
+              &.active {
+                opacity: 1;
+
+                &:hover {
+                  background-color: @form-button-bg;
+                  cursor: default;
+                }
+
+                &:focus {
+                  box-shadow: none;
+                  border: 1px solid @form-button-bg;
+                }
+
+                span {
+                  cursor: default;
+                  color: @admin-white;
+                }
+              }
+            }
+          }
+
+          .close-version-info-button {
+            cursor: pointer;
+            float: right;
+            padding: 2px 16px 7px 7px;
+
+            &:after {
+              content: "";
+              border-left: 6px solid transparent;
+              border-right: 6px solid transparent;
+              border-top: 0px solid transparent;
+              border-bottom: 10px solid @admin-dark-gray;
+            }
+
+            background-color: @admin-white;
+
+            &:hover {
+              background-color: @admin-bg-light-gray;
+            }
+
+            &.hidden {
+              display: none;
+            }
           }
 
         }
-
       }
 
     }

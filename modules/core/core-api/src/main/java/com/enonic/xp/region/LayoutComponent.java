@@ -3,6 +3,7 @@ package com.enonic.xp.region;
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
@@ -104,6 +105,17 @@ public final class LayoutComponent
     public int hashCode()
     {
         return Objects.hash( super.hashCode(), regions );
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this ).
+            add( "type", getType() ).
+            add( "name", getName() ).
+            add( "path", getPath() ).
+            add( "regions", getRegions() ).
+            toString();
     }
 
     public static class Builder

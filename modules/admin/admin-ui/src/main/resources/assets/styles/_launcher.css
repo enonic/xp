@@ -593,6 +593,7 @@
   background-color: transparent;
   cursor: pointer;
   z-index: 2501;
+  line-height: 15px;
 }
 .launcher-button::-moz-focus-inner {
   border: 0;

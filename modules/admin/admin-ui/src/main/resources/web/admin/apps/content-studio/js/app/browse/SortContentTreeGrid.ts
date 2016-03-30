@@ -21,6 +21,7 @@ module app.browse {
     import ChildOrder = api.content.ChildOrder;
 
     import CompareStatus = api.content.CompareStatus;
+    import CompareStatusFormatter = api.content.CompareStatusFormatter;
 
     export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
@@ -73,31 +74,7 @@ module app.browse {
             }
 
             var compareLabel: string = api.content.CompareStatus[value];
-
-            var compareStatus: CompareStatus = CompareStatus[compareLabel];
-
-            switch (compareStatus) {
-            case CompareStatus.NEW:
-                return "Offline";
-                break;
-            case CompareStatus.NEWER:
-                return "Modified";
-                break;
-            case CompareStatus.OLDER:
-                return "Behind";
-                break;
-            case CompareStatus.UNKNOWN:
-                return "Unknown";
-                break;
-            case CompareStatus.PENDING_DELETE:
-                return "Deleted";
-                break;
-            case CompareStatus.EQUAL:
-                return "Online";
-                break;
-            default:
-                return "Unknown"
-            }
+            return CompareStatusFormatter.formatStatus(CompareStatus[compareLabel]);
         }
 
         private dragFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {

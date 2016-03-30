@@ -59,6 +59,8 @@ final class DeleteContentCommand
         final Nodes.Builder nodesToDelete = Nodes.create();
         recursiveDelete( nodeToDelete, nodesToDelete );
 
+        this.nodeService.refresh( RefreshMode.ALL );
+
         return this.translator.fromNodes( nodesToDelete.build(), false );
     }
 
@@ -79,8 +81,6 @@ final class DeleteContentCommand
                 build() );
 
             deletedNodes.addAll( setNodeStateResult.getUpdatedNodes() );
-
-            this.nodeService.refresh( RefreshMode.SEARCH );
 
             final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( FindNodesByParentParams.create().
                 parentPath( nodeToDelete.path() ).

@@ -6,6 +6,9 @@ module api.liveedit {
     import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
     import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
     import ComponentResetEvent = api.content.page.region.ComponentResetEvent;
+    import Content = api.content.Content;
+    import FragmentComponent = api.content.page.region.FragmentComponent;
+    import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
 
     export class ComponentViewBuilder<COMPONENT extends Component> {
 
@@ -126,7 +129,7 @@ module api.liveedit {
                     setParentView(builder.parentRegionView).
                     setParentElement(builder.parentElement).
                     setContextMenuActions(this.createComponentContextMenuActions(builder.contextMenuActions,
-                        builder.inspectActionRequired)).
+                builder.inspectActionRequired, this.parentRegionView.getLiveEditModel())).
                     setContextMenuTitle(new ComponentViewContextMenuTitle(builder.component, builder.type))
             );
 
@@ -168,11 +171,18 @@ module api.liveedit {
             component.unReset(this.resetListener);
         }
 
-        private createComponentContextMenuActions(actions: api.ui.Action[], inspectActionRequired: boolean): api.ui.Action[] {
+        private createComponentContextMenuActions(actions: api.ui.Action[], inspectActionRequired: boolean,
+                                                  liveEditModel: LiveEditModel): api.ui.Action[] {
+            var isFragmentContent = liveEditModel.getContent().getType().isFragment();
+            var parentIsPage = api.ObjectHelper.iFrameSafeInstanceOf(this.getRegionView(), PageView);
+            var isTopFragmentComponent = parentIsPage && isFragmentContent;
+
             var actions = actions || [];
 
-            actions.push(this.createSelectParentAction());
-            actions.push(this.createInsertAction());
+            if (!isTopFragmentComponent) {
+                actions.push(this.createSelectParentAction());
+                actions.push(this.createInsertAction(liveEditModel));
+            }
 
             if (inspectActionRequired) {
                 actions.push(new api.ui.Action("Inspect").onExecuted(() => {
@@ -180,23 +190,46 @@ module api.liveedit {
                 }));
             }
 
-            actions.push(new api.ui.Action("Reset").onExecuted(() => {
-                this.component.reset();
-            }));
-            actions.push(new api.ui.Action("Remove").onExecuted(() => {
-                this.deselect();
-                this.remove();
-            }));
-            actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
-                this.deselect();
+            if (!isTopFragmentComponent) {
+                actions.push(new api.ui.Action("Reset").onExecuted(() => {
+                    this.component.reset();
+                }));
+                actions.push(new api.ui.Action("Remove").onExecuted(() => {
+                    this.deselect();
+                    this.remove();
+                }));
+                actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
+                    this.deselect();
 
-                var duplicatedComponent = <COMPONENT> this.getComponent().duplicate();
-                var duplicatedView = this.duplicate(duplicatedComponent);
+                    var duplicatedComponent = <COMPONENT> this.getComponent().duplicate();
+                    var duplicatedView = this.duplicate(duplicatedComponent);
 
-                duplicatedView.showLoadingSpinner();
+                    duplicatedView.showLoadingSpinner();
 
-                new ComponentDuplicatedEvent(this, duplicatedView).fire();
-            }));
+                    new ComponentDuplicatedEvent(this, duplicatedView).fire();
+                }));
+            }
+
+            var isFragmentComponent = this instanceof api.liveedit.fragment.FragmentComponentView;
+            if (!isFragmentComponent && !isFragmentContent) {
+                actions.push(new api.ui.Action("Create Fragment").onExecuted(() => {
+                    this.deselect();
+                    this.createFragment().then((content: Content): void => {
+                        // replace created fragment in place of source component
+                        var fragmentCmpView = <FragmentComponentView> this.createComponentView(
+                            api.liveedit.fragment.FragmentItemType.get());
+                        fragmentCmpView.getComponent().setFragment(content.getContentId(), content.getDisplayName());
+                        this.addComponentView(fragmentCmpView, this.getNewItemIndex());
+                        this.remove();
+                        new ComponentFragmentCreatedEvent(fragmentCmpView, this.getComponent().getType(), content).fire();
+                    });
+                }));
+            }
+
+            return this.getComponentContextMenuActions(actions, liveEditModel);
+        }
+
+        protected getComponentContextMenuActions(actions: api.ui.Action[], liveEditModel: LiveEditModel): api.ui.Action[] {
             return actions;
         }
 
@@ -277,7 +310,7 @@ module api.liveedit {
             return clone;
         }
 
-        duplicate(duplicate: COMPONENT): ComponentView<Component> {
+        private duplicate(duplicate: COMPONENT): ComponentView<Component> {
 
             var parentView = this.getParentItemView();
             var index = parentView.getComponentViewIndex(this);
@@ -295,6 +328,16 @@ module api.liveedit {
             return duplicateView;
         }
 
+        private createFragment(): wemQ.Promise<Content> {
+            var contentPath = this.getPageView().getLiveEditModel().getContent().getPath();
+            var config = this.getPageView().getLiveEditModel().getPageModel().getConfig();
+
+            var request = new api.content.page.region.CreateFragmentRequest(contentPath).setConfig(config).setComponent(
+                this.getComponent());
+
+            return request.sendAndParse();
+        }
+
         toString() {
             var extra = "";
             if (this.hasComponentPath()) {
@@ -309,14 +352,23 @@ module api.liveedit {
             }
             super.replaceWith(replacement);
 
-            var index = this.getParentItemView().getComponentViewIndex(this);
+            var parentIsPage = api.ObjectHelper.iFrameSafeInstanceOf(this.getParentItemView(), PageView);
+            if (parentIsPage) {
+                // unbind the old view from the component and bind the new one
+                this.unregisterComponentListeners(this.component);
 
-            // unbind the old view from the component and bind the new one
-            this.unregisterComponentListeners(this.component);
+                this.getPageView().registerFragmentComponentView(replacement);
 
-            var parentRegionView = this.parentRegionView;
-            this.parentRegionView.unregisterComponentView(this);
-            parentRegionView.registerComponentView(replacement, index);
+            } else {
+                var index = this.getParentItemView().getComponentViewIndex(this);
+
+                // unbind the old view from the component and bind the new one
+                this.unregisterComponentListeners(this.component);
+
+                var parentRegionView = this.parentRegionView;
+                this.parentRegionView.unregisterComponentView(this);
+                parentRegionView.registerComponentView(replacement, index);
+            }
         }
 
         moveToRegion(toRegionView: RegionView, toIndex: number) {
@@ -343,6 +395,9 @@ module api.liveedit {
 
             // Register with new region...
             toRegionView.addComponentView(this, toIndex);
+            if (parentView && this.component) {
+                this.registerComponentListeners(this.component);
+            }
         }
 
         onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {

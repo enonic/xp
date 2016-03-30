@@ -5,6 +5,7 @@ module app.wizard {
     import FormContextBuilder = api.form.FormContextBuilder;
     import ContentFormContext = api.content.form.ContentFormContext;
     import Content = api.content.Content;
+    import ContentId = api.content.ContentId;
     import ContentPath = api.content.ContentPath;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import CompareStatus = api.content.CompareStatus;
@@ -59,6 +60,7 @@ module app.wizard {
     import ContentPublishedEvent = api.content.event.ContentPublishedEvent;
     import ContentsPublishedEvent = api.content.event.ContentsPublishedEvent;
     import ContentNamedEvent = api.content.event.ContentNamedEvent;
+    import ActiveContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
 
     import DialogButton = api.ui.dialog.DialogButton;
 
@@ -130,7 +132,7 @@ module app.wizard {
 
         private contentCompareStatus: CompareStatus;
 
-        private dataChangedListener: (event: api.data.PropertyEvent) => void;
+        private dataChangedListener: () => void;
 
         /**
          * Whether constructor is being currently executed or not.
@@ -203,7 +205,7 @@ module app.wizard {
 
             ContentPermissionsAppliedEvent.on((event) => this.contentPermissionsUpdated(event.getContent()));
 
-            this.dataChangedListener = (event: api.data.PropertyEvent) => {
+            this.dataChangedListener = () => {
                 if (this.isContentFormValid && this.contentWizardToolbarPublishControls.isOnline()) {
                     this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.NEWER);
                 }
@@ -379,10 +381,8 @@ module app.wizard {
 
         giveInitialFocus() {
 
-            console.log("ContentWizardPanel.giveInitialFocus");
             if (this.contentType.hasContentDisplayNameScript()) {
                 if (!this.contentWizardStepForm.giveFocus()) {
-                    console.log("ContentWizardPanel.giveInitialFocus() WARNING: Failed to give focus to contentWizardStepForm");
                     this.contentWizardHeader.giveFocus();
                 }
             } else {
@@ -406,8 +406,8 @@ module app.wizard {
                     var app = applications[i];
                     if (!app.isStarted()) {
                         var deferred = wemQ.defer<Mixin[]>();
-                        deferred.reject(new api.Exception("Content cannot be opened. Required application '" + app.getDisplayName() +
-                                                          "' is not started.",
+                        deferred.reject(new api.Exception("Application '" + app.getDisplayName() + "' required by the site is not available. " +
+                                                          "Make sure all applications specified in the site configuration are installed and started.",
                             api.ExceptionType.WARNING));
                         return deferred.promise;
                     }
@@ -453,6 +453,14 @@ module app.wizard {
 
                 return mixins;
             });
+        }
+
+
+        close(checkCanClose: boolean = false) {
+            if (this.liveFormPanel) {
+                this.liveFormPanel.skipNextReloadConfirmation(true);
+            }
+            super.close(checkCanClose);
         }
 
         private fetchMixin(name: MixinName): wemQ.Promise<Mixin> {
@@ -552,13 +560,13 @@ module app.wizard {
                 }
             };
 
-            var updateHandler = (event: api.content.event.ContentUpdatedEvent) => {
-                var isCurrent = this.isCurrentContentId(event.getContentId());
+            var updateHandler = (contentId: ContentId) => {
+                var isCurrent = this.isCurrentContentId(contentId);
 
                 // Find all html areas in form
                 var htmlAreas = this.getHtmlAreasInForm(this.getContentType().getForm());
                 // And check if html area actually contains event.getContentId() that was updated
-                var areasContainId = this.doAreasContainId(htmlAreas, event.getContentId().toString());
+                var areasContainId = this.doAreasContainId(htmlAreas, contentId.toString());
 
                 if (isCurrent || areasContainId) {
                     //
@@ -576,12 +584,17 @@ module app.wizard {
                 }
             };
 
-            ContentUpdatedEvent.on(updateHandler);
+            var activeContentVersionSetHandler = (event: ActiveContentVersionSetEvent) => updateHandler(event.getContentId());
+            var contentUpdatedHanlder = (event: ContentUpdatedEvent) => updateHandler(event.getContentId());
+
+            ActiveContentVersionSetEvent.on(activeContentVersionSetHandler);
+            ContentUpdatedEvent.on(contentUpdatedHanlder);
             ContentPublishedEvent.on(publishHandler);
             ContentDeletedEvent.on(deleteHandler);
 
             this.onClosed(() => {
-                ContentUpdatedEvent.un(updateHandler);
+                ActiveContentVersionSetEvent.un(activeContentVersionSetHandler);
+                ContentUpdatedEvent.un(contentUpdatedHanlder);
                 ContentPublishedEvent.un(publishHandler);
                 ContentDeletedEvent.un(deleteHandler);
             });
@@ -748,6 +761,7 @@ module app.wizard {
                 // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
                 this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
                 this.settingsWizardStepForm.layout(content);
+                this.settingsWizardStepForm.getModel().onPropertyChanged(this.dataChangedListener);
 
                 if (this.isSecurityWizardStepFormAllowed) {
                     this.securityWizardStepForm.layout(content);
@@ -763,12 +777,14 @@ module app.wizard {
                     var metadataFormView = this.metadataStepFormByName[schema.getMixinName().toString()];
                     var metadataForm = new api.form.FormBuilder().addFormItems(schema.getFormItems()).build();
 
-                    formViewLayoutPromises.push(metadataFormView.layout(formContext, extraData.getData(), metadataForm));
+                    var data = extraData.getData();
+                    data.onChanged(this.dataChangedListener);
+
+                    formViewLayoutPromises.push(metadataFormView.layout(formContext, data, metadataForm));
                 });
 
                 return wemQ.all(formViewLayoutPromises).spread<void>(() => {
 
-                    console.log("ContentWizardPanel.doLayoutPersistedItem: all FormView-s layed out");
                     if (this.liveFormPanel) {
 
                         if (!this.liveEditModel) {
@@ -1156,6 +1172,10 @@ module app.wizard {
             return this;
         }
 
+        getContentCompareStatus(): CompareStatus {
+            return this.contentCompareStatus;
+        }
+
         private notifyContentNamed(content: api.content.Content) {
             this.contentNamedListeners.forEach((listener: (event: ContentNamedEvent)=>void)=> {
                 listener.call(this, new ContentNamedEvent(this, content));
@@ -1238,7 +1258,14 @@ module app.wizard {
                         extraData = new ExtraData(mixinName, new PropertyTree());
                         content.getAllExtraData().push(extraData);
                     }
-                    this.metadataStepFormByName[key].update(extraData.getData());
+
+                    let form = this.metadataStepFormByName[key];
+                    form.getData().unChanged(this.dataChangedListener);
+
+                    let data = extraData.getData();
+                    data.onChanged(this.dataChangedListener);
+
+                    form.update(data);
                 }
             }
         }

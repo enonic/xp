@@ -63,7 +63,7 @@ public class LayoutRendererTest
     {
         // verify
         String response = this.configureEmptyComponent( RenderMode.PREVIEW );
-        String result = "<div data-portal-component-type=\"{0}\"></div>";
+        String result = "<div data-portal-component-type=\"layout\"></div>";
         assertEquals( result, response );
     }
 
@@ -72,7 +72,7 @@ public class LayoutRendererTest
     {
         // verify
         String response = this.configureEmptyComponent( RenderMode.LIVE );
-        String result = "<div data-portal-component-type=\"{0}\"></div>";
+        String result = "<div data-portal-component-type=\"layout\"></div>";
         assertEquals( result, response );
     }
 

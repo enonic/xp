@@ -13,13 +13,15 @@ public final class ComponentsDataSerializer
 {
     private final static ComponentDataSerializerProvider COMPONENT_DATA_SERIALIZER_FACTORY = new ComponentDataSerializerProvider();
 
+    public static final String TYPE = "type";
+
     public void toData( final Collection<Component> components, final PropertySet parent )
     {
         for ( final Component component : components )
         {
             final PropertySet componentAsSet = parent.addSet( "component" );
             final ComponentType type = component.getType();
-            componentAsSet.setString( "type", type.getComponentClass().getSimpleName() );
+            componentAsSet.setString( TYPE, type.getComponentClass().getSimpleName() );
             COMPONENT_DATA_SERIALIZER_FACTORY.getDataSerializer( type ).toData( component, componentAsSet );
         }
     }
@@ -30,7 +32,7 @@ public final class ComponentsDataSerializer
         for ( final Property componentAsProperty : componentProperties )
         {
             final PropertySet componentWrapper = componentAsProperty.getSet();
-            final ComponentType type = ComponentTypes.bySimpleClassName( componentWrapper.getString( "type" ) );
+            final ComponentType type = ComponentTypes.bySimpleClassName( componentWrapper.getString( TYPE ) );
             final PropertySet componentSet = componentWrapper.getSet( type.getComponentClass().getSimpleName() );
             componentList.add( COMPONENT_DATA_SERIALIZER_FACTORY.getDataSerializer( type ).fromData( componentSet ) );
         }

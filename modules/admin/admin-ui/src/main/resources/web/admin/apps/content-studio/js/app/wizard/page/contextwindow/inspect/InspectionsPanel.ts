@@ -17,6 +17,7 @@ module app.wizard.page.contextwindow.inspect {
         imageInspectionPanel: region.ImageInspectionPanel;
         partInspectionPanel: region.PartInspectionPanel;
         layoutInspectionPanel: region.LayoutInspectionPanel;
+        fragmentInspectionPanel: region.FragmentInspectionPanel;
         saveAction: api.ui.Action;
     }
 
@@ -32,6 +33,7 @@ module app.wizard.page.contextwindow.inspect {
         private contentInspectionPanel: ContentInspectionPanel;
         private pageInspectionPanel: page.PageInspectionPanel;
         private regionInspectionPanel: region.RegionInspectionPanel;
+        private fragmentInspectionPanel: region.FragmentInspectionPanel;
 
         private saveRequestListeners: {() : void}[] = [];
 
@@ -47,6 +49,7 @@ module app.wizard.page.contextwindow.inspect {
             this.contentInspectionPanel = config.contentInspectionPanel;
             this.pageInspectionPanel = config.pageInspectionPanel;
             this.regionInspectionPanel = config.regionInspectionPanel;
+            this.fragmentInspectionPanel = config.fragmentInspectionPanel;
 
             this.deck.addPanel(this.imageInspectionPanel);
             this.deck.addPanel(this.partInspectionPanel);
@@ -54,6 +57,7 @@ module app.wizard.page.contextwindow.inspect {
             this.deck.addPanel(this.contentInspectionPanel);
             this.deck.addPanel(this.regionInspectionPanel);
             this.deck.addPanel(this.pageInspectionPanel);
+            this.deck.addPanel(this.fragmentInspectionPanel);
             this.deck.addPanel(this.noSelectionPanel);
 
             this.deck.showPanel(this.pageInspectionPanel);

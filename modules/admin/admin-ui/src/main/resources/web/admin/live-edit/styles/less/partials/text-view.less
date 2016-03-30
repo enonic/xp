@@ -1,10 +1,64 @@
 .@{_CLS_PREFIX}text-view {
 
+  overflow: auto;
+
+  // tiny mce style enforcing
+  ul, ol {
+    margin: 0 0 12px 40px;
+  }
+
+  li {
+    list-style: inherit;
+  }
+
+  strong, b {
+    font-weight: bold;
+    font-style: inherit;
+  }
+
+  em {
+    font-style: italic;
+    font-weight: inherit;
+  }
+
+  // end of tiny mce style enforcing
+
   &.empty > section {
     display: none;
   }
 
+  .mce-content-body {
+    cursor: auto;
+    display: none;
+    padding: 5px;
+    min-height: 70px;
+
+    &.mce-edit-focus {
+      outline: none;
+    }
+  }
+
+  section {
+    min-height: 58px;
+  }
+
   &.edit-mode {
+
+    .mce-content-body {
+      display: block;
+      box-sizing: border-box;
+    }
+
+    &.editor-focused {
+      .box-shadow(0px 0px 5px @admin-input-blue);
+      .input-border(@admin-input-blue);
+    }
+
+    .input-border(#cccccc);
+
+    section {
+      display: none !important;
+    }
 
     > .@{_CLS_PREFIX}text-placeholder {
       display: none;
@@ -40,4 +94,88 @@
     content: "\e449";
   }
 
+}
+
+.mce-toolbar-container {
+  position: fixed;
+  top: 0;
+  z-index: @z-index-context-menu;
+  width: 100%;
+
+  .mce-toolbar-grp .mce-flow-layout-item {
+    margin-bottom: 2px;
+  }
+
+  .mce-btn-group {
+    border-right: 1px solid #CAC0C0;
+  }
+
+  &.sticky-toolbar {
+    .mce-toolbar-grp {
+      .box-shadow(0px 8px 8px 0 @admin-toolbar-shadow);
+      z-index: 1000;
+    }
+  }
+
+  .mce-tinymce-inline {
+
+    width: 100% !important;
+    border: none;
+
+    .mce-container-body {
+      margin: auto;
+    }
+  }
+
+  .mce-toolbar {
+    background-color: @admin-white;
+
+    .mce-btn, .mce-menubtn {
+      background-color: @admin-white;
+      &:hover, &:focus {
+        background-color: #e3e3e3;
+      }
+
+      .mce-ico {
+        width: 22px;
+        height: 22px;
+      }
+
+      button, span {
+        line-height: 30px;
+      }
+
+      .mce-caret {
+        margin-top: 12px;
+      }
+
+      i {
+        text-align: center;
+      }
+    }
+  }
+}
+
+.docked-panel .tab-bar {
+  margin: 0;
+}
+
+.close-edit-mode-button.icon-close2 {
+  position: fixed;
+  top: 8px;
+  right: 10px;
+  z-index: @z-index-context-menu + 1;
+  pointer-events: auto;
+  color: @admin-dark-gray;
+  font-size: 26px;
+  display: none;
+  text-decoration: none;
+
+  &.active {
+    display: inline;
+  }
+}
+
+.mce-grid-border a {
+  pointer-events: auto;
 }

@@ -50,7 +50,7 @@ module api.data {
         }
 
         valueEquals(a: LocalDate, b: LocalDate): boolean {
-            return a.equals(b);
+            return api.ObjectHelper.equals(a, b);
         }
     }
 }

@@ -48,7 +48,7 @@ module api.data {
         }
 
         valueEquals(a: LocalDateTime, b: LocalDateTime): boolean {
-            return a.equals(b);
+            return api.ObjectHelper.equals(a, b);
         }
     }
 }

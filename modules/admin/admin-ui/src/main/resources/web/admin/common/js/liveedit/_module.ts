@@ -55,9 +55,14 @@
 ///<reference path='ComponentResetEvent.ts' />
 ///<reference path='ComponentDuplicatedEvent.ts' />
 ///<reference path='ComponentLoadedEvent.ts' />
+///<reference path='FragmentComponentLoadedEvent.ts' />
 ///<reference path='Position.ts' />
 ///<reference path='LiveEditPageViewReadyEvent.ts' />
 ///<reference path='DragAndDrop.ts' />
 ///<reference path='LiveEditPageInitializationErrorEvent.ts' />
 ///<reference path='ComponentInspectedEvent.ts' />
 ///<reference path='PageInspectedEvent.ts' />
+///<reference path='LiveEditPageDialogCreatedEvent.ts' />
+
+///<reference path='ComponentFragmentCreatedEvent.ts' />
+///<reference path='ShowWarningLiveEditEvent.ts' />

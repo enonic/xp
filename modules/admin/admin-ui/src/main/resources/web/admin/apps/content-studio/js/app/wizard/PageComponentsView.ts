@@ -6,7 +6,6 @@ module app.wizard {
     import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
-    import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
     import ComponentResetEvent = api.liveedit.ComponentResetEvent;
 
@@ -16,6 +15,7 @@ module app.wizard {
     import PageView = api.liveedit.PageView;
     import ItemView = api.liveedit.ItemView;
     import TextComponentView = api.liveedit.text.TextComponentView;
+    import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
 
     import Mask = api.ui.mask.Mask;
 
@@ -70,7 +70,7 @@ module app.wizard {
             });
 
             this.header = new api.dom.H2El('header');
-            this.header.setHtml('Page Components');
+            this.header.setHtml('Components');
 
             this.appendChildren(closeButton, this.header);
 
@@ -79,7 +79,7 @@ module app.wizard {
             this.onShown((event) => {
                 this.constrainToParent();
                 this.getHTMLElement().style.display = "";
-                if (this.pageView.isLocked()) {
+                if (this.pageView && this.pageView.isLocked()) {
                     this.mask.show();
                 }
             });
@@ -190,6 +190,9 @@ module app.wizard {
                             if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), TextComponentView)) {
                                 this.bindTreeTextNodeUpdateOnTextComponentModify(<TextComponentView>event.getComponentView());
                             }
+                            if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), FragmentComponentView)) {
+                                this.bindTreeFragmentNodeUpdateOnComponentLoaded(<FragmentComponentView>event.getComponentView());
+                            }
 
                             this.constrainToParent();
                         });
@@ -228,6 +231,9 @@ module app.wizard {
 
                     if (api.ObjectHelper.iFrameSafeInstanceOf(event.getNewComponentView(), TextComponentView)) {
                         this.bindTreeTextNodeUpdateOnTextComponentModify(<TextComponentView>event.getNewComponentView());
+                    }
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(event.getNewComponentView(), FragmentComponentView)) {
+                        this.bindTreeFragmentNodeUpdateOnComponentLoaded(<FragmentComponentView>event.getNewComponentView());
                     }
                 });
             });
@@ -352,6 +358,12 @@ module app.wizard {
 
             textComponentView.onKeyUp(handler);
             textComponentView.getHTMLElement().onpaste = handler;
+        }
+
+        private bindTreeFragmentNodeUpdateOnComponentLoaded(fragmentComponentView: FragmentComponentView) {
+            fragmentComponentView.onFragmentContentLoaded((e)=> {
+                this.tree.updateNode(e.getFragmentComponentView())
+            });
         }
 
         private selectItem(treeNode: TreeNode<ItemView>) {

@@ -1,4 +1,5 @@
 @z-index-mask: 2000;
+@z-index-context-window: @z-index-mask - 1;
 @z-index-user-info-popup: @z-index-mask - 1;
 @z-index-draggable: @z-index-mask + 1;
 @z-index-modal-dialog: @z-index-mask + 1;
@@ -14,8 +15,7 @@
 
 @z-index-shader: 2147483600; // number close to max integer 2147483647 to be above live edit page elements
 @z-index-drag-helper: @z-index-shader + 1;
-@z-index-medium-editor: @z-index-shader + 1;
-@z-index-context-menu: @z-index-medium-editor + 1;
+@z-index-context-menu: @z-index-shader + 2;
 @z-index-empty-component-options: @z-index-context-menu + 1;
 @z-index-tooltip: @z-index-empty-component-options + 1;
 @z-index-text-editor-toolbar: @z-index-shader + 1;

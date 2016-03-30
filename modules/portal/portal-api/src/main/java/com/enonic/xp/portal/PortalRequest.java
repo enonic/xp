@@ -17,6 +17,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.HttpMethod;
@@ -25,7 +26,7 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 @Beta
 public final class PortalRequest
 {
-    public final static Branch DEFAULT_BRANCH = ContentConstants.BRANCH_DRAFT;
+    private final static Branch DEFAULT_BRANCH = ContentConstants.BRANCH_DRAFT;
 
     private HttpMethod method;
 
@@ -64,6 +65,8 @@ public final class PortalRequest
     private ApplicationKey applicationKey;
 
     private PageDescriptor pageDescriptor;
+
+    private ControllerScript controllerScript;
 
     private String endpointPath;
 
@@ -320,5 +323,15 @@ public final class PortalRequest
     public void setWebSocket( final boolean webSocket )
     {
         this.webSocket = webSocket;
+    }
+
+    public ControllerScript getControllerScript()
+    {
+        return controllerScript;
+    }
+
+    public void setControllerScript( final ControllerScript controllerScript )
+    {
+        this.controllerScript = controllerScript;
     }
 }
