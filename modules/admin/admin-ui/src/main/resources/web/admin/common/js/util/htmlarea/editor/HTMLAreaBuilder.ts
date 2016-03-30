@@ -108,7 +108,7 @@ module api.util.htmlarea.editor {
                 selector: this.selector,
                 document_base_url: this.assetsUri + '/common/lib/tinymce/',
                 skin_url: this.assetsUri + '/common/lib/tinymce/skins/lightgray',
-                content_css: this.assetsUri + '/common/styles/api/util/htmlarea/tinymce-editor.css',
+                content_css: this.assetsUri + '/common/styles/api/util/htmlarea/html-editor.css',
                 theme_url: 'modern',
                 inline: this.inline,
                 fixed_toolbar_container: this.fixedToolbarContainer,

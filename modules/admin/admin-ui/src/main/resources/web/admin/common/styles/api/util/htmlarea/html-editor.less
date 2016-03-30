@@ -1,0 +1,125 @@
+.mce-content-body {
+  > *:first-child {
+    margin-top: 0px;
+  }
+
+  > *:last-child {
+    margin-bottom: 0px;
+  }
+
+  figure {
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    -webkit-margin-before: 0;
+    -moz-margin-start: 0;
+    -moz-margin-end: 0;
+  }
+
+  figcaption:empty:before {
+    content: "Image caption goes here";
+    color: lightgray;
+  }
+
+  strong {
+    font-family: "Open Sans Bold", "Open Sans", sans-serif;
+  }
+}
+
+.mce-floatpanel.mce-menu {
+  .border-radius(0);
+
+  .mce-menu-item:hover, .mce-menu-item.mce-selected, .mce-menu-item:focus {
+    background-image: none;
+    background-color: @admin-toolbar-toggle-button;
+    .box-shadow(none);
+  }
+}
+
+.mce-toolbar-container .mce-panel, .mce-toolbar-grp.mce-panel/*, .mce-toolbar .mce-flow-layout-item*/ {
+  background-image: none;
+  background-color: @admin-white;
+  border: none;
+}
+
+.mce-toolbar-grp.mce-panel {
+  border-bottom: 1px solid @admin-medium-gray-border;
+}
+
+.mce-toolbar-grp .mce-flow-layout-item {
+  margin: 2px 0 0 0;
+}
+
+.mce-toolbar {
+  display: flex;
+  background-color: @admin-white;
+
+  .mce-btn-group {
+    border-right: 1px solid @admin-medium-gray-border;
+    .mce-menubtn, .mce-btn, .mce-first, .mce-last, .mce-first.mce-last {
+      .border-radius(0);
+      background-image: none;
+      box-shadow: none;
+      border: none;
+      background-color: @admin-white;
+    }
+
+    &.mce-last {
+      border-right: none;
+    }
+
+    .mce-btn, .mce-menubtn {
+
+      &:hover, &:focus {
+        background-color: @admin-bg-light-gray;
+        background-image: none;
+      }
+
+      .mce-ico {
+        width: 22px;
+        height: 22px;
+      }
+
+      button, span {
+        line-height: 30px;
+      }
+
+      button {
+        padding: 2px 8px;
+      }
+
+      .mce-caret {
+        margin-top: 12px;
+      }
+
+      i {
+        text-align: center;
+        text-shadow: none;
+      }
+
+      &.mce-active {
+        background-image: none;
+        background-color: @admin-toolbar-toggle-button;
+        .box-shadow(none);
+
+        span {
+          color: @admin-white;
+        }
+
+        i {
+          border-top-color: @admin-white;
+        }
+
+        .mce-ico {
+          color: @admin-white;
+        }
+
+        &:hover {
+          background-image: none;
+          box-shadow: none;
+          background-color: @admin-toolbar-toggle-button;
+        }
+      }
+    }
+  }
+
+}
