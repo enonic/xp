@@ -136,10 +136,11 @@ module app.view.detail {
             }
             else {
                 this.getEl().setMaxHeightPx(this.getParentElement().getEl().getHeight());
-                setTimeout(() => {
-                    this.getEl().setMaxHeight("none");
-                }, 100);
             }
+
+            setTimeout(() => {
+                this.getEl().setMaxHeight("none");
+            }, 100);
         }
 
         setActive() {
