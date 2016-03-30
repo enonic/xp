@@ -5,6 +5,7 @@ module api.security {
         private key: UserStoreKey;
         private description: string;
         private authConfig: AuthConfig;
+        private idProviderMode: IdProviderMode;
         private permissions: api.security.acl.UserStoreAccessControlList;
 
 
@@ -14,6 +15,7 @@ module api.security {
             this.key = builder.key;
             this.description = builder.description;
             this.authConfig = builder.authConfig;
+            this.idProviderMode = builder.idProviderMode;
             this.permissions = builder.permissions || new api.security.acl.UserStoreAccessControlList();
         }
 
@@ -31,6 +33,10 @@ module api.security {
 
         getAuthConfig(): AuthConfig {
             return this.authConfig;
+        }
+
+        getIdProviderMode(): IdProviderMode {
+            return this.idProviderMode;
         }
 
         getPermissions(): api.security.acl.UserStoreAccessControlList {
@@ -92,6 +98,7 @@ module api.security {
         key: UserStoreKey;
         description: string;
         authConfig: AuthConfig;
+        idProviderMode: IdProviderMode;
         permissions: api.security.acl.UserStoreAccessControlList;
 
         constructor(source?: UserStore) {
@@ -102,6 +109,7 @@ module api.security {
                 this.setKey(source.getKey().toString());
                 this.setDescription(source.getDescription());
                 this.setAuthConfig(source.getAuthConfig());
+                this.setIdProviderMode(source.getIdProviderMode());
                 this.setPermissions(source.getPermissions().clone());
             }
         }
@@ -112,6 +120,7 @@ module api.security {
             this.displayName = json.displayName;
             this.description = json.description;
             this.authConfig = json.authConfig ? AuthConfig.fromJson(json.authConfig) : null;
+            this.idProviderMode = json.idProviderMode ? IdProviderMode[json.idProviderMode] : null;
             this.permissions = json.permissions ? api.security.acl.UserStoreAccessControlList.fromJson(json.permissions) : null;
             return this;
         }
@@ -133,6 +142,11 @@ module api.security {
 
         setAuthConfig(authConfig: AuthConfig): UserStoreBuilder {
             this.authConfig = authConfig;
+            return this;
+        }
+
+        setIdProviderMode(idProviderMode: IdProviderMode): UserStoreBuilder {
+            this.idProviderMode = idProviderMode;
             return this;
         }
 

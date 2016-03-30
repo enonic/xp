@@ -2,6 +2,7 @@
   "authConfig": null,
   "description": null,
   "displayName": "",
+  "idProviderMode": null,
   "key": "default",
   "permissions": [
     {
