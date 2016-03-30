@@ -253,10 +253,9 @@ module api.form.inputtype.text {
 
         private setEditorContent(editorId: string, property: Property): void {
             var editor = this.getEditor(editorId);
-            if (property.hasNonNullValue() && editor) {
-                editor.setContent(HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()));
-            }
-            else if (!editor) {
+            if (editor) {
+                editor.setContent(property.hasNonNullValue() ? HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()) : "");
+            } else {
                 console.log("Editor with id '" + editorId + "' not found")
             }
         }
