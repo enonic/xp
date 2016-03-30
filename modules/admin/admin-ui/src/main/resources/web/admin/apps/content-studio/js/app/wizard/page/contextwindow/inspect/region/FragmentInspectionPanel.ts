@@ -14,6 +14,11 @@ module app.wizard.page.contextwindow.inspect.region {
     import GetContentByIdRequest = api.content.GetContentByIdRequest;
     import Content = api.content.Content;
     import LayoutComponentType = api.content.page.region.LayoutComponentType;
+    import LiveEditModel = api.liveedit.LiveEditModel;
+    import QueryExpr = api.query.expr.QueryExpr;
+    import CompareExpr = api.query.expr.CompareExpr;
+    import FieldExpr = api.query.expr.FieldExpr;
+    import ValueExpr = api.query.expr.ValueExpr;
 
     export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentComponent> {
 
@@ -29,13 +34,15 @@ module app.wizard.page.contextwindow.inspect.region {
 
         private componentPropertyChangedEventHandler: (event: ComponentPropertyChangedEvent) => void;
 
+        private loader: api.content.ContentSummaryLoader;
+
         constructor() {
             super(<ComponentInspectionPanelConfig>{
                 iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("fragment")
             });
-            var loader = new api.content.ContentSummaryLoader();
-            loader.setAllowedContentTypeNames([ContentTypeName.FRAGMENT]);
-            this.fragmentSelector = ContentComboBox.create().setMaximumOccurrences(1).setLoader(loader).build();
+            this.loader = new api.content.ContentSummaryLoader();
+            this.loader.setAllowedContentTypeNames([ContentTypeName.FRAGMENT]);
+            this.fragmentSelector = ContentComboBox.create().setMaximumOccurrences(1).setLoader(this.loader).build();
 
             this.fragmentSelectorForm = new FragmentSelectorForm(this.fragmentSelector, "Fragment");
 
@@ -52,8 +59,10 @@ module app.wizard.page.contextwindow.inspect.region {
             this.appendChild(this.fragmentSelectorForm);
         }
 
-        setComponent(component: FragmentComponent) {
-            super.setComponent(component);
+        setModel(liveEditModel: LiveEditModel) {
+            super.setModel(liveEditModel);
+
+            this.loader.setQueryExpr(this.createParentSiteFragmentsOnlyQuery());
         }
 
         setFragmentComponent(fragmentView: FragmentComponentView) {
@@ -141,6 +150,12 @@ module app.wizard.page.contextwindow.inspect.region {
                 return false;
             }
             return api.ObjectHelper.iFrameSafeInstanceOf(parent.getType(), api.liveedit.layout.LayoutItemType);
+        }
+
+        private createParentSiteFragmentsOnlyQuery(): QueryExpr {
+            var sitePath = this.liveEditModel.getSiteModel().getSite().getPath().toString();
+            var compareExpr: CompareExpr = CompareExpr.like(new FieldExpr("_path"), ValueExpr.string("/content" + sitePath + "/*" ));
+            return new QueryExpr(compareExpr);
         }
 
         getComponentView(): FragmentComponentView {
