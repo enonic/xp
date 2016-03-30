@@ -38,8 +38,10 @@ final class XmlInputTypeConfigMapper
 
     private void build( final InputTypeConfig.Builder builder, final DomElement root, final Boolean addRootProperty )
     {
-        if(addRootProperty) {
-            builder.property( buildProperty( root ) );
+        if ( addRootProperty )
+        {
+            builder.property( InputTypeProperty.create( root.getTagName(),
+                                                        root.getChildren().size() > 0 ? root.serializeBody() : root.getValue() ).build() );
         }
 
         for ( final DomElement child : root.getChildren() )

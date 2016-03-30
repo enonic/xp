@@ -138,6 +138,11 @@ public final class DomElement
         return elem != null ? elem.getValue() : defValue;
     }
 
+    public String serializeBody()
+    {
+        return DomHelper.serializeBody( this.elem );
+    }
+
     public <T> T getChildValueAs( final String name, final Class<T> type, final T defValue )
     {
         return convert( type, getChildValue( name ), defValue );
