@@ -43,11 +43,13 @@ public final class XmlSiteParser
 
     private static final String MAPPING_DESCRIPTOR_CONTROLLER_ATTRIBUTE = "controller";
 
-    private static final String MAPPING_DESCRIPTOR_PATTERN_ATTRIBUTE = "pattern";
-
-    private static final String MAPPING_DESCRIPTOR_MATCH_ATTRIBUTE = "match";
-
     private static final String MAPPING_DESCRIPTOR_ORDER_ATTRIBUTE = "order";
+
+    private static final String MAPPING_DESCRIPTOR_MATCH_TAG_NAME = "match";
+
+    private static final String MAPPING_DESCRIPTOR_PATTERN_TAG_NAME = "pattern";
+
+    private static final String MAPPING_DESCRIPTOR_INVERT_ATTRIBUTE = "invert";
 
     private SiteDescriptor.Builder siteDescriptorBuilder;
 
@@ -120,28 +122,38 @@ public final class XmlSiteParser
         return builder.build();
     }
 
-    private ControllerMappingDescriptor toMappingDescriptor( final DomElement filterElement )
+    private ControllerMappingDescriptor toMappingDescriptor( final DomElement mappingElement )
     {
         final ControllerMappingDescriptor.Builder builder = ControllerMappingDescriptor.create();
-        final String controllerPath = filterElement.getAttribute( MAPPING_DESCRIPTOR_CONTROLLER_ATTRIBUTE );
+        final String controllerPath = mappingElement.getAttribute( MAPPING_DESCRIPTOR_CONTROLLER_ATTRIBUTE );
         builder.controller( ResourceKey.from( this.currentApplication, controllerPath ) );
 
-        final String match = filterElement.getAttribute( MAPPING_DESCRIPTOR_MATCH_ATTRIBUTE );
-        if ( isNotEmpty( match ) )
-        {
-            builder.contentConstraint( match );
-        }
-
-        final String pattern = filterElement.getAttribute( MAPPING_DESCRIPTOR_PATTERN_ATTRIBUTE );
-        if ( isNotEmpty( pattern ) )
-        {
-            builder.pattern( pattern );
-        }
-
-        final String orderValue = filterElement.getAttribute( MAPPING_DESCRIPTOR_ORDER_ATTRIBUTE );
+        final String orderValue = mappingElement.getAttribute( MAPPING_DESCRIPTOR_ORDER_ATTRIBUTE );
         if ( isNotEmpty( orderValue ) )
         {
             builder.order( Integer.parseInt( orderValue ) );
+        }
+
+        final DomElement matchElement = mappingElement.getChild( MAPPING_DESCRIPTOR_MATCH_TAG_NAME );
+        if ( matchElement != null )
+        {
+            final String match = matchElement.getValue();
+            if ( isNotEmpty( match ) )
+            {
+                builder.contentConstraint( match );
+            }
+        }
+
+        final DomElement patternElement = mappingElement.getChild( MAPPING_DESCRIPTOR_PATTERN_TAG_NAME );
+        if ( patternElement != null )
+        {
+            final String pattern = patternElement.getValue();
+            if ( isNotEmpty( pattern ) )
+            {
+                final boolean invert = "true".equals( patternElement.getAttribute( MAPPING_DESCRIPTOR_INVERT_ATTRIBUTE, "false" ) );
+                builder.pattern( pattern );
+                builder.invertPattern( invert );
+            }
         }
 
         return builder.build();

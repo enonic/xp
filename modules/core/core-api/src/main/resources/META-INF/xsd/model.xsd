@@ -252,10 +252,20 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="mappingPattern">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="invert" type="xs:boolean" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
   <xs:complexType name="mapping">
+    <xs:all>
+      <xs:element name="match" type="xs:string" minOccurs="0"/>
+      <xs:element name="pattern" type="mappingPattern" minOccurs="0"/>
+    </xs:all>
     <xs:attribute name="controller" type="xs:string" use="required"/>
-    <xs:attribute name="pattern" type="xs:string" use="optional"/>
-    <xs:attribute name="match" type="xs:string" use="optional"/>
     <xs:attribute name="order" type="xs:int" use="optional"/>
   </xs:complexType>
 
