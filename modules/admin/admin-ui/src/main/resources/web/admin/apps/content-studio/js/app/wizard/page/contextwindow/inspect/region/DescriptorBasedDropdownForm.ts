@@ -1,6 +1,5 @@
 module app.wizard.page.contextwindow.inspect.region {
 
-    import PartDescriptorDropdown = api.content.page.region.PartDescriptorDropdown;
     import Dropdown = api.ui.selector.dropdown.Dropdown;
 
     export class DescriptorBasedDropdownForm extends api.ui.form.Form {
