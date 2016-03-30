@@ -206,7 +206,7 @@ module api.ui.dialog {
             return this.contentPanel;
         }
 
-        hasTabbable(): boolean {
+        private hasTabbable(): boolean {
             return !!this.tabbable && this.tabbable.length > 0;
         }
 
@@ -214,7 +214,7 @@ module api.ui.dialog {
             this.tabbable = this.getTabbableElements();
         }
 
-        getTabbedIndex(): number {
+        private getTabbedIndex(): number {
             let activeElement = document.activeElement;
             let tabbedIndex = 0;
             if (this.hasTabbable()) {
@@ -228,7 +228,7 @@ module api.ui.dialog {
             return tabbedIndex;
         }
 
-        focusNextTabbable() {
+        private focusNextTabbable() {
             if (this.hasTabbable()) {
                 let tabbedIndex = this.getTabbedIndex();
                 tabbedIndex = tabbedIndex + 1 >= this.tabbable.length ? 0 : tabbedIndex + 1;
@@ -236,7 +236,7 @@ module api.ui.dialog {
             }
         }
 
-        focusPreviousTabbable() {
+        private focusPreviousTabbable() {
             if (this.hasTabbable()) {
                 let tabbedIndex = this.getTabbedIndex();
                 tabbedIndex = tabbedIndex - 1 < 0 ? this.tabbable.length - 1 : tabbedIndex - 1;
@@ -244,7 +244,7 @@ module api.ui.dialog {
             }
         }
 
-        overwriteDefaultArrows(element: api.dom.Element) {
+        protected overwriteDefaultArrows(element: api.dom.Element) {
             element.onKeyDown((event) => {
 
 
