@@ -338,7 +338,7 @@ module api.util.htmlarea.dialog {
         }
 
         protected initializeActions() {
-            var submitAction = new api.ui.Action(this.imageElement ? "Update" : "Insert", "enter");
+            var submitAction = new api.ui.Action(this.imageElement ? "Update" : "Insert");
             this.setSubmitAction(submitAction);
             this.addAction(submitAction.onExecuted(() => {
                 if (this.validate()) {

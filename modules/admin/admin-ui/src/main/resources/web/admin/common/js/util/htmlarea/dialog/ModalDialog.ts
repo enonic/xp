@@ -5,16 +5,14 @@ module api.util.htmlarea.dialog {
     import Fieldset = api.ui.form.Fieldset;
     import FormItem = api.ui.form.FormItem;
     import FormItemBuilder = api.ui.form.FormItemBuilder;
-    import BaseDialog = api.ui.dialog.ModalDialog;
-
-    export class ModalDialog extends BaseDialog {
-        private fields:{ [id: string]: api.dom.FormItemEl } = {};
+    
+    export class ModalDialog extends api.ui.dialog.ModalDialog {
+        private fields: { [id: string]: api.dom.FormItemEl } = {};
         private validated = false;
-        private editor:HtmlAreaEditor;
-        private mainForm:Form;
-        private firstFocusField:api.dom.Element;
-        private keyDownListener:{(KeyboardEvent): void};
-        private submitAction:api.ui.Action;
+        private editor: HtmlAreaEditor;
+        private mainForm: Form;
+        private firstFocusField: api.dom.Element;
+        private submitAction: api.ui.Action;
 
         public static CLASS_NAME = "html-area-modal-dialog";
 
@@ -29,26 +27,13 @@ module api.util.htmlarea.dialog {
 
             this.layout();
             this.initializeActions();
-
-            this.keyDownListener = (e:KeyboardEvent) => this.onDialogKeyDown(e);
-
-            api.dom.Body.get().onKeyDown(this.keyDownListener);
         }
 
         setSubmitAction(action:api.ui.Action) {
             this.submitAction = action;
         }
-
-        private onDialogKeyDown(e:KeyboardEvent) {
-            if (api.ui.KeyHelper.isEscKey(e)) {
-                this.getCancelAction().execute();
-            }
-            if (api.ui.KeyHelper.isEnterKey(e)) {
-                this.submitAction.execute();
-            }
-        }
-
-        protected getEditor():HtmlAreaEditor {
+        
+        protected getEditor(): HtmlAreaEditor {
             return this.editor;
         }
 
@@ -142,7 +127,6 @@ module api.util.htmlarea.dialog {
                                  inputEl?:api.dom.FormItemEl):FormItem {
             var formItemEl = inputEl || new api.ui.text.TextInput(),
                 formItemBuilder = new FormItemBuilder(formItemEl).setLabel(label),
-                required:boolean = false,
                 inputWrapper = new api.dom.DivEl("input-wrapper"),
                 formItem;
 
@@ -158,7 +142,6 @@ module api.util.htmlarea.dialog {
 
             if (validator) {
                 formItemBuilder.setValidator(validator);
-                required = true;
             }
 
             formItem = formItemBuilder.build();
@@ -191,7 +174,6 @@ module api.util.htmlarea.dialog {
 
         close() {
             super.close();
-            api.dom.Body.get().unKeyDown(this.keyDownListener);
             this.editor.focus();
             this.remove();
         }

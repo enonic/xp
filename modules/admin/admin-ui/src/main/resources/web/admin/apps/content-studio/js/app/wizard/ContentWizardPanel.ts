@@ -1300,7 +1300,7 @@ module app.wizard {
 
         private initPublishButtonForMobile() {
 
-            var action: api.ui.Action = new api.ui.Action("Publish", "enter");
+            var action: api.ui.Action = new api.ui.Action("Publish");
             action.setIconClass("publish-action");
             action.onExecuted(() => {
                 this.publishAction.execute();
