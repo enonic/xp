@@ -55,8 +55,9 @@ module api.content.form.inputtype.time {
 
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly?: boolean) {
             var datePicker = <api.ui.time.DatePicker> occurrence;
-            if ((!unchangedOnly || !datePicker.isDirty()) && property.hasNonNullValue()) {
-                datePicker.setSelectedDate(property.getLocalDate().toDate());
+            if ((!unchangedOnly || !datePicker.isDirty())) {
+                var date = property.hasNonNullValue() ? property.getLocalDate().toDate() : null;
+                datePicker.setSelectedDate(date);
             }
         }
 
