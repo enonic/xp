@@ -33,18 +33,24 @@ module api.ui.button {
         }
 
         setTitle(title: string, forceAction: boolean = true) {
-            if (title) {
-                this.getEl().setAttribute('title', title);
-                if (forceAction) {
-                    wemjq(this.getEl().getHTMLElement()).trigger("mouseenter");
+            if (!this.isIOS()) {
+                if (title) {
+                    this.getEl().setAttribute('title', title);
+                    if (forceAction) {
+                        wemjq(this.getEl().getHTMLElement()).trigger("mouseenter");
+                    }
+                }
+                else {
+                    if (forceAction) {
+                        wemjq(this.getEl().getHTMLElement()).trigger("mouseleave");
+                    }
+                    this.getEl().removeAttribute('title');
                 }
             }
-            else {
-                if (forceAction) {
-                    wemjq(this.getEl().getHTMLElement()).trigger("mouseleave");
-                }
-                this.getEl().removeAttribute('title');
-            }
+        }
+
+        private isIOS(): boolean {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         }
     }
 }
