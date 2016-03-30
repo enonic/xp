@@ -20,7 +20,9 @@ public final class UserStoreJson
 
     public UserStoreJson( final UserStore userStore, final AuthDescriptorMode idProviderMode )
     {
-        this( userStore, idProviderMode, null, null );
+        super( userStore );
+        this.idProviderMode = idProviderMode;
+        this.permissions = null;
     }
 
     public UserStoreJson( final UserStore userStore, final AuthDescriptorMode idProviderMode,

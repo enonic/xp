@@ -4,13 +4,17 @@
       "authConfig": null,
       "description": null,
       "displayName": "Local LDAP",
-      "key": "local"
+      "idProviderMode": null,
+      "key": "local",
+      "permissions": null
     },
     {
       "authConfig": null,
       "description": null,
       "displayName": "File based user store",
-      "key": "file-store"
+      "idProviderMode": null,
+      "key": "file-store",
+      "permissions": null
     }
   ]
 }

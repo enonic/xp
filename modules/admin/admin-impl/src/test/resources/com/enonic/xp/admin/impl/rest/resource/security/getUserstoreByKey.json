@@ -2,6 +2,7 @@
   "authConfig": null,
   "description": null,
   "displayName": "Local LDAP",
+  "idProviderMode" : null,
   "key": "local",
   "permissions": [
     {
