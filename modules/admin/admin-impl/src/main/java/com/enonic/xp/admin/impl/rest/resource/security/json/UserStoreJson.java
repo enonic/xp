@@ -23,12 +23,6 @@ public final class UserStoreJson
         this( userStore, idProviderMode, null, null );
     }
 
-    public UserStoreJson( final UserStore userStore, final UserStoreAccessControlList userStoreAccessControlList,
-                          final Principals principals )
-    {
-        this( userStore, null, userStoreAccessControlList, principals );
-    }
-
     public UserStoreJson( final UserStore userStore, final AuthDescriptorMode idProviderMode,
                           final UserStoreAccessControlList userStoreAccessControlList, final Principals principals )
     {

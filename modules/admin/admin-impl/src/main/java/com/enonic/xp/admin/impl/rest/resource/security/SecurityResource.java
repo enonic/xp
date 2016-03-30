@@ -127,10 +127,10 @@ public final class SecurityResource
             throw JaxRsExceptions.notFound( String.format( "User Store [%s] not found", keyParam ) );
         }
 
+        final AuthDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
         final UserStoreAccessControlList userStorePermissions = securityService.getUserStorePermissions( userStoreKey );
-
         final Principals principals = securityService.getPrincipals( userStorePermissions.getAllPrincipals() );
-        return new UserStoreJson( userStore, userStorePermissions, principals );
+        return new UserStoreJson( userStore, idProviderMode, userStorePermissions, principals );
     }
 
     @GET
@@ -141,8 +141,9 @@ public final class SecurityResource
 
         final UserStoreAccessControlList userStorePermissions = securityService.getDefaultUserStorePermissions();
 
+        final AuthDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
         final Principals principals = securityService.getPrincipals( userStorePermissions.getAllPrincipals() );
-        return new UserStoreJson( userStore, userStorePermissions, principals );
+        return new UserStoreJson( userStore, idProviderMode, userStorePermissions, principals );
     }
 
     @POST
@@ -152,8 +153,9 @@ public final class SecurityResource
         final UserStore userStore = securityService.createUserStore( params.getCreateUserStoreParams() );
         final UserStoreAccessControlList permissions = securityService.getUserStorePermissions( userStore.getKey() );
 
+        final AuthDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
         final Principals principals = securityService.getPrincipals( permissions.getAllPrincipals() );
-        return new UserStoreJson( userStore, permissions, principals );
+        return new UserStoreJson( userStore, idProviderMode, permissions, principals );
     }
 
     @POST
@@ -163,8 +165,9 @@ public final class SecurityResource
         final UserStore userStore = securityService.updateUserStore( params.getUpdateUserStoreParams() );
         final UserStoreAccessControlList permissions = securityService.getUserStorePermissions( userStore.getKey() );
 
+        final AuthDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
         final Principals principals = securityService.getPrincipals( permissions.getAllPrincipals() );
-        return new UserStoreJson( userStore, permissions, principals );
+        return new UserStoreJson( userStore, idProviderMode, permissions, principals );
     }
 
     @POST

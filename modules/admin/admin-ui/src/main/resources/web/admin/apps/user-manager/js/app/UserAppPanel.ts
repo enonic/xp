@@ -44,7 +44,7 @@ module app {
                                     build()
                             ]).fire();
                         });
-                } else if (id && id.startsWith("guard:")) {
+                } else if (id && id.indexOf("guard:") == 0) {
                     var pathGuardKey = api.security.PathGuardKey.fromString(id.substr("guard:".length));
                     new api.security.GetPathGuardByKeyRequest(pathGuardKey).sendAndParse().
                         done((pathGuard: api.security.PathGuard) => {
@@ -194,10 +194,8 @@ module app {
                 userStoreRequest = userStoreDeferred.promise;
                 switch (userItem.getType()) {
                 case UserTreeGridItemType.USERS:
-                    var idProviderMode = userItem.getUserStore().getIdProviderMode();
-                    if (api.security.IdProviderMode.EXTERNAL == idProviderMode || api.security.IdProviderMode.MIXED == idProviderMode) {
-                        api.notify.showError("Cannot create a user - The ID Provider is in " +
-                                             api.security.IdProviderMode[idProviderMode] + " mode", false);
+                    if (!this.areUsersEditable(userItem.getUserStore())) {
+                        api.notify.showError("The ID Provider selected for this user store does not allow to create users.");
                         return;
                     }
                     principalType = PrincipalType.USER;
@@ -205,10 +203,8 @@ module app {
                     tabName = "User";
                     break;
                 case UserTreeGridItemType.GROUPS:
-                    var idProviderMode = userItem.getUserStore().getIdProviderMode();
-                    if (api.security.IdProviderMode.EXTERNAL == idProviderMode) {
-                        api.notify.showError("Cannot create a group - The ID Provider is in " +
-                                             api.security.IdProviderMode[idProviderMode] + " mode", false);
+                    if (!this.areGroupsEditable(userItem.getUserStore())) {
+                        api.notify.showError("The ID Provider selected for this user store does not allow to create groups.");
                         return;
                     }
                     principalType = PrincipalType.GROUP;
@@ -309,22 +305,9 @@ module app {
                 } else {
                     this.mask.show();
                     var tabId = this.getTabIdForUserItem(userItem);
-
+                    console.log("handleEdit");
                     if (userItem.getType() == UserTreeGridItemType.PRINCIPAL) {
-                        new app.wizard.PrincipalWizardPanelFactory().
-                            setAppBarTabId(tabId).
-                            setPrincipalType(userItem.getPrincipal().getType()).
-                            setPrincipalPath(userItem.getPrincipal().getKey().toPath(true)).
-                            setPrincipalToEdit(userItem.getPrincipal().getKey()).
-                            createForEdit().then((wizard: app.wizard.PrincipalWizardPanel) => {
-
-                                this.handleWizardUpdated(wizard, tabMenuItem, closeViewPanelMenuItem);
-
-                            }).catch((reason: any) => {
-                                api.DefaultErrorHandler.handle(reason);
-                            }).finally(() => {
-                                this.mask.hide();
-                            }).done();
+                        this.handlePrincipalEdit(userItem.getPrincipal(), tabId, tabMenuItem, closeViewPanelMenuItem);
                     } else if (userItem.getType() == UserTreeGridItemType.PATH_GUARD) {
                         new app.wizard.PathGuardWizardPanelFactory().
                             setAppBarTabId(tabId).
@@ -355,6 +338,60 @@ module app {
                     }
                 }
             });
+        }
+
+        private handlePrincipalEdit(principal: Principal, tabId: AppBarTabId, tabMenuItem: AppBarTabMenuItem,
+                                    closeViewPanelMenuItem: AppBarTabMenuItem) {
+            var principalType = principal.getType();
+            if (PrincipalType.USER == principalType || PrincipalType.GROUP == principalType) {
+                var userStoreKey = principal.getKey().getUserStore();
+                new GetUserStoreByKeyRequest(userStoreKey).
+                    sendAndParse().then((userStore: UserStore) => {
+                        if (PrincipalType.USER == principalType && !this.areUsersEditable(userStore)) {
+                            api.notify.showError("The ID Provider selected for this user store does not allow to edit users.");
+                            return;
+                        } else if (PrincipalType.GROUP == principalType && !this.areGroupsEditable(userStore)) {
+                            api.notify.showError("The ID Provider selected for this user store does not allow to edit groups.");
+                            return;
+                        } else {
+                            this.createPrincipalWizardPanelForEdit(principal, tabId, tabMenuItem, closeViewPanelMenuItem);
+                        }
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    }).finally(() => {
+                        this.mask.hide();
+                    }).done();
+            } else {
+                this.createPrincipalWizardPanelForEdit(principal, tabId, tabMenuItem, closeViewPanelMenuItem);
+            }
+        }
+
+        private createPrincipalWizardPanelForEdit(principal: Principal, tabId: AppBarTabId, tabMenuItem: AppBarTabMenuItem,
+                                                  closeViewPanelMenuItem: AppBarTabMenuItem) {
+            new app.wizard.PrincipalWizardPanelFactory().
+                setAppBarTabId(tabId).
+                setPrincipalType(principal.getType()).
+                setPrincipalPath(principal.getKey().toPath(true)).
+                setPrincipalToEdit(principal.getKey()).
+                createForEdit().then((wizard: app.wizard.PrincipalWizardPanel) => {
+
+                    this.handleWizardUpdated(wizard, tabMenuItem, closeViewPanelMenuItem);
+
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).finally(() => {
+                    this.mask.hide();
+                }).done();
+        }
+
+        private areUsersEditable(userStore: UserStore): boolean {
+            var idProviderMode = userStore.getIdProviderMode();
+            return api.security.IdProviderMode.EXTERNAL != idProviderMode && api.security.IdProviderMode.MIXED != idProviderMode;
+        }
+
+        private areGroupsEditable(userStore: UserStore): boolean {
+            var idProviderMode = userStore.getIdProviderMode();
+            return api.security.IdProviderMode.EXTERNAL != idProviderMode;
         }
 
         private handlePrincipalNamedEvent(event: api.event.Event) {
