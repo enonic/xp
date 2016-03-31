@@ -1,107 +1,320 @@
 package com.enonic.xp.impl.macro;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.macro.Macro;
 import com.enonic.xp.macro.MacroKey;
 
-public class MacroParser
+/**
+ * Parse macro strings.
+ * Format:
+ * <ul>
+ * <li>[macroname attrib1="text with \"escaped quotes\"." attrib2="value2"] body [/macroname]
+ * <li>[macroname] body [/macroname]
+ * <li>[macroname/]
+ * </ul>
+ */
+public final class MacroParser
 {
+    private enum Token
+    {
+        LEFT_BRACKET,
+        NAME,
+        QUOTE,
+        EQUALS,
+        SLASH,
+        RIGHT_BRACKET,
+    }
 
-    private final static Pattern VALID_MACRO_PATTERN = Pattern.compile( "^\\[\\w+(\\s(\\w*=.*))*\\s?(/|\\].*\\[/\\w*)\\]$" );
-
-    private final static Pattern MACRO_WITHOUT_BODY_PATTERN = Pattern.compile( "^\\[(\\w+)((\\s\\w*=.*)*)\\s?/\\]$" );
-
-    private final static Pattern MACRO_WITH_BODY_PATTERN = Pattern.compile( "^\\[(\\w+)((\\s\\w*=.*)*)\\s?\\](.*)\\[/\\w*\\]$" );
+    private static final char EOF = (char) -1;
 
     private final ApplicationKey applicationKey;
+
+    private String input;
+
+    private int p;
+
+    private char c;
+
+    private String macroName;
+
+    private final Map<String, String> attributes;
+
+    private String body;
+
+    private boolean debugMode = false;
 
     public MacroParser( final ApplicationKey applicationKey )
     {
         this.applicationKey = applicationKey;
+        this.attributes = new HashMap<>();
     }
 
     public Macro parse( final String text )
     {
+        macroName = "";
+        attributes.clear();
+        body = "";
 
-        if ( !isValidMacro( text ) )
+        input = text;
+        p = 0;
+        c = input.charAt( p );
+
+        try
         {
-            return null;
+            doParse();
         }
-
-        if ( isMacroWithoutBody( text ) )
+        catch ( ParseException e )
         {
-            return parseMacroWithoutBody( text );
-        }
-
-        return parseMacroWithBody( text );
-    }
-
-    private Macro parseMacroWithBody( final String text )
-    {
-        final Matcher matcher = MACRO_WITH_BODY_PATTERN.matcher( text );
-
-        if ( !matcher.find() )
-        {
-            return null;
-        }
-
-        final String body = matcher.group( 4 );
-
-        return populateCommonData( matcher ).body( body ).build();
-    }
-
-    private Macro parseMacroWithoutBody( final String text )
-    {
-        final Matcher matcher = MACRO_WITHOUT_BODY_PATTERN.matcher( text );
-
-        if ( !matcher.find() )
-        {
-            return null;
-        }
-
-        return populateCommonData( matcher ).build();
-    }
-
-    private Macro.Builder populateCommonData( final Matcher matcher )
-    {
-        final String macroName = matcher.group( 1 );
-        final String attributesString = matcher.group( 2 );
-        final Iterable<String> attributesList =
-            Splitter.on( CharMatcher.WHITESPACE ).trimResults().omitEmptyStrings().split( attributesString );
-
-        final Macro.Builder builder = Macro.create();
-        builder.key( MacroKey.from( this.applicationKey, macroName ) );
-
-        return populateAttributes( builder, attributesList );
-    }
-
-    private Macro.Builder populateAttributes( final Macro.Builder builder, final Iterable<String> attributesList )
-    {
-        for ( final String s : attributesList )
-        {
-            final String[] attrs = s.split( "=" );
-            if ( attrs.length == 2 )
+            if ( debugMode )
             {
-                builder.param( attrs[0], attrs[1] );
+                throw e;
+            }
+            return null;
+        }
+
+        final Macro.Builder macro = Macro.create().key( MacroKey.from( applicationKey, macroName ) );
+        for ( Map.Entry<String, String> attribute : attributes.entrySet() )
+        {
+            macro.param( attribute.getKey(), attribute.getValue() );
+        }
+        return macro.body( body ).build();
+    }
+
+    private void doParse()
+    {
+        ws();
+
+        match( '[' );
+        parseMacroName();
+        parseAttributes();
+        parseEndTag();
+    }
+
+    private void parseMacroName()
+    {
+        ws();
+        if ( lookAhead() != Token.NAME )
+        {
+            throw new ParseException( "Expected macro name" );
+        }
+        macroName = parseName();
+    }
+
+    private void parseAttributes()
+    {
+        while ( lookAhead() == Token.NAME )
+        {
+            match( ' ' );
+            parseAttribute();
+        }
+    }
+
+    private void parseAttribute()
+    {
+        ws();
+        final String name = parseName();
+        ws();
+        match( '=' );
+        ws();
+        match( '"' );
+        final String value = parseAttributeValue();
+        match( '"' );
+        this.attributes.put( name, value );
+    }
+
+    private String parseName()
+    {
+        final StringBuilder name = new StringBuilder();
+        while ( isNameChar( c ) )
+        {
+            name.append( c );
+            consume();
+        }
+        return name.toString();
+    }
+
+    private String parseAttributeValue()
+    {
+        final StringBuilder value = new StringBuilder();
+        while ( c != '"' )
+        {
+            if ( c == '\\' )
+            {
+                consume();
+                if ( c == '\\' )
+                {
+                    value.append( '\\' ); // escape backslash \\
+                    consume();
+                }
+                else if ( c == '"' )
+                {
+                    value.append( '"' ); // escape quote \"
+                    consume();
+                }
+            }
+            else
+            {
+                value.append( c );
+                consume();
             }
         }
-
-        return builder;
+        return value.toString();
     }
 
-    public static boolean isValidMacro( final String text )
+    private void parseEndTag()
     {
-        return VALID_MACRO_PATTERN.matcher( text ).matches();
+        final Token next = lookAhead();
+        ws();
+        if ( next == Token.SLASH )
+        {
+            parseWithoutBody();
+            return;
+        }
+        else if ( next == Token.RIGHT_BRACKET )
+        {
+            parseWithBody();
+            return;
+        }
+
+        throw new ParseException( "Expected closing of macro tag at position " + p );
     }
 
-    private boolean isMacroWithoutBody( final String text )
+    private void parseWithoutBody()
     {
-        return MACRO_WITHOUT_BODY_PATTERN.matcher( text ).matches();
+        match( '/' );
+        match( ']' );
     }
+
+    private void parseWithBody()
+    {
+        match( ']' );
+        parseBody();
+        match( '[' );
+        match( '/' );
+        match( macroName );
+        match( ']' );
+    }
+
+    private void parseBody()
+    {
+        final String closingTag = "[/" + macroName + "]";
+        final StringBuilder bodyStr = new StringBuilder();
+        while ( c != EOF )
+        {
+            if ( c == '[' )
+            {
+                final String lookAheadText = input.substring( p, Math.min( p + closingTag.length(), input.length() ) );
+                if ( closingTag.equals( lookAheadText ) )
+                {
+                    break;
+                }
+            }
+            bodyStr.append( c );
+            consume();
+        }
+        body = bodyStr.toString();
+    }
+
+    private Token lookAhead()
+    {
+        final int p = this.p;
+        final char c = this.c;
+        final Token t = nextToken();
+        this.p = p;
+        this.c = c;
+        return t;
+    }
+
+    private Token nextToken()
+    {
+        while ( c != EOF )
+        {
+            if ( Character.isWhitespace( c ) )
+            {
+                ws();
+                continue;
+            }
+            switch ( c )
+            {
+                case '"':
+                    consume();
+                    return Token.QUOTE;
+                case '[':
+                    consume();
+                    return Token.LEFT_BRACKET;
+                case ']':
+                    consume();
+                    return Token.RIGHT_BRACKET;
+                case '=':
+                    consume();
+                    return Token.EQUALS;
+                case '/':
+                    consume();
+                    return Token.SLASH;
+                default:
+                    if ( isNameChar( c ) )
+                    {
+                        return Token.NAME;
+                    }
+                    throw new ParseException( "Invalid character '" + c + "' at position " + p );
+            }
+        }
+        return null;
+    }
+
+    private void consume()
+    {
+        p++;
+        c = p >= input.length() ? EOF : input.charAt( p );
+    }
+
+    private void ws()
+    {
+        while ( Character.isWhitespace( c ) )
+        {
+            consume();
+        }
+    }
+
+    private void match( final char x )
+    {
+        if ( c == x )
+        {
+            consume();
+        }
+        else
+        {
+            throw new ParseException( "Expected '" + x + "', found '" + c + "' at position " + p );
+        }
+    }
+
+    private void match( final String text )
+    {
+        for ( char x : text.toCharArray() )
+        {
+            if ( c == x )
+            {
+                consume();
+            }
+            else
+            {
+                throw new ParseException( "Expected '" + text + "', found '" + c + "' at position " + p );
+            }
+        }
+    }
+
+    private boolean isNameChar( final char c )
+    {
+        return Character.isLetterOrDigit( c ) || c == '_';
+    }
+
+    MacroParser debugMode()
+    {
+        this.debugMode = true;
+        return this;
+    }
+
 }
