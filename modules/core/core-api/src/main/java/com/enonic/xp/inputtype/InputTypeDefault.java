@@ -75,7 +75,7 @@ public final class InputTypeDefault
         return findProperties( name, property -> Objects.equals( value, property.getValue() ) ).count() > 0;
     }
 
-    public boolean hasPropertyAttributeValue( final String name, final String attr, final String attrValue )
+    public boolean hasAttributeValue( final String name, final String attr, final String attrValue )
     {
         return findProperties( name, property -> Objects.equals( attrValue, property.getAttribute( attr ) ) ).count() > 0;
     }
