@@ -1,5 +1,7 @@
 package com.enonic.xp.inputtype;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
@@ -22,13 +24,11 @@ final class DoubleType
     }
 
     @Override
-    public Value createDefaultValue( final InputTypeConfig defaultConfig )
+    public Value createDefaultValue( final InputTypeDefault defaultConfig )
     {
-        final InputTypeProperty defaultProperty = defaultConfig.getProperty( "default" );
-        if ( defaultProperty != null )
+        final String defaultValue = defaultConfig.getValue();
+        if ( StringUtils.isNotEmpty( defaultValue ) )
         {
-            final String defaultValue = defaultProperty.getValue();
-
             return ValueFactory.newDouble( Double.valueOf( defaultValue ) );
         }
         return super.createDefaultValue( defaultConfig );

@@ -40,8 +40,8 @@ public class RadioButtonTypeTest
     @Test
     public void testCreateDefaultValue()
     {
-        final InputTypeConfig config =
-            InputTypeConfig.create().
+        final InputTypeDefault config =
+            InputTypeDefault.create().
                 property( InputTypeProperty.create( "default", "testOption" ).
                     build() ).
                 build();

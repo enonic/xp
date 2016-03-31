@@ -9,6 +9,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
@@ -22,7 +23,7 @@ public final class Input
 
     private final String label;
 
-    private final InputTypeConfig defaultValue;
+    private final InputTypeDefault defaultValue;
 
     private final boolean immutable;
 
@@ -88,7 +89,7 @@ public final class Input
         return label;
     }
 
-    public InputTypeConfig getDefaultValue()
+    public InputTypeDefault getDefaultValue()
     {
         return defaultValue;
     }
@@ -201,7 +202,7 @@ public final class Input
 
         private String label;
 
-        private InputTypeConfig defaultValue;
+        private InputTypeDefault defaultValue;
 
         private boolean immutable = false;
 
@@ -261,7 +262,7 @@ public final class Input
             return this;
         }
 
-        public Builder defaultValue( InputTypeConfig value )
+        public Builder defaultValue( InputTypeDefault value )
         {
             defaultValue = value;
             return this;

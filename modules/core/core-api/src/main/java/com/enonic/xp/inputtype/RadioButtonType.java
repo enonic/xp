@@ -1,5 +1,7 @@
 package com.enonic.xp.inputtype;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
@@ -22,12 +24,12 @@ final class RadioButtonType
     }
 
     @Override
-    public Value createDefaultValue( final InputTypeConfig defaultConfig )
+    public Value createDefaultValue( final InputTypeDefault defaultConfig )
     {
-        final InputTypeProperty defaultProperty = defaultConfig.getProperty( "default" );
-        if ( defaultProperty != null )
+        final String defaultValue = defaultConfig.getValue();
+        if ( StringUtils.isNotEmpty( defaultValue ) )
         {
-            return ValueFactory.newString( defaultProperty.getValue() );
+            return ValueFactory.newString( defaultValue );
         }
         return super.createDefaultValue( defaultConfig );
     }
