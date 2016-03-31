@@ -31,7 +31,7 @@ final class CheckBoxType
     @Override
     public Value createDefaultValue( final InputTypeDefault defaultConfig )
     {
-        final String defaultValue = defaultConfig.getValue();
+        final String defaultValue = defaultConfig.getRootValue();
         if ( StringUtils.isNotEmpty( defaultValue ) )
         {
             return VALID_VALUE.equals( defaultValue ) ? ValueFactory.newBoolean(true) :

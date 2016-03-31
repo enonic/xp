@@ -26,7 +26,7 @@ final class TextAreaType
     @Override
     public Value createDefaultValue( final InputTypeDefault defaultConfig )
     {
-        final String defaultValue = defaultConfig.getValue();
+        final String defaultValue = defaultConfig.getRootValue();
         if ( StringUtils.isNotEmpty( defaultValue ) )
         {
             return ValueFactory.newString( defaultValue );

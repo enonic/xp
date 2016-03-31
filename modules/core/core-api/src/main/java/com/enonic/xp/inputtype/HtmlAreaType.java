@@ -16,12 +16,12 @@ final class HtmlAreaType
     }
 
     @Override
-    public Value createDefaultValue( final InputTypeConfig defaultConfig )
+    public Value createDefaultValue( final InputTypeDefault defaultConfig )
     {
-        final InputTypeProperty defaultProperty = defaultConfig.getProperty( "default" );
-        if ( defaultProperty != null )
+        final String rootValue = defaultConfig.getRootValue();
+        if ( rootValue != null )
         {
-            return ValueFactory.newString( defaultProperty.getValue() );
+            return ValueFactory.newString( rootValue );
         }
         return super.createDefaultValue( defaultConfig );
     }

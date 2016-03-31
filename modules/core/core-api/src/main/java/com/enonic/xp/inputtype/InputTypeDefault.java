@@ -43,24 +43,24 @@ public final class InputTypeDefault
         return getProperties( name ).stream().filter( filter );
     }
 
-    public String getValue() {
-        return this.getPropertyValue("default");
+    public String getRootValue() {
+        return this.getValue("default");
     }
 
-    public String getPropertyValue( final String name )
+    public String getValue( final String name )
     {
         final InputTypeProperty property = getProperty( name );
         return property != null ? property.getValue() : null;
     }
 
-    public <T> T getPropertyValue( final String name, final Class<T> type )
+    public <T> T getValue( final String name, final Class<T> type )
     {
-        return getPropertyValue( name, type, null );
+        return getValue( name, type, null );
     }
 
-    public <T> T getPropertyValue( final String name, final Class<T> type, final T defValue )
+    public <T> T getValue( final String name, final Class<T> type, final T defValue )
     {
-        final String value = getPropertyValue( name );
+        final String value = getValue( name );
         if ( value == null )
         {
             return defValue;

@@ -33,10 +33,10 @@ final class TextLineType
     @Override
     public Value createDefaultValue( final InputTypeDefault defaultConfig )
     {
-        final String defaultValue = defaultConfig.getValue();
+        final String defaultValue = defaultConfig.getRootValue();
         if ( StringUtils.isNotEmpty( defaultValue ) )
         {
-            return ValueFactory.newString( defaultConfig.getValue() );
+            return ValueFactory.newString( defaultValue );
         }
         return super.createDefaultValue( defaultConfig );
     }
