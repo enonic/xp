@@ -14,8 +14,6 @@ module api.content.form.inputtype.contentselector {
 
         private comboBox: api.ui.security.UserStoreComboBox;
 
-        private comboboxLoaded = false;
-
         private userStoreKey: string;
 
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext) {
@@ -42,32 +40,32 @@ module api.content.form.inputtype.contentselector {
 
         private createComboBox(input: api.form.Input) {
             this.comboBox = new api.ui.security.UserStoreComboBox(input.getOccurrences().getMaximum());
+
+            this.comboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<api.security.UserStore>) => {
+                var value = ValueTypes.STRING.newValue(selectedOption.getOption().displayValue.getKey().getId())
+                if (this.comboBox.countSelected() == 1) { // overwrite initial value
+                    this.getPropertyArray().set(0, value);
+                }
+                else if (!this.getPropertyArray().containsValue(value)) {
+                    this.getPropertyArray().add(value);
+                }
+                this.validate(false);
+            });
+
+            this.comboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<api.security.UserStore>) => {
+                this.getPropertyArray().remove(removed.getIndex());
+                this.validate(false);
+            });
+
             var appComboboxLoadingListener = () => {
                 this.comboBox.unLoaded(appComboboxLoadingListener);
-                this.comboboxLoaded = true;
                 this.selectUserStore();
-
-                this.comboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<api.security.UserStore>) => {
-                    var value = ValueTypes.STRING.newValue(selectedOption.getOption().displayValue.getKey().getId())
-                    if (this.comboBox.countSelected() == 1) { // overwrite initial value
-                        this.getPropertyArray().set(0, value);
-                    }
-                    else if (!this.getPropertyArray().containsValue(value)) {
-                        this.getPropertyArray().add(value);
-                    }
-                    this.validate(false);
-                });
-
-                this.comboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<api.security.UserStore>) => {
-                    this.getPropertyArray().remove(removed.getIndex());
-                    this.validate(false);
-                });
-
                 this.appendChild(this.comboBox);
                 this.setLayoutInProgress(false);
                 this.validate(false);
             };
             this.comboBox.onLoaded(appComboboxLoadingListener);
+
             this.comboBox.getLoader().load();
         }
 

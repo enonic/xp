@@ -76,6 +76,10 @@ module app.wizard {
             return new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
         }
 
+        public validate(silent?: boolean): api.form.ValidationRecording {
+            return this.formView.validate(silent);
+        }
+
         getAuthConfig(): api.security.AuthConfig {
             var authConfigPropertySet = this.propertySet.getPropertySet("authConfig");
             if (authConfigPropertySet) {
