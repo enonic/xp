@@ -38,6 +38,22 @@ public class CheckBoxTypeTest
     }
 
     @Test
+    public void testCreateDefaultValue()
+    {
+        final InputTypeDefault config =
+            InputTypeDefault.create().
+                property( InputTypeProperty.create( "default", "checked" ).
+                    build() ).
+                build();
+
+        final Value value = this.type.createDefaultValue( config );
+
+        assertNotNull( value );
+        assertEquals( "true", value.toString() );
+
+    }
+
+    @Test
     public void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();

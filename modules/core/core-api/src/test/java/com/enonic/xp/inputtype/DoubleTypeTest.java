@@ -38,6 +38,20 @@ public class DoubleTypeTest
     }
 
     @Test
+    public void testCreateDefaultValue()
+    {
+        final InputTypeDefault config = InputTypeDefault.create().
+            property( InputTypeProperty.create( "default", "1.3" ).
+                build() ).
+            build();
+
+        final Value value = this.type.createDefaultValue( config );
+
+        assertNotNull( value );
+        assertEquals( 1.3D, value.asDouble().doubleValue(), Double.MIN_NORMAL );
+    }
+
+    @Test
     public void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();

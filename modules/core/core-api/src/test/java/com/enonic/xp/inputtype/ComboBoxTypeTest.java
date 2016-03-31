@@ -38,6 +38,22 @@ public class ComboBoxTypeTest
     }
 
     @Test
+    public void testCreateDefaultValue()
+    {
+        final InputTypeDefault config =
+            InputTypeDefault.create().
+                property( InputTypeProperty.create( "default", "testOption" ).
+                    build() ).
+                build();
+
+        final Value value = this.type.createDefaultValue( config );
+
+        assertNotNull( value );
+        assertEquals( "testOption", value.toString() );
+
+    }
+
+    @Test
     public void testValidate()
     {
         final InputTypeConfig config = newValidConfig();

@@ -31,6 +31,12 @@ public abstract class InputTypeBase
 
     public abstract Value createValue( final String value, final InputTypeConfig config );
 
+    @Override
+    public Value createDefaultValue( final InputTypeDefault defaultConfig )
+    {
+        return null;
+    }
+
     protected final void validateType( final Property property, final ValueType expectedType )
     {
         final ValueType actualType = property.getType();
