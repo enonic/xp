@@ -6,7 +6,8 @@ var assert = require('/lib/xp/assert');
 var group = authLib.createGroup({
     userStore: 'myUserStore',
     name: 'groupName',
-    displayName: 'Group display name'
+    displayName: 'Group display name',
+    description: "description"
 });
 // END
 
@@ -16,7 +17,8 @@ var expected = {
     "type": "group",
     "key": "group:system:group-a",
     "displayName": "Group A",
-    "modifiedTime": "1970-01-01T00:00:00Z"
+    "modifiedTime": "1970-01-01T00:00:00Z",
+    "description": "description"
 };
 // END
 

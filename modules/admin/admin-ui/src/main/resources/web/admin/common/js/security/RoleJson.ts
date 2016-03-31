@@ -4,7 +4,5 @@ module api.security {
 
         members?: string[];
 
-        description: string;
-
     }
 }
