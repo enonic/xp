@@ -44,7 +44,7 @@
   border-bottom: 1px solid #cccccc;
 }
 .mce-toolbar-grp .mce-flow-layout-item {
-  margin: 2px 0 0 0;
+  margin: 0;
 }
 .mce-toolbar {
   display: flex;
@@ -81,17 +81,17 @@
 .mce-toolbar .mce-btn-group .mce-btn .mce-ico,
 .mce-toolbar .mce-btn-group .mce-menubtn .mce-ico {
   width: 22px;
-  height: 22px;
 }
 .mce-toolbar .mce-btn-group .mce-btn button,
 .mce-toolbar .mce-btn-group .mce-menubtn button,
 .mce-toolbar .mce-btn-group .mce-btn span,
 .mce-toolbar .mce-btn-group .mce-menubtn span {
-  line-height: 30px;
+  line-height: 32px;
 }
 .mce-toolbar .mce-btn-group .mce-btn button,
 .mce-toolbar .mce-btn-group .mce-menubtn button {
   padding: 2px 8px;
+  height: 34px;
 }
 .mce-toolbar .mce-btn-group .mce-btn .mce-caret,
 .mce-toolbar .mce-btn-group .mce-menubtn .mce-caret {
