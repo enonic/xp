@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import java.util.Optional;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
@@ -68,15 +67,8 @@ public class GetContentVersionsForViewResultJson
 
     private ActiveContentVersionEntry getActiveContentVersion( final GetActiveContentVersionsResult activeVersions )
     {
-        Optional<ActiveContentVersionEntry>  activeContentVersionEntry = activeVersions.getActiveContentVersions().stream().filter(
-            activeVersion -> ContentConstants.BRANCH_DRAFT.equals( activeVersion.getBranch() ) ).findFirst();
-
-        if ( activeContentVersionEntry.isPresent() )
-        {
-            return activeContentVersionEntry.get();
-        }
-
-       return  null;
+        return activeVersions.getActiveContentVersions().stream().filter(
+            activeVersion -> ContentConstants.BRANCH_DRAFT.equals( activeVersion.getBranch() ) ).findFirst().orElse( null );
     }
 
     private ContentVersions filterContentVersions( final FindContentVersionsResult allVersions )
