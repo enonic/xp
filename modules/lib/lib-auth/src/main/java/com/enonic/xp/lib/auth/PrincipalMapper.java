@@ -29,6 +29,10 @@ public final class PrincipalMapper
             gen.value( "login", user.getLogin() );
             gen.value( "userStore", value.getKey() != null ? value.getKey().getUserStore() : null );
         }
+        else
+        {
+            gen.value( "description", value.getDescription() );
+        }
     }
 
     @Override

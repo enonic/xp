@@ -218,6 +218,7 @@ exports.modifyUser = function (params) {
  * @param {string} params.userStore Key for user store where group has to be created.
  * @param {string} params.name Group name.
  * @param {string} params.displayName Group display name.
+ * @param {string} params.description as principal description .
  */
 exports.createGroup = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.CreateGroupHandler');
@@ -225,6 +226,7 @@ exports.createGroup = function (params) {
     bean.userStore = required(params, 'userStore');
     bean.name = required(params, 'name');
     bean.displayName = nullOrValue(params.displayName);
+    bean.description = nullOrValue(params.description);
 
     return __.toNativeObject(bean.createGroup());
 };
