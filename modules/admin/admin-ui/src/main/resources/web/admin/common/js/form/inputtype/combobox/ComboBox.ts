@@ -35,6 +35,10 @@ module api.form.inputtype.combobox {
             this.comboBoxOptions = options;
         }
 
+        getComboBox(): api.ui.selector.combobox.ComboBox<string> {
+            return this.comboBox;
+        }
+
         availableSizeChanged() {
             // console.log("ComboBox.availableSizeChanged(" + this.getEl().getWidth() + "x" + this.getEl().getWidth() + ")");
         }
