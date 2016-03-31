@@ -65,6 +65,7 @@ module api.content.form.inputtype.contentselector {
 
                 this.appendChild(this.comboBox);
                 this.setLayoutInProgress(false);
+                this.validate(false);
             };
             this.comboBox.onLoaded(appComboboxLoadingListener);
             this.comboBox.getLoader().load();
