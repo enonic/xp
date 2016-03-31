@@ -44,7 +44,18 @@ module app {
                                     build()
                             ]).fire();
                         });
-                } else {
+                } else if (id && this.isValidUserStoreKey(id)) {
+                    new GetUserStoreByKeyRequest(api.security.UserStoreKey.fromString(id)).sendAndParse().
+                    done((userStore: UserStore) => {
+                        new app.browse.EditPrincipalEvent([
+                            new app.browse.UserTreeGridItemBuilder().
+                            setUserStore(userStore).
+                            setType(UserTreeGridItemType.USER_STORE).
+                            build()
+                        ]).fire();
+                    });
+                }
+                else {
                     new api.app.ShowBrowsePanelEvent().fire();
                 }
                 break;
@@ -63,6 +74,15 @@ module app {
         private isValidPrincipalKey(value: string): boolean {
             try {
                 api.security.PrincipalKey.fromString(value);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        private isValidUserStoreKey(value: string): boolean {
+            try {
+                api.security.UserStoreKey.fromString(value);
                 return true;
             } catch (e) {
                 return false;
