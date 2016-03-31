@@ -48,7 +48,7 @@ public class XmlInputTypeConfigMapperTest
     private InputTypeConfig build( final String suffix, final InputTypeName inputTypeName )
     {
         final XmlInputTypeConfigMapper mapper = new XmlInputTypeConfigMapper( APP_KEY, inputTypeName );
-        return mapper.build( parse( suffix ), false );
+        return mapper.build( parse( suffix ) );
     }
 
     @Test

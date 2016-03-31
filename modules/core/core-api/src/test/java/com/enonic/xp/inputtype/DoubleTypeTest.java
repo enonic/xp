@@ -40,7 +40,7 @@ public class DoubleTypeTest
     @Test
     public void testCreateDefaultValue()
     {
-        final InputTypeConfig config = InputTypeConfig.create().
+        final InputTypeDefault config = InputTypeDefault.create().
             property( InputTypeProperty.create( "default", "1.3" ).
                 build() ).
             build();

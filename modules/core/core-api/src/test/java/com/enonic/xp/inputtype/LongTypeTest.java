@@ -40,7 +40,7 @@ public class LongTypeTest
     @Test
     public void testCreateDefaultValue()
     {
-        final InputTypeConfig config = InputTypeConfig.create().
+        final InputTypeDefault config = InputTypeDefault.create().
             property( InputTypeProperty.create( "default", "2" ).
                 build() ).
             build();

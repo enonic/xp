@@ -32,7 +32,7 @@ public abstract class InputTypeBase
     public abstract Value createValue( final String value, final InputTypeConfig config );
 
     @Override
-    public Value createDefaultValue( final InputTypeConfig defaultConfig )
+    public Value createDefaultValue( final InputTypeDefault defaultConfig )
     {
         return null;
     }
