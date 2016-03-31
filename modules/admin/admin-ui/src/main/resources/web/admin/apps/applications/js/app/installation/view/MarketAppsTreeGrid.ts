@@ -72,7 +72,8 @@ module app.installation.view {
                     disableMultipleSelection(true).
                     prependClasses("market-app-tree-grid").
                     setSelectedCellCssClass("selected-sort-row").
-                    setQuietErrorHandling(true)
+                    setQuietErrorHandling(true).
+                    setAutoLoad(false)
             );
 
             this.subsribeAndManageInstallClick();
