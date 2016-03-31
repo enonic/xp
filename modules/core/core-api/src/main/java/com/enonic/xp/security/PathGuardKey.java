@@ -12,6 +12,8 @@ public final class PathGuardKey
 {
     private final static PathGuardKey ADMIN_LOGIN = PathGuardKey.from( "admin" );
 
+    private final static PathGuardKey ADMIN_REST = PathGuardKey.from( "admin-rest" );
+
     private final String id;
 
     public PathGuardKey( final String id )
@@ -55,5 +57,10 @@ public final class PathGuardKey
     public static PathGuardKey admin()
     {
         return ADMIN_LOGIN;
+    }
+
+    public static PathGuardKey adminRest()
+    {
+        return ADMIN_REST;
     }
 }

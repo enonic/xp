@@ -222,14 +222,22 @@ final class SecurityInitializer
 
     private void createPathGuards()
     {
-        final CreatePathGuardParams createPathGuardParams = CreatePathGuardParams.create().
+        final CreatePathGuardParams adminCreatePathGuardParams = CreatePathGuardParams.create().
             key( PathGuardKey.admin() ).
             displayName( "Admin guard" ).
             description( "Admin guard" ).
             userStoreKey( UserStoreKey.system() ).
             addPaths( "/admin" ).
             build();
-        addPathGuard( createPathGuardParams );
+        addPathGuard( adminCreatePathGuardParams );
+
+        final CreatePathGuardParams adminRestCreatePathGuardParams = CreatePathGuardParams.create().
+            key( PathGuardKey.adminRest() ).
+            displayName( "Admin rest guard" ).
+            description( "Admin rest guard" ).
+            addPaths( "/admin/rest" ).
+            build();
+        addPathGuard( adminRestCreatePathGuardParams );
     }
 
     private void addUser( final CreateUserParams createUser )
