@@ -1,11 +1,5 @@
 package com.enonic.xp.core.impl.security;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
-
-import org.junit.Test;
-
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -14,8 +8,14 @@ import com.enonic.xp.security.Group;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalType;
 import com.enonic.xp.security.UserStoreKey;
+import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class GroupNodeTranslatorTest
 {
@@ -31,6 +31,7 @@ public class GroupNodeTranslatorTest
             displayName( "My Group" ).
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
             modifiedTime( Instant.now( clock ) ).
+            description("my group a").
             build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( group );
@@ -39,10 +40,11 @@ public class GroupNodeTranslatorTest
 
         final PropertyTree rootDataSet = createNodeParams.getData();
         assertNotNull( rootDataSet );
-        assertEquals( 3, rootDataSet.getTotalSize() );
+        assertEquals( 4, rootDataSet.getTotalSize() );
         assertEquals( UserStoreKey.system().toString(), rootDataSet.getString( PrincipalPropertyNames.USER_STORE_KEY ) );
         assertEquals( PrincipalType.GROUP.toString(), rootDataSet.getString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) );
         assertEquals( "My Group", rootDataSet.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) );
+        assertEquals( "my group a", rootDataSet.getString( PrincipalPropertyNames.DESCRIPTION_KEY ) );
     }
 
 

@@ -1,7 +1,10 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.concurrent.ConcurrentMap;
 
 import org.osgi.framework.Bundle;
@@ -25,6 +28,7 @@ import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
+import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
@@ -99,9 +103,22 @@ public final class ApplicationServiceImpl
     }
 
     @Override
+    public Application installGlobalApplication( final URL url )
+    {
+        return ApplicationHelper.callWithContext( () -> doInstallGlobalApplicationFromUrl( url ) );
+    }
+
+    @Override
     public Application installGlobalApplication( final ByteSource byteSource )
     {
         return ApplicationHelper.callWithContext( () -> doInstallGlobalApplication( byteSource ) );
+    }
+
+    private Application doInstallGlobalApplicationFromUrl( final URL url )
+    {
+        final ByteSource byteSource = loadApplication( url, true );
+
+        return this.doInstallGlobalApplication( byteSource );
     }
 
     private Application doInstallGlobalApplication( final ByteSource byteSource )
@@ -343,6 +360,56 @@ public final class ApplicationServiceImpl
         }
 
         return application;
+    }
+
+    private ByteSource loadApplication( final URL url, final boolean triggerEvent )
+    {
+        try
+        {
+            URLConnection connection = url.openConnection();
+
+            ByteArrayOutputStream os = null;
+
+            try (final InputStream is = connection.getInputStream())
+            {
+                int totalLength = connection.getContentLength();
+                int bytesRead;
+                int totalRead = 0;
+                int lastPct = 0;
+                int currentPct;
+                byte[] buffer = new byte[8192];
+                os = new ByteArrayOutputStream();
+
+                while ( ( bytesRead = is.read( buffer ) ) != -1 )
+                {
+                    os.write( buffer, 0, bytesRead );
+                    totalRead += bytesRead;
+
+                    currentPct = totalRead * 100 / totalLength;
+
+                    if ( triggerEvent && lastPct != currentPct )
+                    {
+                        this.eventPublisher.publish( ApplicationEvents.progress( url.toString(), currentPct ) );
+                        lastPct = currentPct;
+                    }
+                }
+                os.flush();
+
+                return ByteSource.wrap( os.toByteArray() );
+            }
+            finally
+            {
+                if ( os != null )
+                {
+                    os.close();
+                }
+            }
+        }
+        catch ( IOException e )
+        {
+            LOG.error( "Failed to load application from " + url, e );
+            return null;
+        }
     }
 
     private boolean alreadyInRepo( final ApplicationKey applicationKey )

@@ -218,10 +218,10 @@ module app.wizard {
 
         assembleViewedItem(): Principal {
             return new UserBuilder(!!this.getPersistedItem() ? this.getPersistedItem().asUser() : null).
-                setDisplayName(this.wizardHeader.getDisplayName()).
                 setEmail(this.userEmailWizardStepForm.getEmail()).
                 setLogin(this.wizardHeader.getName()).
                 setMemberships(this.userMembershipsWizardStepForm.getMemberships()).
+                setDisplayName(this.wizardHeader.getDisplayName()).
                 // setDisabled().
                 build();
         }

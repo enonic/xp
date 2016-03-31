@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.content.page.region;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
@@ -12,7 +15,10 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.region.Component;
 import com.enonic.xp.region.CreateFragmentParams;
+import com.enonic.xp.region.TextComponent;
+import com.enonic.xp.region.TextComponentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.User;
 
@@ -35,11 +41,18 @@ final class CreateFragmentCommand
 
     public Content execute()
     {
-        final String componentName = params.getComponent().getName().toString();
+        final Component component = params.getComponent();
+        final String componentName = component.getName().toString();
+        String displayName = componentName;
+        if ( component.getType() instanceof TextComponentType )
+        {
+            displayName = generateDisplayName( (TextComponent) component );
+        }
+
         final String name = generateUniqueContentName( params.getParent(), "fragment-" + componentName );
         final CreateContentParams createContent = CreateContentParams.create().
             parent( params.getParent() ).
-            displayName( componentName ).
+            displayName( displayName ).
             name( name ).
             type( ContentTypeName.fragment() ).
             contentData( new PropertyTree() ).
@@ -57,6 +70,15 @@ final class CreateFragmentCommand
             editor( edit -> edit.page = page );
 
         return this.contentService.update( params );
+    }
+
+    private String generateDisplayName( final TextComponent textComponent )
+    {
+        final String html = textComponent.getText();
+        String text = StringEscapeUtils.unescapeHtml( html.replaceAll( "\\<[^>]*>", "" ) ).trim();
+        text = text.replaceAll( "(\\t|\\r?\\n)+", " " ).trim();
+        return text.isEmpty() ? textComponent.getName().toString() : StringUtils.abbreviate( text, 40 );
+
     }
 
     private User getCurrentUser()

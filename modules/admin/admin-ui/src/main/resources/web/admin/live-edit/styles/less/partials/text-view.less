@@ -101,59 +101,66 @@
   top: 0;
   z-index: @z-index-context-menu;
   width: 100%;
+  border-bottom: 1px solid #cccccc;
 
-  .mce-toolbar-grp .mce-flow-layout-item {
-    margin-bottom: 2px;
+
+
+  .mce-abs-layout, .mce-toolbar-grp, .mce-flow-layout, .mce-container-body.mce-stack-layout {
+    width: auto !important;
   }
 
-  .mce-btn-group {
-    border-right: 1px solid #CAC0C0;
+  .mce-toolbar-grp, .mce-tinymce-inline, .mce-container-body.mce-stack-layout, .mce-container-body.mce-abs-layout {
+    height: auto !important;
+  }
+
+  .mce-container-body.mce-abs-layout {
+    overflow: initial;
+  }
+
+  .mce-abs-layout-item, .mce-abs-end {
+    position: static;
   }
 
   &.sticky-toolbar {
-    .mce-toolbar-grp {
-      .box-shadow(0px 8px 8px 0 @admin-toolbar-shadow);
-      z-index: 1000;
-    }
+    .box-shadow(0px 8px 8px 0 @admin-toolbar-shadow);
+    z-index: 1000;
   }
 
   .mce-tinymce-inline {
 
     width: 100% !important;
-    border: none;
 
     .mce-container-body {
       margin: auto;
     }
-  }
 
-  .mce-toolbar {
-    background-color: @admin-white;
-
-    .mce-btn, .mce-menubtn {
-      background-color: @admin-white;
-      &:hover, &:focus {
-        background-color: #e3e3e3;
-      }
-
-      .mce-ico {
-        width: 22px;
-        height: 22px;
-      }
-
-      button, span {
-        line-height: 30px;
-      }
-
-      .mce-caret {
-        margin-top: 12px;
-      }
-
-      i {
-        text-align: center;
-      }
+    .mce-flow-layout {
+      white-space: normal;
+      padding-right: 30px;
     }
   }
+
+  .mce-toolbar-grp.mce-panel {
+    padding-bottom: 1px;
+    border: none;
+/*
+    button {
+      height: 34px;
+      i {
+        padding-top: 5px;
+      }
+    }
+
+    .mce-menubtn {
+      button {
+        height: auto;
+        i {
+          padding-top: 0;
+        }
+      }
+    }*/
+  }
+
 }
 
 .docked-panel .tab-bar {

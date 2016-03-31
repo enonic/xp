@@ -32,12 +32,23 @@ module app.wizard {
         }
 
         layout(principal: api.security.Principal) {
-//            this.description.setValue(role.getDescription());
-            this.description.setValue("");
+            if(api.ObjectHelper.iFrameSafeInstanceOf(principal, api.security.Role)
+                || api.ObjectHelper.iFrameSafeInstanceOf(principal, api.security.Group)) {
+                var description = principal.getDescription();
+                this.description.setValue(!!description ? description : "");
+            }
+            else {
+                this.description.setValue("");
+            }
+
         }
 
         giveFocus(): boolean {
             return this.description.giveFocus();
+        }
+
+        getDescription(): string {
+            return this.description.getValue();
         }
     }
 }

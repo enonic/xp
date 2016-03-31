@@ -31,7 +31,7 @@ module api.ui.security.acl {
             this.accessSelector = new UserStoreAccessSelector();
             this.accessSelector.onValueChanged((event: ValueChangedEvent) => {
                 this.ace.setAccess(event.getNewValue());
-            })
+            });
 
             this.removeButton = new api.dom.AEl("icon-close");
             this.removeButton.onClicked((event: MouseEvent) => {
@@ -88,8 +88,11 @@ module api.ui.security.acl {
         public setUserStoreAccessControlEntry(ace: UserStoreAccessControlEntry, silent?: boolean) {
             this.ace = ace;
 
-            var principal = new Principal(
-                ace.getPrincipal().getKey(), ace.getPrincipal().getDisplayName(), ace.getPrincipal().getModifiedTime());
+            var principal = Principal.create().
+                setKey(ace.getPrincipal().getKey()).
+                setDisplayName(ace.getPrincipal().getDisplayName()).
+                setModifiedTime(ace.getPrincipal().getModifiedTime()).
+                build();
             this.setObject(principal);
 
             this.accessSelector.setValue(ace.getAccess(), silent);

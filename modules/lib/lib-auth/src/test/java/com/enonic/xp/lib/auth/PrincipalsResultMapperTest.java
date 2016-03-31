@@ -38,12 +38,14 @@ public class PrincipalsResultMapperTest
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group1" ) ).
             displayName( "Group1" ).
             modifiedTime( Instant.now( clock ) ).
+            description( "description1" ).
             build();
 
         final Principal group2 = Group.create().
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group2" ) ).
             displayName( "Group2" ).
             modifiedTime( Instant.now( clock ) ).
+            description( "description2" ).
             build();
 
         final PrincipalsResultMapper principalsResultMapper = new PrincipalsResultMapper( Principals.from( group1, group2 ), 5 );
@@ -59,12 +61,14 @@ public class PrincipalsResultMapperTest
             key( PrincipalKey.ofRole( "Role 1" ) ).
             displayName( "Role 1 Display Name" ).
             modifiedTime( Instant.now( clock ) ).
+            description( "description1" ).
             build();
 
         final Principal role2 = Role.create().
             key( PrincipalKey.ofRole( "Role 2" ) ).
             displayName( "Role 2 Display Name" ).
             modifiedTime( Instant.now( clock ) ).
+            description( "description2" ).
             build();
 
         final PrincipalsResultMapper principalsResultMapper = new PrincipalsResultMapper( Principals.from( role1, role2 ), 3 );

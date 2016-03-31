@@ -1,13 +1,13 @@
 module app.wizard.page.contextwindow.inspect.region {
 
-    import ContentComboBox = api.content.ContentComboBox;
+    import FragmentDropdown = api.content.page.region.FragmentDropdown;
 
     export class FragmentSelectorForm extends api.ui.form.Form {
 
-        private fragmentSelector: ContentComboBox;
+        private fragmentSelector: FragmentDropdown;
 
-        constructor(fragmentSelector: ContentComboBox, title?: string) {
-            super('fragment-combobox-form');
+        constructor(fragmentSelector: FragmentDropdown, title?: string) {
+            super('fragment-dropdown-form');
             this.fragmentSelector = fragmentSelector;
 
             var fieldSet = new api.ui.form.Fieldset();
@@ -21,7 +21,7 @@ module app.wizard.page.contextwindow.inspect.region {
             this.add(fieldSet);
         }
 
-        getSelector(): ContentComboBox {
+        getSelector(): FragmentDropdown {
             return this.fragmentSelector;
         }
 

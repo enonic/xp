@@ -14,4 +14,5 @@ dependencies {
     compile 'org.eclipse.jgit:org.eclipse.jgit:3.7.0.201502260915-r'
     compile 'com.netflix.nebula:gradle-extra-configurations-plugin:2.2.2'
     compile 'com.gradle.publish:plugin-publish-plugin:0.9.3'
+    compile 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:1.2'
 }

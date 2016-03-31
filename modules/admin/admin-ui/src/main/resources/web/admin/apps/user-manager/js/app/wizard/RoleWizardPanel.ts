@@ -75,8 +75,9 @@ module app.wizard {
                 name = this.wizardHeader.getDisplayName(),
                 members = this.getMembersWizardStepForm().getMembers().map((el) => {
                     return el.getKey();
-                });
-            return new CreateRoleRequest().setKey(key).setDisplayName(name).setMembers(members);
+                }),
+                description = this.getDescriptionWizardStepForm().getDescription();
+            return new CreateRoleRequest().setKey(key).setDisplayName(name).setMembers(members).setDescription(description);
         }
 
         updatePersistedItem(): wemQ.Promise<Principal> {
@@ -97,6 +98,7 @@ module app.wizard {
             var role = viewedPrincipal.asRole(),
                 key = role.getKey(),
                 displayName = role.getDisplayName(),
+                description = role.getDescription(),
                 oldMembers = this.getPersistedItem().asRole().getMembers(),
                 oldMembersIds = oldMembers.map((el) => {
                     return el.getId();
@@ -116,15 +118,17 @@ module app.wizard {
                 setKey(key).
                 setDisplayName(displayName).
                 addMembers(addMembers).
-                removeMembers(removeMembers);
+                removeMembers(removeMembers).
+                setDescription(description);
         }
 
         assembleViewedItem(): Principal {
             return new RoleBuilder(this.getPersistedItem().asRole()).
-                setDisplayName(this.wizardHeader.getDisplayName()).
                 setMembers(this.getMembersWizardStepForm().getMembers().map((el) => {
                     return el.getKey();
                 })).
+                setDisplayName(this.wizardHeader.getDisplayName()).
+                setDescription(this.getDescriptionWizardStepForm().getDescription()).
                 build();
         }
 

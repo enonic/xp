@@ -1,5 +1,7 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
+import java.io.File;
+
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.Server;
 import org.junit.Test;
@@ -40,7 +42,7 @@ public class RequestLogConfiguratorTest
 
         final NCSARequestLog log = getRequestLog();
         assertNotNull( log );
-        assertTrue( log.getFilename().endsWith( "/jetty-yyyy_mm_dd.request.log" ) );
+        assertTrue( log.getFilename().endsWith( File.separator + "jetty-yyyy_mm_dd.request.log" ) );
         assertEquals( "GMT", log.getLogTimeZone() );
         assertEquals( 31, log.getRetainDays() );
         assertEquals( true, log.isExtended() );

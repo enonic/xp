@@ -21,9 +21,7 @@ module api.ui.geo {
         }
 
         setGeoPoint(value: api.util.GeoPoint): GeoPoint {
-            if (value) {
-                this.setValue(value.toString());
-            }
+            this.setValue(value ? value.toString() : "");
             return this;
         }
 
