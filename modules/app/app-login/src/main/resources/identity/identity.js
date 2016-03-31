@@ -8,6 +8,7 @@ exports.handle403 = function (req) {
     var jQueryUrl = portalLib.assetUrl({path: "js/jquery-2.2.0.min.js"});
     var appLoginJsUrl = portalLib.assetUrl({path: "js/app-login.js"});
     var appLoginCssUrl = portalLib.assetUrl({path: "css/app-login.css"});
+    var appLoginFontsUrl = portalLib.assetUrl({path: "font"});
     var appLoginServiceUrl = portalLib.serviceUrl({service: "login"});
     var brandingUrl = portalLib.assetUrl({path: "img/enonic.svg"});
 
@@ -29,6 +30,7 @@ exports.handle403 = function (req) {
         jQueryUrl: jQueryUrl,
         appLoginJsUrl: appLoginJsUrl,
         appLoginCssUrl: appLoginCssUrl,
+        appLoginFontsUrl: appLoginFontsUrl,
         appLoginServiceUrl: appLoginServiceUrl,
         backgroundUrl: backgroundUrl,
         brandingUrl: brandingUrl

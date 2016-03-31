@@ -2,11 +2,24 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <meta name="theme-color" content="#ffffff">
     <title></title>
 
     <link rel="stylesheet" type="text/css" href="{{appLoginCssUrl}}">
     <style>
-        #background {
+        @font-face {
+            font-family: 'Open Sans';
+            src: url("{{appLoginFontsUrl}}/opensans-regular.eot");
+            src: url("{{appLoginFontsUrl}}/opensans-regular.eot?#iefix") format("embedded-opentype"),
+            url("{{appLoginFontsUrl}}/opensans-regular.woff") format("woff"),
+            url("{{appLoginFontsUrl}}/opensans-regular.ttf") format("truetype"),
+            url("{{appLoginFontsUrl}}/opensans-regular.svg#open_sansregular") format("svg");
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        #lazy-image {
             background-image: url('{{backgroundUrl}}');
         }
 
@@ -25,28 +38,30 @@
     <script src="{{appLoginJsUrl}}"></script>
 </head>
 <body>
-
-<div id="container">
-    <div id="background"></div>
-    <div id="center-panel">
-        <div id="branding" style="display: flex;">
+<div class="home-main-container">
+    <div id="lazy-image" class="lazy-image"></div>
+    <div class="center-panel">
+        <div id="branding" class="branding">
             <h1>Enonic XP</h1>
         </div>
-        <div id="login-panel" style="display: flex;">
-            <form id="login-form">
-                <input id="username-input" class="input-view" type="text" placeholder="userid or e-mail">
+        <div class="login-panel">
+            <form id="login-form" class="login-form">
+                <input id="username-input"
+                       class="xp-admin-common-text-input form-input input-view" type="text"
+                       placeholder="userid or e-mail">
 
-                <div id="password-container">
-                    <input id="password-input" class="input-view" type="password" placeholder="password">
-                    <button id="login-button" onclick="loginButtonClick();return false;" style="display: none;">
+                <div class="password-container">
+                    <input id="password-input" class="input-view form-input password-input"
+                           type="password" placeholder="password">
+                    <button id="login-button" class="xp-admin-common-button login-button" onclick="loginButtonClick();return false;"
+                            style="display: none;">
                         <span></span>
                     </button>
                 </div>
-                <div id="message-container"></div>
+                <div id="message-container" class="message-container"></div>
             </form>
         </div>
     </div>
 </div>
-
 </body>
 </html>

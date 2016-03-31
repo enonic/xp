@@ -3,7 +3,7 @@ function handleAuthenticateResponse(loginResult) {
         location.reload();
     } else {
         document.getElementById("message-container").innerHTML = 'Login failed!';
-        //document.getElementById("message-container").focus();
+        document.getElementById("message-container").focus();
         document.getElementById("username-input").classList.add('invalid');
         document.getElementById("password-input").classList.add('invalid');
         document.getElementById("login-button").classList.add('invalid');
