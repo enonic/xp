@@ -66,12 +66,12 @@ public class MarketServiceImplTest
         final String version = "6.3.0";
         final Response response = createResponse( code );
 
-        Mockito.when( provider.fetch( this.marketUrl, version ) ).
+        Mockito.when( provider.fetch( this.marketUrl, version, 0, 10 ) ).
             thenReturn( response );
 
         try
         {
-            marketService.get( version );
+            marketService.get( version, 0, 10 );
         }
         catch ( MarketException e )
         {

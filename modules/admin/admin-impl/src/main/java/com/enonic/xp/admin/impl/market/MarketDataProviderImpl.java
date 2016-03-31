@@ -19,9 +19,9 @@ public class MarketDataProviderImpl
 
     private static final int readTimeout = 10_000;
 
-    public Response fetch( final String url, final String version )
+    public Response fetch( final String url, final String version, final int start, final int count )
     {
-        final Request request = MarketRequestFactory.create( url, version );
+        final Request request = MarketRequestFactory.create( url, version, start, count );
 
         final OkHttpClient client = new OkHttpClient();
         client.setReadTimeout( readTimeout, TimeUnit.MILLISECONDS );

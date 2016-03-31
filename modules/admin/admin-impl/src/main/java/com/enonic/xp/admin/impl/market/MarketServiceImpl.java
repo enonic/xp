@@ -34,9 +34,9 @@ public class MarketServiceImpl
     }
 
     @Override
-    public MarketApplicationsJson get( final String version )
+    public MarketApplicationsJson get( final String version, final int from, final int count )
     {
-        final Response response = this.provider.fetch( this.marketUrl, version );
+        final Response response = this.provider.fetch( this.marketUrl, version, from, count );
 
         return parseResponse( response );
     }

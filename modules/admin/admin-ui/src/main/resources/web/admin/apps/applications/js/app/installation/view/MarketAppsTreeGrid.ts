@@ -188,9 +188,14 @@ module app.installation.view {
             this.initData(this.getRoot().getCurrentRoot().treeToList());
         }
 
-
         fetchChildren(): wemQ.Promise<MarketApplication[]> {
-            return new api.application.ListMarketApplicationsRequest().sendAndParse()
+            let from = 0; // TODO
+            let count = 50; // TODO
+            return new api.application.ListMarketApplicationsRequest()
+                .setStart(from)
+                .setCount(count)
+                .setVersion(this.getVersion())
+                .sendAndParse()
                 .then((applications: MarketApplication[])=> {
                     return this.setMarketAppsStatuses(applications);
                 })
@@ -200,6 +205,19 @@ module app.installation.view {
                     this.handleError(reason, reason.getStatusCode() == 500 ? status500Message : defaultErrorMessage);
                     return [];
                 });
+        }
+
+        private getVersion(): string {
+            let version: string = CONFIG.xpVersion;
+            if (!version) {
+                return '';
+            }
+            let parts = version.split('.');
+            if (parts.length > 3) {
+                parts.pop(); // remove '.snapshot'
+                return parts.join('.');
+            }
+            return version;
         }
 
         private setMarketAppsStatuses(marketApplications: MarketApplication[]): wemQ.Promise<MarketApplication[]> {

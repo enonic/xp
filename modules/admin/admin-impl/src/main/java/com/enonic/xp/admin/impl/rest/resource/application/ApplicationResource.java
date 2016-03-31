@@ -246,9 +246,23 @@ public final class ApplicationResource
     public MarketApplicationsJson getMarketApplications( final GetMarketApplicationsJson params )
         throws Exception
     {
-        String version = params.getVersion() != null ? params.getVersion() : "1.0.0";
+        final String version = params.getVersion() != null ? params.getVersion() : "1.0.0";
+        final int start = parseInt( params.getStart(), 0 );
+        final int count = parseInt( params.getCount(), 10 );
 
-        return this.marketService.get( version );
+        return this.marketService.get( version, start, count );
+    }
+
+    private int parseInt( final String value, final int defaultValue )
+    {
+        try
+        {
+            return Integer.parseInt( value );
+        }
+        catch ( NumberFormatException e )
+        {
+            return defaultValue;
+        }
     }
 
     @Reference

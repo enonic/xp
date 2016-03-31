@@ -10,7 +10,7 @@ class MarketRequestFactory
 {
     private final static Map<String, Object> params = Maps.newHashMap();
 
-    public static Request create( final String baseUrl, final String version )
+    public static Request create( final String baseUrl, final String version, final int start, final int count )
     {
         final Request.Builder request = new Request.Builder();
         request.url( baseUrl );
@@ -18,6 +18,8 @@ class MarketRequestFactory
         HttpUrl url = HttpUrl.parse( baseUrl );
 
         params.put( "xpVersion", version );
+        params.put( "start", start );
+        params.put( "count", count );
 
         url = addParams( url, params );
 
