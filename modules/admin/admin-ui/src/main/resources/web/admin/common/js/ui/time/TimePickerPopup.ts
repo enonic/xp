@@ -159,8 +159,8 @@ module api.ui.time {
             this.prevMinute.appendChild(new api.dom.SpanEl());
             minuteContainer.appendChild(this.prevMinute);
 
-            this.selectedHour = builder.getHours() || null;
-            this.selectedMinute = builder.getMinutes() || null;
+            this.selectedHour = this.isHoursValid(builder.getHours()) ? builder.getHours() : null;
+            this.selectedMinute = this.isMinutesValid(builder.getMinutes()) ? builder.getMinutes() : null;
 
             this.useLocalTimezoneIfNotPresent = builder.useLocalTimezoneIfNotPresent;
             this.timezone = builder.timezone;

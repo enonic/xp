@@ -43,11 +43,11 @@ module api.ui.time {
             super('time-picker');
             this.validUserInput = true;
 
-            var popupBuilder = new TimePickerPopupBuilder().
+            this.popup = new TimePickerPopupBuilder().
                 setHours(builder.hours).
                 setMinutes(builder.minutes).
-                setCloseOnOutsideClick(false);
-            this.popup = popupBuilder.build();
+                setCloseOnOutsideClick(false).
+                build();
 
             var value;
             if (builder.hours || builder.minutes) {
