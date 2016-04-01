@@ -6,7 +6,7 @@ exports.handle403 = function (req) {
     var userStore = authLib.getUserStore();
 
     var jQueryUrl = portalLib.assetUrl({path: "js/jquery-2.2.0.min.js"});
-    var appLoginJsUrl = portalLib.assetUrl({path: "js/app-login.js"});
+    var appLoginJsUrl = portalLib.assetUrl({path: "js/simple-auth.js"});
     var appLoginCssUrl = portalLib.assetUrl({path: "common/styles/_all.css"});
     var appLoginServiceUrl = portalLib.serviceUrl({service: "login"});
     var idProviderConfig = authLib.getIdProviderConfig();

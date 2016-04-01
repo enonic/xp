@@ -77,6 +77,6 @@
   <bundle level="30">${group}:admin-impl:${version}</bundle>
 
   <!-- Applications -->
-  <bundle level="40">${group}:app-login:${version}</bundle>
+  <bundle level="40">${group}:simpleauth:${version}</bundle>
 
 </bundles>

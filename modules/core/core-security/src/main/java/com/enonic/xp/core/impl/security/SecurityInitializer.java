@@ -119,7 +119,7 @@ final class SecurityInitializer
         LOG.info( "Initializing user store [" + UserStoreKey.system() + "]" );
 
         final AuthConfig authConfig = AuthConfig.create().
-            applicationKey( ApplicationKey.from( "com.enonic.xp.app.login" ) ).
+            applicationKey( ApplicationKey.from( "com.enonic.xp.simpleauth" ) ).
             build();
 
         final UserStoreAccessControlList permissions =

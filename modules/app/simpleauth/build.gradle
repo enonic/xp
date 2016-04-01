@@ -7,7 +7,7 @@ dependencies {
 }
 
 bundle {
-    instruction 'Bundle-Name', 'Enonic XP App - Login'
+    instruction 'Bundle-Name', 'Enonic XP App - Simple Auth'
 }
 
 

@@ -41,7 +41,7 @@ include 'admin:admin-impl'
 include 'admin:admin-event'
 include 'admin:admin-ui'
 
-include 'app:app-login'
+include 'app:simpleauth'
 
 include 'itest:itest-core'
 
