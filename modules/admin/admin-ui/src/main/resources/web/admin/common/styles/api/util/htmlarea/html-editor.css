@@ -50,6 +50,9 @@
   display: flex;
   background-color: #ffffff;
 }
+.mce-toolbar .mce-flow-layout {
+  text-align: center;
+}
 .mce-toolbar .mce-btn-group {
   border-right: 1px solid #cccccc;
 }
@@ -90,7 +93,7 @@
 }
 .mce-toolbar .mce-btn-group .mce-btn button,
 .mce-toolbar .mce-btn-group .mce-menubtn button {
-  padding: 2px 8px;
+  padding: 2px 8px 2px 7px;
   height: 34px;
 }
 .mce-toolbar .mce-btn-group .mce-btn .mce-caret,

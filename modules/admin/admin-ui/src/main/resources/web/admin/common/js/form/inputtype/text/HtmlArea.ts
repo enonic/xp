@@ -92,6 +92,8 @@ module api.form.inputtype.text {
                 textAreaWrapper.addClass(focusedEditorCls);
 
                 this.notifyFocused(e);
+
+                api.util.AppHelper.dispatchCustomEvent("focusin", this);
             };
 
             var onNodeChangeHandler = (e) => {
@@ -103,6 +105,8 @@ module api.form.inputtype.text {
                 textAreaWrapper.removeClass(focusedEditorCls);
 
                 this.notifyBlurred(e);
+
+                api.util.AppHelper.dispatchCustomEvent("focusout", this);
             };
 
             var onKeydownHandler = (e) => {
