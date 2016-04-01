@@ -23,6 +23,7 @@ module api.util.htmlarea.editor {
         private inline: boolean = false;
         private fixedToolbarContainer: string;
         private convertUrls: boolean = false;
+        private hasActiveDialog: boolean = false;
 
         setAssetsUri(assetsUri: string): HTMLAreaBuilder {
             this.assetsUri = assetsUri;
@@ -99,7 +100,6 @@ module api.util.htmlarea.editor {
         }
 
         public createEditor(): wemQ.Promise<HtmlAreaEditor> {
-
             this.checkRequiredFieldsAreSet();
 
             var deferred = wemQ.defer<HtmlAreaEditor>();
@@ -179,11 +179,14 @@ module api.util.htmlarea.editor {
                         }
                     });
                     editor.on('blur', (e) => {
+                        if (this.hasActiveDialog) {
+                            e.stopImmediatePropagation();
+                            this.hasActiveDialog = false;
+                        }
                         if (!!this.onBlurHandler) {
                             this.onBlurHandler(e);
                         }
                     });
-
                     editor.on('keydown', (e) => {
 
                         if (e.keyCode == 46 || e.keyCode == 8) { // DELETE
@@ -255,6 +258,7 @@ module api.util.htmlarea.editor {
         }
 
         private publishCreateDialogEvent(event: CreateHtmlAreaDialogEvent) {
+            this.hasActiveDialog = true;
             this.notifyCreateDialog(event);
             event.fire();
         }
