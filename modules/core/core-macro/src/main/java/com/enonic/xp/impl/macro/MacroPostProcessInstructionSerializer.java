@@ -16,7 +16,7 @@ public class MacroPostProcessInstructionSerializer
 
     private String makeNameAttribute( final Macro macro )
     {
-        return "_name=\"" + macro.getKey().getName() + "\"";
+        return "_name=\"" + macro.getName() + "\"";
     }
 
     private String makeParamsAttributes( final Macro macro )

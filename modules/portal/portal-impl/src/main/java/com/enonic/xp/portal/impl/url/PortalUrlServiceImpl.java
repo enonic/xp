@@ -19,8 +19,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.data.Property;
-import com.enonic.xp.impl.macro.MacroParser;
-import com.enonic.xp.impl.macro.MacroPostProcessInstructionSerializer;
+import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
@@ -86,7 +85,7 @@ public final class PortalUrlServiceImpl
 
     private ApplicationService applicationService;
 
-    private static final MacroPostProcessInstructionSerializer MACRO_INSTRUCTION_SERIALIZER = new MacroPostProcessInstructionSerializer();
+    private MacroService macroService;
 
     @Override
     public String assetUrl( final AssetUrlParams params )
@@ -201,12 +200,10 @@ public final class PortalUrlServiceImpl
 
         final Matcher contentMatcher = MACROS_PATTERN.matcher( processedHtml );
 
-        final MacroParser macroParser = new MacroParser( applicationKey );
-
         while ( contentMatcher.find() )
         {
             final String match = contentMatcher.group( MATCH_INDEX );
-            result = result.replace( match, MACRO_INSTRUCTION_SERIALIZER.serialize( macroParser.parse( match ) ) );
+            result = result.replace( match, macroService.postProcessInstructionSerialize( macroService.parse( match ) ) );
         }
 
         return result;
@@ -305,5 +302,11 @@ public final class PortalUrlServiceImpl
     public void setApplicationService( final ApplicationService applicationService )
     {
         this.applicationService = applicationService;
+    }
+
+    @Reference
+    public void setMacroService( final MacroService macroService )
+    {
+        this.macroService = macroService;
     }
 }

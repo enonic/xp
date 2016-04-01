@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableMap;
 @Beta
 public final class Macro
 {
-    private final MacroKey key;
+    private final String name;
 
     private final String body;
 
@@ -17,14 +17,14 @@ public final class Macro
 
     private Macro( final Builder builder )
     {
-        this.key = builder.key;
+        this.name = builder.name;
         this.body = builder.body;
         this.params = builder.paramsBuilder.build();
     }
 
-    public MacroKey getKey()
+    public String getName()
     {
-        return key;
+        return name;
     }
 
     public String getBody()
@@ -60,19 +60,19 @@ public final class Macro
         }
 
         final Macro that = (Macro) o;
-        return Objects.equals( this.key, that.key ) && Objects.equals( this.body, that.body ) && this.params.equals( that.params );
+        return Objects.equals( this.name, that.name ) && Objects.equals( this.body, that.body ) && this.params.equals( that.params );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( key, body, params );
+        return Objects.hash( name, body, params );
     }
 
     public String toString()
     {
         final String body = this.body != null ? ( "=" + this.body ) : "";
-        return this.key.toString() + body + "[" +
+        return name + body + "[" +
             Joiner.on( "," ).withKeyValueSeparator( "=" ).join( this.params ) + "]";
     }
 
@@ -89,7 +89,7 @@ public final class Macro
     public static class Builder
     {
 
-        private MacroKey key;
+        private String name;
 
         private String body;
 
@@ -102,15 +102,15 @@ public final class Macro
 
         private Builder( final Macro macro )
         {
-            this.key = macro.key;
+            this.name = macro.name;
             this.body = macro.body;
             this.paramsBuilder = ImmutableMap.builder();
             this.paramsBuilder.putAll( macro.params );
         }
 
-        public Builder key( final MacroKey key )
+        public Builder name( final String name )
         {
-            this.key = key;
+            this.name = name;
             return this;
         }
 
