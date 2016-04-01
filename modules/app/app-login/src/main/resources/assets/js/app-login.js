@@ -1,33 +1,26 @@
 function handleAuthenticateResponse(loginResult) {
+    console.log("handleAuthenticateResponse  + " + loginResult.authenticated);
     if (loginResult.authenticated) {
         location.reload();
     } else {
-        document.getElementById("message-container").innerHTML = 'Login failed!';
-        document.getElementById("message-container").focus();
-        document.getElementById("username-input").classList.add('invalid');
-        document.getElementById("password-input").classList.add('invalid');
-        document.getElementById("login-button").classList.add('invalid');
+        $("#message-container").html("Login failed!");
+        $("#message-container").focus();
+        $("#username-input, #password-input, #login-button").addClass("invalid");
     }
 }
 
 function loginButtonClick() {
-    var userNameInput = document.getElementById("username-input");
-    var passwordInput = document.getElementById("password-input");
-    var loginButton = document.getElementById("login-button");
-    if (userNameInput.value === '' || passwordInput.value === '') {
+    if (checkFieldsEmpty()) {
         return;
     }
 
-    userNameInput.classList.remove("invalid");
-    passwordInput.classList.remove("invalid");
-    loginButton.classList.remove("invalid");
+    $("#username-input, #password-input, #login-button").removeClass("invalid");
 
     var data = {
-        user: userNameInput.value,
-        password: passwordInput.value,
+        user: $("#username-input").val(),
+        password: $("#password-input").val(),
         userStore: CONFIG.userStoreKey
     }
-
     $.ajax({
         url: CONFIG.appLoginServiceUrl,
         type: 'post',
@@ -37,3 +30,33 @@ function loginButtonClick() {
         data: JSON.stringify(data)
     });
 }
+
+function checkFieldsEmpty() {
+    return $("#username-input").val() === "" || $("#password-input").val() === "";
+}
+
+function onInputTyped(event) {
+    $("#username-input, #password-input, #login-button").removeClass("invalid");
+
+    var fieldsEmpty = checkFieldsEmpty();
+    if (fieldsEmpty) {
+        $("#login-button").hide();
+        $("#message-container").html("");
+    } else {
+        $("#login-button").show();
+        if (event.which !== 13) {
+            $("#message-container").html("");
+        }
+    }
+}
+
+
+$("#login-button").click(function () {
+    loginButtonClick();
+    return false;
+});
+
+$("#username-input, #password-input").keyup(function (event) {
+    onInputTyped(event);
+});
+

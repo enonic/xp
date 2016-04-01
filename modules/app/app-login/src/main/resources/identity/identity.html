@@ -19,6 +19,15 @@
             font-style: normal;
         }
 
+        @font-face {
+            font-family: 'icomoon';
+            src: url('{{appLoginFontsUrl}}/icomoon.eot?d2dpl4');
+            src: url('{{appLoginFontsUrl}}/icomoon.eot?#iefixd2dpl4') format('embedded-opentype'),
+            url('{{appLoginFontsUrl}}/icomoon.woff?d2dpl4') format('woff'),
+            url('{{appLoginFontsUrl}}/icomoon.ttf?d2dpl4') format('truetype'),
+            url('{{appLoginFontsUrl}}/icomoon.svg?d2dpl4#icomoon-release') format('svg');
+        }
+
         #lazy-image {
             background-image: url('{{backgroundUrl}}');
         }
@@ -35,7 +44,6 @@
         };
     </script>
     <script src="{{jQueryUrl}}"></script>
-    <script src="{{appLoginJsUrl}}"></script>
 </head>
 <body>
 <div class="home-main-container">
@@ -53,8 +61,7 @@
                 <div class="password-container">
                     <input id="password-input" class="input-view form-input password-input"
                            type="password" placeholder="password">
-                    <button id="login-button" class="xp-admin-common-button login-button" onclick="loginButtonClick();return false;"
-                            style="display: none;">
+                    <button id="login-button" class="xp-admin-common-button login-button" style="display: none;">
                         <span></span>
                     </button>
                 </div>
@@ -63,5 +70,6 @@
         </div>
     </div>
 </div>
+<script src="{{appLoginJsUrl}}"></script>
 </body>
 </html>
