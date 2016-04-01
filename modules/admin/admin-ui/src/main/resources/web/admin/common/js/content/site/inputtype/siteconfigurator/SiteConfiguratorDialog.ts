@@ -120,6 +120,7 @@ module api.content.site.inputtype.siteconfigurator {
                 this.addClass("animated");
                 this.centerMyself();
                 wemjq(this.getHTMLElement()).find('input[type=text],textarea,select').first().focus();
+                this.updateTabbable();
             }, 100);
         }
 
