@@ -1,7 +1,5 @@
 .@{_CLS_PREFIX}text-view {
 
-  overflow: auto;
-
   // tiny mce style enforcing
   ul, ol {
     margin: 0 0 12px 40px;
@@ -23,6 +21,11 @@
 
   // end of tiny mce style enforcing
 
+  &.empty .@{_CLS_PREFIX}text-placeholder {
+      margin-bottom: 0;
+      margin-top: 0;
+  }
+
   &.empty > section {
     display: none;
   }
@@ -35,10 +38,6 @@
     &.mce-edit-focus {
       outline: none;
     }
-  }
-
-  section {
-    min-height: 58px;
   }
 
   &.edit-mode {
