@@ -39,6 +39,33 @@ public class DateTypeTest
     }
 
     @Test
+    public void testCreateDefaultValue()
+    {
+        final InputTypeConfig config = InputTypeConfig.create().
+            property( InputTypeProperty.create( "default", "2014-08-16" ).
+                build() ).
+            build();
+
+        final Value value = this.type.createDefaultValue( config );
+
+        assertNotNull( value );
+        assertSame( ValueTypes.LOCAL_DATE, value.getType() );
+        assertEquals( value.toString(), "2014-08-16" );
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateDefaultValue_invalid()
+    {
+        final InputTypeConfig config = InputTypeConfig.create().
+            property( InputTypeProperty.create( "default", "2014-18-16" ).
+                build() ).
+            build();
+
+        this.type.createDefaultValue( config );
+    }
+
+    @Test
     public void testValidate()
     {
         final InputTypeConfig config = newEmptyConfig();
