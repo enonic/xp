@@ -16,6 +16,7 @@ module api.form.inputtype.text {
     import HTMLAreaBuilder = api.util.htmlarea.editor.HTMLAreaBuilder;
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
     import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
+    import ElementHelper = api.dom.ElementHelper;
 
     export class HtmlArea extends support.BaseInputTypeNotManagingAdd<string> {
 
@@ -98,10 +99,14 @@ module api.form.inputtype.text {
                 this.notifyValueChanged(id, textAreaWrapper);
             };
 
-            var onBlurHandler = (e) => {
-                this.setStaticInputHeight();
-                textAreaWrapper.removeClass(focusedEditorCls);
+            var isMouseOverRemoveOccurenceButton = false;
 
+            var onBlurHandler = (e) => {
+                //checking if remove occurence button clicked or not
+                if(!isMouseOverRemoveOccurenceButton) {
+                    this.setStaticInputHeight();
+                    textAreaWrapper.removeClass(focusedEditorCls);
+                }
                 this.notifyBlurred(e);
             };
 
@@ -147,6 +152,15 @@ module api.form.inputtype.text {
                         this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper);
                     }
                     this.removeTooltipFromEditorArea(textAreaWrapper);
+
+                    var removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(".remove-button")[0];
+                    removeButtonEL.addEventListener("mouseover", () => {
+                        isMouseOverRemoveOccurenceButton = true;
+                    });
+                    removeButtonEL.addEventListener("mouseleave", () => {
+                        isMouseOverRemoveOccurenceButton = false;
+                    });
+
                     HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
                     this.onShown((event) => {
                         // invoke auto resize on shown in case contents have been updated while inactive
