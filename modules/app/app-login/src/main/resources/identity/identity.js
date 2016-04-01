@@ -9,17 +9,32 @@ exports.handle403 = function (req) {
     var appLoginJsUrl = portalLib.assetUrl({path: "js/app-login.js"});
     var appLoginCssUrl = portalLib.assetUrl({path: "common/styles/_all.css"});
     var appLoginServiceUrl = portalLib.serviceUrl({service: "login"});
-    var brandingUrl = portalLib.assetUrl({path: "img/enonic.svg"});
-
-    var backgroundUrl;
     var idProviderConfig = authLib.getIdProviderConfig();
+
+
+    //Retrieves the title
+    var title = idProviderConfig.title || "Enonic XP - Login";
+
+    //Retrieves the background URL
+    var backgroundUrl;
     if (idProviderConfig.background) {
         backgroundUrl = portalLib.assetUrl({
             application: idProviderConfig.background.application,
             path: idProviderConfig.background.path
         });
     } else {
-        backgroundUrl = portalLib.assetUrl({path: "img/background-1920.jpg"});
+        backgroundUrl = portalLib.assetUrl({path: "common/images/background-1920.jpg"});
+    }
+
+    //Retrieves the branding URL
+    var brandingUrl;
+    if (idProviderConfig.branding) {
+        brandingUrl = portalLib.assetUrl({
+            application: idProviderConfig.branding.application,
+            path: idProviderConfig.branding.path
+        });
+    } else {
+        brandingUrl = portalLib.assetUrl({path: "common/images/enonic.svg"});
     }
 
 
@@ -30,6 +45,7 @@ exports.handle403 = function (req) {
         appLoginJsUrl: appLoginJsUrl,
         appLoginCssUrl: appLoginCssUrl,
         appLoginServiceUrl: appLoginServiceUrl,
+        title: title,
         backgroundUrl: backgroundUrl,
         brandingUrl: brandingUrl
     };
