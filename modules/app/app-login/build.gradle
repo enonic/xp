@@ -11,9 +11,9 @@ bundle {
 }
 
 
-task copyAll( type: Copy ) {
+task copyAdminUiCommon( type: Copy ) {
     from '../../admin/admin-ui/src/main/resources/web/admin/common'
     into "$buildDir/resources/main/assets/common"
 }
 
-jar.dependsOn += copyAll
+jar.dependsOn += copyAdminUiCommon
