@@ -10,6 +10,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Splitter;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -18,6 +19,8 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.data.Property;
+import com.enonic.xp.impl.macro.MacroParser;
+import com.enonic.xp.impl.macro.MacroPostProcessInstructionSerializer;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
@@ -62,10 +65,12 @@ public final class PortalUrlServiceImpl
 
     private static final String INLINE_MODE = "inline";
 
-    private final static Pattern CONTENT_PATTERN =
+    private static final Pattern CONTENT_PATTERN =
         Pattern.compile( "(?:href|src)=(\"((" + CONTENT_TYPE + "|" + MEDIA_TYPE + "|" + IMAGE_TYPE +
                              ")://(?:(" + DOWNLOAD_MODE + "|" + INLINE_MODE + ")/)?([0-9a-z-/]+)(\\?[^\"]+)?)\")",
                          Pattern.MULTILINE | Pattern.UNIX_LINES );
+
+    private static final Pattern MACROS_PATTERN = Pattern.compile( "[^\\\\](\\[(\\w+)(\\s(\\w*=.[^\\[\\]]*))*\\s?(/|\\].*\\[/\\2)\\])" );
 
     private static final String IMAGE_SCALE = "width(768)";
 
@@ -80,6 +85,8 @@ public final class PortalUrlServiceImpl
     private ContentService contentService;
 
     private ApplicationService applicationService;
+
+    private static final MacroPostProcessInstructionSerializer MACRO_INSTRUCTION_SERIALIZER = new MacroPostProcessInstructionSerializer();
 
     @Override
     public String assetUrl( final AssetUrlParams params )
@@ -184,7 +191,25 @@ public final class PortalUrlServiceImpl
             }
         }
 
-        return processedHtml;
+        return processMacros( processedHtml, params.getPortalRequest().getApplicationKey() );
+    }
+
+    private String processMacros( final String processedHtml, final ApplicationKey applicationKey )
+    {
+
+        String result = processedHtml;
+
+        final Matcher contentMatcher = MACROS_PATTERN.matcher( processedHtml );
+
+        final MacroParser macroParser = new MacroParser( applicationKey );
+
+        while ( contentMatcher.find() )
+        {
+            final String match = contentMatcher.group( MATCH_INDEX );
+            result = result.replace( match, MACRO_INSTRUCTION_SERIALIZER.serialize( macroParser.parse( match ) ) );
+        }
+
+        return result;
     }
 
     private String getScale( final String id, final String urlParamsString )
