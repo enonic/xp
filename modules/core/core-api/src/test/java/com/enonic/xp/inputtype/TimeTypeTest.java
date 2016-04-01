@@ -38,6 +38,33 @@ public class TimeTypeTest
     }
 
     @Test
+    public void testCreateDefaultValue()
+    {
+        final InputTypeDefault config = InputTypeDefault.create().
+            property( InputTypeProperty.create( "default", "08:08:08" ).
+                build() ).
+            build();
+
+        final Value value = this.type.createDefaultValue( config );
+
+        assertNotNull( value );
+        assertSame( ValueTypes.LOCAL_TIME, value.getType() );
+        assertEquals( value.toString(), "08:08:08" );
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateDefaultValue_invalid()
+    {
+        final InputTypeDefault config = InputTypeDefault.create().
+            property( InputTypeProperty.create( "default", "25:08:08" ).
+                build() ).
+            build();
+
+        this.type.createDefaultValue( config );
+    }
+
+    @Test
     public void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
