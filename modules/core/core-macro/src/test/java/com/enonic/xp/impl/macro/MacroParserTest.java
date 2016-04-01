@@ -37,6 +37,7 @@ public class MacroParserTest
         assertValidMacro( true, "[macroName par1=\"val1\" par2=\"val2\" /]" );
         assertValidMacro( true, "[macroName par1=\"val1\" par2=\"val2\"/]" );
         assertValidMacro( true, "[1111 111=\"111\" 111=\"111\" /]" );
+        assertValidMacro( true, "[macroName par1=\"val1\" par2=\"val2\"]!!!????===[/macroName]" );
 
         assertValidMacro( true, "[macroName par1=\"val1\" par2=\"val2\"]text[/macroName]" );
         assertValidMacro( true, "[macroName par1=\"val1\" par2=\"val2\"] text [/macroName]" );
@@ -57,6 +58,29 @@ public class MacroParserTest
         assertValidMacro( false, "[]ooo[/]" );
         assertValidMacro( false, "[/]" );
         assertValidMacro( true, "[_/]" );
+    }
+
+    @Test
+    public void testMacroInBody()
+    {
+
+        final String test1 = "[macroName]body [macroInBody/] body[/macroName]";
+        final MacroParser macroParser1 = new MacroParser( ApplicationKey.from( "my-app" ) );
+        final Macro parsedMacro1 = macroParser1.parse( test1 );
+
+        assertEquals( "my-app:macroName=body [macroInBody/] body[]", parsedMacro1.toString() );
+
+        final String test2 = "[macroName ][macroInBody ]body body[/macroInBody][/macroName]";
+        final MacroParser macroParser2 = new MacroParser( ApplicationKey.from( "my-app" ) );
+        final Macro parsedMacro2 = macroParser2.parse( test2 );
+
+        assertEquals( "my-app:macroName=[macroInBody ]body body[/macroInBody][]", parsedMacro2.toString() );
+
+        final String test3 = "[macroName par1=\"val1\"][macroInBody ]body body[/macroInBody][/macroName]";
+        final MacroParser macroParser3 = new MacroParser( ApplicationKey.from( "my-app" ) );
+        final Macro parsedMacro3 = macroParser3.parse( test3 );
+
+        assertEquals( "my-app:macroName=[macroInBody ]body body[/macroInBody][par1=val1]", parsedMacro3.toString() );
     }
 
     @Test

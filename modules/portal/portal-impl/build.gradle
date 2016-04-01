@@ -4,6 +4,7 @@ dependencies {
     compile project( ':web:web-api' )
     compile project( ':portal:portal-api' )
     compile project( ':portal:portal-owasp' )
+    compile project( ':core:core-macro' )
     compile 'org.attoparser:attoparser:1.3'
     testCompile project( ':portal:portal-api' )
     testCompile project( ':portal:portal-owasp' )
