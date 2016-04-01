@@ -9,3 +9,11 @@ dependencies {
 bundle {
     instruction 'Bundle-Name', 'Enonic XP App - Login'
 }
+
+
+task copyAll( type: Copy ) {
+    from '../../admin/admin-ui/src/main/resources/web/admin/common'
+    into "$buildDir/resources/main/assets/common"
+}
+
+jar.dependsOn += copyAll
