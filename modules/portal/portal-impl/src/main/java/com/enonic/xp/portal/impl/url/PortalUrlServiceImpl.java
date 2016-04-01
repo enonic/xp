@@ -1,12 +1,8 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.macro.MacroService;
@@ -25,11 +21,6 @@ import com.enonic.xp.portal.url.ServiceUrlParams;
 public final class PortalUrlServiceImpl
     implements PortalUrlService
 {
-
-    private static final int MATCH_INDEX = 1;
-
-    private static final Pattern MACROS_PATTERN = Pattern.compile( "[^\\\\](\\[(\\w+)(\\s(\\w*=.[^\\[\\]]*))*\\s?(/|\\].*\\[/\\2)\\])" );
-
     private ContentService contentService;
 
     private ApplicationService applicationService;
@@ -86,25 +77,11 @@ public final class PortalUrlServiceImpl
             return "";
         }
 
-        String processedHtml = params.getValue();
-        processedHtml = new HtmlLinkProcessor( contentService, this ).process( processedHtml, params.getType(), params.getPortalRequest() );
-        processedHtml = processMacros( processedHtml, params.getPortalRequest().getApplicationKey() );
+        String processedHtml = new HtmlLinkProcessor( contentService, this ).
+            process( params.getValue(), params.getType(), params.getPortalRequest() );
+        processedHtml = new HtmlMacroProcessor( macroService ).
+            process( processedHtml );
         return processedHtml;
-    }
-
-    private String processMacros( final String processedHtml, final ApplicationKey applicationKey )
-    {
-        String result = processedHtml;
-
-        final Matcher contentMatcher = MACROS_PATTERN.matcher( processedHtml );
-
-        while ( contentMatcher.find() )
-        {
-            final String match = contentMatcher.group( MATCH_INDEX );
-            result = result.replace( match, macroService.postProcessInstructionSerialize( macroService.parse( match ) ) );
-        }
-
-        return result;
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )
