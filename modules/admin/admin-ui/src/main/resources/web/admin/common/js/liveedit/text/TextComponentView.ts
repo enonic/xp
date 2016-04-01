@@ -289,7 +289,13 @@ module api.liveedit.text {
         }
 
         private onKeydownHandler(e) {
-            if (e.keyCode == 27) { // esc
+            var saveShortcut = (e.keyCode == 83 && (e.ctrlKey || e.metaKey));
+
+            if (saveShortcut) { //Cmd-S
+                this.processEditorValue();
+            }
+
+            if (e.keyCode == 27 || saveShortcut) { // esc or Cmd-S
                 this.closePageTextEditMode();
                 this.removeClass(TextComponentView.EDITOR_FOCUSED_CLASS);
             }
