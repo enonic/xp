@@ -23,7 +23,7 @@ public class HtmlMacroProcessor
     private static final String ATTRIBUTES = "(?:" + MANDATORY_SPACE + ATTRIBUTE_ENTRY + ")*";
 
     /* Macro tags Regexps */
-    private static final String NO_COMMENT_CHAR = "[^\\\\]";
+    private static final String NO_COMMENT_CHAR = "(?:[^\\\\]|^)";
 
     private static final String CATCHING_MACRO_NAME = "(?<name>\\w+)";
 
@@ -49,7 +49,7 @@ public class HtmlMacroProcessor
         final Matcher matcher = COMPILED_MACRO_TAG.matcher( text );
         while ( matcher.find( index ) )
         {
-            int matchStartIndex = matcher.start();
+            int matchStartIndex = matcher.start( "tag" );
             int matchEndIndex = matcher.end();
 
             //Appends previous text
@@ -68,8 +68,8 @@ public class HtmlMacroProcessor
                 if ( endingMacroTagMatcher.find() )
                 {
                     //The macro to parse if from the opening macro tag to the ending macro tag
-                    entireMacro = text.substring( matchStartIndex, endingMacroTagMatcher.end() );
-                    index = endingMacroTagMatcher.end();
+                    entireMacro = text.substring( matchStartIndex, matchEndIndex + endingMacroTagMatcher.end() );
+                    index = matchEndIndex + endingMacroTagMatcher.end();
                 }
                 else
                 {
@@ -92,7 +92,7 @@ public class HtmlMacroProcessor
                 //If the macro is incorrect.
                 if ( parsedMacro == null )
                 {
-                    //Appends the macro unparsed
+                    //Appends the macro unparsed. Should never happened
                     processedText.append( text.substring( matchStartIndex, matchEndIndex ) );
                 }
                 else

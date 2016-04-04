@@ -351,8 +351,8 @@ public class PortalUrlServiceImpl_processHtmlTest
                       processedHtml4 );
         assertEquals( "<a href=\"<!--#MACRO _name=\"macro\" _body=\"\"-->\">body</a>", processedHtml5 );
 
-        assertEquals( "\\[macro /] \\[macro][/macro] \\ [macro /]", processedHtml6 );
+        assertEquals( "\\[macro /] \\[macro][/macro] \\ <!--#MACRO _name=\"macro\" _body=\"\"-->", processedHtml6 );
 
-        assertEquals( "<!--#MACRO _name=\"macroName\" par1=\"val1\" par2=\"val2\" _body=\"[macro_in_body/]\"-->", processedHtml7 );
+        assertEquals( "<!--#MACRO _name=\"macro_name\" _body=\"[macro_in_body/]\"-->", processedHtml7 );
     }
 }
