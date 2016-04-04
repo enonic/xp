@@ -233,7 +233,7 @@ module api.liveedit {
         }
 
         private isPageScrolled() {
-            return this.getEl().getParent().getScrollTop() > 0;
+            return this.getEl().getScrollTop() > 0 || this.getEl().getParent().getScrollTop() > 0;
         }
 
         private toggleStickyToolbar() {

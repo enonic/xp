@@ -50,6 +50,12 @@ module api.util {
                 timeout = setTimeout(unBeforeUnload, 100);
             });
         }
+
+        static dispatchCustomEvent(name: string, element: api.dom.Element) {
+            let event = document.createEvent('Event');
+            event.initEvent(name, true, true);
+            element.getHTMLElement().dispatchEvent(event);
+        }
     }
 
 }

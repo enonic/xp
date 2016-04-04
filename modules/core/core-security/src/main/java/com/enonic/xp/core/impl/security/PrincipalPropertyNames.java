@@ -17,4 +17,6 @@ final class PrincipalPropertyNames
     public static final String MEMBER_KEY = "member";
 
     public static final String AUTHENTICATION_HASH_KEY = "authenticationHash";
+
+    public static final String DESCRIPTION_KEY = "description";
 }

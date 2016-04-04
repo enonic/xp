@@ -12,5 +12,7 @@ public interface InputType
 
     Value createValue( String value, InputTypeConfig config );
 
+    Value createDefaultValue( InputTypeDefault defaultConfig );
+
     void validate( Property property, InputTypeConfig config );
 }

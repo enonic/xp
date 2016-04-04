@@ -17,8 +17,15 @@
     <response-filter name="filter2" order="10"/>
   </filters>
   <mappings>
-    <mapping controller="/site/page/person/person.js" pattern="/person/*" order="10"/>
-    <mapping controller="controller1.js" match="_path:'/*/fisk'"/>
-    <mapping controller="controller2.js" pattern="/.*" match="contentType:'portal:fragment'" order="5"/>
+    <mapping controller="/site/page/person/person.js" order="10">
+      <pattern>/person/*</pattern>
+    </mapping>
+    <mapping controller="controller1.js">
+      <match>_path:'/*/fisk'</match>
+    </mapping>
+    <mapping controller="controller2.js" order="5">
+      <pattern invert="true">/.*</pattern>
+      <match>type:'portal:fragment'</match>
+    </mapping>
   </mappings>
 </site>

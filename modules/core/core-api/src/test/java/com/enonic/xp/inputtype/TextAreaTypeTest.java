@@ -38,6 +38,22 @@ public class TextAreaTypeTest
     }
 
     @Test
+    public void testCreateDefaultValue()
+    {
+        final InputTypeDefault config =
+            InputTypeDefault.create().
+                property( InputTypeProperty.create( "default", "testString" ).
+                    build() ).
+                build();
+
+        final Value value = this.type.createDefaultValue( config );
+
+        assertNotNull( value );
+        assertEquals( "testString", value.toString() );
+
+    }
+
+    @Test
     public void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();

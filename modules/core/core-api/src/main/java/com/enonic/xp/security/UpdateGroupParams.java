@@ -14,11 +14,14 @@ public final class UpdateGroupParams
 
     private final GroupEditor editor;
 
+    private final String description;
+
     private UpdateGroupParams( final Builder builder )
     {
         this.key = checkNotNull( builder.principalKey, "groupKey is required for a group" );
         this.displayName = builder.displayName;
         this.editor = builder.editor;
+        this.description = builder.description;
     }
 
     public PrincipalKey getKey()
@@ -36,6 +39,11 @@ public final class UpdateGroupParams
         return editor;
     }
 
+    public String getDescription()
+    {
+        return description;
+    }
+
     public Group update( final Group source )
     {
         if ( this.editor != null )
@@ -50,6 +58,12 @@ public final class UpdateGroupParams
         {
             result.displayName( this.getDisplayName() );
         }
+
+        if ( this.description != null )
+        {
+            result.description( this.getDescription() );
+        }
+
         return result.build();
     }
 
@@ -71,6 +85,8 @@ public final class UpdateGroupParams
 
         private GroupEditor editor;
 
+        private String description;
+
         private Builder()
         {
         }
@@ -79,6 +95,7 @@ public final class UpdateGroupParams
         {
             this.principalKey = group.getKey();
             this.displayName = group.getDisplayName();
+            this.description = group.getDescription();
         }
 
         public Builder groupKey( final PrincipalKey value )
@@ -97,6 +114,12 @@ public final class UpdateGroupParams
         public Builder editor( final GroupEditor value )
         {
             this.editor = value;
+            return this;
+        }
+
+        public Builder description( final String value )
+        {
+            this.description = value;
             return this;
         }
 

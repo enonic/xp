@@ -212,7 +212,7 @@ module api.liveedit {
 
             var isFragmentComponent = this instanceof api.liveedit.fragment.FragmentComponentView;
             if (!isFragmentComponent && !isFragmentContent) {
-                actions.push(new api.ui.Action("Save as Fragment").onExecuted(() => {
+                actions.push(new api.ui.Action("Create Fragment").onExecuted(() => {
                     this.deselect();
                     this.createFragment().then((content: Content): void => {
                         // replace created fragment in place of source component

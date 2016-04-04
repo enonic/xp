@@ -54,7 +54,7 @@ module api.content {
             this.contentQuery.setSize(size);
         }
 
-        setQueryExpr(searchString: string, orderList?: OrderExpr[]) {
+        setSearchQueryExpr(searchString: string, orderList?: OrderExpr[]) {
 
             var fulltextExpression: Expression = new api.query.FulltextSearchExpressionBuilder().
                 setSearchString(searchString).
@@ -64,6 +64,10 @@ module api.content {
                 build();
 
             var queryExpr: QueryExpr = new QueryExpr(fulltextExpression, orderList);
+            this.contentQuery.setQueryExpr(queryExpr);
+        }
+
+        setQueryExpr(queryExpr: QueryExpr) {
             this.contentQuery.setQueryExpr(queryExpr);
         }
 

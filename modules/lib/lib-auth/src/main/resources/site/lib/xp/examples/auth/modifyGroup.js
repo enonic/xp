@@ -5,6 +5,7 @@ var assert = require('/lib/xp/assert');
 // Callback to edit the group.
 function editor(c) {
     c.displayName = 'Modified display name';
+    c.description = 'descriptionX'
     return c;
 }
 
@@ -21,7 +22,8 @@ var expected = {
     "type": "group",
     "key": "group:system:group-a",
     "displayName": "Modified display name",
-    "modifiedTime": "1970-01-01T00:00:00Z"
+    "modifiedTime": "1970-01-01T00:00:00Z",
+    "description": "descriptionX"
 };
 // END
 

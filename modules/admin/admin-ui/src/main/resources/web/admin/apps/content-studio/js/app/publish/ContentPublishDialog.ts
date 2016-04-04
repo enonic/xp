@@ -182,6 +182,8 @@ module app.publish {
             this.includeChildItemsCheck.addClass('include-child-check');
             this.includeChildItemsCheck.onValueChanged(this.includeChildrenCheckedListener);
             this.includeChildItemsCheck.setLabel('Include child items');
+
+            this.overwriteDefaultArrows(this.includeChildItemsCheck);
         }
 
         /**
@@ -455,7 +457,12 @@ module app.publish {
             this.cleanPublishButtonText();
 
             this.publishButton.setLabel(count > 0 ? "Publish (" + count + ")" : "Publish");
-            this.publishButton.setEnabled(count > 0 && this.allResolvedItemsAreValid());
+            let canPublish = count > 0 && this.allResolvedItemsAreValid();
+            this.publishButton.setEnabled(canPublish);
+            if (canPublish) {
+                this.getButtonRow().focusDefaultAction();
+                this.updateTabbable();
+            }
         }
 
         private contentItemsAreValid(contentPublishItems: ContentsResolved<ContentPublishItem>): boolean {
@@ -535,7 +542,7 @@ module app.publish {
 
     export class ContentPublishDialogAction extends api.ui.Action {
         constructor() {
-            super("Publish", "enter");
+            super("Publish");
             this.setIconClass("publish-action");
         }
     }

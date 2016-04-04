@@ -8,11 +8,15 @@ import org.osgi.framework.BundleEvent;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
 
-final class ApplicationEvents
+public final class ApplicationEvents
 {
     public static final String EVENT_TYPE = "application";
 
     public static final String APPLICATION_KEY_KEY = "applicationKey";
+
+    public static final String APPLICATION_URL_KEY = "applicationUrl";
+
+    public static final String INSTALLATION_PROGRESS_KEY = "progress";
 
     public static final String EVENT_TYPE_KEY = "eventType";
 
@@ -36,6 +40,8 @@ final class ApplicationEvents
 
     public static final String UNINSTALLED = "UNINSTALLED";
 
+    public static final String INSTALLATION_PROGRESS = "PROGRESS";
+
     private static final Map<Integer, String> STATE_LOOKUP_TABLE = new HashMap<>();
 
     static
@@ -58,6 +64,17 @@ final class ApplicationEvents
             distributed( false ).
             value( APPLICATION_KEY_KEY, ApplicationKey.from( bundleEvent.getBundle() ) ).
             value( EVENT_TYPE_KEY, STATE_LOOKUP_TABLE.get( bundleEvent.getType() ) ).
+            build();
+    }
+
+
+    public static Event progress( final String url, final int progress )
+    {
+        return Event.create( EVENT_TYPE ).
+            distributed( false ).
+            value( EVENT_TYPE_KEY, INSTALLATION_PROGRESS ).
+            value( APPLICATION_URL_KEY, url ).
+            value( INSTALLATION_PROGRESS_KEY, progress ).
             build();
     }
 

@@ -68,7 +68,7 @@ public class GetContentVersionsForViewResultJson
     private ActiveContentVersionEntry getActiveContentVersion( final GetActiveContentVersionsResult activeVersions )
     {
         return activeVersions.getActiveContentVersions().stream().filter(
-            activeVersion -> ContentConstants.BRANCH_DRAFT.equals( activeVersion.getBranch() ) ).findFirst().get();
+            activeVersion -> ContentConstants.BRANCH_DRAFT.equals( activeVersion.getBranch() ) ).findFirst().orElse( null );
     }
 
     private ContentVersions filterContentVersions( final FindContentVersionsResult allVersions )

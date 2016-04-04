@@ -560,7 +560,7 @@ module app.wizard {
                 }
             };
 
-            var updateHandler = (contentId: ContentId) => {
+            var updateHandler = (contentId: ContentId, unchangedOnly: boolean = true) => {
                 var isCurrent = this.isCurrentContentId(contentId);
 
                 // Find all html areas in form
@@ -573,8 +573,8 @@ module app.wizard {
                     new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
                         this.setPersistedItem(content);
                         this.updateWizardHeader(content);
-                        this.updateWizardStepForms(content);
-                        this.updateMetadataAndMetadataStepForms(content.clone());
+                        this.updateWizardStepForms(content, unchangedOnly);
+                        this.updateMetadataAndMetadataStepForms(content.clone(), unchangedOnly);
                         if (this.isContentRenderable() && areasContainId) {
                             // also update live form panel for renderable content without asking
                             this.liveFormPanel.skipNextReloadConfirmation(true);
@@ -584,7 +584,7 @@ module app.wizard {
                 }
             };
 
-            var activeContentVersionSetHandler = (event: ActiveContentVersionSetEvent) => updateHandler(event.getContentId());
+            var activeContentVersionSetHandler = (event: ActiveContentVersionSetEvent) => updateHandler(event.getContentId(), false);
             var contentUpdatedHanlder = (event: ContentUpdatedEvent) => updateHandler(event.getContentId());
 
             ActiveContentVersionSetEvent.on(activeContentVersionSetHandler);
@@ -1247,7 +1247,7 @@ module app.wizard {
          * Synchronizes wizard's extraData step forms with passed content - erases steps forms (meta)data and populates it with content's (meta)data.
          * @param content
          */
-        private updateMetadataAndMetadataStepForms(content: Content) {
+        private updateMetadataAndMetadataStepForms(content: Content, unchangedOnly: boolean = true) {
 
             for (var key in this.metadataStepFormByName) {
                 if (this.metadataStepFormByName.hasOwnProperty(key)) {
@@ -1265,12 +1265,12 @@ module app.wizard {
                     let data = extraData.getData();
                     data.onChanged(this.dataChangedListener);
 
-                    form.update(data);
+                    form.update(data, unchangedOnly);
                 }
             }
         }
 
-        private updateWizardStepForms(content: Content) {
+        private updateWizardStepForms(content: Content, unchangedOnly: boolean = true) {
 
             this.contentWizardStepForm.getData().unChanged(this.dataChangedListener);
 
@@ -1278,16 +1278,16 @@ module app.wizard {
             var contentCopy = content.clone();
             contentCopy.getContentData().onChanged(this.dataChangedListener);
 
-            this.contentWizardStepForm.update(contentCopy.getContentData());
+            this.contentWizardStepForm.update(contentCopy.getContentData(), unchangedOnly);
 
             if (contentCopy.isSite()) {
                 this.siteModel.update(<Site>contentCopy);
             }
 
-            this.settingsWizardStepForm.update(contentCopy);
+            this.settingsWizardStepForm.update(contentCopy, unchangedOnly);
 
             if (this.isSecurityWizardStepFormAllowed) {
-                this.securityWizardStepForm.update(contentCopy);
+                this.securityWizardStepForm.update(contentCopy, unchangedOnly);
             }
         }
 
@@ -1300,7 +1300,7 @@ module app.wizard {
 
         private initPublishButtonForMobile() {
 
-            var action: api.ui.Action = new api.ui.Action("Publish", "enter");
+            var action: api.ui.Action = new api.ui.Action("Publish");
             action.setIconClass("publish-action");
             action.onExecuted(() => {
                 this.publishAction.execute();

@@ -11,7 +11,7 @@ module api.security {
         private memberships: Principal[];
 
         constructor(builder: UserBuilder) {
-            super(builder.key, builder.displayName, builder.modifiedTime);
+            super(builder);
             api.util.assert(builder.key.isUser(), 'Expected PrincipalKey of type User');
             this.email = builder.email || "";
             this.login = builder.login || "";
@@ -72,13 +72,7 @@ module api.security {
 
     }
 
-    export class UserBuilder {
-
-        key: PrincipalKey;
-
-        displayName: string;
-
-        modifiedTime: Date;
+    export class UserBuilder extends PrincipalBuilder{
 
         email: string;
 
@@ -90,6 +84,7 @@ module api.security {
 
         constructor(source?: User) {
             if (source) {
+                super(source);
                 this.key = source.getKey();
                 this.displayName = source.getDisplayName();
                 this.email = source.getEmail();
@@ -103,25 +98,15 @@ module api.security {
         }
 
         fromJson(json: api.security.UserJson): UserBuilder {
-            this.key = PrincipalKey.fromString(json.key);
-            this.displayName = json.displayName;
+            super.fromJson(json);
+
             this.email = json.email;
             this.login = json.login;
             this.loginDisabled = json.loginDisabled;
-            this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
+
             if (json.memberships) {
                 this.memberships = json.memberships.map((principalJson) => Principal.fromJson(principalJson));
             }
-            return this;
-        }
-
-        setKey(key: PrincipalKey): UserBuilder {
-            this.key = key;
-            return this;
-        }
-
-        setDisplayName(displayName: string): UserBuilder {
-            this.displayName = displayName;
             return this;
         }
 

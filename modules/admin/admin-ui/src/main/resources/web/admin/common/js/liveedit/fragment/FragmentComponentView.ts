@@ -6,6 +6,7 @@ module api.liveedit.fragment {
     import FragmentComponent = api.content.page.region.FragmentComponent;
     import GetContentByIdRequest = api.content.GetContentByIdRequest;
     import Content = api.content.Content;
+    import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
 
     export class FragmentComponentViewBuilder extends ComponentViewBuilder<FragmentComponent> {
 
@@ -94,7 +95,7 @@ module api.liveedit.fragment {
             return actions;
         }
 
-        private parseContentViews(parentElement?: api.dom.Element) {
+        private parseContentViews(parentElement?: api.dom.Element, parentType?: api.liveedit.ItemType) {
             var children = parentElement.getChildren();
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
@@ -108,7 +109,14 @@ module api.liveedit.fragment {
                     htmlElement.removeAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
                     htmlElement.removeAttribute("data-" + ItemType.ATTRIBUTE_REGION_NAME);
                 }
-                this.parseContentViews(childElement);
+
+                var isTextComponent = api.liveedit.text.TextItemType.get().equals(parentType);
+                if (isTextComponent && childElement.getEl().getTagName().toUpperCase() == 'SECTION') {
+                    // convert image urls in text component for web
+                    childElement.setHtml(HTMLAreaHelper.prepareImgSrcsInValueForEdit(childElement.getHtml()), false);
+                    return;
+                }
+                this.parseContentViews(childElement, itemType);
             });
         }
 

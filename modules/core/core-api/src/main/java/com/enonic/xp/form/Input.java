@@ -9,6 +9,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
@@ -21,6 +22,8 @@ public final class Input
     private final InputTypeName type;
 
     private final String label;
+
+    private final InputTypeDefault defaultValue;
 
     private final boolean immutable;
 
@@ -53,6 +56,7 @@ public final class Input
         this.name = builder.name;
         this.type = builder.inputType;
         this.label = builder.label;
+        this.defaultValue = builder.defaultValue;
         this.immutable = builder.immutable;
         this.occurrences = builder.occurrences;
         this.indexed = builder.indexed;
@@ -83,6 +87,11 @@ public final class Input
     public String getLabel()
     {
         return label;
+    }
+
+    public InputTypeDefault getDefaultValue()
+    {
+        return defaultValue;
     }
 
     public boolean isRequired()
@@ -157,6 +166,7 @@ public final class Input
         return super.equals( o ) &&
             Objects.equals( this.type, that.type ) &&
             Objects.equals( this.label, that.label ) &&
+            Objects.equals( this.defaultValue, that.defaultValue ) &&
             Objects.equals( this.immutable, that.immutable ) &&
             Objects.equals( this.occurrences, that.occurrences ) &&
             Objects.equals( this.indexed, that.indexed ) &&
@@ -170,7 +180,7 @@ public final class Input
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), this.type, this.label, this.immutable, this.occurrences, this.indexed, this.customText,
+        return Objects.hash( super.hashCode(), this.type, this.label, this.defaultValue, this.immutable, this.occurrences, this.indexed, this.customText,
                              this.helpText, this.validationRegexp, this.inputTypeConfig, this.maximizeUIInputWidth );
     }
 
@@ -191,6 +201,8 @@ public final class Input
         private InputTypeName inputType;
 
         private String label;
+
+        private InputTypeDefault defaultValue;
 
         private boolean immutable = false;
 
@@ -218,6 +230,7 @@ public final class Input
             this.name = source.name;
             this.inputType = source.type;
             this.label = source.label;
+            this.defaultValue = source.defaultValue;
             this.occurrences = source.occurrences;
             this.indexed = source.indexed;
             this.customText = source.customText;
@@ -246,6 +259,12 @@ public final class Input
         public Builder label( String value )
         {
             label = value;
+            return this;
+        }
+
+        public Builder defaultValue( InputTypeDefault value )
+        {
+            defaultValue = value;
             return this;
         }
 

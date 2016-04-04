@@ -1,31 +1,18 @@
 package com.enonic.xp.core.impl.security;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
-
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
-import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.security.Group;
-import com.enonic.xp.security.Principal;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.PrincipalRelationship;
-import com.enonic.xp.security.PrincipalRelationships;
-import com.enonic.xp.security.PrincipalType;
-import com.enonic.xp.security.Principals;
-import com.enonic.xp.security.Role;
-import com.enonic.xp.security.User;
+import com.enonic.xp.node.*;
+import com.enonic.xp.security.*;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
+
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 abstract class PrincipalNodeTranslator
 {
@@ -108,6 +95,12 @@ abstract class PrincipalNodeTranslator
             case USER:
                 populateUserData( data.getRoot(), (User) principal );
                 break;
+            case ROLE:
+                populateRoleData( data.getRoot(), (Role) principal );
+                break;
+            case GROUP:
+                populateGroupData( data.getRoot(), (Group) principal );
+                break;
         }
 
         builder.data( data );
@@ -128,6 +121,13 @@ abstract class PrincipalNodeTranslator
                 {
                     case USER:
                         populateUserData( nodeData.getRoot(), (User) principal );
+                        break;
+                    case ROLE:
+                        populateRoleData( nodeData.getRoot(), (Role) principal );
+                        break;
+                    case GROUP:
+                        populateGroupData( nodeData.getRoot(), (Group) principal );
+                        break;
                 }
             } ).
             build();
@@ -217,6 +217,16 @@ abstract class PrincipalNodeTranslator
         data.setString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, user.getAuthenticationHash() );
     }
 
+    private static void populateRoleData( final PropertySet data, final Role role )
+    {
+        data.setString( PrincipalPropertyNames.DESCRIPTION_KEY, role.getDescription() );
+    }
+
+    private static void populateGroupData( final PropertySet data, final Group group )
+    {
+        data.setString( PrincipalPropertyNames.DESCRIPTION_KEY, group.getDescription() );
+    }
+
     private static User createUserFromNode( final Node node )
     {
         Preconditions.checkNotNull( node );
@@ -241,6 +251,7 @@ abstract class PrincipalNodeTranslator
         return Group.create().
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
             displayName( nodeAsTree.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) ).
+            description( nodeAsTree.getString( PrincipalPropertyNames.DESCRIPTION_KEY ) ).
             build();
     }
 
@@ -253,6 +264,7 @@ abstract class PrincipalNodeTranslator
         return Role.create().
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
             displayName( nodeAsTree.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) ).
+            description( nodeAsTree.getString( PrincipalPropertyNames.DESCRIPTION_KEY ) ).
             build();
     }
 

@@ -51,8 +51,8 @@ module api.content.form.inputtype.time {
         }
 
         private getValueFromProperty(property: api.data.Property): {hours: number; minutes: number} {
-            var hours = 0,
-                minutes = 0;
+            var hours = -1,
+                minutes = -1;
             if (property && property.hasNonNullValue()) {
                 var localTime: api.util.LocalTime = property.getLocalTime();
                 if (localTime) {

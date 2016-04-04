@@ -16,8 +16,6 @@ module app.remove {
 
         private descendantsContainer: DescendantsToBeDeletedList;
 
-        private showChildItemsCheckbox: api.ui.Checkbox;
-
         private yesCallback: () => void;
 
         private noCallback: () => void;
@@ -32,8 +30,6 @@ module app.remove {
             this.addDescendantsContainer();
 
             this.addCancelButtonToBottom();
-
-            this.addShowDescendantsCheckbox();
         }
 
         setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
@@ -45,12 +41,18 @@ module app.remove {
             });
 
             this.renderSelectedItems(this.selectedItems);
-
-            this.showChildItemsCheckbox.setChecked(false);
-            this.showChildItemsCheckbox.setVisible(this.atLeastOneInitialItemHasChild());
             this.updateSubTitle();
             if(this.selectedItems.length === 1) {
                 this.selectedItems[0].hideRemoveButton();
+            }
+
+            this.descendantsContainer.hide();
+
+            if(this.atLeastOneInitialItemHasChild()) {
+                this.descendantsContainer.loadData(this.selectedItems).then(() => {
+                    this.descendantsContainer.show();
+                    this.centerMyself();
+                });
             }
 
             this.countItemsToDeleteAndUpdateButtonCounter();
@@ -71,27 +73,6 @@ module app.remove {
         private addDescendantsContainer() {
             this.descendantsContainer = new DescendantsToBeDeletedList("descendants-to-delete-list");
             this.appendChildToContentPanel(this.descendantsContainer);
-        }
-
-        private addShowDescendantsCheckbox() {
-            this.showChildItemsCheckbox = new api.ui.Checkbox("Show child items");
-            this.showChildItemsCheckbox.addClass('show-child-check');
-
-            this.showChildItemsCheckbox.onValueChanged(() => {
-                if(this.showChildItemsCheckbox.isChecked()) {
-                    this.descendantsContainer.loadData(this.selectedItems).then(() => {
-                        this.descendantsContainer.show();
-                        this.centerMyself();
-                    });
-                }
-                else {
-                    this.descendantsContainer.clearItems();
-                    this.descendantsContainer.hide();
-                    this.centerMyself();
-                }
-            });
-
-            this.appendChildToContentPanel(this.showChildItemsCheckbox);
         }
 
         private indexOf(item: SelectionItem<ContentSummaryAndCompareStatus>): number {
@@ -153,14 +134,12 @@ module app.remove {
                     this.close();
                 }
                 else {
-                    var atLeastOneItemHasChild = this.atLeastOneInitialItemHasChild();
-                    this.showChildItemsCheckbox.setVisible(atLeastOneItemHasChild);
                     this.updateSubTitle();
                     if(this.selectedItems.length === 1) {
                         this.selectedItems[0].hideRemoveButton();
                     }
 
-                    if(atLeastOneItemHasChild && this.showChildItemsCheckbox.isChecked()) {
+                    if(this.atLeastOneInitialItemHasChild()) {
                         this.descendantsContainer.loadData(this.selectedItems).then(() => {
                             this.centerMyself();
                         });

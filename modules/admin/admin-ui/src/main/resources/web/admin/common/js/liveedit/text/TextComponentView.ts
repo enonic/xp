@@ -150,7 +150,7 @@ module api.liveedit.text {
                 if (child.getEl().getTagName().toUpperCase() == 'SECTION') {
                     this.rootElement = child;
                     // convert image urls in text component for web
-                    child.setHtml(HTMLAreaHelper.prepareImgSrcsInValueForEdit(child.getHtml()), false);
+                    child.setHtml(child.getHtml(), false);
                     break;
                 }
             }
@@ -289,7 +289,13 @@ module api.liveedit.text {
         }
 
         private onKeydownHandler(e) {
-            if (e.keyCode == 27) { // esc
+            var saveShortcut = (e.keyCode == 83 && (e.ctrlKey || e.metaKey));
+
+            if (saveShortcut) { //Cmd-S
+                this.processEditorValue();
+            }
+
+            if (e.keyCode == 27 || saveShortcut) { // esc or Cmd-S
                 this.closePageTextEditMode();
                 this.removeClass(TextComponentView.EDITOR_FOCUSED_CLASS);
             }
@@ -323,7 +329,7 @@ module api.liveedit.text {
                 then((editor: HtmlAreaEditor) => {
                     this.htmlAreaEditor = editor;
                     if (!!this.textComponent.getText()) {
-                        this.htmlAreaEditor.setContent(HTMLAreaHelper.prepareImgSrcsInValueForEdit(this.textComponent.getText()));
+                        this.htmlAreaEditor.setContent(this.textComponent.getText());
                     } else {
                         this.htmlAreaEditor.setContent(TextComponentView.DEFAULT_TEXT);
                         this.htmlAreaEditor.selection.select(this.htmlAreaEditor.getBody(), true);
@@ -359,7 +365,7 @@ module api.liveedit.text {
                 // copy editor content over to the root html element
                 this.rootElement.getHTMLElement().innerHTML = TextComponentView.DEFAULT_TEXT;
             } else {
-                var editorContent = HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.htmlAreaEditor);
+                var editorContent = this.htmlAreaEditor.getContent();
                 this.textComponent.setText(editorContent);
                 // copy editor raw content (without any processing!) over to the root html element
                 this.rootElement.getHTMLElement().innerHTML = this.htmlAreaEditor.getContent({format : 'raw'});

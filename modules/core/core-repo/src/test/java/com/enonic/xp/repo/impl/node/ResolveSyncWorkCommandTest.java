@@ -1092,6 +1092,7 @@ public class ResolveSyncWorkCommandTest
     {
         SetNodeStateParams setNodeStateParams =
             SetNodeStateParams.create().nodeId( id ).nodeState( NodeState.PENDING_DELETE ).recursive( true ).build();
+
         SetNodeStateCommand.create().
             params( setNodeStateParams ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -1099,6 +1100,8 @@ public class ResolveSyncWorkCommandTest
             searchService( this.searchService ).
             build().
             execute();
+
+        refresh();
     }
 
     void moveNode( final String nodeId, final NodePath newParent, final String newName )

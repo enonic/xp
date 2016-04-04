@@ -62,13 +62,19 @@
           <xs:element minOccurs="0" name="help-text" type="xs:string"/>
           <xs:element minOccurs="0" name="validation-regexp" type="xs:string"/>
           <xs:element minOccurs="0" name="occurrences" type="occurrence"/>
-          <xs:element minOccurs="0" name="config" type="xs:anyType"/>
+          <xs:element minOccurs="0" name="config" type="config"/>
           <xs:element minOccurs="0" name="maximize" type="xs:boolean"/>
         </xs:sequence>
         <xs:attribute name="type" type="xs:string" use="required"/>
         <xs:attribute name="name" type="xs:string" use="required"/>
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="config">
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType abstract="true" name="formItem">
@@ -252,10 +258,20 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="mappingPattern">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="invert" type="xs:boolean" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
   <xs:complexType name="mapping">
+    <xs:all>
+      <xs:element name="match" type="xs:string" minOccurs="0"/>
+      <xs:element name="pattern" type="mappingPattern" minOccurs="0"/>
+    </xs:all>
     <xs:attribute name="controller" type="xs:string" use="required"/>
-    <xs:attribute name="pattern" type="xs:string" use="optional"/>
-    <xs:attribute name="match" type="xs:string" use="optional"/>
     <xs:attribute name="order" type="xs:int" use="optional"/>
   </xs:complexType>
 

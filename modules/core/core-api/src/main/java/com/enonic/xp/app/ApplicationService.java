@@ -1,5 +1,7 @@
 package com.enonic.xp.app;
 
+import java.net.URL;
+
 import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
@@ -20,6 +22,8 @@ public interface ApplicationService
     void startApplication( ApplicationKey key, final boolean triggerEvent );
 
     void stopApplication( ApplicationKey key, final boolean triggerEvent );
+
+    Application installGlobalApplication( final URL url );
 
     Application installGlobalApplication( final ByteSource byteSource );
 

@@ -29,6 +29,7 @@
 ///<reference path='FragmentComponent.ts' />
 ///<reference path='FragmentComponentType.ts' />
 ///<reference path='FragmentComponentJson.ts' />
+///<reference path='FragmentDropdown.ts' />
 
 ///<reference path='PartDescriptorJson.ts' />
 ///<reference path='PartComponentJson.ts' />

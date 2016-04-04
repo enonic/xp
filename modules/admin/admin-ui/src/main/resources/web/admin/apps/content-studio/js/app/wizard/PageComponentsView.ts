@@ -70,7 +70,7 @@ module app.wizard {
             });
 
             this.header = new api.dom.H2El('header');
-            this.header.setHtml('Page Components');
+            this.header.setHtml('Components');
 
             this.appendChildren(closeButton, this.header);
 

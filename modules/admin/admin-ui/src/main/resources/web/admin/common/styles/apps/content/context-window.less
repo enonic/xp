@@ -2,6 +2,7 @@
   color: @admin-font-gray3;
   .transition(all 0.1s ease-in-out);
   z-index: @z-index-context-window;
+  overflow: visible; // for the ghost-dragger to be visible when dragging outside context window
 
   .splitter {
     position: relative;
@@ -177,6 +178,10 @@
       .input-view .form-input {
         min-width: 100%;
       }
+
+      fieldset {
+        display: table-cell;  //fix for FF - width of a fieldset is never less than the intrinsic width of its content
+      }
     }
 
     &.customized {
@@ -261,7 +266,7 @@
     }
   }
 
-  .page-controller-form, .descriptor-based-dropdown-form, .page-template-form {
+  .page-controller-form, .descriptor-based-dropdown-form, .page-template-form, .fragment-dropdown-form {
     background-color: @admin-context-bg-grey-opal;
   }
 

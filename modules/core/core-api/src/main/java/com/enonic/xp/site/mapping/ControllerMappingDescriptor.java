@@ -22,6 +22,8 @@ public final class ControllerMappingDescriptor
 
     private final Pattern pattern;
 
+    private final boolean invertPattern;
+
     private final ContentMappingConstraint contentConstraint;
 
     private final int order;
@@ -31,6 +33,7 @@ public final class ControllerMappingDescriptor
         Preconditions.checkNotNull( builder.controller, "controller cannot be null" );
         this.controller = builder.controller;
         this.pattern = builder.pattern != null ? builder.pattern : DEFAULT_PATTERN;
+        this.invertPattern = builder.invertPattern;
         this.contentConstraint = builder.contentConstraint;
         this.order = builder.order;
     }
@@ -48,6 +51,11 @@ public final class ControllerMappingDescriptor
     public Pattern getPattern()
     {
         return pattern;
+    }
+
+    public boolean invertPattern()
+    {
+        return invertPattern;
     }
 
     public ContentMappingConstraint getContentConstraint()
@@ -73,6 +81,7 @@ public final class ControllerMappingDescriptor
         }
         final ControllerMappingDescriptor that = (ControllerMappingDescriptor) o;
         return order == that.order &&
+            invertPattern == that.invertPattern &&
             Objects.equals( controller, that.controller ) &&
             Objects.equals( pattern.toString(), that.pattern.toString() ) &&
             Objects.equals( contentConstraint, that.contentConstraint );
@@ -81,7 +90,7 @@ public final class ControllerMappingDescriptor
     @Override
     public int hashCode()
     {
-        return Objects.hash( controller, pattern.toString(), contentConstraint, order );
+        return Objects.hash( controller, pattern.toString(), invertPattern, contentConstraint, order );
     }
 
     @Override
@@ -96,6 +105,7 @@ public final class ControllerMappingDescriptor
         return MoreObjects.toStringHelper( this ).
             add( "controller", controller ).
             add( "pattern", pattern ).
+            add( "invertPattern", invertPattern ).
             add( "contentConstraint", contentConstraint ).
             add( "order", order ).toString();
     }
@@ -116,6 +126,8 @@ public final class ControllerMappingDescriptor
 
         private Pattern pattern;
 
+        private boolean invertPattern = false;
+
         private ContentMappingConstraint contentConstraint;
 
         private int order = DEFAULT_ORDER;
@@ -124,6 +136,7 @@ public final class ControllerMappingDescriptor
         {
             this.controller = mappingDescriptor.getController();
             this.pattern = mappingDescriptor.getPattern();
+            this.invertPattern = mappingDescriptor.invertPattern();
             this.contentConstraint = mappingDescriptor.getContentConstraint();
             this.order = mappingDescriptor.getOrder();
         }
@@ -147,6 +160,12 @@ public final class ControllerMappingDescriptor
         public Builder pattern( final String pattern )
         {
             this.pattern = pattern != null ? Pattern.compile( pattern ) : null;
+            return this;
+        }
+
+        public Builder invertPattern( final boolean invertPattern )
+        {
+            this.invertPattern = invertPattern;
             return this;
         }
 

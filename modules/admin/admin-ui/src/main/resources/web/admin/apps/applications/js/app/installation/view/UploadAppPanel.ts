@@ -17,6 +17,10 @@ module app.installation.view {
             this.initApplicationInput(cancelAction);
 
             this.initApplicationUploader();
+
+            this.onShown(() => {
+                this.applicationInput.giveFocus();
+            });
         }
 
         getApplicationInput(): ApplicationInput {
