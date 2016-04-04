@@ -3,9 +3,7 @@ package com.enonic.xp.impl.macro;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.macro.Macro;
-import com.enonic.xp.macro.MacroKey;
 
 /**
  * Parse macro strings.
@@ -30,8 +28,6 @@ public final class MacroParser
 
     private static final char EOF = (char) -1;
 
-    private final ApplicationKey applicationKey;
-
     private String input;
 
     private int p;
@@ -40,17 +36,11 @@ public final class MacroParser
 
     private String macroName;
 
-    private final Map<String, String> attributes;
+    private final Map<String, String> attributes = new HashMap<>();
 
     private String body;
 
     private boolean debugMode = false;
-
-    public MacroParser( final ApplicationKey applicationKey )
-    {
-        this.applicationKey = applicationKey;
-        this.attributes = new HashMap<>();
-    }
 
     public Macro parse( final String text )
     {
@@ -75,7 +65,7 @@ public final class MacroParser
             return null;
         }
 
-        final Macro.Builder macro = Macro.create().key( MacroKey.from( applicationKey, macroName ) );
+        final Macro.Builder macro = Macro.create().name( macroName );
         for ( Map.Entry<String, String> attribute : attributes.entrySet() )
         {
             macro.param( attribute.getKey(), attribute.getValue() );

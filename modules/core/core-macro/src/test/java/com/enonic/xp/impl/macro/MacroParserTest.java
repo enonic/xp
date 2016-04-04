@@ -2,7 +2,6 @@ package com.enonic.xp.impl.macro;
 
 import org.junit.Test;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.macro.Macro;
 
 import static org.junit.Assert.*;
@@ -14,7 +13,7 @@ public class MacroParserTest
     {
         try
         {
-            final boolean isValid = new MacroParser( ApplicationKey.from( "myapp" ) ).debugMode().parse( text ) != null;
+            final boolean isValid = new MacroParser().debugMode().parse( text ) != null;
             assertTrue( "Expected invalid macro: " + text, isValid && expectedValid );
         }
         catch ( ParseException e )
@@ -65,32 +64,32 @@ public class MacroParserTest
     {
 
         final String test1 = "[macroName]body [macroInBody/] body[/macroName]";
-        final MacroParser macroParser1 = new MacroParser( ApplicationKey.from( "my-app" ) );
+        final MacroParser macroParser1 = new MacroParser();
         final Macro parsedMacro1 = macroParser1.parse( test1 );
 
-        assertEquals( "my-app:macroName=body [macroInBody/] body[]", parsedMacro1.toString() );
+        assertEquals( "macroName=body [macroInBody/] body[]", parsedMacro1.toString() );
 
         final String test2 = "[macroName ][macroInBody ]body body[/macroInBody][/macroName]";
-        final MacroParser macroParser2 = new MacroParser( ApplicationKey.from( "my-app" ) );
+        final MacroParser macroParser2 = new MacroParser();
         final Macro parsedMacro2 = macroParser2.parse( test2 );
 
-        assertEquals( "my-app:macroName=[macroInBody ]body body[/macroInBody][]", parsedMacro2.toString() );
+        assertEquals( "macroName=[macroInBody ]body body[/macroInBody][]", parsedMacro2.toString() );
 
         final String test3 = "[macroName par1=\"val1\"][macroInBody ]body body[/macroInBody][/macroName]";
-        final MacroParser macroParser3 = new MacroParser( ApplicationKey.from( "my-app" ) );
+        final MacroParser macroParser3 = new MacroParser();
         final Macro parsedMacro3 = macroParser3.parse( test3 );
 
-        assertEquals( "my-app:macroName=[macroInBody ]body body[/macroInBody][par1=val1]", parsedMacro3.toString() );
+        assertEquals( "macroName=[macroInBody ]body body[/macroInBody][par1=val1]", parsedMacro3.toString() );
     }
 
     @Test
     public void testParseWithBodyAndAttributes()
     {
         final String macro = "[macroName par1=\"val1\" par2=\"val2\" par3=\"val3\"]body body[/macroName]";
-        final MacroParser parser = new MacroParser( ApplicationKey.from( "my-app" ) );
+        final MacroParser parser = new MacroParser();
         final Macro parsedMacro = parser.parse( macro );
 
-        assertEquals( "my-app:macroName", parsedMacro.getKey().toString() );
+        assertEquals( "macroName", parsedMacro.getName() );
         assertEquals( "body body", parsedMacro.getBody() );
         assertEquals( 3, parsedMacro.getParams().size() );
         assertEquals( "val1", parsedMacro.getParam( "par1" ) );
@@ -98,20 +97,20 @@ public class MacroParserTest
         assertEquals( "val3", parsedMacro.getParam( "par3" ) );
 
         final String test2 = "[macroName ]body body[/macroName]";
-        final MacroParser macroParser2 = new MacroParser( ApplicationKey.from( "my-app" ) );
+        final MacroParser macroParser2 = new MacroParser();
         final Macro parsedMacro2 = macroParser2.parse( test2 );
 
-        assertEquals( "my-app:macroName=body body[]", parsedMacro2.toString() );
+        assertEquals( "macroName=body body[]", parsedMacro2.toString() );
     }
 
     @Test
     public void testParseWithBody()
     {
         final String macro = "[macroName ]body body[/macroName]";
-        final MacroParser parser = new MacroParser( ApplicationKey.from( "my-app" ) );
+        final MacroParser parser = new MacroParser();
         final Macro parsedMacro = parser.parse( macro );
 
-        assertEquals( "my-app:macroName", parsedMacro.getKey().toString() );
+        assertEquals( "macroName", parsedMacro.getName() );
         assertEquals( "body body", parsedMacro.getBody() );
         assertEquals( 0, parsedMacro.getParams().size() );
     }
@@ -120,10 +119,10 @@ public class MacroParserTest
     public void testParseWithoutBodyAndAttributes()
     {
         final String macro = "[macroName par1=\"val1\" par2=\"val2\" par3=\"val3\"/]";
-        final MacroParser parser = new MacroParser( ApplicationKey.from( "my-app" ) );
+        final MacroParser parser = new MacroParser();
         final Macro parsedMacro = parser.parse( macro );
 
-        assertEquals( "my-app:macroName", parsedMacro.getKey().toString() );
+        assertEquals( "macroName", parsedMacro.getName() );
         assertEquals( "", parsedMacro.getBody() );
         assertEquals( 3, parsedMacro.getParams().size() );
         assertEquals( "val1", parsedMacro.getParam( "par1" ) );
@@ -135,10 +134,10 @@ public class MacroParserTest
     public void testParseWithoutBody()
     {
         final String macro = "[macroName /]";
-        final MacroParser parser = new MacroParser( ApplicationKey.from( "my-app" ) );
+        final MacroParser parser = new MacroParser();
         final Macro parsedMacro = parser.parse( macro );
 
-        assertEquals( "my-app:macroName", parsedMacro.getKey().toString() );
+        assertEquals( "macroName", parsedMacro.getName() );
         assertEquals( "", parsedMacro.getBody() );
         assertEquals( 0, parsedMacro.getParams().size() );
     }
@@ -148,10 +147,10 @@ public class MacroParserTest
     {
         final String macro =
             "[macro_name123 par1 = \"value\\\"1\" par2 = \"\\\\va\\\"l\\\"ue2\"]/][body][/[/macro_name123 [/macro_name123]";
-        final MacroParser parser = new MacroParser( ApplicationKey.from( "my-app" ) );
+        final MacroParser parser = new MacroParser();
         final Macro parsedMacro = parser.parse( macro );
 
-        assertEquals( "my-app:macro_name123", parsedMacro.getKey().toString() );
+        assertEquals( "macro_name123", parsedMacro.getName() );
         assertEquals( "/][body][/[/macro_name123 ", parsedMacro.getBody() );
         assertEquals( 2, parsedMacro.getParams().size() );
         assertEquals( "value\"1", parsedMacro.getParam( "par1" ) );

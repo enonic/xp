@@ -11,6 +11,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
 
 public abstract class AbstractPortalUrlServiceImplTest
@@ -38,6 +39,7 @@ public abstract class AbstractPortalUrlServiceImplTest
         this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
 
         this.service = new PortalUrlServiceImpl();
+        this.service.setMacroService( new MacroServiceImpl() );
 
         this.contentService = Mockito.mock( ContentService.class );
         this.service.setContentService( this.contentService );
