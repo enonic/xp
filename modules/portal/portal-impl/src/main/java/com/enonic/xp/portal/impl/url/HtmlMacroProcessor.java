@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.url;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.enonic.xp.macro.Macro;
 import com.enonic.xp.macro.MacroService;
 
 public class HtmlMacroProcessor
@@ -26,20 +27,11 @@ public class HtmlMacroProcessor
 
     private static final String CATCHING_MACRO_NAME = "(?<name>\\w+)";
 
-    private static final String EMPTY_MACRO =
-        NO_COMMENT_CHAR + "\\[" + OPTIONAL_SPACE + CATCHING_MACRO_NAME + ATTRIBUTES + OPTIONAL_SPACE + "/\\]";
-
-    private static final String OPENING_MACRO_TAG =
-        NO_COMMENT_CHAR + "\\[" + OPTIONAL_SPACE + CATCHING_MACRO_NAME + ATTRIBUTES + OPTIONAL_SPACE + "\\]";
-
-    private static final String ENDING_MACRO_TAG = NO_COMMENT_CHAR + "\\[/" + OPTIONAL_SPACE + CATCHING_MACRO_NAME + OPTIONAL_SPACE + "\\]";
+    private static final String MACRO_TAG =
+        NO_COMMENT_CHAR + "(?<tag>\\[" + OPTIONAL_SPACE + CATCHING_MACRO_NAME + ATTRIBUTES + OPTIONAL_SPACE + "(?<empty>/)?\\])";
 
     /* Patterns */
-    private static final Pattern COMPILED_EMPTY_MACRO = Pattern.compile( EMPTY_MACRO );
-
-    private static final Pattern COMPILED_OPENING_MACRO_TAG = Pattern.compile( OPENING_MACRO_TAG );
-
-    private static final Pattern COMPILED_ENDING_MACRO_TAG = Pattern.compile( ENDING_MACRO_TAG );
+    private static final Pattern COMPILED_MACRO_TAG = Pattern.compile( MACRO_TAG );
 
     /* Variables */
     private MacroService macroService;
@@ -51,18 +43,76 @@ public class HtmlMacroProcessor
 
     public String process( final String text )
     {
-        final Matcher matcher = COMPILED_EMPTY_MACRO.matcher( text );
-        System.out.println( matcher.find() );
-        System.out.println( matcher.group( "name" ) );
-        System.out.println( matcher.find() );
-        System.out.println( matcher.group( "name" ) );
+        StringBuilder processedText = new StringBuilder();
+        int index = 0;
 
-        return null;
+        final Matcher matcher = COMPILED_MACRO_TAG.matcher( text );
+        while ( matcher.find( index ) )
+        {
+            int matchStartIndex = matcher.start();
+            int matchEndIndex = matcher.end();
+
+            //Appends previous text
+            processedText.append( text.substring( index, matchStartIndex ) );
+
+            //If the macro has a body
+            String entireMacro = null;
+            if ( matcher.group( "empty" ) == null )
+            {
+                //Searches for the ending macro tag
+                final String macroName = matcher.group( "name" );
+                final Pattern compiledEndingMacroTag = generateCompiledEndingMacroTag( macroName );
+                final Matcher endingMacroTagMatcher = compiledEndingMacroTag.matcher( text.substring( matchEndIndex ) );
+
+                //If there is an ending macro tag
+                if ( endingMacroTagMatcher.find() )
+                {
+                    //The macro to parse if from the opening macro tag to the ending macro tag
+                    entireMacro = text.substring( matchStartIndex, endingMacroTagMatcher.end() );
+                    index = endingMacroTagMatcher.end();
+                }
+                else
+                {
+                    //Else there is an error. Stops the parsing of the text
+                    break;
+                }
+            }
+            else
+            {
+                //Else the macro to parse is the current match
+                entireMacro = matcher.group( "tag" );
+                index = matchEndIndex;
+            }
+
+            if ( entireMacro != null )
+            {
+                //Calls the macro service to parse the macro
+                final Macro parsedMacro = macroService.parse( entireMacro );
+
+                //If the macro is incorrect.
+                if ( parsedMacro == null )
+                {
+                    //Appends the macro unparsed
+                    processedText.append( text.substring( matchStartIndex, matchEndIndex ) );
+                }
+                else
+                {
+                    final String serializedMacro = macroService.postProcessInstructionSerialize( parsedMacro );
+                    processedText.append( serializedMacro );
+                }
+            }
+
+        }
+
+        //Concatenates the rest of the text
+        processedText.append( text.substring( index ) );
+
+        return processedText.toString();
     }
 
-    public static void main( String[] args )
+    private Pattern generateCompiledEndingMacroTag( String macroName )
     {
-        new HtmlMacroProcessor( null ).process(
-            "<a href=\"[macroNoBody /]\">[macro par1=\"val1\" par2=\"val2\"/]</a> \\[macroName]skip me[/macroName]" );
+        String endingMacroTagPattern = NO_COMMENT_CHAR + "\\[/" + OPTIONAL_SPACE + macroName + OPTIONAL_SPACE + "\\]";
+        return Pattern.compile( endingMacroTagPattern );
     }
 }
