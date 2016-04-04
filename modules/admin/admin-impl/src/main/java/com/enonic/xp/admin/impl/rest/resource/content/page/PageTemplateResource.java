@@ -121,6 +121,11 @@ public final class PageTemplateResource
                 return true;
             }
 
+            if ( content.getType().isShortcut() )
+            {
+                return false;
+            }
+
             final Content nearestSite = this.contentService.getNearestSite( contentId );
 
             if ( nearestSite != null )

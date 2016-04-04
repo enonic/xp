@@ -729,6 +729,7 @@ module app.wizard {
             this.showLiveEditAction.setEnabled(false);
             this.previewAction.setVisible(false);
             this.previewAction.setEnabled(false);
+            this.cycleViewModeButton.setEnabled(!content.getType().isShortcut());
 
             new GetNearestSiteRequest(content.getContentId()).sendAndParse().
                 then((parentSite: Site) => {
@@ -934,6 +935,7 @@ module app.wizard {
         persistNewItem(): wemQ.Promise<Content> {
             return new PersistNewContentRoutine(this).setCreateContentRequestProducer(this.produceCreateContentRequest).execute().then((content: Content) => {
                 api.notify.showFeedback('Content created');
+                this.cycleViewModeButton.setEnabled(!content.getType().isShortcut());
                 return content;
             });
         }

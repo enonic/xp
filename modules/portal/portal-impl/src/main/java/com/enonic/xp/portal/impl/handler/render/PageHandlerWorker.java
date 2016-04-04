@@ -4,6 +4,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.Property;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
@@ -39,8 +40,12 @@ final class PageHandlerWorker
         final Content content = getContent( getContentSelector() );
         if ( content.getType().isShortcut() )
         {
-            renderShortcut( content );
-            return;
+            final Property target = content.getData().getProperty( SHORTCUT_TARGET_PROPERTY );
+            if ( target != null )
+            {
+                renderShortcut( target );
+                return;
+            }
         }
 
         final Site site = getSite( content );
@@ -101,15 +106,15 @@ final class PageHandlerWorker
         this.response = PortalResponse.create( response );
     }
 
-    private void renderShortcut( final Content content )
+    private void renderShortcut( final Property target )
     {
-        final Reference target = content.getData().getProperty( SHORTCUT_TARGET_PROPERTY ).getReference();
-        if ( target == null || target.getNodeId() == null )
+        final Reference reference = target.getReference();
+        if ( reference == null || reference.getNodeId() == null )
         {
-            throw notFound( "Missing shortcut target" );
+            throw notFound( "Missing shortcut reference" );
         }
 
-        final PageUrlParams pageUrlParams = new PageUrlParams().id( target.toString() ).portalRequest( this.request );
+        final PageUrlParams pageUrlParams = new PageUrlParams().id( reference.toString() ).portalRequest( this.request );
         pageUrlParams.getParams().putAll( this.request.getParams() );
 
         final String targetUrl = this.portalUrlService.pageUrl( pageUrlParams );
