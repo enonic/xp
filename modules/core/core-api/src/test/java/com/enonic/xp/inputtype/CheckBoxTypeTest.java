@@ -40,11 +40,10 @@ public class CheckBoxTypeTest
     @Test
     public void testCreateDefaultValue()
     {
-        final InputTypeDefault config =
-            InputTypeDefault.create().
-                property( InputTypeProperty.create( "default", "checked" ).
-                    build() ).
-                build();
+        final InputTypeDefault config = InputTypeDefault.create().
+            property( InputTypeProperty.create( "default", "checked" ).
+                build() ).
+            build();
 
         final Value value = this.type.createDefaultValue( config );
 

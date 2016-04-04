@@ -7,14 +7,14 @@
       "key": "role:Role 1",
       "displayName": "Role 1 Display Name",
       "modifiedTime": "1970-01-01T00:00:00Z",
-      "description":"description1"
+      "description": "description1"
     },
     {
       "type": "role",
       "key": "role:Role 2",
       "displayName": "Role 2 Display Name",
       "modifiedTime": "1970-01-01T00:00:00Z",
-      "description":"description2"
+      "description": "description2"
     }
   ]
 }

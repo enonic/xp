@@ -43,8 +43,9 @@ public final class InputTypeDefault
         return getProperties( name ).stream().filter( filter );
     }
 
-    public String getRootValue() {
-        return this.getValue("default");
+    public String getRootValue()
+    {
+        return this.getValue( "default" );
     }
 
     public String getValue( final String name )
@@ -106,8 +107,6 @@ public final class InputTypeDefault
     {
         return new Builder();
     }
-
-
 
 
     public static class Builder

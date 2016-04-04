@@ -180,7 +180,8 @@ public final class Input
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), this.type, this.label, this.defaultValue, this.immutable, this.occurrences, this.indexed, this.customText,
+        return Objects.hash( super.hashCode(), this.type, this.label, this.defaultValue, this.immutable, this.occurrences, this.indexed,
+                             this.customText,
                              this.helpText, this.validationRegexp, this.inputTypeConfig, this.maximizeUIInputWidth );
     }
 

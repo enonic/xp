@@ -1,5 +1,5 @@
 {
-  "description" : null,
+  "description": null,
   "displayName": "Alice",
   "email": "alice@a.org",
   "key": "user:local:a",
@@ -7,13 +7,13 @@
   "loginDisabled": false,
   "memberships": [
     {
-      "description" : "group a",
+      "description": "group a",
       "displayName": "Group A",
       "key": "group:system:group-a",
       "modifiedTime": "1970-01-01T00:00:00Z"
     },
     {
-      "description" : "group b",
+      "description": "group b",
       "displayName": "Group B",
       "key": "group:system:group-b",
       "modifiedTime": "1970-01-01T00:00:00Z"

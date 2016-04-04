@@ -115,19 +115,14 @@ module app.wizard {
 
             return new UpdateGroupRequest().
                 setKey(key).
-                setDisplayName(displayName).
-                addMembers(addMembers).
-                removeMembers(removeMembers).
-                setDescription(description);
+                setDisplayName(displayName).addMembers(addMembers).removeMembers(removeMembers).setDescription(description);
         }
 
         assembleViewedItem(): Principal {
             return new GroupBuilder(this.getPersistedItem().asGroup()).
                 setMembers(this.getMembersWizardStepForm().getMembers().map((el) => {
                     return el.getKey();
-                })).
-                setDisplayName(this.wizardHeader.getDisplayName()).
-                setDescription(this.getDescriptionWizardStepForm().getDescription()).
+            })).setDisplayName(this.wizardHeader.getDisplayName()).setDescription(this.getDescriptionWizardStepForm().getDescription()).
                 build();
         }
 

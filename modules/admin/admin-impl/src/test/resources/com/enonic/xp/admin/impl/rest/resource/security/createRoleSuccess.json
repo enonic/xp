@@ -1,5 +1,5 @@
 {
-  "description" : "role",
+  "description": "role",
   "displayName": "Super user role",
   "key": "role:superuser",
   "members": [

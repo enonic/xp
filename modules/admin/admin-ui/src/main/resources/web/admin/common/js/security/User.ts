@@ -72,7 +72,7 @@ module api.security {
 
     }
 
-    export class UserBuilder extends PrincipalBuilder{
+    export class UserBuilder extends PrincipalBuilder {
 
         email: string;
 

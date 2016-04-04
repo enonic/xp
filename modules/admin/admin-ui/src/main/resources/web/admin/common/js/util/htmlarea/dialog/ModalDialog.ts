@@ -5,7 +5,7 @@ module api.util.htmlarea.dialog {
     import Fieldset = api.ui.form.Fieldset;
     import FormItem = api.ui.form.FormItem;
     import FormItemBuilder = api.ui.form.FormItemBuilder;
-    
+
     export class ModalDialog extends api.ui.dialog.ModalDialog {
         private fields: { [id: string]: api.dom.FormItemEl } = {};
         private validated = false;
@@ -32,7 +32,7 @@ module api.util.htmlarea.dialog {
         setSubmitAction(action:api.ui.Action) {
             this.submitAction = action;
         }
-        
+
         protected getEditor(): HtmlAreaEditor {
             return this.editor;
         }

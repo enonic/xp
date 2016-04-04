@@ -11,7 +11,7 @@ import com.enonic.xp.xml.DomElement;
 final class XmlInputTypeDefaultMapper
 {
 
-    public InputTypeDefault build( final DomElement root)
+    public InputTypeDefault build( final DomElement root )
     {
         final InputTypeDefault.Builder builder = InputTypeDefault.create();
 
@@ -25,8 +25,8 @@ final class XmlInputTypeDefaultMapper
 
     private void build( final InputTypeDefault.Builder builder, final DomElement root )
     {
-        builder.property( InputTypeProperty.create( root.getTagName(),
-                                                    root.getChildren().size() > 0 ? root.serializeBody() : root.getValue() ).build() );
+        builder.property(
+            InputTypeProperty.create( root.getTagName(), root.getChildren().size() > 0 ? root.serializeBody() : root.getValue() ).build() );
 
         for ( final DomElement child : root.getChildren() )
         {
@@ -50,7 +50,7 @@ final class XmlInputTypeDefaultMapper
     private void addPropertyAttribute( final InputTypeProperty.Builder builder, final Attr attr )
     {
         final String name = resolveName( attr.getName() );
-        builder.attribute( name,  attr.getValue() );
+        builder.attribute( name, attr.getValue() );
     }
 
     private String resolveName( final String name )

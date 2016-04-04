@@ -45,13 +45,10 @@ module app {
                             ]).fire();
                         });
                 } else if (id && this.isValidUserStoreKey(id)) {
-                    new GetUserStoreByKeyRequest(api.security.UserStoreKey.fromString(id)).sendAndParse().
-                    done((userStore: UserStore) => {
+                    new GetUserStoreByKeyRequest(api.security.UserStoreKey.fromString(id)).sendAndParse().done((userStore: UserStore) => {
                         new app.browse.EditPrincipalEvent([
-                            new app.browse.UserTreeGridItemBuilder().
-                            setUserStore(userStore).
-                            setType(UserTreeGridItemType.USER_STORE).
-                            build()
+                            new app.browse.UserTreeGridItemBuilder().setUserStore(userStore).setType(
+                                UserTreeGridItemType.USER_STORE).build()
                         ]).fire();
                     });
                 }

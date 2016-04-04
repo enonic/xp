@@ -107,7 +107,7 @@ module api.security {
                 return false;
             }
 
-            if(!api.ObjectHelper.stringEquals(this.description, other.description)) {
+            if (!api.ObjectHelper.stringEquals(this.description, other.description)) {
                 return false;
             }
 
@@ -141,7 +141,7 @@ module api.security {
         description: string;
 
         constructor(source?: Principal) {
-            if(source) {
+            if (source) {
                 this.key = source.getKey();
                 this.displayName = source.getDisplayName();
                 this.modifiedTime = source.getModifiedTime();

@@ -1,11 +1,12 @@
 package com.enonic.xp.admin.impl.rest.resource.security.json;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 

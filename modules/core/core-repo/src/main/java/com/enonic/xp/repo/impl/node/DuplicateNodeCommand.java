@@ -2,6 +2,8 @@ package com.enonic.xp.repo.impl.node;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -15,8 +17,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.repo.impl.blob.BlobKey;
-import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.util.Reference;
 

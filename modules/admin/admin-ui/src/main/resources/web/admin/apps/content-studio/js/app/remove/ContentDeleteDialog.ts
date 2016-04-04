@@ -48,7 +48,7 @@ module app.remove {
 
             this.descendantsContainer.hide();
 
-            if(this.atLeastOneInitialItemHasChild()) {
+            if (this.atLeastOneInitialItemHasChild()) {
                 this.descendantsContainer.loadData(this.selectedItems).then(() => {
                     this.descendantsContainer.show();
                     this.centerMyself();
@@ -139,7 +139,7 @@ module app.remove {
                         this.selectedItems[0].hideRemoveButton();
                     }
 
-                    if(this.atLeastOneInitialItemHasChild()) {
+                    if (this.atLeastOneInitialItemHasChild()) {
                         this.descendantsContainer.loadData(this.selectedItems).then(() => {
                             this.centerMyself();
                         });

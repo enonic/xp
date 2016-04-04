@@ -88,11 +88,8 @@ module api.ui.security.acl {
         public setUserStoreAccessControlEntry(ace: UserStoreAccessControlEntry, silent?: boolean) {
             this.ace = ace;
 
-            var principal = Principal.create().
-                setKey(ace.getPrincipal().getKey()).
-                setDisplayName(ace.getPrincipal().getDisplayName()).
-                setModifiedTime(ace.getPrincipal().getModifiedTime()).
-                build();
+            var principal = Principal.create().setKey(ace.getPrincipal().getKey()).setDisplayName(
+                ace.getPrincipal().getDisplayName()).setModifiedTime(ace.getPrincipal().getModifiedTime()).build();
             this.setObject(principal);
 
             this.accessSelector.setValue(ace.getAccess(), silent);

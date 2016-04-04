@@ -40,7 +40,7 @@ module api.security {
         }
     }
 
-    export class RoleBuilder extends PrincipalBuilder{
+    export class RoleBuilder extends PrincipalBuilder {
 
         members: PrincipalKey[];
 

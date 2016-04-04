@@ -70,10 +70,8 @@ module app.installation.view {
                     setShowToolbar(false).
                     setRowHeight(70).
                     disableMultipleSelection(true).
-                    prependClasses("market-app-tree-grid").
-                    setSelectedCellCssClass("selected-sort-row").
-                    setQuietErrorHandling(true).
-                    setAutoLoad(false)
+                    prependClasses("market-app-tree-grid").setSelectedCellCssClass("selected-sort-row").setQuietErrorHandling(
+                true).setAutoLoad(false)
             );
 
             this.subsribeAndManageInstallClick();
@@ -140,25 +138,25 @@ module app.installation.view {
 
                     new api.application.InstallUrlApplicationRequest(url)
                         .sendAndParse().then((result: api.application.ApplicationInstallResult)=> {
-                            api.application.ApplicationEvent.un(progressHandler);
-                            if (!result.getFailure()) {
+                        api.application.ApplicationEvent.un(progressHandler);
+                        if (!result.getFailure()) {
 
-                                elem.removeClass(MarketAppStatusFormatter.statusInstallCssClass + " " +
-                                                 MarketAppStatusFormatter.statusUpdateCssClass);
-                                elem.addClass(MarketAppStatusFormatter.getStatusCssClass(MarketAppStatus.INSTALLED));
+                            elem.removeClass(MarketAppStatusFormatter.statusInstallCssClass + " " +
+                                             MarketAppStatusFormatter.statusUpdateCssClass);
+                            elem.addClass(MarketAppStatusFormatter.getStatusCssClass(MarketAppStatus.INSTALLED));
 
-                                elem.setHtml(MarketAppStatusFormatter.formatStatus(MarketAppStatus.INSTALLED));
-                                app.setStatus(MarketAppStatus.INSTALLED);
-                            } else {
-                                elem.setHtml(MarketAppStatusFormatter.formatStatus(status));
-                            }
-
-                        }).catch((reason: any) => {
-                            api.application.ApplicationEvent.un(progressHandler);
+                            elem.setHtml(MarketAppStatusFormatter.formatStatus(MarketAppStatus.INSTALLED));
+                            app.setStatus(MarketAppStatus.INSTALLED);
+                        } else {
                             elem.setHtml(MarketAppStatusFormatter.formatStatus(status));
+                        }
 
-                            api.DefaultErrorHandler.handle(reason);
-                        });
+                    }).catch((reason: any) => {
+                        api.application.ApplicationEvent.un(progressHandler);
+                        elem.setHtml(MarketAppStatusFormatter.formatStatus(status));
+
+                        api.DefaultErrorHandler.handle(reason);
+                    });
                 }
             });
         }

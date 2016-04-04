@@ -32,7 +32,7 @@ module app.wizard {
         }
 
         layout(principal: api.security.Principal) {
-            if(api.ObjectHelper.iFrameSafeInstanceOf(principal, api.security.Role)
+            if (api.ObjectHelper.iFrameSafeInstanceOf(principal, api.security.Role)
                 || api.ObjectHelper.iFrameSafeInstanceOf(principal, api.security.Group)) {
                 var description = principal.getDescription();
                 this.description.setValue(!!description ? description : "");

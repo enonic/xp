@@ -34,8 +34,7 @@ final class CheckBoxType
         final String defaultValue = defaultConfig.getRootValue();
         if ( StringUtils.isNotEmpty( defaultValue ) )
         {
-            return VALID_VALUE.equals( defaultValue ) ? ValueFactory.newBoolean(true) :
-                super.createDefaultValue( defaultConfig );
+            return VALID_VALUE.equals( defaultValue ) ? ValueFactory.newBoolean( true ) : super.createDefaultValue( defaultConfig );
         }
         return super.createDefaultValue( defaultConfig );
     }

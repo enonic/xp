@@ -1,5 +1,11 @@
 package com.enonic.xp.core.impl.security;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+
+import org.junit.Test;
+
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -8,14 +14,8 @@ import com.enonic.xp.security.Group;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalType;
 import com.enonic.xp.security.UserStoreKey;
-import org.junit.Test;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class GroupNodeTranslatorTest
 {
@@ -31,7 +31,7 @@ public class GroupNodeTranslatorTest
             displayName( "My Group" ).
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
             modifiedTime( Instant.now( clock ) ).
-            description("my group a").
+            description( "my group a" ).
             build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( group );

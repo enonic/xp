@@ -1,14 +1,15 @@
 package com.enonic.xp.admin.impl.rest.resource.security.json;
 
 
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.security.UpdateGroupParams;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.UpdateGroupParams;
 
 import static java.util.stream.Collectors.toList;
 

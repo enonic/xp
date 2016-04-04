@@ -1,10 +1,10 @@
 package com.enonic.xp.security;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
-
 import java.time.Instant;
 import java.util.Objects;
+
+import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

@@ -73,7 +73,7 @@ module api.liveedit.fragment {
 
         private createParentSiteFragmentsOnlyQuery(): QueryExpr {
             var sitePath = this.fragmentComponentView.getLiveEditModel().getSiteModel().getSite().getPath().toString();
-            var compareExpr: CompareExpr = CompareExpr.like(new FieldExpr("_path"), ValueExpr.string("/content" + sitePath + "/*" ));
+            var compareExpr: CompareExpr = CompareExpr.like(new FieldExpr("_path"), ValueExpr.string("/content" + sitePath + "/*"));
             return new QueryExpr(compareExpr);
         }
 

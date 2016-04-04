@@ -138,7 +138,7 @@ public class CreateContentCommandTest
         assertEquals( "", createdContent.getDisplayName() );
     }
 
-    private void defaultValue_string(final InputTypeName inputTypeName)
+    private void defaultValue_string( final InputTypeName inputTypeName )
     {
         final CreateContentParams params = createContentParams().name( ContentName.from( "name" ) ).displayName( "" ).build();
         final CreateContentCommand command = createContentCommand( params );

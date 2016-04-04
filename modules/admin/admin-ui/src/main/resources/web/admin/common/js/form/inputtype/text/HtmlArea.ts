@@ -105,7 +105,7 @@ module api.form.inputtype.text {
 
             var onBlurHandler = (e) => {
                 //checking if remove occurence button clicked or not
-                if(!isMouseOverRemoveOccurenceButton) {
+                if (!isMouseOverRemoveOccurenceButton) {
                     this.setStaticInputHeight();
                     textAreaWrapper.removeClass(focusedEditorCls);
                 }
@@ -157,13 +157,14 @@ module api.form.inputtype.text {
                     }
                     this.removeTooltipFromEditorArea(textAreaWrapper);
 
-                    var removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(".remove-button")[0];
-                    removeButtonEL.addEventListener("mouseover", () => {
-                        isMouseOverRemoveOccurenceButton = true;
-                    });
-                    removeButtonEL.addEventListener("mouseleave", () => {
-                        isMouseOverRemoveOccurenceButton = false;
-                    });
+                var removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
+                    ".remove-button")[0];
+                removeButtonEL.addEventListener("mouseover", () => {
+                    isMouseOverRemoveOccurenceButton = true;
+                });
+                removeButtonEL.addEventListener("mouseleave", () => {
+                    isMouseOverRemoveOccurenceButton = false;
+                });
 
                     HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
                     this.onShown((event) => {
