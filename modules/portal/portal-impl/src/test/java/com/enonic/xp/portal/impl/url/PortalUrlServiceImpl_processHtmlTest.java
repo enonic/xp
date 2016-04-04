@@ -312,49 +312,47 @@ public class PortalUrlServiceImpl_processHtmlTest
     public void process_html_with_macros()
     {
         final ProcessHtmlParams params1 = new ProcessHtmlParams().
-            type( UrlTypeConstants.ABSOLUTE ).
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"/some/path\">[macroName par1=\"val1\" par2=\"val2\" par3=\"val3\"]body body[/macroName]</a>" );
+            value( "<a href=\"/some/path\">[macroName par1=\"val1\" par2=\"val2\"]body body[/macroName]</a>" );
 
         final ProcessHtmlParams params2 = new ProcessHtmlParams().
-            type( UrlTypeConstants.ABSOLUTE ).
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"/some/path\">[macroName par1=\"val1\" par2=\"val2\" par3=\"val3\"/]</a>" );
+            value( "<a href=\"/some/path\">[macroName par1=\"val1\" par2=\"val2\"/]</a>" );
 
         final ProcessHtmlParams params3 = new ProcessHtmlParams().
-            type( UrlTypeConstants.ABSOLUTE ).
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"[macroNoBody /]\">[macro par1=\"val1\" par2=\"val2\" par3=\"val3\"/]</a> \\[macroName]skip me[/macroName]" );
+            value( "<a href=\"[macroNoBody /]\">[macro par1=\"val1\" par2=\"val2\"/]</a> \\[macroName]skip me[/macroName]" );
 
         final ProcessHtmlParams params4 = new ProcessHtmlParams().
-            type( UrlTypeConstants.ABSOLUTE ).
-            portalRequest( this.portalRequest ).
             value( "<p>[macroName par1=\"val1\"]body [macroInBody]macroInBody[/macroInBody] body[/macroName]</p>" );
 
         final ProcessHtmlParams params5 = new ProcessHtmlParams().
-            type( UrlTypeConstants.ABSOLUTE ).
-            portalRequest( this.portalRequest ).
             value( "<a href=\"[macro /]\">body</a>" );
 
-        MockHttpServletRequest req = new MockHttpServletRequest();
-        ServletRequestHolder.setRequest( req );
+        final ProcessHtmlParams params6 = new ProcessHtmlParams().
+            value( "\\[macro /] \\[macro][/macro] \\ [macro /]" );
+
+        final ProcessHtmlParams params7 = new ProcessHtmlParams().
+            value( "[macro_name][macro_in_body/][/macro_name]" );
 
         final String processedHtml1 = this.service.processHtml( params1 );
         final String processedHtml2 = this.service.processHtml( params2 );
         final String processedHtml3 = this.service.processHtml( params3 );
         final String processedHtml4 = this.service.processHtml( params4 );
         final String processedHtml5 = this.service.processHtml( params5 );
+        final String processedHtml6 = this.service.processHtml( params6 );
+        final String processedHtml7 = this.service.processHtml( params7 );
 
-        assertEquals(
-            "<a href=\"/some/path\"><!--#MACRO _name=\"macroName\" par1=\"val1\" par2=\"val2\" par3=\"val3\" _body=\"body body\"--></a>",
-            processedHtml1 );
-        assertEquals( "<a href=\"/some/path\"><!--#MACRO _name=\"macroName\" par1=\"val1\" par2=\"val2\" par3=\"val3\" _body=\"\"--></a>",
+        assertEquals( "<a href=\"/some/path\"><!--#MACRO _name=\"macroName\" par1=\"val1\" par2=\"val2\" _body=\"body body\"--></a>",
+                      processedHtml1 );
+        assertEquals( "<a href=\"/some/path\"><!--#MACRO _name=\"macroName\" par1=\"val1\" par2=\"val2\" _body=\"\"--></a>",
                       processedHtml2 );
         assertEquals(
-            "<a href=\"<!--#MACRO _name=\"macroNoBody\" _body=\"\"-->\"><!--#MACRO _name=\"macro\" par1=\"val1\" par2=\"val2\" par3=\"val3\" _body=\"\"--></a> \\[macroName]skip me[/macroName]",
+            "<a href=\"<!--#MACRO _name=\"macroNoBody\" _body=\"\"-->\"><!--#MACRO _name=\"macro\" par1=\"val1\" par2=\"val2\" _body=\"\"--></a> \\[macroName]skip me[/macroName]",
             processedHtml3 );
         assertEquals( "<p><!--#MACRO _name=\"macroName\" par1=\"val1\" _body=\"body [macroInBody]macroInBody[/macroInBody] body\"--></p>",
                       processedHtml4 );
         assertEquals( "<a href=\"<!--#MACRO _name=\"macro\" _body=\"\"-->\">body</a>", processedHtml5 );
+
+        assertEquals( "\\[macro /] \\[macro][/macro] \\ [macro /]", processedHtml6 );
+
+        assertEquals( "<!--#MACRO _name=\"macroName\" par1=\"val1\" par2=\"val2\" _body=\"[macro_in_body/]\"-->", processedHtml7 );
     }
 }

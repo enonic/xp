@@ -7,10 +7,41 @@ import com.enonic.xp.macro.MacroService;
 
 public class HtmlMacroProcessor
 {
-    private static final int MATCH_INDEX = 1;
+    /* Generics Regexps */
+    private static final String MANDATORY_SPACE = "\\s+";
 
-    private static final Pattern MACROS_PATTERN = Pattern.compile( "[^\\\\](\\[(\\w+)(\\s(\\w*=.[^\\[\\]]*))*\\s?(/|\\].*\\[/\\2)\\])" );
+    private static final String OPTIONAL_SPACE = "\\s*";
 
+    /* Attributes Regexps */
+    private static final String ATTRIBUTE_KEY = "\\w+";
+
+    private static final String ATTRIBUTE_VALUE = "\"[^\"]+\"";
+
+    private static final String ATTRIBUTE_ENTRY = ATTRIBUTE_KEY + OPTIONAL_SPACE + "=" + OPTIONAL_SPACE + ATTRIBUTE_VALUE;
+
+    private static final String ATTRIBUTES = "(?:" + MANDATORY_SPACE + ATTRIBUTE_ENTRY + ")*";
+
+    /* Macro tags Regexps */
+    private static final String NO_COMMENT_CHAR = "[^\\\\]";
+
+    private static final String CATCHING_MACRO_NAME = "(?<name>\\w+)";
+
+    private static final String EMPTY_MACRO =
+        NO_COMMENT_CHAR + "\\[" + OPTIONAL_SPACE + CATCHING_MACRO_NAME + ATTRIBUTES + OPTIONAL_SPACE + "/\\]";
+
+    private static final String OPENING_MACRO_TAG =
+        NO_COMMENT_CHAR + "\\[" + OPTIONAL_SPACE + CATCHING_MACRO_NAME + ATTRIBUTES + OPTIONAL_SPACE + "\\]";
+
+    private static final String ENDING_MACRO_TAG = NO_COMMENT_CHAR + "\\[/" + OPTIONAL_SPACE + CATCHING_MACRO_NAME + OPTIONAL_SPACE + "\\]";
+
+    /* Patterns */
+    private static final Pattern COMPILED_EMPTY_MACRO = Pattern.compile( EMPTY_MACRO );
+
+    private static final Pattern COMPILED_OPENING_MACRO_TAG = Pattern.compile( OPENING_MACRO_TAG );
+
+    private static final Pattern COMPILED_ENDING_MACRO_TAG = Pattern.compile( ENDING_MACRO_TAG );
+
+    /* Variables */
     private MacroService macroService;
 
     public HtmlMacroProcessor( final MacroService macroService )
@@ -18,18 +49,20 @@ public class HtmlMacroProcessor
         this.macroService = macroService;
     }
 
-    public String process( final String test )
+    public String process( final String text )
     {
-        String result = test;
+        final Matcher matcher = COMPILED_EMPTY_MACRO.matcher( text );
+        System.out.println( matcher.find() );
+        System.out.println( matcher.group( "name" ) );
+        System.out.println( matcher.find() );
+        System.out.println( matcher.group( "name" ) );
 
-        final Matcher contentMatcher = MACROS_PATTERN.matcher( test );
+        return null;
+    }
 
-        while ( contentMatcher.find() )
-        {
-            final String match = contentMatcher.group( MATCH_INDEX );
-            result = result.replace( match, macroService.postProcessInstructionSerialize( macroService.parse( match ) ) );
-        }
-
-        return result;
+    public static void main( String[] args )
+    {
+        new HtmlMacroProcessor( null ).process(
+            "<a href=\"[macroNoBody /]\">[macro par1=\"val1\" par2=\"val2\"/]</a> \\[macroName]skip me[/macroName]" );
     }
 }
