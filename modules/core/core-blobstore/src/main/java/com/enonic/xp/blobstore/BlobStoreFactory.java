@@ -41,14 +41,14 @@ public class BlobStoreFactory
 
         final ProviderConfig config = provider.config();
 
-        BlobStore store = populateWithReadThroughIfApplicable( config, providerStore );
+        builtStore = populateWithReadThroughIfApplicable( config, providerStore );
 
         if ( this.config.cache() )
         {
             builtStore = CachedBlobStore.create().
                 memoryCapacity( this.config.memoryCapacity() ).
                 sizeTreshold( this.config.cacheSizeThreshold() ).
-                blobStore( store ).
+                blobStore( builtStore ).
                 build();
         }
 
