@@ -274,16 +274,11 @@ module api.content.form.inputtype.image {
         }
 
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
-            var superPromise = super.update(propertyArray, unchangedOnly);
-
-            if (!unchangedOnly || !this.contentComboBox.isDirty()) {
-                return superPromise.then(() => {
-
+            return super.update(propertyArray, unchangedOnly).then(() => {
+                if (!unchangedOnly || !this.contentComboBox.isDirty()) {
                     this.contentComboBox.setValue(this.getValueFromPropertyArray(propertyArray));
-                })
-            } else {
-                return superPromise;
-            }
+                }
+            });
         }
 
         private createUploader(): ImageUploaderEl {

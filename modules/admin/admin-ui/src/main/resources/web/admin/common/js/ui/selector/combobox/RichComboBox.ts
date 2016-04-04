@@ -23,6 +23,8 @@ module api.ui.selector.combobox {
 
         private interval: number;
 
+        public static debug: boolean = false;
+
         constructor(builder: RichComboBoxBuilder<OPTION_DISPLAY_VALUE>) {
 
             this.loadedListeners = [];
@@ -337,6 +339,8 @@ module api.ui.selector.combobox {
 
         private loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>;
 
+        private tempValue: string;
+
         public static debug: boolean = false;
 
         constructor(name: string, config: ComboBoxConfig<OPTION_DISPLAY_VALUE>,
@@ -346,27 +350,50 @@ module api.ui.selector.combobox {
         }
 
         protected doSetValue(value: string, silent?: boolean) {
-            if (RichComboBox.debug) {
-                console.debug(this.toString() + '.doSetValue, waiting to be loaded:', value);
+            if (!this.loader.isLoaded()) {
+                if (RichComboBox.debug) {
+                    console.debug(this.toString() + ".doSetValue: loader is not loaded, saving temp value = " + value);
+                }
+                this.tempValue = value;
             }
             this.doWhenLoaded(() => {
-                if (RichComboBox.debug) {
-                    console.debug(this.toString() + '.doSetValue on loaded:', value);
+                if (this.tempValue) {
+                    if (RichComboBox.debug) {
+                        console.debug(this.toString() + ".doSetValue: clearing temp value = " + this.tempValue);
+                    }
+                    delete this.tempValue;
                 }
                 super.doSetValue(value, silent);
             }, value);
+        }
+
+        protected doGetValue(): string {
+            if (!this.loader.isLoaded() && this.tempValue != undefined) {
+                if (RichComboBox.debug) {
+                    console.debug("RichComboBox: loader is not loaded, returning temp value = " + this.tempValue);
+                }
+                return this.tempValue;
+            } else {
+                return super.doGetValue();
+            }
         }
 
         private doWhenLoaded(callback: Function, value: string) {
             if (this.loader.isLoaded()) {
                 callback();
             } else {
+                if (RichComboBox.debug) {
+                    console.debug(this.toString() + '.doWhenLoaded: waiting to be loaded');
+                }
                 var singleLoadListener = () => {
+                    if (RichComboBox.debug) {
+                        console.debug(this.toString() + '.doWhenLoaded: on loaded');
+                    }
                     callback();
                     this.loader.unLoadedData(singleLoadListener);
                 };
                 this.loader.onLoadedData(singleLoadListener);
-                if (this.loader.isNotStarted()) {
+                if (!api.util.StringHelper.isEmpty(value) && this.loader.isNotStarted()) {
                     this.loader.preLoad(value);
                 }
             }
