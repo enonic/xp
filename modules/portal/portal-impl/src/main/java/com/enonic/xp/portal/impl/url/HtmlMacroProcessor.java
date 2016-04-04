@@ -54,6 +54,7 @@ public class HtmlMacroProcessor
 
             //Appends previous text
             processedText.append( text.substring( index, matchStartIndex ) );
+            index = matchStartIndex;
 
             //If the macro has a body
             String entireMacro = null;

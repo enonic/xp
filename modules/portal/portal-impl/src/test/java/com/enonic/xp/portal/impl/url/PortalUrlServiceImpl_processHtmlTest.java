@@ -320,6 +320,7 @@ public class PortalUrlServiceImpl_processHtmlTest
         throws IOException
     {
         assertProcessHtml( "html-with-macros-input.txt", "html-with-macros-output.txt" );
+        assertProcessHtml( "html-with-unclosed-macro-input.txt", "html-with-unclosed-macro-output.txt" );
     }
 
     private void assertProcessHtml( String inputName, String expectedOutputName )
