@@ -1,4 +1,4 @@
-package com.enonic.xp.file;
+package com.enonic.xp.blobstore.file;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -10,7 +10,6 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
-import com.enonic.xp.blobstore.file.FileBlobStore;
 
 import static org.junit.Assert.*;
 

@@ -11,7 +11,6 @@ import com.google.common.io.ByteStreams;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blobstore.MemoryBlobStore;
-import com.enonic.xp.blobstore.file.FileBlobStore;
 import com.enonic.xp.util.ByteSizeParser;
 
 import static org.junit.Assert.*;
@@ -23,14 +22,14 @@ public class ReadThroughBlobStoreTest
 
     private MemoryBlobStore readThroughStore;
 
-    private FileBlobStore finalStore;
+    private MemoryBlobStore finalStore;
 
     @Before
     public void setUp()
         throws Exception
     {
         this.readThroughStore = new MemoryBlobStore();
-        this.finalStore = new FileBlobStore( tempFolder.getRoot() );
+        this.finalStore = new MemoryBlobStore();
     }
 
     @Test

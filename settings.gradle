@@ -69,6 +69,7 @@ include 'launcher:launcher-main'
 
 include 'blobstore:blobstore-aws-s3'
 include 'blobstore:blobstore-swift'
+include 'blobstore:blobstore-file'
 
 include 'distro'
 include 'docs'
