@@ -154,7 +154,9 @@ module api.form.inputtype.text {
                     HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
                     this.onShown((event) => {
                         // invoke auto resize on shown in case contents have been updated while inactive
-                        editor.execCommand('mceAutoResize', false, null, {skip_focus: true});
+                        if (!!editor['contentAreaContainer'] || !!editor['bodyElement']) {
+                            editor.execCommand('mceAutoResize', false, null, {skip_focus: true});
+                        }
                     });
                 });
         }

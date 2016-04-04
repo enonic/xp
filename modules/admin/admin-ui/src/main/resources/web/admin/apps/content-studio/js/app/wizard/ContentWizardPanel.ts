@@ -580,6 +580,7 @@ module app.wizard {
                             this.liveFormPanel.skipNextReloadConfirmation(true);
                             this.liveFormPanel.loadPage();
                         }
+                        this.resetLastFocusedElement();
                     });
                 }
             };
