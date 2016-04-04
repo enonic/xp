@@ -88,6 +88,10 @@ module api.schema.content {
             return ContentTypeName.MEDIA_VECTOR.equals(this);
         }
 
+        isShortcut(): boolean {
+            return ContentTypeName.SHORTCUT.equals(this);
+        }
+
         static getMediaTypes(): ContentTypeName[] {
             return [
                 ContentTypeName.MEDIA_ARCHIVE,
