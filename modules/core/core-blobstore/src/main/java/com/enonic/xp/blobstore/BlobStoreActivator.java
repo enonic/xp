@@ -60,12 +60,18 @@ public class BlobStoreActivator
 
     private void doRegister()
     {
-        final BlobStoreProvider blobStoreProvider = this.providers.get( config.providerName() );
+        final String name = config.providerName();
+
+        LOG.info( "Waiting for blobstore-provider [" + name + "]" );
+
+        final BlobStoreProvider blobStoreProvider = this.providers.get( name );
 
         if ( blobStoreProvider == null )
         {
             return;
         }
+
+        LOG.info( "Found blobstore-provider [" + name + "]" );
 
         if ( blobStoreProvider.config().readThroughEnabled() )
         {

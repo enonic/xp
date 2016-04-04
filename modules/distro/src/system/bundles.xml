@@ -79,8 +79,6 @@
   <bundle level="30">${group}:admin-impl:${version}</bundle>
 
   <!-- Blobstore providers -->
-  <bundle level="22">${group}:blobstore-aws-s3:${version}</bundle>
-  <bundle level="22">${group}:blobstore-swift:${version}</bundle>
   <bundle level="22">${group}:blobstore-file:${version}</bundle>
 
 </bundles>
