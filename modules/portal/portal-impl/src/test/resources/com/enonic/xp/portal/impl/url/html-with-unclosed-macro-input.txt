@@ -1,0 +1,3 @@
+[correct_macro/]
+[unclosed_macro]
+[correct_macro2][/correct_macro2]
