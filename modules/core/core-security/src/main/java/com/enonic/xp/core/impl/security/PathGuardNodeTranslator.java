@@ -89,7 +89,8 @@ public class PathGuardNodeTranslator
                 final PropertyTree data = editableNode.data;
                 data.setString( PathGuardPropertyPaths.DISPLAY_NAME_PATH, params.getDisplayName() );
                 data.setString( PathGuardPropertyPaths.DESCRIPTION_PATH, params.getDescription() );
-                data.setString( PathGuardPropertyPaths.USER_STORE_KEY_PATH, params.getUserStoreKey().toString() );
+                data.setString( PathGuardPropertyPaths.USER_STORE_KEY_PATH,
+                                params.getUserStoreKey() == null ? null : params.getUserStoreKey().toString() );
                 data.removeProperty( PathGuardPropertyPaths.PATHS_PATH );
                 data.addStrings( PathGuardPropertyPaths.PATHS_PATH.toString(), params.getPaths() );
             } ).

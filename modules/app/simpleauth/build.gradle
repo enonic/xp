@@ -10,7 +10,6 @@ bundle {
     instruction 'Bundle-Name', 'Enonic XP App - Simple Auth'
 }
 
-
 task copyAdminUiCommon( type: Copy ) {
     from '../../admin/admin-ui/src/main/resources/web/admin/common'
     into "$buildDir/resources/main/assets/common"
