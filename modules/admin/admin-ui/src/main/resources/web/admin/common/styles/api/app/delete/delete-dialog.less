@@ -1,20 +1,26 @@
 .delete-dialog {
 
   .dialog-content {
+
+    max-height: 300px;
+    overflow-y: auto;
+
+    @media screen and (max-height: 720px) {
+      max-height: 250px;
+    }
+
+    @media screen and (max-height: 540px) {
+      max-height: 150px;
+    }
+
     @media screen and (max-height: 360px) {
-      height: 60%;
+      max-height: 80px;
     }
   }
 
   .item-list {
-    padding: 10px;
     max-height: 400px;
     overflow-y: auto;
-
-    .viewer {
-      padding-top: 5px;
-      padding-bottom: 5px;
-    }
 
     @media screen and (max-height: 720px) {
       max-height: 350px;
@@ -28,6 +34,68 @@
       max-height: 82%;
     }
 
+    .browse-selection-item {
+      padding: 4px 0px 4px 0px;
+      margin: 0px;
+      display: block;
+
+      .status {
+        margin-right: 5px;
+        display: inline-block;
+        float: right;
+
+        &.equal {
+          color: @admin-green;
+        }
+      }
+    }
+
+  }
+
+  .descendants-to-delete-list {
+    margin-top: 20px;
+
+    h6 {
+      margin-bottom: 5px;
+    }
+
+    .names-and-icon-view {
+
+      padding: 4px 0px 4px 0px;
+
+      .wrapper {
+        margin: 0px;
+        height: 16px;
+        width: 16px;
+        line-height: 14px;
+      }
+
+      &.small {
+        .wrapper:before {
+          left: 8px;
+          width: 8px;
+          height: 8px;
+          line-height: 8px;
+          border-radius: 15px;
+          font-size: 12px;
+        }
+      }
+
+      .font-icon-default.image {
+        background: url("../../../../images/icons/16x16/image.png");
+        width: inherit;
+        height: inherit;
+      }
+
+      &.invalid .wrapper {
+        &:before {
+          content: "!";
+          background: #cb0300;
+          color: #ffffff;
+        }
+      }
+
+    }
   }
 
   .dialog-buttons .@{_COMMON_PREFIX}button.delete-action {
@@ -48,9 +116,7 @@
   }
 
   .desc-message {
-    font-style: italic;
-    padding-top: 10px;
-    margin-bottom: -10px;
+    margin-top: 20px;
     padding-left: 1px;
   }
 

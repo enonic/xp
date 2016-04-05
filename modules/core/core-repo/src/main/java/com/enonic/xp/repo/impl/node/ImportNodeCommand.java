@@ -1,12 +1,12 @@
 package com.enonic.xp.repo.impl.node;
 
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.repo.impl.blob.BlobStore;
 
 public class ImportNodeCommand
     extends AbstractNodeCommand

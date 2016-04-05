@@ -1,27 +1,23 @@
 package com.enonic.xp.repo.impl.node.dao;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersions;
-import com.enonic.xp.repo.impl.blob.BlobKey;
-import com.enonic.xp.repo.impl.blob.BlobRecord;
-import com.enonic.xp.repo.impl.blob.BlobStore;
-import com.enonic.xp.repo.impl.blob.cache.CachedBlobStore;
-import com.enonic.xp.repo.impl.blob.file.FileBlobStore;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
@@ -34,17 +30,7 @@ public class NodeVersionDaoImpl
 
     private RepoConfiguration configuration;
 
-    private BlobStore nodeVersionBlobStore;
-
-    @Activate
-    public void initialize()
-    {
-        final File blobStoreDir = new File( this.configuration.getBlobStoreDir(), NodeConstants.NODE_VERSION_BLOB_STORE_DIR );
-        this.nodeVersionBlobStore = CachedBlobStore.create().
-            blobStore( new FileBlobStore( blobStoreDir ) ).
-            sizeTreshold( Long.MAX_VALUE ).
-            build();
-    }
+    private BlobStore blobStore;
 
     @Override
     public NodeVersionId store( final Node node )
@@ -58,7 +44,7 @@ public class NodeVersionDaoImpl
     {
         final String serializedNode = this.nodeVersionJsonSerializer.toString( NodeVersion.from( node ) );
         final ByteSource source = ByteSource.wrap( serializedNode.getBytes( StandardCharsets.UTF_8 ) );
-        return nodeVersionBlobStore.addRecord( source );
+        return blobStore.addRecord( NodeConstants.NODE_SEGMENT, source );
     }
 
     @Override
@@ -77,7 +63,7 @@ public class NodeVersionDaoImpl
     {
         final BlobKey blobKey = new BlobKey( nodeVersionId.toString() );
 
-        final NodeVersion nodeVersionFromBlob = getNodeVersionFromBlob( nodeVersionBlobStore.getRecord( blobKey ) );
+        final NodeVersion nodeVersionFromBlob = getNodeVersionFromBlob( blobStore.getRecord( NodeConstants.NODE_SEGMENT, blobKey ) );
         return NodeVersion.create( nodeVersionFromBlob ).
             versionId( nodeVersionId ).
             build();
@@ -89,7 +75,7 @@ public class NodeVersionDaoImpl
 
         for ( final NodeVersionId nodeVersionId : nodeVersionIds )
         {
-            final BlobRecord blob = nodeVersionBlobStore.getRecord( new BlobKey( nodeVersionId.toString() ) );
+            final BlobRecord blob = blobStore.getRecord( NodeConstants.NODE_SEGMENT, new BlobKey( nodeVersionId.toString() ) );
 
             if ( blob == null )
             {
@@ -129,5 +115,11 @@ public class NodeVersionDaoImpl
     public void setConfiguration( final RepoConfiguration configuration )
     {
         this.configuration = configuration;
+    }
+
+    @Reference
+    public void setBlobStore( final BlobStore blobStore )
+    {
+        this.blobStore = blobStore;
     }
 }

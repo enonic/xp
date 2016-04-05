@@ -2,14 +2,12 @@ package com.enonic.xp.admin.impl.rest.resource.application.json;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Maps;
 
 public class MarketApplicationsJson
 {
     private Map<String, MarketApplicationJson> hits;
 
-    @JsonIgnore
     private int total;
 
     public MarketApplicationsJson()
@@ -31,7 +29,7 @@ public class MarketApplicationsJson
     @SuppressWarnings("unused")
     public int getTotal()
     {
-        return this.hits.keySet().size();
+        return this.total;
     }
 }
 

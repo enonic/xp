@@ -158,19 +158,11 @@
               display: none;
             }
 
-            .spinner {
-              font-family: 'xp-admin-font-icon';
-
-              &:after {
-                .animation(rotate360, .5s, .0s, linear);
-                content: "\e007";
-                color: @admin-green;
-                display: inline-block;
-                margin-left: 5px;
-              }
-            }
-
           }
+        }
+
+        .load-mask {
+          max-height: 580px;
         }
 
         .version {

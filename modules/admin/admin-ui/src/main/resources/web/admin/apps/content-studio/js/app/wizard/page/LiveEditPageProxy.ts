@@ -41,6 +41,8 @@ module app.wizard.page {
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
     import RegionView = api.liveedit.RegionView;
 
+    import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
+    import LiveEditPageDialogCreatedEvent = api.liveedit.LiveEditPageDialogCreatedEvent;
 
     export class LiveEditPageProxy {
 
@@ -105,6 +107,8 @@ module app.wizard.page {
         private showWarningListeners: {(event: ShowWarningLiveEditEvent): void;}[] = [];
 
         private editContentListeners: {(event: EditContentEvent): void;}[] = [];
+
+        private createHtmlAreaDialogListeners: {(event: CreateHtmlAreaDialogEvent): void;}[] = [];
 
         private showLoadMaskHandler: () => void;
 
@@ -235,7 +239,7 @@ module app.wizard.page {
             if (liveEditWindow) {
                 if (liveEditWindow.wemjq) {
                     // Give loaded page same CONFIG.baseUri as in admin
-                    liveEditWindow.CONFIG = {baseUri: CONFIG.baseUri};
+                    liveEditWindow.CONFIG = {baseUri: CONFIG.baseUri, assetsUri: CONFIG.assetsUri};
 
                     this.livejq = <JQueryStatic>liveEditWindow.wemjq;
 
@@ -356,6 +360,8 @@ module app.wizard.page {
             LiveEditPageViewReadyEvent.un(null, contextWindow);
 
             LiveEditPageInitializationErrorEvent.un(null, contextWindow);
+
+            CreateHtmlAreaDialogEvent.un(null, contextWindow);
         }
 
         public listenToPage(contextWindow: any) {
@@ -419,6 +425,8 @@ module app.wizard.page {
             LiveEditPageViewReadyEvent.on(this.notifyLiveEditPageViewReady.bind(this), contextWindow);
 
             LiveEditPageInitializationErrorEvent.on(this.notifyLiveEditPageInitializationError.bind(this), contextWindow);
+
+            CreateHtmlAreaDialogEvent.on(this.notifyLiveEditPageDialogCreate.bind(this), contextWindow);
         }
 
         onLoaded(listener: {(): void;}) {
@@ -689,6 +697,22 @@ module app.wizard.page {
             this.liveEditPageInitErrorListeners.forEach((listener) => listener(event));
         }
 
+        onLiveEditPageDialogCreate(listener: {(event: CreateHtmlAreaDialogEvent): void;}) {
+            this.createHtmlAreaDialogListeners.push(listener);
+        }
+
+        unLiveEditPageDialogCreate(listener: {(event: CreateHtmlAreaDialogEvent): void;}) {
+            this.createHtmlAreaDialogListeners = this.createHtmlAreaDialogListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyLiveEditPageDialogCreate(event: CreateHtmlAreaDialogEvent) {
+            this.createHtmlAreaDialogListeners.forEach((listener) => listener(event));
+        }
+
+        notifyLiveEditPageDialogCreated(modalDialog: api.util.htmlarea.dialog.ModalDialog, config:any) {
+            new LiveEditPageDialogCreatedEvent(modalDialog, config).fire(this.liveEditWindow);
+        }
+
         onComponentFragmentCreated(listener: {(event: ComponentFragmentCreatedEvent): void;}) {
             this.fragmentCreatedListeners.push(listener);
         }
@@ -724,7 +748,7 @@ module app.wizard.page {
         private notifyEditContent(event: EditContentEvent) {
             this.editContentListeners.forEach((listener) => listener(event));
         }
-        
+
         private copyObjectsBeforeFrameReloadForIE() {
             this.copyControllerForIE();
             this.copyRegionsForIE();

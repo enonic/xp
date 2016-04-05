@@ -9,6 +9,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
@@ -38,6 +39,7 @@ import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
@@ -58,8 +60,6 @@ import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.NodeEvents;
-import com.enonic.xp.repo.impl.blob.BlobStore;
-import com.enonic.xp.repo.impl.blob.file.FileBlobStore;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
@@ -85,13 +85,12 @@ public class NodeServiceImpl
 
     private EventPublisher eventPublisher;
 
-    private BlobStore binaryBlobStore;
+    private BlobStore blobStore;
 
     @Activate
     public void initialize()
     {
         final File blobStoreDir = new File( configuration.getBlobStoreDir(), NodeConstants.BINARY_BLOB_STORE_DIR );
-        this.binaryBlobStore = new FileBlobStore( blobStoreDir );
 
         final RepositoryInitializer repoInitializer = new RepositoryInitializer( this.indexServiceInternal );
         repoInitializer.initializeRepositories( ContentConstants.CONTENT_REPO.getId(), SystemConstants.SYSTEM_REPO.getId() );
@@ -198,7 +197,7 @@ public class NodeServiceImpl
         final Node createdNode = CreateNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.binaryBlobStore ).
+            binaryBlobStore( this.blobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -217,7 +216,7 @@ public class NodeServiceImpl
         final Node updatedNode = UpdateNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.binaryBlobStore ).
+            binaryBlobStore( this.blobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -314,7 +313,7 @@ public class NodeServiceImpl
         final Node duplicatedNode = DuplicateNodeCommand.create().
             id( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.binaryBlobStore ).
+            binaryBlobStore( this.blobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -399,6 +398,20 @@ public class NodeServiceImpl
         return GetActiveNodeVersionsCommand.create().
             nodeId( params.getNodeId() ).
             branches( params.getBranches() ).
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
+            build().
+            execute();
+    }
+
+
+    @Override
+    public NodeVersionId setActiveVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
+    {
+        return SetActiveVersionCommand.create().
+            nodeVersionId( nodeVersionId ).
+            nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -531,7 +544,7 @@ public class NodeServiceImpl
             binaryReference( reference ).
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.binaryBlobStore ).
+            binaryBlobStore( this.blobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -610,7 +623,7 @@ public class NodeServiceImpl
             insertManualStrategy( params.getInsertManualStrategy() ).
             dryRun( params.isDryRun() ).
             importPermissions( params.isImportPermissions() ).
-            binaryBlobStore( this.binaryBlobStore ).
+            binaryBlobStore( this.blobStore ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -693,5 +706,11 @@ public class NodeServiceImpl
     public void setConfiguration( final RepoConfiguration configuration )
     {
         this.configuration = configuration;
+    }
+
+    @Reference
+    public void setBlobStore( final BlobStore blobStore )
+    {
+        this.blobStore = blobStore;
     }
 }

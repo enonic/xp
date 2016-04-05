@@ -51,6 +51,10 @@ module api {
             return BrowserHelper.IS_IE;
         }
 
+        static isIOS(): boolean {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window['MSStream'];
+        }
+
         private static init() {
             var M = navigator.userAgent.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
             BrowserHelper.BROWSER_NAME = (<any>BrowserName)[M[1].toLocaleUpperCase()];

@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyVisitor;
@@ -21,8 +23,6 @@ import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBinaryReferenceException;
-import com.enonic.xp.repo.impl.blob.BlobRecord;
-import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.BinaryReferences;
 
@@ -125,7 +125,7 @@ class UpdatedAttachedBinariesResolver
 
     private void storeAndAttachBinary( final Map<BinaryReference, AttachedBinary> resolved, final BinaryAttachment newBinaryAttachment )
     {
-        final BlobRecord blob = this.blobStore.addRecord( newBinaryAttachment.getByteSource() );
+        final BlobRecord blob = this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, newBinaryAttachment.getByteSource() );
         resolved.put( newBinaryAttachment.getReference(),
                       new AttachedBinary( newBinaryAttachment.getReference(), blob.getKey().toString() ) );
     }

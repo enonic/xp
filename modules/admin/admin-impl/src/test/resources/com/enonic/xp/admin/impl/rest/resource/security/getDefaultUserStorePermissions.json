@@ -8,6 +8,7 @@
     {
       "access": "READ",
       "principal": {
+        "description": "authenticated",
         "displayName": "Authenticated",
         "key": "role:system.authenticated",
         "modifiedTime": null
@@ -16,6 +17,7 @@
     {
       "access": "ADMINISTRATOR",
       "principal": {
+        "description": "admin",
         "displayName": "Administrator",
         "key": "role:system.admin",
         "modifiedTime": null

@@ -21,18 +21,23 @@ public final class UpdateRoleJson
 
     private final PrincipalKeys removeMembers;
 
+    private final String description;
+
     @JsonCreator
     public UpdateRoleJson( @JsonProperty("key") final String userKey, @JsonProperty("displayName") final String displayName,
                            @JsonProperty("addMembers") final List<String> addMembers,
-                           @JsonProperty("removeMembers") final List<String> removeMembers )
+                           @JsonProperty("removeMembers") final List<String> removeMembers,
+                           @JsonProperty("description") final String description )
     {
         final PrincipalKey principalKey = PrincipalKey.from( userKey );
         this.updateRoleParams = UpdateRoleParams.create().
             roleKey( principalKey ).
             displayName( displayName ).
+            description( description ).
             build();
         this.addMembers = PrincipalKeys.from( addMembers.stream().map( PrincipalKey::from ).collect( toList() ) );
         this.removeMembers = PrincipalKeys.from( removeMembers.stream().map( PrincipalKey::from ).collect( toList() ) );
+        this.description = description;
     }
 
     @JsonIgnore

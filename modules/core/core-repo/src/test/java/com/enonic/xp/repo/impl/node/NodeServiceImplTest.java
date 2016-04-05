@@ -57,6 +57,7 @@ public class NodeServiceImplTest
         this.nodeService.setSnapshotService( this.snapshotService );
         this.nodeService.setStorageService( this.storageService );
         this.nodeService.setSearchService( this.searchService );
+        this.nodeService.setBlobStore( new MemoryBlobStore() );
         this.nodeService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
         final RepoConfiguration config = Mockito.mock( RepoConfiguration.class );

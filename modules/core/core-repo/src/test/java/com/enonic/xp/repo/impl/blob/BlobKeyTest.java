@@ -2,6 +2,8 @@ package com.enonic.xp.repo.impl.blob;
 
 import org.junit.Test;
 
+import com.enonic.xp.blob.BlobKey;
+
 import static org.junit.Assert.*;
 
 public class BlobKeyTest

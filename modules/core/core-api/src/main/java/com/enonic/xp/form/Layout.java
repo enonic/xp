@@ -21,7 +21,8 @@ public abstract class Layout
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return this.name;
     }
 

@@ -28,7 +28,8 @@ public final class ApplicationInvalidatorListener
     @Override
     public void onEvent( final Event event )
     {
-        if ( event != null && ApplicationEvents.EVENT_TYPE.equals( event.getType() ) )
+        if ( event != null && ApplicationEvents.EVENT_TYPE.equals( event.getType() ) &&
+            !ApplicationEvents.INSTALLATION_PROGRESS.equals( event.getData().get( ApplicationEvents.EVENT_TYPE_KEY ) ) )
         {
             onApplicationEvent( event );
         }

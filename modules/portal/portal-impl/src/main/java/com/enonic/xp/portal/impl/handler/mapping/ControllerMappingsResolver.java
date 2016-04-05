@@ -181,7 +181,8 @@ final class ControllerMappingsResolver
 
     private boolean matchesUrlPattern( final ControllerMappingDescriptor descriptor, final PortalRequest request )
     {
-        return descriptor.getPattern().matcher( request.getPath() ).matches();
+        final boolean patternMatches = descriptor.getPattern().matcher( request.getPath() ).matches();
+        return descriptor.invertPattern() ? !patternMatches : patternMatches;
     }
 
     private boolean matchesContent( final ControllerMappingDescriptor descriptor, final PortalRequest request )

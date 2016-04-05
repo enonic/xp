@@ -2,7 +2,8 @@ package com.enonic.xp.repo.impl.node;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -14,10 +15,8 @@ import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.repo.impl.blob.BlobKey;
-import com.enonic.xp.repo.impl.blob.BlobStore;
-import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.util.Reference;
 
@@ -58,7 +57,11 @@ public final class DuplicateNodeCommand
 
         final NodeReferenceUpdatesHolder nodesToBeUpdated = builder.build();
 
-        this.indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ) );
+        RefreshCommand.create().
+            refreshMode( RefreshMode.SEARCH ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
 
         updateNodeReferences( duplicatedNode, nodesToBeUpdated );
         updateChildReferences( duplicatedNode, nodesToBeUpdated );
@@ -108,8 +111,9 @@ public final class DuplicateNodeCommand
     {
         for ( final AttachedBinary attachedBinary : node.getAttachedBinaries() )
         {
-            paramsBuilder.attachBinary( attachedBinary.getBinaryReference(),
-                                        binaryBlobStore.getRecord( new BlobKey( attachedBinary.getBlobKey() ) ).getBytes() );
+            paramsBuilder.attachBinary( attachedBinary.getBinaryReference(), binaryBlobStore.getRecord( NodeConstants.BINARY_SEGMENT,
+                                                                                                        new BlobKey(
+                                                                                                            attachedBinary.getBlobKey() ) ).getBytes() );
         }
     }
 

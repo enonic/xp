@@ -56,6 +56,9 @@ public class BundleLocationResolverTest
 
         final String location2 = this.resolver.resolve( "org.slf4j:slf4j-api:1.7.10" );
         assertEquals( "system/org/slf4j/slf4j-api/1.7.10/slf4j-api-1.7.10.jar", getRelativeLocation( location2 ) );
+
+        final String location3 = this.resolver.resolve( "org.slf4j:slf4j-api:1.7.10:all:jar" );
+        assertEquals( "system/org/slf4j/slf4j-api/1.7.10/slf4j-api-1.7.10-all.jar", getRelativeLocation( location3 ) );
     }
 
     @Test
@@ -68,5 +71,8 @@ public class BundleLocationResolverTest
 
         final String location2 = this.resolver.resolve( "org.slf4j:slf4j-api:1.7.10" );
         assertEquals( "system/org/slf4j/slf4j-api/1.7.10/slf4j-api-1.7.10.jar", getRelativeLocation( location2 ) );
+
+        final String location3 = this.resolver.resolve( "com.enonic.xp:other:1.0.0" );
+        assertEquals( "project/modules/other/target/libs/other-1.0.0.jar", getRelativeLocation( location3 ) );
     }
 }

@@ -24,6 +24,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.enonic.xp.query.expr.*;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -47,6 +48,7 @@ import com.enonic.xp.admin.impl.json.content.ContentListJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryListJson;
 import com.enonic.xp.admin.impl.json.content.GetActiveContentVersionsResultJson;
+import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
@@ -79,6 +81,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
 import com.enonic.xp.attachment.Attachment;
@@ -125,6 +128,7 @@ import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
+import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
@@ -132,12 +136,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
-import com.enonic.xp.query.expr.CompareExpr;
-import com.enonic.xp.query.expr.ConstraintExpr;
-import com.enonic.xp.query.expr.FieldExpr;
-import com.enonic.xp.query.expr.LogicalExpr;
-import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.security.Principal;
@@ -784,6 +782,15 @@ public final class ContentResource
     }
 
     @POST
+    @Path("getDescendantsOfContents")
+    public ContentSummaryListJson getDescendantsOfContents( final CountItemsWithChildrenJson json )
+    {
+        final ContentPaths contentsPaths = this.filterChildrenIfParentPresents( ContentPaths.from( json.getContentPaths() ) );
+
+        return this.getDescendantsOfContents( contentsPaths );
+    }
+
+    @POST
     @Path("countContentsWithDescendants")
     public long countContentsWithDescendants( final CountItemsWithChildrenJson json )
     {
@@ -868,6 +875,26 @@ public final class ContentResource
         return new GetActiveContentVersionsResultJson( result, this.principalsResolver );
     }
 
+    @POST
+    @Path("getVersionsForView")
+    public GetContentVersionsForViewResultJson getContentVersionsForView( final GetContentVersionsJson params )
+    {
+        final ContentId contentId = ContentId.from( params.getContentId() );
+
+        final FindContentVersionsResult allVersions = contentService.getVersions( FindContentVersionsParams.create().
+            contentId( contentId ).
+            from( params.getFrom() != null ? params.getFrom() : 0 ).
+            size( params.getSize() != null ? params.getSize() : 50 ).
+            build() );
+
+        final GetActiveContentVersionsResult activeVersions = contentService.getActiveVersions( GetActiveContentVersionsParams.create().
+            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+            contentId( contentId ).
+            build() );
+
+        return new GetContentVersionsForViewResultJson( allVersions, activeVersions, this.principalsResolver );
+    }
+
     @GET
     @Path("getAttachments")
     public List<AttachmentJson> getAttachments( @QueryParam("id") final String idParam )
@@ -878,6 +905,15 @@ public final class ContentResource
         return AttachmentListJson.toJson( content.getAttachments() );
     }
 
+    @POST
+    @Path("setActiveVersion")
+    public ContentIdJson setActiveVersion( final SetActiveVersionJson params )
+    {
+        final SetActiveContentVersionResult setActiveContentVersionResult =
+            this.contentService.setActiveContentVersion( params.getContentId(), params.getVersionId() );
+
+        return new ContentIdJson( setActiveContentVersionResult.getContentId() );
+    }
 
     @GET
     @Path("locales")
@@ -1110,27 +1146,43 @@ public final class ContentResource
     private long countChildren( final ContentPaths contentsPaths )
     {
         FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
-            contentQuery( ContentQuery.create().size( 0 ).queryExpr( constructExprToCountChildren( contentsPaths ) ).build() ).
+            contentQuery( ContentQuery.create().size( 0 ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() ).
             build() );
 
         return result.getTotalHits();
     }
 
-    private QueryExpr constructExprToCountChildren( final ContentPaths contentsPaths )
+    private QueryExpr constructExprToFindChildren(final ContentPaths contentsPaths )
     {
-        ConstraintExpr expr = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( "/content" + contentsPaths.first() + "/*" ) );
+        final FieldExpr fieldExpr = FieldExpr.from( "_path" );
+
+        ConstraintExpr expr = CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentsPaths.first() + "/*" ) );
 
         for ( ContentPath contentPath : contentsPaths )
         {
             if ( !contentPath.equals( contentsPaths.first() ) )
             {
                 ConstraintExpr likeExpr =
-                    CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( "/content" + contentPath + "/*" ) );
+                    CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentPath + "/*" ) );
                 expr = LogicalExpr.or( expr, likeExpr );
             }
         }
 
-        return QueryExpr.from( expr );
+        return QueryExpr.from( expr, new FieldOrderExpr( fieldExpr, OrderExpr.Direction.ASC ) );
+    }
+
+    private ContentSummaryListJson getDescendantsOfContents( final ContentPaths contentsPaths )
+    {
+        FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
+                contentQuery( ContentQuery.create().size( Integer.MAX_VALUE ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() ).
+                build() );
+
+        final ContentListMetaData metaData = ContentListMetaData.create().
+                totalHits( result.getTotalHits() ).
+                hits( result.getHits() ).
+                build();
+
+        return new ContentSummaryListJson( result.getContents(), metaData, contentIconUrlResolver );
     }
 
     private boolean contentNameIsOccupied( final RenameContentParams renameParams )

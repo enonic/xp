@@ -15,6 +15,8 @@ module app.installation {
 
     export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
+        private dockedPanel: DockedPanel;
+
         private uploadAppPanel: UploadAppPanel;
 
         private marketAppPanel: MarketAppPanel;
@@ -33,8 +35,6 @@ module app.installation {
             this.initUploadAppPanel();
 
             this.initMarketAppPanel();
-
-            this.initAndAppendInstallAppsTabsPanel();
 
             api.dom.Body.get().appendChild(this);
         }
@@ -67,6 +67,7 @@ module app.installation {
             installAppDockedPanel.addItem("Upload", true, this.uploadAppPanel);
 
             this.appendChildToContentPanel(installAppDockedPanel);
+            this.dockedPanel = installAppDockedPanel;
         }
 
         private initUploaderListeners() {
@@ -103,13 +104,16 @@ module app.installation {
         }
 
         open() {
+            if (!this.dockedPanel) {
+                this.initAndAppendInstallAppsTabsPanel();
+            }
             super.open();
         }
 
         show() {
             this.resetFileInputWithUploader();
             super.show();
-            this.uploadAppPanel.getApplicationInput().giveFocus();
+            this.marketAppPanel.loadGrid();
         }
 
         hide() {

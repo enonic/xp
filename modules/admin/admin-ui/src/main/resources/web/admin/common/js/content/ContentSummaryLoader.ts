@@ -4,6 +4,7 @@ module api.content {
     import FieldOrderExpr = api.query.expr.FieldOrderExpr;
     import OrderDirection = api.query.expr.OrderDirection;
     import FieldExpr = api.query.expr.FieldExpr;
+    import QueryExpr = api.query.expr.QueryExpr;
 
     export class ContentSummaryLoader extends ContentSummaryPreLoader {
 
@@ -39,9 +40,13 @@ module api.content {
             this.contentSummaryRequest.setSize(size);
         }
 
+        setQueryExpr(queryExpr: QueryExpr) {
+            this.contentSummaryRequest.setQueryExpr(queryExpr);
+        }
+
         search(searchString: string): wemQ.Promise<ContentSummary[]> {
 
-            this.contentSummaryRequest.setQueryExpr(searchString, this.order);
+            this.contentSummaryRequest.setSearchQueryExpr(searchString, this.order);
 
             return this.load();
         }

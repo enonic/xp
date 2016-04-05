@@ -3,15 +3,15 @@ package com.enonic.xp.repo.impl.node;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.repo.impl.blob.BlobKey;
-import com.enonic.xp.repo.impl.blob.BlobRecord;
-import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.util.BinaryReference;
 
 public class GetBinaryCommand
@@ -89,7 +89,7 @@ public class GetBinaryCommand
     private ByteSource doGetByteSource( final AttachedBinary attachedBinary )
     {
         final BlobKey blobKey = new BlobKey( attachedBinary.getBlobKey() );
-        final BlobRecord record = this.binaryBlobStore.getRecord( blobKey );
+        final BlobRecord record = this.binaryBlobStore.getRecord( NodeConstants.BINARY_SEGMENT, blobKey );
         return record != null ? record.getBytes() : null;
     }
 

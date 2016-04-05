@@ -1,4 +1,5 @@
 {
+  "description": "super u",
   "displayName": "Super user role",
   "key": "role:superuser",
   "members": [

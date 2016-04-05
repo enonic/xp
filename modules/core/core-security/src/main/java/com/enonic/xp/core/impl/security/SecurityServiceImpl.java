@@ -602,6 +602,7 @@ public final class SecurityServiceImpl
             key( createGroup.getKey() ).
             displayName( createGroup.getDisplayName() ).
             modifiedTime( Instant.now( clock ) ).
+            description( createGroup.getDescription() ).
             build();
 
         final CreateNodeParams createGroupParams = PrincipalNodeTranslator.toCreateNodeParams( group );
@@ -672,6 +673,7 @@ public final class SecurityServiceImpl
             key( createRole.getKey() ).
             displayName( createRole.getDisplayName() ).
             modifiedTime( Instant.now( clock ) ).
+            description( createRole.getDescription() ).
             build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( role );

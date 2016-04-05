@@ -4,5 +4,5 @@ import com.squareup.okhttp.Response;
 
 public interface MarketDataProvider
 {
-    Response fetch( final String url, final String version );
+    Response fetch( String url, String version, int start, int count );
 }

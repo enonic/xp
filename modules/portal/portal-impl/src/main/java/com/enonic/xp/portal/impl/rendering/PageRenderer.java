@@ -92,13 +92,12 @@ public final class PageRenderer
         html += "<!--#" + COMPONENT_INSTRUCTION_PREFIX + FRAGMENT_COMPONENT + "-->";
         html += "</body></html>";
 
-        PortalResponse.Builder portalResponseBuilder = PortalResponse.create().
+        return PortalResponse.create().
             status( HttpStatus.OK ).
             contentType( MediaType.HTML_UTF_8 ).
             body( html ).
-            postProcess( true );
-
-        return this.postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
+            postProcess( true ).
+            build();
     }
 
     private PortalResponse renderForNoPageDescriptor( final PortalRequest portalRequest, final Content content )
@@ -118,13 +117,12 @@ public final class PageRenderer
         }
         html += "</html>";
 
-        PortalResponse.Builder portalResponseBuilder = PortalResponse.create().
+        return PortalResponse.create().
             status( HttpStatus.OK ).
             contentType( MediaType.HTML_UTF_8 ).
             body( html ).
-            postProcess( true );
-
-        return this.postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
+            postProcess( true ).
+            build();
     }
 
     private PortalResponse executeResponseFilters( final PortalRequest portalRequest, final PortalResponse portalResponse )

@@ -612,6 +612,18 @@ module api.dom {
             };
         }
 
+        getDimensionsTopRelativeToParent(): ElementDimensions {
+            var offsetToParent = this.getOffsetToParent();
+            var offsetToDocument = this.getOffset();
+
+            return {
+                top: offsetToParent.top,
+                left: offsetToDocument.left,
+                width: this.getWidthWithBorder(),
+                height: this.getHeightWithBorder()
+            };
+        }
+
         /**
          * Goes up the hierarchy and returns first non-statically positioned parent
          * @returns {HTMLElement}

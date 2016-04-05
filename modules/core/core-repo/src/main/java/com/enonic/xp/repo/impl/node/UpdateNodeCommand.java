@@ -5,13 +5,13 @@ import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.repo.impl.blob.BlobStore;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.Exceptions;

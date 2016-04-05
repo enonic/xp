@@ -102,7 +102,7 @@ public class XmlSiteParserTest
         assertEquals( 50, mapping2.getOrder() );
 
         assertEquals( "myapplication:/controller2.js", mapping3.getController().toString() );
-        assertEquals( "contentType:'portal:fragment'", mapping3.getContentConstraint().toString() );
+        assertEquals( "type:'portal:fragment'", mapping3.getContentConstraint().toString() );
         assertEquals( "/.*", mapping3.getPattern().toString() );
         assertEquals( 5, mapping3.getOrder() );
     }

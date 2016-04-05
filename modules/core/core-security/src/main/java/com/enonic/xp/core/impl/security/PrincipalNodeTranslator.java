@@ -108,6 +108,12 @@ abstract class PrincipalNodeTranslator
             case USER:
                 populateUserData( data.getRoot(), (User) principal );
                 break;
+            case ROLE:
+                populateRoleData( data.getRoot(), (Role) principal );
+                break;
+            case GROUP:
+                populateGroupData( data.getRoot(), (Group) principal );
+                break;
         }
 
         builder.data( data );
@@ -128,6 +134,13 @@ abstract class PrincipalNodeTranslator
                 {
                     case USER:
                         populateUserData( nodeData.getRoot(), (User) principal );
+                        break;
+                    case ROLE:
+                        populateRoleData( nodeData.getRoot(), (Role) principal );
+                        break;
+                    case GROUP:
+                        populateGroupData( nodeData.getRoot(), (Group) principal );
+                        break;
                 }
             } ).
             build();
@@ -217,6 +230,16 @@ abstract class PrincipalNodeTranslator
         data.setString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, user.getAuthenticationHash() );
     }
 
+    private static void populateRoleData( final PropertySet data, final Role role )
+    {
+        data.setString( PrincipalPropertyNames.DESCRIPTION_KEY, role.getDescription() );
+    }
+
+    private static void populateGroupData( final PropertySet data, final Group group )
+    {
+        data.setString( PrincipalPropertyNames.DESCRIPTION_KEY, group.getDescription() );
+    }
+
     private static User createUserFromNode( final Node node )
     {
         Preconditions.checkNotNull( node );
@@ -241,6 +264,7 @@ abstract class PrincipalNodeTranslator
         return Group.create().
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
             displayName( nodeAsTree.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) ).
+            description( nodeAsTree.getString( PrincipalPropertyNames.DESCRIPTION_KEY ) ).
             build();
     }
 
@@ -253,6 +277,7 @@ abstract class PrincipalNodeTranslator
         return Role.create().
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
             displayName( nodeAsTree.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) ).
+            description( nodeAsTree.getString( PrincipalPropertyNames.DESCRIPTION_KEY ) ).
             build();
     }
 

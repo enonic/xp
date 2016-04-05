@@ -19,6 +19,7 @@ import com.enonic.xp.repo.impl.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.xp.repo.impl.elasticsearch.search.ElasticsearchSearchDao;
 import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchStorageDao;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
+import com.enonic.xp.repo.impl.node.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDaoImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryInitializer;
@@ -86,6 +87,8 @@ public class SecurityServiceImplTest
     {
         super.setUp();
 
+        final MemoryBlobStore blobStore = new MemoryBlobStore();
+
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
         Mockito.when( repoConfig.getBlobStoreDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/blob" ) );
 
@@ -101,7 +104,7 @@ public class SecurityServiceImplTest
 
         final NodeVersionDaoImpl nodeDao = new NodeVersionDaoImpl();
         nodeDao.setConfiguration( repoConfig );
-        nodeDao.initialize();
+        nodeDao.setBlobStore( blobStore );
 
         this.indexServiceInternal = new ElasticsearchIndexServiceInternal();
         this.indexServiceInternal.setClient( client );
@@ -128,6 +131,8 @@ public class SecurityServiceImplTest
         this.nodeService.setSearchService( searchService );
         this.nodeService.setStorageService( storageService );
         this.nodeService.setConfiguration( repoConfig );
+
+        this.nodeService.setBlobStore( blobStore );
         this.nodeService.initialize();
 
         this.eventPublisher = Mockito.mock( EventPublisher.class );
@@ -266,6 +271,7 @@ public class SecurityServiceImplTest
             final CreateGroupParams createGroup = CreateGroupParams.create().
                 groupKey( groupKey1 ).
                 displayName( "Group A" ).
+                description( "Group A Description" ).
                 build();
 
             final PrincipalKey groupKey2 = PrincipalKey.ofGroup( SYSTEM, "group-b" );
@@ -283,9 +289,13 @@ public class SecurityServiceImplTest
 
             assertEquals( "Group A", group1.getDisplayName() );
             assertEquals( "Group A", createdGroup1.getDisplayName() );
+            assertEquals( "Group A Description", group1.getDescription() );
+            assertEquals( "Group A Description", createdGroup1.getDescription() );
 
             assertEquals( "Group B", group2.getDisplayName() );
             assertEquals( "Group B", createdGroup2.getDisplayName() );
+            assertNull( group2.getDescription() );
+            assertNull( createdGroup2.getDescription() );
         } );
     }
 
@@ -304,6 +314,7 @@ public class SecurityServiceImplTest
 
             final UpdateGroupParams groupUpdate = UpdateGroupParams.create( group ).
                 displayName( "___Group B___" ).
+                description( "description" ).
                 build();
             final Group updatedGroupResult = securityService.updateGroup( groupUpdate );
             refresh();
@@ -311,6 +322,8 @@ public class SecurityServiceImplTest
             final Group updatedGroup = securityService.getGroup( group.getKey() ).get();
             assertEquals( "___Group B___", updatedGroupResult.getDisplayName() );
             assertEquals( "___Group B___", updatedGroup.getDisplayName() );
+            assertEquals( "description", updatedGroupResult.getDescription() );
+            assertEquals( "description", updatedGroup.getDescription() );
         } );
     }
 
@@ -323,6 +336,7 @@ public class SecurityServiceImplTest
             final CreateRoleParams createRole = CreateRoleParams.create().
                 roleKey( roleKey1 ).
                 displayName( "Role A" ).
+                description( "Group A Description" ).
                 build();
 
             final PrincipalKey roleKey2 = PrincipalKey.ofRole( "role-b" );
@@ -339,9 +353,13 @@ public class SecurityServiceImplTest
 
             assertEquals( "Role A", role1.getDisplayName() );
             assertEquals( "Role A", createdRole1.getDisplayName() );
+            assertEquals( "Group A Description", role1.getDescription() );
+            assertEquals( "Group A Description", createdRole1.getDescription() );
 
             assertEquals( "Role B", role2.getDisplayName() );
             assertEquals( "Role B", createdRole2.getDisplayName() );
+            assertNull( role2.getDescription() );
+            assertNull( createdRole2.getDescription() );
         } );
     }
 
@@ -359,6 +377,7 @@ public class SecurityServiceImplTest
 
             final UpdateRoleParams roleUpdate = UpdateRoleParams.create( role ).
                 displayName( "___Role B___" ).
+                description( "description" ).
                 build();
             final Role updatedRoleResult = securityService.updateRole( roleUpdate );
             refresh();
@@ -366,6 +385,8 @@ public class SecurityServiceImplTest
             final Role updatedRole = securityService.getRole( role.getKey() ).get();
             assertEquals( "___Role B___", updatedRoleResult.getDisplayName() );
             assertEquals( "___Role B___", updatedRole.getDisplayName() );
+            assertEquals( "description", updatedRoleResult.getDescription() );
+            assertEquals( "description", updatedRole.getDescription() );
         } );
     }
 

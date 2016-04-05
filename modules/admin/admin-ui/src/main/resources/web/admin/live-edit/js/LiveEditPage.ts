@@ -26,6 +26,7 @@ module LiveEdit {
     import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
     import Shader = api.liveedit.Shader;
     import Highlighter = api.liveedit.Highlighter;
+    import SelectedHighlighter = api.liveedit.SelectedHighlighter;
     import Cursor = api.liveedit.Cursor;
     import DragAndDrop = api.liveedit.DragAndDrop;
     import Exception = api.Exception;
@@ -111,6 +112,7 @@ module LiveEdit {
 
             ComponentViewDragStartedEvent.on(() => {
                 Highlighter.get().hide();
+                SelectedHighlighter.get().hide();
                 Shader.get().hide();
                 Cursor.get().hide();
 

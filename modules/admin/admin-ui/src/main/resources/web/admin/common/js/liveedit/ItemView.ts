@@ -691,6 +691,10 @@ module api.liveedit {
                 selectedView.deselect();
             }
 
+            // selecting anything should exit the text edit mode
+            // do this before highlighting as this might change text component dimensions
+            this.stopTextEditMode();
+
             this.getEl().setData("live-edit-selected", "true");
 
             this.hideTooltip();
@@ -700,9 +704,6 @@ module api.liveedit {
             if(!pageView.isLocked()) {
                 this.highlightSelected();
             }
-
-            // selecting anything should exit the text edit mode
-            this.stopTextEditMode();
 
             if (this.isEmpty()) {
                 this.selectPlaceholder();
@@ -900,9 +901,7 @@ module api.liveedit {
                 actions.push(this.createInsertSubAction("Layout", api.liveedit.layout.LayoutItemType.get()));
             }
             actions.push(this.createInsertSubAction("Text", api.liveedit.text.TextItemType.get()));
-            if (!isFragmentContent) {
-                actions.push(this.createInsertSubAction("Fragment", api.liveedit.fragment.FragmentItemType.get()));
-            }
+            actions.push(this.createInsertSubAction("Fragment", api.liveedit.fragment.FragmentItemType.get()));
 
             return actions;
         }

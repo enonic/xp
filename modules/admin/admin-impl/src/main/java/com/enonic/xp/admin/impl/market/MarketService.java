@@ -4,5 +4,5 @@ import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplication
 
 public interface MarketService
 {
-    MarketApplicationsJson get( final String version );
+    MarketApplicationsJson get( String version, int start, int count );
 }
