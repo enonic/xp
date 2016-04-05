@@ -74,7 +74,7 @@ public final class LocaleServiceImpl
 
     private Properties loadBundle( final ApplicationKey applicationKey, final String bundleExtension )
     {
-        Properties properties = getOrCreateProperties( applicationKey );
+        Properties properties = new Properties();
 
         final ResourceKey resourceKey = ResourceKey.from( applicationKey, PHRASE_FOLDER + bundleExtension + ".properties" );
         final Resource resource = resourceService.getResource( resourceKey );
@@ -89,18 +89,6 @@ public final class LocaleServiceImpl
             {
                 throw new LocalizationException( "Not able to load resource for: " + applicationKey.toString(), e );
             }
-        }
-
-        return properties;
-    }
-
-    private Properties getOrCreateProperties( final ApplicationKey applicationKey )
-    {
-        Properties properties = null /*getFromCache( application )*/;
-
-        if ( properties == null )
-        {
-            properties = new Properties();
         }
 
         return properties;
