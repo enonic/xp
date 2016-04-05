@@ -6,6 +6,7 @@ import java.util.Map;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
+import com.enonic.xp.blob.ProviderConstants;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentsMapFactory;
 import com.enonic.xp.config.ConfigBuilder;
@@ -36,7 +37,7 @@ public class FileBlobStoreConfigImpl
         return SegmentsMapFactory.create().
             configuration( config ).
             configName( "baseDir" ).
-            requiredSegments( DEFAULT_REQUIRED_SEGMENTS ).
+            requiredSegments( ProviderConstants.DEFAULT_REQUIRED_SEGMENTS ).
             build().
             execute();
     }

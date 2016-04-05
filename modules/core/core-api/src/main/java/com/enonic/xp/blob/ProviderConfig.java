@@ -4,8 +4,6 @@ import java.util.Map;
 
 public interface ProviderConfig
 {
-    public static final Segment[] DEFAULT_REQUIRED_SEGMENTS = new Segment[]{Segment.from( "node" ), Segment.from( "binary" )};
-
     static final String READ_THROUGH_PROVIDER = "readThrough.provider";
 
     static final String READ_THROUGH_ENABLED = "readThrough.enabled";
