@@ -55,6 +55,10 @@ module api {
             return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window['MSStream'];
         }
 
+        static isFirefox(): boolean {
+            return navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+        }
+
         private static init() {
             var M = navigator.userAgent.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
             BrowserHelper.BROWSER_NAME = (<any>BrowserName)[M[1].toLocaleUpperCase()];
