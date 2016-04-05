@@ -1,0 +1,8 @@
+{
+  "name": "macroName",
+  "body": "body",
+  "params": {
+    "firstParam": "firstParamValue",
+    "secondParam": "secondParamValue"
+  }
+}

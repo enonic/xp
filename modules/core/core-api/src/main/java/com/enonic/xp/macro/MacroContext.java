@@ -42,6 +42,11 @@ public final class MacroContext
         return this.params.get( name );
     }
 
+    public ImmutableMap<String, String> getParams()
+    {
+        return params;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
