@@ -686,7 +686,7 @@ module api.ui.treegrid {
             this.grid.show();
             this.errorPanel.hide();
             if (this.quietErrorHandling) {
-                this.errorPanel.setError(message || reason.getMessage());
+                this.errorPanel.setError(message || reason);
                 this.grid.hide();
                 this.errorPanel.show();
             }
