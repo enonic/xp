@@ -2,8 +2,6 @@ package com.enonic.xp.inputtype;
 
 import java.time.Duration;
 import java.time.Period;
-import java.time.temporal.TemporalAmount;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,7 +9,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 public final class RelativeTimeParser
 {
@@ -21,12 +18,12 @@ public final class RelativeTimeParser
 
     private static final String UNIT_ENDING = "(?![\\w])";
 
-    public List<TemporalAmount> parse( final String timeExpression )
+    public static Result parse( final String timeExpression )
     {
         return getTemporalAmounts( timeExpression, DateTimeUnits.DATE_TIME_UNITS );
     }
 
-    public List<TemporalAmount> getTemporalAmounts( final String timeExpression, final Set<String> availableUnits )
+    public static Result getTemporalAmounts( final String timeExpression, final Set<String> availableUnits )
     {
         Duration duration = Duration.ZERO;
         Period period = Period.ZERO;
@@ -34,7 +31,7 @@ public final class RelativeTimeParser
 
         if ( DateTimeUnits.CURRENT_UNITS.contains( timeExpression.trim() ) )
         { //return zero period and duration
-            return Lists.newArrayList( duration, period );
+            return new Result( duration, period );
         }
 
         StringBuilder builder = new StringBuilder( OPERATOR_GROUP ).
@@ -61,13 +58,35 @@ public final class RelativeTimeParser
             }
             isEmpty = false;
         }
-        return isEmpty ? null : Lists.newArrayList( duration, period );
+        return isEmpty ? null : new Result( duration, period );
     }
 
-    private String getPatternGroup( Set<String> set )
+    private static String getPatternGroup( Set<String> set )
     {
         return new StringBuilder( "(" ).append( StringUtils.join( set, "|" ) ).append( ")" ).
             toString();
+    }
+
+    public static class Result {
+
+        private Duration duration;
+
+        private Period period;
+
+        Result(Duration duration, Period period) {
+            this.duration = duration;
+            this.period = period;
+        }
+
+        public Duration getTime()
+        {
+            return duration;
+        }
+
+        public Period getDate()
+        {
+            return period;
+        }
     }
 
     public interface DateTimeUnits
