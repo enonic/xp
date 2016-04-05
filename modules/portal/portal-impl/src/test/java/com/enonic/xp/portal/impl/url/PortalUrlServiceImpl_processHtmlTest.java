@@ -1,10 +1,17 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.io.IOException;
+import java.net.URL;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.CharSource;
+import com.google.common.io.Resources;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
@@ -310,49 +317,27 @@ public class PortalUrlServiceImpl_processHtmlTest
 
     @Test
     public void process_html_with_macros()
+        throws IOException
     {
-        final ProcessHtmlParams params1 = new ProcessHtmlParams().
-            value( "<a href=\"/some/path\">[macroName par1=\"val1\" par2=\"val2\"]body body[/macroName]</a>" );
+        assertProcessHtml( "html-with-macros-input.txt", "html-with-macros-output.txt" );
+        assertProcessHtml( "html-with-unclosed-macro-input.txt", "html-with-unclosed-macro-output.txt" );
+    }
 
-        final ProcessHtmlParams params2 = new ProcessHtmlParams().
-            value( "<a href=\"/some/path\">[macroName par1=\"val1\" par2=\"val2\"/]</a>" );
+    private void assertProcessHtml( String inputName, String expectedOutputName )
+        throws IOException
+    {
+        //Reads the input and output files
+        final URL inputUrl = this.getClass().getResource( inputName );
+        final CharSource inputCharSource = Resources.asCharSource( inputUrl, Charsets.UTF_8 );
+        final URL expectedOutputUrl = this.getClass().getResource( expectedOutputName );
+        final CharSource expectedOutputCharSource = Resources.asCharSource( expectedOutputUrl, Charsets.UTF_8 );
 
-        final ProcessHtmlParams params3 = new ProcessHtmlParams().
-            value( "<a href=\"[macroNoBody /]\">[macro par1=\"val1\" par2=\"val2\"/]</a> \\[macroName]skip me[/macroName]" );
+        //Processes the input file
+        final ProcessHtmlParams processHtmlParams = new ProcessHtmlParams().
+            value( inputCharSource.read() );
+        final String processedHtml = this.service.processHtml( processHtmlParams );
 
-        final ProcessHtmlParams params4 = new ProcessHtmlParams().
-            value( "<p>[macroName par1=\"val1\"]body [macroInBody]macroInBody[/macroInBody] body[/macroName]</p>" );
-
-        final ProcessHtmlParams params5 = new ProcessHtmlParams().
-            value( "<a href=\"[macro /]\">body</a>" );
-
-        final ProcessHtmlParams params6 = new ProcessHtmlParams().
-            value( "\\[macro /] \\[macro][/macro] \\ [macro /]" );
-
-        final ProcessHtmlParams params7 = new ProcessHtmlParams().
-            value( "[macro_name][macro_in_body/][/macro_name]" );
-
-        final String processedHtml1 = this.service.processHtml( params1 );
-        final String processedHtml2 = this.service.processHtml( params2 );
-        final String processedHtml3 = this.service.processHtml( params3 );
-        final String processedHtml4 = this.service.processHtml( params4 );
-        final String processedHtml5 = this.service.processHtml( params5 );
-        final String processedHtml6 = this.service.processHtml( params6 );
-        final String processedHtml7 = this.service.processHtml( params7 );
-
-        assertEquals( "<a href=\"/some/path\"><!--#MACRO _name=\"macroName\" par1=\"val1\" par2=\"val2\" _body=\"body body\"--></a>",
-                      processedHtml1 );
-        assertEquals( "<a href=\"/some/path\"><!--#MACRO _name=\"macroName\" par1=\"val1\" par2=\"val2\" _body=\"\"--></a>",
-                      processedHtml2 );
-        assertEquals(
-            "<a href=\"<!--#MACRO _name=\"macroNoBody\" _body=\"\"-->\"><!--#MACRO _name=\"macro\" par1=\"val1\" par2=\"val2\" _body=\"\"--></a> \\[macroName]skip me[/macroName]",
-            processedHtml3 );
-        assertEquals( "<p><!--#MACRO _name=\"macroName\" par1=\"val1\" _body=\"body [macroInBody]macroInBody[/macroInBody] body\"--></p>",
-                      processedHtml4 );
-        assertEquals( "<a href=\"<!--#MACRO _name=\"macro\" _body=\"\"-->\">body</a>", processedHtml5 );
-
-        assertEquals( "\\[macro /] \\[macro][/macro] \\ <!--#MACRO _name=\"macro\" _body=\"\"-->", processedHtml6 );
-
-        assertEquals( "<!--#MACRO _name=\"macro_name\" _body=\"[macro_in_body/]\"-->", processedHtml7 );
+        //Checks that the processed text is equal to the expected output
+        assertEquals( expectedOutputCharSource.read(), processedHtml );
     }
 }
