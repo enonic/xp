@@ -243,6 +243,9 @@ module api.content.form.inputtype.image {
         }
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
+            if (!ValueTypes.REFERENCE.equals(propertyArray.getType())) {
+                propertyArray.convertValues(ValueTypes.REFERENCE);
+            }
             return super.layout(input, propertyArray).then(() => {
                 return new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(this.relationshipTypeName).sendAndParse()
                     .then((relationshipType: api.schema.relationshiptype.RelationshipType) => {

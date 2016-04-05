@@ -47,6 +47,8 @@ public interface NodeService
 
     GetActiveNodeVersionsResult getActiveVersions( GetActiveNodeVersionsParams params );
 
+    NodeVersionId setActiveVersion( final NodeId nodeId, final NodeVersionId nodeVersionId );
+
     Node setChildOrder( SetNodeChildOrderParams params );
 
     ReorderChildNodesResult reorderChildren( ReorderChildNodesParams params );

@@ -8,16 +8,19 @@
   }
 
   .dialog-content {
+    overflow-y: auto;
+    max-height: 600px;
+
     @media screen and (max-height: 720px) {
-      max-height: 308px;
+      max-height: 420px;
     }
 
     @media screen and (max-height: 540px) {
-      max-height: 145px;
+      max-height: 240px;
     }
 
     @media screen and (max-height: 360px) {
-      max-height: 78%;
+      max-height: 100px;
     }
   }
 
@@ -108,9 +111,7 @@
     position: static !important;
     box-shadow: none;
     width: 100%;
-    max-height: inherit;
     overflow-x: hidden;
-    overflow-y: auto;
 
     .panel {
       position: static;
@@ -122,10 +123,8 @@
     }
 
     .market-app-panel {
+
       .market-app-tree-grid {
-
-
-
         .grid {
           padding-right: 15px;
           .slick-cell {
@@ -157,18 +156,6 @@
 
             .toggle.icon {
               display: none;
-            }
-
-            .spinner {
-              font-family: 'xp-admin-font-icon';
-
-              &:after {
-                .animation(rotate360, .5s, .0s, linear);
-                content: "\e007";
-                color: @admin-green;
-                display: inline-block;
-                margin-left: 5px;
-              }
             }
 
           }

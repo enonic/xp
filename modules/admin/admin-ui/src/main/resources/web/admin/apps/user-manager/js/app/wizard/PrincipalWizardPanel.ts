@@ -244,6 +244,8 @@ module app.wizard {
         }
 
         postPersistNewItem(persistedPrincipal: Principal): wemQ.Promise<void> {
+            app.Router.setHash("edit/" + persistedPrincipal.getKey());
+
             var deferred = wemQ.defer<void>();
             deferred.resolve(null);
             return deferred.promise;
@@ -272,7 +274,12 @@ module app.wizard {
                 displayName = this.wizardHeader.getDisplayName(),
                 modifiedTime = this.getPersistedItem().getModifiedTime();
 
-            return new Principal(key, displayName, modifiedTime);
+            var principal = Principal.create().
+                setKey(key).
+                setDisplayName(displayName).
+                setModifiedTime(modifiedTime).
+                build();
+            return principal;
         }
 
         resolvePrincipalNameForUpdateRequest(): string {

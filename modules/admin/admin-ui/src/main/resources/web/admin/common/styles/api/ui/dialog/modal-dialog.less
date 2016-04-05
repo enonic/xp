@@ -22,14 +22,6 @@
     height: 3em;
   }
 
-  @media screen and (max-height: 360px) {
-    margin-top: 0px;
-    margin-bottom: 0px;
-    padding-top: 20px;
-    padding-bottom: 10px;
-    height: 92%;
-  }
-
   .dialog-header {
     .clearfix();
     margin-bottom: 20px;
@@ -66,37 +58,43 @@
     }
   }
 
-  .@{_COMMON_PREFIX}button {
-    &.cancel-button-top {
-      &:extend(.icon);
-      .icon-close;
+  .cancel-button-top {
+    &:extend(.icon);
+    .icon-close;
 
-      position: absolute;
-      top: 5px;
-      right: 10px;
-      z-index: -1;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: -1;
 
-      padding: 0;
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    text-align: center;
+
+    padding: 0;
+    background-color: white;
+
+    &:before {
+      color: #53585f;
+    }
+
+    &:hover {
       background-color: white;
+      cursor: pointer;
 
-      &:before {
+      &:before, span {
         color: #53585f;
-      }
-
-      &:hover:not(:disabled) {
-        background-color: white;
-
-        &:before, span {
-          color: #53585f;
-        }
-      }
-
-      &:focus:not(:disabled) {
-        box-shadow: 0px 0px 5px white;
-        border: 1px solid white;
       }
     }
 
+    &:focus:not(:disabled) {
+      box-shadow: 0px 0px 5px white;
+      border: 1px solid white;
+    }
+  }
+
+  .@{_COMMON_PREFIX}button {
     &.cancel-button-bottom {
       .button();
       padding: 4px 19px 4px 19px;

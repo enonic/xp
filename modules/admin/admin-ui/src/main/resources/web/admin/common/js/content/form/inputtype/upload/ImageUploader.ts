@@ -45,6 +45,9 @@ module api.content.form.inputtype.upload {
         }
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
+            if (!ValueTypes.STRING.equals(property.getType()) && !ValueTypes.DATA.equals(property.getType())) {
+                property.convertValueType(ValueTypes.STRING);
+            }
 
             this.input = input;
 

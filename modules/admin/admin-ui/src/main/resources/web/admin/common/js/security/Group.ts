@@ -5,7 +5,7 @@ module api.security {
         private members: PrincipalKey[];
 
         constructor(builder: GroupBuilder) {
-            super(builder.key, builder.displayName, builder.modifiedTime);
+            super(builder);
             api.util.assert(builder.key.isGroup(), 'Expected PrincipalKey of type Group');
             this.members = builder.members || [];
         }
@@ -48,17 +48,12 @@ module api.security {
         }
     }
 
-    export class GroupBuilder {
-        key: PrincipalKey;
-        displayName: string;
-        modifiedTime: Date;
+    export class GroupBuilder extends PrincipalBuilder {
         members: PrincipalKey[];
 
         constructor(source?: Group) {
             if (source) {
-                this.key = source.getKey();
-                this.displayName = source.getDisplayName();
-                this.modifiedTime = source.getModifiedTime();
+                super(source);
                 this.members = source.getMembers().slice(0);
             } else {
                 this.members = [];
@@ -66,22 +61,11 @@ module api.security {
         }
 
         fromJson(json: api.security.GroupJson): GroupBuilder {
-            this.key = PrincipalKey.fromString(json.key);
-            this.displayName = json.displayName;
-            this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
+            super.fromJson(json);
+
             if (json.members) {
                 this.members = json.members.map((memberStr) => PrincipalKey.fromString(memberStr));
             }
-            return this;
-        }
-
-        setKey(key: PrincipalKey): GroupBuilder {
-            this.key = key;
-            return this;
-        }
-
-        setDisplayName(displayName: string): GroupBuilder {
-            this.displayName = displayName;
             return this;
         }
 

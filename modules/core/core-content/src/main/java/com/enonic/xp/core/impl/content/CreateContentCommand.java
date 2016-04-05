@@ -341,7 +341,9 @@ final class CreateContentCommand
                     }
                     catch ( IllegalArgumentException ex )
                     {
-                        LOG.warn( "Invalid default value", ex );
+                        LOG.warn(
+                            "Invalid default value for [" + input.getInputType() + "] input type with name '" + input.getName() + "' : " +
+                                ex.toString() );
                     }
                 }
             }

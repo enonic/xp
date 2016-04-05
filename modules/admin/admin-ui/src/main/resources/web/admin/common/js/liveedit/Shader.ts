@@ -66,7 +66,7 @@ module api.liveedit {
         }
 
         private createShaderDiv(cls: string): DivEl {
-            return new DivEl(Shader.CLS_NAME + " " + cls, api.StyleHelper.PAGE_EDITOR_PREFIX)
+            return new DivEl(Shader.CLS_NAME + " " + cls, api.StyleHelper.getCurrentPrefix())
         }
 
         public static get(): Shader {

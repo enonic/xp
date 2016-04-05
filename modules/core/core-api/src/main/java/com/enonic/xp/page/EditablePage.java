@@ -4,15 +4,18 @@ package com.enonic.xp.page;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.region.Component;
 
 @Beta
-public class EditablePage
+public final class EditablePage
 {
     public DescriptorKey controller;
 
     public PageTemplateKey template;
 
     public PageRegions regions;
+
+    public Component fragment;
 
     public PropertyTree config;
 
@@ -25,6 +28,7 @@ public class EditablePage
         this.regions = source.hasRegions() ? source.getRegions().copy() : null;
         this.config = source.hasConfig() ? source.getConfig().copy() : null;
         this.customized = source.isCustomized();
+        this.fragment = source.getFragment();
     }
 
     public Page build()
@@ -35,6 +39,7 @@ public class EditablePage
         builder.regions( regions );
         builder.config( config );
         builder.customized( customized );
+        builder.fragment( fragment );
         return builder.build();
     }
 }

@@ -1,5 +1,7 @@
 package com.enonic.xp.inputtype;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.Property;
@@ -27,13 +29,11 @@ final class CheckBoxType
     }
 
     @Override
-    public Value createDefaultValue( final InputTypeConfig defaultConfig )
+    public Value createDefaultValue( final InputTypeDefault defaultConfig )
     {
-        final InputTypeProperty defaultProperty = defaultConfig.getProperty( "default" );
-        if ( defaultProperty != null )
+        final String defaultValue = defaultConfig.getRootValue();
+        if ( StringUtils.isNotEmpty( defaultValue ) )
         {
-            final String defaultValue = defaultProperty.getValue();
-
             return VALID_VALUE.equals( defaultValue ) ? ValueFactory.newBoolean(true) :
                 super.createDefaultValue( defaultConfig );
         }

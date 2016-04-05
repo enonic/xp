@@ -1,6 +1,8 @@
 .context-window {
   color: @admin-font-gray3;
   .transition(all 0.1s ease-in-out);
+  z-index: @z-index-context-window;
+  overflow: visible; // for the ghost-dragger to be visible when dragging outside context window
 
   .splitter {
     position: relative;
@@ -157,11 +159,11 @@
     .form-view {
       .form-element-spacing(@form-field-spacing);
 
-      &.page-controller-form, &.descriptor-based-dropdown-form, &.page-template-form, &.image-combobox-form {
+      &.page-controller-form, &.descriptor-based-dropdown-form, &.page-template-form, &.image-combobox-form, &.fragment-combobox-form {
         margin-top: 0px;
 
         label {
-          display: inline-block;
+          display: block;
         }
 
         &:first-child {
@@ -171,6 +173,10 @@
 
       form {
         margin: 0;
+      }
+
+      .input-view .form-input {
+        min-width: 100%;
       }
     }
 
@@ -254,6 +260,10 @@
         .input-glow();
       }
     }
+  }
+
+  .page-controller-form, .descriptor-based-dropdown-form, .page-template-form, .fragment-dropdown-form {
+    background-color: @admin-context-bg-grey-opal;
   }
 
   .field-set-view {

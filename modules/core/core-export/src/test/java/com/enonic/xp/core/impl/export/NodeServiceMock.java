@@ -39,6 +39,7 @@ import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
@@ -327,6 +328,12 @@ class NodeServiceMock
 
     @Override
     public SetNodeStateResult setNodeState( final SetNodeStateParams params )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public NodeVersionId setActiveVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

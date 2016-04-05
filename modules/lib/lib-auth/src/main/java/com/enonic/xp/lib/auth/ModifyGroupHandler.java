@@ -75,6 +75,12 @@ public final class ModifyGroupHandler
         {
             target.displayName = displayName;
         }
+
+        final String description = Converters.convert( map.get( "description" ), String.class );
+        if ( description != null )
+        {
+            target.description = description;
+        }
     }
 
     @Override

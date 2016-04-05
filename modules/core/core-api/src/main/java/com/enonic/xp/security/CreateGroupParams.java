@@ -12,10 +12,13 @@ public final class CreateGroupParams
 
     private final String displayName;
 
+    private final String description;
+
     private CreateGroupParams( final Builder builder )
     {
         this.key = checkNotNull( builder.principalKey, "groupKey is required for a group" );
         this.displayName = checkNotNull( builder.displayName, "displayName is required for a group" );
+        this.description = builder.description;
     }
 
     public PrincipalKey getKey()
@@ -28,6 +31,11 @@ public final class CreateGroupParams
         return displayName;
     }
 
+    public String getDescription()
+    {
+        return description;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -38,6 +46,8 @@ public final class CreateGroupParams
         private PrincipalKey principalKey;
 
         private String displayName;
+
+        private String description;
 
         private Builder()
         {
@@ -53,6 +63,12 @@ public final class CreateGroupParams
         public Builder displayName( final String value )
         {
             this.displayName = value;
+            return this;
+        }
+
+        public Builder description( final String value )
+        {
+            this.description = value;
             return this;
         }
 

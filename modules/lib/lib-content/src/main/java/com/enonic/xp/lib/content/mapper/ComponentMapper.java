@@ -4,6 +4,7 @@ import com.enonic.xp.region.Component;
 import com.enonic.xp.region.DescriptorBasedComponent;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
@@ -23,7 +24,7 @@ public final class ComponentMapper
         serialize( gen, this.value );
     }
 
-    private static void serialize( final MapGenerator gen, final Component value )
+    private void serialize( final MapGenerator gen, final Component value )
     {
         gen.value( "name", value.getName() );
         gen.value( "path", value.getPath() );
@@ -38,9 +39,13 @@ public final class ComponentMapper
         {
             serialize( gen, (LayoutComponent) value );
         }
+        else if ( value instanceof TextComponent )
+        {
+            serialize( gen, (TextComponent) value );
+        }
     }
 
-    private static void serialize( final MapGenerator gen, final DescriptorBasedComponent comp )
+    private void serialize( final MapGenerator gen, final DescriptorBasedComponent comp )
     {
         gen.value( "descriptor", comp.getDescriptor() );
         if ( comp.getConfig() != null )
@@ -51,7 +56,7 @@ public final class ComponentMapper
         }
     }
 
-    private static void serialize( final MapGenerator gen, final LayoutComponent comp )
+    private void serialize( final MapGenerator gen, final LayoutComponent comp )
     {
         gen.map( "regions" );
         for ( final Region region : comp.getRegions() )
@@ -59,5 +64,10 @@ public final class ComponentMapper
             new RegionMapper( region ).serialize( gen );
         }
         gen.end();
+    }
+
+    private void serialize( final MapGenerator gen, final TextComponent comp )
+    {
+        gen.value( "text", comp.getText() );
     }
 }

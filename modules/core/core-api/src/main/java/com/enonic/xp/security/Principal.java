@@ -1,10 +1,10 @@
 package com.enonic.xp.security;
 
-import java.time.Instant;
-import java.util.Objects;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+
+import java.time.Instant;
+import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -17,11 +17,14 @@ public abstract class Principal
 
     private final Instant modifiedTime;
 
-    Principal( final PrincipalKey principalKey, final String displayName, final Instant modifiedTime )
+    private final String description;
+
+    Principal( final PrincipalKey principalKey, final String displayName, final Instant modifiedTime, final String description )
     {
         this.key = checkNotNull( principalKey, "Principal key cannot be null" );
         this.displayName = checkNotNull( displayName, "Principal display name cannot be null" );
         this.modifiedTime = modifiedTime;
+        this.description = description;
     }
 
     Principal( final Builder builder )
@@ -29,6 +32,7 @@ public abstract class Principal
         key = builder.key;
         displayName = builder.displayName;
         modifiedTime = builder.modifiedTime;
+        description = builder.description;
     }
 
     public PrincipalKey getKey()
@@ -44,6 +48,11 @@ public abstract class Principal
     public Instant getModifiedTime()
     {
         return modifiedTime;
+    }
+
+    public String getDescription()
+    {
+        return description;
     }
 
     @Override
@@ -79,6 +88,8 @@ public abstract class Principal
 
         Instant modifiedTime;
 
+        String description;
+
         Builder()
         {
         }
@@ -88,6 +99,7 @@ public abstract class Principal
             this.displayName = principal.displayName;
             this.key = principal.key;
             this.modifiedTime = principal.getModifiedTime();
+            this.description = principal.getDescription();
         }
 
         @SuppressWarnings("unchecked")
@@ -108,6 +120,13 @@ public abstract class Principal
         public B modifiedTime( final Instant modifiedTime )
         {
             this.modifiedTime = modifiedTime;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B description( final String description )
+        {
+            this.description = description;
             return (B) this;
         }
 

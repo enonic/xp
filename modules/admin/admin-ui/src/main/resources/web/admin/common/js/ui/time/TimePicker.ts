@@ -43,6 +43,12 @@ module api.ui.time {
             super('time-picker');
             this.validUserInput = true;
 
+            var popupBuilder = new TimePickerPopupBuilder().
+                setHours(builder.hours).
+                setMinutes(builder.minutes).
+                setCloseOnOutsideClick(false);
+            this.popup = popupBuilder.build();
+
             var value;
             if (builder.hours || builder.minutes) {
                 value = this.formatTime(builder.hours, builder.minutes);
@@ -81,18 +87,10 @@ module api.ui.time {
             });
 
             var wrapper = new api.dom.DivEl('wrapper');
-            wrapper.appendChild(this.input);
-
-            var popupBuilder = new TimePickerPopupBuilder().
-                setHours(builder.hours).
-                setMinutes(builder.minutes).
-                setCloseOnOutsideClick(false);
-            this.popup = popupBuilder.build();
-            wrapper.appendChild(this.popup);
 
             this.popupTrigger = new api.ui.button.Button();
             this.popupTrigger.addClass('icon-clock');
-            wrapper.appendChild(this.popupTrigger);
+            wrapper.appendChildren<api.dom.Element>(this.input, this.popup, this.popupTrigger);
 
             this.appendChild(wrapper);
 
@@ -195,11 +193,9 @@ module api.ui.time {
         }
 
         formatTime(hours: number, minutes: number): string {
-            return this.padNumber(hours, 2) + ':' + this.padNumber(minutes, 2);
-        }
-
-        private padNumber(value: number, pad: number): string {
-            return Array(pad - String(value).length + 1).join('0') + value;
+            return this.popup.isHoursValid(hours) && this.popup.isMinutesValid(minutes) ?
+                   this.popup.padNumber(hours, 2) + ':' + this.popup.padNumber(minutes, 2) :
+                   "";
         }
 
         private updateInputStyling() {

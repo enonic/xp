@@ -10,19 +10,21 @@ module api.form.inputtype.text {
     import ContentSummary = api.content.ContentSummary;
     import Element = api.dom.Element;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
-    import LinkModalDialog = api.form.inputtype.text.htmlarea.LinkModalDialog;
-    import ImageModalDialog = api.form.inputtype.text.htmlarea.ImageModalDialog;
-    import AnchorModalDialog = api.form.inputtype.text.htmlarea.AnchorModalDialog;
+    import LinkModalDialog = api.util.htmlarea.dialog.LinkModalDialog;
+    import ImageModalDialog = api.util.htmlarea.dialog.ImageModalDialog;
+    import AnchorModalDialog = api.util.htmlarea.dialog.AnchorModalDialog;
+    import HTMLAreaBuilder = api.util.htmlarea.editor.HTMLAreaBuilder;
+    import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
+    import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
 
     export class HtmlArea extends support.BaseInputTypeNotManagingAdd<string> {
 
         private editors: HtmlAreaOccurrenceInfo[];
         private contentId: api.content.ContentId;
 
-        static imagePrefix = "image://";
-        static maxImageWidth = 640;
+        private focusListeners: {(event: FocusEvent): void}[] = [];
 
-        private modalDialog: api.form.inputtype.text.htmlarea.ModalDialog;
+        private blurListeners: {(event: FocusEvent): void}[] = [];
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
 
@@ -42,8 +44,11 @@ module api.form.inputtype.text {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
+            if (!ValueTypes.STRING.equals(property.getType())) {
+                property.convertValueType(ValueTypes.STRING);
+            }
 
-            var value = this.processPropertyValue(property.getString());
+            var value = HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString());
             var textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
 
             var editorId = textAreaEl.getId();
@@ -82,144 +87,72 @@ module api.form.inputtype.text {
             var focusedEditorCls = "html-area-focused";
             var baseUrl = CONFIG.assetsUri;
 
-            tinymce.init({
-                selector: 'textarea.' + id.replace(/\./g, '_'),
-                document_base_url: baseUrl + '/common/lib/tinymce/',
-                skin_url: baseUrl + '/common/lib/tinymce/skins/lightgray',
-                content_css: baseUrl + '/common/styles/api/form/inputtype/text/tinymce-editor.css',
-                theme_url: 'modern',
+            var onFocusHandler = (e) => {
+                this.resetInputHeight();
+                textAreaWrapper.addClass(focusedEditorCls);
 
-                toolbar: [
-                    "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor image link unlink | table | code"
-                ],
-                formats: {
-                    alignleft: [
-                        {
-                            selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
-                            styles: {textAlign: 'left'},
-                            defaultBlock: 'div'
-                        },
-                        {selector: 'table', collapsed: false, styles: {'float': 'left'}}
-                    ],
-                    aligncenter: [
-                        {
-                            selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
-                            styles: {textAlign: 'center'},
-                            defaultBlock: 'div'
-                        },
-                        {selector: 'table', collapsed: false, styles: {marginLeft: 'auto', marginRight: 'auto'}}
-                    ],
-                    alignright: [
-                        {
-                            selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
-                            styles: {textAlign: 'right'},
-                            defaultBlock: 'div'
-                        },
-                        {selector: 'table', collapsed: false, styles: {'float': 'right'}}
-                    ],
-                    alignjustify: [
-                        {
-                            selector: 'img,figure,p,h1,h2,h3,h4,h5,h6,td,th,tr,div,ul,ol,li',
-                            styles: {textAlign: 'justify'},
-                            defaultBlock: 'div'
-                        }
-                    ]
-                },
-                menubar: false,
-                statusbar: false,
-                paste_as_text: true,
-                plugins: ['autoresize', 'table', 'paste', 'charmap', 'code'],
-                external_plugins: {
-                    "link": baseUrl + "/common/js/form/inputtype/text/plugins/link.js",
-                    "image": baseUrl + "/common/js/form/inputtype/text/plugins/image.js",
-                    "anchor": baseUrl + "/common/js/form/inputtype/text/plugins/anchor.js"
-                },
-                object_resizing: "table",
-                autoresize_min_height: 100,
-                autoresize_bottom_margin: 0,
-                height: 100,
+                this.notifyFocused(e);
+            };
 
-                setup: (editor) => {
-                    editor.addCommand("openLinkDialog", this.openLinkDialog, this);
-                    editor.addCommand("openImageDialog", this.openImageDialog, this);
-                    editor.addCommand("openAnchorDialog", this.openAnchorDialog, this);
-                    editor.on('NodeChange', (e) => {
-                        this.notifyValueChanged(id, textAreaWrapper);
+            var onNodeChangeHandler = (e) => {
+                this.notifyValueChanged(id, textAreaWrapper);
+            };
+
+            var onBlurHandler = (e) => {
+                this.setStaticInputHeight();
+                textAreaWrapper.removeClass(focusedEditorCls);
+
+                this.notifyBlurred(e);
+            };
+
+            var onKeydownHandler = (e) => {
+                if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {  // Cmd-S or Ctrl-S
+                    e.preventDefault();
+
+                    this.notifyValueChanged(id, textAreaWrapper);
+
+                    wemjq(this.getEl().getHTMLElement()).simulate(e.type, { // as editor resides in a frame - propagate event via wrapping element
+                        bubbles: e.bubbles,
+                        cancelable: e.cancelable,
+                        view: parent,
+                        ctrlKey: e.ctrlKey,
+                        altKey: e.altKey,
+                        shiftKey: e.shiftKey,
+                        metaKey: e.metaKey,
+                        keyCode: e.keyCode,
+                        charCode: e.charCode
                     });
-                    editor.on('focus', (e) => {
-                        this.resetInputHeight();
-                        textAreaWrapper.addClass(focusedEditorCls);
-                    });
-                    editor.on('blur', (e) => {
-                        this.setStaticInputHeight();
-                        if (!(this.modalDialog && this.modalDialog.isVisible())) {
-                            textAreaWrapper.removeClass(focusedEditorCls);
-                        }
-                    });
-                    editor.on('keydown', (e) => {
-                        if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {  // Cmd-S or Ctrl-S
-                            e.preventDefault();
+                }
+            };
 
-                            this.notifyValueChanged(id, textAreaWrapper);
+            var onCreateDialogHandler = event => {
+                api.util.htmlarea.dialog.HTMLAreaDialogHandler.createAndOpenDialog(event);
+                textAreaWrapper.addClass(focusedEditorCls);
+            };
 
-                            wemjq(this.getEl().getHTMLElement()).simulate(e.type, { // as editor resides in a frame - propagate event via wrapping element
-                                bubbles: e.bubbles,
-                                cancelable: e.cancelable,
-                                view: parent,
-                                ctrlKey: e.ctrlKey,
-                                altKey: e.altKey,
-                                shiftKey: e.shiftKey,
-                                metaKey: e.metaKey,
-                                keyCode: e.keyCode,
-                                charCode: e.charCode
-                            });
-                        }
-
-                        if (e.keyCode == 46 || e.keyCode == 8) { // DELETE
-                            var selectedNode = editor.selection.getRng().startContainer;
-                            if (/^(FIGURE)$/.test(selectedNode.nodeName)) {
-                                var previousEl = selectedNode.previousSibling;
-                                e.preventDefault();
-                                selectedNode.remove();
-                                if (previousEl) {
-                                    editor.selection.setNode(previousEl);
-                                }
-                                else {
-                                    editor.focus();
-                                }
-                            }
-                        }
-                    });
-
-                    var dragParentElement;
-                    editor.on('dragstart', (e) => {
-                        dragParentElement = e.target.parentElement || e.target.parentNode;
-                    });
-
-                    editor.on('drop', (e) => {
-                        if (dragParentElement) {
-                            // prevent browser from handling the drop
-                            e.preventDefault();
-
-                            e.target.appendChild(dragParentElement);
-                            dragParentElement = undefined;
-                        }
-                    });
-
-                },
-                init_instance_callback: (editor) => {
+            new HTMLAreaBuilder().
+                setSelector('textarea.' + id.replace(/\./g, '_')).
+                setAssetsUri(baseUrl).
+                setInline(false).
+                onCreateDialog(onCreateDialogHandler).
+                setOnFocusHandler(onFocusHandler).
+                setOnBlurHandler(onBlurHandler).
+                setOnKeydownHandler(onKeydownHandler).
+                setOnNodeChangeHandler(onNodeChangeHandler).
+                setContentId(this.contentId).
+                createEditor().
+                then((editor: HtmlAreaEditor) => {
                     this.setEditorContent(id, property);
                     if (this.notInLiveEdit()) {
                         this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper);
                     }
                     this.removeTooltipFromEditorArea(textAreaWrapper);
-                    this.updateImageAlignmentBehaviour(editor);
+                    HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
                     this.onShown((event) => {
                         // invoke auto resize on shown in case contents have been updated while inactive
-                        editor.execCommand('mceAutoResize', false, null);
-                    })
-                }
-            });
+                        editor.execCommand('mceAutoResize', false, null, {skip_focus: true});
+                    });
+                });
         }
 
         private setFocusOnEditorAfterCreate(inputOccurence: Element, id: string): void {
@@ -258,44 +191,6 @@ module api.form.inputtype.text {
                 this.resetInputHeight();
                 this.updateEditorToolbarWidth();
             });
-        }
-
-        private updateImageAlignmentBehaviour(editor) {
-            var imgs = editor.getBody().querySelectorAll('img');
-
-            for (let i = 0; i < imgs.length; i++) {
-                this.changeImageParentAlignmentOnImageAlignmentChange(imgs[i]);
-            }
-        }
-
-        private changeImageParentAlignmentOnImageAlignmentChange(img: HTMLImageElement) {
-            var observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    var alignment = (<HTMLElement>mutation.target).style["text-align"];
-                    var keepOriginalSize = img.getAttribute("data-src").indexOf("keepSize=true") > 0;
-
-                    var styleAttr;
-                    switch (alignment) {
-                    case 'justify':
-                    case 'center':
-                        styleAttr = "text-align: " + alignment;
-                        break;
-                    case 'left':
-                        styleAttr = "float: left; margin: 15px;" + (keepOriginalSize ? "" : "width: 40%");
-                        break;
-                    case 'right':
-                        styleAttr = "float: right; margin: 15px;" + (keepOriginalSize ? "" : "width: 40%");
-                        break;
-                    }
-
-                    img.parentElement.setAttribute("style", styleAttr);
-                    img.parentElement.setAttribute("data-mce-style", styleAttr);
-                });
-            });
-
-            var config = {attributes: true, childList: false, characterData: false, attributeFilter: ["style"]};
-
-            observer.observe(img, config);
         }
 
         private updateStickyEditorToolbar(inputOccurence: Element) {
@@ -348,16 +243,19 @@ module api.form.inputtype.text {
             wemjq(this.getHTMLElement()).height(wemjq(this.getHTMLElement()).height());
         }
 
+        private hideDropdownMenu() {
+            wemjq(".mce-menu").hide();
+        }
+
         private getEditor(editorId: string): HtmlAreaEditor {
             return tinymce.get(editorId);
         }
 
         private setEditorContent(editorId: string, property: Property): void {
             var editor = this.getEditor(editorId);
-            if (property.hasNonNullValue() && editor) {
-                editor.setContent(this.processPropertyValue(property.getString()));
-            }
-            else if (!editor) {
+            if (editor) {
+                editor.setContent(property.hasNonNullValue() ? HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()) : "");
+            } else {
                 console.log("Editor with id '" + editorId + "' not found")
             }
         }
@@ -367,7 +265,7 @@ module api.form.inputtype.text {
         }
 
         private notifyValueChanged(id: string, occurrence: api.dom.Element) {
-            var value = ValueTypes.STRING.newValue(this.processEditorContent(id));
+            var value = ValueTypes.STRING.newValue(HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.getEditor(id)));
             this.notifyOccurrenceValueChanged(occurrence, value);
         }
 
@@ -383,21 +281,6 @@ module api.form.inputtype.text {
 
             // TODO
             return true;
-        }
-
-        private openLinkDialog(config: HtmlAreaAnchor) {
-            this.modalDialog = new LinkModalDialog(config);
-            this.modalDialog.open();
-        }
-
-        private openImageDialog(config: HtmlAreaImage) {
-            this.modalDialog = new ImageModalDialog(config, this.contentId);
-            this.modalDialog.open();
-        }
-
-        private openAnchorDialog(editor: HtmlAreaEditor) {
-            this.modalDialog = new AnchorModalDialog(editor);
-            this.modalDialog.open();
         }
 
         private removeTooltipFromEditorArea(inputOccurence: Element) {
@@ -420,13 +303,46 @@ module api.form.inputtype.text {
             this.getEditor(editorId).focus();
         }
 
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners.push(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners = this.focusListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners.push(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners = this.blurListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyFocused(event: FocusEvent) {
+            this.focusListeners.forEach((listener) => {
+                listener(event);
+            })
+        }
+
+        private notifyBlurred(event: FocusEvent) {
+            this.blurListeners.forEach((listener) => {
+                listener(event);
+            })
+        }
+
+
         private destroyEditor(id: string): void {
-            var editor = this.getEditor(id);
+            var editor = this.getEditor(id)
             if (editor) {
                 try {
                     editor.destroy(false);
                 }
-                catch(e) {
+                catch (e) {
                     //error thrown in FF on tab close - XP-2624
                 }
             }
@@ -452,86 +368,13 @@ module api.form.inputtype.text {
             return result;
         }
 
-        private getConvertedImageSrc(imgSrc: string): string {
-            var contentId = api.util.UriHelper.trimUrlParams(imgSrc.replace(HtmlArea.imagePrefix, api.util.StringHelper.EMPTY_STRING)),
-                imageUrlResolver = new api.content.ContentImageUrlResolver().setContentId(new api.content.ContentId(contentId)).setTimestamp(new Date()),
-                scalingApplied = imgSrc.indexOf("scale=") > 0,
-                urlParams = api.util.UriHelper.decodeUrlParams(imgSrc.replace("&amp;", "&"));
 
-            scalingApplied ? imageUrlResolver.setScale(urlParams["scale"]) : imageUrlResolver.setScaleWidth(true);
-
-            if (!urlParams["keepSize"]) {
-                imageUrlResolver.setSize(HtmlArea.maxImageWidth);
-            }
-
-            var imageUrl = imageUrlResolver.resolve();
-
-            return "src=\"" + imageUrl + "\" data-src=\"" + imgSrc + "\"";
-        }
-
-        private processPropertyValue(propertyValue: string): string {
-            var processedContent = propertyValue,
-                regex = /<img.*?src="(.*?)"/g,
-                imgSrcs;
-
-            if (!processedContent) {
-                return propertyValue;
-            }
-
-            while (processedContent.search(" src=\"" + HtmlArea.imagePrefix) > -1) {
-                imgSrcs = regex.exec(processedContent);
-                if (imgSrcs) {
-                    imgSrcs.forEach((imgSrc: string) => {
-                        if (imgSrc.indexOf(HtmlArea.imagePrefix) === 0) {
-                            processedContent = processedContent.replace(" src=\"" + imgSrc + "\"", this.getConvertedImageSrc(imgSrc));
-                        }
-                    });
-                }
-            }
-            return processedContent;
-        }
-
-        private processEditorContent(editorId: string): string {
-            var content = this.getEditor(editorId).getContent(),
-                processedContent = this.getEditor(editorId).getContent(),
-                regex = /<img.*?data-src="(.*?)".*?>/g,
-                imgTags, imgTag;
-
-            while ((imgTags = regex.exec(content)) != null) {
-                imgTag = imgTags[0];
-                if (imgTag.indexOf("<img ") === 0 && imgTag.indexOf(HtmlArea.imagePrefix) > 0) {
-                    var dataSrc = /<img.*?data-src="(.*?)".*?>/.exec(imgTag)[1],
-                        src = /<img.*?src="(.*?)".*?>/.exec(imgTags[0])[1];
-
-                    var convertedImg = imgTag.replace(src, dataSrc).replace(" data-src=\"" + dataSrc + "\"",
-                        api.util.StringHelper.EMPTY_STRING);
-                    processedContent = processedContent.replace(imgTag, convertedImg);
-                }
-            }
-
-            return processedContent;
-        }
     }
 
     export interface HtmlAreaOccurrenceInfo {
         id: string;
         textAreaWrapper: Element;
         property: Property;
-    }
-
-    export interface HtmlAreaAnchor {
-        editor: HtmlAreaEditor
-        element: HTMLElement
-        text: string
-        anchorList: string[]
-        onlyTextSelected: boolean
-    }
-
-    export interface HtmlAreaImage {
-        editor: HtmlAreaEditor
-        element: HTMLElement
-        container: HTMLElement
-        callback: Function
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("HtmlArea", HtmlArea));

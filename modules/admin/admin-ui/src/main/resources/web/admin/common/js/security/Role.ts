@@ -5,7 +5,7 @@ module api.security {
         private members: PrincipalKey[];
 
         constructor(builder: RoleBuilder) {
-            super(builder.key, builder.displayName, builder.modifiedTime);
+            super(builder);
             api.util.assert(builder.key.isRole(), 'Expected PrincipalKey of type Role');
             this.members = builder.members || [];
         }
@@ -40,17 +40,13 @@ module api.security {
         }
     }
 
-    export class RoleBuilder {
-        key: PrincipalKey;
-        displayName: string;
-        modifiedTime: Date;
+    export class RoleBuilder extends PrincipalBuilder{
+
         members: PrincipalKey[];
 
         constructor(source?: Role) {
             if (source) {
-                this.key = source.getKey();
-                this.displayName = source.getDisplayName();
-                this.modifiedTime = source.getModifiedTime();
+                super(source);
                 this.members = source.getMembers().slice(0);
             } else {
                 this.members = [];
@@ -58,22 +54,11 @@ module api.security {
         }
 
         fromJson(json: api.security.RoleJson): RoleBuilder {
-            this.key = PrincipalKey.fromString(json.key);
-            this.displayName = json.displayName;
-            this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
+            super.fromJson(json);
+
             if (json.members) {
                 this.members = json.members.map((memberStr) => PrincipalKey.fromString(memberStr));
             }
-            return this;
-        }
-
-        setKey(key: PrincipalKey): RoleBuilder {
-            this.key = key;
-            return this;
-        }
-
-        setDisplayName(displayName: string): RoleBuilder {
-            this.displayName = displayName;
             return this;
         }
 

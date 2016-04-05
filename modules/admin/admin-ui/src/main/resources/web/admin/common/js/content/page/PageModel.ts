@@ -82,6 +82,8 @@ module api.content.page {
 
         private defaultTemplateDescriptor: PageDescriptor;
 
+        private defaultTypeDescriptor: PageDescriptor;
+
         private mode: PageMode;
 
         private controller: PageDescriptor;
@@ -91,6 +93,8 @@ module api.content.page {
         private templateDescriptor: PageDescriptor;
 
         private regions: api.content.page.region.Regions;
+
+        private fragment: api.content.page.region.Component;
 
         private config: PropertyTree;
 
@@ -119,6 +123,7 @@ module api.content.page {
             this.defaultTemplateDescriptor = defaultTemplateDescriptor;
             this.mode = pageMode;
             this.customized = liveEditModel.getContent().isPage() && liveEditModel.getContent().getPage().isCustomized();
+            this.fragment = liveEditModel.getContent().getPage() ? liveEditModel.getContent().getPage().getFragment() : null;
             this.configPropertyChangedHandler = (event) => {
                 if (!this.ignorePropertyChanges) {
                     //console.log("PageModel.config.onChanged: ", event.getPath().toString());
@@ -250,6 +255,11 @@ module api.content.page {
             if (this.regions && setController.descriptor) {
                 this.regions.changeRegionsTo(setController.descriptor.getRegions());
             }
+
+            if (this.fragment) {
+                this.unregisterFragmentListeners(this.fragment);
+                this.registerFragmentListeners(this.fragment);
+            }
         }
 
         setAutomaticTemplate(eventSource?: any, ignoreRegionChanges: boolean = false): PageModel {
@@ -279,7 +289,7 @@ module api.content.page {
             if (setTemplate.template) {
                 this.setMode(PageMode.FORCED_TEMPLATE);
             }
-            else {
+            else if (this.getMode() != PageMode.FRAGMENT) {
                 this.setMode(PageMode.AUTOMATIC);
             }
 
@@ -318,7 +328,8 @@ module api.content.page {
             }
 
             if (this.regions) {
-                this.regions.changeRegionsTo(setTemplate.descriptor.getRegions());
+                var regions = setTemplate.descriptor ? setTemplate.descriptor.getRegions() : [];
+                this.regions.changeRegionsTo(regions);
             }
         }
 
@@ -386,6 +397,7 @@ module api.content.page {
                     setRegions(regions).
                     setConfig(config).
                     setCustomized(this.isCustomized()).
+                    setFragment(this.fragment).
                     build();
             }
             else if (this.mode == PageMode.FORCED_CONTROLLER) {
@@ -394,17 +406,22 @@ module api.content.page {
                     setRegions(this.regions).
                     setConfig(this.config).
                     setCustomized(this.isCustomized()).
+                    setFragment(this.fragment).
                     build();
             }
             else if (this.mode == PageMode.NO_CONTROLLER) {
                 if (this.contentHasNonRenderableTemplateSet()) {
                     return new PageBuilder().
-                        setTemplate(this.liveEditModel.getContent().getPage().getTemplate()).
+                        setTemplate(this.liveEditModel.getContent().getPage().getTemplate()).setFragment(this.fragment).
                         build();
                 }
                 else {
                     return null;
                 }
+            }
+            else if (this.mode == PageMode.FRAGMENT) {
+                return new PageBuilder().setRegions(this.regions).setConfig(this.config).setCustomized(this.isCustomized()).setFragment(
+                    this.fragment).build();
             }
             else {
                 throw new Error("Page mode not supported: " + this.mode);
@@ -492,6 +509,14 @@ module api.content.page {
         private unregisterRegionsListeners(regions: api.content.page.region.Regions) {
             regions.unComponentPropertyChanged(this.componentPropertyChangedEventHandler);
             regions.unChanged(this.regionsChangedEventHandler);
+        }
+
+        private registerFragmentListeners(fragment: api.content.page.region.Component) {
+            fragment.onPropertyChanged(this.componentPropertyChangedEventHandler);
+        }
+
+        private unregisterFragmentListeners(fragment: api.content.page.region.Component) {
+            fragment.unPropertyChanged(this.componentPropertyChangedEventHandler);
         }
 
         onPageModeChanged(listener: (event: PageModeChangedEvent)=>void) {

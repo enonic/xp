@@ -27,12 +27,12 @@ module api.rendering {
             }
         }
 
-        public static getComponentUri(contentId: string, componentPath: string, renderingMode: RenderingMode,
+        public static getComponentUri(contentId: string, componentPath: api.content.page.region.ComponentPath, renderingMode: RenderingMode,
                                       workspace: api.content.Branch): string {
             var elementDivider = api.content.ContentPath.ELEMENT_DIVIDER,
                 componentPart = elementDivider + "_" + elementDivider + "component"  + elementDivider;
-
-            return UriHelper.getPortalUri(contentId + componentPart + componentPath, renderingMode, workspace);
+            var componentPathStr = componentPath ? componentPath.toString() : "";
+            return UriHelper.getPortalUri(contentId + componentPart + componentPathStr, renderingMode, workspace);
         }
 
         public static getAdminUri(baseUrl: string, contentPath: string): string {

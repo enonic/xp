@@ -116,6 +116,7 @@ module app.wizard {
                     setPageTemplateKey(viewedPage.getTemplate()).
                     setConfig(viewedPage.getConfig()).
                     setRegions(viewedPage.getRegions()).
+                    setFragment(viewedPage.getFragment()).
                     setCustomized(viewedPage.isCustomized());
             }
             else if (persistedContent.isPage() && viewedContent.isPage()) {
@@ -126,6 +127,7 @@ module app.wizard {
                     setPageTemplateKey((viewedPage.getTemplate())).
                     setConfig(viewedPage.getConfig()).
                     setRegions(viewedPage.getRegions()).
+                    setFragment(viewedPage.getFragment()).
                     setCustomized(viewedPage.isCustomized());
             }
         }

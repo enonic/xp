@@ -34,6 +34,14 @@ module api.ui {
             return event.keyCode >= 37 && event.keyCode <= 40;
         }
 
+        static isArrowLeftKey(event: KeyboardEvent): boolean {
+            return event.keyCode === 37;
+        }
+
+        static isArrowRightKey(event: KeyboardEvent): boolean {
+            return event.keyCode === 39;
+        }
+
         static isControlKey(event: KeyboardEvent): boolean {
             return event.keyCode === 17;
         }

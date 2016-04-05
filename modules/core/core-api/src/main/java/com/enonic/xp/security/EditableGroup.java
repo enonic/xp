@@ -15,12 +15,15 @@ public final class EditableGroup
 
     public Instant modifiedTime;
 
+    public String description;
+
     public EditableGroup( final Group source )
     {
         this.source = source;
         this.displayName = source.getDisplayName();
         this.key = source.getKey();
         this.modifiedTime = source.getModifiedTime();
+        this.description = source.getDescription();
     }
 
     public Group build()
@@ -29,6 +32,7 @@ public final class EditableGroup
             displayName( displayName ).
             key( key ).
             modifiedTime( modifiedTime ).
+            description( description ).
             build();
     }
 }

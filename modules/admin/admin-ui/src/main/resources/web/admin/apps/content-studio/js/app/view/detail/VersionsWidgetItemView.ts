@@ -5,7 +5,7 @@ module app.view.detail {
 
     export class VersionsWidgetItemView extends WidgetItemView {
 
-        private allGrid: ContentVersionsTreeGrid;
+        private allContentVersionsView: app.view.AllContentVersionsView;
 
         private gridLoadDeferred: wemQ.Deferred<any>;
 
@@ -22,15 +22,15 @@ module app.view.detail {
             this.removeChildren();
 
             return super.layout().then(() => {
-                this.allGrid = new AllContentVersionsTreeGrid();
-                this.allGrid.onLoaded(() => {
+                this.allContentVersionsView = new app.view.AllContentVersionsView();
+                this.allContentVersionsView.onLoaded(() => {
                     if (this.gridLoadDeferred) {
                         this.gridLoadDeferred.resolve(null);
                         this.gridLoadDeferred = null;
                     }
                 });
 
-                this.appendChild(this.allGrid);
+                this.appendChild(this.allContentVersionsView);
             });
         }
 
@@ -39,18 +39,11 @@ module app.view.detail {
                 console.debug('VersionsWidgetItemView.setItem: ', item);
             }
 
-            if (this.allGrid) {
-                this.allGrid.setItem(item);
+            if (this.allContentVersionsView) {
+                this.allContentVersionsView.setContentData(item);
                 return this.reloadActivePanel();
             }
             return wemQ<any>(null);
-        }
-
-
-        public invalidateActivePanel() {
-            if (this.allGrid) {
-                this.allGrid.getGrid().invalidate();
-            }
         }
 
         public reloadActivePanel(): wemQ.Promise<any> {
@@ -59,8 +52,8 @@ module app.view.detail {
             }
 
             this.gridLoadDeferred = wemQ.defer<any>();
-            if (this.allGrid) {
-                this.allGrid.reload();
+            if (this.allContentVersionsView) {
+                this.allContentVersionsView.reload();
             } else {
                 this.gridLoadDeferred.resolve(null);
             }

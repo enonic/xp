@@ -24,24 +24,20 @@ final class XmlInputTypeConfigMapper
         this.inputTypeName = inputTypeName;
     }
 
-    public InputTypeConfig build( final DomElement root, final Boolean addRootProperty )
+    public InputTypeConfig build( final DomElement root )
     {
         final InputTypeConfig.Builder builder = InputTypeConfig.create();
 
         if ( root != null )
         {
-            build( builder, root, addRootProperty );
+            build( builder, root );
         }
 
         return builder.build();
     }
 
-    private void build( final InputTypeConfig.Builder builder, final DomElement root, final Boolean addRootProperty )
+    private void build( final InputTypeConfig.Builder builder, final DomElement root )
     {
-        if(addRootProperty) {
-            builder.property( buildProperty( root ) );
-        }
-
         for ( final DomElement child : root.getChildren() )
         {
             builder.property( buildProperty( child ) );

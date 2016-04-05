@@ -20,6 +20,7 @@
       <xs:element minOccurs="0" maxOccurs="unbounded" name="x-data" type="xdata"/>
       <xs:element minOccurs="0" name="config" type="form"/>
       <xs:element minOccurs="0" name="filters" type="filters"/>
+      <xs:element minOccurs="0" name="mappings" type="mappings"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -61,13 +62,19 @@
           <xs:element minOccurs="0" name="help-text" type="xs:string"/>
           <xs:element minOccurs="0" name="validation-regexp" type="xs:string"/>
           <xs:element minOccurs="0" name="occurrences" type="occurrence"/>
-          <xs:element minOccurs="0" name="config" type="xs:anyType"/>
+          <xs:element minOccurs="0" name="config" type="config"/>
           <xs:element minOccurs="0" name="maximize" type="xs:boolean"/>
         </xs:sequence>
         <xs:attribute name="type" type="xs:string" use="required"/>
         <xs:attribute name="name" type="xs:string" use="required"/>
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="config">
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType abstract="true" name="formItem">
@@ -248,6 +255,29 @@
   <xs:complexType name="filters">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="response-filter" type="responseFilter"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="mappingPattern">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="invert" type="xs:boolean" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="mapping">
+    <xs:all>
+      <xs:element name="match" type="xs:string" minOccurs="0"/>
+      <xs:element name="pattern" type="mappingPattern" minOccurs="0"/>
+    </xs:all>
+    <xs:attribute name="controller" type="xs:string" use="required"/>
+    <xs:attribute name="order" type="xs:int" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="mappings">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="mapping" type="mapping"/>
     </xs:sequence>
   </xs:complexType>
 

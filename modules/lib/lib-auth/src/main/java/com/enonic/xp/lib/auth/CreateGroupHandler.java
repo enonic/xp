@@ -21,6 +21,8 @@ public final class CreateGroupHandler
 
     private String displayName;
 
+    private String description;
+
     public void setUserStore( final String userStore )
     {
         this.userStore = UserStoreKey.from( userStore );
@@ -36,11 +38,16 @@ public final class CreateGroupHandler
         this.displayName = displayName;
     }
 
+    public void setDescription( String description ) {
+        this.description = description;
+    }
+
     public PrincipalMapper createGroup()
     {
         final Group group = this.securityService.get().createGroup( CreateGroupParams.create().
             displayName( this.displayName != null ? this.displayName : this.name ).
             groupKey( PrincipalKey.ofGroup( this.userStore, this.name ) ).
+            description( this.description ).
             build() );
         return group != null ? new PrincipalMapper( group ) : null;
     }

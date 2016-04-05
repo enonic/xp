@@ -25,6 +25,9 @@ module api.content.form.inputtype.time {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
+            if (!ValueTypes.LOCAL_DATE.equals(property.getType())) {
+                property.convertValueType(ValueTypes.LOCAL_DATE);
+            }
 
             var datePickerBuilder = new api.ui.time.DatePickerBuilder();
 
@@ -52,8 +55,9 @@ module api.content.form.inputtype.time {
 
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly?: boolean) {
             var datePicker = <api.ui.time.DatePicker> occurrence;
-            if (!unchangedOnly || !datePicker.isDirty()) {
-                datePicker.setSelectedDate(property.getLocalDate().toDate());
+            if ((!unchangedOnly || !datePicker.isDirty())) {
+                var date = property.hasNonNullValue() ? property.getLocalDate().toDate() : null;
+                datePicker.setSelectedDate(date);
             }
         }
 

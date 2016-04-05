@@ -15,6 +15,7 @@ module app.wizard {
         private model: ContentSettingsModel;
         private modelChangeListener: (event: api.PropertyChangedEvent) => void;
         private updateUnchangedOnly: boolean = false;
+        private ignorePropertyChange: boolean = false;
 
         private localeCombo: LocaleComboBox;
         private ownerCombo: PrincipalComboBox;
@@ -23,18 +24,20 @@ module app.wizard {
             super("settings-wizard-step-form");
 
             this.modelChangeListener = (event: api.PropertyChangedEvent) => {
-                var value = event.getNewValue();
-                switch (event.getPropertyName()) {
-                case ContentSettingsModel.PROPERTY_LANG:
-                    if (!this.updateUnchangedOnly || !this.localeCombo.isDirty()) {
-                        this.localeCombo.setValue(value ? value.toString() : "");
+                if (!this.ignorePropertyChange) {
+                    var value = event.getNewValue();
+                    switch (event.getPropertyName()) {
+                    case ContentSettingsModel.PROPERTY_LANG:
+                        if (!this.updateUnchangedOnly || !this.localeCombo.isDirty()) {
+                            this.localeCombo.setValue(value ? value.toString() : "");
+                        }
+                        break;
+                    case ContentSettingsModel.PROPERTY_OWNER:
+                        if (!this.updateUnchangedOnly || !this.ownerCombo.isDirty()) {
+                            this.ownerCombo.setValue(value ? value.toString() : "");
+                        }
+                        break;
                     }
-                    break;
-                case ContentSettingsModel.PROPERTY_OWNER:
-                    if (!this.updateUnchangedOnly || !this.ownerCombo.isDirty()) {
-                        this.ownerCombo.setValue(value ? value.toString() : "");
-                    }
-                    break;
                 }
             }
         }
@@ -71,10 +74,10 @@ module app.wizard {
             this.setModel(new ContentSettingsModel(content));
         }
 
-        update(content: api.content.Content, unchangedOnly?: boolean) {
+        update(content: api.content.Content, unchangedOnly: boolean = true) {
             this.updateUnchangedOnly = unchangedOnly;
 
-            this.getModel().setOwner(content.getOwner()).setLanguage(content.getLanguage());
+            this.model.setOwner(content.getOwner()).setLanguage(content.getLanguage());
         }
 
         private setModel(model: ContentSettingsModel) {
@@ -87,13 +90,17 @@ module app.wizard {
             // 2-way data binding
             var ownerListener = () => {
                 var principals: api.security.Principal[] = this.ownerCombo.getSelectedDisplayValues();
-                model.setOwner(principals.length > 0 ? principals[0].getKey() : null, true);
+                this.ignorePropertyChange = true;
+                model.setOwner(principals.length > 0 ? principals[0].getKey() : null);
+                this.ignorePropertyChange = false;
             };
             this.ownerCombo.onOptionSelected((event) => ownerListener());
             this.ownerCombo.onOptionDeselected((option) => ownerListener());
 
             var localeListener = () => {
-                model.setLanguage(this.localeCombo.getValue(), true);
+                this.ignorePropertyChange = true;
+                model.setLanguage(this.localeCombo.getValue());
+                this.ignorePropertyChange = false;
             };
             this.localeCombo.onOptionSelected((event) => localeListener());
             this.localeCombo.onOptionDeselected((option) => localeListener());

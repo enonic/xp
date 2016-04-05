@@ -48,12 +48,19 @@ module api.form.inputtype.radiobutton {
 
             this.appendChild(this.selector);
 
+            if (!ValueTypes.STRING.equals(property.getType())) {
+                property.convertValueType(ValueTypes.STRING);
+                if (!this.isValidOption(property.getString())) {
+                    property.setValue(ValueTypes.STRING.newNullValue());
+                }
+            }
+
             return wemQ<void>(null);
         }
 
         updateProperty(property: api.data.Property, unchangedOnly: boolean): Q.Promise<void> {
-            if (!unchangedOnly || !this.selector.isDirty()) {
-                this.selector.setValue(property.getString());
+            if ((!unchangedOnly || !this.selector.isDirty())) {
+                this.selector.setValue(property.hasNonNullValue() ? property.getString() : "");
             }
             return wemQ<any>(null);
         }
@@ -95,7 +102,6 @@ module api.form.inputtype.radiobutton {
 
         private createRadioElement(name: string, property: Property): api.ui.RadioGroup {
 
-
             var value = property.hasNonNullValue ? property.getString() : undefined;
             var radioGroup = new api.ui.RadioGroup(name, value);
 
@@ -118,6 +124,17 @@ module api.form.inputtype.radiobutton {
             return new Value(s, ValueTypes.STRING);
         }
 
+        private isValidOption(value: string): boolean {
+            var options = this.radioButtonOptions;
+            var l = options.length;
+            for (let i = 0; i < l; i++) {
+                let option = options[i];
+                if (option.value === value) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("RadioButton", RadioButton));

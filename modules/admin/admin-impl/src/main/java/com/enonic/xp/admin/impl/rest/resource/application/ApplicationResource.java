@@ -1,7 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.application;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.stream.Collectors;
 
@@ -22,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
-import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.admin.impl.json.application.ApplicationJson;
 import com.enonic.xp.admin.impl.market.MarketService;
@@ -181,15 +179,15 @@ public final class ApplicationResource
 
             if ( ArrayUtils.contains( ALLOWED_PROTOCOLS, url.getProtocol() ) )
             {
-                try (final InputStream inputStream = url.openStream())
-                {
-                    return installApplication( ByteSource.wrap( ByteStreams.toByteArray( inputStream ) ), urlString );
-                }
+                ApplicationInstallResultJson json = installApplication( url );
+
+                return json;
             }
             else
             {
                 failure = "Illegal protocol: " + url.getProtocol();
                 result.setFailure( failure );
+
                 return result;
             }
 
@@ -200,6 +198,26 @@ public final class ApplicationResource
             result.setFailure( failure );
             return result;
         }
+    }
+
+    private ApplicationInstallResultJson installApplication( final URL url )
+    {
+        final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
+
+        try
+        {
+            final Application application = this.applicationService.installGlobalApplication( url );
+
+            result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
+        }
+        catch ( Exception e )
+        {
+            final String failure = "Failed to process application from " + url;
+            LOG.error( failure );
+
+            result.setFailure( failure );
+        }
+        return result;
     }
 
     private ApplicationInstallResultJson installApplication( final ByteSource byteSource, final String applicationName )

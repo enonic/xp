@@ -14,6 +14,8 @@ module app.remove {
 
         private deleteButton: DialogButton;
 
+        private descendantsContainer: DescendantsToBeDeletedList;
+
         private yesCallback: () => void;
 
         private noCallback: () => void;
@@ -25,10 +27,12 @@ module app.remove {
 
             this.addDeleteActionHandler();
 
+            this.addDescendantsContainer();
+
             this.addCancelButtonToBottom();
         }
 
-        setContentToDelete(contents: ContentSummaryAndCompareStatus[]) {
+        setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
 
             this.selectedItems = [];
 
@@ -37,16 +41,38 @@ module app.remove {
             });
 
             this.renderSelectedItems(this.selectedItems);
+            this.updateSubTitle();
+            if(this.selectedItems.length === 1) {
+                this.selectedItems[0].hideRemoveButton();
+            }
+
+            this.descendantsContainer.hide();
+
+            if(this.atLeastOneInitialItemHasChild()) {
+                this.descendantsContainer.loadData(this.selectedItems).then(() => {
+                    this.descendantsContainer.show();
+                    this.centerMyself();
+                });
+            }
 
             this.countItemsToDeleteAndUpdateButtonCounter();
+
+            return this;
         }
 
-        setYesCallback(callback: () => void) {
+        setYesCallback(callback: () => void): ContentDeleteDialog {
             this.yesCallback = callback;
+            return this;
         }
 
-        setNoCallback(callback: () => void) {
+        setNoCallback(callback: () => void): ContentDeleteDialog {
             this.noCallback = callback;
+            return this;
+        }
+
+        private addDescendantsContainer() {
+            this.descendantsContainer = new DescendantsToBeDeletedList("descendants-to-delete-list");
+            this.appendChildToContentPanel(this.descendantsContainer);
         }
 
         private indexOf(item: SelectionItem<ContentSummaryAndCompareStatus>): number {
@@ -61,7 +87,10 @@ module app.remove {
         private addDeleteActionHandler() {
             this.getDeleteAction().onExecuted(() => {
 
-                this.yesCallback();
+                if(!!this.yesCallback) {
+                    this.yesCallback();
+                }
+
                 this.deleteButton.setEnabled(false);
                 this.showLoadingSpinner();
 
@@ -92,7 +121,7 @@ module app.remove {
                 setPath(content.getPath().toString()).
                 setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve());
 
-            var selectionItem = new SelectionItem(deleteItemViewer, browseItem, () => {
+            var selectionItem = new ContentDeleteSelectionItem(deleteItemViewer, browseItem, () => {
                 var index = this.indexOf(selectionItem);
                 if (index < 0) {
                     return;
@@ -105,6 +134,21 @@ module app.remove {
                     this.close();
                 }
                 else {
+                    this.updateSubTitle();
+                    if(this.selectedItems.length === 1) {
+                        this.selectedItems[0].hideRemoveButton();
+                    }
+
+                    if(this.atLeastOneInitialItemHasChild()) {
+                        this.descendantsContainer.loadData(this.selectedItems).then(() => {
+                            this.centerMyself();
+                        });
+                    }
+                    else {
+                        this.descendantsContainer.hide();
+                        this.centerMyself();
+                    }
+
                     this.countItemsToDeleteAndUpdateButtonCounter();
                 }
             });
@@ -144,7 +188,8 @@ module app.remove {
         }
 
         private updateDeleteButtonCounter(count: number) {
-            this.deleteButton.setLabel("Delete (" + count + ")");
+            var showCounter: boolean = this.selectedItems.length > 1 || this.atLeastOneInitialItemHasChild();
+            this.deleteButton.setLabel("Delete" + (showCounter ? " (" + count + ")" : ""));
         }
 
         private showLoadingSpinner() {
@@ -157,6 +202,97 @@ module app.remove {
 
         private cleanDeleteButtonText() {
             this.deleteButton.setLabel("Delete ");
+        }
+
+        private atLeastOneInitialItemHasChild(): boolean {
+            return this.selectedItems.some((obj: SelectionItem<ContentSummaryAndCompareStatus>) => {
+                return obj.getBrowseItem().getModel().hasChildren();
+            });
+        }
+
+        private updateSubTitle() {
+            if(!this.atLeastOneInitialItemHasChild()) {
+                this.updateSubTitleText("");
+            }
+            else if(this.selectedItems.length > 1) {
+                this.updateSubTitleText("Delete selected items and their child content");
+            }
+            else {
+                this.updateSubTitleText("Delete selected item and its child content");
+            }
+        }
+    }
+
+    export class DescendantsToBeDeletedList extends api.ui.selector.list.ListBox<ContentSummary> {
+
+        constructor(className?: string) {
+            super(className);
+        }
+
+        loadData(selectedItems: SelectionItem<ContentSummaryAndCompareStatus>[]): wemQ.Promise<void> {
+            return this.createRequestForGettingItemsDescendants(selectedItems).sendAndParse().then((result: api.content.ContentResponse<ContentSummary>) => {
+                this.setItems(result.getContents());
+                this.prependChild(new api.dom.H6El("descendants-header").setHtml("Other items that will be deleted"));
+            });
+        }
+
+        createItemView(item: ContentSummary, readOnly: boolean): api.dom.Element {
+            return new DescendantView(item);
+        }
+
+        getItemId(item: ContentSummary): string {
+            return item.getId();
+        }
+
+        private createRequestForGettingItemsDescendants(selectedItems: SelectionItem<ContentSummaryAndCompareStatus>[]): api.content.GetDescendantsOfContents {
+            var getDescendantsOfContentsRequest = new api.content.GetDescendantsOfContents();
+            for (var j = 0; j < selectedItems.length; j++) {
+                getDescendantsOfContentsRequest.addContentPath(ContentPath.fromString(selectedItems[j].getBrowseItem().getPath()));
+            }
+
+            return getDescendantsOfContentsRequest;
+        }
+    }
+
+    export class DescendantView extends api.dom.DivEl {
+
+        private wrapperDivEl: api.dom.DivEl;
+
+        private iconImageEl: api.dom.ImgEl;
+
+        private iconDivEl: api.dom.DivEl;
+
+        private namesView: api.app.NamesView;
+
+        constructor(content: api.content.ContentSummary) {
+            super("names-and-icon-view descendant-view small");
+
+            this.wrapperDivEl = new api.dom.DivEl("wrapper");
+            this.appendChild(this.wrapperDivEl);
+
+            if (!content.getType().isImage()) {
+                this.iconImageEl = new api.dom.ImgEl(null, "font-icon-default");
+                this.wrapperDivEl.appendChild(this.iconImageEl);
+                this.iconImageEl.setSrc(this.resolveIconUrl(content));
+            } else {
+                this.iconDivEl = new api.dom.DivEl("font-icon-default image");
+                this.wrapperDivEl.appendChild(this.iconDivEl);
+            }
+
+            this.namesView = new api.app.NamesView(false).setMainName(this.resolveDisplayName(content));
+            this.appendChild(this.namesView);
+        }
+
+        private resolveDisplayName(object: ContentSummary): string {
+            var contentName = object.getName(),
+                invalid = !object.isValid() || !object.getDisplayName() || contentName.isUnnamed();
+            this.toggleClass("invalid", invalid);
+
+            return object.getPath().toString();
+        }
+
+        private resolveIconUrl(object: ContentSummary): string {
+            return new ContentIconUrlResolver().setContent(object).resolve();
         }
     }
 }

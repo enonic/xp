@@ -30,7 +30,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private addOkButton(okCallback: () => void) {
-            var okAction = new api.ui.Action("Apply", "enter");
+            var okAction = new api.ui.Action("Apply");
             this.addAction(okAction, true, true);
             okAction.onExecuted(() => {
                 if (okCallback) {

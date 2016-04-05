@@ -21,6 +21,8 @@ import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ComponentService;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutRegions;
 
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
@@ -28,7 +30,11 @@ import static org.apache.commons.lang.StringUtils.substringAfter;
 public final class ComponentInstruction
     implements PostProcessInstruction
 {
-    static final String APPLICATION_COMPONENT_PREFIX = "module:";
+    private static final String APPLICATION_COMPONENT_PREFIX = "module:";
+
+    public static final String FRAGMENT_COMPONENT = "fragment";
+
+    public static final String COMPONENT_INSTRUCTION_PREFIX = "COMPONENT ";
 
     private RendererFactory rendererFactory;
 
@@ -49,7 +55,7 @@ public final class ComponentInstruction
     @Override
     public PortalResponse evaluate( final PortalRequest portalRequest, final String instruction )
     {
-        if ( !instruction.startsWith( "COMPONENT " ) )
+        if ( !instruction.startsWith( COMPONENT_INSTRUCTION_PREFIX ) )
         {
             return null;
         }
@@ -67,7 +73,11 @@ public final class ComponentInstruction
     private PortalResponse renderComponent( final PortalRequest portalRequest, final String componentSelector )
     {
         final Component component;
-        if ( !componentSelector.startsWith( APPLICATION_COMPONENT_PREFIX ) )
+        if ( FRAGMENT_COMPONENT.equalsIgnoreCase( componentSelector ) )
+        {
+            component = getPageFragment( portalRequest );
+        }
+        else if ( !componentSelector.startsWith( APPLICATION_COMPONENT_PREFIX ) )
         {
             final ComponentPath componentPath = ComponentPath.from( componentSelector );
             component = resolveComponent( portalRequest, componentPath );
@@ -100,20 +110,55 @@ public final class ComponentInstruction
         {
             return null;
         }
-
         final Page page = content.getPage();
+
+        if ( content.getType().isFragment() )
+        {
+            return resolveComponentInFragment( page, path );
+        }
+
         final PageRegions pageRegions = page.getRegions();
         Component component = pageRegions.getComponent( path );
         if ( component == null )
         {
-            // TODO: Hack: See if component still exist in page template
-            component = portalRequest.getPageTemplate().getRegions().getComponent( path );
-            if ( component == null )
-            {
-                throw new RenderException( "Component not found: [{0}]", path );
-            }
+            throw new RenderException( "Component not found: [{0}]", path );
         }
 
         return component;
+    }
+
+    private Component resolveComponentInFragment( final Page page, final ComponentPath path )
+    {
+        final Component fragmentComponent = page.getFragment();
+        if ( !( fragmentComponent instanceof LayoutComponent ) )
+        {
+            throw new RenderException( "Component not found: [{0}]", path );
+        }
+        final LayoutComponent layout = (LayoutComponent) fragmentComponent;
+
+        final LayoutRegions pageRegions = layout.getRegions();
+        final Component component = pageRegions.getComponent( path );
+        if ( component == null )
+        {
+            throw new RenderException( "Component not found: [{0}]", path );
+        }
+        return component;
+    }
+
+    private Component getPageFragment( final PortalRequest portalRequest )
+    {
+        final Content content = portalRequest.getContent();
+        if ( content == null )
+        {
+            return null;
+        }
+
+        final Page page = content.getPage();
+        if ( page == null )
+        {
+            return null;
+        }
+        final Component fragment = page.getFragment();
+        return fragment == null ? null : fragment;
     }
 }

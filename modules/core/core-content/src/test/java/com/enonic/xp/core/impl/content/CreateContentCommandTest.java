@@ -20,7 +20,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.media.MediaInfo;
@@ -150,7 +150,7 @@ public class CreateContentCommandTest
             inputTypeProperty( InputTypeProperty.create( "two", "two" ).build() ).
             inputTypeProperty( InputTypeProperty.create( "three", "three" ).build() ).
             inputType( inputTypeName ).
-            defaultValue( InputTypeConfig.create().property( InputTypeProperty.create( "default", "two" ).build() ).build() ).
+            defaultValue( InputTypeDefault.create().property( InputTypeProperty.create( "default", "two" ).build() ).build() ).
             build();
 
         final ContentType contentType = ContentType.create().
@@ -187,7 +187,7 @@ public class CreateContentCommandTest
             name( "testInput" ).
             label( "testInput" ).
             inputType( InputTypeName.CHECK_BOX ).
-            defaultValue( InputTypeConfig.create().property( InputTypeProperty.create( "default", "checked" ).build() ).build() ).
+            defaultValue( InputTypeDefault.create().property( InputTypeProperty.create( "default", "checked" ).build() ).build() ).
             build();
 
         final ContentType contentType = ContentType.create().
@@ -212,7 +212,7 @@ public class CreateContentCommandTest
             name( "testInput" ).
             label( "testInput" ).
             inputType( InputTypeName.CHECK_BOX ).
-            defaultValue( InputTypeConfig.create().property( InputTypeProperty.create( "default", "unchecked" ).build() ).build() ).
+            defaultValue( InputTypeDefault.create().property( InputTypeProperty.create( "default", "unchecked" ).build() ).build() ).
             build();
 
         final ContentType contentType = ContentType.create().

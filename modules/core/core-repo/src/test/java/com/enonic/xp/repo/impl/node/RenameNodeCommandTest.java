@@ -142,4 +142,29 @@ public class RenameNodeCommandTest
         final Node renamedChild1_2_2 = getNodeById( child1_2_2.id() );
         assertEquals( renamedChild1_2.path(), renamedChild1_2_2.parentPath() );
     }
+
+    @Test
+    public void rename_then_create_with_same_name()
+        throws Exception
+    {
+        final CreateNodeParams createNodeNamedMyNodeParams = CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            build();
+
+        final Node createdNode = createNode( createNodeNamedMyNodeParams );
+
+        RenameNodeCommand.create().
+            params( RenameNodeParams.create().
+                nodeId( createdNode.id() ).
+                nodeName( NodeName.from( "my-node-edited" ) ).
+                build() ).
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
+            build().
+            execute();
+
+        createNode( createNodeNamedMyNodeParams );
+    }
 }

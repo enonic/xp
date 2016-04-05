@@ -334,9 +334,9 @@ module api.ui.uploader {
         }
 
         protected appendNewItems(newItemsToAppend: Element[]) {
-            for(var key in newItemsToAppend) {
+            for (var key in newItemsToAppend) {
                 this.getResultContainer().appendChild(newItemsToAppend[key]);
-            };
+            }
         }
 
         protected removeAllChildrenExceptGiven(itemsToKeep: Element[]) {
@@ -348,7 +348,7 @@ module api.ui.uploader {
                     toRemove.push(elem);
                 }
             });
-            for(var key in toRemove) {
+            for (var key in toRemove) {
                 toRemove[key].remove();
             }
         }
@@ -395,6 +395,10 @@ module api.ui.uploader {
             return this;
         }
 
+        protected getErrorMessage(fileString: string): string {
+            return "File(s) [" + fileString + "] were not uploaded";
+        }
+
         protected setDropzoneVisible(visible: boolean = true) {
             if (!visible && this.config.dropzoneAlwaysVisible) {
                 return;
@@ -421,7 +425,7 @@ module api.ui.uploader {
             this.cancelBtn.setVisible(visible && this.config.showCancel);
         }
 
-        protected setResultVisible(visible: boolean = true) {
+        setResultVisible(visible: boolean = true) {
             if (!visible && this.config.resultAlwaysVisisble) {
                 return;
             }
@@ -538,15 +542,15 @@ module api.ui.uploader {
             }
 
             // Check for max allowed occurrences
-           /* if (this.config.maximumOccurrences > 0 && files.length > this.config.maximumOccurrences) {
-                if (UploaderEl.debug) {
-                    console.log('Max ' + this.config.maximumOccurrences + ' files allowed, removing the rest', this);
-                }
+            /* if (this.config.maximumOccurrences > 0 && files.length > this.config.maximumOccurrences) {
+             if (UploaderEl.debug) {
+             console.log('Max ' + this.config.maximumOccurrences + ' files allowed, removing the rest', this);
+             }
 
-                files.splice(this.config.maximumOccurrences);
-                up.splice(this.config.maximumOccurrences);
-                api.notify.NotifyManager.get().showWarning('Max ' + this.config.maximumOccurrences + ' files are allowed');
-            }*/
+             files.splice(this.config.maximumOccurrences);
+             up.splice(this.config.maximumOccurrences);
+             api.notify.NotifyManager.get().showWarning('Max ' + this.config.maximumOccurrences + ' files are allowed');
+             }*/
 
             return files.length > 0;
         }
@@ -669,7 +673,7 @@ module api.ui.uploader {
                 } catch (e) {
                     console.warn("Failed to parse the response", response, e);
                     var files = up.files.map((file: PluploadFile) => file.name);
-                    api.notify.NotifyManager.get().showError("File(s) [" + files.join(', ') + "] were not uploaded");
+                    api.notify.NotifyManager.get().showError(this.getErrorMessage(files.join(', ')));
                 }
 
                 var uploadItem = this.findUploadItemById(response.file.id);
@@ -687,11 +691,11 @@ module api.ui.uploader {
                 var values = [];
                 this.uploadedItems.forEach((item) => {
                     if (item.getStatus() == PluploadStatus.DONE) {
-                        if(item.getModel()) {
+                        if (item.getModel()) {
                             values.push(this.getModelValue(item.getModel()));
                         } else {
                             item.notifyFailed();
-                           this.notifyUploadFailed(item);
+                            this.notifyUploadFailed(item);
                         }
                     }
                 });

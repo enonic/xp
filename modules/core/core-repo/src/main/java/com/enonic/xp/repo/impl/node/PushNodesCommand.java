@@ -19,11 +19,11 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodesResult;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.storage.MoveNodeParams;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -107,7 +107,11 @@ public class PushNodesCommand
             }
         }
 
-        indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ) );
+        RefreshCommand.create().
+            refreshMode( RefreshMode.ALL ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
 
         return builder.build();
     }

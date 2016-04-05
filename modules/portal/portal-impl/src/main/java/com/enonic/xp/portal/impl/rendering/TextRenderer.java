@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.rendering;
 import java.text.MessageFormat;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.net.MediaType;
 
@@ -10,6 +11,8 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.rendering.Renderer;
+import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.region.TextComponent;
 
 import static com.enonic.xp.portal.impl.rendering.RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE;
@@ -18,6 +21,8 @@ import static com.enonic.xp.portal.impl.rendering.RenderingConstants.PORTAL_COMP
 public final class TextRenderer
     implements Renderer<TextComponent>
 {
+
+    PortalUrlService service;
 
     private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
         "<div " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"><section></section></div>";
@@ -58,8 +63,10 @@ public final class TextRenderer
                 case LIVE:
                 case PREVIEW:
                 default:
+                    ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( portalRequest ).value( textComponent.getText() );
+                    String processedHtml = service.processHtml( params );
                     portalResponseBuilder.body(
-                        MessageFormat.format( COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString(), textComponent.getText() ) );
+                        MessageFormat.format( COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString(), processedHtml ) );
                     break;
             }
         }
@@ -90,5 +97,11 @@ public final class TextRenderer
     private RenderMode getRenderingMode( final PortalRequest portalRequest )
     {
         return portalRequest == null ? RenderMode.LIVE : portalRequest.getMode();
+    }
+
+    @Reference
+    public void setPortalUrlService( final PortalUrlService service )
+    {
+        this.service = service;
     }
 }

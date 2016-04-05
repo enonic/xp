@@ -38,6 +38,21 @@ public class HtmlAreaTypeTest
     }
 
     @Test
+    public void testCreateDefaultValue()
+    {
+        final InputTypeDefault config = InputTypeDefault.create().
+            property( InputTypeProperty.create( "default", "<p>test</p>" ).
+                build() ).
+            build();
+
+        final Value value = this.type.createDefaultValue( config );
+
+        assertNotNull( value );
+        assertEquals( "<p>test</p>", value.toString() );
+
+    }
+
+    @Test
     public void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
