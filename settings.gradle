@@ -63,14 +63,14 @@ include 'lib:lib-cache'
 include 'lib:lib-context'
 include 'lib:lib-websocket'
 
-include 'app:simpleauth'
-
 include 'launcher:launcher-api'
 include 'launcher:launcher-impl'
 include 'launcher:launcher-ui'
 include 'launcher:launcher-main'
 
 include 'blobstore:blobstore-file'
+
+include 'app:simpleauth'
 
 include 'distro'
 include 'docs'
