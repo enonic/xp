@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.auth;
 
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,31 +29,29 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class PathGuardResponseSerializer
 {
-    private final HttpServletRequest request;
-
     private final SecurityService securityService;
 
     private final AuthControllerScriptFactory authControllerScriptFactory;
 
     private final AuthDescriptorService authDescriptorService;
 
-    private final PathGuard pathGuard;
+    private final HttpServletRequest request;
 
-    public PathGuardResponseSerializer( final HttpServletRequest request, final SecurityService securityService,
+    public PathGuardResponseSerializer( final SecurityService securityService,
                                         final AuthControllerScriptFactory authControllerScriptFactory,
-                                        final AuthDescriptorService authDescriptorService, final PathGuard pathGuard )
+                                        final AuthDescriptorService authDescriptorService, final HttpServletRequest request )
     {
-        this.request = request;
         this.securityService = securityService;
         this.authControllerScriptFactory = authControllerScriptFactory;
         this.authDescriptorService = authDescriptorService;
-        this.pathGuard = pathGuard;
+        this.request = request;
     }
 
     public boolean serialize( final HttpServletResponse response )
         throws IOException
     {
-        final UserStore userStore = retrieveUserStore();
+        final PathGuard pathGuard = retrievePathGuard();
+        final UserStore userStore = retrieveUserStore( pathGuard );
         final AuthDescriptor authDescriptor = retrieveAuthDescriptor( userStore );
 
         if ( authDescriptor != null )
@@ -74,7 +73,15 @@ public class PathGuardResponseSerializer
         return false;
     }
 
-    private UserStore retrieveUserStore()
+    private PathGuard retrievePathGuard()
+    {
+        //Retrieves the PathGuard for the current path
+        final String requestURI = request.getRequestURI();
+        final Optional<PathGuard> pathGuardOptional = runWithAdminRole( () -> securityService.getPathGuardByPath( requestURI ) );
+        return pathGuardOptional.orElse( null );
+    }
+
+    private UserStore retrieveUserStore( PathGuard pathGuard )
     {
         UserStoreKey userStoreKey = pathGuard == null ? null : pathGuard.getUserStoreKey();
         if ( userStoreKey != null )
