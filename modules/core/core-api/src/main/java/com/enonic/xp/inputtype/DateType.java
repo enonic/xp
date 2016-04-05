@@ -1,8 +1,12 @@
 package com.enonic.xp.inputtype;
 
+import java.time.LocalDate;
+import java.time.Period;
+
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.data.ValueTypeException;
 import com.enonic.xp.data.ValueTypes;
 
 final class DateType
@@ -19,6 +23,37 @@ final class DateType
     public Value createValue( final String value, final InputTypeConfig config )
     {
         return ValueFactory.newLocalDate( ValueTypes.LOCAL_DATE.convert( value ) );
+    }
+
+    @Override
+    public Value createDefaultValue( final InputTypeDefault defaultConfig )
+    {
+        final String defaultValue = defaultConfig.getRootValue();
+        if ( defaultValue != null )
+        {
+            try
+            {
+                return ValueFactory.newLocalDate( ValueTypes.LOCAL_DATE.convert( defaultValue ) );
+            }
+            catch ( ValueTypeException e )
+            {
+                final RelativeTimeParser.Result result = RelativeTimeParser.parse( defaultValue );
+
+                if ( result != null )
+                {
+                    final Period period = result.getDate();
+                    final LocalDate localDate =
+                        LocalDate.now().plusYears( period.getYears() ).plusMonths( period.getMonths() ).plusDays( period.getDays() );
+                    return ValueFactory.newLocalDate( localDate );
+                }
+                else
+                {
+                    throw new IllegalArgumentException( "Invalid Date format: " + defaultValue );
+                }
+
+            }
+        }
+        return super.createDefaultValue( defaultConfig );
     }
 
     @Override
