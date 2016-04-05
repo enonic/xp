@@ -15,6 +15,8 @@ import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
+import com.enonic.xp.util.Exceptions;
+
 @Beta
 public class ImmutableFilesHelper
 {
@@ -95,6 +97,7 @@ public class ImmutableFilesHelper
                     }
                     catch ( InterruptedException e )
                     {
+                        throw Exceptions.unchecked( e );
                     }
                 }
             }
