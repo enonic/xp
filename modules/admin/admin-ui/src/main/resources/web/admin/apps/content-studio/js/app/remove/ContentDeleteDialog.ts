@@ -8,6 +8,8 @@ module app.remove {
     import ContentPath = api.content.ContentPath;
     import DialogButton = api.ui.dialog.DialogButton;
     import CompareStatus = api.content.CompareStatus;
+    import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
+    import PublishContentRequest = api.content.PublishContentRequest;
 
     export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
 
@@ -56,18 +58,13 @@ module app.remove {
             this.instantDeleteCheckbox.setChecked(false, true);
 
             if(this.atLeastOneInitialItemHasChild()) {
-                this.descendantsContainer.loadData(this.selectedItems).then((descendants: ContentSummary[]) => {
+                this.descendantsContainer.loadData(this.selectedItems).then((descendants: ContentSummaryAndCompareStatus[]) => {
                     this.descendantsContainer.show();
                     this.centerMyself();
 
-                    if(!this.atLeastOneInitialItemIsPublished()) {
-                        this.checkAtLeastOneDescendantIsPublished(descendants).then((atLeastOneDescendantIsPublished) => {
-                            if(atLeastOneDescendantIsPublished) {
-                                this.instantDeleteCheckbox.show();
-                            }
-                        });
+                    if(!this.atLeastOneInitialItemIsPublished() && this.atLeastOneDescendantIsPublished(descendants)) {
+                        this.instantDeleteCheckbox.show();
                     }
-
                 });
             }
 
@@ -163,12 +160,20 @@ module app.remove {
                     }
 
                     if (this.atLeastOneInitialItemHasChild()) {
-                        this.descendantsContainer.loadData(this.selectedItems).then(() => {
+                        this.descendantsContainer.loadData(this.selectedItems).then((descendants: ContentSummaryAndCompareStatus[]) => {
                             this.centerMyself();
+
+                            if(!this.atLeastOneInitialItemIsPublished() && !this.atLeastOneDescendantIsPublished(descendants)) {
+                                this.instantDeleteCheckbox.hide();
+                            }
                         });
                     }
                     else {
                         this.descendantsContainer.hide();
+                        if(!this.atLeastOneInitialItemIsPublished()) {
+                            this.instantDeleteCheckbox.hide();
+                        }
+
                         this.centerMyself();
                     }
 
@@ -239,13 +244,9 @@ module app.remove {
             });
         }
 
-        private checkAtLeastOneDescendantIsPublished(descendants: ContentSummary[]): wemQ.Promise<boolean> {
-            return api.content.CompareContentRequest.fromContentSummaries(descendants).sendAndParse().then((compareContentResults: api.content.CompareContentResults) => {
-                var atLeastOneDescendantIsPublished = compareContentResults.getAll().some((obj: api.content.CompareContentResult) => {
-                    return this.isContentPublished(obj.getCompareStatus());
-                });
-
-                return atLeastOneDescendantIsPublished;
+        private atLeastOneDescendantIsPublished(descendants: ContentSummaryAndCompareStatus[]): boolean {
+            return descendants.some((obj: ContentSummaryAndCompareStatus) => {
+                return this.isContentPublished(obj.getCompareStatus());
             });
         }
 
@@ -274,11 +275,14 @@ module app.remove {
             super(className);
         }
 
-        loadData(selectedItems: SelectionItem<ContentSummaryAndCompareStatus>[]): wemQ.Promise<ContentSummary[]> {
+        loadData(selectedItems: SelectionItem<ContentSummaryAndCompareStatus>[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
             return this.createRequestForGettingItemsDescendants(selectedItems).sendAndParse().then((result: api.content.ContentResponse<ContentSummary>) => {
                 this.setItems(result.getContents());
                 this.prependChild(new api.dom.H6El("descendants-header").setHtml("Other items that will be deleted"));
-                return result.getContents();
+
+                return api.content.CompareContentRequest.fromContentSummaries(result.getContents()).sendAndParse().then((compareContentResults: api.content.CompareContentResults) => {
+                    return ContentSummaryAndCompareStatusFetcher.updateCompareStatus(result.getContents(), compareContentResults);
+                });
             });
         }
 
