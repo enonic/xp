@@ -1,5 +1,8 @@
 package com.enonic.xp.inputtype;
 
+import java.time.Instant;
+import java.time.ZoneId;
+
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
@@ -34,7 +37,17 @@ final class TimeType
             }
             catch ( ValueTypeException e )
             {
-                throw new IllegalArgumentException( "Invalid Date format: " + defaultValue );
+                final RelativeTime result = RelativeTimeParser.parse( defaultValue );
+
+                if ( result != null )
+                {
+                    final Instant instant = Instant.now().plus( result.getTime() );
+                    return ValueFactory.newLocalTime( instant.atZone( ZoneId.systemDefault() ).toLocalTime() );
+                }
+                else
+                {
+                    throw new IllegalArgumentException( "Invalid Date format: " + defaultValue );
+                }
             }
         }
         return super.createDefaultValue( defaultConfig );
