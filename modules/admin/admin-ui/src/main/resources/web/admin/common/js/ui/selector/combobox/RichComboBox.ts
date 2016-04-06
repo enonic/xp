@@ -380,7 +380,16 @@ module api.ui.selector.combobox {
 
         private doWhenLoaded(callback: Function, value: string) {
             if (this.loader.isLoaded()) {
-                callback();
+                var option = this.getOptionByValue(value);
+                if (option != null) { // option is loaded
+                    callback();
+                } else if (!api.util.StringHelper.isEmpty(value)) { // option needs loading
+                    this.loader.preLoad(value).then(() => {
+                        callback();
+                    });
+                } else {
+                    callback(); // empty option
+                }
             } else {
                 if (RichComboBox.debug) {
                     console.debug(this.toString() + '.doWhenLoaded: waiting to be loaded');
