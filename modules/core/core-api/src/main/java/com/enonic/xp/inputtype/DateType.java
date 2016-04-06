@@ -1,8 +1,5 @@
 package com.enonic.xp.inputtype;
 
-import java.time.LocalDate;
-import java.time.Period;
-
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
@@ -37,7 +34,7 @@ final class DateType
             }
             catch ( ValueTypeException e )
             {
-                final RelativeTimeParser.Result result = RelativeTimeParser.parse( defaultValue );
+                final RelativeTime result = RelativeTimeParser.parse( defaultValue );
 
                 if ( result != null )
                 {
