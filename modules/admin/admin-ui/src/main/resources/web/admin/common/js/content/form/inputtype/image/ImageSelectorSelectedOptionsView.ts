@@ -120,8 +120,9 @@ module api.content.form.inputtype.image {
 
             optionView.onChecked((view: ImageSelectorSelectedOptionView, checked: boolean) => {
                 if (checked) {
-                    if(this.selection.indexOf(selectedOption) < 0)
+                    if (this.selection.indexOf(selectedOption) < 0) {
                         this.selection.push(selectedOption);
+                    }
                 } else {
                     var index = this.selection.indexOf(selectedOption);
                     if (index > -1) {
@@ -132,9 +133,22 @@ module api.content.form.inputtype.image {
                 this.updateSelectionToolbarLayout();
             });
 
-            optionView.getIcon().onLoaded((event: UIEvent) => {
-                optionView.updateProportions();
-                this.refreshSortable();
+            var optionImg = optionView.getIcon();
+            optionImg.onLoaded((event: UIEvent) => {
+                var loadedListener = () => {
+                    optionView.updateProportions();
+                    this.refreshSortable();
+                };
+                if (optionImg.isVisible()) {
+                    loadedListener();
+                } else {
+                    // execute listener on shown in case it's hidden now to correctly calc proportions
+                    var shownListener = () => {
+                        loadedListener();
+                        optionImg.unShown(shownListener);
+                    };
+                    optionImg.onShown(shownListener);
+                }
             });
 
             optionView.insertBeforeEl(this.toolbar);
@@ -162,7 +176,7 @@ module api.content.form.inputtype.image {
             var selectedOptions = this.getSelectedOptions();
             for (var i = 0; i < selectedOptions.length; i++) {
                 var view = <ImageSelectorSelectedOptionView>selectedOptions[i].getOptionView();
-                if(i != option.getIndex()) {
+                if (i != option.getIndex()) {
                     view.getCheckbox().setChecked(false);
                 }
             }
@@ -203,7 +217,7 @@ module api.content.form.inputtype.image {
         }
 
         private hideImageSelectorDialog() {
-            if(this.activeOption) {
+            if (this.activeOption) {
                 this.activeOption.getOptionView().removeClass('editing first-in-row last-in-row');
                 this.activeOption = null;
             }

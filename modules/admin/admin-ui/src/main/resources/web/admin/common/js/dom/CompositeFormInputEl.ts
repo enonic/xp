@@ -30,6 +30,16 @@ module api.dom {
             return this;
         }
 
+
+        setValue(value: string, silent?: boolean, userInput?: boolean): CompositeFormInputEl {
+            this.wrappedInput.setValue(value, silent, userInput);
+            return this;
+        }
+
+        getValue(): string {
+            return this.wrappedInput.getValue();
+        }
+
         getName(): string {
             return this.wrappedInput.getName();
         }

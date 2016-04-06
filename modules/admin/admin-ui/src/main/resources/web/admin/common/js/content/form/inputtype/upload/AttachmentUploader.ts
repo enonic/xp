@@ -35,7 +35,7 @@ module api.content.form.inputtype.upload {
                 this.uploaderEl = this.createUploader();
                 this.uploaderWrapper = this.createUploaderWrapper();
 
-                this.update(propertyArray);
+                this.update(propertyArray).done();
 
                 this.uploaderEl.onUploadStarted(() => {
                     this.uploaderWrapper.removeClass("empty");
