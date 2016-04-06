@@ -2,8 +2,6 @@ package com.enonic.xp.inputtype;
 
 import java.time.Duration;
 import java.time.Period;
-import java.time.temporal.TemporalAmount;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,7 +9,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 public final class RelativeTimeParser
 {
@@ -21,20 +18,21 @@ public final class RelativeTimeParser
 
     private static final String UNIT_ENDING = "(?![\\w])";
 
-    public List<TemporalAmount> parse( final String timeExpression )
+    public static RelativeTime parse( final String timeExpression )
     {
         return getTemporalAmounts( timeExpression, DateTimeUnits.DATE_TIME_UNITS );
     }
 
-    public List<TemporalAmount> getTemporalAmounts( final String timeExpression, final Set<String> availableUnits )
+    public static RelativeTime getTemporalAmounts( final String timeExpression, final Set<String> availableUnits )
     {
         Duration duration = Duration.ZERO;
         Period period = Period.ZERO;
-        Boolean isEmpty = true;
 
-        if ( DateTimeUnits.CURRENT_UNITS.contains( timeExpression.trim() ) )
+        final String trimedExpression = timeExpression.replaceAll( "\\s", "" );
+
+        if ( DateTimeUnits.CURRENT_UNITS.contains( trimedExpression ) )
         { //return zero period and duration
-            return Lists.newArrayList( duration, period );
+            return new RelativeTime( duration, period );
         }
 
         StringBuilder builder = new StringBuilder( OPERATOR_GROUP ).
@@ -43,13 +41,17 @@ public final class RelativeTimeParser
             append( getPatternGroup( availableUnits ) ).
             append( UNIT_ENDING );
 
-        Matcher m = Pattern.compile( builder.toString(), Pattern.CASE_INSENSITIVE ).matcher( timeExpression );
+        final Matcher m = Pattern.compile( builder.toString(), Pattern.CASE_INSENSITIVE ).matcher( trimedExpression );
+        final StringBuilder actualExpression = new StringBuilder();
 
         while ( m.find() )
         {
+            actualExpression.append( m.group( 0 ) );
+
             final String operatorString = m.group( 1 );
             final String valueString = m.group( 2 );
             final String unitTypeString = m.group( 3 );
+
 
             if ( DateTimeUnits.PERIOD_UNITS.contains( unitTypeString ) )
             {
@@ -59,18 +61,18 @@ public final class RelativeTimeParser
             {
                 duration = duration.plus( Duration.parse( "PT" + operatorString + valueString + unitTypeString.substring( 0, 1 ) ) );
             }
-            isEmpty = false;
         }
-        return isEmpty ? null : Lists.newArrayList( duration, period );
+        return trimedExpression.equals( actualExpression.toString() ) // check for whole expression is valid
+            ? new RelativeTime( duration, period ) : null;
     }
 
-    private String getPatternGroup( Set<String> set )
+    private static String getPatternGroup( Set<String> set )
     {
         return new StringBuilder( "(" ).append( StringUtils.join( set, "|" ) ).append( ")" ).
             toString();
     }
 
-    public interface DateTimeUnits
+    private interface DateTimeUnits
     {
         public static final Set<String> YEAR_UNITS = ImmutableSet.of( "year", "years", "y" );
 
