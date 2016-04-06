@@ -1,3 +1,3 @@
 <!--#MACRO _name="correct_macro" _body=""-->
 [unclosed_macro]
-[correct_macro2][/correct_macro2]
+<!--#MACRO _name="correct_macro2" _body=""-->

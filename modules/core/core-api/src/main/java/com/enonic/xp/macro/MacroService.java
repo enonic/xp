@@ -1,8 +1,12 @@
 package com.enonic.xp.macro;
 
+import java.util.function.Function;
+
 public interface MacroService
 {
-    Macro parse( final String text );
+    Macro parse( String text );
 
-    String postProcessInstructionSerialize( final Macro macro );
+    String evaluateMacros( String text, Function<Macro, String> macroProcessor );
+
+    String postProcessInstructionSerialize( Macro macro );
 }

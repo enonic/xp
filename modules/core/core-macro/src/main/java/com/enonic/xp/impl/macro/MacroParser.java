@@ -44,12 +44,22 @@ public final class MacroParser
 
     public Macro parse( final String text )
     {
+        return parse( text, 0 );
+    }
+
+    public Macro parse( final String text, final int startPosition )
+    {
         macroName = "";
         attributes.clear();
         body = "";
 
         input = text;
-        p = 0;
+        if ( startPosition < 0 || startPosition > input.length() )
+        {
+            throw new ParseException( "Invalid start position: " + startPosition );
+        }
+
+        p = startPosition;
         c = input.charAt( p );
 
         try
@@ -71,6 +81,11 @@ public final class MacroParser
             macro.param( attribute.getKey(), attribute.getValue() );
         }
         return macro.body( body ).build();
+    }
+
+    public int parsedEndPos()
+    {
+        return p;
     }
 
     private void doParse()
