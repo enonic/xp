@@ -1,5 +1,8 @@
 package com.enonic.xp.inputtype;
 
+import java.time.LocalDate;
+import java.time.Period;
+
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
