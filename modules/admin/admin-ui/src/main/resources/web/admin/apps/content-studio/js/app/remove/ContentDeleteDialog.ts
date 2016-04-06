@@ -7,6 +7,7 @@ module app.remove {
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import ContentPath = api.content.ContentPath;
     import DialogButton = api.ui.dialog.DialogButton;
+    import CompareStatus = api.content.CompareStatus;
 
     export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
 
@@ -15,6 +16,8 @@ module app.remove {
         private deleteButton: DialogButton;
 
         private descendantsContainer: DescendantsToBeDeletedList;
+
+        private instantDeleteCheckbox: api.ui.Checkbox;
 
         private yesCallback: () => void;
 
@@ -30,6 +33,8 @@ module app.remove {
             this.addDescendantsContainer();
 
             this.addCancelButtonToBottom();
+
+            this.addInstantDeleteCheckbox();
         }
 
         setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
@@ -47,11 +52,22 @@ module app.remove {
             }
 
             this.descendantsContainer.hide();
+            this.atLeastOneInitialItemIsPublished() ? this.instantDeleteCheckbox.show() : this.instantDeleteCheckbox.hide();
+            this.instantDeleteCheckbox.setChecked(false, true);
 
-            if (this.atLeastOneInitialItemHasChild()) {
-                this.descendantsContainer.loadData(this.selectedItems).then(() => {
+            if(this.atLeastOneInitialItemHasChild()) {
+                this.descendantsContainer.loadData(this.selectedItems).then((descendants: ContentSummary[]) => {
                     this.descendantsContainer.show();
                     this.centerMyself();
+
+                    if(!this.atLeastOneInitialItemIsPublished()) {
+                        this.checkAtLeastOneDescendantIsPublished(descendants).then((atLeastOneDescendantIsPublished) => {
+                            if(atLeastOneDescendantIsPublished) {
+                                this.instantDeleteCheckbox.show();
+                            }
+                        });
+                    }
+
                 });
             }
 
@@ -73,6 +89,13 @@ module app.remove {
         private addDescendantsContainer() {
             this.descendantsContainer = new DescendantsToBeDeletedList("descendants-to-delete-list");
             this.appendChildToContentPanel(this.descendantsContainer);
+        }
+
+        private addInstantDeleteCheckbox() {
+            this.instantDeleteCheckbox = new api.ui.Checkbox("Instantly delete published content");
+            this.instantDeleteCheckbox.addClass('instant-delete-check');
+
+            this.appendChildToContentPanel(this.instantDeleteCheckbox);
         }
 
         private indexOf(item: SelectionItem<ContentSummaryAndCompareStatus>): number {
@@ -210,6 +233,28 @@ module app.remove {
             });
         }
 
+        private atLeastOneInitialItemIsPublished(): boolean {
+            return this.selectedItems.some((obj: SelectionItem<ContentSummaryAndCompareStatus>) => {
+                return this.isContentPublished(obj.getBrowseItem().getModel().getCompareStatus());
+            });
+        }
+
+        private checkAtLeastOneDescendantIsPublished(descendants: ContentSummary[]): wemQ.Promise<boolean> {
+            return api.content.CompareContentRequest.fromContentSummaries(descendants).sendAndParse().then((compareContentResults: api.content.CompareContentResults) => {
+                var atLeastOneDescendantIsPublished = compareContentResults.getAll().some((obj: api.content.CompareContentResult) => {
+                    return this.isContentPublished(obj.getCompareStatus());
+                });
+
+                return atLeastOneDescendantIsPublished;
+            });
+        }
+
+        private isContentPublished(status: CompareStatus): boolean {
+            return  status === CompareStatus.EQUAL ||
+                    status === CompareStatus.MOVED ||
+                    status === CompareStatus.PENDING_DELETE;
+        }
+
         private updateSubTitle() {
             if(!this.atLeastOneInitialItemHasChild()) {
                 this.updateSubTitleText("");
@@ -229,10 +274,11 @@ module app.remove {
             super(className);
         }
 
-        loadData(selectedItems: SelectionItem<ContentSummaryAndCompareStatus>[]): wemQ.Promise<void> {
+        loadData(selectedItems: SelectionItem<ContentSummaryAndCompareStatus>[]): wemQ.Promise<ContentSummary[]> {
             return this.createRequestForGettingItemsDescendants(selectedItems).sendAndParse().then((result: api.content.ContentResponse<ContentSummary>) => {
                 this.setItems(result.getContents());
                 this.prependChild(new api.dom.H6El("descendants-header").setHtml("Other items that will be deleted"));
+                return result.getContents();
             });
         }
 
