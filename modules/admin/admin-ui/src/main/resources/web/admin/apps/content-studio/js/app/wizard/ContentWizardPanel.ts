@@ -213,7 +213,8 @@ module app.wizard {
 
             var isSiteOrWithinSite = this.site || this.createSite;
             var isPageTemplate = this.contentType.getContentTypeName().isPageTemplate();
-            if (isSiteOrWithinSite || isPageTemplate) {
+            var isShortcut = this.contentType.getContentTypeName().isShortcut();
+            if ((isSiteOrWithinSite || isPageTemplate) && !isShortcut) {
 
                 this.liveFormPanel = new page.LiveFormPanel(<page.LiveFormPanelConfig> {
                     contentWizardPanel: this,
@@ -733,7 +734,7 @@ module app.wizard {
             new GetNearestSiteRequest(content.getContentId()).sendAndParse().
                 then((parentSite: Site) => {
 
-                    if (parentSite || content.isSite()) {
+                    if ((parentSite && !content.getType().isShortcut()) || content.isSite()) {
                         this.setupWizardLiveEdit(true);
                     }
                     else {
