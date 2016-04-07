@@ -92,7 +92,7 @@ module app.remove {
             this.instantDeleteCheckbox = new api.ui.Checkbox("Instantly delete online content");
             this.instantDeleteCheckbox.addClass('instant-delete-check');
 
-            this.appendChildToContentPanel(this.instantDeleteCheckbox);
+            this.appendChild(this.instantDeleteCheckbox);
         }
 
         private indexOf(item: SelectionItem<ContentSummaryAndCompareStatus>): number {
