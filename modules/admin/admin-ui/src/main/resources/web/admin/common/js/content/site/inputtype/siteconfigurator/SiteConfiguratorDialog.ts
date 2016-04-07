@@ -30,7 +30,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private addOkButton(okCallback: () => void) {
-            var okAction = new api.ui.Action("Apply", "enter");
+            var okAction = new api.ui.Action("Apply");
             this.addAction(okAction, true, true);
             okAction.onExecuted(() => {
                 if (okCallback) {
@@ -58,7 +58,7 @@ module api.content.site.inputtype.siteconfigurator {
             formView.getChildren().forEach((element: api.dom.Element) => {
                 if (api.ObjectHelper.iFrameSafeInstanceOf(element, InputView)) {
                     var inputView: InputView = <InputView> element;
-                    if (this.isContentOrImageSelector(inputView)) {
+                    if (this.isContentOrImageOrComboSelectorInput(inputView)) {
                         var combobox = this.getComboboxFromSelectorInputView(inputView);
                         if (!!combobox) {
                             comboboxArray.push(combobox);
@@ -97,17 +97,21 @@ module api.content.site.inputtype.siteconfigurator {
                 inputTypeView = inputView.getInputTypeView();
             if (api.ObjectHelper.iFrameSafeInstanceOf(inputTypeView, ContentSelector)) {
                 contentComboBox = (<ContentSelector> inputTypeView).getContentComboBox();
-            } else {
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(inputTypeView, ImageSelector)) {
                 contentComboBox = (<ImageSelector> inputTypeView).getContentComboBox();
+            } else {
+                return (<api.form.inputtype.combobox.ComboBox> inputTypeView).getComboBox();
             }
             return !!contentComboBox ? contentComboBox.getComboBox() : null;
         }
 
-        private isContentOrImageSelector(inputView: InputView): boolean {
+        private isContentOrImageOrComboSelectorInput(inputView: InputView): boolean {
             return !!inputView &&
                    (api.ObjectHelper.iFrameSafeInstanceOf(inputView.getInputTypeView(), ContentSelector) ||
-                    api.ObjectHelper.iFrameSafeInstanceOf(inputView.getInputTypeView(), ImageSelector));
+                    api.ObjectHelper.iFrameSafeInstanceOf(inputView.getInputTypeView(), ImageSelector) ||
+                    api.ObjectHelper.iFrameSafeInstanceOf(inputView.getInputTypeView(), api.form.inputtype.combobox.ComboBox));
         }
+
 
         show() {
             api.dom.Body.get().appendChild(this);
@@ -116,6 +120,7 @@ module api.content.site.inputtype.siteconfigurator {
                 this.addClass("animated");
                 this.centerMyself();
                 wemjq(this.getHTMLElement()).find('input[type=text],textarea,select').first().focus();
+                this.updateTabbable();
             }, 100);
         }
 

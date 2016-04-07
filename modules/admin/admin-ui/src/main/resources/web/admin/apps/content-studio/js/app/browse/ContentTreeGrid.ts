@@ -27,6 +27,7 @@ module app.browse {
     import ContentBrowseSearchEvent = app.browse.filter.ContentBrowseSearchEvent;
     import ContentBrowseResetEvent = app.browse.filter.ContentBrowseResetEvent;
     import ContentBrowseRefreshEvent = app.browse.filter.ContentBrowseRefreshEvent;
+    import ContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
 
     import ContentQueryResult = api.content.ContentQueryResult;
     import ContentSummaryJson = api.content.json.ContentSummaryJson;
@@ -181,6 +182,9 @@ module app.browse {
             });
             ContentBrowseRefreshEvent.on((event) => {
                 this.notifyLoaded();
+            });
+            ContentVersionSetEvent.on((event: ContentVersionSetEvent) => {
+                this.updateContentNode(event.getContentId());
             });
         }
 

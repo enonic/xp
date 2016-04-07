@@ -13,6 +13,7 @@ include 'core:core-i18n'
 include 'core:core-media'
 include 'core:core-app'
 include 'core:core-service'
+include 'core:core-blobstore'
 include 'core:core-macro'
 
 include 'server:server-shell'
@@ -66,6 +67,8 @@ include 'launcher:launcher-api'
 include 'launcher:launcher-impl'
 include 'launcher:launcher-ui'
 include 'launcher:launcher-main'
+
+include 'blobstore:blobstore-file'
 
 include 'distro'
 include 'docs'

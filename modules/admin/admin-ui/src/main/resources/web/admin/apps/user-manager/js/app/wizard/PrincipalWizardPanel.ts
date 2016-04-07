@@ -274,7 +274,8 @@ module app.wizard {
                 displayName = this.wizardHeader.getDisplayName(),
                 modifiedTime = this.getPersistedItem().getModifiedTime();
 
-            return new Principal(key, displayName, modifiedTime);
+            var principal = Principal.create().setKey(key).setDisplayName(displayName).setModifiedTime(modifiedTime).build();
+            return principal;
         }
 
         resolvePrincipalNameForUpdateRequest(): string {

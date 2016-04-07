@@ -24,6 +24,8 @@ module api.liveedit {
 
         public ITEM_NOT_DRAGGABLE_SELECTOR: string = '.not-draggable';
 
+        public PLACEHOLDER_CONTAINER_SELECTOR: string = 'live-edit-drag-placeholder-container';
+
         public DRAGGED_OVER_CLASS: string = 'dragged-over';
 
         public DRAGGING_ACTIVE_CLASS: string = 'dragging';
@@ -33,6 +35,8 @@ module api.liveedit {
         private _isDragging: boolean = false;
 
         private _wasDropped: boolean = false;
+
+        private _wasDestroyed: boolean = false;
 
         private _newItemItemType: ItemType;
 
@@ -114,7 +118,7 @@ module api.liveedit {
                 cursor: 'move',
                 cursorAt: DragHelper.CURSOR_AT,
                 scrollSensitivity: this.calculateScrollSensitivity(),
-                placeholder: 'live-edit-drag-placeholder-container',
+                placeholder: this.PLACEHOLDER_CONTAINER_SELECTOR,
                 forceHelperSize: true,
                 helper: (event, ui) => DragHelper.get().getHTMLElement(),
                 start: (event, ui) => this.handleSortStart(event, ui),
@@ -151,6 +155,7 @@ module api.liveedit {
         // Used by the Context Window when dragging above the IFrame
         destroyDraggable(jq: JQuery) {
             jq.draggable("destroy");
+            this._wasDestroyed = true;
         }
 
         /*
@@ -251,6 +256,12 @@ module api.liveedit {
                 console.groupEnd();
             }
 
+            if (this._wasDestroyed) {
+                this.cancelDrag(<HTMLElement> event.target);
+                this._wasDestroyed = false;
+                return;
+            }
+
             var regionView: RegionView = this.getRegionView(ui.item.parent());
 
             if (!DragHelper.get().isDropAllowed()) {
@@ -259,7 +270,7 @@ module api.liveedit {
                     console.log("DragAndDrop.handleStop: cancelling drag because it is not allowed to drop here...");
                 }
 
-                this.cancelDrag(event, ui);
+                this.cancelDrag(<HTMLElement> event.target);
             } else {
                 var componentIndex = wemjq('>.drag-helper, >.' + api.StyleHelper.getCls("item-view"),
                     regionView.getHTMLElement()).index(ui.item);
@@ -431,9 +442,9 @@ module api.liveedit {
         }
 
 
-        private cancelDrag(event: JQueryEventObject, ui: JQueryUI.SortableUIParams) {
+        private cancelDrag(sortable: HTMLElement) {
 
-            wemjq(event.target).sortable('cancel');
+            wemjq(sortable).sortable('cancel');
 
             this.notifyCanceled(this._draggedComponentView);
         }
@@ -570,6 +581,16 @@ module api.liveedit {
 
         private isDraggingLayoutOverLayout(regionView: RegionView, draggingItemType: ItemType): boolean {
             var isLayout = regionView.hasParentLayoutComponentView() && draggingItemType.getShortName() == 'layout';
+            if (!isLayout) {
+                var itemType = this.getItemType();
+                if (api.liveedit.fragment.FragmentItemType.get().equals(itemType)) {
+                    var fragment = <api.liveedit.fragment.FragmentComponentView> this._draggedComponentView;
+                    isLayout = fragment && fragment.containsLayout();
+                    if (isLayout && DragAndDrop.debug) {
+                        console.log('DragAndDrop.isDraggingLayoutOverLayout - Fragment contains layout');
+                    }
+                }
+            }
             if (DragAndDrop.debug) {
                 console.log('DragAndDrop.isDraggingLayoutOverLayout = ' + isLayout);
             }

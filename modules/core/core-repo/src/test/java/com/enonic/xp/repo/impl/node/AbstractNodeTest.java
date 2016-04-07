@@ -7,6 +7,7 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.mockito.Mockito;
 
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
@@ -27,8 +28,6 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.parser.QueryParser;
-import com.enonic.xp.repo.impl.blob.BlobStore;
-import com.enonic.xp.repo.impl.blob.file.FileBlobStore;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
@@ -85,7 +84,7 @@ public abstract class AbstractNodeTest
         authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
 
-    public BlobStore binaryBlobStore;
+    public BlobStore blobStore;
 
     protected NodeVersionDaoImpl nodeDao;
 
@@ -118,8 +117,7 @@ public abstract class AbstractNodeTest
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
-        final File blobStoreDir = new File( xpHome.getRoot(), "repo/blob/test" );
-        this.binaryBlobStore = new FileBlobStore( blobStoreDir );
+        this.blobStore = new MemoryBlobStore();
 
         final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
         storageDao.setClient( this.client );
@@ -144,7 +142,7 @@ public abstract class AbstractNodeTest
 
         this.nodeDao = new NodeVersionDaoImpl();
         this.nodeDao.setConfiguration( repoConfig );
-        this.nodeDao.initialize();
+        this.nodeDao.setBlobStore( blobStore );
 
         this.indexedDataService = new IndexedDataServiceImpl();
         this.indexedDataService.setStorageDao( storageDao );
@@ -202,7 +200,7 @@ public abstract class AbstractNodeTest
         return UpdateNodeCommand.create().
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.binaryBlobStore ).
+            binaryBlobStore( this.blobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -225,7 +223,7 @@ public abstract class AbstractNodeTest
 
         final Node createdNode = CreateNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.binaryBlobStore ).
+            binaryBlobStore( this.blobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             params( createParamsWithAnalyzer ).

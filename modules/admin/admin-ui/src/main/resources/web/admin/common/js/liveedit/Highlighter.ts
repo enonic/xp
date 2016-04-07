@@ -6,6 +6,8 @@ module api.liveedit {
 
         private static INSTANCE: Highlighter;
 
+        private lastHighlightedItemView: ItemView;
+
         constructor() {
             // Needs to be a SVG element as the css has pointer-events:none
             // CSS pointer-events only works for SVG in IE
@@ -35,16 +37,22 @@ module api.liveedit {
                 this.hide();
                 return;
             }
-            var dimensions = itemView.getEl().getDimensions();
+            var dimensions = itemView.getEl().getDimensionsTopRelativeToParent();
             var style = itemView.getType().getConfig().getHighlighterStyle();
 
             this.resize(dimensions, this.preProcessStyle(style));
             this.show();
+
+            this.lastHighlightedItemView = itemView;
         }
 
         highlightElement(dimensions: ElementDimensions, style: HighlighterStyle): void {
             this.resize(dimensions, style);
             this.show();
+        }
+
+        updateLastHighlightedItemView() {
+            this.highlightItemView(this.lastHighlightedItemView);
         }
 
         protected preProcessStyle(style: HighlighterStyle): HighlighterStyle {

@@ -45,7 +45,7 @@ public class DuplicateNodeCommandTest
         final Node duplicatedNode = DuplicateNodeCommand.create().
             id( createdNode.id() ).
             indexServiceInternal( indexServiceInternal ).
-            binaryBlobStore( binaryBlobStore ).
+            binaryBlobStore( blobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -74,7 +74,7 @@ public class DuplicateNodeCommandTest
         final Node duplicatedNode = DuplicateNodeCommand.create().
             id( createdNode.id() ).
             indexServiceInternal( indexServiceInternal ).
-            binaryBlobStore( binaryBlobStore ).
+            binaryBlobStore( blobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -266,7 +266,7 @@ public class DuplicateNodeCommandTest
         final Node duplicatedNode = DuplicateNodeCommand.create().
             id( createdNode.id() ).
             indexServiceInternal( indexServiceInternal ).
-            binaryBlobStore( binaryBlobStore ).
+            binaryBlobStore( blobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -311,7 +311,7 @@ public class DuplicateNodeCommandTest
         final Node duplicateParent = DuplicateNodeCommand.create().
             id( parentNode.id() ).
             indexServiceInternal( indexServiceInternal ).
-            binaryBlobStore( binaryBlobStore ).
+            binaryBlobStore( blobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -372,7 +372,7 @@ public class DuplicateNodeCommandTest
         return DuplicateNodeCommand.create().
             id( node1.id() ).
             indexServiceInternal( indexServiceInternal ).
-            binaryBlobStore( this.binaryBlobStore ).
+            binaryBlobStore( this.blobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().

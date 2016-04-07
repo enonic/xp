@@ -13,18 +13,25 @@ module app.installation.view {
             var gridInitialized = false;
 
             this.onShown(() => {
-                if (!gridInitialized) {
-                    this.marketAppsTreeGrid = new MarketAppsTreeGrid();
-                    this.marketAppsTreeGrid.onLoaded(this.dataLoadListener.bind(this));
-                    this.appendChild(this.marketAppsTreeGrid);
-                    this.marketAppsTreeGrid.mask();
-                    this.isGridLoadingData = true;
-                    gridInitialized = true;
+                if (gridInitialized) {
+                    return;
                 }
-                if (!this.gridDataLoaded && !this.isGridLoadingData) {
-                    this.marketAppsTreeGrid.reload();
-                    this.isGridLoadingData = true;
-                }
+
+                this.marketAppsTreeGrid = new MarketAppsTreeGrid();
+                this.marketAppsTreeGrid.onLoaded(this.dataLoadListener.bind(this));
+                this.appendChild(this.marketAppsTreeGrid);
+                gridInitialized = true;
+            });
+        }
+
+        public loadGrid() {
+            if (this.isGridLoadingData) {
+                return;
+            }
+            this.isGridLoadingData = true;
+            this.marketAppsTreeGrid.reload().then(() => {
+                this.isGridLoadingData = false;
+                this.marketAppsTreeGrid.getGrid().resizeCanvas();
             });
         }
 
@@ -38,8 +45,6 @@ module app.installation.view {
                     }
                 }, 500);
             }
-            this.isGridLoadingData = false;
-            this.marketAppsTreeGrid.unmask();
         }
 
         public getMarketAppsTreeGrid(): MarketAppsTreeGrid {

@@ -2,6 +2,7 @@ module app.installation.view {
 
     import Element = api.dom.Element;
     import ElementHelper = api.dom.ElementHelper;
+    import ElementFromHelperBuilder = api.dom.ElementFromHelperBuilder;
 
     import GridColumn = api.ui.grid.GridColumn;
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
@@ -69,9 +70,8 @@ module app.installation.view {
                     setShowToolbar(false).
                     setRowHeight(70).
                     disableMultipleSelection(true).
-                    prependClasses("market-app-tree-grid").
-                    setSelectedCellCssClass("selected-sort-row").
-                    setQuietErrorHandling(true)
+                    prependClasses("market-app-tree-grid").setSelectedCellCssClass("selected-sort-row").setQuietErrorHandling(
+                true).setAutoLoad(false)
             );
 
             this.subsribeAndManageInstallClick();
@@ -117,31 +117,44 @@ module app.installation.view {
             this.getGrid().subscribeOnClick((event, data) => {
                 var node = this.getItem(data.row),
                     app = <MarketApplication>node.getData(),
-                    elem = new ElementHelper(event.target),
+                    url = app.getLatestVersionDownloadUrl(),
+                    elem = new Element(new ElementFromHelperBuilder().setHelper(new ElementHelper(event.target))),
                     status = app.getStatus();
 
                 if ((elem.hasClass(MarketAppStatusFormatter.statusInstallCssClass) ||
                      elem.hasClass(MarketAppStatusFormatter.statusUpdateCssClass))) {
-                    elem.setInnerHtml("");
-                    elem.addClass("spinner");
-                    new api.application.InstallUrlApplicationRequest(node.getData().getLatestVersionDownloadUrl()).sendAndParse().then((result: api.application.ApplicationInstallResult)=> {
 
-                        elem.removeClass("spinner");
+                    var progressBar = new api.ui.ProgressBar(0);
+                    var progressHandler = (event) => {
+                        if (event.getApplicationUrl() == url &&
+                            event.getEventType() == api.application.ApplicationEventType.PROGRESS) {
 
-                        if(!result.getFailure()) {
+                            progressBar.setValue(event.getProgress());
+                        }
+                    };
+
+                    api.application.ApplicationEvent.on(progressHandler);
+                    elem.removeChildren().appendChild(progressBar);
+
+                    new api.application.InstallUrlApplicationRequest(url)
+                        .sendAndParse().then((result: api.application.ApplicationInstallResult)=> {
+                        api.application.ApplicationEvent.un(progressHandler);
+                        if (!result.getFailure()) {
 
                             elem.removeClass(MarketAppStatusFormatter.statusInstallCssClass + " " +
                                              MarketAppStatusFormatter.statusUpdateCssClass);
                             elem.addClass(MarketAppStatusFormatter.getStatusCssClass(MarketAppStatus.INSTALLED));
 
-                            elem.setInnerHtml(MarketAppStatusFormatter.formatStatus(MarketAppStatus.INSTALLED));
+                            elem.setHtml(MarketAppStatusFormatter.formatStatus(MarketAppStatus.INSTALLED));
                             app.setStatus(MarketAppStatus.INSTALLED);
                         } else {
-                            elem.setInnerHtml(MarketAppStatusFormatter.formatStatus(status));
+                            elem.setHtml(MarketAppStatusFormatter.formatStatus(status));
                         }
+
                     }).catch((reason: any) => {
-                        elem.removeClass("spinner");
-                        elem.setInnerHtml(MarketAppStatusFormatter.formatStatus(status));
+                        api.application.ApplicationEvent.un(progressHandler);
+                        elem.setHtml(MarketAppStatusFormatter.formatStatus(status));
+
                         api.DefaultErrorHandler.handle(reason);
                     });
                 }
@@ -173,9 +186,14 @@ module app.installation.view {
             this.initData(this.getRoot().getCurrentRoot().treeToList());
         }
 
-
         fetchChildren(): wemQ.Promise<MarketApplication[]> {
-            return new api.application.ListMarketApplicationsRequest().sendAndParse()
+            let from = 0; // TODO
+            let count = 50; // TODO
+            return new api.application.ListMarketApplicationsRequest()
+                .setStart(from)
+                .setCount(count)
+                .setVersion(this.getVersion())
+                .sendAndParse()
                 .then((applications: MarketApplication[])=> {
                     return this.setMarketAppsStatuses(applications);
                 })
@@ -185,6 +203,19 @@ module app.installation.view {
                     this.handleError(reason, reason.getStatusCode() == 500 ? status500Message : defaultErrorMessage);
                     return [];
                 });
+        }
+
+        private getVersion(): string {
+            let version: string = CONFIG.xpVersion;
+            if (!version) {
+                return '';
+            }
+            let parts = version.split('.');
+            if (parts.length > 3) {
+                parts.pop(); // remove '.snapshot'
+                return parts.join('.');
+            }
+            return version;
         }
 
         private setMarketAppsStatuses(marketApplications: MarketApplication[]): wemQ.Promise<MarketApplication[]> {

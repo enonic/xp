@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Strings;
 
 import com.enonic.xp.admin.ui.tool.UriScriptHelper;
@@ -19,6 +22,8 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 public class SimpleAuthResponseWrapper
     extends HttpServletResponseWrapper
 {
+    private final static Logger LOG = LoggerFactory.getLogger( SimpleAuthResponseWrapper.class );
+
     private final HttpServletRequest request;
 
     private boolean redirected;
@@ -40,7 +45,7 @@ public class SimpleAuthResponseWrapper
             }
             catch ( IOException e )
             {
-                e.printStackTrace();
+                LOG.error( "Failed to redirect to the login admin tool", e );
             }
         }
         else
@@ -131,7 +136,7 @@ public class SimpleAuthResponseWrapper
     private void redirect()
         throws IOException
     {
-        StringBuffer uri = new StringBuffer( ServletRequestUrlHelper.createUri( request.getRequestURI()) );
+        StringBuffer uri = new StringBuffer( ServletRequestUrlHelper.createUri( request.getRequestURI() ) );
         if ( !Strings.isNullOrEmpty( request.getQueryString() ) )
         {
             uri.append( "?" ).

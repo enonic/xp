@@ -1,5 +1,7 @@
 package com.enonic.xp.inputtype;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
@@ -19,6 +21,17 @@ final class TextAreaType
     public Value createValue( final String value, final InputTypeConfig config )
     {
         return ValueFactory.newString( value );
+    }
+
+    @Override
+    public Value createDefaultValue( final InputTypeDefault defaultConfig )
+    {
+        final String defaultValue = defaultConfig.getRootValue();
+        if ( StringUtils.isNotEmpty( defaultValue ) )
+        {
+            return ValueFactory.newString( defaultValue );
+        }
+        return super.createDefaultValue( defaultConfig );
     }
 
     @Override

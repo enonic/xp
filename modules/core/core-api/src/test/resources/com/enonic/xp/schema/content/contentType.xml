@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <content-type xmlns="urn:enonic:xp:model:1.0">
-    <display-name>All the Base Types</display-name>
-    <description>description</description>
-    <content-display-name-script>$('firstName') + ' ' + $('lastName')</content-display-name-script>
+  <display-name>All the Base Types</display-name>
+  <description>description</description>
+  <content-display-name-script>$('firstName') + ' ' + $('lastName')</content-display-name-script>
   <super-type>myapplication:content</super-type>
-    <is-abstract>false</is-abstract>
-    <is-final>true</is-final>
-    <allow-child-content>true</allow-child-content>
-    <form>
-        <item-set name="mySet">
-            <items>
-                <field-set name="myFieldSet">
-                    <label>My field set</label>
-                    <items>
-                        <input name="myTextLine" type="TextLine">
-                            <immutable>false</immutable>
-                            <indexed>false</indexed>
-                            <occurrences minimum="0" maximum="1"/>
-                        </input>
-                    </items>
-                </field-set>
-            </items>
-            <immutable>false</immutable>
-          <occurrences minimum="0" maximum="1"/>
-        </item-set>
-    </form>
+  <is-abstract>false</is-abstract>
+  <is-final>true</is-final>
+  <allow-child-content>true</allow-child-content>
+  <form>
+    <item-set name="mySet">
+      <label>mySet</label>
+      <occurrences minimum="0" maximum="1"/>
+      <items>
+        <field-set name="myFieldSet">
+          <label>My field set</label>
+          <items>
+            <input name="myTextLine" type="TextLine">
+              <label>myTextLine</label>
+              <immutable>false</immutable>
+              <indexed>false</indexed>
+              <occurrences minimum="0" maximum="1"/>
+              <config>
+                <relationship-type/>
+              </config>
+            </input>
+          </items>
+        </field-set>
+      </items>
+    </item-set>
+  </form>
 </content-type>

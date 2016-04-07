@@ -1,0 +1,11 @@
+apply plugin: 'org.sonarqube'
+
+sonarqube {
+    properties {
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.skipDesign", "true"
+        property "sonar.language", "java"
+        property "sonar.host.url", "http://sonar:9000"
+        property "sonar.login", "5fab9131f9706936de98a8f186fbca07f92c33df"
+    }
+}

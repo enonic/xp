@@ -111,6 +111,7 @@ public class SecurityResourceTest
         final Group group1 = Group.create().
             key( PrincipalKey.from( "group:local:mygroup" ) ).
             displayName( "My Group" ).
+            description( "my group" ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
@@ -138,9 +139,10 @@ public class SecurityResourceTest
             UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "role:system.authenticated" ) ).access( READ ).build(),
             UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "role:system.admin" ) ).access( ADMINISTRATOR ).build() );
 
-        final Principals principals =
-            Principals.from( Role.create().displayName( "Authenticated" ).key( PrincipalKey.from( "role:system.authenticated" ) ).build(),
-                             Role.create().displayName( "Administrator" ).key( PrincipalKey.from( "role:system.admin" ) ).build() );
+        final Principals principals = Principals.from(
+            Role.create().displayName( "Authenticated" ).key( PrincipalKey.from( "role:system.authenticated" ) ).description(
+                "authenticated" ).build(),
+            Role.create().displayName( "Administrator" ).key( PrincipalKey.from( "role:system.admin" ) ).description( "admin" ).build() );
 
         Mockito.when( securityService.getDefaultUserStorePermissions() ).thenReturn( userStoreAccessControlList );
         Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn( principals );
@@ -294,10 +296,12 @@ public class SecurityResourceTest
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
             displayName( "Group A" ).
             modifiedTime( Instant.now( clock ) ).
+            description( "group a" ).
             build();
         final Group group2 = Group.create().
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-b" ) ).
             displayName( "Group B" ).
+            description( "group b" ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
@@ -324,6 +328,7 @@ public class SecurityResourceTest
         final Group group = Group.create().
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
             displayName( "Group A" ).
+            description( "group a" ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
@@ -351,6 +356,7 @@ public class SecurityResourceTest
             key( PrincipalKey.ofRole( "superuser" ) ).
             displayName( "Super user role" ).
             modifiedTime( Instant.now( clock ) ).
+            description( "super u" ).
             build();
 
         final Optional<? extends Principal> userRes = Optional.of( role );
@@ -439,6 +445,7 @@ public class SecurityResourceTest
         final Group group = Group.create().
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
             displayName( "Group A" ).
+            description( "group a" ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
@@ -460,6 +467,7 @@ public class SecurityResourceTest
             key( PrincipalKey.ofRole( "superuser" ) ).
             displayName( "Super user role" ).
             modifiedTime( Instant.now( clock ) ).
+            description( "role" ).
             build();
 
         Mockito.when( securityService.createRole( Mockito.any( CreateRoleParams.class ) ) ).thenReturn( role );
@@ -501,6 +509,7 @@ public class SecurityResourceTest
         final Group group = Group.create().
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
             displayName( "Group A" ).
+            description( "group a" ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
@@ -526,6 +535,7 @@ public class SecurityResourceTest
             key( PrincipalKey.ofRole( "superuser" ) ).
             displayName( "Super user role" ).
             modifiedTime( Instant.now( clock ) ).
+            description( "role" ).
             build();
 
         Mockito.when( securityService.updateRole( Mockito.any( UpdateRoleParams.class ) ) ).thenReturn( role );

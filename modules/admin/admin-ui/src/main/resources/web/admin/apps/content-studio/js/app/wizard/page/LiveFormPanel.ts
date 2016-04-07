@@ -21,6 +21,7 @@ module app.wizard.page {
     import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
     import PartComponent = api.content.page.region.PartComponent;
     import LayoutComponent = api.content.page.region.LayoutComponent;
+    import FragmentComponent = api.content.page.region.FragmentComponent;
     import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
     import ComponentPropertyValueChangedEvent = api.content.page.region.ComponentPropertyValueChangedEvent;
 
@@ -35,6 +36,7 @@ module app.wizard.page {
     import ImageInspectionPanel = app.wizard.page.contextwindow.inspect.region.ImageInspectionPanel;
     import PartInspectionPanel = app.wizard.page.contextwindow.inspect.region.PartInspectionPanel;
     import LayoutInspectionPanel = app.wizard.page.contextwindow.inspect.region.LayoutInspectionPanel;
+    import FragmentInspectionPanel = app.wizard.page.contextwindow.inspect.region.FragmentInspectionPanel;
     import ContextWindow = app.wizard.page.contextwindow.ContextWindow;
     import ContextWindowConfig = app.wizard.page.contextwindow.ContextWindowConfig;
     import ContextWindowController = app.wizard.page.contextwindow.ContextWindowController;
@@ -49,6 +51,7 @@ module app.wizard.page {
     import PartComponentView = api.liveedit.part.PartComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import TextComponentView = api.liveedit.text.TextComponentView;
+    import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
     import ComponentViewDragStartedEvent = api.liveedit.ComponentViewDragStartedEvent;
     import ComponentViewDragDroppedEvent = api.liveedit.ComponentViewDragDroppedEvent;
     import ComponentViewDragCanceledEvent = api.liveedit.ComponentViewDragCanceledEvent;
@@ -62,6 +65,11 @@ module app.wizard.page {
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
+    import ComponentFragmentCreatedEvent = api.liveedit.ComponentFragmentCreatedEvent;
+    import ShowWarningLiveEditEvent = api.liveedit.ShowWarningLiveEditEvent;
+
+    import HtmlAreaDialogShownEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
+    import HTMLAreaDialogHandler = api.util.htmlarea.dialog.HTMLAreaDialogHandler;
 
     import Panel = api.ui.panel.Panel;
 
@@ -105,6 +113,7 @@ module app.wizard.page {
         private imageInspectionPanel: ImageInspectionPanel;
         private partInspectionPanel: PartInspectionPanel;
         private layoutInspectionPanel: LayoutInspectionPanel;
+        private fragmentInspectionPanel: FragmentInspectionPanel;
 
         private contentWizardPanel: ContentWizardPanel;
 
@@ -127,6 +136,7 @@ module app.wizard.page {
             this.imageInspectionPanel = new ImageInspectionPanel();
             this.partInspectionPanel = new PartInspectionPanel();
             this.layoutInspectionPanel = new LayoutInspectionPanel();
+            this.fragmentInspectionPanel = new FragmentInspectionPanel();
 
             api.dom.WindowDOM.get().onBeforeUnload((event) => {
                 console.log("onbeforeunload " + this.liveEditModel.getContent().getDisplayName());
@@ -157,6 +167,7 @@ module app.wizard.page {
                 imageInspectionPanel: this.imageInspectionPanel,
                 partInspectionPanel: this.partInspectionPanel,
                 layoutInspectionPanel: this.layoutInspectionPanel,
+                fragmentInspectionPanel: this.fragmentInspectionPanel,
                 saveAction: saveAction
             });
 
@@ -172,6 +183,7 @@ module app.wizard.page {
             this.frameContainer = new Panel("frame-container");
             this.appendChild(this.frameContainer);
             this.frameContainer.appendChild(this.liveEditPageProxy.getIFrame());
+            this.frameContainer.appendChild(this.liveEditPageProxy.getDragMask());
 
             // append it here in order for the context window to be above
             this.appendChild(this.liveEditPageProxy.getLoadMask());
@@ -229,6 +241,7 @@ module app.wizard.page {
             this.partInspectionPanel.setModel(liveEditModel);
             this.layoutInspectionPanel.setModel(liveEditModel);
             this.imageInspectionPanel.setModel(liveEditModel);
+            this.fragmentInspectionPanel.setModel(liveEditModel);
 
             this.pageModel.setIgnorePropertyChanges(false);
 
@@ -287,6 +300,14 @@ module app.wizard.page {
                         }
                     }
                 }
+                else if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), FragmentComponent)) {
+                    if (event.getPropertyName() == FragmentComponent.PROPERTY_FRAGMENT && !event.getComponent().isEmpty()) {
+                        var componentView = this.pageView.getComponentViewByPath(event.getPath());
+                        if (componentView) {
+                            this.saveAndReloadOnlyComponent(componentView);
+                        }
+                    }
+                }
             });
         }
 
@@ -331,7 +352,7 @@ module app.wizard.page {
 
             this.pageSkipReload = true;
             var componentUrl = api.rendering.UriHelper.getComponentUri(this.content.getContentId().toString(),
-                componentView.getComponentPath().toString(),
+                componentView.getComponentPath(),
                 RenderingMode.EDIT,
                 api.content.Branch.DRAFT);
 
@@ -465,6 +486,26 @@ module app.wizard.page {
                 this.inspectPage();
             });
 
+            this.liveEditPageProxy.onComponentFragmentCreated((event: ComponentFragmentCreatedEvent) => {
+                var fragmentView: FragmentComponentView = event.getComponentView();
+                var componentType = event.getSourceComponentType().getShortName();
+                var componentName = fragmentView.getComponent().getName().toString();
+                api.notify.showSuccess(`Fragment created from '${componentName}' ${componentType}.`);
+
+                this.saveAndReloadOnlyComponent(event.getComponentView());
+
+                var summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(event.getFragmentContent());
+                new api.content.event.EditContentEvent([summaryAndStatus]).fire();
+            });
+
+            this.liveEditPageProxy.onShowWarning((event: ShowWarningLiveEditEvent) => {
+                api.notify.showWarning(event.getMessage());
+            });
+
+            this.liveEditPageProxy.onEditContent((event: api.content.event.EditContentEvent) => {
+                new api.content.event.EditContentEvent(event.getModels()).fire();
+            });
+
             this.liveEditPageProxy.onLiveEditPageInitializationError((event: LiveEditPageInitializationErrorEvent) => {
                 api.notify.showError(event.getMessage(), false);
                 new app.wizard.ShowContentFormEvent().fire();
@@ -473,7 +514,23 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onPageUnloaded((event: api.liveedit.PageUnloadedEvent) => {
                 this.contentWizardPanel.close();
-            })
+            });
+
+            this.liveEditPageProxy.onLiveEditPageDialogCreate((event: HtmlAreaDialogShownEvent) => {
+                let modalDialog = HTMLAreaDialogHandler.createAndOpenDialog(event);
+                this.liveEditPageProxy.notifyLiveEditPageDialogCreated(modalDialog, event.getConfig());
+            });
+
+            this.liveEditPageProxy.onPageTextModeStarted(() => {
+                // Collapse the panel with a delay to give HTML editor time to initialize
+                setTimeout(() => {
+                    this.minimizeContentFormPanelIfNeeded();
+                }, 200);
+            });
+        }
+
+        private shade() {
+            api.liveedit.Shader.get().shade(this);
         }
 
         private minimizeContentFormPanelIfNeeded() {
@@ -489,7 +546,8 @@ module app.wizard.page {
         private clearSelection(): void {
             var pageModel = this.liveEditModel.getPageModel();
             var customizedWithController = pageModel.isCustomized() && pageModel.hasController();
-            if (pageModel.hasDefaultPageTemplate() || customizedWithController) {
+            var isFragmentContent = pageModel.getMode() === PageMode.FRAGMENT;
+            if (pageModel.hasDefaultPageTemplate() || customizedWithController || isFragmentContent) {
                 this.contextWindow.clearSelection();
             } else {
                 this.inspectPage();
@@ -528,6 +586,10 @@ module app.wizard.page {
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, TextComponentView)) {
 
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, FragmentComponentView)) {
+                this.fragmentInspectionPanel.setFragmentComponent(<FragmentComponentView>componentView);
+                this.contextWindow.showInspectionPanel(this.fragmentInspectionPanel);
             }
             else {
                 throw new Error("ComponentView cannot be selected: " + api.ClassHelper.getClassName(componentView));

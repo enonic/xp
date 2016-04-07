@@ -202,7 +202,7 @@ public class CompareNodeCommandTest
         return UpdateNodeCommand.create().
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
-            binaryBlobStore( this.binaryBlobStore ).
+            binaryBlobStore( this.blobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().

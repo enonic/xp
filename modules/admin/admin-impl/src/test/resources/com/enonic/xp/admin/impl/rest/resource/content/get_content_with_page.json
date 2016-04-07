@@ -60,6 +60,7 @@
         ],
         "controller": null,
         "customized" : false,
+        "fragment": null,
         "regions": [
             {
                 "components": [

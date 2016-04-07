@@ -21,12 +21,16 @@ public final class CreateGroupJson
     @JsonProperty("members")
     public List<String> members;
 
+    @JsonProperty("description")
+    public String description;
+
     public CreateGroupParams toCreateGroupParams()
     {
         final PrincipalKey principalKey = PrincipalKey.from( this.userKey );
         return CreateGroupParams.create().
             groupKey( principalKey ).
             displayName( this.displayName ).
+            description( this.description ).
             build();
     }
 

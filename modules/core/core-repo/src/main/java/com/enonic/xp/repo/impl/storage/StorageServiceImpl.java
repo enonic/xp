@@ -161,6 +161,26 @@ public class StorageServiceImpl
     }
 
     @Override
+    public Node get( final NodeVersionId nodeVersionId, final InternalContext context )
+    {
+        final NodeVersion nodeVersion = nodeVersionDao.get( nodeVersionId );
+
+        if ( nodeVersion == null )
+        {
+            return null;
+        }
+
+        final NodeBranchMetadata nodeBranchMetadata = branchService.get( nodeVersion.getId(), context );
+
+        if ( nodeBranchMetadata == null )
+        {
+            return null;
+        }
+
+        return constructNode( nodeBranchMetadata, nodeVersion );
+    }
+
+    @Override
     public NodeVersion get( final NodeVersionMetadata nodeVersionMetadata )
     {
         return this.nodeVersionDao.get( nodeVersionMetadata.getNodeVersionId() );
@@ -234,6 +254,11 @@ public class StorageServiceImpl
 
         final NodeVersion nodeVersion = nodeVersionDao.get( nodeBranchMetadata.getVersionId() );
 
+        return constructNode( nodeBranchMetadata, nodeVersion );
+    }
+
+    private Node constructNode( final NodeBranchMetadata nodeBranchMetadata, final NodeVersion nodeVersion )
+    {
         final Node node = NodeFactory.create( nodeVersion, nodeBranchMetadata );
 
         return canRead( node.getPermissions() ) ? node : null;

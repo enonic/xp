@@ -10,6 +10,7 @@ module app.view {
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import MobileContentTreeGridActions = app.browse.action.MobileContentTreeGridActions;
     import MobileContentBrowseToolbar = app.browse.MobileContentBrowseToolbar;
+    import MobileDetailsPanelToggleButton = app.view.detail.button.MobileDetailsPanelToggleButton;
 
     export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
 
@@ -22,7 +23,7 @@ module app.view {
             setUseViewer(false).
             setSlideFrom(app.view.detail.SLIDE_FROM.BOTTOM).
             build();
-        private detailsToggleButton: app.view.detail.button.MobileDetailsPanelToggleButton;
+        private detailsToggleButton: MobileDetailsPanelToggleButton;
 
         private mobileBrowseActions: MobileContentTreeGridActions;
         private toolbar: MobileContentBrowseToolbar;
@@ -58,7 +59,9 @@ module app.view {
 
         private initHeader() {
             this.itemHeader.appendChild(this.headerLabel);
-            this.detailsToggleButton = new app.view.detail.button.MobileDetailsPanelToggleButton(this.detailsPanel);
+            this.detailsToggleButton = new MobileDetailsPanelToggleButton(this.detailsPanel, () => {
+                this.calcAndSetDetailsPanelTopOffset();
+            });
             var backButton = new api.dom.DivEl("back-button");
             backButton.onClicked((event) => {
                 this.slideAllOut();
@@ -92,6 +95,7 @@ module app.view {
             }
             if (!!this.detailsPanel.getActiveWidget()) {
                 this.detailsPanel.getActiveWidget().slideIn();
+                this.detailsToggleButton.addClass(MobileDetailsPanelToggleButton.EXPANDED_CLASS);
             }
             this.slideIn();
         }
@@ -122,7 +126,12 @@ module app.view {
         }
 
         slideIn() {
+            this.calcAndSetDetailsPanelTopOffset();
             this.getEl().setRightPx(0);
+        }
+
+        private calcAndSetDetailsPanelTopOffset() {
+            this.detailsPanel.getEl().setTopPx(this.itemHeader.getEl().getHeightWithMargin());
         }
     }
 

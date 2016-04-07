@@ -1,5 +1,6 @@
 module api.ui.dialog {
 
+    import DivEl = api.dom.DivEl;
     export interface ModalDialogConfig {
         title: api.ui.dialog.ModalDialogHeader;
     }
@@ -22,9 +23,15 @@ module api.ui.dialog {
 
         private responsiveItem: api.ui.responsive.ResponsiveItem;
 
-        private cancelButton: api.ui.button.ActionButton;
+        private cancelButton: api.dom.DivEl;
 
         private static openDialogsCounter: number = 0;
+
+        private modalDialogIsFocused: boolean = false;
+
+        private buttonRowIsFocused: boolean = false;
+
+        private tabbable: api.dom.Element[];
 
         constructor(config: ModalDialogConfig) {
             super("modal-dialog", api.StyleHelper.COMMON_PREFIX);
@@ -35,7 +42,8 @@ module api.ui.dialog {
             this.appendChild(wrapper);
 
             this.cancelAction = this.createDefaultCancelAction();
-            this.cancelButton = new DialogButton(this.cancelAction);
+            this.cancelButton = new api.dom.DivEl("cancel-button-top");
+            this.cancelButton.onClicked(() => this.cancelAction.execute());
             wrapper.appendChild(this.cancelButton);
 
             this.title = this.config.title;
@@ -66,17 +74,55 @@ module api.ui.dialog {
                 }
             };
 
-            api.dom.Body.get().onMouseDown(this.mouseClickListener);
-
-            this.onRemoved(() => api.dom.Body.get().unMouseDown(this.mouseClickListener));
-            this.onAdded(() => api.dom.Body.get().onMouseDown(this.mouseClickListener));
+            this.onRemoved(() => {
+                api.dom.Body.get().unMouseDown(this.mouseClickListener);
+            });
+            this.onAdded(() => {
+                api.dom.Body.get().onMouseDown(this.mouseClickListener);
+            });
             this.onShown(() => api.ui.responsive.ResponsiveManager.fireResizeEvent());
 
             this.responsiveItem =
-            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
-                if (this.isVisible()) {
-                    this.centerMyself();
-                }
+                api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+                    if (this.isVisible()) {
+                        this.centerMyself();
+                    }
+                });
+
+
+            let modalDialogFocusOutTimeout;
+            let buttonRowFocusOutTimeout;
+
+            this.onFocusIn((event) => {
+                this.modalDialogIsFocused = true;
+                clearTimeout(modalDialogFocusOutTimeout);
+            });
+
+            this.onFocusOut((event) => {
+                modalDialogFocusOutTimeout = setTimeout(() => {
+                    this.modalDialogIsFocused = false;
+
+                    if (this.hasTabbable() && !this.hasSubDialog()) {
+                        // last focusable - Cancel
+                        // first focusable - X
+                        if (this.buttonRowIsFocused) { // last element lost focus
+                            this.tabbable[0].giveFocus();
+                        } else {
+                            this.tabbable[this.tabbable.length - 1].giveFocus();
+                        }
+                    }
+                }, 10);
+            });
+
+            this.buttonRow.onFocusIn((event) => {
+                this.buttonRowIsFocused = true;
+                clearTimeout(buttonRowFocusOutTimeout);
+            });
+
+            this.buttonRow.onFocusOut((event) => {
+                buttonRowFocusOutTimeout = setTimeout(() => {
+                    this.buttonRowIsFocused = false;
+                }, 15); // timeout should be > timeout for modal dialog to trigger after
             });
         }
 
@@ -160,8 +206,95 @@ module api.ui.dialog {
             return this.contentPanel;
         }
 
-        hide() {
-            super.hide();
+        protected hasSubDialog(): boolean {
+            // html area can spawn sub dialogs so check none is open
+            return !!api.util.htmlarea.dialog.HTMLAreaDialogHandler.getOpenDialog();
+        }
+
+        private hasTabbable(): boolean {
+            return !!this.tabbable && this.tabbable.length > 0;
+        }
+
+        updateTabbable() {
+            this.tabbable = this.getTabbableElements();
+        }
+
+        private getTabbedIndex(): number {
+            let activeElement = document.activeElement;
+            let tabbedIndex = 0;
+            if (this.hasTabbable()) {
+                for (let i = 0; i < this.tabbable.length; i++) {
+                    if (activeElement === this.tabbable[i].getHTMLElement()) {
+                        tabbedIndex = i;
+                        break;
+                    }
+                }
+            }
+            return tabbedIndex;
+        }
+
+        private focusNextTabbable() {
+            if (this.hasTabbable()) {
+                let tabbedIndex = this.getTabbedIndex();
+                tabbedIndex = tabbedIndex + 1 >= this.tabbable.length ? 0 : tabbedIndex + 1;
+                this.tabbable[tabbedIndex].giveFocus();
+            }
+        }
+
+        private focusPreviousTabbable() {
+            if (this.hasTabbable()) {
+                let tabbedIndex = this.getTabbedIndex();
+                tabbedIndex = tabbedIndex - 1 < 0 ? this.tabbable.length - 1 : tabbedIndex - 1;
+                this.tabbable[tabbedIndex].giveFocus();
+            }
+        }
+
+        protected overwriteDefaultArrows(element: api.dom.Element) {
+            element.onKeyDown((event) => {
+
+
+                if (api.ui.KeyHelper.isArrowLeftKey(event)) {
+                    this.focusPreviousTabbable();
+                    event.stopPropagation();
+                    event.preventDefault();
+                } else if (api.ui.KeyHelper.isArrowRightKey(event)) {
+                    this.focusNextTabbable();
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+            });
+        }
+
+        open() {
+
+            api.ui.mask.BodyMask.get().show();
+
+            api.ui.KeyBindings.get().shelveBindings();
+
+            this.show();
+
+            let keyBindings = api.ui.Action.getKeyBindings(this.actions);
+
+            this.updateTabbable();
+
+            keyBindings = keyBindings.concat([
+                new KeyBinding("right", (event) => {
+                    this.focusNextTabbable();
+
+                    event.stopPropagation();
+                    event.preventDefault();
+                }),
+                new KeyBinding("left", (event) => {
+                    this.focusPreviousTabbable();
+
+                    event.stopPropagation();
+                    event.preventDefault();
+                })
+            ]);
+
+            api.ui.KeyBindings.get().bindKeys(keyBindings);
+
+            ModalDialog.openDialogsCounter++;
         }
 
         close() {
@@ -175,19 +308,6 @@ module api.ui.dialog {
             api.ui.KeyBindings.get().unshelveBindings();
 
             ModalDialog.openDialogsCounter--;
-        }
-
-        open() {
-
-            api.ui.mask.BodyMask.get().show();
-
-            api.ui.KeyBindings.get().shelveBindings();
-
-            this.show();
-
-            api.ui.KeyBindings.get().bindKeys(api.ui.Action.getKeyBindings(this.actions));
-
-            ModalDialog.openDialogsCounter++;
         }
     }
 
@@ -250,6 +370,10 @@ module api.ui.dialog {
             if (this.defaultButton) {
                 this.defaultButton.giveFocus();
             }
+        }
+
+        getLastButton(): api.dom.Element {
+            return this.buttonContainer.getLastChild();
         }
     }
 

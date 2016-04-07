@@ -31,6 +31,7 @@ public class GroupNodeTranslatorTest
             displayName( "My Group" ).
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
             modifiedTime( Instant.now( clock ) ).
+            description( "my group a" ).
             build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( group );
@@ -39,10 +40,11 @@ public class GroupNodeTranslatorTest
 
         final PropertyTree rootDataSet = createNodeParams.getData();
         assertNotNull( rootDataSet );
-        assertEquals( 3, rootDataSet.getTotalSize() );
+        assertEquals( 4, rootDataSet.getTotalSize() );
         assertEquals( UserStoreKey.system().toString(), rootDataSet.getString( PrincipalPropertyNames.USER_STORE_KEY ) );
         assertEquals( PrincipalType.GROUP.toString(), rootDataSet.getString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) );
         assertEquals( "My Group", rootDataSet.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) );
+        assertEquals( "my group a", rootDataSet.getString( PrincipalPropertyNames.DESCRIPTION_KEY ) );
     }
 
 

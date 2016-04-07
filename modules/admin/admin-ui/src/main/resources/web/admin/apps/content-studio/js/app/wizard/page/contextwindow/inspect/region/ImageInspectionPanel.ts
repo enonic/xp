@@ -134,7 +134,7 @@ module app.wizard.page.contextwindow.inspect.region {
 
             this.imageSelector.onOptionDeselected((option: SelectedOption<ContentSummary>) => {
                 if (this.handleSelectorEvents) {
-                    this.imageComponent.setImage(null, null);
+                    this.imageComponent.reset();
                 }
             });
         }

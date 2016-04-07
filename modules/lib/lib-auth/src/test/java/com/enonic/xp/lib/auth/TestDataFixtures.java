@@ -56,6 +56,7 @@ public class TestDataFixtures
             key( PrincipalKey.ofRole( "aRole" ) ).
             displayName( "Role Display Name" ).
             modifiedTime( Instant.now( clock ) ).
+            description( "description" ).
             build();
     }
 
@@ -65,6 +66,7 @@ public class TestDataFixtures
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
             displayName( "Group A" ).
             modifiedTime( Instant.now( clock ) ).
+            description( "description" ).
             build();
     }
 

@@ -74,7 +74,7 @@ module app.wizard {
             this.setModel(new ContentSettingsModel(content));
         }
 
-        update(content: api.content.Content, unchangedOnly?: boolean) {
+        update(content: api.content.Content, unchangedOnly: boolean = true) {
             this.updateUnchangedOnly = unchangedOnly;
 
             this.model.setOwner(content.getOwner()).setLanguage(content.getLanguage());

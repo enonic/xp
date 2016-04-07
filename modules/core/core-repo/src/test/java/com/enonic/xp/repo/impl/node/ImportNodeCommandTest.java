@@ -170,7 +170,7 @@ public class ImportNodeCommandTest
     {
         return ImportNodeCommand.create().
             importNode( importNode ).
-            binaryBlobStore( this.binaryBlobStore ).
+            binaryBlobStore( this.blobStore ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

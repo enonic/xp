@@ -12,6 +12,8 @@ module api.content.page {
 
         private regions: api.content.page.region.Regions;
 
+        private fragment: api.content.page.region.Component;
+
         private customized: boolean;
 
         constructor(contentId: api.content.ContentId) {
@@ -40,6 +42,11 @@ module api.content.page {
             return this;
         }
 
+        setFragment(value: api.content.page.region.Component): UpdatePageRequest {
+            this.fragment = value;
+            return this;
+        }
+
         setCustomized(value: boolean): UpdatePageRequest {
             this.customized = value;
             return this;
@@ -52,7 +59,8 @@ module api.content.page {
                 template: this.template ? this.template.toString() : null,
                 config: this.config ? this.config.toJson() : null,
                 regions: this.regions != null ? this.regions.toJson() : null,
-                customized: this.customized
+                customized: this.customized,
+                fragment: this.fragment != null ? this.fragment.toJson() : null
             };
         }
 

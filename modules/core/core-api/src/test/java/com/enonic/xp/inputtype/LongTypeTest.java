@@ -38,6 +38,21 @@ public class LongTypeTest
     }
 
     @Test
+    public void testCreateDefaultValue()
+    {
+        final InputTypeDefault config = InputTypeDefault.create().
+            property( InputTypeProperty.create( "default", "2" ).
+                build() ).
+            build();
+
+        final Value value = this.type.createDefaultValue( config );
+
+        assertNotNull( value );
+        assertEquals( 2L, value.asLong().longValue() );
+
+    }
+
+    @Test
     public void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();

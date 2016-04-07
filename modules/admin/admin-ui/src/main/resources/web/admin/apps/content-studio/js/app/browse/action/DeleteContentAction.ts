@@ -12,8 +12,9 @@ module app.browse.action {
             this.onExecuted(() => {
                 var contents: api.content.ContentSummaryAndCompareStatus[]
                     = grid.getSelectedDataList();
-                new ContentDeletePromptEvent(contents).
-                    setYesCallback(() => {
+                new ContentDeletePromptEvent(contents)
+                    .setNoCallback(null)
+                    .setYesCallback(() => {
                         var excludeStatuses = [CompareStatus.EQUAL, CompareStatus.PENDING_DELETE, CompareStatus.NEWER],
                         deselected = [];
                         grid.getSelectedDataList().forEach((content: ContentSummaryAndCompareStatus) => {

@@ -10,7 +10,6 @@
 ///<reference path='lib/crossroads.d.ts' />
 ///<reference path='lib/jquery.slimscroll.d.ts' />
 ///<reference path='lib/noconflict.d.ts' />
-///<reference path='lib/medium-editor.d.ts' />
 ///<reference path='lib/tinymce.d.ts' />
 
 ///<reference path='Equitable.ts' />
@@ -94,12 +93,13 @@
 ///<reference path='form/inputtype/support/_module.ts' />
 ///<reference path='form/inputtype/combobox/_module.ts' />
 ///<reference path='form/inputtype/radiobutton/_module.ts' />
-///<reference path='form/inputtype/text/htmlarea/_module.ts' />
-///<reference path='form/inputtype/text/_module.ts' />
 ///<reference path='form/inputtype/checkbox/_module.ts' />
 ///<reference path='form/inputtype/long/_module.ts' />
 ///<reference path='form/inputtype/double/_module.ts' />
 ///<reference path='form/inputtype/time/_module.ts' />
+
+///<reference path='util/htmlarea/_module.ts' />
+///<reference path='form/inputtype/text/_module.ts' />
 
 ///<reference path='site/json/_module.ts' />
 ///<reference path='site/_module.ts' />
@@ -160,6 +160,7 @@
 ///<reference path='liveedit/part/_module.ts' />
 ///<reference path='liveedit/layout/_module.ts' />
 ///<reference path='liveedit/text/_module.ts' />
+///<reference path='liveedit/fragment/_module.ts' />
 ///<reference path='liveedit/ItemViewIconClassResolver.ts' />
 
 ///<reference path='main.ts' />

@@ -112,7 +112,7 @@ module app.wizard {
             this.content = content;
         }
 
-        update(content: api.content.Content) {
+        update(content: api.content.Content, unchangedOnly: boolean = true) {
             //TODO: preserve changes
             this.layout(content);
         }

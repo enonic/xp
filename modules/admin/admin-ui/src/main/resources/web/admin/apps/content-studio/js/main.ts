@@ -85,10 +85,11 @@ function startApplication() {
 
     var contentDeleteDialog = new app.remove.ContentDeleteDialog();
     app.browse.ContentDeletePromptEvent.on((event) => {
-        contentDeleteDialog.setContentToDelete(event.getModels());
-        contentDeleteDialog.setYesCallback(event.getYesCallback());
-        contentDeleteDialog.setNoCallback(event.getNoCallback());
-        contentDeleteDialog.open();
+        contentDeleteDialog.
+            setContentToDelete(event.getModels()).
+            setYesCallback(event.getYesCallback()).
+            setNoCallback(event.getNoCallback()).
+            open();
     });
 
     app.browse.ContentPublishPromptEvent.on((event) => {

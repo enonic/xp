@@ -1,6 +1,5 @@
 module api.liveedit {
 
-    import PropertyTree = api.data.PropertyTree;
     import Content = api.content.Content;
     import Page = api.content.page.Page;
     import PageModel = api.content.page.PageModel;
@@ -12,6 +11,8 @@ module api.liveedit {
     import Region = api.content.page.region.Region;
     import RegionPath = api.content.page.region.RegionPath;
     import ComponentPath = api.content.page.region.ComponentPath;
+    import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
+    import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
 
     export class PageViewBuilder {
 
@@ -47,6 +48,8 @@ module api.liveedit {
 
         private regionViews: RegionView[];
 
+        private fragmentView: ComponentView<Component>;
+
         private viewsById: {[s:number] : ItemView;};
 
         private ignorePropertyChanges: boolean;
@@ -63,6 +66,8 @@ module api.liveedit {
 
         private itemViewRemovedListener: (event: ItemViewRemovedEvent) => void;
 
+        private scrolledListener: (event: WheelEvent) => void;
+
         public static debug;
 
         private propertyChangedListener: (event: api.PropertyChangedEvent) => void;
@@ -72,6 +77,10 @@ module api.liveedit {
         private lockedContextMenu: api.liveedit.ItemViewContextMenu;
 
         private disableContextMenu: boolean;
+
+        private closeTextEditModeButton: api.dom.Element;
+
+        private editorToolbar: api.dom.DivEl;
 
         private registerPageModel(pageModel: PageModel, resetAction: api.ui.Action) {
             if (PageView.debug) {
@@ -137,6 +146,10 @@ module api.liveedit {
 
             this.registerPageModel(this.pageModel, resetAction);
 
+            this.scrolledListener = (event: WheelEvent) => {
+                this.toggleStickyToolbar();
+            }
+
             this.itemViewAddedListener = (event: ItemViewAddedEvent) => {
                 // register the view and all its child views (i.e layout with regions)
                 var itemView = event.getView();
@@ -151,7 +164,9 @@ module api.liveedit {
                     }
                     else {
                         (<api.liveedit.text.TextComponentView>itemView).setEditMode(true);
+                        this.closeTextEditModeButton.toggleClass("active", true);
                     }
+                    new ItemViewSelectedEvent(itemView, null, event.isNew(), true).fire();
                     itemView.giveFocus();
                 } else {
                     if (this.isTextEditMode()) {
@@ -183,19 +198,63 @@ module api.liveedit {
 
             this.parseItemViews();
 
-            this.appendChild(this.createTextModeToolbar());
+            this.closeTextEditModeButton = this.createCloseTextEditModeEl();
+
+            this.appendChild(this.closeTextEditModeButton);
 
             this.refreshEmptyState();
 
             // lock page by default for every content that has not been modified except for page template
             var isCustomized = this.liveEditModel.getPageModel().isCustomized();
-            if (!this.liveEditModel.getContent().isPageTemplate() && !this.pageModel.isModified() && !isCustomized) {
+            var isFragment = !!this.fragmentView;
+            if (!this.liveEditModel.getContent().isPageTemplate() && !this.pageModel.isModified() && !isCustomized && !isFragment) {
                 this.setLocked(true);
             }
 
             this.listenToMouseEvents();
 
             this.onRemoved(event => this.unregisterPageModel(this.pageModel));
+
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+                if (this.isTextEditMode()) {
+                    this.updateVerticalSpaceForEditorToolbar();
+                }
+            });
+        }
+
+        private createCloseTextEditModeEl(): api.dom.Element {
+            var closeButton = new api.dom.AEl("close-edit-mode-button icon-close2");
+            closeButton.onClicked((event: MouseEvent) => {
+                this.setTextEditMode(false);
+                event.stopPropagation();
+                return false;
+            });
+            return closeButton;
+        }
+
+        private isPageScrolled() {
+            return this.getEl().getScrollTop() > 0 || this.getEl().getParent().getScrollTop() > 0;
+        }
+
+        private toggleStickyToolbar() {
+            if (!this.isPageScrolled()) {
+                this.editorToolbar.removeClass("sticky-toolbar");
+            }
+            else if (!this.editorToolbar.hasClass("sticky-toolbar")) {
+                this.editorToolbar.addClass("sticky-toolbar");
+            }
+        }
+
+        appendContainerForTextToolbar() {
+            if (!this.hasToolbarContainer()) {
+                this.editorToolbar = new api.dom.DivEl("mce-toolbar-container");
+                this.appendChild(this.editorToolbar);
+                this.addClass("has-toolbar-container");
+            }
+        }
+
+        hasToolbarContainer(): boolean {
+            return this.hasClass("has-toolbar-container");
         }
 
         private setIgnorePropertyChanges(value: boolean) {
@@ -327,10 +386,33 @@ module api.liveedit {
             event.stopPropagation();
 
             if (this.isTextEditMode()) {
-                this.setTextEditMode(false);
+                if (!this.isTextEditorToolbarClicked(event) && !this.isTextEditorDialogClicked(event)) {
+                    this.setTextEditMode(false);
+                }
             } else {
                 super.handleClick(event);
             }
+        }
+
+        private isTextEditorToolbarClicked(event: MouseEvent) {
+            var target = <HTMLElement> event.target;
+            if (!!target) {
+                var parent = <HTMLElement> target.parentElement;
+                return (target.id.indexOf("mce") >= 0 || target.className.indexOf("mce") >= 0 ||
+                        parent.id.indexOf("mce") >= 0 || parent.className.indexOf("mce") >= 0)
+            }
+            return false;
+        }
+
+        private isTextEditorDialogClicked(event: MouseEvent) {
+            var target = <HTMLElement> event.target;
+            while (target) {
+                if (target.classList.contains(api.util.htmlarea.dialog.ModalDialog.CLASS_NAME)) {
+                    return true;
+                }
+                target = target.parentElement;
+            }
+            return false;
         }
 
         hideContextMenu() {
@@ -370,23 +452,6 @@ module api.liveedit {
             this.notifyPageLockChanged(locked);
         }
 
-        private createTextModeToolbar() {
-            var toolbar = new api.dom.DivEl('text-edit-toolbar');
-            var wrapper = new api.dom.DivEl('wrapper');
-            wrapper.setHtml('Text Edit Mode');
-            var closeButton = new api.ui.button.CloseButton('transparent');
-            closeButton.onClicked((event: MouseEvent) => {
-                event.stopPropagation();
-                event.preventDefault();
-
-                this.setTextEditMode(false);
-            });
-            wrapper.appendChild(closeButton);
-            toolbar.appendChild(wrapper);
-            return toolbar;
-        }
-
-
         isTextEditMode(): boolean {
             return this.hasClass('text-edit-mode');
         }
@@ -401,12 +466,70 @@ module api.liveedit {
                 textView = <api.liveedit.text.TextComponentView> view;
                 if (textView.isEditMode() != flag) {
                     textView.setEditMode(flag);
+                    this.closeTextEditModeButton.toggleClass("active", flag);
                 }
             });
 
             if (flag) {
+                this.addVerticalSpaceForEditorToolbar();
+
+                this.onScrolled(this.scrolledListener);
                 new PageTextModeStartedEvent(this).fire();
             }
+            else {
+                this.removeVerticalSpaceForEditorToolbar();
+                this.unScrolled(this.scrolledListener);
+
+                api.liveedit.Highlighter.get().updateLastHighlightedItemView();
+                api.liveedit.SelectedHighlighter.get().updateLastHighlightedItemView();
+            }
+
+        }
+
+        private addVerticalSpaceForEditorToolbar() {
+            this.getPageView().getEl().setPosition("relative");
+            this.updateVerticalSpaceForEditorToolbar()
+            this.toggleStickyToolbar();
+        }
+
+        private updateVerticalSpaceForEditorToolbar() {
+            var result = this.getEditorToolbarWidth();
+
+            if (!!result) {
+                this.getPageView().getEl().setTop(this.getEditorToolbarWidth() + "px");
+            }
+            else {
+                this.waitUntilEditorToolbarShown();
+            }
+
+        }
+
+        private waitUntilEditorToolbarShown() {
+            var intervalId,
+                toolbarHeight,
+                attempts = 0;
+
+            intervalId = setInterval(()=> {
+                attempts++;
+                toolbarHeight = this.getEditorToolbarWidth();
+                if (!!toolbarHeight) {
+                    this.getPageView().getEl().setTop(toolbarHeight + "px");
+                    clearInterval(intervalId);
+                }
+                else if (attempts > 10) {
+                    clearInterval(intervalId);
+                }
+            }, 50);
+
+        }
+
+        private removeVerticalSpaceForEditorToolbar() {
+            this.getEl().setPosition("");
+            this.getEl().setTop("");
+        }
+
+        private getEditorToolbarWidth(): number {
+            return wemjq(".mce-toolbar-container .mce-tinymce-inline:not([style*='display: none'])").outerHeight();
         }
 
         hasTargetWithinTextComponent(target: HTMLElement) {
@@ -495,6 +618,10 @@ module api.liveedit {
 
         getRegions(): RegionView[] {
             return this.regionViews;
+        }
+
+        getFragmentView(): ComponentView<Component> {
+            return this.fragmentView;
         }
 
         toItemViewArray(): ItemView[] {
@@ -597,7 +724,10 @@ module api.liveedit {
         }
 
         getComponentViewByPath(path: ComponentPath): ComponentView<Component> {
-
+            if (!path) {
+                return this.fragmentView;
+            }
+            
             var firstLevelOfPath = path.getFirstLevel();
 
             for (var i = 0; i < this.regionViews.length; i++) {
@@ -656,7 +786,11 @@ module api.liveedit {
             this.regionViews = [];
             this.viewsById = {};
 
-            this.doParseItemViews();
+            if (this.liveEditModel.getPageModel().getMode() === PageMode.FRAGMENT) {
+                this.doParseFragmentItemViews();
+            } else {
+                this.doParseItemViews();
+            }
 
             // register everything that was parsed
             this.toItemViewArray().forEach((itemView: ItemView) => {
@@ -707,6 +841,46 @@ module api.liveedit {
                     this.doParseItemViews(childElement);
                 }
             });
+        }
+
+        private doParseFragmentItemViews(parentElement?: api.dom.Element) {
+
+            var fragment = this.liveEditModel.getPageModel().getPage().getFragment();
+            if (!fragment) {
+                return;
+            }
+            var children = parentElement ? parentElement.getChildren() : this.getChildren();
+
+            children.forEach((childElement: api.dom.Element) => {
+                var itemType = ItemType.fromElement(childElement);
+                var component: Component = this.pageModel.getPage().getFragment();
+                var componentView: ComponentView<Component>;
+
+                if (itemType && itemType.isComponentType()) {
+                    if (component) {
+                        var itemViewConfig = new CreateItemViewConfig<PageView, Component>().setParentView(this).setData(
+                            component).setElement(childElement).setParentElement(parentElement ? parentElement : this);
+                        componentView = <ComponentView<Component>> itemType.createView(itemViewConfig);
+
+                        this.registerFragmentComponentView(componentView);
+                    }
+                } else {
+                    this.doParseFragmentItemViews(childElement);
+                }
+            });
+        }
+
+        registerFragmentComponentView(componentView: ComponentView<Component>) {
+            componentView.onItemViewAdded(this.itemViewAddedListener);
+            componentView.onItemViewRemoved(this.itemViewRemovedListener);
+
+            this.registerItemView(componentView);
+            if (componentView instanceof api.liveedit.layout.LayoutComponentView) {
+                componentView.getRegions().forEach((regionView) => {
+                    this.registerRegionView(regionView);
+                });
+            }
+            this.fragmentView = componentView;
         }
 
         onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {

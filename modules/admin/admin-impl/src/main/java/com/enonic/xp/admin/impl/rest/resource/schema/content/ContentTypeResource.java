@@ -1,7 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.content;
 
-import java.awt.image.BufferedImage;
-
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -23,6 +21,7 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -30,7 +29,6 @@ import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "schema/content")
 @Produces("application/json")
@@ -105,7 +103,7 @@ public final class ContentTypeResource
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
 
-        final BufferedImage image = HELPER.resizeImage( icon.asInputStream(), size );
+        final Object image = HELPER.isSvg( icon ) ? icon.toByteArray() : HELPER.resizeImage( icon.asInputStream(), size );
         final Response.ResponseBuilder responseBuilder = Response.ok( image, icon.getMimeType() );
 
         if ( StringUtils.isNotEmpty( hash ) )
