@@ -34,6 +34,8 @@ public final class ComponentInstruction
 
     public static final String FRAGMENT_COMPONENT = "fragment";
 
+    public static final String COMPONENT_INSTRUCTION_PREFIX = "COMPONENT";
+
     private RendererFactory rendererFactory;
 
     private ComponentService componentService;
@@ -53,7 +55,7 @@ public final class ComponentInstruction
     @Override
     public PortalResponse evaluate( final PortalRequest portalRequest, final String instruction )
     {
-        if ( !Instruction.isInstruction( instruction, "COMPONENT" ) )
+        if ( !Instruction.isInstruction( instruction, COMPONENT_INSTRUCTION_PREFIX ) )
         {
             return null;
         }
