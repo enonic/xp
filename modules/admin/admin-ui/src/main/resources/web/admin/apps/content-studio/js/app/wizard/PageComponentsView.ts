@@ -97,7 +97,7 @@ module app.wizard {
 
         setPageView(pageView: PageView) {
 
-            if(this.mask) {
+            if (this.mask) {
                 this.destroyMask();
             }
 
@@ -127,7 +127,7 @@ module app.wizard {
             this.mask.remove();
             this.mask = null;
 
-            if(this.pageView) {
+            if (this.pageView) {
                 this.pageView.unPageLocked(this.pageLockedHandler.bind(this));
             }
         }
@@ -136,7 +136,7 @@ module app.wizard {
             this.mask = new Mask(this.tree);
             this.appendChild(this.mask);
 
-            if(this.pageView.isLocked()) {
+            if (this.pageView.isLocked()) {
                 this.mask.show();
             }
 
@@ -302,7 +302,7 @@ module app.wizard {
                     rowElement = rowElement.parentElement;
                 }
 
-                if(!this.pageView.isLocked()) {
+                if (!this.pageView.isLocked()) {
                     this.highlightRow(rowElement, selected);
                 }
             });
@@ -517,7 +517,7 @@ module app.wizard {
         }
 
         private pageLockedHandler(value: boolean) {
-            if(this.mask) {
+            if (this.mask) {
                 if (value) {
                     this.mask.show();
                 } else {
@@ -530,13 +530,12 @@ module app.wizard {
             event.stopPropagation();
             event.preventDefault();
 
-            if (this.contextMenu && this.contextMenu.isVisible()  ) {
+            if (this.contextMenu && this.contextMenu.isVisible()) {
                 this.hideContextMenu();
             } else {
                 this.showContextMenu(null, {x: event.pageX, y: event.pageY});
             }
         }
-
 
 
         private isMenuIconClicked(cellNumber: number): boolean {
@@ -545,7 +544,7 @@ module app.wizard {
 
         private showContextMenu(row: number, clickPosition: api.liveedit.Position) {
             var node = this.tree.getGrid().getDataView().getItem(row);
-            if(node) {
+            if (node) {
                 var itemView: ItemView = node.getData(),
                     pageView: api.liveedit.PageView = itemView.getPageView();
             } else {
@@ -574,6 +573,8 @@ module app.wizard {
             });
 
             this.contextMenu.getMenu().onAfterAction((action: api.ui.Action) => {
+                this.hidePageComponentsIfInMobileView(action);
+
                 setTimeout(() => {
                     this.pageView.setDisabledContextMenu(false);
                     this.contextMenu.getMenu().clearActionListeners();
@@ -587,6 +588,15 @@ module app.wizard {
             var y = clickPosition.y;
 
             this.contextMenu.showAt(x, y, false);
+        }
+
+        private hidePageComponentsIfInMobileView(action: api.ui.Action) {
+            var isInMobileMode: boolean = ResponsiveRanges._720_960.isFitOrSmaller(window.innerWidth);
+            if (isInMobileMode && ((action.hasParentAction() && action.getParentAction().getLabel() == "Insert")
+                                   || action.getLabel() == "Inspect" || action.getLabel() == "Edit" ||
+                                   action.getLabel() == "Duplicate")) {
+                this.hide();
+            }
         }
 
         private setMenuOpenStyleOnMenuIcon(row: number) {
