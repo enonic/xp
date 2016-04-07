@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroDescriptors;
@@ -18,6 +19,8 @@ import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.xml.XmlException;
+import com.enonic.xp.xml.parser.XmlMacroDescriptorParser;
 
 @Component
 public final class MacroDescriptorServiceImpl
@@ -56,12 +59,33 @@ public final class MacroDescriptorServiceImpl
         return MacroDescriptor.
             create().
             key( key ).
+            displayName( key.getName() ).
+            form( Form.create().build() ).
             build();
+    }
+
+    private void parseXml( final Resource resource, final MacroDescriptor.Builder builder )
+    {
+        try
+        {
+            final XmlMacroDescriptorParser parser = new XmlMacroDescriptorParser();
+            parser.builder( builder );
+            parser.currentApplication( resource.getKey().getApplicationKey() );
+            parser.source( resource.readString() );
+            parser.parse();
+        }
+        catch ( final Exception e )
+        {
+            throw new XmlException( e, "Could not load macro descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+        }
     }
 
     private MacroDescriptor loadDescriptor( final MacroKey key, final Resource resource )
     {
-        return MacroDescriptor.create().key( key ).build();
+        final MacroDescriptor.Builder builder = MacroDescriptor.create();
+        parseXml( resource, builder );
+        builder.key( key );
+        return builder.build();
     }
 
     @Override

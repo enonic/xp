@@ -67,7 +67,7 @@ public final class MacroDescriptor
 
     public static ResourceKey toResourceKey( final MacroKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".js" );
+        return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".xml" );
     }
 
     public static Builder create()
