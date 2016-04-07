@@ -1,12 +1,14 @@
 module app.browse {
 
+    import Event = api.event.Event;
+
     export class ContentDeletePromptEvent extends BaseContentModelEvent {
 
-        private yesCallback: () => void;
+        private yesCallback: (exclude?: api.content.CompareStatus[]) => void;
 
         private noCallback: () => void;
 
-        setYesCallback(callback: ()=>void): ContentDeletePromptEvent {
+        setYesCallback(callback: (exclude?: api.content.CompareStatus[])=>void): ContentDeletePromptEvent {
             this.yesCallback = callback;
             return this;
         }
@@ -25,11 +27,11 @@ module app.browse {
         }
 
         static on(handler: (event: ContentDeletePromptEvent) => void) {
-            api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
+            Event.bind(api.ClassHelper.getFullName(this), handler);
         }
 
         static un(handler?: (event: ContentDeletePromptEvent) => void) {
-            api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
+            Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
     }
 }

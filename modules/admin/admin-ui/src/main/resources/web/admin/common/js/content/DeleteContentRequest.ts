@@ -4,6 +4,8 @@ module api.content {
 
         private contentPaths: ContentPath[] = [];
 
+        private deleteOnline: boolean;
+
         constructor(contentPath?: ContentPath) {
             super();
             this.setHeavyOperation(true);
@@ -23,12 +25,17 @@ module api.content {
             return this;
         }
 
+        setDeleteOnline(deleteOnline: boolean) {
+            this.deleteOnline = deleteOnline;
+        }
+
         getParams(): Object {
             var fn = (contentPath: ContentPath) => {
                 return contentPath.toString();
             };
             return {
-                contentPaths: this.contentPaths.map(fn)
+                contentPaths: this.contentPaths.map(fn),
+                deleteOnline: this.deleteOnline
             };
         }
 
