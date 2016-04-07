@@ -56,7 +56,7 @@ public class MacroParserTest
         assertValidMacro( false, "[macroName]ooo[/macroName" );
         assertValidMacro( false, "[]ooo[/]" );
         assertValidMacro( false, "[/]" );
-        assertValidMacro( true, "[_/]" );
+        assertValidMacro( false, "[_/]" );
     }
 
     @Test
@@ -157,4 +157,35 @@ public class MacroParserTest
         assertEquals( "\\va\"l\"ue2", parsedMacro.getParam( "par2" ) );
     }
 
+    @Test
+    public void testNameNotStartingWithUnderscore()
+    {
+        final String macro = "[_mymacro][/_mymacro]";
+        try
+        {
+            new MacroParser().debugMode().parse( macro );
+
+            fail( "Expected exception" );
+        }
+        catch ( ParseException e )
+        {
+            assertEquals( "Name cannot start with underscore '_' at position 1", e.getMessage() );
+        }
+    }
+
+    @Test
+    public void testAttributeNameNotStartingWithUnderscore()
+    {
+        final String macro = "[mymacro _body=\"something\"]real body[/mymacro]";
+        try
+        {
+            new MacroParser().debugMode().parse( macro );
+
+            fail( "Expected exception" );
+        }
+        catch ( ParseException e )
+        {
+            assertEquals( "Name cannot start with underscore '_' at position 9", e.getMessage() );
+        }
+    }
 }

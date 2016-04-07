@@ -49,7 +49,7 @@ public final class ComponentInstruction
     @Override
     public PortalResponse evaluate( final PortalRequest portalRequest, final String instruction )
     {
-        if ( !instruction.startsWith( "COMPONENT " ) )
+        if ( !Instruction.isInstruction( instruction, "COMPONENT" ) )
         {
             return null;
         }

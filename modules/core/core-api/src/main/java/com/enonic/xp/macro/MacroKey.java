@@ -69,12 +69,12 @@ public final class MacroKey
     public static MacroKey from( final String s )
     {
         final String applicationKey = StringUtils.substringBefore( s, SEPARATOR );
-        final String macrosName = StringUtils.substringAfter( s, SEPARATOR );
-        return new MacroKey( ApplicationKey.from( applicationKey ), macrosName );
+        final String macroName = StringUtils.substringAfter( s, SEPARATOR );
+        return new MacroKey( ApplicationKey.from( applicationKey ), macroName );
     }
 
-    public static MacroKey from( final ApplicationKey applicationKey, final String macrosName )
+    public static MacroKey from( final ApplicationKey applicationKey, final String macroName )
     {
-        return new MacroKey( applicationKey, macrosName );
+        return new MacroKey( applicationKey, macroName );
     }
 }

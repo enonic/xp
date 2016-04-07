@@ -33,12 +33,12 @@ public final class MacroDescriptor
 
     public ResourceKey toResourceKey()
     {
-        return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() );
+        return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".js" );
     }
 
     public static ResourceKey toResourceKey( final MacroKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() );
+        return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".js" );
     }
 
     public static Builder create()

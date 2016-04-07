@@ -144,7 +144,7 @@ public final class MacroParser
     private String parseAttributeValue()
     {
         final StringBuilder value = new StringBuilder();
-        while ( c != '"' )
+        while ( c != '"' && c != EOF )
         {
             if ( c == '\\' )
             {
@@ -262,6 +262,10 @@ public final class MacroParser
                 default:
                     if ( isNameChar( c ) )
                     {
+                        if ( c == '_' )
+                        {
+                            throw new ParseException( "Name cannot start with underscore '" + c + "' at position " + p );
+                        }
                         return Token.NAME;
                     }
                     throw new ParseException( "Invalid character '" + c + "' at position " + p );

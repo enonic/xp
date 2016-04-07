@@ -2,10 +2,13 @@ package com.enonic.xp.impl.macro;
 
 import java.util.function.Function;
 
+import org.osgi.service.component.annotations.Component;
+
 import com.enonic.xp.macro.Macro;
 import com.enonic.xp.macro.MacroService;
 
-public class MacroServiceImpl
+@Component(immediate = true)
+public final class MacroServiceImpl
     implements MacroService
 {
 

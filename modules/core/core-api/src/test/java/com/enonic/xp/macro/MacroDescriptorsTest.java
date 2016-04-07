@@ -19,7 +19,7 @@ public class MacroDescriptorsTest
     {
         final MacroDescriptors macroDescriptors1 = MacroDescriptors.from( MacroDescriptor.from( "my-app:macro1" ) );
         assertEquals( 1, macroDescriptors1.getSize() );
-        assertEquals( "my-app:/site/macros/macro1", macroDescriptors1.iterator().next().toResourceKey().toString() );
+        assertEquals( "my-app:/site/macros/macro1/macro1.js", macroDescriptors1.iterator().next().toResourceKey().toString() );
 
         final MacroDescriptors macroDescriptors2 = MacroDescriptors.from( "my-app:macro1", "my-app:macro2" );
         assertEquals( 2, macroDescriptors2.getSize() );

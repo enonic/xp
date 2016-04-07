@@ -15,8 +15,6 @@ import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
-import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.page.DescriptorKeyLocator;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
@@ -70,7 +68,7 @@ public final class MacroDescriptorServiceImpl
     public MacroDescriptors getByApplication( final ApplicationKey applicationKey )
     {
         final List<MacroDescriptor> list = Lists.newArrayList();
-        for ( final DescriptorKey descriptorKey : findDescriptorKeys( applicationKey ) )
+        for ( final MacroKey descriptorKey : findDescriptorKeys( applicationKey ) )
         {
             final MacroKey macroKey = MacroKey.from( descriptorKey.getApplicationKey(), descriptorKey.getName() );
             final MacroDescriptor descriptor = getByKey( macroKey );
@@ -78,15 +76,14 @@ public final class MacroDescriptorServiceImpl
             {
                 list.add( descriptor );
             }
-
         }
 
         return MacroDescriptors.from( list );
     }
 
-    private Set<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
+    private Set<MacroKey> findDescriptorKeys( final ApplicationKey key )
     {
-        return new DescriptorKeyLocator( this.resourceService, PATH, true ).findKeys( key );
+        return new MacroDescriptorKeyLocator( this.resourceService, PATH ).findKeys( key );
     }
 
     @Override
