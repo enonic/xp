@@ -26,19 +26,72 @@ public final class MacroDescriptorServiceImpl
 
     private final static String PATH = "/site/macros";
 
+    private final BuiltinMacroDescriptors builtinMacrosDescriptors = new BuiltinMacroDescriptors();
+
     private ResourceService resourceService;
 
     @Override
     public MacroDescriptor getByKey( final MacroKey key )
     {
-        final ResourceProcessor<MacroKey, MacroDescriptor> processor = newProcessor( key );
-        final MacroDescriptor descriptor = this.resourceService.processResource( processor );
-        if ( descriptor != null )
+        MacroDescriptor descriptor;
+        if ( isSystem( key.getApplicationKey() ) )
         {
-            return descriptor;
+            descriptor = builtinMacrosDescriptors.getByKey( key );
+        }
+        else
+        {
+            final ResourceProcessor<MacroKey, MacroDescriptor> processor = newProcessor( key );
+            descriptor = this.resourceService.processResource( processor );
+
+        }
+        if ( descriptor == null )
+        {
+            descriptor = createDefaultDescriptor( key );
         }
 
-        return createDefaultDescriptor( key );
+        return descriptor;
+    }
+
+    @Override
+    public MacroDescriptors getByApplication( final ApplicationKey applicationKey )
+    {
+        final List<MacroDescriptor> list = Lists.newArrayList();
+        if ( isSystem( applicationKey ) )
+        {
+            list.addAll( builtinMacrosDescriptors.getAll().getSet() );
+        }
+        else
+        {
+            for ( final MacroKey descriptorKey : findDescriptorKeys( applicationKey ) )
+            {
+                final MacroKey macroKey = MacroKey.from( descriptorKey.getApplicationKey(), descriptorKey.getName() );
+                final MacroDescriptor descriptor = getByKey( macroKey );
+                if ( descriptor != null )
+                {
+                    list.add( descriptor );
+                }
+            }
+
+        }
+
+        return MacroDescriptors.from( list );
+    }
+
+    @Override
+    public MacroDescriptors getByApplications( final ApplicationKeys applicationKeys )
+    {
+        final List<MacroDescriptor> list = new ArrayList<>();
+        for ( final ApplicationKey key : applicationKeys )
+        {
+            list.addAll( getByApplication( key ).getSet() );
+        }
+
+        return MacroDescriptors.from( list );
+    }
+
+    private boolean isSystem( ApplicationKey applicationKey )
+    {
+        return ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( applicationKey );
     }
 
     private ResourceProcessor<MacroKey, MacroDescriptor> newProcessor( final MacroKey key )
@@ -64,38 +117,9 @@ public final class MacroDescriptorServiceImpl
         return MacroDescriptor.create().key( key ).build();
     }
 
-    @Override
-    public MacroDescriptors getByApplication( final ApplicationKey applicationKey )
-    {
-        final List<MacroDescriptor> list = Lists.newArrayList();
-        for ( final MacroKey descriptorKey : findDescriptorKeys( applicationKey ) )
-        {
-            final MacroKey macroKey = MacroKey.from( descriptorKey.getApplicationKey(), descriptorKey.getName() );
-            final MacroDescriptor descriptor = getByKey( macroKey );
-            if ( descriptor != null )
-            {
-                list.add( descriptor );
-            }
-        }
-
-        return MacroDescriptors.from( list );
-    }
-
     private Set<MacroKey> findDescriptorKeys( final ApplicationKey key )
     {
         return new MacroDescriptorKeyLocator( this.resourceService, PATH ).findKeys( key );
-    }
-
-    @Override
-    public MacroDescriptors getByApplications( final ApplicationKeys applicationKeys )
-    {
-        final List<MacroDescriptor> list = new ArrayList<>();
-        for ( final ApplicationKey key : applicationKeys )
-        {
-            list.addAll( getByApplication( key ).getSet() );
-        }
-
-        return MacroDescriptors.from( list );
     }
 
     @Reference
