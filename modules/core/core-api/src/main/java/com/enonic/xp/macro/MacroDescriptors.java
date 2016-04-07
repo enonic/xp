@@ -1,15 +1,11 @@
 package com.enonic.xp.macro;
 
 import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Stream;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
-
-import static java.util.stream.Collectors.toSet;
 
 @Beta
 public final class MacroDescriptors
@@ -30,11 +26,6 @@ public final class MacroDescriptors
         return new MacroDescriptors( ImmutableSet.copyOf( macroDescriptors ) );
     }
 
-    public static MacroDescriptors from( final String... macroDescriptors )
-    {
-        return new MacroDescriptors( parsePrincipalKeys( macroDescriptors ) );
-    }
-
     public static MacroDescriptors from( final Iterable<MacroDescriptor>... macroDescriptors )
     {
         final ImmutableSet.Builder<MacroDescriptor> keys = ImmutableSet.builder();
@@ -50,9 +41,4 @@ public final class MacroDescriptors
         return new MacroDescriptors( ImmutableSet.of() );
     }
 
-    private static ImmutableSet<MacroDescriptor> parsePrincipalKeys( final String... macroDescriptors )
-    {
-        final Set<MacroDescriptor> descriptorKeyList = Stream.of( macroDescriptors ).map( MacroDescriptor::from ).collect( toSet() );
-        return ImmutableSet.copyOf( descriptorKeyList );
-    }
 }
