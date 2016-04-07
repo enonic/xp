@@ -1,7 +1,9 @@
 package com.enonic.xp.portal.impl.macro;
 
 import com.enonic.xp.macro.MacroContext;
-import com.enonic.xp.macro.MacroProcessor;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
+import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 
@@ -18,7 +20,7 @@ public final class MacroProcessorScript
     }
 
     @Override
-    public String process( final MacroContext macroContext )
+    public PortalResponse process( final MacroContext macroContext )
     {
         final boolean exists = this.scriptExports.hasMethod( SCRIPT_METHOD_NAME );
         if ( !exists )
@@ -27,7 +29,8 @@ public final class MacroProcessorScript
         }
 
         final MacroContextMapper macroContextMapper = new MacroContextMapper( macroContext );
-        final ScriptValue scriptValue = this.scriptExports.executeMethod( SCRIPT_METHOD_NAME, macroContextMapper );
-        return (String) scriptValue.getValue();
+        final ScriptValue result = this.scriptExports.executeMethod( SCRIPT_METHOD_NAME, macroContextMapper );
+        return new PortalResponseSerializer( result ).serialize();
     }
+
 }

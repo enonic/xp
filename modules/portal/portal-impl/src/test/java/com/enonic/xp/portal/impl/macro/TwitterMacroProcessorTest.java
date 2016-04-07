@@ -1,9 +1,9 @@
-package com.enonic.xp.impl.macro;
+package com.enonic.xp.portal.impl.macro;
 
 import org.junit.Test;
 
 import com.enonic.xp.macro.MacroContext;
-import com.enonic.xp.macro.MacroProcessor;
+import com.enonic.xp.portal.macro.MacroProcessor;
 
 import static org.junit.Assert.*;
 
@@ -23,7 +23,8 @@ public class TwitterMacroProcessorTest
 
         assertEquals(
             "<blockquote class=\"twitter-tweet\" lang=\"nw\"><a hidden=\"true\" href=\"http://twitter-url/bla\">Link to tweet</a></blockquote>\n" +
-                "<script src=\"//platform.twitter.com/widgets.js\" async=\"\" charset=\"utf-8\">", macroProcessor.process( macroContext ) );
+                "<script src=\"//platform.twitter.com/widgets.js\" async=\"\" charset=\"utf-8\">",
+            macroProcessor.process( macroContext ).getBody() );
 
         final MacroContext macroContext2 = MacroContext.create().name( "name" ).
             body( "body" ).
@@ -33,6 +34,6 @@ public class TwitterMacroProcessorTest
         assertEquals(
             "<blockquote class=\"twitter-tweet\" lang=\"en\"><a hidden=\"true\" href=\"http://twitter-url/bla2\">Link to tweet</a></blockquote>\n" +
                 "<script src=\"//platform.twitter.com/widgets.js\" async=\"\" charset=\"utf-8\">",
-            macroProcessor.process( macroContext2 ) );
+            macroProcessor.process( macroContext2 ).getBody() );
     }
 }

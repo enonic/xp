@@ -10,9 +10,10 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroKey;
-import com.enonic.xp.macro.MacroProcessor;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.RenderException;
+import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -47,7 +48,8 @@ public class MacroInstructionTest
         MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).build();
         when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
 
-        MacroProcessor macro = ( ctx ) -> ctx.getName() + ": param1=" + ctx.getParam( "param1" ) + ", body=" + ctx.getBody();
+        MacroProcessor macro = ( ctx ) -> PortalResponse.create().body(
+            ctx.getName() + ": param1=" + ctx.getParam( "param1" ) + ", body=" + ctx.getBody() ).build();
         when( macroScriptFactory.fromScript( any() ) ).thenReturn( macro );
 
         String outputHtml = instruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getAsString();

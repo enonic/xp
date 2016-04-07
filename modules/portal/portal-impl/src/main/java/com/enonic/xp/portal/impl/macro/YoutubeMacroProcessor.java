@@ -1,7 +1,8 @@
-package com.enonic.xp.impl.macro;
+package com.enonic.xp.portal.impl.macro;
 
 import com.enonic.xp.macro.MacroContext;
-import com.enonic.xp.macro.MacroProcessor;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.macro.MacroProcessor;
 
 public class YoutubeMacroProcessor
     implements MacroProcessor
@@ -13,18 +14,18 @@ public class YoutubeMacroProcessor
 
     private static final String HEIGHT_PARAM = "height";
 
-    private static final char QUOTE = '\"';
-
     @Override
-    public String process( final MacroContext context )
+    public PortalResponse process( final MacroContext context )
     {
         if ( !hasAttr( context, URL_PARAM ) )
         {
             return null;
         }
 
-        return new StringBuilder().append( "<iframe src=\"" ).append( context.getParam( URL_PARAM ) ).append( QUOTE ).append(
-            makeWidthAttr( context ) ).append( makeHeightAttr( context ) ).append( "></iframe>" ).toString();
+        final String html =
+            "<iframe src=\"" + context.getParam( URL_PARAM ) + "\"" + makeWidthAttr( context ) + makeHeightAttr( context ) + "></iframe>";
+
+        return PortalResponse.create().body( html ).build();
     }
 
     private boolean hasAttr( final MacroContext macroContext, final String name )
@@ -35,12 +36,12 @@ public class YoutubeMacroProcessor
     private String makeWidthAttr( final MacroContext macroContext )
     {
         final String result = macroContext.getParam( WIDTH_PARAM );
-        return result != null ? " width=\"" + result + QUOTE : "";
+        return result != null ? " width=\"" + result + "\"" : "";
     }
 
     private String makeHeightAttr( final MacroContext macroContext )
     {
         final String result = macroContext.getParam( HEIGHT_PARAM );
-        return result != null ? " height=\"" + result + QUOTE : "";
+        return result != null ? " height=\"" + result + "\"" : "";
     }
 }

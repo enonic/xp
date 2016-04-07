@@ -7,10 +7,10 @@ import com.enonic.xp.macro.MacroContext;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroKey;
-import com.enonic.xp.macro.MacroProcessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.RenderException;
+import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 import com.enonic.xp.site.Site;
@@ -71,8 +71,7 @@ public final class MacroInstruction
         final MacroProcessor macroProcessor = macroScriptFactory.fromScript( macroDescriptor.toResourceKey() );
         final MacroContext context = createContext( macroInstruction );
 
-        final String result = macroProcessor.process( context );
-        return PortalResponse.create().body( result ).build();
+        return macroProcessor.process( context );
     }
 
     private MacroDescriptor resolveMacro( final Site site, final String macroName )

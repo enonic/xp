@@ -1,7 +1,8 @@
-package com.enonic.xp.impl.macro;
+package com.enonic.xp.portal.impl.macro;
 
 import com.enonic.xp.macro.MacroContext;
-import com.enonic.xp.macro.MacroProcessor;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.macro.MacroProcessor;
 
 public class TwitterMacroProcessor
     implements MacroProcessor
@@ -18,13 +19,15 @@ public class TwitterMacroProcessor
             "<script src=\"//platform.twitter.com/widgets.js\" async=\"\" charset=\"utf-8\">";
 
     @Override
-    public String process( final MacroContext macroContext )
+    public PortalResponse process( final MacroContext macroContext )
     {
         if ( !hasUrlAttr( macroContext ) )
         {
             return null;
         }
-        return TWITTER_OUTPUT.replace( LANG_WILDCARD, getLanguageAttr( macroContext ) ).replace( URL_WILDCARD, getUrlAttr( macroContext ) );
+        final String html =
+            TWITTER_OUTPUT.replace( LANG_WILDCARD, getLanguageAttr( macroContext ) ).replace( URL_WILDCARD, getUrlAttr( macroContext ) );
+        return PortalResponse.create().body( html ).build();
     }
 
     private boolean hasUrlAttr( final MacroContext macroContext )

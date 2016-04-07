@@ -1,9 +1,9 @@
-package com.enonic.xp.impl.macro;
+package com.enonic.xp.portal.impl.macro;
 
 import org.junit.Test;
 
 import com.enonic.xp.macro.MacroContext;
-import com.enonic.xp.macro.MacroProcessor;
+import com.enonic.xp.portal.macro.MacroProcessor;
 
 import static org.junit.Assert.*;
 
@@ -22,7 +22,7 @@ public class YoutubeMacroProcessorTest
         final MacroProcessor macroProcessor = new YoutubeMacroProcessor();
 
         assertEquals( "<iframe src=\"https://www.youtube.com/watch?v=iDdDd\" width=\"200\" height=\"100\"></iframe>",
-                      macroProcessor.process( macroContext ) );
+                      macroProcessor.process( macroContext ).getBody() );
 
         final MacroContext macroContext2 = MacroContext.create().name( "name" ).
             body( "body" ).
@@ -31,7 +31,7 @@ public class YoutubeMacroProcessorTest
             build();
 
         assertEquals( "<iframe src=\"https://www.youtube.com/watch?v=iDdDd\" height=\"100\"></iframe>",
-                      macroProcessor.process( macroContext2 ) );
+                      macroProcessor.process( macroContext2 ).getBody() );
 
         final MacroContext macroContext3 = MacroContext.create().name( "name" ).
             build();
@@ -43,6 +43,7 @@ public class YoutubeMacroProcessorTest
             param( "url", "https://www.youtube.com/watch?v=iDdDd" ).
             build();
 
-        assertEquals( "<iframe src=\"https://www.youtube.com/watch?v=iDdDd\"></iframe>", macroProcessor.process( macroContext4 ) );
+        assertEquals( "<iframe src=\"https://www.youtube.com/watch?v=iDdDd\"></iframe>",
+                      macroProcessor.process( macroContext4 ).getBody() );
     }
 }

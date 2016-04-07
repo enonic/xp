@@ -4,7 +4,6 @@ import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -18,24 +17,26 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.macro.MacroContext;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
+import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.impl.ScriptRuntimeFactoryImpl;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
+import static org.junit.Assert.*;
+
 public class MacroProcessorScriptTest
 {
     private MacroProcessorScriptFactoryImpl factory;
 
-    protected MacroContext macroContext;
-
-    protected String response;
+    private MacroContext macroContext;
 
     private final ObjectMapper mapper;
 
-    protected ResourceService resourceService;
+    private ResourceService resourceService;
 
     public MacroProcessorScriptTest()
     {
@@ -91,25 +92,27 @@ public class MacroProcessorScriptTest
         ServletRequestHolder.setRequest( req );
     }
 
-    private final void execute( final String scriptKey )
+    private PortalResponse execute( final String scriptKey )
     {
         final MacroProcessorScript macroProcessorScript = this.factory.fromScript( ResourceKey.from( scriptKey ) );
-        this.response = macroProcessorScript.process( this.macroContext );
+        return macroProcessorScript.process( this.macroContext );
     }
 
     @Test
     public void testMacro()
     {
-        execute( "myapplication:/macro/macro.js" );
-        Assert.assertEquals(
+        final PortalResponse response = execute( "myapplication:/macro/macro.js" );
+        assertEquals(
             "Macro context: {\"name\":\"macroName\",\"body\":\"body\",\"params\":{\"firstParam\":\"firstParamValue\",\"secondParam\":\"secondParamValue\"}}",
-            this.response );
+            response.getBody() );
+        assertEquals( 1, response.getContributions( HtmlTag.HEAD_END ).size() );
+        assertEquals( 1, response.getContributions( HtmlTag.BODY_END ).size() );
     }
 
     @Test
     public void testMissingMacro()
     {
-        execute( "myapplication:/macro/missing-macro.js" );
-        Assert.assertNull( this.response );
+        final PortalResponse response = execute( "myapplication:/macro/missing-macro.js" );
+        assertNull( response );
     }
 }
