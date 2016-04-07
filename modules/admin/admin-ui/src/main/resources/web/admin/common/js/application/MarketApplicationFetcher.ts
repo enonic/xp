@@ -2,35 +2,30 @@ module api.application {
 
     export class MarketApplicationsFetcher {
 
-        static fetchChildren(version: string, from: number = 0, size: number = -1): wemQ.Promise<MarketApplicationResponse> {
-
-            let deferred = wemQ.defer<MarketApplicationResponse>();
-
-            new api.application.ListMarketApplicationsRequest()
+        static fetchChildren(version: string, installedApplications: Application[], from: number = 0,
+                             size: number = -1): wemQ.Promise<MarketApplicationResponse> {
+            return new api.application.ListMarketApplicationsRequest()
                 .setStart(from)
                 .setCount(size)
                 .setVersion(version)
                 .sendAndParse()
                 .then((response: MarketApplicationResponse)=> {
-                    new api.application.ListApplicationsRequest().sendAndParse().then((installedApplications: Application[]) => {
-                        let applications = response.getApplications();
-                        applications.forEach((marketApp) => {
-                            for (let i = 0; i < installedApplications.length; i++) {
-                                if (marketApp.getAppKey().equals(installedApplications[i].getApplicationKey())) {
-                                    if (this.installedAppCanBeUpdated(marketApp, installedApplications[i])) {
-                                        marketApp.setStatus(MarketAppStatus.OLDER_VERSION_INSTALLED);
-                                    } else {
-                                        marketApp.setStatus(MarketAppStatus.INSTALLED);
-                                    }
-                                    break;
+                    let applications = response.getApplications();
+                    applications.forEach((marketApp) => {
+                        for (let i = 0; i < installedApplications.length; i++) {
+                            if (marketApp.getAppKey().equals(installedApplications[i].getApplicationKey())) {
+                                if (this.installedAppCanBeUpdated(marketApp, installedApplications[i])) {
+                                    marketApp.setStatus(MarketAppStatus.OLDER_VERSION_INSTALLED);
+                                } else {
+                                    marketApp.setStatus(MarketAppStatus.INSTALLED);
                                 }
+                                break;
                             }
-                        });
-                        deferred.resolve(response);
+                        }
                     });
-                });
 
-            return deferred.promise;
+                    return response;
+                });
         }
 
         static installedAppCanBeUpdated(marketApp: MarketApplication, installedApp: Application): boolean {

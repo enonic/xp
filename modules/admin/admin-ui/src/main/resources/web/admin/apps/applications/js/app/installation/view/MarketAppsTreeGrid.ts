@@ -38,6 +38,8 @@ module app.installation.view {
 
         static MAX_FETCH_SIZE: number = 10;
 
+        private installApplications: api.application.Application[];
+
         constructor() {
 
             var nameColumn = new GridColumnBuilder<TreeNode<MarketApplication>>().
@@ -80,6 +82,8 @@ module app.installation.view {
                     setQuietErrorHandling(true).
                     setAutoLoad(false)
             );
+
+            this.installApplications = [];
 
             this.subscribeAndManageInstallClick();
             this.subscribeOnUninstallEvent();
@@ -206,6 +210,10 @@ module app.installation.view {
             this.initData(this.getRoot().getCurrentRoot().treeToList());
         }
 
+        updateInstallApplications(installApplications: api.application.Application[]) {
+            this.installApplications = installApplications;
+        }
+
         fetchChildren(): wemQ.Promise<MarketApplication[]> {
             let root = this.getRoot().getCurrentRoot();
             let children = root.getChildren();
@@ -215,7 +223,8 @@ module app.installation.view {
                 from--;
             }
 
-            return MarketApplicationsFetcher.fetchChildren(this.getVersion(), from, MarketAppsTreeGrid.MAX_FETCH_SIZE).then(
+            return MarketApplicationsFetcher.fetchChildren(this.getVersion(), this.installApplications, from,
+                MarketAppsTreeGrid.MAX_FETCH_SIZE).then(
                 (data: MarketApplicationResponse) => {
                     let meta = data.getMetadata();
                     let applications = children.map((el) => {
