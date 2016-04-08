@@ -18,13 +18,11 @@ module app.wizard {
 
     export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
 
-        isPrincipalFormValid: boolean;
+        protected principalType: PrincipalType;
 
-        principalType: PrincipalType;
+        protected principalPath: string;
 
-        principalPath: string;
-
-        principalNamedListeners: {(event: PrincipalNamedEvent): void}[];
+        protected principalNamedListeners: {(event: PrincipalNamedEvent): void}[];
 
         private parentOfSameType: boolean;
 
@@ -34,7 +32,6 @@ module app.wizard {
 
         constructor(params: PrincipalWizardPanelParams, callback: (wizard: PrincipalWizardPanel) => void) {
 
-            this.isPrincipalFormValid = false;
             this.principalNamedListeners = [];
 
             this.principalType = params.persistedType;

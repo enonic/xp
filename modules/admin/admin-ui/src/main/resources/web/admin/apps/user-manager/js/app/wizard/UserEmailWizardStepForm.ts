@@ -54,7 +54,7 @@ module app.wizard {
         }
 
         isValid(): boolean {
-            return this.email.isAvailable();
+            return this.email.isValid();
         }
 
         getEmail(): string {
