@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.postprocess.instruction;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -28,31 +29,61 @@ import static org.mockito.Mockito.when;
 
 public class MacroInstructionTest
 {
+    private MacroDescriptorService macroDescriptorService;
+
+    private MacroProcessorScriptFactory macroProcessorScriptFactory;
+
+    private MacroInstruction macroInstruction;
+
+    private PortalRequest portalRequest;
+
+    @Before
+    public void setUp()
+    {
+        macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
+        macroProcessorScriptFactory = Mockito.mock( MacroProcessorScriptFactory.class );
+
+        macroInstruction = new MacroInstruction();
+        macroInstruction.setMacroDescriptorService( macroDescriptorService );
+        macroInstruction.setMacroScriptFactory( macroProcessorScriptFactory );
+
+        portalRequest = new PortalRequest();
+        Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
+        portalRequest.setSite( site );
+        portalRequest.setContent( site );
+    }
+
     @Test
     public void testInstructionMacro()
         throws Exception
     {
-        MacroDescriptorService macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
-        MacroProcessorScriptFactory macroScriptFactory = Mockito.mock( MacroProcessorScriptFactory.class );
-
-        MacroInstruction instruction = new MacroInstruction();
-        instruction.setMacroDescriptorService( macroDescriptorService );
-        instruction.setMacroScriptFactory( macroScriptFactory );
-
-        PortalRequest portalRequest = new PortalRequest();
-        Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
-        portalRequest.setSite( site );
-        portalRequest.setContent( site );
-
         MacroKey key = MacroKey.from( "myapp:mymacro" );
         MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).build();
         when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
 
         MacroProcessor macro = ( ctx ) -> PortalResponse.create().body(
             ctx.getName() + ": param1=" + ctx.getParam( "param1" ) + ", body=" + ctx.getBody() ).build();
-        when( macroScriptFactory.fromScript( any() ) ).thenReturn( macro );
+        when( macroProcessorScriptFactory.fromScript( any() ) ).thenReturn( macro );
 
-        String outputHtml = instruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getAsString();
+        String outputHtml =
+            macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getAsString();
+        assertEquals( "mymacro: param1=value1, body=body", outputHtml );
+    }
+
+    @Test
+    public void testInstructionSystemMacro()
+        throws Exception
+    {
+        MacroKey key = MacroKey.from( ApplicationKey.SYSTEM, "mymacro" );
+        MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).build();
+        when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
+
+        MacroProcessor macro = ( ctx ) -> PortalResponse.create().body(
+            ctx.getName() + ": param1=" + ctx.getParam( "param1" ) + ", body=" + ctx.getBody() ).build();
+        when( macroProcessorScriptFactory.fromScript( any() ) ).thenReturn( macro );
+
+        String outputHtml =
+            macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getAsString();
         assertEquals( "mymacro: param1=value1, body=body", outputHtml );
     }
 
@@ -60,19 +91,8 @@ public class MacroInstructionTest
     public void testInstructionMissingMacro()
         throws Exception
     {
-        MacroDescriptorService macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
-        MacroProcessorScriptFactory macroScriptFactory = Mockito.mock( MacroProcessorScriptFactory.class );
-
-        MacroInstruction instruction = new MacroInstruction();
-        instruction.setMacroDescriptorService( macroDescriptorService );
-        instruction.setMacroScriptFactory( macroScriptFactory );
-
-        PortalRequest portalRequest = new PortalRequest();
-        Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
-        portalRequest.setSite( site );
-        portalRequest.setContent( site );
-
-        String outputHtml = instruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getAsString();
+        String outputHtml =
+            macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getAsString();
         assertEquals( "mymacro: param1=value1, body=body", outputHtml );
     }
 
