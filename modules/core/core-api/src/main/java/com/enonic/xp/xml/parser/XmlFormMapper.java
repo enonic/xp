@@ -109,7 +109,7 @@ public final class XmlFormMapper
         {
             builder.defaultValue( this.defaultMapper.build( root.getChild( "default" ) ) );
         }
-        buildConfig( builder, root.getChild( "config" ), inputTypeName );
+        buildConfig( builder, root.getChild( "config" ) );
 
         return builder.build();
     }
@@ -145,12 +145,16 @@ public final class XmlFormMapper
 
     private Occurrences buildOccurrence( final DomElement root )
     {
+        if ( root == null )
+        {
+            return Occurrences.create( 0, 1 );
+        }
         final int min = root.getAttributeAs( "minimum", Integer.class, 0 );
         final int max = root.getAttributeAs( "maximum", Integer.class, 0 );
         return Occurrences.create( min, max );
     }
 
-    private void buildConfig( final Input.Builder builder, final DomElement root, final InputTypeName inputTypeName )
+    private void buildConfig( final Input.Builder builder, final DomElement root )
     {
         builder.inputTypeConfig( this.configMapper.build( root ) );
     }

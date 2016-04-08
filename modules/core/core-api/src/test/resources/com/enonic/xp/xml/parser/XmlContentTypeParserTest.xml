@@ -43,5 +43,10 @@
         </field-set>
       </items>
     </item-set>
+    <input type="TextLine" name="defaultOccurrences">
+      <label>Default occurrences</label>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+    </input>
   </form>
 </content-type>
