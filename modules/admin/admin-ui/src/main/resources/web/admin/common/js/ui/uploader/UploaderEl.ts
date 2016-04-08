@@ -322,6 +322,7 @@ module api.ui.uploader {
                     if (!existingItem) {
                         newItemsToAppend.push(this.createResultItem(val));
                     } else {
+                        this.refreshExistingItem(existingItem, val);
                         existingItems.push(existingItem);
                     }
                 }
@@ -351,6 +352,10 @@ module api.ui.uploader {
             for (var key in toRemove) {
                 toRemove[key].remove();
             }
+        }
+
+        protected refreshExistingItem(existingItem: Element, value: string) {
+
         }
 
         protected getExistingItem(value: string): Element {

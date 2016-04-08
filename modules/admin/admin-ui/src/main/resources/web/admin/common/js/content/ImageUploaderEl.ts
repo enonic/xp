@@ -153,11 +153,7 @@ module api.content {
         private createImageEditor(value: string): ImageEditor {
 
             var contentId = new api.content.ContentId(value),
-                imgUrl = new ContentImageUrlResolver().
-                setContentId(contentId).
-                setTimestamp(new Date()).
-                setSource(true).
-                resolve();
+                imgUrl = this.resolveImageUrl(value);
 
             this.togglePlaceholder(true);
 
@@ -166,6 +162,14 @@ module api.content {
             imageEditor.setSrc(imgUrl);
 
             return imageEditor;
+        }
+
+        private resolveImageUrl(value: string): string {
+            return new ContentImageUrlResolver().
+                setContentId(new api.content.ContentId(value)).
+                setTimestamp(new Date()).
+                setSource(true).
+                resolve();
         }
 
         private subscribeImageEditorOnEvents(imageEditor: ImageEditor, contentId: api.content.ContentId) {
@@ -230,13 +234,23 @@ module api.content {
             var resultOffset = this.getResultContainer().getEl().getOffset();
 
             imageEditor.getEl().setTopPx(resultOffset.top).
-            setLeftPx(resultOffset.left);
+                setLeftPx(resultOffset.left);
         }
 
         protected getExistingItem(value: string): api.dom.Element {
             return this.imageEditors.filter(elem => {
                 return !!elem.getSrc() && elem.getSrc().indexOf(value) > -1;
             })[0];
+        }
+
+        protected refreshExistingItem(existingItem: api.dom.Element, value: string) {
+            for (var i = 0; i < this.imageEditors.length; i++) {
+                var editor = this.imageEditors[i];
+                if (existingItem == editor) {
+                    editor.setSrc(this.resolveImageUrl(value));
+                    break;
+                }
+            }
         }
 
         createResultItem(value: string): api.dom.DivEl {
