@@ -110,7 +110,7 @@ module api.ui.text {
         }
 
         isValid(): boolean {
-            return this.input.isValid() && this.isAvailable();
+            return this.input.isValid() && !StringHelper.isEmpty(this.doGetValue()) && this.isAvailable();
         }
 
         validate(): boolean {
