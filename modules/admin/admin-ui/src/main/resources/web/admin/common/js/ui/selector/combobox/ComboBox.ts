@@ -470,8 +470,27 @@ module api.ui.selector.combobox {
 
         private setupListeners() {
 
+            let combobox = this;
+
+            let comboBoxOnBlurEventHandler = (event: SelectorOnBlurEvent) => {
+                if (combobox === event.getSelector()) {
+                    return;
+                } else {
+                    combobox.hideDropdown();
+                    combobox.active = false;
+                }
+
+            };
+
+            SelectorOnBlurEvent.on(comboBoxOnBlurEventHandler);
+
+            this.onRemoved(() => {
+                SelectorOnBlurEvent.un(comboBoxOnBlurEventHandler);
+            });
+
             this.onClicked((event: MouseEvent) => {
                 this.setOnBlurListener();
+                new SelectorOnBlurEvent(combobox).fire();
             });
 
             this.onScrolled((event: WheelEvent) => {
@@ -481,6 +500,7 @@ module api.ui.selector.combobox {
             this.input.onClicked((event: MouseEvent) => {
                 this.giveInputFocus();
                 event.stopPropagation();
+                new SelectorOnBlurEvent(combobox).fire();
             });
 
             this.comboBoxDropdown.onRowSelection((event: DropdownGridRowSelectedEvent) => {
@@ -506,6 +526,8 @@ module api.ui.selector.combobox {
 
                     }
                 }
+
+                new SelectorOnBlurEvent(combobox).fire();
             });
 
             if (this.applySelectionsButton) {
@@ -518,8 +540,7 @@ module api.ui.selector.combobox {
                 this.preservedInputValueChangedEvent = event;
                 if (this.delayedInputValueChangedHandling == 0) {
                     this.handleInputValueChanged();
-                }
-                else {
+                } else {
                     this.setEmptyDropdownText("Just keep on typing...");
                     this.delayedHandleInputValueChangedFnCall.delayCall();
                 }

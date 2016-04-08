@@ -286,6 +286,24 @@ module api.ui.selector.dropdown {
 
         private setupListeners() {
 
+            let dropdown = this;
+
+            let dropdownOnBlurEventHandler = (event: SelectorOnBlurEvent) => {
+                if (dropdown === event.getSelector()) {
+                    return;
+                } else {
+                    dropdown.hideDropdown();
+                    dropdown.active = false;
+                }
+
+            };
+
+            SelectorOnBlurEvent.on(dropdownOnBlurEventHandler);
+
+            this.onRemoved(() => {
+                SelectorOnBlurEvent.un(dropdownOnBlurEventHandler);
+            });
+
             this.onClicked(() => {
                 this.setOnBlurListener();
             });
@@ -298,6 +316,8 @@ module api.ui.selector.dropdown {
                     this.showDropdown();
                 }
                 this.giveFocus();
+
+                new SelectorOnBlurEvent(dropdown).fire();
             });
 
             this.input.onValueChanged((event: api.ValueChangedEvent) => {
@@ -379,7 +399,7 @@ module api.ui.selector.dropdown {
                 combobox.hideDropdown();
                 combobox.active = false;
                 api.dom.Body.get().getEl().removeEventListener('click', hideDropdownOnBlur);
-            }
+            };
 
             // set callback function on document body if combobox wasn't marked as active
             if (!this.active) {

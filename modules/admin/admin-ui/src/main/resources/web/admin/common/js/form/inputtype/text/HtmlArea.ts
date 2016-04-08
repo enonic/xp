@@ -95,6 +95,7 @@ module api.form.inputtype.text {
                 this.notifyFocused(e);
 
                 api.util.AppHelper.dispatchCustomEvent("focusin", this);
+                new api.ui.selector.SelectorOnBlurEvent(this).fire();
             };
 
             var onNodeChangeHandler = (e) => {
