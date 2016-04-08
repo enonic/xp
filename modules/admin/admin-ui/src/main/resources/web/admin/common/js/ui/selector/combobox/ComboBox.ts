@@ -475,10 +475,10 @@ module api.ui.selector.combobox {
             let comboBoxOnBlurEventHandler = (event: SelectorOnBlurEvent) => {
                 if (combobox === event.getSelector()) {
                     return;
-                } else {
-                    combobox.hideDropdown();
-                    combobox.active = false;
                 }
+
+                combobox.hideDropdown();
+                combobox.active = false;
 
             };
 
@@ -486,6 +486,19 @@ module api.ui.selector.combobox {
 
             this.onRemoved(() => {
                 SelectorOnBlurEvent.un(comboBoxOnBlurEventHandler);
+            });
+
+            this.onFocusOut(() => {
+                timeout = setTimeout(() => {
+                    combobox.hideDropdown();
+                    combobox.active = false;
+                }, 200);
+            });
+
+            var timeout;
+
+            this.onFocusIn(() => {
+                clearTimeout(timeout);
             });
 
             this.onClicked((event: MouseEvent) => {
