@@ -50,13 +50,14 @@ public class BuiltinMacroDescriptors
         return MacroDescriptor.create().
             key( macroKey ).
             displayName( "YouTube macro" ).
+            description( "YouTube macro" ).
             form( form ).
             build();
     }
 
     private MacroDescriptor generateTwitterMacroDescriptor()
     {
-        final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, "twitter" );
+        final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, "tweet" );
         final Form form = Form.create().
             addFormItem( createTextLineInput( "url", "Url" ).occurrences( 1, 1 ).build() ).
             addFormItem( createTextLineInput( "lang", "Language" ).occurrences( 0, 1 ).build() ).
@@ -65,6 +66,7 @@ public class BuiltinMacroDescriptors
         return MacroDescriptor.create().
             key( macroKey ).
             displayName( "Twitter macro" ).
+            description( "Twitter macro" ).
             form( form ).
             build();
     }
@@ -73,9 +75,15 @@ public class BuiltinMacroDescriptors
     {
         final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, "code" );
 
+        final Form form = Form.create().
+            addFormItem( createTextAreaInput( "body", "Body" ).occurrences( 1, 1 ).build() ).
+            build();
+
         return MacroDescriptor.create().
             key( macroKey ).
             displayName( "Twitter macro" ).
+            description( "Twitter macro" ).
+            form( form ).
             build();
     }
 
@@ -83,6 +91,15 @@ public class BuiltinMacroDescriptors
     {
         return Input.create().
             inputType( InputTypeName.TEXT_LINE ).
+            label( label ).
+            name( name ).
+            immutable( true );
+    }
+
+    private static Input.Builder createTextAreaInput( final String name, final String label )
+    {
+        return Input.create().
+            inputType( InputTypeName.TEXT_AREA ).
             label( label ).
             name( name ).
             immutable( true );

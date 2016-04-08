@@ -91,7 +91,7 @@ public final class MacroDescriptorServiceImpl
 
     private boolean isSystem( ApplicationKey applicationKey )
     {
-        return ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( applicationKey );
+        return ApplicationKey.SYSTEM.equals( applicationKey );
     }
 
     private ResourceProcessor<MacroKey, MacroDescriptor> newProcessor( final MacroKey key )
