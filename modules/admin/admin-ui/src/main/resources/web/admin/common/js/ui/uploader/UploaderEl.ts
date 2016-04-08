@@ -81,14 +81,14 @@ module api.ui.uploader {
             // init defaults
             this.initConfig(config);
 
-            if (config.showInput) {
+            if (this.config.showInput) {
                 this.input = api.ui.text.TextInput.middle();
                 this.input.setPlaceholder("Paste URL to image here");
                 this.appendChild(this.input);
             }
 
-            if (config.value) {
-                this.value = config.value;
+            if (this.config.value) {
+                this.value = this.config.value;
             }
 
             // need the container to constrain plupload created dropzone
@@ -99,7 +99,7 @@ module api.ui.uploader {
             this.dropzone.getEl().setTabIndex(-1);// for mac default settings
             this.getEl().setTabIndex(0);
             this.dropzoneContainer.appendChild(this.dropzone);
-            if (config.hideDropZone) {
+            if (this.config.hideDropZone) {
                 this.dropzoneContainer.getEl().setAttribute("hidden", "true");
             }
             this.appendChild(this.dropzoneContainer);
@@ -198,13 +198,9 @@ module api.ui.uploader {
             });
         }
 
-        public setResetVisible(visible: boolean) {
+        protected setResetVisible(visible: boolean) {
             this.config.showReset = visible;
             this.resetBtn.setVisible(visible);
-        }
-
-        getResetButton(): CloseButton {
-            return this.resetBtn;
         }
 
         protected initHandler() {

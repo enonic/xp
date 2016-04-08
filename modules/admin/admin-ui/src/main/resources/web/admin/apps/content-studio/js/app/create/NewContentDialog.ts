@@ -151,6 +151,8 @@ module app.create {
                 },
                 name: 'new-content-uploader',
                 showResult: false,
+                showReset: false,
+                showCancel: false,
                 allowMultiSelection: true,
                 deferred: true  // wait till the window is shown
             });
@@ -406,11 +408,7 @@ module app.create {
         private toggleUploaderEnabled() {
             this.uploaderEnabled = !this.parentContent || !this.parentContent.getType().isTemplateFolder();
 
-            if (this.uploaderEnabled) {
-                this.removeClass("no-uploader-el");
-            } else {
-                this.addClass("no-uploader-el");
-            }
+            this.toggleClass("no-uploader-el", !this.uploaderEnabled);
         }
 
         private resetFileInputWithUploader() {
