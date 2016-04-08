@@ -49,8 +49,8 @@ public class BuiltinMacroDescriptors
 
         return MacroDescriptor.create().
             key( macroKey ).
-            displayName( "YouTube macro" ).
-            description( "YouTube macro" ).
+            displayName( "Youtube macro" ).
+            description( "Youtube macro" ).
             form( form ).
             build();
     }
@@ -81,8 +81,8 @@ public class BuiltinMacroDescriptors
 
         return MacroDescriptor.create().
             key( macroKey ).
-            displayName( "Twitter macro" ).
-            description( "Twitter macro" ).
+            displayName( "Embedded code macro" ).
+            description( "Embedded code macro" ).
             form( form ).
             build();
     }
