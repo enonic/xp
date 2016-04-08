@@ -45,14 +45,16 @@
   }
 
   &.available {
-    .form-input {
-      .input-border(@available-color);
-      .input-glow(@available-color);
-    }
+    &:not(.just-shown) {
+      .form-input {
+        .input-border(@available-color);
+        .input-glow(@available-color);
+      }
 
-    &:after {
-      color: (@available-color);
-      content: 'Available';
+      &:after {
+        color: (@available-color);
+        content: 'Available';
+      }
     }
   }
 
