@@ -16,9 +16,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.macro.MacroContext;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
+import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -103,7 +103,7 @@ public class MacroProcessorScriptTest
     {
         final PortalResponse response = execute( "myapplication:/macro/macro.js" );
         assertEquals(
-            "Macro context: {\"name\":\"macroName\",\"body\":\"body\",\"params\":{\"firstParam\":\"firstParamValue\",\"secondParam\":\"secondParamValue\"}}",
+            "Macro context: {\"name\":\"macroName\",\"body\":\"body\",\"params\":{\"firstParam\":\"firstParamValue\",\"secondParam\":\"secondParamValue\"},\"request\":{}}",
             response.getBody() );
         assertEquals( 1, response.getContributions( HtmlTag.HEAD_END ).size() );
         assertEquals( 1, response.getContributions( HtmlTag.BODY_END ).size() );

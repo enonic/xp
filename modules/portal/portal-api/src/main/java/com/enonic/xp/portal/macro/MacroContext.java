@@ -1,10 +1,12 @@
-package com.enonic.xp.macro;
+package com.enonic.xp.portal.macro;
 
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
+
+import com.enonic.xp.portal.PortalRequest;
 
 @Beta
 public final class MacroContext
@@ -15,11 +17,14 @@ public final class MacroContext
 
     private final ImmutableMap<String, String> params;
 
+    private final PortalRequest request;
+
     private MacroContext( final Builder builder )
     {
         this.name = builder.name;
         this.body = builder.body;
         this.params = builder.paramsBuilder.build();
+        this.request = builder.request;
     }
 
     public String getName()
@@ -47,6 +52,11 @@ public final class MacroContext
         return params;
     }
 
+    public PortalRequest getRequest()
+    {
+        return request;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -58,20 +68,27 @@ public final class MacroContext
         {
             return false;
         }
-
         final MacroContext that = (MacroContext) o;
-        return Objects.equals( this.name, that.name ) && Objects.equals( this.body, that.body ) && this.params.equals( that.params );
+        return Objects.equals( name, that.name ) &&
+            Objects.equals( body, that.body ) &&
+            Objects.equals( params, that.params ) &&
+            Objects.equals( request, that.request );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( name, body, params );
+        return Objects.hash( name, body, params, request );
     }
 
+    @Override
     public String toString()
     {
-        return this.name + "=" + this.body + "[" + Joiner.on( "," ).withKeyValueSeparator( "=" ).join( this.params ) + "]";
+        return MoreObjects.toStringHelper( this ).
+            add( "name", name ).
+            add( "body", body ).
+            add( "params", params ).
+            add( "request", request ).toString();
     }
 
     public static Builder create()
@@ -93,6 +110,8 @@ public final class MacroContext
 
         private final ImmutableMap.Builder<String, String> paramsBuilder;
 
+        private PortalRequest request;
+
         public Builder()
         {
             this.paramsBuilder = ImmutableMap.builder();
@@ -104,6 +123,7 @@ public final class MacroContext
             this.body = macroContext.body;
             this.paramsBuilder = ImmutableMap.builder();
             this.paramsBuilder.putAll( macroContext.params );
+            this.request = macroContext.request;
         }
 
         public Builder name( final String name )
@@ -121,6 +141,12 @@ public final class MacroContext
         public Builder param( final String name, final String value )
         {
             this.paramsBuilder.put( name, value );
+            return this;
+        }
+
+        public Builder request( final PortalRequest request )
+        {
+            this.request = request;
             return this;
         }
 
