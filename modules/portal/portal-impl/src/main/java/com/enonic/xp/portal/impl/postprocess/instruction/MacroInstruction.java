@@ -1,8 +1,11 @@
 package com.enonic.xp.portal.impl.postprocess.instruction;
 
+import java.util.Objects;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.macro.MacroContext;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
@@ -14,7 +17,6 @@ import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.site.SiteConfig;
 
 @Component(immediate = true)
 public final class MacroInstruction
@@ -76,17 +78,23 @@ public final class MacroInstruction
 
     private MacroDescriptor resolveMacro( final Site site, final String macroName )
     {
-        for ( SiteConfig siteConfig : site.getSiteConfigs() )
-        {
-            final MacroKey macroKey = MacroKey.from( siteConfig.getApplicationKey(), macroName );
-            final MacroDescriptor macroDescriptor = macroDescriptorService.getByKey( macroKey );
+        //Searches for the macro in the applications associated to the site
+        MacroDescriptor macroDescriptor = site.getSiteConfigs().
+            stream().
+            map( siteConfig -> MacroKey.from( siteConfig.getApplicationKey(), macroName ) ).
+            map( macroDescriptorService::getByKey ).
+            filter( Objects::nonNull ).findFirst().
+            orElse( null );
 
-            if ( macroDescriptor != null )
-            {
-                return macroDescriptor;
-            }
+        //If there is no corresponding macro
+        if ( macroDescriptor == null )
+        {
+            //Searches in the builtin macros
+            final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, macroName );
+            macroDescriptor = macroDescriptorService.getByKey( macroKey );
         }
-        return null;
+
+        return macroDescriptor;
     }
 
     private MacroContext createContext( final Instruction macroInstruction )
