@@ -10,9 +10,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import com.enonic.xp.macro.MacroContext;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.impl.ContentFixtures;
+import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.web.HttpMethod;
 
 public class MacroContextMapperTest
 {
@@ -50,11 +54,33 @@ public class MacroContextMapperTest
     @Before
     public void setup()
     {
+        PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMethod( HttpMethod.GET );
+        portalRequest.setScheme( "http" );
+        portalRequest.setHost( "localhost" );
+        portalRequest.setPort( 80 );
+        portalRequest.setPath( "/portal/live/master/a/b" );
+        portalRequest.setUrl( "http://localhost/portal/live/master/a/b?param1=value1" );
+        portalRequest.getParams().put( "param1", "value1" );
+        portalRequest.getParams().put( "param2", "value2" );
+        portalRequest.getParams().put( "param3", "value3-A" );
+        portalRequest.getParams().put( "param3", "value3-B" );
+
+        portalRequest.getHeaders().put( "header1", "value1" );
+        portalRequest.getHeaders().put( "header2", "value2" );
+        portalRequest.getHeaders().put( "header3", "value3" );
+
+        portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
+        portalRequest.setContent( ContentFixtures.newContent() );
+        portalRequest.setSite( ContentFixtures.newSite() );
+        portalRequest.setPageDescriptor( ContentFixtures.newPageDescriptor() );
+
         this.macroContext = MacroContext.create().
             name( "macroName" ).
             body( "body" ).
             param( "firstParam", "firstParamValue" ).
             param( "secondParam", "secondParamValue" ).
+            request( portalRequest ).
             build();
     }
 
@@ -64,4 +90,5 @@ public class MacroContextMapperTest
     {
         assertJson( "mapping", new MacroContextMapper( this.macroContext ) );
     }
+
 }

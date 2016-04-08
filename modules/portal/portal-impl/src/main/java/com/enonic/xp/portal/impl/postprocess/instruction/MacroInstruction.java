@@ -3,13 +3,13 @@ package com.enonic.xp.portal.impl.postprocess.instruction;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.macro.MacroContext;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.RenderException;
+import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
@@ -69,7 +69,7 @@ public final class MacroInstruction
 
         // execute macro
         final MacroProcessor macroProcessor = macroScriptFactory.fromScript( macroDescriptor.toResourceKey() );
-        final MacroContext context = createContext( macroInstruction );
+        final MacroContext context = createContext( macroInstruction, portalRequest );
 
         return macroProcessor.process( context );
     }
@@ -89,7 +89,7 @@ public final class MacroInstruction
         return null;
     }
 
-    private MacroContext createContext( final Instruction macroInstruction )
+    private MacroContext createContext( final Instruction macroInstruction, final PortalRequest request )
     {
         final MacroContext.Builder context = MacroContext.create().name( macroInstruction.attribute( MACRO_NAME ) );
         for ( String name : macroInstruction.attributeNames() )
@@ -101,6 +101,7 @@ public final class MacroInstruction
             context.param( name, macroInstruction.attribute( name, "" ) );
             context.body( macroInstruction.attribute( MACRO_BODY ) );
         }
+        context.request( request );
         return context.build();
     }
 

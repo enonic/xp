@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.macro;
 
 import org.junit.Test;
 
-import com.enonic.xp.macro.MacroContext;
+import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.macro.MacroProcessor;
 
 import static org.junit.Assert.*;

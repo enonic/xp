@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.macro;
 
-import com.enonic.xp.macro.MacroContext;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.macro.MacroProcessor;
 
 public class YoutubeMacroProcessor
