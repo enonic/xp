@@ -23,20 +23,9 @@ module api.content.page.region {
 
             config.loader.onLoadedData((event: LoadedDataEvent<ContentSummary>) => {
 
-                var descriptors: ContentSummary[] = event.getData();
-                descriptors.forEach((descriptor: ContentSummary) => {
-
-                    var indices: string[] = [];
-                    indices.push(descriptor.getDisplayName());
-                    indices.push(descriptor.getName().toString());
-
-                    var option = <Option<ContentSummary>>{
-                        value: descriptor.getId().toString(),
-                        displayValue: descriptor,
-                        indices: indices
-                    };
-
-                    this.addOption(option);
+                var fragments: ContentSummary[] = event.getData();
+                fragments.forEach((fragment: ContentSummary) => {
+                    this.addOption(this.newOption(fragment));
                 });
             });
 
@@ -46,10 +35,28 @@ module api.content.page.region {
             });
         }
 
-        setSelection(descriptor: ContentSummary) {
+        private newOption(fragment: ContentSummary): Option<ContentSummary> {
+            let indices: string[] = [];
+            indices.push(fragment.getDisplayName());
+            indices.push(fragment.getName().toString());
 
-            if (descriptor) {
-                var option = this.getOptionByValue(descriptor.getId().toString());
+            return <Option<ContentSummary>>{
+                value: fragment.getId().toString(),
+                displayValue: fragment,
+                indices: indices
+            };
+        }
+
+        addFragmentOption(fragment: ContentSummary) {
+            if (fragment) {
+                this.addOption(this.newOption(fragment));
+            }
+        }
+
+        setSelection(fragment: ContentSummary) {
+
+            if (fragment) {
+                var option = this.getOptionByValue(fragment.getId().toString());
                 if (option) {
                     this.selectOption(option, true);
                 }
