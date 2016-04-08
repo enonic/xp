@@ -660,7 +660,13 @@
     -o-background-size: cover;
     background-size: cover;
 
-    transition: opacity 1s;
+    background-position: right center;
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+
+    transition: opacity 2s;
     &.empty {
       opacity: 0;
     }
