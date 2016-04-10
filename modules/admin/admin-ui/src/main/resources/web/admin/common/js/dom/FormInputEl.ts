@@ -73,7 +73,8 @@ module api.dom {
             if (FormInputEl.debug) {
                 console.groupCollapsed(this.toString() + '.setValue(' + value + ')');
             }
-            if (this.oldValue != value) {
+            // force set value in case of user input regardless of old value
+            if (this.oldValue != value || userInput) {
                 if (FormInputEl.debug) {
                     console.debug('update value from "' + this.oldValue + '" to "' + value + '"');
                 }
