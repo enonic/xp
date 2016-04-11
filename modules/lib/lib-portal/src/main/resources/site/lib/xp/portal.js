@@ -125,6 +125,22 @@ exports.serviceUrl = function (params) {
 };
 
 /**
+ * This function generates a URL pointing to the login service of the ID provider corresponding to the current execution context.
+ *
+ *
+ * @param {object} params Input parameters as JSON.
+ * @param {string} [params.redirectUrl] The URL to redirect to after the login.
+ * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
+ * @param {object} [params.params] Custom parameters to append to the url.
+ *
+ * @returns {string} The generated URL.
+ */
+exports.loginUrl = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.portal.url.LoginUrlHandler');
+    return bean.createUrl(__.toScriptValue(params));
+};
+
+/**
  * This function generates a URL.
  *
  * @example-ref examples/portal/url.js

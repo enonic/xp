@@ -29,6 +29,7 @@ function handleGet(req) {
     var userIconUrl = portal.assetUrl({path: "icons/user.svg"});
     var launcherCss = portal.assetUrl({path: "styles/_launcher.css"});
     var logoutServiceUrl = portal.serviceUrl({service: 'logout'});
+    var loginUrl = portal.loginUrl({});
     var user = auth.getUser();
 
     var params = {
@@ -38,6 +39,7 @@ function handleGet(req) {
         userIconUrl: userIconUrl,
         user: user,
         logoutServiceUrl: logoutServiceUrl,
+        loginUrl: loginUrl,
         homeUrl: uriScriptHelper.generateAdminToolUri(),
         installation: uriScriptHelper.getInstallation() || "Tools",
         launcherCss: launcherCss
