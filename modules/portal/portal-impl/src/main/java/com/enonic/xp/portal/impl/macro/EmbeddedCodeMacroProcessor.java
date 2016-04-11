@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.macro;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.macro.MacroProcessor;
@@ -24,7 +22,7 @@ public class EmbeddedCodeMacroProcessor
             return null;
         }
 
-        final String html = CODE_WRAPPER_START + StringEscapeUtils.escapeHtml( context.getBody() ) + CODE_WRAPPER_END;
+        final String html = CODE_WRAPPER_START + context.getBody() + CODE_WRAPPER_END;
         return PortalResponse.create().body( html ).build();
     }
 }

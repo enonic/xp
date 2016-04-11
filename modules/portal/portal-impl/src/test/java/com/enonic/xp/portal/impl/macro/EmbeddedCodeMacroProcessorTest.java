@@ -34,7 +34,7 @@ public class EmbeddedCodeMacroProcessorTest
             build();
 
         assertEquals(
-            "<pre style=\"background-color: #f8f8f8; border: 1px solid #dfdfdf; white-space: pre-wrap; word-wrap: break-word; margin: 1.5em 0; padding: 0.125rem 0.3125rem 0.0625rem;\"><code>&lt;script&gt;alert(&quot;I am XSS&quot;);&lt;/script&quot;</code></pre>",
+            "<pre style=\"background-color: #f8f8f8; border: 1px solid #dfdfdf; white-space: pre-wrap; word-wrap: break-word; margin: 1.5em 0; padding: 0.125rem 0.3125rem 0.0625rem;\"><code><script>alert(\"I am XSS\");</script\"</code></pre>",
             processor.process( macroContext1 ).getBody() );
 
         final MacroContext macroContext2 = MacroContext.create().name( "name" ).
@@ -42,7 +42,7 @@ public class EmbeddedCodeMacroProcessorTest
             build();
 
         assertEquals(
-            "<pre style=\"background-color: #f8f8f8; border: 1px solid #dfdfdf; white-space: pre-wrap; word-wrap: break-word; margin: 1.5em 0; padding: 0.125rem 0.3125rem 0.0625rem;\"><code>&lt;tag1&gt;&lt;tag2&gt;body&lt;/tag2&gt;&lt;/tag1&gt;</code></pre>",
+            "<pre style=\"background-color: #f8f8f8; border: 1px solid #dfdfdf; white-space: pre-wrap; word-wrap: break-word; margin: 1.5em 0; padding: 0.125rem 0.3125rem 0.0625rem;\"><code><tag1><tag2>body</tag2></tag1></code></pre>",
             processor.process( macroContext2 ).getBody() );
     }
 }
