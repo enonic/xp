@@ -141,6 +141,7 @@ module api.liveedit {
                 var clone = this.clone();
                 this.replaceWith(clone);
                 clone.select();
+                clone.hideContextMenu();
 
                 new api.liveedit.ComponentResetEvent(clone, this).fire();
             };

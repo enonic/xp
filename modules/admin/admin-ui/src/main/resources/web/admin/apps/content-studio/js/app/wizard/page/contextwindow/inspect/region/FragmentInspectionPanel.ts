@@ -108,6 +108,12 @@ module app.wizard.page.contextwindow.inspect.region {
 
         private setSelectorValue(fragment: ContentSummary) {
             this.handleSelectorEvents = false;
+            if (fragment) {
+                var option = this.fragmentSelector.getOptionByValue(fragment.getId().toString());
+                if (!option) {
+                    this.fragmentSelector.addFragmentOption(fragment);
+                }
+            }
             this.fragmentSelector.setSelection(fragment);
             this.handleSelectorEvents = true;
         }

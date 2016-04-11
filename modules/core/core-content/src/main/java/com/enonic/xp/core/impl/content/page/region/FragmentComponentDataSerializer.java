@@ -4,6 +4,7 @@ package com.enonic.xp.core.impl.content.page.region;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.region.FragmentComponent;
+import com.enonic.xp.util.Reference;
 
 public class FragmentComponentDataSerializer
     extends ComponentDataSerializer<FragmentComponent, FragmentComponent>
@@ -18,7 +19,7 @@ public class FragmentComponentDataSerializer
         applyComponentToData( component, asData );
         if ( component.getFragment() != null )
         {
-            asData.addString( FRAGMENT_PROPERTY, component.getFragment().toString() );
+            asData.addReference( FRAGMENT_PROPERTY, Reference.from( component.getFragment().toString() ) );
         }
         if ( component.hasConfig() )
         {
@@ -33,7 +34,7 @@ public class FragmentComponentDataSerializer
         applyComponentFromData( component, asData );
         if ( asData.isNotNull( FRAGMENT_PROPERTY ) )
         {
-            component.fragment( ContentId.from( asData.getString( FRAGMENT_PROPERTY ) ) );
+            component.fragment( ContentId.from( asData.getReference( FRAGMENT_PROPERTY ) ) );
         }
         if ( asData.hasProperty( "config" ) )
         {

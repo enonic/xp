@@ -35,7 +35,7 @@ module api.form.inputtype.support {
                     if (BaseInputTypeManagingAdd.debug) {
                         console.debug('BaseInputTypeManagingAdd: propertyArrayListener', args);
                     }
-                    this.update(this.propertyArray, true);
+                    this.update(this.propertyArray, true).done();
                 }
             };
         }

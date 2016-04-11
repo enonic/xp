@@ -103,9 +103,10 @@ public final class RepoNodesHandler
             throw new UpgradeException( "Expected repository directory, found '" + repository + "'" );
         }
 
-        try (final Stream<Path> branches = IOHelper.getChildren( repository ).filter( IGNORE_FILES_FILTER ))
+        try (final Stream<Path> repositoryChildren = IOHelper.getChildren( repository ))
         {
-            branches.forEach( ( branch ) -> this.processBranch( branch, repoName ) );
+            repositoryChildren.filter( IGNORE_FILES_FILTER ).
+                forEach( ( branch ) -> this.processBranch( branch, repoName ) );
         }
 
     }
