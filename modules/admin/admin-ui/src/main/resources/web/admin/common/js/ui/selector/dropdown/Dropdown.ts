@@ -286,8 +286,22 @@ module api.ui.selector.dropdown {
 
         private setupListeners() {
 
-            this.onClicked(() => {
-                this.setOnBlurListener();
+            let focusoutTimeout = 0;
+
+            this.onFocusOut(() => {
+                focusoutTimeout = setTimeout(() => {
+                    this.hideDropdown();
+                    this.active = false;
+                }, 50);
+            });
+
+            this.onFocusIn(() => {
+                clearTimeout(focusoutTimeout);
+            });
+
+            // Prevent focus loss on mouse down
+            this.onMouseDown((event: MouseEvent) => {
+                event.preventDefault();
             });
 
             this.dropdownHandle.onClicked((event: any) => {
@@ -353,39 +367,6 @@ module api.ui.selector.dropdown {
 
                 this.input.getHTMLElement().focus();
             });
-        }
-
-        /**
-         * Setup event listener that hides dropdown when combobox loses focus.
-         * Listener is added to document body when combobox makes active and removed on click outside of combobox.
-         */
-        private setOnBlurListener() {
-            // reference to this combobox to use it in closure
-            var combobox = this;
-
-            // function variable to be able to add and remove it as listener
-            var hideDropdownOnBlur = function (event: Event) {
-
-                var comboboxHtmlElement = combobox.getHTMLElement();
-
-                // check if event occured inside combobox then do nothing and return
-                for (var element = event.target; element; element = (<any>element).parentNode) {
-                    if (element == comboboxHtmlElement) {
-                        return;
-                    }
-                }
-
-                // if combobox lost focus then hide dropdown options and remove unnecessary listener
-                combobox.hideDropdown();
-                combobox.active = false;
-                api.dom.Body.get().getEl().removeEventListener('click', hideDropdownOnBlur);
-            }
-
-            // set callback function on document body if combobox wasn't marked as active
-            if (!this.active) {
-                this.active = true;
-                api.dom.Body.get().onClicked(hideDropdownOnBlur);
-            }
         }
 
         onOptionSelected(listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) {
