@@ -20,6 +20,7 @@ module api.content.form.inputtype.image {
     import Option = api.ui.selector.Option;
     import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
 
+    import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
     import UploadItem = api.ui.uploader.UploadItem;
     import FileUploadedEvent = api.ui.uploader.FileUploadedEvent;
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
@@ -51,6 +52,8 @@ module api.content.form.inputtype.image {
 
         private allowedContentPaths: string[];
 
+        private contentDeletedListener: (event: ContentDeletedEvent) => void;
+
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("image-selector");
             this.addClass("input-type-view");
@@ -75,18 +78,24 @@ module api.content.form.inputtype.image {
                 this.updateSelectedItemsIcons();
             });
 
-            api.content.event.ContentDeletedEvent.on((event) => {
-                event.getDeletedItems().filter((deletedItem) => {
-                    return !!deletedItem;
-                }).forEach((deletedItem) => {
+            if (!this.contentDeletedListener) {
+                this.contentDeletedListener = (event) => {
+                    event.getDeletedItems().filter((deletedItem) => {
+                        return !!deletedItem;
+                    }).forEach((deletedItem) => {
 
-                    var option = this.selectedOptionsView.getById(deletedItem.getContentId().toString());
-                    if (option != null) {
-                        this.selectedOptionsView.removeSelectedOptions([option]);
-                    }
-                });
-            });
+                        var option = this.selectedOptionsView.getById(deletedItem.getContentId().toString());
+                        if (option != null) {
+                            this.selectedOptionsView.removeSelectedOptions([option]);
+                        }
+                    });
+                }
+            }
+            ContentDeletedEvent.on(this.contentDeletedListener);
 
+            this.onRemoved((event) => {
+                ContentDeletedEvent.un(this.contentDeletedListener);
+            })
         }
 
         public getContentComboBox(): ImageContentComboBox {

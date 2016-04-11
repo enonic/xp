@@ -51,10 +51,6 @@ module api.content.form.inputtype.upload {
 
             this.input = input;
 
-            if (property.hasNonNullValue()) {
-                this.updateProperty(property);
-            }
-
             this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
                 var content = event.getUploadItem().getModel(),
                     value = this.imageUploader.getMediaValue(content);
@@ -88,7 +84,7 @@ module api.content.form.inputtype.upload {
                 }
             });
 
-            return wemQ<void>(null);
+            return property.hasNonNullValue() ? this.updateProperty(property) : wemQ<void>(null);
         }
 
 
@@ -96,18 +92,18 @@ module api.content.form.inputtype.upload {
             this.ignorePropertyChange = true;
             var property = this.getProperty();
             switch (property.getType()) {
-                case ValueTypes.DATA:
-                    // update the attachment name, and reset the focal point data
-                    var set = property.getPropertySet();
-                    set.setProperty('attachment', 0, value);
-                    set.removeProperty('focalPoint', 0);
-                    set.removeProperty('cropPosition', 0);
-                    set.removeProperty('zoomPosition', 0);
+            case ValueTypes.DATA:
+                // update the attachment name, and reset the focal point data
+                var set = property.getPropertySet();
+                set.setProperty('attachment', 0, value);
+                set.removeProperty('focalPoint', 0);
+                set.removeProperty('cropPosition', 0);
+                set.removeProperty('zoomPosition', 0);
 
-                    break;
-                case ValueTypes.STRING:
-                    property.setValue(value);
-                    break;
+                break;
+            case ValueTypes.STRING:
+                property.setValue(value);
+                break;
             }
             this.validate();
             this.ignorePropertyChange = false;
@@ -116,20 +112,18 @@ module api.content.form.inputtype.upload {
         updateProperty(property: api.data.Property, unchangedOnly?: boolean): Q.Promise<void> {
             if ((!unchangedOnly || !this.imageUploader.isDirty()) && this.getContext().contentId) {
 
-                this.imageUploader.setValue(this.getContext().contentId.toString());
-                //TODO: should we pass Content.getId() instead of ContentId in property to spare this request ?
                 return new api.content.GetContentByIdRequest(this.getContext().contentId).
-                sendAndParse().
-                then((content: api.content.Content) => {
+                    sendAndParse().
+                    then((content: api.content.Content) => {
 
-                    this.imageUploader.setOriginalDimensions(content);
-                    this.imageUploader.setValue(content.getId());
+                        this.imageUploader.setOriginalDimensions(content);
+                        this.imageUploader.setValue(content.getId(), false, true);
 
-                    this.configEditorsProperties(content);
+                        this.configEditorsProperties(content);
 
-                }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                });
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    });
             }
             return wemQ<void>(null);
         }
@@ -163,21 +157,21 @@ module api.content.form.inputtype.upload {
         private getPropertyContainer(property: Property) {
             var container;
             switch (property.getType()) {
-                case ValueTypes.DATA:
-                    container = property.getPropertySet();
-                    break;
-                case ValueTypes.STRING:
-                    // save in new format always no matter what was the format originally
-                    container = new api.data.PropertyTree();
-                    container.setString('attachment', 0, property.getString());
-                    var propertyParent = property.getParent();
-                    var propertyName = property.getName();
-                    // remove old string property and set the new property set
-                    propertyParent.removeProperty(propertyName, 0);
-                    var newProperty = propertyParent.setPropertySet(propertyName, 0, container.getRoot());
-                    // update local property reference
-                    this.registerProperty(newProperty);
-                    break;
+            case ValueTypes.DATA:
+                container = property.getPropertySet();
+                break;
+            case ValueTypes.STRING:
+                // save in new format always no matter what was the format originally
+                container = new api.data.PropertyTree();
+                container.setString('attachment', 0, property.getString());
+                var propertyParent = property.getParent();
+                var propertyName = property.getName();
+                // remove old string property and set the new property set
+                propertyParent.removeProperty(propertyName, 0);
+                var newProperty = propertyParent.setPropertySet(propertyName, 0, container.getRoot());
+                // update local property reference
+                this.registerProperty(newProperty);
+                break;
             }
             return container;
         }

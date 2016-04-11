@@ -44,7 +44,7 @@ module api.content.form.inputtype.upload {
 
             this.uploaderWrapper = this.createUploaderWrapper(property);
 
-            this.updateProperty(property);
+            this.updateProperty(property).done();
 
             this.mediaUploaderEl.onUploadStarted(() => {
                 this.uploaderWrapper.removeClass("empty");

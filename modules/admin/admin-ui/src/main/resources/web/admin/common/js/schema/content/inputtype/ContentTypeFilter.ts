@@ -21,9 +21,12 @@ module api.schema.content.inputtype {
 
         private context: ContentInputTypeViewContext;
 
+        private onContentTypesLoadedHandler: (contentTypeArray: ContentTypeSummary[]) => void;
+
         constructor(context: ContentInputTypeViewContext) {
             super('content-type-filter');
             this.context = context;
+            this.onContentTypesLoadedHandler = this.onContentTypesLoaded.bind(this);
         }
 
         getValueType(): ValueType {
@@ -47,19 +50,19 @@ module api.schema.content.inputtype {
             var loader = this.context.formContext.getContentTypeName().isPageTemplate() ? this.createPageTemplateLoader() : null,
                 comboBox = new ContentTypeComboBox(this.getInput().getOccurrences().getMaximum(), loader);
 
-            comboBox.onLoaded((contentTypeArray: ContentTypeSummary[]) => this.onContentTypesLoaded(contentTypeArray));
+            comboBox.onLoaded(this.onContentTypesLoadedHandler);
             comboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<ContentTypeSummary>) => this.onContentTypeSelected(selectedOption));
             comboBox.onOptionDeselected((option: SelectedOption<ContentTypeSummary>) => this.onContentTypeDeselected(option));
 
             return comboBox;
         }
 
-        private onContentTypesLoaded(contentTypeArray: ContentTypeSummary[]): void {
+        private onContentTypesLoaded(): void {
 
             this.combobox.getComboBox().setValue(this.getValueFromPropertyArray(this.getPropertyArray()));
 
             this.setLayoutInProgress(false);
-            this.combobox.unLoaded(this.onContentTypesLoaded);
+            this.combobox.unLoaded(this.onContentTypesLoadedHandler);
 
             this.validate(false);
         }
@@ -106,7 +109,7 @@ module api.schema.content.inputtype {
             if (!unchangedOnly || !this.combobox.isDirty()) {
                 return superPromise.then(() => {
 
-                    return this.combobox.getLoader().load().then(this.onContentTypesLoaded);
+                    return this.combobox.getLoader().load().then(this.onContentTypesLoadedHandler);
                 });
             } else {
                 return superPromise;

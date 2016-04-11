@@ -306,7 +306,10 @@ module app.browse {
                 this.handleContentCreated(data, oldPaths)
             });
 
-            handler.onContentDeleted((data: ContentPath[]) => this.handleContentDeleted(data));
+            handler.onContentDeleted((data: api.content.event.ContentServerChangeItem[]) => {
+                var paths = data.map((changeItem) => changeItem.getContentPath());
+                this.handleContentDeleted(paths)
+            });
 
             handler.onContentPending((data: ContentSummaryAndCompareStatus[]) => this.handleContentPending(data));
 

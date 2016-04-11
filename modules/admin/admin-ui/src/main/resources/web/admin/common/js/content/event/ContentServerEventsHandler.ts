@@ -15,7 +15,7 @@ module api.content.event {
 
         private contentUpdatedListeners: {(data: ContentSummaryAndCompareStatus[]):void}[] = [];
 
-        private contentDeletedListeners: {(paths: ContentPath[], pending?: boolean):void}[] = [];
+        private contentDeletedListeners: {(paths: ContentServerChangeItem[], pending?: boolean):void}[] = [];
 
         private contentMovedListeners: {(data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]):void}[] = [];
 
@@ -67,7 +67,10 @@ module api.content.event {
 
             if (event.getType() == ContentServerChangeType.DELETE) {
                 // content has already been deleted so no need to fetch summaries
-                this.handleContentDeleted(this.extractContentPaths(changes));
+                var changeItems: ContentServerChangeItem[] = changes.reduce((total, change: ContentServerChange) => {
+                    return total.concat(change.getChangeItems());
+                }, []);
+                this.handleContentDeleted(changeItems);
 
             } else {
                 ContentSummaryAndCompareStatusFetcher.fetchByPaths(this.extractContentPaths(changes, useNewPaths))
@@ -116,7 +119,9 @@ module api.content.event {
 
         private extractContentPaths(changes: ContentServerChange[], useNewPaths?: boolean): ContentPath[] {
             return changes.reduce<ContentPath[]>((prev, curr) => {
-                return prev.concat(useNewPaths ? curr.getNewContentPaths() : curr.getContentPaths());
+                return prev.concat(useNewPaths
+                    ? curr.getNewContentPaths()
+                    : curr.getChangeItems().map((changeItem: ContentServerChangeItem) => changeItem.getContentPath()));
             }, []);
         }
 
@@ -147,20 +152,17 @@ module api.content.event {
             this.notifyContentRenamed(data, oldPaths);
         }
 
-        private handleContentDeleted(oldPaths: ContentPath[]) {
+        private handleContentDeleted(changeItems: ContentServerChangeItem[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: deleted", oldPaths);
+                console.debug("ContentServerEventsHandler: deleted", changeItems);
             }
             var contentDeletedEvent = new ContentDeletedEvent();
-
-            oldPaths.filter((path) => {
-                return !!path;        // not sure if this check is necessary
-            }).forEach((path) => {
-                contentDeletedEvent.addItem(null, path);
+            changeItems.forEach((changeItem) => {
+                contentDeletedEvent.addItem(changeItem.getContentId(), changeItem.getContentPath());
             });
             contentDeletedEvent.fire();
 
-            this.notifyContentDeleted(oldPaths);
+            this.notifyContentDeleted(changeItems);
         }
 
         private handleContentPending(data: ContentSummaryAndCompareStatus[]) {
@@ -246,19 +248,19 @@ module api.content.event {
             });
         }
 
-        onContentDeleted(listener: (paths: ContentPath[], pending?: boolean)=>void) {
+        onContentDeleted(listener: (paths: ContentServerChangeItem[], pending?: boolean)=>void) {
             this.contentDeletedListeners.push(listener);
         }
 
-        unContentDeleted(listener: (paths: ContentPath[], pending?: boolean)=>void) {
+        unContentDeleted(listener: (paths: ContentServerChangeItem[], pending?: boolean)=>void) {
             this.contentDeletedListeners =
-                this.contentDeletedListeners.filter((currentListener: (paths: ContentPath[], pending?: boolean)=>void) => {
+                this.contentDeletedListeners.filter((currentListener: (paths: ContentServerChangeItem[], pending?: boolean)=>void) => {
                     return currentListener != listener;
                 });
         }
 
-        private notifyContentDeleted(paths: ContentPath[], pending?: boolean) {
-            this.contentDeletedListeners.forEach((listener: (paths: ContentPath[], pending?: boolean)=>void) => {
+        private notifyContentDeleted(paths: ContentServerChangeItem[], pending?: boolean) {
+            this.contentDeletedListeners.forEach((listener: (paths: ContentServerChangeItem[], pending?: boolean)=>void) => {
                 listener(paths, pending);
             });
         }
