@@ -19,6 +19,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
 import com.enonic.xp.portal.macro.MacroContext;
+import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -94,8 +95,8 @@ public class MacroProcessorScriptTest
 
     private PortalResponse execute( final String scriptKey )
     {
-        final MacroProcessorScript macroProcessorScript = this.factory.fromScript( ResourceKey.from( scriptKey ) );
-        return macroProcessorScript.process( this.macroContext );
+        final MacroProcessor macroProcessor = this.factory.fromScript( ResourceKey.from( scriptKey ) );
+        return macroProcessor.process( this.macroContext );
     }
 
     @Test

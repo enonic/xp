@@ -56,27 +56,26 @@ public final class MacroInstruction
             return null;
         }
 
-        // resolve macro script
+        // resolve macro processor
         final Site site = portalRequest.getSite();
         if ( site == null )
         {
             throw new RenderException( "Macro script could not be resolved, context site could not be found." );
         }
 
-        final MacroDescriptor macroDescriptor = resolveMacro( site, macroName );
-        if ( macroDescriptor == null )
+        final MacroDescriptor macroDescriptor = resolveMacroDescriptor( site, macroName );
+        final MacroProcessor macroProcessor = resolveMacroProcessor( macroDescriptor );
+        if ( macroProcessor == null )
         {
             throw new RenderException( "Macro script not found: " + macroName );
         }
 
         // execute macro
-        final MacroProcessor macroProcessor = macroScriptFactory.fromScript( macroDescriptor.toResourceKey() );
         final MacroContext context = createContext( macroInstruction, portalRequest );
-
         return macroProcessor.process( context );
     }
 
-    private MacroDescriptor resolveMacro( final Site site, final String macroName )
+    private MacroDescriptor resolveMacroDescriptor( final Site site, final String macroName )
     {
         //Searches for the macro in the applications associated to the site
         MacroDescriptor macroDescriptor = site.getSiteConfigs().
@@ -95,6 +94,15 @@ public final class MacroInstruction
         }
 
         return macroDescriptor;
+    }
+
+    private MacroProcessor resolveMacroProcessor( MacroDescriptor macroDescriptor )
+    {
+        if ( macroDescriptor != null )
+        {
+            return macroScriptFactory.fromScript( macroDescriptor.toControllerResourceKey() );
+        }
+        return null;
     }
 
     private MacroContext createContext( final Instruction macroInstruction, final PortalRequest request )

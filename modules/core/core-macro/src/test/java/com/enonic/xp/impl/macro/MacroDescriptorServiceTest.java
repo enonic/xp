@@ -32,7 +32,7 @@ public class MacroDescriptorServiceTest
     public void testGetByKey()
         throws Exception
     {
-        final MacroKey macroKey = MacroKey.from( ApplicationKey.from( "myapp1" ), "macros1" );
+        final MacroKey macroKey = MacroKey.from( ApplicationKey.from( "myapp1" ), "macro1" );
         final MacroDescriptor descriptor = this.service.getByKey( macroKey );
         assertNotNull( descriptor );
         assertTrue( descriptor.getKey().equals( macroKey ) );

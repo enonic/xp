@@ -60,14 +60,24 @@ public final class MacroDescriptor
         return icon;
     }
 
-    public ResourceKey toResourceKey()
+    public ResourceKey toDescriptorResourceKey()
+    {
+        return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".xml" );
+    }
+
+    public ResourceKey toControllerResourceKey()
     {
         return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".js" );
     }
 
-    public static ResourceKey toResourceKey( final MacroKey key )
+    public static ResourceKey toDescriptorResourceKey( final MacroKey key )
     {
         return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".xml" );
+    }
+
+    public static ResourceKey toControllerResourceKey( final MacroKey key )
+    {
+        return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".js" );
     }
 
     public static Builder create()
