@@ -58,26 +58,31 @@ module app.browse.filter {
                 this.resetFacets();
             });
 
-            this.onRefresh(this.searchFacets);
+            this.onRefresh(this.refreshFacets);
 
             this.onSearch(this.searchFacets);
         }
 
         private searchFacets(event: api.app.browse.filter.SearchEvent) {
-
-            var isClean = !this.hasFilterSet();
-            if (isClean) {
-                this.handleEmptyFilterInput(event);
+            if (!this.hasFilterSet()) {
+                this.handleEmptyFilterInput();
                 return;
             }
 
-            var contentQuery: ContentQuery = this.createContentQuery(event);
-
-            this.searchDataAndHandleResponse(contentQuery);
+            this.searchDataAndHandleResponse(this.createContentQuery(event));
         }
 
-        private handleEmptyFilterInput(event: api.app.browse.filter.SearchEvent) {
-            if (event instanceof RefreshEvent) {
+        private refreshFacets(event: api.app.browse.filter.SearchEvent) {
+            if (!this.hasFilterSet()) {
+                this.handleEmptyFilterInput(true);
+                return;
+            }
+
+            this.refreshDataAndHandleResponse(this.createContentQuery(event));
+        }
+
+        private handleEmptyFilterInput(isRefreshEvent?: boolean) {
+            if (isRefreshEvent) {
 
                 this.resetFacets(true, true).then(() => {
                     new ContentBrowseRefreshEvent().fire();
@@ -112,32 +117,65 @@ module app.browse.filter {
             new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
                 setExpand(api.rest.Expand.SUMMARY).
                 sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
-                    this.getAggregations(contentQuery, contentQueryResult).then((aggregations: api.aggregation.Aggregation[]) => {
-                        this.updateAggregations(aggregations, true);
-                        this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
-                        this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
-                        new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
-                    });
-
+                    this.handleDataSearchResult(contentQuery, contentQueryResult);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
         }
 
+        private refreshDataAndHandleResponse(contentQuery: ContentQuery) {
+            new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
+            setExpand(api.rest.Expand.SUMMARY).
+            sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+                if(contentQueryResult.getMetadata().getTotalHits() > 0) {
+                    this.handleDataSearchResult(contentQuery, contentQueryResult);
+                }
+                else {
+                    this.handleNoSearchResultOnRefresh(contentQuery);
+                }
+
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
+        }
+
+        private handleDataSearchResult(contentQuery: ContentQuery,
+                                       contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) {
+            this.getAggregations(contentQuery, contentQueryResult).then((aggregations: api.aggregation.Aggregation[]) => {
+                this.updateAggregations(aggregations, true);
+                this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
+                this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
+                new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
+            });
+        }
+
+        private handleNoSearchResultOnRefresh(contentQuery: ContentQuery) {
+            if(contentQuery.getContentTypes().length > 0 ) { //remove content type facet from search
+                this.refreshDataAndHandleResponse(this.cloneContentQueryNoContentTypes(contentQuery));
+            }
+            else if(this.hasSearchStringSet()) { // if still no result and search text is set remove last modified facet
+                this.deselectAll();
+                this.searchDataAndHandleResponse(this.cloneContentQueryNoAggregations(contentQuery));
+            }
+            else {
+                this.reset();
+            }
+        }
+
         private cloneContentQueryNoContentTypes(contentQuery: ContentQuery): ContentQuery {
-            var newContentQuery: ContentQuery = new ContentQuery();
-            newContentQuery.setContentTypeNames([]);
-            newContentQuery.setFrom(contentQuery.getFrom());
-            newContentQuery.setQueryExpr(contentQuery.getQueryExpr());
-            newContentQuery.setSize(contentQuery.getSize());
-            contentQuery.getAggregationQueries().forEach((aggregationQUery) => {
-                newContentQuery.addAggregationQuery(aggregationQUery);
-            });
-            contentQuery.getQueryFilters().forEach((queryFilter) => {
-                newContentQuery.addQueryFilter(queryFilter);
-            });
+            var newContentQuery: ContentQuery = new ContentQuery().
+                setContentTypeNames([]).
+                setFrom(contentQuery.getFrom()).
+                setQueryExpr(contentQuery.getQueryExpr()).
+                setSize(contentQuery.getSize()).
+                setAggregationQueries(contentQuery.getAggregationQueries()).
+                setQueryFilters(contentQuery.getQueryFilters());
 
             return newContentQuery;
+        }
+
+        private cloneContentQueryNoAggregations(contentQuery: ContentQuery): ContentQuery {
+            return this.cloneContentQueryNoContentTypes(contentQuery).setQueryFilters([]);
         }
 
         private getAggregations(contentQuery: ContentQuery,

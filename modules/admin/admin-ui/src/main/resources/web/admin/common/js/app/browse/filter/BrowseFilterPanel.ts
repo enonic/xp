@@ -100,10 +100,13 @@ module api.app.browse.filter {
             return searchInputValues;
         }
 
-        hasFilterSet() {
-            return this.aggregationContainer.hasSelectedBuckets() || this.searchField.getHTMLElement()['value'].trim() != '';
+        hasFilterSet(): boolean {
+            return this.aggregationContainer.hasSelectedBuckets() || this.hasSearchStringSet();
         }
 
+        hasSearchStringSet(): boolean {
+            return this.searchField.getHTMLElement()['value'].trim() != '';
+        }
 
         search(elementChanged?: api.dom.Element) {
             if (this.hasFilterSet()) {
@@ -125,6 +128,10 @@ module api.app.browse.filter {
             this.aggregationContainer.deselectAll(true);
             this.clearFilter.hide();
             this.notifyReset();
+        }
+
+        deselectAll() {
+            this.aggregationContainer.deselectAll(true);
         }
 
         onSearch(listener: (event: SearchEvent)=>void) {
