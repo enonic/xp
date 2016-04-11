@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.macro;
 
+import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -27,14 +28,18 @@ public final class MacroProcessorScriptFactoryImpl
     {
         if ( isSystem( scriptResourceKey ) )
         {
-            switch ( scriptResourceKey.getName() )
+            final String name = StringUtils.substringBefore( scriptResourceKey.getName(), ".js" );
+            // TODO make resolving dynamic
+            switch ( name )
             {
-                case "youtube.js":
+                case "youtube":
                     return new YoutubeMacroProcessor();
-                case "tweet.js":
+                case "tweet":
                     return new TwitterMacroProcessor();
-                case "code.js":
+                case "code":
                     return new EmbeddedCodeMacroProcessor();
+                case "noformat":
+                    return new NoFormatMacroProcessor();
                 default:
                     return null;
             }

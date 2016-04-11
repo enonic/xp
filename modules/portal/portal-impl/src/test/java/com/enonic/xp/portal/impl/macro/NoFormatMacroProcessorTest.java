@@ -26,7 +26,6 @@ public class NoFormatMacroProcessorTest
             body( "<tagWithMacro>here is macro: [macro]body[/macro]</tagWithMacro>" ).
             build();
 
-        assertEquals( "&lt;tagWithMacro&gt;here is macro: [macro]body[/macro]&lt;/tagWithMacro&gt;",
-                      processor.process( macroContext2 ).getBody() );
+        assertEquals( "<tagWithMacro>here is macro: [macro]body[/macro]</tagWithMacro>", processor.process( macroContext2 ).getBody() );
     }
 }

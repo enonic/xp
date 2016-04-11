@@ -33,7 +33,8 @@ public class BuiltinMacroDescriptors
         final ImmutableSet.Builder<MacroDescriptor> macroDescriptors = ImmutableSet.builder();
         macroDescriptors.add( generateYouTrackMacroDescriptor() ).
             add( generateTwitterMacroDescriptor() ).
-            add( generateEmbeddedCodeMacroDescriptor() );
+            add( generateEmbeddedCodeMacroDescriptor() ).
+            add( generateNoFormatMacroDescriptor() );
 
         return MacroDescriptors.from( macroDescriptors.build() );
     }
@@ -83,6 +84,22 @@ public class BuiltinMacroDescriptors
             key( macroKey ).
             displayName( "Embedded code macro" ).
             description( "Embedded code macro" ).
+            form( form ).
+            build();
+    }
+
+    private MacroDescriptor generateNoFormatMacroDescriptor()
+    {
+        final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, "noformat" );
+
+        final Form form = Form.create().
+            addFormItem( createTextAreaInput( "body", "Body" ).occurrences( 1, 1 ).build() ).
+            build();
+
+        return MacroDescriptor.create().
+            key( macroKey ).
+            displayName( "No Format macro" ).
+            description( "The contents of the body will not be formatted" ).
             form( form ).
             build();
     }
