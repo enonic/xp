@@ -257,6 +257,10 @@ module api.liveedit {
             return this.hasClass("has-toolbar-container");
         }
 
+        getEditorToolbarHeight(): number {
+            return !!this.editorToolbar ? this.editorToolbar.getEl().getHeightWithMargin() : 0;
+        }
+
         private setIgnorePropertyChanges(value: boolean) {
             this.ignorePropertyChanges = value;
         }
