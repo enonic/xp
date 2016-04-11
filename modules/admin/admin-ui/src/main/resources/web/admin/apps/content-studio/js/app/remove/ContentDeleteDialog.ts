@@ -21,7 +21,7 @@ module app.remove {
 
         private instantDeleteCheckbox: api.ui.Checkbox;
 
-        private yesCallback: () => void;
+        private yesCallback: (exclude?: CompareStatus[]) => void;
 
         private noCallback: () => void;
 
@@ -89,10 +89,10 @@ module app.remove {
         }
 
         private addInstantDeleteCheckbox() {
-            this.instantDeleteCheckbox = new api.ui.Checkbox("Instantly delete published content");
+            this.instantDeleteCheckbox = new api.ui.Checkbox("Instantly delete online content");
             this.instantDeleteCheckbox.addClass('instant-delete-check');
 
-            this.appendChildToContentPanel(this.instantDeleteCheckbox);
+            this.appendChild(this.instantDeleteCheckbox);
         }
 
         private indexOf(item: SelectionItem<ContentSummaryAndCompareStatus>): number {
@@ -108,7 +108,7 @@ module app.remove {
             this.getDeleteAction().onExecuted(() => {
 
                 if(!!this.yesCallback) {
-                    this.yesCallback();
+                    this.instantDeleteCheckbox.isChecked() ? this.yesCallback([]) : this.yesCallback();
                 }
 
                 this.deleteButton.setEnabled(false);
@@ -212,6 +212,8 @@ module app.remove {
                 deleteRequest.addContentPath(ContentPath.fromString(this.selectedItems[i].getBrowseItem().getPath()));
             }
 
+            deleteRequest.setDeleteOnline(this.instantDeleteCheckbox.isChecked());
+
             return deleteRequest;
         }
 
@@ -253,7 +255,8 @@ module app.remove {
         private isContentPublished(status: CompareStatus): boolean {
             return  status === CompareStatus.EQUAL ||
                     status === CompareStatus.MOVED ||
-                    status === CompareStatus.PENDING_DELETE;
+                    status === CompareStatus.PENDING_DELETE ||
+                    status === CompareStatus.NEWER;
         }
 
         private updateSubTitle() {
