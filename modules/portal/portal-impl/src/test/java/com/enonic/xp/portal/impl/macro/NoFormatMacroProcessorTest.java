@@ -1,10 +1,10 @@
-package com.enonic.xp.impl.macro;
+package com.enonic.xp.portal.impl.macro;
 
 
 import org.junit.Test;
 
-import com.enonic.xp.macro.MacroContext;
-import com.enonic.xp.macro.MacroProcessor;
+import com.enonic.xp.portal.macro.MacroContext;
+import com.enonic.xp.portal.macro.MacroProcessor;
 
 import static org.junit.Assert.*;
 
@@ -20,12 +20,13 @@ public class NoFormatMacroProcessorTest
             body( "here is macro: [macro]body[/macro]" ).
             build();
 
-        assertEquals( "here is macro: [macro]body[/macro]", processor.process( macroContext1 ) );
+        assertEquals( "here is macro: [macro]body[/macro]", processor.process( macroContext1 ).getBody() );
 
         final MacroContext macroContext2 = MacroContext.create().name( "name" ).
             body( "<tagWithMacro>here is macro: [macro]body[/macro]</tagWithMacro>" ).
             build();
 
-        assertEquals( "<tagWithMacro>here is macro: [macro]body[/macro]</tagWithMacro>", processor.process( macroContext2 ) );
+        assertEquals( "&lt;tagWithMacro&gt;here is macro: [macro]body[/macro]&lt;/tagWithMacro&gt;",
+                      processor.process( macroContext2 ).getBody() );
     }
 }
