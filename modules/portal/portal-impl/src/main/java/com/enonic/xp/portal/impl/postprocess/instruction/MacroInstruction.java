@@ -115,8 +115,8 @@ public final class MacroInstruction
                 continue;
             }
             context.param( name, macroInstruction.attribute( name, "" ) );
-            context.body( macroInstruction.attribute( MACRO_BODY ) );
         }
+        context.body( macroInstruction.attribute( MACRO_BODY ) );
         context.request( request );
         return context.build();
     }
