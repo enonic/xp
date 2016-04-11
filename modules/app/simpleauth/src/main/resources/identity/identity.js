@@ -57,3 +57,14 @@ exports.handle403 = function (req) {
         body: body
     };
 };
+
+exports.logout = function (req) {
+    log.info("logout:" + JSON.stringify(req, null, 2));
+    authLib.logout();
+    if (req.params.redirectUrl) {
+        log.info("Redirect to " + req.params._redirectUrl);
+        return {
+            redirect: req.params._redirectUrl
+        }
+    }
+};

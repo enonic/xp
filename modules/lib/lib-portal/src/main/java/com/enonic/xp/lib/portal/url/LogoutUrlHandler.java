@@ -1,32 +1,37 @@
 package com.enonic.xp.lib.portal.url;
 
-import java.util.Optional;
-
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.context.Context;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.script.bean.BeanContext;
-import com.enonic.xp.security.PathGuard;
-import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
-public final class LoginUrlHandler
+public final class LogoutUrlHandler
     extends AbstractUrlHandler
 {
-    private SecurityService securityService;
+
+    private Context context;
 
     @Override
     protected String buildUrl( final Multimap<String, String> map )
     {
-        String path = request.getBaseUri() + "/" + request.getBranch() + request.getContentPath();
-        final Optional<PathGuard> pathGuardOptional = securityService.getPathGuardByPath( path );
-        final UserStoreKey userStoreKey = pathGuardOptional.isPresent() ? pathGuardOptional.get().getUserStoreKey() : null;
+        final AuthenticationInfo authInfo = this.context.getAuthInfo();
+        UserStoreKey userStoreKey = null;
+        if ( authInfo.isAuthenticated() )
+        {
+            userStoreKey = authInfo.getUser().
+                getKey().
+                getUserStore();
+        }
 
         final IdentityUrlParams params = new IdentityUrlParams().
             portalRequest( request ).
-            idProviderFunction( "login" ).
+            idProviderFunction( "logout" ).
             userStoreKey( userStoreKey == null ? UserStoreKey.system() : userStoreKey ).
             setAsMap( map );
+
         return this.urlService.identityUrl( params );
     }
 
@@ -34,6 +39,6 @@ public final class LoginUrlHandler
     public void initialize( final BeanContext context )
     {
         super.initialize( context );
-        this.securityService = context.getService( SecurityService.class ).get();
+        this.context = context.getBinding( Context.class ).get();
     }
 }
