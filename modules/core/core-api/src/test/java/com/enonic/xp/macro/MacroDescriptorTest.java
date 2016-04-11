@@ -15,21 +15,29 @@ import static org.junit.Assert.*;
 public class MacroDescriptorTest
 {
     @Test
-    public void testToResourceKey()
+    public void testToDescriptorResourceKey()
     {
         final MacroDescriptor macroDescriptor = MacroDescriptor.create().key( MacroKey.from( "my-app:macro1" ) ).build();
-        assertEquals( "my-app:/site/macros/macro1/macro1.js", macroDescriptor.toResourceKey().toString() );
+        assertEquals( "my-app:/site/macros/macro1/macro1.xml", macroDescriptor.toDescriptorResourceKey().toString() );
+    }
+
+    @Test
+    public void testToControllerResourceKey()
+    {
+        final MacroDescriptor macroDescriptor = MacroDescriptor.create().key( MacroKey.from( "my-app:macro1" ) ).build();
+        assertEquals( "my-app:/site/macros/macro1/macro1.js", macroDescriptor.toControllerResourceKey().toString() );
     }
 
     @Test
     public void testCreateWithKey()
     {
         final MacroDescriptor macroDescriptor1 = MacroDescriptor.create().key( "my-app:macro1" ).build();
-        assertEquals( "my-app:/site/macros/macro1/macro1.js", macroDescriptor1.toResourceKey().toString() );
+        assertEquals( "my-app:/site/macros/macro1/macro1.js", macroDescriptor1.toControllerResourceKey().toString() );
 
         final MacroDescriptor macroDescriptor2 = MacroDescriptor.create().key( MacroKey.from( "my-app:macro2" ) ).build();
-        assertEquals( "my-app:/site/macros/macro2/macro2.js", macroDescriptor2.toResourceKey().toString() );
+        assertEquals( "my-app:/site/macros/macro2/macro2.js", macroDescriptor2.toControllerResourceKey().toString() );
     }
+
 
     @Test
     public void testCreate()

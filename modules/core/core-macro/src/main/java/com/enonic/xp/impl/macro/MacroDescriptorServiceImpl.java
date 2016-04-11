@@ -43,13 +43,13 @@ public final class MacroDescriptorServiceImpl
         }
         else
         {
-            final ResourceProcessor<MacroKey, MacroDescriptor> processor = newProcessor( key );
-            descriptor = this.resourceService.processResource( processor );
-
-        }
-        if ( descriptor == null )
-        {
-            descriptor = createDefaultDescriptor( key );
+            final ResourceProcessor<MacroKey, MacroDescriptor> descriptorProcessor = newDescriptorProcessor( key );
+            descriptor = this.resourceService.processResource( descriptorProcessor );
+            if ( descriptor == null )
+            {
+                final ResourceProcessor<MacroKey, MacroDescriptor> controllerProcessor = newControllerProcessor( key );
+                descriptor = this.resourceService.processResource( controllerProcessor );
+            }
         }
 
         return descriptor;
@@ -74,7 +74,6 @@ public final class MacroDescriptorServiceImpl
                     list.add( descriptor );
                 }
             }
-
         }
 
         return MacroDescriptors.from( list );
@@ -97,23 +96,23 @@ public final class MacroDescriptorServiceImpl
         return ApplicationKey.SYSTEM.equals( applicationKey );
     }
 
-    private ResourceProcessor<MacroKey, MacroDescriptor> newProcessor( final MacroKey key )
+    private ResourceProcessor<MacroKey, MacroDescriptor> newDescriptorProcessor( final MacroKey key )
     {
         return new ResourceProcessor.Builder<MacroKey, MacroDescriptor>().
             key( key ).
             segment( "macroDescriptor" ).
-            keyTranslator( MacroDescriptor::toResourceKey ).
+            keyTranslator( MacroDescriptor::toDescriptorResourceKey ).
             processor( resource -> loadDescriptor( key, resource ) ).
             build();
     }
 
-    private MacroDescriptor createDefaultDescriptor( final MacroKey key )
+    private ResourceProcessor<MacroKey, MacroDescriptor> newControllerProcessor( final MacroKey key )
     {
-        return MacroDescriptor.
-            create().
+        return new ResourceProcessor.Builder<MacroKey, MacroDescriptor>().
             key( key ).
-            displayName( key.getName() ).
-            form( Form.create().build() ).
+            segment( "macroDescriptor" ).
+            keyTranslator( MacroDescriptor::toControllerResourceKey ).
+            processor( resource -> createDefaultDescriptor( key ) ).
             build();
     }
 
@@ -139,6 +138,16 @@ public final class MacroDescriptorServiceImpl
         parseXml( resource, builder );
         builder.key( key );
         return builder.build();
+    }
+
+    private MacroDescriptor createDefaultDescriptor( final MacroKey key )
+    {
+        return MacroDescriptor.
+            create().
+            key( key ).
+            displayName( key.getName() ).
+            form( Form.create().build() ).
+            build();
     }
 
     private Set<MacroKey> findDescriptorKeys( final ApplicationKey key )
