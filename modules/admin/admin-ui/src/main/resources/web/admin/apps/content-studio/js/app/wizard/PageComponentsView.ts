@@ -625,6 +625,9 @@ module app.wizard {
                     if (data.getType().isComponentType()) {
                         api.liveedit.Highlighter.get().highlightElement(dimensions, data.getType().getConfig().getHighlighterStyle());
                     }
+                    if (api.BrowserHelper.isIOS()) {
+                        this.selectItem(hoveredNode);
+                    }
                 }
             }
         }
