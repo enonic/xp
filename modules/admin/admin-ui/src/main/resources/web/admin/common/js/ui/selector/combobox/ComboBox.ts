@@ -249,12 +249,16 @@ module api.ui.selector.combobox {
                 this.clearSelection(false, false, true);
             }
 
-            value.split(';').forEach((val) => {
+            this.splitValues(value).forEach((val) => {
                 var option = this.getOptionByValue(val);
                 if (option != null) {
                     this.selectOption(option, true);
                 }
             });
+        }
+
+        protected splitValues(value: string): string[] {
+            return value.split(';');
         }
 
         handleRowSelected(index: number) {

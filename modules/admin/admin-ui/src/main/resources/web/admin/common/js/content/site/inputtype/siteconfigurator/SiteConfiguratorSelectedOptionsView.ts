@@ -16,10 +16,6 @@ module api.content.site.inputtype.siteconfigurator {
 
         private siteConfigFormDisplayedListeners: {(applicationKey: ApplicationKey, formView: FormView) : void}[] = [];
 
-        private beforeOptionCreatedListeners: {():void}[] = [];
-
-        private afterOptionCreatedListeners: {():void}[] = [];
-
         private formContext: api.content.form.ContentFormContext;
 
         private items: SiteConfiguratorSelectedOptionView[] = [];
@@ -32,8 +28,10 @@ module api.content.site.inputtype.siteconfigurator {
             this.siteConfigProvider.onPropertyChanged(() => {
 
                 this.items.forEach((optionView) => {
-                    let newConfig = this.siteConfigProvider.getConfig(optionView.getSiteConfig().getApplicationKey());
-                    optionView.setSiteConfig(newConfig);
+                    let newConfig = this.siteConfigProvider.getConfig(optionView.getSiteConfig().getApplicationKey(), false);
+                    if (newConfig) {
+                        optionView.setSiteConfig(newConfig);
+                    }
                 });
 
             });
@@ -42,7 +40,6 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         createSelectedOption(option: Option<Application>): SelectedOption<Application> {
-            this.notifyBeforeOptionCreated();
 
             let siteConfig = this.siteConfigProvider.getConfig(option.displayValue.getApplicationKey());
             let optionView = new SiteConfiguratorSelectedOptionView(option, siteConfig, this.formContext);
@@ -52,14 +49,13 @@ module api.content.site.inputtype.siteconfigurator {
             });
             this.items.push(optionView);
 
-            this.notifyAfterOptionCreated();
             return new SelectedOption<Application>(optionView, this.count());
         }
 
         removeOption(optionToRemove: api.ui.selector.Option<Application>, silent: boolean = false) {
             this.items = this.items.filter(item => !item.getSiteConfig().getApplicationKey().
-                                                equals(optionToRemove.displayValue.getApplicationKey()));
-            super.removeOption(optionToRemove,silent);
+                equals(optionToRemove.displayValue.getApplicationKey()));
+            super.removeOption(optionToRemove, silent);
         }
 
         onSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey, formView: FormView): void;}) {
@@ -73,35 +69,6 @@ module api.content.site.inputtype.siteconfigurator {
 
         private notifySiteConfigFormDisplayed(applicationKey: ApplicationKey, formView: FormView) {
             this.siteConfigFormDisplayedListeners.forEach((listener) => listener(applicationKey, formView));
-        }
-
-
-        onBeforeOptionCreated(listener: () => void) {
-            this.beforeOptionCreatedListeners.push(listener);
-        }
-
-        unBeforeOptionCreated(listener: () => void) {
-            this.beforeOptionCreatedListeners = this.beforeOptionCreatedListeners.filter((curr) => {
-                return listener !== curr;
-            });
-        }
-
-        private notifyBeforeOptionCreated() {
-            this.beforeOptionCreatedListeners.forEach((listener) => listener());
-        }
-
-        onAfterOptionCreated(listener: () => void) {
-            this.afterOptionCreatedListeners.push(listener);
-        }
-
-        unAfterOptionCreated(listener: () => void) {
-            this.afterOptionCreatedListeners = this.afterOptionCreatedListeners.filter((curr) => {
-                return listener !== curr;
-            });
-        }
-
-        private notifyAfterOptionCreated() {
-            this.afterOptionCreatedListeners.forEach((listener) => listener());
         }
 
     }
