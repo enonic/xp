@@ -134,6 +134,10 @@ module app.wizard {
 
         private dataChangedListener: () => void;
 
+        private applicationAddedListener: (event: api.content.site.ApplicationAddedEvent) => void;
+
+        private applicationRemovedListener: (event: api.content.site.ApplicationRemovedEvent) => void;
+
         /**
          * Whether constructor is being currently executed or not.
          */
@@ -209,6 +213,14 @@ module app.wizard {
                 if (this.isContentFormValid && this.contentWizardToolbarPublishControls.isOnline()) {
                     this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.NEWER);
                 }
+            };
+
+            this.applicationAddedListener = (event: api.content.site.ApplicationAddedEvent) => {
+                this.addMetadataStepForms(event.getApplicationKey());
+            };
+
+            this.applicationRemovedListener = (event: api.content.site.ApplicationRemovedEvent) => {
+                this.removeMetadataStepForms();
             };
 
             var isSiteOrWithinSite = this.site || this.createSite;
@@ -407,7 +419,8 @@ module app.wizard {
                     var app = applications[i];
                     if (!app.isStarted()) {
                         var deferred = wemQ.defer<Mixin[]>();
-                        deferred.reject(new api.Exception("Application '" + app.getDisplayName() + "' required by the site is not available. " +
+                        deferred.reject(new api.Exception("Application '" + app.getDisplayName() +
+                                                          "' required by the site is not available. " +
                                                           "Make sure all applications specified in the site configuration are installed and started.",
                             api.ExceptionType.WARNING));
                         return deferred.promise;
@@ -570,13 +583,15 @@ module app.wizard {
                 var areasContainId = this.doAreasContainId(htmlAreas, contentId.toString());
 
                 if (isCurrent || areasContainId) {
-                    //
                     new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
                         this.setPersistedItem(content);
                         this.updateWizardHeader(content);
                         this.updateWizardStepForms(content, unchangedOnly);
                         this.updateMetadataAndMetadataStepForms(content.clone(), unchangedOnly);
-                        if (this.isContentRenderable() && areasContainId) {
+
+                        if (!unchangedOnly) {
+                            this.updateLiveFormOnVersionChange();
+                        } else if (this.isContentRenderable() && areasContainId) {
                             // also update live form panel for renderable content without asking
                             this.liveFormPanel.skipNextReloadConfirmation(true);
                             this.liveFormPanel.loadPage();
@@ -600,6 +615,35 @@ module app.wizard {
                 ContentPublishedEvent.un(publishHandler);
                 ContentDeletedEvent.un(deleteHandler);
             });
+        }
+
+        private updateLiveFormOnVersionChange() {
+            var content = this.getPersistedItem(),
+                formContext = this.createFormContext(content);
+
+            if (!!this.siteModel) {
+                this.unbindSiteModelListeners();
+            }
+
+            if (this.liveFormPanel) {
+
+                var site = content.isSite() ? <Site>content : this.site;
+                this.siteModel = new SiteModel(site);
+                return this.initLiveEditModel(content, this.siteModel, formContext).then(() => {
+                    this.liveFormPanel.setModel(this.liveEditModel);
+                    this.liveFormPanel.skipNextReloadConfirmation(true);
+                    this.liveFormPanel.loadPage();
+                    this.updatePreviewActionVisibility();
+                    return wemQ(null);
+                });
+
+            }
+            if (!this.siteModel && content.isSite()) {
+                this.siteModel = new SiteModel(<Site>content);
+            }
+            if (this.siteModel) {
+                this.initSiteModelListeners();
+            }
         }
 
         private doAreasContainId(areas: string[], id: string): boolean {
@@ -827,13 +871,13 @@ module app.wizard {
         }
 
         private initSiteModelListeners() {
-            this.siteModel.onApplicationAdded((event: api.content.site.ApplicationAddedEvent) => {
-                this.addMetadataStepForms(event.getApplicationKey());
-            });
+            this.siteModel.onApplicationAdded(this.applicationAddedListener.bind(this));
+            this.siteModel.onApplicationRemoved(this.applicationRemovedListener.bind(this));
+        }
 
-            this.siteModel.onApplicationRemoved((event: api.content.site.ApplicationRemovedEvent) => {
-                this.removeMetadataStepForms();
-            });
+        private unbindSiteModelListeners() {
+            this.siteModel.unApplicationAdded(this.applicationAddedListener.bind(this));
+            this.siteModel.unApplicationRemoved(this.applicationRemovedListener.bind(this));
         }
 
         private removeMetadataStepForms() {
