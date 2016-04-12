@@ -18,21 +18,20 @@ public final class LogoutUrlHandler
     protected String buildUrl( final Multimap<String, String> map )
     {
         final AuthenticationInfo authInfo = this.context.getAuthInfo();
-        UserStoreKey userStoreKey = null;
         if ( authInfo.isAuthenticated() )
         {
-            userStoreKey = authInfo.getUser().
+            UserStoreKey userStoreKey = authInfo.getUser().
                 getKey().
                 getUserStore();
+            final IdentityUrlParams params = new IdentityUrlParams().
+                portalRequest( request ).
+                idProviderFunction( "logout" ).
+                userStoreKey( userStoreKey ).
+                setAsMap( map );
+
+            return this.urlService.identityUrl( params );
         }
-
-        final IdentityUrlParams params = new IdentityUrlParams().
-            portalRequest( request ).
-            idProviderFunction( "logout" ).
-            userStoreKey( userStoreKey == null ? UserStoreKey.system() : userStoreKey ).
-            setAsMap( map );
-
-        return this.urlService.identityUrl( params );
+        return null;
     }
 
     @Override

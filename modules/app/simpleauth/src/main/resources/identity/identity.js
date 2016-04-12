@@ -59,12 +59,10 @@ exports.handle403 = function (req) {
 };
 
 exports.logout = function (req) {
-    log.info("logout:" + JSON.stringify(req, null, 2));
     authLib.logout();
-    if (req.params.redirectUrl) {
-        log.info("Redirect to " + req.params._redirectUrl);
+    if (req.params.redirectionUrl) {
         return {
-            redirect: req.params._redirectUrl
+            redirect: req.params.redirectionUrl
         }
     }
 };
