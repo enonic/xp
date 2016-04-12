@@ -78,9 +78,10 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private handleDialogClose(formView: FormView) {
+            let imageSelector;
             formView.getChildren().forEach((element: api.dom.Element) => {
                 if (api.ObjectHelper.iFrameSafeInstanceOf(element, InputView)) {
-                    const imageSelector = (<InputView> element).getInputTypeView().getElement();
+                    imageSelector = (<InputView> element).getInputTypeView().getElement();
                     if (api.ObjectHelper.iFrameSafeInstanceOf(imageSelector, ImageSelector)) {
                         (<ImageSelector> imageSelector).onEditContentRequest(this.close.bind(this));
                     }
