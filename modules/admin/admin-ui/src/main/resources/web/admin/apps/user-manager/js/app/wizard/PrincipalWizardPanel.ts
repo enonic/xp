@@ -89,8 +89,17 @@ module app.wizard {
                     }
                 });
 
+                var deleteHandler = (event: api.security.event.PrincipalDeletedEvent) => {
+                    event.getDeletedItems().forEach((path: string) => {
+                        if (this.getPersistedItem().getKey().toPath() == path) {
+                            this.close();
+                        }
+                    });
+                };
+
                 this.onRemoved((event) => {
                     ResponsiveManager.unAvailableSizeChanged(this);
+                    api.security.event.PrincipalDeletedEvent.un(deleteHandler.bind(this));
                 });
 
                 this.onShown((event: api.dom.ElementShownEvent) => {
@@ -101,14 +110,13 @@ module app.wizard {
                     }
 
                     responsiveItem.update();
+                    api.security.event.PrincipalDeletedEvent.on(deleteHandler.bind(this));
                 });
 
                 this.constructing = false;
 
                 callback(this);
             });
-
-
         }
 
         getUserItemType(): string {
