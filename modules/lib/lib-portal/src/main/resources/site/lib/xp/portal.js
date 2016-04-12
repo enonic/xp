@@ -129,7 +129,7 @@ exports.serviceUrl = function (params) {
  *
  *
  * @param {object} params Input parameters as JSON.
- * @param {string} [params.redirectTo] The URL to redirect to after the login.
+ * @param {string} [params.redirect] The URL to redirect to after the login.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
@@ -145,7 +145,7 @@ exports.loginUrl = function (params) {
  *
  *
  * @param {object} params Input parameters as JSON.
- * @param {string} [params.redirectTo] The URL to redirect to after the logout.
+ * @param {string} [params.redirect] The URL to redirect to after the logout.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *

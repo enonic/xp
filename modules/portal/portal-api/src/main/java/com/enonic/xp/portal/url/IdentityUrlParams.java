@@ -55,7 +55,7 @@ public final class IdentityUrlParams
     public IdentityUrlParams setAsMap( final Multimap<String, String> map )
     {
         super.setAsMap( map );
-        redirectionUrl( singleValue( map, "_redirectTo" ) );
+        redirectionUrl( singleValue( map, "_redirect" ) );
         getParams().putAll( map );
         return this;
     }
@@ -66,6 +66,6 @@ public final class IdentityUrlParams
         super.buildToString( helper );
         helper.add( "userStoreKey", this.userStoreKey );
         helper.add( "idProviderFunction", this.idProviderFunction );
-        helper.add( "redirectTo", this.redirectionUrl );
+        helper.add( "redirect", this.redirectionUrl );
     }
 }
