@@ -37,6 +37,7 @@ module app.wizard.page {
     import PartInspectionPanel = app.wizard.page.contextwindow.inspect.region.PartInspectionPanel;
     import LayoutInspectionPanel = app.wizard.page.contextwindow.inspect.region.LayoutInspectionPanel;
     import FragmentInspectionPanel = app.wizard.page.contextwindow.inspect.region.FragmentInspectionPanel;
+    import TextInspectionPanel = app.wizard.page.contextwindow.inspect.region.TextInspectionPanel;
     import ContextWindow = app.wizard.page.contextwindow.ContextWindow;
     import ContextWindowConfig = app.wizard.page.contextwindow.ContextWindowConfig;
     import ContextWindowController = app.wizard.page.contextwindow.ContextWindowController;
@@ -114,6 +115,7 @@ module app.wizard.page {
         private partInspectionPanel: PartInspectionPanel;
         private layoutInspectionPanel: LayoutInspectionPanel;
         private fragmentInspectionPanel: FragmentInspectionPanel;
+        private textInspectionPanel: TextInspectionPanel;
 
         private contentWizardPanel: ContentWizardPanel;
 
@@ -137,6 +139,7 @@ module app.wizard.page {
             this.partInspectionPanel = new PartInspectionPanel();
             this.layoutInspectionPanel = new LayoutInspectionPanel();
             this.fragmentInspectionPanel = new FragmentInspectionPanel();
+            this.textInspectionPanel = new TextInspectionPanel();
 
             api.dom.WindowDOM.get().onBeforeUnload((event) => {
                 console.log("onbeforeunload " + this.liveEditModel.getContent().getDisplayName());
@@ -168,6 +171,7 @@ module app.wizard.page {
                 partInspectionPanel: this.partInspectionPanel,
                 layoutInspectionPanel: this.layoutInspectionPanel,
                 fragmentInspectionPanel: this.fragmentInspectionPanel,
+                textInspectionPanel: this.textInspectionPanel,
                 saveAction: saveAction
             });
 
@@ -585,7 +589,8 @@ module app.wizard.page {
                 this.contextWindow.showInspectionPanel(this.layoutInspectionPanel);
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, TextComponentView)) {
-
+                this.textInspectionPanel.setTextComponent(<TextComponentView>componentView);
+                this.contextWindow.showInspectionPanel(this.textInspectionPanel);
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, FragmentComponentView)) {
                 this.fragmentInspectionPanel.setFragmentComponent(<FragmentComponentView>componentView);

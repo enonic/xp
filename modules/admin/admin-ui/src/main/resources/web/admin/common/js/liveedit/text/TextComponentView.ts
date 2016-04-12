@@ -58,7 +58,8 @@ module api.liveedit.text {
             super(builder.
                 setContextMenuActions(this.createTextContextMenuActions()).
                 setPlaceholder(new TextPlaceholder()).
-                setTooltipViewer(new TextComponentViewer()));
+                setViewer(new TextComponentViewer()).
+                setComponent(this.textComponent));
 
             this.addClassEx('text-view');
 
@@ -119,18 +120,6 @@ module api.liveedit.text {
         private handlePasteEvent(event) {
             if (this.isAllTextSelected()) {
                 this.rootElement.getHTMLElement().innerHTML = "";
-            }
-        }
-
-        showTooltip() {
-            if (!this.isEditMode()) {
-                super.showTooltip();
-            }
-        }
-
-        hideTooltip(hideParentTooltip: boolean = true) {
-            if (!this.isEditMode()) {
-                super.hideTooltip(hideParentTooltip);
             }
         }
 
@@ -267,8 +256,6 @@ module api.liveedit.text {
             this.setDraggable(!flag);
 
             if (flag) {
-                this.hideTooltip();
-
                 if (!this.htmlAreaEditor && !this.isInitializingEditor) {
                     this.initEditor();
                 }

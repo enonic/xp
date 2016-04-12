@@ -8,3 +8,4 @@
 ///<reference path='ImageSelectorForm.ts' />
 ///<reference path='FragmentInspectionPanel.ts' />
 ///<reference path='FragmentSelectorForm.ts' />
+///<reference path='TextInspectionPanel.ts' />
