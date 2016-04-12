@@ -1,45 +1,20 @@
 module api.content.event {
 
-    export interface NodeEventJson extends api.app.EventJson {
-        data: NodeEventDataJson;
-    }
-
-    export interface NodeEventDataJson {
-        nodes: NodeEventNodeJson[];
-    }
-
-    export interface NodeEventNodeJson {
-        id: string;
-        path: string;
-        newPath: string;
-    }
-
-    export class ContentServerEvent extends api.event.Event {
-
-        private change: ContentServerChange;
+    export class ContentServerEvent extends api.event.NodeServerEvent {
 
         constructor(change: ContentServerChange) {
-            super();
-            this.change = change;
+            super(change);
         }
 
-        getContentChange(): ContentServerChange {
-            return this.change;
+        getNodeChange(): ContentServerChange {
+            return <ContentServerChange>super.getNodeChange();
         }
 
-        toString(): string {
-            return "ContentServerEvent: [" + this.change.toString() + "]";
+        static is(eventJson: api.event.NodeEventJson): boolean {
+            return eventJson.data.nodes.some(node => node.path.indexOf("/content") == 0);
         }
 
-        static on(handler: (event: ContentServerEvent) => void) {
-            api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
-        }
-
-        static un(handler?: (event: ContentServerEvent) => void) {
-            api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
-        }
-
-        static fromJson(nodeEventJson: NodeEventJson): ContentServerEvent {
+        static fromJson(nodeEventJson: api.event.NodeEventJson): ContentServerEvent {
             var change = ContentServerChange.fromJson(nodeEventJson);
             return new ContentServerEvent(change);
         }
