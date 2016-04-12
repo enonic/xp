@@ -52,6 +52,10 @@ module api.content.site.inputtype.siteconfigurator {
             super.layout(input, propertyArray);
 
             this.siteConfigProvider = new SiteConfigProvider(propertyArray);
+            // ignore changes made to property by siteConfigProvider
+            this.siteConfigProvider.onBeforePropertyChanged(() => this.ignorePropertyChange = true);
+            this.siteConfigProvider.onAfterPropertyChanged(() => this.ignorePropertyChange = false);
+
             this.comboBox = this.createComboBox(input, this.siteConfigProvider);
 
             this.appendChild(this.comboBox);
@@ -63,18 +67,14 @@ module api.content.site.inputtype.siteconfigurator {
 
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
-            var superPromise = super.update(propertyArray, unchangedOnly);
-            this.siteConfigProvider.setPropertyArray(propertyArray);
+            return super.update(propertyArray, unchangedOnly).then(() => {
+                this.siteConfigProvider.setPropertyArray(propertyArray);
 
-            this.siteConfigProvider.setPropertyArray(propertyArray);
-
-            if (!unchangedOnly || !this.comboBox.isDirty()) {
-                return superPromise.then(() => {
+                if (!unchangedOnly || !this.comboBox.isDirty()) {
                     this.comboBox.setValue(this.getValueFromPropertyArray(propertyArray));
-                });
-            } else {
-                return superPromise;
-            }
+                }
+                return null;
+            });
         }
 
 
@@ -107,10 +107,6 @@ module api.content.site.inputtype.siteconfigurator {
             var siteConfigFormsToDisplay = value.split(';');
             var comboBox = new SiteConfiguratorComboBox(input.getOccurrences().getMaximum() || 0, siteConfigProvider, this.formContext,
                 value);
-
-            // creating selected option might involve property changes
-            comboBox.onBeforeOptionCreated(() => this.ignorePropertyChange = true);
-            comboBox.onAfterOptionCreated(() => this.ignorePropertyChange = false);
 
             comboBox.onOptionDeselected((removed: SelectedOption<Application>) => {
                 this.ignorePropertyChange = true;

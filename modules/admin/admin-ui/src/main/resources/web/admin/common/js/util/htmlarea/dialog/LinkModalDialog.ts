@@ -100,7 +100,7 @@ module api.util.htmlarea.dialog {
         }
 
         private getSubject():string {
-            if (!this.isEmail()) {
+            if (!this.isEmail() || this.getHref().indexOf(LinkModalDialog.subjectPrefix) == -1) {
                 return api.util.StringHelper.EMPTY_STRING;
             }
             var emailArr = this.getHref().split(LinkModalDialog.subjectPrefix);

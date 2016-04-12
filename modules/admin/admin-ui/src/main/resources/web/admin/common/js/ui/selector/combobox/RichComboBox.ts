@@ -380,13 +380,14 @@ module api.ui.selector.combobox {
 
         private doWhenLoaded(callback: Function, value: string) {
             if (this.loader.isLoaded()) {
-                var option = this.getOptionByValue(value);
-                if (option == null && !api.util.StringHelper.isEmpty(value)) { // option needs loading
+                var optionsMissing = !api.util.StringHelper.isEmpty(value) && this.splitValues(value).some((val) => {
+                        return !this.getOptionByValue(val);
+                    });
+                if (optionsMissing) { // option needs loading
                     this.loader.preLoad(value).then(() => {
                         callback();
                     });
-                }
-                else { // empty option
+                } else { // empty option
                     callback();
                 }
             } else {
