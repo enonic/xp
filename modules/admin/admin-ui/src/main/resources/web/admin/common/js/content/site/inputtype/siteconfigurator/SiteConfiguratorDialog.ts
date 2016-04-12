@@ -10,6 +10,8 @@ module api.content.site.inputtype.siteconfigurator {
     import ContentSelector = api.content.form.inputtype.contentselector.ContentSelector;
     import ImageSelector = api.content.form.inputtype.image.ImageSelector;
     import ComboBox = api.ui.selector.combobox.ComboBox;
+    import ImageContentComboBox = api.content.form.inputtype.image.ImageContentComboBox;
+    import ImageSelectorSelectedOptionsView = api.content.form.inputtype.image.ImageSelectorSelectedOptionsView;
 
     export class SiteConfiguratorDialog extends api.ui.dialog.ModalDialog {
 
@@ -21,6 +23,7 @@ module api.content.site.inputtype.siteconfigurator {
             this.getEl().addClass("site-configurator-dialog");
             this.appendChildToContentPanel(formView);
             this.handleSelectorsDropdowns(formView);
+            this.handleDialogClose(formView);
 
             this.addOkButton(okCallback);
             this.getCancelAction().onExecuted(() => cancelCallback());
@@ -71,6 +74,18 @@ module api.content.site.inputtype.siteconfigurator {
                 comboboxArray.forEach((comboBox: ComboBox<any>) => {
                     comboBox.hideDropdown();
                 });
+            });
+        }
+
+        private handleDialogClose(formView: FormView) {
+            let imageSelector;
+            formView.getChildren().forEach((element: api.dom.Element) => {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(element, InputView)) {
+                    imageSelector = (<InputView> element).getInputTypeView().getElement();
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(imageSelector, ImageSelector)) {
+                        (<ImageSelector> imageSelector).onEditContentRequest(this.close.bind(this));
+                    }
+                }
             });
         }
 
