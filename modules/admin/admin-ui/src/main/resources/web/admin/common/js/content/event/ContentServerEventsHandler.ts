@@ -1,6 +1,7 @@
 module api.content.event {
 
     import ContentPath = api.content.ContentPath;
+    import NodeServerChangeType = api.event.NodeServerChangeType;
 
     /**
      * Class that listens to server events and fires UI events
@@ -60,12 +61,12 @@ module api.content.event {
                 console.debug("ContentServerEventsHandler: received server event", event);
             }
 
-            var changes = event.getEvents().map((change) => change.getContentChange());
+            var changes = event.getEvents().map((change) => change.getNodeChange());
             // use new paths in case content was renamed or moved
-            var useNewPaths = ContentServerChangeType.RENAME === event.getType() ||
-                              ContentServerChangeType.MOVE == event.getType();
+            var useNewPaths = NodeServerChangeType.RENAME === event.getType() ||
+                              NodeServerChangeType.MOVE == event.getType();
 
-            if (event.getType() == ContentServerChangeType.DELETE) {
+            if (event.getType() == NodeServerChangeType.DELETE) {
                 // content has already been deleted so no need to fetch summaries
                 var changeItems: ContentServerChangeItem[] = changes.reduce((total, change: ContentServerChange) => {
                     return total.concat(change.getChangeItems());
@@ -79,36 +80,36 @@ module api.content.event {
                             console.debug("ContentServerEventsHandler: fetched summaries", summaries);
                         }
                         switch (event.getType()) {
-                        case ContentServerChangeType.CREATE:
+                        case NodeServerChangeType.CREATE:
                             this.handleContentCreated(summaries);
                             break;
-                        case ContentServerChangeType.UPDATE:
+                        case NodeServerChangeType.UPDATE:
                             this.handleContentUpdated(summaries);
                             break;
-                        case ContentServerChangeType.RENAME:
+                        case NodeServerChangeType.RENAME:
                             // also supply old paths in case of rename
                             this.handleContentRenamed(summaries, this.extractContentPaths(changes));
                             break;
-                        case ContentServerChangeType.DELETE:
+                        case NodeServerChangeType.DELETE:
                             // has been handled without fetching summaries
                             break;
-                        case ContentServerChangeType.PENDING:
+                        case NodeServerChangeType.PENDING:
                             this.handleContentPending(summaries);
                             break;
-                        case ContentServerChangeType.DUPLICATE:
+                        case NodeServerChangeType.DUPLICATE:
                             this.handleContentDuplicated(summaries);
                             break;
-                        case ContentServerChangeType.PUBLISH:
+                        case NodeServerChangeType.PUBLISH:
                             this.handleContentPublished(summaries);
                             break;
-                        case ContentServerChangeType.MOVE:
+                        case NodeServerChangeType.MOVE:
                             // also supply old paths in case of move
                             this.handleContentMoved(summaries, this.extractContentPaths(changes));
                             break;
-                        case ContentServerChangeType.SORT:
+                        case NodeServerChangeType.SORT:
                             this.handleContentSorted(summaries);
                             break;
-                        case ContentServerChangeType.UNKNOWN:
+                        case NodeServerChangeType.UNKNOWN:
                             break;
                         default:
                             //
@@ -120,8 +121,8 @@ module api.content.event {
         private extractContentPaths(changes: ContentServerChange[], useNewPaths?: boolean): ContentPath[] {
             return changes.reduce<ContentPath[]>((prev, curr) => {
                 return prev.concat(useNewPaths
-                    ? curr.getNewContentPaths()
-                    : curr.getChangeItems().map((changeItem: ContentServerChangeItem) => changeItem.getContentPath()));
+                    ? curr.getNewPaths()
+                    : curr.getChangeItems().map((changeItem: ContentServerChangeItem) => changeItem.getPath()));
             }, []);
         }
 
@@ -158,7 +159,7 @@ module api.content.event {
             }
             var contentDeletedEvent = new ContentDeletedEvent();
             changeItems.forEach((changeItem) => {
-                contentDeletedEvent.addItem(changeItem.getContentId(), changeItem.getContentPath());
+                contentDeletedEvent.addItem(changeItem.getContentId(), changeItem.getPath());
             });
             contentDeletedEvent.fire();
 

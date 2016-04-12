@@ -1,15 +1,15 @@
 module api.app {
 
-    import ContentServerEvent = api.content.event.ContentServerEvent;
-    import ContentServerChangeType = api.content.event.ContentServerChangeType;
+    import NodeServerEvent = api.event.NodeServerEvent;
+    import NodeServerChangeType = api.event.NodeServerChangeType;
 
     export class ServerEventAggregator {
 
         private static AGGREGATION_TIMEOUT: number = 500;
 
-        private events: ContentServerEvent[];
+        private events: NodeServerEvent[];
 
-        private type: ContentServerChangeType;
+        private type: NodeServerChangeType;
 
         private batchReadyListeners: {(event):void}[] = [];
 
@@ -21,7 +21,7 @@ module api.app {
             }, ServerEventAggregator.AGGREGATION_TIMEOUT, false);
         }
 
-        getEvents(): ContentServerEvent[] {
+        getEvents(): NodeServerEvent[] {
             return this.events;
         }
 
@@ -29,7 +29,7 @@ module api.app {
             this.events = [];
         }
 
-        appendEvent(event: ContentServerEvent) {
+        appendEvent(event: NodeServerEvent) {
             if (this.events == null || this.events.length == 0) {
                 this.init(event);
             } else {
@@ -43,12 +43,12 @@ module api.app {
             this.debounced();
         }
 
-        getType(): ContentServerChangeType {
+        getType(): NodeServerChangeType {
             return this.type;
         }
 
-        private isTheSameTypeEvent(event: ContentServerEvent) {
-            var change = event.getContentChange();
+        private isTheSameTypeEvent(event: NodeServerEvent) {
+            var change = event.getNodeChange();
 
             if (this.type != change.getChangeType()) {
                 return false;
@@ -57,9 +57,9 @@ module api.app {
             return true;
         }
 
-        private init(event: ContentServerEvent) {
+        private init(event: NodeServerEvent) {
             this.events = [event];
-            this.type = !!event.getContentChange() ? event.getContentChange().getChangeType() : null;
+            this.type = !!event.getNodeChange() ? event.getNodeChange().getChangeType() : null;
         }
 
         onBatchIsReady(listener: (event)=>void) {
