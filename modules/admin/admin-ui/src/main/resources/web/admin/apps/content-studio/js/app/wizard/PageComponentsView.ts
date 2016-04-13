@@ -304,6 +304,9 @@ module app.wizard {
 
                 if(!this.pageView.isLocked()) {
                     this.highlightRow(rowElement, selected);
+                    if (this.isMenuIcon(event.target) && api.BrowserHelper.isIOS()) {
+                        this.showContextMenu(new api.dom.ElementHelper(rowElement).getSiblingIndex(), {x: event.pageX, y: event.pageY});
+                    }
                 }
             });
 
@@ -341,6 +344,13 @@ module app.wizard {
             this.tree.onRemoved((event) => this.tree.getGrid().unsubscribeOnClick(this.clickListener));
 
             this.tree.onLoaded(() => this.bindTextComponentViewsUpdateOnTextModify());
+        }
+
+        private isMenuIcon(element: HTMLElement): boolean {
+            if (!!element && !!element.className && element.className.indexOf("menu-icon") > -1) {
+                return true;
+            }
+            return false;
         }
 
         private bindTextComponentViewsUpdateOnTextModify() {
