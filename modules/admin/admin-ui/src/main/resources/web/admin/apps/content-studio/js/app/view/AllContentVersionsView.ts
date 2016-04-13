@@ -31,27 +31,13 @@ module app.view {
         }
 
         createItemView(item: ContentVersion, readOnly: boolean): api.dom.Element {
-            var itemEl = new api.dom.LiEl("content-version-item");
+            var itemContainer = new api.dom.LiEl("content-version-item");
 
-            var contentVersionStatus = this.getStatus(item);
-            if (!!contentVersionStatus) {
-                var statusDiv = new api.dom.DivEl("status " + contentVersionStatus.workspace);
-                statusDiv.setHtml(contentVersionStatus.status);
-                itemEl.appendChild(statusDiv);
-            }
+            this.createStatusBlock(item, itemContainer);
+            this.createDataBlocks(item, itemContainer);
+            this.addOnClickHandler(itemContainer);
 
-            var descriptionDiv = this.createDescriptionBlock(item),
-                versionInfoDiv = this.createVersionInfoBlock(item),
-                closeButton = this.createCloseButton(versionInfoDiv);
-
-            itemEl.appendChildren(closeButton, descriptionDiv, versionInfoDiv);
-
-            itemEl.onClicked(() => {
-                versionInfoDiv.toggleClass("hidden");
-                closeButton.toggleClass("hidden");
-            });
-
-            return itemEl;
+            return itemContainer;
         }
 
         getItemId(item: ContentVersion): string {
@@ -120,7 +106,24 @@ module app.view {
             }
         }
 
-        private createCloseButton(elementToHide: api.dom.Element): api.dom.Element {
+        private createStatusBlock(item: ContentVersion, itemEl: api.dom.Element) {
+            var contentVersionStatus = this.getStatus(item);
+            if (!!contentVersionStatus) {
+                var statusDiv = new api.dom.DivEl("status " + contentVersionStatus.workspace);
+                statusDiv.setHtml(contentVersionStatus.status);
+                itemEl.appendChild(statusDiv);
+            }
+        }
+
+        private createDataBlocks(item: ContentVersion, itemEl: api.dom.Element) {
+            var descriptionDiv = this.createDescriptionBlock(item),
+                versionInfoDiv = this.createVersionInfoBlock(item),
+                closeButton = this.createCloseButton();
+
+            itemEl.appendChildren(closeButton, descriptionDiv, versionInfoDiv);
+        }
+
+        private createCloseButton(): api.dom.Element {
             return new api.dom.DivEl("close-version-info-button hidden");
         }
 
@@ -169,6 +172,17 @@ module app.view {
             versionInfoDiv.appendChildren(timestampDiv, versionIdDiv, displayNameDiv, restoreButton);
 
             return versionInfoDiv;
+        }
+
+        private addOnClickHandler(itemContainer: api.dom.Element) {
+            itemContainer.onClicked(() => {
+                this.collaspeAllContentVersionItemViewsExcept(itemContainer);
+                itemContainer.toggleClass("expanded");
+            });
+        }
+
+        private collaspeAllContentVersionItemViewsExcept(itemContainer: api.dom.Element) {
+            wemjq(this.getHTMLElement()).find(".content-version-item").not(itemContainer.getHTMLElement()).removeClass("expanded");
         }
     }
 
