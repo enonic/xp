@@ -123,7 +123,7 @@ module api.form {
 
             return wemQ.all(updatePromises).spread<void>(() => {
                 return wemQ<void>(null);
-            });
+            }).catch(api.DefaultErrorHandler.handle);
         }
     }
 }

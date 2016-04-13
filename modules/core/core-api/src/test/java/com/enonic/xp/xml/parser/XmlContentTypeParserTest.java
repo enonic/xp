@@ -6,6 +6,7 @@ import org.junit.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
@@ -60,7 +61,7 @@ public class XmlContentTypeParserTest
         assertEquals( false, result.isAbstract() );
         assertEquals( true, result.isFinal() );
 
-        assertEquals( 3, result.getForm().size() );
+        assertEquals( 4, result.getForm().size() );
         assertEquals( "[myapplication:metadata]", result.getMetadata().toString() );
 
         final FormItem item = result.getForm().getFormItem( "myDate" );
@@ -83,5 +84,10 @@ public class XmlContentTypeParserTest
 
         final InputTypeConfig config = input.getInputTypeConfig();
         assertNotNull( config );
+
+        final Input defaultOccurrencesInput = result.getForm().getInput( "defaultOccurrences" );
+        final Occurrences defaultOccurrences = defaultOccurrencesInput.getOccurrences();
+        assertEquals( 0, defaultOccurrences.getMinimum() );
+        assertEquals( 1, defaultOccurrences.getMaximum() );
     }
 }

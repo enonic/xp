@@ -22,6 +22,7 @@ module app.view {
             setUseSplitter(false).
             setUseViewer(false).
             setSlideFrom(app.view.detail.SLIDE_FROM.BOTTOM).
+            setIsMobile(true).
             build();
         private detailsToggleButton: MobileDetailsPanelToggleButton;
 
@@ -93,10 +94,6 @@ module app.view {
                     this.setName(this.makeDisplayName(item));
                 }
             }
-            if (!!this.detailsPanel.getActiveWidget()) {
-                this.detailsPanel.getActiveWidget().slideIn();
-                this.detailsToggleButton.addClass(MobileDetailsPanelToggleButton.EXPANDED_CLASS);
-            }
             this.slideIn();
         }
 
@@ -126,7 +123,7 @@ module app.view {
         }
 
         slideIn() {
-            this.calcAndSetDetailsPanelTopOffset();
+            //this.calcAndSetDetailsPanelTopOffset();
             this.getEl().setRightPx(0);
         }
 

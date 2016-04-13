@@ -55,21 +55,6 @@ module api.content.site.inputtype.siteconfigurator {
             this.siteConfiguratorSelectedOptionsView.unSiteConfigFormDisplayed(listener);
         }
 
-        onBeforeOptionCreated(listener: () => void) {
-            this.siteConfiguratorSelectedOptionsView.onBeforeOptionCreated(listener);
-        }
-
-        unBeforeOptionCreated(listener: () => void) {
-            this.siteConfiguratorSelectedOptionsView.unBeforeOptionCreated(listener);
-        }
-
-        onAfterOptionCreated(listener: () => void) {
-            this.siteConfiguratorSelectedOptionsView.onAfterOptionCreated(listener);
-        }
-
-        unAfterOptionCreated(listener: () => void) {
-            this.siteConfiguratorSelectedOptionsView.unAfterOptionCreated(listener);
-        }
     }
 
 }

@@ -1,6 +1,7 @@
 module app.wizard {
 
     import ItemView = api.liveedit.ItemView;
+    import ComponentView = api.liveedit.ItemView;
     import ItemType = api.liveedit.ItemType;
     import PageView = api.liveedit.PageView;
     import PageItemType = api.liveedit.PageItemType;
@@ -10,6 +11,7 @@ module app.wizard {
     import TextComponentView = api.liveedit.text.TextComponentView;
     import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
     import TextComponent = api.content.page.region.TextComponent;
+    import TextComponentViewer = api.liveedit.text.TextComponentViewer;
 
     export class PageComponentsItemViewer extends api.ui.NamesAndIconViewer<ItemView> {
 
@@ -22,8 +24,10 @@ module app.wizard {
 
         resolveDisplayName(object: ItemView): string {
             if (api.ObjectHelper.iFrameSafeInstanceOf(object.getType(), TextItemType)) {
-                return this.extractTextFromTextComponentView(object);
-
+                let textView = <TextComponentView> object;
+                let textComponent = <TextComponent>textView.getComponent();
+                let viewer = <TextComponentViewer>object.getViewer()
+                return viewer.resolveDisplayName(textComponent, textView);
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(object.getType(), FragmentItemType)) {
                 let fragmentView = <FragmentComponentView> object;
                 let fragmentComponent = fragmentView.getFragmentRootComponent();
@@ -60,10 +64,6 @@ module app.wizard {
 
         resolveIconClass(object: ItemView): string {
             return object.getIconClass();
-        }
-
-        private extractTextFromTextComponentView(object: ItemView): string {
-            return wemjq(object.getHTMLElement()).text().trim();
         }
 
         private extractTextFromTextComponent(textComponent: TextComponent): string {

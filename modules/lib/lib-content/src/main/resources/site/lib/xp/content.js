@@ -136,6 +136,7 @@ exports.getChildren = function (params) {
  * @param {boolean} [params.requireValid=true] The content has to be valid to be created.
  * @param {string} params.contentType Content type to use.
  * @param {string} [params.language] The language tag representing the content’s locale.
+ * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  * @param {object} params.data Actual content data.
  * @param {object} [params.x] eXtra data to use.
  *

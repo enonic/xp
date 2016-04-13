@@ -37,6 +37,8 @@ module api.form {
 
         private blurListeners: {(event: FocusEvent):void}[] = [];
 
+        private layoutFinishedListeners: {():void}[] = [];
+
         public static debug: boolean = false;
 
         /**
@@ -115,7 +117,9 @@ module api.form {
 
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
-            }).done();
+            }).done(() => {
+                this.notifyLayoutFinished();
+            });
 
             return deferred.promise;
         }
@@ -256,6 +260,16 @@ module api.form {
             });
         }
 
+        onLayoutFinished(listener: () => void) {
+            this.layoutFinishedListeners.push(listener);
+        }
+
+        unLayoutFinished(listener: () => void) {
+            this.layoutFinishedListeners = this.layoutFinishedListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
         private notifyFocused(event: FocusEvent) {
             this.focusListeners.forEach((listener) => {
                 listener(event);
@@ -265,6 +279,12 @@ module api.form {
         private notifyBlurred(event: FocusEvent) {
             this.blurListeners.forEach((listener) => {
                 listener(event);
+            })
+        }
+
+        private notifyLayoutFinished() {
+            this.layoutFinishedListeners.forEach((listener) => {
+                listener();
             })
         }
     }

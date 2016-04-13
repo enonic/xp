@@ -1,4 +1,4 @@
-package com.enonic.xp;
+package com.enonic.xp.core.impl.app;
 
 public class ApplicationInstallException
     extends RuntimeException

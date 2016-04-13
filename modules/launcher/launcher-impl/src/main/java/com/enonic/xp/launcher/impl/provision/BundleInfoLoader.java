@@ -1,8 +1,10 @@
 package com.enonic.xp.launcher.impl.provision;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -14,17 +16,21 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import com.enonic.xp.launcher.impl.config.ConfigProperties;
 
 final class BundleInfoLoader
 {
+    private final DocumentBuilderFactory documentBuilderFactory;
+
     private final File systemDir;
 
     private final BundleLocationResolver resolver;
 
     public BundleInfoLoader( final File systemDir, final ConfigProperties config )
     {
+        this.documentBuilderFactory = DocumentBuilderFactory.newInstance();
         this.systemDir = systemDir;
         this.resolver = new BundleLocationResolver( this.systemDir, config );
     }
@@ -32,17 +38,34 @@ final class BundleInfoLoader
     public List<BundleInfo> load()
         throws Exception
     {
-        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        final DocumentBuilder builder = factory.newDocumentBuilder();
+        final Set<BundleInfo> set = Sets.newHashSet();
+        for ( final File file : findBundleFiles() )
+        {
+            loadBundles( set, file );
+        }
 
-        final File file = new File( this.systemDir, "bundles.xml" );
-        final Document doc = builder.parse( file );
-
-        final List<BundleInfo> list = Lists.newArrayList();
-        build( list, doc.getDocumentElement() );
-
+        final List<BundleInfo> list = Lists.newArrayList( set );
         Collections.sort( list );
         return list;
+    }
+
+    private File[] findBundleFiles()
+    {
+        final File[] files = this.systemDir.listFiles( this::isBundleFile );
+        return files != null ? files : new File[0];
+    }
+
+    private boolean isBundleFile( final File file )
+    {
+        return file.isFile() && file.getName().endsWith( ".xml" );
+    }
+
+    private void loadBundles( final Set<BundleInfo> set, final File file )
+        throws Exception
+    {
+        final DocumentBuilder builder = this.documentBuilderFactory.newDocumentBuilder();
+        final Document doc = builder.parse( file );
+        build( set, doc.getDocumentElement() );
     }
 
     private List<Element> findElements( final Element root, final String name )
@@ -62,7 +85,7 @@ final class BundleInfoLoader
         return result;
     }
 
-    private void build( final List<BundleInfo> list, final Element root )
+    private void build( final Collection<BundleInfo> list, final Element root )
     {
         list.addAll( findElements( root, "bundle" ).stream().map( this::buildItem ).collect( Collectors.toList() ) );
     }

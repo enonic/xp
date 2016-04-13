@@ -186,15 +186,13 @@ module api.liveedit {
                 setLiveEditModel(builder.liveEditModel).
                 setItemViewIdProducer(builder.itemViewProducer).
                 setPlaceholder(new PagePlaceholder(this)).
-                setTooltipViewer(new api.content.ContentSummaryViewer()).
+                setViewer(new api.content.ContentSummaryViewer()).
                 setType(PageItemType.get()).
                 setElement(builder.element).
                 setContextMenuActions(this.unlockedScreenActions).
                 setContextMenuTitle(new PageViewContextMenuTitle(builder.liveEditModel.getContent())));
 
             this.addClassEx('page-view');
-
-            this.setTooltipObject(builder.liveEditModel.getContent());
 
             this.parseItemViews();
 
@@ -257,14 +255,12 @@ module api.liveedit {
             return this.hasClass("has-toolbar-container");
         }
 
-        private setIgnorePropertyChanges(value: boolean) {
-            this.ignorePropertyChanges = value;
+        getEditorToolbarHeight(): number {
+            return !!this.editorToolbar ? this.editorToolbar.getEl().getHeightWithMargin() : 0;
         }
 
-        showTooltip() {
-            if (!this.isTextEditMode() && !this.isLocked()) {
-                super.showTooltip();
-            }
+        private setIgnorePropertyChanges(value: boolean) {
+            this.ignorePropertyChanges = value;
         }
 
         highlight() {

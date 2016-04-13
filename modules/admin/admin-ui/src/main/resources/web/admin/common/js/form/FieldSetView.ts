@@ -48,6 +48,10 @@ module api.form {
             return this.doLayout();
         }
 
+        getFormItemViews(): FormItemView[] {
+            return this.formItemViews;
+        }
+
         private doLayout(): wemQ.Promise<void> {
 
             var deferred = wemQ.defer<void>();
