@@ -451,35 +451,35 @@ module app.view.detail {
             this.toggleClass("no-selection", empty);
         }
 
-        private slideInRight() {
+        protected slideInRight() {
             this.getEl().setRightPx(0);
         }
 
-        private slideOutRight() {
+        protected slideOutRight() {
             this.getEl().setRightPx(-this.getEl().getWidthWithBorder());
         }
 
-        private slideInLeft() {
+        protected slideInLeft() {
             this.getEl().setLeftPx(0);
         }
 
-        private slideOutLeft() {
+        protected slideOutLeft() {
             this.getEl().setLeftPx(-this.getEl().getWidthWithBorder());
         }
 
-        private slideInTop() {
+        protected slideInTop() {
             this.getEl().setTopPx(36);
         }
 
-        private slideOutTop() {
+        protected slideOutTop() {
             this.getEl().setTopPx(-window.outerHeight);
         }
 
-        private slideInBottom() {
+        protected slideInBottom() {
             this.getEl().setTopPx(36);
         }
 
-        private slideOutBottom() {
+        protected slideOutBottom() {
             this.getEl().setTopPx(window.outerHeight);
         }
 
@@ -498,11 +498,11 @@ module app.view.detail {
 
     export class MobileDetailsPanel extends DetailsPanel {
 
-        private slideOutTop() {
+        protected slideOutTop() {
             this.getEl().setTopPx(api.BrowserHelper.isIOS() ? -window.innerHeight : -window.outerHeight);
         }
 
-        private slideOutBottom() {
+        protected slideOutBottom() {
             this.getEl().setTopPx(api.BrowserHelper.isIOS() ? window.innerHeight : window.outerHeight);
         }
     }
