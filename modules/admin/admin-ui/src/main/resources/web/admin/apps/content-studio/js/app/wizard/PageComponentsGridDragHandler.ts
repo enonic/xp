@@ -22,7 +22,7 @@ module app.wizard {
                 nodes = this.contentGrid.getRoot().getCurrentRoot().treeToList(),
                 draggedNode = nodes[row.getSiblingIndex()];
 
-            if (draggedNode.getData().isDraggableView()) { // prevent the grid from cancelling drag'n'drop by default
+            if (draggedNode.getData().isDraggableView() && !api.BrowserHelper.isMobile()) { // prevent the grid from cancelling drag'n'drop by default
                 e.stopImmediatePropagation();
             }
         }

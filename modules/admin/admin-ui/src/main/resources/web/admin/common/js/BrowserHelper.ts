@@ -59,6 +59,14 @@ module api {
             return navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
         }
 
+        static isAndroid(): boolean {
+            return /(android)/i.test(navigator.userAgent);
+        }
+
+        static isMobile(): boolean {
+            return BrowserHelper.isIOS() || BrowserHelper.isAndroid();
+        }
+
         private static init() {
             var M = navigator.userAgent.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
             BrowserHelper.BROWSER_NAME = (<any>BrowserName)[M[1].toLocaleUpperCase()];

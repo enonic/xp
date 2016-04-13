@@ -601,8 +601,7 @@ module app.wizard {
         }
 
         private hidePageComponentsIfInMobileView(action: api.ui.Action) {
-            var isInMobileMode: boolean = ResponsiveRanges._720_960.isFitOrSmaller(window.innerWidth);
-            if (isInMobileMode && ((action.hasParentAction() && action.getParentAction().getLabel() == "Insert")
+            if (api.BrowserHelper.isMobile() && ((action.hasParentAction() && action.getParentAction().getLabel() == "Insert")
                                    || action.getLabel() == "Inspect" || action.getLabel() == "Edit" ||
                                    action.getLabel() == "Duplicate")) {
                 this.hide();
@@ -642,7 +641,7 @@ module app.wizard {
 
                 if (hoveredNode) {
                     var data = hoveredNode.getData();
-                    if (data.getType().isComponentType()) {
+                    if (data.getType().isComponentType() && !api.BrowserHelper.isMobile()) {
                         api.liveedit.Highlighter.get().highlightElement(dimensions, data.getType().getConfig().getHighlighterStyle());
                     }
                     if (api.BrowserHelper.isIOS()) {
