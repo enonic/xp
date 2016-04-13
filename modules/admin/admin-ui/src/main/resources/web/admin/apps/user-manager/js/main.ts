@@ -53,7 +53,7 @@ function startApplication() {
             }
         }
     };
-
+    api.security.event.PrincipalServerEventsHandler.getInstance().start();
 }
 
 module components {
