@@ -29,7 +29,7 @@ module api.liveedit.part {
             this.partPlaceholder = new PartPlaceholder(this);
 
             super(builder.
-                setTooltipViewer(new PartComponentViewer()).
+                setViewer(new PartComponentViewer()).
                 setPlaceholder(this.partPlaceholder).
                 setInspectActionRequired(true));
 

@@ -28,7 +28,7 @@ module api.form.inputtype.support {
 
             this.propertyListener = (event: api.data.PropertyValueChangedEvent) => {
                 if (!this.ignorePropertyChange) {
-                    this.updateProperty(event.getProperty(), true);
+                    this.updateProperty(event.getProperty(), true).done();
                 }
             };
         }

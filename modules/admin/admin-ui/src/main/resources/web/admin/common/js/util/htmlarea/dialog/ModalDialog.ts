@@ -67,6 +67,11 @@ module api.util.htmlarea.dialog {
             return this.mainForm.validate(true).isValid();
         }
 
+        protected hasSubDialog(): boolean {
+            // html area dialogs can't have sub dialogs
+            return false;
+        }
+
         show() {
             api.dom.Body.get().appendChild(this);
             super.show();

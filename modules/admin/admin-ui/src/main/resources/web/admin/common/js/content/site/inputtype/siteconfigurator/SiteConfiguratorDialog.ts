@@ -10,8 +10,6 @@ module api.content.site.inputtype.siteconfigurator {
     import ContentSelector = api.content.form.inputtype.contentselector.ContentSelector;
     import ImageSelector = api.content.form.inputtype.image.ImageSelector;
     import ComboBox = api.ui.selector.combobox.ComboBox;
-    import ImageContentComboBox = api.content.form.inputtype.image.ImageContentComboBox;
-    import ImageSelectorSelectedOptionsView = api.content.form.inputtype.image.ImageSelectorSelectedOptionsView;
 
     export class SiteConfiguratorDialog extends api.ui.dialog.ModalDialog {
 
@@ -22,8 +20,16 @@ module api.content.site.inputtype.siteconfigurator {
 
             this.getEl().addClass("site-configurator-dialog");
             this.appendChildToContentPanel(formView);
-            this.handleSelectorsDropdowns(formView);
-            this.handleDialogClose(formView);
+
+            formView.onLayoutFinished(() => {
+                this.handleSelectorsDropdowns(formView);
+                this.handleDialogClose(formView);
+
+                this.addClass("animated");
+                this.centerMyself();
+                wemjq(this.getHTMLElement()).find('input[type=text],textarea,select').first().focus();
+                this.updateTabbable();
+            });
 
             this.addOkButton(okCallback);
             this.getCancelAction().onExecuted(() => cancelCallback());
@@ -59,16 +65,7 @@ module api.content.site.inputtype.siteconfigurator {
         private handleSelectorsDropdowns(formView: FormView) {
             var comboboxArray = [];
             formView.getChildren().forEach((element: api.dom.Element) => {
-                if (api.ObjectHelper.iFrameSafeInstanceOf(element, InputView)) {
-                    var inputView: InputView = <InputView> element;
-                    if (this.isContentOrImageOrComboSelectorInput(inputView)) {
-                        var combobox = this.getComboboxFromSelectorInputView(inputView);
-                        if (!!combobox) {
-                            comboboxArray.push(combobox);
-                        }
-                        this.subscribeCombobox(combobox);
-                    }
-                }
+                this.findItemViewsAndSubscribe(element, comboboxArray);
             });
             this.getContentPanel().onScroll((event) => {
                 comboboxArray.forEach((comboBox: ComboBox<any>) => {
@@ -87,6 +84,28 @@ module api.content.site.inputtype.siteconfigurator {
                     }
                 }
             });
+        }
+
+        private findItemViewsAndSubscribe(element: api.dom.Element, comboboxArray: ComboBox<any>[]) {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(element, InputView)) {
+                this.checkItemViewAndSubscribe(<InputView> element, comboboxArray);
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(element, api.form.FieldSetView)) {
+                var fieldSetView: api.form.FieldSetView = <api.form.FieldSetView> element;
+                fieldSetView.getFormItemViews().forEach((formItemView: api.form.FormItemView) => {
+                    this.findItemViewsAndSubscribe(formItemView, comboboxArray);
+                });
+            }
+        }
+
+        private checkItemViewAndSubscribe(itemView: api.form.FormItemView, comboboxArray: ComboBox<any>[]) {
+            var inputView: InputView = <InputView> itemView;
+            if (this.isContentOrImageOrComboSelectorInput(inputView)) {
+                var combobox = this.getComboboxFromSelectorInputView(inputView);
+                if (!!combobox) {
+                    comboboxArray.push(combobox);
+                }
+                this.subscribeCombobox(combobox);
+            }
         }
 
         private subscribeCombobox(comboBox: ComboBox<any>) {
@@ -131,12 +150,6 @@ module api.content.site.inputtype.siteconfigurator {
         show() {
             api.dom.Body.get().appendChild(this);
             super.show();
-            setTimeout(() => {
-                this.addClass("animated");
-                this.centerMyself();
-                wemjq(this.getHTMLElement()).find('input[type=text],textarea,select').first().focus();
-                this.updateTabbable();
-            }, 100);
         }
 
         close() {

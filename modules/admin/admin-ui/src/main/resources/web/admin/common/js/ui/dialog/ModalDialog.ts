@@ -83,11 +83,11 @@ module api.ui.dialog {
             this.onShown(() => api.ui.responsive.ResponsiveManager.fireResizeEvent());
 
             this.responsiveItem =
-            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
-                if (this.isVisible()) {
-                    this.centerMyself();
-                }
-            });
+                api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+                    if (this.isVisible()) {
+                        this.centerMyself();
+                    }
+                });
 
 
             let modalDialogFocusOutTimeout;
@@ -102,7 +102,7 @@ module api.ui.dialog {
                 modalDialogFocusOutTimeout = setTimeout(() => {
                     this.modalDialogIsFocused = false;
 
-                    if (this.hasTabbable()) {
+                    if (this.hasTabbable() && !this.hasSubDialog()) {
                         // last focusable - Cancel
                         // first focusable - X
                         if (this.buttonRowIsFocused) { // last element lost focus
@@ -204,6 +204,11 @@ module api.ui.dialog {
 
         protected getContentPanel(): ModalDialogContentPanel {
             return this.contentPanel;
+        }
+
+        protected hasSubDialog(): boolean {
+            // html area can spawn sub dialogs so check none is open
+            return !!api.util.htmlarea.dialog.HTMLAreaDialogHandler.getOpenDialog();
         }
 
         private hasTabbable(): boolean {

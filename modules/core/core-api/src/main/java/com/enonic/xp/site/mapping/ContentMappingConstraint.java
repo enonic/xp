@@ -8,12 +8,20 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.schema.mixin.MixinName;
+
+import static org.apache.commons.lang.StringUtils.substringAfter;
+import static org.apache.commons.lang.StringUtils.substringBefore;
 
 @Beta
 public final class ContentMappingConstraint
@@ -29,6 +37,16 @@ public final class ContentMappingConstraint
     private static final String TYPE_PROPERTY = "type";
 
     private static final String DISPLAY_NAME_PROPERTY = "displayName";
+
+    private static final String HAS_CHILDREN_PROPERTY = "hasChildren";
+
+    private static final String LANGUAGE_PROPERTY = "language";
+
+    private static final String VALID_PROPERTY = "valid";
+
+    private static final String DATA_PROPERTY_PREFIX = "data.";
+
+    private static final String XDATA_PROPERTY_PREFIX = "x.";
 
     private final String id;
 
@@ -63,17 +81,82 @@ public final class ContentMappingConstraint
         {
             return valueMatches( val, content.getDisplayName() );
         }
-        else
+        else if ( HAS_CHILDREN_PROPERTY.equals( this.id ) )
         {
-            final Property prop = content.getData().getProperty( id );
+            return valueMatches( val, content.hasChildren() );
+        }
+        else if ( LANGUAGE_PROPERTY.equals( this.id ) )
+        {
+            return valueMatches( val, content.getLanguage() == null ? "" : content.getLanguage().toLanguageTag() );
+        }
+        else if ( VALID_PROPERTY.equals( this.id ) )
+        {
+            return valueMatches( val, content.isValid() );
+        }
+        else if ( this.id.startsWith( DATA_PROPERTY_PREFIX ) )
+        {
+            final String dataPath = substringAfter( id, DATA_PROPERTY_PREFIX );
+            final Property prop = content.getData().getProperty( dataPath );
             if ( prop == null || prop.getValue() == null )
             {
                 return false;
             }
 
             final Value propertyValue = convert( val, prop.getValue().getType() );
-            return propertyValue != null && prop.getValue().equals( propertyValue );
+            return propertyValue != null && valueMatches( propertyValue.asString(), prop.getValue().asString() );
         }
+        else if ( this.id.startsWith( XDATA_PROPERTY_PREFIX ) )
+        {
+            String dataPath = substringAfter( id, XDATA_PROPERTY_PREFIX );
+            final String appPrefix = substringBefore( dataPath, "." );
+            dataPath = substringAfter( dataPath, "." );
+            final String mixinName = substringBefore( dataPath, "." );
+            dataPath = substringAfter( dataPath, "." );
+            final PropertyTree xData = getXData( content.getAllExtraData(), appPrefix, mixinName );
+            if ( xData == null )
+            {
+                return false;
+            }
+
+            final Property prop = xData.getProperty( dataPath );
+            if ( prop == null || prop.getValue() == null )
+            {
+                return false;
+            }
+
+            final Value propertyValue = convert( val, prop.getValue().getType() );
+            return propertyValue != null && valueMatches( propertyValue.asString(), prop.getValue().asString() );
+        }
+
+        return false;
+    }
+
+    private PropertyTree getXData( final ExtraDatas xDatas, final String appPrefix, final String name )
+    {
+        if ( xDatas == null )
+        {
+            return null;
+        }
+        try
+        {
+            final ApplicationKey app = ExtraData.fromApplicationPrefix( appPrefix );
+            final MixinName mixinName = MixinName.from( app, name );
+            final ExtraData extraData = xDatas.getMetadata( mixinName );
+            if ( extraData == null )
+            {
+                return null;
+            }
+            return extraData.getData();
+        }
+        catch ( Exception e )
+        {
+            return null;
+        }
+    }
+
+    private boolean valueMatches( final String pattern, final boolean value )
+    {
+        return valueMatches( pattern, Boolean.toString( value ) );
     }
 
     private boolean valueMatches( final String pattern, final String value )
@@ -160,8 +243,8 @@ public final class ContentMappingConstraint
         {
             throw new IllegalArgumentException( "Invalid match expression: " + expression );
         }
-        final String id = StringUtils.substringBefore( expression, SEPARATOR ).trim();
-        final String value = StringUtils.substringAfter( expression, SEPARATOR ).trim();
+        final String id = substringBefore( expression, SEPARATOR ).trim();
+        final String value = substringAfter( expression, SEPARATOR ).trim();
         if ( StringUtils.isBlank( id ) )
         {
             throw new IllegalArgumentException( "Invalid match expression: " + expression );

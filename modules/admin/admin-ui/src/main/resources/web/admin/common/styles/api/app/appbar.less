@@ -51,7 +51,7 @@
     .order(1);
 
     float: left;
-    padding: 2px 30px 6px 0;
+    padding: 8px 25px;
     border: 0;
     color: @admin-bg-light-gray;
     background-color: transparent;
@@ -101,7 +101,7 @@
 
   &.tabs-present {
     .home-button {
-      .flex(0 0 48px);
+      .flex(0 0 41px);
 
       &:before {
         float: left;
@@ -111,16 +111,25 @@
         display: none;
       }
     }
+
+    .xp-admin-common-button {
+      padding-right: 17px !important;
+    }
+
+    .appbar-tab-menu {
+      max-width: calc(~'100% - ' 90px);
+    }
   }
 
   .tab-menu {
     min-width: initial;
   }
+
 }
 
 .tabs-present {
   .appbar-tab-menu {
-    margin: 0px 24px 0px 0px;
+    max-width: calc(~'100% - ' 222px);
 
     ul.bar {
       min-width: inherit;

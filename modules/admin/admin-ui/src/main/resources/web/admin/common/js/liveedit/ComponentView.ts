@@ -30,7 +30,7 @@ module api.liveedit {
 
         placeholder: ItemViewPlaceholder;
 
-        tooltipViewer: api.ui.Viewer<any>;
+        viewer: api.ui.Viewer<any>;
 
         inspectActionRequired: boolean;
 
@@ -82,13 +82,13 @@ module api.liveedit {
             return this;
         }
 
-        setTooltipViewer(value: api.ui.Viewer<any>): ComponentViewBuilder<COMPONENT> {
-            this.tooltipViewer = value;
+        setInspectActionRequired(value: boolean): ComponentViewBuilder<COMPONENT> {
+            this.inspectActionRequired = value;
             return this;
         }
 
-        setInspectActionRequired(value: boolean): ComponentViewBuilder<COMPONENT> {
-            this.inspectActionRequired = value;
+        setViewer(value: api.ui.Viewer<any>): ComponentViewBuilder<COMPONENT> {
+            this.viewer = value;
             return this;
         }
     }
@@ -123,7 +123,7 @@ module api.liveedit {
                         ? builder.itemViewProducer
                         : builder.parentRegionView.getItemViewIdProducer()).
                     setPlaceholder(builder.placeholder).
-                    setTooltipViewer(builder.tooltipViewer).
+                    setViewer(builder.viewer).
                     setType(builder.type).
                     setElement(builder.element).
                     setParentView(builder.parentRegionView).
@@ -141,6 +141,7 @@ module api.liveedit {
                 var clone = this.clone();
                 this.replaceWith(clone);
                 clone.select();
+                clone.hideContextMenu();
 
                 new api.liveedit.ComponentResetEvent(clone, this).fire();
             };
@@ -255,7 +256,6 @@ module api.liveedit {
                 if (this.component) {
                     this.unregisterComponentListeners(this.component);
                 }
-                this.setTooltipObject(component);
                 this.registerComponentListeners(component);
             }
 
@@ -463,7 +463,6 @@ module api.liveedit {
                 event.dataTransfer.effectAllowed = "move";
                 //event.dataTransfer.setData('text/plain', 'This text may be dragged');
                 console.log("ComponentView[" + this.getItemId().toNumber() + "].handleDragStart", event, this.getHTMLElement());
-                this.hideTooltip();
             }
         }
 

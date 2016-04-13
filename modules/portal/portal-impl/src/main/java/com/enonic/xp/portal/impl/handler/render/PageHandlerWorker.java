@@ -4,6 +4,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.Property;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
@@ -103,7 +104,8 @@ final class PageHandlerWorker
 
     private void renderShortcut( final Content content )
     {
-        final Reference target = content.getData().getProperty( SHORTCUT_TARGET_PROPERTY ).getReference();
+        final Property shortcut = content.getData().getProperty( SHORTCUT_TARGET_PROPERTY );
+        final Reference target = shortcut == null ? null : shortcut.getReference();
         if ( target == null || target.getNodeId() == null )
         {
             throw notFound( "Missing shortcut target" );

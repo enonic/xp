@@ -28,7 +28,7 @@ module api.liveedit {
 
         placeholder: ItemViewPlaceholder;
 
-        tooltipViewer: api.ui.Viewer<any>;
+        viewer: api.ui.Viewer<any>;
 
         setLiveEditModel(value: LiveEditModel): ItemViewBuilder {
             this.liveEditModel = value;
@@ -55,8 +55,8 @@ module api.liveedit {
             return this;
         }
 
-        setTooltipViewer(value: api.ui.Viewer<any>): ItemViewBuilder {
-            this.tooltipViewer = value;
+        setViewer(value: api.ui.Viewer<any>): ItemViewBuilder {
+            this.viewer = value;
             return this;
         }
 
@@ -95,15 +95,13 @@ module api.liveedit {
 
         private loadMask: api.ui.mask.LoadMask;
 
-        private tooltip: api.ui.Tooltip;
-
         private contextMenu: api.liveedit.ItemViewContextMenu;
 
         private contextMenuTitle: ItemViewContextMenuTitle;
 
         private contextMenuActions: api.ui.Action[];
 
-        private tooltipViewer: api.ui.Viewer<any>;
+        private viewer: api.ui.Viewer<any>;
 
         private mouseOver: boolean;
 
@@ -163,17 +161,7 @@ module api.liveedit {
                 this.getEl().setData(ItemType.ATTRIBUTE_TYPE, builder.type.getShortName());
             }
 
-            /*          To disable all the tooltips
-             if (builder.tooltipViewer) {
-             this.tooltipViewer = builder.tooltipViewer;
-
-             this.tooltip = new api.ui.Tooltip(this).
-             setSide(api.ui.Tooltip.SIDE_BOTTOM).
-             setMode(api.ui.Tooltip.MODE_FOLLOW).
-             setTrigger(api.ui.Tooltip.TRIGGER_NONE).
-             setHideTimeout(0).
-             setContent(this.tooltipViewer);
-             }*/
+            this.viewer = builder.viewer;
 
             // remove old placeholder in case of parsing already parsed page again
             for (var i = 0; i < this.getChildren().length; i++) {
@@ -240,7 +228,6 @@ module api.liveedit {
                 var isDragging = DragAndDrop.get().isDragging();
 
                 if (!isDragging) {
-                    this.showTooltip();
                     this.showCursor();
                     this.highlight();
                 }
@@ -260,7 +247,6 @@ module api.liveedit {
                 var isDragging = DragAndDrop.get().isDragging();
 
                 if (!isDragging) {
-                    this.hideTooltip();
                     this.resetCursor();
                     this.unhighlight();
                 }
@@ -478,9 +464,6 @@ module api.liveedit {
             // Turn off 'mouseOver' state and notify ItemVeiw was left.
             this.mouseOver = false;
             this.notifyMouseLeaveView();
-            if (this.tooltip) {
-                this.tooltip.hide();
-            }
 
             // Notify parent ItemView is entered.
             if (this.parentItemView) {
@@ -553,33 +536,6 @@ module api.liveedit {
 
         getItemViewIdProducer(): ItemViewIdProducer {
             return this.itemViewIdProducer;
-        }
-
-        setTooltipObject(object: any) {
-            if (this.tooltipViewer) {
-                this.tooltipViewer.setObject(object);
-            }
-        }
-
-        showTooltip() {
-            if (ItemView.debug) {
-                console.log('showing tooltip [' + this.getId() + "]");
-            }
-            if (this.tooltip) {
-                this.tooltip.show();
-            }
-        }
-
-        hideTooltip(hideParentTooltip: boolean = true) {
-            if (ItemView.debug) {
-                console.log('hiding tooltip [' + this.getId() + "]");
-            }
-            if (this.tooltip) {
-                this.tooltip.hide();
-            }
-            if (hideParentTooltip && this.parentItemView) {
-                this.parentItemView.hideTooltip();
-            }
         }
 
         showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
@@ -697,7 +653,6 @@ module api.liveedit {
 
             this.getEl().setData("live-edit-selected", "true");
 
-            this.hideTooltip();
             //this.shade();
             this.showCursor();
 
@@ -799,6 +754,10 @@ module api.liveedit {
 
         getLiveEditModel(): LiveEditModel {
             return this.liveEditModel;
+        }
+
+        getViewer(): api.ui.Viewer<any> {
+            return this.viewer;
         }
 
         static findParentItemViewAsHTMLElement(htmlElement: HTMLElement): HTMLElement {

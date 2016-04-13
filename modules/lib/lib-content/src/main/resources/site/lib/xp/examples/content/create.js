@@ -7,7 +7,7 @@ var result1 = contentLib.create({
     name: 'mycontent',
     parentPath: '/a/b',
     displayName: 'My Content',
-    draft: true,
+    branch: 'draft',
     contentType: 'test:myContentType',
     language: 'es',
     data: {
@@ -41,7 +41,7 @@ try {
         name: 'mycontent',
         parentPath: '/a/b',
         displayName: 'My Content',
-        draft: true,
+        branch: 'draft',
         contentType: 'test:myContentType',
         data: {}
     });

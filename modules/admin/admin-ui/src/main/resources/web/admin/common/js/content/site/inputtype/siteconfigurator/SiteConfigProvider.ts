@@ -11,6 +11,10 @@ module api.content.site.inputtype.siteconfigurator {
 
         private arrayChangedListeners: {() : void}[] = [];
 
+        private beforeArrayChangedListeners: {():void}[] = [];
+
+        private afterArrayChangedListeners: {():void}[] = [];
+
         constructor(propertyArray: PropertyArray) {
             this.setPropertyArray(propertyArray);
         }
@@ -20,8 +24,12 @@ module api.content.site.inputtype.siteconfigurator {
             this.notifyPropertyChanged();
         }
 
-        getConfig(applicationKey: ApplicationKey): SiteConfig {
+        getConfig(applicationKey: ApplicationKey, addMissing: boolean = true): SiteConfig {
             var match: SiteConfig = null;
+
+            if (!applicationKey) {
+                return match;
+            }
 
             this.propertyArray.forEach((property: Property) => {
                 if (property.hasNonNullValue()) {
@@ -33,13 +41,17 @@ module api.content.site.inputtype.siteconfigurator {
                 }
             });
 
-            if (!match) {
+            if (!match && addMissing) {
+                this.notifyBeforePropertyChanged();
+
                 var siteConfigAsSet = this.propertyArray.addSet();
                 siteConfigAsSet.addString("applicationKey", applicationKey.toString());
                 siteConfigAsSet.addPropertySet("config");
                 var newSiteConfig = SiteConfig.create().
                     fromData(siteConfigAsSet).
                     build();
+
+                this.notifyAfterPropertyChanged();
                 return newSiteConfig;
 
             }
@@ -54,11 +66,42 @@ module api.content.site.inputtype.siteconfigurator {
             this.arrayChangedListeners = this.arrayChangedListeners.filter((currentListener: ()=>void) => {
                 return currentListener != listener;
             });
-
         }
 
         private notifyPropertyChanged() {
             this.arrayChangedListeners.forEach((listener: ()=>void) => {
+                listener.call(this);
+            });
+        }
+
+        onBeforePropertyChanged(listener: ()=>void) {
+            this.beforeArrayChangedListeners.push(listener);
+        }
+
+        unBeforePropertyChanged(listener: ()=>void) {
+            this.beforeArrayChangedListeners = this.beforeArrayChangedListeners.filter((currentListener: ()=>void) => {
+                return currentListener != listener;
+            });
+        }
+
+        private notifyBeforePropertyChanged() {
+            this.beforeArrayChangedListeners.forEach((listener: ()=>void) => {
+                listener.call(this);
+            });
+        }
+
+        onAfterPropertyChanged(listener: ()=>void) {
+            this.afterArrayChangedListeners.push(listener);
+        }
+
+        unAfterPropertyChanged(listener: ()=>void) {
+            this.afterArrayChangedListeners = this.afterArrayChangedListeners.filter((currentListener: ()=>void) => {
+                return currentListener != listener;
+            });
+        }
+
+        private notifyAfterPropertyChanged() {
+            this.afterArrayChangedListeners.forEach((listener: ()=>void) => {
                 listener.call(this);
             });
         }
