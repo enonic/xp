@@ -1,6 +1,7 @@
 package com.enonic.xp.site.mapping;
 
 import java.time.Instant;
+import java.util.Locale;
 
 import org.junit.Test;
 
@@ -88,6 +89,33 @@ public class ContentMappingConstraintTest
     }
 
     @Test
+    public void testMatchesHasChildren()
+        throws Exception
+    {
+        final Content content = newContent();
+        assertTrue( ContentMappingConstraint.parse( "hasChildren:true" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse( "hasChildren:false" ).matches( content ) );
+    }
+
+    @Test
+    public void testMatchesLanguage()
+        throws Exception
+    {
+        final Content content = newContent();
+        assertTrue( ContentMappingConstraint.parse( "language:'fr'" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse( "language:'es'" ).matches( content ) );
+    }
+
+    @Test
+    public void testMatchesValid()
+        throws Exception
+    {
+        final Content content = newContent();
+        assertTrue( ContentMappingConstraint.parse( "valid:true" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse( "valid:false" ).matches( content ) );
+    }
+
+    @Test
     public void testEquals()
         throws Exception
     {
@@ -122,8 +150,8 @@ public class ContentMappingConstraintTest
         throws Exception
     {
         final Content content = newContent();
-        assertTrue( ContentMappingConstraint.parse( "c.h:true" ).matches( content ) );
-        assertFalse( ContentMappingConstraint.parse( "c.h:false" ).matches( content ) );
+        assertTrue( ContentMappingConstraint.parse( "data.c.h:true" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse( "data.c.h:false" ).matches( content ) );
     }
 
     @Test
@@ -131,9 +159,9 @@ public class ContentMappingConstraintTest
         throws Exception
     {
         final Content content = newContent();
-        assertTrue( ContentMappingConstraint.parse( "c.g:'test'" ).matches( content ) );
-        assertTrue( ContentMappingConstraint.parse( "c.g:test" ).matches( content ) );
-        assertFalse( ContentMappingConstraint.parse( "c.g:'foo'" ).matches( content ) );
+        assertTrue( ContentMappingConstraint.parse( "data.c.g:'test'" ).matches( content ) );
+        assertTrue( ContentMappingConstraint.parse( "data.c.g:test" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse( "data.c.g:'foo'" ).matches( content ) );
     }
 
     @Test
@@ -141,8 +169,8 @@ public class ContentMappingConstraintTest
         throws Exception
     {
         final Content content = newContent();
-        assertTrue( ContentMappingConstraint.parse( "c.i:42" ).matches( content ) );
-        assertFalse( ContentMappingConstraint.parse( "c.i:1" ).matches( content ) );
+        assertTrue( ContentMappingConstraint.parse( "data.c.i:42" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse( "data.c.i:1" ).matches( content ) );
     }
 
     @Test
@@ -150,8 +178,19 @@ public class ContentMappingConstraintTest
         throws Exception
     {
         final Content content = newContent();
-        assertTrue( ContentMappingConstraint.parse( "c.j:99" ).matches( content ) );
-        assertFalse( ContentMappingConstraint.parse( "c.j:1" ).matches( content ) );
+        assertTrue( ContentMappingConstraint.parse( "data.c.j:99" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse( "data.c.j:1" ).matches( content ) );
+    }
+
+    @Test
+    public void testMatchesXDataPropertyString()
+        throws Exception
+    {
+        final Content content = newContent();
+        assertTrue( ContentMappingConstraint.parse( "x.myapplication.myschema.a:1" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse( "x.myapplication.missing.a:1" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse( "x.myapplication.myschema.a:2" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse( "x.myapplication.myschema.b:1" ).matches( content ) );
     }
 
     private Content newContent()
@@ -167,6 +206,9 @@ public class ContentMappingConstraintTest
         builder.creator( PrincipalKey.from( "user:system:admin" ) );
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
         builder.data( newPropertyTree() );
+        builder.hasChildren( true );
+        builder.valid( true );
+        builder.language( Locale.FRENCH );
 
         builder.addExtraData( new ExtraData( MixinName.from( "myapplication:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );
