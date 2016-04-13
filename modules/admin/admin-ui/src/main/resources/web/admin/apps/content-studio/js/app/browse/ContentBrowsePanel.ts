@@ -374,9 +374,11 @@ module app.browse {
             isFiltered = true;
             if (isFiltered) {
                 this.setFilterPanelRefreshNeeded(true);
-                window.setTimeout(() => {
-                    this.refreshFilter();
-                }, 1000);
+                if (this.contentFilterPanel.isVisible()) {
+                    window.setTimeout(() => {
+                        this.refreshFilter();
+                    }, 1000);
+                }
             }
 
         }
@@ -447,9 +449,11 @@ module app.browse {
             });
 
             this.setFilterPanelRefreshNeeded(true);
-            window.setTimeout(() => {
-                this.refreshFilter();
-            }, 1000);
+            if (this.contentFilterPanel.isVisible()) {
+                window.setTimeout(() => {
+                    this.refreshFilter();
+                }, 1000);
+            }
         }
 
         private handleContentPending(data: ContentSummaryAndCompareStatus[]) {
