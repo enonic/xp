@@ -8,9 +8,15 @@ public final class DeleteContentParams
 {
     private final ContentPath contentPath;
 
+    private final boolean deleteOnline;
+
+    private final boolean deletePending;
+
     private DeleteContentParams( Builder builder )
     {
         contentPath = builder.contentPath;
+        deleteOnline = builder.deleteOnline;
+        deletePending = builder.deletePending;
     }
 
     public static Builder create()
@@ -21,6 +27,16 @@ public final class DeleteContentParams
     public ContentPath getContentPath()
     {
         return contentPath;
+    }
+
+    public boolean isDeleteOnline()
+    {
+        return deleteOnline;
+    }
+
+    public boolean isDeletePending()
+    {
+        return deletePending;
     }
 
     public void validate()
@@ -61,6 +77,10 @@ public final class DeleteContentParams
     {
         private ContentPath contentPath;
 
+        private boolean deleteOnline;
+
+        private boolean deletePending;
+
         private Builder()
         {
         }
@@ -68,6 +88,18 @@ public final class DeleteContentParams
         public Builder contentPath( ContentPath contentPath )
         {
             this.contentPath = contentPath;
+            return this;
+        }
+
+        public Builder deleteOnline( boolean deleteOnline )
+        {
+            this.deleteOnline = deleteOnline;
+            return this;
+        }
+
+        public Builder deletePending( boolean deletePending )
+        {
+            this.deletePending = deletePending;
             return this;
         }
 
