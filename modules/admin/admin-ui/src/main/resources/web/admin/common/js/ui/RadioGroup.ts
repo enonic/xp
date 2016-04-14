@@ -7,11 +7,17 @@ module api.ui {
 
     export class RadioGroup extends api.dom.FormInputEl {
 
+        // Group name is similar to name, but have and addition counter
+        // to prevent inappropriate behaviour of the radio group on one page
+        // with the same names
+        private groupName: string;
+
         private options: RadioButton[] = [];
 
         constructor(name: string, originalValue?: string) {
             super("div", "radio-group", undefined, originalValue);
             this.setName(name);
+            this.groupName = `${name}-${api.dom.ElementRegistry.getElementCountById(this.getId())}`;
         }
 
         public setOrientation(orientation: RadioOrientation): RadioGroup {
@@ -20,7 +26,7 @@ module api.ui {
         }
 
         public addOption(value: string, label: string, checked?: boolean) {
-            var radio = new RadioButton(label, value, this.getName(), checked);
+            var radio = new RadioButton(label, value, this.groupName, checked);
             radio.onValueChanged((event: api.ValueChangedEvent) => {
                 this.setValue(this.doGetValue(), false, true);
             });
