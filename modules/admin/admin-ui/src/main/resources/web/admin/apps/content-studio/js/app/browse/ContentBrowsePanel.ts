@@ -72,9 +72,9 @@ module app.browse {
                     this.contentTreeGrid.mask();
                 }
             };
-            this.contentFilterPanel.onSearch(showMask);
+            this.contentFilterPanel.onSearchStarted(showMask);
             this.contentFilterPanel.onReset(showMask);
-            this.contentFilterPanel.onRefresh(showMask);
+            this.contentFilterPanel.onRefreshStarted(showMask);
 
             this.getTreeGrid().onDataChanged((event: api.ui.treegrid.DataChangedEvent<ContentSummaryAndCompareStatus>) => {
                 if (event.getType() === 'updated') {
@@ -373,7 +373,7 @@ module app.browse {
 
             isFiltered = true;
             if (isFiltered) {
-                this.setFilterPanelRefreshNeeded(true);
+                this.setRefreshOfFilterRequired();
                 window.setTimeout(() => {
                     this.refreshFilter();
                 }, 1000);
@@ -446,7 +446,7 @@ module app.browse {
                 }
             });
 
-            this.setFilterPanelRefreshNeeded(true);
+            this.setRefreshOfFilterRequired();
             window.setTimeout(() => {
                 this.refreshFilter();
             }, 1000);

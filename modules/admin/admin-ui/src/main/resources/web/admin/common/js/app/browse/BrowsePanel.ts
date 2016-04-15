@@ -36,8 +36,6 @@ module api.app.browse {
 
         private filterAndGridSplitPanel: api.ui.panel.SplitPanel;
 
-        private filterPanelRefreshNeeded: boolean = false;
-
         private filterPanelForcedShown: boolean = false;
 
         private filterPanelForcedHidden: boolean = false;
@@ -138,20 +136,15 @@ module api.app.browse {
         }
 
         refreshFilter() {
-            if (this.isFilterPanelRefreshNeeded()) {
-                if (this.filterPanel) {
-                    this.filterPanel.refresh();
-                }
-                this.filterPanelRefreshNeeded = false;
+            if (this.filterPanel) {
+                this.filterPanel.refresh();
             }
         }
 
-        isFilterPanelRefreshNeeded(): boolean {
-            return this.filterPanelRefreshNeeded;
-        }
-
-        setFilterPanelRefreshNeeded(refreshNeeded: boolean) {
-            this.filterPanelRefreshNeeded = refreshNeeded;
+        setRefreshOfFilterRequired() {
+            if (this.filterPanel) {
+                this.filterPanel.setRefreshOfFilterRequired();
+            }
         }
 
         toggleFilterPanel() {

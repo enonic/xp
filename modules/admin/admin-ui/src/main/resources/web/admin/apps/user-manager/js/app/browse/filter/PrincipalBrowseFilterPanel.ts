@@ -5,7 +5,6 @@ module app.browse.filter {
     import Principal = api.security.Principal;
     import FindPrincipalsRequest = api.security.FindPrincipalsRequest;
     import PrincipalType = api.security.PrincipalType;
-    import RefreshEvent = api.app.browse.filter.RefreshEvent;
 
     export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
@@ -18,11 +17,19 @@ module app.browse.filter {
                 this.resetFacets();
             });
 
-            this.onRefresh(this.searchFacets);
-
-            this.onSearch(this.searchFacets);
+            this.onShown(() => {
+                this.refresh();
+            });
 
             this.initHitsCounter();
+        }
+
+        doRefresh() {
+            this.searchFacets(true);
+        }
+
+        doSearch(elementChanged?: api.dom.Element) {
+            this.searchFacets();
         }
 
         private resetFacets(supressEvent?: boolean) {
@@ -33,20 +40,21 @@ module app.browse.filter {
             }
         }
 
-        private searchFacets(event: api.app.browse.filter.SearchEvent) {
-            var searchText = event.getSearchInputValues().getTextSearchFieldValue();
+        private searchFacets(isRefresh: boolean = false) {
+            var values = this.getSearchInputValues(),
+                searchText = values.getTextSearchFieldValue();
             if (!searchText) {
-                this.handleEmptyFilterInput(event);
+                this.handleEmptyFilterInput(isRefresh);
                 return;
             }
 
             this.searchDataAndHandleResponse(searchText);
         }
 
-        private  handleEmptyFilterInput(event: api.app.browse.filter.SearchEvent) {
-            if (event instanceof RefreshEvent) {
+        private handleEmptyFilterInput(isRefresh: boolean) {
+            if (isRefresh) {
                 this.resetFacets(true);
-            } else { // it's SearchEvent, usual reset with grid reload
+            } else {
                 this.reset();
             }
         }
