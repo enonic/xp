@@ -142,7 +142,7 @@ module api.liveedit.text {
                 if (child.getEl().getTagName().toUpperCase() == 'SECTION') {
                     this.rootElement = child;
                     // convert image urls in text component for web
-                    child.setHtml(child.getHtml(), false);
+                    child.setHtml(HTMLAreaHelper.prepareImgSrcsInValueForEdit(child.getHtml()), false);
                     break;
                 }
             }
@@ -330,7 +330,7 @@ module api.liveedit.text {
                 then((editor: HtmlAreaEditor) => {
                     this.htmlAreaEditor = editor;
                     if (!!this.textComponent.getText()) {
-                        this.htmlAreaEditor.setContent(this.textComponent.getText());
+                        this.htmlAreaEditor.setContent(HTMLAreaHelper.prepareImgSrcsInValueForEdit(this.textComponent.getText()));
                     } else {
                         this.htmlAreaEditor.setContent(TextComponentView.DEFAULT_TEXT);
                         this.htmlAreaEditor.selection.select(this.htmlAreaEditor.getBody(), true);
@@ -372,10 +372,10 @@ module api.liveedit.text {
                 // copy editor content over to the root html element
                 this.rootElement.getHTMLElement().innerHTML = TextComponentView.DEFAULT_TEXT;
             } else {
-                var editorContent = this.htmlAreaEditor.getContent();
-                this.textComponent.setText(editorContent);
                 // copy editor raw content (without any processing!) over to the root html element
                 this.rootElement.getHTMLElement().innerHTML = this.htmlAreaEditor.getContent({format: 'raw'});
+                // but save processed text to the component
+                this.textComponent.setText(HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.htmlAreaEditor));
             }
         }
 
