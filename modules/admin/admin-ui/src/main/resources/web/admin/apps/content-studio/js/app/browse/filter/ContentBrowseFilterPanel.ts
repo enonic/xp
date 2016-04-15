@@ -24,8 +24,6 @@ module app.browse.filter {
     import DynamicConstraintExpr = api.query.expr.DynamicConstraintExpr;
     import Value = api.data.Value;
     import ValueTypes = api.data.ValueTypes;
-    import RefreshEvent = api.app.browse.filter.RefreshEvent;
-    import SearchEvent = api.app.browse.filter.SearchEvent;
     import QueryField = api.query.QueryField;
 
 
@@ -58,31 +56,39 @@ module app.browse.filter {
                 this.resetFacets();
             });
 
-            this.onRefresh(this.refreshFacets);
-
-            this.onSearch(this.searchFacets);
+            this.onShown(() => {
+                this.refresh();
+            });
         }
 
-        private searchFacets(event: api.app.browse.filter.SearchEvent) {
+        doRefresh() {
+            this.refreshFacets();
+        }
+
+        doSearch(elementChanged?: api.dom.Element) {
+            this.searchFacets();
+        }
+
+        private searchFacets() {
             if (!this.hasFilterSet()) {
                 this.handleEmptyFilterInput();
                 return;
             }
 
-            this.searchDataAndHandleResponse(this.createContentQuery(event));
+            this.searchDataAndHandleResponse(this.createContentQuery());
         }
 
-        private refreshFacets(event: api.app.browse.filter.SearchEvent) {
+        private refreshFacets() {
             if (!this.hasFilterSet()) {
                 this.handleEmptyFilterInput(true);
                 return;
             }
 
-            this.refreshDataAndHandleResponse(this.createContentQuery(event));
+            this.refreshDataAndHandleResponse(this.createContentQuery());
         }
 
-        private handleEmptyFilterInput(isRefreshEvent?: boolean) {
-            if (isRefreshEvent) {
+        private handleEmptyFilterInput(isRefresh?: boolean) {
+            if (isRefresh) {
 
                 this.resetFacets(true, true).then(() => {
                     new ContentBrowseRefreshEvent().fire();
@@ -95,12 +101,13 @@ module app.browse.filter {
             }
         }
 
-        private createContentQuery(event: api.app.browse.filter.SearchEvent): ContentQuery {
-            var contentQuery: ContentQuery = new ContentQuery();
-            this.appendFulltextSearch(event.getSearchInputValues(), contentQuery);
-            this.appendContentTypeFilter(event.getSearchInputValues(), contentQuery);
+        private createContentQuery(): ContentQuery {
+            var contentQuery: ContentQuery = new ContentQuery(),
+                values = this.getSearchInputValues();
+            this.appendFulltextSearch(values, contentQuery);
+            this.appendContentTypeFilter(values, contentQuery);
 
-            var lastModifiedFilter: api.query.filter.Filter = this.appendLastModifiedQuery(event.getSearchInputValues());
+            var lastModifiedFilter: api.query.filter.Filter = this.appendLastModifiedQuery(values);
             if (lastModifiedFilter != null) {
                 contentQuery.addQueryFilter(lastModifiedFilter);
             }
@@ -133,7 +140,6 @@ module app.browse.filter {
                 else {
                     this.handleNoSearchResultOnRefresh(contentQuery);
                 }
-
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
