@@ -40,8 +40,8 @@ public final class ResponseSerializer
         response.setContentType( this.portalResponse.getContentType().toString() );
 
         serializeHeaders( response, this.portalResponse.getHeaders() );
-        serializeBody( response, this.portalResponse.getBody() );
         serializeCookies( response, this.portalResponse.getCookies() );
+        serializeBody( response, this.portalResponse.getBody() );
     }
 
     private void serializeCookies( final HttpServletResponse response, final ImmutableList<Cookie> cookies )
