@@ -65,7 +65,6 @@
 
   & > div {
     padding: 0 @panel-indent;
-    display: table;
   }
 
   &.hidden, &.slideout {
@@ -119,7 +118,7 @@
     background-color: rgba(0, 0, 0, 0.9);
 
     .scrollable-content {
-      height: 100%;
+      height: inherit;
       overflow-x: hidden;
       overflow-y: auto;
     }

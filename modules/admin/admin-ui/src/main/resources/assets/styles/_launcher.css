@@ -350,7 +350,6 @@
 }
 .launcher-panel > div {
   padding: 0 30px;
-  display: table;
 }
 .launcher-panel.hidden,
 .launcher-panel.slideout {
@@ -410,7 +409,7 @@
   background-color: rgba(0, 0, 0, 0.9);
 }
 .launcher-panel .launcher-app-container .scrollable-content {
-  height: 100%;
+  height: inherit;
   overflow-x: hidden;
   overflow-y: auto;
 }
