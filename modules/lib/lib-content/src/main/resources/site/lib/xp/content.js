@@ -248,6 +248,7 @@ exports.publish = function (params) {
  * @param {string} [params.mimeType] Mime-type of the data.
  * @param {number} [params.focalX] Focal point for X axis (if it's an image).
  * @param {number} [params.focalY] Focal point for Y axis (if it's an image).
+ * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  * @param  params.data Data (as stream) to use.
  *
  * @returns {object} Returns the created media content.
@@ -259,6 +260,7 @@ exports.createMedia = function (params) {
     bean.mimeType = nullOrValue(params.mimeType);
     bean.focalX = nullOrValue(params.focalX);
     bean.focalY = nullOrValue(params.focalY);
+    bean.branch = nullOrValue(params.branch);
     bean.data = nullOrValue(params.data);
     bean.idGenerator = nullOrValue(params.idGenerator);
     return __.toNativeObject(bean.execute());
