@@ -27,6 +27,8 @@ public final class MediaInfo
 
     public static final MixinName GPS_INFO_METADATA_NAME = MixinName.from( ApplicationKey.BASE, GPS_INFO );
 
+    public static final String GPS_INFO_GEO_POINT = "geoPoint";
+
     public static final String IMAGE_INFO_PIXEL_SIZE = "pixelSize";
 
     public static final String IMAGE_INFO_IMAGE_HEIGHT = "imageHeight";
