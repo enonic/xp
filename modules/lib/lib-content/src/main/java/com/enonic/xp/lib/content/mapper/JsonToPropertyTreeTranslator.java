@@ -126,8 +126,19 @@ public final class JsonToPropertyTreeTranslator
         {
             PropertySet propertySet = new PropertySet();
             value.fields().
-                forEachRemaining(
-                    ( objectValue ) -> propertySet.addProperty( objectValue.getKey(), resolveCoreValue( objectValue.getValue() ) ) );
+                forEachRemaining( ( field ) -> {
+                    if ( field.getValue().isArray() )
+                    {
+                        for ( final JsonNode arrayNode : field.getValue() )
+                        {
+                            propertySet.addProperty( field.getKey(), resolveCoreValue( arrayNode ) );
+                        }
+                    }
+                    else
+                    {
+                        propertySet.addProperty( field.getKey(), resolveCoreValue( field.getValue() ) );
+                    }
+                } );
             return ValueFactory.newPropertySet( propertySet );
         }
 
