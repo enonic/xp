@@ -19,6 +19,13 @@
   "time": "10:00:32.123",
   "geoPoint": "-45,34",
   "htmlArea": "<stuff>staff</stuff>",
+  "media": {
+    "attachment": "MyImage.JPG",
+    "focalPoint": {
+      "x": 0.5,
+      "y": 0.5
+    }
+  },
   "set": {
     "setString": "ost",
     "setDouble": 123

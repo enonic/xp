@@ -29,7 +29,11 @@ public class JsonToPropertyTreeTranslatorTest
         throws Exception
     {
         final JsonNode node = loadJson( "allInputTypes" );
-        new JsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
+        final PropertyTree data = new JsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
+
+        final Property media = data.getProperty( "media" );
+        assertNotNull( media );
+        assertEquals( ValueTypes.PROPERTY_SET.getName(), media.getType().getName() );
     }
 
     @Test
@@ -183,6 +187,11 @@ public class JsonToPropertyTreeTranslatorTest
                 label( "Datetime" ).
                 inputType( InputTypeName.DATE_TIME ).
                 inputTypeProperty( InputTypeProperty.create( "timezone", "true" ).build() ).
+                build() ).
+            addFormItem( Input.create().
+                name( "media" ).
+                label( "Image Uploader" ).
+                inputType( InputTypeName.IMAGE_UPLOADER ).
                 build() ).
             addFormItem( set ).
             build();

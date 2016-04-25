@@ -49,7 +49,7 @@ public final class JsonToPropertyTreeTranslator
         {
             final Map.Entry<String, JsonNode> next = fields.next();
 
-            if ( next.getValue().isObject() )
+            if ( next.getValue().isObject() && hasInput( parent.getProperty(), next.getKey() ) )
             {
                 final PropertySet propertySet = parent.addSet( next.getKey() );
                 traverse( next.getValue(), propertySet );
@@ -70,11 +70,6 @@ public final class JsonToPropertyTreeTranslator
                 addValue( parent, key, objNode );
             }
         }
-        else if ( value.isObject() )
-        {
-            final PropertySet parentSet = parent.addSet( key );
-            value.fields().forEachRemaining( ( objectValue ) -> addValue( parentSet, objectValue.getKey(), objectValue.getValue() ) );
-        }
         else
         {
             mapValue( parent, key, value );
@@ -84,8 +79,7 @@ public final class JsonToPropertyTreeTranslator
     private void mapValue( final PropertySet parent, final String key, final JsonNode value )
     {
         final Property parentProperty = parent.getProperty();
-
-        final Input input = this.form.getInput( resolveInputPath( key, parentProperty ) );
+        final Input input = getInput( parentProperty, key );
 
         if ( input == null )
         {
@@ -150,5 +144,15 @@ public final class JsonToPropertyTreeTranslator
 
         final FormItemPath parentPath = FormItemPath.from( parentProperty.getPath().resetAllIndexesTo( 0 ).toString() );
         return FormItemPath.from( FormItemPath.from( parentPath, key ) );
+    }
+
+    private boolean hasInput( final Property parentProperty, final String key )
+    {
+        return !Input.class.isInstance( this.form.getFormItem( resolveInputPath( key, parentProperty ) ) );
+    }
+
+    private Input getInput( final Property parentProperty, final String key )
+    {
+        return this.form.getInput( resolveInputPath( key, parentProperty ) );
     }
 }

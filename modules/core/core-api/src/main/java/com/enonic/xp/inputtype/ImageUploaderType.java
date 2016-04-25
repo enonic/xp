@@ -2,7 +2,7 @@ package com.enonic.xp.inputtype;
 
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.Property;
-import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
@@ -20,9 +20,9 @@ final class ImageUploaderType
     @Override
     public Value createValue( final String value, final InputTypeConfig config )
     {
-        PropertyTree tree = new PropertyTree();
-        tree.setString( ContentPropertyNames.MEDIA_ATTACHMENT, value );
-        return ValueFactory.newPropertySet( tree.getRoot() );
+        PropertySet propertySet = new PropertySet();
+        propertySet.setString( ContentPropertyNames.MEDIA_ATTACHMENT, value );
+        return ValueFactory.newPropertySet( propertySet );
     }
 
     @Override
