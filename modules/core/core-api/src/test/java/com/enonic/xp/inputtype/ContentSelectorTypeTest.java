@@ -3,6 +3,7 @@ package com.enonic.xp.inputtype;
 import org.junit.Test;
 
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 
 import static org.junit.Assert.*;
@@ -31,7 +32,7 @@ public class ContentSelectorTypeTest
     public void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createValue( "name", config );
+        final Value value = this.type.createValue( ValueFactory.newString( "name" ), config );
 
         assertNotNull( value );
         assertSame( ValueTypes.REFERENCE, value.getType() );

@@ -10,7 +10,7 @@ public interface InputType
 {
     InputTypeName getName();
 
-    Value createValue( String value, InputTypeConfig config );
+    Value createValue( Value value, InputTypeConfig config );
 
     Value createDefaultValue( InputTypeDefault defaultConfig );
 

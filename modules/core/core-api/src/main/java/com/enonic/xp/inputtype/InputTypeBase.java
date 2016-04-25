@@ -29,7 +29,7 @@ public abstract class InputTypeBase
         return this.name.toString();
     }
 
-    public abstract Value createValue( final String value, final InputTypeConfig config );
+    public abstract Value createValue( final Value value, final InputTypeConfig config );
 
     @Override
     public Value createDefaultValue( final InputTypeDefault defaultConfig )

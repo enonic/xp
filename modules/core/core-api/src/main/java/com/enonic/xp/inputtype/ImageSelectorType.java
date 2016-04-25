@@ -4,7 +4,6 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.util.Reference;
 
 final class ImageSelectorType
     extends InputTypeBase
@@ -17,9 +16,9 @@ final class ImageSelectorType
     }
 
     @Override
-    public Value createValue( final String value, final InputTypeConfig config )
+    public Value createValue( final Value value, final InputTypeConfig config )
     {
-        return ValueFactory.newReference( Reference.from( value ) );
+        return ValueFactory.newReference( value.asReference() );
     }
 
     @Override

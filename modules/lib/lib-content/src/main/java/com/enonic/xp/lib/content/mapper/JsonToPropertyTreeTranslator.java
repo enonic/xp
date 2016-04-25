@@ -94,7 +94,7 @@ public final class JsonToPropertyTreeTranslator
         else
         {
             final InputType type = this.inputTypeResolver.resolve( input.getInputType() );
-            final Value mappedPropertyValue = type.createValue( resolveStringValue( value ), input.getInputTypeConfig() );
+            final Value mappedPropertyValue = type.createValue( resolveCoreValue( value ), input.getInputTypeConfig() );
 
             parent.addProperty( key, mappedPropertyValue );
         }
@@ -120,6 +120,15 @@ public final class JsonToPropertyTreeTranslator
         if ( value.isLong() )
         {
             return ValueFactory.newLong( value.longValue() );
+        }
+
+        if ( value.isObject() )
+        {
+            PropertySet propertySet = new PropertySet();
+            value.fields().
+                forEachRemaining(
+                    ( objectValue ) -> propertySet.addProperty( objectValue.getKey(), resolveCoreValue( objectValue.getValue() ) ) );
+            return ValueFactory.newPropertySet( propertySet );
         }
 
         return ValueFactory.newString( value.toString() );
