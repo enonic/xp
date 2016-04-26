@@ -254,12 +254,6 @@ module app.browse {
                 viewer.setObject(node.getData(), node.calcLevel() > 1);
                 return viewer.toString();
 
-            } else { // `load more` node
-                var content = new api.dom.DivEl("children-to-load"),
-                    parent = node.getParent();
-                content.setHtml((parent.getMaxChildren() - parent.getChildren().length + 1) + " children left to load.");
-
-                return content.toString();
             }
         }
 
