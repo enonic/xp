@@ -3,6 +3,7 @@ package com.enonic.xp.inputtype;
 import org.junit.Test;
 
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 
 import static org.junit.Assert.*;
@@ -31,10 +32,13 @@ public class LongTypeTest
     public void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createValue( "13", config );
-
+        final Value value = this.type.createValue( ValueFactory.newDouble( 13.0 ), config );
         assertNotNull( value );
         assertSame( ValueTypes.LONG, value.getType() );
+
+        final Value value2 = this.type.createValue( "13.0", config );
+        assertNotNull( value2 );
+        assertSame( ValueTypes.LONG, value2.getType() );
     }
 
     @Test

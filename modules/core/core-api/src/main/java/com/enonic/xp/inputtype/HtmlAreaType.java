@@ -27,9 +27,9 @@ final class HtmlAreaType
     }
 
     @Override
-    public Value createValue( final String value, final InputTypeConfig config )
+    public Value createValue( final Value value, final InputTypeConfig config )
     {
-        return ValueFactory.newString( value );
+        return ValueFactory.newString( value.asString() );
     }
 
     @Override
