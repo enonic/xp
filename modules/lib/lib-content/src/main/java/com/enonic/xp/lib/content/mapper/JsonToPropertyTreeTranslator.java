@@ -70,6 +70,11 @@ public final class JsonToPropertyTreeTranslator
                 addValue( parent, key, objNode );
             }
         }
+        else if ( value.isObject() )
+        {
+            final PropertySet parentSet = parent.addSet( key );
+            value.fields().forEachRemaining( ( objectValue ) -> addValue( parentSet, objectValue.getKey(), objectValue.getValue() ) );
+        }
         else
         {
             mapValue( parent, key, value );
