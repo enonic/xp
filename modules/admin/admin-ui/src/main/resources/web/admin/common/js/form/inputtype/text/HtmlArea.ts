@@ -169,7 +169,9 @@ module api.form.inputtype.text {
                     HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
                     this.onShown((event) => {
                         // invoke auto resize on shown in case contents have been updated while inactive
-                        editor.execCommand('mceAutoResize', false, null, {skip_focus: true});
+                        if (!!editor['contentAreaContainer'] || !!editor['bodyElement']) {
+                            editor.execCommand('mceAutoResize', false, null, {skip_focus: true});
+                        }
                     });
                 });
         }
@@ -193,7 +195,6 @@ module api.form.inputtype.text {
             });
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, () => {
-                this.updateEditorToolbarWidth();
                 this.updateEditorToolbarPos(inputOccurence);
             });
 
@@ -203,28 +204,21 @@ module api.form.inputtype.text {
 
             this.onOccurrenceRendered(() => {
                 this.resetInputHeight();
-                this.updateEditorToolbarWidth();
             });
 
             this.onOccurrenceRemoved(() => {
                 this.resetInputHeight();
-                this.updateEditorToolbarWidth();
             });
         }
 
         private updateStickyEditorToolbar(inputOccurence: Element) {
             if (!this.editorTopEdgeIsVisible(inputOccurence) && this.editorLowerEdgeIsVisible(inputOccurence)) {
                 inputOccurence.addClass("sticky-toolbar");
-                this.updateEditorToolbarWidth();
                 this.updateEditorToolbarPos(inputOccurence);
             }
             else {
                 inputOccurence.removeClass("sticky-toolbar")
             }
-        }
-
-        private updateEditorToolbarWidth() {
-            wemjq(this.getHTMLElement()).find(".mce-toolbar-grp").width(wemjq(this.getHTMLElement()).find(".mce-edit-area").innerWidth());
         }
 
         private updateEditorToolbarPos(inputOccurence: Element) {

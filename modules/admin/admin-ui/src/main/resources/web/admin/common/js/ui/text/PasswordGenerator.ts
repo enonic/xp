@@ -174,8 +174,6 @@ module api.ui.text {
                     break;
                 }
             }
-            console.log('Generated ' + length + ' chars password (SP:' + maxSpecials + ', DG:' + maxDigits + ',UC:' + maxUppercase +
-                        ', LC:' + maxLowercase + ') = ' + result);
             this.input.setValue(result);
         }
 

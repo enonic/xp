@@ -37,8 +37,12 @@ module api.liveedit {
                 this.hide();
                 return;
             }
-            var dimensions = itemView.getEl().getDimensionsTopRelativeToParent();
+            var dimensions = itemView.getEl().getDimensions();
             var style = itemView.getType().getConfig().getHighlighterStyle();
+
+            if (!!itemView.getPageView() && itemView.getPageView().hasToolbarContainer()) {
+                dimensions.top = dimensions.top - itemView.getPageView().getEditorToolbarHeight();
+            }
 
             this.resize(dimensions, this.preProcessStyle(style));
             this.show();

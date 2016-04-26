@@ -153,9 +153,9 @@ module api.content.event {
             this.notifyContentRenamed(data, oldPaths);
         }
 
-        private handleContentDeleted(oldPaths: ContentPath[]) {
+        private handleContentDeleted(changeItems: ContentServerChangeItem[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: deleted", oldPaths);
+                console.debug("ContentServerEventsHandler: deleted", changeItems);
             }
             var contentDeletedEvent = new ContentDeletedEvent();
             changeItems.forEach((changeItem) => {

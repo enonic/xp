@@ -50,9 +50,6 @@
   display: flex;
   background-color: #ffffff;
 }
-.mce-toolbar .mce-flow-layout {
-  text-align: center;
-}
 .mce-toolbar .mce-btn-group {
   border-right: 1px solid #cccccc;
 }

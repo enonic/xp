@@ -43,7 +43,8 @@ module api.ui.text {
             });
 
             super(this.input);
-            this.addClass("email-input");
+            this.addClass("email-input just-shown");
+            this.updateStatus('available');
         }
 
         getInput(): InputEl {
@@ -86,6 +87,7 @@ module api.ui.text {
                     var availability = available || email === this.originEmail;
                     this.updateStatus(availability ? 'available' : 'notavailable');
                     this.notifyValidityChanged(isValid && availability);
+                    this.removeClass("just-shown");
                 }).fail((reason) => {
                     this.notifyValidityChanged(false);
                     this.updateStatus('error');
@@ -108,7 +110,7 @@ module api.ui.text {
         }
 
         isValid(): boolean {
-            return this.input.isValid();
+            return this.input.isValid() && !StringHelper.isEmpty(this.doGetValue()) && this.isAvailable();
         }
 
         validate(): boolean {

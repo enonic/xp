@@ -2,6 +2,8 @@ module api.util.htmlarea.dialog {
 
     export class HTMLAreaDialogHandler {
 
+        private static modalDialog: ModalDialog;
+
         static createAndOpenDialog(event: CreateHtmlAreaDialogEvent): ModalDialog {
             let modalDialog;
 
@@ -16,7 +18,19 @@ module api.util.htmlarea.dialog {
                 modalDialog = this.openLinkDialog(event.getConfig());
                 break;
             }
-            return modalDialog;
+
+            if (modalDialog) {
+                this.modalDialog = modalDialog;
+                modalDialog.onHidden(() => {
+                    this.modalDialog = null;
+                });
+            }
+
+            return this.modalDialog;
+        }
+
+        static getOpenDialog(): ModalDialog {
+            return this.modalDialog;
         }
 
         private static openLinkDialog(config: HtmlAreaAnchor): ModalDialog {

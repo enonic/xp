@@ -1,15 +1,5 @@
 module app.wizard.page.contextwindow.inspect {
 
-    import Content = api.content.Content;
-    import ContentTypeName = api.schema.content.ContentTypeName;
-    import PageTemplateKey = api.content.page.PageTemplateKey;
-    import PageTemplate = api.content.page.PageTemplate;
-    import PageDescriptor = api.content.page.PageDescriptor;
-    import Region = api.content.page.region.Region;
-    import ImageComponent = api.content.page.region.ImageComponent
-    import PartComponent = api.content.page.region.PartComponent;
-    import LayoutComponent = api.content.page.region.LayoutComponent;
-
     export interface InspectionsPanelConfig {
         contentInspectionPanel: ContentInspectionPanel;
         pageInspectionPanel: page.PageInspectionPanel;
@@ -18,6 +8,7 @@ module app.wizard.page.contextwindow.inspect {
         partInspectionPanel: region.PartInspectionPanel;
         layoutInspectionPanel: region.LayoutInspectionPanel;
         fragmentInspectionPanel: region.FragmentInspectionPanel;
+        textInspectionPanel: region.TextInspectionPanel;
         saveAction: api.ui.Action;
     }
 
@@ -34,6 +25,7 @@ module app.wizard.page.contextwindow.inspect {
         private pageInspectionPanel: page.PageInspectionPanel;
         private regionInspectionPanel: region.RegionInspectionPanel;
         private fragmentInspectionPanel: region.FragmentInspectionPanel;
+        private textInspectionPanel: region.TextInspectionPanel;
 
         private saveRequestListeners: {() : void}[] = [];
 
@@ -50,6 +42,7 @@ module app.wizard.page.contextwindow.inspect {
             this.pageInspectionPanel = config.pageInspectionPanel;
             this.regionInspectionPanel = config.regionInspectionPanel;
             this.fragmentInspectionPanel = config.fragmentInspectionPanel;
+            this.textInspectionPanel = config.textInspectionPanel;
 
             this.deck.addPanel(this.imageInspectionPanel);
             this.deck.addPanel(this.partInspectionPanel);
@@ -58,6 +51,7 @@ module app.wizard.page.contextwindow.inspect {
             this.deck.addPanel(this.regionInspectionPanel);
             this.deck.addPanel(this.pageInspectionPanel);
             this.deck.addPanel(this.fragmentInspectionPanel);
+            this.deck.addPanel(this.textInspectionPanel);
             this.deck.addPanel(this.noSelectionPanel);
 
             this.deck.showPanel(this.pageInspectionPanel);
