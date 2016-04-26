@@ -1,12 +1,14 @@
 module api.content.event {
 
+    import NodeServerChangeType = api.event.NodeServerChangeType;
+
     export class BatchContentServerEvent extends api.event.Event {
 
         private events: ContentServerEvent[];
 
-        private type: ContentServerChangeType;
+        private type: NodeServerChangeType;
 
-        constructor(events: ContentServerEvent[], type: ContentServerChangeType) {
+        constructor(events: ContentServerEvent[], type: NodeServerChangeType) {
             super();
             this.events = events || [];
             this.type = type;
@@ -16,7 +18,7 @@ module api.content.event {
             return this.events;
         }
 
-        getType(): ContentServerChangeType {
+        getType(): NodeServerChangeType {
             return this.type;
         }
 

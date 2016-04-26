@@ -4,7 +4,7 @@ module api.application {
         INSTALLED, UNINSTALLED, RESOLVED, STARTING, STARTED, UPDATED, STOPPING, STOPPED, UNRESOLVED, PROGRESS
     }
 
-    export interface ApplicationEventJson extends api.app.EventJson {
+    export interface ApplicationEventJson extends api.event.EventJson {
         data: ApplicationEventDataJson;
     }
 

@@ -13,7 +13,7 @@ module app.browse {
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
     import ContentPath = api.content.ContentPath;
-    import ContentServerChangeType = api.content.event.ContentServerChangeType;
+    import NodeServerChangeType = api.event.NodeServerChangeType;
     import BatchContentRequest = api.content.BatchContentRequest;
     import TreeNodesOfContentPath = api.content.TreeNodesOfContentPath;
     import ContentId = api.content.ContentId;
@@ -307,7 +307,7 @@ module app.browse {
             });
 
             handler.onContentDeleted((data: api.content.event.ContentServerChangeItem[]) => {
-                var paths = data.map((changeItem) => changeItem.getContentPath());
+                var paths = data.map((changeItem) => changeItem.getPath());
                 this.handleContentDeleted(paths)
             });
 
