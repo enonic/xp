@@ -3,10 +3,16 @@ package com.enonic.xp.core.impl.app;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
+import com.enonic.xp.config.ConfigBuilder;
+import com.enonic.xp.config.ConfigInterpolator;
+import com.enonic.xp.config.Configuration;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -35,11 +41,14 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.util.Exceptions;
 
-@Component
+@Component(immediate = true, configurationPid = "com.enonic.xp.app")
 public final class ApplicationServiceImpl
     implements ApplicationService, ApplicationInvalidator
 {
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationServiceImpl.class );
+
+    private static final String MARKET_PROXY_PROPERTY_KEY = "marketProxy";
+    private String marketProxy = "";
 
     private final ConcurrentMap<ApplicationKey, Boolean> localApplicationSet = Maps.newConcurrentMap();
 
@@ -51,12 +60,22 @@ public final class ApplicationServiceImpl
 
     private EventPublisher eventPublisher;
 
+    private Configuration config;
+
     @Activate
-    public void activate( final BundleContext context )
+    public void activate( final BundleContext context,  final Map<String, String> map  )
     {
         this.registry = new ApplicationRegistry( context );
         this.context = context;
         ApplicationHelper.runAsAdmin( this::installAllStoredApplications );
+
+        config = ConfigBuilder.create().
+                load( getClass(), "default.properties" ).
+                addAll( map ).
+                build();
+        config = new ConfigInterpolator().interpolate( this.config );
+        marketProxy = config.get( MARKET_PROXY_PROPERTY_KEY );
+
     }
 
     @Override
@@ -365,7 +384,16 @@ public final class ApplicationServiceImpl
     {
         try
         {
-            URLConnection connection = url.openConnection();
+            URLConnection connection;
+            if (marketProxy!=""){
+                int split = marketProxy.lastIndexOf(":");
+                String proxyHost = marketProxy.substring(marketProxy.indexOf("://")+3, split);
+                Integer proxyPort = Integer.parseInt(marketProxy.substring(split + 1, marketProxy.length()));
+                Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+                connection = url.openConnection(proxy);
+            }else{
+                connection = url.openConnection();
+            }
 
             ByteArrayOutputStream os = null;
 
