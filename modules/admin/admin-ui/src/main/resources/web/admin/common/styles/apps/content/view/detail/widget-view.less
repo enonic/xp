@@ -99,10 +99,6 @@
           .version-info {
             padding: 10px 7px 7px 7px;
 
-            &.hidden {
-              display: none;
-            }
-
             .version-info-version-id, .version-info-display-name {
               overflow: hidden;
               text-overflow: ellipsis;
@@ -164,12 +160,16 @@
               background-color: @admin-bg-light-gray;
             }
 
-            &.hidden {
+          }
+
+          &:not(.expanded) {
+            .close-version-info-button, .version-info {
               display: none;
             }
           }
 
         }
+
       }
 
     }
