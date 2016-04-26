@@ -59,7 +59,6 @@ module api.security.event {
             }).forEach((path) => {
                 contentDeletedEvent.addItem(path);
             });
-            debugger;
             contentDeletedEvent.fire();
 
             this.notifyPrincipalDeleted(oldPaths);

@@ -159,7 +159,7 @@ module api.content.event {
             }
             var contentDeletedEvent = new ContentDeletedEvent();
             changeItems.forEach((changeItem) => {
-                contentDeletedEvent.addItem(changeItem.getContentId(), changeItem.getContentPath());
+                contentDeletedEvent.addItem(changeItem.getContentId(), changeItem.getPath());
             });
             contentDeletedEvent.fire();
 
