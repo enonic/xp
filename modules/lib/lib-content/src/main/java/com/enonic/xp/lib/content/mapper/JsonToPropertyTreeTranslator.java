@@ -48,16 +48,7 @@ public final class JsonToPropertyTreeTranslator
         while ( fields.hasNext() )
         {
             final Map.Entry<String, JsonNode> next = fields.next();
-
-            if ( next.getValue().isObject() && !hasInput( parent.getProperty(), next.getKey() ) )
-            {
-                final PropertySet propertySet = parent.addSet( next.getKey() );
-                traverse( next.getValue(), propertySet );
-            }
-            else
-            {
-                addValue( parent, next.getKey(), next.getValue() );
-            }
+            addValue( parent, next.getKey(), next.getValue() );
         }
     }
 
