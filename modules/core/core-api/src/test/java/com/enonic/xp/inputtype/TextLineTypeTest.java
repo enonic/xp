@@ -36,9 +36,12 @@ public class TextLineTypeTest
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         final Value value = this.type.createValue( ValueFactory.newString( "test" ), config );
-
         assertNotNull( value );
         assertSame( ValueTypes.STRING, value.getType() );
+
+        final Value value2 = this.type.createValue( "test", config );
+        assertNotNull( value2 );
+        assertSame( ValueTypes.STRING, value2.getType() );
     }
 
     @Test

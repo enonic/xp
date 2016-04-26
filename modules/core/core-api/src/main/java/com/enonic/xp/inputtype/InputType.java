@@ -10,6 +10,9 @@ public interface InputType
 {
     InputTypeName getName();
 
+    @Deprecated
+    Value createValue( String value, InputTypeConfig config );
+
     Value createValue( Value value, InputTypeConfig config );
 
     Value createDefaultValue( InputTypeDefault defaultConfig );
