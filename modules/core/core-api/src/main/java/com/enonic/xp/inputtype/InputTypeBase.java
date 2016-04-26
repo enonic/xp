@@ -4,6 +4,7 @@ import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueType;
 
 @Beta
@@ -29,7 +30,12 @@ public abstract class InputTypeBase
         return this.name.toString();
     }
 
-    public abstract Value createValue( final String value, final InputTypeConfig config );
+    public Value createValue( final String value, final InputTypeConfig config )
+    {
+        return createValue( ValueFactory.newString( value ), config );
+    }
+
+    public abstract Value createValue( final Value value, final InputTypeConfig config );
 
     @Override
     public Value createDefaultValue( final InputTypeDefault defaultConfig )

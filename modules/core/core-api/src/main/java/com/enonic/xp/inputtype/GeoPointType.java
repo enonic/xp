@@ -16,9 +16,9 @@ final class GeoPointType
     }
 
     @Override
-    public Value createValue( final String value, final InputTypeConfig config )
+    public Value createValue( final Value value, final InputTypeConfig config )
     {
-        return ValueFactory.newGeoPoint( com.enonic.xp.util.GeoPoint.from( value ) );
+        return ValueFactory.newGeoPoint( value.asGeoPoint() );
     }
 
     @Override

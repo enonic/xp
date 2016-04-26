@@ -2,7 +2,9 @@ package com.enonic.xp.inputtype;
 
 import org.junit.Test;
 
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 
 import static org.junit.Assert.*;
@@ -31,7 +33,7 @@ public class ImageUploaderTypeTest
     public void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createValue( "test", config );
+        final Value value = this.type.createValue( ValueFactory.newPropertySet( new PropertySet() ), config );
 
         assertNotNull( value );
         assertSame( ValueTypes.PROPERTY_SET, value.getType() );
