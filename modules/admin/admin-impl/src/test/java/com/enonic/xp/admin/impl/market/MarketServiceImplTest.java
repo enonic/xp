@@ -23,6 +23,7 @@ public class MarketServiceImplTest
     private MarketServiceImpl marketService;
 
     private String marketUrl = "https://market.enonic.com/applications";
+    private String marketProxy = "";
 
     @Before
     public void setUp()
@@ -66,7 +67,7 @@ public class MarketServiceImplTest
         final String version = "6.3.0";
         final Response response = createResponse( code );
 
-        Mockito.when( provider.fetch( this.marketUrl, version, 0, 10 ) ).
+        Mockito.when( provider.fetch( this.marketUrl, this.marketProxy, version, 0, 10 ) ).
             thenReturn( response );
 
         try

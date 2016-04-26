@@ -24,6 +24,7 @@ public class MarketServiceImpl
     implements MarketService
 {
     private String marketUrl;
+    private String marketProxy;
 
     private MarketDataProvider provider;
 
@@ -31,12 +32,13 @@ public class MarketServiceImpl
     public void activate( final MarketConfig config )
     {
         this.marketUrl = config.marketUrl();
+        this.marketProxy = config.marketProxy();
     }
 
     @Override
     public MarketApplicationsJson get( final String version, final int from, final int count )
     {
-        final Response response = this.provider.fetch( this.marketUrl, version, from, count );
+        final Response response = this.provider.fetch( this.marketUrl, this.marketProxy, version, from, count );
 
         return parseResponse( response );
     }

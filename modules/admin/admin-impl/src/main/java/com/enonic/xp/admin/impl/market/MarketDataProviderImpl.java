@@ -11,6 +11,10 @@ import com.squareup.okhttp.Response;
 
 import com.enonic.xp.market.MarketException;
 
+import com.squareup.okhttp.HttpUrl;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+
 @Component(immediate = true)
 public class MarketDataProviderImpl
     implements MarketDataProvider
@@ -19,11 +23,19 @@ public class MarketDataProviderImpl
 
     private static final int readTimeout = 10_000;
 
-    public Response fetch( final String url, final String version, final int start, final int count )
+    public Response fetch( final String url, final String proxyUrl, final String version, final int start, final int count )
     {
         final Request request = MarketRequestFactory.create( url, version, start, count );
 
+
         final OkHttpClient client = new OkHttpClient();
+
+        HttpUrl parsedProxyUrl = HttpUrl.parse(proxyUrl);
+        if (parsedProxyUrl !=null && parsedProxyUrl.host()!=null && !"".equals(parsedProxyUrl.host()) && parsedProxyUrl.scheme()!=null){
+            Proxy proxy = new Proxy(Proxy.Type.valueOf(parsedProxyUrl.scheme().toUpperCase()), new InetSocketAddress(parsedProxyUrl.host(), parsedProxyUrl.port()));
+            client.setProxy(proxy);
+        }
+
         client.setReadTimeout( readTimeout, TimeUnit.MILLISECONDS );
         client.setConnectTimeout( connectionTimeout, TimeUnit.MILLISECONDS );
 
