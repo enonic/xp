@@ -49,12 +49,12 @@ module app.remove {
 
             this.renderSelectedItems(this.selectedItems);
             this.updateSubTitle();
-            if(this.selectedItems.length === 1) {
+            if (this.onlyOneItemSelected()) {
                 this.selectedItems[0].hideRemoveButton();
             }
 
             this.descendantsContainer.hide();
-            this.atLeastOneInitialItemIsPublished() ? this.instantDeleteCheckbox.show() : this.instantDeleteCheckbox.hide();
+            this.atLeastOneInitialItemIsOnline() ? this.instantDeleteCheckbox.show() : this.instantDeleteCheckbox.hide();
             this.instantDeleteCheckbox.setChecked(false, true);
 
             if(this.atLeastOneInitialItemHasChild()) {
@@ -62,7 +62,7 @@ module app.remove {
                     this.descendantsContainer.show();
                     this.centerMyself();
 
-                    if(!this.atLeastOneInitialItemIsPublished() && this.atLeastOneDescendantIsPublished(descendants)) {
+                    if (!this.atLeastOneInitialItemIsOnline() && this.atLeastOneDescendantIsOnline(descendants)) {
                         this.instantDeleteCheckbox.show();
                     }
                 });
@@ -150,12 +150,12 @@ module app.remove {
                 this.selectedItems[index].remove();
                 this.selectedItems.splice(index, 1);
 
-                if (this.selectedItems.length == 0) {
+                if (this.noItemsSelected()) {
                     this.close();
                 }
                 else {
                     this.updateSubTitle();
-                    if(this.selectedItems.length === 1) {
+                    if (this.onlyOneItemSelected()) {
                         this.selectedItems[0].hideRemoveButton();
                     }
 
@@ -163,14 +163,14 @@ module app.remove {
                         this.descendantsContainer.loadData(this.selectedItems).then((descendants: ContentSummaryAndCompareStatus[]) => {
                             this.centerMyself();
 
-                            if(!this.atLeastOneInitialItemIsPublished() && !this.atLeastOneDescendantIsPublished(descendants)) {
+                            if (!this.atLeastOneInitialItemIsOnline() && !this.atLeastOneDescendantIsOnline(descendants)) {
                                 this.instantDeleteCheckbox.hide();
                             }
                         });
                     }
                     else {
                         this.descendantsContainer.hide();
-                        if(!this.atLeastOneInitialItemIsPublished()) {
+                        if (!this.atLeastOneInitialItemIsOnline()) {
                             this.instantDeleteCheckbox.hide();
                         }
 
@@ -212,13 +212,13 @@ module app.remove {
                 deleteRequest.addContentPath(ContentPath.fromString(this.selectedItems[i].getBrowseItem().getPath()));
             }
 
-            deleteRequest.setDeleteOnline(this.instantDeleteCheckbox.isChecked());
+            this.instantDeleteCheckbox.isChecked() ? deleteRequest.setDeleteOnline(true) : deleteRequest.setDeletePending(true);
 
             return deleteRequest;
         }
 
         private updateDeleteButtonCounter(count: number) {
-            var showCounter: boolean = this.selectedItems.length > 1 || this.atLeastOneInitialItemHasChild();
+            var showCounter: boolean = this.moreThanOneItemSelected() || this.atLeastOneInitialItemHasChild();
             this.deleteButton.setLabel("Delete" + (showCounter ? " (" + count + ")" : ""));
         }
 
@@ -240,35 +240,46 @@ module app.remove {
             });
         }
 
-        private atLeastOneInitialItemIsPublished(): boolean {
+        private atLeastOneInitialItemIsOnline(): boolean {
             return this.selectedItems.some((obj: SelectionItem<ContentSummaryAndCompareStatus>) => {
-                return this.isContentPublished(obj.getBrowseItem().getModel().getCompareStatus());
+                return this.isContentOnline(obj.getBrowseItem().getModel().getCompareStatus());
             });
         }
 
-        private atLeastOneDescendantIsPublished(descendants: ContentSummaryAndCompareStatus[]): boolean {
+        private atLeastOneDescendantIsOnline(descendants: ContentSummaryAndCompareStatus[]): boolean {
             return descendants.some((obj: ContentSummaryAndCompareStatus) => {
-                return this.isContentPublished(obj.getCompareStatus());
+                return this.isContentOnline(obj.getCompareStatus());
             });
         }
 
-        private isContentPublished(status: CompareStatus): boolean {
+        private isContentOnline(status: CompareStatus): boolean {
             return  status === CompareStatus.EQUAL ||
                     status === CompareStatus.MOVED ||
-                    status === CompareStatus.PENDING_DELETE ||
-                    status === CompareStatus.NEWER;
+                    status === CompareStatus.NEWER; //except PENDING_DELETE because it gets deleted immediately
         }
 
         private updateSubTitle() {
             if(!this.atLeastOneInitialItemHasChild()) {
                 this.updateSubTitleText("");
             }
-            else if(this.selectedItems.length > 1) {
+            else if (this.moreThanOneItemSelected()) {
                 this.updateSubTitleText("Delete selected items and their child content");
             }
             else {
                 this.updateSubTitleText("Delete selected item and its child content");
             }
+        }
+
+        private noItemsSelected(): boolean {
+            return this.selectedItems.length === 0;
+        }
+
+        private onlyOneItemSelected(): boolean {
+            return this.selectedItems.length === 1;
+        }
+
+        private moreThanOneItemSelected(): boolean {
+            return this.selectedItems.length > 1;
         }
     }
 
@@ -338,8 +349,10 @@ module app.remove {
 
         private resolveDisplayName(object: ContentSummary): string {
             var contentName = object.getName(),
-                invalid = !object.isValid() || !object.getDisplayName() || contentName.isUnnamed();
+                invalid = !object.isValid() || !object.getDisplayName() || contentName.isUnnamed(),
+                pendingDelete = object.getContentState().isPendingDelete();
             this.toggleClass("invalid", invalid);
+            this.toggleClass("pending-delete", pendingDelete);
 
             return object.getPath().toString();
         }
