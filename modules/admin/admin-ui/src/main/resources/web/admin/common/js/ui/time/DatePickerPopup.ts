@@ -4,8 +4,6 @@ module api.ui.time {
 
         calendar: Calendar;
 
-        closeOnOutsideClick: boolean = true;
-
         setCalendar(value: Calendar): DatePickerPopupBuilder {
             this.calendar = value;
             return this;
@@ -13,15 +11,6 @@ module api.ui.time {
 
         getCalendar(): Calendar {
             return this.calendar;
-        }
-
-        setCloseOnOutsideClick(value: boolean): DatePickerPopupBuilder {
-            this.closeOnOutsideClick = value;
-            return this;
-        }
-
-        isCloseOnOutsideClick(): boolean {
-            return this.closeOnOutsideClick;
         }
 
         build(): DatePickerPopup {
@@ -101,10 +90,6 @@ module api.ui.time {
                 this.year.setHtml(year.toString());
             });
             this.appendChild(this.calendar);
-
-            if (builder.isCloseOnOutsideClick()) {
-                api.dom.Body.get().onClicked((e: MouseEvent) => this.outsideClickListener(e));
-            }
         }
 
         getSelectedDate(): Date {
@@ -121,12 +106,6 @@ module api.ui.time {
 
         unSelectedDateChanged(listener: (event: SelectedDateChangedEvent) => void) {
             this.calendar.unSelectedDateChanged(listener);
-        }
-
-        private outsideClickListener(e: MouseEvent) {
-            if (!this.getEl().contains(<HTMLElement> e.target)) {
-                this.hide();
-            }
         }
     }
 

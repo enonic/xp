@@ -43,8 +43,10 @@ module api.ui.time {
             super('time-picker');
             this.validUserInput = true;
 
-            this.popup =
-                new TimePickerPopupBuilder().setHours(builder.hours).setMinutes(builder.minutes).setCloseOnOutsideClick(false).build();
+            this.popup = new TimePickerPopupBuilder().
+                setHours(builder.hours).
+                setMinutes(builder.minutes).
+                build();
 
             var value;
             if (builder.hours || builder.minutes) {
@@ -90,6 +92,30 @@ module api.ui.time {
             wrapper.appendChildren<api.dom.Element>(this.input, this.popup, this.popupTrigger);
 
             this.appendChild(wrapper);
+            
+            this.setupListeners(builder);
+        }
+
+        private setupListeners(builder: TimePickerBuilder) {
+
+            if (builder.closeOnOutsideClick) {
+                let focusoutTimeout = 0;
+
+                this.onFocusOut(() => {
+                    focusoutTimeout = setTimeout(() => {
+                        this.popup.hide();
+                    }, 50);
+                });
+
+                this.onFocusIn(() => {
+                    clearTimeout(focusoutTimeout);
+                });
+
+                // Prevent focus loss on mouse down
+                this.popup.onMouseDown((event: MouseEvent) => {
+                    event.preventDefault();
+                });
+            }
 
             this.popupTrigger.onClicked((e: MouseEvent) => {
                 e.preventDefault();
@@ -138,34 +164,10 @@ module api.ui.time {
                     this.popup.hide();
                 }
             });
-
-            api.dom.Body.get().onKeyDown((e: KeyboardEvent) => this.popupTabListener(e));
-            if (builder.closeOnOutsideClick) {
-                api.dom.Body.get().onClicked((e: MouseEvent) => this.outsideClickListener(e));
-            }
-
         }
 
         isDirty(): boolean {
             return this.input.isDirty();
-        }
-
-        // as popup blur and focus events behave incorrectly - we manually catch tab navigation event in popup below
-        private popupTabListener(e: KeyboardEvent) {
-            if (api.ui.KeyHelper.isTabKey(e) && !this.getEl().contains(<HTMLElement> e.target)) {
-                if (this.popup.isVisible()) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    this.popupTrigger.getEl().focus();
-                    this.popup.hide();
-                }
-            }
-        }
-
-        private outsideClickListener(e: MouseEvent) {
-            if (!this.getEl().contains(<HTMLElement> e.target)) {
-                this.popup.hide();
-            }
         }
 
         hasValidUserInput(): boolean {
