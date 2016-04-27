@@ -24,15 +24,15 @@ final class DateTimeType
     }
 
     @Override
-    public Value createValue( final String value, final InputTypeConfig config )
+    public Value createValue( final Value value, final InputTypeConfig config )
     {
         if ( useTimeZone( config ) )
         {
-            return ValueFactory.newDateTime( ValueTypes.DATE_TIME.convert( value ) );
+            return ValueFactory.newDateTime( value.asInstant() );
         }
         else
         {
-            return ValueFactory.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) );
+            return ValueFactory.newLocalDateTime( value.asLocalDateTime() );
         }
     }
 

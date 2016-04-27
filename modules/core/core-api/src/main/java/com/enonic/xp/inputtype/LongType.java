@@ -18,9 +18,9 @@ final class LongType
     }
 
     @Override
-    public Value createValue( final String value, final InputTypeConfig config )
+    public Value createValue( final Value value, final InputTypeConfig config )
     {
-        return ValueFactory.newLong( ValueTypes.LONG.convert( value ) );
+        return ValueFactory.newLong( value.asLong() );
     }
 
     @Override
