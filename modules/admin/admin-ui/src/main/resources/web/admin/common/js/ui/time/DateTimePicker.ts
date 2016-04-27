@@ -145,7 +145,7 @@ module api.ui.time {
             wrapper.appendChild(this.popup);
 
             this.popupTrigger = new api.ui.button.Button();
-            this.popupTrigger.addClass('icon-calendar4');
+            this.popupTrigger.addClass('icon-calendar');
             wrapper.appendChild(this.popupTrigger);
 
             this.appendChild(wrapper);
