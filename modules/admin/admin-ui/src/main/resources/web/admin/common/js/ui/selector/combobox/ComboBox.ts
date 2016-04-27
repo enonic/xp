@@ -166,8 +166,6 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.renderDropdownGrid();
 
             this.input.setReadOnly(true);
-
-            this.setOnBlurListener();
         }
 
         setEmptyDropdownText(label: string) {
@@ -470,40 +468,22 @@ module api.ui.selector.combobox {
 
         private setupListeners() {
 
-            let combobox = this;
-
-            let comboBoxOnBlurEventHandler = (event: SelectorOnBlurEvent) => {
-                if (combobox === event.getSelector()) {
-                    return;
-                }
-
-                combobox.hideDropdown();
-                combobox.active = false;
-
-            };
-
-            SelectorOnBlurEvent.on(comboBoxOnBlurEventHandler);
-
-            this.onRemoved(() => {
-                SelectorOnBlurEvent.un(comboBoxOnBlurEventHandler);
-            });
+            let focusoutTimeout = 0;
 
             this.onFocusOut(() => {
-                timeout = setTimeout(() => {
-                    combobox.hideDropdown();
-                    combobox.active = false;
-                }, 200);
+                focusoutTimeout = setTimeout(() => {
+                    this.hideDropdown();
+                    this.active = false;
+                }, 50);
             });
-
-            var timeout;
 
             this.onFocusIn(() => {
-                clearTimeout(timeout);
+                clearTimeout(focusoutTimeout);
             });
 
-            this.onClicked((event: MouseEvent) => {
-                this.setOnBlurListener();
-                new SelectorOnBlurEvent(combobox).fire();
+            // Prevent focus loss on mouse down
+            this.onMouseDown((event: MouseEvent) => {
+                event.preventDefault();
             });
 
             this.onScrolled((event: WheelEvent) => {
@@ -513,7 +493,6 @@ module api.ui.selector.combobox {
             this.input.onClicked((event: MouseEvent) => {
                 this.giveInputFocus();
                 event.stopPropagation();
-                new SelectorOnBlurEvent(combobox).fire();
             });
 
             this.comboBoxDropdown.onRowSelection((event: DropdownGridRowSelectedEvent) => {
@@ -528,19 +507,15 @@ module api.ui.selector.combobox {
                     if (this.isDropdownShown()) {
                         this.hideDropdown();
                         this.giveInputFocus();
-                    }
-                    else {
+                    } else {
                         this.showDropdown();
-                        this.loadOptionsAfterShowDropdown().then(() => {
-                            this.giveInputFocus();
-                        }).catch((reason: any) => {
+                        this.giveInputFocus();
+                        this.loadOptionsAfterShowDropdown().catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
-                        }).done();
+                        });
 
                     }
                 }
-
-                new SelectorOnBlurEvent(combobox).fire();
             });
 
             if (this.applySelectionsButton) {
@@ -748,39 +723,6 @@ module api.ui.selector.combobox {
                 .filter(x => selectedValues.indexOf(x) == -1)
                 .concat(selectedValues.filter(x => gridOptions.indexOf(x) == -1));
 
-        }
-
-        /**
-         * Setup event listener that hides dropdown when combobox loses focus.
-         * Listener is added to document body when combobox makes active and removed on click outside of combobox.
-         */
-        private setOnBlurListener() {
-            // reference to this combobox to use it in closure
-            var combobox = this;
-
-            // function variable to be able to add and remove it as listener
-            var hideDropdownOnBlur = function (event: Event) {
-
-                var comboboxHtmlElement = combobox.getHTMLElement();
-
-                // check if event occured inside combobox then do nothing and return
-                for (var element = event.target; element; element = (<any>element).parentNode) {
-                    if (element == comboboxHtmlElement) {
-                        return;
-                    }
-                }
-
-                // if combobox lost focus then hide dropdown options and remove unnecessary listener
-                combobox.hideDropdown();
-                combobox.active = false;
-                api.dom.Body.get().getEl().removeEventListener('click', hideDropdownOnBlur);
-            };
-
-            // set callback function on document body if combobox wasn't marked as active
-            if (!this.active) {
-                this.active = true;
-                api.dom.Body.get().onClicked(hideDropdownOnBlur);
-            }
         }
 
         onOptionSelected(listener: (event: SelectedOption<OPTION_DISPLAY_VALUE>)=>void) {
