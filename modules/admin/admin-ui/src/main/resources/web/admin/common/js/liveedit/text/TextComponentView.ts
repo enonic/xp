@@ -309,11 +309,6 @@ module api.liveedit.text {
                 this.appendChild(this.editorContainer);
             }
 
-            var forceEditorFocus: () => void = () => {
-                this.htmlAreaEditor.focus();
-                wemjq(this.htmlAreaEditor.getElement()).simulate("click");
-            }
-
             new HTMLAreaBuilder().
                 setSelector('div.' + id + ' .tiny-mce-here').
                 setAssetsUri(assetsUri).
@@ -338,16 +333,23 @@ module api.liveedit.text {
                     if (this.focusOnInit) {
                         if (api.BrowserHelper.isFirefox()) {
                             setTimeout(() => {
-                                forceEditorFocus();
+                                this.forceEditorFocus();
                             }, 100);
                         } else {
-                            forceEditorFocus();
+                            this.forceEditorFocus();
                         }
                     }
                     this.focusOnInit = false;
                     this.isInitializingEditor = false;
                     HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
                 });
+        }
+
+        private forceEditorFocus() {
+            if (!!this.htmlAreaEditor) {
+                this.htmlAreaEditor.focus();
+                wemjq(this.htmlAreaEditor.getElement()).simulate("click");
+            }
         }
 
         private anyEditorHasFocus(): boolean {
@@ -429,6 +431,8 @@ module api.liveedit.text {
             var actions: api.ui.Action[] = [];
             actions.push(new api.ui.Action('Edit').onExecuted(() => {
                 this.startPageTextEditMode();
+                this.focusOnInit = true;
+                this.forceEditorFocus();
             }));
             return actions;
         }

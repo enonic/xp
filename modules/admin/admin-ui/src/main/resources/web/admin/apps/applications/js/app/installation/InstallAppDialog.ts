@@ -39,6 +39,10 @@ module app.installation {
             api.dom.Body.get().appendChild(this);
         }
 
+        updateInstallApplications(installApplications: api.application.Application[]) {
+            this.marketAppPanel.updateInstallApplications(installApplications);
+        }
+
         private initMarketAppPanel() {
             this.marketAppPanel = new MarketAppPanel("market-app-panel");
             this.marketAppPanel.onShown(() => {

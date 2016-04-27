@@ -30,7 +30,15 @@ module app.installation.view {
     import ApplicationEvent = api.application.ApplicationEvent;
     import ApplicationEventType = api.application.ApplicationEventType;
 
+    import MarketApplicationsFetcher = api.application.MarketApplicationsFetcher;
+    import MarketApplicationResponse = api.application.MarketApplicationResponse;
+    import MarketApplicationBuilder = api.application.MarketApplicationBuilder;
+
     export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
+
+        static MAX_FETCH_SIZE: number = 10;
+
+        private installApplications: api.application.Application[];
 
         constructor() {
 
@@ -64,8 +72,7 @@ module app.installation.view {
                         nameColumn,
                         versionColumn,
                         appStatusColumns
-                    ]).
-                    setPartialLoadEnabled(false).
+                ]).setPartialLoadEnabled(true).setLoadBufferSize(2).
                     setCheckableRows(false).
                     setShowToolbar(false).
                     setRowHeight(70).
@@ -74,7 +81,9 @@ module app.installation.view {
                 true).setAutoLoad(false)
             );
 
-            this.subsribeAndManageInstallClick();
+            this.installApplications = [];
+
+            this.subscribeAndManageInstallClick();
             this.subscribeOnUninstallEvent();
             this.subscribeOnInstallEvent();
         }
@@ -100,7 +109,7 @@ module app.installation.view {
                             true).sendAndParse().then((application: api.application.Application)=> {
                                 if (!!application) {
                                     var marketApplication: MarketApplication = <MarketApplication>nodeToUpdate.getData();
-                                    if (this.installedAppCanBeUpdated(marketApplication, application)) {
+                                    if (MarketApplicationsFetcher.installedAppCanBeUpdated(marketApplication, application)) {
                                         marketApplication.setStatus(MarketAppStatus.OLDER_VERSION_INSTALLED);
                                     } else {
                                         marketApplication.setStatus(MarketAppStatus.INSTALLED);
@@ -113,7 +122,7 @@ module app.installation.view {
             });
         }
 
-        private subsribeAndManageInstallClick() {
+        private subscribeAndManageInstallClick() {
             this.getGrid().subscribeOnClick((event, data) => {
                 var node = this.getItem(data.row),
                     app = <MarketApplication>node.getData(),
@@ -162,22 +171,35 @@ module app.installation.view {
         }
 
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<MarketApplication>) {
+            let data = node.getData();
+            if (!!data.getAppKey()) {
+                var viewer: MarketAppViewer = <MarketAppViewer>node.getViewer("name");
+                if (!viewer) {
+                    viewer = new MarketAppViewer();
+                    viewer.setObject(node.getData(), node.calcLevel() > 1);
+                    node.setViewer("name", viewer);
+                }
+                return viewer.toString();
+            } else { // `load more` node
+                var application = new api.dom.DivEl("children-to-load"),
+                    parent = node.getParent();
+                application.setHtml((parent.getMaxChildren() - parent.getChildren().length + 1) + " children left to load.");
 
-            var viewer: MarketAppViewer = <MarketAppViewer>node.getViewer("name");
-            if (!viewer) {
-                viewer = new MarketAppViewer();
-                viewer.setObject(node.getData(), node.calcLevel() > 1);
-                node.setViewer("name", viewer);
+                return application.toString();
             }
-            return viewer.toString();
         }
 
         private appStatusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<MarketApplication>) {
-            var status = node.getData().getStatus(),
-                statusWrapper = new api.dom.DivEl()
+            let data = node.getData();
+            let statusWrapper = new api.dom.DivEl();
 
-            statusWrapper.setHtml(MarketAppStatusFormatter.formatStatus(status));
-            statusWrapper.addClass(MarketAppStatusFormatter.getStatusCssClass(status));
+            if (!!data.getAppKey()) {
+
+                let status = node.getData().getStatus();
+
+                statusWrapper.setHtml(MarketAppStatusFormatter.formatStatus(status));
+                statusWrapper.addClass(MarketAppStatusFormatter.getStatusCssClass(status));
+            }
 
             return statusWrapper.toString();
         }
@@ -186,21 +208,36 @@ module app.installation.view {
             this.initData(this.getRoot().getCurrentRoot().treeToList());
         }
 
+        updateInstallApplications(installApplications: api.application.Application[]) {
+            this.installApplications = installApplications;
+        }
+
         fetchChildren(): wemQ.Promise<MarketApplication[]> {
-            let from = 0; // TODO
-            let count = 50; // TODO
-            return new api.application.ListMarketApplicationsRequest()
-                .setStart(from)
-                .setCount(count)
-                .setVersion(this.getVersion())
-                .sendAndParse()
-                .then((applications: MarketApplication[])=> {
-                    return this.setMarketAppsStatuses(applications);
-                })
-                .catch((reason: any) => {
+            let root = this.getRoot().getCurrentRoot();
+            let children = root.getChildren();
+            var from = root.getChildren().length;
+            if (from > 0 && !children[from - 1].getData().getAppKey()) {
+                children.pop();
+                from--;
+            }
+
+            return MarketApplicationsFetcher.fetchChildren(this.getVersion(), this.installApplications, from,
+                MarketAppsTreeGrid.MAX_FETCH_SIZE).then(
+                (data: MarketApplicationResponse) => {
+                    let meta = data.getMetadata();
+                    let applications = children.map((el) => {
+                        return el.getData();
+                    }).slice(0, from).concat(data.getApplications());
+                    root.setMaxChildren(meta.getTotalHits());
+                    if (from + meta.getHits() < meta.getTotalHits()) {
+                        let emptyApplication = new MarketApplicationBuilder().setLatestVersion("").build();
+                        applications.push(emptyApplication);
+                    }
+                    return applications;
+                }).catch((reason: any) => {
                     var status500Message = "Woops... The server seems to be experiencing problems. Please try again later.";
                     var defaultErrorMessage = "Enonic Market is temporarily unavailable. Please try again later.";
-                    this.handleError(reason, reason.getStatusCode() == 500 ? status500Message : defaultErrorMessage);
+                this.handleError(reason, reason.getStatusCode() === 500 ? status500Message : defaultErrorMessage);
                     return [];
                 });
         }
@@ -218,56 +255,8 @@ module app.installation.view {
             return version;
         }
 
-        private setMarketAppsStatuses(marketApplications: MarketApplication[]): wemQ.Promise<MarketApplication[]> {
-            return new api.application.ListApplicationsRequest().sendAndParse().then((installedApplications: Application[]) => {
-                marketApplications.forEach((marketApp) => {
-                    for (var i = 0; i < installedApplications.length; i++) {
-                        if (marketApp.getAppKey().equals(installedApplications[i].getApplicationKey())) {
-                            if (this.installedAppCanBeUpdated(marketApp, installedApplications[i])) {
-                                marketApp.setStatus(MarketAppStatus.OLDER_VERSION_INSTALLED);
-                            } else {
-                                marketApp.setStatus(MarketAppStatus.INSTALLED);
-                            }
-                            break;
-                        }
-                    }
-                });
-                return marketApplications;
-            });
-        }
-
-        private installedAppCanBeUpdated(marketApp: MarketApplication, installedApp: Application): boolean {
-            return this.compareVersionNumbers(marketApp.getLatestVersion(), installedApp.getVersion()) > 0;
-        }
-
-        compareVersionNumbers(v1: string, v2: string): number {
-            var v1parts = v1.split('.');
-            var v2parts = v2.split('.');
-
-            for (var i = 0; i < v1parts.length; ++i) {
-                if (v2parts.length === i) {
-                    return 1;
-                }
-
-                if (v1parts[i] === v2parts[i]) {
-                    continue;
-                }
-                if (v1parts[i] > v2parts[i]) {
-                    return 1;
-                }
-                return -1;
-            }
-
-            if (v1parts.length != v2parts.length) {
-                return -1;
-            }
-
-            return 0;
-        }
-
-
         getDataId(data: MarketApplication): string {
-            return data.getAppKey().toString();
+            return data.getAppKey() ? data.getAppKey().toString() : "";
         }
     }
 }

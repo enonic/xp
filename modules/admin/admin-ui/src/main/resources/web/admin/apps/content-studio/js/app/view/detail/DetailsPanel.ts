@@ -451,35 +451,35 @@ module app.view.detail {
             this.toggleClass("no-selection", empty);
         }
 
-        private slideInRight() {
+        protected slideInRight() {
             this.getEl().setRightPx(0);
         }
 
-        private slideOutRight() {
+        protected slideOutRight() {
             this.getEl().setRightPx(-this.getEl().getWidthWithBorder());
         }
 
-        private slideInLeft() {
+        protected slideInLeft() {
             this.getEl().setLeftPx(0);
         }
 
-        private slideOutLeft() {
+        protected slideOutLeft() {
             this.getEl().setLeftPx(-this.getEl().getWidthWithBorder());
         }
 
-        private slideInTop() {
+        protected slideInTop() {
             this.getEl().setTopPx(36);
         }
 
-        private slideOutTop() {
+        protected slideOutTop() {
             this.getEl().setTopPx(-window.outerHeight);
         }
 
-        private slideInBottom() {
+        protected slideInBottom() {
             this.getEl().setTopPx(36);
         }
 
-        private slideOutBottom() {
+        protected slideOutBottom() {
             this.getEl().setTopPx(window.outerHeight);
         }
 
@@ -496,12 +496,24 @@ module app.view.detail {
         }
     }
 
+    export class MobileDetailsPanel extends DetailsPanel {
+
+        protected slideOutTop() {
+            this.getEl().setTopPx(api.BrowserHelper.isIOS() ? -window.innerHeight : -window.outerHeight);
+        }
+
+        protected slideOutBottom() {
+            this.getEl().setTopPx(api.BrowserHelper.isIOS() ? window.innerHeight : window.outerHeight);
+        }
+    }
+
     export class Builder {
 
         private useViewer: boolean = true;
         private slideFrom: SLIDE_FROM = SLIDE_FROM.RIGHT;
         private name: string;
         private useSplitter: boolean = true;
+        private isMobile: boolean = false;
 
         public setUseViewer(value: boolean): Builder {
             this.useViewer = value;
@@ -539,8 +551,13 @@ module app.view.detail {
             return this.useSplitter;
         }
 
+        public setIsMobile(value: boolean): Builder {
+            this.isMobile = value;
+            return this;
+        }
+
         public build(): DetailsPanel {
-            return new DetailsPanel(this);
+            return this.isMobile ? new MobileDetailsPanel(this) : new DetailsPanel(this);
         }
     }
 

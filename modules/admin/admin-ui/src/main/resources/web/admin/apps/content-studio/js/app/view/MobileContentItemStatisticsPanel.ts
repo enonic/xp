@@ -22,6 +22,7 @@ module app.view {
             setUseSplitter(false).
             setUseViewer(false).
             setSlideFrom(app.view.detail.SLIDE_FROM.BOTTOM).
+            setIsMobile(true).
             build();
         private detailsToggleButton: MobileDetailsPanelToggleButton;
 

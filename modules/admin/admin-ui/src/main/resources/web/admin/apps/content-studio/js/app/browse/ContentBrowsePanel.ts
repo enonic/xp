@@ -13,7 +13,7 @@ module app.browse {
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
     import ContentPath = api.content.ContentPath;
-    import ContentServerChangeType = api.content.event.ContentServerChangeType;
+    import NodeServerChangeType = api.event.NodeServerChangeType;
     import BatchContentRequest = api.content.BatchContentRequest;
     import TreeNodesOfContentPath = api.content.TreeNodesOfContentPath;
     import ContentId = api.content.ContentId;
@@ -72,9 +72,9 @@ module app.browse {
                     this.contentTreeGrid.mask();
                 }
             };
-            this.contentFilterPanel.onSearch(showMask);
+            this.contentFilterPanel.onSearchStarted(showMask);
             this.contentFilterPanel.onReset(showMask);
-            this.contentFilterPanel.onRefresh(showMask);
+            this.contentFilterPanel.onRefreshStarted(showMask);
 
             this.getTreeGrid().onDataChanged((event: api.ui.treegrid.DataChangedEvent<ContentSummaryAndCompareStatus>) => {
                 if (event.getType() === 'updated') {
@@ -307,7 +307,7 @@ module app.browse {
             });
 
             handler.onContentDeleted((data: api.content.event.ContentServerChangeItem[]) => {
-                var paths = data.map((changeItem) => changeItem.getContentPath());
+                var paths = data.map((changeItem) => changeItem.getPath());
                 this.handleContentDeleted(paths)
             });
 
@@ -373,7 +373,7 @@ module app.browse {
 
             isFiltered = true;
             if (isFiltered) {
-                this.setFilterPanelRefreshNeeded(true);
+                this.setRefreshOfFilterRequired();
                 window.setTimeout(() => {
                     this.refreshFilter();
                 }, 1000);
@@ -446,7 +446,7 @@ module app.browse {
                 }
             });
 
-            this.setFilterPanelRefreshNeeded(true);
+            this.setRefreshOfFilterRequired();
             window.setTimeout(() => {
                 this.refreshFilter();
             }, 1000);

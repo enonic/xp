@@ -21,5 +21,8 @@
 ///<reference path='ApplicationUploadStartedEvent.ts' />
 ///<reference path='InstallUrlApplicationRequest.ts' />
 ///<reference path='MarketApplication.ts' />
+///<reference path='MarketApplicationFetcher.ts' />
+///<reference path='MarketApplicationResponse.ts' />
+///<reference path='MarketApplicationMetadata.ts' />
 ///<reference path='ListMarketApplicationsRequest.ts' />
 ///<reference path='UninstallApplicationRequest.ts' />

@@ -453,7 +453,6 @@
 }
 .launcher-main-container > div {
   padding-left: 30px;
-  display: table;
   width: calc(100% -  30px);
 }
 .launcher-main-container .launcher-title {

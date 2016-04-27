@@ -23,6 +23,7 @@ module api.content.site.inputtype.siteconfigurator {
 
             formView.onLayoutFinished(() => {
                 this.handleSelectorsDropdowns(formView);
+                this.handleDialogClose(formView);
 
                 this.addClass("animated");
                 this.centerMyself();
@@ -34,6 +35,7 @@ module api.content.site.inputtype.siteconfigurator {
             this.getCancelAction().onExecuted(() => cancelCallback());
 
             this.addCancelButtonToBottom();
+
         }
 
         private addOkButton(okCallback: () => void) {
@@ -69,6 +71,18 @@ module api.content.site.inputtype.siteconfigurator {
                 comboboxArray.forEach((comboBox: ComboBox<any>) => {
                     comboBox.hideDropdown();
                 });
+            });
+        }
+
+        private handleDialogClose(formView: FormView) {
+            let imageSelector;
+            formView.getChildren().forEach((element: api.dom.Element) => {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(element, InputView)) {
+                    imageSelector = (<InputView> element).getInputTypeView().getElement();
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(imageSelector, ImageSelector)) {
+                        (<ImageSelector> imageSelector).onEditContentRequest(this.close.bind(this));
+                    }
+                }
             });
         }
 
