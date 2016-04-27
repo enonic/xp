@@ -193,10 +193,12 @@
         }
       }
 
-      min-height: 100px;
+      min-height: 115px;
     }
 
     .attachments-widget-item-view {
+
+      min-height: 35px;
 
       ul.attachment-list {
 
@@ -225,6 +227,7 @@
       .att-placeholder {
         display: block;
         text-align: center;
+        margin: 8px auto;
       }
     }
 
@@ -250,12 +253,14 @@
     .user-access-widget-item-view {
 
       text-align: center;
-
       .@{_COMMON_PREFIX}tooltip {
 
         z-index: 99999;
       }
 
+      &.empty {
+        min-width: 57px;
+      }
       .user-access-widget-header {
         .icon-menu4 {
           display: inline-block;

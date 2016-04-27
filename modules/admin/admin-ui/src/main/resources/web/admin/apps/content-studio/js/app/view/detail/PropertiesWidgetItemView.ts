@@ -34,7 +34,6 @@ module app.view.detail {
             if (PropertiesWidgetItemView.debug) {
                 console.debug('PropertiesWidgetItemView.layout');
             }
-            this.removeChildren();
 
             return super.layout().then(() => {
                 if (this.content != undefined) {
@@ -86,6 +85,7 @@ module app.view.detail {
                     stringItem.layout(this.list);
                 }
             });
+            this.removeChildren();
             this.appendChild(this.list);
         }
     }
