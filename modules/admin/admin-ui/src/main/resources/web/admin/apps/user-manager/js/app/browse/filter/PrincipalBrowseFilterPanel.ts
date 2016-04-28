@@ -64,10 +64,10 @@ module app.browse.filter {
                 setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER, PrincipalType.ROLE]).
                 setSearchQuery(searchString).
                 sendAndParse().then((principals: Principal[]) => {
-                    if(fireEvent) {
+                    if (fireEvent) {
                         new PrincipalBrowseSearchEvent(principals).fire();
                     }
-                    this.updateHitsCounter(principals ? principals.length : 0)
+                    this.updateHitsCounter(principals ? principals.length : 0, api.util.StringHelper.isBlank(searchString));
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
