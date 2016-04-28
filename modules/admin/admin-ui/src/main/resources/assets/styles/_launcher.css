@@ -157,7 +157,7 @@
   -webkit-opacity: 0.5;
   -moz-opacity: 0.5;
   opacity: 0.5;
-  background-color: #ffffff;
+  background-color: #fff;
   display: none;
   z-index: 2000;
   position: fixed;
@@ -389,7 +389,7 @@
   opacity: 0;
   display: table-cell;
   vertical-align: middle;
-  color: #ffffff;
+  color: #fff;
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -431,21 +431,21 @@
   background-color: rgba(255, 255, 255, 0.3);
 }
 .launcher-main-container .app-row-selected .app-info .app-description {
-  color: #ffffff;
+  color: #fff;
 }
  .launcher-main-container.keyboard-navigation .launcher-app-container .app-row.selected {
   width: 100%;
   background-color: rgba(255, 255, 255, 0.3);
 }
  .launcher-main-container.keyboard-navigation .launcher-app-container .app-row.selected .app-info .app-description {
-  color: #ffffff;
+  color: #fff;
 }
 .launcher-main-container:not(.keyboard-navigation) .launcher-app-container .app-row:hover {
   width: 100%;
   background-color: rgba(255, 255, 255, 0.3);
 }
 .launcher-main-container:not(.keyboard-navigation) .launcher-app-container .app-row:hover .app-info .app-description {
-  color: #ffffff;
+  color: #fff;
 }
 .launcher-main-container > * {
   -webkit-font-smoothing: antialiased;
@@ -460,7 +460,7 @@
   top: 0;
   height: 44px;
   background-color: #000000;
-  color: #ffffff;
+  color: #fff;
   font-size: 25px;
   display: table;
   overflow: hidden;
@@ -470,7 +470,7 @@
   overflow: hidden;
   white-space: pre;
   text-overflow: ellipsis;
-  color: #ffffff;
+  color: #fff;
   font-family: "Open Sans", sans-serif;
   font-size: 32px;
   font-weight: 100;
@@ -501,7 +501,7 @@
   overflow-y: auto;
 }
 .launcher-main-container .launcher-app-container a {
-  color: #ffffff;
+  color: #fff;
   text-decoration: none;
 }
 .launcher-main-container .launcher-app-container a:focus {
@@ -552,7 +552,7 @@
   display: table;
   height: 44px;
   background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  color: #fff;
   font-size: 14px;
 }
 .launcher-main-container .launcher-user .user-info {
@@ -572,7 +572,7 @@
   width: 100px;
 }
 .launcher-main-container .launcher-user .user-logout a {
-  color: #ffffff;
+  color: #fff;
   text-decoration: none;
 }
 .launcher-main-container .launcher-user img {
@@ -604,30 +604,30 @@
   display: inline-block;
   width: 20px;
   height: 3px;
-  background: #ffffff;
+  background: #fff;
   transition: 0.3s;
 }
 .dark .launcher-button .line {
-  background: #eeeeee;
+  background: #eee;
 }
 .launcher-button .lines {
   display: inline-block;
   width: 20px;
   height: 3px;
-  background: #ffffff;
+  background: #fff;
   transition: 0.3s;
   position: relative;
   top: -4px;
 }
 .dark .launcher-button .lines {
-  background: #eeeeee;
+  background: #eee;
 }
 .launcher-button .lines:before,
 .launcher-button .lines:after {
   display: inline-block;
   width: 20px;
   height: 3px;
-  background: #ffffff;
+  background: #fff;
   transition: 0.3s;
   position: absolute;
   left: 0;
@@ -637,7 +637,7 @@
 }
 .dark .launcher-button .lines:before,
 .dark .launcher-button .lines:after {
-  background: #eeeeee;
+  background: #eee;
 }
 .launcher-button .lines:before {
   top: 6px;
@@ -688,3 +688,4 @@
   -webkit-transform: rotate3d(0, 0, 1, -45deg);
   transform: rotate3d(0, 0, 1, -45deg);
 }
+/*# sourceMappingURL=src/main/resources/assets/styles/_launcher.css.map */

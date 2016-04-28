@@ -37,21 +37,21 @@
 .mce-toolbar-container .mce-panel,
 .mce-toolbar-grp.mce-panel {
   background-image: none;
-  background-color: #ffffff;
+  background-color: #fff;
   border: none;
 }
 .mce-toolbar-grp.mce-panel {
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid #ccc;
 }
 .mce-toolbar-grp .mce-flow-layout-item {
   margin: 0;
 }
 .mce-toolbar {
   display: flex;
-  background-color: #ffffff;
+  background-color: #fff;
 }
 .mce-toolbar .mce-btn-group {
-  border-right: 1px solid #cccccc;
+  border-right: 1px solid #ccc;
 }
 .mce-toolbar .mce-btn-group .mce-menubtn,
 .mce-toolbar .mce-btn-group .mce-btn,
@@ -66,7 +66,7 @@
   background-image: none;
   box-shadow: none;
   border: none;
-  background-color: #ffffff;
+  background-color: #fff;
 }
 .mce-toolbar .mce-btn-group.mce-last {
   border-right: none;
@@ -75,7 +75,7 @@
 .mce-toolbar .mce-btn-group .mce-menubtn:hover,
 .mce-toolbar .mce-btn-group .mce-btn:focus,
 .mce-toolbar .mce-btn-group .mce-menubtn:focus {
-  background-color: #eeeeee;
+  background-color: #eee;
   background-image: none;
 }
 .mce-toolbar .mce-btn-group .mce-btn .mce-ico,
@@ -112,15 +112,15 @@
 }
 .mce-toolbar .mce-btn-group .mce-btn.mce-active span,
 .mce-toolbar .mce-btn-group .mce-menubtn.mce-active span {
-  color: #ffffff;
+  color: #fff;
 }
 .mce-toolbar .mce-btn-group .mce-btn.mce-active i,
 .mce-toolbar .mce-btn-group .mce-menubtn.mce-active i {
-  border-top-color: #ffffff;
+  border-top-color: #fff;
 }
 .mce-toolbar .mce-btn-group .mce-btn.mce-active .mce-ico,
 .mce-toolbar .mce-btn-group .mce-menubtn.mce-active .mce-ico {
-  color: #ffffff;
+  color: #fff;
 }
 .mce-toolbar .mce-btn-group .mce-btn.mce-active:hover,
 .mce-toolbar .mce-btn-group .mce-menubtn.mce-active:hover {
@@ -128,3 +128,4 @@
   box-shadow: none;
   background-color: #4997da;
 }
+/*# sourceMappingURL=src/main/resources/web/admin/common/styles/api/util/htmlarea/html-editor.css.map */
