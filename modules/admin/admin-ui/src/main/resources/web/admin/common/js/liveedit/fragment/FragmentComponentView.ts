@@ -33,7 +33,7 @@ module api.liveedit.fragment {
             this.fragmentContent = null;
             this.fragmentContentLoadedListeners = [];
 
-            super(builder.setPlaceholder(new FragmentPlaceholder(this)).setTooltipViewer(
+            super(builder.setPlaceholder(new FragmentPlaceholder(this)).setViewer(
                 new FragmentComponentViewer()).setInspectActionRequired(true));
 
             this.fragmentComponent.onPropertyValueChanged((e: api.content.page.region.ComponentPropertyValueChangedEvent) => {

@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.Attachment;
@@ -42,7 +43,6 @@ import com.enonic.xp.schema.mixin.Mixins;
 import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.util.GeoPoint;
 
-import static com.enonic.xp.media.MediaInfo.GPS_INFO;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
@@ -63,6 +63,10 @@ final class ImageContentProcessor
         put( "whiteBalanceMode", "whiteBalance" ).
         put( "isoSpeedRatings", "iso" ).
         build();
+
+    private static final String GEO_LONGITUDE = "geoLong";
+
+    private static final String GEO_LATITUDE = "geoLat";
 
     private final MixinService mixinService;
 
@@ -213,10 +217,17 @@ final class ImageContentProcessor
                                   (int) ( height * cropping.height() ) );
     }
 
-    private ExtraDatas extractMetadata( MediaInfo mediaInfo, Mixins mixins, CreateAttachment sourceAttachment )
+    private ExtraDatas extractMetadata( final MediaInfo mediaInfo, final Mixins mixins, final CreateAttachment sourceAttachment )
     {
         final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
         final Map<MixinName, ExtraData> metadataMap = new HashMap<>();
+
+        final ExtraData geoData = extractGeoLocation( mediaInfo, mixins );
+        if ( geoData != null )
+        {
+            metadataMap.put( MediaInfo.GPS_INFO_METADATA_NAME, geoData );
+            extradatasBuilder.add( geoData );
+        }
 
         for ( Map.Entry<String, Collection<String>> entry : mediaInfo.getMetadata().asMap().entrySet() )
         {
@@ -262,7 +273,52 @@ final class ImageContentProcessor
         return extradatasBuilder.build();
     }
 
-    public String getConformityName( String tikaFieldValue )
+    private ExtraData extractGeoLocation( final MediaInfo mediaInfo, final Mixins mixins )
+    {
+        final ImmutableMultimap<String, String> mediaItems = mediaInfo.getMetadata();
+        final Double geoLat = parseDouble( mediaItems.get( GEO_LATITUDE ).stream().findFirst().orElse( null ) );
+        final Double geoLong = parseDouble( mediaItems.get( GEO_LONGITUDE ).stream().findFirst().orElse( null ) );
+        if ( geoLat == null || geoLong == null )
+        {
+            return null;
+        }
+
+        final Mixin geoMixin = mixins.getMixin( MediaInfo.GPS_INFO_METADATA_NAME );
+        if ( geoMixin == null )
+        {
+            return null;
+        }
+        final ExtraData extraData = new ExtraData( geoMixin.getName(), new PropertyTree() );
+        final FormItem formItem = geoMixin.getForm().getFormItems().getItemByName( MediaInfo.GPS_INFO_GEO_POINT );
+        if ( FormItemType.INPUT.equals( formItem.getType() ) )
+        {
+            Input input = (Input) formItem;
+            if ( InputTypeName.GEO_POINT.equals( input.getInputType() ) )
+            {
+                final GeoPoint geoPoint = new GeoPoint( geoLat, geoLong );
+                extraData.getData().addGeoPoint( formItem.getName(), ValueTypes.GEO_POINT.convert( geoPoint ) );
+            }
+        }
+        return extraData;
+    }
+
+    private Double parseDouble( final String str )
+    {
+        if ( str == null )
+        {
+            return null;
+        }
+        try
+        {
+            return Double.parseDouble( str );
+        }
+        catch ( NumberFormatException e )
+        {
+            return null;
+        }
+    }
+
+    private String getConformityName( String tikaFieldValue )
     {
         if ( FIELD_CONFORMITY_MAP.containsValue( tikaFieldValue ) )
         {
@@ -271,7 +327,7 @@ final class ImageContentProcessor
         return FIELD_CONFORMITY_MAP.containsKey( tikaFieldValue ) ? FIELD_CONFORMITY_MAP.get( tikaFieldValue ) : tikaFieldValue;
     }
 
-    public void fillComputedFormItems( Collection<ExtraData> extraDataList, MediaInfo mediaInfo, final CreateAttachment sourceAttachment )
+    private void fillComputedFormItems( Collection<ExtraData> extraDataList, MediaInfo mediaInfo, final CreateAttachment sourceAttachment )
     {
         for ( ExtraData extraData : extraDataList )
         {
@@ -300,15 +356,6 @@ final class ImageContentProcessor
                     {
                         throw Exceptions.newRutime( "Failed to read BufferedImage from InputStream" ).withCause( e );
                     }
-                }
-            }
-            if ( GPS_INFO.equals( extraData.getName().getLocalName() ) )
-            {
-                if ( mediaInfo.getMetadata().get( "geoLat" ).size() > 0 && mediaInfo.getMetadata().get( "geoLong" ).size() > 0 )
-                {
-                    xData.addGeoPoint( "geoPoint",
-                                       new GeoPoint( Double.valueOf( mediaInfo.getMetadata().get( "geoLat" ).toArray()[0].toString() ),
-                                                     Double.valueOf( mediaInfo.getMetadata().get( "geoLong" ).toArray()[0].toString() ) ) );
                 }
             }
         }

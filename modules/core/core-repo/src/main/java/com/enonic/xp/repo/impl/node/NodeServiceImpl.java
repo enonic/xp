@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.io.File;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -90,8 +89,6 @@ public class NodeServiceImpl
     @Activate
     public void initialize()
     {
-        final File blobStoreDir = new File( configuration.getBlobStoreDir(), NodeConstants.BINARY_BLOB_STORE_DIR );
-
         final RepositoryInitializer repoInitializer = new RepositoryInitializer( this.indexServiceInternal );
         repoInitializer.initializeRepositories( ContentConstants.CONTENT_REPO.getId(), SystemConstants.SYSTEM_REPO.getId() );
     }

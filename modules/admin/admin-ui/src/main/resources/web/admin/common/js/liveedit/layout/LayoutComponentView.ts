@@ -40,7 +40,7 @@ module api.liveedit.layout {
             this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => this.notifyItemViewRemoved(event.getView());
 
             super(builder.
-                setTooltipViewer(new LayoutComponentViewer()).
+                setViewer(new LayoutComponentViewer()).
                 setPlaceholder(new LayoutPlaceholder(this)).
                 setInspectActionRequired(true));
 

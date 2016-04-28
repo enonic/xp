@@ -14,6 +14,7 @@ import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.Mixins;
 
 import static com.enonic.xp.media.MediaInfo.CAMERA_INFO_METADATA_NAME;
+import static com.enonic.xp.media.MediaInfo.GPS_INFO_GEO_POINT;
 import static com.enonic.xp.media.MediaInfo.GPS_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
@@ -63,7 +64,7 @@ final class BuiltinMixinsTypes
     private static Form createGpsInfoMixinForm()
     {
         final Form.Builder form = Form.create();
-        form.addFormItem( createGeoPoint( "geoPoint", "Geo Point" ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createGeoPoint( GPS_INFO_GEO_POINT, "Geo Point" ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "altitude", "Altitude" ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "direction", "Direction" ).occurrences( 0, 1 ).build() );
 

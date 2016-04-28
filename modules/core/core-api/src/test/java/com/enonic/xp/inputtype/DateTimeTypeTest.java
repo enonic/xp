@@ -3,6 +3,7 @@ package com.enonic.xp.inputtype;
 import org.junit.Test;
 
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 
 import static org.junit.Assert.*;
@@ -31,7 +32,7 @@ public class DateTimeTypeTest
     public void testCreateProperty()
     {
         final InputTypeConfig config = newEmptyConfig();
-        final Value value = this.type.createValue( "2015-01-02T22:11:00", config );
+        final Value value = this.type.createValue( ValueFactory.newString( "2015-01-02T22:11:00" ), config );
 
         assertNotNull( value );
         assertSame( ValueTypes.LOCAL_DATE_TIME, value.getType() );
@@ -41,7 +42,7 @@ public class DateTimeTypeTest
     public void testCreateProperty_withTimezone()
     {
         final InputTypeConfig config = newFullConfig();
-        final Value value = this.type.createValue( "2015-01-02T22:11:00Z", config );
+        final Value value = this.type.createValue( ValueFactory.newString( "2015-01-02T22:11:00Z" ), config );
 
         assertNotNull( value );
         assertSame( ValueTypes.DATE_TIME, value.getType() );

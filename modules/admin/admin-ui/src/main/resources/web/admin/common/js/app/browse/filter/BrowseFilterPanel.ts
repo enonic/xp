@@ -2,9 +2,7 @@ module api.app.browse.filter {
 
     export class BrowseFilterPanel extends api.ui.panel.Panel {
 
-        private searchListeners: {(event: SearchEvent):void}[] = [];
-
-        private refreshListeners: {(event: RefreshEvent):void}[] = [];
+        private searchStartedListeners: {():void}[] = [];
 
         private resetListeners: {():void}[] = [];
 
@@ -23,6 +21,10 @@ module api.app.browse.filter {
         private hideFilterPanelButton: api.dom.SpanEl;
 
         private showResultsButton: api.dom.SpanEl;
+
+        protected filterPanelRefreshNeeded: boolean = false;
+
+        private refreshStartedListeners: {():void}[] = [];
 
         constructor(aggregations?: api.aggregation.Aggregation[], groupViews?: api.aggregation.AggregationGroupView[]) {
             super();
@@ -82,6 +84,14 @@ module api.app.browse.filter {
             })
         }
 
+        setRefreshOfFilterRequired() {
+            this.filterPanelRefreshNeeded = true;
+        }
+
+        isFilterPanelRefreshNeeded(): boolean {
+            return this.filterPanelRefreshNeeded;
+        }
+
         giveFocusToSearch() {
             this.searchField.giveFocus();
         }
@@ -115,12 +125,24 @@ module api.app.browse.filter {
             else {
                 this.clearFilter.hide();
             }
-            var values = this.getSearchInputValues();
-            this.notifySearch(values, elementChanged);
+            this.notifySearchStarted();
+            this.doSearch(elementChanged);
+        }
+
+        doSearch(elementChanged?: api.dom.Element) {
+            return;
         }
 
         refresh() {
-            this.notifyRefresh();
+            if (this.filterPanelRefreshNeeded && this.getEl().isVisible()) {
+                this.notifyRefreshStarted();
+                this.doRefresh();
+                this.filterPanelRefreshNeeded = false;
+            }
+        }
+
+        doRefresh() {
+            return;
         }
 
         reset() {
@@ -134,65 +156,71 @@ module api.app.browse.filter {
             this.aggregationContainer.deselectAll(true);
         }
 
-        onSearch(listener: (event: SearchEvent)=>void) {
-            this.searchListeners.push(listener);
+        onSearchStarted(listener: ()=> void) {
+            this.searchStartedListeners.push(listener);
         }
 
-        onReset(listener: ()=>void) {
+        onReset(listener: ()=> void) {
             this.resetListeners.push(listener);
         }
 
-        onRefresh(listener: (event: RefreshEvent)=>void) {
-            this.refreshListeners.push(listener);
+        onRefreshStarted(listener: ()=> void) {
+            this.refreshStartedListeners.push(listener);
         }
 
-        unSearch(listener: (event: SearchEvent)=>void) {
-            this.searchListeners = this.searchListeners.filter((currentListener: (event: SearchEvent)=>void) => {
+        unRefreshStarted(listener: ()=>void) {
+            this.refreshStartedListeners = this.refreshStartedListeners.filter((currentListener: ()=> void) => {
                 return currentListener != listener;
             });
         }
 
-        unReset(listener: ()=>void) {
+        unSearchStarted(listener: ()=> void) {
+            this.searchStartedListeners = this.searchStartedListeners.filter((currentListener: ()=> void) => {
+                return currentListener != listener;
+            });
+        }
+
+        unReset(listener: ()=> void) {
             this.resetListeners = this.resetListeners.filter((currentListener: ()=>void) => {
                 return currentListener != listener;
             });
 
         }
 
-        onHideFilterPanelButtonClicked(listener: ()=>void) {
+        onHideFilterPanelButtonClicked(listener: ()=> void) {
             this.hideFilterPanelButtonClickedListeners.push(listener);
         }
 
-        onShowResultsButtonClicked(listener: ()=>void) {
+        onShowResultsButtonClicked(listener: ()=> void) {
             this.showResultsButtonClickedListeners.push(listener);
         }
 
-        private notifySearch(searchInputValues: api.query.SearchInputValues, elementChanged?: api.dom.Element) {
-            this.searchListeners.forEach((listener: (event: SearchEvent)=>void) => {
-                listener.call(this, new SearchEvent(searchInputValues, elementChanged));
+        private notifySearchStarted() {
+            this.searchStartedListeners.forEach((listener: ()=> void) => {
+                listener.call(this);
             });
         }
 
-        private notifyRefresh() {
-            this.refreshListeners.forEach((listener: ()=>void) => {
-                listener.call(this, new RefreshEvent(this.getSearchInputValues()));
+        protected notifyRefreshStarted() {
+            this.refreshStartedListeners.forEach((listener: ()=> void) => {
+                listener.call(this);
             });
         }
 
         private notifyReset() {
-            this.resetListeners.forEach((listener: ()=>void) => {
+            this.resetListeners.forEach((listener: ()=> void) => {
                 listener.call(this);
             });
         }
 
         private notifyHidePanelButtonPressed() {
-            this.hideFilterPanelButtonClickedListeners.forEach((listener: ()=>void) => {
+            this.hideFilterPanelButtonClickedListeners.forEach((listener: ()=> void) => {
                 listener.call(this);
             });
         }
 
         private notifyShowResultsButtonPressed() {
-            this.showResultsButtonClickedListeners.forEach((listener: ()=>void) => {
+            this.showResultsButtonClickedListeners.forEach((listener: ()=> void) => {
                 listener.call(this);
             });
         }
@@ -209,7 +237,7 @@ module api.app.browse.filter {
                 this.hitsCounterEl.setHtml(hits + " total");
             }
 
-            if(hits != 0) {
+            if (hits != 0) {
                 this.showResultsButton.show();
             }
             else {

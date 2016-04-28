@@ -68,4 +68,10 @@ final class BundleInfo
     {
         return obj.location.equals( this.location ) && ( obj.level == this.level );
     }
+
+    @Override
+    public String toString()
+    {
+        return this.location + "@" + this.level;
+    }
 }

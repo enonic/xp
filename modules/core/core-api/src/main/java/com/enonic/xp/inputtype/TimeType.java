@@ -16,9 +16,9 @@ final class TimeType
     }
 
     @Override
-    public Value createValue( final String value, final InputTypeConfig config )
+    public Value createValue( final Value value, final InputTypeConfig config )
     {
-        return ValueFactory.newLocalTime( ValueTypes.LOCAL_TIME.convert( value ) );
+        return ValueFactory.newLocalTime( value.asLocalTime() );
     }
 
     @Override

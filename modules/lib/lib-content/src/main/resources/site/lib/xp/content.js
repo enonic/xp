@@ -136,6 +136,7 @@ exports.getChildren = function (params) {
  * @param {boolean} [params.requireValid=true] The content has to be valid to be created.
  * @param {string} params.contentType Content type to use.
  * @param {string} [params.language] The language tag representing the content’s locale.
+ * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  * @param {object} params.data Actual content data.
  * @param {object} [params.x] eXtra data to use.
  *
@@ -247,6 +248,7 @@ exports.publish = function (params) {
  * @param {string} [params.mimeType] Mime-type of the data.
  * @param {number} [params.focalX] Focal point for X axis (if it's an image).
  * @param {number} [params.focalY] Focal point for Y axis (if it's an image).
+ * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  * @param  params.data Data (as stream) to use.
  *
  * @returns {object} Returns the created media content.
@@ -258,6 +260,7 @@ exports.createMedia = function (params) {
     bean.mimeType = nullOrValue(params.mimeType);
     bean.focalX = nullOrValue(params.focalX);
     bean.focalY = nullOrValue(params.focalY);
+    bean.branch = nullOrValue(params.branch);
     bean.data = nullOrValue(params.data);
     bean.idGenerator = nullOrValue(params.idGenerator);
     return __.toNativeObject(bean.execute());

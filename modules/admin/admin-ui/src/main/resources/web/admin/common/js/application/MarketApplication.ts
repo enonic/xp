@@ -197,6 +197,11 @@ module api.application {
             return this;
         }
 
+        setLatestVersion(latestVersion: string): MarketApplicationBuilder {
+            this.latestVersion = latestVersion;
+            return this;
+        }
+
         public build(): MarketApplication {
             return new MarketApplication(this);
         }

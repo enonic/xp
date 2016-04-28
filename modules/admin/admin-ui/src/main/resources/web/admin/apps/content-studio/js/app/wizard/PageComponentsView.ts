@@ -97,7 +97,7 @@ module app.wizard {
 
         setPageView(pageView: PageView) {
 
-            if(this.mask) {
+            if (this.mask) {
                 this.destroyMask();
             }
 
@@ -127,7 +127,7 @@ module app.wizard {
             this.mask.remove();
             this.mask = null;
 
-            if(this.pageView) {
+            if (this.pageView) {
                 this.pageView.unPageLocked(this.pageLockedHandler.bind(this));
             }
         }
@@ -136,7 +136,7 @@ module app.wizard {
             this.mask = new Mask(this.tree);
             this.appendChild(this.mask);
 
-            if(this.pageView.isLocked()) {
+            if (this.pageView.isLocked()) {
                 this.mask.show();
             }
 
@@ -302,8 +302,11 @@ module app.wizard {
                     rowElement = rowElement.parentElement;
                 }
 
-                if(!this.pageView.isLocked()) {
+                if (!this.pageView.isLocked()) {
                     this.highlightRow(rowElement, selected);
+                    if (this.isMenuIcon(event.target) && api.BrowserHelper.isIOS()) {
+                        this.showContextMenu(new api.dom.ElementHelper(rowElement).getSiblingIndex(), {x: event.pageX, y: event.pageY});
+                    }
                 }
             });
 
@@ -341,6 +344,13 @@ module app.wizard {
             this.tree.onRemoved((event) => this.tree.getGrid().unsubscribeOnClick(this.clickListener));
 
             this.tree.onLoaded(() => this.bindTextComponentViewsUpdateOnTextModify());
+        }
+
+        private isMenuIcon(element: HTMLElement): boolean {
+            if (!!element && !!element.className && element.className.indexOf("menu-icon") > -1) {
+                return true;
+            }
+            return false;
         }
 
         private bindTextComponentViewsUpdateOnTextModify() {
@@ -517,7 +527,7 @@ module app.wizard {
         }
 
         private pageLockedHandler(value: boolean) {
-            if(this.mask) {
+            if (this.mask) {
                 if (value) {
                     this.mask.show();
                 } else {
@@ -530,13 +540,12 @@ module app.wizard {
             event.stopPropagation();
             event.preventDefault();
 
-            if (this.contextMenu && this.contextMenu.isVisible()  ) {
+            if (this.contextMenu && this.contextMenu.isVisible()) {
                 this.hideContextMenu();
             } else {
                 this.showContextMenu(null, {x: event.pageX, y: event.pageY});
             }
         }
-
 
 
         private isMenuIconClicked(cellNumber: number): boolean {
@@ -545,7 +554,7 @@ module app.wizard {
 
         private showContextMenu(row: number, clickPosition: api.liveedit.Position) {
             var node = this.tree.getGrid().getDataView().getItem(row);
-            if(node) {
+            if (node) {
                 var itemView: ItemView = node.getData(),
                     pageView: api.liveedit.PageView = itemView.getPageView();
             } else {
@@ -574,6 +583,8 @@ module app.wizard {
             });
 
             this.contextMenu.getMenu().onAfterAction((action: api.ui.Action) => {
+                this.hidePageComponentsIfInMobileView(action);
+
                 setTimeout(() => {
                     this.pageView.setDisabledContextMenu(false);
                     this.contextMenu.getMenu().clearActionListeners();
@@ -587,6 +598,14 @@ module app.wizard {
             var y = clickPosition.y;
 
             this.contextMenu.showAt(x, y, false);
+        }
+
+        private hidePageComponentsIfInMobileView(action: api.ui.Action) {
+            if (api.BrowserHelper.isMobile() && ((action.hasParentAction() && action.getParentAction().getLabel() == "Insert")
+                                   || action.getLabel() == "Inspect" || action.getLabel() == "Edit" ||
+                                   action.getLabel() == "Duplicate")) {
+                this.hide();
+            }
         }
 
         private setMenuOpenStyleOnMenuIcon(row: number) {
@@ -622,8 +641,11 @@ module app.wizard {
 
                 if (hoveredNode) {
                     var data = hoveredNode.getData();
-                    if (data.getType().isComponentType()) {
+                    if (data.getType().isComponentType() && !api.BrowserHelper.isMobile()) {
                         api.liveedit.Highlighter.get().highlightElement(dimensions, data.getType().getConfig().getHighlighterStyle());
+                    }
+                    if (api.BrowserHelper.isIOS()) {
+                        this.selectItem(hoveredNode);
                     }
                 }
             }

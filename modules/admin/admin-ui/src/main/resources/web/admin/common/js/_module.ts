@@ -52,6 +52,7 @@
 ///<reference path='security/_module.ts' />
 ///<reference path='security/acl/_module.ts' />
 ///<reference path='security/auth/_module.ts' />
+///<reference path='security/event/_module.ts' />
 
 ///<reference path='locale/_module.ts' />
 ///<reference path='locale/json/_module.ts' />

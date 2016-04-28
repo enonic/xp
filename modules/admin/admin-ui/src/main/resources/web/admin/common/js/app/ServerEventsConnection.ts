@@ -1,8 +1,6 @@
 module api.app {
-    export interface EventJson {
-        type: string;
-        timestamp: number;
-    }
+
+    import EventJson = api.event.EventJson;
 
     export class ServerEventsConnection {
         private static KEEP_ALIVE_TIME: number = 30 * 1000;
@@ -74,7 +72,7 @@ module api.app {
             });
 
             this.ws.addEventListener('message', (remoteEvent: any) => {
-                var jsonEvent = <EventJson> JSON.parse(remoteEvent.data);
+                var jsonEvent = <api.event.NodeEventJson> JSON.parse(remoteEvent.data);
                 if (ServerEventsConnection.debug) {
                     console.debug('ServerEventsConnection: Server event [' + jsonEvent.type + ']', jsonEvent);
                 }
@@ -117,7 +115,7 @@ module api.app {
             return this.ws.readyState === WebSocket.OPEN;
         }
 
-        private handleServerEvent(eventJson: EventJson): void {
+        private handleServerEvent(eventJson: api.event.NodeEventJson): void {
             var clientEvent: api.event.Event = this.translateServerEvent(eventJson);
 
             if (clientEvent) {
@@ -132,11 +130,17 @@ module api.app {
                 return api.application.ApplicationEvent.fromJson(<api.application.ApplicationEventJson>eventJson);
             }
             if (eventType.indexOf('node.') === 0) {
-                var event = api.content.event.ContentServerEvent.fromJson(<api.content.event.NodeEventJson>eventJson);
-                if (!!event.getContentChange()) {
+                let event;
+                if (api.content.event.ContentServerEvent.is(<api.event.NodeEventJson>eventJson)) {
+                    event = api.content.event.ContentServerEvent.fromJson(<api.event.NodeEventJson>eventJson);
+                }
+
+                if (api.security.event.PrincipalServerEvent.is(<api.event.NodeEventJson>eventJson)) {
+                    event = api.security.event.PrincipalServerEvent.fromJson(<api.event.NodeEventJson>eventJson);
+                }
+
+                if (event && event.getNodeChange()) {
                     return event;
-                } else {
-                    return null;
                 }
             }
 

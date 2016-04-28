@@ -60,6 +60,8 @@ module api.ui.treegrid {
 
         private loadBufferSize: number;
 
+        private loading: boolean = false;
+
         private scrollable: api.dom.Element;
 
         private quietErrorHandling: boolean;
@@ -450,8 +452,10 @@ module api.ui.treegrid {
                     }
                 }).catch((reason: any) => {
                     this.handleError(reason);
-                }).finally(() => {
-                }).done(() => this.notifyLoaded());
+                }).then(() => {
+                    this.notifyLoaded();
+                    this.loading = false;
+                });
             }
         }
 
@@ -478,24 +482,24 @@ module api.ui.treegrid {
 
         private postLoad() {
             // Skip if not visible or active (is loading something)
-            var disabled = !this.isInRenderingView();
+            const disabled = !this.isInRenderingView() || this.loading;
 
             if (disabled) {
                 return;
             }
 
-            var viewportRange = this.grid.getViewport(),
-                lastIndex = this.gridData.getItems().length - 1,
+            const viewportRange = this.grid.getViewport();
+            const lastIndex = this.gridData.getItems().length - 1;
             // first and last rows, that are visible in grid
-                firstVisible = viewportRange.top,
-                lastVisible = Math.min(viewportRange.bottom, lastIndex),
+            const firstVisible = viewportRange.top;
+            const lastVisible = Math.min(viewportRange.bottom, lastIndex);
             // interval borders to search for the empty node
-                from = firstVisible,
-                to = Math.min(lastVisible + this.loadBufferSize, lastIndex);
+            const from = firstVisible;
+            const to = Math.min(lastVisible + this.loadBufferSize, lastIndex);
 
-            for (var i = from; i <= to; i++) {
+            for (let i = from; i <= to; i++) {
                 if (!!this.gridData.getItem(i) && this.gridData.getItem(i).getDataId() === "") {
-                    //emptyNode = this.gridData.getItem(i);
+                    this.loading = true;
                     this.loadEmptyNode(this.gridData.getItem(i));
                     break;
                 }
@@ -686,7 +690,7 @@ module api.ui.treegrid {
             this.grid.show();
             this.errorPanel.hide();
             if (this.quietErrorHandling) {
-                this.errorPanel.setError(message || reason.getMessage());
+                this.errorPanel.setError(message || reason);
                 this.grid.hide();
                 this.errorPanel.show();
             }

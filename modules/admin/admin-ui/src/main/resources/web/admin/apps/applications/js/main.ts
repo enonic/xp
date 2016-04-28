@@ -60,6 +60,7 @@ function startApplication() {
     var installAppDialog = new app.installation.InstallAppDialog();
 
     app.installation.InstallAppPromptEvent.on((event) => {
+        installAppDialog.updateInstallApplications(event.getInstalledApplications());
         installAppDialog.open();
     });
 

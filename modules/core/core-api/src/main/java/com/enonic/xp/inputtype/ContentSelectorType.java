@@ -16,9 +16,9 @@ final class ContentSelectorType
     }
 
     @Override
-    public Value createValue( final String value, final InputTypeConfig config )
+    public Value createValue( final Value value, final InputTypeConfig config )
     {
-        return ValueFactory.newReference( ValueTypes.REFERENCE.convert( value ) );
+        return ValueFactory.newReference( value.asReference() );
     }
 
     @Override

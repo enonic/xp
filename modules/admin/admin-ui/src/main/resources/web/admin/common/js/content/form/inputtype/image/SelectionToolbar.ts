@@ -18,7 +18,7 @@ module api.content.form.inputtype.image {
             super("selection-toolbar");
 
             this.editButton = new Button("Edit");
-            this.editButton.addClass("large");
+            this.editButton.addClass("large edit");
             this.editButton.onClicked((event: MouseEvent) => {
                 this.notifyEditClicked();
             });

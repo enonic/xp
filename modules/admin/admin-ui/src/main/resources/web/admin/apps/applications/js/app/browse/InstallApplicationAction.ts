@@ -8,7 +8,9 @@ module app.browse {
             super("Install");
             this.setEnabled(false);
             this.onExecuted(() => {
-                new app.installation.InstallAppPromptEvent().fire();
+                const installedApplications: Application[] = applicationTreeGrid.getRoot().getCurrentRoot().treeToList().map(
+                    (node) => node.getData());
+                new app.installation.InstallAppPromptEvent(installedApplications).fire();
             });
         }
     }

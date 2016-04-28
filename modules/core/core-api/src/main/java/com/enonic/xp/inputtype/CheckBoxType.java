@@ -23,9 +23,9 @@ final class CheckBoxType
     }
 
     @Override
-    public Value createValue( final String value, final InputTypeConfig config )
+    public Value createValue( final Value value, final InputTypeConfig config )
     {
-        return ValueFactory.newBoolean( ValueTypes.BOOLEAN.convert( value ) );
+        return ValueFactory.newBoolean( value.asBoolean() );
     }
 
     @Override

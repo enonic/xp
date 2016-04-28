@@ -10,7 +10,7 @@ function handleGet(req) {
     var view = resolve('home.html');
 
     var isLatestSnapshot = app.version.endsWith('.0.SNAPSHOT');
-    var docLinkPrefix = 'http://xp.readthedocs.org/en/';
+    var docLinkPrefix = 'http://docs.enonic.com/en/';
 
     if (isLatestSnapshot) {
         docLinkPrefix += 'latest';

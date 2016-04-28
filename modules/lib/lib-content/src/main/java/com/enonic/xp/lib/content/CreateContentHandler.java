@@ -55,6 +55,10 @@ public final class CreateContentHandler
         {
             this.name = generateUniqueContentName( ContentPath.from( this.parentPath ), this.displayName );
         }
+        if ( isBlank( this.displayName ) && isNotBlank( this.name ) )
+        {
+            this.displayName = this.name;
+        }
 
         final CreateContentParams params = createParams();
         final Content result = this.contentService.create( params );
