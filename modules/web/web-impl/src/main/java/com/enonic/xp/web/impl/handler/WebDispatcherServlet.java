@@ -2,9 +2,12 @@ package com.enonic.xp.web.impl.handler;
 
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
@@ -78,12 +82,33 @@ public class WebDispatcherServlet
 
     private Multimap<String, String> generateWebRequestParams( final HttpServletRequest servletRequest )
     {
-        return null; //TODO
+        final HashMultimap<String, String> paramsMultimap = HashMultimap.create();
+
+        servletRequest.getParameterMap().
+            entrySet().
+            forEach( servletRequestParameter -> {
+                String key = servletRequestParameter.getKey();
+                List<String> values = Arrays.asList( servletRequestParameter.getValue() );
+                paramsMultimap.putAll( key, values );
+            } );
+
+        return paramsMultimap;
     }
 
     private ImmutableMap<String, String> generateWebRequestCookies( final HttpServletRequest servletRequest )
     {
-        return null; //TODO
+        final ImmutableMap.Builder<String, String> cookieImmutableMap = ImmutableMap.builder();
+
+        final Cookie[] servletRequestCookies = servletRequest.getCookies();
+        if ( servletRequestCookies != null )
+        {
+            for ( final Cookie servletRequestCookie : servletRequestCookies )
+            {
+                cookieImmutableMap.put( servletRequestCookie.getName(), servletRequestCookie.getValue() );
+            }
+        }
+
+        return cookieImmutableMap.build();
     }
 
     private boolean isWebSocket( final HttpServletRequest servletRequest, final HttpServletResponse servletResponse )
