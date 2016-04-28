@@ -3,10 +3,14 @@ package com.enonic.xp.web.impl.handler;
 
 import java.io.IOException;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
@@ -14,11 +18,17 @@ import com.google.common.collect.Multimap;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebRequestImpl;
+import com.enonic.xp.web.impl.websocket.WebSocketContext;
+import com.enonic.xp.web.impl.websocket.WebSocketContextFactory;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
+@Component(immediate = true, service = Servlet.class,
+    property = {"osgi.http.whiteboard.servlet.pattern=/test/*"})
 public class WebDispatcherServlet
     extends HttpServlet
 {
+
+    private WebSocketContextFactory webSocketContextFactory;
 
     @Override
     protected void service( final HttpServletRequest servletRequest, final HttpServletResponse servletResponse )
@@ -78,6 +88,13 @@ public class WebDispatcherServlet
 
     private boolean isWebSocket( final HttpServletRequest servletRequest, final HttpServletResponse servletResponse )
     {
-        return false; //TODO final WebSocketContext webSocketContext = webSocketContextFactory.newContext( servletRequest, servletResponse );
+        final WebSocketContext webSocketContext = webSocketContextFactory.newContext( servletRequest, servletResponse );
+        return webSocketContext != null;
+    }
+
+    @Reference
+    public void setWebSocketContextFactory( final WebSocketContextFactory webSocketContextFactory )
+    {
+        this.webSocketContextFactory = webSocketContextFactory;
     }
 }
