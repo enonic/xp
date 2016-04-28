@@ -4,11 +4,14 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.web.HttpMethod;
 
+@Beta
 public class WebRequestImpl
     implements WebRequest
 {
@@ -143,6 +146,17 @@ public class WebRequestImpl
         return webSocket;
     }
 
+    @Override
+    public Object getAttribute( final String name )
+    {
+        return rawRequest.getAttribute( name );
+    }
+
+    @Override
+    public void setAttribute( final String name, final Object value )
+    {
+        rawRequest.setAttribute( name, value );
+    }
 
     public static final class Builder
     {
@@ -238,8 +252,14 @@ public class WebRequestImpl
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkNotNull( rawRequest, "rawRequest cannot be null" );
+        }
+
         public WebRequestImpl build()
         {
+            validate();
             return new WebRequestImpl( this );
         }
     }
