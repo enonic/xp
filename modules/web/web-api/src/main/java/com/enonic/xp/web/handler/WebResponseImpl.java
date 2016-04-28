@@ -1,10 +1,12 @@
 package com.enonic.xp.web.handler;
 
+import java.util.Map;
+
 import javax.servlet.http.Cookie;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.web.HttpStatus;
@@ -18,7 +20,7 @@ public class WebResponseImpl
 
     private MediaType contentType;
 
-    private ImmutableMap<String, String> headers;
+    private Map<String, String> headers = Maps.newHashMap();
 
     private ImmutableList<Cookie> cookies;
 
@@ -39,7 +41,7 @@ public class WebResponseImpl
     }
 
     @Override
-    public ImmutableMap<String, String> getHeaders()
+    public Map<String, String> getHeaders()
     {
         return headers;
     }
@@ -75,9 +77,9 @@ public class WebResponseImpl
     }
 
     @Override
-    public void setHeaders( final ImmutableMap<String, String> headers )
+    public void addHeader( final String key, final String value )
     {
-        this.headers = headers;
+        this.headers.put( key, value );
     }
 
     @Override
