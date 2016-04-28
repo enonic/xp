@@ -1,4 +1,6 @@
 declare var CONFIG;
+
+import "./api.ts";
 import {ApplicationAppPanel} from "./app/ApplicationAppPanel";
 import {InstallAppDialog} from "./app/installation/InstallAppDialog";
 import {InstallAppPromptEvent} from "./app/installation/InstallAppPromptEvent";
