@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.export.xml;
 
+import java.io.Reader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.Map;
@@ -29,8 +30,11 @@ public final class XsltTransformer
     {
         final StringWriter stringWriter = new StringWriter();
 
-        this.transformer.transform( new StreamSource( source.openStream() ), new StreamResult( stringWriter ) );
-        return stringWriter.toString();
+        try (Reader reader = source.openStream())
+        {
+            this.transformer.transform( new StreamSource( reader ), new StreamResult( stringWriter ) );
+            return stringWriter.toString();
+        }
     }
 
     public static XsltTransformer create( final URL script, final Map<String, Object> params )
