@@ -12,6 +12,7 @@
     "grunt-ts": "5.1.0",
     "grunt-typedoc": "~0.2.3",
     "load-grunt-config": "~0.17.2",
+    "ts-loader": "^0.8.2",
     "typescript": "1.6.2",
     "webpack": "^1.13.0"
   },
