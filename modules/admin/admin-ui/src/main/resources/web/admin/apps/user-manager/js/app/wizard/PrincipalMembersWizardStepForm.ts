@@ -1,103 +1,100 @@
-module app.wizard {
+import "../../api.ts";
 
-    import Role = api.security.Role;
-    import Principal = api.security.Principal;
-    import PrincipalKey = api.security.PrincipalKey;
-    import PrincipalType = api.security.PrincipalType;
-    import PrincipalLoader = api.security.PrincipalLoader;
-    import FormItemBuilder = api.ui.form.FormItemBuilder;
+import Role = api.security.Role;
+import Principal = api.security.Principal;
+import PrincipalKey = api.security.PrincipalKey;
+import PrincipalType = api.security.PrincipalType;
+import PrincipalLoader = api.security.PrincipalLoader;
+import FormItemBuilder = api.ui.form.FormItemBuilder;
 
-    import PrincipalComboBox = api.ui.security.PrincipalComboBox;
+import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 
-    import DivEl = api.dom.DivEl;
-    import LabelEl = api.dom.LabelEl;
+import DivEl = api.dom.DivEl;
+import LabelEl = api.dom.LabelEl;
 
-    export class PrincipalMembersWizardStepForm extends api.app.wizard.WizardStepForm {
+export class PrincipalMembersWizardStepForm extends api.app.wizard.WizardStepForm {
 
-        private principals: PrincipalComboBox;
+    private principals: PrincipalComboBox;
 
-        private principal: Principal;
+    private principal: Principal;
 
-        private loader: PrincipalLoader;
+    private loader: PrincipalLoader;
 
-        constructor(loadedHandler?: Function) {
-            super();
+    constructor(loadedHandler?: Function) {
+        super();
 
-            loadedHandler = loadedHandler || (() => {
-                });
-            this.loader = new PrincipalLoader().setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER]).
-            skipPrincipals([PrincipalKey.ofAnonymous()]);
-
-            this.principals = new PrincipalComboBox(this.loader);
-            var handler = () => {
-                this.selectMembers();
-                loadedHandler();
-                this.principals.unLoaded(handler);
-            };
-            this.principals.onLoaded(handler);
-
-            var principalsFormItem = new FormItemBuilder(this.principals).
-            setLabel('Members').
-            build();
-
-            var fieldSet = new api.ui.form.Fieldset();
-            fieldSet.add(principalsFormItem);
-
-            var form = new api.ui.form.Form().add(fieldSet);
-
-            form.onFocus((event) => {
-                this.notifyFocused(event);
+        loadedHandler = loadedHandler || (() => {
             });
-            form.onBlur((event) => {
-                this.notifyBlurred(event);
-            });
+        this.loader =
+            new PrincipalLoader().setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER]).skipPrincipals([PrincipalKey.ofAnonymous()]);
 
-            this.appendChild(form);
-
-        }
-
-        layout(principal: Principal) {
-            this.principal = principal;
-            this.loader.skipPrincipal(principal.getKey());
+        this.principals = new PrincipalComboBox(this.loader);
+        var handler = () => {
             this.selectMembers();
-        }
+            loadedHandler();
+            this.principals.unLoaded(handler);
+        };
+        this.principals.onLoaded(handler);
 
-        private selectMembers(): void {
-            if (!!this.principal) {
-                var principalKeys = this.getPrincipalMembers().map((key: PrincipalKey) => {
-                    return key.getId();
-                });
-                var selected = this.principals.getDisplayValues().filter((principal: Principal) => {
-                    return principalKeys.indexOf(principal.getKey().getId()) >= 0;
-                });
-                selected.forEach((selection) => {
-                    this.principals.select(selection);
-                });
-            }
-        }
+        var principalsFormItem = new FormItemBuilder(this.principals).setLabel('Members').build();
 
-        getMembers(): Principal[] {
-            return this.principals.getSelectedDisplayValues();
-        }
+        var fieldSet = new api.ui.form.Fieldset();
+        fieldSet.add(principalsFormItem);
 
-        getPrincipals(): PrincipalComboBox {
-            return this.principals;
-        }
+        var form = new api.ui.form.Form().add(fieldSet);
 
-        getPrincipal(): Principal {
-            return this.principal;
-        }
+        form.onFocus((event) => {
+            this.notifyFocused(event);
+        });
+        form.onBlur((event) => {
+            this.notifyBlurred(event);
+        });
 
-        getPrincipalMembers(): PrincipalKey[] {
-            throw new Error("Must be implemented by inheritors");
-        }
+        this.appendChild(form);
 
-        giveFocus(): boolean {
-            return this.principals.giveFocus();
-        }
+    }
 
-        getLoader(): PrincipalLoader {
-            return this.loader;
+    layout(principal: Principal) {
+        this.principal = principal;
+        this.loader.skipPrincipal(principal.getKey());
+        this.selectMembers();
+    }
+
+    private selectMembers(): void {
+        if (!!this.principal) {
+            var principalKeys = this.getPrincipalMembers().map((key: PrincipalKey) => {
+                return key.getId();
+            });
+            var selected = this.principals.getDisplayValues().filter((principal: Principal) => {
+                return principalKeys.indexOf(principal.getKey().getId()) >= 0;
+            });
+            selected.forEach((selection) => {
+                this.principals.select(selection);
+            });
         }
+    }
+
+    getMembers(): Principal[] {
+        return this.principals.getSelectedDisplayValues();
+    }
+
+    getPrincipals(): PrincipalComboBox {
+        return this.principals;
+    }
+
+    getPrincipal(): Principal {
+        return this.principal;
+    }
+
+    getPrincipalMembers(): PrincipalKey[] {
+        throw new Error("Must be implemented by inheritors");
+    }
+
+    giveFocus(): boolean {
+        return this.principals.giveFocus();
+    }
+
+    getLoader(): PrincipalLoader {
+        return this.loader;
     }
 }

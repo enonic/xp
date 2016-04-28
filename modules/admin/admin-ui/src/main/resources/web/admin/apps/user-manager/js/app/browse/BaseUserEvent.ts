@@ -1,16 +1,16 @@
-module app.browse {
+import "../../api.ts";
+import {UserTreeGridItem} from "./UserTreeGridItem";
 
-    export class BaseUserEvent extends api.event.Event {
+export class BaseUserEvent extends api.event.Event {
 
-        private gridItems: app.browse.UserTreeGridItem[];
+    private gridItems: UserTreeGridItem[];
 
-        constructor(gridItems: app.browse.UserTreeGridItem[]) {
-            this.gridItems = gridItems;
-            super();
-        }
+    constructor(gridItems: UserTreeGridItem[]) {
+        this.gridItems = gridItems;
+        super();
+    }
 
-        getPrincipals(): app.browse.UserTreeGridItem[] {
-            return this.gridItems;
-        }
+    getPrincipals(): UserTreeGridItem[] {
+        return this.gridItems;
     }
 }

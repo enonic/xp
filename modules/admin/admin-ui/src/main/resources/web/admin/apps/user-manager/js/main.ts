@@ -1,8 +1,13 @@
 declare var CONFIG;
 
-var application = (function () {
+import "./api.ts";
+import {UserAppPanel} from "./app/UserAppPanel";
+import {ChangeUserPasswordDialog} from "./app/wizard/ChangeUserPasswordDialog";
+import {Router} from "./app/Router";
+
+function getApplication(): api.app.Application {
     var application = new api.app.Application('user-manager', 'Users', 'UM', 'user-manager');
-    application.setPath(api.rest.Path.fromString(app.Router.getPath()));
+    application.setPath(api.rest.Path.fromString(Router.getPath()));
     application.setWindow(window);
     this.serverEventsListener = new api.app.ServerEventsListener([application]);
 
@@ -22,17 +27,13 @@ var application = (function () {
     });
 
     return application;
-})();
-
-function getApplication(id: string): api.app.Application {
-    return application;
 }
 
 function startApplication() {
 
-    var application: api.app.Application = api.app.Application.getApplication();
+    var application: api.app.Application = getApplication();
     var appBar = new api.app.bar.AppBar(application);
-    var appPanel = new app.UserAppPanel(appBar, application.getPath());
+    var appPanel = new UserAppPanel(appBar, application.getPath());
 
     var body = api.dom.Body.get();
     body.appendChild(appBar);
@@ -40,7 +41,7 @@ function startApplication() {
 
     api.util.AppHelper.preventDragRedirect();
 
-    var changePasswordDialog = new app.wizard.ChangeUserPasswordDialog();
+    var changePasswordDialog = new ChangeUserPasswordDialog();
     application.setLoaded(true);
     this.serverEventsListener.start();
     this.lostConnectionDetector.startPolling();
@@ -56,6 +57,6 @@ function startApplication() {
     api.security.event.PrincipalServerEventsHandler.getInstance().start();
 }
 
-module components {
-    export var detailPanel: app.browse.UserBrowseItemPanel;
-}
+window.onload = function () {
+    startApplication();
+};
