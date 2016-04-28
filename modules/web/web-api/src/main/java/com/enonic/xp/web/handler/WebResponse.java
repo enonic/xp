@@ -2,6 +2,7 @@ package com.enonic.xp.web.handler;
 
 import javax.servlet.http.Cookie;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.net.MediaType;
@@ -9,6 +10,7 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 
+@Beta
 interface WebResponse
 {
     HttpStatus getStatus();
