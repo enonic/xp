@@ -236,6 +236,8 @@ module api.app.wizard {
             this.stepNavigator.unNavigationItemActivated(this.toggleMinimizeListener);
             this.formPanel.toggleClass("minimized");
 
+            new MinimizeWizardPanelEvent().fire();
+
             if (this.minimized) {
                 this.stepNavigator.setScrollEnabled(false);
 

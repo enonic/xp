@@ -13,6 +13,7 @@
 ///<reference path='WizardStepValidityChangedEvent.ts' />
 ///<reference path='WizardStepForm.ts' />
 ///<reference path='WizardPanel.ts' />
+///<reference path='MinimizeWizardPanelEvent.ts' />
 ///<reference path='SaveBeforeCloseDialog.ts' />
 ///<reference path='UploadFinishedEvent.ts' />
 ///<reference path='WizardClosedEvent.ts' />
