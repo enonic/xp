@@ -15,8 +15,6 @@ module api.ui.time {
         // use local timezone if timezone value is not initialized
         useLocalTimezoneIfNotPresent: boolean = false;
 
-        closeOnOutsideClick: boolean = true;
-
         setHours(value: number): DateTimePickerPopupBuilder {
             this.hours = value;
             return this;
@@ -62,15 +60,6 @@ module api.ui.time {
             return this.timezone;
         }
 
-        setCloseOnOutsideClick(value: boolean): DateTimePickerPopupBuilder {
-            this.closeOnOutsideClick = value;
-            return this;
-        }
-
-        isCloseOnOutsideClick(): boolean {
-            return this.closeOnOutsideClick;
-        }
-
         build(): DateTimePickerPopup {
             return new DateTimePickerPopup(this);
         }
@@ -86,24 +75,17 @@ module api.ui.time {
         constructor(builder: DateTimePickerPopupBuilder) {
             super('date-time-dialog');
 
-            var closeOnOutsideClick = builder.isCloseOnOutsideClick();
-            builder.setCloseOnOutsideClick(false);
-
             this.datePickerPopup = new DatePickerPopupBuilder().
                 setCalendar(builder.getCalendar()).
-                setCloseOnOutsideClick(false).build();
+                build();
             this.timePickerPopup = new TimePickerPopupBuilder().
                 setHours(builder.getHours()).
-                setCloseOnOutsideClick(false).
                 setTimezone(builder.timezone).
                 setUseLocalTimezoneIfNotPresent(builder.useLocalTimezoneIfNotPresent).
-                setMinutes(builder.getMinutes()).build();
+                setMinutes(builder.getMinutes()).
+                build();
 
             this.appendChildren(<api.dom.Element>this.datePickerPopup, <api.dom.Element>this.timePickerPopup);
-
-            if (closeOnOutsideClick) {
-                api.dom.Body.get().onClicked((e: MouseEvent) => this.outsideClickListener(e));
-            }
         }
 
         getSelectedDate(): Date {
@@ -145,12 +127,6 @@ module api.ui.time {
 
         setSelectedDate(date: Date, silent?: boolean) {
             this.datePickerPopup.setSelectedDate(date, silent);
-        }
-
-        private outsideClickListener(e: MouseEvent) {
-            if (!this.getEl().contains(<HTMLElement> e.target)) {
-                this.hide();
-            }
         }
     }
 }

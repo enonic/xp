@@ -120,7 +120,7 @@ module app.view {
             name = name.charAt(0) + name.slice(1).toLowerCase();
 
             var groupAndRoleGroup = new ItemDataGroup(name, "group-and-role");
-            groupAndRoleGroup.addDataList(" ", "");
+            groupAndRoleGroup.appendChild(new api.dom.DivEl("description").setHtml(item.getModel().getPrincipal().getDescription()));
             this.userDataContainer.appendChild(groupAndRoleGroup);
 
             var membersGroup = new ItemDataGroup("Members", "members");
@@ -139,8 +139,6 @@ module app.view {
                             });
 
                     wemQ.all(membersPromises).then((results: Principal[]) => {
-                        groupAndRoleGroup = new ItemDataGroup(name, "group-and-role");
-                        groupAndRoleGroup.addDataList(" ", ""); // TODO: Pass a description as a title, when implemented.
 
                         membersGroup = new ItemDataGroup("Members", "members");
 

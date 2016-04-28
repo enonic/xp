@@ -89,11 +89,9 @@ module api.ui.time {
                     setInteractive(true).
                     build();
 
-            var popupBuilder = new DatePickerPopupBuilder().
+            this.popup = new DatePickerPopupBuilder().
                 setCalendar(this.calendar).
-                setCloseOnOutsideClick(false);
-
-            this.popup = popupBuilder.build();
+                build();
             this.popup.onShown(() => {
                 new DatePickerShownEvent(this).fire();
             });
@@ -128,6 +126,30 @@ module api.ui.time {
 
             this.appendChild(wrapper);
 
+            this.setupListeners(builder);
+        }
+
+        private setupListeners(builder: DatePickerBuilder) {
+
+            if (builder.closeOnOutsideClick) {
+                let focusoutTimeout = 0;
+
+                this.onFocusOut(() => {
+                    focusoutTimeout = setTimeout(() => {
+                        this.popup.hide();
+                    }, 50);
+                });
+
+                this.onFocusIn(() => {
+                    clearTimeout(focusoutTimeout);
+                });
+
+                // Prevent focus loss on mouse down
+                this.popup.onMouseDown((event: MouseEvent) => {
+                    event.preventDefault();
+                });
+            }
+
             this.popupTrigger.onClicked((e: MouseEvent) => {
                 this.togglePopupVisibility(e);
             });
@@ -152,8 +174,7 @@ module api.ui.time {
                     this.validUserInput = true;
                     this.popup.hide();
                     this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
-                }
-                else {
+                } else {
                     var date = api.util.DateHelper.parseDate(typedDate, "-", true);
                     if (date) {
                         this.selectedDate = date;
@@ -163,8 +184,7 @@ module api.ui.time {
                         if (!this.popup.isVisible()) {
                             this.popup.show();
                         }
-                    }
-                    else {
+                    } else {
                         this.selectedDate = null;
                         this.validUserInput = false;
                         this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
@@ -201,11 +221,6 @@ module api.ui.time {
                     this.popup.hide();
                 }
             });
-
-            api.dom.Body.get().onKeyDown((e: KeyboardEvent) => this.popupTabListener(e));
-            if (builder.closeOnOutsideClick) {
-                api.dom.Body.get().onClicked((e: MouseEvent) => this.outsideClickListener(e));
-            }
         }
 
         private togglePopupVisibility(e: MouseEvent) {
@@ -215,24 +230,6 @@ module api.ui.time {
                 this.popup.hide();
             } else {
                 this.popup.show();
-            }
-        }
-
-        // as popup blur and focus events behave incorrectly - we manually catch tab navigation event in popup below
-        private popupTabListener(e: KeyboardEvent) {
-            if (api.ui.KeyHelper.isTabKey(e) && !this.getEl().contains(<HTMLElement> e.target)) {
-                if (this.popup.isVisible()) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    this.popupTrigger.getEl().focus();
-                    this.popup.hide();
-                }
-            }
-        }
-
-        private outsideClickListener(e: MouseEvent) {
-            if (!this.getEl().contains(<HTMLElement> e.target)) {
-                this.popup.hide();
             }
         }
 
