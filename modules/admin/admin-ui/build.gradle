@@ -36,5 +36,13 @@ task copyAll( type: Copy, dependsOn: gruntAll ) {
     into "$buildDir/resources/main"
 }
 
+task webpack( type: NodeTask, dependsOn: npmInstall ) {
+    inputs.files fileTree( dir: 'src/main/resources' )
+    outputs.files fileTree( dir: 'target/resources/main' )
+    script = file( 'node_modules/webpack/bin/webpack.js' )
+}
+
 jar.dependsOn += copyAll
+jar.dependsOn += webpack
+
 clean.dependsOn += cleanSourceFiles

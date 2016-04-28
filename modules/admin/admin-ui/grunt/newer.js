@@ -4,7 +4,7 @@ add('common', 'common', []);
 add('content_manager', 'apps/content-studio', ['common']);
 add('applications', 'apps/applications', ['common']);
 add('user_manager', 'apps/user-manager', ['common']);
-add('login', 'apps/login', ['common']);
+// add('login', 'apps/login', ['common']);
 add('live_edit', 'live-edit', ['common']);
 
 function add(name, path, dependencies) {
