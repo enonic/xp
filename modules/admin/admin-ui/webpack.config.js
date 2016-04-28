@@ -3,7 +3,8 @@ var webpack = require("webpack");
 module.exports = {
     entry: {
         "home": "./src/main/resources/assets/js/home/main.js",
-        "login": "./src/main/resources/web/admin/apps/login/js/main.ts"
+        "login": "./src/main/resources/web/admin/apps/login/js/main.ts",
+        "launcher": "./src/main/resources/assets/js/launcher/main.js"
     },
     output: {
         filename: "./target/resources/main/web/admin/apps/[name]/js/_all.js"
