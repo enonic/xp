@@ -11,7 +11,7 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 
 @Beta
-interface WebResponse
+public interface WebResponse
 {
     HttpStatus getStatus();
 

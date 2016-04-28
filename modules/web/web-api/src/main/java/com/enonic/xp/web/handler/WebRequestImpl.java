@@ -35,6 +35,8 @@ public class WebRequestImpl
 
     private final HttpServletRequest rawRequest;
 
+    private final String contentType;
+
     private final boolean webSocket;
 
     private WebRequestImpl( final Builder builder )
@@ -49,6 +51,7 @@ public class WebRequestImpl
         cookies = builder.cookies;
         body = builder.body;
         rawRequest = builder.rawRequest;
+        contentType = builder.contentType;
         webSocket = builder.webSocket;
     }
 
@@ -70,6 +73,7 @@ public class WebRequestImpl
         builder.cookies = webRequest.cookies;
         builder.body = webRequest.body;
         builder.rawRequest = webRequest.rawRequest;
+        builder.contentType = webRequest.contentType;
         builder.webSocket = webRequest.webSocket;
         return builder;
     }
@@ -141,6 +145,12 @@ public class WebRequestImpl
     }
 
     @Override
+    public String getContentType()
+    {
+        return contentType;
+    }
+
+    @Override
     public boolean isWebSocket()
     {
         return webSocket;
@@ -179,6 +189,8 @@ public class WebRequestImpl
         private Object body;
 
         private HttpServletRequest rawRequest;
+
+        private String contentType;
 
         private boolean webSocket;
 
@@ -243,6 +255,12 @@ public class WebRequestImpl
         public Builder rawRequest( final HttpServletRequest rawRequest )
         {
             this.rawRequest = rawRequest;
+            return this;
+        }
+
+        public Builder contentType( final String contentType )
+        {
+            this.contentType = contentType;
             return this;
         }
 

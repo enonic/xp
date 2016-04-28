@@ -8,7 +8,6 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.ControllerHandlerWorker;
-import com.enonic.xp.portal.websocket.WebSocketEndpoint;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -17,6 +16,7 @@ import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.websocket.WebSocketConfig;
+import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 final class ServiceHandlerWorker
     extends ControllerHandlerWorker

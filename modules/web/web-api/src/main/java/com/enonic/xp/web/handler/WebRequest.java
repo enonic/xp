@@ -34,6 +34,8 @@ public interface WebRequest
 
     HttpServletRequest getRawRequest();
 
+    String getContentType();
+
     boolean isWebSocket();
 
     Object getAttribute( String name );

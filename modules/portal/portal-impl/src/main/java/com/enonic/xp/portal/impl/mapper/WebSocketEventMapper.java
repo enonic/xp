@@ -3,9 +3,9 @@ package com.enonic.xp.portal.impl.mapper;
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
 
-import com.enonic.xp.portal.websocket.WebSocketEvent;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.web.websocket.WebSocketEvent;
 
 public final class WebSocketEventMapper
     implements MapSerializable
