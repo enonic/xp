@@ -6,8 +6,11 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebRequest;
+import com.enonic.xp.web.handler.WebResponse;
+import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-final class WebHandlerRegistry
+final class WebDispatcher
 {
     private final List<WebHandler> webHandlerList = Lists.newCopyOnWriteArrayList();
 
@@ -31,5 +34,12 @@ final class WebHandlerRegistry
     private int compare( final WebHandler webHandler1, final WebHandler webHandler2 )
     {
         return webHandler1.getOrder() - webHandler2.getOrder();
+    }
+
+    public void dispatch( final WebRequest webRequest, final WebResponse webResponse )
+    {
+        ServletRequestHolder.setRequest( webRequest.getRawRequest() );
+        new WebHandlerChainImpl( webHandlerList ).
+            handle( webRequest, webResponse );
     }
 }

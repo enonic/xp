@@ -14,14 +14,20 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebRequestImpl;
+import com.enonic.xp.web.handler.WebResponse;
+import com.enonic.xp.web.handler.WebResponseImpl;
 import com.enonic.xp.web.impl.websocket.WebSocketContext;
 import com.enonic.xp.web.impl.websocket.WebSocketContextFactory;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
@@ -31,6 +37,7 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 public class WebDispatcherServlet
     extends HttpServlet
 {
+    private WebDispatcher webDispatcher = new WebDispatcher();
 
     private WebSocketContextFactory webSocketContextFactory;
 
@@ -38,10 +45,12 @@ public class WebDispatcherServlet
     protected void service( final HttpServletRequest servletRequest, final HttpServletResponse servletResponse )
         throws ServletException, IOException
     {
-        //Generates the Web request
+        //Generates the Web request and response
         WebRequest webRequest = generateWebRequest( servletRequest, servletResponse );
+        WebResponse webResponse = generateWebResponse();
 
         //Handles the request
+        webDispatcher.dispatch( webRequest, webResponse );
 
         //Serializes the request
 
@@ -78,6 +87,14 @@ public class WebDispatcherServlet
             contentType( contentType ).
             webSocket( webSocket ).
             build();
+    }
+
+    private WebResponse generateWebResponse()
+    {
+        final WebResponseImpl webResponse = new WebResponseImpl();
+        webResponse.setStatus( HttpStatus.OK );
+        //TODO Set missing fields
+        return webResponse;
     }
 
     private Multimap<String, String> generateWebRequestParams( final HttpServletRequest servletRequest )
@@ -121,5 +138,16 @@ public class WebDispatcherServlet
     public void setWebSocketContextFactory( final WebSocketContextFactory webSocketContextFactory )
     {
         this.webSocketContextFactory = webSocketContextFactory;
+    }
+
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addWebHandler( final WebHandler webHandler )
+    {
+        webDispatcher.add( webHandler );
+    }
+
+    public void removeWebHandler( final WebHandler webHandler )
+    {
+        webDispatcher.remove( webHandler );
     }
 }
