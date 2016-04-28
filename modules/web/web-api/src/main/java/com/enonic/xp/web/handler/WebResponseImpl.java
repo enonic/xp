@@ -60,5 +60,41 @@ public class WebResponseImpl
         return body;
     }
 
+    @Override
+    public void setStatus( final HttpStatus status )
+    {
+        this.status = status;
+    }
+
+    @Override
+    public void setContentType( final MediaType contentType )
+    {
+        this.contentType = contentType;
+    }
+
+    @Override
+    public void setHeaders( final ImmutableMap<String, String> headers )
+    {
+        this.headers = headers;
+    }
+
+    @Override
+    public void setCookies( final ImmutableList<Cookie> cookies )
+    {
+        this.cookies = cookies;
+    }
+
+    @Override
+    public void setWebSocketConfig( final WebSocketConfig webSocketConfig )
+    {
+        this.webSocketConfig = webSocketConfig;
+    }
+
+    @Override
+    public void setBody( final Object body )
+    {
+        this.body = body;
+    }
+
 
 }

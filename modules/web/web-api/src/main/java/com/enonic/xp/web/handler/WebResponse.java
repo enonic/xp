@@ -23,6 +23,18 @@ interface WebResponse
 
     Object getBody();
 
+    void setStatus( HttpStatus status );
+
+    void setContentType( MediaType contentType );
+
+    void setHeaders( ImmutableMap<String, String> headers );
+
+    void setCookies( ImmutableList<Cookie> cookies );
+
+    void setWebSocketConfig( WebSocketConfig webSocketConfig );
+
+    void setBody( Object body );
+
 //    boolean isPostProcess();
 
 //    ImmutableList<String> getContributions( final HtmlTag tag );
