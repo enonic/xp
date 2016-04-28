@@ -1,4 +1,4 @@
-package com.enonic.xp.web.handler;
+package com.enonic.xp.web.impl.handler;
 
 import java.io.IOException;
 

@@ -1,9 +1,11 @@
-package com.enonic.xp.web.handler;
+package com.enonic.xp.web.impl.handler;
 
 import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+
+import com.enonic.xp.web.handler.WebHandler;
 
 final class WebHandlerRegistry
 {
