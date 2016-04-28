@@ -35,11 +35,12 @@ module app.view.detail {
             if (AttachmentsWidgetItemView.debug) {
                 console.debug('AttachmentsWidgetItemView.layout');
             }
-            this.removeChildren();
 
             return super.layout().then(() => {
                 if (this.content != undefined) {
                     return this.layoutAttachments();
+                } else {
+                    this.removeChildren();
                 }
             });
         }
