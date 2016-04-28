@@ -8,6 +8,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.lib.content.mapper.JsonToPropertyTreeTranslator;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -67,7 +68,7 @@ public abstract class BaseContextHandler
         }
 
         final boolean strict = !contentType.getName().isUnstructured();
-        return new JsonToPropertyTreeTranslator( contentType.getForm(), strict ).translate( json );
+        return new JsonToPropertyTreeTranslator( inlineMixins( contentType.getForm() ), strict ).translate( json );
     }
 
     protected PropertyTree translateToPropertyTree( final JsonNode json, final MixinName mixinName )
@@ -79,7 +80,12 @@ public abstract class BaseContextHandler
             throw new IllegalArgumentException( "Mixin  not found [" + mixinName + "]" );
         }
 
-        return new JsonToPropertyTreeTranslator( mixin.getForm(), true ).translate( json );
+        return new JsonToPropertyTreeTranslator( inlineMixins( mixin.getForm() ), true ).translate( json );
+    }
+
+    private Form inlineMixins( final Form form )
+    {
+        return this.mixinService.inlineFormItems( form );
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -17,6 +18,10 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.Mixin;
 
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
 public class ModifyContentHandlerTest
     extends BaseContentHandlerTest
 {
@@ -24,13 +29,13 @@ public class ModifyContentHandlerTest
     public void testExample()
     {
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.unstructured() );
-        Mockito.when( this.contentTypeService.getByName( getContentType ) ).thenReturn(
+        when( this.contentTypeService.getByName( getContentType ) ).thenReturn(
             ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
 
         final Content content = TestDataFixtures.newExampleContent();
-        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
+        when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
-        Mockito.when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
+        when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0], content ) );
 
         mockXData();
@@ -41,12 +46,12 @@ public class ModifyContentHandlerTest
     public void modifyById()
         throws Exception
     {
-        Mockito.when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
+        when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
                                               TestDataFixtures.newSmallContent() ) );
 
         final Content content = TestDataFixtures.newSmallContent();
-        Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
         mockXData();
 
@@ -58,9 +63,9 @@ public class ModifyContentHandlerTest
         throws Exception
     {
         final Content content = TestDataFixtures.newSmallContent();
-        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
-        Mockito.when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
+        when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
                                               TestDataFixtures.newSmallContent() ) );
 
@@ -122,7 +127,7 @@ public class ModifyContentHandlerTest
             build();
 
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
-        Mockito.when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+        when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
 
         final Mixin mixin1 = Mixin.create().
             name( "com.enonic.myapplication:myschema" ).
@@ -132,7 +137,7 @@ public class ModifyContentHandlerTest
                 inputType( InputTypeName.DOUBLE ).
                 build() ).
             build();
-        Mockito.when( this.mixinService.getByName( Mockito.eq( mixin1.getName() ) ) ).thenReturn( mixin1 );
+        when( this.mixinService.getByName( Mockito.eq( mixin1.getName() ) ) ).thenReturn( mixin1 );
 
         final Mixin mixin2 = Mixin.create().
             name( "com.enonic.myapplication:other" ).
@@ -142,7 +147,8 @@ public class ModifyContentHandlerTest
                 inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             build();
-        Mockito.when( this.mixinService.getByName( Mockito.eq( mixin2.getName() ) ) ).thenReturn( mixin2 );
+        when( this.mixinService.getByName( Mockito.eq( mixin2.getName() ) ) ).thenReturn( mixin2 );
+        when( this.mixinService.inlineFormItems( any( Form.class ) ) ).then( returnsFirstArg() );
     }
 
     private Content invokeUpdate( final UpdateContentParams params, final Content content )
