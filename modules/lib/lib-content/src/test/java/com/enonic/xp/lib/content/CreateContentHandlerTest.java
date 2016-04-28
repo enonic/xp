@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -22,12 +23,16 @@ import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
 public class CreateContentHandlerTest
     extends BaseContentHandlerTest
 {
     private void mockCreateContent()
     {
-        Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenAnswer(
+        when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
 
         final FormItemSet eSet = FormItemSet.create().
@@ -72,7 +77,7 @@ public class CreateContentHandlerTest
             build();
 
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
-        Mockito.when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+        when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
 
         final PropertyTree extraData = new PropertyTree();
         extraData.addDouble( "a", 1.0 );
@@ -85,8 +90,8 @@ public class CreateContentHandlerTest
                 inputType( InputTypeName.DOUBLE ).
                 build() ).
             build();
-        Mockito.when( this.mixinService.getByName( Mockito.eq( MixinName.from( "com.enonic.myapplication:myschema" ) ) ) ).thenReturn(
-            mixin );
+        when( this.mixinService.getByName( Mockito.eq( MixinName.from( "com.enonic.myapplication:myschema" ) ) ) ).thenReturn( mixin );
+        when( this.mixinService.inlineFormItems( any( Form.class ) ) ).then( returnsFirstArg() );
     }
 
     @Test
@@ -109,7 +114,7 @@ public class CreateContentHandlerTest
         throws Exception
     {
         final Exception alreadyExistException = new ContentAlreadyExistsException( ContentPath.from( "/a/b/mycontent" ) );
-        Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenThrow( alreadyExistException );
+        when( this.contentService.create( any( CreateContentParams.class ) ) ).thenThrow( alreadyExistException );
 
         final ContentType contentType = ContentType.create().
             name( "test:myContentType" ).
@@ -117,7 +122,7 @@ public class CreateContentHandlerTest
             build();
 
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
-        Mockito.when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+        when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
 
         runFunction( "/site/test/CreateContentHandlerTest.js", "createContentNameAlreadyExists" );
     }
@@ -126,7 +131,7 @@ public class CreateContentHandlerTest
     public void createContentAutoGenerateName()
         throws Exception
     {
-        Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenAnswer(
+        when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
 
         final ContentType contentType = ContentType.create().
@@ -135,7 +140,7 @@ public class CreateContentHandlerTest
             build();
 
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
-        Mockito.when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+        when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
 
         runFunction( "/site/test/CreateContentHandlerTest.js", "createContentAutoGenerateName" );
     }
@@ -144,12 +149,12 @@ public class CreateContentHandlerTest
     public void createContentAutoGenerateNameWithExistingName()
         throws Exception
     {
-        Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenAnswer(
+        when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
 
-        Mockito.when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content" ) ) ) ).thenReturn( true );
-        Mockito.when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content-1" ) ) ) ).thenReturn( true );
-        Mockito.when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content-2" ) ) ) ).thenReturn( true );
+        when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content" ) ) ) ).thenReturn( true );
+        when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content-1" ) ) ) ).thenReturn( true );
+        when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content-2" ) ) ) ).thenReturn( true );
 
         final ContentType contentType = ContentType.create().
             name( "test:myContentType" ).
@@ -157,7 +162,7 @@ public class CreateContentHandlerTest
             build();
 
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
-        Mockito.when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+        when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
 
         runFunction( "/site/test/CreateContentHandlerTest.js", "createContentAutoGenerateNameWithExistingName" );
     }
