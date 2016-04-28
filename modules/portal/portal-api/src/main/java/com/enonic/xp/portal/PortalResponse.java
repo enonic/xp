@@ -15,8 +15,8 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.postprocess.HtmlTag;
-import com.enonic.xp.portal.websocket.WebSocketConfig;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.websocket.WebSocketConfig;
 
 @Beta
 public final class PortalResponse

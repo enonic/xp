@@ -37,10 +37,10 @@ import com.enonic.xp.portal.impl.serializer.RequestBodyReader;
 import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
 import com.enonic.xp.portal.impl.websocket.WebSocketContext;
 import com.enonic.xp.portal.impl.websocket.WebSocketContextFactory;
-import com.enonic.xp.portal.websocket.WebSocketConfig;
 import com.enonic.xp.portal.websocket.WebSocketEndpoint;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+import com.enonic.xp.web.websocket.WebSocketConfig;
 
 @Component(immediate = true, service = Servlet.class,
     property = {"osgi.http.whiteboard.servlet.pattern=/portal/*"})
