@@ -77,7 +77,7 @@ public class WebResponseImpl
     }
 
     @Override
-    public void addHeader( final String key, final String value )
+    public void setHeader( final String key, final String value )
     {
         this.headers.put( key, value );
     }

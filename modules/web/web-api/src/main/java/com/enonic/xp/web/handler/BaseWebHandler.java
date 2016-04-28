@@ -34,6 +34,12 @@ public abstract class BaseWebHandler
         this.methodsAllowed = methodsAllowed;
     }
 
+    @Override
+    public int getOrder()
+    {
+        return order;
+    }
+
     protected abstract boolean canHandle( WebRequest webRequest );
 
     protected abstract void doHandle( WebRequest webRequest, WebResponse webResponse, WebHandlerChain webHandlerChain );
@@ -49,7 +55,7 @@ public abstract class BaseWebHandler
     private void handleOptions( final WebResponse webResponse )
     {
         webResponse.setStatus( HttpStatus.OK );
-        webResponse.addHeader( "Allow", Joiner.on( "," ).join( this.methodsAllowed ) );
+        webResponse.setHeader( "Allow", Joiner.on( "," ).join( this.methodsAllowed ) );
     }
 
 
@@ -74,5 +80,15 @@ public abstract class BaseWebHandler
             webHandlerChain.handle( webRequest, webResponse );
         }
 
+    }
+
+    protected final WebException notFound( final String message, final Object... args )
+    {
+        return new WebException( HttpStatus.NOT_FOUND, String.format( message, args ) );
+    }
+
+    protected final WebException methodNotAllowed( final String message, final Object... args )
+    {
+        return new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( message, args ) );
     }
 }

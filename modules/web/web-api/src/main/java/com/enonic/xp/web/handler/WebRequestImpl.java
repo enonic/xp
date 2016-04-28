@@ -29,6 +29,8 @@ public class WebRequestImpl
 
     private final String url;
 
+    private final String endpointPath;
+
     private final ImmutableMap<String, String> cookies;
 
     private final Object body;
@@ -48,6 +50,7 @@ public class WebRequestImpl
         path = builder.path;
         params = builder.params;
         url = builder.url;
+        endpointPath = builder.endpointPath;
         cookies = builder.cookies;
         body = builder.body;
         rawRequest = builder.rawRequest;
@@ -70,6 +73,7 @@ public class WebRequestImpl
         builder.path = webRequest.path;
         builder.params = webRequest.params;
         builder.url = webRequest.url;
+        builder.endpointPath = webRequest.endpointPath;
         builder.cookies = webRequest.cookies;
         builder.body = webRequest.body;
         builder.rawRequest = webRequest.rawRequest;
@@ -118,6 +122,12 @@ public class WebRequestImpl
     public String getUrl()
     {
         return url;
+    }
+
+    @Override
+    public String getEndpointPath()
+    {
+        return endpointPath;
     }
 
     @Override
@@ -184,6 +194,8 @@ public class WebRequestImpl
 
         private String url;
 
+        private String endpointPath;
+
         private ImmutableMap<String, String> cookies;
 
         private Object body;
@@ -237,6 +249,12 @@ public class WebRequestImpl
         public Builder url( final String url )
         {
             this.url = url;
+            return this;
+        }
+
+        public Builder endpointPath( final String endpointPath )
+        {
+            this.endpointPath = endpointPath;
             return this;
         }
 

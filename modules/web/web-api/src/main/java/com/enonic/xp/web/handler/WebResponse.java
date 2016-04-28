@@ -30,7 +30,7 @@ public interface WebResponse
 
     void setContentType( final MediaType contentType );
 
-    void addHeader( final String key, final String value );
+    void setHeader( final String key, final String value );
 
     void setCookies( final ImmutableList<Cookie> cookies );
 

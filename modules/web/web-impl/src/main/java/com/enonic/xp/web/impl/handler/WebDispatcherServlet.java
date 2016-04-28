@@ -71,6 +71,7 @@ public class WebDispatcherServlet
 
         final Multimap<String, String> params = generateWebRequestParams( servletRequest );
         final ImmutableMap<String, String> cookies = generateWebRequestCookies( servletRequest );
+        final String endpointPath = getEndpointPath( servletRequest );
         final boolean webSocket = isWebSocket( servletRequest, servletResponse );
 
         return WebRequestImpl.create().
@@ -81,6 +82,7 @@ public class WebDispatcherServlet
             path( path ).
             params( params ).
             url( url ).
+            endpointPath( endpointPath ).
             cookies( cookies ).
             body( body ).
             rawRequest( servletRequest ).
@@ -126,6 +128,13 @@ public class WebDispatcherServlet
         }
 
         return cookieImmutableMap.build();
+    }
+
+    private String getEndpointPath( final HttpServletRequest servletRequest )
+    {
+        final String requestURI = servletRequest.getRequestURI();
+        final int endpointPathIndex = requestURI.indexOf( "/_/" );
+        return endpointPathIndex > -1 ? requestURI.substring( endpointPathIndex ) : "";
     }
 
     private boolean isWebSocket( final HttpServletRequest servletRequest, final HttpServletResponse servletResponse )

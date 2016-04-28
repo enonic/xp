@@ -26,6 +26,8 @@ public interface WebRequest
 
     String getUrl();
 
+    String getEndpointPath();
+
     Map<String, String> getCookies();
 
     Object getBody();
@@ -63,10 +65,6 @@ public interface WebRequest
 //    PageDescriptor getPageDescriptor()
 
 //    ContentPath getContentPath()
-
-//    String getEndpointPath()
-
-//    String getContentType()
 
 //    ControllerScript getControllerScript()
 
