@@ -1,142 +1,144 @@
-module app.wizard.page.contextwindow.inspect.region {
+import "../../../../../../api.ts";
 
-    import Content = api.content.Content;
-    import SiteModel = api.content.site.SiteModel;
-    import LiveEditModel = api.liveedit.LiveEditModel;
-    import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
-    import DescriptorKey = api.content.page.DescriptorKey;
-    import DescriptorByDisplayNameComparator = api.content.page.DescriptorByDisplayNameComparator;
-    import LayoutComponent = api.content.page.region.LayoutComponent;
-    import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
-    import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
-    import GetLayoutDescriptorByKeyRequest = api.content.page.region.GetLayoutDescriptorByKeyRequest;
-    import GetLayoutDescriptorsByApplicationsRequest = api.content.page.region.GetLayoutDescriptorsByApplicationsRequest;
-    import Descriptor = api.content.page.Descriptor;
-    import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
-    import LayoutDescriptorLoader = api.content.page.region.LayoutDescriptorLoader;
-    import LayoutDescriptorBuilder = api.content.page.region.LayoutDescriptorBuilder;
-    import LayoutDescriptorDropdown = api.content.page.region.LayoutDescriptorDropdown;
-    import LayoutDescriptorDropdownConfig = api.content.page.region.LayoutDescriptorDropdownConfig;
-    import Option = api.ui.selector.Option;
-    import SelectedOption = api.ui.selector.combobox.SelectedOption;
-    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
-    import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
+import Content = api.content.Content;
+import SiteModel = api.content.site.SiteModel;
+import LiveEditModel = api.liveedit.LiveEditModel;
+import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
+import DescriptorKey = api.content.page.DescriptorKey;
+import DescriptorByDisplayNameComparator = api.content.page.DescriptorByDisplayNameComparator;
+import LayoutComponent = api.content.page.region.LayoutComponent;
+import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
+import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
+import GetLayoutDescriptorByKeyRequest = api.content.page.region.GetLayoutDescriptorByKeyRequest;
+import GetLayoutDescriptorsByApplicationsRequest = api.content.page.region.GetLayoutDescriptorsByApplicationsRequest;
+import Descriptor = api.content.page.Descriptor;
+import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+import LayoutDescriptorLoader = api.content.page.region.LayoutDescriptorLoader;
+import LayoutDescriptorBuilder = api.content.page.region.LayoutDescriptorBuilder;
+import LayoutDescriptorDropdown = api.content.page.region.LayoutDescriptorDropdown;
+import LayoutDescriptorDropdownConfig = api.content.page.region.LayoutDescriptorDropdownConfig;
+import Option = api.ui.selector.Option;
+import SelectedOption = api.ui.selector.combobox.SelectedOption;
+import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
+import {DescriptorBasedComponentInspectionPanel} from "./DescriptorBasedComponentInspectionPanel";
+import {DescriptorBasedDropdownForm} from "./DescriptorBasedDropdownForm";
+import {DescriptorBasedComponentInspectionPanelConfig} from "./DescriptorBasedComponentInspectionPanel";
 
-    export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPanel<LayoutComponent, LayoutDescriptor> {
+export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPanel<LayoutComponent, LayoutDescriptor> {
 
-        private layoutView: LayoutComponentView;
+    private layoutView: LayoutComponentView;
 
-        private layoutComponent: LayoutComponent;
+    private layoutComponent: LayoutComponent;
 
-        private layoutSelector: LayoutDescriptorDropdown;
+    private layoutSelector: LayoutDescriptorDropdown;
 
-        private layoutForm: DescriptorBasedDropdownForm;
+    private layoutForm: DescriptorBasedDropdownForm;
 
-        private handleSelectorEvents: boolean = true;
+    private handleSelectorEvents: boolean = true;
 
-        private componentPropertyChangedEventHandler;
+    private componentPropertyChangedEventHandler;
 
-        constructor() {
-            super(<DescriptorBasedComponentInspectionPanelConfig>{
-                iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("layout", "icon-xlarge")
-            });
-        }
+    constructor() {
+        super(<DescriptorBasedComponentInspectionPanelConfig>{
+            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("layout", "icon-xlarge")
+        });
+    }
 
-        setModel(liveEditModel: LiveEditModel) {
+    setModel(liveEditModel: LiveEditModel) {
 
-            super.setModel(liveEditModel);
+        super.setModel(liveEditModel);
 
-            var descriptorsRequest = new GetLayoutDescriptorsByApplicationsRequest(liveEditModel.getSiteModel().getApplicationKeys());
-            var loader = new LayoutDescriptorLoader(descriptorsRequest);
-            loader.setComparator(new DescriptorByDisplayNameComparator());
-            this.layoutSelector = new LayoutDescriptorDropdown("", {loader: loader});
-            this.layoutForm = new DescriptorBasedDropdownForm(this.layoutSelector, "Layout");
-            loader.load();
+        var descriptorsRequest = new GetLayoutDescriptorsByApplicationsRequest(liveEditModel.getSiteModel().getApplicationKeys());
+        var loader = new LayoutDescriptorLoader(descriptorsRequest);
+        loader.setComparator(new DescriptorByDisplayNameComparator());
+        this.layoutSelector = new LayoutDescriptorDropdown("", {loader: loader});
+        this.layoutForm = new DescriptorBasedDropdownForm(this.layoutSelector, "Layout");
+        loader.load();
 
-            this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
+        this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
 
-                // Ensure displayed config form and selector option are removed when descriptor is removed
-                if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
-                    if (!this.layoutComponent.hasDescriptor()) {
-                        this.setupComponentForm(this.layoutComponent, null);
-                        this.layoutSelector.setDescriptor(null);
-                    }
+            // Ensure displayed config form and selector option are removed when descriptor is removed
+            if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
+                if (!this.layoutComponent.hasDescriptor()) {
+                    this.setupComponentForm(this.layoutComponent, null);
+                    this.layoutSelector.setDescriptor(null);
                 }
-            };
-
-            this.initSelectorListeners();
-            this.appendChild(this.layoutForm);
-
-            liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_SITE_CONFIGS) {
-                    descriptorsRequest.setApplicationKeys(liveEditModel.getSiteModel().getApplicationKeys());
-                    loader.load();
-                }
-            });
-        }
-
-        private registerComponentListeners(component: LayoutComponent) {
-            component.onPropertyChanged(this.componentPropertyChangedEventHandler);
-        }
-
-        private unregisterComponentListeners(component: LayoutComponent) {
-            component.unPropertyChanged(this.componentPropertyChangedEventHandler);
-        }
-
-        setComponent(component: LayoutComponent, descriptor?: LayoutDescriptor) {
-
-            super.setComponent(component);
-            this.layoutSelector.setDescriptor(descriptor);
-        }
-
-        setLayoutComponent(layoutView: LayoutComponentView) {
-
-            if (this.layoutComponent) {
-                this.unregisterComponentListeners(this.layoutComponent);
             }
+        };
 
-            this.layoutView = layoutView;
-            this.layoutComponent = <LayoutComponent> layoutView.getComponent();
+        this.initSelectorListeners();
+        this.appendChild(this.layoutForm);
 
-            this.setComponent(this.layoutComponent);
-            var key: DescriptorKey = this.layoutComponent.getDescriptor();
-            if (key) {
-                var descriptor: LayoutDescriptor = this.layoutSelector.getDescriptor(key);
-                if (descriptor) {
+        liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
+            if (event.getPropertyName() == SiteModel.PROPERTY_NAME_SITE_CONFIGS) {
+                descriptorsRequest.setApplicationKeys(liveEditModel.getSiteModel().getApplicationKeys());
+                loader.load();
+            }
+        });
+    }
+
+    private registerComponentListeners(component: LayoutComponent) {
+        component.onPropertyChanged(this.componentPropertyChangedEventHandler);
+    }
+
+    private unregisterComponentListeners(component: LayoutComponent) {
+        component.unPropertyChanged(this.componentPropertyChangedEventHandler);
+    }
+
+    setComponent(component: LayoutComponent, descriptor?: LayoutDescriptor) {
+
+        super.setComponent(component);
+        this.layoutSelector.setDescriptor(descriptor);
+    }
+
+    setLayoutComponent(layoutView: LayoutComponentView) {
+
+        if (this.layoutComponent) {
+            this.unregisterComponentListeners(this.layoutComponent);
+        }
+
+        this.layoutView = layoutView;
+        this.layoutComponent = <LayoutComponent> layoutView.getComponent();
+
+        this.setComponent(this.layoutComponent);
+        var key: DescriptorKey = this.layoutComponent.getDescriptor();
+        if (key) {
+            var descriptor: LayoutDescriptor = this.layoutSelector.getDescriptor(key);
+            if (descriptor) {
+                this.setSelectorValue(descriptor);
+                this.setupComponentForm(this.layoutComponent, descriptor);
+            } else {
+                new GetLayoutDescriptorByKeyRequest(key).sendAndParse().then((descriptor: LayoutDescriptor) => {
                     this.setSelectorValue(descriptor);
                     this.setupComponentForm(this.layoutComponent, descriptor);
-                } else {
-                    new GetLayoutDescriptorByKeyRequest(key).sendAndParse().then((descriptor: LayoutDescriptor) => {
-                        this.setSelectorValue(descriptor);
-                        this.setupComponentForm(this.layoutComponent, descriptor);
-                    }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason);
-                    }).done();
-                }
-            } else {
-                this.setSelectorValue(null);
-                this.setupComponentForm(this.layoutComponent, null);
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
             }
-
-            this.registerComponentListeners(this.layoutComponent);
+        } else {
+            this.setSelectorValue(null);
+            this.setupComponentForm(this.layoutComponent, null);
         }
 
-        private setSelectorValue(descriptor: LayoutDescriptor) {
-            this.handleSelectorEvents = false;
-            this.layoutSelector.setDescriptor(descriptor);
-            this.handleSelectorEvents = true;
-        }
+        this.registerComponentListeners(this.layoutComponent);
+    }
 
-        private initSelectorListeners() {
-            this.layoutSelector.onOptionSelected((event: OptionSelectedEvent<LayoutDescriptor>) => {
-                if (this.handleSelectorEvents) {
+    private setSelectorValue(descriptor: LayoutDescriptor) {
+        this.handleSelectorEvents = false;
+        this.layoutSelector.setDescriptor(descriptor);
+        this.handleSelectorEvents = true;
+    }
 
-                    var option: Option<LayoutDescriptor> = event.getOption();
+    private initSelectorListeners() {
+        this.layoutSelector.onOptionSelected((event: OptionSelectedEvent<LayoutDescriptor>) => {
+            if (this.handleSelectorEvents) {
 
-                    var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
-                    this.layoutComponent.setDescriptor(selectedDescriptorKey, option.displayValue);
-                }
-            });
-        }
+                var option: Option<LayoutDescriptor> = event.getOption();
+
+                var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
+                this.layoutComponent.setDescriptor(selectedDescriptorKey, option.displayValue);
+            }
+        });
     }
 }

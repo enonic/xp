@@ -1,27 +1,27 @@
-module app.view {
+import "../../api.ts";
 
-    import Panel = api.ui.panel.Panel;
-    import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
+import Panel = api.ui.panel.Panel;
+import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
 
-    export class ContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
+import {ContentItemPreviewPanel} from "./ContentItemPreviewPanel";
 
-        private previewPanel: ContentItemPreviewPanel;
+export class ContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
 
-        constructor() {
-            super("content-item-statistics-panel");
+    private previewPanel: ContentItemPreviewPanel;
 
-            this.previewPanel = new ContentItemPreviewPanel();
-            this.previewPanel.setDoOffset(false);
-            this.appendChild(this.previewPanel);
+    constructor() {
+        super("content-item-statistics-panel");
+
+        this.previewPanel = new ContentItemPreviewPanel();
+        this.previewPanel.setDoOffset(false);
+        this.appendChild(this.previewPanel);
+    }
+
+    setItem(item: api.app.view.ViewItem<api.content.ContentSummaryAndCompareStatus>) {
+        if (this.getItem() != item) {
+            super.setItem(item);
+            this.previewPanel.setItem(item);
         }
-
-        setItem(item: api.app.view.ViewItem<api.content.ContentSummaryAndCompareStatus>) {
-            if (this.getItem() != item) {
-                super.setItem(item);
-                this.previewPanel.setItem(item);
-            }
-        }
-
     }
 
 }

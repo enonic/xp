@@ -1,90 +1,89 @@
-module app.wizard {
+import "../../api.ts";
 
-    import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
-    import Form = api.form.Form;
-    import FormContext = api.form.FormContext;
-    import FormView = api.form.FormView;
-    import PropertyTree = api.data.PropertyTree;
-    import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
+import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
+import Form = api.form.Form;
+import FormContext = api.form.FormContext;
+import FormView = api.form.FormView;
+import PropertyTree = api.data.PropertyTree;
+import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
 
-    export class ContentWizardStepForm extends api.app.wizard.WizardStepForm {
+export class ContentWizardStepForm extends api.app.wizard.WizardStepForm {
 
-        private formContext: FormContext;
+    private formContext: FormContext;
 
-        private form: Form;
+    private form: Form;
 
-        private formView: FormView;
+    private formView: FormView;
 
-        private data: PropertyTree;
+    private data: PropertyTree;
 
-        constructor() {
-            super();
-        }
+    constructor() {
+        super();
+    }
 
-        update(data: PropertyTree, unchangedOnly: boolean = true): wemQ.Promise<void> {
-            this.data = data;
-            return this.formView.update(data.getRoot(), unchangedOnly);
-        }
+    update(data: PropertyTree, unchangedOnly: boolean = true): wemQ.Promise<void> {
+        this.data = data;
+        return this.formView.update(data.getRoot(), unchangedOnly);
+    }
 
-        layout(formContext: FormContext, data: PropertyTree, form: Form): wemQ.Promise<void> {
+    layout(formContext: FormContext, data: PropertyTree, form: Form): wemQ.Promise<void> {
 
-            this.formContext = formContext;
-            this.form = form;
-            this.data = data;
-            return this.doLayout(form, data).then(() => {
-                if (form.getFormItems().length === 0) {
-                    this.hide();
-                }
+        this.formContext = formContext;
+        this.form = form;
+        this.data = data;
+        return this.doLayout(form, data).then(() => {
+            if (form.getFormItems().length === 0) {
+                this.hide();
+            }
+        });
+    }
+
+    private doLayout(form: Form, data: PropertyTree): wemQ.Promise<void> {
+
+        this.formView = new FormView(this.formContext, form, data.getRoot());
+        return this.formView.layout().then(() => {
+
+            this.formView.onFocus((event) => {
+                this.notifyFocused(event);
             });
-        }
-
-        private doLayout(form: Form, data: PropertyTree): wemQ.Promise<void> {
-
-            this.formView = new FormView(this.formContext, form, data.getRoot());
-            return this.formView.layout().then(() => {
-
-                this.formView.onFocus((event) => {
-                    this.notifyFocused(event);
-                });
-                this.formView.onBlur((event) => {
-                    this.notifyBlurred(event);
-                });
-
-                this.appendChild(this.formView);
-
-                this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
-                    this.previousValidation = event.getRecording();
-                    this.notifyValidityChanged(new WizardStepValidityChangedEvent(event.isValid()));
-                });
-
-                var formViewValid = this.formView.isValid();
-                this.notifyValidityChanged(new WizardStepValidityChangedEvent(formViewValid));
+            this.formView.onBlur((event) => {
+                this.notifyBlurred(event);
             });
-        }
 
-        public validate(silent?: boolean): api.form.ValidationRecording {
-            return this.formView.validate(silent);
-        }
+            this.appendChild(this.formView);
 
-        public displayValidationErrors(display: boolean) {
-            this.formView.displayValidationErrors(display);
-        }
+            this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
+                this.previousValidation = event.getRecording();
+                this.notifyValidityChanged(new WizardStepValidityChangedEvent(event.isValid()));
+            });
 
-        getForm(): Form {
-            return this.form;
-        }
+            var formViewValid = this.formView.isValid();
+            this.notifyValidityChanged(new WizardStepValidityChangedEvent(formViewValid));
+        });
+    }
 
-        getFormView(): FormView {
-            return this.formView;
-        }
+    public validate(silent?: boolean): api.form.ValidationRecording {
+        return this.formView.validate(silent);
+    }
 
-        getData(): PropertyTree {
+    public displayValidationErrors(display: boolean) {
+        this.formView.displayValidationErrors(display);
+    }
 
-            return this.data;
-        }
+    getForm(): Form {
+        return this.form;
+    }
 
-        giveFocus(): boolean {
-            return this.formView.giveFocus();
-        }
+    getFormView(): FormView {
+        return this.formView;
+    }
+
+    getData(): PropertyTree {
+
+        return this.data;
+    }
+
+    giveFocus(): boolean {
+        return this.formView.giveFocus();
     }
 }

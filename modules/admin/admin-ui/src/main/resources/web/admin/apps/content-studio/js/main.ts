@@ -1,12 +1,27 @@
+import "./api.ts";
+import {Router} from "./app/Router";
+import {ContentAppPanel} from "./app/ContentAppPanel";
+import {ContentDeletePromptEvent} from "./app/browse/ContentDeletePromptEvent";
+import {ContentPublishPromptEvent} from "./app/browse/ContentPublishPromptEvent";
+import {ContentDeleteDialog} from "./app/remove/ContentDeleteDialog";
+import {ContentPublishDialog} from "./app/publish/ContentPublishDialog";
+import {NewContentDialog} from "./app/create/NewContentDialog";
+import {ShowNewContentDialogEvent} from "./app/browse/ShowNewContentDialogEvent";
+import {SortContentDialog} from "./app/browse/SortContentDialog";
+import {MoveContentDialog} from "./app/browse/MoveContentDialog";
+import {EditPermissionsDialog} from "./app/wizard/EditPermissionsDialog";
+
 declare var CONFIG;
 
-module components {
-    export var detailPanel: app.browse.ContentBrowseItemPanel;
-}
+/*
+ module components {
+ export var detailPanel: app.browse.ContentBrowseItemPanel;
+ }
+ */
 
-var application = (function () {
+function getApplication(): api.app.Application {
     var application = new api.app.Application('content-studio', 'Content Studio', 'CM', 'content-studio');
-    application.setPath(api.rest.Path.fromString(app.Router.getPath()));
+    application.setPath(api.rest.Path.fromString(Router.getPath()));
     application.setWindow(window);
     this.serverEventsListener = new api.app.ServerEventsListener([application]);
 
@@ -25,10 +40,6 @@ var application = (function () {
         api.notify.NotifyManager.get().hide(messageId);
     });
 
-    return application;
-})();
-
-function getApplication(id: string): api.app.Application {
     return application;
 }
 
@@ -73,59 +84,56 @@ function initToolTip() {
 
 function startApplication() {
 
-    var application: api.app.Application = api.app.Application.getApplication();
+    var application: api.app.Application = getApplication();
 
     var body = api.dom.Body.get();
 
     var appBar = new api.app.bar.AppBar(application);
-    var appPanel = new app.ContentAppPanel(appBar, application.getPath());
+    var appPanel = new ContentAppPanel(appBar, application.getPath());
 
     body.appendChild(appBar);
     body.appendChild(appPanel);
 
-    var contentDeleteDialog = new app.remove.ContentDeleteDialog();
-    app.browse.ContentDeletePromptEvent.on((event) => {
-        contentDeleteDialog.
-            setContentToDelete(event.getModels()).
-            setYesCallback(event.getYesCallback()).
-            setNoCallback(event.getNoCallback()).
-            open();
+    var contentDeleteDialog = new ContentDeleteDialog();
+    ContentDeletePromptEvent.on((event) => {
+        contentDeleteDialog.setContentToDelete(event.getModels()).setYesCallback(event.getYesCallback()).setNoCallback(
+            event.getNoCallback()).open();
     });
 
-    app.browse.ContentPublishPromptEvent.on((event) => {
-        var contentPublishDialog = new app.publish.ContentPublishDialog();
+    ContentPublishPromptEvent.on((event) => {
+        var contentPublishDialog = new ContentPublishDialog();
         contentPublishDialog.setSelectedContents(event.getModels());
         contentPublishDialog.initAndOpen();
     });
 
-    var newContentDialog = new app.create.NewContentDialog();
-    app.browse.ShowNewContentDialogEvent.on((event) => {
+    var newContentDialog = new NewContentDialog();
+    ShowNewContentDialogEvent.on((event) => {
 
         var parentContent: api.content.ContentSummary = event.getParentContent()
             ? event.getParentContent().getContentSummary() : null;
 
         if (parentContent != null) {
-            new api.content.GetContentByIdRequest(parentContent.getContentId()).sendAndParse().
-                then((newParentContent: api.content.Content) => {
+            new api.content.GetContentByIdRequest(parentContent.getContentId()).sendAndParse().then(
+                (newParentContent: api.content.Content) => {
 
                     // TODO: remove pyramid of doom
                     if (parentContent.hasParent() && parentContent.getType().isTemplateFolder()) {
-                        new api.content.GetContentByPathRequest(parentContent.getPath().getParentPath()).
-                            sendAndParse().then((grandParent: api.content.Content) => {
+                        new api.content.GetContentByPathRequest(parentContent.getPath().getParentPath()).sendAndParse().then(
+                            (grandParent: api.content.Content) => {
 
                                 newContentDialog.setParentContent(newParentContent);
                                 newContentDialog.open();
                             }).catch((reason: any) => {
-                                api.DefaultErrorHandler.handle(reason);
-                            }).done();
+                            api.DefaultErrorHandler.handle(reason);
+                        }).done();
                     }
                     else {
                         newContentDialog.setParentContent(newParentContent);
                         newContentDialog.open();
                     }
                 }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                }).done();
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
         }
         else {
             newContentDialog.setParentContent(null);
@@ -137,9 +145,9 @@ function startApplication() {
 
     api.util.AppHelper.preventDragRedirect();
 
-    var sortDialog = new app.browse.SortContentDialog();
-    var moveDialog = new app.browse.MoveContentDialog();
-    var editPermissionsDialog = new app.wizard.EditPermissionsDialog();
+    var sortDialog = new SortContentDialog();
+    var moveDialog = new MoveContentDialog();
+    var editPermissionsDialog = new EditPermissionsDialog();
     application.setLoaded(true);
     this.serverEventsListener.start();
     this.lostConnectionDetector.startPolling();
@@ -155,3 +163,7 @@ function startApplication() {
 
     api.content.event.ContentServerEventsHandler.getInstance().start();
 }
+
+window.onload = function () {
+    startApplication();
+};
