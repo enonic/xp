@@ -29,7 +29,9 @@ public final class ResourceLocatorImpl
 
     private BundleContext context;
 
-    private File resourcesDevDir;
+    private File resourcesSrcDir;
+
+    private File resourcesTargetDir;
 
     public ResourceLocatorImpl()
     {
@@ -64,8 +66,10 @@ public final class ResourceLocatorImpl
             return;
         }
 
-        this.resourcesDevDir = new File( rootDir, "modules/admin/admin-ui/src/main/resources" );
-        LOG.info( "Loading UI resources from bundle and project directory {}", this.resourcesDevDir );
+        this.resourcesSrcDir = new File( rootDir, "modules/admin/admin-ui/src/main/resources" );
+        this.resourcesTargetDir = new File( rootDir, "modules/admin/admin-ui/target/resources/main" );
+
+        LOG.info( "Loading UI resources from bundle and project directory {} and {}", this.resourcesSrcDir, this.resourcesTargetDir );
     }
 
     @Deactivate
@@ -116,13 +120,16 @@ public final class ResourceLocatorImpl
     public URL findResource( final String name )
         throws IOException
     {
-        if ( this.resourcesDevDir != null )
+        final URL url1 = findFromDir( this.resourcesTargetDir, name );
+        if ( url1 != null )
         {
-            final File file = new File( this.resourcesDevDir, name );
-            if ( file.isFile() )
-            {
-                return file.toURI().toURL();
-            }
+            return url1;
+        }
+
+        final URL url2 = findFromDir( this.resourcesSrcDir, name );
+        if ( url2 != null )
+        {
+            return url2;
         }
 
         for ( final Bundle bundle : this.bundles )
@@ -132,6 +139,23 @@ public final class ResourceLocatorImpl
             {
                 return url;
             }
+        }
+
+        return null;
+    }
+
+    private URL findFromDir( final File dir, final String name )
+        throws IOException
+    {
+        if ( dir == null )
+        {
+            return null;
+        }
+
+        final File file = new File( dir, name );
+        if ( file.isFile() )
+        {
+            return file.toURI().toURL();
         }
 
         return null;
