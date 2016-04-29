@@ -10,7 +10,6 @@ export class DependantView extends api.app.NamesAndIconView {
 
         this.setMainName(this.resolveDisplayName(builder.object));
 
-        debugger;
         if (builder.object.getType && builder.object.getType().isImage()) {
 
             this.setIconClass("image");
