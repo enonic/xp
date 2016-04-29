@@ -2,7 +2,6 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':web:web-api' )
-    compile project( ':web:web-impl' ) //TODO Temporary. Remove after obsolete code removal
     compile project( ':portal:portal-api' )
     compile project( ':portal:portal-owasp' )
     compile 'org.attoparser:attoparser:1.3'

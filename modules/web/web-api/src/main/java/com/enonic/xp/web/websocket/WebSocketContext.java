@@ -1,8 +1,6 @@
-package com.enonic.xp.web.impl.websocket;
+package com.enonic.xp.web.websocket;
 
 import java.io.IOException;
-
-import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 public interface WebSocketContext
 {

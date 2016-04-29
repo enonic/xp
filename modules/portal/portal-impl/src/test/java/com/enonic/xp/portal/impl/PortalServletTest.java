@@ -21,8 +21,8 @@ import com.enonic.xp.portal.impl.exception.ExceptionRendererImpl;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.filter.BaseWebFilter;
-import com.enonic.xp.web.impl.websocket.WebSocketContextFactory;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
+import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
 import static org.junit.Assert.*;
 

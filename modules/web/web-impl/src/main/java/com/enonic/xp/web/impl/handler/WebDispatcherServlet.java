@@ -28,9 +28,9 @@ import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebRequestImpl;
 import com.enonic.xp.web.handler.WebResponse;
 import com.enonic.xp.web.handler.WebResponseImpl;
-import com.enonic.xp.web.impl.websocket.WebSocketContext;
-import com.enonic.xp.web.impl.websocket.WebSocketContextFactory;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+import com.enonic.xp.web.websocket.WebSocketContext;
+import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
 @Component(immediate = true, service = Servlet.class,
     property = {"osgi.http.whiteboard.servlet.pattern=/test/*"})

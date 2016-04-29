@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.web.websocket.WebSocketContext;
+import com.enonic.xp.web.websocket.WebSocketContextFactory;
 import com.enonic.xp.web.websocket.WebSocketManager;
 import com.enonic.xp.web.websocket.WebSocketService;
 
