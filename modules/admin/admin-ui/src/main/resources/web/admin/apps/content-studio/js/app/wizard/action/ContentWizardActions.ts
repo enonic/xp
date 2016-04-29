@@ -3,6 +3,7 @@ import {ContentWizardPanel} from "../ContentWizardPanel";
 import {DuplicateContentAction} from "./DuplicateContentAction";
 import {DeleteContentAction} from "./DeleteContentAction";
 import {PublishAction} from "./PublishAction";
+import {UnpublishAction} from "./UnpublishAction";
 import {PreviewAction} from "./PreviewAction";
 import {ShowLiveEditAction} from "./ShowLiveEditAction";
 import {ShowFormAction} from "./ShowFormAction";
@@ -22,6 +23,8 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     private publish: api.ui.Action;
 
+    private unpublish: api.ui.Action;
+
     private preview: api.ui.Action;
 
     private showLiveEditAction: api.ui.Action;
@@ -37,13 +40,14 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         this.close = new api.app.wizard.CloseAction(wizardPanel);
         this.saveAndClose = new api.app.wizard.SaveAndCloseAction(wizardPanel);
         this.publish = new PublishAction(wizardPanel);
+        this.unpublish = new UnpublishAction(wizardPanel);
         this.preview = new PreviewAction(wizardPanel);
         this.showLiveEditAction = new ShowLiveEditAction(wizardPanel);
         this.showFormAction = new ShowFormAction(wizardPanel);
         this.showSplitEditAction = new ShowSplitEditAction(wizardPanel);
 
         super(this.save, this.delete, this.duplicate,
-            this.preview, this.publish, this.close,
+            this.preview, this.publish, this.unpublish, this.close,
             this.showLiveEditAction, this.showFormAction,
             this.showSplitEditAction, this.saveAndClose);
     }
@@ -87,6 +91,17 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
             }
             if (!hasPublishPermission) {
                 this.publish.setEnabled(false);
+            } else {
+                // check if already published to show unpublish button
+                api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(existing)
+                    .then((contentAndCompare: api.content.ContentSummaryAndCompareStatus) => {
+
+                        var status = contentAndCompare.getCompareStatus();
+                        var isPublished = status !== api.content.CompareStatus.NEW &&
+                                          status != api.content.CompareStatus.UNKNOWN;
+
+                        this.unpublish.setVisible(isPublished);
+                    });
             }
 
             if (existing.hasParent()) {
@@ -138,6 +153,10 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     getPublishAction(): api.ui.Action {
         return this.publish;
+    }
+
+    getUnpublishAction(): api.ui.Action {
+        return this.unpublish;
     }
 
     getPreviewAction(): api.ui.Action {

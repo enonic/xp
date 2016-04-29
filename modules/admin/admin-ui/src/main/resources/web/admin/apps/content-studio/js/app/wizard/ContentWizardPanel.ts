@@ -124,6 +124,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private publishAction: api.ui.Action;
 
+    private unpublishAction: api.ui.Action;
+
     private contextWindowToggler: TogglerButton;
 
     private componentsViewToggler: TogglerButton;
@@ -182,6 +184,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions = new ContentWizardActions(this);
         this.previewAction = this.wizardActions.getPreviewAction();
         this.publishAction = this.wizardActions.getPublishAction();
+        this.unpublishAction = this.wizardActions.getUnpublishAction();
 
         var mainToolbar = new ContentWizardToolbar({
             saveAction: this.wizardActions.getSaveAction(),
@@ -189,6 +192,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             duplicateAction: this.wizardActions.getDuplicateAction(),
             previewAction: this.wizardActions.getPreviewAction(),
             publishAction: this.wizardActions.getPublishAction(),
+            unpublishAction: this.wizardActions.getUnpublishAction(),
             showLiveEditAction: this.wizardActions.getShowLiveEditAction(),
             showFormAction: this.wizardActions.getShowFormAction(),
             showSplitEditAction: this.wizardActions.getShowSplitEditAction()

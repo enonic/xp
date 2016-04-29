@@ -8,19 +8,22 @@ import CompareStatus = api.content.CompareStatus;
 export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
 
     private publishButton: DialogButton;
+    private unpublishAction: Action;
     private contentStateSpan: SpanEl;
     private publishAction: Action;
     private contentCanBePublished: boolean = false;
     private userCanPublish: boolean = true;
     private contentCompareStatus: CompareStatus;
 
-    constructor(action: Action) {
+    constructor(publish: Action, unpublish: Action) {
         super("toolbar-publish-controls");
 
-        this.publishAction = action;
+        this.unpublishAction = unpublish;
+
+        this.publishAction = publish;
         this.publishAction.setIconClass("publish-action");
 
-        this.publishButton = new DialogButton(action);
+        this.publishButton = new DialogButton(publish);
         this.publishButton.addClass("content-wizard-toolbar-publish-button");
 
         this.contentStateSpan = new SpanEl("content-status");
@@ -52,7 +55,11 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
     public refreshState() {
         var canBeEnabled = this.contentCompareStatus !== CompareStatus.EQUAL && this.contentCanBePublished && this.userCanPublish;
         this.publishAction.setEnabled(canBeEnabled);
+
         this.contentStateSpan.setHtml(this.getContentStateValueForSpan(this.contentCompareStatus), false);
+
+        var isPublished = this.contentCompareStatus != CompareStatus.NEW && this.contentCompareStatus != CompareStatus.UNKNOWN;
+        this.unpublishAction.setVisible(isPublished);
     }
 
     public isOnline(): boolean {
