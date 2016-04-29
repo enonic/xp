@@ -6,6 +6,7 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.site.SiteService;
@@ -24,11 +25,14 @@ class AbstractCreatingOrUpdatingContentCommand
 
     final SiteService siteService;
 
+    final ContentProcessors contentProcessors;
+
     AbstractCreatingOrUpdatingContentCommand( final Builder builder )
     {
         super( builder );
         this.mixinService = builder.mixinService;
         this.siteService = builder.siteService;
+        this.contentProcessors = builder.contentProcessors;
     }
 
     public static class Builder<B extends Builder>
@@ -37,6 +41,8 @@ class AbstractCreatingOrUpdatingContentCommand
         private MixinService mixinService;
 
         private SiteService siteService;
+
+        private ContentProcessors contentProcessors;
 
         Builder()
         {
@@ -47,6 +53,7 @@ class AbstractCreatingOrUpdatingContentCommand
             super( source );
             this.mixinService = source.mixinService;
             this.siteService = source.siteService;
+            this.contentProcessors = source.contentProcessors;
         }
 
         @SuppressWarnings("unchecked")
@@ -60,6 +67,13 @@ class AbstractCreatingOrUpdatingContentCommand
         B siteService( final SiteService siteService )
         {
             this.siteService = siteService;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        B contentProcessors( final ContentProcessors contentProcessors )
+        {
+            this.contentProcessors = contentProcessors;
             return (B) this;
         }
 

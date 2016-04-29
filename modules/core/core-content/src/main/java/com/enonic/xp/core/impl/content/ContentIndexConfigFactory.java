@@ -4,12 +4,14 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 
 import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT;
+import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT_TEXT_COMPONENT;
 import static com.enonic.xp.content.ContentPropertyNames.CREATED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.CREATOR;
 import static com.enonic.xp.content.ContentPropertyNames.DATA;
@@ -19,6 +21,7 @@ import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIER;
 import static com.enonic.xp.content.ContentPropertyNames.OWNER;
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;
+import static com.enonic.xp.content.ContentPropertyNames.PAGE_TEXT_COMPONENT;
 import static com.enonic.xp.content.ContentPropertyNames.SITE;
 import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 
@@ -26,15 +29,15 @@ class ContentIndexConfigFactory
 {
     public static IndexConfigDocument create( final CreateContentTranslatorParams params )
     {
-        return doCreateIndexConfig();
+        return doCreateIndexConfig( params.getData() );
     }
 
     public static IndexConfigDocument create( final Content content )
     {
-        return doCreateIndexConfig();
+        return doCreateIndexConfig( content.getData() );
     }
 
-    private static IndexConfigDocument doCreateIndexConfig()
+    private static IndexConfigDocument doCreateIndexConfig( final PropertyTree data )
     {
         final PatternIndexConfigDocument.Builder configDocumentBuilder = PatternIndexConfigDocument.create().
             analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
@@ -43,7 +46,8 @@ class ContentIndexConfigFactory
             add( CREATED_TIME, IndexConfig.MINIMAL ).
             add( MODIFIED_TIME, IndexConfig.MINIMAL ).
             add( OWNER, IndexConfig.MINIMAL ).
-            add( PAGE, IndexConfig.MINIMAL ).
+            add( PAGE, IndexConfig.NONE ).
+            add( PAGE_TEXT_COMPONENT, IndexConfig.FULLTEXT ).
             add( PropertyPath.from( PAGE, "regions" ), IndexConfig.NONE ).
             add( SITE, IndexConfig.NONE ).
             add( DATA, IndexConfig.BY_TYPE ).
@@ -51,6 +55,14 @@ class ContentIndexConfigFactory
             add( ATTACHMENT, IndexConfig.MINIMAL ).
             add( PropertyPath.from( EXTRA_DATA ), IndexConfig.MINIMAL ).
             defaultConfig( IndexConfig.BY_TYPE );
+
+        configDocumentBuilder.add( ATTACHMENT_TEXT_COMPONENT, IndexConfig.create().
+            enabled( true ).
+            fulltext( true ).
+            includeInAllText( false ).
+            nGram( true ).
+            decideByType( false ).
+            build() );
 
         final IndexConfig htmlIndexConfig = IndexConfig.create().
             enabled( true ).
@@ -60,6 +72,7 @@ class ContentIndexConfigFactory
             includeInAllText( true ).
             addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).
             build();
+
         configDocumentBuilder.add( HTMLAREA_TEXT, htmlIndexConfig );
 
         return configDocumentBuilder.build();

@@ -191,6 +191,7 @@ public class AbstractContentServiceTest
         final MediaInfoServiceImpl mediaInfoService = new MediaInfoServiceImpl();
         mediaInfoService.setDetector( new DefaultDetector() );
         mediaInfoService.setParser( new DefaultParser() );
+        mediaInfoService.activate();
 
         final SiteDescriptorRegistry siteDescriptorRegistry = Mockito.mock( SiteDescriptorRegistry.class );
         final SiteServiceImpl siteService = new SiteServiceImpl();
@@ -244,12 +245,12 @@ public class AbstractContentServiceTest
     }
 
 
-    protected CreateAttachments createAttachment( final String name, final String mimeType, final ByteSource image )
+    protected CreateAttachments createAttachment( final String name, final String mimeType, final ByteSource byteSource )
     {
         return CreateAttachments.from( CreateAttachment.create().
             name( name ).
             mimeType( mimeType ).
-            byteSource( image ).
+            byteSource( byteSource ).
             build() );
     }
 

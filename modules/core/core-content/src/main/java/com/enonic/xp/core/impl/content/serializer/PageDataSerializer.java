@@ -1,9 +1,6 @@
-package com.enonic.xp.core.impl.content.page;
+package com.enonic.xp.core.impl.content.serializer;
 
-import com.enonic.xp.core.impl.content.page.region.ComponentDataSerializer;
-import com.enonic.xp.core.impl.content.page.region.ComponentDataSerializerProvider;
 import com.enonic.xp.core.impl.content.page.region.ComponentTypes;
-import com.enonic.xp.core.impl.content.page.region.RegionDataSerializer;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.page.DescriptorKey;
@@ -15,7 +12,7 @@ import com.enonic.xp.region.ComponentType;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.util.Reference;
 
-import static com.enonic.xp.core.impl.content.page.region.ComponentsDataSerializer.TYPE;
+import static com.enonic.xp.core.impl.content.serializer.ComponentsDataSerializer.TYPE;
 
 public final class PageDataSerializer
     extends AbstractDataSetSerializer<Page, Page>

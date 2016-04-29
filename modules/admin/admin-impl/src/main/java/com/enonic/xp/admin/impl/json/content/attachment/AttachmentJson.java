@@ -34,6 +34,11 @@ public class AttachmentJson
         return this.attachment.getSize();
     }
 
+    public String getText()
+    {
+        return this.attachment.getTextContent();
+    }
+
     @JsonIgnore
     public Attachment getAttachment()
     {

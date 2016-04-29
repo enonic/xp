@@ -1,9 +1,8 @@
-package com.enonic.xp.core.impl.content.page.region;
+package com.enonic.xp.core.impl.content.serializer;
 
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.core.impl.content.page.AbstractDataSetSerializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentName;

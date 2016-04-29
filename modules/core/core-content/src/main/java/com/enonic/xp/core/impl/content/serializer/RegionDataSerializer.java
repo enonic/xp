@@ -1,7 +1,6 @@
-package com.enonic.xp.core.impl.content.page.region;
+package com.enonic.xp.core.impl.content.serializer;
 
 
-import com.enonic.xp.core.impl.content.page.AbstractDataSetSerializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.Region;

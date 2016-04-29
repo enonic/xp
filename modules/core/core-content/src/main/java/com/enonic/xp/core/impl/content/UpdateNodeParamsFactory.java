@@ -4,6 +4,7 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.NodeEditor;
@@ -13,7 +14,7 @@ import com.enonic.xp.node.UpdateNodeParams;
 
 public class UpdateNodeParamsFactory
 {
-    private static final ContentDataSerializer serializer = new ContentDataSerializer();
+    private static final ContentDataSerializer CONTENT_DATA_SERIALIZER = new ContentDataSerializer();
 
     public static UpdateNodeParams create( final UpdateContentTranslatorParams params )
     {
@@ -40,7 +41,7 @@ public class UpdateNodeParamsFactory
     {
         final Content content = params.getEditedContent();
 
-        final PropertyTree nodeData = serializer.toNodeData( params );
+        final PropertyTree nodeData = CONTENT_DATA_SERIALIZER.toUpdateNodeData( params );
 
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( content );
 
