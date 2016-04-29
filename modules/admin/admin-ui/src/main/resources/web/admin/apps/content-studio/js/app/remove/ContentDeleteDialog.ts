@@ -15,6 +15,8 @@ module app.remove {
 
         private selectedItems: SelectionItem<ContentSummaryAndCompareStatus>[];
 
+        private descendantItems: ContentSummaryAndCompareStatus[];
+
         private deleteButton: DialogButton;
 
         private descendantsContainer: DescendantsToBeDeletedList;
@@ -24,6 +26,8 @@ module app.remove {
         private yesCallback: (exclude?: CompareStatus[]) => void;
 
         private noCallback: () => void;
+
+        private totalItemsToDelete: number;
 
         constructor() {
             super("item");
@@ -42,6 +46,7 @@ module app.remove {
         setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
 
             this.selectedItems = [];
+            this.descendantItems = [];
 
             contents.forEach((content: ContentSummaryAndCompareStatus) => {
                 this.selectedItems.push(this.createSelectionItemForDelete(content));
@@ -59,6 +64,7 @@ module app.remove {
 
             if(this.atLeastOneInitialItemHasChild()) {
                 this.descendantsContainer.loadData(this.selectedItems).then((descendants: ContentSummaryAndCompareStatus[]) => {
+                    this.descendantItems = descendants;
                     this.descendantsContainer.show();
                     this.centerMyself();
 
@@ -106,6 +112,15 @@ module app.remove {
 
         private addDeleteActionHandler() {
             this.getDeleteAction().onExecuted(() => {
+                if (this.isAnySiteToBeDeleted()) {
+                    this.close();
+                    new app.remove.ConfirmContentDeleteDialog({
+                        totalItemsToDelete: this.totalItemsToDelete,
+                        deleteRequest: this.createDeleteRequest(),
+                        yesCallback: this.yesCallback
+                    }).open();
+                    return;
+                }
 
                 if(!!this.yesCallback) {
                     this.instantDeleteCheckbox.isChecked() ? this.yesCallback([]) : this.yesCallback();
@@ -161,6 +176,7 @@ module app.remove {
 
                     if (this.atLeastOneInitialItemHasChild()) {
                         this.descendantsContainer.loadData(this.selectedItems).then((descendants: ContentSummaryAndCompareStatus[]) => {
+                            this.descendantItems = descendants;
                             this.centerMyself();
 
                             if (!this.atLeastOneInitialItemIsOnline() && !this.atLeastOneDescendantIsOnline(descendants)) {
@@ -169,6 +185,7 @@ module app.remove {
                         });
                     }
                     else {
+                        this.descendantItems = [];
                         this.descendantsContainer.hide();
                         if (!this.atLeastOneInitialItemIsOnline()) {
                             this.instantDeleteCheckbox.hide();
@@ -190,7 +207,8 @@ module app.remove {
 
             this.createRequestForCountingItemsToDelete().sendAndParse().then((itemsToDeleteCounter: number) => {
                 this.hideLoadingSpinner();
-                this.updateDeleteButtonCounter(itemsToDeleteCounter);
+                this.totalItemsToDelete = itemsToDeleteCounter;
+                this.updateDeleteButtonCounter();
             }).finally(() => {
                 this.hideLoadingSpinner();
             }).done();
@@ -217,9 +235,9 @@ module app.remove {
             return deleteRequest;
         }
 
-        private updateDeleteButtonCounter(count: number) {
+        private updateDeleteButtonCounter() {
             var showCounter: boolean = this.moreThanOneItemSelected() || this.atLeastOneInitialItemHasChild();
-            this.deleteButton.setLabel("Delete" + (showCounter ? " (" + count + ")" : ""));
+            this.deleteButton.setLabel("Delete" + (showCounter ? " (" + this.totalItemsToDelete + ")" : ""));
         }
 
         private showLoadingSpinner() {
@@ -280,6 +298,28 @@ module app.remove {
 
         private moreThanOneItemSelected(): boolean {
             return this.selectedItems.length > 1;
+        }
+
+        private isAnySiteToBeDeleted(): boolean {
+            var result = this.selectedItems.some((selectionItem: SelectionItem<ContentSummaryAndCompareStatus>) => {
+                return selectionItem.getBrowseItem().getModel().getContentSummary().isSite() &&
+                       (!this.isContentOnline(selectionItem.getBrowseItem().getModel().getCompareStatus()) ||
+                        this.instantDeleteCheckbox.isChecked());
+            });
+
+            if (result) {
+                return true;
+            }
+
+            if (!!this.descendantItems && this.descendantItems.length > 0) {
+                return this.descendantItems.some((descendant: ContentSummaryAndCompareStatus) => {
+                    return descendant.getContentSummary().isSite() &&
+                           (!this.isContentOnline(descendant.getCompareStatus()) || this.instantDeleteCheckbox.isChecked());
+                });
+            }
+            else {
+                return false;
+            }
         }
     }
 
