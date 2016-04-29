@@ -17,11 +17,11 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 public class WebResponseImpl
     implements WebResponse
 {
-    private HttpStatus status;
+    private HttpStatus status = HttpStatus.OK;
 
-    private MediaType contentType;
+    private MediaType contentType = MediaType.PLAIN_TEXT_UTF_8;
 
-    private Map<String, String> headers = Maps.newHashMap();
+    private Map<String, String> headers = Maps.newTreeMap( String.CASE_INSENSITIVE_ORDER );
 
     private Set<Cookie> cookies = Sets.newHashSet();
 

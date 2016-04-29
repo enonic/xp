@@ -1,7 +1,8 @@
 package com.enonic.xp.portal;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 
 import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.web.handler.WebResponseImpl;
@@ -10,11 +11,11 @@ import com.enonic.xp.web.handler.WebResponseImpl;
 public final class PortalWebResponse
     extends WebResponseImpl
 {
-    private boolean postProcess;
+    private boolean postProcess = true;
 
-    private ImmutableListMultimap<HtmlTag, String> contributions;
+    private ListMultimap<HtmlTag, String> contributions = ArrayListMultimap.create();
 
-    private boolean applyFilters;
+    private boolean applyFilters = true;
 
 
     public boolean isPostProcess()
@@ -22,7 +23,7 @@ public final class PortalWebResponse
         return postProcess;
     }
 
-    public ImmutableListMultimap<HtmlTag, String> getContributions()
+    public ListMultimap<HtmlTag, String> getContributions()
     {
         return contributions;
     }
@@ -37,7 +38,7 @@ public final class PortalWebResponse
         this.postProcess = postProcess;
     }
 
-    public void setContributions( final ImmutableListMultimap<HtmlTag, String> contributions )
+    public void setContributions( final ListMultimap<HtmlTag, String> contributions )
     {
         this.contributions = contributions;
     }

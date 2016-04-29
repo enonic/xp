@@ -13,6 +13,7 @@ import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.handler.WebRequestImpl;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Beta
 public final class PortalWebRequest
@@ -66,6 +67,66 @@ public final class PortalWebRequest
     public static Builder create( final PortalWebRequest portalWebRequest )
     {
         return new Builder( portalWebRequest );
+    }
+
+    public String getBaseUri()
+    {
+        return baseUri;
+    }
+
+    public RenderMode getMode()
+    {
+        return mode;
+    }
+
+    public Branch getBranch()
+    {
+        return branch;
+    }
+
+    public ContentPath getContentPath()
+    {
+        return this.content != null ? this.content.getPath() : this.contentPath;
+    }
+
+    public Site getSite()
+    {
+        return site;
+    }
+
+    public Content getContent()
+    {
+        return content;
+    }
+
+    public PageTemplate getPageTemplate()
+    {
+        return pageTemplate;
+    }
+
+    public Component getComponent()
+    {
+        return component;
+    }
+
+    public ApplicationKey getApplicationKey()
+    {
+        return applicationKey;
+    }
+
+    public PageDescriptor getPageDescriptor()
+    {
+        return pageDescriptor;
+    }
+
+    public ControllerScript getControllerScript()
+    {
+        return controllerScript;
+    }
+
+    public String rewriteUri( final String uri )
+    {
+        return ServletRequestUrlHelper.rewriteUri( uri ).getRewrittenUri();
     }
 
 

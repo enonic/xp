@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -270,7 +271,7 @@ public class WebRequestImpl
 
         public Builder endpointPath( final String endpointPath )
         {
-            this.endpointPath = endpointPath;
+            this.endpointPath = Strings.emptyToNull( endpointPath );
             return this;
         }
 
