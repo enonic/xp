@@ -1,11 +1,11 @@
 package com.enonic.xp.web.handler;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.Cookie;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableList;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.web.HttpStatus;
@@ -20,7 +20,7 @@ public interface WebResponse
 
     Map<String, String> getHeaders();
 
-    ImmutableList<Cookie> getCookies();
+    Set<Cookie> getCookies();
 
     WebSocketConfig getWebSocket();
 
@@ -32,7 +32,7 @@ public interface WebResponse
 
     void setHeader( final String key, final String value );
 
-    void setCookies( final ImmutableList<Cookie> cookies );
+    void setCookie( Cookie cookie );
 
     void setWebSocketConfig( final WebSocketConfig webSocketConfig );
 

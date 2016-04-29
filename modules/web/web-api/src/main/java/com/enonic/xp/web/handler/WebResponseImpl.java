@@ -1,12 +1,13 @@
 package com.enonic.xp.web.handler;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.Cookie;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.web.HttpStatus;
@@ -22,7 +23,7 @@ public class WebResponseImpl
 
     private Map<String, String> headers = Maps.newHashMap();
 
-    private ImmutableList<Cookie> cookies;
+    private Set<Cookie> cookies = Sets.newHashSet();
 
     private WebSocketConfig webSocketConfig;
 
@@ -47,7 +48,7 @@ public class WebResponseImpl
     }
 
     @Override
-    public ImmutableList<Cookie> getCookies()
+    public Set<Cookie> getCookies()
     {
         return cookies;
     }
@@ -83,9 +84,9 @@ public class WebResponseImpl
     }
 
     @Override
-    public void setCookies( final ImmutableList<Cookie> cookies )
+    public void setCookie( Cookie cookie )
     {
-        this.cookies = cookies;
+        this.cookies.add( cookie );
     }
 
     @Override

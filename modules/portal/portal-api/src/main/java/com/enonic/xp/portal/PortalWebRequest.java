@@ -72,13 +72,13 @@ public final class PortalWebRequest
     public static final class Builder
         extends WebRequestImpl.Builder
     {
-        private String baseUri;
+        private String baseUri = "";
 
-        private RenderMode mode;
+        private RenderMode mode = RenderMode.LIVE;
 
-        private Branch branch;
+        private Branch branch = DEFAULT_BRANCH;
 
-        private ContentPath contentPath;
+        private ContentPath contentPath = ContentPath.from( "/" );
 
         private Site site;
 

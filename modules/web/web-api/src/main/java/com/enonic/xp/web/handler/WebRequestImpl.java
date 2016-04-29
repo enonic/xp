@@ -6,7 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.web.HttpMethod;
@@ -31,6 +33,8 @@ public class WebRequestImpl
 
     private final String endpointPath;
 
+    private final ImmutableMap<String, String> headers;
+
     private final ImmutableMap<String, String> cookies;
 
     private final Object body;
@@ -51,7 +55,8 @@ public class WebRequestImpl
         params = builder.params;
         url = builder.url;
         endpointPath = builder.endpointPath;
-        cookies = builder.cookies;
+        headers = ImmutableMap.copyOf( builder.headers );
+        cookies = ImmutableMap.copyOf( builder.cookies );
         body = builder.body;
         rawRequest = builder.rawRequest;
         contentType = builder.contentType;
@@ -117,6 +122,12 @@ public class WebRequestImpl
     }
 
     @Override
+    public Map<String, String> getHeaders()
+    {
+        return headers;
+    }
+
+    @Override
     public Map<String, String> getCookies()
     {
         return cookies;
@@ -176,13 +187,15 @@ public class WebRequestImpl
 
         private String path;
 
-        private Multimap<String, String> params;
+        private Multimap<String, String> params = HashMultimap.create();
 
         private String url;
 
         private String endpointPath;
 
-        private ImmutableMap<String, String> cookies;
+        private Map<String, String> cookies = Maps.newHashMap();
+
+        private Map<String, String> headers = Maps.newHashMap();
 
         private Object body;
 
@@ -243,9 +256,9 @@ public class WebRequestImpl
             return this;
         }
 
-        public Builder params( final Multimap<String, String> params )
+        public Builder param( final String key, String value )
         {
-            this.params = params;
+            this.params.put( key, value );
             return this;
         }
 
@@ -261,9 +274,15 @@ public class WebRequestImpl
             return this;
         }
 
-        public Builder cookies( final ImmutableMap<String, String> cookies )
+        public Builder header( final String key, String value )
         {
-            this.cookies = cookies;
+            headers.put( key, value );
+            return this;
+        }
+
+        public Builder cookie( final String key, String value )
+        {
+            cookies.put( key, value );
             return this;
         }
 

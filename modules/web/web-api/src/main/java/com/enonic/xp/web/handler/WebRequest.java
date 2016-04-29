@@ -28,6 +28,8 @@ public interface WebRequest
 
     String getEndpointPath();
 
+    Map<String, String> getHeaders();
+
     Map<String, String> getCookies();
 
     Object getBody();
