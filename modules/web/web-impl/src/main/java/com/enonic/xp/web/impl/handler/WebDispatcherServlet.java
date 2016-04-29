@@ -46,11 +46,11 @@ public class WebDispatcherServlet
         throws ServletException, IOException
     {
         //Generates the Web request and response
-        WebRequest webRequest = generateWebRequest( servletRequest, servletResponse );
+        final WebRequest webRequest = generateWebRequest( servletRequest, servletResponse );
         WebResponse webResponse = generateWebResponse();
 
         //Handles the request
-        webDispatcher.dispatch( webRequest, webResponse );
+        webResponse = webDispatcher.dispatch( webRequest, webResponse );
 
         //Serializes the request
 

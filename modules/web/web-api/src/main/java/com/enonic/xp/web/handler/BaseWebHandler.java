@@ -42,7 +42,7 @@ public abstract class BaseWebHandler
 
     protected abstract boolean canHandle( WebRequest webRequest );
 
-    protected abstract void doHandle( WebRequest webRequest, WebResponse webResponse, WebHandlerChain webHandlerChain );
+    protected abstract WebResponse doHandle( WebRequest webRequest, WebResponse webResponse, WebHandlerChain webHandlerChain );
 
     private void checkMethodAllowed( final HttpMethod method )
     {
@@ -52,15 +52,16 @@ public abstract class BaseWebHandler
         }
     }
 
-    private void handleOptions( final WebResponse webResponse )
+    private WebResponse handleOptions( final WebResponse webResponse )
     {
         webResponse.setStatus( HttpStatus.OK );
         webResponse.setHeader( "Allow", Joiner.on( "," ).join( this.methodsAllowed ) );
+        return webResponse;
     }
 
 
     @Override
-    public void handle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
+    public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
     {
         if ( canHandle( webRequest ) )
         {
@@ -69,15 +70,14 @@ public abstract class BaseWebHandler
 
             if ( HttpMethod.OPTIONS == method )
             {
-                handleOptions( webResponse );
-                return;
+                return handleOptions( webResponse );
             }
 
-            doHandle( webRequest, webResponse, webHandlerChain );
+            return doHandle( webRequest, webResponse, webHandlerChain );
         }
         else
         {
-            webHandlerChain.handle( webRequest, webResponse );
+            return webHandlerChain.handle( webRequest, webResponse );
         }
 
     }

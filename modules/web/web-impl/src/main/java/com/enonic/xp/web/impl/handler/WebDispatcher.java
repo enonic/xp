@@ -36,10 +36,10 @@ final class WebDispatcher
         return webHandler1.getOrder() - webHandler2.getOrder();
     }
 
-    public void dispatch( final WebRequest webRequest, final WebResponse webResponse )
+    public WebResponse dispatch( final WebRequest webRequest, final WebResponse webResponse )
     {
         ServletRequestHolder.setRequest( webRequest.getRawRequest() );
-        new WebHandlerChainImpl( webHandlerList ).
+        return new WebHandlerChainImpl( webHandlerList ).
             handle( webRequest, webResponse );
     }
 }

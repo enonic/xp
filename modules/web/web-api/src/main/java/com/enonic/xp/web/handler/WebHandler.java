@@ -11,5 +11,5 @@ public interface WebHandler
 
     int getOrder();
 
-    void handle( WebRequest req, WebResponse res, WebHandlerChain webHandlerChain );
+    WebResponse handle( WebRequest webRequest, WebResponse webResponse, WebHandlerChain webHandlerChain );
 }
