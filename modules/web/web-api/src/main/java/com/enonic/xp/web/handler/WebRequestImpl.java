@@ -41,7 +41,7 @@ public class WebRequestImpl
 
     private final boolean webSocket;
 
-    private WebRequestImpl( final Builder builder )
+    protected WebRequestImpl( final Builder builder )
     {
         method = builder.method;
         scheme = builder.scheme;
@@ -65,21 +65,7 @@ public class WebRequestImpl
 
     public static Builder create( final WebRequestImpl webRequest )
     {
-        Builder builder = new Builder();
-        builder.method = webRequest.method;
-        builder.scheme = webRequest.scheme;
-        builder.host = webRequest.host;
-        builder.port = webRequest.port;
-        builder.path = webRequest.path;
-        builder.params = webRequest.params;
-        builder.url = webRequest.url;
-        builder.endpointPath = webRequest.endpointPath;
-        builder.cookies = webRequest.cookies;
-        builder.body = webRequest.body;
-        builder.rawRequest = webRequest.rawRequest;
-        builder.contentType = webRequest.contentType;
-        builder.webSocket = webRequest.webSocket;
-        return builder;
+        return new Builder( webRequest );
     }
 
     @Override
@@ -178,7 +164,7 @@ public class WebRequestImpl
         rawRequest.setAttribute( name, value );
     }
 
-    public static final class Builder
+    public static class Builder
     {
         private HttpMethod method;
 
@@ -206,8 +192,25 @@ public class WebRequestImpl
 
         private boolean webSocket;
 
-        private Builder()
+        protected Builder()
         {
+        }
+
+        public Builder( final WebRequestImpl webRequest )
+        {
+            method = webRequest.method;
+            scheme = webRequest.scheme;
+            host = webRequest.host;
+            port = webRequest.port;
+            path = webRequest.path;
+            params = webRequest.params;
+            url = webRequest.url;
+            endpointPath = webRequest.endpointPath;
+            cookies = webRequest.cookies;
+            body = webRequest.body;
+            rawRequest = webRequest.rawRequest;
+            contentType = webRequest.contentType;
+            webSocket = webRequest.webSocket;
         }
 
         public Builder method( final HttpMethod method )
