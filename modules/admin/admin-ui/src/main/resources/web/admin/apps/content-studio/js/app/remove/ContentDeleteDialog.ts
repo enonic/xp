@@ -89,7 +89,7 @@ module app.remove {
         }
 
         private addInstantDeleteCheckbox() {
-            this.instantDeleteCheckbox = new api.ui.Checkbox("Instantly delete online content");
+            this.instantDeleteCheckbox = new api.ui.Checkbox("Instantly delete published items");
             this.instantDeleteCheckbox.addClass('instant-delete-check');
 
             this.appendChild(this.instantDeleteCheckbox);
