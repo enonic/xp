@@ -20,10 +20,13 @@ final class WebHandlerChainImpl
     }
 
     @Override
-    public void handle( final WebRequest webRequest, final WebResponse webResponse )
+    public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse )
     {
-        webHandlerList.forEach( webHandler -> {
-            webHandler.handle( webRequest, webResponse, this );
-        } );
+        WebResponse result = webResponse;
+        for ( WebHandler webHandler : webHandlerList )
+        {
+            result = webHandler.handle( webRequest, result, this );
+        }
+        return result;
     }
 }

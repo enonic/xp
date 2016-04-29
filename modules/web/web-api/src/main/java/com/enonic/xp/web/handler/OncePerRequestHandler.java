@@ -7,24 +7,18 @@ import com.google.common.annotations.Beta;
 public abstract class OncePerRequestHandler
     extends BaseWebHandler
 {
-    private final String flag;
-
-    public OncePerRequestHandler()
-    {
-        this.flag = getClass().getName() + ".handled";
-    }
+    private final String flag = getClass().getName() + ".handled";
 
     @Override
-    public void handle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
+    public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
     {
         if ( isAlreadyHandled( webRequest ) )
         {
-            webHandlerChain.handle( webRequest, webResponse );
-            return;
+            return webHandlerChain.handle( webRequest, webResponse );
         }
 
         setAlreadyHandledFlag( webRequest );
-        super.handle( webRequest, webResponse, webHandlerChain );
+        return super.handle( webRequest, webResponse, webHandlerChain );
     }
 
     private boolean isAlreadyHandled( final WebRequest webRequest )

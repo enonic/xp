@@ -1,10 +1,11 @@
 package com.enonic.xp.web.handler;
 
+import java.util.Map;
+import java.util.Set;
+
 import javax.servlet.http.Cookie;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.web.HttpStatus;
@@ -17,25 +18,25 @@ public interface WebResponse
 
     MediaType getContentType();
 
-    ImmutableMap<String, String> getHeaders();
+    Map<String, String> getHeaders();
 
-    ImmutableList<Cookie> getCookies();
+    Set<Cookie> getCookies();
 
     WebSocketConfig getWebSocket();
 
     Object getBody();
 
-    void setStatus( HttpStatus status );
+    void setStatus( final HttpStatus status );
 
-    void setContentType( MediaType contentType );
+    void setContentType( final MediaType contentType );
 
-    void setHeaders( ImmutableMap<String, String> headers );
+    void setHeader( final String key, final String value );
 
-    void setCookies( ImmutableList<Cookie> cookies );
+    void setCookie( Cookie cookie );
 
-    void setWebSocketConfig( WebSocketConfig webSocketConfig );
+    void setWebSocketConfig( final WebSocketConfig webSocketConfig );
 
-    void setBody( Object body );
+    void setBody( final Object body );
 
 //    boolean isPostProcess();
 

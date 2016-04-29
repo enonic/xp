@@ -36,10 +36,10 @@ import com.enonic.xp.portal.impl.exception.ExceptionRenderer;
 import com.enonic.xp.portal.impl.serializer.RequestBodyReader;
 import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
 import com.enonic.xp.web.HttpMethod;
-import com.enonic.xp.web.impl.websocket.WebSocketContext;
-import com.enonic.xp.web.impl.websocket.WebSocketContextFactory;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.web.websocket.WebSocketConfig;
+import com.enonic.xp.web.websocket.WebSocketContext;
+import com.enonic.xp.web.websocket.WebSocketContextFactory;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 @Component(immediate = true, service = Servlet.class,

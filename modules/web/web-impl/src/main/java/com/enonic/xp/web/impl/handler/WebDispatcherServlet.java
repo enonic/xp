@@ -28,9 +28,9 @@ import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebRequestImpl;
 import com.enonic.xp.web.handler.WebResponse;
 import com.enonic.xp.web.handler.WebResponseImpl;
-import com.enonic.xp.web.impl.websocket.WebSocketContext;
-import com.enonic.xp.web.impl.websocket.WebSocketContextFactory;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+import com.enonic.xp.web.websocket.WebSocketContext;
+import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
 @Component(immediate = true, service = Servlet.class,
     property = {"osgi.http.whiteboard.servlet.pattern=/test/*"})
@@ -46,11 +46,11 @@ public class WebDispatcherServlet
         throws ServletException, IOException
     {
         //Generates the Web request and response
-        WebRequest webRequest = generateWebRequest( servletRequest, servletResponse );
+        final WebRequest webRequest = generateWebRequest( servletRequest, servletResponse );
         WebResponse webResponse = generateWebResponse();
 
         //Handles the request
-        webDispatcher.dispatch( webRequest, webResponse );
+        webResponse = webDispatcher.dispatch( webRequest, webResponse );
 
         //Serializes the request
 
@@ -71,6 +71,7 @@ public class WebDispatcherServlet
 
         final Multimap<String, String> params = generateWebRequestParams( servletRequest );
         final ImmutableMap<String, String> cookies = generateWebRequestCookies( servletRequest );
+        final String endpointPath = getEndpointPath( servletRequest );
         final boolean webSocket = isWebSocket( servletRequest, servletResponse );
 
         return WebRequestImpl.create().
@@ -81,6 +82,7 @@ public class WebDispatcherServlet
             path( path ).
             params( params ).
             url( url ).
+            endpointPath( endpointPath ).
             cookies( cookies ).
             body( body ).
             rawRequest( servletRequest ).
@@ -126,6 +128,13 @@ public class WebDispatcherServlet
         }
 
         return cookieImmutableMap.build();
+    }
+
+    private String getEndpointPath( final HttpServletRequest servletRequest )
+    {
+        final String requestURI = servletRequest.getRequestURI();
+        final int endpointPathIndex = requestURI.indexOf( "/_/" );
+        return endpointPathIndex > -1 ? requestURI.substring( endpointPathIndex ) : "";
     }
 
     private boolean isWebSocket( final HttpServletRequest servletRequest, final HttpServletResponse servletResponse )
