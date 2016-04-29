@@ -53,6 +53,8 @@ public class WebDispatcherServlet
         webResponse = webDispatcher.dispatch( webRequest, webResponse );
 
         //Serializes the request
+        final WebResponseSerializer serializer = new WebResponseSerializer( webRequest, webResponse );
+        serializer.serialize( servletResponse );
 
     }
 
