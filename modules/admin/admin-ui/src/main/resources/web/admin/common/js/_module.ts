@@ -12,6 +12,8 @@
 ///<reference path='lib/noconflict.d.ts' />
 ///<reference path='lib/tinymce.d.ts' />
 
+///<reference path='util/_module.ts' />
+
 ///<reference path='Equitable.ts' />
 ///<reference path='Cloneable.ts' />
 ///<reference path='Class.ts' />
@@ -19,6 +21,7 @@
 ///<reference path='ClassHelper.ts' />
 ///<reference path='BrowserHelper.ts' />
 ///<reference path='Comparator.ts' />
+///<reference path='NamePrettyfier.ts' />
 ///<reference path='Name.ts' />
 ///<reference path='Exception.ts' />
 ///<reference path='AccessDeniedException.ts' />
@@ -28,7 +31,6 @@
 ///<reference path='ValueChangedEvent.ts' />
 ///<reference path='StyleHelper.ts' />
 
-///<reference path='util/_module.ts' />
 ///<reference path='util/loader/event/_module.ts' />
 ///<reference path='util/loader/_module.ts' />
 
