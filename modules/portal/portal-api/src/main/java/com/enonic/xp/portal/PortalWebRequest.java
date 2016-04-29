@@ -12,6 +12,7 @@ import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebRequestImpl;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
@@ -64,9 +65,9 @@ public final class PortalWebRequest
         return new Builder();
     }
 
-    public static Builder create( final PortalWebRequest portalWebRequest )
+    public static Builder create( final WebRequest webRequest )
     {
-        return new Builder( portalWebRequest );
+        return new Builder( webRequest );
     }
 
     public String getBaseUri()
@@ -159,20 +160,24 @@ public final class PortalWebRequest
         {
         }
 
-        public Builder( final PortalWebRequest portalWebRequest )
+        public Builder( final WebRequest webRequest )
         {
-            super( portalWebRequest );
-            baseUri = portalWebRequest.baseUri;
-            mode = portalWebRequest.mode;
-            branch = portalWebRequest.branch;
-            contentPath = portalWebRequest.contentPath;
-            site = portalWebRequest.site;
-            content = portalWebRequest.content;
-            pageTemplate = portalWebRequest.pageTemplate;
-            component = portalWebRequest.component;
-            applicationKey = portalWebRequest.applicationKey;
-            pageDescriptor = portalWebRequest.pageDescriptor;
-            controllerScript = portalWebRequest.controllerScript;
+            super( webRequest );
+            if ( webRequest instanceof PortalWebRequest )
+            {
+                PortalWebRequest portalWebRequest = (PortalWebRequest) webRequest;
+                baseUri = portalWebRequest.baseUri;
+                mode = portalWebRequest.mode;
+                branch = portalWebRequest.branch;
+                contentPath = portalWebRequest.contentPath;
+                site = portalWebRequest.site;
+                content = portalWebRequest.content;
+                pageTemplate = portalWebRequest.pageTemplate;
+                component = portalWebRequest.component;
+                applicationKey = portalWebRequest.applicationKey;
+                pageDescriptor = portalWebRequest.pageDescriptor;
+                controllerScript = portalWebRequest.controllerScript;
+            }
         }
 
         public Builder baseUri( final String baseUri )

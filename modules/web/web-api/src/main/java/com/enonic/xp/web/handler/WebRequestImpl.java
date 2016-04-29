@@ -210,21 +210,21 @@ public class WebRequestImpl
         {
         }
 
-        public Builder( final WebRequestImpl webRequest )
+        public Builder( final WebRequest webRequest )
         {
-            method = webRequest.method;
-            scheme = webRequest.scheme;
-            host = webRequest.host;
-            port = webRequest.port;
-            path = webRequest.path;
-            params = webRequest.params;
-            url = webRequest.url;
-            endpointPath = webRequest.endpointPath;
-            cookies = webRequest.cookies;
-            body = webRequest.body;
-            rawRequest = webRequest.rawRequest;
-            contentType = webRequest.contentType;
-            webSocket = webRequest.webSocket;
+            method = webRequest.getMethod();
+            scheme = webRequest.getScheme();
+            host = webRequest.getHost();
+            port = webRequest.getPort();
+            path = webRequest.getPath();
+            params = webRequest.getParams();
+            url = webRequest.getUrl();
+            endpointPath = webRequest.getEndpointPath();
+            cookies = webRequest.getCookies();
+            body = webRequest.getBody();
+            rawRequest = webRequest.getRawRequest();
+            contentType = webRequest.getContentType();
+            webSocket = webRequest.isWebSocket();
         }
 
         public Builder method( final HttpMethod method )
@@ -257,6 +257,13 @@ public class WebRequestImpl
             return this;
         }
 
+
+        public Builder params( final Multimap<String, String> params )
+        {
+            this.params = params;
+            return this;
+        }
+
         public Builder param( final String key, String value )
         {
             this.params.put( key, value );
@@ -278,6 +285,12 @@ public class WebRequestImpl
         public Builder header( final String key, String value )
         {
             headers.put( key, value );
+            return this;
+        }
+
+        public Builder cookies( final ImmutableMap<String, String> cookies )
+        {
+            this.cookies = cookies;
             return this;
         }
 
