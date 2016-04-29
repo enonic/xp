@@ -3,7 +3,7 @@ module api.ui.selector.dropdown {
     import Option = api.ui.selector.Option;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import OptionFilterInputValueChangedEvent = api.ui.selector.OptionFilterInputValueChangedEvent;
-    import DropdownHandle = api.ui.selector.DropdownHandle;
+    import DropdownHandle = api.ui.button.DropdownHandle;
     import Viewer = api.ui.Viewer;
     import DefaultOptionDisplayValueViewer = api.ui.selector.DefaultOptionDisplayValueViewer;
 

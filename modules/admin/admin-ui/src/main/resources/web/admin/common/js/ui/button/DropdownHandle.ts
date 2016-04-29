@@ -1,4 +1,4 @@
-module api.ui.selector {
+module api.ui.button {
 
     export class DropdownHandle extends api.dom.DivEl {
 
