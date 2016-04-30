@@ -92,7 +92,7 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
     }
 
     private addInstantDeleteCheckbox() {
-        this.instantDeleteCheckbox = new api.ui.Checkbox("Instantly delete online content");
+        this.instantDeleteCheckbox = new api.ui.Checkbox("Instantly delete published items");
         this.instantDeleteCheckbox.addClass('instant-delete-check');
 
         this.appendChild(this.instantDeleteCheckbox);
