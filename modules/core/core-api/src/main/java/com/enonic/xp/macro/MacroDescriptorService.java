@@ -13,4 +13,6 @@ public interface MacroDescriptorService
     MacroDescriptors getByApplication( final ApplicationKey applicationKey );
 
     MacroDescriptors getByApplications( final ApplicationKeys applicationKeys );
+
+    MacroDescriptors getAll();
 }

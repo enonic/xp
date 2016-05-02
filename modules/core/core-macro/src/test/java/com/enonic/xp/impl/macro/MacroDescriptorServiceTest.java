@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptors;
@@ -26,6 +28,7 @@ public class MacroDescriptorServiceTest
 
         this.service = new MacroDescriptorServiceImpl();
         this.service.setResourceService( this.resourceService );
+        this.service.setApplicationService( this.applicationService );
     }
 
     @Test
@@ -77,6 +80,14 @@ public class MacroDescriptorServiceTest
             this.service.getByApplications( ApplicationKeys.from( "myapp1", "myapp2", ApplicationKey.SYSTEM.getName() ) );
 
         assertNotNull( result );
+        assertEquals( 6, result.getSize() );
+    }
+
+    @Test
+    public void testGetAll()
+        throws Exception
+    {
+        final MacroDescriptors result = this.service.getAll();
         assertEquals( 6, result.getSize() );
     }
 }
