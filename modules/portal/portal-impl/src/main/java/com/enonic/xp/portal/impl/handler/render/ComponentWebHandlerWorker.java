@@ -1,10 +1,16 @@
 package com.enonic.xp.portal.impl.handler.render;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.page.PageTemplateService;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.PortalWebRequest;
+import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
@@ -14,17 +20,33 @@ import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.site.Site;
 
 final class ComponentWebHandlerWorker
-    extends RenderHandlerWorker
+    extends RenderWebHandlerWorker
 {
-    protected ComponentPath componentPath;
+    private final ComponentPath componentPath;
 
-    protected RendererFactory rendererFactory;
+    private final RendererFactory rendererFactory;
 
-    protected PostProcessor postProcessor;
+    private final PostProcessor postProcessor;
+
+    private ComponentWebHandlerWorker( final Builder builder )
+    {
+        portalWebRequest = builder.portalWebRequest;
+        portalWebResponse = builder.portalWebResponse;
+        contentService = builder.contentService;
+        pageTemplateService = builder.pageTemplateService;
+        pageDescriptorService = builder.pageDescriptorService;
+        componentPath = builder.componentPath;
+        rendererFactory = builder.rendererFactory;
+        postProcessor = builder.postProcessor;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
 
     @Override
-    public void execute()
-        throws Exception
+    public PortalWebResponse execute()
     {
         final Content content = getContent( getContentSelector() );
         final Site site = getSite( content );
@@ -88,17 +110,97 @@ final class ComponentWebHandlerWorker
             throw notFound( "Page component for [%s] not found", this.componentPath );
         }
 
-        this.request.setSite( site );
-        this.request.setContent( effectiveContent );
-        this.request.setComponent( component );
-        this.request.setApplicationKey( pageController != null ? pageController.getApplicationKey() : null );
-        this.request.setPageTemplate( pageTemplate );
-        this.request.setPageDescriptor( null );
+        final PortalWebRequest portalWebRequest = PortalWebRequest.create( this.portalWebRequest ).
+            site( site ).
+            content( effectiveContent ).
+            component( component ).
+            applicationKey( pageController != null ? pageController.getApplicationKey() : null ).
+            pageTemplate( pageTemplate ).pageDescriptor( null ).
+            build();
+
+        final PortalRequest portalRequest = convertToPortalRequest( portalWebRequest );
 
         final Renderer<Component> renderer = this.rendererFactory.getRenderer( component );
-        PortalResponse response = renderer.render( component, this.request );
-        response = this.postProcessor.processResponseInstructions( this.request, response );
+        PortalResponse response = renderer.render( component, portalRequest );
+        response = this.postProcessor.processResponseInstructions( portalRequest, response );
 
-        this.response = PortalResponse.create( response );
+        final PortalResponse portalResponse = PortalResponse.create( response ).build();
+        return convertToPortalWebResponse( portalResponse );
+    }
+
+    public static final class Builder
+    {
+        private PortalWebRequest portalWebRequest;
+
+        private PortalWebResponse portalWebResponse;
+
+        private ContentService contentService;
+
+        private PageTemplateService pageTemplateService;
+
+        private PageDescriptorService pageDescriptorService;
+
+        private ComponentPath componentPath;
+
+        private RendererFactory rendererFactory;
+
+        private PostProcessor postProcessor;
+
+        private Builder()
+        {
+        }
+
+        public Builder portalWebRequest( final PortalWebRequest portalWebRequest )
+        {
+            this.portalWebRequest = portalWebRequest;
+            return this;
+        }
+
+        public Builder portalWebResponse( final PortalWebResponse portalWebResponse )
+        {
+            this.portalWebResponse = portalWebResponse;
+            return this;
+        }
+
+        public Builder contentService( final ContentService contentService )
+        {
+            this.contentService = contentService;
+            return this;
+        }
+
+        public Builder pageTemplateService( final PageTemplateService pageTemplateService )
+        {
+            this.pageTemplateService = pageTemplateService;
+            return this;
+        }
+
+        public Builder pageDescriptorService( final PageDescriptorService pageDescriptorService )
+        {
+            this.pageDescriptorService = pageDescriptorService;
+            return this;
+        }
+
+        public Builder componentPath( final ComponentPath componentPath )
+        {
+            this.componentPath = componentPath;
+            return this;
+        }
+
+        public Builder rendererFactory( final RendererFactory rendererFactory )
+        {
+            this.rendererFactory = rendererFactory;
+            return this;
+        }
+
+        public Builder postProcessor( final PostProcessor postProcessor )
+        {
+            this.postProcessor = postProcessor;
+            return this;
+        }
+
+        public ComponentWebHandlerWorker build()
+        {
+            return new ComponentWebHandlerWorker( this );
+        }
     }
 }

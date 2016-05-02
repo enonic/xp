@@ -29,7 +29,7 @@ public abstract class EndpointWebHandler
     }
 
     @Override
-    public final boolean canHandle( final WebRequest webRequest )
+    public boolean canHandle( final WebRequest webRequest )
     {
         final String endpointPath = Strings.nullToEmpty( webRequest.getEndpointPath() );
         return endpointPath.startsWith( this.pathPrefix );
