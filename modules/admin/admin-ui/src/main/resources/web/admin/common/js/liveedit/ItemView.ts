@@ -500,9 +500,11 @@ module api.liveedit {
                 // The rest will only deselect current selection
                 // Also allow selecting the same component again (i.e. to show context menu)
                 if (!selectedView || selectedView == this || this.getType().isComponentType()) {
-                    var clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
-                    var menuPosition = event.which == 3 ? null : ItemViewContextMenuPosition.NONE;
-                    this.select(clickPosition, menuPosition, false, true);
+                    let clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
+                    let rightClicked = event.which === 3;
+                    let menuPosition = rightClicked ? null : ItemViewContextMenuPosition.NONE;
+                    //
+                    this.select(clickPosition, menuPosition, false, rightClicked);
                 }
             } else {
                 this.deselect();
@@ -624,10 +626,10 @@ module api.liveedit {
             return this.getEl().hasAttribute('data-live-edit-selected');
         }
 
-        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false, silent: boolean = false) {
+        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false, rightClicked: boolean = false) {
             this.selectItem();
             this.showContextMenu(clickPosition, menuPosition);
-            new ItemViewSelectedEvent(this, clickPosition, isNew, silent).fire();
+            new ItemViewSelectedEvent(this, clickPosition, isNew, rightClicked).fire();
         }
 
         selectWithoutMenu(isNew: boolean = false) {
@@ -881,7 +883,7 @@ module api.liveedit {
                 var parentView: ItemView = this.getParentItemView();
                 if (parentView) {
                     this.deselect();
-                    parentView.select(null, ItemViewContextMenuPosition.TOP);
+                    parentView.select(null, ItemViewContextMenuPosition.TOP, false, true);
                     parentView.scrollComponentIntoView();
                 }
             });
