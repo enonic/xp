@@ -379,6 +379,12 @@ public final class ImageContentProcessor
     }
 
     @Reference
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
+    }
+
+    @Reference
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
