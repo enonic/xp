@@ -88,10 +88,11 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
     }
 
     private initConfirmationInput() {
-        this.input = api.ui.text.TextInput.middle("text");
+        this.input = api.ui.text.TextInput.middle("text").setForbiddenCharsRe(/[^0-9]/);
         this.input.onValueChanged((event: api.ValueChangedEvent) => {
             if (this.isInputEmpty()) {
                 this.input.removeClass("invalid valid");
+                this.confirmDeleteAction.setEnabled(false);
                 return;
             }
 
