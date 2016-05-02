@@ -4,18 +4,18 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.CreateContentTranslatorParams;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
 
 public class CreateNodeParamsFactory
 {
-    private static final ContentDataSerializer serializer = new ContentDataSerializer();
+    private static final ContentDataSerializer CONTENT_DATA_SERIALIZER = new ContentDataSerializer();
 
     public static CreateNodeParams create( final CreateContentTranslatorParams params )
     {
-        final PropertyTree contentAsData = new PropertyTree();
-        serializer.toCreateNodeData( params, contentAsData.getRoot() );
+        final PropertyTree contentAsData = CONTENT_DATA_SERIALIZER.toCreateNodeData( params );
 
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( params );
 

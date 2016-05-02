@@ -45,6 +45,7 @@ import RegionView = api.liveedit.RegionView;
 
 import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
 import LiveEditPageDialogCreatedEvent = api.liveedit.LiveEditPageDialogCreatedEvent;
+import MinimizeWizardPanelEvent = api.app.wizard.MinimizeWizardPanelEvent;
 
 import {ShowContentFormEvent} from "../ShowContentFormEvent";
 import {ShowLiveEditEvent} from "../ShowLiveEditEvent";
@@ -380,6 +381,10 @@ export class LiveEditPageProxy {
             });
             imageUploadDialog.open();
         }, contextWindow);
+
+        MinimizeWizardPanelEvent.on(() => {
+            new MinimizeWizardPanelEvent().fire(contextWindow);
+        });
 
         ComponentViewDragStartedEvent.on(this.notifyComponentViewDragStarted.bind(this), contextWindow);
 

@@ -14,10 +14,13 @@ import {ContentDeleteDialogAction} from "./ContentDeleteDialogAction";
 import {ContentDeleteSelectionItem} from "./ContentDeleteSelectionItem";
 import {DeleteAction} from "../view/DeleteAction";
 import {DependantView} from "../view/DependantView";
+import {ConfirmContentDeleteDialog} from "./ConfirmContentDeleteDialog";
 
 export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
 
     private selectedItems: SelectionItem<ContentSummaryAndCompareStatus>[];
+
+    private descendantItems: ContentSummaryAndCompareStatus[];
 
     private deleteButton: DialogButton;
 
@@ -28,6 +31,8 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
     private yesCallback: (exclude?: CompareStatus[]) => void;
 
     private noCallback: () => void;
+
+    private totalItemsToDelete: number;
 
     constructor() {
         super("item");
@@ -46,6 +51,7 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
     setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
 
         this.selectedItems = [];
+        this.descendantItems = [];
 
         contents.forEach((content: ContentSummaryAndCompareStatus) => {
             this.selectedItems.push(this.createSelectionItemForDelete(content));
@@ -63,6 +69,7 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
 
         if(this.atLeastOneInitialItemHasChild()) {
             this.descendantsContainer.loadData(this.selectedItems).then((descendants: ContentSummaryAndCompareStatus[]) => {
+                this.descendantItems = descendants;
                 this.descendantsContainer.show();
                 this.centerMyself();
 
@@ -110,6 +117,15 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
 
     private addDeleteActionHandler() {
         this.getDeleteAction().onExecuted(() => {
+            if (this.isAnySiteToBeDeleted()) {
+                this.close();
+                new ConfirmContentDeleteDialog({
+                    totalItemsToDelete: this.totalItemsToDelete,
+                    deleteRequest: this.createDeleteRequest(),
+                    yesCallback: this.yesCallback
+                }).open();
+                return;
+            }
 
             if(!!this.yesCallback) {
                 this.instantDeleteCheckbox.isChecked() ? this.yesCallback([]) : this.yesCallback();
@@ -165,6 +181,7 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
 
                 if (this.atLeastOneInitialItemHasChild()) {
                     this.descendantsContainer.loadData(this.selectedItems).then((descendants: ContentSummaryAndCompareStatus[]) => {
+                        this.descendantItems = descendants;
                         this.centerMyself();
 
                         if (!this.atLeastOneInitialItemIsOnline() && !this.atLeastOneDescendantIsOnline(descendants)) {
@@ -173,6 +190,7 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
                     });
                 }
                 else {
+                    this.descendantItems = [];
                     this.descendantsContainer.hide();
                     if (!this.atLeastOneInitialItemIsOnline()) {
                         this.instantDeleteCheckbox.hide();
@@ -194,7 +212,8 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
 
         this.createRequestForCountingItemsToDelete().sendAndParse().then((itemsToDeleteCounter: number) => {
             this.hideLoadingSpinner();
-            this.updateDeleteButtonCounter(itemsToDeleteCounter);
+            this.totalItemsToDelete = itemsToDeleteCounter;
+            this.updateDeleteButtonCounter();
         }).finally(() => {
             this.hideLoadingSpinner();
         }).done();
@@ -221,9 +240,9 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
         return deleteRequest;
     }
 
-    private updateDeleteButtonCounter(count: number) {
+    private updateDeleteButtonCounter() {
         var showCounter: boolean = this.moreThanOneItemSelected() || this.atLeastOneInitialItemHasChild();
-        this.deleteButton.setLabel("Delete" + (showCounter ? " (" + count + ")" : ""));
+        this.deleteButton.setLabel("Delete" + (showCounter ? " (" + this.totalItemsToDelete + ")" : ""));
     }
 
     private showLoadingSpinner() {
@@ -284,6 +303,28 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
 
     private moreThanOneItemSelected(): boolean {
         return this.selectedItems.length > 1;
+    }
+
+    private isAnySiteToBeDeleted(): boolean {
+        var result = this.selectedItems.some((selectionItem: SelectionItem<ContentSummaryAndCompareStatus>) => {
+            return selectionItem.getBrowseItem().getModel().getContentSummary().isSite() &&
+                   (!this.isContentOnline(selectionItem.getBrowseItem().getModel().getCompareStatus()) ||
+                    this.instantDeleteCheckbox.isChecked());
+        });
+
+        if (result) {
+            return true;
+        }
+
+        if (!!this.descendantItems && this.descendantItems.length > 0) {
+            return this.descendantItems.some((descendant: ContentSummaryAndCompareStatus) => {
+                return descendant.getContentSummary().isSite() &&
+                       (!this.isContentOnline(descendant.getCompareStatus()) || this.instantDeleteCheckbox.isChecked());
+            });
+        }
+        else {
+            return false;
+        }
     }
 }
 
