@@ -140,6 +140,11 @@ public final class ResourceLocatorImpl
 
     private File findDevResource( final String name )
     {
+        if ( this.resourcesSrcDir == null )
+        {
+            return null;
+        }
+
         final File file1 = new File( this.resourcesSrcDir, name );
         final File file2 = new File( this.resourcesTargetDir, name );
 
