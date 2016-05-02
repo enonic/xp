@@ -166,8 +166,6 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.renderDropdownGrid();
 
             this.input.setReadOnly(true);
-
-            this.setOnBlurListener();
         }
 
         setEmptyDropdownText(label: string) {
@@ -474,8 +472,22 @@ module api.ui.selector.combobox {
 
         private setupListeners() {
 
-            this.onClicked((event: MouseEvent) => {
-                this.setOnBlurListener();
+            let focusoutTimeout = 0;
+
+            this.onFocusOut(() => {
+                focusoutTimeout = setTimeout(() => {
+                    this.hideDropdown();
+                    this.active = false;
+                }, 50);
+            });
+
+            this.onFocusIn(() => {
+                clearTimeout(focusoutTimeout);
+            });
+
+            // Prevent focus loss on mouse down
+            this.onMouseDown((event: MouseEvent) => {
+                event.preventDefault();
             });
 
             this.onScrolled((event: WheelEvent) => {
@@ -499,14 +511,12 @@ module api.ui.selector.combobox {
                     if (this.isDropdownShown()) {
                         this.hideDropdown();
                         this.giveInputFocus();
-                    }
-                    else {
+                    } else {
                         this.showDropdown();
-                        this.loadOptionsAfterShowDropdown().then(() => {
-                            this.giveInputFocus();
-                        }).catch((reason: any) => {
+                        this.giveInputFocus();
+                        this.loadOptionsAfterShowDropdown().catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
-                        }).done();
+                        });
 
                     }
                 }
@@ -522,8 +532,7 @@ module api.ui.selector.combobox {
                 this.preservedInputValueChangedEvent = event;
                 if (this.delayedInputValueChangedHandling == 0) {
                     this.handleInputValueChanged();
-                }
-                else {
+                } else {
                     this.setEmptyDropdownText("Just keep on typing...");
                     this.delayedHandleInputValueChangedFnCall.delayCall();
                 }
@@ -718,39 +727,6 @@ module api.ui.selector.combobox {
                 .filter(x => selectedValues.indexOf(x) == -1)
                 .concat(selectedValues.filter(x => gridOptions.indexOf(x) == -1));
 
-        }
-
-        /**
-         * Setup event listener that hides dropdown when combobox loses focus.
-         * Listener is added to document body when combobox makes active and removed on click outside of combobox.
-         */
-        private setOnBlurListener() {
-            // reference to this combobox to use it in closure
-            var combobox = this;
-
-            // function variable to be able to add and remove it as listener
-            var hideDropdownOnBlur = function (event: Event) {
-
-                var comboboxHtmlElement = combobox.getHTMLElement();
-
-                // check if event occured inside combobox then do nothing and return
-                for (var element = event.target; element; element = (<any>element).parentNode) {
-                    if (element == comboboxHtmlElement) {
-                        return;
-                    }
-                }
-
-                // if combobox lost focus then hide dropdown options and remove unnecessary listener
-                combobox.hideDropdown();
-                combobox.active = false;
-                api.dom.Body.get().getEl().removeEventListener('click', hideDropdownOnBlur);
-            };
-
-            // set callback function on document body if combobox wasn't marked as active
-            if (!this.active) {
-                this.active = true;
-                api.dom.Body.get().onClicked(hideDropdownOnBlur);
-            }
         }
 
         onOptionSelected(listener: (event: SelectedOption<OPTION_DISPLAY_VALUE>)=>void) {

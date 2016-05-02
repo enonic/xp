@@ -1,15 +1,15 @@
-module app.create {
+import "../../api.ts";
+import {NewContentDialogListItem} from "./NewContentDialogListItem";
 
-    export class NewContentDialogItemSelectedEvent {
+export class NewContentDialogItemSelectedEvent {
 
-        private item: NewContentDialogListItem;
+    private item: NewContentDialogListItem;
 
-        constructor(item: NewContentDialogListItem) {
-            this.item = item;
-        }
+    constructor(item: NewContentDialogListItem) {
+        this.item = item;
+    }
 
-        getItem(): NewContentDialogListItem {
-            return this.item;
-        }
+    getItem(): NewContentDialogListItem {
+        return this.item;
     }
 }

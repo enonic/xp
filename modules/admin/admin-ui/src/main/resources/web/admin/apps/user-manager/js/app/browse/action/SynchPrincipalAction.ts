@@ -1,21 +1,23 @@
-module app.browse.action {
+import "../../../api.ts";
 
-    import Action = api.ui.Action;
-    export class SynchPrincipalAction extends Action {
+import Action = api.ui.Action;
+import {UserItemsTreeGrid} from "../UserItemsTreeGrid";
+import {UserTreeGridItem} from "../UserTreeGridItem";
 
-        constructor(grid: UserItemsTreeGrid) {
-            super("Synch");
-            this.setEnabled(false);
-            this.onExecuted(() => {
-                var principals: app.browse.UserTreeGridItem[] = grid.getSelectedDataList();
-                grid.getSelectedDataList().forEach((elem) => {
-                    this.synch(elem);
-                });
+export class SynchPrincipalAction extends Action {
+
+    constructor(grid: UserItemsTreeGrid) {
+        super("Synch");
+        this.setEnabled(false);
+        this.onExecuted(() => {
+            var principals: UserTreeGridItem[] = grid.getSelectedDataList();
+            grid.getSelectedDataList().forEach((elem) => {
+                this.synch(elem);
             });
-        }
+        });
+    }
 
-        private synch(principal: app.browse.UserTreeGridItem) {
-            console.log('Synch principals action');
-        }
+    private synch(principal: UserTreeGridItem) {
+        console.log('Synch principals action');
     }
 }

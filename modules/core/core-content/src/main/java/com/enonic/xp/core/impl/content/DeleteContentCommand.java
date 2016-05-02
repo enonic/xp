@@ -11,6 +11,7 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -72,24 +73,34 @@ final class DeleteContentCommand
         {
             final Node deletedNode = nodeService.deleteById( nodeToDelete.id() );
             deletedNodes.add( deletedNode );
+            return;
         }
-        else
+
+        if ( isOnlineContentToBeDeleted( status ) )
         {
-            final SetNodeStateResult setNodeStateResult = this.nodeService.setNodeState( SetNodeStateParams.create().
-                nodeId( nodeToDelete.id() ).
-                nodeState( NodeState.PENDING_DELETE ).
+            final Context currentContext = ContextAccessor.current();
+            deleteNodeInContext( nodeToDelete, currentContext );
+            final Node deletedNode = deleteNodeInContext( nodeToDelete, ContextBuilder.from( currentContext ).
+                branch( ContentConstants.BRANCH_MASTER ).
                 build() );
+            deletedNodes.add( deletedNode );
+            return;
+        }
 
-            deletedNodes.addAll( setNodeStateResult.getUpdatedNodes() );
+        final SetNodeStateResult setNodeStateResult = this.nodeService.setNodeState( SetNodeStateParams.create().
+            nodeId( nodeToDelete.id() ).
+            nodeState( NodeState.PENDING_DELETE ).
+            build() );
 
-            final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( FindNodesByParentParams.create().
-                parentPath( nodeToDelete.path() ).
-                build() );
+        deletedNodes.addAll( setNodeStateResult.getUpdatedNodes() );
 
-            for ( Node childNodeToDelete : findNodesByParentResult.getNodes() )
-            {
-                recursiveDelete( childNodeToDelete, deletedNodes );
-            }
+        final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( FindNodesByParentParams.create().
+            parentPath( nodeToDelete.path() ).
+            build() );
+
+        for ( Node childNodeToDelete : findNodesByParentResult.getNodes() )
+        {
+            recursiveDelete( childNodeToDelete, deletedNodes );
         }
     }
 
@@ -108,6 +119,16 @@ final class DeleteContentCommand
             compare = this.nodeService.compare( nodeToDelete.id(), ContentConstants.BRANCH_DRAFT );
         }
         return compare.getCompareStatus();
+    }
+
+    private boolean isOnlineContentToBeDeleted( final CompareStatus status )
+    {
+        return this.params.isDeleteOnline() || ( this.params.isDeletePending() && status == CompareStatus.PENDING_DELETE );
+    }
+
+    private Node deleteNodeInContext( final Node nodeToDelete, final Context context )
+    {
+        return context.callWith( () -> this.nodeService.deleteById( nodeToDelete.id() ) );
     }
 
 

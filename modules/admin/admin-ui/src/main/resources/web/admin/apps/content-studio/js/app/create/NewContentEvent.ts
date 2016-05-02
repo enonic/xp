@@ -1,35 +1,33 @@
-module app.create {
+import "../../api.ts";
 
-    import ContentTypeSummary = api.schema.content.ContentTypeSummary;
-    import Content = api.content.Content;
+import ContentTypeSummary = api.schema.content.ContentTypeSummary;
+import Content = api.content.Content;
 
-    export class NewContentEvent extends api.event.Event {
+export class NewContentEvent extends api.event.Event {
 
-        private contentType: ContentTypeSummary;
+    private contentType: ContentTypeSummary;
 
-        private parentContent: Content;
+    private parentContent: Content;
 
-        constructor(contentType: ContentTypeSummary, parentContent: Content) {
-            super();
-            this.contentType = contentType;
-            this.parentContent = parentContent;
-        }
-
-        getContentType(): ContentTypeSummary {
-            return this.contentType;
-        }
-
-        getParentContent(): Content {
-            return this.parentContent;
-        }
-
-        static on(handler: (event: NewContentEvent) => void) {
-            api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
-        }
-
-        static un(handler?: (event: NewContentEvent) => void) {
-            api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
-        }
+    constructor(contentType: ContentTypeSummary, parentContent: Content) {
+        super();
+        this.contentType = contentType;
+        this.parentContent = parentContent;
     }
 
+    getContentType(): ContentTypeSummary {
+        return this.contentType;
+    }
+
+    getParentContent(): Content {
+        return this.parentContent;
+    }
+
+    static on(handler: (event: NewContentEvent) => void) {
+        api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
+    }
+
+    static un(handler?: (event: NewContentEvent) => void) {
+        api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
+    }
 }

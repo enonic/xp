@@ -1,17 +1,17 @@
-module app.wizard.action {
+import "../../../api.ts";
+import {ShowContentFormEvent} from "../ShowContentFormEvent";
+import {ContentWizardPanel} from "../ContentWizardPanel";
 
-    export class ShowFormAction extends api.ui.Action {
+export class ShowFormAction extends api.ui.Action {
 
-        constructor(wizard: app.wizard.ContentWizardPanel) {
-            super("Form");
+    constructor(wizard: ContentWizardPanel) {
+        super("Form");
 
-            this.setEnabled(true);
-            this.setTitle("Hide Page Editor");
-            this.onExecuted(() => {
-                wizard.showForm();
-                new ShowContentFormEvent().fire();
-            })
-        }
+        this.setEnabled(true);
+        this.setTitle("Hide Page Editor");
+        this.onExecuted(() => {
+            wizard.showForm();
+            new ShowContentFormEvent().fire();
+        })
     }
-
 }

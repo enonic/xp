@@ -5,7 +5,7 @@ function handleGet(req) {
     var uriScriptHelper = Java.type("com.enonic.xp.admin.ui.tool.UriScriptHelper");
     var adminUrl = uriScriptHelper.generateAdminUri();
     var assetsUri = uriScriptHelper.generateAdminAssetsUri();
-    var view = resolve('../common/admin-app.html');
+    var view = resolve('./content-studio.html');
 
     var params = {
         adminUrl: adminUrl,

@@ -1,16 +1,17 @@
-module app.browse {
+import "../../api.ts";
+import {ApplicationTreeGrid} from "./ApplicationTreeGrid";
+import {StopApplicationEvent} from "./StopApplicationEvent";
 
-    import Application = api.application.Application;
+import Application = api.application.Application;
 
-    export class StopApplicationAction extends api.ui.Action {
+export class StopApplicationAction extends api.ui.Action {
 
-        constructor(applicationTreeGrid: ApplicationTreeGrid) {
-            super("Stop");
-            this.setEnabled(false);
-            this.onExecuted(() => {
-                var applications: Application[] = applicationTreeGrid.getSelectedDataList();
-                new StopApplicationEvent(applications).fire();
-            });
-        }
+    constructor(applicationTreeGrid: ApplicationTreeGrid) {
+        super("Stop");
+        this.setEnabled(false);
+        this.onExecuted(() => {
+            var applications: Application[] = applicationTreeGrid.getSelectedDataList();
+            new StopApplicationEvent(applications).fire();
+        });
     }
 }

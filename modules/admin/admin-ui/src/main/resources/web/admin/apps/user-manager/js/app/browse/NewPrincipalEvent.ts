@@ -1,13 +1,13 @@
-module app.browse {
+import "../../api.ts";
+import {BaseUserEvent} from "./BaseUserEvent";
 
-    export class NewPrincipalEvent extends BaseUserEvent {
+export class NewPrincipalEvent extends BaseUserEvent {
 
-        static on(handler: (event: NewPrincipalEvent) => void) {
-            api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
-        }
+    static on(handler: (event: NewPrincipalEvent) => void) {
+        api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
+    }
 
-        static un(handler?: (event: NewPrincipalEvent) => void) {
-            api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
-        }
+    static un(handler?: (event: NewPrincipalEvent) => void) {
+        api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
     }
 }

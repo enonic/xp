@@ -1,92 +1,100 @@
-module app.view {
+import "../../api.ts";
 
-    export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content.ContentSummaryAndCompareStatus> {
+import {ContentItemPreviewPanel} from "./ContentItemPreviewPanel";
+import {ContentItemViewToolbar} from "./ContentItemViewToolbar";
+import {EditAction} from "./EditAction";
+import {DeleteAction} from "./DeleteAction";
+import {CloseAction} from "./CloseAction";
+import {ContentItemStatisticsPanel} from "./ContentItemStatisticsPanel";
+import {Router} from "../Router";
+import {ShowPreviewEvent} from "../browse/ShowPreviewEvent";
+import {ShowDetailsEvent} from "../browse/ShowDetailsEvent";
 
-        private statisticsPanel: api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus>;
+export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content.ContentSummaryAndCompareStatus> {
 
-        private statisticsPanelIndex: number;
+    private statisticsPanel: api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus>;
 
-        private previewPanel: ContentItemPreviewPanel;
+    private statisticsPanelIndex: number;
 
-        private previewMode: boolean;
+    private previewPanel: ContentItemPreviewPanel;
 
-        private previewPanelIndex: number;
+    private previewMode: boolean;
 
-        private deckPanel: api.ui.panel.DeckPanel;
+    private previewPanelIndex: number;
 
-        private editAction: api.ui.Action;
+    private deckPanel: api.ui.panel.DeckPanel;
 
-        private deleteAction: api.ui.Action;
+    private editAction: api.ui.Action;
 
-        private closeAction: api.ui.Action;
+    private deleteAction: api.ui.Action;
 
-        private actions: api.ui.Action[];
+    private closeAction: api.ui.Action;
 
-        constructor() {
+    private actions: api.ui.Action[];
 
-            this.deckPanel = new api.ui.panel.DeckPanel();
+    constructor() {
 
-            this.editAction = new EditAction(this);
-            this.deleteAction = new DeleteAction(this);
-            this.closeAction = new CloseAction(this, true);
+        this.deckPanel = new api.ui.panel.DeckPanel();
 
-            this.actions = [this.editAction, this.deleteAction, this.closeAction];
+        this.editAction = new EditAction(this);
+        this.deleteAction = new DeleteAction(this);
+        this.closeAction = new CloseAction(this, true);
 
-            var toolbar = new ContentItemViewToolbar({
-                editAction: this.editAction,
-                deleteAction: this.deleteAction
-            });
+        this.actions = [this.editAction, this.deleteAction, this.closeAction];
 
-            super(toolbar, this.deckPanel);
+        var toolbar = new ContentItemViewToolbar({
+            editAction: this.editAction,
+            deleteAction: this.deleteAction
+        });
 
-            this.statisticsPanel = new ContentItemStatisticsPanel();
-            this.previewPanel = new ContentItemPreviewPanel();
+        super(toolbar, this.deckPanel);
 
-            this.statisticsPanelIndex = this.deckPanel.addPanel(this.statisticsPanel);
-            this.previewPanelIndex = this.deckPanel.addPanel(this.previewPanel);
+        this.statisticsPanel = new ContentItemStatisticsPanel();
+        this.previewPanel = new ContentItemPreviewPanel();
 
+        this.statisticsPanelIndex = this.deckPanel.addPanel(this.statisticsPanel);
+        this.previewPanelIndex = this.deckPanel.addPanel(this.previewPanel);
+
+        this.showPreview(false);
+
+        ShowPreviewEvent.on((event) => {
+            this.showPreview(true);
+        });
+
+        ShowDetailsEvent.on((event) => {
             this.showPreview(false);
+        });
 
-            app.browse.ShowPreviewEvent.on((event) => {
-                this.showPreview(true);
-            });
-
-            app.browse.ShowDetailsEvent.on((event) => {
-                this.showPreview(false);
-            });
-
-            this.onShown((event: api.dom.ElementShownEvent) => {
-                if (this.getItem()) {
-                    app.Router.setHash("view/" + this.getItem().getModel().getId());
-                }
-            });
-        }
-
-        setItem(item: api.app.view.ViewItem<api.content.ContentSummaryAndCompareStatus>) {
-            super.setItem(item);
-            this.statisticsPanel.setItem(item);
-            this.previewPanel.setItem(item);
-        }
-
-
-        public showPreview(enabled: boolean) {
-            this.previewMode = enabled;
-            // refresh the view
-            if (enabled) {
-                this.deckPanel.showPanelByIndex(this.previewPanelIndex);
-            } else {
-                this.deckPanel.showPanelByIndex(this.statisticsPanelIndex);
+        this.onShown((event: api.dom.ElementShownEvent) => {
+            if (this.getItem()) {
+                Router.setHash("view/" + this.getItem().getModel().getId());
             }
-        }
+        });
+    }
 
-        public getCloseAction() : api.ui.Action {
-            return this.closeAction;
-        }
+    setItem(item: api.app.view.ViewItem<api.content.ContentSummaryAndCompareStatus>) {
+        super.setItem(item);
+        this.statisticsPanel.setItem(item);
+        this.previewPanel.setItem(item);
+    }
 
-        getActions(): api.ui.Action[] {
-            return this.actions;
-        }
 
+    public showPreview(enabled: boolean) {
+        this.previewMode = enabled;
+        // refresh the view
+        if (enabled) {
+            this.deckPanel.showPanelByIndex(this.previewPanelIndex);
+        } else {
+            this.deckPanel.showPanelByIndex(this.statisticsPanelIndex);
+        }
+    }
+
+    public getCloseAction(): api.ui.Action {
+        return this.closeAction;
+    }
+
+    getActions(): api.ui.Action[] {
+        return this.actions;
     }
 
 }

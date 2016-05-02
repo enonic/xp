@@ -1,36 +1,36 @@
-module app.browse {
-    import Principal = api.security.Principal;
-    export class PrincipalDuplicatedEvent extends api.event.Event {
+import "../../api.ts";
+import Principal = api.security.Principal;
 
-        private source: Principal;
-        private principal: Principal;
-        private nextToSource: boolean;
+export class PrincipalDuplicatedEvent extends api.event.Event {
 
-        constructor(principal: Principal, source: Principal, nextToSource: boolean = true) {
-            super();
-            this.principal = principal;
-            this.source = source;
-            this.nextToSource = nextToSource;
-        }
+    private source: Principal;
+    private principal: Principal;
+    private nextToSource: boolean;
 
-        getSource(): Principal {
-            return this.source;
-        }
+    constructor(principal: Principal, source: Principal, nextToSource: boolean = true) {
+        super();
+        this.principal = principal;
+        this.source = source;
+        this.nextToSource = nextToSource;
+    }
 
-        getPrincipal(): Principal {
-            return this.principal;
-        }
+    getSource(): Principal {
+        return this.source;
+    }
 
-        isNextToSource(): boolean {
-            return this.nextToSource;
-        }
+    getPrincipal(): Principal {
+        return this.principal;
+    }
 
-        static on(handler: (event: PrincipalDuplicatedEvent) => void) {
-            api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
-        }
+    isNextToSource(): boolean {
+        return this.nextToSource;
+    }
 
-        static un(handler?: (event: PrincipalDuplicatedEvent) => void) {
-            api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
-        }
+    static on(handler: (event: PrincipalDuplicatedEvent) => void) {
+        api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
+    }
+
+    static un(handler?: (event: PrincipalDuplicatedEvent) => void) {
+        api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
     }
 }

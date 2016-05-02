@@ -1,35 +1,35 @@
-module app.browse {
+import "../../api.ts";
+import {BaseContentModelEvent} from "./BaseContentModelEvent";
 
-    export class ContentDeletePromptEvent extends BaseContentModelEvent {
+export class ContentDeletePromptEvent extends BaseContentModelEvent {
 
-        private yesCallback: () => void;
+    private yesCallback: () => void;
 
-        private noCallback: () => void;
+    private noCallback: () => void;
 
-        setYesCallback(callback: ()=>void): ContentDeletePromptEvent {
-            this.yesCallback = callback;
-            return this;
-        }
+    setYesCallback(callback: ()=>void): ContentDeletePromptEvent {
+        this.yesCallback = callback;
+        return this;
+    }
 
-        setNoCallback(callback: () => void): ContentDeletePromptEvent {
-            this.noCallback = callback;
-            return this;
-        }
+    setNoCallback(callback: () => void): ContentDeletePromptEvent {
+        this.noCallback = callback;
+        return this;
+    }
 
-        getYesCallback(): () => void {
-            return this.yesCallback;
-        }
+    getYesCallback(): () => void {
+        return this.yesCallback;
+    }
 
-        getNoCallback(): () => void {
-            return this.noCallback;
-        }
+    getNoCallback(): () => void {
+        return this.noCallback;
+    }
 
-        static on(handler: (event: ContentDeletePromptEvent) => void) {
-            api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
-        }
+    static on(handler: (event: ContentDeletePromptEvent) => void) {
+        api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
+    }
 
-        static un(handler?: (event: ContentDeletePromptEvent) => void) {
-            api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
-        }
+    static un(handler?: (event: ContentDeletePromptEvent) => void) {
+        api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
     }
 }

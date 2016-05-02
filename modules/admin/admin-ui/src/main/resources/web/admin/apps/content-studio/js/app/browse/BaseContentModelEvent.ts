@@ -1,16 +1,15 @@
-module app.browse {
+import "../../api.ts";
 
-    export class BaseContentModelEvent extends api.event.Event {
+export class BaseContentModelEvent extends api.event.Event {
 
-        private model: api.content.ContentSummaryAndCompareStatus[];
+    private model: api.content.ContentSummaryAndCompareStatus[];
 
-        constructor(model: api.content.ContentSummaryAndCompareStatus[]) {
-            this.model = model;
-            super();
-        }
+    constructor(model: api.content.ContentSummaryAndCompareStatus[]) {
+        this.model = model;
+        super();
+    }
 
-        getModels(): api.content.ContentSummaryAndCompareStatus[] {
-            return this.model;
-        }
+    getModels(): api.content.ContentSummaryAndCompareStatus[] {
+        return this.model;
     }
 }

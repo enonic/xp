@@ -1,26 +1,27 @@
-module app.view.detail.button {
+import "../../../../api.ts";
 
-    export class InfoWidgetToggleButton extends api.dom.DivEl {
+import {DetailsPanel} from "../DetailsPanel";
 
-        private detailsPanel: DetailsPanel;
+export class InfoWidgetToggleButton extends api.dom.DivEl {
 
-        constructor(detailsPanel: DetailsPanel) {
-            super("info-widget-toggle-button");
+    private detailsPanel: DetailsPanel;
 
-            this.detailsPanel = detailsPanel;
+    constructor(detailsPanel: DetailsPanel) {
+        super("info-widget-toggle-button");
 
-            this.onClicked((event) => {
-                this.addClass("active");
-                detailsPanel.activateDefaultWidget();
-            });
-        }
+        this.detailsPanel = detailsPanel;
 
-        setActive() {
+        this.onClicked((event) => {
             this.addClass("active");
-        }
+            detailsPanel.activateDefaultWidget();
+        });
+    }
 
-        setInactive() {
-            this.removeClass("active");
-        }
+    setActive() {
+        this.addClass("active");
+    }
+
+    setInactive() {
+        this.removeClass("active");
     }
 }

@@ -37,4 +37,5 @@ task copyAll( type: Copy, dependsOn: gruntAll ) {
 }
 
 jar.dependsOn += copyAll
+
 clean.dependsOn += cleanSourceFiles

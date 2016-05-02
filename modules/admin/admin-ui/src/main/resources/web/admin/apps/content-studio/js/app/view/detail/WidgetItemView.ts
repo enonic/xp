@@ -1,50 +1,49 @@
-module app.view.detail {
+import "../../../api.ts";
 
-    import Element = api.dom.Element;
-    import LabelEl = api.dom.LabelEl;
-    import LinkEl = api.dom.LinkEl;
+import Element = api.dom.Element;
+import LabelEl = api.dom.LabelEl;
+import LinkEl = api.dom.LinkEl;
 
-    export class WidgetItemView extends api.dom.DivEl {
+export class WidgetItemView extends api.dom.DivEl {
 
-        public static debug = false;
-        private uid: string = "";
+    public static debug = false;
+    private uid: string = "";
 
-        constructor(className?: string) {
-            super("widget-item-view" + (className ? " " + className : ""));
+    constructor(className?: string) {
+        super("widget-item-view" + (className ? " " + className : ""));
+    }
+
+    public layout(): wemQ.Promise<any> {
+        if (WidgetItemView.debug) {
+            console.debug('WidgetItemView.layout: ', this);
         }
+        return wemQ<any>(null);
+    }
 
-        public layout(): wemQ.Promise<any> {
-            if (WidgetItemView.debug) {
-                console.debug('WidgetItemView.layout: ', this);
-            }
-            return wemQ<any>(null);
-        }
+    private getFullWidgetUrl(url: string, uid: string) {
+        return url + "?uid=" + uid;
+    }
 
-        private getFullWidgetUrl(url: string, uid: string) {
-            return url + "?uid=" + uid;
-        }
+    public setUrl(url: string, keepId: boolean = false): wemQ.Promise<void> {
+        var deferred = wemQ.defer<void>(),
+            uid = (!keepId || !this.uid) ? Date.now().toString() : this.uid,
+            linkEl = new LinkEl(this.getFullWidgetUrl(url, uid)),
+            el = this.getEl(),
+            onLinkLoaded = ((event: UIEvent) => {
+                var mainContainer = wemjq(event.target["import"]).find("div")[0];
+                if (mainContainer) {
+                    el.appendChild(document.importNode(<Node>mainContainer, true));
+                }
+                linkEl.unLoaded(onLinkLoaded);
+                deferred.resolve(null);
+            });
 
-        public setUrl(url: string, keepId: boolean = false): wemQ.Promise<void> {
-            var deferred = wemQ.defer<void>(),
-                uid = (!keepId || !this.uid) ? Date.now().toString() : this.uid,
-                linkEl = new LinkEl(this.getFullWidgetUrl(url, uid)),
-                el = this.getEl(),
-                onLinkLoaded = ((event: UIEvent) => {
-                    var mainContainer = wemjq(event.target["import"]).find("div")[0];
-                    if (mainContainer) {
-                        el.appendChild(document.importNode(<Node>mainContainer, true));
-                    }
-                    linkEl.unLoaded(onLinkLoaded);
-                    deferred.resolve(null);
-                });
+        this.uid = uid;
+        this.removeChildren();
 
-            this.uid = uid;
-            this.removeChildren();
+        linkEl.onLoaded(onLinkLoaded);
+        this.appendChild(linkEl);
 
-            linkEl.onLoaded(onLinkLoaded);
-            this.appendChild(linkEl);
-
-            return deferred.promise;
-        }
+        return deferred.promise;
     }
 }

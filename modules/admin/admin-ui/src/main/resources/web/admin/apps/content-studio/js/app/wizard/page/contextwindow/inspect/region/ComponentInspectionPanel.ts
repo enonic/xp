@@ -1,44 +1,44 @@
-module app.wizard.page.contextwindow.inspect.region {
+import "../../../../../../api.ts";
 
-    import Component = api.content.page.region.Component;
-    import ComponentName = api.content.page.region.ComponentName;
-    import ComponentView = api.liveedit.ComponentView;
-    import ContentFormContext = api.content.form.ContentFormContext;
-    import LiveEditModel = api.liveedit.LiveEditModel;
+import Component = api.content.page.region.Component;
+import ComponentName = api.content.page.region.ComponentName;
+import ComponentView = api.liveedit.ComponentView;
+import ContentFormContext = api.content.form.ContentFormContext;
+import LiveEditModel = api.liveedit.LiveEditModel;
+import {BaseInspectionPanel} from "../BaseInspectionPanel";
 
-    export interface ComponentInspectionPanelConfig {
+export interface ComponentInspectionPanelConfig {
 
-        iconClass: string;
+    iconClass: string;
+}
+
+export abstract class ComponentInspectionPanel<COMPONENT extends Component> extends BaseInspectionPanel {
+
+    liveEditModel: LiveEditModel;
+
+    formContext: ContentFormContext;
+
+    private component: COMPONENT;
+
+    constructor(config: ComponentInspectionPanelConfig) {
+        super();
     }
 
-    export abstract class ComponentInspectionPanel<COMPONENT extends Component> extends app.wizard.page.contextwindow.inspect.BaseInspectionPanel {
+    setModel(liveEditModel: LiveEditModel) {
 
-        liveEditModel: LiveEditModel;
+        this.liveEditModel = liveEditModel;
+        this.formContext = liveEditModel.getFormContext();
+    }
 
-        formContext: ContentFormContext;
+    setComponent(component: COMPONENT) {
+        this.component = component;
+    }
 
-        private component: COMPONENT;
+    getComponentView(): ComponentView<Component> {
+        throw new Error("Must be implemented by inheritors");
+    }
 
-        constructor(config: ComponentInspectionPanelConfig) {
-            super();
-        }
-
-        setModel(liveEditModel: LiveEditModel) {
-
-            this.liveEditModel = liveEditModel;
-            this.formContext = liveEditModel.getFormContext();
-        }
-
-        setComponent(component: COMPONENT) {
-            this.component = component;
-        }
-
-        getComponentView(): ComponentView<Component> {
-            throw new Error("Must be implemented by inheritors");
-        }
-
-        getComponent(): COMPONENT {
-            return this.component;
-        }
+    getComponent(): COMPONENT {
+        return this.component;
     }
 }

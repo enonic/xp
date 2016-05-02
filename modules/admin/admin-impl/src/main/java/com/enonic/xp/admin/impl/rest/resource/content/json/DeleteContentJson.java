@@ -7,6 +7,10 @@ public class DeleteContentJson
 {
     private Set<String> contentPaths;
 
+    private boolean deleteOnline;
+
+    private boolean deletePending;
+
     public Set<String> getContentPaths()
     {
         return contentPaths;
@@ -16,4 +20,25 @@ public class DeleteContentJson
     {
         this.contentPaths = contentPaths;
     }
+
+    public boolean isDeleteOnline()
+    {
+        return deleteOnline;
+    }
+
+    public void setDeleteOnline( boolean deleteOnline )
+    {
+        this.deleteOnline = deleteOnline;
+    }
+
+    public boolean isDeletePending()
+    {
+        return deletePending;
+    }
+
+    public void setDeletePending( boolean deletePending )
+    {
+        this.deletePending = deletePending;
+    }
+
 }

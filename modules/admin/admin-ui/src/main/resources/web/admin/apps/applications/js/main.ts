@@ -1,9 +1,13 @@
 declare var CONFIG;
 
+import "./api.ts";
+import {ApplicationAppPanel} from "./app/ApplicationAppPanel";
+import {InstallAppDialog} from "./app/installation/InstallAppDialog";
+import {InstallAppPromptEvent} from "./app/installation/InstallAppPromptEvent";
+
 import Application = api.application.Application;
 
-
-var application = (function () {
+function getApplication(): api.app.Application {
     var application = new api.app.Application('applications', 'Applications', 'AM', 'applications');
     application.setPath(api.rest.Path.fromString("/"));
     application.setWindow(window);
@@ -24,19 +28,14 @@ var application = (function () {
         api.notify.NotifyManager.get().hide(messageId);
     });
 
-
-    return application;
-})();
-
-function getApplication(id: string): api.app.Application {
     return application;
 }
 
 function startApplication() {
 
-    var application: api.app.Application = api.app.Application.getApplication();
+    var application: api.app.Application = getApplication();
     var appBar = new api.app.bar.AppBar(application);
-    var appPanel = new app.ApplicationAppPanel(appBar, application.getPath());
+    var appPanel = new ApplicationAppPanel(appBar, application.getPath());
 
     var body = api.dom.Body.get();
     body.appendChild(appBar);
@@ -57,15 +56,15 @@ function startApplication() {
         }
     };
 
-    var installAppDialog = new app.installation.InstallAppDialog();
+    var installAppDialog = new InstallAppDialog();
 
-    app.installation.InstallAppPromptEvent.on((event) => {
+    InstallAppPromptEvent.on((event) => {
         installAppDialog.updateInstallApplications(event.getInstalledApplications());
         installAppDialog.open();
     });
 
 }
 
-module components {
-    export var detailPanel: app.browse.ApplicationBrowseItemPanel;
-}
+window.onload = function () {
+    startApplication();
+};

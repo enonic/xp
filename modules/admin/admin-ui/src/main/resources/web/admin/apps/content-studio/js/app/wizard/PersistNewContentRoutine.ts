@@ -1,69 +1,66 @@
-module app.wizard {
+import "../../api.ts";
 
-    import CreateContentRequest = api.content.CreateContentRequest;
-    import Content = api.content.Content;
+import CreateContentRequest = api.content.CreateContentRequest;
+import Content = api.content.Content;
+import {ContentWizardPanel} from "./ContentWizardPanel";
 
-    export class PersistedNewContentRoutineContext {
+export class PersistedNewContentRoutineContext {
 
-        content: api.content.Content = null;
+    content: api.content.Content = null;
+}
+
+export class PersistNewContentRoutine extends api.util.Flow<api.content.Content,PersistedNewContentRoutineContext> {
+
+    private createContentRequestProducer: {() : wemQ.Promise<CreateContentRequest>; };
+
+    private doneHandledContent = false;
+
+    constructor(thisOfProducer: ContentWizardPanel) {
+        super(thisOfProducer);
     }
 
-    export class PersistNewContentRoutine extends api.util.Flow<api.content.Content,PersistedNewContentRoutineContext> {
+    public setCreateContentRequestProducer(producer: {() : wemQ.Promise<CreateContentRequest>; }): PersistNewContentRoutine {
+        this.createContentRequestProducer = producer;
+        return this;
+    }
 
-        private createContentRequestProducer: {() : wemQ.Promise<CreateContentRequest>; };
+    public execute(): wemQ.Promise<Content> {
 
-        private doneHandledContent = false;
+        var context = new PersistedNewContentRoutineContext();
+        return this.doExecute(context);
+    }
 
-        constructor(thisOfProducer: ContentWizardPanel) {
-            super(thisOfProducer);
+    doExecuteNext(context: PersistedNewContentRoutineContext): wemQ.Promise<Content> {
+
+        if (!this.doneHandledContent) {
+
+            return this.doHandleCreateContent(context).then(() => {
+
+                this.doneHandledContent = true;
+                return this.doExecuteNext(context);
+
+            });
         }
-
-        public setCreateContentRequestProducer(producer: {() : wemQ.Promise<CreateContentRequest>; }): PersistNewContentRoutine {
-            this.createContentRequestProducer = producer;
-            return this;
+        else {
+            return wemQ(context.content);
         }
+    }
 
-        public execute(): wemQ.Promise<Content> {
+    private doHandleCreateContent(context: PersistedNewContentRoutineContext): wemQ.Promise<void> {
 
-            var context = new PersistedNewContentRoutineContext();
-            return this.doExecute(context);
+        if (this.createContentRequestProducer != undefined) {
+
+            return this.createContentRequestProducer.call(this.getThisOfProducer()).then((createContentRequest: CreateContentRequest) => {
+
+                return createContentRequest.sendAndParse().then((content: Content): void => {
+
+                    context.content = content;
+
+                });
+            });
         }
-
-        doExecuteNext(context: PersistedNewContentRoutineContext): wemQ.Promise<Content> {
-
-            if (!this.doneHandledContent) {
-
-                return this.doHandleCreateContent(context).
-                    then(() => {
-
-                        this.doneHandledContent = true;
-                        return this.doExecuteNext(context);
-
-                    });
-            }
-            else {
-                return wemQ(context.content);
-            }
-        }
-
-        private doHandleCreateContent(context: PersistedNewContentRoutineContext): wemQ.Promise<void> {
-
-            if (this.createContentRequestProducer != undefined) {
-
-                return this.createContentRequestProducer.call(this.getThisOfProducer()).
-                    then((createContentRequest: CreateContentRequest) => {
-
-                        return createContentRequest.sendAndParse().
-                            then((content: Content): void => {
-
-                                context.content = content;
-
-                            });
-                    });
-            }
-            else {
-                return api.util.PromiseHelper.newResolvedVoidPromise();
-            }
+        else {
+            return api.util.PromiseHelper.newResolvedVoidPromise();
         }
     }
 }

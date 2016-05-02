@@ -22,6 +22,10 @@ module api.content {
             return compareContentResult;
         }
 
+        getAll(): CompareContentResult[] {
+            return this.compareContentResults;
+        }
+
         static fromJson(json: api.content.json.CompareContentResultsJson): CompareContentResults {
 
             var list: CompareContentResult[] = [];

@@ -1,24 +1,24 @@
-module app.browse {
+import "../../api.ts";
+import {BaseContentModelEvent} from "./BaseContentModelEvent";
 
-    export class ShowNewContentDialogEvent extends BaseContentModelEvent {
+export class ShowNewContentDialogEvent extends BaseContentModelEvent {
 
-        private parentContent: api.content.ContentSummaryAndCompareStatus;
+    private parentContent: api.content.ContentSummaryAndCompareStatus;
 
-        constructor(parentContent: api.content.ContentSummaryAndCompareStatus) {
-            super([parentContent]);
-            this.parentContent = parentContent;
-        }
+    constructor(parentContent: api.content.ContentSummaryAndCompareStatus) {
+        super([parentContent]);
+        this.parentContent = parentContent;
+    }
 
-        getParentContent(): api.content.ContentSummaryAndCompareStatus {
-            return this.parentContent;
-        }
+    getParentContent(): api.content.ContentSummaryAndCompareStatus {
+        return this.parentContent;
+    }
 
-        static on(handler: (event: ShowNewContentDialogEvent) => void) {
-            api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
-        }
+    static on(handler: (event: ShowNewContentDialogEvent) => void) {
+        api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
+    }
 
-        static un(handler?: (event: ShowNewContentDialogEvent) => void) {
-            api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
-        }
+    static un(handler?: (event: ShowNewContentDialogEvent) => void) {
+        api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
     }
 }
