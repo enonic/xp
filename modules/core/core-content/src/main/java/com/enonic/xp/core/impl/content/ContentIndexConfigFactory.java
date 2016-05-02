@@ -4,6 +4,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.IndexValueProcessors;
@@ -26,15 +27,15 @@ class ContentIndexConfigFactory
 {
     public static IndexConfigDocument create( final CreateContentTranslatorParams params )
     {
-        return doCreateIndexConfig();
+        return doCreateIndexConfig( getNumberOfHtmlAreas( params.getData() ) );
     }
 
     public static IndexConfigDocument create( final Content content )
     {
-        return doCreateIndexConfig();
+        return doCreateIndexConfig( getNumberOfHtmlAreas( content.getData() ) );
     }
 
-    private static IndexConfigDocument doCreateIndexConfig()
+    private static IndexConfigDocument doCreateIndexConfig( int htmlAreas )
     {
         final PatternIndexConfigDocument.Builder configDocumentBuilder = PatternIndexConfigDocument.create().
             analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
@@ -60,9 +61,25 @@ class ContentIndexConfigFactory
             includeInAllText( true ).
             addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).
             build();
-        configDocumentBuilder.add( HTMLAREA_TEXT, htmlIndexConfig );
+
+        for ( int i = 1; i <= htmlAreas; i++ )
+        {
+            configDocumentBuilder.add( HTMLAREA_TEXT + ( i == 1 ? "" : i ), htmlIndexConfig );
+        }
 
         return configDocumentBuilder.build();
     }
 
+    private static int getNumberOfHtmlAreas( final PropertyTree propertyTree )
+    {
+        int counter = 0;
+        for ( final String propName : propertyTree.getRoot().getPropertyNames() )
+        {
+            if ( propName.startsWith( "htmlarea_text" ) )
+            {
+                counter++;
+            }
+        }
+        return counter;
+    }
 }
