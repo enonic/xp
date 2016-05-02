@@ -69,7 +69,7 @@ public class WebRequestImpl
         return new Builder();
     }
 
-    public static Builder create( final WebRequestImpl webRequest )
+    public static Builder create( final WebRequest webRequest )
     {
         return new Builder( webRequest );
     }
