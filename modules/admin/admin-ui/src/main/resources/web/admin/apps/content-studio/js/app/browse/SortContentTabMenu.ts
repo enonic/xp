@@ -4,7 +4,7 @@ import ChildOrder = api.content.ChildOrder;
 import FieldOrderExpr = api.content.FieldOrderExpr;
 import FieldOrderExprBuilder = api.content.FieldOrderExprBuilder;
 import ContentSummary = api.content.ContentSummary;
-import DropdownHandle = api.ui.selector.DropdownHandle;
+import DropdownHandle = api.ui.button.DropdownHandle;
 import {SortContentTabMenuItem} from "./SortContentTabMenuItem";
 import {SortContentTabMenuItems} from "./SortContentTabMenuItems";
 
