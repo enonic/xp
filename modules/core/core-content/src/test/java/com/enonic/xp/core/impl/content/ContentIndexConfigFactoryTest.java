@@ -54,4 +54,34 @@ public class ContentIndexConfigFactoryTest
         assertEquals( IndexConfig.MINIMAL, indexConfigDocument.getConfigForPath(
             PropertyPath.from( ContentPropertyNames.EXTRA_DATA, "subSet", "subSetValue" ) ) );
     }
+
+    @Test
+    public void page_indexing()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet page = data.addSet( ContentPropertyNames.PAGE );
+        final PropertySet region = page.addSet( "region" );
+        final PropertySet component = region.addSet( "component" );
+        final PropertySet textcomponent = component.addSet( "textcomponent" );
+        textcomponent.setString( "text", "<h1>This is a text component</h1>" );
+
+        final CreateContentTranslatorParams createContentTranslatorParams = CreateContentTranslatorParams.create().
+            type( ContentTypeName.imageMedia() ).
+            displayName( "myContent" ).
+            name( "my-content" ).
+            parent( ContentPath.ROOT ).
+            contentData( data ).
+            creator( PrincipalKey.ofAnonymous() ).
+            childOrder( ContentConstants.DEFAULT_CHILD_ORDER ).
+            build();
+
+        final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( createContentTranslatorParams );
+
+        assertFalse( indexConfigDocument.getConfigForPath( PropertyPath.from( ContentPropertyNames.PAGE ) ).isEnabled() );
+        assertFalse( indexConfigDocument.getConfigForPath(
+            PropertyPath.from( ContentPropertyNames.PAGE, "region", "component", "partcomponent", "template" ) ).isEnabled() );
+        assertTrue( indexConfigDocument.getConfigForPath(
+            PropertyPath.from( ContentPropertyNames.PAGE, "region", "component", "textcomponent", "text" ) ).isEnabled() );
+    }
 }
