@@ -12,10 +12,13 @@ module api.ui.button {
         setEnabled(value: boolean) {
             if (value) {
                 this.removeClass('disabled');
-            }
-            else {
+            } else {
                 this.addClass('disabled');
             }
+        }
+        
+        isEnabled(): boolean {
+            return !this.hasClass('disabled');
         }
 
         down() {

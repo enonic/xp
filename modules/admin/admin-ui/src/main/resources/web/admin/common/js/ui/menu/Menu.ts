@@ -1,6 +1,7 @@
 module api.ui.menu {
 
     export class Menu extends api.dom.UlEl {
+
         private menuItems: MenuItem[] = [];
         private hideOnItemClick = true;
         private itemClickListeners: {(item: MenuItem):void}[] = [];
