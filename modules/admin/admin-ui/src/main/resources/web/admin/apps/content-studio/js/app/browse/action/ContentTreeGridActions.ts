@@ -20,6 +20,7 @@ import {DuplicateContentAction} from "./DuplicateContentAction";
 import {MoveContentAction} from "./MoveContentAction";
 import {SortContentAction} from "./SortContentAction";
 import {PublishContentAction} from "./PublishContentAction";
+import {UnpublishContentAction} from "./UnpublishContentAction";
 import {ContentBrowseItem} from "../ContentBrowseItem";
 
 export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAndCompareStatus> {
@@ -32,6 +33,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     public MOVE_CONTENT: Action;
     public SORT_CONTENT: Action;
     public PUBLISH_CONTENT: Action;
+    public UNPUBLISH_CONTENT: Action;
     public TOGGLE_SEARCH_PANEL: Action;
 
     private actions: api.ui.Action[] = [];
@@ -47,13 +49,14 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.MOVE_CONTENT = new MoveContentAction(grid);
         this.SORT_CONTENT = new SortContentAction(grid);
         this.PUBLISH_CONTENT = new PublishContentAction(grid);
+        this.UNPUBLISH_CONTENT = new UnpublishContentAction(grid);
 
         this.actions.push(
             this.SHOW_NEW_CONTENT_DIALOG_ACTION,
             this.EDIT_CONTENT, this.DELETE_CONTENT,
             this.DUPLICATE_CONTENT, this.MOVE_CONTENT,
             this.SORT_CONTENT, this.PREVIEW_CONTENT,
-            this.PUBLISH_CONTENT
+            this.PUBLISH_CONTENT, this.UNPUBLISH_CONTENT
         );
 
         let previewHandler = (<PreviewContentAction>this.PREVIEW_CONTENT).getPreviewHandler();
@@ -91,7 +94,11 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.DUPLICATE_CONTENT.setEnabled(false);
             this.MOVE_CONTENT.setEnabled(false);
             this.SORT_CONTENT.setEnabled(false);
+
             this.PUBLISH_CONTENT.setEnabled(false);
+            this.PUBLISH_CONTENT.setVisible(true);
+            this.UNPUBLISH_CONTENT.setEnabled(false);
+            this.UNPUBLISH_CONTENT.setVisible(false);
 
             parallelPromises = [
                 previewHandler.updateState(contentBrowseItems, changes),
@@ -110,7 +117,14 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.DELETE_CONTENT.setEnabled(!contentSummary ? false : contentSummary.isDeletable());
             this.DUPLICATE_CONTENT.setEnabled(true);
             this.MOVE_CONTENT.setEnabled(true);
-            this.PUBLISH_CONTENT.setEnabled(true);
+
+            let isPublished = this.isPublished(contentBrowseItems[0].getModel().getCompareStatus());
+
+            this.PUBLISH_CONTENT.setEnabled(!isPublished);
+            this.PUBLISH_CONTENT.setVisible(!isPublished);
+            this.UNPUBLISH_CONTENT.setEnabled(isPublished);
+            this.UNPUBLISH_CONTENT.setVisible(isPublished);
+
             this.SORT_CONTENT.setEnabled(true);
             // this.PREVIEW_CONTENT.setEnabled(false);
             parallelPromises = [
@@ -130,7 +144,16 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.DUPLICATE_CONTENT.setEnabled(false);
             this.MOVE_CONTENT.setEnabled(true);
             this.SORT_CONTENT.setEnabled(false);
-            this.PUBLISH_CONTENT.setEnabled(true);
+
+            let anyUnpublished = contentBrowseItems.some((browseItem) => {
+                return !this.isPublished(browseItem.getModel().getCompareStatus());
+            });
+
+            this.PUBLISH_CONTENT.setEnabled(anyUnpublished);
+            this.PUBLISH_CONTENT.setVisible(anyUnpublished);
+            this.UNPUBLISH_CONTENT.setEnabled(!anyUnpublished);
+            this.UNPUBLISH_CONTENT.setVisible(!anyUnpublished);
+
             parallelPromises = [
                 previewHandler.updateState(contentBrowseItems, changes),
                 this.updateActionsEnabledStateByPermissions(contentBrowseItems)
@@ -141,6 +164,10 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             }).catch(api.DefaultErrorHandler.handle);
         }
         return deferred.promise;
+    }
+
+    private isPublished(status: api.content.CompareStatus): boolean {
+        return status != api.content.CompareStatus.NEW && status != api.content.CompareStatus.UNKNOWN;
     }
 
     private updateActionsEnabledStateByPermissions(contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {
