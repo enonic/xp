@@ -26,11 +26,15 @@ export class DependantView extends api.app.NamesAndIconView {
 
         this.toggleClass("invalid", invalid);
 
-        if (object.getCompareStatus) {
-            var pendingDelete = api.content.CompareStatus.PENDING_DELETE == object.getCompareStatus() ? true : false;
-            this.toggleClass("pending-delete", pendingDelete);
+        var pendingDelete = false;
+
+        if (object.getCompareStatus ) { //TODO: use one data model
+            pendingDelete = (api.content.CompareStatus.PENDING_DELETE == object.getCompareStatus())
+        } else if(object.getContentState) {
+            pendingDelete = object.getContentState().isPendingDelete();
         }
 
+        this.toggleClass("pending-delete", pendingDelete);
         return object.getPath().toString();
     }
 
