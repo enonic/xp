@@ -17,8 +17,7 @@ module api.content.page.region {
                 setOptionDisplayValueViewer(new LayoutDescriptorViewer()).
                 setSelectedOptionsView(new LayoutDescriptorSelectedOptionsView()).
                 setLoader(loader).
-                setMaximumOccurrences(1).
-                setNextInputFocusWhenMaxReached(false));
+                setMaximumOccurrences(1).setNextInputFocusWhenMaxReached(false).setNoOptionsText("No applications available"));
         }
         getDescriptor(descriptorKey: DescriptorKey): LayoutDescriptor {
             var option = this.getOptionByValue(descriptorKey.toString());

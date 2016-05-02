@@ -31,6 +31,8 @@ module api.ui.selector.combobox {
 
         value?: string;
 
+        noOptionsText?: string;
+
     }
 
     export class ComboBox<OPTION_DISPLAY_VALUE> extends api.dom.FormInputEl {
@@ -67,6 +69,8 @@ module api.ui.selector.combobox {
 
         private selectiondDelta = [];
 
+        private noOptionsText: string;
+
         public static debug: boolean = false;
 
         /**
@@ -95,6 +99,8 @@ module api.ui.selector.combobox {
             if (config.minWidth) {
                 this.minWidth = config.minWidth;
             }
+
+            this.noOptionsText = config.noOptionsText;
 
             this.input = new ComboBoxOptionFilterInput();
             this.appendChild(this.input);
@@ -160,7 +166,14 @@ module api.ui.selector.combobox {
 
             this.doUpdateDropdownTopPositionAndWidth();
             this.notifyExpanded(true);
-            this.comboBoxDropdown.showDropdown(this.getSelectedOptions());
+
+            if (this.input.getValue() === "") {
+                this.comboBoxDropdown.showDropdown(this.getSelectedOptions(), this.noOptionsText);
+            }
+            else {
+                this.comboBoxDropdown.showDropdown(this.getSelectedOptions());
+            }
+
             this.dropdownHandle.down();
 
             this.comboBoxDropdown.renderDropdownGrid();
@@ -183,7 +196,13 @@ module api.ui.selector.combobox {
         }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[], saveSelection?: boolean) {
-            this.comboBoxDropdown.setOptions(options, this.getSelectedOptions(), saveSelection);
+            if (this.input.getValue() === "") {
+                this.comboBoxDropdown.setOptions(options, this.getSelectedOptions(), saveSelection, this.noOptionsText);
+            }
+            else {
+                this.comboBoxDropdown.setOptions(options, this.getSelectedOptions(), saveSelection);
+            }
+
         }
 
         addOption(option: Option<OPTION_DISPLAY_VALUE>) {
