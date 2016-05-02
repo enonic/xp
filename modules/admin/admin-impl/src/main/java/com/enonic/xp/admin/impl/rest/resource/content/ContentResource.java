@@ -392,7 +392,6 @@ public final class ContentResource
         final ContentPaths contentsToDelete = ContentPaths.from( json.getContentPaths() );
 
         final ContentPaths contentsToDeleteList = this.filterChildrenIfParentPresents( ContentPaths.from( json.getContentPaths() ) );
-        ;
 
         final DeleteContentResultJson jsonResult = new DeleteContentResultJson();
 
