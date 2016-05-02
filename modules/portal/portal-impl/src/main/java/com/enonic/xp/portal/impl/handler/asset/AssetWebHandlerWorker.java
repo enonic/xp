@@ -33,7 +33,6 @@ final class AssetWebHandlerWorker
         portalWebRequest = builder.portalWebRequest;
         portalWebResponse = builder.portalWebResponse;
         resourceService = builder.resourceService;
-        resourceService = builder.resourceService;
         applicationKey = builder.applicationKey;
         name = builder.name;
         cacheable = builder.cacheable;

@@ -1,0 +1,243 @@
+package com.enonic.xp.portal.impl.handler.service;
+
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.PortalWebRequest;
+import com.enonic.xp.portal.PortalWebResponse;
+import com.enonic.xp.portal.controller.ControllerScript;
+import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.handler.ControllerWebHandlerWorker;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.service.ServiceDescriptor;
+import com.enonic.xp.service.ServiceDescriptorService;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.web.websocket.WebSocketConfig;
+import com.enonic.xp.web.websocket.WebSocketEndpoint;
+
+final class ServiceWebHandlerWorker
+    extends ControllerWebHandlerWorker
+{
+    private final static String ROOT_SERVICE_PREFIX = "services/";
+
+    private final static String SITE_SERVICE_PREFIX = "site/services/";
+
+    private final ResourceService resourceService;
+
+    private final ServiceDescriptorService serviceDescriptorService;
+
+    private final ControllerScriptFactory controllerScriptFactory;
+
+    private final ApplicationKey applicationKey;
+
+    private final String name;
+
+    private ServiceWebHandlerWorker( final Builder builder )
+    {
+        portalWebRequest = builder.portalWebRequest;
+        portalWebResponse = builder.portalWebResponse;
+        contentService = builder.contentService;
+        resourceService = builder.resourceService;
+        serviceDescriptorService = builder.serviceDescriptorService;
+        controllerScriptFactory = builder.controllerScriptFactory;
+        applicationKey = builder.applicationKey;
+        name = builder.name;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    @Override
+    public PortalWebResponse execute()
+    {
+        //Retrieves the ServiceDescriptor
+        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, name );
+        final ServiceDescriptor serviceDescriptor = serviceDescriptorService.getByKey( descriptorKey );
+        if ( serviceDescriptor == null )
+        {
+            throw notFound( "Service [%s] not found", descriptorKey.toString() );
+        }
+
+        //Checks if the access to ServiceDescriptor is allowed
+        final PrincipalKeys principals = ContextAccessor.current().
+            getAuthInfo().
+            getPrincipals();
+        if ( !serviceDescriptor.isAccessAllowed( principals ) )
+        {
+            throw forbidden( "You don't have permission to access [%s]", serviceDescriptor.toString() );
+        }
+
+        //Prepares the request
+        final Content content = getContentOrNull( getContentSelector() );
+        final Site site = getSiteOrNull( content );
+        final PortalWebRequest portalWebRequest = PortalWebRequest.create( this.portalWebRequest ).
+            applicationKey( applicationKey ).
+            content( content ).
+            site( site ).
+            build();
+
+        //TODO Temporary fix until renaming of PortalWebRequest to PortalRequest
+        final PortalRequest portalRequest = convertToPortalRequest( portalWebRequest );
+
+        //Executes the service
+        final ControllerScript controllerScript = getScript();
+        final PortalResponse portalResponse = PortalResponse.create( controllerScript.execute( portalRequest ) ).
+            build();
+
+        //TODO Temporary fix until renaming of PortalWebResponse to PortalResponse
+        final PortalWebResponse portalWebResponse = convertToPortalWebResponse( portalResponse );
+
+        return portalWebResponse;
+    }
+
+    private PortalRequest convertToPortalRequest( PortalWebRequest portalWebRequest )
+    {
+        final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMethod( portalWebRequest.getMethod() );
+        portalRequest.getParams().putAll( portalWebRequest.getParams() );
+        portalRequest.getHeaders().putAll( portalWebRequest.getHeaders() );
+        portalRequest.getCookies().putAll( portalWebRequest.getCookies() );
+        portalRequest.setScheme( portalWebRequest.getScheme() );
+        portalRequest.setHost( portalWebRequest.getHost() );
+        portalRequest.setPort( portalWebRequest.getPort() );
+        portalRequest.setPath( portalWebRequest.getPath() );
+        portalRequest.setUrl( portalWebRequest.getUrl() );
+        portalRequest.setMode( portalWebRequest.getMode() );
+        portalRequest.setBranch( portalWebRequest.getBranch() );
+        portalRequest.setContentPath( portalWebRequest.getContentPath() );
+        portalRequest.setBaseUri( portalWebRequest.getBaseUri() );
+        portalRequest.setSite( portalWebRequest.getSite() );
+        portalRequest.setContent( portalWebRequest.getContent() );
+        portalRequest.setPageTemplate( portalWebRequest.getPageTemplate() );
+        portalRequest.setComponent( portalWebRequest.getComponent() );
+        portalRequest.setApplicationKey( portalWebRequest.getApplicationKey() );
+        portalRequest.setPageDescriptor( portalWebRequest.getPageDescriptor() );
+        portalRequest.setControllerScript( portalWebRequest.getControllerScript() );
+        portalRequest.setEndpointPath( portalWebRequest.getEndpointPath() );
+        portalRequest.setContentType( portalWebRequest.getContentType() );
+        portalRequest.setBody( portalWebRequest.getBody() );
+        portalRequest.setRawRequest( portalWebRequest.getRawRequest() );
+        portalRequest.setWebSocket( portalWebRequest.isWebSocket() );
+        return portalRequest;
+    }
+
+    private PortalWebResponse convertToPortalWebResponse( final PortalResponse portalResponse )
+    {
+        final PortalWebResponse portalWebResponse = new PortalWebResponse();
+        portalWebResponse.setStatus( portalResponse.getStatus() );
+        portalWebResponse.setContentType( portalResponse.getContentType() );
+        portalWebResponse.getHeaders().putAll( portalResponse.getHeaders() );
+        portalWebResponse.getCookies().addAll( portalResponse.getCookies() );
+        portalWebResponse.setWebSocketConfig( portalResponse.getWebSocket() );
+        portalWebResponse.setBody( portalResponse.getBody() );
+        portalWebResponse.setPostProcess( portalResponse.isPostProcess() );
+        portalWebResponse.setContributions( portalResponse.getContributions() );
+        portalWebResponse.setApplyFilters( portalResponse.applyFilters() );
+        return portalWebResponse;
+    }
+
+
+    private ControllerScript getScript()
+    {
+        //Retrieves the resource
+        Resource resource = this.resourceService.getResource( ResourceKey.from( this.applicationKey, ROOT_SERVICE_PREFIX + this.name ) );
+        if ( !resource.exists() )
+        {
+            resource = this.resourceService.getResource( ResourceKey.from( this.applicationKey, SITE_SERVICE_PREFIX + this.name ) );
+        }
+
+        //Executes the service
+        return this.controllerScriptFactory.fromDir( resource.getKey() );
+    }
+
+    @Override
+    public WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config )
+    {
+        return new WebSocketEndpointImpl( config, this::getScript );
+    }
+
+    public static final class Builder
+    {
+        public PortalWebRequest portalWebRequest;
+
+        public PortalWebResponse portalWebResponse;
+
+        private ContentService contentService;
+
+        private ResourceService resourceService;
+
+        private ServiceDescriptorService serviceDescriptorService;
+
+        private ControllerScriptFactory controllerScriptFactory;
+
+        private ApplicationKey applicationKey;
+
+        private String name;
+
+        private Builder()
+        {
+        }
+
+        public Builder portalWebRequest( final PortalWebRequest portalWebRequest )
+        {
+            this.portalWebRequest = portalWebRequest;
+            return this;
+        }
+
+        public Builder portalWebResponse( final PortalWebResponse portalWebResponse )
+        {
+            this.portalWebResponse = portalWebResponse;
+            return this;
+        }
+
+        public Builder contentService( final ContentService contentService )
+        {
+            this.contentService = contentService;
+            return this;
+        }
+
+        public Builder resourceService( final ResourceService resourceService )
+        {
+            this.resourceService = resourceService;
+            return this;
+        }
+
+        public Builder serviceDescriptorService( final ServiceDescriptorService serviceDescriptorService )
+        {
+            this.serviceDescriptorService = serviceDescriptorService;
+            return this;
+        }
+
+        public Builder controllerScriptFactory( final ControllerScriptFactory controllerScriptFactory )
+        {
+            this.controllerScriptFactory = controllerScriptFactory;
+            return this;
+        }
+
+        public Builder applicationKey( final ApplicationKey applicationKey )
+        {
+            this.applicationKey = applicationKey;
+            return this;
+        }
+
+        public Builder name( final String name )
+        {
+            this.name = name;
+            return this;
+        }
+
+        public ServiceWebHandlerWorker build()
+        {
+            return new ServiceWebHandlerWorker( this );
+        }
+    }
+}

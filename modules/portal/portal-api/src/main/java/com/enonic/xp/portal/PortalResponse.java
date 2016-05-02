@@ -77,6 +77,11 @@ public final class PortalResponse
         return postProcess;
     }
 
+    public ImmutableListMultimap<HtmlTag, String> getContributions()
+    {
+        return this.contributions;
+    }
+
     public ImmutableList<String> getContributions( final HtmlTag tag )
     {
         return this.contributions.containsKey( tag ) ? this.contributions.get( tag ) : ImmutableList.of();

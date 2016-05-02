@@ -52,7 +52,11 @@ public class WebDispatcherServlet
         //Handles the request
         webResponse = webDispatcher.dispatch( webRequest, webResponse );
 
+        //TODO Websockets
+
         //Serializes the request
+        final WebResponseSerializer serializer = new WebResponseSerializer( webRequest, webResponse );
+        serializer.serialize( servletResponse );
 
     }
 
