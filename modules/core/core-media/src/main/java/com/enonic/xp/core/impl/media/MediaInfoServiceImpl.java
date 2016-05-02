@@ -79,29 +79,6 @@ public final class MediaInfoServiceImpl
     private Metadata parseMetadata( final ByteSource byteSource )
     {
         return this.mediaParser.parseMetadata( byteSource ).getMetadata();
-
-        /*
-        final ParseContext context = new ParseContext();
-        final ContentHandler handler = new BodyContentHandler();
-        final Metadata metadata = new Metadata();
-
-        // Parse metadata
-        try (final InputStream stream = byteSource.openStream())
-        {
-            final AutoDetectParser autoDetectParser = new AutoDetectParser( this.detector, this.parser );
-
-            autoDetectParser.parse( stream, handler, metadata, context );
-
-        }
-        catch ( IOException | SAXException | TikaException e )
-        {
-            throw Exceptions.unchecked( e );
-        }
-
-        System.out.println( handler.toString() );
-
-        return metadata;
-        */
     }
 
     @Reference

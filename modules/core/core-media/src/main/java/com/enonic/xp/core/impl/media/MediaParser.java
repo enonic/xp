@@ -55,7 +55,7 @@ public class MediaParser
 
     private String getContent( final BodyContentHandler contentHandler )
     {
-        return contentHandler.toString();
+        return ExtractedTextCleaner.clean( contentHandler.toString() );
     }
 
 }
