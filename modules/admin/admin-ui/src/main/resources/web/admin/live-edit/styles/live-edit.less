@@ -2,6 +2,7 @@
 @import "less/shader";
 @import "less/highlighter";
 @import "less/dialog";
+@import "less/reset";
 @import "less/partials/drag-placeholder";
 @import "less/partials/item-view";
 @import "less/partials/image-view";
@@ -11,15 +12,3 @@
 @import "less/partials/layout-view";
 @import "less/partials/page-view";
 @import "less/partials/fragment-view";
-
-/*
-    Disable pointer events for A elements
-    disables CSS hover selectors and clicks on links
-*/
-a {
-    pointer-events: none;
-}
-
-a[disabled] {
-    cursor: move; //IE fix XP-2100
-}
