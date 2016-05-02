@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
@@ -9,15 +11,31 @@ import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.form.Input;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.index.IndexValueProcessors;
+import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.Assert.*;
 
 public class ContentIndexConfigFactoryTest
 {
+
+    ContentTypeService contentTypeService;
+
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        contentTypeService = Mockito.mock( ContentTypeService.class );
+    }
+
     @Test
     public void media_indexing()
         throws Exception
@@ -41,7 +59,13 @@ public class ContentIndexConfigFactoryTest
             childOrder( ContentConstants.DEFAULT_CHILD_ORDER ).
             build();
 
-        final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( createContentTranslatorParams );
+        final Form form = Form.create().build();
+        final ContentType contentType =
+            ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test" ).form( form ).build();
+        Mockito.when( contentTypeService.getByName( Mockito.any() ) ).thenReturn( contentType );
+
+        final IndexConfigDocument indexConfigDocument =
+            ContentIndexConfigFactory.create( createContentTranslatorParams, contentTypeService );
 
         assertEquals( IndexConfig.MINIMAL, indexConfigDocument.getConfigForPath( PropertyPath.from( ContentPropertyNames.EXTRA_DATA ) ) );
 
@@ -53,5 +77,53 @@ public class ContentIndexConfigFactoryTest
 
         assertEquals( IndexConfig.MINIMAL, indexConfigDocument.getConfigForPath(
             PropertyPath.from( ContentPropertyNames.EXTRA_DATA, "subSet", "subSetValue" ) ) );
+    }
+
+    @Test
+    public void htmlAreaIndexing()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+
+        final Form form = Form.create().
+            addFormItem( Input.create().name( "html_area1" ).label( "HtmlArea" ).inputType( InputTypeName.HTML_AREA ).build() ).
+            addFormItem( Input.create().name( "html_area2" ).label( "HtmlArea" ).inputType( InputTypeName.HTML_AREA ).build() ).
+            addFormItem( Input.create().name( "html_area3" ).label( "HtmlArea" ).inputType( InputTypeName.HTML_AREA ).build() ).build();
+
+        final ContentType contentType =
+            ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test" ).form( form ).build();
+        Mockito.when( contentTypeService.getByName( Mockito.any() ) ).thenReturn( contentType );
+
+        final IndexConfig htmlIndexConfig = IndexConfig.create().
+            enabled( true ).
+            fulltext( true ).
+            nGram( true ).
+            decideByType( false ).
+            includeInAllText( true ).
+            addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).
+            build();
+
+        final CreateContentTranslatorParams createContentTranslatorParams = CreateContentTranslatorParams.create().
+            type( ContentTypeName.imageMedia() ).
+            displayName( "myContent" ).
+            name( "my-content" ).
+            parent( ContentPath.ROOT ).
+            contentData( data ).
+            creator( PrincipalKey.ofAnonymous() ).
+            childOrder( ContentConstants.DEFAULT_CHILD_ORDER ).
+            build();
+
+        final IndexConfigDocument indexConfigDocument =
+            ContentIndexConfigFactory.create( createContentTranslatorParams, contentTypeService );
+
+        assertEquals( htmlIndexConfig, indexConfigDocument.getConfigForPath( PropertyPath.from( ContentPropertyNames.HTMLAREA_TEXT ) ) );
+
+        assertEquals( htmlIndexConfig,
+                      indexConfigDocument.getConfigForPath( PropertyPath.from( ContentPropertyNames.HTMLAREA_TEXT + "1" ) ) );
+
+        assertEquals( htmlIndexConfig,
+                      indexConfigDocument.getConfigForPath( PropertyPath.from( ContentPropertyNames.HTMLAREA_TEXT + "2" ) ) );
+
+
     }
 }

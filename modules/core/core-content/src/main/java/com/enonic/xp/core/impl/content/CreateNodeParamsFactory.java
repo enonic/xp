@@ -7,17 +7,18 @@ import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.schema.content.ContentTypeService;
 
 public class CreateNodeParamsFactory
 {
     private static final ContentDataSerializer serializer = new ContentDataSerializer();
 
-    public static CreateNodeParams create( final CreateContentTranslatorParams params )
+    public static CreateNodeParams create( final CreateContentTranslatorParams params, final ContentTypeService contentTypeService )
     {
         final PropertyTree contentAsData = new PropertyTree();
         serializer.toCreateNodeData( params, contentAsData.getRoot() );
 
-        final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( params );
+        final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( params, contentTypeService );
 
         final CreateNodeParams.Builder builder = CreateNodeParams.create().
             name( resolveNodeName( params.getName() ) ).
