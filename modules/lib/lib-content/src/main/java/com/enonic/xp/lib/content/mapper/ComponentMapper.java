@@ -2,6 +2,7 @@ package com.enonic.xp.lib.content.mapper;
 
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.DescriptorBasedComponent;
+import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.TextComponent;
@@ -43,6 +44,10 @@ public final class ComponentMapper
         {
             serialize( gen, (TextComponent) value );
         }
+        else if ( value instanceof FragmentComponent )
+        {
+            serialize( gen, (FragmentComponent) value );
+        }
     }
 
     private void serialize( final MapGenerator gen, final DescriptorBasedComponent comp )
@@ -64,6 +69,17 @@ public final class ComponentMapper
             new RegionMapper( region ).serialize( gen );
         }
         gen.end();
+    }
+
+    private void serialize( final MapGenerator gen, final FragmentComponent comp )
+    {
+        gen.value( "fragment", comp.getFragment() );
+        if ( comp.getConfig() != null )
+        {
+            gen.map( "config" );
+            new PropertyTreeMapper( comp.getConfig() ).serialize( gen );
+            gen.end();
+        }
     }
 
     private void serialize( final MapGenerator gen, final TextComponent comp )
