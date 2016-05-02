@@ -59,19 +59,17 @@ module api.content.form.inputtype.upload {
                 this.mediaUploaderEl.setFileName(fileName);
 
                 switch (property.getType()) {
-                    case ValueTypes.DATA:
-                        property.getPropertySet().setProperty('attachment', 0, value);
-                        break;
-                    case ValueTypes.STRING:
-                        property.setValue(ValueTypes.STRING.newValue(fileName));
-                        break;
+                case ValueTypes.DATA:
+                    property.getPropertySet().setProperty('attachment', 0, value);
+                    break;
+                case ValueTypes.STRING:
+                    property.setValue(ValueTypes.STRING.newValue(fileName));
+                    break;
                 }
 
                 api.notify.showFeedback('\"' + fileName + '\" uploaded');
 
                 this.manageSVGImageIfPresent(content);
-
-                new ContentRequiresSaveEvent(content.getContentId()).fire();
             });
 
             this.mediaUploaderEl.onUploadFailed(() => {
@@ -83,12 +81,12 @@ module api.content.form.inputtype.upload {
                 this.mediaUploaderEl.setFileName('');
 
                 switch (property.getType()) {
-                    case ValueTypes.DATA:
-                        property.getPropertySet().setProperty('attachment', 0, ValueTypes.STRING.newNullValue());
-                        break;
-                    case ValueTypes.STRING:
-                        property.setValue(ValueTypes.STRING.newNullValue());
-                        break;
+                case ValueTypes.DATA:
+                    property.getPropertySet().setProperty('attachment', 0, ValueTypes.STRING.newNullValue());
+                    break;
+                case ValueTypes.STRING:
+                    property.setValue(ValueTypes.STRING.newNullValue());
+                    break;
                 }
             });
 
@@ -118,10 +116,8 @@ module api.content.form.inputtype.upload {
         private manageSVGImageIfPresent(content: api.content.Content) {
             if (content.getType().isVectorMedia()) {
                 this.addClass("with-svg-image");
-                var imgUrl = new api.content.ContentImageUrlResolver().
-                    setContentId(this.getContext().contentId).
-                    setTimestamp(content.getModifiedTime()).
-                    resolve();
+                var imgUrl = new api.content.ContentImageUrlResolver().setContentId(this.getContext().contentId).setTimestamp(
+                    content.getModifiedTime()).resolve();
 
                 this.svgImage.setSrc(imgUrl);
             } else {
@@ -132,9 +128,7 @@ module api.content.form.inputtype.upload {
         private deleteContent(property: Property) {
             var contentId = this.getContext().contentId;
 
-            new api.content.GetContentByIdRequest(contentId).
-            sendAndParse().
-            then((content: api.content.Content) => {
+            new api.content.GetContentByIdRequest(contentId).sendAndParse().then((content: api.content.Content) => {
                 var deleteRequest = new api.content.DeleteContentRequest();
 
                 deleteRequest.addContentPath(content.getPath());
@@ -157,10 +151,10 @@ module api.content.form.inputtype.upload {
         private getFileNameFromProperty(property: Property): string {
             if (property.getValue() != null) {
                 switch (property.getType()) {
-                    case ValueTypes.DATA:
-                        return property.getPropertySet().getString('attachment');
-                    case ValueTypes.STRING:
-                        return property.getValue().getString();
+                case ValueTypes.DATA:
+                    return property.getPropertySet().getString('attachment');
+                case ValueTypes.STRING:
+                    return property.getValue().getString();
                 }
             }
             return "";
@@ -172,8 +166,8 @@ module api.content.form.inputtype.upload {
 
         private propertyAlreadyHasAttachment(property: Property): boolean {
             return (property.getValue() != null &&
-            property.getType() == ValueTypes.DATA &&
-            !api.util.StringHelper.isEmpty(property.getPropertySet().getString('attachment')));
+                    property.getType() == ValueTypes.DATA &&
+                    !api.util.StringHelper.isEmpty(property.getPropertySet().getString('attachment')));
         }
 
         private getAllowTypeFromFileName(fileName: string): MediaUploaderConfigAllowType[] {
@@ -187,10 +181,8 @@ module api.content.form.inputtype.upload {
 
                 var content = this.config.formContext.getPersistedContent();
 
-                var imgUrl = new api.content.ContentImageUrlResolver().
-                    setContentId(this.getContext().contentId).
-                    setTimestamp(content.getModifiedTime()).
-                    resolve();
+                var imgUrl = new api.content.ContentImageUrlResolver().setContentId(this.getContext().contentId).setTimestamp(
+                    content.getModifiedTime()).resolve();
 
                 this.svgImage.setSrc(imgUrl);
 
