@@ -13,6 +13,7 @@ import PublishContentRequest = api.content.PublishContentRequest;
 import {ContentDeleteDialogAction} from "./ContentDeleteDialogAction";
 import {ContentDeleteSelectionItem} from "./ContentDeleteSelectionItem";
 import {DeleteAction} from "../view/DeleteAction";
+import {DependantView} from "../view/DependantView";
 
 export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
 
@@ -304,7 +305,7 @@ export class DescendantsToBeDeletedList extends api.ui.selector.list.ListBox<Con
     }
 
     createItemView(item: ContentSummary, readOnly: boolean): api.dom.Element {
-        return new DescendantView(item);
+        return DependantView.create().item(item).build();
     }
 
     getItemId(item: ContentSummary): string {
@@ -321,46 +322,4 @@ export class DescendantsToBeDeletedList extends api.ui.selector.list.ListBox<Con
     }
 }
 
-export class DescendantView extends api.dom.DivEl {
 
-    private wrapperDivEl: api.dom.DivEl;
-
-    private iconImageEl: api.dom.ImgEl;
-
-    private iconDivEl: api.dom.DivEl;
-
-    private namesView: api.app.NamesView;
-
-    constructor(content: api.content.ContentSummary) {
-        super("names-and-icon-view descendant-view small");
-
-        this.wrapperDivEl = new api.dom.DivEl("wrapper");
-        this.appendChild(this.wrapperDivEl);
-
-        if (!content.getType().isImage()) {
-            this.iconImageEl = new api.dom.ImgEl(null, "font-icon-default");
-            this.wrapperDivEl.appendChild(this.iconImageEl);
-            this.iconImageEl.setSrc(this.resolveIconUrl(content));
-        } else {
-            this.iconDivEl = new api.dom.DivEl("font-icon-default image");
-            this.wrapperDivEl.appendChild(this.iconDivEl);
-        }
-
-        this.namesView = new api.app.NamesView(false).setMainName(this.resolveDisplayName(content));
-        this.appendChild(this.namesView);
-    }
-
-    private resolveDisplayName(object: ContentSummary): string {
-        var contentName = object.getName(),
-            invalid = !object.isValid() || !object.getDisplayName() || contentName.isUnnamed(),
-            pendingDelete = object.getContentState().isPendingDelete();
-        this.toggleClass("invalid", invalid);
-        this.toggleClass("pending-delete", pendingDelete);
-
-        return object.getPath().toString();
-    }
-
-    private resolveIconUrl(object: ContentSummary): string {
-        return new ContentIconUrlResolver().setContent(object).resolve();
-    }
-}
