@@ -8,9 +8,12 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
@@ -32,6 +35,8 @@ public final class MacroDescriptorServiceImpl
     private final BuiltinMacroDescriptors builtinMacrosDescriptors = new BuiltinMacroDescriptors();
 
     private ResourceService resourceService;
+
+    private ApplicationService applicationService;
 
     @Override
     public MacroDescriptor getByKey( final MacroKey key )
@@ -86,6 +91,20 @@ public final class MacroDescriptorServiceImpl
         for ( final ApplicationKey key : applicationKeys )
         {
             list.addAll( getByApplication( key ).getSet() );
+        }
+
+        return MacroDescriptors.from( list );
+    }
+
+    @Override
+    public MacroDescriptors getAll()
+    {
+        final Set<MacroDescriptor> list = Sets.newLinkedHashSet();
+
+        for ( final Application application : this.applicationService.getInstalledApplications() )
+        {
+            final MacroDescriptors macroDescriptors = getByApplication( application.getKey() );
+            list.addAll( macroDescriptors.getSet() );
         }
 
         return MacroDescriptors.from( list );
@@ -159,5 +178,11 @@ public final class MacroDescriptorServiceImpl
     public void setResourceService( final ResourceService resourceService )
     {
         this.resourceService = resourceService;
+    }
+
+    @Reference
+    public void setApplicationService( final ApplicationService applicationService )
+    {
+        this.applicationService = applicationService;
     }
 }
