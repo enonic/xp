@@ -3,7 +3,6 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +23,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.enonic.xp.query.expr.*;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -136,6 +134,14 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.ConstraintExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.LogicalExpr;
+import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.security.Principal;
@@ -385,22 +391,21 @@ public final class ContentResource
     {
         final ContentPaths contentsToDelete = ContentPaths.from( json.getContentPaths() );
 
-        //sort contents by nesting order to avoid removing parent content before child.
-        List<ContentPath> contentsToDeleteList = Lists.newArrayList( contentsToDelete.getSet() );
-        Collections.sort( contentsToDeleteList, ( ContentPath contentPath1, ContentPath contentPath2 ) -> ( contentPath2.elementCount() -
-            contentPath1.elementCount() ) );
+        final ContentPaths contentsToDeleteList = this.filterChildrenIfParentPresents( ContentPaths.from( json.getContentPaths() ) );
 
         final DeleteContentResultJson jsonResult = new DeleteContentResultJson();
 
         for ( final ContentPath contentToDelete : contentsToDeleteList )
         {
-            final DeleteContentParams deleteContent = DeleteContentParams.create().
-                contentPath( contentToDelete ).
-                build();
+            final DeleteContentParams deleteContentParams = DeleteContentParams.create().
+                    contentPath( contentToDelete ).
+                deleteOnline( json.isDeleteOnline() ).
+                deletePending( json.isDeletePending() ).
+                    build();
 
             try
             {
-                Contents contents = contentService.delete( deleteContent );
+                Contents contents = contentService.delete( deleteContentParams );
                 contents.forEach( ( content ) -> {
                     if ( ContentState.PENDING_DELETE.equals( content.getContentState() ) )
                     {
@@ -422,12 +427,12 @@ public final class ContentResource
                     if ( content != null )
                     {
                         jsonResult.addFailure( content.getId().toString(), content.getDisplayName(), content.getType().getLocalName(),
-                                               e.getMessage() );
+                                e.getMessage() );
                     }
                 }
                 catch ( final Exception e2 )
                 {
-                    jsonResult.addFailure( null, deleteContent.getContentPath().toString(), null, e2.getMessage() );
+                    jsonResult.addFailure( null, deleteContentParams.getContentPath().toString(), null, e2.getMessage() );
                 }
 
             }

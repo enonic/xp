@@ -172,7 +172,7 @@ module api.liveedit {
                     if (this.isTextEditMode()) {
                         this.setTextEditMode(false);
                     }
-                    itemView.select(null, ItemViewContextMenuPosition.NONE, event.isNew(), true);
+                    itemView.select(null, ItemViewContextMenuPosition.NONE, event.isNew());
                 }
             };
             this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => {
@@ -313,8 +313,8 @@ module api.liveedit {
             });
         }
 
-        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
-            super.select(clickPosition, menuPosition);
+        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false, rightClicked: boolean = false) {
+            super.select(clickPosition, menuPosition, false, rightClicked);
 
             new PageSelectedEvent(this).fire();
         }

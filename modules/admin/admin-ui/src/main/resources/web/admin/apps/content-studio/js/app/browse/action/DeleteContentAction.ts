@@ -16,15 +16,17 @@ export class DeleteContentAction extends Action {
                 = grid.getSelectedDataList();
             new ContentDeletePromptEvent(contents)
                 .setNoCallback(null)
-                .setYesCallback(() => {
-                    var excludeStatuses = [CompareStatus.EQUAL, CompareStatus.PENDING_DELETE, CompareStatus.NEWER],
-                        deselected = [];
+                .setYesCallback((exclude?: api.content.CompareStatus[]) => {
+
+                    var excludeStatuses = !!exclude ? exclude : [CompareStatus.EQUAL, CompareStatus.NEWER, CompareStatus.MOVED],
+                    //except PENDING_DELETE because it gets deleted immediately via dialog
+                    deselected = [];
                     grid.getSelectedDataList().forEach((content: ContentSummaryAndCompareStatus) => {
                         if (excludeStatuses.indexOf(content.getCompareStatus()) < 0) {
                             deselected.push(content.getId());
                         }
                     });
-                    grid.deselectNodes(deselected);
+                grid.deselectNodes(deselected);
                 }).fire();
         });
     }

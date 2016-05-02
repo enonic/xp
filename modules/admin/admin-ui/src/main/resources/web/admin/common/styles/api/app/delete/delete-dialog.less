@@ -18,6 +18,15 @@
     }
   }
 
+  .instant-delete-check {
+    position: absolute;
+    bottom: 40px;
+
+    input[type="checkbox"] + label {
+      color: @admin-blue !important;
+    }
+  }
+
   .item-list {
     max-height: 400px;
     overflow-y: auto;
@@ -92,6 +101,12 @@
           content: "!";
           background: #cb0300;
           color: #ffffff;
+        }
+      }
+
+      &.pending-delete .names-view {
+        .main-name, .sub-name {
+          text-decoration: line-through;
         }
       }
 
