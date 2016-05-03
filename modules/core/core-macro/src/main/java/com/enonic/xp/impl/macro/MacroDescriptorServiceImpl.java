@@ -156,7 +156,7 @@ public final class MacroDescriptorServiceImpl
     {
         final MacroDescriptor.Builder builder = MacroDescriptor.create();
         parseXml( resource, builder );
-        builder.key( key );
+        builder.key( key ).icon( IconLoader.loadIcon( key, this.resourceService, PATH ) );
         return builder.build();
     }
 

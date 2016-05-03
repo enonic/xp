@@ -55,6 +55,17 @@ public class MacroDescriptorServiceTest
     }
 
     @Test
+    public void testIconAdded()
+        throws Exception
+    {
+        final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, "youtube" );
+        final MacroDescriptor descriptor = this.service.getByKey( macroKey );
+        assertNotNull( descriptor );
+        assertTrue( descriptor.getKey().equals( macroKey ) );
+        assertNotNull( descriptor.getIcon() );
+    }
+
+    @Test
     public void testGetByApplication()
         throws Exception
     {

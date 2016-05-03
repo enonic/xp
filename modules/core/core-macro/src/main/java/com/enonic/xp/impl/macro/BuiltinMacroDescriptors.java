@@ -15,6 +15,8 @@ public class BuiltinMacroDescriptors
 {
     private final MacroDescriptors macroDescriptors = generateMacroDescriptors();
 
+    private static final String MACRO_DESCRIPTORS_FOLDER = "macro-descriptors";
+
     public MacroDescriptor getByKey( final MacroKey key )
     {
         return macroDescriptors.stream().
@@ -48,12 +50,7 @@ public class BuiltinMacroDescriptors
             addFormItem( createTextLineInput( "height", "Height" ).occurrences( 0, 1 ).build() ).
             build();
 
-        return MacroDescriptor.create().
-            key( macroKey ).
-            displayName( "Youtube macro" ).
-            description( "Youtube macro" ).
-            form( form ).
-            build();
+        return create( macroKey, "Youtube macro", "Youtube macro", form );
     }
 
     private MacroDescriptor generateTwitterMacroDescriptor()
@@ -64,12 +61,7 @@ public class BuiltinMacroDescriptors
             addFormItem( createTextLineInput( "lang", "Language" ).occurrences( 0, 1 ).build() ).
             build();
 
-        return MacroDescriptor.create().
-            key( macroKey ).
-            displayName( "Twitter macro" ).
-            description( "Twitter macro" ).
-            form( form ).
-            build();
+        return create( macroKey, "Twitter macro", "Twitter macro", form );
     }
 
     private MacroDescriptor generateEmbeddedCodeMacroDescriptor()
@@ -80,12 +72,7 @@ public class BuiltinMacroDescriptors
             addFormItem( createTextAreaInput( "body", "Body" ).occurrences( 1, 1 ).build() ).
             build();
 
-        return MacroDescriptor.create().
-            key( macroKey ).
-            displayName( "Embedded code macro" ).
-            description( "Embedded code macro" ).
-            form( form ).
-            build();
+        return create( macroKey, "Embedded code macro", "Embedded code macro", form );
     }
 
     private MacroDescriptor generateNoFormatMacroDescriptor()
@@ -96,11 +83,17 @@ public class BuiltinMacroDescriptors
             addFormItem( createTextAreaInput( "body", "Body" ).occurrences( 1, 1 ).build() ).
             build();
 
+        return create( macroKey, "No Format macro", "The contents of the body will not be formatted", form );
+    }
+
+    private MacroDescriptor create( final MacroKey macroKey, final String displayName, final String description, final Form form )
+    {
         return MacroDescriptor.create().
             key( macroKey ).
-            displayName( "No Format macro" ).
-            description( "The contents of the body will not be formatted" ).
+            displayName( displayName ).
+            description( description ).
             form( form ).
+            icon( IconLoader.loadIcon( this.getClass(), MACRO_DESCRIPTORS_FOLDER, macroKey.getName() ) ).
             build();
     }
 
