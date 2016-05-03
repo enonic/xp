@@ -1,0 +1,24 @@
+{
+  "macros": [
+    {
+      "description": "my description",
+      "displayName": "my macro1 name",
+      "form": {
+        "formItems": []
+      },
+      "iconUrl": null,
+      "key": "my-app1:macro1",
+      "name": "macro1"
+    },
+    {
+      "description": "my description",
+      "displayName": "my macro2 name",
+      "form": {
+        "formItems": []
+      },
+      "iconUrl": null,
+      "key": "my-app2:macro2",
+      "name": "macro2"
+    }
+  ]
+}
