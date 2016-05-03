@@ -38,14 +38,14 @@ public class PortalWebHandler
         }
         else
         {
-            final String path = webRequest.getPath();
-            final Branch branch = findBranch( path );
-            final ContentPath contentPath = findContentPath( path );
+            final String baseSubPath = webRequest.getPath().substring( BRANCH_PREFIX.length() );
+            final Branch branch = findBranch( baseSubPath );
+            final ContentPath contentPath = findContentPath( baseSubPath );
 
             portalWebRequest = PortalWebRequest.create( webRequest ).
                 baseUri( BASE_URI ).
                 branch( branch ).
-                contentPath( contentPath ).
+                contentPath( contentPath ). //TODO Retrieval of content and site could be done here
 //                site( site ).
 //                content( content ).
 //                pageTemplate().
@@ -58,24 +58,24 @@ public class PortalWebHandler
         return webHandlerChain.handle( portalWebRequest, new PortalWebResponse() );
     }
 
-    private static Branch findBranch( final String path )
+    private static Branch findBranch( final String baseSubPath )
     {
-        final int index = path.indexOf( '/', BRANCH_PREFIX.length() );
-        final String result = path.substring( BRANCH_PREFIX.length(), index > 0 ? index : path.length() );
+        final int index = baseSubPath.indexOf( '/' );
+        final String result = baseSubPath.substring( 0, index > 0 ? index : baseSubPath.length() );
         return Strings.isNullOrEmpty( result ) ? null : Branch.from( result );
     }
 
-    private static ContentPath findContentPath( final String path )
+    private static ContentPath findContentPath( final String baseSubPath )
     {
-        final String restPath = findPathAfterBranch( path );
-        final int underscore = restPath.indexOf( "/_/" );
-        final String result = restPath.substring( 0, underscore > -1 ? underscore : restPath.length() );
+        final String branchSubPath = findPathAfterBranch( baseSubPath );
+        final int underscore = branchSubPath.indexOf( "/_/" );
+        final String result = branchSubPath.substring( 0, underscore > -1 ? underscore : branchSubPath.length() );
         return ContentPath.from( result.startsWith( "/" ) ? result : ( "/" + result ) );
     }
 
-    private static String findPathAfterBranch( final String path )
+    private static String findPathAfterBranch( final String baseSubPath )
     {
-        final int index = path.indexOf( '/', BRANCH_PREFIX.length() );
-        return path.substring( index > 0 ? index : path.length() );
+        final int index = baseSubPath.indexOf( '/' );
+        return baseSubPath.substring( index > 0 ? index : baseSubPath.length() );
     }
 }
