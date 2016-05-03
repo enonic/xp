@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.handler.portal;
 
+import org.osgi.service.component.annotations.Component;
+
 import com.google.common.base.Strings;
 
 import com.enonic.xp.branch.Branch;
@@ -7,21 +9,23 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.web.handler.BaseWebHandler;
+import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebResponse;
 
+@Component(immediate = true, service = WebHandler.class)
 public class PortalWebHandler
     extends BaseWebHandler
 {
-    private final static String BASE_URI = "/portal";
+    private final static String BASE_URI = "/test/portal"; //TODO Rewrite
 
     private final static String BRANCH_PREFIX = BASE_URI + "/";
 
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest.getPath().startsWith( "/portal/" );
+        return webRequest.getPath().startsWith( BASE_URI );
     }
 
     @Override
