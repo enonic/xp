@@ -103,7 +103,7 @@ final class UpdateContentCommand
             modifier( getCurrentUser().getKey() ).
             build();
 
-        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( updateContentTranslatorParams );
+        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( updateContentTranslatorParams, this.contentTypeService );
         final Node editedNode = this.nodeService.update( updateNodeParams );
         return translator.fromNode( editedNode, true );
     }
