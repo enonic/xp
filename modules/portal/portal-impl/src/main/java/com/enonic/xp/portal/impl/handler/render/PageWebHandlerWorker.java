@@ -1,0 +1,226 @@
+package com.enonic.xp.portal.impl.handler.render;
+
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.data.Property;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.page.PageTemplateService;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.PortalWebRequest;
+import com.enonic.xp.portal.PortalWebResponse;
+import com.enonic.xp.portal.rendering.Renderer;
+import com.enonic.xp.portal.rendering.RendererFactory;
+import com.enonic.xp.portal.url.PageUrlParams;
+import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.util.Reference;
+import com.enonic.xp.web.HttpStatus;
+
+final class PageWebHandlerWorker
+    extends RenderWebHandlerWorker
+{
+    private static final String SHORTCUT_TARGET_PROPERTY = "target";
+
+    private final RendererFactory rendererFactory;
+
+    private final PortalUrlService portalUrlService;
+
+    private PageWebHandlerWorker( final Builder builder )
+    {
+        portalWebRequest = builder.portalWebRequest;
+        portalWebResponse = builder.portalWebResponse;
+        contentService = builder.contentService;
+        pageTemplateService = builder.pageTemplateService;
+        pageDescriptorService = builder.pageDescriptorService;
+        rendererFactory = builder.rendererFactory;
+        portalUrlService = builder.portalUrlService;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    @Override
+    public PortalWebResponse execute()
+    {
+        final ContentPath contentPath = this.portalWebRequest.getContentPath();
+        if ( ContentConstants.CONTENT_ROOT_PARENT.toString().equals( contentPath.toString() ) )
+        {
+            throw notFound( "Page [%s] not found", contentPath );
+        }
+
+        final Content content = getContent( getContentSelector() );
+        if ( content.getType().isShortcut() )
+        {
+            renderShortcut( content );
+            return null;
+        }
+
+        final Site site = getSite( content );
+
+        PageTemplate pageTemplate = null;
+        PageDescriptor pageDescriptor = null;
+
+        if ( content instanceof PageTemplate )
+        {
+            pageTemplate = (PageTemplate) content;
+        }
+        else if ( !content.hasPage() )
+        {
+            pageTemplate = getDefaultPageTemplate( content.getType(), site );
+        }
+        else // hasPage
+        {
+            final Page page = getPage( content );
+            if ( page.hasTemplate() )
+            {
+                final PageTemplate resolvedPageTemplate = getPageTemplate( page );
+                if ( resolvedPageTemplate.canRender( content.getType() ) )
+                {
+                    //template may be deleted or updated to not support content type after content had been created
+                    pageTemplate = resolvedPageTemplate;
+                }
+            }
+            else if ( page.hasController() )
+            {
+                pageDescriptor = getPageDescriptor( page.getController() );
+            }
+        }
+
+        if ( pageTemplate != null && pageTemplate.getController() != null )
+        {
+            pageDescriptor = getPageDescriptor( pageTemplate );
+        }
+
+        ApplicationKey applicationKey = null;
+        if ( pageDescriptor != null )
+        {
+            applicationKey = pageDescriptor.getKey().getApplicationKey();
+        }
+
+        final Page effectivePage = new EffectivePageResolver( content, pageTemplate ).resolve();
+        final Content effectiveContent = Content.create( content ).
+            page( effectivePage ).
+            build();
+
+        final PortalWebRequest portalWebRequest = PortalWebRequest.create( this.portalWebRequest ).
+            site( site ).
+            content( effectiveContent ).
+            applicationKey( applicationKey ).
+            pageTemplate( pageTemplate ).
+            pageDescriptor( pageDescriptor ).
+            build();
+        final PortalRequest portalRequest = convertToPortalRequest( portalWebRequest );
+
+        final Renderer<Content> renderer = this.rendererFactory.getRenderer( effectiveContent );
+        final PortalResponse portalResponse = renderer.render( effectiveContent, portalRequest );
+        return convertToPortalWebResponse( portalResponse );
+    }
+
+    private void renderShortcut( final Content content )
+    {
+        final Property shortcut = content.getData().getProperty( SHORTCUT_TARGET_PROPERTY );
+        final Reference target = shortcut == null ? null : shortcut.getReference();
+        if ( target == null || target.getNodeId() == null )
+        {
+            throw notFound( "Missing shortcut target" );
+        }
+
+        final PortalRequest portalRequest = convertToPortalRequest( portalWebRequest );
+        final PageUrlParams pageUrlParams = new PageUrlParams().id( target.toString() ).portalRequest( portalRequest );
+        pageUrlParams.getParams().putAll( this.portalWebRequest.getParams() );
+
+        final String targetUrl = this.portalUrlService.pageUrl( pageUrlParams );
+
+        this.portalWebResponse.setStatus( HttpStatus.TEMPORARY_REDIRECT );
+        this.portalWebResponse.setHeader( "Location", targetUrl );
+    }
+
+    private PageDescriptor getPageDescriptor( final DescriptorKey descriptorKey )
+    {
+        final PageDescriptor pageDescriptor = this.pageDescriptorService.getByKey( descriptorKey );
+        if ( pageDescriptor == null )
+        {
+            throw notFound( "Page descriptor [%s] not found", descriptorKey.getName() );
+        }
+
+        return pageDescriptor;
+    }
+
+    public static final class Builder
+    {
+        private PortalWebRequest portalWebRequest;
+
+        private PortalWebResponse portalWebResponse;
+
+        private ContentService contentService;
+
+        private PageTemplateService pageTemplateService;
+
+        private PageDescriptorService pageDescriptorService;
+
+        private RendererFactory rendererFactory;
+
+        private PortalUrlService portalUrlService;
+
+        private Builder()
+        {
+        }
+
+        public Builder portalWebRequest( final PortalWebRequest portalWebRequest )
+        {
+            this.portalWebRequest = portalWebRequest;
+            return this;
+        }
+
+        public Builder portalWebResponse( final PortalWebResponse portalWebResponse )
+        {
+            this.portalWebResponse = portalWebResponse;
+            return this;
+        }
+
+        public Builder contentService( final ContentService contentService )
+        {
+            this.contentService = contentService;
+            return this;
+        }
+
+        public Builder pageTemplateService( final PageTemplateService pageTemplateService )
+        {
+            this.pageTemplateService = pageTemplateService;
+            return this;
+        }
+
+        public Builder pageDescriptorService( final PageDescriptorService pageDescriptorService )
+        {
+            this.pageDescriptorService = pageDescriptorService;
+            return this;
+        }
+
+        public Builder rendererFactory( final RendererFactory rendererFactory )
+        {
+            this.rendererFactory = rendererFactory;
+            return this;
+        }
+
+        public Builder portalUrlService( final PortalUrlService portalUrlService )
+        {
+            this.portalUrlService = portalUrlService;
+            return this;
+        }
+
+        public PageWebHandlerWorker build()
+        {
+            return new PageWebHandlerWorker( this );
+        }
+    }
+}

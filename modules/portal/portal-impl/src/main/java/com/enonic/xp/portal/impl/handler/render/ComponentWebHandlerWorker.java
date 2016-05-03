@@ -117,14 +117,11 @@ final class ComponentWebHandlerWorker
             applicationKey( pageController != null ? pageController.getApplicationKey() : null ).
             pageTemplate( pageTemplate ).pageDescriptor( null ).
             build();
-
         final PortalRequest portalRequest = convertToPortalRequest( portalWebRequest );
 
         final Renderer<Component> renderer = this.rendererFactory.getRenderer( component );
-        PortalResponse response = renderer.render( component, portalRequest );
-        response = this.postProcessor.processResponseInstructions( portalRequest, response );
-
-        final PortalResponse portalResponse = PortalResponse.create( response ).build();
+        PortalResponse portalResponse = renderer.render( component, portalRequest );
+        portalResponse = this.postProcessor.processResponseInstructions( portalRequest, portalResponse );
         return convertToPortalWebResponse( portalResponse );
     }
 
