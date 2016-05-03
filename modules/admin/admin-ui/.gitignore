@@ -1,6 +1,10 @@
 node_modules
 tscommand*tmp.txt
 _all.*
-_home.*
-_launcher.*
+_home.css
+_home.css.map
+_launcher.css
+_launcher.css.map
+html-editor.css
+html-editor.css.map
 *.map
