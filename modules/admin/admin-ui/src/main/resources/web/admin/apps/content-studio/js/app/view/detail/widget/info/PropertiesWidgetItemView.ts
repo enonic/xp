@@ -1,4 +1,4 @@
-import "../../../api.ts";
+import "../../../../../api.ts";
 
 import CompareStatus = api.content.CompareStatus;
 import CompareStatusFormatter = api.content.CompareStatusFormatter;
@@ -6,7 +6,7 @@ import ContentSummary = api.content.ContentSummary;
 import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 import Application = api.application.Application;
 import ApplicationKey = api.application.ApplicationKey;
-import {WidgetItemView} from "./WidgetItemView";
+import {WidgetItemView} from "../../WidgetItemView";
 import {AttachmentsWidgetItemView} from "./AttachmentsWidgetItemView";
 
 export class PropertiesWidgetItemView extends WidgetItemView {

@@ -1,4 +1,4 @@
-import "../../../api.ts";
+import "../../../../../api.ts";
 
 import CompareStatus = api.content.CompareStatus;
 import ContentSummary = api.content.ContentSummary;
@@ -15,7 +15,7 @@ import Permission = api.security.acl.Permission;
 import Principal = api.security.Principal;
 import PrincipalKey = api.security.PrincipalKey;
 import User = api.security.User;
-import {WidgetItemView} from "./WidgetItemView";
+import {WidgetItemView} from "../../WidgetItemView";
 
 export class UserAccessWidgetItemView extends WidgetItemView {
 

@@ -1,10 +1,10 @@
-import "../../api.ts";
+import "../../../../../api.ts";
 
 import ContentVersion = api.content.ContentVersion;
 import ContentId = api.content.ContentId;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
-export class AllContentVersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
+export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
 
     private contentId: ContentId;
     private status: api.content.CompareStatus;
@@ -85,11 +85,11 @@ export class AllContentVersionsView extends api.ui.selector.list.ListBox<Content
         var result = null;
 
         var hasMaster = contentVersion.workspaces.some((workspace) => {
-            return workspace == AllContentVersionsView.branchMaster;
+            return workspace == VersionsView.branchMaster;
         });
 
         contentVersion.workspaces.some((workspace: string) => {
-            if (!hasMaster || workspace == AllContentVersionsView.branchMaster) {
+            if (!hasMaster || workspace == VersionsView.branchMaster) {
                 result = {workspace: workspace, status: this.getState(workspace)};
                 return true;
             }
@@ -99,7 +99,7 @@ export class AllContentVersionsView extends api.ui.selector.list.ListBox<Content
     }
 
     private getState(workspace): string {
-        if (workspace == AllContentVersionsView.branchMaster) {
+        if (workspace == VersionsView.branchMaster) {
             return api.content.CompareStatusFormatter.formatStatus(api.content.CompareStatus.EQUAL);
         }
         else {

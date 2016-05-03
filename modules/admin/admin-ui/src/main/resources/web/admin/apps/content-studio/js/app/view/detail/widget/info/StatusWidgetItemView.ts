@@ -1,8 +1,8 @@
-import "../../../api.ts";
+import "../../../../../api.ts";
 
 import CompareStatus = api.content.CompareStatus;
 import CompareStatusFormatter = api.content.CompareStatusFormatter;
-import {WidgetItemView} from "./WidgetItemView";
+import {WidgetItemView} from "../../WidgetItemView";
 
 export class StatusWidgetItemView extends WidgetItemView {
 
