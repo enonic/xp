@@ -13,6 +13,8 @@ import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
 
+import static org.junit.Assert.*;
+
 public class MacroResourceTest
     extends AdminResourceTestSupport
 {
@@ -28,6 +30,17 @@ public class MacroResourceTest
         resource.setMacroDescriptorService( this.macroDescriptorService );
 
         return resource;
+    }
+
+    @Test
+    public void testGetDefaultIcon()
+        throws Exception
+    {
+        String response = request().
+            path( "macro/icon/key" ).
+            get().getAsString();
+
+        assertNotNull( response.getBytes() );
     }
 
     @Test
