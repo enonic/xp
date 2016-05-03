@@ -472,7 +472,7 @@ public final class ApplicationServiceImpl
         }
         catch ( BundleException e )
         {
-            e.printStackTrace();
+            LOG.warn( "Failed to uninstall bundle", e );
         }
     }
 
