@@ -16,7 +16,6 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
-import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -81,41 +80,26 @@ public class ContentIndexConfigFactoryTest
     }
 
     @Test
-    public void htmlAreaIndexing()
+    public void html_area_path()
         throws Exception
     {
         final PropertyTree data = new PropertyTree();
 
-        final Input htmlInput1 = Input.create().name( "html_area1" ).label( "HtmlArea" ).inputType( InputTypeName.HTML_AREA ).build();
-        final Input htmlInput2 = Input.create().name( "html_area2" ).label( "HtmlArea" ).inputType( InputTypeName.HTML_AREA ).build();
-        final Input htmlInput3 = Input.create().name( "html_area3" ).label( "HtmlArea" ).inputType( InputTypeName.HTML_AREA ).build();
-        final Input htmlInput4 = Input.create().name( "html_area4" ).label( "HtmlArea" ).inputType( InputTypeName.HTML_AREA ).build();
+        final Input htmlInput1 = Input.create().name( "myHtmlArea" ).label( "HtmlArea" ).inputType( InputTypeName.HTML_AREA ).build();
 
         final FormItemSet myOuterSet =
             FormItemSet.create().name( "myOuterSet" ).label( "Label" ).multiple( true ).addFormItem( htmlInput1 ).build();
-        final FormItemSet myInnerSet =
-            FormItemSet.create().name( "myInnerSet" ).label( "Label" ).multiple( true ).addFormItem( htmlInput2 ).build();
-        final FormItemSet myInnermostSet =
-            FormItemSet.create().name( "myInnermostSet" ).label( "Label" ).multiple( true ).addFormItem( htmlInput3 ).build();
-        myInnerSet.add( myInnermostSet );
-        myOuterSet.add( myInnerSet );
 
         final Form form = Form.create().
-            addFormItem( htmlInput4 ).
             addFormItem( myOuterSet ).build();
+
+        System.out.println( form );
+
+        System.out.println( htmlInput1.getPath() );
 
         final ContentType contentType =
             ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test" ).form( form ).build();
         Mockito.when( contentTypeService.getByName( Mockito.any() ) ).thenReturn( contentType );
-
-        final IndexConfig htmlIndexConfig = IndexConfig.create().
-            enabled( true ).
-            fulltext( true ).
-            nGram( true ).
-            decideByType( false ).
-            includeInAllText( true ).
-            addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).
-            build();
 
         final CreateContentTranslatorParams createContentTranslatorParams = CreateContentTranslatorParams.create().
             type( ContentTypeName.imageMedia() ).
@@ -130,14 +114,11 @@ public class ContentIndexConfigFactoryTest
         final IndexConfigDocument indexConfigDocument =
             ContentIndexConfigFactory.create( createContentTranslatorParams, contentTypeService );
 
-        assertEquals( htmlIndexConfig, indexConfigDocument.getConfigForPath( PropertyPath.from( htmlInput1.getPath().toString() ) ) );
+        final IndexConfig configForPath = indexConfigDocument.getConfigForPath(
+            PropertyPath.from( ContentPropertyNames.DATA, htmlInput1.getPath().getElementsAsArray() ) );
 
-        assertEquals( htmlIndexConfig, indexConfigDocument.getConfigForPath( PropertyPath.from( htmlInput2.getPath().toString() ) ) );
-
-        assertEquals( htmlIndexConfig, indexConfigDocument.getConfigForPath( PropertyPath.from( htmlInput3.getPath().toString() ) ) );
-
-        assertEquals( htmlIndexConfig, indexConfigDocument.getConfigForPath( PropertyPath.from( htmlInput4.getPath().toString() ) ) );
-
+        assertNotNull( configForPath );
+        assertEquals( 1, configForPath.getIndexValueProcessors().size() );
     }
 
     @Test

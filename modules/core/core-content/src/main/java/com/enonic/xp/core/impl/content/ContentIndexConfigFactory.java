@@ -65,7 +65,7 @@ class ContentIndexConfigFactory
             decideByType( false ).
             build() );
 
-        final IndexConfigVisitor indexConfigVisitor = new IndexConfigVisitor( configDocumentBuilder );
+        final IndexConfigVisitor indexConfigVisitor = new IndexConfigVisitor( DATA, configDocumentBuilder );
         indexConfigVisitor.traverse( form );
 
         return configDocumentBuilder.build();

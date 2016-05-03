@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.InputVisitor;
 import com.enonic.xp.index.IndexConfig;
@@ -13,8 +14,11 @@ public class IndexConfigVisitor
 
     private final PatternIndexConfigDocument.Builder configDocumentBuilder;
 
-    public IndexConfigVisitor( final PatternIndexConfigDocument.Builder configDocumentBuilder )
+    private final String parentElement;
+
+    public IndexConfigVisitor( final String parentElement, final PatternIndexConfigDocument.Builder configDocumentBuilder )
     {
+        this.parentElement = parentElement;
         this.configDocumentBuilder = configDocumentBuilder;
     }
 
@@ -33,7 +37,18 @@ public class IndexConfigVisitor
                 addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).
                 build();
 
-            configDocumentBuilder.add( input.getPath().toString(), htmlIndexConfig );
+            configDocumentBuilder.add( createPath( input ), htmlIndexConfig );
         }
     }
+
+    private final PropertyPath createPath( final Input input )
+    {
+        if ( this.parentElement == null )
+        {
+            return PropertyPath.from( input.getPath().toString() );
+        }
+
+        return PropertyPath.from( parentElement, input.getPath().getElementsAsArray() );
+    }
+
 }
