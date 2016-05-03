@@ -9,7 +9,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.handler.PortalWebHandlerWorker;
 import com.enonic.xp.security.RoleKeys;
@@ -32,8 +31,7 @@ final class AttachmentWebHandlerWorker
 
     private AttachmentWebHandlerWorker( final Builder builder )
     {
-        portalWebRequest = builder.portalWebRequest;
-        portalWebResponse = builder.portalWebResponse;
+        super( builder );
         contentService = builder.contentService;
         id = builder.id;
         name = builder.name;
@@ -107,11 +105,8 @@ final class AttachmentWebHandlerWorker
     }
 
     public static final class Builder
+        extends PortalWebHandlerWorker.Builder<Builder>
     {
-        private PortalWebRequest portalWebRequest;
-
-        private PortalWebResponse portalWebResponse;
-
         private ContentService contentService;
 
         private ContentId id;
@@ -124,18 +119,6 @@ final class AttachmentWebHandlerWorker
 
         private Builder()
         {
-        }
-
-        public Builder portalWebRequest( final PortalWebRequest portalWebRequest )
-        {
-            this.portalWebRequest = portalWebRequest;
-            return this;
-        }
-
-        public Builder portalWebResponse( final PortalWebResponse portalWebResponse )
-        {
-            this.portalWebResponse = portalWebResponse;
-            return this;
         }
 
         public Builder contentService( final ContentService contentService )

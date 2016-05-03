@@ -13,6 +13,12 @@ public abstract class ControllerWebHandlerWorker
 {
     protected ContentService contentService;
 
+    protected ControllerWebHandlerWorker( final Builder builder )
+    {
+        super( builder );
+        contentService = builder.contentService;
+    }
+
     protected final String getContentSelector()
     {
         return this.portalWebRequest.getContentPath().toString();
@@ -103,5 +109,21 @@ public abstract class ControllerWebHandlerWorker
     public final void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    public static class Builder<T extends Builder>
+        extends PortalWebHandlerWorker.Builder<T>
+    {
+        private ContentService contentService;
+
+        protected Builder()
+        {
+        }
+
+        public T contentService( final ContentService contentService )
+        {
+            this.contentService = contentService;
+            return (T) this;
+        }
     }
 }

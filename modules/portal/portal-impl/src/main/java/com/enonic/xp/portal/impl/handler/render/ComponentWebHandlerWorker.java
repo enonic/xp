@@ -1,12 +1,9 @@
 package com.enonic.xp.portal.impl.handler.render;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplate;
-import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.PortalWebRequest;
@@ -30,11 +27,7 @@ final class ComponentWebHandlerWorker
 
     private ComponentWebHandlerWorker( final Builder builder )
     {
-        portalWebRequest = builder.portalWebRequest;
-        portalWebResponse = builder.portalWebResponse;
-        contentService = builder.contentService;
-        pageTemplateService = builder.pageTemplateService;
-        pageDescriptorService = builder.pageDescriptorService;
+        super( builder );
         componentPath = builder.componentPath;
         rendererFactory = builder.rendererFactory;
         postProcessor = builder.postProcessor;
@@ -126,17 +119,8 @@ final class ComponentWebHandlerWorker
     }
 
     public static final class Builder
+        extends RenderWebHandlerWorker.Builder<Builder>
     {
-        private PortalWebRequest portalWebRequest;
-
-        private PortalWebResponse portalWebResponse;
-
-        private ContentService contentService;
-
-        private PageTemplateService pageTemplateService;
-
-        private PageDescriptorService pageDescriptorService;
-
         private ComponentPath componentPath;
 
         private RendererFactory rendererFactory;
@@ -145,36 +129,6 @@ final class ComponentWebHandlerWorker
 
         private Builder()
         {
-        }
-
-        public Builder portalWebRequest( final PortalWebRequest portalWebRequest )
-        {
-            this.portalWebRequest = portalWebRequest;
-            return this;
-        }
-
-        public Builder portalWebResponse( final PortalWebResponse portalWebResponse )
-        {
-            this.portalWebResponse = portalWebResponse;
-            return this;
-        }
-
-        public Builder contentService( final ContentService contentService )
-        {
-            this.contentService = contentService;
-            return this;
-        }
-
-        public Builder pageTemplateService( final PageTemplateService pageTemplateService )
-        {
-            this.pageTemplateService = pageTemplateService;
-            return this;
-        }
-
-        public Builder pageDescriptorService( final PageDescriptorService pageDescriptorService )
-        {
-            this.pageDescriptorService = pageDescriptorService;
-            return this;
         }
 
         public Builder componentPath( final ComponentPath componentPath )

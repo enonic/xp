@@ -19,6 +19,13 @@ abstract class RenderWebHandlerWorker
 
     protected PageDescriptorService pageDescriptorService;
 
+    protected RenderWebHandlerWorker( final Builder builder )
+    {
+        super( builder );
+        pageTemplateService = builder.pageTemplateService;
+        pageDescriptorService = builder.pageDescriptorService;
+    }
+
     protected final Page getPage( final Content content )
     {
         if ( !content.hasPage() )
@@ -71,5 +78,29 @@ abstract class RenderWebHandlerWorker
         }
 
         return pageDescriptor;
+    }
+
+    public static class Builder<T extends Builder>
+        extends ControllerWebHandlerWorker.Builder<T>
+    {
+        private PageTemplateService pageTemplateService;
+
+        private PageDescriptorService pageDescriptorService;
+
+        protected Builder()
+        {
+        }
+
+        public T pageTemplateService( final PageTemplateService pageTemplateService )
+        {
+            this.pageTemplateService = pageTemplateService;
+            return (T) this;
+        }
+
+        public T pageDescriptorService( final PageDescriptorService pageDescriptorService )
+        {
+            this.pageDescriptorService = pageDescriptorService;
+            return (T) this;
+        }
     }
 }

@@ -17,6 +17,12 @@ public abstract class PortalWebHandlerWorker
 
     protected PortalWebResponse portalWebResponse;
 
+    public PortalWebHandlerWorker( final Builder builder )
+    {
+        portalWebRequest = builder.portalWebRequest;
+        portalWebResponse = builder.portalWebResponse;
+    }
+
     public abstract PortalWebResponse execute()
         throws Exception;
 
@@ -90,5 +96,28 @@ public abstract class PortalWebHandlerWorker
         portalWebResponse.setContributions( portalResponse.getContributions() );
         portalWebResponse.setApplyFilters( portalResponse.applyFilters() );
         return portalWebResponse;
+    }
+
+    public static class Builder<T extends Builder>
+    {
+        private PortalWebRequest portalWebRequest;
+
+        private PortalWebResponse portalWebResponse;
+
+        protected Builder()
+        {
+        }
+
+        public T portalWebRequest( final PortalWebRequest portalWebRequest )
+        {
+            this.portalWebRequest = portalWebRequest;
+            return (T) this;
+        }
+
+        public T portalWebResponse( final PortalWebResponse portalWebResponse )
+        {
+            this.portalWebResponse = portalWebResponse;
+            return (T) this;
+        }
     }
 }

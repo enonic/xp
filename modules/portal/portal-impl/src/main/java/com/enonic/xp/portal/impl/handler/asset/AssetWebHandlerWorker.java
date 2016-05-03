@@ -4,7 +4,6 @@ import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.handler.PortalWebHandlerWorker;
 import com.enonic.xp.resource.Resource;
@@ -30,8 +29,7 @@ final class AssetWebHandlerWorker
 
     private AssetWebHandlerWorker( final Builder builder )
     {
-        portalWebRequest = builder.portalWebRequest;
-        portalWebResponse = builder.portalWebResponse;
+        super( builder );
         resourceService = builder.resourceService;
         applicationKey = builder.applicationKey;
         name = builder.name;
@@ -78,11 +76,8 @@ final class AssetWebHandlerWorker
     }
 
     public static final class Builder
+        extends PortalWebHandlerWorker.Builder<Builder>
     {
-        public PortalWebRequest portalWebRequest;
-
-        public PortalWebResponse portalWebResponse;
-
         private ResourceService resourceService;
 
         private ApplicationKey applicationKey;
@@ -93,18 +88,6 @@ final class AssetWebHandlerWorker
 
         private Builder()
         {
-        }
-
-        public Builder portalWebRequest( final PortalWebRequest portalWebRequest )
-        {
-            this.portalWebRequest = portalWebRequest;
-            return this;
-        }
-
-        public Builder portalWebResponse( final PortalWebResponse portalWebResponse )
-        {
-            this.portalWebResponse = portalWebResponse;
-            return this;
         }
 
         public Builder resourceService( final ResourceService resourceService )

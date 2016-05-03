@@ -18,7 +18,6 @@ import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.handler.PortalWebHandlerWorker;
 import com.enonic.xp.security.RoleKeys;
@@ -59,8 +58,7 @@ final class ImageWebHandlerWorker
 
     private ImageWebHandlerWorker( final Builder builder )
     {
-        portalWebRequest = builder.portalWebRequest;
-        portalWebResponse = builder.portalWebResponse;
+        super( builder );
         name = builder.name;
         contentId = builder.contentId;
         filterParam = builder.filterParam;
@@ -234,11 +232,8 @@ final class ImageWebHandlerWorker
     }
 
     public static final class Builder
+        extends PortalWebHandlerWorker.Builder<Builder>
     {
-        public PortalWebRequest portalWebRequest;
-
-        public PortalWebResponse portalWebResponse;
-
         private String name;
 
         private ContentId contentId;
@@ -262,19 +257,6 @@ final class ImageWebHandlerWorker
         private Builder()
         {
         }
-
-        public Builder portalWebRequest( final PortalWebRequest portalWebRequest )
-        {
-            this.portalWebRequest = portalWebRequest;
-            return this;
-        }
-
-        public Builder portalWebResponse( final PortalWebResponse portalWebResponse )
-        {
-            this.portalWebResponse = portalWebResponse;
-            return this;
-        }
-
 
         public Builder name( final String name )
         {

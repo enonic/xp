@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.handler.service;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
@@ -41,9 +40,7 @@ final class ServiceWebHandlerWorker
 
     private ServiceWebHandlerWorker( final Builder builder )
     {
-        portalWebRequest = builder.portalWebRequest;
-        portalWebResponse = builder.portalWebResponse;
-        contentService = builder.contentService;
+        super( builder );
         resourceService = builder.resourceService;
         serviceDescriptorService = builder.serviceDescriptorService;
         controllerScriptFactory = builder.controllerScriptFactory;
@@ -116,13 +113,8 @@ final class ServiceWebHandlerWorker
     }
 
     public static final class Builder
+        extends ControllerWebHandlerWorker.Builder<Builder>
     {
-        public PortalWebRequest portalWebRequest;
-
-        public PortalWebResponse portalWebResponse;
-
-        private ContentService contentService;
-
         private ResourceService resourceService;
 
         private ServiceDescriptorService serviceDescriptorService;
@@ -135,24 +127,6 @@ final class ServiceWebHandlerWorker
 
         private Builder()
         {
-        }
-
-        public Builder portalWebRequest( final PortalWebRequest portalWebRequest )
-        {
-            this.portalWebRequest = portalWebRequest;
-            return this;
-        }
-
-        public Builder portalWebResponse( final PortalWebResponse portalWebResponse )
-        {
-            this.portalWebResponse = portalWebResponse;
-            return this;
-        }
-
-        public Builder contentService( final ContentService contentService )
-        {
-            this.contentService = contentService;
-            return this;
         }
 
         public Builder resourceService( final ResourceService resourceService )
