@@ -85,7 +85,6 @@ final class ServiceWebHandlerWorker
             site( site ).
             build();
 
-        //TODO Temporary fix until renaming of PortalWebRequest to PortalRequest
         final PortalRequest portalRequest = convertToPortalRequest( portalWebRequest );
 
         //Executes the service
@@ -93,56 +92,7 @@ final class ServiceWebHandlerWorker
         final PortalResponse portalResponse = PortalResponse.create( controllerScript.execute( portalRequest ) ).
             build();
 
-        //TODO Temporary fix until renaming of PortalWebResponse to PortalResponse
-        final PortalWebResponse portalWebResponse = convertToPortalWebResponse( portalResponse );
-
-        return portalWebResponse;
-    }
-
-    private PortalRequest convertToPortalRequest( PortalWebRequest portalWebRequest )
-    {
-        final PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setMethod( portalWebRequest.getMethod() );
-        portalRequest.getParams().putAll( portalWebRequest.getParams() );
-        portalRequest.getHeaders().putAll( portalWebRequest.getHeaders() );
-        portalRequest.getCookies().putAll( portalWebRequest.getCookies() );
-        portalRequest.setScheme( portalWebRequest.getScheme() );
-        portalRequest.setHost( portalWebRequest.getHost() );
-        portalRequest.setPort( portalWebRequest.getPort() );
-        portalRequest.setPath( portalWebRequest.getPath() );
-        portalRequest.setUrl( portalWebRequest.getUrl() );
-        portalRequest.setMode( portalWebRequest.getMode() );
-        portalRequest.setBranch( portalWebRequest.getBranch() );
-        portalRequest.setContentPath( portalWebRequest.getContentPath() );
-        portalRequest.setBaseUri( portalWebRequest.getBaseUri() );
-        portalRequest.setSite( portalWebRequest.getSite() );
-        portalRequest.setContent( portalWebRequest.getContent() );
-        portalRequest.setPageTemplate( portalWebRequest.getPageTemplate() );
-        portalRequest.setComponent( portalWebRequest.getComponent() );
-        portalRequest.setApplicationKey( portalWebRequest.getApplicationKey() );
-        portalRequest.setPageDescriptor( portalWebRequest.getPageDescriptor() );
-        portalRequest.setControllerScript( portalWebRequest.getControllerScript() );
-        portalRequest.setEndpointPath( portalWebRequest.getEndpointPath() );
-        portalRequest.setContentType( portalWebRequest.getContentType() );
-        portalRequest.setBody( portalWebRequest.getBody() );
-        portalRequest.setRawRequest( portalWebRequest.getRawRequest() );
-        portalRequest.setWebSocket( portalWebRequest.isWebSocket() );
-        return portalRequest;
-    }
-
-    private PortalWebResponse convertToPortalWebResponse( final PortalResponse portalResponse )
-    {
-        final PortalWebResponse portalWebResponse = new PortalWebResponse();
-        portalWebResponse.setStatus( portalResponse.getStatus() );
-        portalWebResponse.setContentType( portalResponse.getContentType() );
-        portalWebResponse.getHeaders().putAll( portalResponse.getHeaders() );
-        portalWebResponse.getCookies().addAll( portalResponse.getCookies() );
-        portalWebResponse.setWebSocketConfig( portalResponse.getWebSocket() );
-        portalWebResponse.setBody( portalResponse.getBody() );
-        portalWebResponse.setPostProcess( portalResponse.isPostProcess() );
-        portalWebResponse.setContributions( portalResponse.getContributions() );
-        portalWebResponse.setApplyFilters( portalResponse.applyFilters() );
-        return portalWebResponse;
+        return convertToPortalWebResponse( portalResponse );
     }
 
 
