@@ -6,7 +6,7 @@
       "form": {
         "formItems": []
       },
-      "iconUrl": null,
+      "iconUrl": "/admin/rest/resource/macro/macro1",
       "key": "my-app1:macro1",
       "name": "macro1"
     },
@@ -16,7 +16,7 @@
       "form": {
         "formItems": []
       },
-      "iconUrl": null,
+      "iconUrl": "/admin/rest/resource/macro/macro2",
       "key": "my-app2:macro2",
       "name": "macro2"
     }

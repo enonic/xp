@@ -33,6 +33,10 @@ public class MacroResource
 
     private MacroDescriptorService macroDescriptorService;
 
+    private MacroIconResolver macroIconResolver;
+
+    private MacroIconUrlResolver macroIconUrlResolver;
+
     private static final MacroImageHelper HELPER = new MacroImageHelper();
 
     private static final String DEFAULT_MIME_TYPE = "image/svg+xml";
@@ -41,7 +45,7 @@ public class MacroResource
     @Path("list")
     public MacrosJson create()
     {
-        return new MacrosJson( this.macroDescriptorService.getAll() );
+        return new MacrosJson( this.macroDescriptorService.getAll(), this.macroIconUrlResolver );
     }
 
     @GET
@@ -52,7 +56,7 @@ public class MacroResource
         throws Exception
     {
         final MacroKey macroKey = MacroKey.from( macroKeyStr );
-        final Icon icon = null; //this.macroIconUrlResolver.resolveIcon( macroKey );
+        final Icon icon = this.macroIconResolver.resolveIcon( macroKey );
 
         final Response.ResponseBuilder responseBuilder;
         if ( icon == null )
@@ -85,5 +89,7 @@ public class MacroResource
     public void setMacroDescriptorService( final MacroDescriptorService macroDescriptorService )
     {
         this.macroDescriptorService = macroDescriptorService;
+        this.macroIconResolver = new MacroIconResolver( this.macroDescriptorService );
+        this.macroIconUrlResolver = new MacroIconUrlResolver( this.macroIconResolver );
     }
 }
