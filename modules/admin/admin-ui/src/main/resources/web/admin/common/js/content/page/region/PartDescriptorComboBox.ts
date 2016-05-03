@@ -17,8 +17,7 @@ module api.content.page.region {
                 setOptionDisplayValueViewer(new PartDescriptorViewer()).
                 setSelectedOptionsView(new PartDescriptorSelectedOptionsView()).
                 setLoader(loader).
-                setMaximumOccurrences(1).
-                setNextInputFocusWhenMaxReached(false));
+                setMaximumOccurrences(1).setNextInputFocusWhenMaxReached(false).setNoOptionsText("No applications available"));
         }
 
         getDescriptor(descriptorKey: DescriptorKey): PartDescriptor {
