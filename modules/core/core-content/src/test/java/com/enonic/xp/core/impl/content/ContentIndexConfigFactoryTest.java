@@ -161,6 +161,10 @@ public class ContentIndexConfigFactoryTest
             childOrder( ContentConstants.DEFAULT_CHILD_ORDER ).
             build();
 
+        final ContentType contentType = ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test" ).form(
+            Form.create().build() ).build();
+        Mockito.when( contentTypeService.getByName( Mockito.any() ) ).thenReturn( contentType );
+
         final IndexConfigDocument indexConfigDocument =
             ContentIndexConfigFactory.create( createContentTranslatorParams, contentTypeService );
 
