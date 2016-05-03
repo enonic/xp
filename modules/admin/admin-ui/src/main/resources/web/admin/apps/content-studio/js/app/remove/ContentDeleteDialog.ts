@@ -10,21 +10,18 @@ import DialogButton = api.ui.dialog.DialogButton;
 import CompareStatus = api.content.CompareStatus;
 import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
 import PublishContentRequest = api.content.PublishContentRequest;
+import ListBox = api.ui.selector.list.ListBox;
 import {ContentDeleteDialogAction} from "./ContentDeleteDialogAction";
 import {ContentDeleteSelectionItem} from "./ContentDeleteSelectionItem";
 import {DeleteAction} from "../view/DeleteAction";
 import {DependantView} from "../view/DependantView";
 import {ConfirmContentDeleteDialog} from "./ConfirmContentDeleteDialog";
 
-export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
-
-    private selectedItems: SelectionItem<ContentSummaryAndCompareStatus>[];
-
-    private descendantItems: ContentSummaryAndCompareStatus[];
+export class ContentDeleteDialog extends api.app.remove.DeleteDialog<ContentSummaryAndCompareStatus> {
 
     private deleteButton: DialogButton;
 
-    private descendantsContainer: DescendantsToBeDeletedList;
+    private dependantList: DependantList;
 
     private instantDeleteCheckbox: api.ui.Checkbox;
 
@@ -37,46 +34,96 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
     constructor() {
         super("item");
 
+        this.getItemList().onItemsRemoved(this.onListItemsRemoved.bind(this));
+
         this.deleteButton = this.setDeleteAction(new ContentDeleteDialogAction());
 
         this.addDeleteActionHandler();
 
-        this.addDescendantsContainer();
-
         this.addCancelButtonToBottom();
 
-        this.addInstantDeleteCheckbox();
+        this.dependantList = new DependantList("descendants-to-delete-list");
+        this.appendChildToContentPanel(this.dependantList);
+
+        this.instantDeleteCheckbox = new api.ui.Checkbox("Instantly delete published items");
+        this.instantDeleteCheckbox.addClass('instant-delete-check');
+
+        this.appendChild(this.instantDeleteCheckbox);
+    }
+
+    protected createItemList(): ListBox<ContentSummaryAndCompareStatus> {
+        return new DeletablesList();
+    }
+
+    private onListItemsRemoved(items: ContentSummaryAndCompareStatus[]) {
+        var count = this.getItemList().getItemCount();
+
+        if (count == 0) {
+            this.close();
+
+        } else {
+            this.updateSubTitle();
+
+            if (count == 1) {
+                (<ContentDeleteSelectionItem>this.getItemList().getItemViews()[0]).hideRemoveButton();
+            }
+
+            var items = this.getItemList().getItems();
+            if (items) {
+                this.dependantList.loadData(items)
+                    .then((descendants: ContentSummaryAndCompareStatus[]) => {
+
+                        if (!this.isAnyOnline(items) && !this.isAnyOnline(descendants)) {
+                            this.instantDeleteCheckbox.hide();
+                        }
+
+                        this.centerMyself();
+                    });
+
+            } else {
+                this.dependantList.hide();
+
+                if (!this.isAnyOnline(items)) {
+                    this.instantDeleteCheckbox.hide();
+                }
+
+                this.centerMyself();
+            }
+
+            this.countItemsToDeleteAndUpdateButtonCounter();
+        }
+
     }
 
     setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
 
-        this.selectedItems = [];
-        this.descendantItems = [];
-
-        contents.forEach((content: ContentSummaryAndCompareStatus) => {
-            this.selectedItems.push(this.createSelectionItemForDelete(content));
-        });
-
-        this.renderSelectedItems(this.selectedItems);
+        this.setListItems(contents);
         this.updateSubTitle();
-        if (this.onlyOneItemSelected()) {
-            this.selectedItems[0].hideRemoveButton();
+
+        if (contents.length == 1) {
+            (<ContentDeleteSelectionItem>this.getItemList().getItemView(contents[0])).hideRemoveButton();
         }
 
-        this.descendantsContainer.hide();
-        this.atLeastOneInitialItemIsOnline() ? this.instantDeleteCheckbox.show() : this.instantDeleteCheckbox.hide();
+        this.dependantList.hide();
+
+        if (this.isAnyOnline(contents)) {
+            this.instantDeleteCheckbox.show();
+        } else {
+            this.instantDeleteCheckbox.hide();
+        }
         this.instantDeleteCheckbox.setChecked(false, true);
 
-        if(this.atLeastOneInitialItemHasChild()) {
-            this.descendantsContainer.loadData(this.selectedItems).then((descendants: ContentSummaryAndCompareStatus[]) => {
-                this.descendantItems = descendants;
-                this.descendantsContainer.show();
-                this.centerMyself();
+        var items = this.getItemList().getItems();
+        if (items) {
+            this.dependantList.loadData(items)
+                .then((descendants: ContentSummaryAndCompareStatus[]) => {
+                    this.dependantList.show();
+                    this.centerMyself();
 
-                if (!this.atLeastOneInitialItemIsOnline() && this.atLeastOneDescendantIsOnline(descendants)) {
-                    this.instantDeleteCheckbox.show();
-                }
-            });
+                    if (!this.isAnyOnline(items) && this.isAnyOnline(descendants)) {
+                        this.instantDeleteCheckbox.show();
+                    }
+                });
         }
 
         this.countItemsToDeleteAndUpdateButtonCounter();
@@ -94,26 +141,6 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
         return this;
     }
 
-    private addDescendantsContainer() {
-        this.descendantsContainer = new DescendantsToBeDeletedList("descendants-to-delete-list");
-        this.appendChildToContentPanel(this.descendantsContainer);
-    }
-
-    private addInstantDeleteCheckbox() {
-        this.instantDeleteCheckbox = new api.ui.Checkbox("Instantly delete published items");
-        this.instantDeleteCheckbox.addClass('instant-delete-check');
-
-        this.appendChild(this.instantDeleteCheckbox);
-    }
-
-    private indexOf(item: SelectionItem<ContentSummaryAndCompareStatus>): number {
-        for (var i = 0; i < this.selectedItems.length; i++) {
-            if (item.getBrowseItem().getPath() == this.selectedItems[i].getBrowseItem().getPath()) {
-                return i;
-            }
-        }
-        return -1;
-    }
 
     private addDeleteActionHandler() {
         this.getDeleteAction().onExecuted(() => {
@@ -127,7 +154,7 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
                 return;
             }
 
-            if(!!this.yesCallback) {
+            if (!!this.yesCallback) {
                 this.instantDeleteCheckbox.isChecked() ? this.yesCallback([]) : this.yesCallback();
             }
 
@@ -150,62 +177,6 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
         });
     }
 
-    private createSelectionItemForDelete(content: ContentSummaryAndCompareStatus): SelectionItem<ContentSummaryAndCompareStatus> {
-
-        var deleteItemViewer = new api.content.ContentSummaryAndCompareStatusViewer();
-        deleteItemViewer.setObject(content);
-
-        var browseItem = new BrowseItem<ContentSummaryAndCompareStatus>(content).
-            setId(content.getId()).
-            setDisplayName(content.getDisplayName()).
-            setPath(content.getPath().toString()).
-            setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve());
-
-        var selectionItem = new ContentDeleteSelectionItem(deleteItemViewer, browseItem, () => {
-            var index = this.indexOf(selectionItem);
-            if (index < 0) {
-                return;
-            }
-
-            this.selectedItems[index].remove();
-            this.selectedItems.splice(index, 1);
-
-            if (this.noItemsSelected()) {
-                this.close();
-            }
-            else {
-                this.updateSubTitle();
-                if (this.onlyOneItemSelected()) {
-                    this.selectedItems[0].hideRemoveButton();
-                }
-
-                if (this.atLeastOneInitialItemHasChild()) {
-                    this.descendantsContainer.loadData(this.selectedItems).then((descendants: ContentSummaryAndCompareStatus[]) => {
-                        this.descendantItems = descendants;
-                        this.centerMyself();
-
-                        if (!this.atLeastOneInitialItemIsOnline() && !this.atLeastOneDescendantIsOnline(descendants)) {
-                            this.instantDeleteCheckbox.hide();
-                        }
-                    });
-                }
-                else {
-                    this.descendantItems = [];
-                    this.descendantsContainer.hide();
-                    if (!this.atLeastOneInitialItemIsOnline()) {
-                        this.instantDeleteCheckbox.hide();
-                    }
-
-                    this.centerMyself();
-                }
-
-                this.countItemsToDeleteAndUpdateButtonCounter();
-            }
-        });
-
-        return selectionItem;
-    }
-
     private countItemsToDeleteAndUpdateButtonCounter() {
         this.cleanDeleteButtonText();
         this.showLoadingSpinner();
@@ -222,18 +193,20 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
 
     private createRequestForCountingItemsToDelete(): api.content.CountContentsWithDescendantsRequest {
         var countContentChildrenRequest = new api.content.CountContentsWithDescendantsRequest();
-        for (var j = 0; j < this.selectedItems.length; j++) {
-            countContentChildrenRequest.addContentPath(ContentPath.fromString(this.selectedItems[j].getBrowseItem().getPath()));
-        }
+
+        this.getItemList().getItems().forEach((item) => {
+            countContentChildrenRequest.addContentPath(item.getContentSummary().getPath());
+        });
 
         return countContentChildrenRequest;
     }
 
     private createDeleteRequest(): api.content.DeleteContentRequest {
         var deleteRequest = new api.content.DeleteContentRequest();
-        for (var i = 0; i < this.selectedItems.length; i++) {
-            deleteRequest.addContentPath(ContentPath.fromString(this.selectedItems[i].getBrowseItem().getPath()));
-        }
+
+        this.getItemList().getItems().forEach((item) => {
+            deleteRequest.addContentPath(item.getContentSummary().getPath());
+        });
 
         this.instantDeleteCheckbox.isChecked() ? deleteRequest.setDeleteOnline(true) : deleteRequest.setDeletePending(true);
 
@@ -241,8 +214,11 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
     }
 
     private updateDeleteButtonCounter() {
-        var showCounter: boolean = this.moreThanOneItemSelected() || this.atLeastOneInitialItemHasChild();
-        this.deleteButton.setLabel("Delete" + (showCounter ? " (" + this.totalItemsToDelete + ")" : ""));
+        var items = this.getItemList().getItems(),
+            count = items.length;
+
+        var showCounter: boolean = count > 1 || this.doAnyHaveChildren(items);
+        this.deleteButton.setLabel("Delete" + (showCounter ? " (" + count + ")" : ""));
     }
 
     private showLoadingSpinner() {
@@ -257,107 +233,126 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
         this.deleteButton.setLabel("Delete ");
     }
 
-    private atLeastOneInitialItemHasChild(): boolean {
-        return this.selectedItems.some((obj: SelectionItem<ContentSummaryAndCompareStatus>) => {
-            return obj.getBrowseItem().getModel().hasChildren();
+    private doAnyHaveChildren(items: ContentSummaryAndCompareStatus[]): boolean {
+        return items.some((item: ContentSummaryAndCompareStatus) => {
+            return item.getContentSummary().hasChildren();
         });
     }
 
-    private atLeastOneInitialItemIsOnline(): boolean {
-        return this.selectedItems.some((obj: SelectionItem<ContentSummaryAndCompareStatus>) => {
-            return this.isContentOnline(obj.getBrowseItem().getModel().getCompareStatus());
+    private isAnyOnline(items: ContentSummaryAndCompareStatus[]): boolean {
+        return items.some((item: ContentSummaryAndCompareStatus) => {
+            return this.isStatusOnline(item.getCompareStatus());
         });
     }
 
-    private atLeastOneDescendantIsOnline(descendants: ContentSummaryAndCompareStatus[]): boolean {
-        return descendants.some((obj: ContentSummaryAndCompareStatus) => {
-            return this.isContentOnline(obj.getCompareStatus());
-        });
+    private isStatusOnline(status: CompareStatus): boolean {
+        return status === CompareStatus.EQUAL ||
+               status === CompareStatus.MOVED ||
+               status === CompareStatus.NEWER; //except PENDING_DELETE because it gets deleted immediately
     }
 
-    private isContentOnline(status: CompareStatus): boolean {
-        return  status === CompareStatus.EQUAL ||
-                status === CompareStatus.MOVED ||
-                status === CompareStatus.NEWER; //except PENDING_DELETE because it gets deleted immediately
-    }
+    updateSubTitle() {
+        var items = this.getItemList().getItems(),
+            count = items.length;
 
-    private updateSubTitle() {
-        if(!this.atLeastOneInitialItemHasChild()) {
-            this.updateSubTitleText("");
-        }
-        else if (this.moreThanOneItemSelected()) {
-            this.updateSubTitleText("Delete selected items and their child content");
-        }
-        else {
-            this.updateSubTitleText("Delete selected item and its child content");
+        if (!this.doAnyHaveChildren(items)) {
+            super.updateSubTitle("");
+        } else {
+            super.updateSubTitle(`Delete selected items and ${count > 1 ? 'their' : 'its'} child content`);
         }
     }
 
-    private noItemsSelected(): boolean {
-        return this.selectedItems.length === 0;
-    }
-
-    private onlyOneItemSelected(): boolean {
-        return this.selectedItems.length === 1;
-    }
-
-    private moreThanOneItemSelected(): boolean {
-        return this.selectedItems.length > 1;
-    }
 
     private isAnySiteToBeDeleted(): boolean {
-        var result = this.selectedItems.some((selectionItem: SelectionItem<ContentSummaryAndCompareStatus>) => {
-            return selectionItem.getBrowseItem().getModel().getContentSummary().isSite() &&
-                   (!this.isContentOnline(selectionItem.getBrowseItem().getModel().getCompareStatus()) ||
-                    this.instantDeleteCheckbox.isChecked());
+        var result = this.getItemList().getItems().some((item: ContentSummaryAndCompareStatus) => {
+            return item.getContentSummary().isSite() &&
+                   (!this.isStatusOnline(item.getCompareStatus()) || this.instantDeleteCheckbox.isChecked());
         });
 
         if (result) {
             return true;
         }
 
-        if (!!this.descendantItems && this.descendantItems.length > 0) {
-            return this.descendantItems.some((descendant: ContentSummaryAndCompareStatus) => {
+        if (this.dependantList.getItemCount() > 0) {
+            return this.dependantList.getItems().some((descendant: ContentSummaryAndCompareStatus) => {
                 return descendant.getContentSummary().isSite() &&
-                       (!this.isContentOnline(descendant.getCompareStatus()) || this.instantDeleteCheckbox.isChecked());
+                       (!this.isStatusOnline(descendant.getCompareStatus()) || this.instantDeleteCheckbox.isChecked());
             });
-        }
-        else {
+        } else {
             return false;
         }
     }
+
 }
 
-export class DescendantsToBeDeletedList extends api.ui.selector.list.ListBox<ContentSummary> {
+export class DeletablesList extends ListBox<ContentSummaryAndCompareStatus> {
 
     constructor(className?: string) {
         super(className);
     }
 
-    loadData(selectedItems: SelectionItem<ContentSummaryAndCompareStatus>[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
-        return this.createRequestForGettingItemsDescendants(selectedItems).sendAndParse().then((result: api.content.ContentResponse<ContentSummary>) => {
-            this.setItems(result.getContents());
-            this.prependChild(new api.dom.H6El("descendants-header").setHtml("Other items that will be deleted"));
+    createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
+        var deleteItemViewer = new api.content.ContentSummaryAndCompareStatusViewer();
+        deleteItemViewer.setObject(item);
 
-            return api.content.CompareContentRequest.fromContentSummaries(result.getContents()).sendAndParse().then((compareContentResults: api.content.CompareContentResults) => {
-                return ContentSummaryAndCompareStatusFetcher.updateCompareStatus(result.getContents(), compareContentResults);
-            });
+        var browseItem = new BrowseItem<ContentSummaryAndCompareStatus>(item).
+            setId(item.getId()).
+            setDisplayName(item.getDisplayName()).
+            setPath(item.getPath().toString()).
+            setIconUrl(new ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
+
+
+        var selectionItem = new ContentDeleteSelectionItem(deleteItemViewer, browseItem, () => {
+            this.removeItem(item);
         });
+
+        return selectionItem;
     }
 
-    createItemView(item: ContentSummary, readOnly: boolean): api.dom.Element {
-        return DependantView.create().item(item).build();
+    getItemId(item: ContentSummaryAndCompareStatus): string {
+        return item.getContentSummary().getId();
     }
 
-    getItemId(item: ContentSummary): string {
-        return item.getId();
+}
+
+export class DependantList extends ListBox<ContentSummaryAndCompareStatus> {
+
+    constructor(className?: string) {
+        super(className);
     }
 
-    private createRequestForGettingItemsDescendants(selectedItems: SelectionItem<ContentSummaryAndCompareStatus>[]): api.content.GetDescendantsOfContents {
+    loadData(summaries: ContentSummaryAndCompareStatus[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+        return this.createRequestForGettingItemsDescendants(summaries).sendAndParse()
+            .then((result: api.content.ContentResponse<ContentSummary>) => {
+
+                return api.content.CompareContentRequest.fromContentSummaries(result.getContents()).sendAndParse()
+                    .then((compareContentResults: api.content.CompareContentResults) => {
+
+                        var summaries = ContentSummaryAndCompareStatusFetcher
+                            .updateCompareStatus(result.getContents(), compareContentResults);
+
+                        this.setItems(summaries);
+                        this.prependChild(new api.dom.H6El("descendants-header").setHtml("Other items that will be deleted"));
+
+                        return summaries;
+                    });
+            });
+    }
+
+    createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
+        return DependantView.create().item(item.getContentSummary()).build();
+    }
+
+    getItemId(item: ContentSummaryAndCompareStatus): string {
+        return item.getContentSummary().getId();
+    }
+
+    private createRequestForGettingItemsDescendants(summaries: ContentSummaryAndCompareStatus[]): api.content.GetDescendantsOfContents {
         var getDescendantsOfContentsRequest = new api.content.GetDescendantsOfContents();
-        for (var j = 0; j < selectedItems.length; j++) {
-            getDescendantsOfContentsRequest.addContentPath(ContentPath.fromString(selectedItems[j].getBrowseItem().getPath()));
-        }
+
+        summaries.forEach((summary) => {
+            getDescendantsOfContentsRequest.addContentPath(summary.getContentSummary().getPath());
+        });
 
         return getDescendantsOfContentsRequest;
     }
