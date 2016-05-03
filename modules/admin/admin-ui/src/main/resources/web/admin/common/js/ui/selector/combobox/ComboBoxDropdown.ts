@@ -26,7 +26,8 @@ module api.ui.selector.combobox {
             };
         }
 
-        setOptions(options: Option<OPTION_DISPLAY_VALUE>[], selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = [], saveSelection?: boolean) {
+        setOptions(options: Option<OPTION_DISPLAY_VALUE>[], selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = [], saveSelection?: boolean,
+                   noOptionsText?: string) {
 
             selectedOptions.forEach((selectedOption: Option<OPTION_DISPLAY_VALUE>) => {
                 if (selectedOption.readOnly) {
@@ -58,11 +59,11 @@ module api.ui.selector.combobox {
                     selected = gridSelection.concat(newSelection);
                 }
 
-                this.showDropdown(selected);
+                this.showDropdown(selected, noOptionsText);
             }
         }
 
-        showDropdown(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
+        showDropdown(selectedOptions: Option<OPTION_DISPLAY_VALUE>[], noOptionsText?: string) {
 
             if (this.hasOptions()) {
                 this.getEmptyDropdown().hide();
@@ -72,7 +73,7 @@ module api.ui.selector.combobox {
                 this.getDropdownGrid().markReadOnly(selectedOptions);
             } else {
                 this.getDropdownGrid().hide();
-                this.getEmptyDropdown().getEl().setInnerHtml("No matching items");
+                this.getEmptyDropdown().getEl().setInnerHtml(!!noOptionsText ? noOptionsText : "No matching items");
                 this.getEmptyDropdown().show();
             }
         }
