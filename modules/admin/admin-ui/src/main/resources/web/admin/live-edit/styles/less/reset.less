@@ -1,12 +1,15 @@
-.@{_CLS_PREFIX}region-placeholder {
-    border: 0;
-    outline: 0;
-    color: @admin-dark-gray;
-    font-size: 11px;
-    font-family: Tahoma, Geneva, sans-serif;
-    font-weight: normal;
+body {
     margin: 0;
-    padding: 0;
-    vertical-align: baseline;
-    line-height: 1.2;
+}
+
+/*
+    Disable pointer events for A elements
+    disables CSS hover selectors and clicks on links
+*/
+a {
+    pointer-events: none;
+}
+
+a[disabled] {
+    cursor: move; //IE fix XP-2100
 }

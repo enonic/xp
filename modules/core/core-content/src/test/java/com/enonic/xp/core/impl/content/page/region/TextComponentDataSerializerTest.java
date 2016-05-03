@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import org.junit.Test;
 
+import com.enonic.xp.core.impl.content.serializer.TextComponentDataSerializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.region.TextComponent;

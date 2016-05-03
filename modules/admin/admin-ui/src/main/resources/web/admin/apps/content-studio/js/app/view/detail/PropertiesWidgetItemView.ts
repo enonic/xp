@@ -36,7 +36,6 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         if (PropertiesWidgetItemView.debug) {
             console.debug('PropertiesWidgetItemView.layout');
         }
-        this.removeChildren();
 
         return super.layout().then(() => {
             if (this.content != undefined) {
@@ -88,6 +87,7 @@ export class PropertiesWidgetItemView extends WidgetItemView {
                 stringItem.layout(this.list);
             }
         });
+        this.removeChildren();
         this.appendChild(this.list);
     }
 }

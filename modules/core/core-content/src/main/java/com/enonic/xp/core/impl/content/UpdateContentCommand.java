@@ -16,6 +16,9 @@ import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
+import com.enonic.xp.core.impl.content.processor.ContentProcessor;
+import com.enonic.xp.core.impl.content.processor.ProcessUpdateParams;
+import com.enonic.xp.core.impl.content.processor.ProcessUpdateResult;
 import com.enonic.xp.core.impl.content.validate.DataValidationError;
 import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
@@ -88,7 +91,7 @@ final class UpdateContentCommand
         editedContent = Content.create( editedContent ).
             valid( validated ).
             build();
-        editedContent = processContent( contentBeforeChange, editedContent );
+        editedContent = processContent( editedContent );
         editedContent = attachThumbnail( editedContent );
         editedContent = setModifiedTime( editedContent );
 
@@ -105,26 +108,43 @@ final class UpdateContentCommand
         return translator.fromNode( editedNode, true );
     }
 
-    private Content processContent( final Content contentBeforeChange, Content editedContent )
+    private Content processContent( Content editedContent )
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( editedContent.getType() ) );
 
-        final ProxyContentProcessor proxyContentProcessor = ProxyContentProcessor.create().
-            mediaInfo( this.mediaInfo ).
-            mixinService( this.mixinService ).
-            contentService( this.contentService ).
-            contentType( contentType ).
-            build();
+        editedContent = runContentProcessors( editedContent, contentType );
 
-        final ProcessUpdateResult processUpdateResult =
-            proxyContentProcessor.processEdit( contentBeforeChange.getType(), params, params.getCreateAttachments() );
+        return editedContent;
+    }
+
+    private Content runContentProcessors( Content editedContent, final ContentType contentType )
+    {
+        for ( final ContentProcessor contentProcessor : this.contentProcessors )
+        {
+            if ( contentProcessor.supports( contentType ) )
+            {
+                final ProcessUpdateResult result = contentProcessor.processUpdate( ProcessUpdateParams.create().
+                    contentType( contentType ).
+                    mediaInfo( mediaInfo ).
+                    createAttachments( params.getCreateAttachments() ).
+                    build() );
+
+                editedContent = updateContentWithProcessedData( editedContent, result );
+            }
+        }
+
+        return editedContent;
+    }
+
+    private Content updateContentWithProcessedData( Content editedContent, final ProcessUpdateResult processUpdateResult )
+    {
         if ( processUpdateResult != null )
         {
-            if ( processUpdateResult.editor != null )
+            if ( processUpdateResult.getEditor() != null )
             {
-                editedContent = editContent( processUpdateResult.editor, editedContent );
+                editedContent = editContent( processUpdateResult.getEditor(), editedContent );
             }
-            this.params.createAttachments( processUpdateResult.createAttachments );
+            this.params.createAttachments( processUpdateResult.getCreateAttachments() );
         }
         return editedContent;
     }

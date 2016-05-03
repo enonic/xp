@@ -2,7 +2,6 @@
 ///<reference path='OptionFilterInput.ts' />
 ///<reference path='OptionFilterInputValueChangedEvent.ts' />
 ///<reference path='OptionSelectedEvent.ts' />
-///<reference path='DropdownHandle.ts' />
 ///<reference path='DropdownGridRowSelectedEvent.ts' />
 ///<reference path='DropdownGridMultipleSelectionEvent.ts' />
 ///<reference path='DefaultOptionDisplayValueViewer.ts' />

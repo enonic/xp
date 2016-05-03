@@ -1,0 +1,60 @@
+.menu-button {
+  display: inline-block;
+  position: relative;
+  height: 40px;
+
+  &.hidden-dropdown {
+    .dropdown-handle, .menu {
+      display: none;
+    }
+
+    .action-button {
+      margin-left: 0px;
+    }
+  }
+
+  .dropdown-handle {
+    left: 0;
+    width: 40px;
+    background: @form-button-bg;
+    &:after {
+      margin-left: -6px;
+      border-top: 10px solid @admin-white;
+    }
+    &.disabled {
+      background: @form-button-bg-disabled;
+    }
+  }
+
+  .action-button {
+    position: relative;
+    height: 100%;
+    border: none;
+    min-width: 126px;
+    margin-left: 42px;
+    background: @admin-green;
+    text-align: center;
+    span {
+      color: @admin-white;
+    }
+
+    &:disabled {
+      background: @form-button-bg;
+    }
+  }
+
+  .menu {
+    position: absolute;
+    width: 100%;
+    z-index: @z-index-mask;
+    box-sizing: border-box;
+
+    &.expanded {
+      display: block;
+    }
+  }
+
+  .menu-item {
+    display: block !important;
+  }
+}

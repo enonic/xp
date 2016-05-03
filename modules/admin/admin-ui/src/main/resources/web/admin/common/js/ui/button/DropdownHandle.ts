@@ -1,4 +1,4 @@
-module api.ui.selector {
+module api.ui.button {
 
     export class DropdownHandle extends api.dom.DivEl {
 
@@ -12,10 +12,13 @@ module api.ui.selector {
         setEnabled(value: boolean) {
             if (value) {
                 this.removeClass('disabled');
-            }
-            else {
+            } else {
                 this.addClass('disabled');
             }
+        }
+        
+        isEnabled(): boolean {
+            return !this.hasClass('disabled');
         }
 
         down() {

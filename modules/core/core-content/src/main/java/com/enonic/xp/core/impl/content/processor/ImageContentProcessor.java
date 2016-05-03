@@ -1,13 +1,15 @@
-package com.enonic.xp.core.impl.content;
+package com.enonic.xp.core.impl.content.processor;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -24,7 +26,6 @@ import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -36,6 +37,8 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -49,7 +52,9 @@ import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
 import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
 
-final class ImageContentProcessor
+@Component
+public final class ImageContentProcessor
+    implements ContentProcessor
 {
     private static final ImmutableMap<String, String> FIELD_CONFORMITY_MAP = ImmutableMap.<String, String>builder().
         put( "tiffImagelength", "imageHeight" ).
@@ -68,33 +73,39 @@ final class ImageContentProcessor
 
     private static final String GEO_LATITUDE = "geoLat";
 
-    private final MixinService mixinService;
+    private ContentService contentService;
 
-    private final ContentService contentService;
 
-    private final MediaInfo mediaInfo;
+    protected ContentTypeService contentTypeService;
 
-    private final ContentType contentType;
+    protected MixinService mixinService;
 
-    private ImageContentProcessor( final Builder builder )
+    @Override
+    public boolean supports( final ContentType contentType )
     {
-        this.mediaInfo = builder.mediaInfo;
-        this.contentType = builder.contentType;
-        this.mixinService = builder.mixinService;
-        this.contentService = builder.contentService;
+        return contentType.getName().isImageMedia();
     }
 
-    public CreateContentParams processCreate( final CreateContentParams params )
+    protected Mixins getMixins( final ContentTypeName contentTypeName )
     {
-        Preconditions.checkArgument( params.getType().isImageMedia(),
-                                     "This processor only accepts [" + ContentTypeName.imageMedia() + "]: " + params.getType() );
+        final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( contentTypeName ) );
 
-        final CreateAttachments originalAttachments = params.getCreateAttachments();
+        return mixinService.getByContentType( contentType );
+    }
+
+    @Override
+    public ProcessCreateResult processCreate( final ProcessCreateParams params )
+    {
+        final CreateContentParams createContentParams = params.getCreateContentParams();
+        final MediaInfo mediaInfo = params.getMediaInfo();
+
+        final CreateAttachments originalAttachments = createContentParams.getCreateAttachments();
         Preconditions.checkArgument( originalAttachments.getSize() == 1, "Expected only one attachment" );
 
         final CreateAttachment sourceAttachment = originalAttachments.first();
 
-        final Mixins contentMixins = mixinService.getByContentType( contentType );
+        final Mixins contentMixins = getMixins( createContentParams.getType() );
+
         ExtraDatas extraDatas = null;
         if ( mediaInfo != null )
         {
@@ -104,13 +115,17 @@ final class ImageContentProcessor
         final CreateAttachments.Builder builder = CreateAttachments.create();
         builder.add( sourceAttachment );
 
-        return CreateContentParams.create( params ).
+        return new ProcessCreateResult( CreateContentParams.create( createContentParams ).
             createAttachments( builder.build() ).extraDatas( extraDatas ).
-            build();
+            build() );
     }
 
-    public ProcessUpdateResult processUpdate( final UpdateContentParams params, final CreateAttachments createAttachments )
+    @Override
+    public ProcessUpdateResult processUpdate( final ProcessUpdateParams params )
     {
+        final CreateAttachments createAttachments = params.getCreateAttachments();
+        final MediaInfo mediaInfo = params.getMediaInfo();
+
         final CreateAttachment sourceAttachment = createAttachments == null ? null : createAttachments.first();
 
         final ContentEditor editor;
@@ -118,7 +133,7 @@ final class ImageContentProcessor
         {
             editor = editable -> {
 
-                Mixins contentMixins = mixinService.getByContentType( contentType );
+                final Mixins contentMixins = getMixins( params.getContentType().getName() );
                 editable.extraDatas = extractMetadata( mediaInfo, contentMixins, sourceAttachment );
 
             };
@@ -127,15 +142,17 @@ final class ImageContentProcessor
         {
             editor = editable -> {
 
-                if ( !contentType.getName().isDescendantOfMedia() )
+                if ( !params.getContentType().getName().isDescendantOfMedia() )
                 {
                     return;
                 }
+
                 editable.extraDatas = updateImageMetadata( editable );
 
             };
         }
         return new ProcessUpdateResult( createAttachments, editor );
+
     }
 
     private ExtraDatas updateImageMetadata( final EditableContent editable )
@@ -361,93 +378,22 @@ final class ImageContentProcessor
         }
     }
 
-    public static Builder create()
+    @Reference
+    public void setMixinService( final MixinService mixinService )
     {
-        return new Builder();
+        this.mixinService = mixinService;
     }
 
-    public static class Builder
+    @Reference
+    public void setContentService( final ContentService contentService )
     {
-        private MediaInfo mediaInfo;
-
-        private ContentType contentType;
-
-        private MixinService mixinService;
-
-        private ContentService contentService;
-
-        public Builder mediaInfo( final MediaInfo mediaInfo )
-        {
-            this.mediaInfo = mediaInfo;
-            return this;
-        }
-
-        public Builder contentType( final ContentType contentType )
-        {
-            this.contentType = contentType;
-            return this;
-        }
-
-        public Builder mixinService( final MixinService mixinService )
-        {
-            this.mixinService = mixinService;
-            return this;
-        }
-
-        public Builder contentService( final ContentService contentService )
-        {
-            this.contentService = contentService;
-            return this;
-        }
-
-        private void validate()
-        {
-            Preconditions.checkNotNull( this.mixinService );
-            Preconditions.checkNotNull( this.contentType );
-        }
-
-        public ImageContentProcessor build()
-        {
-            this.validate();
-            return new ImageContentProcessor( this );
-        }
+        this.contentService = contentService;
     }
 
-    /**
-     * Keeps track of the number of bytes written to the output stream, but discards the data.
-     */
-    private static final class SizeCounterOutputStream
-        extends OutputStream
+    @Reference
+    public void setContentTypeService( final ContentTypeService contentTypeService )
     {
-        private long size = 0;
-
-        public long size()
-        {
-            return size;
-        }
-
-        @Override
-        public void write( final byte[] b )
-            throws IOException
-        {
-            if ( b != null )
-            {
-                size += b.length;
-            }
-        }
-
-        @Override
-        public void write( final byte[] b, final int off, final int len )
-            throws IOException
-        {
-            size += len;
-        }
-
-        @Override
-        public void write( final int b )
-            throws IOException
-        {
-            size++;
-        }
+        this.contentTypeService = contentTypeService;
     }
+
 }

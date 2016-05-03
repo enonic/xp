@@ -132,6 +132,11 @@
   transition: @params;
 }
 
+.transition-timing-function(@value) {
+  -webkit-transition-timing-function: @value;
+  transition-timing-function: @value;
+}
+
 .transform (@function) {
   -webkit-transform: @function;
   -moz-transform: @function;

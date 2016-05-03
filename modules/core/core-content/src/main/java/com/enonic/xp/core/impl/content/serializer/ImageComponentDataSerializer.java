@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.content.page.region;
+package com.enonic.xp.core.impl.content.serializer;
 
 
 import com.enonic.xp.content.ContentId;
