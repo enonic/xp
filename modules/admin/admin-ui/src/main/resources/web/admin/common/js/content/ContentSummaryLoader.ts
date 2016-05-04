@@ -8,9 +8,10 @@ module api.content {
 
     export class ContentSummaryLoader extends ContentSummaryPreLoader {
 
-        public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("_modifiedTime"), OrderDirection.DESC);
+        public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("modifiedTime"), OrderDirection.DESC);
+        public static SCORE = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
 
-        public static ORDER_BY_MODIFIED_TIME_DESC: OrderExpr[] = [ContentSummaryLoader.MODIFIED_TIME_DESC];
+        public static ORDER_BY_MODIFIED_TIME_DESC: OrderExpr[] = [ContentSummaryLoader.SCORE, ContentSummaryLoader.MODIFIED_TIME_DESC];
 
         private contentSummaryRequest: ContentSummaryRequest;
 

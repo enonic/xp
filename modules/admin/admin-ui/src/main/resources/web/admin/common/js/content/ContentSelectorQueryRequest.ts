@@ -14,11 +14,17 @@ module api.content {
 
         public static DEFAULT_SIZE = 15;
 
-        public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("_modifiedTime"), OrderDirection.DESC);
+        public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("modifiedTime"), OrderDirection.DESC);
+
+        public static SCORE_DESC = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
 
         public static ORDER_BY_MODIFIED_TIME_DESC: OrderExpr[] = [ContentSelectorQueryRequest.MODIFIED_TIME_DESC];
 
-        private order: OrderExpr[] = ContentSelectorQueryRequest.ORDER_BY_MODIFIED_TIME_DESC;
+        public static ORDER_BY_SCORE_DESC: OrderExpr[] = [ContentSelectorQueryRequest.SCORE_DESC];
+
+        public static DEFAULT_ORDER: OrderExpr[] = [ContentSelectorQueryRequest.SCORE_DESC, ContentSelectorQueryRequest.MODIFIED_TIME_DESC];
+
+        private order: OrderExpr[] = ContentSelectorQueryRequest.DEFAULT_ORDER;
 
         private queryExpr: api.query.expr.QueryExpr;
 
@@ -93,12 +99,11 @@ module api.content {
 
         setQueryExpr(searchString: string) {
 
-            var fulltextExpression: Expression = new api.query.FulltextSearchExpressionBuilder().
-                setSearchString(searchString).
-                addField(new QueryField(QueryField.DISPLAY_NAME, 5)).
-                addField(new QueryField(QueryField.NAME, 3)).
-                addField(new QueryField(QueryField.ALL)).
-                build();
+            var fulltextExpression: Expression = new api.query.FulltextSearchExpressionBuilder().setSearchString(searchString).addField(
+                new QueryField(QueryField.DISPLAY_NAME, 5)).addField(new QueryField(QueryField.NAME, 3)).addField(
+                new QueryField(QueryField.ALL)).build();
+
+            console.log("ORDER: ", this.order);
 
             this.queryExpr = new QueryExpr(fulltextExpression, this.order);
         }
@@ -143,25 +148,25 @@ module api.content {
 
         sendAndParse(): wemQ.Promise<ContentSummary[]> {
 
-            return this.send().
-                then((response: api.rest.JsonResponse<json.ContentQueryResultJson<ContentSummaryJson>>) => {
+            return this.send().then((response: api.rest.JsonResponse<json.ContentQueryResultJson<ContentSummaryJson>>) => {
 
-                    var responseResult: json.ContentQueryResultJson<ContentSummaryJson> = response.getResult();
+                var responseResult: json.ContentQueryResultJson<ContentSummaryJson> = response.getResult();
 
-                    var contentsAsJson: json.ContentSummaryJson[] = responseResult.contents;
+                var contentsAsJson: json.ContentSummaryJson[] = responseResult.contents;
 
-                    var contentSummaries: ContentSummary[] = <any[]> this.fromJsonToContentSummaryArray(<json.ContentSummaryJson[]>contentsAsJson);
+                var contentSummaries: ContentSummary[] = <any[]> this.fromJsonToContentSummaryArray(
+                    <json.ContentSummaryJson[]>contentsAsJson);
 
-                    if (this.from === 0) {
-                        this.results = [];
-                    }
-                    this.from += responseResult.metadata["hits"];
-                    this.loaded = this.from >= responseResult.metadata["totalHits"];
+                if (this.from === 0) {
+                    this.results = [];
+                }
+                this.from += responseResult.metadata["hits"];
+                this.loaded = this.from >= responseResult.metadata["totalHits"];
 
-                    this.results = this.results.concat(contentSummaries);
+                this.results = this.results.concat(contentSummaries);
 
-                    return this.results;
-                });
+                return this.results;
+            });
         }
 
         private expandAsString(): string {
