@@ -12,6 +12,7 @@ import ContentsPublishedEvent = api.content.event.ContentsPublishedEvent;
 import {WidgetView} from "./WidgetView";
 import {WidgetsSelectionRow} from "./WidgetsSelectionRow";
 import {VersionsWidgetItemView} from "./widget/version/VersionsWidgetItemView";
+import {DependenciesWidgetItemView} from "./widget/dependency/DependenciesWidgetItemView";
 import {InfoWidgetView} from "./widget/info/InfoWidgetView";
 
 export class DetailsPanel extends api.ui.panel.Panel {
@@ -45,6 +46,7 @@ export class DetailsPanel extends api.ui.panel.Panel {
     private alreadyFetchedCustomWidgets: boolean;
 
     private versionsWidgetItemView: VersionsWidgetItemView;
+    private dependenciesWidgetItemView: DependenciesWidgetItemView;
 
     public static debug = false;
 
@@ -249,7 +251,12 @@ export class DetailsPanel extends api.ui.panel.Panel {
     }
 
     private updateCommonWidgetViews(): wemQ.Promise<any> {
-        return this.versionsWidgetItemView.setItem(this.item);
+        var promises = [];
+
+        promises.push(this.versionsWidgetItemView.setItem(this.item));
+        promises.push(this.dependenciesWidgetItemView.setItem(this.item));
+
+        return wemQ.all(promises);
     }
 
     private updateCustomWidgetViews(): wemQ.Promise<any> {
@@ -277,11 +284,17 @@ export class DetailsPanel extends api.ui.panel.Panel {
     private initCommonWidgetViews() {
 
         this.versionsWidgetItemView = new VersionsWidgetItemView();
+        this.dependenciesWidgetItemView = new DependenciesWidgetItemView();
 
-        var versionsWidgetView = WidgetView.create().setName("Version history").setDetailsPanel(this).addWidgetItemView(
-            this.versionsWidgetItemView).build();
+        var versionsWidgetView = WidgetView.create().setName("Version history").setDetailsPanel(this)
+                                    .addWidgetItemView(this.versionsWidgetItemView).build();
 
-        this.addWidgets([versionsWidgetView]);
+        var dependenciesWidgetView = WidgetView.create().setName("Dependencies").setDetailsPanel(this)
+                                    .addWidgetItemView(this.dependenciesWidgetItemView).build();
+
+        dependenciesWidgetView.addClass("dependency-widget");
+
+        this.addWidgets([versionsWidgetView, dependenciesWidgetView]);
     }
 
     private getAndInitCustomWidgetViews(): wemQ.Promise<any> {

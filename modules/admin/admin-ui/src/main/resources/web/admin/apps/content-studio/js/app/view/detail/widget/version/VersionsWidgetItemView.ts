@@ -1,6 +1,5 @@
 import "../../../../../api.ts";
 
-import ViewItem = api.app.view.ViewItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import {WidgetItemView} from "../../WidgetItemView";
 import {VersionsView} from "./VersionsView";
