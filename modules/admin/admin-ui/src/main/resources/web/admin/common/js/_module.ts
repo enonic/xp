@@ -117,6 +117,8 @@
 ///<reference path='application/_module.ts' />
 ///<reference path='application/json/_module.ts' />
 
+///<reference path='macro/_module.ts' />
+
 ///<reference path='schema/_module.ts' />
 ///<reference path='schema/mixin/_module.ts'/>
 ///<reference path='schema/content/_module.ts' />
