@@ -35,7 +35,7 @@ public final class ServiceWebHandler
 
     public ServiceWebHandler()
     {
-        super( -50, "service" );
+        super( 25, "service" );
     }
 
     @Override
@@ -48,7 +48,8 @@ public final class ServiceWebHandler
             throw notFound( "Not a valid service url pattern" );
         }
 
-        final PortalWebRequest portalWebRequest = PortalWebRequest.create( webRequest ).build();
+        final PortalWebRequest portalWebRequest =
+            webRequest instanceof PortalWebRequest ? (PortalWebRequest) webRequest : PortalWebRequest.create( webRequest ).build();
 
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
 
