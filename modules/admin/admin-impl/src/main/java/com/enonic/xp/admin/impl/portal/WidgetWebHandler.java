@@ -7,7 +7,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.PortalHandler;
 import com.enonic.xp.resource.ResourceKey;
@@ -23,8 +22,6 @@ public final class WidgetWebHandler
     private final static String ADMIN_WIDGET_PREFIX = "/test/admin/widget/"; //TODO rewrite
 
     private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
-
-    private ContentService contentService;
 
     private ControllerScriptFactory controllerScriptFactory;
 
@@ -54,12 +51,6 @@ public final class WidgetWebHandler
             controllerScriptFactory( controllerScriptFactory ).
             build().
             execute();
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
     }
 
     @Reference

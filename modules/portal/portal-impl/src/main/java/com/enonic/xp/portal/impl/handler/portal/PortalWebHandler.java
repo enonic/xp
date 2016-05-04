@@ -22,6 +22,11 @@ public class PortalWebHandler
 
     private final static String BRANCH_PREFIX = BASE_URI + "/";
 
+    public PortalWebHandler()
+    {
+        super( -50 );
+    }
+
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
@@ -53,7 +58,7 @@ public class PortalWebHandler
 //                applicationKey().
 //                pageDescriptor().
 //                controllerScript().
-    build();
+                build();
         }
         return webHandlerChain.handle( portalWebRequest, new PortalWebResponse() );
     }

@@ -17,7 +17,7 @@ public final class ErrorWebHandler
 {
     public ErrorWebHandler()
     {
-        super( -50, "error" );
+        super( "error" );
     }
 
     @Override

@@ -26,6 +26,11 @@ public class AdminPortalWebHandler
 
     private final static Pattern PATTERN = Pattern.compile( "^" + BASE_URI_START + "/(edit|preview|admin)/" );
 
+    public AdminPortalWebHandler()
+    {
+        super( -50 );
+    }
+
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {

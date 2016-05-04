@@ -35,7 +35,7 @@ public final class ImageWebHandler
 
     public ImageWebHandler()
     {
-        super( 25, EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "image" );
+        super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "image" );
     }
 
     @Override

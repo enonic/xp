@@ -33,7 +33,7 @@ public final class ComponentWebHandler
 
     public ComponentWebHandler()
     {
-        super( 25, "component" );
+        super( "component" );
     }
 
     @Override

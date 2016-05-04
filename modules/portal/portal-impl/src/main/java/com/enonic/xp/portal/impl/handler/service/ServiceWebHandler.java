@@ -34,7 +34,7 @@ public final class ServiceWebHandler
 
     public ServiceWebHandler()
     {
-        super( 25, "service" );
+        super( "service" );
     }
 
     @Override

@@ -28,6 +28,11 @@ public abstract class BaseWebHandler
         this( order, EnumSet.allOf( HttpMethod.class ) );
     }
 
+    public BaseWebHandler( final EnumSet<HttpMethod> methodsAllowed )
+    {
+        this( DEFAULT_ORDER, methodsAllowed );
+    }
+
     public BaseWebHandler( final int order, final EnumSet<HttpMethod> methodsAllowed )
     {
         this.order = order;

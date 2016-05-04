@@ -27,7 +27,7 @@ public final class AttachmentWebHandler
 
     public AttachmentWebHandler()
     {
-        super( 25, EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "attachment" );
+        super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "attachment" );
     }
 
     @Override

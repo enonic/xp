@@ -26,7 +26,7 @@ public final class AssetWebHandler
 
     public AssetWebHandler()
     {
-        super( -50, EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "asset" );
+        super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "asset" );
     }
 
     @Override
