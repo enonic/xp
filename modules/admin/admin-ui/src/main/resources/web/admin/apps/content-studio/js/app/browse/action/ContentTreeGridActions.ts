@@ -92,6 +92,10 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
         let previewHandler = (<PreviewContentAction>this.PREVIEW_CONTENT).getPreviewHandler();
 
+        let publishEnabled = true;
+        let treePublishEnabled = true;
+        let unpublishEnabled = true;
+
         switch (contentBrowseItems.length) {
         case 0:
             this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
@@ -126,11 +130,22 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.MOVE_CONTENT.setEnabled(true);
 
             let isPublished = this.isPublished(contentBrowseItems[0].getModel().getCompareStatus());
-            
-            this.PUBLISH_CONTENT.setEnabled(!isPublished);
+
+            if (this.isEveryLeaf(contentSummaries)) {
+                publishEnabled = !isPublished;
+                treePublishEnabled = false;
+                unpublishEnabled = isPublished;
+            } else if (this.isOneNonLeaf(contentSummaries)) {
+                // publishEnabled = true;
+                // treePublishEnabled = true;
+                unpublishEnabled = isPublished;
+            }
+
+            this.PUBLISH_CONTENT.setEnabled(publishEnabled);
+            this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
+            this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
+
             this.PUBLISH_CONTENT.setVisible(!isPublished);
-            this.PUBLISH_TREE_CONTENT.setEnabled(!isPublished);
-            this.UNPUBLISH_CONTENT.setEnabled(isPublished);
             this.UNPUBLISH_CONTENT.setVisible(isPublished);
 
             this.SORT_CONTENT.setEnabled(true);
@@ -157,10 +172,29 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
                 return !this.isPublished(browseItem.getModel().getCompareStatus());
             });
 
-            this.PUBLISH_CONTENT.setEnabled(anyUnpublished);
+            let anyPublished = contentBrowseItems.some((browseItem) => {
+                return this.isPublished(browseItem.getModel().getCompareStatus());
+            });
+
+            if (this.isEveryLeaf(contentSummaries)) {
+                publishEnabled = anyUnpublished;
+                treePublishEnabled = false;
+                unpublishEnabled = anyPublished;
+            } else if (this.isOneNonLeaf(contentSummaries)) {
+                // publishEnabled = true;
+                // treePublishEnabled = true;
+                unpublishEnabled = anyPublished;
+            } else if (this.isOneNonLeafInMany(contentSummaries)) {
+                // publishEnabled = true;
+                // treePublishEnabled = true;
+                // unpublishEnabled = true;
+            }
+
+            this.PUBLISH_CONTENT.setEnabled(publishEnabled);
+            this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
+            this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
+
             this.PUBLISH_CONTENT.setVisible(anyUnpublished);
-            this.PUBLISH_TREE_CONTENT.setEnabled(anyUnpublished);
-            this.UNPUBLISH_CONTENT.setEnabled(!anyUnpublished);
             this.UNPUBLISH_CONTENT.setVisible(!anyUnpublished);
 
             parallelPromises = [
@@ -173,6 +207,18 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             }).catch(api.DefaultErrorHandler.handle);
         }
         return deferred.promise;
+    }
+
+    private isEveryLeaf(contentSummaries: ContentSummary[]): boolean {
+        return contentSummaries.every((obj: ContentSummary) => obj.hasParent());
+    }
+
+    private isOneNonLeaf(contentSummaries: ContentSummary[]): boolean {
+        return contentSummaries.length === 1 && !contentSummaries[0].hasParent();
+    }
+
+    private isOneNonLeafInMany(contentSummaries: ContentSummary[]): boolean {
+        return contentSummaries.length > 1 && contentSummaries.some((obj: ContentSummary) => !obj.hasParent());
     }
 
     private isPublished(status: api.content.CompareStatus): boolean {
