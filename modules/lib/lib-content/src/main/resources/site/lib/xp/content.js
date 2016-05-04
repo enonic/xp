@@ -221,7 +221,7 @@ exports.modify = function (params) {
  * @param {boolean} [params.includeChildren=true] Whether all children should be included when publishing content.
  * @param {boolean} [params.includeDependencies=true] Whether all related content should be included when publishing content.
  *
- * @returns {object} Modified content as JSON.
+ * @returns {object} Status of the publish operation in JSON.
  */
 exports.publish = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.PublishContentHandler');
