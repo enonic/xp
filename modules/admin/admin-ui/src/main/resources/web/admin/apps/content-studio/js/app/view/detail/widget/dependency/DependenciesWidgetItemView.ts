@@ -5,20 +5,16 @@ import {WidgetItemView} from "../../WidgetItemView";
 
 export class DependenciesWidgetItemView extends WidgetItemView {
 
+    private mainContainer: api.dom.DivEl;
     private nameAndIcon: api.app.NamesAndIconView;
 
-    public static debug = true;
+    private noInboundDependencies: api.dom.DivEl;
+    private noOutboundDependencies: api.dom.DivEl;
 
     constructor() {
         super("dependency-widget-item-view");
-    }
 
-    public layout(): wemQ.Promise<any> {
-        if (DependenciesWidgetItemView.debug) {
-            console.debug('DependenciesWidgetItemView.layout');
-        }
-
-        return super.layout();
+        this.appendMainContainer();
     }
 
     public setItem(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
@@ -26,17 +22,41 @@ export class DependenciesWidgetItemView extends WidgetItemView {
             console.debug('DependenciesWidgetItemView.setItem: ', item);
         }
 
-        this.removeChildren();
+        this.renderContent(item);
 
+        return wemQ<any>(null);
+    }
+
+    private appendMainContainer() {
+        this.mainContainer = new api.dom.DivEl("main-container");
+        this.appendChild(this.mainContainer);
+    }
+
+    private appendContentNamesAndIcon(item: ContentSummaryAndCompareStatus) {
         this.nameAndIcon =
             new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.medium))
                 .setIconUrl(item.getIconUrl())
                 .setMainName(item.getDisplayName())
                 .setSubName(item.getPath().toString());
 
-        this.appendChild(this.nameAndIcon);
-
-        return wemQ<any>(null);
+        this.mainContainer.appendChild(this.nameAndIcon);
     }
 
+    private createNoDependenciesDiv(text: string): api.dom.DivEl {
+        var div = new api.dom.DivEl("no-dependencies");
+        div.setHtml(text);
+
+        this.mainContainer.appendChild(div);
+
+        return div;
+    }
+
+    private renderContent(item: ContentSummaryAndCompareStatus) {
+
+        this.mainContainer.removeChildren();
+
+        this.noInboundDependencies = this.createNoDependenciesDiv("No inbound dependencies");
+        this.appendContentNamesAndIcon(item);
+        this.noOutboundDependencies = this.createNoDependenciesDiv("No outbound dependencies");
+    }
 }

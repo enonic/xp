@@ -1,25 +1,56 @@
 .widget-view.dependency-widget {
-  height: calc(~'100% - 10px');;
+  height: calc(~'100% - 10px');
 
   .widget-item-view {
-    height: calc(~'100% - 25px');;
+    height: calc(~'100% - 25px');
 
-    .names-and-icon-view {
+    .main-container {
       position: absolute;
-      top: 40%;
+      top: 25%;
       width: 100%;
       max-width: 100%;
-      padding-right: 10px;
-      box-sizing: border-box;
 
-      .wrapper {
-        margin: 0 auto 10px auto;
-        float: none;
+      .no-dependencies {
+        color: @admin-font-gray2;
+        text-align: center;
+        height: 16px;
+        line-height: 16px;
+        font-size: 16px;
+        font-weight: normal;
+        .ellipsis();
       }
 
-      .names-view {
-        margin: 0 auto;
-        text-align: center;
+      .names-and-icon-view {
+        margin: 150px 0;
+        padding-right: 10px;
+        box-sizing: border-box;
+        overflow: visible;
+
+        &:before, &:after {
+          content: '';
+          position: absolute;
+          left: calc(~'50% - 5px');
+          border-left: 2px solid #ccc;
+          height: 130px;
+        }
+
+        &:before {
+          top: -140px;
+        }
+
+        &:after {
+          bottom: -140px;
+        }
+
+        .wrapper {
+          margin: 0 auto 10px auto;
+          float: none;
+        }
+
+        .names-view {
+          margin: 0 auto;
+          text-align: center;
+        }
       }
     }
   }
