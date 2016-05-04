@@ -16,7 +16,7 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebResponse;
 
-final class AdminToolWebHandlerWorker
+final class ToolWebHandlerWorker
     extends PortalWebHandlerWorker
 {
 
@@ -26,7 +26,7 @@ final class AdminToolWebHandlerWorker
 
     private final DescriptorKey descriptorKey;
 
-    private AdminToolWebHandlerWorker( final Builder builder )
+    private ToolWebHandlerWorker( final Builder builder )
     {
         super( builder );
         controllerScriptFactory = builder.controllerScriptFactory;
@@ -102,9 +102,9 @@ final class AdminToolWebHandlerWorker
             return this;
         }
 
-        public AdminToolWebHandlerWorker build()
+        public ToolWebHandlerWorker build()
         {
-            return new AdminToolWebHandlerWorker( this );
+            return new ToolWebHandlerWorker( this );
         }
     }
 }

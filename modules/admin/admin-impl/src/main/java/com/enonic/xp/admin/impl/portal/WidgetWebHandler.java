@@ -6,69 +6,60 @@ import java.util.regex.Pattern;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.handler.PortalHandler;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.web.handler.BaseWebHandler;
-import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebResponse;
 
-@Component(immediate = true, service = WebHandler.class)
-public final class AdminToolWebHandler
+@Component(immediate = true, service = PortalHandler.class)
+public final class WidgetWebHandler
     extends BaseWebHandler
 {
-    private final static String ADMIN_TOOL_PREFIX = "/test/admin/tool/"; //TODO rewrite
+    private final static String ADMIN_WIDGET_PREFIX = "/test/admin/widget/"; //TODO rewrite
 
     private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
 
-    private final static DescriptorKey DEFAULT_DESCRIPTOR_KEY = DescriptorKey.from( "com.enonic.xp.admin.ui:home" );
-
-    private AdminToolDescriptorService adminToolDescriptorService;
+    private ContentService contentService;
 
     private ControllerScriptFactory controllerScriptFactory;
 
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest.getPath().startsWith( ADMIN_TOOL_PREFIX );
+        return webRequest.getPath().startsWith( ADMIN_WIDGET_PREFIX );
     }
 
     @Override
     protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
     {
-
-        final String subPath = webRequest.getPath().substring( ADMIN_TOOL_PREFIX.length() );
+        final String subPath = webRequest.getPath().substring( ADMIN_WIDGET_PREFIX.length() );
         final Matcher matcher = PATTERN.matcher( subPath );
-
-        final DescriptorKey descriptorKey;
-        if ( matcher.find() )
+        if ( !matcher.find() )
         {
-            final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
-            final String adminToolName = matcher.group( 2 );
-            descriptorKey = DescriptorKey.from( applicationKey, adminToolName );
-        }
-        else
-        {
-            descriptorKey = DEFAULT_DESCRIPTOR_KEY;
+            throw notFound( "Not a valid service url pattern" );
         }
 
-        return AdminToolWebHandlerWorker.create().
+        final ApplicationKey appKey = ApplicationKey.from( matcher.group( 1 ) );
+        final ResourceKey scriptDir = ResourceKey.from( appKey, "admin/widgets/" + matcher.group( 2 ) );
+
+        return WidgetWebHandlerWorker.create().
             webRequest( webRequest ).
             webResponse( webResponse ).
+            scriptDir( scriptDir ).
             controllerScriptFactory( controllerScriptFactory ).
-            adminToolDescriptorService( adminToolDescriptorService ).
-            descriptorKey( descriptorKey ).
             build().
             execute();
     }
 
     @Reference
-    public void setAdminToolDescriptorService( final AdminToolDescriptorService adminToolDescriptorService )
+    public void setContentService( final ContentService contentService )
     {
-        this.adminToolDescriptorService = adminToolDescriptorService;
+        this.contentService = contentService;
     }
 
     @Reference
