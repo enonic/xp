@@ -11,7 +11,7 @@ module api.content {
         public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("modifiedTime"), OrderDirection.DESC);
         public static SCORE = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
 
-        public static ORDER_BY_MODIFIED_TIME_DESC: OrderExpr[] = [ContentSummaryLoader.SCORE, ContentSummaryLoader.MODIFIED_TIME_DESC];
+        public static SCORE_MODIFIED_ORDER: OrderExpr[] = [ContentSummaryLoader.SCORE, ContentSummaryLoader.MODIFIED_TIME_DESC];
 
         private contentSummaryRequest: ContentSummaryRequest;
 
@@ -21,7 +21,7 @@ module api.content {
             this.contentSummaryRequest = new ContentSummaryRequest();
 
             // Setting default order
-            this.order = ContentSummaryLoader.ORDER_BY_MODIFIED_TIME_DESC;
+            this.order = ContentSummaryLoader.SCORE_MODIFIED_ORDER;
             super(this.contentSummaryRequest);
         }
 

@@ -103,8 +103,6 @@ module api.content {
                 new QueryField(QueryField.DISPLAY_NAME, 5)).addField(new QueryField(QueryField.NAME, 3)).addField(
                 new QueryField(QueryField.ALL)).build();
 
-            console.log("ORDER: ", this.order);
-
             this.queryExpr = new QueryExpr(fulltextExpression, this.order);
         }
 
