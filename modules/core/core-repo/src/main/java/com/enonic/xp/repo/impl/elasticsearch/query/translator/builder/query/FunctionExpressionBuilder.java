@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.elasticsearch.query.translator.builder;
+package com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.query;
 
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -14,17 +14,11 @@ import com.enonic.xp.repo.impl.elasticsearch.function.NGramFunctionArguments;
 import com.enonic.xp.repo.impl.elasticsearch.function.RangeFunctionArg;
 import com.enonic.xp.repo.impl.elasticsearch.function.RangeFunctionArgsFactory;
 import com.enonic.xp.repo.impl.elasticsearch.function.WeightedQueryFieldName;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.QueryFieldNameResolver;
 
-public class FunctionQueryBuilderFactory
-    extends AbstractBuilderFactory
+public class FunctionExpressionBuilder
 {
-    public FunctionQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
-    {
-        super( fieldNameResolver );
-    }
 
-    public static QueryBuilder create( final FunctionExpr function )
+    public static QueryBuilder build( final FunctionExpr function )
     {
         final String functionName = function.getName();
 

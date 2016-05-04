@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.elasticsearch.query.translator.builder;
+package com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.query;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -8,17 +8,19 @@ import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.index.IndexValueNormalizer;
 
-public class LikeQueryBuilderFactory
-    extends AbstractBuilderFactory
+public class LikeExpressionBuilder
 {
-    public LikeQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
-    {
-        super( fieldNameResolver );
-    }
 
-    public QueryBuilder create( final CompareExpr compareExpr )
+
+    public static QueryBuilder build( final CompareExpr compareExpr, final QueryFieldNameResolver resolver )
     {
-        final String queryFieldName = fieldNameResolver.resolve( compareExpr.getField().getFieldPath() );
+        final String queryFieldName = resolver.resolve( compareExpr.getField().getFieldPath() );
+
+        if ( compareExpr.getFirstValue() == null )
+        {
+            throw new IllegalArgumentException( "Invalid compare expression [" + compareExpr.toString() + "]" );
+        }
+
         final Value value = compareExpr.getFirstValue().getValue();
 
         return QueryBuilders.wildcardQuery( queryFieldName, IndexValueNormalizer.normalize( value.asString() ) );

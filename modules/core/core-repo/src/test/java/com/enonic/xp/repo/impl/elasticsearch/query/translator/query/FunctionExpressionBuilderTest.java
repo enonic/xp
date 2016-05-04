@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.elasticsearch.query.translator;
+package com.enonic.xp.repo.impl.elasticsearch.query.translator.query;
 
 import java.util.List;
 
@@ -10,11 +10,11 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.ValueExpr;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.FunctionQueryBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.query.FunctionExpressionBuilder;
 
 import static org.junit.Assert.*;
 
-public class FunctionQueryBuilderFactoryTest
+public class FunctionExpressionBuilderTest
 {
     @Test
     public void test_fulltext()
@@ -22,7 +22,7 @@ public class FunctionQueryBuilderFactoryTest
         List<ValueExpr> arguments =
             Lists.newArrayList( ValueExpr.string( "myField" ), ValueExpr.string( "mySearchString" ), ValueExpr.string( "OR" ) );
 
-        final QueryBuilder fulltext = FunctionQueryBuilderFactory.create( new FunctionExpr( "fulltext", arguments ) );
+        final QueryBuilder fulltext = FunctionExpressionBuilder.build( new FunctionExpr( "fulltext", arguments ) );
 
         assertTrue( fulltext instanceof SimpleQueryStringBuilder );
     }

@@ -7,16 +7,12 @@ import org.elasticsearch.index.query.QueryBuilders;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.ConstraintExpr;
-import com.enonic.xp.query.expr.DynamicConstraintExpr;
-import com.enonic.xp.query.expr.Expression;
-import com.enonic.xp.query.expr.LogicalExpr;
-import com.enonic.xp.query.expr.NotExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.QueryFieldNameResolver;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.query.ConstraintExpressionBuilder;
 
 public class QueryBuilderFactory
     extends AbstractBuilderFactory
@@ -40,7 +36,7 @@ public class QueryBuilderFactory
         {
             final ConstraintExpr constraint = queryExpr.getConstraint();
 
-            queryBuilder = buildConstraint( constraint );
+            queryBuilder = ConstraintExpressionBuilder.build( constraint, fieldNameResolver );
         }
         else
         {
@@ -59,63 +55,6 @@ public class QueryBuilderFactory
             return queryBuilder;
         }
     }
-
-    private QueryBuilder buildConstraint( final Expression constraint )
-    {
-        if ( constraint == null )
-        {
-            return QueryBuilders.matchAllQuery();
-        }
-        else if ( constraint instanceof LogicalExpr )
-        {
-            return buildLogicalExpression( (LogicalExpr) constraint );
-        }
-        else if ( constraint instanceof DynamicConstraintExpr )
-        {
-            return DynamicQueryBuilderFactory.create( (DynamicConstraintExpr) constraint );
-        }
-        else if ( constraint instanceof CompareExpr )
-        {
-            return new CompareQueryBuilderFactory( fieldNameResolver ).create( (CompareExpr) constraint );
-
-        }
-        else if ( constraint instanceof NotExpr )
-        {
-            return buildNotExpr( (NotExpr) constraint );
-        }
-        else
-        {
-            throw new UnsupportedOperationException( "Not able to handle expression of type " + constraint.getClass() );
-        }
-    }
-
-    private QueryBuilder buildNotExpr( final NotExpr expr )
-    {
-        final QueryBuilder negated = buildConstraint( expr.getExpression() );
-        return new NotQueryBuilderFactory( fieldNameResolver ).create( negated );
-    }
-
-
-    private QueryBuilder buildLogicalExpression( final LogicalExpr expr )
-    {
-
-        final QueryBuilder left = buildConstraint( expr.getLeft() );
-        final QueryBuilder right = buildConstraint( expr.getRight() );
-
-        if ( expr.getOperator() == LogicalExpr.Operator.OR )
-        {
-            return QueryBuilders.boolQuery().should( left ).should( right );
-        }
-        else if ( expr.getOperator() == LogicalExpr.Operator.AND )
-        {
-            return QueryBuilders.boolQuery().must( left ).must( right );
-        }
-        else
-        {
-            throw new IllegalArgumentException( "Operation [" + expr.getOperator() + "] not supported" );
-        }
-    }
-
 
     public static Builder newBuilder()
     {

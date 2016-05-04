@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.elasticsearch.query.translator.builder;
+package com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.query;
 
 import java.util.List;
 
@@ -11,18 +11,11 @@ import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.index.query.IndexQueryBuilderException;
 
-public class InQueryBuilderFactory
-    extends AbstractBuilderFactory
+public class InExpressionBuilder
 {
-    public InQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    public static QueryBuilder build( final CompareExpr compareExpr, final QueryFieldNameResolver resolver )
     {
-        super( fieldNameResolver );
-    }
-
-    public QueryBuilder create( final CompareExpr compareExpr )
-    {
-
-        final String queryFieldName = this.fieldNameResolver.resolve( compareExpr.getField().getFieldPath() );
+        final String queryFieldName = resolver.resolve( compareExpr.getField().getFieldPath() );
 
         final List<ValueExpr> values = compareExpr.getValues();
 
@@ -35,7 +28,7 @@ public class InQueryBuilderFactory
 
         for ( ValueExpr value : values )
         {
-            boolQuery.should( new TermQueryBuilderFactory( fieldNameResolver ).create( queryFieldName, value.getValue() ) );
+            boolQuery.should( TermExpressionBuilder.build( queryFieldName, value.getValue() ) );
         }
 
         return boolQuery;
