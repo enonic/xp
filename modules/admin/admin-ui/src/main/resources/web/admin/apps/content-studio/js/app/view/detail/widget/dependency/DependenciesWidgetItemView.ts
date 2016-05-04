@@ -26,6 +26,16 @@ export class DependenciesWidgetItemView extends WidgetItemView {
             console.debug('DependenciesWidgetItemView.setItem: ', item);
         }
 
+        this.removeChildren();
+
+        this.nameAndIcon =
+            new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.medium))
+                .setIconUrl(item.getIconUrl())
+                .setMainName(item.getDisplayName())
+                .setSubName(item.getPath().toString());
+
+        this.appendChild(this.nameAndIcon);
+
         return wemQ<any>(null);
     }
 
