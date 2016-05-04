@@ -13,14 +13,14 @@ public class MacroTest
             body( "body" ).
             param( "param1", "value1" ).
             build();
-        assertEquals( "macro=body[param1=value1]", macro.toString() );
+        assertEquals( "[macro param1=\"value1\"]body[/macro]", macro.toString() );
     }
 
     @Test
     public void testBodyNull()
     {
         final Macro macro = Macro.create().name( "macro" ).param( "param1", "value1" ).build();
-        assertEquals( "macro[param1=value1]", macro.toString() );
+        assertEquals( "[macro param1=\"value1\"/]", macro.toString() );
     }
 
     @Test

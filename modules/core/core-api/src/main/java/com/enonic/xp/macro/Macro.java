@@ -3,7 +3,6 @@ package com.enonic.xp.macro;
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 
 @Beta
@@ -18,7 +17,7 @@ public final class Macro
     private Macro( final Builder builder )
     {
         this.name = builder.name;
-        this.body = builder.body;
+        this.body = builder.body == null ? "" : builder.body;
         this.params = builder.paramsBuilder.build();
     }
 
@@ -71,9 +70,34 @@ public final class Macro
 
     public String toString()
     {
-        final String body = this.body != null ? ( "=" + this.body ) : "";
-        return name + body + "[" +
-            Joiner.on( "," ).withKeyValueSeparator( "=" ).join( this.params ) + "]";
+        final StringBuilder result = new StringBuilder( "[" ).append( name );
+        if ( params.isEmpty() && body.isEmpty() )
+        {
+            result.append( "/]" );
+        }
+        else
+        {
+            for ( String paramName : params.keySet() )
+            {
+                result.append( " " ).append( paramName ).append( "=\"" );
+                result.append( escapeParam( params.get( paramName ) ) );
+                result.append( "\"" );
+            }
+            if ( body.isEmpty() )
+            {
+                result.append( "/]" );
+            }
+            else
+            {
+                result.append( "]" ).append( body ).append( "[/" ).append( name ).append( "]" );
+            }
+        }
+        return result.toString();
+    }
+
+    private String escapeParam( final String value )
+    {
+        return value.replace( "\\", "\\\\" ).replace( "\"", "\\\"" );
     }
 
     public static Builder create()
