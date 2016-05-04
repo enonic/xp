@@ -58,8 +58,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.SHOW_NEW_CONTENT_DIALOG_ACTION,
             this.EDIT_CONTENT, this.DELETE_CONTENT,
             this.DUPLICATE_CONTENT, this.MOVE_CONTENT,
-            this.SORT_CONTENT, this.PREVIEW_CONTENT,
-            this.PUBLISH_CONTENT, this.UNPUBLISH_CONTENT
+            this.SORT_CONTENT, this.PREVIEW_CONTENT
         );
 
         let previewHandler = (<PreviewContentAction>this.PREVIEW_CONTENT).getPreviewHandler();
@@ -71,6 +70,10 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     getAllActions(): api.ui.Action[] {
+        return [...this.actions, this.PUBLISH_CONTENT, this.UNPUBLISH_CONTENT];
+    }
+
+    getAllActionsNoPublish(): api.ui.Action[] {
         return this.actions;
     }
 
@@ -101,7 +104,6 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.PUBLISH_CONTENT.setEnabled(false);
             this.PUBLISH_CONTENT.setVisible(true);
             this.PUBLISH_TREE_CONTENT.setEnabled(false);
-            this.PUBLISH_TREE_CONTENT.setVisible(true);
             this.UNPUBLISH_CONTENT.setEnabled(false);
             this.UNPUBLISH_CONTENT.setVisible(false);
 
@@ -124,12 +126,10 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.MOVE_CONTENT.setEnabled(true);
 
             let isPublished = this.isPublished(contentBrowseItems[0].getModel().getCompareStatus());
-
-            // TODO: Remove setVisible on Publish/Unpublish remove
+            
             this.PUBLISH_CONTENT.setEnabled(!isPublished);
             this.PUBLISH_CONTENT.setVisible(!isPublished);
             this.PUBLISH_TREE_CONTENT.setEnabled(!isPublished);
-            this.PUBLISH_TREE_CONTENT.setVisible(!isPublished);
             this.UNPUBLISH_CONTENT.setEnabled(isPublished);
             this.UNPUBLISH_CONTENT.setVisible(isPublished);
 
@@ -160,7 +160,6 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.PUBLISH_CONTENT.setEnabled(anyUnpublished);
             this.PUBLISH_CONTENT.setVisible(anyUnpublished);
             this.PUBLISH_TREE_CONTENT.setEnabled(anyUnpublished);
-            this.PUBLISH_TREE_CONTENT.setVisible(anyUnpublished);
             this.UNPUBLISH_CONTENT.setEnabled(!anyUnpublished);
             this.UNPUBLISH_CONTENT.setVisible(!anyUnpublished);
 
