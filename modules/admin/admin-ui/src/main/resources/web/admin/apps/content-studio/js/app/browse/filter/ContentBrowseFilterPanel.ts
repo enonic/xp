@@ -156,7 +156,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private handleNoSearchResultOnRefresh(contentQuery: ContentQuery) {
-        if (contentQuery.getContentTypes().length > 0) { //remove content type facet from search
+        if (this.contentTypesAndRangeFiltersUsed(contentQuery)) { //remove content type facet from search if both content types and date are filtered
             this.refreshDataAndHandleResponse(this.cloneContentQueryNoContentTypes(contentQuery));
         }
         else if (this.hasSearchStringSet()) { // if still no result and search text is set remove last modified facet
@@ -166,6 +166,10 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         else {
             this.reset();
         }
+    }
+
+    private contentTypesAndRangeFiltersUsed(contentQuery: ContentQuery): boolean {
+        return contentQuery.getContentTypes().length > 0 && contentQuery.getQueryFilters().length > 0;
     }
 
     private cloneContentQueryNoContentTypes(contentQuery: ContentQuery): ContentQuery {
