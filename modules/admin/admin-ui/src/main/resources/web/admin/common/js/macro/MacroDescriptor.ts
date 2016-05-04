@@ -44,6 +44,10 @@ module api.macro {
             return this.iconUrl;
         }
 
+        static create(): MacroDescriptorBuilder {
+            return new MacroDescriptorBuilder();
+        }
+
         equals(o: api.Equitable): boolean {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, MacroDescriptor)) {
                 return false;
@@ -93,6 +97,15 @@ module api.macro {
             this.description = source.getDescription();
             this.form = source.getForm();
             this.iconUrl = source.getIconUrl();
+            return this;
+        }
+
+        fromJson(json: MacroJson) {
+            this.macroKey = MacroKey.fromString(json.key);
+            this.displayName = json.displayName;
+            this.description = json.description;
+            this.form = json.form != null ? api.form.Form.fromJson(json.form) : null;
+            this.iconUrl = json.iconUrl;
             return this;
         }
 
