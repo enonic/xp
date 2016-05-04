@@ -14,7 +14,6 @@ import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ScaleParamsParser;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalWebRequest;
-import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.handler.EndpointWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
@@ -36,7 +35,7 @@ public final class ImageWebHandler
 
     public ImageWebHandler()
     {
-        super( -50, EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "image" );
+        super( 25, EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "image" );
     }
 
     @Override
@@ -44,16 +43,17 @@ public final class ImageWebHandler
     {
         final String endpointSubPath = getEndpointSubPath( webRequest );
         final Matcher matcher = PATTERN.matcher( endpointSubPath );
-
         if ( !matcher.find() )
         {
             throw notFound( "Not a valid image url pattern" );
         }
 
-        final PortalWebRequest portalWebRequest = PortalWebRequest.create( webRequest ).build();
+        final PortalWebRequest portalWebRequest =
+            webRequest instanceof PortalWebRequest ? (PortalWebRequest) webRequest : PortalWebRequest.create( webRequest ).build();
+
         return ImageWebHandlerWorker.create().
-            portalWebRequest( portalWebRequest ).
-            portalWebResponse( new PortalWebResponse() ).
+            webRequest( portalWebRequest ).
+            webResponse( webResponse ).
             contentId( ContentId.from( matcher.group( 1 ) ) ).
             cacheable( matcher.group( 2 ) != null ).
             scaleParams( new ScaleParamsParser().parse( matcher.group( 3 ) ) ).

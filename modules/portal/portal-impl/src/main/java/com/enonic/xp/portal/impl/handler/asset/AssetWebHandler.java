@@ -8,8 +8,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.portal.PortalWebRequest;
-import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.handler.EndpointWebHandler;
@@ -41,12 +39,10 @@ public final class AssetWebHandler
             throw notFound( "Not a valid asset url pattern" );
         }
 
-        final PortalWebRequest portalWebRequest = PortalWebRequest.create( webRequest ).build();
-
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
         return AssetWebHandlerWorker.create().
-            portalWebRequest( portalWebRequest ).
-            portalWebResponse( new PortalWebResponse() ). //TODO Rewrite
+            webRequest( webRequest ).
+            webResponse( webResponse ).
             resourceService( resourceService ).
             applicationKey( applicationKey ).
             name( matcher.group( 3 ) ).cacheable( matcher.group( 2 ) != null ).

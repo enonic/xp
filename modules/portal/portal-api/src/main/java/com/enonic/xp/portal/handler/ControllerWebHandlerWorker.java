@@ -5,11 +5,13 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.web.handler.WebResponse;
 
-public abstract class ControllerWebHandlerWorker
-    extends PortalWebHandlerWorker
+public abstract class ControllerWebHandlerWorker<WebResponseType extends WebResponse>
+    extends PortalWebHandlerWorker<PortalWebRequest, WebResponseType>
 {
     protected ContentService contentService;
 
@@ -21,7 +23,7 @@ public abstract class ControllerWebHandlerWorker
 
     protected final String getContentSelector()
     {
-        return this.portalWebRequest.getContentPath().toString();
+        return this.webRequest.getContentPath().toString();
     }
 
     protected final Content getContent( final String contentSelector )
@@ -44,7 +46,7 @@ public abstract class ControllerWebHandlerWorker
 
     protected final Content getContentOrNull( final String contentSelector )
     {
-        final boolean inEditMode = ( this.portalWebRequest.getMode() == RenderMode.EDIT );
+        final boolean inEditMode = ( this.webRequest.getMode() == RenderMode.EDIT );
         if ( inEditMode )
         {
             final ContentId contentId = ContentId.from( contentSelector.substring( 1 ) );
@@ -111,8 +113,8 @@ public abstract class ControllerWebHandlerWorker
         this.contentService = contentService;
     }
 
-    public static class Builder<T extends Builder>
-        extends PortalWebHandlerWorker.Builder<T>
+    public static class Builder<BuilderType extends Builder, WebResponseType extends WebResponse>
+        extends PortalWebHandlerWorker.Builder<BuilderType, PortalWebRequest, WebResponseType>
     {
         private ContentService contentService;
 
@@ -120,10 +122,10 @@ public abstract class ControllerWebHandlerWorker
         {
         }
 
-        public T contentService( final ContentService contentService )
+        public BuilderType contentService( final ContentService contentService )
         {
             this.contentService = contentService;
-            return (T) this;
+            return (BuilderType) this;
         }
     }
 }

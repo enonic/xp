@@ -103,7 +103,7 @@ final class ComponentWebHandlerWorker
             throw notFound( "Page component for [%s] not found", this.componentPath );
         }
 
-        final PortalWebRequest portalWebRequest = PortalWebRequest.create( this.portalWebRequest ).
+        final PortalWebRequest portalWebRequest = PortalWebRequest.create( this.webRequest ).
             site( site ).
             content( effectiveContent ).
             component( component ).

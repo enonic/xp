@@ -18,6 +18,7 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.web.handler.WebResponse;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
@@ -76,7 +77,7 @@ final class ServiceWebHandlerWorker
         //Prepares the request
         final Content content = getContentOrNull( getContentSelector() );
         final Site site = getSiteOrNull( content );
-        final PortalWebRequest portalWebRequest = PortalWebRequest.create( this.portalWebRequest ).
+        final PortalWebRequest portalWebRequest = PortalWebRequest.create( this.webRequest ).
             applicationKey( applicationKey ).
             content( content ).
             site( site ).
@@ -113,7 +114,7 @@ final class ServiceWebHandlerWorker
     }
 
     public static final class Builder
-        extends ControllerWebHandlerWorker.Builder<Builder>
+        extends ControllerWebHandlerWorker.Builder<Builder, WebResponse>
     {
         private ResourceService resourceService;
 

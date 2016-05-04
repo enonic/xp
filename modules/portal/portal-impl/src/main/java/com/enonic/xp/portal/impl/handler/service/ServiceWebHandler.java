@@ -9,7 +9,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalWebRequest;
-import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.service.ServiceDescriptorService;
@@ -54,8 +53,8 @@ public final class ServiceWebHandler
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
 
         return ServiceWebHandlerWorker.create().
-            portalWebRequest( portalWebRequest ).
-            portalWebResponse( new PortalWebResponse() ). //TODO Rewrite
+            webRequest( portalWebRequest ).
+            webResponse( webResponse ).
             contentService( contentService ).
             resourceService( resourceService ).
             serviceDescriptorService( serviceDescriptorService ).

@@ -4,13 +4,14 @@ import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.handler.PortalWebHandlerWorker;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.handler.WebRequest;
+import com.enonic.xp.web.handler.WebResponse;
 
 final class AssetWebHandlerWorker
     extends PortalWebHandlerWorker
@@ -42,23 +43,23 @@ final class AssetWebHandlerWorker
     }
 
     @Override
-    public PortalWebResponse execute()
+    public WebResponse execute()
     {
         final Resource resource = resolveResource();
 
-        portalWebResponse.setStatus( HttpStatus.OK );
-        portalWebResponse.setBody( resource );
+        webResponse.setStatus( HttpStatus.OK );
+        webResponse.setBody( resource );
 
         final String type = MediaTypes.instance().fromFile( resource.getKey().getName() ).toString();
-        this.portalWebResponse.setContentType( MediaType.parse( type ) );
+        this.webResponse.setContentType( MediaType.parse( type ) );
 
         if ( cacheable )
         {
             final String cacheControlValue = "public, no-transform, max-age=31536000";
-            portalWebResponse.setHeader( HttpHeaders.CACHE_CONTROL, cacheControlValue );
+            webResponse.setHeader( HttpHeaders.CACHE_CONTROL, cacheControlValue );
         }
 
-        return portalWebResponse;
+        return webResponse;
     }
 
     private Resource resolveResource()
@@ -76,7 +77,7 @@ final class AssetWebHandlerWorker
     }
 
     public static final class Builder
-        extends PortalWebHandlerWorker.Builder<Builder>
+        extends PortalWebHandlerWorker.Builder<Builder, WebRequest, WebResponse>
     {
         private ResourceService resourceService;
 

@@ -9,15 +9,16 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.portal.PortalWebResponse;
+import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.handler.PortalWebHandlerWorker;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.handler.WebResponse;
 
 final class AttachmentWebHandlerWorker
-    extends PortalWebHandlerWorker
+    extends PortalWebHandlerWorker<PortalWebRequest, WebResponse>
 {
     private final ContentService contentService;
 
@@ -46,28 +47,28 @@ final class AttachmentWebHandlerWorker
 
 
     @Override
-    public PortalWebResponse execute()
+    public WebResponse execute()
     {
         final Content content = getContent( this.id );
         final Attachment attachment = resolveAttachment( content, this.name );
         final ByteSource binary = resolveBinary( this.id, attachment );
 
-        this.portalWebResponse.setStatus( HttpStatus.OK );
-        this.portalWebResponse.setContentType( MediaType.parse( attachment.getMimeType() ) );
-        this.portalWebResponse.setBody( binary );
+        this.webResponse.setStatus( HttpStatus.OK );
+        this.webResponse.setContentType( MediaType.parse( attachment.getMimeType() ) );
+        this.webResponse.setBody( binary );
 
         if ( this.download )
         {
-            this.portalWebResponse.setHeader( "Content-Disposition", "attachment; filename=" + attachment.getName() );
+            this.webResponse.setHeader( "Content-Disposition", "attachment; filename=" + attachment.getName() );
         }
         if ( this.cacheable )
         {
             final AccessControlEntry publicAccessControlEntry = content.getPermissions().getEntry( RoleKeys.EVERYONE );
             final boolean everyoneCanRead = publicAccessControlEntry != null && publicAccessControlEntry.isAllowed( Permission.READ );
-            final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( this.portalWebRequest.getBranch() );
+            final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( this.webRequest.getBranch() );
             setResponseCacheable( everyoneCanRead && masterBranch );
         }
-        return this.portalWebResponse;
+        return this.webResponse;
     }
 
     private Content getContent( final ContentId contentId )
@@ -105,7 +106,7 @@ final class AttachmentWebHandlerWorker
     }
 
     public static final class Builder
-        extends PortalWebHandlerWorker.Builder<Builder>
+        extends PortalWebHandlerWorker.Builder<Builder, PortalWebRequest, WebResponse>
     {
         private ContentService contentService;
 

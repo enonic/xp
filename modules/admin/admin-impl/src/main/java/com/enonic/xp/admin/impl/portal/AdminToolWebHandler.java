@@ -9,8 +9,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.portal.PortalWebRequest;
-import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
@@ -57,10 +55,9 @@ public final class AdminToolWebHandler
             descriptorKey = DEFAULT_DESCRIPTOR_KEY;
         }
 
-        final PortalWebRequest portalWebRequest = PortalWebRequest.create( webRequest ).build();
         return AdminToolWebHandlerWorker.create().
-            portalWebRequest( portalWebRequest ).
-            portalWebResponse( new PortalWebResponse() ).
+            webRequest( webRequest ).
+            webResponse( webResponse ).
             controllerScriptFactory( controllerScriptFactory ).
             adminToolDescriptorService( adminToolDescriptorService ).
             descriptorKey( descriptorKey ).

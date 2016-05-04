@@ -10,7 +10,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalWebRequest;
-import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.handler.EndpointWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
@@ -48,8 +47,8 @@ public final class AttachmentWebHandler
         }
 
         return AttachmentWebHandlerWorker.create().
-            portalWebRequest( (PortalWebRequest) webRequest ).
-            portalWebResponse( (PortalWebResponse) webResponse ).
+            webRequest( (PortalWebRequest) webRequest ).
+            webResponse( webResponse ).
             contentService( contentService ).
             download( "download".equals( matcher.group( 1 ) ) ).
             id( ContentId.from( matcher.group( 2 ) ) ).

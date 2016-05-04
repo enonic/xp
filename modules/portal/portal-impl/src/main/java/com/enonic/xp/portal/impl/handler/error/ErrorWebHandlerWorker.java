@@ -4,6 +4,8 @@ import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.handler.PortalWebHandlerWorker;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.handler.WebRequest;
+import com.enonic.xp.web.handler.WebResponse;
 
 final class ErrorWebHandlerWorker
     extends PortalWebHandlerWorker
@@ -41,7 +43,7 @@ final class ErrorWebHandlerWorker
     }
 
     public static final class Builder
-        extends PortalWebHandlerWorker.Builder<Builder>
+        extends PortalWebHandlerWorker.Builder<Builder, WebRequest, WebResponse>
     {
         private HttpStatus code;
 

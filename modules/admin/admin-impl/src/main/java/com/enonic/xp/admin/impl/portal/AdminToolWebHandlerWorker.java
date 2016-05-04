@@ -10,12 +10,14 @@ import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.handler.ControllerWebHandlerWorker;
+import com.enonic.xp.portal.handler.PortalWebHandlerWorker;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.web.handler.WebRequest;
+import com.enonic.xp.web.handler.WebResponse;
 
 final class AdminToolWebHandlerWorker
-    extends ControllerWebHandlerWorker
+    extends PortalWebHandlerWorker
 {
 
     private final ControllerScriptFactory controllerScriptFactory;
@@ -58,7 +60,7 @@ final class AdminToolWebHandlerWorker
 
         final ResourceKey scriptDir = ResourceKey.from( descriptorKey.getApplicationKey(), "admin/tools/" + descriptorKey.getName() );
         final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( scriptDir );
-        final PortalWebRequest portalWebRequest = PortalWebRequest.create( this.portalWebRequest ).
+        final PortalWebRequest portalWebRequest = PortalWebRequest.create( this.webRequest ).
             applicationKey( descriptorKey.getApplicationKey() ).
             build();
 
@@ -70,7 +72,7 @@ final class AdminToolWebHandlerWorker
     }
 
     public static final class Builder
-        extends ControllerWebHandlerWorker.Builder<Builder>
+        extends PortalWebHandlerWorker.Builder<Builder, WebRequest, WebResponse>
     {
         private ControllerScriptFactory controllerScriptFactory;
 

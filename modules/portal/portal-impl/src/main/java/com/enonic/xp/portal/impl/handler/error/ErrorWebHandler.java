@@ -4,8 +4,6 @@ import java.util.Collection;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.portal.PortalWebRequest;
-import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.handler.EndpointWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
@@ -27,10 +25,9 @@ public final class ErrorWebHandler
     {
         final String endpointSubPath = getEndpointSubPath( webRequest );
 
-        final PortalWebRequest portalWebRequest = PortalWebRequest.create( webRequest ).build();
         return ErrorWebHandlerWorker.create().
-            portalWebRequest( portalWebRequest ).
-            portalWebResponse( new PortalWebResponse() ).
+            webRequest( webRequest ).
+            webResponse( webResponse ).
             code( parseStatus( endpointSubPath ) ).
             message( getParameter( webRequest, "message" ) ).
             build().

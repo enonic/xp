@@ -7,13 +7,14 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateService;
+import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.handler.ControllerWebHandlerWorker;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.Site;
 
 abstract class RenderWebHandlerWorker
-    extends ControllerWebHandlerWorker
+    extends ControllerWebHandlerWorker<PortalWebResponse>
 {
     protected PageTemplateService pageTemplateService;
 
@@ -60,7 +61,7 @@ abstract class RenderWebHandlerWorker
             build();
 
         final PageTemplate pageTemplate = this.pageTemplateService.getDefault( getDefPageTemplate );
-        if ( pageTemplate == null && ( this.portalWebRequest.getMode() != RenderMode.EDIT ) )
+        if ( pageTemplate == null && ( this.webRequest.getMode() != RenderMode.EDIT ) )
         {
             // we can render default empty page in Live-Edit, for selecting controller when page customized
             throw notFound( "No template found for content" );
@@ -80,8 +81,8 @@ abstract class RenderWebHandlerWorker
         return pageDescriptor;
     }
 
-    public static class Builder<T extends Builder>
-        extends ControllerWebHandlerWorker.Builder<T>
+    public static class Builder<BuilderType extends Builder>
+        extends ControllerWebHandlerWorker.Builder<BuilderType, PortalWebResponse>
     {
         private PageTemplateService pageTemplateService;
 
@@ -91,16 +92,16 @@ abstract class RenderWebHandlerWorker
         {
         }
 
-        public T pageTemplateService( final PageTemplateService pageTemplateService )
+        public BuilderType pageTemplateService( final PageTemplateService pageTemplateService )
         {
             this.pageTemplateService = pageTemplateService;
-            return (T) this;
+            return (BuilderType) this;
         }
 
-        public T pageDescriptorService( final PageDescriptorService pageDescriptorService )
+        public BuilderType pageDescriptorService( final PageDescriptorService pageDescriptorService )
         {
             this.pageDescriptorService = pageDescriptorService;
-            return (T) this;
+            return (BuilderType) this;
         }
     }
 }

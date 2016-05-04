@@ -45,7 +45,7 @@ final class PageWebHandlerWorker
     @Override
     public PortalWebResponse execute()
     {
-        final ContentPath contentPath = this.portalWebRequest.getContentPath();
+        final ContentPath contentPath = this.webRequest.getContentPath();
         if ( ContentConstants.CONTENT_ROOT_PARENT.toString().equals( contentPath.toString() ) )
         {
             throw notFound( "Page [%s] not found", contentPath );
@@ -105,7 +105,7 @@ final class PageWebHandlerWorker
             page( effectivePage ).
             build();
 
-        final PortalWebRequest portalWebRequest = PortalWebRequest.create( this.portalWebRequest ).
+        final PortalWebRequest portalWebRequest = PortalWebRequest.create( this.webRequest ).
             site( site ).
             content( effectiveContent ).
             applicationKey( applicationKey ).
@@ -128,14 +128,14 @@ final class PageWebHandlerWorker
             throw notFound( "Missing shortcut target" );
         }
 
-        final PortalRequest portalRequest = convertToPortalRequest( portalWebRequest );
+        final PortalRequest portalRequest = convertToPortalRequest( webRequest );
         final PageUrlParams pageUrlParams = new PageUrlParams().id( target.toString() ).portalRequest( portalRequest );
-        pageUrlParams.getParams().putAll( this.portalWebRequest.getParams() );
+        pageUrlParams.getParams().putAll( this.webRequest.getParams() );
 
         final String targetUrl = this.portalUrlService.pageUrl( pageUrlParams );
 
-        this.portalWebResponse.setStatus( HttpStatus.TEMPORARY_REDIRECT );
-        this.portalWebResponse.setHeader( "Location", targetUrl );
+        this.webResponse.setStatus( HttpStatus.TEMPORARY_REDIRECT );
+        this.webResponse.setHeader( "Location", targetUrl );
     }
 
     private PageDescriptor getPageDescriptor( final DescriptorKey descriptorKey )

@@ -46,8 +46,8 @@ public final class PageWebHandler
     protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
     {
         return PageWebHandlerWorker.create().
-            portalWebRequest( (PortalWebRequest) webRequest ).
-            portalWebResponse( (PortalWebResponse) webResponse ).
+            webRequest( (PortalWebRequest) webRequest ).
+            webResponse( new PortalWebResponse() ).
             contentService( contentService ).
             rendererFactory( rendererFactory ).
             pageDescriptorService( pageDescriptorService ).

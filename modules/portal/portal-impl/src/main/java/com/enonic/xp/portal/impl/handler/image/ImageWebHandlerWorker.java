@@ -18,7 +18,7 @@ import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.portal.PortalWebResponse;
+import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.handler.PortalWebHandlerWorker;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -26,11 +26,12 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.handler.WebResponse;
 
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 
 final class ImageWebHandlerWorker
-    extends PortalWebHandlerWorker
+    extends PortalWebHandlerWorker<PortalWebRequest, WebResponse>
 {
     private final static int DEFAULT_BACKGROUND = 0x00FFFFFF;
 
@@ -77,7 +78,7 @@ final class ImageWebHandlerWorker
     }
 
     @Override
-    public PortalWebResponse execute()
+    public WebResponse execute()
     {
         try
         {
@@ -90,7 +91,7 @@ final class ImageWebHandlerWorker
     }
 
 
-    private PortalWebResponse doExecute()
+    private WebResponse doExecute()
         throws Exception
     {
         final Media imageContent = getImage( this.contentId );
@@ -130,19 +131,19 @@ final class ImageWebHandlerWorker
 
         final ByteSource source = this.imageService.readImage( readImageParams );
 
-        this.portalWebResponse.setStatus( HttpStatus.OK );
-        this.portalWebResponse.setBody( source );
-        this.portalWebResponse.setContentType( MediaType.parse( mimeType ) );
+        this.webResponse.setStatus( HttpStatus.OK );
+        this.webResponse.setBody( source );
+        this.webResponse.setContentType( MediaType.parse( mimeType ) );
 
         if ( cacheable )
         {
             final AccessControlEntry publicAccessControlEntry = imageContent.getPermissions().getEntry( RoleKeys.EVERYONE );
             final boolean everyoneCanRead = publicAccessControlEntry != null && publicAccessControlEntry.isAllowed( Permission.READ );
-            final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( portalWebRequest.getBranch() );
+            final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( webRequest.getBranch() );
             setResponseCacheable( everyoneCanRead && masterBranch );
         }
 
-        return this.portalWebResponse;
+        return this.webResponse;
     }
 
     private String getFormat( final String fileName, final String mimeType )
@@ -232,7 +233,7 @@ final class ImageWebHandlerWorker
     }
 
     public static final class Builder
-        extends PortalWebHandlerWorker.Builder<Builder>
+        extends PortalWebHandlerWorker.Builder<Builder, PortalWebRequest, WebResponse>
     {
         private String name;
 

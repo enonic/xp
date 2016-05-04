@@ -8,22 +8,24 @@ import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.handler.WebException;
+import com.enonic.xp.web.handler.WebRequest;
+import com.enonic.xp.web.handler.WebResponse;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
-public abstract class PortalWebHandlerWorker
+public abstract class PortalWebHandlerWorker<WebRequestType extends WebRequest, WebResponseType extends WebResponse>
 {
-    protected PortalWebRequest portalWebRequest;
+    protected WebRequestType webRequest;
 
-    protected PortalWebResponse portalWebResponse;
+    protected WebResponseType webResponse;
 
-    public PortalWebHandlerWorker( final Builder builder )
+    public PortalWebHandlerWorker( final Builder<? extends Builder, ? extends WebRequestType, ? extends WebResponseType> builder )
     {
-        portalWebRequest = builder.portalWebRequest;
-        portalWebResponse = builder.portalWebResponse;
+        webRequest = builder.webRequest;
+        webResponse = builder.webResponse;
     }
 
-    public abstract PortalWebResponse execute()
+    public abstract WebResponseType execute()
         throws Exception;
 
     public WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config )
@@ -45,7 +47,7 @@ public abstract class PortalWebHandlerWorker
     protected void setResponseCacheable( final boolean isPublic )
     {
         final String cacheControlValue = ( isPublic ? "public" : "private" ) + ", max-age=31536000";
-        portalWebResponse.setHeader( HttpHeaders.CACHE_CONTROL, cacheControlValue );
+        webResponse.setHeader( HttpHeaders.CACHE_CONTROL, cacheControlValue );
     }
 
     //TODO Temporary fix until renaming of PortalWebRequest to PortalRequest
@@ -98,26 +100,26 @@ public abstract class PortalWebHandlerWorker
         return portalWebResponse;
     }
 
-    public static class Builder<T extends Builder>
+    public static class Builder<BuilderType extends Builder, WebRequestType extends WebRequest, WebResponseType extends WebResponse>
     {
-        private PortalWebRequest portalWebRequest;
+        private WebRequestType webRequest;
 
-        private PortalWebResponse portalWebResponse;
+        private WebResponseType webResponse;
 
         protected Builder()
         {
         }
 
-        public T portalWebRequest( final PortalWebRequest portalWebRequest )
+        public BuilderType webRequest( final WebRequestType webRequest )
         {
-            this.portalWebRequest = portalWebRequest;
-            return (T) this;
+            this.webRequest = webRequest;
+            return (BuilderType) this;
         }
 
-        public T portalWebResponse( final PortalWebResponse portalWebResponse )
+        public BuilderType webResponse( final WebResponseType webResponse )
         {
-            this.portalWebResponse = portalWebResponse;
-            return (T) this;
+            this.webResponse = webResponse;
+            return (BuilderType) this;
         }
     }
 }
