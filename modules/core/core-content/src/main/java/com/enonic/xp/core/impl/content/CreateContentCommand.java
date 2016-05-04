@@ -22,6 +22,9 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.impl.content.processor.ContentProcessor;
+import com.enonic.xp.core.impl.content.processor.ProcessCreateParams;
+import com.enonic.xp.core.impl.content.processor.ProcessCreateResult;
 import com.enonic.xp.core.impl.content.validate.DataValidationError;
 import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
@@ -80,7 +83,7 @@ final class CreateContentCommand
 
         final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedParams );
 
-        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams );
+        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams, this.contentTypeService );
 
         try
         {
@@ -253,12 +256,21 @@ final class CreateContentCommand
 
     private CreateContentParams runContentProcessors( final CreateContentParams createContentParams, final ContentType contentType )
     {
-        return ProxyContentProcessor.create().
-            mediaInfo( mediaInfo ).
-            contentType( contentType ).
-            mixinService( mixinService ).
-            build().
-            processCreate( createContentParams );
+        CreateContentParams processedParams = createContentParams;
+
+        for ( final ContentProcessor contentProcessor : this.contentProcessors )
+        {
+            if ( contentProcessor.supports( contentType ) )
+            {
+                final ProcessCreateResult processCreateResult =
+                    contentProcessor.processCreate( new ProcessCreateParams( createContentParams, mediaInfo ) );
+
+                processedParams = CreateContentParams.create( processCreateResult.getCreateContentParams() ).
+                    build();
+            }
+        }
+
+        return processedParams;
     }
 
     private void populateLanguage( final CreateContentTranslatorParams.Builder builder )

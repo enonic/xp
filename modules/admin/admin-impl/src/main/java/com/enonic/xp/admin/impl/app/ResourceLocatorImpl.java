@@ -29,7 +29,9 @@ public final class ResourceLocatorImpl
 
     private BundleContext context;
 
-    private File resourcesDevDir;
+    private File resourcesSrcDir;
+
+    private File resourcesTargetDir;
 
     public ResourceLocatorImpl()
     {
@@ -64,8 +66,10 @@ public final class ResourceLocatorImpl
             return;
         }
 
-        this.resourcesDevDir = new File( rootDir, "modules/admin/admin-ui/src/main/resources" );
-        LOG.info( "Loading UI resources from bundle and project directory {}", this.resourcesDevDir );
+        this.resourcesSrcDir = new File( rootDir, "modules/admin/admin-ui/src/main/resources" );
+        this.resourcesTargetDir = new File( rootDir, "modules/admin/admin-ui/target/resources/main" );
+
+        LOG.info( "Loading UI resources from bundle and project directory {} and {}", this.resourcesSrcDir, this.resourcesTargetDir );
     }
 
     @Deactivate
@@ -116,13 +120,10 @@ public final class ResourceLocatorImpl
     public URL findResource( final String name )
         throws IOException
     {
-        if ( this.resourcesDevDir != null )
+        final File file = findDevResource( name );
+        if ( file != null )
         {
-            final File file = new File( this.resourcesDevDir, name );
-            if ( file.isFile() )
-            {
-                return file.toURI().toURL();
-            }
+            return file.toURI().toURL();
         }
 
         for ( final Bundle bundle : this.bundles )
@@ -135,5 +136,38 @@ public final class ResourceLocatorImpl
         }
 
         return null;
+    }
+
+    private File findDevResource( final String name )
+    {
+        if ( this.resourcesSrcDir == null )
+        {
+            return null;
+        }
+
+        final File file1 = new File( this.resourcesSrcDir, name );
+        final File file2 = new File( this.resourcesTargetDir, name );
+
+        if ( file1.isFile() && file2.isFile() )
+        {
+            return findNewestFile( file1, file2 );
+        }
+
+        if ( file1.isFile() )
+        {
+            return file1;
+        }
+
+        if ( file2.isFile() )
+        {
+            return file2;
+        }
+
+        return null;
+    }
+
+    private File findNewestFile( final File file1, final File file2 )
+    {
+        return file1.lastModified() > file2.lastModified() ? file1 : file2;
     }
 }

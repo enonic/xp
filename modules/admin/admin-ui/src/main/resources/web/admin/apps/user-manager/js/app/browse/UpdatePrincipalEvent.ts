@@ -1,26 +1,25 @@
-module app.browse {
+import "../../api.ts";
 
-    import Principal = api.security.Principal;
-    import Event = api.event.Event;
+import Principal = api.security.Principal;
+import Event = api.event.Event;
 
-    export class UpdatePrincipalEvent extends Event {
-        private principals: Principal[];
+export class UpdatePrincipalEvent extends Event {
+    private principals: Principal[];
 
-        constructor(principals: Principal[]) {
-            this.principals = principals;
-            super();
-        }
+    constructor(principals: Principal[]) {
+        this.principals = principals;
+        super();
+    }
 
-        getPrincipals(): Principal[] {
-            return this.principals;
-        }
+    getPrincipals(): Principal[] {
+        return this.principals;
+    }
 
-        static on(handler: (event: UpdatePrincipalEvent) => void) {
-            Event.bind(api.ClassHelper.getFullName(this), handler);
-        }
+    static on(handler: (event: UpdatePrincipalEvent) => void) {
+        Event.bind(api.ClassHelper.getFullName(this), handler);
+    }
 
-        static un(handler?: (event: UpdatePrincipalEvent) => void) {
-            Event.unbind(api.ClassHelper.getFullName(this), handler);
-        }
+    static un(handler?: (event: UpdatePrincipalEvent) => void) {
+        Event.unbind(api.ClassHelper.getFullName(this), handler);
     }
 }

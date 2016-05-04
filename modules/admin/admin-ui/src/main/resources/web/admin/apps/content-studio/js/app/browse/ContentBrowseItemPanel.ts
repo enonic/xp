@@ -1,23 +1,25 @@
-module app.browse {
+import "../../api.ts";
 
-    export class ContentBrowseItemPanel extends api.app.browse.BrowseItemPanel<api.content.ContentSummaryAndCompareStatus> {
+import {ContentBrowseItem} from "./ContentBrowseItem";
+import {ContentBrowseItemsSelectionPanel} from "./ContentBrowseItemsSelectionPanel";
+import {ContentItemStatisticsPanel} from "../view/ContentItemStatisticsPanel";
 
-        createItemSelectionPanel(): ContentBrowseItemsSelectionPanel {
-            return new ContentBrowseItemsSelectionPanel();
-        }
+export class ContentBrowseItemPanel extends api.app.browse.BrowseItemPanel<api.content.ContentSummaryAndCompareStatus> {
 
-        createItemStatisticsPanel(): app.view.ContentItemStatisticsPanel {
-            return new app.view.ContentItemStatisticsPanel();
-        }
+    createItemSelectionPanel(): ContentBrowseItemsSelectionPanel {
+        return new ContentBrowseItemsSelectionPanel();
+    }
 
-        setItems(items: ContentBrowseItem[]): api.app.browse.BrowseItemsChanges<api.content.ContentSummaryAndCompareStatus> {
-            return super.setItems(items);
-        }
+    createItemStatisticsPanel(): ContentItemStatisticsPanel {
+        return new ContentItemStatisticsPanel();
+    }
 
-        getItems(): ContentBrowseItem[] {
-            return <ContentBrowseItem[]>super.getItems();
-        }
+    setItems(items: ContentBrowseItem[]): api.app.browse.BrowseItemsChanges<api.content.ContentSummaryAndCompareStatus> {
+        return super.setItems(items);
+    }
 
+    getItems(): ContentBrowseItem[] {
+        return <ContentBrowseItem[]>super.getItems();
     }
 
 }

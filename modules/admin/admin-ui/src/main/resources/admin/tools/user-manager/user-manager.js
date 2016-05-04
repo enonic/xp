@@ -5,7 +5,7 @@ function handleGet(req) {
     var uriScriptHelper = Java.type("com.enonic.xp.admin.ui.tool.UriScriptHelper");
     var adminUrl = uriScriptHelper.generateAdminUri();
     var assetsUri = uriScriptHelper.generateAdminAssetsUri();
-    var view = resolve('../common/admin-app.html');
+    var view = resolve('./user-manager.html');
 
     var params = {
         adminUrl: adminUrl,
@@ -21,4 +21,5 @@ function handleGet(req) {
         body: mustache.render(view, params)
     };
 }
+
 exports.get = handleGet;

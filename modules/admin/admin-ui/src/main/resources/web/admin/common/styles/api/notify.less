@@ -1,12 +1,22 @@
 .notification-container {
   position: fixed;
   z-index: @z-index-notification;
-  width: 100%;
+
+  @media screen and (max-width: 799px) {
+    width: 100%;
+  }
+  @media screen and (min-width: 800px) {
+    left: 50%;
+    margin-left: -400px;
+  }
 }
 
 .notification-wrapper {
   margin: auto;
-  width: 800px;
+
+  @media screen and (min-width: 800px) {
+    width: 800px;
+  }
 }
 
 .error div.notification-inner {

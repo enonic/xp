@@ -1,29 +1,30 @@
-module app.create {
+import "../../api.ts";
 
-    export class MostPopularItemsBlock extends api.dom.DivEl {
+import {MostPopularItemsList} from "./MostPopularItemsList";
 
-        public static DEFAULT_MAX_ITEMS = 2;
+export class MostPopularItemsBlock extends api.dom.DivEl {
 
-        private mostPopularItemsList: MostPopularItemsList;
+    public static DEFAULT_MAX_ITEMS = 2;
 
-        private title: api.dom.H2El;
+    private mostPopularItemsList: MostPopularItemsList;
 
-        constructor(title = "Most Popular") {
-            super("most-popular-content-types-container");
+    private title: api.dom.H2El;
 
-            this.title = new api.dom.H2El();
-            this.title.setHtml(title);
+    constructor(title = "Most Popular") {
+        super("most-popular-content-types-container");
 
-            this.mostPopularItemsList = new MostPopularItemsList();
-            this.appendChildren(this.title, this.mostPopularItemsList);
-        }
+        this.title = new api.dom.H2El();
+        this.title.setHtml(title);
 
-        getMostPopularList(): MostPopularItemsList {
-            return this.mostPopularItemsList;
-        }
+        this.mostPopularItemsList = new MostPopularItemsList();
+        this.appendChildren(this.title, this.mostPopularItemsList);
+    }
 
-        setTitle(newTitle: string) {
-            this.title.setHtml(newTitle);
-        }
+    getMostPopularList(): MostPopularItemsList {
+        return this.mostPopularItemsList;
+    }
+
+    setTitle(newTitle: string) {
+        this.title.setHtml(newTitle);
     }
 }

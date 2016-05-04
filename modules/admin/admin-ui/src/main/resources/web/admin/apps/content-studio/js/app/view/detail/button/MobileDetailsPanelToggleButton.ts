@@ -1,27 +1,28 @@
-module app.view.detail.button {
+import "../../../../api.ts";
 
-    export class MobileDetailsPanelToggleButton extends api.dom.DivEl {
+import {DetailsPanel} from "../DetailsPanel";
 
-        private detailsPanel: DetailsPanel;
+export class MobileDetailsPanelToggleButton extends api.dom.DivEl {
 
-        public static EXPANDED_CLASS: string = "expanded";
+    private detailsPanel: DetailsPanel;
 
-        constructor(detailsPanel: DetailsPanel, slideInCallback?: () => void) {
-            super("mobile-details-panel-toggle-button");
+    public static EXPANDED_CLASS: string = "expanded";
 
-            this.detailsPanel = detailsPanel;
+    constructor(detailsPanel: DetailsPanel, slideInCallback?: () => void) {
+        super("mobile-details-panel-toggle-button");
 
-            this.onClicked(() => {
-                this.toggleClass(MobileDetailsPanelToggleButton.EXPANDED_CLASS);
-                if (this.hasClass(MobileDetailsPanelToggleButton.EXPANDED_CLASS)) {
-                    this.detailsPanel.slideIn();
-                    if (!!slideInCallback) {
-                        slideInCallback();
-                    }
-                } else {
-                    this.detailsPanel.slideOut();
+        this.detailsPanel = detailsPanel;
+
+        this.onClicked(() => {
+            this.toggleClass(MobileDetailsPanelToggleButton.EXPANDED_CLASS);
+            if (this.hasClass(MobileDetailsPanelToggleButton.EXPANDED_CLASS)) {
+                this.detailsPanel.slideIn();
+                if (!!slideInCallback) {
+                    slideInCallback();
                 }
-            });
-        }
+            } else {
+                this.detailsPanel.slideOut();
+            }
+        });
     }
 }

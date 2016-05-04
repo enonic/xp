@@ -1,17 +1,15 @@
-module app.wizard {
+import "../../api.ts";
 
-    export class UserItemWizardPanelParams {
+export class UserItemWizardPanelParams {
 
-        tabId: api.app.bar.AppBarTabId;
+    tabId: api.app.bar.AppBarTabId;
 
-        userStoreKey: api.security.UserStoreKey;
+    userStoreKey: api.security.UserStoreKey;
 
-        persistedPath: string;
+    persistedPath: string;
 
-        getPersistedItem() {
-            throw new Error("Must be implemented by inheritors");
-        }
-
-
+    getPersistedItem() {
+        throw new Error("Must be implemented by inheritors");
     }
+
 }

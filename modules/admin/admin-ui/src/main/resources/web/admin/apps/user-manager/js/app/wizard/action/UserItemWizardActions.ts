@@ -1,41 +1,43 @@
-module app.wizard.action {
+import "../../../api.ts";
 
-    export class UserItemWizardActions<USER_ITEM_TYPE extends api.Equitable> extends api.app.wizard.WizardActions<USER_ITEM_TYPE> {
+import {UserItemWizardPanel} from "../UserItemWizardPanel";
+import {DeleteUserItemAction} from "./DeleteUserItemAction";
 
-        private save: api.ui.Action;
+export class UserItemWizardActions<USER_ITEM_TYPE extends api.Equitable> extends api.app.wizard.WizardActions<USER_ITEM_TYPE> {
 
-        private close: api.ui.Action;
+    private save: api.ui.Action;
 
-        private delete: api.ui.Action;
+    private close: api.ui.Action;
 
-        constructor(wizardPanel: app.wizard.UserItemWizardPanel<USER_ITEM_TYPE>) {
-            this.save = new api.app.wizard.SaveAction(wizardPanel);
-            this.delete = new DeleteUserItemAction(wizardPanel);
-            this.close = new api.app.wizard.CloseAction(wizardPanel);
-            super(this.save, this.delete, this.close);
-        }
+    private delete: api.ui.Action;
 
-        enableActionsForNew() {
-            this.save.setEnabled(false);
-            this.delete.setEnabled(false);
-        }
-
-        enableActionsForExisting() {
-            this.save.setEnabled(true);
-            this.delete.setEnabled(true);
-        }
-
-        getDeleteAction(): api.ui.Action {
-            return this.delete;
-        }
-
-        getSaveAction(): api.ui.Action {
-            return this.save;
-        }
-
-        getCloseAction(): api.ui.Action {
-            return this.close;
-        }
-
+    constructor(wizardPanel: UserItemWizardPanel<USER_ITEM_TYPE>) {
+        this.save = new api.app.wizard.SaveAction(wizardPanel);
+        this.delete = new DeleteUserItemAction(wizardPanel);
+        this.close = new api.app.wizard.CloseAction(wizardPanel);
+        super(this.save, this.delete, this.close);
     }
+
+    enableActionsForNew() {
+        this.save.setEnabled(false);
+        this.delete.setEnabled(false);
+    }
+
+    enableActionsForExisting() {
+        this.save.setEnabled(true);
+        this.delete.setEnabled(true);
+    }
+
+    getDeleteAction(): api.ui.Action {
+        return this.delete;
+    }
+
+    getSaveAction(): api.ui.Action {
+        return this.save;
+    }
+
+    getCloseAction(): api.ui.Action {
+        return this.close;
+    }
+
 }

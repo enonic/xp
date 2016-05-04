@@ -1,15 +1,15 @@
-module app.browse.action {
+import "../../../api.ts";
 
-    import Action = api.ui.Action;
+import Action = api.ui.Action;
+import {ToggleSearchPanelEvent} from "../ToggleSearchPanelEvent";
 
-    export class ToggleSearchPanelAction extends Action {
+export class ToggleSearchPanelAction extends Action {
 
-        constructor() {
-            super("");
-            this.onExecuted(() => {
-                new ToggleSearchPanelEvent().fire();
-            });
-            this.setIconClass("icon-search3");
-        }
+    constructor() {
+        super("");
+        this.onExecuted(() => {
+            new ToggleSearchPanelEvent().fire();
+        });
+        this.setIconClass("icon-search3");
     }
 }

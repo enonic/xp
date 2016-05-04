@@ -25,6 +25,8 @@ public class MediaInfoServiceTest
         this.service = new MediaInfoServiceImpl();
         this.service.setDetector( new DefaultDetector() );
         this.service.setParser( new DefaultParser() );
+
+        this.service.activate();
     }
 
     @Test

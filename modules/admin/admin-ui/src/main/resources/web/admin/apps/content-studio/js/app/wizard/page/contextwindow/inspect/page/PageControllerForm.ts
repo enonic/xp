@@ -1,21 +1,22 @@
-module app.wizard.page.contextwindow.inspect.page {
+import "../../../../../../api.ts";
 
-    export class PageControllerForm extends api.ui.form.Form {
+import {PageControllerSelector} from "./PageControllerSelector";
 
-        private controllerSelector: PageControllerSelector;
+export class PageControllerForm extends api.ui.form.Form {
 
-        constructor(controllerSelector: PageControllerSelector) {
-            super('page-controller-form');
-            this.controllerSelector = controllerSelector;
+    private controllerSelector: PageControllerSelector;
 
-            var fieldSet = new api.ui.form.Fieldset();
-            fieldSet.add(new api.ui.form.FormItemBuilder(controllerSelector).setLabel("Page Controller").build());
-            this.add(fieldSet);
-        }
+    constructor(controllerSelector: PageControllerSelector) {
+        super('page-controller-form');
+        this.controllerSelector = controllerSelector;
 
-        getSelector(): PageControllerSelector {
-            return this.controllerSelector;
-        }
-
+        var fieldSet = new api.ui.form.Fieldset();
+        fieldSet.add(new api.ui.form.FormItemBuilder(controllerSelector).setLabel("Page Controller").build());
+        this.add(fieldSet);
     }
+
+    getSelector(): PageControllerSelector {
+        return this.controllerSelector;
+    }
+
 }

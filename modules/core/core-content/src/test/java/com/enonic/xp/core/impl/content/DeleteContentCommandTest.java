@@ -160,4 +160,138 @@ public class DeleteContentCommandTest
 
     }
 
+    @Test
+    public void delete_online_content_instantly()
+        throws Exception
+    {
+        final NodeId id = NodeId.from( "test" );
+
+        final Node node = Node.create().
+            id( id ).
+            name( "myContent" ).
+            parentPath( ContentConstants.CONTENT_ROOT_PATH ).
+            build();
+
+        Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) ).
+            thenReturn( node );
+
+        Mockito.when( this.nodeService.findByParent( Mockito.isA( FindNodesByParentParams.class ) ) ).
+            thenReturn( FindNodesByParentResult.create().
+                hits( 0 ).
+                nodes( Nodes.empty() ).
+                totalHits( 0 ).
+                build() );
+
+        Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Branch.class ) ) ).
+            thenReturn( new NodeComparison( id, CompareStatus.EQUAL ) );
+
+        Mockito.when( this.nodeService.deleteByPath( Mockito.isA( NodePath.class ) ) ).
+            thenReturn( node );
+
+        Mockito.when( this.nodeService.deleteById( node.id() ) ).
+            thenReturn( node );
+
+        Mockito.when( this.translator.fromNodes( Nodes.from( node ), false ) ).thenReturn( Contents.create().
+            add( Content.create().
+                id( ContentId.from( "test" ) ).
+                name( "test" ).
+                parentPath( ContentPath.ROOT ).
+                build() ).
+            build() );
+
+        final Contents myContent = DeleteContentCommand.create().
+            params( DeleteContentParams.create().
+                contentPath( ContentPath.from( "myContent" ) ).
+                deleteOnline( true ).
+                build() ).
+            nodeService( this.nodeService ).
+            eventPublisher( this.eventPublisher ).
+            translator( this.translator ).
+            build().
+            execute();
+
+        assertEquals( 1, myContent.getSize() );
+        Mockito.verify( this.nodeService, Mockito.times( 2 ) ).deleteById( node.id() );
+    }
+
+    @Test
+    public void delete_pending_content_only_instantly()
+        throws Exception
+    {
+        final NodeId id = NodeId.from( "test" );
+
+        final Node node = Node.create().
+            id( id ).
+            name( "myContent" ).
+            parentPath( ContentConstants.CONTENT_ROOT_PATH ).
+            nodeState( NodeState.PENDING_DELETE ).
+            build();
+
+        final SetNodeStateResult setNodeStateResult = SetNodeStateResult.
+            create().
+            addUpdatedNode( node ).
+            build();
+
+        Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) ).
+            thenReturn( node );
+
+        Mockito.when( this.nodeService.findByParent( Mockito.isA( FindNodesByParentParams.class ) ) ).
+            thenReturn( FindNodesByParentResult.create().
+                hits( 0 ).
+                nodes( Nodes.empty() ).
+                totalHits( 0 ).
+                build() );
+
+        Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Branch.class ) ) ).
+            thenReturn( new NodeComparison( id, CompareStatus.EQUAL ) ).
+            thenReturn( new NodeComparison( id, CompareStatus.PENDING_DELETE ) );
+
+        Mockito.when( this.nodeService.deleteByPath( Mockito.isA( NodePath.class ) ) ).
+            thenReturn( node );
+
+        Mockito.when( this.nodeService.deleteById( node.id() ) ).
+            thenReturn( node );
+
+        Mockito.when( this.nodeService.setNodeState( Mockito.isA( SetNodeStateParams.class ) ) ).
+            thenReturn( setNodeStateResult );
+
+        Mockito.when( this.translator.fromNodes( Nodes.from( node ), false ) ).thenReturn( Contents.create().
+            add( Content.create().
+                id( ContentId.from( "test" ) ).
+                name( "test" ).
+                parentPath( ContentPath.ROOT ).
+                build() ).
+            build() );
+
+        DeleteContentCommand.create().
+            params( DeleteContentParams.create().
+                contentPath( ContentPath.from( "myContent" ) ).
+                deletePending( true ).
+                build() ).
+            nodeService( this.nodeService ).
+            eventPublisher( this.eventPublisher ).
+            translator( this.translator ).
+            build().
+            execute();
+
+        DeleteContentCommand.create().
+            params( DeleteContentParams.create().
+                contentPath( ContentPath.from( "myContent" ) ).
+                deletePending( true ).
+                build() ).
+            nodeService( this.nodeService ).
+            eventPublisher( this.eventPublisher ).
+            translator( this.translator ).
+            build().
+            execute();
+
+        final SetNodeStateParams params = SetNodeStateParams.create().
+            nodeId( node.id() ).
+            nodeState( NodeState.PENDING_DELETE ).
+            build();
+
+        Mockito.verify( this.nodeService, Mockito.times( 2 ) ).deleteById( node.id() );
+        Mockito.verify( this.nodeService, Mockito.times( 1 ) ).setNodeState( Mockito.eq( params ) );
+    }
+
 }

@@ -1,14 +1,13 @@
-module app.view {
+import "../../api.ts";
 
-    export class CloseAction extends api.ui.Action {
+export class CloseAction extends api.ui.Action {
 
-        constructor(itemViewPanel: api.app.view.ItemViewPanel<api.content.ContentSummaryAndCompareStatus>,
-                    checkCanRemovePanel: boolean = true) {
-            super("Close", "mod+alt+f4");
+    constructor(itemViewPanel: api.app.view.ItemViewPanel<api.content.ContentSummaryAndCompareStatus>,
+                checkCanRemovePanel: boolean = true) {
+        super("Close", "mod+alt+f4");
 
-            this.onExecuted(() => {
-                itemViewPanel.close(checkCanRemovePanel);
-            });
-        }
+        this.onExecuted(() => {
+            itemViewPanel.close(checkCanRemovePanel);
+        });
     }
 }

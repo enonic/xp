@@ -1,11 +1,12 @@
-module app.browse {
+import "../../api.ts";
 
-    export class UserBrowseToolbar extends api.ui.toolbar.Toolbar {
+import {UserTreeGridActions} from "./UserTreeGridActions";
 
-        constructor(actions: UserTreeGridActions) {
-            super();
-            this.addClass("user-browse-toolbar")
-            this.addActions(actions.getAllActions());
-        }
+export class UserBrowseToolbar extends api.ui.toolbar.Toolbar {
+
+    constructor(actions: UserTreeGridActions) {
+        super();
+        this.addClass("user-browse-toolbar")
+        this.addActions(actions.getAllActions());
     }
 }

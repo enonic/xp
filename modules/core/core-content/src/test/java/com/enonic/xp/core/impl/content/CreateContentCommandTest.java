@@ -15,6 +15,7 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
@@ -426,6 +427,7 @@ public class CreateContentCommandTest
             mediaInfo( mediaInfo ).
             mixinService( this.mixinService ).
             siteService( this.siteService ).
+            contentProcessors( new ContentProcessors() ).
             build();
     }
 

@@ -67,6 +67,7 @@ final class CreateMediaCommand
             mimeType( params.getMimeType() ).
             label( "source" ).
             byteSource( params.getByteSource() ).
+            text( mediaInfo.getTextContent() ).
             build();
 
         final CreateContentParams createContentParams = CreateContentParams.create().

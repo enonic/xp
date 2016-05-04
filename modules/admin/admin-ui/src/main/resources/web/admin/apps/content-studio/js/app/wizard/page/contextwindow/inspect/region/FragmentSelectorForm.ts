@@ -1,29 +1,28 @@
-module app.wizard.page.contextwindow.inspect.region {
+import "../../../../../../api.ts";
 
-    import FragmentDropdown = api.content.page.region.FragmentDropdown;
+import FragmentDropdown = api.content.page.region.FragmentDropdown;
 
-    export class FragmentSelectorForm extends api.ui.form.Form {
+export class FragmentSelectorForm extends api.ui.form.Form {
 
-        private fragmentSelector: FragmentDropdown;
+    private fragmentSelector: FragmentDropdown;
 
-        constructor(fragmentSelector: FragmentDropdown, title?: string) {
-            super('fragment-dropdown-form');
-            this.fragmentSelector = fragmentSelector;
+    constructor(fragmentSelector: FragmentDropdown, title?: string) {
+        super('fragment-dropdown-form');
+        this.fragmentSelector = fragmentSelector;
 
-            var fieldSet = new api.ui.form.Fieldset();
-            if (!api.util.StringHelper.isBlank(title)) {
-                fieldSet.add(new api.ui.form.FormItemBuilder(fragmentSelector).setLabel(title).build());
-            }
-            else {
-                fieldSet.add(new api.ui.form.FormItemBuilder(fragmentSelector).build());
-            }
-
-            this.add(fieldSet);
+        var fieldSet = new api.ui.form.Fieldset();
+        if (!api.util.StringHelper.isBlank(title)) {
+            fieldSet.add(new api.ui.form.FormItemBuilder(fragmentSelector).setLabel(title).build());
+        }
+        else {
+            fieldSet.add(new api.ui.form.FormItemBuilder(fragmentSelector).build());
         }
 
-        getSelector(): FragmentDropdown {
-            return this.fragmentSelector;
-        }
-
+        this.add(fieldSet);
     }
+
+    getSelector(): FragmentDropdown {
+        return this.fragmentSelector;
+    }
+
 }

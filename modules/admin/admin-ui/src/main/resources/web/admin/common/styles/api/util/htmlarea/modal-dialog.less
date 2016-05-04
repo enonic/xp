@@ -10,6 +10,12 @@
       margin-left: @label-width;
     }
   }
+
+  .form-view .input-view.invalid {
+    label + .input-wrapper {
+      margin-left: @label-width - 12px;
+    }
+  }
 }
 
 .html-area-modal-dialog {
@@ -25,10 +31,6 @@
 
   &._540-720 {
     .modal-dialog-margin-mixin();
-
-    &.link-modal-dialog {
-      .modal-dialog-margin-mixin(@form-label-width + 20px);
-    }
   }
 
   .image-preview {
@@ -93,7 +95,7 @@
     div.input-view.invalid + div.validation-viewer {
       background-color: @input-light-red;
       padding-bottom: 10px;
-      padding-left: @form-label-width + 10;
+      padding-left: @form-label-width;
     }
 
     .form-view {
@@ -186,11 +188,6 @@
 
       .names-and-icon-view .names-view {
         margin-left: 0;
-      }
-
-      &.invalid .uploader-el {
-        margin-top: 10px;
-        margin-right: 10px;
       }
     }
   }
@@ -382,6 +379,9 @@
       }
     }
 
+    .input-view.invalid .preview-panel-scroll-navigation-wrapper {
+      display: none;
+    }
   }
 
 }

@@ -1,16 +1,15 @@
-module app.view {
+import "../../api.ts";
 
-    export interface ContentItemViewToolbarParams {
-        editAction: api.ui.Action;
-        deleteAction: api.ui.Action;
-    }
+export interface ContentItemViewToolbarParams {
+    editAction: api.ui.Action;
+    deleteAction: api.ui.Action;
+}
 
-    export class ContentItemViewToolbar extends api.ui.toolbar.Toolbar {
+export class ContentItemViewToolbar extends api.ui.toolbar.Toolbar {
 
-        constructor(params: ContentItemViewToolbarParams) {
-            super();
-            super.addAction(params.editAction);
-            super.addAction(params.deleteAction);
-        }
+    constructor(params: ContentItemViewToolbarParams) {
+        super();
+        super.addAction(params.editAction);
+        super.addAction(params.deleteAction);
     }
 }

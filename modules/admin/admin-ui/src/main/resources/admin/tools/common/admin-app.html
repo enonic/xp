@@ -59,7 +59,7 @@
     if (CONFIG.portalAssetsUrl) {
         var launcherJs = document.createElement("script");
         launcherJs.setAttribute("type", "text/javascript");
-        launcherJs.setAttribute("src", CONFIG.portalAssetsUrl + "/js/launcher.js");
+        launcherJs.setAttribute("src", CONFIG.assetsUri + "/apps/launcher/js/_all.js");
 
         document.getElementsByTagName("body")[0].appendChild(launcherJs);
     }

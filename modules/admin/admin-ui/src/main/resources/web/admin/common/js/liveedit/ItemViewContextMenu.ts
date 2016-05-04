@@ -1,5 +1,7 @@
 module api.liveedit {
 
+    import MinimizeWizardPanelEvent = api.app.wizard.MinimizeWizardPanelEvent;
+
     export enum ItemViewContextMenuOrientation {
         UP,
         DOWN
@@ -78,6 +80,14 @@ module api.liveedit {
                 // stop drag if the element was hidden while dragging
                 this.stopDrag(dragListener, upListener);
             });
+
+            let minimizeHandler = () => {
+                this.hide();
+            };
+
+            MinimizeWizardPanelEvent.on(minimizeHandler);
+
+            this.onRemoved(() => MinimizeWizardPanelEvent.un(minimizeHandler));
 
             api.dom.Body.get().appendChild(this);
         }
