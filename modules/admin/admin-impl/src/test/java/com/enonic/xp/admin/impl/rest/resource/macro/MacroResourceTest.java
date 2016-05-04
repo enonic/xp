@@ -2,8 +2,12 @@ package com.enonic.xp.admin.impl.rest.resource.macro;
 
 import java.time.Instant;
 
+import javax.ws.rs.core.Response;
+
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.form.Form;
@@ -21,15 +25,17 @@ public class MacroResourceTest
 
     private MacroDescriptorService macroDescriptorService;
 
+    private MacroResource macroResource;
+
     @Override
     protected Object getResourceInstance()
     {
         this.macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
 
-        final MacroResource resource = new MacroResource();
-        resource.setMacroDescriptorService( this.macroDescriptorService );
+        this.macroResource = new MacroResource();
+        macroResource.setMacroDescriptorService( this.macroDescriptorService );
 
-        return resource;
+        return macroResource;
     }
 
     @Test
@@ -41,6 +47,30 @@ public class MacroResourceTest
             get().getAsString();
 
         assertNotNull( response.getBytes() );
+    }
+
+    @Test
+    public void testMacroIcon()
+        throws Exception
+    {
+        byte[] data = Resources.toByteArray( getClass().getResource( "macro1.svg" ) );
+        final Icon icon = Icon.from( data, "image/svg+xml", Instant.now() );
+
+        final MacroDescriptor macroDescriptor = MacroDescriptor.create().
+            key( MacroKey.from( "myapp:macro1" ) ).
+            description( "my description" ).
+            displayName( "my macro1 name" ).
+            form( Form.create().build() ).
+            icon( icon ).
+            build();
+
+        Mockito.when( macroDescriptorService.getByKey( macroDescriptor.getKey() ) ).thenReturn( macroDescriptor );
+
+        final Response response = this.macroResource.getIcon( "myapp:macro1", 20, null );
+
+        assertNotNull( response.getEntity() );
+        assertEquals( icon.getMimeType(), response.getMediaType().toString() );
+        org.junit.Assert.assertArrayEquals( data, (byte[]) response.getEntity() );
     }
 
     @Test
@@ -56,6 +86,7 @@ public class MacroResourceTest
     }
 
     private MacroDescriptors getTestDescriptors()
+        throws Exception
     {
         final Form config = Form.create().build();
 
@@ -64,7 +95,6 @@ public class MacroResourceTest
             description( "my description" ).
             displayName( "my macro1 name" ).
             form( config ).
-            icon( Icon.from( new byte[]{123}, "image/png", Instant.now() ) ).
             build();
 
         final MacroDescriptor macroDescriptor2 = MacroDescriptor.create().
@@ -72,7 +102,6 @@ public class MacroResourceTest
             description( "my description" ).
             displayName( "my macro2 name" ).
             form( config ).
-            icon( Icon.from( new byte[]{123}, "image/png", Instant.now() ) ).
             build();
 
         return MacroDescriptors.from( macroDescriptor1, macroDescriptor2 );
