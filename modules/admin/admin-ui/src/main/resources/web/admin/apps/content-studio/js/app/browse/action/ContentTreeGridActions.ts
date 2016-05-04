@@ -1,4 +1,17 @@
 import "../../../api.ts";
+import {ContentTreeGrid} from "../ContentTreeGrid";
+import {ToggleSearchPanelAction} from "./ToggleSearchPanelAction";
+import {ShowNewContentDialogAction} from "./ShowNewContentDialogAction";
+import {PreviewContentAction} from "./PreviewContentAction";
+import {EditContentAction} from "./EditContentAction";
+import {DeleteContentAction} from "./DeleteContentAction";
+import {DuplicateContentAction} from "./DuplicateContentAction";
+import {MoveContentAction} from "./MoveContentAction";
+import {SortContentAction} from "./SortContentAction";
+import {PublishContentAction} from "./PublishContentAction";
+import {PublishTreeContentAction} from "./PublishTreeContentAction";
+import {UnpublishContentAction} from "./UnpublishContentAction";
+import {ContentBrowseItem} from "../ContentBrowseItem";
 
 import Action = api.ui.Action;
 import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
@@ -10,18 +23,6 @@ import Content = api.content.Content;
 import PermissionHelper = api.security.acl.PermissionHelper;
 import AccessControlEntry = api.security.acl.AccessControlEntry;
 import AccessControlList = api.security.acl.AccessControlList;
-import {ContentTreeGrid} from "../ContentTreeGrid";
-import {ToggleSearchPanelAction} from "./ToggleSearchPanelAction";
-import {ShowNewContentDialogAction} from "./ShowNewContentDialogAction";
-import {PreviewContentAction} from "./PreviewContentAction";
-import {EditContentAction} from "./EditContentAction";
-import {DeleteContentAction} from "./DeleteContentAction";
-import {DuplicateContentAction} from "./DuplicateContentAction";
-import {MoveContentAction} from "./MoveContentAction";
-import {SortContentAction} from "./SortContentAction";
-import {PublishContentAction} from "./PublishContentAction";
-import {UnpublishContentAction} from "./UnpublishContentAction";
-import {ContentBrowseItem} from "../ContentBrowseItem";
 
 export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAndCompareStatus> {
 
@@ -33,6 +34,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     public MOVE_CONTENT: Action;
     public SORT_CONTENT: Action;
     public PUBLISH_CONTENT: Action;
+    public PUBLISH_TREE_CONTENT: Action;
     public UNPUBLISH_CONTENT: Action;
     public TOGGLE_SEARCH_PANEL: Action;
 
@@ -49,6 +51,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.MOVE_CONTENT = new MoveContentAction(grid);
         this.SORT_CONTENT = new SortContentAction(grid);
         this.PUBLISH_CONTENT = new PublishContentAction(grid);
+        this.PUBLISH_TREE_CONTENT = new PublishTreeContentAction(grid);
         this.UNPUBLISH_CONTENT = new UnpublishContentAction(grid);
 
         this.actions.push(
@@ -97,6 +100,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
             this.PUBLISH_CONTENT.setEnabled(false);
             this.PUBLISH_CONTENT.setVisible(true);
+            this.PUBLISH_TREE_CONTENT.setEnabled(false);
+            this.PUBLISH_TREE_CONTENT.setVisible(true);
             this.UNPUBLISH_CONTENT.setEnabled(false);
             this.UNPUBLISH_CONTENT.setVisible(false);
 
@@ -120,8 +125,11 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
             let isPublished = this.isPublished(contentBrowseItems[0].getModel().getCompareStatus());
 
+            // TODO: Remove setVisible on Publish/Unpublish remove
             this.PUBLISH_CONTENT.setEnabled(!isPublished);
             this.PUBLISH_CONTENT.setVisible(!isPublished);
+            this.PUBLISH_TREE_CONTENT.setEnabled(!isPublished);
+            this.PUBLISH_TREE_CONTENT.setVisible(!isPublished);
             this.UNPUBLISH_CONTENT.setEnabled(isPublished);
             this.UNPUBLISH_CONTENT.setVisible(isPublished);
 
@@ -151,6 +159,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
             this.PUBLISH_CONTENT.setEnabled(anyUnpublished);
             this.PUBLISH_CONTENT.setVisible(anyUnpublished);
+            this.PUBLISH_TREE_CONTENT.setEnabled(anyUnpublished);
+            this.PUBLISH_TREE_CONTENT.setVisible(anyUnpublished);
             this.UNPUBLISH_CONTENT.setEnabled(!anyUnpublished);
             this.UNPUBLISH_CONTENT.setVisible(!anyUnpublished);
 
@@ -244,6 +254,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
                     }
                     if (!hasPublishPermission) {
                         this.PUBLISH_CONTENT.setEnabled(false);
+                        this.PUBLISH_TREE_CONTENT.setEnabled(false);
                     }
                     return wemQ(null);
                 }).done();
@@ -275,14 +286,14 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
                     deferred.resolve(PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
                         loginResult,
                         parent.getPermissions()));
-                })
+                });
         } else {
             new api.content.GetContentRootPermissionsRequest().sendAndParse().then((accessControlList: AccessControlList) => {
 
                 deferred.resolve(PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
                     loginResult,
                     accessControlList));
-            })
+            });
         }
 
         return deferred.promise;

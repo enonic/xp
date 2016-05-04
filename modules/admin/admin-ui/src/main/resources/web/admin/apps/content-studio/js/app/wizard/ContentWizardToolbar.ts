@@ -1,8 +1,8 @@
 import "../../api.ts";
+import {ContentWizardToolbarPublishControls} from "./ContentWizardToolbarPublishControls";
 
 import CycleButton = api.ui.button.CycleButton;
 import TogglerButton = api.ui.button.TogglerButton;
-import {ContentWizardToolbarPublishControls} from "./ContentWizardToolbarPublishControls";
 
 export interface ContentWizardToolbarParams {
     saveAction:api.ui.Action;
@@ -35,6 +35,7 @@ export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
         this.cycleViewModeButton = new CycleButton([params.showLiveEditAction, params.showFormAction]);
         this.componentsViewToggler = new TogglerButton("icon-clipboard", "Show Component View");
         this.contextWindowToggler = new TogglerButton("icon-cog", "Show Inspection Panel");
+        // TODO: remove on Publish menu implemented.
         this.contentWizardToolbarPublishControls = new ContentWizardToolbarPublishControls(params.publishAction, params.unpublishAction);
 
         super.addElement(this.contentWizardToolbarPublishControls);
