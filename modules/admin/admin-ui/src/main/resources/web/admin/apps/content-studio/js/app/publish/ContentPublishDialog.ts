@@ -1,4 +1,7 @@
 import "../../api.ts";
+import {SelectionPublishItem, SelectionPublishItemBuilder} from "./SelectionPublishItem";
+import {ContentPublishItem} from "./ContentPublishItem";
+import {ResolvedPublishContentViewer, ResolvedDependantContentViewer} from "./ResolvedPublishContentViewer";
 
 import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -9,9 +12,6 @@ import PublishContentRequest = api.content.PublishContentRequest;
 import ResolvePublishContentResultJson = api.content.json.ResolvePublishContentResultJson;
 import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
-import {SelectionPublishItem, SelectionPublishItemBuilder} from "./SelectionPublishItem";
-import {ContentPublishItem} from "./ContentPublishItem";
-import {ResolvedPublishContentViewer, ResolvedDependantContentViewer} from "./ResolvedPublishContentViewer";
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -78,11 +78,13 @@ export class ContentPublishDialog extends api.ui.dialog.ModalDialog {
         this.appendChildToContentPanel(this.includeChildItemsCheck);
     }
 
-    initAndOpen() {
+    initAndOpen(includeChildItems?: boolean) {
         this.renderSelectedContentsWhileItemsGettingResolved();
         if (!this.atLeastOneInitialItemHasChild()) {
             this.includeChildItemsCheck.setVisible(false);
             this.getButtonRow().addClass("no-checkbox");
+        } else if (includeChildItems) {
+            this.includeChildItemsCheck.setChecked(true);
         }
 
         this.runResolveTasks(this.getResolveTasks(), () => this.centerMyself());
@@ -469,9 +471,7 @@ export class ContentPublishDialog extends api.ui.dialog.ModalDialog {
     }
 
     private atLeastOneInitialItemHasChild(): boolean {
-        return this.selectedContents.some((obj: ContentSummaryAndCompareStatus) => {
-            return obj.hasChildren();
-        });
+        return this.selectedContents.some((obj: ContentSummaryAndCompareStatus) => obj.hasChildren());
     }
 
     private allResolvedItemsAreValid(): boolean {

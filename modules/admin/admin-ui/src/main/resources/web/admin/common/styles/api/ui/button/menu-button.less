@@ -41,16 +41,24 @@
     &:disabled {
       background: @form-button-bg;
     }
+
+    &:not(:disabled):hover {
+      background: lighten(@admin-green, 30%);
+      span {
+        color: @admin-white;
+      }
+    }
   }
 
   .menu {
+    display: none;
     position: absolute;
     width: 100%;
     z-index: @z-index-mask;
     box-sizing: border-box;
 
     &.expanded {
-      display: block;
+      display: block !important;
     }
   }
 

@@ -80,6 +80,7 @@ module api.ui.menu {
             menuItem.onClicked((event: MouseEvent) => {
                 this.notifyItemClicked(menuItem);
                 if (this.hideOnItemClick) {
+                    this.removeClass('expanded');
                     this.hide();
                 }
                 event.preventDefault();

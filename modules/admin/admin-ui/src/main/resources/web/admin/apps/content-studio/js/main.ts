@@ -103,7 +103,7 @@ function startApplication() {
     ContentPublishPromptEvent.on((event) => {
         var contentPublishDialog = new ContentPublishDialog();
         contentPublishDialog.setSelectedContents(event.getModels());
-        contentPublishDialog.initAndOpen();
+        contentPublishDialog.initAndOpen(event.isIncludeChildItems());
     });
 
     var newContentDialog = new NewContentDialog();
