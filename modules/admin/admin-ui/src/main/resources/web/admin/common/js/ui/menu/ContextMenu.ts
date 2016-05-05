@@ -1,69 +1,16 @@
 module api.ui.menu {
 
-    export class ContextMenu extends api.dom.UlEl {
-        private menuItems: MenuItem[] = [];
-        private hideOnItemClick = true;
-        private itemClickListeners: {(item: MenuItem):void}[] = [];
+    export class ContextMenu extends Menu {
 
         constructor(actions?: api.ui.Action[], appendToBody = true) {
-            super("context-menu");
-
-            if (actions) {
-                for (var i = 0; i < actions.length; i++) {
-                    this.addAction(actions[i]);
-                }
-            }
+            super(actions);
+            
+            this.addClass("context-menu");
+            
             if (appendToBody) {
                 api.dom.Body.get().appendChild(this);
                 api.dom.Body.get().onClicked((event: MouseEvent) => this.hideMenuOnOutsideClick(event));
             }
-
-            this.onClicked((e: MouseEvent) => {
-                // menu itself was clicked so do nothing
-                e.preventDefault();
-                e.stopPropagation();
-            });
-        }
-
-        addAction(action: api.ui.Action): ContextMenu {
-            var menuItem = this.createMenuItem(action);
-            this.appendChild(menuItem);
-            return this;
-        }
-
-        addActions(actions: api.ui.Action[]): ContextMenu {
-            actions.forEach((action) => {
-                this.addAction(action);
-            });
-            return this;
-        }
-
-        removeAction(action: api.ui.Action): ContextMenu {
-            var menuItem = this.getMenuItem(action);
-            if (menuItem) {
-                this.removeMenuItem(menuItem);
-                this.removeChild(menuItem);
-            }
-            return this;
-        }
-
-        removeActions(actions: api.ui.Action[]): ContextMenu {
-            actions.forEach((action: api.ui.Action) => {
-                this.removeAction(action);
-            });
-            return this;
-        }
-
-        setActions(actions: api.ui.Action[]): ContextMenu {
-            this.menuItems.length = 0;
-            this.removeChildren();
-            this.addActions(actions);
-            return this;
-        }
-
-        setHideOnItemClick(hide: boolean): ContextMenu {
-            this.hideOnItemClick = hide;
-            return this;
         }
 
         showAt(x: number, y: number) {
@@ -82,52 +29,6 @@ module api.ui.menu {
 
         doMoveTo(menu: ContextMenu, x: number, y: number) {
             menu.getEl().setLeftPx(x).setTopPx(y);
-        }
-
-        onItemClicked(listener: (item: MenuItem) => void) {
-            this.itemClickListeners.push(listener);
-        }
-
-        unItemClicked(listener: (item: MenuItem) => void) {
-            this.itemClickListeners = this.itemClickListeners.filter((currentListener: (item: MenuItem) => void) => {
-                return listener != currentListener;
-            });
-        }
-
-        private notifyItemClicked(item: MenuItem) {
-            this.itemClickListeners.forEach((listener: (item: MenuItem)=>void) => {
-                listener(item);
-            });
-        }
-
-        private createMenuItem(action: api.ui.Action): MenuItem {
-            var menuItem = new MenuItem(action);
-            menuItem.onClicked((event: MouseEvent) => {
-                this.notifyItemClicked(menuItem);
-                if (this.hideOnItemClick) {
-                    this.hide();
-                }
-                event.preventDefault();
-                event.stopPropagation();
-            });
-            this.menuItems.push(menuItem);
-            return menuItem;
-        }
-
-        private removeMenuItem(menuItem: MenuItem) {
-            this.menuItems = this.menuItems.filter((item) => {
-                return item != menuItem;
-            })
-        }
-
-        private getMenuItem(action: api.ui.Action): MenuItem {
-            for (var i = 0; i < this.menuItems.length; i++) {
-                var menuItem = this.menuItems[i];
-                if (menuItem.getAction() == action) {
-                    return menuItem;
-                }
-            }
-            return undefined;
         }
 
         private hideMenuOnOutsideClick(evt: Event): void {
