@@ -115,7 +115,7 @@ module api.util.htmlarea.editor {
                 convert_urls: this.convertUrls,
 
                 toolbar: [
-                    "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor image link unlink | table | code"
+                    "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor image macro link unlink | table | code"
                 ],
 
                 formats: {
@@ -158,7 +158,8 @@ module api.util.htmlarea.editor {
                 external_plugins: {
                     "link": this.assetsUri + "/common/js/util/htmlarea/plugins/link.js",
                     "anchor": this.assetsUri + "/common/js/util/htmlarea/plugins/anchor.js",
-                    "image": this.assetsUri + "/common/js/util/htmlarea/plugins/image.js"
+                    "image": this.assetsUri + "/common/js/util/htmlarea/plugins/image.js",
+                    "macro": this.assetsUri + "/common/js/util/htmlarea/plugins/macro.js"
                 },
                 object_resizing: "table",
                 autoresize_min_height: 100,
