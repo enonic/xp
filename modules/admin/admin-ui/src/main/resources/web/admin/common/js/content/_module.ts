@@ -61,6 +61,7 @@
 ///<reference path='PublishContentResult.ts' />
 ///<reference path='ResolvePublishRequestedContentsRequest.ts' />
 ///<reference path='ResolvePublishDependenciesRequest.ts' />
+///<reference path='ResolvePublishDependenciesResult.ts' />
 ///<reference path='CompareContentRequest.ts' />
 ///<reference path='CompareContentResults.ts' />
 ///<reference path='CompareContentResult.ts' />
@@ -71,6 +72,7 @@
 ///<reference path='ContentSummaryAndCompareStatusFetcher.ts' />
 ///<reference path='ContentSummaryAndCompareStatusViewer.ts' />
 ///<reference path='ContentVersion.ts' />
+///<reference path='ContentPublishItem.ts' />
 ///<reference path='ContentVersionViewer.ts' />
 ///<reference path='GetActiveContentVersionsRequest.ts' />
 ///<reference path='GetContentVersionsRequest.ts' />
