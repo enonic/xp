@@ -1,17 +1,15 @@
 import "../../api.ts";
 
-import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
-import BrowseItem = api.app.browse.BrowseItem;
-import ContentPath = api.content.ContentPath;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DialogButton = api.ui.dialog.DialogButton;
 import PublishContentRequest = api.content.PublishContentRequest;
-import ResolvePublishContentResultJson = api.content.json.ResolvePublishContentResultJson;
+import ResolvePublishDependenciesResult = api.content.ResolvePublishDependenciesResult;
 import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
-import {SelectionPublishItem, SelectionPublishItemBuilder} from "./SelectionPublishItem";
-import {ContentPublishItem} from "./ContentPublishItem";
-import {ResolvedPublishContentViewer, ResolvedDependantContentViewer} from "./ResolvedPublishContentViewer";
+import ContentPublishItem = api.content.ContentPublishItem;
+import ListBox = api.ui.selector.list.ListBox;
+import {DependantView} from "../dialog/DependantView";
+import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItemsDialog";
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -20,331 +18,142 @@ import {ResolvedPublishContentViewer, ResolvedDependantContentViewer} from "./Re
  * Dependant items number will change depending on includeChildren checkbox state as
  * resolved dependencies usually differ in that case.
  */
-export class ContentPublishDialog extends api.ui.dialog.ModalDialog {
-
-    private modelName: string;
-
-    private selectionItems: SelectionPublishItem<ContentPublishItem>[] = [];
+export class ContentPublishDialog extends DependantItemsDialog {
 
     private publishButton: DialogButton;
 
-    private publishAction: api.ui.Action;
+    private childrenCheckbox: api.ui.Checkbox;
 
-    private initialItemsView: PublishDialogItemList = new PublishDialogItemList();
-
-    private dependenciesItemsView: PublishDialogDependantsItemList = new PublishDialogDependantsItemList();
-
-    private includeChildItemsCheck: api.ui.Checkbox;
-
-    private subheaderMessage: api.dom.H6El = new api.dom.H6El("publish-dialog-subheader");
-
-    private selectedContents: ContentSummaryAndCompareStatus[];
-
-    private initialContentsResolvedWithChildren: ContentsResolved<ContentPublishItem> = new ContentsResolved<ContentPublishItem>();
-
-    private initialContentsResolvedWithoutChildren: ContentsResolved<ContentPublishItem> = new ContentsResolved<ContentPublishItem>();
-
-    private dependenciesContentsResolvedWithChildren: ContentsResolved<ContentPublishItem> = new ContentsResolved<ContentPublishItem>();
-
-    private dependenciesContentsResolvedWithoutChildren: ContentsResolved<ContentPublishItem> = new ContentsResolved<ContentPublishItem>();
-
-    private includeChildrenCheckedListener: () => void;
+    // stashes previous checkbox state items, until selected items changed
+    private stash: {[checked:string]:ContentSummaryAndCompareStatus[]} = {};
 
     constructor() {
-        super({
-            title: new api.ui.dialog.ModalDialogHeader("Publishing Wizard")
-        });
-
-        this.modelName = "item";
-
-        this.initIncludeChildrenCheckbox();
+        super("Publishing Wizard", "Resolving items...", "Other items that will be published");
 
         this.getEl().addClass("publish-dialog");
 
-        this.appendChildToContentPanel(this.initialItemsView);
-        this.appendChildToContentPanel(this.dependenciesItemsView);
-
-        this.initSubheaderMessage();
-
-        this.publishButton = this.setPublishAction(new ContentPublishDialogAction());
+        var publishAction = new ContentPublishDialogAction();
+        publishAction.onExecuted(this.doPublish.bind(this));
+        this.publishButton = this.addAction(publishAction, true, true);
         this.publishButton.setEnabled(false);
-
-        this.getPublishAction().onExecuted(() => {
-            this.doPublish();
-        });
 
         this.addCancelButtonToBottom();
 
-        this.appendChildToContentPanel(this.includeChildItemsCheck);
+        this.initChildrenCheckbox();
+
+        this.getItemList().onItemsRemoved((items: ContentSummaryAndCompareStatus[]) => {
+
+            // clear the stash because it is no longer valid
+            this.clearStashedItems();
+
+            this.refreshPublishDependencies().done();
+        });
     }
 
-    initAndOpen() {
-        this.renderSelectedContentsWhileItemsGettingResolved();
-        if (!this.atLeastOneInitialItemHasChild()) {
-            this.includeChildItemsCheck.setVisible(false);
+
+    protected createDependantList(): ListBox<ContentSummaryAndCompareStatus> {
+        let dependants = new PublishDialogDependantList();
+
+        dependants.onItemClicked((item: ContentSummaryAndCompareStatus) => {
+            this.close();
+            new api.content.event.EditContentEvent([item]).fire();
+        })
+
+        return dependants;
+    }
+
+    open() {
+        if (!this.doAnyHaveChildren(this.getItemList().getItems())) {
+
+            this.childrenCheckbox.setVisible(false);
             this.getButtonRow().addClass("no-checkbox");
         }
 
-        this.runResolveTasks(this.getResolveTasks(), () => this.centerMyself());
-        this.open();
+        this.clearStashedItems();
+
+        this.refreshPublishDependencies().done(() => this.centerMyself());
+
+        super.open();
     }
 
-    private runResolveTasks(resolveTasks: wemQ.Promise<any>[], doneCallback?: () => void) {
+    private getStashedItems(): ContentSummaryAndCompareStatus[] {
+        return this.stash[String(this.childrenCheckbox.isChecked())];
+    }
 
+    private setStashedItems(items: ContentSummaryAndCompareStatus[]) {
+        this.stash[String(this.childrenCheckbox.isChecked())] = items;
+    }
+
+    private clearStashedItems() {
+        this.stash = {};
+    }
+
+    private refreshPublishDependencies(): wemQ.Promise<void> {
         this.showLoadingSpinnerAtButton();
         this.publishButton.setEnabled(false);
 
-        wemQ.all(resolveTasks).done(() => {
-            if (doneCallback) {
-                doneCallback();
-            }
-            this.hideLoadingSpinnerAtButton();
-            this.countItemsToPublishAndUpdateCounterElements();
-        });
-    }
+        let stashedItems = this.getStashedItems();
 
-    private getResolveTasks(): wemQ.Promise<any>[] {
-        return [this.resolvePublishDependenciesIfNeededAndUpdateView()];
-    }
+        // means we just opened or we had to clear it because of selection change
+        if (!stashedItems) {
 
-    show() {
-        api.dom.Body.get().appendChild(this);
-        super.show();
-    }
+            let ids = this.getContentToPublishIds(),
+                flag = this.childrenCheckbox.isChecked(),
+                resolveDependenciesRequest = new api.content.ResolvePublishDependenciesRequest(ids, flag);
 
-    close() {
-        super.close();
-        this.remove();
-    }
+            return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
 
-    setPublishAction(action: api.ui.Action): DialogButton {
-        this.publishAction = action;
-        return this.addAction(action, true, true);
-    }
+                var dependants = result.getDependants().map(dependant => dependant.toContentSummaryAndCompareStatus());
+                this.setDependantItems(dependants);
+                this.setStashedItems(dependants);
 
-    getPublishAction(): api.ui.Action {
-        return this.publishAction;
-    }
+                // do not set requested contents as they are never going to change
 
-    setSelectedContents(contents: ContentSummaryAndCompareStatus[]) {
-        this.selectedContents = contents;
-    }
-
-    private renderSelectedContentsWhileItemsGettingResolved() {
-
-        var initiallySelectedContents: ContentPublishItem[] = ContentPublishItem.buildPublishItemsFromContentSummaryAndCompareStatuses(
-            this.sortContentSummariesArrayByPath(this.selectedContents).slice(0, 15));
-
-        initiallySelectedContents.forEach((content: ContentPublishItem) => {
-            var item: SelectionPublishItem<ContentPublishItem> = new SelectionPublishItemBuilder<ContentPublishItem>().create().setViewer(
-                new ResolvedPublishContentViewer<ContentPublishItem>()).setContent(content).setIsCheckBoxEnabled(
-                false).setRemovable(true).build();
-            this.initialItemsView.appendChild(item);
-        });
-    }
-
-    private sortContentSummariesArrayByPath(arrayToSort: ContentSummaryAndCompareStatus[]): ContentSummaryAndCompareStatus[] {
-        arrayToSort.sort((contentA, contentB) => {
-            var pathA = contentA.getPath().toString(),
-                pathB = contentB.getPath().toString();
-            return (pathA < pathB) ? -1 : (pathA > pathB) ? 1 : 0;
-        });
-        return arrayToSort;
-    }
-
-    // inits selection items and appends them to display view
-    renderResolvedPublishItems() {
-        this.initSelectionItems();
-        this.initialItemsView.clear();
-
-        this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishItem>) => {
-            if (!item.isHidden()) {
-                this.initialItemsView.appendChild(item);
-            }
-        });
-    }
-
-    private initSubheaderMessage() {
-        this.appendChildToTitle(this.subheaderMessage);
-        this.subheaderMessage.setHtml("Resolving items...");
-    }
-
-    private initIncludeChildrenCheckbox() {
-
-        var resolveTasks: wemQ.Promise<any>[] = [];
-
-        this.includeChildrenCheckedListener = () => {
-            resolveTasks.push(this.resolvePublishDependenciesIfNeededAndUpdateView());
-            this.runResolveTasks(resolveTasks);
-        };
-
-        this.includeChildItemsCheck = new api.ui.Checkbox();
-        this.includeChildItemsCheck.addClass('include-child-check');
-        this.includeChildItemsCheck.onValueChanged(this.includeChildrenCheckedListener);
-        this.includeChildItemsCheck.setLabel('Include child items');
-
-        this.overwriteDefaultArrows(this.includeChildItemsCheck);
-    }
-
-    /**
-     * Inits selection items from resolved items returned via resolve request.
-     * Method is called from renderResolvedPublishItems() so it also saves and restores unchecked items.
-     */
-    private initSelectionItems() {
-
-        this.selectionItems = [];
-
-        var pushRequestedItems: ContentPublishItem[] = this.includeChildItemsCheck.isChecked()
-            ? this.initialContentsResolvedWithChildren.getContentsResolved()
-            : this.initialContentsResolvedWithoutChildren.getContentsResolved();
-
-        pushRequestedItems.forEach((content: ContentPublishItem) => {
-            var item: SelectionPublishItem<ContentPublishItem> = new SelectionPublishItemBuilder<ContentPublishItem>().create().setViewer(
-                new ResolvedPublishContentViewer<ContentPublishItem>()).setContent(content).setIsCheckBoxEnabled(
-                false).setRemovable(true).setRemoveCallback(() => {
-                if (this.selectionItems.length == 1) { // this is the last item in the dialog
-                    this.close();
-                    return;
-                }
-                this.removeFromInitialSelection(item);
-                this.initialContentsResolvedWithChildren.setAlreadyResolved(false);
-                this.initialContentsResolvedWithoutChildren.setAlreadyResolved(false);
-                this.dependenciesContentsResolvedWithChildren.setAlreadyResolved(false);
-                this.dependenciesContentsResolvedWithoutChildren.setAlreadyResolved(false);
-                this.runResolveTasks(this.getResolveTasks());
-            }).build();
-            this.selectionItems.push(item);
-
-            if (this.isInvalidContent(content)) {
-                this.addOnClickedListener(item);
-                item.addClass("invalid");
-            }
-        });
-    }
-
-    private removeSelectionItem(item: SelectionPublishItem<ContentPublishItem>) {
-        var index = this.indexOf(item);
-        if (index < 0) {
-            return;
-        }
-
-        this.selectionItems[index].remove();
-        this.selectionItems.splice(index, 1);
-
-        if (this.selectionItems.length == 0) {
-            this.close();
-        }
-    }
-
-    private indexOf(item: SelectionPublishItem<ContentPublishItem>): number {
-        for (var i = 0; i < this.selectionItems.length; i++) {
-            if (item.getBrowseItem().getId() == this.selectionItems[i].getBrowseItem().getId()) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    private removeFromInitialSelection(item: SelectionPublishItem<ContentPublishItem>) {
-        for (var i = 0; i < this.selectedContents.length; i++) {
-            if (item.getBrowseItem().getId() == this.selectedContents[i].getId()) {
-                this.selectedContents.splice(i, 1);
-                break;
-            }
-        }
-    }
-
-    private getSelectedContentsIds(): ContentId[] {
-
-        return this.selectedContents.filter((el) => {
-            return (typeof el !== "undefined");
-        }).map((el) => {
-            return new ContentId(el.getId());
-        })
-    }
-
-    /**
-     * Ensures that contents that were unchecked in the dialog are restored after re-render.
-     * @param unCheckedRequestedContentsIds
-     * @param publishRequestedSelectionItems
-     */
-    private restoreUncheckedState(unCheckedRequestedContentsIds: string[],
-                                  publishRequestedSelectionItems: SelectionPublishItem<ContentPublishItem>[]) {
-        publishRequestedSelectionItems.forEach((item: SelectionPublishItem<ContentPublishItem>) => {
-            if (unCheckedRequestedContentsIds.indexOf(item.getBrowseItem().getId()) > -1) {
-                item.setChecked(false);
-            }
-        });
-    }
-
-    /**
-     * Perform request to resolve dependency items of passed item.
-     */
-    private resolvePublishDependenciesIfNeededAndUpdateView(): wemQ.Promise<any> {
-
-        if ((this.includeChildItemsCheck.isChecked() && !this.dependenciesContentsResolvedWithChildren.isAlreadyResolved()) ||
-            (!this.includeChildItemsCheck.isChecked() && !this.dependenciesContentsResolvedWithoutChildren.isAlreadyResolved())) {
-
-            var resolveDependenciesRequest = new api.content.ResolvePublishDependenciesRequest(this.getSelectedContentsIds(),
-                this.includeChildItemsCheck.isChecked());
-
-            return resolveDependenciesRequest.send().then((jsonResponse: api.rest.JsonResponse<ResolvePublishContentResultJson>) => {
-                this.initResolvedPublishItems(jsonResponse.getResult());
-                this.renderResolvedPublishItems();
-                this.initResolvedDependenciesItems(jsonResponse.getResult());
-                this.renderResolvedDependenciesItems();
+                this.hideLoadingSpinnerAtButton();
+                this.refreshCountElements();
             });
+
         } else {
-            this.renderResolvedDependenciesItems();
-            return wemQ<any>(null);
+            // apply the stash to avoid extra heavy request
+            this.setDependantItems(this.getStashedItems());
+
+            return wemQ<void>(null);
         }
     }
 
-    private renderResolvedDependenciesItems() {
-        this.dependenciesItemsView.clear();
 
-        var dependenciesItems: ContentsResolved<ContentPublishItem> =
-            this.includeChildItemsCheck.isChecked() ?
-            this.dependenciesContentsResolvedWithChildren :
-            this.dependenciesContentsResolvedWithoutChildren;
-
-        if (dependenciesItems.getContentsResolved().length > 0) {
-            var dependenciesHeader: api.dom.H6El = new api.dom.H6El("dependencies-header");
-            dependenciesHeader.setHtml("Other items that will be published");
-            this.dependenciesItemsView.appendChild(dependenciesHeader);
-        }
-
-        // append dependencies to view
-        dependenciesItems.getContentsResolved().forEach((dependency: ContentPublishItem) => {
-            var dependencyView: SelectionPublishItem<ContentPublishItem> = new SelectionPublishItemBuilder<ContentPublishItem>().create().setViewer(
-                new ResolvedDependantContentViewer<ContentPublishItem>()).setContent(dependency).setIsCheckBoxEnabled(
-                false).setIsCheckboxHidden(true).setShowStatus(false).build();
-
-            this.dependenciesItemsView.appendDependency(dependencyView);
-
-            if (this.isInvalidContent(dependency)) {
-                this.addOnClickedListener(dependencyView);
-                dependencyView.addClass("invalid");
-            }
-        });
+    setDependantItems(items: api.content.ContentSummaryAndCompareStatus[]) {
+        super.setDependantItems(items);
 
         if (this.extendsWindowHeightSize()) {
             this.centerMyself();
         }
     }
 
-    private addOnClickedListener(dependencyView: SelectionPublishItem<ContentPublishItem>) {
-        dependencyView.onClicked(() => {
-            var contentId = new api.content.ContentId(dependencyView.getBrowseItem().getId());
-            api.content.ContentSummaryAndCompareStatusFetcher.fetch(contentId).then((contentSummary: ContentSummaryAndCompareStatus) => {
-                this.close();
-                new api.content.event.EditContentEvent([contentSummary]).fire();
-            });
-        });
+    setContentToPublish(contents: ContentSummaryAndCompareStatus[]) {
+        // this.selectedContents = contents;
+        this.setListItems(contents);
+        return this;
     }
 
-    private isInvalidContent(item: ContentPublishItem): boolean {
-        return !item.isValid() || !item.getDisplayName() || item.getName().isUnnamed();
+
+    private initChildrenCheckbox() {
+
+        let childrenCheckboxListener = () => this.refreshPublishDependencies().done();
+
+        this.childrenCheckbox = new api.ui.Checkbox('Include child items');
+        this.childrenCheckbox.addClass('include-child-check');
+        this.childrenCheckbox.onValueChanged(childrenCheckboxListener);
+
+        this.overwriteDefaultArrows(this.childrenCheckbox);
+
+        this.appendChildToContentPanel(this.childrenCheckbox);
+    }
+
+    private getContentToPublishIds(): ContentId[] {
+        return this.getItemList().getItems().map(item => {
+            return item.getContentId();
+        })
     }
 
     private extendsWindowHeightSize(): boolean {
@@ -362,41 +171,14 @@ export class ContentPublishDialog extends api.ui.dialog.ModalDialog {
         return false;
     }
 
-    /**
-     * Inits arrays of properties that store results of performing resolve request.
-     */
-    private initResolvedPublishItems(json: ResolvePublishContentResultJson) {
-
-        if (this.includeChildItemsCheck.isChecked()) {
-            this.initialContentsResolvedWithChildren.setContentsResolved(
-                ContentPublishItem.fromNewContentPublishItems(json.requestedContents));
-        } else {
-            this.initialContentsResolvedWithoutChildren.setContentsResolved(
-                ContentPublishItem.fromNewContentPublishItems(json.requestedContents));
-        }
-    }
-
-    /**
-     * Inits arrays of properties that store results of performing resolve request.
-     */
-    private initResolvedDependenciesItems(json: ResolvePublishContentResultJson) {
-
-        if (this.includeChildItemsCheck.isChecked()) {
-            this.dependenciesContentsResolvedWithChildren.setContentsResolved(
-                ContentPublishItem.fromNewContentPublishItems(json.dependentContents));
-        } else {
-            this.dependenciesContentsResolvedWithoutChildren.setContentsResolved(
-                ContentPublishItem.fromNewContentPublishItems(json.dependentContents));
-        }
-    }
-
     private doPublish() {
 
         this.showLoadingSpinnerAtButton();
         this.publishButton.setEnabled(false);
 
-        var selectedIds = this.getSelectedContentsIds();
-        new PublishContentRequest().setIncludeChildren(this.includeChildItemsCheck.isChecked()).setIds(selectedIds).send().done(
+        var selectedIds = this.getContentToPublishIds();
+
+        new PublishContentRequest().setIncludeChildren(this.childrenCheckbox.isChecked()).setIds(selectedIds).send().done(
             (jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
                 this.close();
                 PublishContentRequest.feedback(jsonResponse);
@@ -404,54 +186,44 @@ export class ContentPublishDialog extends api.ui.dialog.ModalDialog {
             });
     }
 
-    private countItemsToPublishAndUpdateCounterElements() {
+    private refreshCountElements() {
 
-        var totalCountToPublish = this.getTotalCountToPublish();
+        let count = this.countTotalToPublish();
 
-        //subheader
-        this.updateSubheaderMessage(totalCountToPublish);
-
-        // publish button
-        this.updatePublishButton(totalCountToPublish);
+        this.updateSubTitle(count);
+        this.updatePublishButton(count);
     }
 
-    private getTotalCountToPublish(): number {
-        var result = 0;
-
-        result += this.getCountToPublish(this.includeChildItemsCheck.isChecked()
-            ? this.initialContentsResolvedWithChildren
-            : this.initialContentsResolvedWithoutChildren);
-
-        result += this.getCountToPublish(this.includeChildItemsCheck.isChecked()
-            ? this.dependenciesContentsResolvedWithChildren
-            : this.dependenciesContentsResolvedWithoutChildren);
-
-        return result;
+    private countTotalToPublish(): number {
+        return this.countToPublish(this.getItemList().getItems())
+               + this.countToPublish(this.getDependantList().getItems());
     }
 
-    private getCountToPublish(contentsResolved: ContentsResolved<ContentPublishItem>): number {
-        var result = 0;
-        contentsResolved.getContentsResolved().forEach((contentPublishItem: ContentPublishItem) => {
-            if (contentPublishItem.getCompareStatus() != api.content.CompareStatus.EQUAL) {
-                result++;
+    private countToPublish(summaries: ContentSummaryAndCompareStatus[]): number {
+        return summaries.reduce((count, summary: ContentSummaryAndCompareStatus) => {
+            if (summary.getCompareStatus() != api.content.CompareStatus.EQUAL) {
+                count++;
             }
-        });
-        return result;
+        }, 0);
     }
 
-    private updateSubheaderMessage(count: number) {
-        var allValid = this.allResolvedItemsAreValid();
-        this.subheaderMessage.setHtml(count == 0 ? "No items to publish" :
-                                      allValid ? "Your changes are ready for publishing" : "Invalid content(s) prevent publish");
-        this.subheaderMessage.toggleClass("invalid", !allValid);
+    private updateSubTitle(count: number) {
+        let allValid = this.areItemsAndDependantsValid();
+
+        let subTitle = count == 0
+            ? "No items to publish"
+            : allValid ? "Your changes are ready for publishing"
+                           : "Invalid content(s) prevent publish";
+
+        this.setSubTitle(subTitle);
+        this.toggleClass("invalid", !allValid);
     }
 
     private updatePublishButton(count: number) {
-
-        this.cleanPublishButtonText();
-
         this.publishButton.setLabel(count > 0 ? "Publish (" + count + ")" : "Publish");
-        let canPublish = count > 0 && this.allResolvedItemsAreValid();
+
+        let canPublish = count > 0 && this.areItemsAndDependantsValid();
+
         this.publishButton.setEnabled(canPublish);
         if (canPublish) {
             this.getButtonRow().focusDefaultAction();
@@ -459,33 +231,23 @@ export class ContentPublishDialog extends api.ui.dialog.ModalDialog {
         }
     }
 
-    private contentItemsAreValid(contentPublishItems: ContentsResolved<ContentPublishItem>): boolean {
-
-        return contentPublishItems.getContentsResolved().every((content: ContentPublishItem) => {
-            return content.getCompareStatus() == CompareStatus.PENDING_DELETE ||
-                   (content.isValid() && !api.util.StringHelper.isBlank(content.getDisplayName()) && !content.getName().isUnnamed());
-        });
-
+    private areAllValid(summaries: ContentSummaryAndCompareStatus[]): boolean {
+        return summaries.every((summary: ContentSummaryAndCompareStatus) => isContentSummaryValid(summary));
     }
 
-    private atLeastOneInitialItemHasChild(): boolean {
-        return this.selectedContents.some((obj: ContentSummaryAndCompareStatus) => {
-            return obj.hasChildren();
+    private doAnyHaveChildren(items: ContentSummaryAndCompareStatus[]): boolean {
+        return items.some((item: ContentSummaryAndCompareStatus) => {
+            return item.hasChildren();
         });
     }
 
-    private allResolvedItemsAreValid(): boolean {
-        var includeChildItems = this.includeChildItemsCheck.isChecked();
+    private areItemsAndDependantsValid(): boolean {
+        var itemsValid = this.areAllValid(this.getItemList().getItems());
+        if (!itemsValid) {
+            return false;
+        }
 
-        var initialValid = this.contentItemsAreValid(includeChildItems
-            ? this.initialContentsResolvedWithChildren
-            : this.initialContentsResolvedWithoutChildren);
-
-        var dependenciesValid = this.contentItemsAreValid(includeChildItems
-            ? this.dependenciesContentsResolvedWithChildren
-            : this.dependenciesContentsResolvedWithoutChildren);
-
-        return initialValid && dependenciesValid;
+        return this.areAllValid(this.getDependantList().getItems());
     }
 
     private showLoadingSpinnerAtButton() {
@@ -496,42 +258,6 @@ export class ContentPublishDialog extends api.ui.dialog.ModalDialog {
         this.publishButton.removeClass("spinner");
     }
 
-    private cleanPublishButtonText() {
-        this.publishButton.setLabel("Publish");
-    }
-}
-
-export class PublishDialogItemList extends api.dom.DivEl {
-    constructor() {
-        super();
-        this.getEl().addClass("item-list");
-        this.getEl().addClass("initial-items");
-    }
-
-    clear() {
-        this.removeChildren();
-    }
-}
-
-export class PublishDialogDependantsItemList extends api.dom.DivEl {
-
-    private selectionDependenciesItems: SelectionPublishItem<ContentPublishItem>[] = [];
-
-    constructor() {
-        super();
-        this.getEl().addClass("item-list");
-        this.getEl().addClass("dependant-items");
-    }
-
-    appendDependency(dependencyView: SelectionPublishItem<ContentPublishItem>) {
-        this.appendChild(dependencyView);
-        this.selectionDependenciesItems.push(dependencyView);
-    }
-
-    clear() {
-        this.selectionDependenciesItems = [];
-        this.removeChildren();
-    }
 }
 
 export class ContentPublishDialogAction extends api.ui.Action {
@@ -541,37 +267,43 @@ export class ContentPublishDialogAction extends api.ui.Action {
     }
 }
 
-class ContentsResolved<M extends ContentPublishItem> {
+export class PublishDialogDependantList extends DialogDependantList {
 
-    private alreadyResolved: boolean = false;
+    private clickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
 
-    private contentsResolved: M[] = [];
+    createItemView(item: api.content.ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
+        let view = super.createItemView(item, readOnly);
 
-    isAlreadyResolved(): boolean {
-        return this.alreadyResolved;
-    }
-
-    setAlreadyResolved(value: boolean) {
-        this.alreadyResolved = value;
-    }
-
-    setContentsResolved(contentsResolvedWithChildren: M[]) {
-        this.contentsResolved = contentsResolvedWithChildren;
-        this.alreadyResolved = true;
-    }
-
-    getContentsResolved(): M[] {
-        return this.contentsResolved;
-    }
-
-    removeItemWithId(id: String) {
-        if (this.alreadyResolved) {
-            for (var i = 0; i < this.contentsResolved.length; i++) {
-                if (id == this.contentsResolved[i].getId()) {
-                    this.contentsResolved.splice(i, 1);
-                    break;
-                }
-            }
+        if (!isContentSummaryValid(item)) {
+            view.onClicked(() => this.notifyItemClicked(item));
+            view.addClass("invalid");
         }
+
+        return view;
     }
+
+    onItemClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
+        this.clickListeners.push(listener);
+    }
+
+    unItemClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
+        this.clickListeners = this.clickListeners.filter((curr) => {
+            return curr !== listener;
+        })
+    }
+
+    private notifyItemClicked(item) {
+        this.clickListeners.forEach(listener => {
+            listener(item);
+        })
+    }
+
+}
+
+function isContentSummaryValid(item: ContentSummaryAndCompareStatus): boolean {
+    let status = item.getCompareStatus(),
+        summary = item.getContentSummary();
+
+    return status == CompareStatus.PENDING_DELETE ||
+           (summary.isValid() && !api.util.StringHelper.isBlank(summary.getDisplayName()) && !summary.getName().isUnnamed());
 }

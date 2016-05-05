@@ -50,19 +50,17 @@ module api.ui.selector.list {
         }
 
         addItem(...items: I[]) {
-            this.items = this.items.concat(items);
-            items.forEach((item) => {
-                this.addItemView(item);
-            });
-            if (items.length > 0) {
-                this.notifyItemsAdded(items);
-            }
+            this.doAddItem(false, items);
         }
 
         addItemReadOnly(...items: I[]) {
+            this.doAddItem(true, items);
+        }
+
+        private doAddItem(readOnly: boolean, items: I[]) {
             this.items = this.items.concat(items);
             items.forEach((item) => {
-                this.addItemView(item, true);
+                this.addItemView(item, readOnly);
             });
             if (items.length > 0) {
                 this.notifyItemsAdded(items);
@@ -125,15 +123,7 @@ module api.ui.selector.list {
         }
 
         private addItemView(item: I, readOnly: boolean = false) {
-            if(readOnly)
-            {
-                var itemView = this.createItemView(item, readOnly);
-            }
-            else
-            {
-                var itemView = this.createItemView(item, false);
-            }
-
+            var itemView = this.createItemView(item, readOnly);
             this.itemViews[this.getItemId(item)] = itemView;
             this.appendChild(itemView);
         }
