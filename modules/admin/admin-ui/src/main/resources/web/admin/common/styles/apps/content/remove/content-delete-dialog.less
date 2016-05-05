@@ -1,0 +1,27 @@
+.delete-dialog {
+  .instant-delete-check {
+    position: absolute;
+    bottom: 40px;
+
+    input[type="checkbox"] + label {
+      color: @admin-blue !important;
+    }
+  }
+
+  .dialog-buttons .@{_COMMON_PREFIX}button.delete-action {
+    .button(@form-button-font, @input-red-text, @form-button-font, lighten(@input-red-text, 10%));
+    padding: 4px 19px 4px 19px;
+    margin-left: 11px;
+
+    &.spinner {
+      font-family: 'xp-admin-font-icon';
+
+      &:after {
+        .animation(rotate360, .5s, .0s, linear);
+        content: "\e007";
+        color: white;
+        display: inline-block;
+      }
+    }
+  }
+}

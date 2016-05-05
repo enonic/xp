@@ -1,30 +1,21 @@
 import "../../api.ts";
 
-import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
-import BrowseItem = api.app.browse.BrowseItem;
-import SelectionItem = api.app.browse.SelectionItem;
 import ContentSummary = api.content.ContentSummary;
-import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import ContentPath = api.content.ContentPath;
-import DialogButton = api.ui.dialog.DialogButton;
 import CompareStatus = api.content.CompareStatus;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import DialogButton = api.ui.dialog.DialogButton;
 import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
-import PublishContentRequest = api.content.PublishContentRequest;
-import {ContentDeleteDialogAction} from "./ContentDeleteDialogAction";
-import {ContentDeleteSelectionItem} from "./ContentDeleteSelectionItem";
+import ListBox = api.ui.selector.list.ListBox;
 import {DeleteAction} from "../view/DeleteAction";
-import {DependantView} from "../view/DependantView";
+import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItemsDialog";
+import {StatusSelectionItem} from "../dialog/StatusSelectionItem";
+import {DependantView} from "../dialog/DependantView";
+import {ContentDeleteDialogAction} from "./ContentDeleteDialogAction";
 import {ConfirmContentDeleteDialog} from "./ConfirmContentDeleteDialog";
 
-export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
-
-    private selectedItems: SelectionItem<ContentSummaryAndCompareStatus>[];
-
-    private descendantItems: ContentSummaryAndCompareStatus[];
+export class ContentDeleteDialog extends DependantItemsDialog {
 
     private deleteButton: DialogButton;
-
-    private descendantsContainer: DescendantsToBeDeletedList;
 
     private instantDeleteCheckbox: api.ui.Checkbox;
 
@@ -35,48 +26,99 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
     private totalItemsToDelete: number;
 
     constructor() {
-        super("item");
+        super("Delete item",
+            "Delete selected items and their children",
+            "Other items that will be deleted");
 
-        this.deleteButton = this.setDeleteAction(new ContentDeleteDialogAction());
+        this.addClass("delete-dialog");
 
-        this.addDeleteActionHandler();
+        this.getItemList().onItemsRemoved(this.onListItemsRemoved.bind(this));
 
-        this.addDescendantsContainer();
+        let deleteAction = new ContentDeleteDialogAction();
+        this.addDeleteActionHandler(deleteAction);
+        this.deleteButton = this.addAction(deleteAction, true, true);
 
         this.addCancelButtonToBottom();
 
-        this.addInstantDeleteCheckbox();
+        this.instantDeleteCheckbox = new api.ui.Checkbox("Instantly delete published items");
+        this.instantDeleteCheckbox.addClass('instant-delete-check');
+
+        this.appendChild(this.instantDeleteCheckbox);
+    }
+
+    private onListItemsRemoved(items: ContentSummaryAndCompareStatus[]) {
+        var count = this.getItemList().getItemCount();
+
+        if (count == 0) {
+            this.close();
+
+        } else {
+            this.updateSubTitle();
+
+            var items = this.getItemList().getItems();
+
+            if (items) {
+                this.loadDependantData(items)
+                    .then((descendants: ContentSummaryAndCompareStatus[]) => {
+
+                        this.getDependantList().setItems(descendants);
+                        this.setDependantsVisible(descendants.length > 0);
+
+                        if (!this.isAnyOnline(items) && !this.isAnyOnline(descendants)) {
+                            this.instantDeleteCheckbox.hide();
+                        }
+
+                        this.centerMyself();
+                    });
+
+            } else {
+                this.setDependantsVisible(false);
+
+                if (!this.isAnyOnline(items)) {
+                    this.instantDeleteCheckbox.hide();
+                }
+
+                this.centerMyself();
+            }
+
+            this.countItemsToDeleteAndUpdateButtonCounter();
+        }
+
     }
 
     setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
 
-        this.selectedItems = [];
-        this.descendantItems = [];
-
-        contents.forEach((content: ContentSummaryAndCompareStatus) => {
-            this.selectedItems.push(this.createSelectionItemForDelete(content));
-        });
-
-        this.renderSelectedItems(this.selectedItems);
+        this.setListItems(contents);
         this.updateSubTitle();
-        if (this.onlyOneItemSelected()) {
-            this.selectedItems[0].hideRemoveButton();
-        }
 
-        this.descendantsContainer.hide();
-        this.atLeastOneInitialItemIsOnline() ? this.instantDeleteCheckbox.show() : this.instantDeleteCheckbox.hide();
+        if (contents.length == 1) {
+            (<StatusSelectionItem>this.getItemList().getItemView(contents[0])).hideRemoveButton();
+        }
+        var dependantList = <DialogDependantList>this.getDependantList();
+
+        this.setDependantsVisible(false);
+
+        if (this.isAnyOnline(contents)) {
+            this.instantDeleteCheckbox.show();
+        } else {
+            this.instantDeleteCheckbox.hide();
+        }
         this.instantDeleteCheckbox.setChecked(false, true);
 
-        if(this.atLeastOneInitialItemHasChild()) {
-            this.descendantsContainer.loadData(this.selectedItems).then((descendants: ContentSummaryAndCompareStatus[]) => {
-                this.descendantItems = descendants;
-                this.descendantsContainer.show();
-                this.centerMyself();
+        var items = this.getItemList().getItems();
+        if (items) {
+            this.loadDependantData(items)
+                .then((descendants: ContentSummaryAndCompareStatus[]) => {
 
-                if (!this.atLeastOneInitialItemIsOnline() && this.atLeastOneDescendantIsOnline(descendants)) {
-                    this.instantDeleteCheckbox.show();
-                }
-            });
+                    this.getDependantList().setItems(descendants);
+                    this.setDependantsVisible(descendants.length > 0);
+
+                    if (!this.isAnyOnline(items) && this.isAnyOnline(descendants)) {
+                        this.instantDeleteCheckbox.show();
+                    }
+
+                    this.centerMyself();
+                });
         }
 
         this.countItemsToDeleteAndUpdateButtonCounter();
@@ -94,29 +136,9 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
         return this;
     }
 
-    private addDescendantsContainer() {
-        this.descendantsContainer = new DescendantsToBeDeletedList("descendants-to-delete-list");
-        this.appendChildToContentPanel(this.descendantsContainer);
-    }
 
-    private addInstantDeleteCheckbox() {
-        this.instantDeleteCheckbox = new api.ui.Checkbox("Instantly delete published items");
-        this.instantDeleteCheckbox.addClass('instant-delete-check');
-
-        this.appendChild(this.instantDeleteCheckbox);
-    }
-
-    private indexOf(item: SelectionItem<ContentSummaryAndCompareStatus>): number {
-        for (var i = 0; i < this.selectedItems.length; i++) {
-            if (item.getBrowseItem().getPath() == this.selectedItems[i].getBrowseItem().getPath()) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    private addDeleteActionHandler() {
-        this.getDeleteAction().onExecuted(() => {
+    private addDeleteActionHandler(deleteAction: api.ui.Action) {
+        deleteAction.onExecuted(() => {
             if (this.isAnySiteToBeDeleted()) {
                 this.close();
                 new ConfirmContentDeleteDialog({
@@ -127,7 +149,7 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
                 return;
             }
 
-            if(!!this.yesCallback) {
+            if (!!this.yesCallback) {
                 this.instantDeleteCheckbox.isChecked() ? this.yesCallback([]) : this.yesCallback();
             }
 
@@ -150,64 +172,8 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
         });
     }
 
-    private createSelectionItemForDelete(content: ContentSummaryAndCompareStatus): SelectionItem<ContentSummaryAndCompareStatus> {
-
-        var deleteItemViewer = new api.content.ContentSummaryAndCompareStatusViewer();
-        deleteItemViewer.setObject(content);
-
-        var browseItem = new BrowseItem<ContentSummaryAndCompareStatus>(content).
-            setId(content.getId()).
-            setDisplayName(content.getDisplayName()).
-            setPath(content.getPath().toString()).
-            setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve());
-
-        var selectionItem = new ContentDeleteSelectionItem(deleteItemViewer, browseItem, () => {
-            var index = this.indexOf(selectionItem);
-            if (index < 0) {
-                return;
-            }
-
-            this.selectedItems[index].remove();
-            this.selectedItems.splice(index, 1);
-
-            if (this.noItemsSelected()) {
-                this.close();
-            }
-            else {
-                this.updateSubTitle();
-                if (this.onlyOneItemSelected()) {
-                    this.selectedItems[0].hideRemoveButton();
-                }
-
-                if (this.atLeastOneInitialItemHasChild()) {
-                    this.descendantsContainer.loadData(this.selectedItems).then((descendants: ContentSummaryAndCompareStatus[]) => {
-                        this.descendantItems = descendants;
-                        this.centerMyself();
-
-                        if (!this.atLeastOneInitialItemIsOnline() && !this.atLeastOneDescendantIsOnline(descendants)) {
-                            this.instantDeleteCheckbox.hide();
-                        }
-                    });
-                }
-                else {
-                    this.descendantItems = [];
-                    this.descendantsContainer.hide();
-                    if (!this.atLeastOneInitialItemIsOnline()) {
-                        this.instantDeleteCheckbox.hide();
-                    }
-
-                    this.centerMyself();
-                }
-
-                this.countItemsToDeleteAndUpdateButtonCounter();
-            }
-        });
-
-        return selectionItem;
-    }
-
     private countItemsToDeleteAndUpdateButtonCounter() {
-        this.cleanDeleteButtonText();
+        this.deleteButton.setLabel("Delete ");
         this.showLoadingSpinner();
 
         this.createRequestForCountingItemsToDelete().sendAndParse().then((itemsToDeleteCounter: number) => {
@@ -222,18 +188,20 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
 
     private createRequestForCountingItemsToDelete(): api.content.CountContentsWithDescendantsRequest {
         var countContentChildrenRequest = new api.content.CountContentsWithDescendantsRequest();
-        for (var j = 0; j < this.selectedItems.length; j++) {
-            countContentChildrenRequest.addContentPath(ContentPath.fromString(this.selectedItems[j].getBrowseItem().getPath()));
-        }
+
+        this.getItemList().getItems().forEach((item) => {
+            countContentChildrenRequest.addContentPath(item.getContentSummary().getPath());
+        });
 
         return countContentChildrenRequest;
     }
 
     private createDeleteRequest(): api.content.DeleteContentRequest {
         var deleteRequest = new api.content.DeleteContentRequest();
-        for (var i = 0; i < this.selectedItems.length; i++) {
-            deleteRequest.addContentPath(ContentPath.fromString(this.selectedItems[i].getBrowseItem().getPath()));
-        }
+
+        this.getItemList().getItems().forEach((item) => {
+            deleteRequest.addContentPath(item.getContentSummary().getPath());
+        });
 
         this.instantDeleteCheckbox.isChecked() ? deleteRequest.setDeleteOnline(true) : deleteRequest.setDeletePending(true);
 
@@ -241,8 +209,11 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
     }
 
     private updateDeleteButtonCounter() {
-        var showCounter: boolean = this.moreThanOneItemSelected() || this.atLeastOneInitialItemHasChild();
-        this.deleteButton.setLabel("Delete" + (showCounter ? " (" + this.totalItemsToDelete + ")" : ""));
+        var items = this.getItemList().getItems(),
+            count = items.length;
+
+        var showCounter: boolean = count > 1 || this.doAnyHaveChildren(items);
+        this.deleteButton.setLabel("Delete" + (showCounter ? " (" + count + ")" : ""));
     }
 
     private showLoadingSpinner() {
@@ -253,114 +224,81 @@ export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
         this.deleteButton.removeClass("spinner");
     }
 
-    private cleanDeleteButtonText() {
-        this.deleteButton.setLabel("Delete ");
-    }
 
-    private atLeastOneInitialItemHasChild(): boolean {
-        return this.selectedItems.some((obj: SelectionItem<ContentSummaryAndCompareStatus>) => {
-            return obj.getBrowseItem().getModel().hasChildren();
+    private doAnyHaveChildren(items: ContentSummaryAndCompareStatus[]): boolean {
+        return items.some((item: ContentSummaryAndCompareStatus) => {
+            return item.getContentSummary().hasChildren();
         });
     }
 
-    private atLeastOneInitialItemIsOnline(): boolean {
-        return this.selectedItems.some((obj: SelectionItem<ContentSummaryAndCompareStatus>) => {
-            return this.isContentOnline(obj.getBrowseItem().getModel().getCompareStatus());
+    private isAnyOnline(items: ContentSummaryAndCompareStatus[]): boolean {
+        return items.some((item: ContentSummaryAndCompareStatus) => {
+            return this.isStatusOnline(item.getCompareStatus());
         });
     }
 
-    private atLeastOneDescendantIsOnline(descendants: ContentSummaryAndCompareStatus[]): boolean {
-        return descendants.some((obj: ContentSummaryAndCompareStatus) => {
-            return this.isContentOnline(obj.getCompareStatus());
-        });
-    }
-
-    private isContentOnline(status: CompareStatus): boolean {
-        return  status === CompareStatus.EQUAL ||
-                status === CompareStatus.MOVED ||
-                status === CompareStatus.NEWER; //except PENDING_DELETE because it gets deleted immediately
+    private isStatusOnline(status: CompareStatus): boolean {
+        return status === CompareStatus.EQUAL ||
+               status === CompareStatus.MOVED ||
+               status === CompareStatus.NEWER; //except PENDING_DELETE because it gets deleted immediately
     }
 
     private updateSubTitle() {
-        if(!this.atLeastOneInitialItemHasChild()) {
-            this.updateSubTitleText("");
-        }
-        else if (this.moreThanOneItemSelected()) {
-            this.updateSubTitleText("Delete selected items and their child content");
-        }
-        else {
-            this.updateSubTitleText("Delete selected item and its child content");
+        var items = this.getItemList().getItems(),
+            count = items.length;
+
+        if (!this.doAnyHaveChildren(items)) {
+            super.setSubTitle("");
+        } else {
+            super.setSubTitle(`Delete selected items and ${count > 1 ? 'their' : 'its'} child content`);
         }
     }
 
-    private noItemsSelected(): boolean {
-        return this.selectedItems.length === 0;
-    }
-
-    private onlyOneItemSelected(): boolean {
-        return this.selectedItems.length === 1;
-    }
-
-    private moreThanOneItemSelected(): boolean {
-        return this.selectedItems.length > 1;
-    }
 
     private isAnySiteToBeDeleted(): boolean {
-        var result = this.selectedItems.some((selectionItem: SelectionItem<ContentSummaryAndCompareStatus>) => {
-            return selectionItem.getBrowseItem().getModel().getContentSummary().isSite() &&
-                   (!this.isContentOnline(selectionItem.getBrowseItem().getModel().getCompareStatus()) ||
-                    this.instantDeleteCheckbox.isChecked());
+        var result = this.getItemList().getItems().some((item: ContentSummaryAndCompareStatus) => {
+            return item.getContentSummary().isSite() &&
+                   (!this.isStatusOnline(item.getCompareStatus()) || this.instantDeleteCheckbox.isChecked());
         });
 
         if (result) {
             return true;
         }
-
-        if (!!this.descendantItems && this.descendantItems.length > 0) {
-            return this.descendantItems.some((descendant: ContentSummaryAndCompareStatus) => {
+        var dependantList = this.getDependantList();
+        if (dependantList.getItemCount() > 0) {
+            return dependantList.getItems().some((descendant: ContentSummaryAndCompareStatus) => {
                 return descendant.getContentSummary().isSite() &&
-                       (!this.isContentOnline(descendant.getCompareStatus()) || this.instantDeleteCheckbox.isChecked());
+                       (!this.isStatusOnline(descendant.getCompareStatus()) || this.instantDeleteCheckbox.isChecked());
             });
-        }
-        else {
+        } else {
             return false;
         }
     }
-}
 
-export class DescendantsToBeDeletedList extends api.ui.selector.list.ListBox<ContentSummary> {
 
-    constructor(className?: string) {
-        super(className);
-    }
-
-    loadData(selectedItems: SelectionItem<ContentSummaryAndCompareStatus>[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
-        return this.createRequestForGettingItemsDescendants(selectedItems).sendAndParse().then((result: api.content.ContentResponse<ContentSummary>) => {
-            this.setItems(result.getContents());
-            this.prependChild(new api.dom.H6El("descendants-header").setHtml("Other items that will be deleted"));
-
-            return api.content.CompareContentRequest.fromContentSummaries(result.getContents()).sendAndParse().then((compareContentResults: api.content.CompareContentResults) => {
-                return ContentSummaryAndCompareStatusFetcher.updateCompareStatus(result.getContents(), compareContentResults);
-            });
-        });
-    }
-
-    createItemView(item: ContentSummary, readOnly: boolean): api.dom.Element {
-        return DependantView.create().item(item).build();
-    }
-
-    getItemId(item: ContentSummary): string {
-        return item.getId();
-    }
-
-    private createRequestForGettingItemsDescendants(selectedItems: SelectionItem<ContentSummaryAndCompareStatus>[]): api.content.GetDescendantsOfContents {
+    private createRequestForGettingItemsDescendants(summaries: ContentSummaryAndCompareStatus[]): api.content.GetDescendantsOfContents {
         var getDescendantsOfContentsRequest = new api.content.GetDescendantsOfContents();
-        for (var j = 0; j < selectedItems.length; j++) {
-            getDescendantsOfContentsRequest.addContentPath(ContentPath.fromString(selectedItems[j].getBrowseItem().getPath()));
-        }
+
+        summaries.forEach((summary) => {
+            getDescendantsOfContentsRequest.addContentPath(summary.getContentSummary().getPath());
+        });
 
         return getDescendantsOfContentsRequest;
     }
+
+    loadDependantData(summaries: ContentSummaryAndCompareStatus[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+        return this.createRequestForGettingItemsDescendants(summaries).sendAndParse()
+            .then((result: api.content.ContentResponse<ContentSummary>) => {
+
+                return api.content.CompareContentRequest.fromContentSummaries(result.getContents()).sendAndParse()
+                    .then((compareContentResults: api.content.CompareContentResults) => {
+
+                        return ContentSummaryAndCompareStatusFetcher
+                            .updateCompareStatus(result.getContents(), compareContentResults);
+                    });
+            });
+    }
+
 }
 
 

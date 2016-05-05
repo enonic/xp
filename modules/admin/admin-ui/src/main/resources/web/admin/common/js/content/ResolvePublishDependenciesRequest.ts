@@ -1,6 +1,8 @@
 module api.content {
 
-    export class ResolvePublishDependenciesRequest extends ContentResourceRequest<api.content.json.ResolvePublishContentResultJson, any> {
+    import ResolvePublishContentResultJson = api.content.json.ResolvePublishContentResultJson;
+
+    export class ResolvePublishDependenciesRequest extends ContentResourceRequest<ResolvePublishContentResultJson, ResolvePublishDependenciesResult> {
 
         private ids: ContentId[] = [];
 
@@ -24,6 +26,13 @@ module api.content {
 
         getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "resolvePublishContent");
+        }
+
+        sendAndParse(): wemQ.Promise<ResolvePublishDependenciesResult> {
+
+            return this.send().then((response: api.rest.JsonResponse<ResolvePublishContentResultJson>) => {
+                return ResolvePublishDependenciesResult.fromJson(response.getResult());
+            });
         }
     }
 }

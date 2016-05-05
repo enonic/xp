@@ -4,7 +4,7 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import CompareStatus = api.content.CompareStatus;
 import BrowseItem = api.app.browse.BrowseItem;
 
-export class ContentDeleteSelectionItem extends api.app.browse.SelectionItem<ContentSummaryAndCompareStatus> {
+export class StatusSelectionItem extends api.app.browse.SelectionItem<ContentSummaryAndCompareStatus> {
 
     private statusDiv: api.dom.DivEl;
 
