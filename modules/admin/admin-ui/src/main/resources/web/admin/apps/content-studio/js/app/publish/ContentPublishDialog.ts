@@ -24,6 +24,8 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
     private childrenCheckbox: api.ui.Checkbox;
 
+    private ignoreItemsRemoved: boolean;
+
     // stashes previous checkbox state items, until selected items changed
     private stash: {[checked:string]:ContentSummaryAndCompareStatus[]} = {};
 
@@ -42,11 +44,12 @@ export class ContentPublishDialog extends DependantItemsDialog {
         this.initChildrenCheckbox();
 
         this.getItemList().onItemsRemoved((items: ContentSummaryAndCompareStatus[]) => {
+            if (!this.ignoreItemsRemoved) {
+                // clear the stash because it is no longer valid
+                this.clearStashedItems();
 
-            // clear the stash because it is no longer valid
-            this.clearStashedItems();
-
-            this.refreshPublishDependencies().done();
+                this.refreshPublishDependencies().done();
+            }
         });
     }
 
@@ -57,7 +60,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
         dependants.onItemClicked((item: ContentSummaryAndCompareStatus) => {
             this.close();
             new api.content.event.EditContentEvent([item]).fire();
-        })
+        });
 
         return dependants;
     }
@@ -81,7 +84,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     private setStashedItems(items: ContentSummaryAndCompareStatus[]) {
-        this.stash[String(this.childrenCheckbox.isChecked())] = items;
+        this.stash[String(this.childrenCheckbox.isChecked())] = items.slice();
     }
 
     private clearStashedItems() {
@@ -89,13 +92,14 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     private refreshPublishDependencies(): wemQ.Promise<void> {
-        this.showLoadingSpinnerAtButton();
-        this.publishButton.setEnabled(false);
 
         let stashedItems = this.getStashedItems();
 
-        // means we just opened or we had to clear it because of selection change
+        // null - means we just opened or we had to clear it because of selection change
         if (!stashedItems) {
+            this.getDependantList().clearItems();
+            this.showLoadingSpinnerAtButton();
+            this.publishButton.setEnabled(false);
 
             let ids = this.getContentToPublishIds(),
                 flag = this.childrenCheckbox.isChecked(),
@@ -105,17 +109,16 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
                 var dependants = result.getDependants().map(dependant => dependant.toContentSummaryAndCompareStatus());
                 this.setDependantItems(dependants);
-                this.setStashedItems(dependants);
+                this.setStashedItems(dependants.slice());
 
                 // do not set requested contents as they are never going to change
 
                 this.hideLoadingSpinnerAtButton();
-                this.refreshCountElements();
             });
 
         } else {
             // apply the stash to avoid extra heavy request
-            this.setDependantItems(this.getStashedItems());
+            this.setDependantItems(stashedItems.slice());
 
             return wemQ<void>(null);
         }
@@ -125,14 +128,20 @@ export class ContentPublishDialog extends DependantItemsDialog {
     setDependantItems(items: api.content.ContentSummaryAndCompareStatus[]) {
         super.setDependantItems(items);
 
+        let count = this.countTotalToPublish();
+
+        this.updateSubTitle(count);
+        this.updatePublishButton(count);
+
         if (this.extendsWindowHeightSize()) {
             this.centerMyself();
         }
     }
 
     setContentToPublish(contents: ContentSummaryAndCompareStatus[]) {
-        // this.selectedContents = contents;
+        this.ignoreItemsRemoved = true;
         this.setListItems(contents);
+        this.ignoreItemsRemoved = false;
         return this;
     }
 
@@ -186,14 +195,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
             });
     }
 
-    private refreshCountElements() {
-
-        let count = this.countTotalToPublish();
-
-        this.updateSubTitle(count);
-        this.updatePublishButton(count);
-    }
-
     private countTotalToPublish(): number {
         return this.countToPublish(this.getItemList().getItems())
                + this.countToPublish(this.getDependantList().getItems());
@@ -201,8 +202,8 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
     private countToPublish(summaries: ContentSummaryAndCompareStatus[]): number {
         return summaries.reduce((count, summary: ContentSummaryAndCompareStatus) => {
-            if (summary.getCompareStatus() != api.content.CompareStatus.EQUAL) {
-                count++;
+            if (summary.getCompareStatus() != CompareStatus.EQUAL) {
+                return ++count;
             }
         }, 0);
     }

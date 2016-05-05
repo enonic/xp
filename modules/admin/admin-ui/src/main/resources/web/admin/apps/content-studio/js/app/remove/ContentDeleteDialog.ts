@@ -61,8 +61,7 @@ export class ContentDeleteDialog extends DependantItemsDialog {
                 this.loadDependantData(items)
                     .then((descendants: ContentSummaryAndCompareStatus[]) => {
 
-                        this.getDependantList().setItems(descendants);
-                        this.setDependantsVisible(descendants.length > 0);
+                        this.setDependantItems(descendants);
 
                         if (!this.isAnyOnline(items) && !this.isAnyOnline(descendants)) {
                             this.instantDeleteCheckbox.hide();
@@ -72,7 +71,6 @@ export class ContentDeleteDialog extends DependantItemsDialog {
                     });
 
             } else {
-                this.setDependantsVisible(false);
 
                 if (!this.isAnyOnline(items)) {
                     this.instantDeleteCheckbox.hide();
@@ -94,9 +92,6 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         if (contents.length == 1) {
             (<StatusSelectionItem>this.getItemList().getItemView(contents[0])).hideRemoveButton();
         }
-        var dependantList = <DialogDependantList>this.getDependantList();
-
-        this.setDependantsVisible(false);
 
         if (this.isAnyOnline(contents)) {
             this.instantDeleteCheckbox.show();
@@ -110,8 +105,7 @@ export class ContentDeleteDialog extends DependantItemsDialog {
             this.loadDependantData(items)
                 .then((descendants: ContentSummaryAndCompareStatus[]) => {
 
-                    this.getDependantList().setItems(descendants);
-                    this.setDependantsVisible(descendants.length > 0);
+                    this.setDependantItems(descendants);
 
                     if (!this.isAnyOnline(items) && this.isAnyOnline(descendants)) {
                         this.instantDeleteCheckbox.show();
