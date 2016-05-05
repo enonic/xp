@@ -145,6 +145,11 @@ export class ContentPublishDialog extends DependantItemsDialog {
         return this;
     }
 
+    setIncludeChildItems(include: boolean) {
+        this.childrenCheckbox.setChecked(include);
+        return this;
+    }
+
 
     private initChildrenCheckbox() {
 
