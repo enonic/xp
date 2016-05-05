@@ -8,7 +8,7 @@ import com.enonic.xp.macro.MacroKey;
 public class MacroIconUrlResolver
     extends IconUrlResolver
 {
-    public static final String REST_SCHEMA_ICON_URL = "/admin/rest/resource/macro/";
+    public static final String REST_SCHEMA_ICON_URL = "/admin/rest/macro/icon/";
 
     private final MacroIconResolver macroIconResolver;
 

@@ -2,6 +2,7 @@
 ///<reference path='LinkModalDialog.ts' />
 ///<reference path='ImageModalDialog.ts' />
 ///<reference path='AnchorModalDialog.ts' />
+///<reference path='MacroModalDialog.ts' />
 ///<reference path='CreateHtmlAreaDialogEvent.ts' />
 ///<reference path='HTMLAreaDialogHandler.ts' />
 ///<reference path='ImageCroppingNameView.ts' />

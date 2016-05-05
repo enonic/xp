@@ -3,7 +3,7 @@
 tinymce.PluginManager.add('macro', function (editor) {
 
     function showDialog() {
-
+        editor.execCommand("openMacroDialog", editor);
     }
 
     editor.addButton('macro', {
