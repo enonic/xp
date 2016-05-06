@@ -45,10 +45,12 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.appendChildToContentPanel(this.itemList);
 
         let itemsChangedListener = (items) => {
+            let count = this.itemList.getItemCount();
             if (this.autoUpdateTitle) {
-                let count = this.itemList.getItemCount();
                 this.setTitle(this.dialogName + (count > 1 ? "s" : ''));
             }
+
+            this.toggleClass("contains-removable", (count > 1));
         };
         this.itemList.onItemsRemoved(itemsChangedListener);
         this.itemList.onItemsAdded(itemsChangedListener);

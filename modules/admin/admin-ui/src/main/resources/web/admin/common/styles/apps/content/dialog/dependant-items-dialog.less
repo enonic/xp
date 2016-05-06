@@ -1,5 +1,16 @@
 .dependant-dialog {
 
+  &.contains-removable {
+    .dialog-content .dependants .dependant-list {
+      margin-left: 24px;
+
+      &.contains-removable {
+        margin-left: 0;
+      }
+    }
+
+  }
+
   &.invalid {
     .sub-title {
       color: @admin-red;
@@ -70,16 +81,23 @@
 
       .dependant-list {
         margin-top: 20px;
-
         &.contains-removable {
           padding-left: 25px;
+          margin-left: 8px;
+          .browse-selection-item {
+            padding-left: 0px;
+            .names-and-icon-view .wrapper {
+              margin-left: 10px;
+            }
+          }
+
         }
         h6 {
           margin-bottom: 5px;
         }
 
         .browse-selection-item {
-          padding: 4px 0px;
+          padding: 4px 0px 4px 10px;
           margin: 0px;
           display: block;
 
@@ -125,6 +143,10 @@
                 line-height: 8px;
                 border-radius: 15px;
                 font-size: 12px;
+              }
+
+              .names-view {
+                margin-left: 37px;
               }
             }
 
