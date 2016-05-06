@@ -17,7 +17,7 @@ module api.liveedit {
         private orientationListeners: {(orientation: ItemViewContextMenuOrientation): void}[] = [];
 
         constructor(menuTitle: ItemViewContextMenuTitle, actions: api.ui.Action[], showArrow: boolean = true) {
-            super('item-view-context-menu');
+            super('menu item-view-context-menu');
 
             if (showArrow) {
                 this.arrow = new ItemViewContextMenuArrow();
