@@ -109,8 +109,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
         let stashedItems = this.getStashedItems(),
             dependantList = this.getDependantList();
 
-        dependantList.removeClass("contains-removable");
-
         // null - means we just opened or we had to clear it because of selection change
         if (!stashedItems) {
             dependantList.clearItems();
@@ -296,6 +294,12 @@ export class PublishDialogDependantList extends DialogDependantList {
     private itemClickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
 
     private removeClickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
+
+
+    clearItems() {
+        this.removeClass("contains-removable");
+        super.clearItems();
+    }
 
     createItemView(item: api.content.ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
         let view = super.createItemView(item, readOnly);

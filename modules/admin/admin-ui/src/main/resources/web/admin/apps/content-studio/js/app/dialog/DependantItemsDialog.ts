@@ -179,7 +179,7 @@ export class DialogDependantList extends ListBox<ContentSummaryAndCompareStatus>
             setPath(item.getPath().toString()).
             setIconUrl(new ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
 
-        let selectionItem = new api.app.browse.SelectionItem<ContentSummaryAndCompareStatus>(dependantViewer, browseItem);
+        let selectionItem = new StatusSelectionItem(dependantViewer, browseItem);
 
         return selectionItem;
     }

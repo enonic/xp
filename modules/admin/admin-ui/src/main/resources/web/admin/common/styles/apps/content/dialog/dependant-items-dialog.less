@@ -10,6 +10,22 @@
     margin-top: 20px;
   }
 
+  .browse-selection-item {
+    padding: 4px 0px 4px 0px;
+    margin: 0px;
+    display: block;
+
+    .status {
+      margin-right: 5px;
+      display: inline-block;
+      float: right;
+
+      &.equal {
+        color: @admin-green;
+      }
+    }
+  }
+
   .dialog-content {
 
     max-height: 300px;
@@ -43,22 +59,6 @@
         max-height: 82%;
       }
 
-      .browse-selection-item {
-        padding: 4px 0px 4px 0px;
-        margin: 0px;
-        display: block;
-
-        .status {
-          margin-right: 5px;
-          display: inline-block;
-          float: right;
-
-          &.equal {
-            color: @admin-green;
-          }
-        }
-      }
-
     }
 
     .dependants {
@@ -79,9 +79,6 @@
         }
 
         .browse-selection-item {
-          padding: 4px 0px;
-          margin: 0px;
-          display: block;
 
           .remove {
             height: 16px;
