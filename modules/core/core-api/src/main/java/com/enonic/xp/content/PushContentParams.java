@@ -11,6 +11,8 @@ public class PushContentParams
 {
     private final ContentIds contentIds;
 
+    private final ContentIds excludedContentIds;
+
     private final Branch target;
 
     private final boolean includeChildren;
@@ -20,9 +22,10 @@ public class PushContentParams
     private PushContentParams( Builder builder )
     {
         contentIds = builder.contentIds;
+        excludedContentIds = builder.excludedContentIds;
         target = builder.target;
-        includeChildren = builder.includeChildren;
         includeDependencies = builder.includeDependencies;
+        includeChildren = builder.includeChildren;
     }
 
     public static Builder create()
@@ -33,6 +36,11 @@ public class PushContentParams
     public ContentIds getContentIds()
     {
         return contentIds;
+    }
+
+    public ContentIds getExcludedContentIds()
+    {
+        return excludedContentIds;
     }
 
     public Branch getTarget()
@@ -65,18 +73,21 @@ public class PushContentParams
         return includeChildren == that.includeChildren &&
             includeDependencies == that.includeDependencies &&
             Objects.equals( contentIds, that.contentIds ) &&
+            Objects.equals( excludedContentIds, that.excludedContentIds ) &&
             Objects.equals( target, that.target );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( contentIds, target, includeChildren, includeDependencies );
+        return Objects.hash( contentIds, excludedContentIds, target, includeChildren, includeDependencies );
     }
 
     public static final class Builder
     {
         private ContentIds contentIds;
+
+        private ContentIds excludedContentIds;
 
         private Branch target;
 
@@ -91,6 +102,12 @@ public class PushContentParams
         public Builder contentIds( ContentIds contentIds )
         {
             this.contentIds = contentIds;
+            return this;
+        }
+
+        public Builder excludedContentIds( ContentIds excludedContentIds )
+        {
+            this.excludedContentIds = excludedContentIds;
             return this;
         }
 
