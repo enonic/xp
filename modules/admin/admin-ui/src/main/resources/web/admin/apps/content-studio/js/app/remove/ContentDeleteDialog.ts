@@ -47,6 +47,10 @@ export class ContentDeleteDialog extends DependantItemsDialog {
     }
 
     private onListItemsRemoved(items: ContentSummaryAndCompareStatus[]) {
+        if (this.isIgnoreItemsChanged()) {
+            return;
+        }
+
         var count = this.getItemList().getItemCount();
 
         if (count == 0) {
@@ -85,13 +89,10 @@ export class ContentDeleteDialog extends DependantItemsDialog {
     }
 
     setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
-
+        this.setIgnoreItemsChanged(true);
         this.setListItems(contents);
+        this.setIgnoreItemsChanged(false);
         this.updateSubTitle();
-
-        if (contents.length == 1) {
-            (<StatusSelectionItem>this.getItemList().getItemView(contents[0])).hideRemoveButton();
-        }
 
         if (this.isAnyOnline(contents)) {
             this.instantDeleteCheckbox.show();
@@ -100,14 +101,13 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         }
         this.instantDeleteCheckbox.setChecked(false, true);
 
-        var items = this.getItemList().getItems();
-        if (items) {
-            this.loadDependantData(items)
+        if (contents) {
+            this.loadDependantData(contents)
                 .then((descendants: ContentSummaryAndCompareStatus[]) => {
 
                     this.setDependantItems(descendants);
 
-                    if (!this.isAnyOnline(items) && this.isAnyOnline(descendants)) {
+                    if (!this.isAnyOnline(contents) && this.isAnyOnline(descendants)) {
                         this.instantDeleteCheckbox.show();
                     }
 
@@ -170,17 +170,17 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         this.deleteButton.setLabel("Delete ");
         this.showLoadingSpinner();
 
-        this.createRequestForCountingItemsToDelete().sendAndParse().then((itemsToDeleteCounter: number) => {
+        this.createCountToDeleteRequest().sendAndParse().then((countToDelete: number) => {
             this.hideLoadingSpinner();
-            this.totalItemsToDelete = itemsToDeleteCounter;
-            this.updateDeleteButtonCounter();
+            this.totalItemsToDelete = countToDelete;
+            this.updateDeleteButtonCounter(countToDelete);
         }).finally(() => {
             this.hideLoadingSpinner();
         }).done();
     }
 
 
-    private createRequestForCountingItemsToDelete(): api.content.CountContentsWithDescendantsRequest {
+    private createCountToDeleteRequest(): api.content.CountContentsWithDescendantsRequest {
         var countContentChildrenRequest = new api.content.CountContentsWithDescendantsRequest();
 
         this.getItemList().getItems().forEach((item) => {
@@ -202,9 +202,8 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         return deleteRequest;
     }
 
-    private updateDeleteButtonCounter() {
-        var items = this.getItemList().getItems(),
-            count = items.length;
+    private updateDeleteButtonCounter(count) {
+        var items = this.getItemList().getItems();
 
         var showCounter: boolean = count > 1 || this.doAnyHaveChildren(items);
         this.deleteButton.setLabel("Delete" + (showCounter ? " (" + count + ")" : ""));
