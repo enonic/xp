@@ -9,7 +9,6 @@ import ListBox = api.ui.selector.list.ListBox;
 import {DeleteAction} from "../view/DeleteAction";
 import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItemsDialog";
 import {StatusSelectionItem} from "../dialog/StatusSelectionItem";
-import {DependantView} from "../dialog/DependantView";
 import {ContentDeleteDialogAction} from "./ContentDeleteDialogAction";
 import {ConfirmContentDeleteDialog} from "./ConfirmContentDeleteDialog";
 

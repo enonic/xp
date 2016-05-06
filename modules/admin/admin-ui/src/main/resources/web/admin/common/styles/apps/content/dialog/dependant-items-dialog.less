@@ -71,36 +71,31 @@
       .dependant-list {
         margin-top: 20px;
 
+        &.contains-removable {
+          padding-left: 25px;
+        }
         h6 {
           margin-bottom: 5px;
         }
 
-        .names-and-icon-view {
+        .browse-selection-item {
+          padding: 4px 0px;
+          margin: 0px;
+          display: block;
 
-          padding: 4px 0px 4px 0px;
-
-          .wrapper {
-            margin: 0px;
+          .remove {
             height: 16px;
-            width: 16px;
-            line-height: 14px;
+            display: none;
+
           }
 
-          &.small {
-            .wrapper:before {
-              left: 8px;
-              width: 8px;
-              height: 8px;
-              line-height: 8px;
-              border-radius: 15px;
-              font-size: 12px;
+          &.removable {
+
+            margin-left: -25px;
+
+            .remove {
+              display: block;
             }
-          }
-
-          .font-icon-default.image {
-            background: url("../../../../images/icons/16x16/image.png");
-            width: inherit;
-            height: inherit;
           }
 
           &.invalid .wrapper {
@@ -113,12 +108,45 @@
             }
           }
 
-          &.pending-delete .names-view {
-            .main-name, .sub-name {
-              text-decoration: line-through;
-            }
-          }
+          .names-and-icon-view {
 
+            .wrapper {
+              margin: 0px;
+              height: 16px;
+              width: 16px;
+              line-height: 14px;
+            }
+
+            &.small {
+              .wrapper:before {
+                left: 8px;
+                width: 8px;
+                height: 8px;
+                line-height: 8px;
+                border-radius: 15px;
+                font-size: 12px;
+              }
+            }
+
+            .font-icon-default.image {
+              background: url("../../../../images/icons/16x16/image.png");
+              width: inherit;
+              height: inherit;
+            }
+
+            .names-view {
+              .sub-name {
+                display: none;
+              }
+            }
+
+            &.pending-delete .names-view {
+              .main-name, .sub-name {
+                text-decoration: line-through;
+              }
+            }
+
+          }
         }
       }
     }

@@ -4,6 +4,8 @@ module api.content {
 
         private ids: ContentId[] = [];
 
+        private excludedIds: ContentId[] = [];
+
         private includeChildren: boolean;
 
         constructor(contentId?: ContentId) {
@@ -20,6 +22,11 @@ module api.content {
             return this;
         }
 
+        setExcludedIds(excludedIds: ContentId[]): PublishContentRequest {
+            this.excludedIds = excludedIds;
+            return this;
+        }
+
         setIncludeChildren(includeChildren: boolean): PublishContentRequest {
             this.includeChildren = includeChildren;
             return this;
@@ -33,6 +40,9 @@ module api.content {
         getParams(): Object {
             return {
                 ids: this.ids.map((el) => {
+                    return el.toString();
+                }),
+                excludedIds: this.excludedIds.map((el) => {
                     return el.toString();
                 }),
                 includeChildren: this.includeChildren
