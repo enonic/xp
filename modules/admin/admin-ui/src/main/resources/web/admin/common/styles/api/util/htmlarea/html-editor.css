@@ -80,7 +80,7 @@
 }
 .mce-toolbar .mce-btn-group .mce-btn .mce-ico,
 .mce-toolbar .mce-btn-group .mce-menubtn .mce-ico {
-  width: 22px;
+  width: 21px;
 }
 .mce-toolbar .mce-btn-group .mce-btn button,
 .mce-toolbar .mce-btn-group .mce-menubtn button,
@@ -90,7 +90,7 @@
 }
 .mce-toolbar .mce-btn-group .mce-btn button,
 .mce-toolbar .mce-btn-group .mce-menubtn button {
-  padding: 2px 8px 2px 7px;
+  padding: 2px 7px 2px 7px;
   height: 34px;
 }
 .mce-toolbar .mce-btn-group .mce-btn .mce-caret,
