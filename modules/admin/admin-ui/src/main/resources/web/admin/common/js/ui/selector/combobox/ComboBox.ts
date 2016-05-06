@@ -2,7 +2,7 @@ module api.ui.selector.combobox {
 
     import Option = api.ui.selector.Option;
     import OptionFilterInputValueChangedEvent = api.ui.selector.OptionFilterInputValueChangedEvent;
-    import DropdownHandle = api.ui.selector.DropdownHandle;
+    import DropdownHandle = api.ui.button.DropdownHandle;
     import Viewer = api.ui.Viewer;
     import DelayedFunctionCall = api.util.DelayedFunctionCall;
     import Button = api.ui.button.Button;

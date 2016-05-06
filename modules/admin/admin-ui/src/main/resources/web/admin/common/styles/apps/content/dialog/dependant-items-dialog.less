@@ -61,61 +61,65 @@
 
     }
 
-    .dependants-header {
-      margin: 20px 0;
-    }
+    .dependants {
+      display: none;
 
-    .dependant-list {
-      margin-top: 20px;
-
-      h6 {
-        margin-bottom: 5px;
+      .dependants-header {
+        margin: 20px 0;
       }
 
-      .names-and-icon-view {
+      .dependant-list {
+        margin-top: 20px;
 
-        padding: 4px 0px 4px 0px;
-
-        .wrapper {
-          margin: 0px;
-          height: 16px;
-          width: 16px;
-          line-height: 14px;
+        h6 {
+          margin-bottom: 5px;
         }
 
-        &.small {
-          .wrapper:before {
-            left: 8px;
-            width: 8px;
-            height: 8px;
-            line-height: 8px;
-            border-radius: 15px;
-            font-size: 12px;
+        .names-and-icon-view {
+
+          padding: 4px 0px 4px 0px;
+
+          .wrapper {
+            margin: 0px;
+            height: 16px;
+            width: 16px;
+            line-height: 14px;
           }
-        }
 
-        .font-icon-default.image {
-          background: url("../../../../images/icons/16x16/image.png");
-          width: inherit;
-          height: inherit;
-        }
-
-        &.invalid .wrapper {
-          &:before {
-            content: "!";
-            background: #cb0300;
-            color: #ffffff;
-            top: 2px;
-            left: 30px;
+          &.small {
+            .wrapper:before {
+              left: 8px;
+              width: 8px;
+              height: 8px;
+              line-height: 8px;
+              border-radius: 15px;
+              font-size: 12px;
+            }
           }
-        }
 
-        &.pending-delete .names-view {
-          .main-name, .sub-name {
-            text-decoration: line-through;
+          .font-icon-default.image {
+            background: url("../../../../images/icons/16x16/image.png");
+            width: inherit;
+            height: inherit;
           }
-        }
 
+          &.invalid .wrapper {
+            &:before {
+              content: "!";
+              background: #cb0300;
+              color: #ffffff;
+              top: 2px;
+              left: 30px;
+            }
+          }
+
+          &.pending-delete .names-view {
+            .main-name, .sub-name {
+              text-decoration: line-through;
+            }
+          }
+
+        }
       }
     }
   }

@@ -14,9 +14,8 @@ module api.ui.selector.list {
         }
 
         setItems(items: I[]) {
-            if (this.items.length > 0) {
-                this.notifyItemsRemoved(this.items);
-            }
+            this.clearItems();
+
             this.items = items;
             if (items.length > 0) {
                 this.layoutList(items);
@@ -42,11 +41,12 @@ module api.ui.selector.list {
 
         clearItems() {
             if (this.items.length > 0) {
-                this.notifyItemsRemoved(this.items);
+                let removedItems = this.items.slice();
+                // correct way to empty array
+                this.items.length = 0;
+                this.notifyItemsRemoved(removedItems);
+                this.layoutList(this.items);
             }
-            // correct way to empty array
-            this.items.length = 0;
-            this.layoutList(this.items);
         }
 
         addItem(...items: I[]) {

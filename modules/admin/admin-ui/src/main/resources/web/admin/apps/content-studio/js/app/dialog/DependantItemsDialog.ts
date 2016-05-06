@@ -39,14 +39,19 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.itemList.addClass("item-list");
         this.appendChildToContentPanel(this.itemList);
 
-        this.dependantsHeader = new api.dom.H6El("dependants-header")
-            .setHtml(dependantsName);
+        this.dependantsHeader = new api.dom.H6El("dependants-header").setHtml(dependantsName);
 
         this.dependantList = this.createDependantList();
         this.dependantList.addClass("dependant-list");
 
         this.dependantsContainer = new api.dom.DivEl('dependants');
         this.dependantsContainer.appendChildren(this.dependantsHeader, this.dependantList);
+
+        let itemsChangedListener = (items) => {
+            this.dependantsContainer.setVisible(this.dependantList.getItemCount() > 0);
+        };
+        this.dependantList.onItemsRemoved(itemsChangedListener);
+        this.dependantList.onItemsAdded(itemsChangedListener);
 
         this.appendChildToContentPanel(this.dependantsContainer);
 
@@ -91,9 +96,6 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.subTitle.setHtml(text);
     }
 
-    setDependantsVisible(visible: boolean) {
-        this.dependantsContainer.setVisible(visible);
-    }
 }
 
 export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {

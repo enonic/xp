@@ -1,6 +1,6 @@
 module api.ui.selector.dropdown {
 
-    import DropdownHandle = api.ui.selector.DropdownHandle;
+    import DropdownHandle = api.ui.button.DropdownHandle;
 
     export class SelectedOptionView<T> extends api.dom.DivEl {
 
