@@ -15,8 +15,8 @@ public class IndexConfig
         nGram( false ).
         decideByType( false ).
         includeInAllText( false ).
+        path( false ).
         build();
-
 
     public final static IndexConfig FULLTEXT = IndexConfig.create().
         enabled( true ).
@@ -24,6 +24,16 @@ public class IndexConfig
         nGram( true ).
         decideByType( false ).
         includeInAllText( true ).
+        path( false ).
+        build();
+
+    public final static IndexConfig PATH = IndexConfig.create().
+        enabled( true ).
+        fulltext( false ).
+        nGram( false ).
+        decideByType( false ).
+        includeInAllText( false ).
+        path( true ).
         build();
 
     public final static IndexConfig MINIMAL = IndexConfig.create().
@@ -32,6 +42,7 @@ public class IndexConfig
         nGram( false ).
         decideByType( false ).
         includeInAllText( false ).
+        path( false ).
         build();
 
     public final static IndexConfig BY_TYPE = IndexConfig.create().
@@ -40,6 +51,7 @@ public class IndexConfig
         nGram( false ).
         decideByType( true ).
         includeInAllText( false ).
+        path( false ).
         build();
 
     private final boolean decideByType;
@@ -51,6 +63,8 @@ public class IndexConfig
     private final boolean fulltext;
 
     private final boolean includeInAllText;
+
+    private final boolean path;
 
     private final ImmutableList<IndexValueProcessor> indexValueProcessors;
 
@@ -74,6 +88,11 @@ public class IndexConfig
         return fulltext;
     }
 
+    public boolean isPath()
+    {
+        return path;
+    }
+
     public boolean isIncludeInAllText()
     {
         return includeInAllText;
@@ -92,6 +111,7 @@ public class IndexConfig
         fulltext = builder.fulltext;
         includeInAllText = builder.includeInAllText;
         indexValueProcessors = ImmutableList.copyOf( builder.indexValueProcessors );
+        path = builder.path;
     }
 
     public static Builder create()
@@ -102,15 +122,17 @@ public class IndexConfig
 
     public static final class Builder
     {
-        private boolean decideByType;
+        private boolean decideByType = false;
 
-        private boolean enabled;
+        private boolean enabled = true;
 
-        private boolean nGram;
+        private boolean nGram = false;
 
-        private boolean fulltext;
+        private boolean fulltext = false;
 
-        private boolean includeInAllText;
+        private boolean includeInAllText = false;
+
+        private boolean path = false;
 
         private List<IndexValueProcessor> indexValueProcessors = new LinkedList<>();
 
@@ -142,6 +164,12 @@ public class IndexConfig
             return this;
         }
 
+        public Builder path( boolean path )
+        {
+            this.path = path;
+            return this;
+        }
+
         public Builder includeInAllText( boolean includeInAllText )
         {
             this.includeInAllText = includeInAllText;
@@ -170,7 +198,7 @@ public class IndexConfig
         {
             return true;
         }
-        if ( !( o instanceof IndexConfig ) )
+        if ( o == null || getClass() != o.getClass() )
         {
             return false;
         }
@@ -185,6 +213,10 @@ public class IndexConfig
         {
             return false;
         }
+        if ( nGram != that.nGram )
+        {
+            return false;
+        }
         if ( fulltext != that.fulltext )
         {
             return false;
@@ -193,7 +225,7 @@ public class IndexConfig
         {
             return false;
         }
-        if ( nGram != that.nGram )
+        if ( path != that.path )
         {
             return false;
         }
@@ -209,6 +241,7 @@ public class IndexConfig
         result = 31 * result + ( nGram ? 1 : 0 );
         result = 31 * result + ( fulltext ? 1 : 0 );
         result = 31 * result + ( includeInAllText ? 1 : 0 );
+        result = 31 * result + ( path ? 1 : 0 );
         return result;
     }
 }
