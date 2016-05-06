@@ -51,41 +51,23 @@ export class ContentDeleteDialog extends DependantItemsDialog {
             return;
         }
 
-        var count = this.getItemList().getItemCount();
+        this.updateSubTitle();
 
-        if (count == 0) {
-            this.close();
+        var items = this.getItemList().getItems();
+        this.loadDependantData(items)
+            .then((descendants: ContentSummaryAndCompareStatus[]) => {
 
-        } else {
-            this.updateSubTitle();
+                this.setDependantItems(descendants);
 
-            var items = this.getItemList().getItems();
-
-            if (items) {
-                this.loadDependantData(items)
-                    .then((descendants: ContentSummaryAndCompareStatus[]) => {
-
-                        this.setDependantItems(descendants);
-
-                        if (!this.isAnyOnline(items) && !this.isAnyOnline(descendants)) {
-                            this.instantDeleteCheckbox.hide();
-                        }
-
-                        this.centerMyself();
-                    });
-
-            } else {
-
-                if (!this.isAnyOnline(items)) {
+                if (!this.isAnyOnline(items) && !this.isAnyOnline(descendants)) {
                     this.instantDeleteCheckbox.hide();
                 }
 
                 this.centerMyself();
-            }
+            });
 
-            this.countItemsToDeleteAndUpdateButtonCounter();
-        }
 
+        this.countItemsToDeleteAndUpdateButtonCounter();
     }
 
     setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {

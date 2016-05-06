@@ -36,7 +36,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.dialogName = dialogName;
 
         this.subTitle = new api.dom.H6El("sub-title")
-            .setHtml(dialogSubName);
+            .setHtml(dialogSubName, false);
         this.appendChildToTitle(this.subTitle);
 
         this.itemList = this.createItemList();
@@ -52,7 +52,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.itemList.onItemsRemoved(itemsChangedListener);
         this.itemList.onItemsAdded(itemsChangedListener);
 
-        this.dependantsHeader = new api.dom.H6El("dependants-header").setHtml(dependantsName);
+        this.dependantsHeader = new api.dom.H6El("dependants-header").setHtml(dependantsName, false);
 
         this.dependantList = this.createDependantList();
         this.dependantList.addClass("dependant-list");

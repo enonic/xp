@@ -3,8 +3,10 @@ import {Router} from "./app/Router";
 import {ContentAppPanel} from "./app/ContentAppPanel";
 import {ContentDeletePromptEvent} from "./app/browse/ContentDeletePromptEvent";
 import {ContentPublishPromptEvent} from "./app/browse/ContentPublishPromptEvent";
+import {ContentUnpublishPromptEvent} from "./app/browse/ContentUnpublishPromptEvent";
 import {ContentDeleteDialog} from "./app/remove/ContentDeleteDialog";
 import {ContentPublishDialog} from "./app/publish/ContentPublishDialog";
+import {ContentUnpublishDialog} from "./app/publish/ContentUnpublishDialog";
 import {NewContentDialog} from "./app/create/NewContentDialog";
 import {ShowNewContentDialogEvent} from "./app/browse/ShowNewContentDialogEvent";
 import {SortContentDialog} from "./app/browse/SortContentDialog";
@@ -108,6 +110,13 @@ function startApplication() {
         contentPublishDialog
             .setContentToPublish(event.getModels())
             .setIncludeChildItems(event.isIncludeChildItems())
+            .open();
+    });
+
+    var contentUnpublishDialog = new ContentUnpublishDialog();
+    ContentUnpublishPromptEvent.on((event) => {
+        contentUnpublishDialog
+            .setContentToUnpublish(event.getModels())
             .open();
     });
 
