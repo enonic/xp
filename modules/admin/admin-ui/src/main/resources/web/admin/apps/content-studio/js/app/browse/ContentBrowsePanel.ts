@@ -36,6 +36,7 @@ import ContentId = api.content.ContentId;
 import BatchContentServerEvent = api.content.event.BatchContentServerEvent;
 import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
 import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
+import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 
 export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
@@ -91,8 +92,11 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         this.getTreeGrid().onDataChanged((event: api.ui.treegrid.DataChangedEvent<ContentSummaryAndCompareStatus>) => {
             if (event.getType() === 'updated') {
-                var browseItems = this.treeNodesToBrowseItems(event.getTreeNodes());
+                let browseItems = this.treeNodesToBrowseItems(event.getTreeNodes());
                 this.getBrowseItemPanel().updateItemViewers(browseItems);
+                
+                this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
+                this.mobileBrowseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
             }
         });
 
@@ -398,27 +402,24 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
         var treeNodes: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
 
-        var results = [];
+        let changed = [];
         data.forEach((el) => {
-
             for (var i = 0; i < treeNodes.length; i++) {
                 if (treeNodes[i].getId() === el.getId()) {
                     treeNodes[i].updateNodeData(el);
-
                     this.updateStatisticsPreview(el); // update preview item
-
                     this.updateItemInDetailsPanelIfNeeded(el);
-
-                    results.push(treeNodes[i]);
+                    changed.push(...treeNodes[i].getNodes());
                     break;
                 }
             }
         });
-        // update actions state in case of permission changes
-        this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
-        this.mobileBrowseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
 
-        return this.contentTreeGrid.xPlaceContentNodes(results);
+        // Unpdate since CompareStatus changed
+        let changedEvent = new DataChangedEvent<ContentSummaryAndCompareStatus>(changed, DataChangedEvent.UPDATED);
+        this.contentTreeGrid.notifyDataChanged(changedEvent);
+
+        return this.contentTreeGrid.xPlaceContentNodes(changed);
     }
 
     private handleContentDeleted(paths: ContentPath[]) {
@@ -492,18 +493,22 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
         var treeNodes: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
 
+        let changed = [];
         data.forEach((el) => {
             for (var i = 0; i < treeNodes.length; i++) {
                 if (treeNodes[i].getId() === el.getId()) {
                     treeNodes[i].updateNodeData(el);
-
                     this.updateItemInDetailsPanelIfNeeded(el);
-
+                    changed.push(...treeNodes[i].getNodes());
                     break;
                 }
             }
         });
         this.contentTreeGrid.invalidate();
+        
+        // Unpdate since CompareStatus changed
+        let changedEvent = new DataChangedEvent<ContentSummaryAndCompareStatus>(changed, DataChangedEvent.UPDATED);
+        this.contentTreeGrid.notifyDataChanged(changedEvent);
     }
 
     private handleContentSorted(data: ContentSummaryAndCompareStatus[]) {

@@ -108,6 +108,7 @@ module api.app.browse {
             items.forEach((item) => {
                 var index = this.indexOf(item);
                 if (index >= 0) {
+                    this.items[index] = item;
                     this.selectionItems[index].setBrowseItem(item);
                 }
             });
