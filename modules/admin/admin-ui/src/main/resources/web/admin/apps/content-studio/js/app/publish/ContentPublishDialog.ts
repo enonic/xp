@@ -24,14 +24,13 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
     private childrenCheckbox: api.ui.Checkbox;
 
-    private ignoreItemsRemoved: boolean;
-
     // stashes previous checkbox state items, until selected items changed
     private stash: {[checked:string]:ContentSummaryAndCompareStatus[]} = {};
 
     constructor() {
         super("Publishing Wizard", "Resolving items...", "Other items that will be published");
 
+        this.setAutoUpdateTitle(false);
         this.getEl().addClass("publish-dialog");
 
         var publishAction = new ContentPublishDialogAction();
@@ -44,7 +43,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
         this.initChildrenCheckbox();
 
         this.getItemList().onItemsRemoved((items: ContentSummaryAndCompareStatus[]) => {
-            if (!this.ignoreItemsRemoved) {
+            if (!this.isIgnoreItemsChanged()) {
                 // clear the stash because it is no longer valid
                 this.clearStashedItems();
 
@@ -139,9 +138,9 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     setContentToPublish(contents: ContentSummaryAndCompareStatus[]) {
-        this.ignoreItemsRemoved = true;
+        this.setIgnoreItemsChanged(true);
         this.setListItems(contents);
-        this.ignoreItemsRemoved = false;
+        this.setIgnoreItemsChanged(false);
         return this;
     }
 

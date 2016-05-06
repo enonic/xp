@@ -13,6 +13,10 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     private dialogName: string;
 
+    private autoUpdateTitle: boolean = true;
+
+    private ignoreItemsChanged: boolean;
+
     private subTitle: api.dom.H6El;
 
     private itemList: ListBox<ContentSummaryAndCompareStatus>;
@@ -39,6 +43,15 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.itemList.addClass("item-list");
         this.appendChildToContentPanel(this.itemList);
 
+        let itemsChangedListener = (items) => {
+            if (this.autoUpdateTitle) {
+                let count = this.itemList.getItemCount();
+                this.setTitle(this.dialogName + (count > 1 ? "s" : ''));
+            }
+        };
+        this.itemList.onItemsRemoved(itemsChangedListener);
+        this.itemList.onItemsAdded(itemsChangedListener);
+
         this.dependantsHeader = new api.dom.H6El("dependants-header").setHtml(dependantsName);
 
         this.dependantList = this.createDependantList();
@@ -47,11 +60,12 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.dependantsContainer = new api.dom.DivEl('dependants');
         this.dependantsContainer.appendChildren(this.dependantsHeader, this.dependantList);
 
-        let itemsChangedListener = (items) => {
-            this.dependantsContainer.setVisible(this.dependantList.getItemCount() > 0);
+        let dependantsChangedListener = (items) => {
+            let count = this.dependantList.getItemCount();
+            this.dependantsContainer.setVisible(count > 0);
         };
-        this.dependantList.onItemsRemoved(itemsChangedListener);
-        this.dependantList.onItemsAdded(itemsChangedListener);
+        this.dependantList.onItemsRemoved(dependantsChangedListener);
+        this.dependantList.onItemsAdded(dependantsChangedListener);
 
         this.appendChildToContentPanel(this.dependantsContainer);
 
@@ -73,6 +87,14 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         return this.dependantList;
     }
 
+    protected isIgnoreItemsChanged(): boolean {
+        return this.ignoreItemsChanged;
+    }
+
+    protected setIgnoreItemsChanged(value: boolean) {
+        this.ignoreItemsChanged = value;
+    }
+
     show() {
         api.dom.Body.get().appendChild(this);
         super.show();
@@ -83,9 +105,15 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.remove();
     }
 
+    setAutoUpdateTitle(value: boolean) {
+        this.autoUpdateTitle = value;
+    }
+
     setListItems(items: ContentSummaryAndCompareStatus[]) {
-        this.setTitle(this.dialogName + (items.length > 1 ? "s" : ''));
         this.itemList.setItems(items);
+        if (items.length == 1) {
+            (<StatusSelectionItem>this.getItemList().getItemView(items[0])).hideRemoveButton();
+        }
     }
 
     setDependantItems(items: ContentSummaryAndCompareStatus[]) {
