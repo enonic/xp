@@ -37,6 +37,8 @@ public class ResolveSyncWorkCommand
 
     private final Set<NodeId> processedIds;
 
+    private final NodeIds excludedIds;
+
     private boolean allPossibleNodesAreIncluded;
 
     private final NodeIds.Builder result;
@@ -51,6 +53,7 @@ public class ResolveSyncWorkCommand
         this.repositoryRoot = builder.repositoryRoot;
         this.result = NodeIds.create();
         this.processedIds = Sets.newHashSet();
+        this.excludedIds = builder.excludedIds;
         this.allPossibleNodesAreIncluded = false;
 
         final Node publishRootNode = doGetById( builder.nodeId );
@@ -77,10 +80,9 @@ public class ResolveSyncWorkCommand
     {
         final NodeVersionDiffResult diff = getInitialDiff();
 
-        for ( final NodeId nodeId : diff.getNodesWithDifferences() )
-        {
-            resolveDiff( nodeId );
-        }
+        diff.getNodesWithDifferences().stream().
+            filter( nodeId -> !this.excludedIds.contains( nodeId ) ).
+            forEach( nodeId -> resolveDiff( nodeId ) );
 
         return result.build();
     }
@@ -175,7 +177,7 @@ public class ResolveSyncWorkCommand
 
             final NodeComparison nodeComparison = getNodeComparison( parentId );
 
-            if ( shouldBeResolvedDiffFor( nodeComparison ) )
+            if ( shouldBeResolvedDiffFor( nodeComparison ) && !this.excludedIds.contains( parentId ) )
             {
                 resolveDiff( parentId );
             }
@@ -191,7 +193,7 @@ public class ResolveSyncWorkCommand
 
         for ( final NodeId referredNodeId : references )
         {
-            if ( !this.processedIds.contains( referredNodeId ) )
+            if ( !this.processedIds.contains( referredNodeId ) && !this.excludedIds.contains( referredNodeId ) )
             {
                 final NodeBranchMetadata nodeBranchMetadata =
                     this.storageService.getBranchNodeVersion( referredNodeId, InternalContext.from( ContextAccessor.current() ) );
@@ -216,6 +218,7 @@ public class ResolveSyncWorkCommand
         findNodesWithVersionDifference( branchNodeVersion.getNodePath() ).
             getNodesWithDifferences().
             stream().
+            filter( childNodeId -> !this.excludedIds.contains( childNodeId ) ).
             filter( childNodeId -> !this.processedIds.contains( childNodeId ) ).
             forEach( childNodeId -> resolveDiff( childNodeId ) );
     }
@@ -246,6 +249,8 @@ public class ResolveSyncWorkCommand
     {
         private NodeId nodeId;
 
+        private NodeIds excludedIds = NodeIds.empty();
+
         private Branch target;
 
         private boolean includeChildren = true;
@@ -265,6 +270,15 @@ public class ResolveSyncWorkCommand
         public Builder nodeId( final NodeId nodeId )
         {
             this.nodeId = nodeId;
+            return this;
+        }
+
+        public Builder excludedNodeIds( final NodeIds excludedNodeIds )
+        {
+            if ( excludedNodeIds != null )
+            {
+                this.excludedIds = excludedNodeIds;
+            }
             return this;
         }
 
