@@ -45,7 +45,8 @@ public final class AssetWebHandler
             webResponse( webResponse ).
             resourceService( resourceService ).
             applicationKey( applicationKey ).
-            name( matcher.group( 3 ) ).cacheable( matcher.group( 2 ) != null ).
+            name( matcher.group( 3 ) ).
+            cacheable( matcher.group( 2 ) != null ).
             build().
             execute();
     }
