@@ -11,7 +11,6 @@
 ///<reference path='ComponentFactory.ts' />
 ///<reference path='DescriptorBasedComponentJson.ts' />
 ///<reference path='DescriptorBasedComponent.ts' />
-///<reference path='DescriptorBasedDropdown.ts' />
 
 ///<reference path='RegionsChangedEvent.ts' />
 ///<reference path='RegionAddedEvent.ts' />
