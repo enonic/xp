@@ -184,7 +184,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
                 // publishEnabled = true;
                 // treePublishEnabled = true;
                 unpublishEnabled = anyPublished;
-            } else if (this.isOneNonLeafInMany(contentSummaries)) {
+            } else if (this.isNonLeafInMany(contentSummaries)) {
                 // publishEnabled = true;
                 // treePublishEnabled = true;
                 // unpublishEnabled = true;
@@ -210,15 +210,15 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     private isEveryLeaf(contentSummaries: ContentSummary[]): boolean {
-        return contentSummaries.every((obj: ContentSummary) => obj.hasParent());
+        return contentSummaries.every((obj: ContentSummary) => !obj.hasChildren());
     }
 
     private isOneNonLeaf(contentSummaries: ContentSummary[]): boolean {
-        return contentSummaries.length === 1 && !contentSummaries[0].hasParent();
+        return contentSummaries.length === 1 && contentSummaries[0].hasChildren();
     }
 
-    private isOneNonLeafInMany(contentSummaries: ContentSummary[]): boolean {
-        return contentSummaries.length > 1 && contentSummaries.some((obj: ContentSummary) => !obj.hasParent());
+    private isNonLeafInMany(contentSummaries: ContentSummary[]): boolean {
+        return contentSummaries.length > 1 && contentSummaries.some((obj: ContentSummary) => obj.hasChildren());
     }
 
     private isPublished(status: api.content.CompareStatus): boolean {

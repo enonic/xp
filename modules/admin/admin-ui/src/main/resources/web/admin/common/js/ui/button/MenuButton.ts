@@ -59,6 +59,13 @@ module api.ui.button {
             });
 
             this.actionButton.onClicked(hideMenuOnOutsideClick);
+            
+            this.menu.onItemClicked(() => {
+                if (this.menu.isHideOnItemClick()) {
+                    this.dropdownHandle.removeClass('down');
+                    this.menu.removeClass('expanded');
+                }
+            });
 
             api.dom.Body.get().onClicked(hideMenuOnOutsideClick);
 
