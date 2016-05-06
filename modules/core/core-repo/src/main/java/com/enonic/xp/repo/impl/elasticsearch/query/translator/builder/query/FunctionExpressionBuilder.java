@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.query;
 
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.index.query.SimpleQueryStringBuilder;
@@ -11,6 +12,7 @@ import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.repo.impl.elasticsearch.function.AbstractSimpleQueryStringFunction;
 import com.enonic.xp.repo.impl.elasticsearch.function.FulltextFunctionArguments;
 import com.enonic.xp.repo.impl.elasticsearch.function.NGramFunctionArguments;
+import com.enonic.xp.repo.impl.elasticsearch.function.PathMatchFunctionArguments;
 import com.enonic.xp.repo.impl.elasticsearch.function.RangeFunctionArg;
 import com.enonic.xp.repo.impl.elasticsearch.function.RangeFunctionArgsFactory;
 import com.enonic.xp.repo.impl.elasticsearch.function.WeightedQueryFieldName;
@@ -33,6 +35,10 @@ public class FunctionExpressionBuilder
         else if ( "range".equals( functionName ) )
         {
             return createRange( function );
+        }
+        else if ( "pathMatch".equals( functionName ) )
+        {
+            return createPathMatch( function );
         }
 
         throw new UnsupportedOperationException( "Function '" + functionName + "' is not supported" );
@@ -79,6 +85,12 @@ public class FunctionExpressionBuilder
             to( arguments.getTo() ).
             includeLower( arguments.includeFrom() ).
             includeUpper( arguments.includeTo() );
+    }
+
+    private static QueryBuilder createPathMatch( final FunctionExpr functionExpr )
+    {
+        final PathMatchFunctionArguments arguments = PathMatchFunctionArguments.create( functionExpr.getArguments() );
+        return new MatchQueryBuilder( arguments.getFieldName(), arguments.getPath() );
     }
 
     private static void appendQueryFieldNames( final AbstractSimpleQueryStringFunction arguments, final SimpleQueryStringBuilder builder )
