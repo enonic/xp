@@ -296,6 +296,7 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( params.getContentIds() ).
+            excludedContentIds( params.getExcludedContentIds() ).
             target( params.getTarget() ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( params.isIncludeDependencies() ).
@@ -312,6 +313,7 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( params.getContentIds() ).
+            excludedContentIds( params.getExcludedContentIds() ).
             target( params.getTarget() ).
             includeChildren( params.isIncludeChildren() ).
             build().
