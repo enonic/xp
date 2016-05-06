@@ -110,7 +110,9 @@ export class ContentPublishDialog extends DependantItemsDialog {
                 this.setDependantItems(dependants);
                 this.setStashedItems(dependants.slice());
 
-                // do not set requested contents as they are never going to change
+                // do not set requested contents as they are never going to change,
+                // but returned data contains less info than original summaries
+                this.childrenCheckbox.setVisible(this.doAnyHaveChildren(this.getItemList().getItems()));
 
                 this.hideLoadingSpinnerAtButton();
             });
