@@ -1,12 +1,5 @@
 module api.util.htmlarea.editor {
 
-    import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
-    import AnchorModalDialog = api.util.htmlarea.dialog.AnchorModalDialog;
-    import ImageModalDialog = api.util.htmlarea.dialog.ImageModalDialog;
-    import LinkModalDialog = api.util.htmlarea.dialog.LinkModalDialog;
-    import HtmlAreaAnchor = api.util.htmlarea.dialog.HtmlAreaAnchor;
-    import HtmlAreaImage = api.util.htmlarea.dialog.HtmlAreaImage;
-
     import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
 
     export class HTMLAreaBuilder {
@@ -169,6 +162,7 @@ module api.util.htmlarea.editor {
                     editor.addCommand("openLinkDialog", this.notifyLinkDialog, this);
                     editor.addCommand("openAnchorDialog", this.notifyAnchorDialog, this);
                     editor.addCommand("openImageDialog", this.notifyImageDialog, this) ;
+                    editor.addCommand("openMacroDialog", this.notifyMacroDialog, this);
                     editor.on('NodeChange', (e) => {
                         if (!!this.onNodeChangeHandler) {
                             this.onNodeChangeHandler(e);
@@ -254,6 +248,14 @@ module api.util.htmlarea.editor {
             let event = CreateHtmlAreaDialogEvent.create().
                 setConfig(config).
                 setType(api.util.htmlarea.dialog.HtmlAreaDialogType.ANCHOR).
+                build();
+            this.publishCreateDialogEvent(event);
+        }
+
+        private notifyMacroDialog(config) {
+            let event = CreateHtmlAreaDialogEvent.create().
+                setConfig(config).
+                setType(api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).
                 build();
             this.publishCreateDialogEvent(event);
         }

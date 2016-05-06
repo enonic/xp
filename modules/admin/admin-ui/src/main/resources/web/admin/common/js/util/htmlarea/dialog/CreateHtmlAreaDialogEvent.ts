@@ -3,7 +3,7 @@ module api.util.htmlarea.dialog {
     import ContentId = api.content.ContentId;
 
     export enum HtmlAreaDialogType {
-        ANCHOR,IMAGE,LINK
+        ANCHOR, IMAGE, LINK, MACRO
     }
 
     export class CreateHtmlAreaDialogEvent extends api.event.Event {
