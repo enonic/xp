@@ -1,0 +1,27 @@
+.html-area-modal-dialog.macro-modal-dialog {
+
+  .hasSelectedItemPreview();
+
+  &.macro-selector {
+    .showsSelectedOption(true);
+
+    .selected-options .selected-option {
+      height: auto;
+      .names-view .main-name {
+        font-size: 24px;
+        color: @admin-black;
+        height: 24px;
+        line-height: 24px;
+      }
+      .wrapper {
+        height: 41px;
+      }
+    }
+  }
+
+  &.shows-preview {
+    .dialog-header {
+      display: none;
+    }
+  }
+}

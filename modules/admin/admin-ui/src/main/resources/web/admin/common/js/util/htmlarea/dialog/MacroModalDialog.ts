@@ -31,18 +31,11 @@ module api.util.htmlarea.dialog {
 
             this.macroSelector = macroSelector;
 
-            formItem.addClass("macro-selector");
-
-            if (this.macroSelector) {
-                var singleLoadListener = (event: api.util.loader.event.LoadedDataEvent<api.macro.MacroDescriptor>) => {
-                    loader.unLoadedData(singleLoadListener);
-                };
-                loader.onLoadedData(singleLoadListener);
-                loader.load();
-            }
+            this.addClass("macro-selector");
 
             macroSelectorComboBox.onOptionSelected((selectedOption: api.ui.selector.combobox.SelectedOption<api.macro.MacroDescriptor>) => {
-                formItem.addClass("macro-preview");
+                formItem.addClass("selected-item-preview");
+                this.addClass("shows-preview");
             });
 
             macroSelectorComboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
@@ -52,7 +45,8 @@ module api.util.htmlarea.dialog {
             });
 
             macroSelectorComboBox.onOptionDeselected(() => {
-                formItem.removeClass("macro-preview");
+                formItem.removeClass("selected-item-preview");
+                this.removeClass("shows-preview");
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
 
