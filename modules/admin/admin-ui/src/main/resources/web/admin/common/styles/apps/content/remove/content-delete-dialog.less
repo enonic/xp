@@ -1,4 +1,5 @@
 .delete-dialog {
+
   .instant-delete-check {
     position: absolute;
     bottom: 40px;
@@ -8,20 +9,12 @@
     }
   }
 
-  .dialog-buttons .@{_COMMON_PREFIX}button.delete-action {
-    .button(@form-button-font, @input-red-text, @form-button-font, lighten(@input-red-text, 10%));
-    padding: 4px 19px 4px 19px;
-    margin-left: 11px;
+  .dialog-buttons {
 
-    &.spinner {
-      font-family: 'xp-admin-font-icon';
-
-      &:after {
-        .animation(rotate360, .5s, .0s, linear);
-        content: "\e007";
-        color: white;
-        display: inline-block;
-      }
+    button.delete-action {
+      .dialog-button(@form-button-font, @input-red-text);
     }
+
   }
+
 }

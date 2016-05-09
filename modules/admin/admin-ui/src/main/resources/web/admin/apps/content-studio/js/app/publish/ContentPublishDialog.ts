@@ -110,7 +110,9 @@ export class ContentPublishDialog extends DependantItemsDialog {
                 this.setDependantItems(dependants);
                 this.setStashedItems(dependants.slice());
 
-                // do not set requested contents as they are never going to change
+                // do not set requested contents as they are never going to change,
+                // but returned data contains less info than original summaries
+                this.childrenCheckbox.setVisible(this.doAnyHaveChildren(this.getItemList().getItems()));
 
                 this.hideLoadingSpinnerAtButton();
             });
@@ -206,9 +208,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
     private countToPublish(summaries: ContentSummaryAndCompareStatus[]): number {
         return summaries.reduce((count, summary: ContentSummaryAndCompareStatus) => {
-            if (summary.getCompareStatus() != CompareStatus.EQUAL) {
-                return ++count;
-            }
+            return summary.getCompareStatus() != CompareStatus.EQUAL ? ++count : count;
         }, 0);
     }
 
