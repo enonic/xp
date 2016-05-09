@@ -9,7 +9,14 @@
     label + .input-wrapper {
       margin-left: @label-width;
     }
+
+    &.invalid {
+      label + .input-wrapper {
+        margin-left: @label-width - 12px;
+      }
+    }
   }
+
 }
 
 .hasSelectedItemPreview() {
@@ -43,9 +50,6 @@
   .input-wrapper {
     .flexbox();
     overflow-y: hidden;
-    .rich-combobox {
-      width: 93%;
-    }
   }
 
   .names-and-icon-view .names-view {
@@ -66,10 +70,6 @@
 
   &._540-720 {
     .modal-dialog-margin-mixin();
-
-    &.link-modal-dialog {
-      .modal-dialog-margin-mixin(@form-label-width + 20px);
-    }
   }
 
   &.animated {
@@ -109,9 +109,6 @@
         padding-top: 10px;
       }
 
-      .input-view {
-        margin-right: 2px;
-      }
     }
 
     .checkbox.form-input {
@@ -125,7 +122,7 @@
     div.input-view.invalid + div.validation-viewer {
       background-color: @input-light-red;
       padding-bottom: 10px;
-      padding-left: @form-label-width + 10;
+      padding-left: @form-label-width;
     }
 
     .form-view {
