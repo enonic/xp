@@ -26,7 +26,7 @@ import com.enonic.xp.web.handler.WebResponse;
 public class AdminPortalWebHandler
     extends BaseWebHandler
 {
-    private final static String BASE_URI_START = "/test/admin/portal"; //TODO Rewrite
+    private final static String BASE_URI_START = "/admin/portal";
 
     private final static Pattern PATTERN = Pattern.compile( "^" + BASE_URI_START + "/(edit|preview|admin)/" );
 

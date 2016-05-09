@@ -22,7 +22,7 @@ import com.enonic.xp.web.handler.WebResponse;
 public class PortalWebHandler
     extends BaseWebHandler
 {
-    private final static String BASE_URI = "/test/portal"; //TODO Rewrite
+    private final static String BASE_URI = "/portal";
 
     private final static String BRANCH_PREFIX = BASE_URI + "/";
 

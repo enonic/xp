@@ -16,7 +16,7 @@ import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.RenderMode;
 
 @Component(immediate = true, service = Servlet.class,
-    property = {"osgi.http.whiteboard.servlet.pattern=/admin/tool", "osgi.http.whiteboard.servlet.pattern=/admin/tool/*"})
+    property = {"osgi.http.whiteboard.servlet.pattern=/todelete2"})
 public final class PortalToolForwardHandler
     extends HttpServlet
 {

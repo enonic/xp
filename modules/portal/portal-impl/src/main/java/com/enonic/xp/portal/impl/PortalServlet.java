@@ -43,7 +43,7 @@ import com.enonic.xp.web.websocket.WebSocketContextFactory;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 @Component(immediate = true, service = Servlet.class,
-    property = {"osgi.http.whiteboard.servlet.pattern=/portal/*"})
+    property = {"osgi.http.whiteboard.servlet.pattern=/todelete3"})
 public final class PortalServlet
     extends HttpServlet
 {

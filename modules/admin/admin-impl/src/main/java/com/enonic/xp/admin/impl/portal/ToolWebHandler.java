@@ -20,7 +20,7 @@ import com.enonic.xp.web.handler.WebResponse;
 public final class ToolWebHandler
     extends BaseWebHandler
 {
-    private final static String ADMIN_TOOL_PREFIX = "/test/admin/tool/"; //TODO rewrite
+    private final static String ADMIN_TOOL_PREFIX = "/admin/tool/";
 
     private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
 
