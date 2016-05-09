@@ -20,7 +20,7 @@ import com.enonic.xp.web.handler.WebResponse;
 public final class ToolWebHandler
     extends BaseWebHandler
 {
-    private final static String ADMIN_TOOL_PREFIX = "/admin/tool/";
+    final static String ADMIN_TOOL_PREFIX = "/admin/tool/";
 
     private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
 
@@ -29,6 +29,11 @@ public final class ToolWebHandler
     private AdminToolDescriptorService adminToolDescriptorService;
 
     private ControllerScriptFactory controllerScriptFactory;
+
+    public ToolWebHandler()
+    {
+        super( 50 );
+    }
 
     @Override
     protected boolean canHandle( final WebRequest webRequest )

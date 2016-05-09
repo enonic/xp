@@ -25,6 +25,11 @@ public final class WidgetWebHandler
 
     private ControllerScriptFactory controllerScriptFactory;
 
+    public WidgetWebHandler()
+    {
+        super( 50 );
+    }
+
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
