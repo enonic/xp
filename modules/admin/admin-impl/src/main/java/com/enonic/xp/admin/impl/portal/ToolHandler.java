@@ -63,7 +63,7 @@ public final class ToolHandler
             descriptorKey = DEFAULT_DESCRIPTOR_KEY;
         }
 
-        return ToolWebHandlerWorker.create().
+        return ToolHandlerWorker.create().
             webRequest( webRequest ).
             webResponse( webResponse ).
             controllerScriptFactory( controllerScriptFactory ).

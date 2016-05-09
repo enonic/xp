@@ -9,18 +9,18 @@ import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.handler.ControllerWebHandlerWorker;
+import com.enonic.xp.portal.handler.ControllerHandlerWorker;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.Site;
 
-abstract class RenderWebHandlerWorker
-    extends ControllerWebHandlerWorker<PortalWebResponse>
+abstract class RenderHandlerWorker
+    extends ControllerHandlerWorker<PortalWebResponse>
 {
     protected PageTemplateService pageTemplateService;
 
     protected PageDescriptorService pageDescriptorService;
 
-    protected RenderWebHandlerWorker( final Builder builder )
+    protected RenderHandlerWorker( final Builder builder )
     {
         super( builder );
         pageTemplateService = builder.pageTemplateService;
@@ -82,7 +82,7 @@ abstract class RenderWebHandlerWorker
     }
 
     public static class Builder<BuilderType extends Builder>
-        extends ControllerWebHandlerWorker.Builder<BuilderType, PortalWebResponse>
+        extends ControllerHandlerWorker.Builder<BuilderType, PortalWebResponse>
     {
         private PageTemplateService pageTemplateService;
 

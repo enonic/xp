@@ -45,7 +45,7 @@ public final class PageHandler
     @Override
     protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
     {
-        return PageWebHandlerWorker.create().
+        return PageHandlerWorker.create().
             webRequest( (PortalWebRequest) webRequest ).
             webResponse( new PortalWebResponse() ).
             contentService( contentService ).

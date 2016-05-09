@@ -49,7 +49,7 @@ public final class WidgetHandler
         final ApplicationKey appKey = ApplicationKey.from( matcher.group( 1 ) );
         final ResourceKey scriptDir = ResourceKey.from( appKey, "admin/widgets/" + matcher.group( 2 ) );
 
-        return WidgetWebHandlerWorker.create().
+        return WidgetHandlerWorker.create().
             webRequest( webRequest ).
             webResponse( webResponse ).
             scriptDir( scriptDir ).

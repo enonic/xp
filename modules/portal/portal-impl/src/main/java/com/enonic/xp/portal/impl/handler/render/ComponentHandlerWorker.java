@@ -16,8 +16,8 @@ import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.site.Site;
 
-final class ComponentWebHandlerWorker
-    extends RenderWebHandlerWorker
+final class ComponentHandlerWorker
+    extends RenderHandlerWorker
 {
     private final ComponentPath componentPath;
 
@@ -25,7 +25,7 @@ final class ComponentWebHandlerWorker
 
     private final PostProcessor postProcessor;
 
-    private ComponentWebHandlerWorker( final Builder builder )
+    private ComponentHandlerWorker( final Builder builder )
     {
         super( builder );
         componentPath = builder.componentPath;
@@ -119,7 +119,7 @@ final class ComponentWebHandlerWorker
     }
 
     public static final class Builder
-        extends RenderWebHandlerWorker.Builder<Builder>
+        extends RenderHandlerWorker.Builder<Builder>
     {
         private ComponentPath componentPath;
 
@@ -149,9 +149,9 @@ final class ComponentWebHandlerWorker
             return this;
         }
 
-        public ComponentWebHandlerWorker build()
+        public ComponentHandlerWorker build()
         {
-            return new ComponentWebHandlerWorker( this );
+            return new ComponentHandlerWorker( this );
         }
     }
 }

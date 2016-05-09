@@ -7,7 +7,7 @@ import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.handler.PortalWebHandlerWorker;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.resource.Resource;
@@ -15,8 +15,8 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.web.handler.WebResponse;
 
-final class MappingWebHandlerWorker
-    extends PortalWebHandlerWorker<PortalWebRequest, WebResponse>
+final class MappingHandlerWorker
+    extends PortalHandlerWorker<PortalWebRequest, WebResponse>
 {
     private final ResourceService resourceService;
 
@@ -26,7 +26,7 @@ final class MappingWebHandlerWorker
 
     private final RendererFactory rendererFactory;
 
-    private MappingWebHandlerWorker( final Builder builder )
+    private MappingHandlerWorker( final Builder builder )
     {
         super( builder );
         resourceService = builder.resourceService;
@@ -91,7 +91,7 @@ final class MappingWebHandlerWorker
     }
 
     public static final class Builder
-        extends PortalWebHandlerWorker.Builder<Builder, PortalWebRequest, WebResponse>
+        extends PortalHandlerWorker.Builder<Builder, PortalWebRequest, WebResponse>
     {
         private ResourceService resourceService;
 
@@ -129,9 +129,9 @@ final class MappingWebHandlerWorker
             return this;
         }
 
-        public MappingWebHandlerWorker build()
+        public MappingHandlerWorker build()
         {
-            return new MappingWebHandlerWorker( this );
+            return new MappingHandlerWorker( this );
         }
     }
 }

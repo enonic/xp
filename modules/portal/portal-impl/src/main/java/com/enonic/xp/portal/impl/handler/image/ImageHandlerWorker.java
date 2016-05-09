@@ -19,7 +19,7 @@ import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalWebRequest;
-import com.enonic.xp.portal.handler.PortalWebHandlerWorker;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.Permission;
@@ -30,8 +30,8 @@ import com.enonic.xp.web.handler.WebResponse;
 
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 
-final class ImageWebHandlerWorker
-    extends PortalWebHandlerWorker<PortalWebRequest, WebResponse>
+final class ImageHandlerWorker
+    extends PortalHandlerWorker<PortalWebRequest, WebResponse>
 {
     private final static int DEFAULT_BACKGROUND = 0x00FFFFFF;
 
@@ -57,7 +57,7 @@ final class ImageWebHandlerWorker
 
     private final MediaInfoService mediaInfoService;
 
-    private ImageWebHandlerWorker( final Builder builder )
+    private ImageHandlerWorker( final Builder builder )
     {
         super( builder );
         name = builder.name;
@@ -233,7 +233,7 @@ final class ImageWebHandlerWorker
     }
 
     public static final class Builder
-        extends PortalWebHandlerWorker.Builder<Builder, PortalWebRequest, WebResponse>
+        extends PortalHandlerWorker.Builder<Builder, PortalWebRequest, WebResponse>
     {
         private String name;
 
@@ -319,9 +319,9 @@ final class ImageWebHandlerWorker
             return this;
         }
 
-        public ImageWebHandlerWorker build()
+        public ImageHandlerWorker build()
         {
-            return new ImageWebHandlerWorker( this );
+            return new ImageHandlerWorker( this );
         }
     }
 }

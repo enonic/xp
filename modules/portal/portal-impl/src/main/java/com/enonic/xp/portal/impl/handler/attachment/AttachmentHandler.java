@@ -46,7 +46,7 @@ public final class AttachmentHandler
             throw notFound( "Not a valid attachment url pattern" );
         }
 
-        return AttachmentWebHandlerWorker.create().
+        return AttachmentHandlerWorker.create().
             webRequest( (PortalWebRequest) webRequest ).
             webResponse( webResponse ).
             contentService( contentService ).

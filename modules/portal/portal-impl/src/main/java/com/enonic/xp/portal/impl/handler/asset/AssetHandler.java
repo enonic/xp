@@ -40,7 +40,7 @@ public final class AssetHandler
         }
 
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
-        return AssetWebHandlerWorker.create().
+        return AssetHandlerWorker.create().
             webRequest( webRequest ).
             webResponse( webResponse ).
             resourceService( resourceService ).

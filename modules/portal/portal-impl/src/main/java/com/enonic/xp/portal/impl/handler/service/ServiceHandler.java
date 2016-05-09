@@ -52,7 +52,7 @@ public final class ServiceHandler
 
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
 
-        return ServiceWebHandlerWorker.create().
+        return ServiceHandlerWorker.create().
             webRequest( portalWebRequest ).
             webResponse( webResponse ).
             contentService( contentService ).

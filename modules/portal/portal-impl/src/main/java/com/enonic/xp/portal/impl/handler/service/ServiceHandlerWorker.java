@@ -12,7 +12,7 @@ import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.handler.ControllerWebHandlerWorker;
+import com.enonic.xp.portal.handler.ControllerHandlerWorker;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -26,8 +26,8 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
-final class ServiceWebHandlerWorker
-    extends ControllerWebHandlerWorker
+final class ServiceHandlerWorker
+    extends ControllerHandlerWorker
 {
     private final static String ROOT_SERVICE_PREFIX = "services/";
 
@@ -43,7 +43,7 @@ final class ServiceWebHandlerWorker
 
     private final String name;
 
-    private ServiceWebHandlerWorker( final Builder builder )
+    private ServiceHandlerWorker( final Builder builder )
     {
         super( builder );
         resourceService = builder.resourceService;
@@ -139,7 +139,7 @@ final class ServiceWebHandlerWorker
     }
 
     public static final class Builder
-        extends ControllerWebHandlerWorker.Builder<Builder, WebResponse>
+        extends ControllerHandlerWorker.Builder<Builder, WebResponse>
     {
         private ResourceService resourceService;
 
@@ -185,9 +185,9 @@ final class ServiceWebHandlerWorker
             return this;
         }
 
-        public ServiceWebHandlerWorker build()
+        public ServiceHandlerWorker build()
         {
-            return new ServiceWebHandlerWorker( this );
+            return new ServiceHandlerWorker( this );
         }
     }
 }

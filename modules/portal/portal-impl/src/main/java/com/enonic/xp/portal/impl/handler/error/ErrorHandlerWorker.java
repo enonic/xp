@@ -1,20 +1,20 @@
 package com.enonic.xp.portal.impl.handler.error;
 
 import com.enonic.xp.portal.PortalWebResponse;
-import com.enonic.xp.portal.handler.PortalWebHandlerWorker;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.handler.WebException;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebResponse;
 
-final class ErrorWebHandlerWorker
-    extends PortalWebHandlerWorker
+final class ErrorHandlerWorker
+    extends PortalHandlerWorker
 {
     private HttpStatus code;
 
     private String message;
 
-    private ErrorWebHandlerWorker( final Builder builder )
+    private ErrorHandlerWorker( final Builder builder )
     {
         super( builder );
         code = builder.code;
@@ -43,7 +43,7 @@ final class ErrorWebHandlerWorker
     }
 
     public static final class Builder
-        extends PortalWebHandlerWorker.Builder<Builder, WebRequest, WebResponse>
+        extends PortalHandlerWorker.Builder<Builder, WebRequest, WebResponse>
     {
         private HttpStatus code;
 
@@ -65,9 +65,9 @@ final class ErrorWebHandlerWorker
             return this;
         }
 
-        public ErrorWebHandlerWorker build()
+        public ErrorHandlerWorker build()
         {
-            return new ErrorWebHandlerWorker( this );
+            return new ErrorHandlerWorker( this );
         }
     }
 }

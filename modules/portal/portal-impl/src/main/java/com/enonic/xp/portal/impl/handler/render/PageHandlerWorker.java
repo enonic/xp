@@ -21,8 +21,8 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.web.HttpStatus;
 
-final class PageWebHandlerWorker
-    extends RenderWebHandlerWorker
+final class PageHandlerWorker
+    extends RenderHandlerWorker
 {
     private static final String SHORTCUT_TARGET_PROPERTY = "target";
 
@@ -30,7 +30,7 @@ final class PageWebHandlerWorker
 
     private final PortalUrlService portalUrlService;
 
-    private PageWebHandlerWorker( final Builder builder )
+    private PageHandlerWorker( final Builder builder )
     {
         super( builder );
         rendererFactory = builder.rendererFactory;
@@ -150,7 +150,7 @@ final class PageWebHandlerWorker
     }
 
     public static final class Builder
-        extends RenderWebHandlerWorker.Builder<Builder>
+        extends RenderHandlerWorker.Builder<Builder>
     {
         private RendererFactory rendererFactory;
 
@@ -172,9 +172,9 @@ final class PageWebHandlerWorker
             return this;
         }
 
-        public PageWebHandlerWorker build()
+        public PageHandlerWorker build()
         {
-            return new PageWebHandlerWorker( this );
+            return new PageHandlerWorker( this );
         }
     }
 }

@@ -47,7 +47,7 @@ public final class ComponentHandler
     {
         final String endpointSubPath = getEndpointSubPath( webRequest );
 
-        return ComponentWebHandlerWorker.create().
+        return ComponentHandlerWorker.create().
             webRequest( (PortalWebRequest) webRequest ).
             webResponse( new PortalWebResponse() ).
             contentService( contentService ).

@@ -13,13 +13,13 @@ import com.enonic.xp.web.handler.WebResponse;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
-public abstract class PortalWebHandlerWorker<WebRequestType extends WebRequest, WebResponseType extends WebResponse>
+public abstract class PortalHandlerWorker<WebRequestType extends WebRequest, WebResponseType extends WebResponse>
 {
     protected WebRequestType webRequest;
 
     protected WebResponseType webResponse;
 
-    public PortalWebHandlerWorker( final Builder<? extends Builder, ? extends WebRequestType, ? extends WebResponseType> builder )
+    public PortalHandlerWorker( final Builder<? extends Builder, ? extends WebRequestType, ? extends WebResponseType> builder )
     {
         webRequest = builder.webRequest;
         webResponse = builder.webResponse;

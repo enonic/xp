@@ -10,14 +10,14 @@ import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.handler.PortalWebHandlerWorker;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebResponse;
 
-final class ToolWebHandlerWorker
-    extends PortalWebHandlerWorker
+final class ToolHandlerWorker
+    extends PortalHandlerWorker
 {
 
     private final ControllerScriptFactory controllerScriptFactory;
@@ -26,7 +26,7 @@ final class ToolWebHandlerWorker
 
     private final DescriptorKey descriptorKey;
 
-    private ToolWebHandlerWorker( final Builder builder )
+    private ToolHandlerWorker( final Builder builder )
     {
         super( builder );
         controllerScriptFactory = builder.controllerScriptFactory;
@@ -73,7 +73,7 @@ final class ToolWebHandlerWorker
     }
 
     public static final class Builder
-        extends PortalWebHandlerWorker.Builder<Builder, WebRequest, WebResponse>
+        extends PortalHandlerWorker.Builder<Builder, WebRequest, WebResponse>
     {
         private ControllerScriptFactory controllerScriptFactory;
 
@@ -103,9 +103,9 @@ final class ToolWebHandlerWorker
             return this;
         }
 
-        public ToolWebHandlerWorker build()
+        public ToolHandlerWorker build()
         {
-            return new ToolWebHandlerWorker( this );
+            return new ToolHandlerWorker( this );
         }
     }
 }

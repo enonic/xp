@@ -4,7 +4,7 @@ import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.portal.handler.PortalWebHandlerWorker;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -13,8 +13,8 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebResponse;
 
-final class AssetWebHandlerWorker
-    extends PortalWebHandlerWorker
+final class AssetHandlerWorker
+    extends PortalHandlerWorker
 {
     private final static String ROOT_ASSET_PREFIX = "assets/";
 
@@ -28,7 +28,7 @@ final class AssetWebHandlerWorker
 
     private boolean cacheable;
 
-    private AssetWebHandlerWorker( final Builder builder )
+    private AssetHandlerWorker( final Builder builder )
     {
         super( builder );
         resourceService = builder.resourceService;
@@ -77,7 +77,7 @@ final class AssetWebHandlerWorker
     }
 
     public static final class Builder
-        extends PortalWebHandlerWorker.Builder<Builder, WebRequest, WebResponse>
+        extends PortalHandlerWorker.Builder<Builder, WebRequest, WebResponse>
     {
         private ResourceService resourceService;
 
@@ -115,9 +115,9 @@ final class AssetWebHandlerWorker
             return this;
         }
 
-        public AssetWebHandlerWorker build()
+        public AssetHandlerWorker build()
         {
-            return new AssetWebHandlerWorker( this );
+            return new AssetHandlerWorker( this );
         }
     }
 }

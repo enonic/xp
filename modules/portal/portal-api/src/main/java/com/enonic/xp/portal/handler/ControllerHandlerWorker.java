@@ -10,12 +10,12 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.handler.WebResponse;
 
-public abstract class ControllerWebHandlerWorker<WebResponseType extends WebResponse>
-    extends PortalWebHandlerWorker<PortalWebRequest, WebResponseType>
+public abstract class ControllerHandlerWorker<WebResponseType extends WebResponse>
+    extends PortalHandlerWorker<PortalWebRequest, WebResponseType>
 {
     protected ContentService contentService;
 
-    protected ControllerWebHandlerWorker( final Builder builder )
+    protected ControllerHandlerWorker( final Builder builder )
     {
         super( builder );
         contentService = builder.contentService;
@@ -114,7 +114,7 @@ public abstract class ControllerWebHandlerWorker<WebResponseType extends WebResp
     }
 
     public static class Builder<BuilderType extends Builder, WebResponseType extends WebResponse>
-        extends PortalWebHandlerWorker.Builder<BuilderType, PortalWebRequest, WebResponseType>
+        extends PortalHandlerWorker.Builder<BuilderType, PortalWebRequest, WebResponseType>
     {
         private ContentService contentService;
 

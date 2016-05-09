@@ -51,7 +51,7 @@ public final class ImageHandler
         final PortalWebRequest portalWebRequest =
             webRequest instanceof PortalWebRequest ? (PortalWebRequest) webRequest : PortalWebRequest.create( webRequest ).build();
 
-        return ImageWebHandlerWorker.create().
+        return ImageHandlerWorker.create().
             webRequest( portalWebRequest ).
             webResponse( webResponse ).
             contentId( ContentId.from( matcher.group( 1 ) ) ).

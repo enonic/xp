@@ -25,7 +25,7 @@ public final class ErrorHandler
     {
         final String endpointSubPath = getEndpointSubPath( webRequest );
 
-        return ErrorWebHandlerWorker.create().
+        return ErrorHandlerWorker.create().
             webRequest( webRequest ).
             webResponse( webResponse ).
             code( parseStatus( endpointSubPath ) ).

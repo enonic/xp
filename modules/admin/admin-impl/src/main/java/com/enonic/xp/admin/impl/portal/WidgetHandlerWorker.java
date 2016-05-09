@@ -5,19 +5,19 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.handler.PortalWebHandlerWorker;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebResponse;
 
-final class WidgetWebHandlerWorker
-    extends PortalWebHandlerWorker
+final class WidgetHandlerWorker
+    extends PortalHandlerWorker
 {
     private final ResourceKey scriptDir;
 
     private final ControllerScriptFactory controllerScriptFactory;
 
-    private WidgetWebHandlerWorker( final Builder builder )
+    private WidgetHandlerWorker( final Builder builder )
     {
         super( builder );
         scriptDir = builder.scriptDir;
@@ -47,7 +47,7 @@ final class WidgetWebHandlerWorker
 
 
     public static final class Builder
-        extends PortalWebHandlerWorker.Builder<Builder, WebRequest, WebResponse>
+        extends PortalHandlerWorker.Builder<Builder, WebRequest, WebResponse>
     {
         private ResourceKey scriptDir;
 
@@ -69,9 +69,9 @@ final class WidgetWebHandlerWorker
             return this;
         }
 
-        public WidgetWebHandlerWorker build()
+        public WidgetHandlerWorker build()
         {
-            return new WidgetWebHandlerWorker( this );
+            return new WidgetHandlerWorker( this );
         }
     }
 }

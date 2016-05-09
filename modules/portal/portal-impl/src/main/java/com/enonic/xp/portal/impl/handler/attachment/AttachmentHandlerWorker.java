@@ -10,15 +10,15 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalWebRequest;
-import com.enonic.xp.portal.handler.PortalWebHandlerWorker;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.handler.WebResponse;
 
-final class AttachmentWebHandlerWorker
-    extends PortalWebHandlerWorker<PortalWebRequest, WebResponse>
+final class AttachmentHandlerWorker
+    extends PortalHandlerWorker<PortalWebRequest, WebResponse>
 {
     private final ContentService contentService;
 
@@ -30,7 +30,7 @@ final class AttachmentWebHandlerWorker
 
     private final boolean cacheable;
 
-    private AttachmentWebHandlerWorker( final Builder builder )
+    private AttachmentHandlerWorker( final Builder builder )
     {
         super( builder );
         contentService = builder.contentService;
@@ -106,7 +106,7 @@ final class AttachmentWebHandlerWorker
     }
 
     public static final class Builder
-        extends PortalWebHandlerWorker.Builder<Builder, PortalWebRequest, WebResponse>
+        extends PortalHandlerWorker.Builder<Builder, PortalWebRequest, WebResponse>
     {
         private ContentService contentService;
 
@@ -152,9 +152,9 @@ final class AttachmentWebHandlerWorker
             return this;
         }
 
-        public AttachmentWebHandlerWorker build()
+        public AttachmentHandlerWorker build()
         {
-            return new AttachmentWebHandlerWorker( this );
+            return new AttachmentHandlerWorker( this );
         }
     }
 }
