@@ -8,18 +8,17 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.PortalWebResponse;
-import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.rendering.RendererFactory;
-import com.enonic.xp.region.ComponentPath;
-import com.enonic.xp.web.handler.EndpointWebHandler;
+import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebResponse;
 
 @Component(immediate = true, service = WebHandler.class)
-public final class ComponentWebHandler
-    extends EndpointWebHandler
+public final class PageHandler
+    extends BaseWebHandler
 {
     private ContentService contentService;
 
@@ -29,33 +28,32 @@ public final class ComponentWebHandler
 
     private PageTemplateService pageTemplateService;
 
-    protected PostProcessor postProcessor;
+    private PortalUrlService portalUrlService;
 
-    public ComponentWebHandler()
+    public PageHandler()
     {
-        super( "component" );
+        super( 50 );
     }
 
     @Override
     public boolean canHandle( final WebRequest webRequest )
     {
-        return super.canHandle( webRequest ) && webRequest instanceof PortalWebRequest;
+        return webRequest instanceof PortalWebRequest;
     }
+
 
     @Override
     protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
     {
-        final String endpointSubPath = getEndpointSubPath( webRequest );
-
-        return ComponentWebHandlerWorker.create().
+        return PageWebHandlerWorker.create().
             webRequest( (PortalWebRequest) webRequest ).
             webResponse( new PortalWebResponse() ).
             contentService( contentService ).
-            pageTemplateService( pageTemplateService ).
-            pageDescriptorService( pageDescriptorService ).
-            componentPath( ComponentPath.from( endpointSubPath ) ).
             rendererFactory( rendererFactory ).
-            postProcessor( postProcessor ).build().
+            pageDescriptorService( pageDescriptorService ).
+            pageTemplateService( pageTemplateService ).
+            portalUrlService( portalUrlService ).
+            build().
             execute();
     }
 
@@ -84,8 +82,8 @@ public final class ComponentWebHandler
     }
 
     @Reference
-    public void setPostProcessor( final PostProcessor postProcessor )
+    public void setPortalUrlService( final PortalUrlService portalUrlService )
     {
-        this.postProcessor = postProcessor;
+        this.portalUrlService = portalUrlService;
     }
 }

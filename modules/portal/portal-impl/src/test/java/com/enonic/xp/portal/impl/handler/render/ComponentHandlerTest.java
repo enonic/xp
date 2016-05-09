@@ -15,10 +15,10 @@ import com.enonic.xp.web.handler.WebResponse;
 
 import static org.junit.Assert.*;
 
-public class ComponentWebHandlerTest
-    extends RenderBaseWebHandlerTest
+public class ComponentHandlerTest
+    extends RenderBaseHandlerTest
 {
-    private ComponentWebHandler handler;
+    private ComponentHandler handler;
 
 
     @Override
@@ -26,7 +26,7 @@ public class ComponentWebHandlerTest
         throws Exception
     {
         super.configure( requestBuilder );
-        this.handler = new ComponentWebHandler();
+        this.handler = new ComponentHandler();
         this.handler.setContentService( this.contentService );
         this.handler.setPageDescriptorService( this.pageDescriptorService );
         this.handler.setPageTemplateService( this.pageTemplateService );

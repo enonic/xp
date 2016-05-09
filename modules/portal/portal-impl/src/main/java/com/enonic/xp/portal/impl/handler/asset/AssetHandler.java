@@ -10,21 +10,21 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.web.HttpMethod;
-import com.enonic.xp.web.handler.EndpointWebHandler;
+import com.enonic.xp.web.handler.EndpointHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebResponse;
 
 @Component(immediate = true, service = WebHandler.class)
-public final class AssetWebHandler
-    extends EndpointWebHandler
+public final class AssetHandler
+    extends EndpointHandler
 {
     private final static Pattern PATTERN = Pattern.compile( "([^/^:]+)(:[^/]+)?/(.+)" );
 
     private ResourceService resourceService;
 
-    public AssetWebHandler()
+    public AssetHandler()
     {
         super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "asset" );
     }

@@ -12,15 +12,15 @@ import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.service.ServiceDescriptorService;
-import com.enonic.xp.web.handler.EndpointWebHandler;
+import com.enonic.xp.web.handler.EndpointHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebResponse;
 
 @Component(immediate = true, service = WebHandler.class)
-public final class ServiceWebHandler
-    extends EndpointWebHandler
+public final class ServiceHandler
+    extends EndpointHandler
 {
     private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
 
@@ -32,7 +32,7 @@ public final class ServiceWebHandler
 
     private ControllerScriptFactory controllerScriptFactory;
 
-    public ServiceWebHandler()
+    public ServiceHandler()
     {
         super( "service" );
     }

@@ -22,10 +22,10 @@ import com.enonic.xp.web.handler.WebResponse;
 
 import static org.junit.Assert.*;
 
-public class AssetWebHandlerTest
+public class AssetHandlerTest
     extends BaseWebHandlerTest
 {
-    private AssetWebHandler handler;
+    private AssetHandler handler;
 
     private Map<Object, Resource> resources;
 
@@ -40,7 +40,7 @@ public class AssetWebHandlerTest
         final ResourceService resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).then( this::getResource );
 
-        this.handler = new AssetWebHandler();
+        this.handler = new AssetHandler();
         this.handler.setResourceService( resourceService );
 
         this.nullResource = Mockito.mock( Resource.class );

@@ -62,7 +62,7 @@ final class ToolWebHandlerWorker
         final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( scriptDir );
         final PortalWebRequest portalWebRequest = PortalWebRequest.create( this.webRequest ).
             applicationKey( descriptorKey.getApplicationKey() ).
-            baseUri( ToolWebHandler.ADMIN_TOOL_PREFIX + descriptorKey.getApplicationKey() + "/" + descriptorKey.getName() ).
+            baseUri( ToolHandler.ADMIN_TOOL_PREFIX + descriptorKey.getApplicationKey() + "/" + descriptorKey.getName() ).
             build();
 
         final PortalRequest portalRequest = convertToPortalRequest( portalWebRequest );

@@ -1,4 +1,7 @@
-package com.enonic.xp.portal.impl.handler.portal;
+package com.enonic.xp.admin.impl.portal;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -9,6 +12,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.PortalWebResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebException;
 import com.enonic.xp.web.handler.WebExceptionMapper;
@@ -19,18 +23,18 @@ import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebResponse;
 
 @Component(immediate = true, service = WebHandler.class)
-public class PortalWebHandler
+public class AdminPortalHandler
     extends BaseWebHandler
 {
-    private final static String BASE_URI = "/portal";
+    private final static String BASE_URI_START = "/admin/portal";
 
-    private final static String BRANCH_PREFIX = BASE_URI + "/";
+    private final static Pattern PATTERN = Pattern.compile( "^" + BASE_URI_START + "/(edit|preview|admin)/" );
 
     private WebExceptionMapper webExceptionMapper;
 
     private WebExceptionRenderer webExceptionRenderer;
 
-    public PortalWebHandler()
+    public AdminPortalHandler()
     {
         super( -50 );
     }
@@ -38,7 +42,7 @@ public class PortalWebHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest.getPath().startsWith( BASE_URI );
+        return PATTERN.matcher( webRequest.getPath() ).find();
     }
 
     @Override
@@ -51,14 +55,19 @@ public class PortalWebHandler
         }
         else
         {
-            final String baseSubPath = webRequest.getPath().substring( BRANCH_PREFIX.length() );
+            final Matcher matcher = PATTERN.matcher( webRequest.getPath() );
+            matcher.find();
+            final String baseUri = matcher.group( 0 );
+            final RenderMode mode = RenderMode.from( matcher.group( 1 ) );
+            final String baseSubPath = webRequest.getPath().substring( baseUri.length() );
             final Branch branch = findBranch( baseSubPath );
             final ContentPath contentPath = findContentPath( baseSubPath );
 
             portalWebRequest = PortalWebRequest.create( webRequest ).
-                baseUri( BASE_URI ).
+                baseUri( baseUri ).
                 branch( branch ).
                 contentPath( contentPath ). //TODO Retrieval of content and site could be done here
+                mode( mode ).
                 build();
         }
 
@@ -79,6 +88,7 @@ public class PortalWebHandler
         final WebException webException = webExceptionMapper.map( e );
         return webExceptionRenderer.render( webRequest, webException );
     }
+
 
     private static Branch findBranch( final String baseSubPath )
     {

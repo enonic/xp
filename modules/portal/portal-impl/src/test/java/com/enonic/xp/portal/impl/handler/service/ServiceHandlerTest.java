@@ -39,7 +39,7 @@ import com.enonic.xp.web.handler.WebResponse;
 
 import static org.junit.Assert.*;
 
-public class ServiceWebHandlerTest
+public class ServiceHandlerTest
     extends BaseWebHandlerTest
 {
     protected ContentService contentService;
@@ -50,7 +50,7 @@ public class ServiceWebHandlerTest
 
     private ControllerScript controllerScript;
 
-    private ServiceWebHandler handler;
+    private ServiceHandler handler;
 
     @Override
     protected void configure( final PortalWebRequest.Builder requestBuilder )
@@ -80,7 +80,7 @@ public class ServiceWebHandlerTest
 
         this.contentService = Mockito.mock( ContentService.class );
 
-        this.handler = new ServiceWebHandler();
+        this.handler = new ServiceHandler();
         this.handler.setControllerScriptFactory( controllerScriptFactory );
         this.handler.setContentService( this.contentService );
         this.handler.setResourceService( this.resourceService );

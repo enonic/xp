@@ -5,17 +5,17 @@ import java.util.Collection;
 import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.web.HttpStatus;
-import com.enonic.xp.web.handler.EndpointWebHandler;
+import com.enonic.xp.web.handler.EndpointHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebResponse;
 
 @Component(immediate = true, service = WebHandler.class)
-public final class ErrorWebHandler
-    extends EndpointWebHandler
+public final class ErrorHandler
+    extends EndpointHandler
 {
-    public ErrorWebHandler()
+    public ErrorHandler()
     {
         super( "error" );
     }

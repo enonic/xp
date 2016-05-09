@@ -17,7 +17,7 @@ import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebResponse;
 
 @Component(immediate = true, service = WebHandler.class)
-public final class ToolWebHandler
+public final class ToolHandler
     extends BaseWebHandler
 {
     final static String ADMIN_TOOL_START = "/admin/tool";
@@ -32,7 +32,7 @@ public final class ToolWebHandler
 
     private ControllerScriptFactory controllerScriptFactory;
 
-    public ToolWebHandler()
+    public ToolHandler()
     {
         super( 50 );
     }

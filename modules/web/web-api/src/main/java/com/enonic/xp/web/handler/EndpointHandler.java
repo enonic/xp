@@ -6,29 +6,29 @@ import com.google.common.base.Strings;
 
 import com.enonic.xp.web.HttpMethod;
 
-public abstract class EndpointWebHandler
+public abstract class EndpointHandler
     extends BaseWebHandler
 {
     private final String pathPrefix;
 
-    public EndpointWebHandler( final String type )
+    public EndpointHandler( final String type )
     {
         this.pathPrefix = "/_/" + type + "/";
     }
 
-    public EndpointWebHandler( final int order, final String type )
+    public EndpointHandler( final int order, final String type )
     {
         super( order );
         this.pathPrefix = "/_/" + type + "/";
     }
 
-    public EndpointWebHandler( final EnumSet<HttpMethod> methodsAllowed, final String type )
+    public EndpointHandler( final EnumSet<HttpMethod> methodsAllowed, final String type )
     {
         super( methodsAllowed );
         this.pathPrefix = "/_/" + type + "/";
     }
 
-    public EndpointWebHandler( final int order, final EnumSet<HttpMethod> methodsAllowed, final String type )
+    public EndpointHandler( final int order, final EnumSet<HttpMethod> methodsAllowed, final String type )
     {
         super( order, methodsAllowed );
         this.pathPrefix = "/_/" + type + "/";

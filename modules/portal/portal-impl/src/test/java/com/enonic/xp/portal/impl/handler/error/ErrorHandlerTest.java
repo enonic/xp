@@ -11,16 +11,16 @@ import com.enonic.xp.web.handler.WebResponse;
 
 import static org.junit.Assert.*;
 
-public class ErrorWebHandlerTest
+public class ErrorHandlerTest
     extends BaseWebHandlerTest
 {
-    private ErrorWebHandler handler;
+    private ErrorHandler handler;
 
     @Override
     protected void configure( final PortalWebRequest.Builder requestBuilder )
         throws Exception
     {
-        this.handler = new ErrorWebHandler();
+        this.handler = new ErrorHandler();
 
         requestBuilder.method( HttpMethod.GET );
         requestBuilder.endpointPath( "/_/error/401" );

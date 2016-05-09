@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.handler.image;
+package com.enonic.xp.portal.impl.handler.attachment;
 
 import java.time.Instant;
 
@@ -10,16 +10,11 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.image.ImageService;
-import com.enonic.xp.image.ReadImageParams;
-import com.enonic.xp.media.ImageOrientation;
-import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.handler.BaseWebHandlerTest;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -32,58 +27,50 @@ import com.enonic.xp.web.handler.WebResponse;
 
 import static org.junit.Assert.*;
 
-public class ImageWebHandlerTest
+public class AttachmentHandlerTest
     extends BaseWebHandlerTest
 {
-    private ImageWebHandler handler;
+    private AttachmentHandler handler;
 
     private ContentService contentService;
 
-    private ImageService imageService;
-
-    private MediaInfoService mediaInfoService;
+    private ByteSource mediaBytes;
 
     @Override
     protected void configure( final PortalWebRequest.Builder requestBuilder )
         throws Exception
     {
         this.contentService = Mockito.mock( ContentService.class );
-        this.imageService = Mockito.mock( ImageService.class );
-        this.mediaInfoService = Mockito.mock( MediaInfoService.class );
-
-        this.handler = new ImageWebHandler();
+        this.handler = new AttachmentHandler();
         this.handler.setContentService( this.contentService );
-        this.handler.setImageService( this.imageService );
-        this.handler.setMediaInfoService( this.mediaInfoService );
 
         requestBuilder.method( HttpMethod.GET );
         requestBuilder.contentPath( ContentPath.from( "/path/to/content" ) );
-        requestBuilder.endpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        requestBuilder.endpointPath( "/_/attachment/inline/123456/logo.png" );
+
+        setupMedia();
     }
 
-    private void setupContent()
+    private void setupMedia()
         throws Exception
     {
         final Attachment attachment = Attachment.create().
-            name( "enonic-logo.png" ).
+            name( "logo.png" ).
             mimeType( "image/png" ).
-            label( "source" ).
+            label( "small" ).
             build();
 
-        final Content content = createContent( "123456", "path/to/image-name.jpg", attachment );
+        final Media content = createMedia( "123456", "path/to/content", attachment );
 
         Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ) ) ).thenReturn( content );
         Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ) ) ).thenReturn( content );
 
-        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
-
+        this.mediaBytes = ByteSource.wrap( new byte[0] );
         Mockito.when( this.contentService.getBinary( Mockito.isA( ContentId.class ), Mockito.isA( BinaryReference.class ) ) ).
-            thenReturn( imageBytes );
-
-        Mockito.when( this.imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+            thenReturn( this.mediaBytes );
     }
 
-    private Content createContent( final String id, final String contentPath, final Attachment... attachments )
+    private Media createMedia( final String id, final String contentPath, final Attachment... attachments )
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "media", attachments[0].getName() );
@@ -102,7 +89,6 @@ public class ImageWebHandlerTest
             build();
     }
 
-
     @Test
     public void testOrder()
     {
@@ -115,13 +101,13 @@ public class ImageWebHandlerTest
         setEndpointPath( null );
         assertEquals( false, this.handler.canHandle( this.request ) );
 
-        setEndpointPath( "/_/other/123456/scale-100-100/image-name.jpg" );
+        setEndpointPath( "/_/other/inline/a/b" );
         assertEquals( false, this.handler.canHandle( this.request ) );
 
-        setEndpointPath( "/image/123456/scale-100-100/image-name.jpg" );
+        setEndpointPath( "/attachment/inline/a/b" );
         assertEquals( false, this.handler.canHandle( this.request ) );
 
-        setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        setEndpointPath( "/_/attachment/inline/a/b" );
         assertEquals( true, this.handler.canHandle( this.request ) );
     }
 
@@ -151,7 +137,7 @@ public class ImageWebHandlerTest
     public void testNotValidUrlPattern()
         throws Exception
     {
-        setEndpointPath( "/_/image/" );
+        setEndpointPath( "/_/attachment/" );
 
         try
         {
@@ -161,48 +147,43 @@ public class ImageWebHandlerTest
         catch ( final WebException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
-            assertEquals( "Not a valid image url pattern", e.getMessage() );
+            assertEquals( "Not a valid attachment url pattern", e.getMessage() );
         }
     }
 
     @Test
-    public void testImageFound()
+    public void testInline()
         throws Exception
     {
-        setupContent();
+        setEndpointPath( "/_/attachment/inline/123456/logo.png" );
 
-        setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        final WebResponse res = this.handler.handle( this.request, this.response, null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.PNG.withoutParameters(), res.getContentType() );
+        assertNull( res.getHeaders().get( "Content-Disposition" ) );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    public void testDownload()
+        throws Exception
+    {
+        setEndpointPath( "/_/attachment/download/123456/logo.png" );
 
         final WebResponse res = this.handler.handle( this.request, this.response, null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
-        assertTrue( res.getBody() instanceof ByteSource );
+        assertEquals( "attachment; filename=logo.png", res.getHeaders().get( "Content-Disposition" ) );
+        assertSame( this.mediaBytes, res.getBody() );
     }
 
     @Test
-    public void testImageWithFilter()
+    public void testIdNotFound()
         throws Exception
     {
-        setupContent();
-
-        setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
-        this.request.getParams().put( "filter", "sepia()" );
-        this.request.getParams().put( "quality", "75" );
-        this.request.getParams().put( "background", "0x0" );
-
-        final WebResponse res = this.handler.handle( this.request, this.response, null );
-        assertNotNull( res );
-        assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( MediaType.PNG, res.getContentType() );
-        assertTrue( res.getBody() instanceof ByteSource );
-    }
-
-    @Test
-    public void testImageNotFound()
-        throws Exception
-    {
-        setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        setEndpointPath( "/_/attachment/download/1/logo.png" );
 
         try
         {
@@ -212,27 +193,25 @@ public class ImageWebHandlerTest
         catch ( final WebException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
-            assertEquals( "Content with id [123456] not found", e.getMessage() );
+            assertEquals( "Content with id [1] not found", e.getMessage() );
         }
     }
 
     @Test
-    public void testImageWithOrientation()
+    public void testNameNotFound()
         throws Exception
     {
-        setupContent();
-        Mockito.when( this.mediaInfoService.getImageOrientation( Mockito.any( ByteSource.class ) ) ).thenReturn(
-            ImageOrientation.LeftBottom );
+        setEndpointPath( "/_/attachment/download/123456/other.png" );
 
-        setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
-        this.request.getParams().put( "filter", "sepia()" );
-        this.request.getParams().put( "quality", "75" );
-        this.request.getParams().put( "background", "0x0" );
-
-        final WebResponse res = this.handler.handle( this.request, this.response, null );
-        assertNotNull( res );
-        assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( MediaType.PNG, res.getContentType() );
-        assertTrue( res.getBody() instanceof ByteSource );
+        try
+        {
+            this.handler.handle( this.request, this.response, null );
+            fail( "Should throw exception" );
+        }
+        catch ( final WebException e )
+        {
+            assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
+            assertEquals( "Attachment [other.png] not found for [/path/to/content]", e.getMessage() );
+        }
     }
 }

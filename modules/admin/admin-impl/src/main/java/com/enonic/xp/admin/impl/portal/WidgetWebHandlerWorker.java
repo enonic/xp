@@ -36,7 +36,7 @@ final class WidgetWebHandlerWorker
 
         final PortalWebRequest portalWebRequest = PortalWebRequest.create( webRequest ).
             applicationKey( this.scriptDir.getApplicationKey() ).
-            baseUri( WidgetWebHandler.ADMIN_WIDGET_PREFIX + scriptDir.getApplicationKey() + "/" + scriptDir.getName() ).
+            baseUri( WidgetHandler.ADMIN_WIDGET_PREFIX + scriptDir.getApplicationKey() + "/" + scriptDir.getName() ).
             build();
         final PortalRequest portalRequest = convertToPortalRequest( portalWebRequest );
 

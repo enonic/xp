@@ -23,17 +23,17 @@ import com.enonic.xp.web.handler.WebResponse;
 
 import static org.junit.Assert.*;
 
-public class PageWebHandlerTest
-    extends RenderBaseWebHandlerTest
+public class PageHandlerTest
+    extends RenderBaseHandlerTest
 {
-    private PageWebHandler handler;
+    private PageHandler handler;
 
     @Override
     protected void configure( final PortalWebRequest.Builder requestBuilder )
         throws Exception
     {
         super.configure( requestBuilder );
-        this.handler = new PageWebHandler();
+        this.handler = new PageHandler();
         this.handler.setContentService( this.contentService );
         this.handler.setPageDescriptorService( this.pageDescriptorService );
         this.handler.setPageTemplateService( this.pageTemplateService );

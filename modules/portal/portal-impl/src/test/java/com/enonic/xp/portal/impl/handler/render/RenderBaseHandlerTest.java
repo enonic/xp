@@ -33,7 +33,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 
-public abstract class RenderBaseWebHandlerTest
+public abstract class RenderBaseHandlerTest
     extends BaseWebHandlerTest
 {
     protected ContentService contentService;

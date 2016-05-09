@@ -15,15 +15,15 @@ import com.enonic.xp.image.ScaleParamsParser;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.web.HttpMethod;
-import com.enonic.xp.web.handler.EndpointWebHandler;
+import com.enonic.xp.web.handler.EndpointHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebResponse;
 
 @Component(immediate = true, service = WebHandler.class)
-public final class ImageWebHandler
-    extends EndpointWebHandler
+public final class ImageHandler
+    extends EndpointHandler
 {
     private final static Pattern PATTERN = Pattern.compile( "([^/^:]+)(:[^/]+)?/([^/]+)/([^/]+)" );
 
@@ -33,7 +33,7 @@ public final class ImageWebHandler
 
     private MediaInfoService mediaInfoService;
 
-    public ImageWebHandler()
+    public ImageHandler()
     {
         super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "image" );
     }

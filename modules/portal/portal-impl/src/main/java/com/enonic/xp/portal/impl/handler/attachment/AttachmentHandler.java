@@ -11,21 +11,21 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.web.HttpMethod;
-import com.enonic.xp.web.handler.EndpointWebHandler;
+import com.enonic.xp.web.handler.EndpointHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebResponse;
 
 @Component(immediate = true, service = WebHandler.class)
-public final class AttachmentWebHandler
-    extends EndpointWebHandler
+public final class AttachmentHandler
+    extends EndpointHandler
 {
     private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/^:]+)(:[^/]+)?/([^/]+)" );
 
     private ContentService contentService;
 
-    public AttachmentWebHandler()
+    public AttachmentHandler()
     {
         super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "attachment" );
     }
