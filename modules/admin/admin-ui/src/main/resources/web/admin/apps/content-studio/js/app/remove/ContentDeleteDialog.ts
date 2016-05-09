@@ -179,7 +179,7 @@ export class ContentDeleteDialog extends DependantItemsDialog {
             deleteRequest.addContentPath(item.getContentSummary().getPath());
         });
 
-        this.instantDeleteCheckbox.isChecked() ? deleteRequest.setDeleteOnline(true) : deleteRequest.setDeletePending(true);
+        deleteRequest.setDeleteOnline(this.instantDeleteCheckbox.isChecked());
 
         return deleteRequest;
     }
@@ -215,7 +215,8 @@ export class ContentDeleteDialog extends DependantItemsDialog {
     private isStatusOnline(status: CompareStatus): boolean {
         return status === CompareStatus.EQUAL ||
                status === CompareStatus.MOVED ||
-               status === CompareStatus.NEWER; //except PENDING_DELETE because it gets deleted immediately
+               status === CompareStatus.NEWER ||
+               status === CompareStatus.PENDING_DELETE;
     }
 
     private updateSubTitle() {
