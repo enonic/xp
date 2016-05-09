@@ -25,6 +25,7 @@ public final class PortalRequestMapper
         gen.value( "port", this.request.getPort() );
         gen.value( "path", this.request.getPath() );
         gen.value( "url", this.request.getUrl() );
+        gen.value( "remoteAddress", this.request.getRemoteAddress() );
         gen.value( "mode", Objects.toString( this.request.getMode(), null ) );
         gen.value( "webSocket", this.request.isWebSocket() );
 

@@ -126,6 +126,7 @@ public final class PortalServlet
         result.setScheme( ServletRequestUrlHelper.getScheme( req ) );
         result.setHost( ServletRequestUrlHelper.getHost( req ) );
         result.setPort( ServletRequestUrlHelper.getPort( req ) );
+        result.setRemoteAddress( ServletRequestUrlHelper.getRemoteAddress( req ) );
         result.setPath( ServletRequestUrlHelper.getPath( req ) );
         result.setUrl( ServletRequestUrlHelper.getFullUrl( req ) );
 

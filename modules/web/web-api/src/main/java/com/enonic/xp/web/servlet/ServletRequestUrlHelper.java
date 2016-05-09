@@ -15,9 +15,11 @@ import com.enonic.xp.web.vhost.VirtualHostHelper;
 @Beta
 public final class ServletRequestUrlHelper
 {
-    public static final String X_FORWARDED_PROTO = HttpHeaders.X_FORWARDED_PROTO;
+    static final String X_FORWARDED_PROTO = HttpHeaders.X_FORWARDED_PROTO;
 
-    public static final String X_FORWARDED_HOST = "X-Forwarded-Host";
+    static final String X_FORWARDED_HOST = "X-Forwarded-Host";
+
+    static final String X_FORWARDED_FOR = HttpHeaders.X_FORWARDED_FOR;
 
     public static String createUri( final String path )
     {
@@ -96,6 +98,16 @@ public final class ServletRequestUrlHelper
         }
 
         return HostAndPort.fromParts( req.getServerName(), req.getServerPort() );
+    }
+
+    public static String getRemoteAddress( final HttpServletRequest req )
+    {
+        final String xForwardedHost = req.getHeader( X_FORWARDED_FOR );
+        if ( xForwardedHost != null )
+        {
+            return xForwardedHost.contains( "," ) ? xForwardedHost.substring( 0, xForwardedHost.indexOf( "," ) ) : xForwardedHost;
+        }
+        return req.getRemoteAddr();
     }
 
     public static String getPath()

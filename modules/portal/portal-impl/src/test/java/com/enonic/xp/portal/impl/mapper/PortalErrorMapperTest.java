@@ -63,6 +63,7 @@ public class PortalErrorMapperTest
         portalRequest.setPort( 80 );
         portalRequest.setPath( "/portal/live/master/a/b" );
         portalRequest.setUrl( "http://localhost/portal/live/master/a/b?param1=value1" );
+        portalRequest.setRemoteAddress( "10.0.0.1" );
         portalRequest.getParams().put( "param1", "value1" );
         portalRequest.getParams().put( "param2", "value2" );
         portalRequest.getParams().put( "param3", "value3-A" );
