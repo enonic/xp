@@ -8,6 +8,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.websocket.WebSocketContext;
 
 @Beta
 public interface WebRequest
@@ -41,6 +42,8 @@ public interface WebRequest
     String getContentType();
 
     boolean isWebSocket();
+
+    WebSocketContext getWebSocketContext();
 
     Object getAttribute( String name );
 

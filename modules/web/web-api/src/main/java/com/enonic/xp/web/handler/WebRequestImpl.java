@@ -13,6 +13,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.websocket.WebSocketContext;
 
 @Beta
 public class WebRequestImpl
@@ -44,7 +45,7 @@ public class WebRequestImpl
 
     private final String contentType;
 
-    private final boolean webSocket;
+    private final WebSocketContext webSocketContext;
 
     protected WebRequestImpl( final Builder builder )
     {
@@ -61,7 +62,7 @@ public class WebRequestImpl
         body = builder.body;
         rawRequest = builder.rawRequest;
         contentType = builder.contentType;
-        webSocket = builder.webSocket;
+        webSocketContext = builder.webSocketContext;
     }
 
     public static Builder create()
@@ -161,7 +162,13 @@ public class WebRequestImpl
     @Override
     public boolean isWebSocket()
     {
-        return webSocket;
+        return webSocketContext != null;
+    }
+
+    @Override
+    public WebSocketContext getWebSocketContext()
+    {
+        return webSocketContext;
     }
 
     @Override
@@ -204,7 +211,7 @@ public class WebRequestImpl
 
         private String contentType;
 
-        private boolean webSocket;
+        private WebSocketContext webSocketContext;
 
         protected Builder()
         {
@@ -224,7 +231,7 @@ public class WebRequestImpl
             body = webRequest.getBody();
             rawRequest = webRequest.getRawRequest();
             contentType = webRequest.getContentType();
-            webSocket = webRequest.isWebSocket();
+            webSocketContext = webRequest.getWebSocketContext();
         }
 
         public Builder method( final HttpMethod method )
@@ -318,9 +325,9 @@ public class WebRequestImpl
             return this;
         }
 
-        public Builder webSocket( final boolean webSocket )
+        public Builder webSocketContext( final WebSocketContext webSocketContext )
         {
-            this.webSocket = webSocket;
+            this.webSocketContext = webSocketContext;
             return this;
         }
 

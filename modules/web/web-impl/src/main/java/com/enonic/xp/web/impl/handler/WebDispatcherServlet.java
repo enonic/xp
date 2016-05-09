@@ -58,8 +58,10 @@ public class WebDispatcherServlet
 
         //Handles the request
         webResponse = dispatch( webRequest, webResponse );
-
-        //TODO Websockets
+        if ( webRequest.isWebSocket() && webResponse.getWebSocket() != null )
+        {
+            return;
+        }
 
         //Serializes the request
         final WebResponseSerializer serializer = new WebResponseSerializer( webRequest, webResponse );
@@ -83,7 +85,7 @@ public class WebDispatcherServlet
         final Multimap<String, String> params = generateWebRequestParams( servletRequest );
         final ImmutableMap<String, String> cookies = generateWebRequestCookies( servletRequest );
         final String endpointPath = getEndpointPath( servletRequest );
-        final boolean webSocket = isWebSocket( servletRequest, servletResponse );
+        final WebSocketContext webSocketContext = newWebSocketContext( servletRequest, servletResponse );
 
         return WebRequestImpl.create().
             method( httpMethod ).
@@ -98,7 +100,7 @@ public class WebDispatcherServlet
             body( body ).
             rawRequest( servletRequest ).
             contentType( contentType ).
-            webSocket( webSocket ).
+            webSocketContext( webSocketContext ).
             build();
     }
 
@@ -148,10 +150,9 @@ public class WebDispatcherServlet
         return endpointPathIndex > -1 ? requestURI.substring( endpointPathIndex ) : "";
     }
 
-    private boolean isWebSocket( final HttpServletRequest servletRequest, final HttpServletResponse servletResponse )
+    private WebSocketContext newWebSocketContext( final HttpServletRequest servletRequest, final HttpServletResponse servletResponse )
     {
-        final WebSocketContext webSocketContext = webSocketContextFactory.newContext( servletRequest, servletResponse );
-        return webSocketContext != null;
+        return webSocketContextFactory.newContext( servletRequest, servletResponse );
     }
 
     private WebResponse dispatch( final WebRequest webRequest, final WebResponse webResponse )

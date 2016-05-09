@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.handler.service;
 
+import java.io.IOException;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.context.ContextAccessor;
@@ -18,8 +20,10 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.web.handler.WebResponse;
 import com.enonic.xp.web.websocket.WebSocketConfig;
+import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 final class ServiceWebHandlerWorker
@@ -90,7 +94,28 @@ final class ServiceWebHandlerWorker
         final PortalResponse portalResponse = PortalResponse.create( controllerScript.execute( portalRequest ) ).
             build();
 
+        //Applies web socker endpoint if necessary
+        final WebSocketContext webSocketContext = portalWebRequest.getWebSocketContext();
+        final WebSocketConfig webSocketConfig = portalResponse.getWebSocket();
+        if ( ( webSocketContext != null ) && ( webSocketConfig != null ) )
+        {
+            applyWebSocket( webSocketContext, webSocketConfig );
+        }
+
         return convertToPortalWebResponse( portalResponse );
+    }
+
+    private void applyWebSocket( final WebSocketContext webSocketContext, final WebSocketConfig webSocketConfig )
+    {
+        final WebSocketEndpointImpl webSocketEndpoint = new WebSocketEndpointImpl( webSocketConfig, this::getScript );
+        try
+        {
+            webSocketContext.apply( webSocketEndpoint );
+        }
+        catch ( IOException e )
+        {
+            Exceptions.unchecked( e );
+        }
     }
 
 
