@@ -64,7 +64,9 @@ public class PortalWebHandler
 
         try
         {
-            return webHandlerChain.handle( portalWebRequest, new PortalWebResponse() );
+            final WebResponse returnedWebResponse = webHandlerChain.handle( portalWebRequest, new PortalWebResponse() );
+            webExceptionMapper.throwIfNeeded( returnedWebResponse );
+            return returnedWebResponse;
         }
         catch ( Exception e )
         {
