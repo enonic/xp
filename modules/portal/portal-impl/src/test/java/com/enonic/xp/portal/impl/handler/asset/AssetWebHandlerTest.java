@@ -78,16 +78,16 @@ public class AssetWebHandlerTest
     @Test
     public void testMatch()
     {
-        PortalWebRequest portalWebRequest = PortalWebRequest.create( this.request ).endpointPath( null ).build();
-        assertEquals( false, this.handler.canHandle( portalWebRequest ) );
+        setEndpointPath( null );
+        assertEquals( false, this.handler.canHandle( this.request ) );
 
-        portalWebRequest = PortalWebRequest.create( this.request ).endpointPath( "/_/other/a/b" ).build();
-        assertEquals( false, this.handler.canHandle( portalWebRequest ) );
+        setEndpointPath( "/_/other/a/b" );
+        assertEquals( false, this.handler.canHandle( this.request ) );
 
-        portalWebRequest = PortalWebRequest.create( this.request ).endpointPath( "/asset/a/b" ).build();
-        assertEquals( false, this.handler.canHandle( portalWebRequest ) );
+        setEndpointPath( "/asset/a/b" );
+        assertEquals( false, this.handler.canHandle( this.request ) );
 
-        portalWebRequest = PortalWebRequest.create( this.request ).endpointPath( "/_/asset/a/b" ).build();
+        setEndpointPath( "/_/asset/a/b" );
         assertEquals( true, this.handler.canHandle( this.request ) );
     }
 
@@ -105,9 +105,9 @@ public class AssetWebHandlerTest
     public void testOptions()
         throws Exception
     {
-        PortalWebRequest portalWebRequest = PortalWebRequest.create( this.request ).method( HttpMethod.OPTIONS ).build();
+        setMethod( HttpMethod.OPTIONS );
 
-        final WebResponse res = this.handler.handle( portalWebRequest, this.response, null );
+        final WebResponse res = this.handler.handle( this.request, this.response, null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,HEAD,OPTIONS", res.getHeaders().get( "Allow" ) );
@@ -160,11 +160,11 @@ public class AssetWebHandlerTest
     public void testNotValidUrlPattern()
         throws Exception
     {
-        PortalWebRequest portalWebRequest = PortalWebRequest.create( this.request ).endpointPath( "/_/asset/" ).build();
+        setEndpointPath( "/_/asset/" );
 
         try
         {
-            this.handler.handle( portalWebRequest, this.response, null );
+            this.handler.handle( this.request, this.response, null );
             fail( "Should throw exception" );
         }
         catch ( final WebException e )
@@ -179,10 +179,9 @@ public class AssetWebHandlerTest
         throws Exception
     {
         addResource( "demo:/site/assets/css/main.css" );
-        PortalWebRequest portalWebRequest =
-            PortalWebRequest.create( this.request ).endpointPath( "/_/asset/demo:123/css/main.css" ).build();
+        setEndpointPath( "/_/asset/demo:123/css/main.css" );
 
-        final WebResponse res = this.handler.handle( portalWebRequest, this.response, null );
+        final WebResponse res = this.handler.handle( this.request, this.response, null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "public, no-transform, max-age=31536000", res.getHeaders().get( "Cache-Control" ) );
@@ -193,9 +192,9 @@ public class AssetWebHandlerTest
         throws Exception
     {
         addResource( "demo:/site/assets/css/main.css" );
-        PortalWebRequest portalWebRequest = PortalWebRequest.create( this.request ).mode( RenderMode.EDIT ).build();
+        setMode( RenderMode.EDIT );
 
-        final WebResponse res = this.handler.handle( portalWebRequest, this.response, null );
+        final WebResponse res = this.handler.handle( this.request, this.response, null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertNull( res.getHeaders().get( "Cache-Control" ) );

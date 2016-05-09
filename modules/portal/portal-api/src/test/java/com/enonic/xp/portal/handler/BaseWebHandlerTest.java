@@ -46,4 +46,19 @@ public abstract class BaseWebHandlerTest
 
         fail( "Method " + method + " should not be allowed" );
     }
+
+    protected void setEndpointPath( String endpointPath )
+    {
+        this.request = PortalWebRequest.create( this.request ).endpointPath( endpointPath ).build();
+    }
+
+    protected void setMethod( HttpMethod method )
+    {
+        this.request = PortalWebRequest.create( this.request ).method( method ).build();
+    }
+
+    protected void setMode( RenderMode mode )
+    {
+        this.request = PortalWebRequest.create( this.request ).mode( mode ).build();
+    }
 }
