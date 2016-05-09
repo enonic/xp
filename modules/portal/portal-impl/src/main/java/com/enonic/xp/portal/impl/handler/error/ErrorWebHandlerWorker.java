@@ -1,9 +1,9 @@
 package com.enonic.xp.portal.impl.handler.error;
 
-import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.handler.PortalWebHandlerWorker;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.handler.WebException;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebResponse;
 
@@ -39,7 +39,7 @@ final class ErrorWebHandlerWorker
             this.message = this.code.getReasonPhrase();
         }
 
-        throw new PortalException( this.code, this.message );
+        throw new WebException( this.code, this.message );
     }
 
     public static final class Builder

@@ -23,7 +23,7 @@ public class ErrorWebHandlerTest
         this.handler = new ErrorWebHandler();
 
         requestBuilder.method( HttpMethod.GET );
-        requestBuilder.endpointPath( "/_/asset/error/401" );
+        requestBuilder.endpointPath( "/_/error/401" );
     }
 
     @Test
