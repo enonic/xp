@@ -2,6 +2,7 @@ package com.enonic.xp.portal.handler;
 
 import org.junit.Before;
 
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.RenderMode;
@@ -60,5 +61,10 @@ public abstract class BaseWebHandlerTest
     protected void setMode( RenderMode mode )
     {
         this.request = PortalWebRequest.create( this.request ).mode( mode ).build();
+    }
+
+    protected void setContentPath( ContentPath contentPath )
+    {
+        this.request = PortalWebRequest.create( this.request ).contentPath( contentPath ).build();
     }
 }

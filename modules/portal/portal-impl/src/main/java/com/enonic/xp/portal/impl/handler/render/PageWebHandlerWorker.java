@@ -54,8 +54,7 @@ final class PageWebHandlerWorker
         final Content content = getContent( getContentSelector() );
         if ( content.getType().isShortcut() )
         {
-            renderShortcut( content );
-            return null;
+            return renderShortcut( content );
         }
 
         final Site site = getSite( content );
@@ -119,7 +118,7 @@ final class PageWebHandlerWorker
         return convertToPortalWebResponse( portalResponse );
     }
 
-    private void renderShortcut( final Content content )
+    private PortalWebResponse renderShortcut( final Content content )
     {
         final Property shortcut = content.getData().getProperty( SHORTCUT_TARGET_PROPERTY );
         final Reference target = shortcut == null ? null : shortcut.getReference();
@@ -136,6 +135,7 @@ final class PageWebHandlerWorker
 
         this.webResponse.setStatus( HttpStatus.TEMPORARY_REDIRECT );
         this.webResponse.setHeader( "Location", targetUrl );
+        return this.webResponse;
     }
 
     private PageDescriptor getPageDescriptor( final DescriptorKey descriptorKey )
