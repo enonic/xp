@@ -9,6 +9,9 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.page.CreatePageParams;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.security.User;
 
 final class CreatePageCommand
@@ -17,10 +20,14 @@ final class CreatePageCommand
 
     private final ContentService contentService;
 
+    private final PageDefaultValuesProcessor defaultValuesProcessor;
+
     private CreatePageCommand( Builder builder )
     {
         params = builder.params;
         contentService = builder.contentService;
+        defaultValuesProcessor =
+            new PageDefaultValuesProcessor( builder.pageDescriptorService, builder.partDescriptorService, builder.layoutDescriptorService );
     }
 
     public static Builder create()
@@ -39,6 +46,8 @@ final class CreatePageCommand
             regions( this.params.getRegions() ).
             customized( this.params.isCustomized() ).
             build();
+
+        defaultValuesProcessor.applyDefaultValues( page );
 
         final UpdateContentParams params = new UpdateContentParams().
             contentId( this.params.getContent() ).
@@ -61,6 +70,12 @@ final class CreatePageCommand
 
         private ContentService contentService;
 
+        private PageDescriptorService pageDescriptorService;
+
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
+
         private Builder()
         {
         }
@@ -77,9 +92,30 @@ final class CreatePageCommand
             return this;
         }
 
+        public Builder pageDescriptorService( final PageDescriptorService pageDescriptorService )
+        {
+            this.pageDescriptorService = pageDescriptorService;
+            return this;
+        }
+
+        public Builder partDescriptorService( final PartDescriptorService partDescriptorService )
+        {
+            this.partDescriptorService = partDescriptorService;
+            return this;
+        }
+
+        public Builder layoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
+        {
+            this.layoutDescriptorService = layoutDescriptorService;
+            return this;
+        }
+
         private void validate()
         {
             Preconditions.checkNotNull( contentService );
+            Preconditions.checkNotNull( pageDescriptorService );
+            Preconditions.checkNotNull( partDescriptorService );
+            Preconditions.checkNotNull( layoutDescriptorService );
             Preconditions.checkNotNull( params );
         }
 

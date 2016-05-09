@@ -9,8 +9,11 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.page.EditablePage;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageNotFoundException;
 import com.enonic.xp.page.UpdatePageParams;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 
 final class UpdatePageCommand
 {
@@ -18,10 +21,14 @@ final class UpdatePageCommand
 
     private final ContentService contentService;
 
+    private final PageDefaultValuesProcessor defaultValuesProcessor;
+
     private UpdatePageCommand( Builder builder )
     {
         params = builder.params;
         contentService = builder.contentService;
+        defaultValuesProcessor =
+            new PageDefaultValuesProcessor( builder.pageDescriptorService, builder.partDescriptorService, builder.layoutDescriptorService );
     }
 
     public static Builder create()
@@ -46,24 +53,33 @@ final class UpdatePageCommand
         this.params.getEditor().edit( editablePage );
         final Page editedPage = editablePage.build();
 
-        if ( !editedPage.equals( content.getPage() ) )
+        if ( editedPage.equals( content.getPage() ) )
         {
-            final UpdateContentParams params = new UpdateContentParams().
-                contentId( this.params.getContent() ).
-                editor( edit -> edit.page = editedPage );
-
-            this.contentService.update( params );
+            return content;
         }
+
+        defaultValuesProcessor.applyDefaultValues( editedPage, content.getPage() );
+
+        final UpdateContentParams params = new UpdateContentParams().
+            contentId( this.params.getContent() ).
+            editor( edit -> edit.page = editedPage );
+
+        this.contentService.update( params );
 
         return this.contentService.getById( this.params.getContent() );
     }
-
 
     public static final class Builder
     {
         private UpdatePageParams params;
 
         private ContentService contentService;
+
+        private PageDescriptorService pageDescriptorService;
+
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
 
         private Builder()
         {
@@ -81,9 +97,30 @@ final class UpdatePageCommand
             return this;
         }
 
+        public Builder pageDescriptorService( final PageDescriptorService pageDescriptorService )
+        {
+            this.pageDescriptorService = pageDescriptorService;
+            return this;
+        }
+
+        public Builder partDescriptorService( final PartDescriptorService partDescriptorService )
+        {
+            this.partDescriptorService = partDescriptorService;
+            return this;
+        }
+
+        public Builder layoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
+        {
+            this.layoutDescriptorService = layoutDescriptorService;
+            return this;
+        }
+
         private void validate()
         {
             Preconditions.checkNotNull( contentService );
+            Preconditions.checkNotNull( pageDescriptorService );
+            Preconditions.checkNotNull( partDescriptorService );
+            Preconditions.checkNotNull( layoutDescriptorService );
             Preconditions.checkNotNull( params );
         }
 
