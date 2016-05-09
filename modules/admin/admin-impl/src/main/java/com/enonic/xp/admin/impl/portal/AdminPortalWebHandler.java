@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Strings;
 
@@ -13,6 +14,9 @@ import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.web.handler.BaseWebHandler;
+import com.enonic.xp.web.handler.WebException;
+import com.enonic.xp.web.handler.WebExceptionMapper;
+import com.enonic.xp.web.handler.WebExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.handler.WebRequest;
@@ -25,6 +29,10 @@ public class AdminPortalWebHandler
     private final static String BASE_URI_START = "/test/admin/portal"; //TODO Rewrite
 
     private final static Pattern PATTERN = Pattern.compile( "^" + BASE_URI_START + "/(edit|preview|admin)/" );
+
+    private WebExceptionMapper webExceptionMapper;
+
+    private WebExceptionRenderer webExceptionRenderer;
 
     public AdminPortalWebHandler()
     {
@@ -60,17 +68,25 @@ public class AdminPortalWebHandler
                 branch( branch ).
                 contentPath( contentPath ). //TODO Retrieval of content and site could be done here
                 mode( mode ).
-//                site( site ).
-//                content( content ).
-//                pageTemplate().
-//                component().
-//                applicationKey().
-//                pageDescriptor().
-//                controllerScript().
-    build();
+                build();
         }
-        return webHandlerChain.handle( portalWebRequest, new PortalWebResponse() );
+
+        try
+        {
+            return webHandlerChain.handle( portalWebRequest, new PortalWebResponse() );
+        }
+        catch ( Exception e )
+        {
+            return handleError( portalWebRequest, e );
+        }
     }
+
+    private WebResponse handleError( final WebRequest webRequest, final Exception e )
+    {
+        final WebException webException = webExceptionMapper.map( e );
+        return webExceptionRenderer.render( webRequest, webException );
+    }
+
 
     private static Branch findBranch( final String baseSubPath )
     {
@@ -91,5 +107,17 @@ public class AdminPortalWebHandler
     {
         final int index = baseSubPath.indexOf( '/' );
         return baseSubPath.substring( index > 0 ? index : baseSubPath.length() );
+    }
+
+    @Reference
+    public void setWebExceptionMapper( final WebExceptionMapper webExceptionMapper )
+    {
+        this.webExceptionMapper = webExceptionMapper;
+    }
+
+    @Reference
+    public void setWebExceptionRenderer( final WebExceptionRenderer webExceptionRenderer )
+    {
+        this.webExceptionRenderer = webExceptionRenderer;
     }
 }
