@@ -158,9 +158,7 @@ public class WebDispatcherServlet
     {
         try
         {
-            final WebResponse returnedWebResponse = webDispatcher.dispatch( webRequest, webResponse );
-            webExceptionMapper.throwIfNeeded( returnedWebResponse );
-            return returnedWebResponse;
+            return webDispatcher.dispatch( webRequest, webResponse );
         }
         catch ( Exception e )
         {
