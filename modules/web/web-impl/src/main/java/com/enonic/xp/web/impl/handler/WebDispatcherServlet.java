@@ -23,6 +23,9 @@ import com.google.common.collect.Multimap;
 
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.handler.WebException;
+import com.enonic.xp.web.handler.WebExceptionMapper;
+import com.enonic.xp.web.handler.WebExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebRequest;
 import com.enonic.xp.web.handler.WebRequestImpl;
@@ -41,6 +44,10 @@ public class WebDispatcherServlet
 
     private WebSocketContextFactory webSocketContextFactory;
 
+    private WebExceptionMapper webExceptionMapper;
+
+    private WebExceptionRenderer webExceptionRenderer;
+
     @Override
     protected void service( final HttpServletRequest servletRequest, final HttpServletResponse servletResponse )
         throws ServletException, IOException
@@ -50,7 +57,7 @@ public class WebDispatcherServlet
         WebResponse webResponse = generateWebResponse();
 
         //Handles the request
-        webResponse = webDispatcher.dispatch( webRequest, webResponse );
+        webResponse = dispatch( webRequest, webResponse );
 
         //TODO Websockets
 
@@ -145,6 +152,36 @@ public class WebDispatcherServlet
     {
         final WebSocketContext webSocketContext = webSocketContextFactory.newContext( servletRequest, servletResponse );
         return webSocketContext != null;
+    }
+
+    private WebResponse dispatch( final WebRequest webRequest, final WebResponse webResponse )
+    {
+        try
+        {
+            return webDispatcher.dispatch( webRequest, webResponse );
+        }
+        catch ( Exception e )
+        {
+            return handleError( webRequest, e );
+        }
+    }
+
+    private WebResponse handleError( final WebRequest webRequest, final Exception e )
+    {
+        final WebException webException = webExceptionMapper.map( e );
+        return webExceptionRenderer.render( webRequest, webException );
+    }
+
+    @Reference
+    public void setWebExceptionMapper( final WebExceptionMapper webExceptionMapper )
+    {
+        this.webExceptionMapper = webExceptionMapper;
+    }
+
+    @Reference
+    public void setWebExceptionRenderer( final WebExceptionRenderer webExceptionRenderer )
+    {
+        this.webExceptionRenderer = webExceptionRenderer;
     }
 
     @Reference
