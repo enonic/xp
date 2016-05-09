@@ -40,6 +40,8 @@ public final class PortalRequest
 
     private String host;
 
+    private String remoteAddress;
+
     private int port;
 
     private String path;
@@ -120,6 +122,11 @@ public final class PortalRequest
         return port;
     }
 
+    public String getRemoteAddress()
+    {
+        return remoteAddress;
+    }
+
     public String getPath()
     {
         return path;
@@ -153,6 +160,11 @@ public final class PortalRequest
     public void setPort( final int port )
     {
         this.port = port;
+    }
+
+    public void setRemoteAddress( final String remoteAddress )
+    {
+        this.remoteAddress = remoteAddress;
     }
 
     public void setPath( final String path )

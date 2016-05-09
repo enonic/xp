@@ -143,4 +143,21 @@ public class ServletRequestUrlHelperTest
         assertEquals( "/admin/page", rewritingResult3.getRewrittenUri() );
         assertFalse( rewritingResult3.isOutOfScope() );
     }
+
+    @Test
+    public void getRemoteAddress()
+    {
+        this.req.setRemoteAddr( "127.0.0.1" );
+
+        assertEquals( "127.0.0.1", ServletRequestUrlHelper.getRemoteAddress( this.req ) );
+    }
+
+    @Test
+    public void getRemoteAddress_x_forwarded_for_header()
+    {
+        this.req.setRemoteAddr( "127.0.0.1" );
+        this.req.addHeader( ServletRequestUrlHelper.X_FORWARDED_FOR, "10.0.0.1" );
+
+        assertEquals( "10.0.0.1", ServletRequestUrlHelper.getRemoteAddress( this.req ) );
+    }
 }
