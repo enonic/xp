@@ -183,7 +183,7 @@ public class WebRequestImpl
         rawRequest.setAttribute( name, value );
     }
 
-    public static class Builder
+    public static class Builder<BuilderType extends Builder>
     {
         private HttpMethod method;
 
@@ -234,41 +234,41 @@ public class WebRequestImpl
             webSocketContext = webRequest.getWebSocketContext();
         }
 
-        public Builder method( final HttpMethod method )
+        public BuilderType method( final HttpMethod method )
         {
             this.method = method;
-            return this;
+            return (BuilderType) this;
         }
 
-        public Builder scheme( final String scheme )
+        public BuilderType scheme( final String scheme )
         {
             this.scheme = scheme;
-            return this;
+            return (BuilderType) this;
         }
 
-        public Builder host( final String host )
+        public BuilderType host( final String host )
         {
             this.host = host;
-            return this;
+            return (BuilderType) this;
         }
 
-        public Builder port( final int port )
+        public BuilderType port( final int port )
         {
             this.port = port;
-            return this;
+            return (BuilderType) this;
         }
 
-        public Builder path( final String path )
+        public BuilderType path( final String path )
         {
             this.path = path;
-            return this;
+            return (BuilderType) this;
         }
 
 
-        public Builder params( final Multimap<String, String> params )
+        public BuilderType params( final Multimap<String, String> params )
         {
             this.params = params;
-            return this;
+            return (BuilderType) this;
         }
 
         public Builder param( final String key, String value )
@@ -277,58 +277,58 @@ public class WebRequestImpl
             return this;
         }
 
-        public Builder url( final String url )
+        public BuilderType url( final String url )
         {
             this.url = url;
-            return this;
+            return (BuilderType) this;
         }
 
-        public Builder endpointPath( final String endpointPath )
+        public BuilderType endpointPath( final String endpointPath )
         {
             this.endpointPath = Strings.emptyToNull( endpointPath );
-            return this;
+            return (BuilderType) this;
         }
 
-        public Builder header( final String key, String value )
+        public BuilderType header( final String key, String value )
         {
             headers.put( key, value );
-            return this;
+            return (BuilderType) this;
         }
 
-        public Builder cookies( final ImmutableMap<String, String> cookies )
+        public BuilderType cookies( final ImmutableMap<String, String> cookies )
         {
             this.cookies = cookies;
-            return this;
+            return (BuilderType) this;
         }
 
-        public Builder cookie( final String key, String value )
+        public BuilderType cookie( final String key, String value )
         {
             cookies.put( key, value );
-            return this;
+            return (BuilderType) this;
         }
 
-        public Builder body( final Object body )
+        public BuilderType body( final Object body )
         {
             this.body = body;
-            return this;
+            return (BuilderType) this;
         }
 
-        public Builder rawRequest( final HttpServletRequest rawRequest )
+        public BuilderType rawRequest( final HttpServletRequest rawRequest )
         {
             this.rawRequest = rawRequest;
-            return this;
+            return (BuilderType) this;
         }
 
-        public Builder contentType( final String contentType )
+        public BuilderType contentType( final String contentType )
         {
             this.contentType = contentType;
-            return this;
+            return (BuilderType) this;
         }
 
-        public Builder webSocketContext( final WebSocketContext webSocketContext )
+        public BuilderType webSocketContext( final WebSocketContext webSocketContext )
         {
             this.webSocketContext = webSocketContext;
-            return this;
+            return (BuilderType) this;
         }
 
         private void validate()

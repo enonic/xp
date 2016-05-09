@@ -132,7 +132,7 @@ public final class PortalWebRequest
 
 
     public static final class Builder
-        extends WebRequestImpl.Builder
+        extends WebRequestImpl.Builder<Builder>
     {
         private String baseUri = "";
 
