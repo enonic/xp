@@ -19,7 +19,7 @@ import com.enonic.xp.web.handler.WebResponse;
 public final class WidgetWebHandler
     extends BaseWebHandler
 {
-    private final static String ADMIN_WIDGET_PREFIX = "/admin/widget/";
+    final static String ADMIN_WIDGET_PREFIX = "/admin/widget/";
 
     private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
 
