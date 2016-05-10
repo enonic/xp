@@ -110,12 +110,12 @@ final class ComponentHandlerWorker
             applicationKey( pageController != null ? pageController.getApplicationKey() : null ).
             pageTemplate( pageTemplate ).pageDescriptor( null ).
             build();
-        final PortalRequest portalRequest = convertToPortalRequest( portalWebRequest );
+        final PortalRequest portalRequest = PortalWebRequest.convertToPortalRequest( portalWebRequest );
 
         final Renderer<Component> renderer = this.rendererFactory.getRenderer( component );
         PortalResponse portalResponse = renderer.render( component, portalRequest );
         portalResponse = this.postProcessor.processResponseInstructions( portalRequest, portalResponse );
-        return convertToPortalWebResponse( portalResponse );
+        return PortalWebResponse.convertToPortalWebResponse( portalResponse );
     }
 
     public static final class Builder

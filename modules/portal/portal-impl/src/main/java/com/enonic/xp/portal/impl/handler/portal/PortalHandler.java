@@ -58,7 +58,7 @@ public class PortalHandler
             portalWebRequest = PortalWebRequest.create( webRequest ).
                 baseUri( BASE_URI ).
                 branch( branch ).
-                contentPath( contentPath ). //TODO Retrieval of content and site could be done here
+                contentPath( contentPath ).
                 build();
         }
 

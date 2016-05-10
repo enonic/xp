@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.portal;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.PortalWebRequest;
+import com.enonic.xp.portal.PortalWebResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
@@ -38,11 +39,11 @@ final class WidgetHandlerWorker
             applicationKey( this.scriptDir.getApplicationKey() ).
             baseUri( WidgetHandler.ADMIN_WIDGET_PREFIX + scriptDir.getApplicationKey() + "/" + scriptDir.getName() ).
             build();
-        final PortalRequest portalRequest = convertToPortalRequest( portalWebRequest );
+        final PortalRequest portalRequest = PortalWebRequest.convertToPortalRequest( portalWebRequest );
 
         final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( this.scriptDir );
         final PortalResponse portalResponse = PortalResponse.create( controllerScript.execute( portalRequest ) ).build();
-        return convertToPortalWebResponse( portalResponse );
+        return PortalWebResponse.convertToPortalWebResponse( portalResponse );
     }
 
 

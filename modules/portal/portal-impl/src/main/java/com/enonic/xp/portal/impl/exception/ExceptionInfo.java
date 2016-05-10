@@ -6,7 +6,6 @@ import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.web.HttpStatus;
@@ -74,14 +73,6 @@ final class ExceptionInfo
     {
         this.resourceService = resourceService;
         return this;
-    }
-
-    //TODO Delete
-    public PortalResponse toResponse( final PortalRequest req )
-    {
-        final String accept = Strings.nullToEmpty( req.getHeaders().get( HttpHeaders.ACCEPT ) );
-        final boolean isHtml = accept.contains( "text/html" );
-        return isHtml ? toHtmlResponse() : toJsonResponse();
     }
 
     public PortalResponse toResponse( final WebRequest webRequest )

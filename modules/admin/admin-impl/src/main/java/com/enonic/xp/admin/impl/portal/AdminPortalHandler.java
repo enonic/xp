@@ -66,7 +66,7 @@ public class AdminPortalHandler
             portalWebRequest = PortalWebRequest.create( webRequest ).
                 baseUri( baseUri ).
                 branch( branch ).
-                contentPath( contentPath ). //TODO Retrieval of content and site could be done here
+                contentPath( contentPath ).
                 mode( mode ).
                 build();
         }

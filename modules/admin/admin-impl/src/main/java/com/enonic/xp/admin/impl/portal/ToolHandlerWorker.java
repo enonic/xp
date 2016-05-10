@@ -65,11 +65,11 @@ final class ToolHandlerWorker
             baseUri( ToolHandler.ADMIN_TOOL_PREFIX + descriptorKey.getApplicationKey() + "/" + descriptorKey.getName() ).
             build();
 
-        final PortalRequest portalRequest = convertToPortalRequest( portalWebRequest );
+        final PortalRequest portalRequest = PortalWebRequest.convertToPortalRequest( portalWebRequest );
 
         //Render the Admin application
         final PortalResponse portalResponse = PortalResponse.create( controllerScript.execute( portalRequest ) ).build();
-        return convertToPortalWebResponse( portalResponse );
+        return PortalWebResponse.convertToPortalWebResponse( portalResponse );
     }
 
     public static final class Builder

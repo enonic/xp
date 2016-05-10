@@ -87,7 +87,7 @@ final class ServiceHandlerWorker
             site( site ).
             build();
 
-        final PortalRequest portalRequest = convertToPortalRequest( portalWebRequest );
+        final PortalRequest portalRequest = PortalWebRequest.convertToPortalRequest( portalWebRequest );
 
         //Executes the service
         final ControllerScript controllerScript = getScript();
@@ -102,7 +102,7 @@ final class ServiceHandlerWorker
             applyWebSocket( webSocketContext, webSocketConfig );
         }
 
-        return convertToPortalWebResponse( portalResponse );
+        return PortalWebResponse.convertToPortalWebResponse( portalResponse );
     }
 
     private void applyWebSocket( final WebSocketContext webSocketContext, final WebSocketConfig webSocketConfig )

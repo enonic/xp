@@ -111,11 +111,11 @@ final class PageHandlerWorker
             pageTemplate( pageTemplate ).
             pageDescriptor( pageDescriptor ).
             build();
-        final PortalRequest portalRequest = convertToPortalRequest( portalWebRequest );
+        final PortalRequest portalRequest = PortalWebRequest.convertToPortalRequest( portalWebRequest );
 
         final Renderer<Content> renderer = this.rendererFactory.getRenderer( effectiveContent );
         final PortalResponse portalResponse = renderer.render( effectiveContent, portalRequest );
-        return convertToPortalWebResponse( portalResponse );
+        return PortalWebResponse.convertToPortalWebResponse( portalResponse );
     }
 
     private PortalWebResponse renderShortcut( final Content content )
@@ -127,7 +127,7 @@ final class PageHandlerWorker
             throw notFound( "Missing shortcut target" );
         }
 
-        final PortalRequest portalRequest = convertToPortalRequest( webRequest );
+        final PortalRequest portalRequest = PortalWebRequest.convertToPortalRequest( webRequest );
         final PageUrlParams pageUrlParams = new PageUrlParams().id( target.toString() ).portalRequest( portalRequest );
         pageUrlParams.getParams().putAll( this.webRequest.getParams() );
 

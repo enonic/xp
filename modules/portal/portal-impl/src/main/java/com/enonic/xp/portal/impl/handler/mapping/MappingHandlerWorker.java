@@ -71,23 +71,23 @@ final class MappingHandlerWorker
     private PortalWebResponse renderPage( final PortalWebRequest.Builder portalWebRequestBuilder, final ControllerScript controllerScript )
     {
         final PortalWebRequest portalWebRequest = portalWebRequestBuilder.controllerScript( controllerScript ).build();
-        final PortalRequest portalRequest = convertToPortalRequest( portalWebRequest );
+        final PortalRequest portalRequest = PortalWebRequest.convertToPortalRequest( portalWebRequest );
 
         final Content content = this.webRequest.getContent();
         final Renderer<Content> renderer = this.rendererFactory.getRenderer( content );
         final PortalResponse response = renderer.render( content, portalRequest );
         final PortalResponse portalResponse = PortalResponse.create( response ).build();
-        return convertToPortalWebResponse( portalResponse );
+        return PortalWebResponse.convertToPortalWebResponse( portalResponse );
     }
 
     private PortalWebResponse renderController( final PortalWebRequest.Builder portalWebRequestBuilder,
                                                 final ControllerScript controllerScript )
     {
         final PortalWebRequest portalWebRequest = portalWebRequestBuilder.controllerScript( controllerScript ).build();
-        final PortalRequest portalRequest = convertToPortalRequest( portalWebRequest );
+        final PortalRequest portalRequest = PortalWebRequest.convertToPortalRequest( portalWebRequest );
 
         final PortalResponse portalResponse = PortalResponse.create( controllerScript.execute( portalRequest ) ).build();
-        return convertToPortalWebResponse( portalResponse );
+        return PortalWebResponse.convertToPortalWebResponse( portalResponse );
     }
 
     public static final class Builder
