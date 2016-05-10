@@ -22,7 +22,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.web.HttpMethod;
-import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.handler.WebException;
 import com.enonic.xp.web.handler.WebExceptionMapper;
 import com.enonic.xp.web.handler.WebExceptionRenderer;
@@ -106,10 +105,7 @@ public class WebDispatcherServlet
 
     private WebResponse generateWebResponse()
     {
-        final WebResponseImpl webResponse = new WebResponseImpl();
-        webResponse.setStatus( HttpStatus.OK );
-        //TODO Set missing fields
-        return webResponse;
+        return new WebResponseImpl();
     }
 
     private Multimap<String, String> generateWebRequestParams( final HttpServletRequest servletRequest )
