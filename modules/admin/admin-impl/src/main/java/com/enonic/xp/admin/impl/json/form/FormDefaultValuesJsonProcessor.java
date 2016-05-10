@@ -57,7 +57,7 @@ final class FormDefaultValuesJsonProcessor
             }
             else if ( formItem.getType() == LAYOUT && formItem.toLayout() instanceof FieldSet )
             {
-                processFormItems( formItem.toFormItemSet().getFormItems(), ( (FieldSetJson) formItemJson ).getItems() );
+                processFormItems( (FieldSet) formItem, ( (FieldSetJson) formItemJson ).getItems() );
             }
         }
     }
