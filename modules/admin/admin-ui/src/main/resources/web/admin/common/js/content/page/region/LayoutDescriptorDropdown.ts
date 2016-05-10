@@ -7,7 +7,7 @@ module api.content.page.region {
             super(name, loader, {
                 optionDisplayValueViewer: new LayoutDescriptorViewer(),
                 dataIdProperty: "value",
-                noOptionsText: "No layouts available in required applications"
+                noOptionsText: "No layouts available"
             });
         }
     }

@@ -18,7 +18,7 @@ module api.content.page.region {
                 setSelectedOptionsView(new PartDescriptorSelectedOptionsView()).
                 setLoader(loader).
                 setMaximumOccurrences(1).setNextInputFocusWhenMaxReached(false).setNoOptionsText(
-                "No parts available in required applications"));
+                "No parts available"));
         }
 
         getDescriptor(descriptorKey: DescriptorKey): PartDescriptor {

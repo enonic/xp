@@ -55,6 +55,10 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
         this.layoutForm = new DescriptorBasedDropdownForm(this.layoutSelector, "Layout");
         loader.load();
 
+        liveEditModel.getSiteModel().onApplicationUnavailable(() => {
+            this.layoutSelector.hideDropdown();
+        });
+
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
 
             // Ensure displayed config form and selector option are removed when descriptor is removed

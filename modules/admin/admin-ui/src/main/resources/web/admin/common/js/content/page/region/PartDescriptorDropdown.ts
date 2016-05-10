@@ -7,7 +7,7 @@ module api.content.page.region {
             super(name, loader, {
                 optionDisplayValueViewer: new PartDescriptorViewer(),
                 dataIdProperty: "value",
-                noOptionsText: "No parts available in required applications"
+                noOptionsText: "No parts available"
             });
 
         }

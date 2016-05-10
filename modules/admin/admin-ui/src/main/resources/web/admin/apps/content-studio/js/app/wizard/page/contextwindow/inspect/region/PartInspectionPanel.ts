@@ -50,6 +50,10 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
         this.partForm = new DescriptorBasedDropdownForm(this.partSelector, "Part");
         loader.load();
 
+        liveEditModel.getSiteModel().onApplicationUnavailable(() => {
+            this.partSelector.hideDropdown();
+        });
+
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
 
             // Ensure displayed config form and selector option are removed when descriptor is removed
