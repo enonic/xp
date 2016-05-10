@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -104,6 +105,7 @@ public class InputJson
         return json;
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public PropertyValueJson getDefaultValue()
     {
         return defaultValue != null ? new PropertyValueJson( defaultValue ) : null;
