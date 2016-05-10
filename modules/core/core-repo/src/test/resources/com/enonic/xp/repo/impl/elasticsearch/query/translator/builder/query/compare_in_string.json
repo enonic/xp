@@ -1,0 +1,16 @@
+{
+  "bool": {
+    "should": [
+      {
+        "term": {
+          "myfield": "myfirstvalue"
+        }
+      },
+      {
+        "term": {
+          "myfield": "mysecondvalue"
+        }
+      }
+    ]
+  }
+}

@@ -1,9 +1,0 @@
-{
-    "bool": {
-        "must_not": {
-            "term": {
-                "myfield": "myvalue"
-            }
-        }
-    }
-}
