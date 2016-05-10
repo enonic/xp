@@ -1,0 +1,175 @@
+.dependant-dialog {
+
+  &.contains-removable {
+    .dialog-content .dependants .dependant-list {
+      margin-left: 24px;
+
+      &.contains-removable {
+        margin-left: 0;
+      }
+    }
+
+  }
+
+  &.invalid {
+    .sub-title {
+      color: @admin-red;
+    }
+  }
+
+  .sub-title {
+    margin-top: 20px;
+  }
+
+  .browse-selection-item {
+    padding: 4px 0px;
+    margin: 0px;
+    display: block;
+
+    .status {
+      margin-right: 5px;
+      display: inline-block;
+      float: right;
+
+      &.equal {
+        color: @admin-green;
+      }
+    }
+  }
+
+  .dialog-content {
+
+    max-height: 300px;
+    overflow-y: auto;
+
+    @media screen and (max-height: 720px) {
+      max-height: 250px;
+    }
+
+    @media screen and (max-height: 540px) {
+      max-height: 150px;
+    }
+
+    @media screen and (max-height: 360px) {
+      max-height: 80px;
+    }
+
+    .item-list {
+      max-height: 400px;
+      overflow-y: auto;
+
+      @media screen and (max-height: 720px) {
+        max-height: 350px;
+      }
+
+      @media screen and (max-height: 540px) {
+        max-height: 170px;
+      }
+
+      @media screen and (max-height: 360px) {
+        max-height: 82%;
+      }
+
+    }
+
+    .dependants {
+      display: none;
+
+      .dependants-header {
+        margin: 20px 0;
+      }
+
+      .dependant-list {
+        margin-top: 20px;
+
+        &.contains-removable {
+          padding-left: 25px;
+          margin-left: 8px;
+          .browse-selection-item {
+            padding-left: 0px;
+            .names-and-icon-view .wrapper {
+              margin-left: 10px;
+            }
+          }
+
+        }
+        h6 {
+          margin-bottom: 5px;
+        }
+
+        .browse-selection-item {
+          padding-left: 10px;
+
+          .remove {
+            height: 16px;
+            display: none;
+          }
+
+          &.removable {
+
+            margin-left: -25px;
+
+            .remove {
+              display: block;
+            }
+          }
+
+          &.invalid .wrapper {
+            &:before {
+              content: "!";
+              background: #cb0300;
+              color: #ffffff;
+              top: 2px;
+              left: 30px;
+            }
+          }
+
+          .names-and-icon-view {
+
+            .wrapper {
+              margin: 0px;
+              height: 16px;
+              width: 16px;
+              line-height: 14px;
+            }
+
+            &.small {
+              .wrapper:before {
+                left: 8px;
+                width: 8px;
+                height: 8px;
+                line-height: 8px;
+                border-radius: 15px;
+                font-size: 12px;
+              }
+
+              .names-view {
+                margin-left: 37px;
+              }
+            }
+
+            .font-icon-default.image {
+              background: url("../../../../images/icons/16x16/image.png");
+              width: inherit;
+              height: inherit;
+            }
+
+            .names-view {
+              .sub-name {
+                display: none;
+              }
+            }
+
+            &.pending-delete .names-view {
+              .main-name, .sub-name {
+                text-decoration: line-through;
+              }
+            }
+
+          }
+        }
+      }
+    }
+  }
+
+}

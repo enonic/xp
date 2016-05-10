@@ -27,6 +27,8 @@ public class PushContentCommand
 {
     private final ContentIds contentIds;
 
+    private final ContentIds excludedContentIds;
+
     private final Branch target;
 
     private final boolean includeDependencies;
@@ -39,6 +41,7 @@ public class PushContentCommand
     {
         super( builder );
         this.contentIds = builder.contentIds;
+        this.excludedContentIds = builder.excludedContentIds;
         this.target = builder.target;
         this.includeDependencies = builder.includeDependencies;
         this.includeChildren = builder.includeChildren;
@@ -106,6 +109,7 @@ public class PushContentCommand
     {
         final ResolvePublishDependenciesResult resolvedResult = ResolvePublishDependenciesCommand.create().
             contentIds( this.contentIds ).
+            excludedContentIds( this.excludedContentIds ).
             includeChildren( this.includeChildren ).
             target( this.target ).
             contentTypeService( this.contentTypeService ).
@@ -180,6 +184,8 @@ public class PushContentCommand
     {
         private ContentIds contentIds;
 
+        private ContentIds excludedContentIds;
+
         private Branch target;
 
         private boolean includeDependencies = true;
@@ -189,6 +195,12 @@ public class PushContentCommand
         public Builder contentIds( final ContentIds contentIds )
         {
             this.contentIds = contentIds;
+            return this;
+        }
+
+        public Builder excludedContentIds( final ContentIds excludedContentIds )
+        {
+            this.excludedContentIds = excludedContentIds;
             return this;
         }
 

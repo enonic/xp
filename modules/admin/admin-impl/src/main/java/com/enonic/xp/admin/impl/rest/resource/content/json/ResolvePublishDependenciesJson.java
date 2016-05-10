@@ -6,6 +6,8 @@ public class ResolvePublishDependenciesJson
 {
     private Set<String> ids;
 
+    private Set<String> excludedIds;
+
     private boolean includeChildren;
 
     public Set<String> getIds()
@@ -17,6 +19,16 @@ public class ResolvePublishDependenciesJson
     public void setIds( final Set<String> ids )
     {
         this.ids = ids;
+    }
+
+    public Set<String> getExcludedIds()
+    {
+        return excludedIds;
+    }
+
+    public void setExcludedIds( final Set<String> excludedIds )
+    {
+        this.excludedIds = excludedIds;
     }
 
     public boolean includeChildren()

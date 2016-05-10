@@ -14,9 +14,8 @@ module api.ui.selector.list {
         }
 
         setItems(items: I[]) {
-            if (this.items.length > 0) {
-                this.notifyItemsRemoved(this.items);
-            }
+            this.clearItems();
+
             this.items = items;
             if (items.length > 0) {
                 this.layoutList(items);
@@ -42,27 +41,26 @@ module api.ui.selector.list {
 
         clearItems() {
             if (this.items.length > 0) {
-                this.notifyItemsRemoved(this.items);
+                let removedItems = this.items.slice();
+                // correct way to empty array
+                this.items.length = 0;
+                this.notifyItemsRemoved(removedItems);
+                this.layoutList(this.items);
             }
-            // correct way to empty array
-            this.items.length = 0;
-            this.layoutList(this.items);
         }
 
         addItem(...items: I[]) {
-            this.items = this.items.concat(items);
-            items.forEach((item) => {
-                this.addItemView(item);
-            });
-            if (items.length > 0) {
-                this.notifyItemsAdded(items);
-            }
+            this.doAddItem(false, items);
         }
 
         addItemReadOnly(...items: I[]) {
+            this.doAddItem(true, items);
+        }
+
+        private doAddItem(readOnly: boolean, items: I[]) {
             this.items = this.items.concat(items);
             items.forEach((item) => {
-                this.addItemView(item, true);
+                this.addItemView(item, readOnly);
             });
             if (items.length > 0) {
                 this.notifyItemsAdded(items);
@@ -125,15 +123,7 @@ module api.ui.selector.list {
         }
 
         private addItemView(item: I, readOnly: boolean = false) {
-            if(readOnly)
-            {
-                var itemView = this.createItemView(item, readOnly);
-            }
-            else
-            {
-                var itemView = this.createItemView(item, false);
-            }
-
+            var itemView = this.createItemView(item, readOnly);
             this.itemViews[this.getItemId(item)] = itemView;
             this.appendChild(itemView);
         }

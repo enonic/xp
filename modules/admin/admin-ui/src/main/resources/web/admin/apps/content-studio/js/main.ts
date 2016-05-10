@@ -96,14 +96,19 @@ function startApplication() {
 
     var contentDeleteDialog = new ContentDeleteDialog();
     ContentDeletePromptEvent.on((event) => {
-        contentDeleteDialog.setContentToDelete(event.getModels()).setYesCallback(event.getYesCallback()).setNoCallback(
-            event.getNoCallback()).open();
+        contentDeleteDialog
+            .setContentToDelete(event.getModels())
+            .setYesCallback(event.getYesCallback())
+            .setNoCallback(event.getNoCallback())
+            .open();
     });
 
+    var contentPublishDialog = new ContentPublishDialog();
     ContentPublishPromptEvent.on((event) => {
-        var contentPublishDialog = new ContentPublishDialog();
-        contentPublishDialog.setSelectedContents(event.getModels());
-        contentPublishDialog.initAndOpen();
+        contentPublishDialog
+            .setContentToPublish(event.getModels())
+            .setIncludeChildItems(event.isIncludeChildItems())
+            .open();
     });
 
     var newContentDialog = new NewContentDialog();
@@ -124,16 +129,16 @@ function startApplication() {
                                 newContentDialog.setParentContent(newParentContent);
                                 newContentDialog.open();
                             }).catch((reason: any) => {
-                            api.DefaultErrorHandler.handle(reason);
-                        }).done();
+                                api.DefaultErrorHandler.handle(reason);
+                            }).done();
                     }
                     else {
                         newContentDialog.setParentContent(newParentContent);
                         newContentDialog.open();
                     }
                 }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
         }
         else {
             newContentDialog.setParentContent(null);

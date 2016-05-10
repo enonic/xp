@@ -446,10 +446,12 @@ public final class ContentResource
     public PublishContentResultJson publish( final PublishContentJson params )
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
+        final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
 
         final PushContentsResult result = contentService.push( PushContentParams.create().
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
+            excludedContentIds( excludeContentIds ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( true ).
             build() );
@@ -467,6 +469,7 @@ public final class ContentResource
     {
         //Resolved the requested ContentPublishItem
         final ContentIds requestedContentIds = ContentIds.from( params.getIds() );
+        final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
         final List<ContentPublishItemJson> requestedContentPublishItemList = resolveContentPublishItems( requestedContentIds );
 
         //Resolves the publish dependencies
@@ -474,6 +477,7 @@ public final class ContentResource
             contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
                 target( ContentConstants.BRANCH_MASTER ).
                 contentIds( requestedContentIds ).
+                excludedContentIds( excludeContentIds ).
                 includeChildren( params.includeChildren() ).
                 build() );
 

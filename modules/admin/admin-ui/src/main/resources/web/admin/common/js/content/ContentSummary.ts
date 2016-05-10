@@ -374,6 +374,21 @@ module api.content {
             return this;
         }
 
+        setContentId(value: ContentId): ContentSummaryBuilder {
+            this.contentId = value;
+            return this;
+        }
+
+        setIconUrl(value: string): ContentSummaryBuilder {
+            this.iconUrl = value;
+            return this;
+        }
+
+        setContentState(value: ContentState): ContentSummaryBuilder {
+            this.contentState = value;
+            return this;
+        }
+
         setValid(value: boolean): ContentSummaryBuilder {
             this.valid = value;
             return this;

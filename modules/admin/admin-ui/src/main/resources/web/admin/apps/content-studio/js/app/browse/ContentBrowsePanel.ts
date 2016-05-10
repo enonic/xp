@@ -1,4 +1,20 @@
 import "../../api.ts";
+import {ContentTreeGridActions} from "./action/ContentTreeGridActions";
+import {ContentBrowseToolbar} from "./ContentBrowseToolbar";
+import {ContentTreeGrid} from "./ContentTreeGrid";
+import {ContentBrowseFilterPanel} from "./filter/ContentBrowseFilterPanel";
+import {ContentBrowseItemPanel} from "./ContentBrowseItemPanel";
+import {MobileContentItemStatisticsPanel} from "../view/MobileContentItemStatisticsPanel";
+import {MobileContentTreeGridActions} from "./action/MobileContentTreeGridActions";
+import {DetailsPanel} from "../view/detail/DetailsPanel";
+import {NonMobileDetailsPanelsManager, NonMobileDetailsPanelsManagerBuilder} from "../view/detail/NonMobileDetailsPanelsManager";
+import {Router} from "../Router";
+import {ActiveDetailsPanelManager} from "../view/detail/ActiveDetailsPanelManager";
+import {ContentBrowseItem} from "./ContentBrowseItem";
+import {ToggleSearchPanelEvent} from "./ToggleSearchPanelEvent";
+import {NewMediaUploadEvent} from "../create/NewMediaUploadEvent";
+import {ContentPreviewPathChangedEvent} from "../view/ContentPreviewPathChangedEvent";
+import {ContentPublishMenuManager} from "./ContentPublishMenuManager";
 
 import TreeNode = api.ui.treegrid.TreeNode;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -20,21 +36,6 @@ import ContentId = api.content.ContentId;
 import BatchContentServerEvent = api.content.event.BatchContentServerEvent;
 import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
 import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
-import {ContentTreeGridActions} from "./action/ContentTreeGridActions";
-import {ContentBrowseToolbar} from "./ContentBrowseToolbar";
-import {ContentTreeGrid} from "./ContentTreeGrid";
-import {ContentBrowseFilterPanel} from "./filter/ContentBrowseFilterPanel";
-import {ContentBrowseItemPanel} from "./ContentBrowseItemPanel";
-import {MobileContentItemStatisticsPanel} from "../view/MobileContentItemStatisticsPanel";
-import {MobileContentTreeGridActions} from "./action/MobileContentTreeGridActions";
-import {DetailsPanel} from "../view/detail/DetailsPanel";
-import {NonMobileDetailsPanelsManager, NonMobileDetailsPanelsManagerBuilder} from "../view/detail/NonMobileDetailsPanelsManager";
-import {Router} from "../Router";
-import {ActiveDetailsPanelManager} from "../view/detail/ActiveDetailsPanelManager";
-import {ContentBrowseItem} from "./ContentBrowseItem";
-import {ToggleSearchPanelEvent} from "./ToggleSearchPanelEvent";
-import {NewMediaUploadEvent} from "../create/NewMediaUploadEvent";
-import {ContentPreviewPathChangedEvent} from "../view/ContentPreviewPathChangedEvent";
 
 export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
@@ -131,6 +132,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
 
         this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
+        
+        let contentPublishMenuManager = new ContentPublishMenuManager(this.browseActions);
+        this.toolbar.appendChild(contentPublishMenuManager.getPublishMenuButton());
 
         return true;
     }
