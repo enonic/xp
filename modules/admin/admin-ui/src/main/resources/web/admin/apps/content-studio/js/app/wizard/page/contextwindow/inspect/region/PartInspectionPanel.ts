@@ -46,9 +46,13 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
         var descriptorsRequest = new GetPartDescriptorsByApplicationsRequest(liveEditModel.getSiteModel().getApplicationKeys());
         var loader = new PartDescriptorLoader(descriptorsRequest);
         loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
-        this.partSelector = new PartDescriptorDropdown("", {loader: loader});
+        this.partSelector = new PartDescriptorDropdown("", loader);
         this.partForm = new DescriptorBasedDropdownForm(this.partSelector, "Part");
         loader.load();
+
+        liveEditModel.getSiteModel().onApplicationUnavailable(() => {
+            this.partSelector.hideDropdown();
+        });
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
 

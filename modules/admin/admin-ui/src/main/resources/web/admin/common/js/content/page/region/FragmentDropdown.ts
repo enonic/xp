@@ -8,34 +8,19 @@ module api.content.page.region {
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryLoader = api.content.ContentSummaryLoader;
 
-    export interface FragmentDropdownConfig {
-        loader: ContentSummaryLoader
-    }
+    import RichDropdown = api.ui.selector.dropdown.RichDropdown;
 
-    export class FragmentDropdown extends Dropdown<ContentSummary> {
+    export class FragmentDropdown extends RichDropdown<ContentSummary> {
 
-        constructor(name: string, config: FragmentDropdownConfig) {
+        constructor(name: string, loader: ContentSummaryLoader) {
 
-            super(name, <DropdownConfig<ContentSummary>>{
+            super(name, loader, {
                 optionDisplayValueViewer: new ContentSummaryViewer(),
                 dataIdProperty: "value"
             });
-
-            config.loader.onLoadedData((event: LoadedDataEvent<ContentSummary>) => {
-
-                var fragments: ContentSummary[] = event.getData();
-                fragments.forEach((fragment: ContentSummary) => {
-                    this.addOption(this.newOption(fragment));
-                });
-            });
-
-            this.onExpanded(() => {
-                this.removeAllOptions();
-                config.loader.load();
-            });
         }
 
-        private newOption(fragment: ContentSummary): Option<ContentSummary> {
+        protected createOption(fragment: ContentSummary): Option<ContentSummary> {
             let indices: string[] = [];
             indices.push(fragment.getDisplayName());
             indices.push(fragment.getName().toString());
@@ -49,7 +34,7 @@ module api.content.page.region {
 
         addFragmentOption(fragment: ContentSummary) {
             if (fragment) {
-                this.addOption(this.newOption(fragment));
+                this.addOption(this.createOption(fragment));
             }
         }
 

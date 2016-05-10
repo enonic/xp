@@ -54,12 +54,12 @@ module api.ui.selector {
             return this.emptyDropdown.isVisible() || this.dropdownGrid.isVisible();
         }
 
-        setOptions(options: Option<OPTION_DISPLAY_VALUE>[], selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = []) {
+        setOptions(options: Option<OPTION_DISPLAY_VALUE>[], noOptionsText: string) {
 
             this.dropdownGrid.setOptions(options);
 
-            if (this.dropdownGrid.isVisible()) {
-                this.showDropdown([]);
+            if (this.isDropdownShown()) {
+                this.showDropdown(null, noOptionsText);
             }
         }
 
@@ -99,19 +99,20 @@ module api.ui.selector {
             this.dropdownGrid.setFilterArgs(args);
         }
 
-        showDropdown(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
+        showDropdown(selectedOptions?: Option<OPTION_DISPLAY_VALUE>[], noOptionsText?: string) {
 
             if (this.hasOptions()) {
                 this.emptyDropdown.hide();
                 this.dropdownGrid.show();
                 this.dropdownGrid.adjustGridHeight();
-                if (!!selectedOptions) {
-                    this.dropdownGrid.markSelections(selectedOptions.splice(1));
+                if (selectedOptions) {
+                    this.dropdownGrid.markSelections(selectedOptions);
+                    this.dropdownGrid.markReadOnly(selectedOptions);
                     this.navigateToRowIfNotActive(selectedOptions[0]);
                 }
             } else {
                 this.dropdownGrid.hide();
-                this.emptyDropdown.getEl().setInnerHtml("No matching items");
+                this.emptyDropdown.getEl().setInnerHtml(!!noOptionsText ? noOptionsText : "No matching items");
                 this.emptyDropdown.show();
             }
         }

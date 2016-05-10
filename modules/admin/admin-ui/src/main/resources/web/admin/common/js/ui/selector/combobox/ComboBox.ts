@@ -167,12 +167,7 @@ module api.ui.selector.combobox {
             this.doUpdateDropdownTopPositionAndWidth();
             this.notifyExpanded(true);
 
-            if (this.input.getValue() === "") {
-                this.comboBoxDropdown.showDropdown(this.getSelectedOptions(), this.noOptionsText);
-            }
-            else {
-                this.comboBoxDropdown.showDropdown(this.getSelectedOptions());
-            }
+            this.comboBoxDropdown.showDropdown(this.getSelectedOptions(), this.isInputEmpty() ? this.noOptionsText : null);
 
             this.dropdownHandle.down();
 
@@ -196,13 +191,12 @@ module api.ui.selector.combobox {
         }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[], saveSelection?: boolean) {
-            if (this.input.getValue() === "") {
-                this.comboBoxDropdown.setOptions(options, this.getSelectedOptions(), saveSelection, this.noOptionsText);
-            }
-            else {
-                this.comboBoxDropdown.setOptions(options, this.getSelectedOptions(), saveSelection);
-            }
+            this.comboBoxDropdown.setOptions(options, this.isInputEmpty() ? this.noOptionsText : null, this.getSelectedOptions(),
+                saveSelection);
+        }
 
+        private isInputEmpty(): boolean {
+            return this.input.getValue() === "";
         }
 
         addOption(option: Option<OPTION_DISPLAY_VALUE>) {
