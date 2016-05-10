@@ -9,8 +9,9 @@ import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 
+//TODOGRI
 @Component(service = Filter.class,
-    property = {"osgi.http.whiteboard.filter.pattern=/admin", "service.ranking:Integer=50",
+    property = {"osgi.http.whiteboard.filter.pattern=/tobedeleted", "service.ranking:Integer=50",
         "osgi.http.whiteboard.filter.dispatcher=FORWARD", "osgi.http.whiteboard.filter.dispatcher=REQUEST"})
 public class SimpleAuthFilter
     extends OncePerRequestFilter

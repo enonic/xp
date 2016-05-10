@@ -14,6 +14,7 @@ include 'core:core-media'
 include 'core:core-app'
 include 'core:core-service'
 include 'core:core-blobstore'
+include 'core:core-auth'
 
 include 'server:server-shell'
 include 'server:server-status'
@@ -68,6 +69,8 @@ include 'launcher:launcher-ui'
 include 'launcher:launcher-main'
 
 include 'blobstore:blobstore-file'
+
+include 'app:simpleauth'
 
 include 'distro'
 include 'docs'

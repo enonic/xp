@@ -89,7 +89,7 @@ public abstract class AbstractUrlHandler
     }
 
     @Override
-    public final void initialize( final BeanContext context )
+    public void initialize( final BeanContext context )
     {
         this.request = PortalRequestAccessor.get();
         this.urlService = context.getService( PortalUrlService.class ).get();

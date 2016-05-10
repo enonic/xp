@@ -3,10 +3,12 @@ package com.enonic.xp.core.impl.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.CreateUserStoreParams;
@@ -112,6 +114,10 @@ final class SecurityInitializer
     {
         LOG.info( "Initializing user store [" + UserStoreKey.system() + "]" );
 
+        final AuthConfig authConfig = AuthConfig.create().
+            applicationKey( ApplicationKey.from( "com.enonic.xp.simpleauth" ) ).
+            build();
+
         final UserStoreAccessControlList permissions =
             UserStoreAccessControlList.of( UserStoreAccessControlEntry.create().principal( RoleKeys.ADMIN ).access( ADMINISTRATOR ).build(),
                                            UserStoreAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access(
@@ -120,6 +126,7 @@ final class SecurityInitializer
         final CreateUserStoreParams createParams = CreateUserStoreParams.create().
             key( UserStoreKey.system() ).
             displayName( SYSTEM_USER_STORE_DISPLAY_NAME ).
+            authConfig( authConfig ).
             permissions( permissions ).
             build();
         this.securityService.createUserStore( createParams );

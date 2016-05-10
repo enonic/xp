@@ -60,6 +60,8 @@ public final class ApplicationResource
 
     private MarketService marketService;
 
+    private AuthDescriptorService authDescriptorService;
+
     private final static String[] ALLOWED_PROTOCOLS = {"http", "https"};
 
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
@@ -92,8 +94,11 @@ public final class ApplicationResource
             final ApplicationKey applicationKey = application.getKey();
             if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( applicationKey ) )//Remove after 7.0.0 refactoring
             {
-                json.add( application, this.applicationService.isLocalApplication( applicationKey ),
-                          this.siteService.getDescriptor( applicationKey ) );
+                final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( application.getKey() );
+                final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( application.getKey() );
+                final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
+
+                json.add( application, localApplication, siteDescriptor, authDescriptor );
             }
         }
 
@@ -113,7 +118,8 @@ public final class ApplicationResource
 
         final boolean local = this.applicationService.isLocalApplication( appKey );
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( appKey );
-        return new ApplicationJson( application, local, siteDescriptor );
+        final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( appKey );
+        return new ApplicationJson( application, local, siteDescriptor, authDescriptor );
     }
 
     @POST
@@ -281,6 +287,12 @@ public final class ApplicationResource
     public void setMarketService( final MarketService marketService )
     {
         this.marketService = marketService;
+    }
+
+    @Reference
+    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
+    {
+        this.authDescriptorService = authDescriptorService;
     }
 }
 

@@ -26,7 +26,7 @@ public class PortalForwardHandlerTest
         this.servlet = new PortalForwardHandler();
     }
 
-    @Test
+    @Test //TODOGRI
     public void forward_forbidden()
         throws Exception
     {
