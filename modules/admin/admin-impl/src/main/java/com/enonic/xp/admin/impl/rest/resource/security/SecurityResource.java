@@ -44,8 +44,13 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateUserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UserJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UserStoresJson;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.auth.AuthDescriptor;
+import com.enonic.xp.auth.AuthDescriptorMode;
+import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
+import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
@@ -78,6 +83,8 @@ public final class SecurityResource
     implements JaxRsComponent
 {
     private SecurityService securityService;
+
+    private AuthDescriptorService authDescriptorService;
 
     @GET
     @Path("userstore/list")

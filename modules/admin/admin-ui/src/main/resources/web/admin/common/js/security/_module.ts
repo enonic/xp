@@ -46,3 +46,6 @@
 ///<reference path="UserItemCreatedEvent.ts"/>
 ///<reference path="UserItemUpdatedEvent.ts"/>
 ///<reference path="UserItemDeletedEvent.ts"/>
+///<reference path="AuthConfig.ts"/>
+///<reference path="AuthConfigJson.ts"/>
+///<reference path="IdProviderMode.ts"/>

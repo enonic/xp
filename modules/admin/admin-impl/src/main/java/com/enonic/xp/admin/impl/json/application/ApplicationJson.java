@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.app.Application;
+import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.SiteDescriptor;
 

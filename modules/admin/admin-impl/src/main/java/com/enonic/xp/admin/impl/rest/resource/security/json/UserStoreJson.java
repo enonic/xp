@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.security.json;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enonic.xp.auth.AuthDescriptorMode;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.UserStore;
