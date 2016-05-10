@@ -1,9 +1,9 @@
-module api.form.json{
+module api.form.json {
 
-    export class FieldSetJson extends LayoutJson {
+    export interface FieldSetJson extends LayoutJson {
 
-        items:LayoutTypeWrapperJson[];
+        items: LayoutTypeWrapperJson[];
 
-        label:string;
+        label: string;
     }
 }

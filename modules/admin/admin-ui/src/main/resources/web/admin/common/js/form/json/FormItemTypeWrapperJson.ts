@@ -1,11 +1,11 @@
-module api.form.json{
+module api.form.json {
 
     export interface FormItemTypeWrapperJson {
 
-        Input?:InputJson;
+        Input?: InputJson;
 
-        FormItemSet?:FormItemSetJson;
+        FormItemSet?: FormItemSetJson;
 
-        FieldSet?:FieldSetJson;
+        FieldSet?: FieldSetJson;
     }
 }
