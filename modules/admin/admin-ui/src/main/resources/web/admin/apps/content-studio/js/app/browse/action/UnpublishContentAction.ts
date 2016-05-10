@@ -10,6 +10,7 @@ export class UnpublishContentAction extends Action {
         super("Unpublish");
 
         this.setVisible(false);
+        this.setEnabled(false);
 
         this.onExecuted(() => {
             var contents: api.content.ContentSummaryAndCompareStatus[]
