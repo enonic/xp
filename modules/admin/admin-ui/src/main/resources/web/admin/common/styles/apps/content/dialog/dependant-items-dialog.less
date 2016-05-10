@@ -122,13 +122,27 @@
             }
           }
 
-          &.invalid .wrapper {
-            &:before {
-              content: "!";
-              background: #cb0300;
-              color: #ffffff;
-              top: 2px;
-              left: 30px;
+          &.invalid {
+            cursor: pointer;
+
+            .names-and-icon-view {
+              cursor: pointer;
+
+              .wrapper:before {
+                content: "!";
+                background: #cb0300;
+                color: #ffffff;
+                top: 2px;
+                left: 30px;
+              }
+
+              .main-name, .sub-name {
+                cursor: pointer;
+              }
+            }
+
+            &:hover {
+              background-color: #eeeeee;
             }
           }
 

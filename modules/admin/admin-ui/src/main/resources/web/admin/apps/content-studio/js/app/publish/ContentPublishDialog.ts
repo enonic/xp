@@ -321,6 +321,7 @@ export class PublishDialogDependantList extends DialogDependantList {
 
         if (!isContentSummaryValid(item)) {
             view.addClass("invalid");
+            view.getEl().setTitle("Edit invalid content");
         }
 
         return view;
