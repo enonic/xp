@@ -15,9 +15,8 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.portal.PortalException;
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.PortalWebRequest;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.resource.Resource;
@@ -27,16 +26,18 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.handler.WebException;
+import com.enonic.xp.web.handler.WebResponse;
 
 import static org.junit.Assert.*;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.Mockito.when;
 
-public class ExceptionRendererImplTest
+public class WebExceptionRendererImplTest
 {
-    private ExceptionRendererImpl renderer;
+    private WebExceptionRendererImpl renderer;
 
-    private PortalRequest request;
+    private PortalWebRequest request;
 
     private ResourceService resourceService;
 
@@ -51,17 +52,17 @@ public class ExceptionRendererImplTest
         this.contentService = Mockito.mock( ContentService.class );
         this.errorHandlerScriptFactory = Mockito.mock( ErrorHandlerScriptFactory.class );
 
-        this.renderer = new ExceptionRendererImpl();
+        this.renderer = new WebExceptionRendererImpl();
         this.renderer.setResourceService( resourceService );
         this.renderer.setContentService( contentService );
         this.renderer.setErrorHandlerScriptFactory( errorHandlerScriptFactory );
-        this.request = new PortalRequest();
+        this.request = PortalWebRequest.create().build();
     }
 
     @Test
     public void render_json()
     {
-        final PortalResponse res = this.renderer.render( this.request, new PortalException( HttpStatus.NOT_FOUND, "Custom message" ) );
+        final WebResponse res = this.renderer.render( this.request, new WebException( HttpStatus.NOT_FOUND, "Custom message" ) );
         assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
         assertEquals( MediaType.JSON_UTF_8.withoutParameters(), res.getContentType() );
 
@@ -74,7 +75,7 @@ public class ExceptionRendererImplTest
     {
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
 
-        final PortalResponse res = this.renderer.render( this.request, new PortalException( HttpStatus.NOT_FOUND, "Custom message" ) );
+        final WebResponse res = this.renderer.render( this.request, new WebException( HttpStatus.NOT_FOUND, "Custom message" ) );
         assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
         assertEquals( MediaType.HTML_UTF_8.withoutParameters(), res.getContentType() );
 
@@ -83,14 +84,14 @@ public class ExceptionRendererImplTest
         assertTrue( body.contains( "Custom message" ) );
 
         // Should not show exception
-        assertTrue( body.contains( ExceptionRendererImplTest.class.getName() ) );
+        assertTrue( body.contains( WebExceptionRendererImplTest.class.getName() ) );
     }
 
     @Test
     public void render_json_withCause()
     {
         final RuntimeException cause = new RuntimeException( "Custom message" );
-        final PortalResponse res = this.renderer.render( this.request, new PortalException( HttpStatus.BAD_REQUEST, cause ) );
+        final WebResponse res = this.renderer.render( this.request, new WebException( HttpStatus.BAD_REQUEST, cause ) );
         assertEquals( HttpStatus.BAD_REQUEST, res.getStatus() );
         assertEquals( MediaType.JSON_UTF_8.withoutParameters(), res.getContentType() );
         MediaType.create( "", "" );
@@ -105,7 +106,7 @@ public class ExceptionRendererImplTest
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
 
         final RuntimeException cause = new RuntimeException( "Custom message" );
-        final PortalResponse res = this.renderer.render( this.request, new PortalException( HttpStatus.BAD_REQUEST, cause ) );
+        final WebResponse res = this.renderer.render( this.request, new WebException( HttpStatus.BAD_REQUEST, cause ) );
         assertEquals( HttpStatus.BAD_REQUEST, res.getStatus() );
         assertEquals( MediaType.HTML_UTF_8.withoutParameters(), res.getContentType() );
 
@@ -122,7 +123,9 @@ public class ExceptionRendererImplTest
     {
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
         final Site site = newSite();
-        this.request.setSite( site );
+        this.request = PortalWebRequest.create( this.request ).
+            site( site ).
+            build();
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
         final ErrorHandlerScript errorHandlerScript =
             ( portalError ) -> PortalResponse.create().body( "Custom message page" ).status( HttpStatus.BAD_REQUEST ).build();
@@ -133,7 +136,7 @@ public class ExceptionRendererImplTest
         when( this.resourceService.getResource( errorResource ) ).thenReturn( resource );
 
         final RuntimeException cause = new RuntimeException( "Custom message" );
-        final PortalResponse res = this.renderer.render( this.request, new PortalException( HttpStatus.BAD_REQUEST, cause ) );
+        final WebResponse res = this.renderer.render( this.request, new WebException( HttpStatus.BAD_REQUEST, cause ) );
 
         assertEquals( HttpStatus.BAD_REQUEST, res.getStatus() );
         assertEquals( "Custom message page", res.getBody().toString() );
@@ -143,8 +146,9 @@ public class ExceptionRendererImplTest
     public void render_custom_error_for_404_in_site_path()
     {
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
-        this.request.setContentPath( ContentPath.from( "/mysite/some/long/path" ) );
-
+        this.request = PortalWebRequest.create( this.request ).
+            contentPath( ContentPath.from( "/mysite/some/long/path" ) ).
+            build();
         final Site site = newSite();
         when( contentService.getByPath( ContentPath.from( "/mysite" ) ) ).thenReturn( site );
         when( contentService.getByPath( not( Matchers.eq( ContentPath.from( "/mysite" ) ) ) ) ).thenThrow(
@@ -160,7 +164,7 @@ public class ExceptionRendererImplTest
         when( this.resourceService.getResource( errorResource ) ).thenReturn( resource );
 
         final RuntimeException cause = new RuntimeException( "Custom message" );
-        final PortalResponse res = this.renderer.render( this.request, new PortalException( HttpStatus.NOT_FOUND, cause ) );
+        final WebResponse res = this.renderer.render( this.request, new WebException( HttpStatus.NOT_FOUND, cause ) );
 
         assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
         assertEquals( "Custom message page", res.getBody().toString() );
@@ -171,7 +175,9 @@ public class ExceptionRendererImplTest
     {
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
         final Site site = newSite();
-        this.request.setSite( site );
+        this.request = PortalWebRequest.create( this.request ).
+            site( site ).
+            build();
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
         final ErrorHandlerScript errorHandlerScript = ( portalError ) -> {
             throw new RuntimeException( "Something went wrong in the handler script" );
@@ -183,7 +189,7 @@ public class ExceptionRendererImplTest
         when( this.resourceService.getResource( errorResource ) ).thenReturn( resource );
 
         final RuntimeException cause = new RuntimeException( "Custom message" );
-        final PortalResponse res = this.renderer.render( this.request, new PortalException( HttpStatus.BAD_REQUEST, cause ) );
+        final WebResponse res = this.renderer.render( this.request, new WebException( HttpStatus.BAD_REQUEST, cause ) );
 
         final String body = res.getBody().toString();
         assertTrue( body.contains( "400 Bad Request" ) );

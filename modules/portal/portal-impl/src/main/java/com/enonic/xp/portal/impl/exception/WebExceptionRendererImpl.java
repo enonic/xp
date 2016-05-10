@@ -86,7 +86,7 @@ public final class WebExceptionRendererImpl
             PortalWebRequest errorPortalWebRequest = PortalWebRequest.create( req ).
                 site( site ).
                 build();
-            final PortalRequest portalRequest = convertToPortalRequest( errorPortalWebRequest );
+            final PortalRequest portalRequest = PortalWebRequest.convertToPortalRequest( errorPortalWebRequest );
 
             final PortalError portalError = PortalError.create().
                 status( cause.getStatus() ).
@@ -100,7 +100,7 @@ public final class WebExceptionRendererImpl
                 final PortalResponse response = renderApplicationCustomError( siteConfig.getApplicationKey(), portalError );
                 if ( response != null )
                 {
-                    return convertToPortalWebResponse( response );
+                    return PortalWebResponse.convertToPortalWebResponse( response );
                 }
             }
         }
@@ -171,7 +171,7 @@ public final class WebExceptionRendererImpl
         final ExceptionInfo info = toErrorInfo( cause );
         logIfNeeded( info );
         final PortalResponse portalResponse = info.toResponse( req );
-        return convertToPortalWebResponse( portalResponse );
+        return PortalWebResponse.convertToPortalWebResponse( portalResponse );
     }
 
     private ExceptionInfo toErrorInfo( final WebException cause )
@@ -187,57 +187,6 @@ public final class WebExceptionRendererImpl
         {
             LOG.error( info.getMessage(), info.getCause() );
         }
-    }
-
-
-    //TODO Temporary fix until renaming of PortalWebRequest to PortalRequest
-    @Deprecated
-    protected PortalRequest convertToPortalRequest( PortalWebRequest portalWebRequest )
-    {
-        final PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setMethod( portalWebRequest.getMethod() );
-        portalRequest.getParams().putAll( portalWebRequest.getParams() );
-        portalRequest.getHeaders().putAll( portalWebRequest.getHeaders() );
-        portalRequest.getCookies().putAll( portalWebRequest.getCookies() );
-        portalRequest.setScheme( portalWebRequest.getScheme() );
-        portalRequest.setHost( portalWebRequest.getHost() );
-        portalRequest.setPort( portalWebRequest.getPort() );
-        portalRequest.setPath( portalWebRequest.getPath() );
-        portalRequest.setUrl( portalWebRequest.getUrl() );
-        portalRequest.setMode( portalWebRequest.getMode() );
-        portalRequest.setBranch( portalWebRequest.getBranch() );
-        portalRequest.setContentPath( portalWebRequest.getContentPath() );
-        portalRequest.setBaseUri( portalWebRequest.getBaseUri() );
-        portalRequest.setSite( portalWebRequest.getSite() );
-        portalRequest.setContent( portalWebRequest.getContent() );
-        portalRequest.setPageTemplate( portalWebRequest.getPageTemplate() );
-        portalRequest.setComponent( portalWebRequest.getComponent() );
-        portalRequest.setApplicationKey( portalWebRequest.getApplicationKey() );
-        portalRequest.setPageDescriptor( portalWebRequest.getPageDescriptor() );
-        portalRequest.setControllerScript( portalWebRequest.getControllerScript() );
-        portalRequest.setEndpointPath( portalWebRequest.getEndpointPath() );
-        portalRequest.setContentType( portalWebRequest.getContentType() );
-        portalRequest.setBody( portalWebRequest.getBody() );
-        portalRequest.setRawRequest( portalWebRequest.getRawRequest() );
-        portalRequest.setWebSocket( portalWebRequest.isWebSocket() );
-        return portalRequest;
-    }
-
-    //TODO Temporary fix until renaming of PortalWebResponse to PortalResponse
-    @Deprecated
-    protected PortalWebResponse convertToPortalWebResponse( final PortalResponse portalResponse )
-    {
-        final PortalWebResponse portalWebResponse = new PortalWebResponse();
-        portalWebResponse.setStatus( portalResponse.getStatus() );
-        portalWebResponse.setContentType( portalResponse.getContentType() );
-        portalWebResponse.getHeaders().putAll( portalResponse.getHeaders() );
-        portalWebResponse.getCookies().addAll( portalResponse.getCookies() );
-        portalWebResponse.setWebSocketConfig( portalResponse.getWebSocket() );
-        portalWebResponse.setBody( portalResponse.getBody() );
-        portalWebResponse.setPostProcess( portalResponse.isPostProcess() );
-        portalWebResponse.setContributions( portalResponse.getContributions() );
-        portalWebResponse.setApplyFilters( portalResponse.applyFilters() );
-        return portalWebResponse;
     }
 
     @Reference

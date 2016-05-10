@@ -47,4 +47,21 @@ public final class PortalWebResponse
     {
         this.applyFilters = applyFilters;
     }
+
+    //TODO Temporary fix until renaming of PortalWebResponse to PortalResponse
+    @Deprecated
+    public static PortalWebResponse convertToPortalWebResponse( final PortalResponse portalResponse )
+    {
+        final PortalWebResponse portalWebResponse = new PortalWebResponse();
+        portalWebResponse.setStatus( portalResponse.getStatus() );
+        portalWebResponse.setContentType( portalResponse.getContentType() );
+        portalWebResponse.getHeaders().putAll( portalResponse.getHeaders() );
+        portalWebResponse.getCookies().addAll( portalResponse.getCookies() );
+        portalWebResponse.setWebSocketConfig( portalResponse.getWebSocket() );
+        portalWebResponse.setBody( portalResponse.getBody() );
+        portalWebResponse.setPostProcess( portalResponse.isPostProcess() );
+        portalWebResponse.setContributions( portalResponse.getContributions() );
+        portalWebResponse.setApplyFilters( portalResponse.applyFilters() );
+        return portalWebResponse;
+    }
 }

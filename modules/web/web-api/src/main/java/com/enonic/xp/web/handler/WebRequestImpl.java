@@ -35,9 +35,9 @@ public class WebRequestImpl
 
     private final String endpointPath;
 
-    private final ImmutableMap<String, String> headers;
+    private final Map<String, String> headers;
 
-    private final ImmutableMap<String, String> cookies;
+    private final Map<String, String> cookies;
 
     private final Object body;
 
@@ -57,8 +57,8 @@ public class WebRequestImpl
         params = builder.params;
         url = builder.url;
         endpointPath = builder.endpointPath;
-        headers = ImmutableMap.copyOf( builder.headers );
-        cookies = ImmutableMap.copyOf( builder.cookies );
+        headers = builder.headers;
+        cookies = builder.cookies;
         body = builder.body;
         rawRequest = builder.rawRequest;
         contentType = builder.contentType;
@@ -227,6 +227,7 @@ public class WebRequestImpl
             params = webRequest.getParams();
             url = webRequest.getUrl();
             endpointPath = webRequest.getEndpointPath();
+            headers = webRequest.getHeaders();
             cookies = webRequest.getCookies();
             body = webRequest.getBody();
             rawRequest = webRequest.getRawRequest();

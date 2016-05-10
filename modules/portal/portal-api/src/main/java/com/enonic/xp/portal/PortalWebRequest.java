@@ -251,4 +251,37 @@ public final class PortalWebRequest
             return new PortalWebRequest( this );
         }
     }
+
+    //TODO Temporary fix until renaming of PortalWebRequest to PortalRequest
+    @Deprecated
+    public static PortalRequest convertToPortalRequest( PortalWebRequest portalWebRequest )
+    {
+        final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMethod( portalWebRequest.getMethod() );
+        portalRequest.getParams().putAll( portalWebRequest.getParams() );
+        portalRequest.getHeaders().putAll( portalWebRequest.getHeaders() );
+        portalRequest.getCookies().putAll( portalWebRequest.getCookies() );
+        portalRequest.setScheme( portalWebRequest.getScheme() );
+        portalRequest.setHost( portalWebRequest.getHost() );
+        portalRequest.setPort( portalWebRequest.getPort() );
+        portalRequest.setPath( portalWebRequest.getPath() );
+        portalRequest.setUrl( portalWebRequest.getUrl() );
+        portalRequest.setMode( portalWebRequest.getMode() );
+        portalRequest.setBranch( portalWebRequest.getBranch() );
+        portalRequest.setContentPath( portalWebRequest.getContentPath() );
+        portalRequest.setBaseUri( portalWebRequest.getBaseUri() );
+        portalRequest.setSite( portalWebRequest.getSite() );
+        portalRequest.setContent( portalWebRequest.getContent() );
+        portalRequest.setPageTemplate( portalWebRequest.getPageTemplate() );
+        portalRequest.setComponent( portalWebRequest.getComponent() );
+        portalRequest.setApplicationKey( portalWebRequest.getApplicationKey() );
+        portalRequest.setPageDescriptor( portalWebRequest.getPageDescriptor() );
+        portalRequest.setControllerScript( portalWebRequest.getControllerScript() );
+        portalRequest.setEndpointPath( portalWebRequest.getEndpointPath() );
+        portalRequest.setContentType( portalWebRequest.getContentType() );
+        portalRequest.setBody( portalWebRequest.getBody() );
+        portalRequest.setRawRequest( portalWebRequest.getRawRequest() );
+        portalRequest.setWebSocket( portalWebRequest.isWebSocket() );
+        return portalRequest;
+    }
 }
