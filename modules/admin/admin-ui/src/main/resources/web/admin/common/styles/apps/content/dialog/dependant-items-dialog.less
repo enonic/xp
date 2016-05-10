@@ -76,17 +76,23 @@
       display: none;
 
       .dependants-header {
-        margin: 20px 0;
+        margin: 20px 0 10px 0;
       }
 
       .dependant-list {
-        margin-top: 20px;
+        margin-top: 10px;
 
         &.contains-removable {
           padding-left: 25px;
           margin-left: 8px;
+
           .browse-selection-item {
             padding-left: 0px;
+
+            .dependant-item-viewer {
+              width: calc(~'100% - 80px');
+            }
+
             .names-and-icon-view .wrapper {
               margin-left: 10px;
             }
@@ -102,6 +108,8 @@
 
           .remove {
             height: 16px;
+          }
+          .remove, .status {
             display: none;
           }
 
@@ -109,7 +117,7 @@
 
             margin-left: -25px;
 
-            .remove {
+            .remove, .status {
               display: block;
             }
           }
@@ -124,8 +132,11 @@
             }
           }
 
-          .names-and-icon-view {
+          .dependant-item-viewer {
+            width: calc(~'100% - 20px');
+          }
 
+          .names-and-icon-view {
             .wrapper {
               margin: 0px;
               height: 16px;
