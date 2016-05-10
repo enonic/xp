@@ -13,13 +13,26 @@ public class PathMatchFunctionTest
 {
 
     @Test
-    public void create()
+    public void two_arguments()
         throws Exception
     {
         final String expected = load( "pathMatch.json" );
 
         final QueryBuilder query =
             PathMatchFunction.create( FunctionExpr.from( "pathMatch", ValueExpr.string( "myPath" ), ValueExpr.string( "/fisk" ) ) );
+
+        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+
+    }
+
+    @Test
+    public void with_minimum_should_match()
+        throws Exception
+    {
+        final String expected = load( "pathMatch_minimum_match.json" );
+
+        final QueryBuilder query = PathMatchFunction.create(
+            FunctionExpr.from( "pathMatch", ValueExpr.string( "myPath" ), ValueExpr.string( "/fisk" ), ValueExpr.number( 3 ) ) );
 
         Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
 

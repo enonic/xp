@@ -36,6 +36,34 @@ public class FindNodesByQueryCommandTest_func_pathMatch
         assertEquals( 1, result.getNodes().getSize() );
     }
 
+
+    @Test
+    public void matches_subPath_minimum_match()
+        throws Exception
+    {
+        final Node node1 = createNode( CreateNodeParams.create().
+            name( "node1" ).
+            setNodeId( NodeId.from( "node1" ) ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node node1_1 = createNode( CreateNodeParams.create().
+            name( "node1_1" ).
+            setNodeId( NodeId.from( "node1_1" ) ).
+            parent( node1.path() ).
+            build() );
+
+        final Node node1_1_1 = createNode( CreateNodeParams.create().
+            name( "node1_1_1" ).
+            setNodeId( NodeId.from( "node1_1_1" ) ).
+            parent( node1_1.path() ).
+            build() );
+
+        final FindNodesByQueryResult result = doQuery( "pathMatch('_path', '/node1/node1_1/node1_1_1', 2)" );
+
+        assertOrder( result, node1_1_1, node1_1 );
+    }
+
     @Test
     public void score_order_most_matching_first()
         throws Exception

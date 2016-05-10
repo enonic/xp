@@ -10,6 +10,7 @@ class PathMatchFunction
     public static QueryBuilder create( final FunctionExpr functionExpr )
     {
         final PathMatchFunctionArguments arguments = PathMatchFunctionArguments.create( functionExpr.getArguments() );
-        return new MatchQueryBuilder( arguments.getFieldName(), arguments.getPath() );
+        return new MatchQueryBuilder( arguments.getFieldName(), arguments.getPath() ).
+            minimumShouldMatch( arguments.getMinimumMatch() + "" );
     }
 }

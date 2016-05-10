@@ -13,6 +13,8 @@ public class PathMatchFunctionArguments
 
     private final String path;
 
+    private final int minimumMatch;
+
     @Override
     protected int getMinArguments()
     {
@@ -22,7 +24,7 @@ public class PathMatchFunctionArguments
     @Override
     protected int getMaxArguments()
     {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -31,10 +33,11 @@ public class PathMatchFunctionArguments
         return "pathMatch";
     }
 
-    private PathMatchFunctionArguments( final String fieldName, final String path )
+    private PathMatchFunctionArguments( final String fieldName, final String path, final int minimumMatch )
     {
         this.fieldName = fieldName;
         this.path = path;
+        this.minimumMatch = minimumMatch;
     }
 
     public static PathMatchFunctionArguments create( final List<ValueExpr> arguments )
@@ -43,7 +46,14 @@ public class PathMatchFunctionArguments
         final String fieldName = arguments.get( 0 ).getValue().asString();
         final String path = arguments.get( 1 ).getValue().asString();
 
-        return new PathMatchFunctionArguments( fieldName, path );
+        int minimumMatch = 1;
+
+        if ( arguments.size() > 2 )
+        {
+            minimumMatch = arguments.get( 2 ).getValue().asDouble().intValue();
+        }
+
+        return new PathMatchFunctionArguments( fieldName, path, minimumMatch );
     }
 
     public String getFieldName()
@@ -54,5 +64,10 @@ public class PathMatchFunctionArguments
     public String getPath()
     {
         return path;
+    }
+
+    public int getMinimumMatch()
+    {
+        return minimumMatch;
     }
 }
