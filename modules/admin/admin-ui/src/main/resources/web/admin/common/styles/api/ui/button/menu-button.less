@@ -16,13 +16,21 @@
   .dropdown-handle {
     left: 0;
     width: 40px;
-    background: @form-button-bg;
+    background-color: @admin-green;
+
     &:after {
       margin-left: -6px;
       border-top: 10px solid @admin-white;
     }
-    &.disabled {
-      background: @form-button-bg-disabled;
+
+    &:hover {
+      background-color: lighten(@admin-green, 30%);
+      span {
+        color: @admin-white;
+      }
+    }
+    &.disabled, &.disabled:hover {
+      background-color: @form-button-bg-disabled;
     }
   }
 
@@ -32,18 +40,18 @@
     border: none;
     min-width: 126px;
     margin-left: 42px;
-    background: @admin-green;
+    background-color: @admin-green;
     text-align: center;
     span {
       color: @admin-white;
     }
 
     &:disabled {
-      background: @form-button-bg;
+      background-color: @form-button-bg;
     }
 
     &:not(:disabled):hover {
-      background: lighten(@admin-green, 30%);
+      background-color: lighten(@admin-green, 30%);
       span {
         color: @admin-white;
       }

@@ -129,14 +129,13 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.DUPLICATE_CONTENT.setEnabled(true);
             this.MOVE_CONTENT.setEnabled(true);
 
+            let publishEnabled = !this.isOnline(contentBrowseItems[0].getModel().getCompareStatus());
             let isPublished = this.isPublished(contentBrowseItems[0].getModel().getCompareStatus());
 
             if (this.isEveryLeaf(contentSummaries)) {
-                publishEnabled = !isPublished;
                 treePublishEnabled = false;
                 unpublishEnabled = isPublished;
             } else if (this.isOneNonLeaf(contentSummaries)) {
-                // publishEnabled = true;
                 // treePublishEnabled = true;
                 unpublishEnabled = isPublished;
             }
@@ -177,20 +176,20 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             });
 
             if (this.isEveryLeaf(contentSummaries)) {
-                publishEnabled = anyUnpublished;
+                //publishEnabled = anyUnpublished;
                 treePublishEnabled = false;
                 unpublishEnabled = anyPublished;
             } else if (this.isOneNonLeaf(contentSummaries)) {
                 // publishEnabled = true;
                 // treePublishEnabled = true;
                 unpublishEnabled = anyPublished;
-            } else if (this.isOneNonLeafInMany(contentSummaries)) {
+            } else if (this.isNonLeafInMany(contentSummaries)) {
                 // publishEnabled = true;
                 // treePublishEnabled = true;
                 // unpublishEnabled = true;
             }
 
-            this.PUBLISH_CONTENT.setEnabled(publishEnabled);
+            this.PUBLISH_CONTENT.setEnabled(anyUnpublished);
             this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
             this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
 
@@ -210,19 +209,23 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     private isEveryLeaf(contentSummaries: ContentSummary[]): boolean {
-        return contentSummaries.every((obj: ContentSummary) => obj.hasParent());
+        return contentSummaries.every((obj: ContentSummary) => !obj.hasChildren());
     }
 
     private isOneNonLeaf(contentSummaries: ContentSummary[]): boolean {
-        return contentSummaries.length === 1 && !contentSummaries[0].hasParent();
+        return contentSummaries.length === 1 && contentSummaries[0].hasChildren();
     }
 
-    private isOneNonLeafInMany(contentSummaries: ContentSummary[]): boolean {
-        return contentSummaries.length > 1 && contentSummaries.some((obj: ContentSummary) => !obj.hasParent());
+    private isNonLeafInMany(contentSummaries: ContentSummary[]): boolean {
+        return contentSummaries.length > 1 && contentSummaries.some((obj: ContentSummary) => obj.hasChildren());
     }
 
     private isPublished(status: api.content.CompareStatus): boolean {
         return status != api.content.CompareStatus.NEW && status != api.content.CompareStatus.UNKNOWN;
+    }
+
+    private isOnline(status: api.content.CompareStatus): boolean {
+        return status == api.content.CompareStatus.EQUAL;
     }
 
     private updateActionsEnabledStateByPermissions(contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {
