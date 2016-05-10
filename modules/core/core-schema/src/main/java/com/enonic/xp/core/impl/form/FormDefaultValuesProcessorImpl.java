@@ -1,7 +1,8 @@
-package com.enonic.xp.core.impl.content;
+package com.enonic.xp.core.impl.form;
 
 import java.util.stream.StreamSupport;
 
+import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +11,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypes;
@@ -18,20 +20,18 @@ import static com.enonic.xp.form.FormItemType.FORM_ITEM_SET;
 import static com.enonic.xp.form.FormItemType.INPUT;
 import static com.enonic.xp.form.FormItemType.LAYOUT;
 
-public final class FormDefaultValuesProcessor
+@Component(immediate = true)
+public final class FormDefaultValuesProcessorImpl
+    implements FormDefaultValuesProcessor
 {
-    private final static Logger LOG = LoggerFactory.getLogger( CreateContentCommand.class );
+    private final static Logger LOG = LoggerFactory.getLogger( FormDefaultValuesProcessorImpl.class );
 
-    private FormDefaultValuesProcessor()
-    {
-    }
-
-    public static void process( final Form form, final PropertyTree data )
+    public void setDefaultValues( final Form form, final PropertyTree data )
     {
         processFormItems( form.getFormItems(), data, PropertyPath.from( "" ) );
     }
 
-    private static void processFormItems( final Iterable<FormItem> formItems, final PropertyTree data, final PropertyPath parentPath )
+    private void processFormItems( final Iterable<FormItem> formItems, final PropertyTree data, final PropertyPath parentPath )
     {
         StreamSupport.stream( formItems.spliterator(), false ).forEach( formItem -> {
             if ( formItem.getType() == INPUT )

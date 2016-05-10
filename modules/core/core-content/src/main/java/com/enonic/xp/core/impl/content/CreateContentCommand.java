@@ -27,6 +27,7 @@ import com.enonic.xp.core.impl.content.processor.ProcessCreateResult;
 import com.enonic.xp.core.impl.content.validate.DataValidationError;
 import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
+import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.name.NamePrettyfier;
@@ -50,11 +51,14 @@ final class CreateContentCommand
 
     private final MediaInfo mediaInfo;
 
+    private final FormDefaultValuesProcessor formDefaultValuesProcessor;
+
     private CreateContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfo = builder.mediaInfo;
+        this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
     }
 
     Content execute()
@@ -67,7 +71,7 @@ final class CreateContentCommand
         validateBlockingChecks();
 
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
-        FormDefaultValuesProcessor.process( contentType.getForm(), params.getData() );
+        formDefaultValuesProcessor.setDefaultValues( contentType.getForm(), params.getData() );
         // TODO apply default values to xData
 
         CreateContentParams processedParams = processCreateContentParams();
@@ -379,6 +383,8 @@ final class CreateContentCommand
 
         private MediaInfo mediaInfo;
 
+        private FormDefaultValuesProcessor formDefaultValuesProcessor;
+
         private Builder()
         {
         }
@@ -400,11 +406,18 @@ final class CreateContentCommand
             return this;
         }
 
+        Builder formDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
+        {
+            this.formDefaultValuesProcessor = formDefaultValuesProcessor;
+            return this;
+        }
+
         @Override
         void validate()
         {
             super.validate();
             Preconditions.checkNotNull( params, "params must be given" );
+            Preconditions.checkNotNull( formDefaultValuesProcessor );
         }
 
         public CreateContentCommand build()

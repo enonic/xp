@@ -7,6 +7,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.page.CreatePageParams;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
@@ -27,7 +28,8 @@ final class CreatePageCommand
         params = builder.params;
         contentService = builder.contentService;
         defaultValuesProcessor =
-            new PageDefaultValuesProcessor( builder.pageDescriptorService, builder.partDescriptorService, builder.layoutDescriptorService );
+            new PageDefaultValuesProcessor( builder.pageDescriptorService, builder.partDescriptorService, builder.layoutDescriptorService,
+                                            builder.formDefaultValuesProcessor );
     }
 
     public static Builder create()
@@ -76,6 +78,8 @@ final class CreatePageCommand
 
         private LayoutDescriptorService layoutDescriptorService;
 
+        private FormDefaultValuesProcessor formDefaultValuesProcessor;
+
         private Builder()
         {
         }
@@ -110,12 +114,19 @@ final class CreatePageCommand
             return this;
         }
 
+        public Builder formDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
+        {
+            this.formDefaultValuesProcessor = formDefaultValuesProcessor;
+            return this;
+        }
+
         private void validate()
         {
             Preconditions.checkNotNull( contentService );
             Preconditions.checkNotNull( pageDescriptorService );
             Preconditions.checkNotNull( partDescriptorService );
             Preconditions.checkNotNull( layoutDescriptorService );
+            Preconditions.checkNotNull( formDefaultValuesProcessor );
             Preconditions.checkNotNull( params );
         }
 

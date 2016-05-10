@@ -6,6 +6,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.page.CreatePageParams;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageService;
@@ -25,6 +26,8 @@ public final class PageServiceImpl
 
     private LayoutDescriptorService layoutDescriptorService;
 
+    private FormDefaultValuesProcessor formDefaultValuesProcessor;
+
     @Override
     public Content create( final CreatePageParams params )
     {
@@ -33,6 +36,7 @@ public final class PageServiceImpl
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             params( params ).
             build().
             execute();
@@ -46,6 +50,7 @@ public final class PageServiceImpl
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             params( params ).
             build().
             execute();
@@ -83,5 +88,11 @@ public final class PageServiceImpl
     public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
     {
         this.layoutDescriptorService = layoutDescriptorService;
+    }
+
+    @Reference
+    public void setFormDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
+    {
+        this.formDefaultValuesProcessor = formDefaultValuesProcessor;
     }
 }

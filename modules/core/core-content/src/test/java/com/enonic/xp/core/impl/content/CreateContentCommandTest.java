@@ -19,11 +19,7 @@ import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.form.Input;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.inputtype.InputTypeDefault;
-import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -137,95 +133,6 @@ public class CreateContentCommandTest
         final Content createdContent = command.execute();
         assertTrue( createdContent.getName().isUnnamed() );
         assertEquals( "", createdContent.getDisplayName() );
-    }
-
-    private void defaultValue_string( final InputTypeName inputTypeName )
-    {
-        final CreateContentParams params = createContentParams().name( ContentName.from( "name" ) ).displayName( "" ).build();
-        final CreateContentCommand command = createContentCommand( params );
-
-        Input input = Input.create().
-            name( "testInput" ).
-            label( "testInput" ).
-            inputTypeProperty( InputTypeProperty.create( "one", "one" ).build() ).
-            inputTypeProperty( InputTypeProperty.create( "two", "two" ).build() ).
-            inputTypeProperty( InputTypeProperty.create( "three", "three" ).build() ).
-            inputType( inputTypeName ).
-            defaultValue( InputTypeDefault.create().property( InputTypeProperty.create( "default", "two" ).build() ).build() ).
-            build();
-
-        final ContentType contentType = ContentType.create().
-            superType( ContentTypeName.documentMedia() ).
-            name( ContentTypeName.dataMedia() ).
-            addFormItem( input ).
-            build();
-
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
-
-        final Content createdContent = command.execute();
-        assertTrue( createdContent.getData().getString( "testInput" ).equals( "two" ) );
-    }
-
-    @Test
-    public void defaultValue_combobox()
-    {
-        this.defaultValue_string( InputTypeName.COMBO_BOX );
-    }
-
-    @Test
-    public void defaultValue_radio()
-    {
-        this.defaultValue_string( InputTypeName.RADIO_BUTTON );
-    }
-
-    @Test
-    public void defaultValue_checkbox()
-    {
-        final CreateContentParams params = createContentParams().name( ContentName.from( "name" ) ).displayName( "" ).build();
-        final CreateContentCommand command = createContentCommand( params );
-
-        Input input = Input.create().
-            name( "testInput" ).
-            label( "testInput" ).
-            inputType( InputTypeName.CHECK_BOX ).
-            defaultValue( InputTypeDefault.create().property( InputTypeProperty.create( "default", "checked" ).build() ).build() ).
-            build();
-
-        final ContentType contentType = ContentType.create().
-            superType( ContentTypeName.documentMedia() ).
-            name( ContentTypeName.dataMedia() ).
-            addFormItem( input ).
-            build();
-
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
-
-        final Content createdContent = command.execute();
-        assertTrue( createdContent.getData().getString( "testInput" ).equals( "true" ) );
-    }
-
-    @Test
-    public void defaultValue_checkbox_invalid()
-    {
-        final CreateContentParams params = createContentParams().name( ContentName.from( "name" ) ).displayName( "" ).build();
-        final CreateContentCommand command = createContentCommand( params );
-
-        Input input = Input.create().
-            name( "testInput" ).
-            label( "testInput" ).
-            inputType( InputTypeName.CHECK_BOX ).
-            defaultValue( InputTypeDefault.create().property( InputTypeProperty.create( "default", "unchecked" ).build() ).build() ).
-            build();
-
-        final ContentType contentType = ContentType.create().
-            superType( ContentTypeName.documentMedia() ).
-            name( ContentTypeName.dataMedia() ).
-            addFormItem( input ).
-            build();
-
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
-
-        final Content createdContent = command.execute();
-        assertNull( createdContent.getData().getString( "testInput" ) );
     }
 
     @Test
@@ -428,6 +335,8 @@ public class CreateContentCommandTest
             mixinService( this.mixinService ).
             siteService( this.siteService ).
             contentProcessors( new ContentProcessors() ).
+            formDefaultValuesProcessor( ( form, data ) -> {
+            } ).
             build();
     }
 

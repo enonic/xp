@@ -2,9 +2,9 @@ package com.enonic.xp.core.impl.content.page;
 
 import java.util.Objects;
 
-import com.enonic.xp.core.impl.content.FormDefaultValuesProcessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
@@ -28,12 +28,16 @@ final class PageDefaultValuesProcessor
 
     private final LayoutDescriptorService layoutDescriptorService;
 
+    private final FormDefaultValuesProcessor formDefaultValuesProcessor;
+
     PageDefaultValuesProcessor( final PageDescriptorService pageDescriptorService, final PartDescriptorService partDescriptorService,
-                                final LayoutDescriptorService layoutDescriptorService )
+                                final LayoutDescriptorService layoutDescriptorService,
+                                final FormDefaultValuesProcessor formDefaultValuesProcessor )
     {
         this.pageDescriptorService = pageDescriptorService;
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
+        this.formDefaultValuesProcessor = formDefaultValuesProcessor;
     }
 
     void applyDefaultValues( final Page editedPage, final Page sourcePage )
@@ -124,7 +128,7 @@ final class PageDefaultValuesProcessor
 
         if ( cmpForm != null )
         {
-            FormDefaultValuesProcessor.process( cmpForm, cmpData );
+            formDefaultValuesProcessor.setDefaultValues( cmpForm, cmpData );
         }
     }
 
@@ -140,7 +144,7 @@ final class PageDefaultValuesProcessor
         {
             return;
         }
-        FormDefaultValuesProcessor.process( pageForm.getConfig(), pageData );
+        formDefaultValuesProcessor.setDefaultValues( pageForm.getConfig(), pageData );
     }
 
 
