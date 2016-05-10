@@ -25,7 +25,7 @@ public class ConstraintExpressionBuilder
         }
         else if ( constraint instanceof DynamicConstraintExpr )
         {
-            return DynamicExpressionFactory.build( (DynamicConstraintExpr) constraint );
+            return DynamicExpressionBuilder.build( (DynamicConstraintExpr) constraint );
         }
         else if ( constraint instanceof CompareExpr )
         {

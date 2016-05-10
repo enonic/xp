@@ -11,8 +11,8 @@ import org.junit.rules.ExpectedException;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.query.expr.ValueExpr;
-import com.enonic.xp.repo.impl.elasticsearch.function.FulltextFunctionArguments;
-import com.enonic.xp.repo.impl.elasticsearch.function.FunctionQueryBuilderException;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.function.FulltextFunctionArguments;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.function.FunctionQueryBuilderException;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 
 public class FulltextFunctionArgumentsTest

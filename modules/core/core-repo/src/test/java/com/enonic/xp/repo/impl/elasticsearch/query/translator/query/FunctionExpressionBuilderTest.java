@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.ValueExpr;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.query.FunctionExpressionBuilder;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.function.FunctionExpressionBuilder;
 
 import static org.junit.Assert.*;
 

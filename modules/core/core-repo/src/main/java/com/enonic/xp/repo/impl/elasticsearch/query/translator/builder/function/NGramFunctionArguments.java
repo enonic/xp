@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.elasticsearch.function;
+package com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.function;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import com.enonic.xp.repo.impl.index.IndexValueType;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 
 public class NGramFunctionArguments
-    extends AbstractSimpleQueryStringFunction
+    extends AbstractSimpleQueryStringFunctionArguments
 {
 
     @Override

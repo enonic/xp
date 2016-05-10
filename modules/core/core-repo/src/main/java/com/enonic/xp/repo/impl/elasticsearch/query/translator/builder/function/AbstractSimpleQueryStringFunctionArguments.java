@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.elasticsearch.function;
+package com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.function;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 
 import com.enonic.xp.query.expr.ValueExpr;
 
-public abstract class AbstractSimpleQueryStringFunction
+public abstract class AbstractSimpleQueryStringFunctionArguments
     extends AbstractFunctionArguments
 {
     private static final int FIELDNAME_INDEX = 0;
@@ -36,7 +36,7 @@ public abstract class AbstractSimpleQueryStringFunction
         return analyzer;
     }
 
-    AbstractSimpleQueryStringFunction( final List<ValueExpr> arguments )
+    AbstractSimpleQueryStringFunctionArguments( final List<ValueExpr> arguments )
     {
         verifyNumberOfArguments( arguments );
 

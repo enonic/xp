@@ -4,8 +4,9 @@ import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.query.expr.DynamicConstraintExpr;
 import com.enonic.xp.query.expr.FunctionExpr;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.function.FunctionExpressionBuilder;
 
-class DynamicExpressionFactory
+class DynamicExpressionBuilder
 {
     public static QueryBuilder build( final DynamicConstraintExpr expression )
     {

@@ -14,6 +14,7 @@ import com.enonic.xp.query.expr.DynamicOrderExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.QueryFieldNameResolver;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.function.DynamicSortBuilderFactory;
 
 public class SortQueryBuilderFactory
     extends AbstractBuilderFactory

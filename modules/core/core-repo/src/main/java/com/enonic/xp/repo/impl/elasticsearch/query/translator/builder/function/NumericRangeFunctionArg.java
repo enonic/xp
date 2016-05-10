@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.elasticsearch.function;
+package com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.function;
 
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.SearchQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.index.IndexValueType;

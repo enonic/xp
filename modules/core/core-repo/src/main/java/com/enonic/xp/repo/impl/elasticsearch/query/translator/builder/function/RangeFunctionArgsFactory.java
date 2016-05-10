@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.elasticsearch.function;
+package com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.function;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.query.QueryException;
 import com.enonic.xp.query.expr.ValueExpr;
 
-public class RangeFunctionArgsFactory
+class RangeFunctionArgsFactory
 {
     private static final int FIELDNAME_INDEX = 0;
 

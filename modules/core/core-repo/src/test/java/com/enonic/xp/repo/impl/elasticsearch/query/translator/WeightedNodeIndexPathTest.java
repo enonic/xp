@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.xp.repo.impl.elasticsearch.function.WeightedQueryFieldName;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.function.WeightedQueryFieldName;
 
 public class WeightedNodeIndexPathTest
 {

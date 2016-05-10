@@ -8,8 +8,8 @@ import org.junit.rules.ExpectedException;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.query.expr.ValueExpr;
-import com.enonic.xp.repo.impl.elasticsearch.function.FunctionQueryBuilderException;
-import com.enonic.xp.repo.impl.elasticsearch.function.GeoDistanceSortFunctionArguments;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.function.FunctionQueryBuilderException;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.function.GeoDistanceSortFunctionArguments;
 
 public class GeoDistanceSortFunctionArgumentsTest
 {

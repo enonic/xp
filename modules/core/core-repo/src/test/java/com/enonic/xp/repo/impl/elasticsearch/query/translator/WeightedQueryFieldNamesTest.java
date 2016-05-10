@@ -5,8 +5,8 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.repo.impl.elasticsearch.function.WeightedQueryFieldName;
-import com.enonic.xp.repo.impl.elasticsearch.function.WeightedQueryFieldNames;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.function.WeightedQueryFieldName;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.function.WeightedQueryFieldNames;
 
 public class WeightedQueryFieldNamesTest
 {

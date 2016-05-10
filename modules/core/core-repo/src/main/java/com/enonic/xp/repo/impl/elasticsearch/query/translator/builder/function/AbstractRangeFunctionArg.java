@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.elasticsearch.function;
+package com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.function;
 
 public abstract class AbstractRangeFunctionArg<T>
     implements RangeFunctionArg<T>
