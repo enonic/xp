@@ -80,7 +80,7 @@ public abstract class AbstractSimpleQueryStringFunctionArguments
         }
         catch ( IllegalArgumentException e )
         {
-            throw new FunctionQueryBuilderException( "fulltext", OPERATOR_INDEX + 1, operatorAsString, e );
+            throw new FunctionQueryBuilderException( getFunctionName(), OPERATOR_INDEX + 1, operatorAsString, e );
         }
     }
 
