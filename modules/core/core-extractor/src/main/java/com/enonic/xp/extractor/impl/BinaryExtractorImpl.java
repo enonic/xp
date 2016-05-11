@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.media;
+package com.enonic.xp.extractor.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,32 +10,33 @@ import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.xml.sax.SAXException;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.extractor.BinaryExtractor;
+import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.util.Exceptions;
 
-public class MediaParser
+@Component(immediate = true)
+public class BinaryExtractorImpl
+    implements BinaryExtractor
 {
-    private final Detector detector;
+    private Detector detector;
 
-    private final Parser parser;
+    private Parser parser;
 
-    public MediaParser( final Detector detector, final Parser parser )
-    {
-        this.detector = detector;
-        this.parser = parser;
-    }
-
-    ParsedMediaData parseMetadata( final ByteSource byteSource )
+    @Override
+    public ExtractedData extract( final ByteSource source )
     {
         final ParseContext context = new ParseContext();
         final BodyContentHandler handler = new BodyContentHandler();
         final Metadata metadata = new Metadata();
 
         // Parse metadata
-        try (final InputStream stream = byteSource.openStream())
+        try (final InputStream stream = source.openStream())
         {
             final AutoDetectParser autoDetectParser = new AutoDetectParser( this.detector, this.parser );
 
@@ -46,16 +47,24 @@ public class MediaParser
             throw Exceptions.unchecked( e );
         }
 
-        return ParsedMediaData.create().
-            handler( getContent( handler ) ).
-            metadata( metadata ).
-            build();
+        return ExtractorResultFactory.create( metadata, handler );
     }
-
 
     private String getContent( final BodyContentHandler contentHandler )
     {
         return ExtractedTextCleaner.clean( contentHandler.toString() );
+    }
+
+    @Reference
+    public void setParser( final Parser parser )
+    {
+        this.parser = parser;
+    }
+
+    @Reference
+    public void setDetector( final Detector detector )
+    {
+        this.detector = detector;
     }
 
 }

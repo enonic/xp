@@ -242,6 +242,7 @@ public final class ContentDataSerializer
                 label( attachmentAsSet.getString( "label" ) ).
                 mimeType( attachmentAsSet.getString( "mimeType" ) ).
                 size( attachmentAsSet.getLong( "size" ) ).
+                textContent( attachmentAsSet.getString( "text" ) ).
                 build() );
         }
         return attachments.build();

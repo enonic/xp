@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.media;
+package com.enonic.xp.extractor.impl;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Strings;

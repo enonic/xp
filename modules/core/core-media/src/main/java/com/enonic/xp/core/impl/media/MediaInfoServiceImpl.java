@@ -1,16 +1,16 @@
 package com.enonic.xp.core.impl.media;
 
 import java.io.IOException;
+import java.util.Set;
 
-import org.apache.tika.detect.Detector;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.Parser;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
+import com.google.common.net.HttpHeaders;
 
+import com.enonic.xp.extractor.BinaryExtractor;
+import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
@@ -20,42 +20,30 @@ import com.enonic.xp.util.Exceptions;
 public final class MediaInfoServiceImpl
     implements MediaInfoService
 {
-    private Parser parser;
-
-    private Detector detector;
-
-    private MediaParser mediaParser;
-
-    @Activate
-    public void activate()
-    {
-        this.mediaParser = new MediaParser( detector, parser );
-    }
+    private BinaryExtractor binaryExtractor;
 
     @Override
     public MediaInfo parseMediaInfo( final ByteSource byteSource )
     {
         final MediaInfo.Builder builder = MediaInfo.create();
 
-        final ParsedMediaData parsedMediaData = mediaParser.parseMetadata( byteSource );
+        final ExtractedData extractedData = binaryExtractor.extract( byteSource );
 
-        addMetadata( byteSource, builder, parsedMediaData );
-        builder.setTextContent( parsedMediaData.getTextContent() );
+        addMetadata( byteSource, builder, extractedData );
+        builder.setTextContent( extractedData.getText() );
 
         return builder.build();
     }
 
-    private void addMetadata( final ByteSource byteSource, final MediaInfo.Builder builder, final ParsedMediaData parsedMediaData )
+    private void addMetadata( final ByteSource byteSource, final MediaInfo.Builder builder, final ExtractedData extractedData )
     {
-        final Metadata metadata = parsedMediaData.getMetadata();
-
-        builder.mediaType( metadata.get( Metadata.CONTENT_TYPE ) );
+        builder.mediaType( extractedData.get( HttpHeaders.CONTENT_TYPE ) );
 
         // Append metadata to info object
-        final String[] names = metadata.names();
+        final Set<String> names = extractedData.names();
         for ( final String name : names )
         {
-            final String value = metadata.get( name );
+            final String value = extractedData.get( name );
             builder.addMetadata( name, value );
         }
         try
@@ -71,25 +59,14 @@ public final class MediaInfoServiceImpl
     @Override
     public ImageOrientation getImageOrientation( ByteSource byteSource )
     {
-        final Metadata metadata = this.parseMetadata( byteSource );
-        final String orientation = metadata.get( Metadata.ORIENTATION );
+        final ExtractedData extractedData = binaryExtractor.extract( byteSource );
+        final String orientation = extractedData.getImageOrientation();
         return ImageOrientation.from( orientation );
     }
 
-    private Metadata parseMetadata( final ByteSource byteSource )
-    {
-        return this.mediaParser.parseMetadata( byteSource ).getMetadata();
-    }
-
     @Reference
-    public void setParser( final Parser parser )
+    public void setBinaryExtractor( final BinaryExtractor binaryExtractor )
     {
-        this.parser = parser;
-    }
-
-    @Reference
-    public void setDetector( final Detector detector )
-    {
-        this.detector = detector;
+        this.binaryExtractor = binaryExtractor;
     }
 }
