@@ -8,7 +8,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.security.RoleKeys;
 
 public class PortalForwardHandlerTest
 {
@@ -26,22 +25,10 @@ public class PortalForwardHandlerTest
         this.servlet = new PortalForwardHandler();
     }
 
-    @Test //TODOGRI
-    public void forward_forbidden()
-        throws Exception
-    {
-        this.req.setRequestURI( "/admin/portal/edit/ws/a/b" );
-        this.servlet.service( this.req, this.res );
-
-        Assert.assertEquals( 403, this.res.getStatus() );
-        Assert.assertEquals( null, this.res.getForwardedUrl() );
-    }
-
     @Test
     public void forward_illegalMode()
         throws Exception
     {
-        this.req.addUserRole( RoleKeys.ADMIN_LOGIN_ID );
         this.req.setRequestURI( "/admin/portal/mode/ws/a/b" );
         this.servlet.service( this.req, this.res );
 
@@ -53,7 +40,6 @@ public class PortalForwardHandlerTest
     public void forward_edit()
         throws Exception
     {
-        this.req.addUserRole( RoleKeys.ADMIN_LOGIN_ID );
         this.req.setRequestURI( "/admin/portal/edit/ws/a/b" );
         this.servlet.service( this.req, this.res );
 
@@ -69,7 +55,6 @@ public class PortalForwardHandlerTest
     public void forward_preview()
         throws Exception
     {
-        this.req.addUserRole( RoleKeys.ADMIN_LOGIN_ID );
         this.req.setRequestURI( "/admin/portal/preview/ws/a/b" );
         this.servlet.service( this.req, this.res );
 
@@ -85,7 +70,6 @@ public class PortalForwardHandlerTest
     public void forward_admin()
         throws Exception
     {
-        this.req.addUserRole( RoleKeys.ADMIN_LOGIN_ID );
         this.req.setRequestURI( "/admin/portal/admin/ws/a/b" );
         this.servlet.service( this.req, this.res );
 
