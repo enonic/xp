@@ -4,6 +4,8 @@ import {StatusSelectionItem} from "./StatusSelectionItem";
 import {DependantView} from "./DependantView";
 
 import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
+import ContentSummary = api.content.ContentSummary;
+import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import BrowseItem = api.app.browse.BrowseItem;
 import SelectionItem = api.app.browse.SelectionItem;
@@ -122,6 +124,20 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     setSubTitle(text: string) {
         this.subTitle.setHtml(text);
+    }
+
+    protected loadDescendants(summaries: ContentSummaryAndCompareStatus[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+        return new api.content.GetDescendantsOfContents()
+            .setContentPaths(summaries.map(summary => summary.getContentSummary().getPath())).sendAndParse()
+            .then((result: api.content.ContentResponse<ContentSummary>) => {
+
+                return api.content.CompareContentRequest.fromContentSummaries(result.getContents()).sendAndParse()
+                    .then((compareContentResults: api.content.CompareContentResults) => {
+
+                        return ContentSummaryAndCompareStatusFetcher
+                            .updateCompareStatus(result.getContents(), compareContentResults);
+                    });
+            });
     }
 
 }

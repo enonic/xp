@@ -50,13 +50,9 @@ export class ContentUnpublishDialog extends DependantItemsDialog {
         this.showLoadingSpinnerAtButton();
         this.unpublishButton.setEnabled(false);
 
-        let ids = this.getContentToUnpublishIds(),
-            resolveDependenciesRequest = new api.content.ResolvePublishDependenciesRequest(ids, true);
+        return this.loadDescendants(this.getItemList().getItems()).then((summaries: ContentSummaryAndCompareStatus[]) => {
 
-        return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
-
-            var dependants = result.getDependants().map(dependant => dependant.toContentSummaryAndCompareStatus());
-            this.setDependantItems(dependants);
+            this.setDependantItems(this.filterUnpublishableItems(summaries));
 
             // do not set requested contents as they are never going to change
 

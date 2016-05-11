@@ -4,7 +4,6 @@ import ContentSummary = api.content.ContentSummary;
 import CompareStatus = api.content.CompareStatus;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DialogButton = api.ui.dialog.DialogButton;
-import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
 import ListBox = api.ui.selector.list.ListBox;
 import {DeleteAction} from "../view/DeleteAction";
 import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItemsDialog";
@@ -54,7 +53,7 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         this.updateSubTitle();
 
         var items = this.getItemList().getItems();
-        this.loadDependantData(items)
+        this.loadDescendants(items)
             .then((descendants: ContentSummaryAndCompareStatus[]) => {
 
                 this.setDependantItems(descendants);
@@ -84,7 +83,7 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         this.instantDeleteCheckbox.setChecked(false, true);
 
         if (contents) {
-            this.loadDependantData(contents)
+            this.loadDescendants(contents)
                 .then((descendants: ContentSummaryAndCompareStatus[]) => {
 
                     this.setDependantItems(descendants);
@@ -249,30 +248,6 @@ export class ContentDeleteDialog extends DependantItemsDialog {
         } else {
             return false;
         }
-    }
-
-
-    private createRequestForGettingItemsDescendants(summaries: ContentSummaryAndCompareStatus[]): api.content.GetDescendantsOfContents {
-        var getDescendantsOfContentsRequest = new api.content.GetDescendantsOfContents();
-
-        summaries.forEach((summary) => {
-            getDescendantsOfContentsRequest.addContentPath(summary.getContentSummary().getPath());
-        });
-
-        return getDescendantsOfContentsRequest;
-    }
-
-    loadDependantData(summaries: ContentSummaryAndCompareStatus[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
-        return this.createRequestForGettingItemsDescendants(summaries).sendAndParse()
-            .then((result: api.content.ContentResponse<ContentSummary>) => {
-
-                return api.content.CompareContentRequest.fromContentSummaries(result.getContents()).sendAndParse()
-                    .then((compareContentResults: api.content.CompareContentResults) => {
-
-                        return ContentSummaryAndCompareStatusFetcher
-                            .updateCompareStatus(result.getContents(), compareContentResults);
-                    });
-            });
     }
 
 }
