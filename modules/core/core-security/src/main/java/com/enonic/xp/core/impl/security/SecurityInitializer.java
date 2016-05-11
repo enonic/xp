@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
@@ -114,8 +116,20 @@ final class SecurityInitializer
     {
         LOG.info( "Initializing user store [" + UserStoreKey.system() + "]" );
 
+        final PropertySet backgroundSet = new PropertySet();
+        backgroundSet.setString( "application", "com.enonic.xp.simpleauth" );
+        backgroundSet.setString( "path", "common/images/background-1920.jpg" );
+        final PropertySet brandingSet = new PropertySet();
+        brandingSet.setString( "application", "com.enonic.xp.simpleauth" );
+        brandingSet.setString( "path", "common/images/enonic.svg" );
+        final PropertyTree config = new PropertyTree();
+        config.setString( "title", "Enonic XP - Login" );
+        config.addSet( "background", backgroundSet );
+        config.addSets( "branding", brandingSet );
+
         final AuthConfig authConfig = AuthConfig.create().
             applicationKey( ApplicationKey.from( "com.enonic.xp.simpleauth" ) ).
+            config( config ).
             build();
 
         final UserStoreAccessControlList permissions =
