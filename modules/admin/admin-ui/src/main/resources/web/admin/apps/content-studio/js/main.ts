@@ -51,6 +51,10 @@ function initToolTip() {
         showAt = function (e) {
             var ntop = pageY + OFFSET_Y, nleft = pageX + OFFSET_X;
             var tooltipText = api.util.StringHelper.escapeHtml(wemjq(e.target).data(DATA));
+            if (!tooltipText) { //if no text then probably hovering over children of original element that has title attr
+                return;
+            }
+            
             var tooltipWidth = tooltipText.length * 7.5;
             var windowWidth = wemjq(window).width();
             if (nleft + tooltipWidth >= windowWidth) {
