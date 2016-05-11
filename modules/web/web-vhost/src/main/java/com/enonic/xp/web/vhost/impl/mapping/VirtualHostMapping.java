@@ -6,6 +6,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
+import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 public final class VirtualHostMapping
@@ -20,6 +21,8 @@ public final class VirtualHostMapping
     private String source;
 
     private String target;
+
+    private UserStoreKey userStoreKey;
 
     public VirtualHostMapping( final String name )
     {
@@ -53,6 +56,12 @@ public final class VirtualHostMapping
         return this.target;
     }
 
+    @Override
+    public UserStoreKey getUserStoreKey()
+    {
+        return userStoreKey;
+    }
+
     public void setHost( final String value )
     {
         this.host = Strings.isNullOrEmpty( value ) ? DEFAULT_HOST : value;
@@ -66,6 +75,11 @@ public final class VirtualHostMapping
     public void setTarget( final String value )
     {
         this.target = normalizePath( value );
+    }
+
+    public void setUserStoreKey( final UserStoreKey userStoreKey )
+    {
+        this.userStoreKey = userStoreKey;
     }
 
     public boolean matches( final HttpServletRequest req )
