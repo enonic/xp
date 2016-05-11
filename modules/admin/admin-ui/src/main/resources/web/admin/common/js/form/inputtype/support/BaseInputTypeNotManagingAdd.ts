@@ -296,6 +296,7 @@ module api.form.inputtype.support {
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
+
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
@@ -309,7 +310,7 @@ module api.form.inputtype.support {
         }
 
         newInitialValue(): Value {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            return this.input ? this.input.getDefaultValue() : null;
         }
 
         giveFocus(): boolean {

@@ -17,7 +17,7 @@ module api.form.inputtype.support {
         }
 
         newInitialValue(): Value {
-            return ValueTypes.STRING.newValue("");
+            return super.newInitialValue() || ValueTypes.STRING.newValue("");
         }
 
         layout(input: api.form.Input, property?: PropertyArray): wemQ.Promise<void> {
