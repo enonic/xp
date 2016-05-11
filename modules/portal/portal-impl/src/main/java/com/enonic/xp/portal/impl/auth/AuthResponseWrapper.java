@@ -17,15 +17,15 @@ public class AuthResponseWrapper
 {
     private final HttpServletResponse response;
 
-    private final PathGuardResponseSerializer pathGuardResponseSerializer;
+    private final AuthControllerWorker authControllerWorker;
 
     private boolean errorHandled;
 
-    public AuthResponseWrapper( final HttpServletResponse response, final PathGuardResponseSerializer pathGuardResponseSerializer )
+    public AuthResponseWrapper( final HttpServletResponse response, final AuthControllerWorker authControllerWorker )
     {
         super( response );
         this.response = response;
-        this.pathGuardResponseSerializer = pathGuardResponseSerializer;
+        this.authControllerWorker = authControllerWorker;
     }
 
     @Override
@@ -120,7 +120,7 @@ public class AuthResponseWrapper
         {
             try
             {
-                final boolean responseSerialized = pathGuardResponseSerializer.serialize( "login", response );
+                final boolean responseSerialized = authControllerWorker.serialize( "login", response );
                 if ( responseSerialized )
                 {
                     errorHandled = true;

@@ -32,23 +32,19 @@ public final class AuthFilter
         throws Exception
     {
         final MultiBodyReaderRequestMapper wrappedRequest = new MultiBodyReaderRequestMapper( req );
-        final PathGuardResponseSerializer pathGuardResponseSerializer =
-            new PathGuardResponseSerializer( securityService, authControllerScriptFactory, authDescriptorService, wrappedRequest );
+        final AuthControllerWorker authControllerWorker =
+            new AuthControllerWorker( securityService, authControllerScriptFactory, authDescriptorService, wrappedRequest );
 
         // If the current user is not authenticated
-        boolean responseSerialized = false;
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         if ( !authInfo.isAuthenticated() )
         {
-            responseSerialized = pathGuardResponseSerializer.serialize( "authFilter", res );
+            authControllerWorker.execute( "authFilter" );
         }
 
-        if ( !responseSerialized )
-        {
-            //Wraps the response to handle 403 errors
-            final AuthResponseWrapper responseWrapper = new AuthResponseWrapper( res, pathGuardResponseSerializer );
-            chain.doFilter( wrappedRequest, responseWrapper );
-        }
+        //Wraps the response to handle 403 errors
+        final AuthResponseWrapper responseWrapper = new AuthResponseWrapper( res, authControllerWorker );
+        chain.doFilter( wrappedRequest, responseWrapper );
 
     }
 

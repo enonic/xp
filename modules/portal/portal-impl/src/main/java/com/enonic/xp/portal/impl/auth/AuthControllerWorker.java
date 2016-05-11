@@ -27,7 +27,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
-public class PathGuardResponseSerializer
+public class AuthControllerWorker
 {
     private final SecurityService securityService;
 
@@ -37,14 +37,19 @@ public class PathGuardResponseSerializer
 
     private final HttpServletRequest request;
 
-    public PathGuardResponseSerializer( final SecurityService securityService,
-                                        final AuthControllerScriptFactory authControllerScriptFactory,
-                                        final AuthDescriptorService authDescriptorService, final HttpServletRequest request )
+    public AuthControllerWorker( final SecurityService securityService, final AuthControllerScriptFactory authControllerScriptFactory,
+                                 final AuthDescriptorService authDescriptorService, final HttpServletRequest request )
     {
         this.securityService = securityService;
         this.authControllerScriptFactory = authControllerScriptFactory;
         this.authDescriptorService = authDescriptorService;
         this.request = request;
+    }
+
+    public boolean execute( final String functionName )
+        throws IOException
+    {
+        return serialize( functionName, null );
     }
 
     public boolean serialize( final String functionName, final HttpServletResponse response )
@@ -65,8 +70,11 @@ public class PathGuardResponseSerializer
                 portalRequest.setUserStore( userStore );
 
                 final PortalResponse portalResponse = authControllerScript.execute( functionName, portalRequest );
-                final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );
-                serializer.serialize( response );
+                if ( response != null )
+                {
+                    final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );
+                    serializer.serialize( response );
+                }
                 return true;
             }
         }
