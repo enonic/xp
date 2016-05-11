@@ -9,8 +9,10 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.auth.AuthControllerScriptFactory;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 
 @Component(immediate = true, service = Filter.class,
@@ -29,12 +31,25 @@ public final class AuthFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-
-        //Wraps the response to handle 403 errors
+        final MultiBodyReaderRequestMapper wrappedRequest = new MultiBodyReaderRequestMapper( req );
         final PathGuardResponseSerializer pathGuardResponseSerializer =
-            new PathGuardResponseSerializer( securityService, authControllerScriptFactory, authDescriptorService, req );
-        final AuthResponseWrapper responseWrapper = new AuthResponseWrapper( res, pathGuardResponseSerializer );
-        chain.doFilter( req, responseWrapper );
+            new PathGuardResponseSerializer( securityService, authControllerScriptFactory, authDescriptorService, wrappedRequest );
+
+        // If the current user is not authenticated
+        boolean responseSerialized = false;
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        if ( !authInfo.isAuthenticated() )
+        {
+            responseSerialized = pathGuardResponseSerializer.serialize( "authFilter", res );
+        }
+
+        if ( !responseSerialized )
+        {
+            //Wraps the response to handle 403 errors
+            final AuthResponseWrapper responseWrapper = new AuthResponseWrapper( res, pathGuardResponseSerializer );
+            chain.doFilter( wrappedRequest, responseWrapper );
+        }
+
     }
 
     @Reference

@@ -47,7 +47,7 @@ public class PathGuardResponseSerializer
         this.request = request;
     }
 
-    public boolean serialize( final HttpServletResponse response )
+    public boolean serialize( final String functionName, final HttpServletResponse response )
         throws IOException
     {
         final UserStore userStore = retrieveUserStore();
@@ -56,17 +56,19 @@ public class PathGuardResponseSerializer
         if ( authDescriptor != null )
         {
 
-            final PortalRequest portalRequest = new PortalRequestAdapter().
-                adapt( request );
-            portalRequest.setApplicationKey( authDescriptor.getKey() );
-            portalRequest.setUserStore( userStore );
-
             final AuthControllerScript authControllerScript = authControllerScriptFactory.fromScript( authDescriptor.getResourceKey() );
-            final PortalResponse portalResponse = authControllerScript.execute( "login", portalRequest );
+            if ( authControllerScript.hasMethod( functionName ) )
+            {
+                final PortalRequest portalRequest = new PortalRequestAdapter().
+                    adapt( request );
+                portalRequest.setApplicationKey( authDescriptor.getKey() );
+                portalRequest.setUserStore( userStore );
 
-            final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );
-            serializer.serialize( response );
-            return true;
+                final PortalResponse portalResponse = authControllerScript.execute( functionName, portalRequest );
+                final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );
+                serializer.serialize( response );
+                return true;
+            }
         }
 
         return false;

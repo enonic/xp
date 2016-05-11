@@ -58,6 +58,10 @@ exports.login = function (req) {
     };
 };
 
+exports.authFilter = function (req) {
+    log.info("authFilter");
+}
+
 exports.logout = function (req) {
     authLib.logout();
     if (req.params.redirect) {

@@ -120,7 +120,7 @@ public class AuthResponseWrapper
         {
             try
             {
-                final boolean responseSerialized = pathGuardResponseSerializer.serialize( response );
+                final boolean responseSerialized = pathGuardResponseSerializer.serialize( "login", response );
                 if ( responseSerialized )
                 {
                     errorHandled = true;
