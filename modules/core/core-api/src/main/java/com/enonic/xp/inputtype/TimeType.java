@@ -42,7 +42,7 @@ final class TimeType
                 if ( result != null )
                 {
                     final Instant instant = Instant.now().plus( result.getTime() );
-                    return ValueFactory.newLocalTime( instant.atZone( ZoneId.systemDefault() ).toLocalTime() );
+                    return ValueFactory.newLocalTime( instant.atZone( ZoneId.systemDefault() ).toLocalTime().withNano( 0 ) );
                 }
                 else
                 {
