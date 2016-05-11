@@ -970,6 +970,115 @@ public class ResolveSyncWorkCommandTest
         assertEquals( 4, result.getSize() );
     }
 
+    @Test
+    public void exclude_empty()
+    {
+        createS1S2Tree();
+        refresh();
+
+        NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.empty(), false );
+        assertEquals( 1, result.getSize() );
+
+        assertTrue( result.contains( NodeId.from( "s1" ) ) );
+
+        result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.empty(), true );
+        assertEquals( 7, result.getSize() );
+
+    }
+
+    @Test
+    public void exclude_itself()
+    {
+        createS1S2Tree();
+        refresh();
+
+        NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "s1" ), true );
+        assertEquals( 6, result.getSize() );
+
+        result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "s1" ), false );
+        assertEquals( 0, result.getSize() );
+    }
+
+    @Test
+    public void exclude_all()
+    {
+        createS1S2Tree();
+        refresh();
+
+        NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "s1", "a1", "a2", "a2_1", "b2_1", "b2", "s2" ), true );
+        assertEquals( 0, result.getSize() );
+    }
+
+    @Test
+    public void exclude_all_children()
+    {
+        createS1S2Tree();
+        refresh();
+
+        final NodeIds children = NodeIds.from( "a1", "a2", "a2_1", "b2_1", "b2", "s2" );
+
+        NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), children, false );
+        assertEquals( 1, result.getSize() );
+
+        assertTrue( result.contains( NodeId.from( "s1" ) ) );
+
+        result = resolveSyncWorkResult( NodeId.from( "s1" ), children, true );
+        assertEquals( 1, result.getSize() );
+
+        assertTrue( result.contains( NodeId.from( "s1" ) ) );
+    }
+
+    @Test
+    public void exclude_children_from_the_middle()
+    {
+        createS1S2Tree();
+        refresh();
+
+        final NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "a2" ), true );
+        assertEquals( 6, result.getSize() );
+    }
+
+    @Test
+    public void exclude_child_with_refs()
+    {
+        createS1S2Tree();
+        refresh();
+
+        final NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "a2_1" ), true );
+        assertEquals( 3, result.getSize() );
+
+        assertFalse( result.contains( NodeId.from( "b2" ) ) );
+        assertFalse( result.contains( NodeId.from( "b2_1" ) ) );
+        assertFalse( result.contains( NodeId.from( "s2" ) ) );
+    }
+
+    @Test
+    public void exclude_referencies()
+    {
+        createS1S2Tree();
+        refresh();
+
+        final NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "b2_1" ), true );
+        assertEquals( 4, result.getSize() );
+
+        assertFalse( result.contains( NodeId.from( "b2" ) ) );
+        assertFalse( result.contains( NodeId.from( "b2_1" ) ) );
+        assertFalse( result.contains( NodeId.from( "s2" ) ) );
+    }
+
+    @Test
+    public void exclude_referencies_in_the_middle()
+    {
+        createS1S2Tree();
+        refresh();
+
+        final NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "b2" ), true );
+        assertEquals( 5, result.getSize() );
+
+        assertFalse( result.contains( NodeId.from( "b2" ) ) );
+        assertTrue( result.contains( NodeId.from( "b2_1" ) ) );
+    }
+
     @Ignore("Just for development testing")
     @Test
     public void test_large_tree()
@@ -1155,7 +1264,7 @@ public class ResolveSyncWorkCommandTest
         assertNotNull( nodePublishRequests.get( NodeId.from( s1 ) ) );
     }
 
-    private NodeIds resolveSyncWorkResult( final NodeId nodeId, final boolean includeChildren )
+    private NodeIds resolveSyncWorkResult( final NodeId nodeId, final NodeIds excludeIds, final boolean includeChildren )
     {
         return ResolveSyncWorkCommand.create().
             nodeId( nodeId ).
@@ -1164,8 +1273,14 @@ public class ResolveSyncWorkCommandTest
             storageService( this.storageService ).
             searchService( this.searchService ).
             includeChildren( includeChildren ).
+            excludedNodeIds( excludeIds ).
             build().
             execute();
+    }
+
+    private NodeIds resolveSyncWorkResult( final NodeId nodeId, final boolean includeChildren )
+    {
+        return resolveSyncWorkResult( NodeId.from( nodeId ), NodeIds.empty(), includeChildren );
     }
 
     private NodeIds resolveSyncWorkResult( final String nodeId )
