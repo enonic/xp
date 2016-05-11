@@ -1,6 +1,5 @@
 module api.util.htmlarea.dialog {
 
-    import FormView = api.form.FormView;
     import Form = api.ui.form.Form;
     import Fieldset = api.ui.form.Fieldset;
     import FormItem = api.ui.form.FormItem;

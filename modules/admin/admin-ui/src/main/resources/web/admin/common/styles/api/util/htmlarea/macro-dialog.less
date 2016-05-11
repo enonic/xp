@@ -19,9 +19,21 @@
     }
   }
 
+  .dialog-content > .docked-panel {
+    display: none;
+  }
+
   &.shows-preview {
     .dialog-header {
       display: none;
+    }
+
+    .dialog-content > .docked-panel {
+      display: block;
+
+      .input-view.invalid:not(:last-child) {
+        margin-bottom: 15px;
+      }
     }
   }
 }
