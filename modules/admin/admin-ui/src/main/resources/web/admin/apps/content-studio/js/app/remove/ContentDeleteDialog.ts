@@ -1,4 +1,8 @@
 import "../../api.ts";
+import {DeleteAction} from "../view/DeleteAction";
+import {DependantItemsDialog} from "../dialog/DependantItemsDialog";
+import {ContentDeleteDialogAction} from "./ContentDeleteDialogAction";
+import {ConfirmContentDeleteDialog} from "./ConfirmContentDeleteDialog";
 
 import ContentSummary = api.content.ContentSummary;
 import CompareStatus = api.content.CompareStatus;
@@ -6,11 +10,6 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import DialogButton = api.ui.dialog.DialogButton;
 import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
 import ListBox = api.ui.selector.list.ListBox;
-import {DeleteAction} from "../view/DeleteAction";
-import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItemsDialog";
-import {StatusSelectionItem} from "../dialog/StatusSelectionItem";
-import {ContentDeleteDialogAction} from "./ContentDeleteDialogAction";
-import {ConfirmContentDeleteDialog} from "./ConfirmContentDeleteDialog";
 
 export class ContentDeleteDialog extends DependantItemsDialog {
 
