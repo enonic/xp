@@ -8,9 +8,11 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
-public final class RelativeTimeParser
+@Beta
+final class RelativeTimeParser
 {
     private static final String VALUE_GROUP = "(\\d*)";
 
@@ -18,12 +20,12 @@ public final class RelativeTimeParser
 
     private static final String UNIT_ENDING = "(?![\\w])";
 
-    public static RelativeTime parse( final String timeExpression )
+    static RelativeTime parse( final String timeExpression )
     {
         return getTemporalAmounts( timeExpression, DateTimeUnits.DATE_TIME_UNITS );
     }
 
-    public static RelativeTime getTemporalAmounts( final String timeExpression, final Set<String> availableUnits )
+    private static RelativeTime getTemporalAmounts( final String timeExpression, final Set<String> availableUnits )
     {
         Duration duration = Duration.ZERO;
         Period period = Period.ZERO;
@@ -73,36 +75,36 @@ public final class RelativeTimeParser
 
     private interface DateTimeUnits
     {
-        public static final Set<String> YEAR_UNITS = ImmutableSet.of( "year", "years", "y" );
+        Set<String> YEAR_UNITS = ImmutableSet.of( "year", "years", "y" );
 
-        public static final Set<String> MONTH_UNITS = ImmutableSet.of( "month", "months", "M" );
+        Set<String> MONTH_UNITS = ImmutableSet.of( "month", "months", "M" );
 
-        public static final Set<String> WEEK_UNITS = ImmutableSet.of( "week", "weeks", "w" );
+        Set<String> WEEK_UNITS = ImmutableSet.of( "week", "weeks", "w" );
 
-        public static final Set<String> DAY_UNITS = ImmutableSet.of( "day", "days", "d" );
+        Set<String> DAY_UNITS = ImmutableSet.of( "day", "days", "d" );
 
-        public static final Set<String> HOUR_UNITS = ImmutableSet.of( "hour", "hours", "h" );
+        Set<String> HOUR_UNITS = ImmutableSet.of( "hour", "hours", "h" );
 
-        public static final Set<String> MINUTE_UNITS = ImmutableSet.of( "minute", "minutes", "m" );
+        Set<String> MINUTE_UNITS = ImmutableSet.of( "minute", "minutes", "m" );
 
-        public static final Set<String> SECOND_UNITS = ImmutableSet.of( "second", "seconds", "s" );
+        Set<String> SECOND_UNITS = ImmutableSet.of( "second", "seconds", "s" );
 
-        public static final Set<String> CURRENT_UNITS = ImmutableSet.of( "now", "0" );
+        Set<String> CURRENT_UNITS = ImmutableSet.of( "now", "0" );
 
-        public static final Set<String> PERIOD_UNITS = ImmutableSet.<String>builder().
+        Set<String> PERIOD_UNITS = ImmutableSet.<String>builder().
             addAll( YEAR_UNITS ).
             addAll( MONTH_UNITS ).
             addAll( WEEK_UNITS ).
             addAll( DAY_UNITS ).
             build();
 
-        public static final Set<String> DURATION_UNITS = ImmutableSet.<String>builder().
+        Set<String> DURATION_UNITS = ImmutableSet.<String>builder().
             addAll( HOUR_UNITS ).
             addAll( MINUTE_UNITS ).
             addAll( SECOND_UNITS ).
             build();
 
-        public static final Set<String> DATE_TIME_UNITS = ImmutableSet.<String>builder().
+        Set<String> DATE_TIME_UNITS = ImmutableSet.<String>builder().
             addAll( PERIOD_UNITS ).
             addAll( DURATION_UNITS ).
             build();

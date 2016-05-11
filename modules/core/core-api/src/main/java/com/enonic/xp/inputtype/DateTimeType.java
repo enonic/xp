@@ -48,38 +48,33 @@ final class DateTimeType
         final String defaultValue = defaultConfig.getRootValue();
         if ( defaultValue != null )
         {
-            try
+            Value value = parseDateTime( defaultValue );
+            if ( value != null )
             {
-                return ValueFactory.newDateTime( ValueTypes.DATE_TIME.convert( defaultValue ) );
+                return value;
             }
-            catch ( ValueTypeException e )
+
+            value = parseLocalDateTime( defaultValue );
+            if ( value != null )
             {
-                try
-                {
-                    return ValueFactory.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( defaultValue ) );
-                }
-                catch ( ValueTypeException e1 )
-                {
-                    final RelativeTime result = RelativeTimeParser.parse( defaultValue );
+                return value;
+            }
 
-                    if ( result != null )
-                    {
-                        final Instant instant = Instant.now().plus( result.getTime() );
-                        final LocalDateTime localDateTime = instant.atZone( ZoneId.systemDefault() ).toLocalDateTime();
+            final RelativeTime result = RelativeTimeParser.parse( defaultValue );
+            if ( result != null )
+            {
+                final Instant instant = Instant.now().plus( result.getTime() );
+                final LocalDateTime localDateTime = instant.atZone( ZoneId.systemDefault() ).toLocalDateTime();
 
-                        final Period period = result.getDate();
+                final Period period = result.getDate();
 
-                        return ValueFactory.newLocalDateTime(
-                            localDateTime.plusYears( period.getYears() ).
-                                plusMonths( period.getMonths() ).
-                                plusDays( period.getDays() )
-                        );
-                    }
-                    else
-                    {
-                        throw new IllegalArgumentException( "Invalid Date format: " + defaultValue );
-                    }
-                }
+                return ValueFactory.newLocalDateTime( localDateTime.plusYears( period.getYears() ).
+                    plusMonths( period.getMonths() ).
+                    plusDays( period.getDays() ) );
+            }
+            else
+            {
+                throw new IllegalArgumentException( "Invalid DateTime format: " + defaultValue );
             }
         }
         return super.createDefaultValue( defaultConfig );
@@ -89,5 +84,29 @@ final class DateTimeType
     public void validate( final Property property, final InputTypeConfig config )
     {
         validateType( property, ValueTypes.DATE_TIME, ValueTypes.LOCAL_DATE_TIME );
+    }
+
+    private Value parseDateTime( final String value )
+    {
+        try
+        {
+            return ValueFactory.newDateTime( ValueTypes.DATE_TIME.convert( value ) );
+        }
+        catch ( ValueTypeException e )
+        {
+            return null;
+        }
+    }
+
+    private Value parseLocalDateTime( final String value )
+    {
+        try
+        {
+            return ValueFactory.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) );
+        }
+        catch ( ValueTypeException e )
+        {
+            return null;
+        }
     }
 }

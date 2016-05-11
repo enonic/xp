@@ -3,14 +3,17 @@ package com.enonic.xp.inputtype;
 import java.time.Duration;
 import java.time.Period;
 
-public class RelativeTime
+import com.google.common.annotations.Beta;
+
+@Beta
+final class RelativeTime
 {
+    private final Duration duration;
 
-    private Duration duration;
+    private final Period period;
 
-    private Period period;
-
-    RelativeTime( Duration duration, Period period ) {
+    RelativeTime( Duration duration, Period period )
+    {
         this.duration = duration;
         this.period = period;
     }
