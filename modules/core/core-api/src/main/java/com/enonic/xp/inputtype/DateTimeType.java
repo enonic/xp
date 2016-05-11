@@ -68,9 +68,11 @@ final class DateTimeType
 
                 final Period period = result.getDate();
 
-                return ValueFactory.newLocalDateTime( localDateTime.plusYears( period.getYears() ).
+                return ValueFactory.newLocalDateTime( localDateTime.
+                    plusYears( period.getYears() ).
                     plusMonths( period.getMonths() ).
-                    plusDays( period.getDays() ) );
+                    plusDays( period.getDays() ).
+                    withNano( 0 ) );
             }
             else
             {
