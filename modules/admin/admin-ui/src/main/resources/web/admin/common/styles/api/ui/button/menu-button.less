@@ -23,7 +23,7 @@
     }
 
     &:hover {
-      background-color: lighten(@admin-green, 30%);
+      background-color: lighten(@admin-green, 10%);
       span {
         color: @admin-white;
       }
@@ -45,12 +45,16 @@
       color: @admin-white;
     }
 
+    &:focus {
+      box-shadow: 0 0 5px 5px black;
+    }
+
     &:disabled {
       background-color: @form-button-bg;
     }
 
     &:not(:disabled):hover {
-      background-color: lighten(@admin-green, 30%);
+      background-color: lighten(@admin-green, 10%);
       span {
         color: @admin-white;
       }

@@ -471,23 +471,10 @@ module api.ui.selector.combobox {
         }
 
         private setupListeners() {
-
-            let focusoutTimeout = 0;
-
-            this.onFocusOut(() => {
-                focusoutTimeout = setTimeout(() => {
-                    this.hideDropdown();
-                    this.active = false;
-                }, 50);
-            });
-
-            this.onFocusIn(() => {
-                clearTimeout(focusoutTimeout);
-            });
-
-            // Prevent focus loss on mouse down
-            this.onMouseDown((event: MouseEvent) => {
-                event.preventDefault();
+            
+            api.util.AppHelper.focusInOut(this, () => {
+                this.hideDropdown();
+                this.active = false;
             });
 
             this.onScrolled((event: WheelEvent) => {
