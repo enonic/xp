@@ -2,6 +2,7 @@ module api.ui.button {
 
     import Element = api.dom.Element;
     import Menu = api.ui.menu.Menu;
+    import MenuItem = api.ui.menu.MenuItem;
 
     export class MenuButton extends api.dom.DivEl {
 
@@ -49,7 +50,7 @@ module api.ui.button {
         }
 
         private initListeners() {
-            let hideMenuOnOutsideClick = this.hideMenuOnOutsideClick.bind(this);
+            let hideMenu = this.hideMenu.bind(this);
 
             this.dropdownHandle.onClicked(() => {
                 if (this.dropdownHandle.isEnabled()) {
@@ -57,31 +58,25 @@ module api.ui.button {
                     this.dropdownHandle.toggleClass('down');
                 }
             });
-
-            this.actionButton.onClicked(hideMenuOnOutsideClick);
             
-            this.menu.onItemClicked(() => {
-                if (this.menu.isHideOnItemClick()) {
-                    this.dropdownHandle.removeClass('down');
-                    this.menu.removeClass('expanded');
+            this.menu.onItemClicked((item: MenuItem) => {
+                if (this.menu.isHideOnItemClick() && item.isEnabled()) {
+                    hideMenu();
                 }
             });
+            
+            this.actionButton.onClicked(hideMenu);
 
-            api.dom.Body.get().onClicked(hideMenuOnOutsideClick);
+            this.dropdownHandle.onClicked(() => this.actionButton.giveFocus());
 
-            this.onRemoved(() => {
-                api.dom.Body.get().unClicked(() => hideMenuOnOutsideClick);
-            });
+            this.menu.onClicked(() => this.actionButton.giveFocus());
+
+            api.util.AppHelper.focusInOut(this, hideMenu);
         }
 
-        private hideMenuOnOutsideClick(event: MouseEvent): void {
-            let el = this.getEl();
-            let targetEl = <HTMLElement> event.target;
-
-            if (!el.contains(targetEl)) {
-                this.menu.removeClass('expanded');
-                this.dropdownHandle.removeClass('down');
-            }
+        private hideMenu(event: MouseEvent): void {
+            this.menu.removeClass('expanded');
+            this.dropdownHandle.removeClass('down');
         }
 
         setDropdownHandleEnabled(enabled: boolean = true) {
