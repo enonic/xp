@@ -20,8 +20,6 @@ module api.ui.selector.list {
             if (items.length > 0) {
                 this.layoutList(items);
                 this.notifyItemsAdded(items);
-            } else {
-                this.clearItems();
             }
         }
 
