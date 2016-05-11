@@ -20,11 +20,7 @@ module api.content {
 
         public static ORDER_BY_MODIFIED_TIME_DESC: OrderExpr[] = [ContentSelectorQueryRequest.MODIFIED_TIME_DESC];
 
-        public static ORDER_BY_SCORE_DESC: OrderExpr[] = [ContentSelectorQueryRequest.SCORE_DESC];
-
         public static DEFAULT_ORDER: OrderExpr[] = [ContentSelectorQueryRequest.SCORE_DESC, ContentSelectorQueryRequest.MODIFIED_TIME_DESC];
-
-        private order: OrderExpr[] = ContentSelectorQueryRequest.DEFAULT_ORDER;
 
         private queryExpr: api.query.expr.QueryExpr;
 
@@ -51,6 +47,8 @@ module api.content {
         constructor() {
             super();
             super.setMethod("POST");
+
+            this.setQueryExpr();
         }
 
         setInputName(name: string) {
@@ -97,13 +95,20 @@ module api.content {
             this.relationshipType = relationshipType;
         }
 
-        setQueryExpr(searchString: string) {
+        setQueryExpr(searchString: string = "") {
+            var order = searchString ? ContentSelectorQueryRequest.DEFAULT_ORDER : ContentSelectorQueryRequest.ORDER_BY_MODIFIED_TIME_DESC;
+            var fulltextExpression = searchString ? this.createSearchExpression(searchString) : "";
 
-            var fulltextExpression: Expression = new api.query.FulltextSearchExpressionBuilder().setSearchString(searchString).addField(
-                new QueryField(QueryField.DISPLAY_NAME, 5)).addField(new QueryField(QueryField.NAME, 3)).addField(
-                new QueryField(QueryField.ALL)).build();
+            this.queryExpr = new QueryExpr(fulltextExpression, order);
+        }
 
-            this.queryExpr = new QueryExpr(fulltextExpression, this.order);
+        private createSearchExpression(searchString): Expression {
+            return new api.query.FulltextSearchExpressionBuilder()
+                        .setSearchString(searchString)
+                        .addField(new QueryField(QueryField.DISPLAY_NAME, 5))
+                        .addField(new QueryField(QueryField.NAME, 3))
+                        .addField(new QueryField(QueryField.ALL))
+                        .build();
         }
 
         getQueryExpr(): api.query.expr.QueryExpr {
@@ -128,7 +133,6 @@ module api.content {
         }
 
         getParams(): Object {
-
             var queryExprAsString = this.getQueryExpr() ? this.getQueryExpr().toString() : "";
 
             return {
