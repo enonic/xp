@@ -8,6 +8,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -19,11 +20,14 @@ final class CreateMediaCommand
 
     private final MediaInfoService mediaInfoService;
 
+    private final FormDefaultValuesProcessor formDefaultValuesProcessor;
+
     private CreateMediaCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfoService = builder.mediaInfoService;
+        this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
     }
 
     Content execute()
@@ -86,6 +90,7 @@ final class CreateMediaCommand
             params( createContentParams ).
             siteService( this.siteService ).
             mixinService( this.mixinService ).
+            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             build();
 
         return createCommand.execute();
@@ -104,6 +109,8 @@ final class CreateMediaCommand
 
         private MediaInfoService mediaInfoService;
 
+        private FormDefaultValuesProcessor formDefaultValuesProcessor;
+
         public Builder params( final CreateMediaParams params )
         {
             this.params = params;
@@ -116,10 +123,17 @@ final class CreateMediaCommand
             return this;
         }
 
+        public Builder formDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
+        {
+            this.formDefaultValuesProcessor = formDefaultValuesProcessor;
+            return this;
+        }
+
         @Override
         void validate()
         {
             Preconditions.checkNotNull( params, "params must be given" );
+            Preconditions.checkNotNull( formDefaultValuesProcessor );
             super.validate();
         }
 

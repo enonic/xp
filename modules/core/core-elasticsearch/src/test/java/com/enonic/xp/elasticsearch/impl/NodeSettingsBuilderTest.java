@@ -40,7 +40,7 @@ public class NodeSettingsBuilderTest
         final Settings settings = this.builder.buildSettings( map );
 
         assertNotNull( settings );
-        assertEquals( 22, settings.getAsMap().size() );
+        assertEquals( 23, settings.getAsMap().size() );
         assertSettings( System.getProperty( "xp.home" ) + "/repo/index", settings );
     }
 
@@ -53,7 +53,7 @@ public class NodeSettingsBuilderTest
         final Settings settings = this.builder.buildSettings( map );
 
         assertNotNull( settings );
-        assertEquals( 22, settings.getAsMap().size() );
+        assertEquals( 23, settings.getAsMap().size() );
         assertSettings( "/to/some/other/path", settings );
     }
 

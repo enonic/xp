@@ -1,7 +1,7 @@
-module api.form.json{
+module api.form.json {
 
     export class FormJson {
 
-        formItems:FormItemTypeWrapperJson[];
+        formItems: FormItemTypeWrapperJson[];
     }
 }

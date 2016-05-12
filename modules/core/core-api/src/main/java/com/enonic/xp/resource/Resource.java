@@ -1,6 +1,7 @@
 package com.enonic.xp.resource;
 
 import java.io.InputStream;
+import java.io.Reader;
 import java.net.URL;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public interface Resource
 
     InputStream openStream();
 
-    Readable openReader();
+    Reader openReader();
 
     String readString();
 

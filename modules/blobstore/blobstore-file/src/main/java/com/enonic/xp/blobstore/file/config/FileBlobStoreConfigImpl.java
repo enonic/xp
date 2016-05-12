@@ -18,7 +18,12 @@ import com.enonic.xp.util.ByteSizeParser;
 public class FileBlobStoreConfigImpl
     implements FileBlobStoreConfig
 {
+
+    public static final String BASE_DIR = "baseDir";
+
     private Configuration config;
+
+    public static final String COLLECTION_PROPERTY_NAME = "folder";
 
     @Activate
     public void activate( final Map<String, String> map )
@@ -36,7 +41,8 @@ public class FileBlobStoreConfigImpl
     {
         return SegmentsMapFactory.create().
             configuration( config ).
-            configName( "baseDir" ).
+            configName( BASE_DIR ).
+            collectionPrefix( "baseDir" + "." ).
             requiredSegments( ProviderConstants.DEFAULT_REQUIRED_SEGMENTS ).
             build().
             execute();
@@ -59,7 +65,6 @@ public class FileBlobStoreConfigImpl
     {
         return Boolean.valueOf( this.config.get( "readThrough.enabled" ) );
     }
-
 
     @Override
     public File baseDir()

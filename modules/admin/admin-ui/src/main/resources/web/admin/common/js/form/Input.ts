@@ -24,6 +24,8 @@ module api.form {
 
         maximizeUIInputWidth: boolean;
 
+        defaultValue: api.data.Value;
+
         setName(value: string): InputBuilder {
             this.name = value;
             return this;
@@ -86,6 +88,10 @@ module api.form {
             this.helpText = json.helpText;
             this.inputTypeConfig = json.config;
             this.maximizeUIInputWidth = json.maximizeUIInputWidth;
+            if (json.defaultValue) {
+                var type = api.data.ValueTypes.fromName(json.defaultValue.type);
+                this.defaultValue = type.fromJsonValue(json.defaultValue.value);
+            }
             return this;
         }
 
@@ -124,6 +130,8 @@ module api.form {
 
         private maximizeUIInputWidth: boolean;
 
+        private defaultValue: api.data.Value;
+
         constructor(builder: InputBuilder) {
             super(builder.name);
             this.inputType = builder.inputType;
@@ -136,6 +144,7 @@ module api.form {
             this.validationRegex = builder.validationRegex;
             this.helpText = builder.helpText;
             this.maximizeUIInputWidth = builder.maximizeUIInputWidth;
+            this.defaultValue = builder.defaultValue;
         }
 
         static fromJson(json: api.form.json.InputJson): Input {
@@ -182,6 +191,10 @@ module api.form {
 
         getInputTypeConfig(): any {
             return this.inputTypeConfig;
+        }
+
+        getDefaultValue(): api.data.Value {
+            return this.defaultValue;
         }
 
         equals(o: api.Equitable): boolean {
@@ -237,19 +250,21 @@ module api.form {
 
         public toInputJson(): api.form.json.FormItemTypeWrapperJson {
 
-            return <api.form.json.FormItemTypeWrapperJson>{Input: <api.form.json.InputJson>{
-                name: this.getName(),
-                customText: this.getCustomText(),
-                helpText: this.getHelpText(),
-                immutable: this.isImmutable(),
-                indexed: this.isIndexed(),
-                label: this.getLabel(),
-                occurrences: this.getOccurrences().toJson(),
-                validationRegexp: this.getValidationRegex(),
-                inputType: this.getInputType().toJson(),
-                config: this.getInputTypeConfig(),
-                maximizeUIInputWidth: this.isMaximizeUIInputWidth()
-            }};
+            return <api.form.json.FormItemTypeWrapperJson>{
+                Input: <api.form.json.InputJson>{
+                    name: this.getName(),
+                    customText: this.getCustomText(),
+                    helpText: this.getHelpText(),
+                    immutable: this.isImmutable(),
+                    indexed: this.isIndexed(),
+                    label: this.getLabel(),
+                    occurrences: this.getOccurrences().toJson(),
+                    validationRegexp: this.getValidationRegex(),
+                    inputType: this.getInputType().toJson(),
+                    config: this.getInputTypeConfig(),
+                    maximizeUIInputWidth: this.isMaximizeUIInputWidth()
+                }
+            };
         }
     }
 }

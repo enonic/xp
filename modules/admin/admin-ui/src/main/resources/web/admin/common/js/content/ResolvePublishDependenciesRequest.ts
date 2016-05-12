@@ -6,18 +6,24 @@ module api.content {
 
         private ids: ContentId[] = [];
 
+        private excludedIds: ContentId[] = [];
+
         private includeChildren: boolean;
 
-        constructor(contentIds: ContentId[], includeChildren: boolean) {
+        constructor(contentIds: ContentId[],excludedIds: ContentId[], includeChildren: boolean) {
             super();
             super.setMethod("POST");
             this.ids = contentIds;
+            this.excludedIds = excludedIds;
             this.includeChildren = includeChildren;
         }
 
         getParams(): Object {
             return {
                 ids: this.ids.map((el) => {
+                    return el.toString();
+                }),
+                excludedIds: this.excludedIds.map((el) => {
                     return el.toString();
                 }),
                 includeChildren: this.includeChildren

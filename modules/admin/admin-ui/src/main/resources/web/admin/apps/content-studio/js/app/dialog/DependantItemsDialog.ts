@@ -1,12 +1,13 @@
 import "../../api.ts";
 
 import {StatusSelectionItem} from "./StatusSelectionItem";
-import {DependantView} from "./DependantView";
+import {DependantItemViewer} from "./DependantItemViewer";
 
 import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import CompareStatus = api.content.CompareStatus;
 import BrowseItem = api.app.browse.BrowseItem;
 import SelectionItem = api.app.browse.SelectionItem;
 import ListBox = api.ui.selector.list.ListBox;
@@ -46,10 +47,12 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.appendChildToContentPanel(this.itemList);
 
         let itemsChangedListener = (items) => {
+            let count = this.itemList.getItemCount();
             if (this.autoUpdateTitle) {
-                let count = this.itemList.getItemCount();
                 this.setTitle(this.dialogName + (count > 1 ? "s" : ''));
             }
+
+            this.toggleClass("contains-removable", (count > 1));
         };
         this.itemList.onItemsRemoved(itemsChangedListener);
         this.itemList.onItemsAdded(itemsChangedListener);
@@ -155,9 +158,9 @@ export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
     }
 
     createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
-        let deleteItemViewer = new api.content.ContentSummaryAndCompareStatusViewer();
+        let itemViewer = new api.content.ContentSummaryAndCompareStatusViewer();
 
-        deleteItemViewer.setObject(item);
+        itemViewer.setObject(item);
 
         let browseItem = new BrowseItem<ContentSummaryAndCompareStatus>(item).
             setId(item.getId()).
@@ -165,7 +168,7 @@ export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
             setPath(item.getPath().toString()).
             setIconUrl(new ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
 
-        return new StatusSelectionItem(deleteItemViewer, browseItem, () => {
+        return new StatusSelectionItem(itemViewer, browseItem, () => {
             this.removeItem(item);
         });
     }
@@ -183,7 +186,20 @@ export class DialogDependantList extends ListBox<ContentSummaryAndCompareStatus>
     }
 
     createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
-        return DependantView.create().item(item.getContentSummary()).build();
+
+        let dependantViewer = new DependantItemViewer();
+
+        dependantViewer.setObject(item);
+
+        let browseItem = new BrowseItem<ContentSummaryAndCompareStatus>(item).
+            setId(item.getId()).
+            setDisplayName(item.getDisplayName()).
+            setPath(item.getPath().toString()).
+            setIconUrl(new ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
+
+        let selectionItem = new StatusSelectionItem(dependantViewer, browseItem);
+
+        return selectionItem;
     }
 
     getItemId(item: ContentSummaryAndCompareStatus): string {

@@ -8,7 +8,6 @@ import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
 import ContentPublishItem = api.content.ContentPublishItem;
 import ListBox = api.ui.selector.list.ListBox;
-import {DependantView} from "../dialog/DependantView";
 import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItemsDialog";
 
 /**
@@ -23,6 +22,8 @@ export class ContentPublishDialog extends DependantItemsDialog {
     private publishButton: DialogButton;
 
     private childrenCheckbox: api.ui.Checkbox;
+
+    private excludedIds: ContentId[] = [];
 
     // stashes previous checkbox state items, until selected items changed
     private stash: {[checked:string]:ContentSummaryAndCompareStatus[]} = {};
@@ -57,8 +58,19 @@ export class ContentPublishDialog extends DependantItemsDialog {
         let dependants = new PublishDialogDependantList();
 
         dependants.onItemClicked((item: ContentSummaryAndCompareStatus) => {
-            this.close();
-            new api.content.event.EditContentEvent([item]).fire();
+            if (!isContentSummaryValid(item)) {
+                new api.content.event.EditContentEvent([item]).fire();
+                this.close();
+            }
+        });
+
+        dependants.onItemRemoveClicked((item: ContentSummaryAndCompareStatus) => {
+            this.excludedIds.push(item.getContentId());
+
+            // clear the stash because it is no longer valid
+            this.clearStashedItems();
+
+            this.refreshPublishDependencies().done();
         });
 
         return dependants;
@@ -74,6 +86,8 @@ export class ContentPublishDialog extends DependantItemsDialog {
         this.clearStashedItems();
 
         this.refreshPublishDependencies().done(() => this.centerMyself());
+
+        this.excludedIds = [];
 
         super.open();
     }
@@ -92,17 +106,18 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
     private refreshPublishDependencies(): wemQ.Promise<void> {
 
-        let stashedItems = this.getStashedItems();
+        let stashedItems = this.getStashedItems(),
+            dependantList = this.getDependantList();
 
         // null - means we just opened or we had to clear it because of selection change
         if (!stashedItems) {
-            this.getDependantList().clearItems();
+            dependantList.clearItems();
             this.showLoadingSpinnerAtButton();
             this.publishButton.setEnabled(false);
 
             let ids = this.getContentToPublishIds(),
                 flag = this.childrenCheckbox.isChecked(),
-                resolveDependenciesRequest = new api.content.ResolvePublishDependenciesRequest(ids, flag);
+                resolveDependenciesRequest = new api.content.ResolvePublishDependenciesRequest(ids, this.excludedIds, flag);
 
             return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
 
@@ -193,7 +208,9 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
         var selectedIds = this.getContentToPublishIds();
 
-        new PublishContentRequest().setIncludeChildren(this.childrenCheckbox.isChecked()).setIds(selectedIds).send().done(
+        new PublishContentRequest().setIncludeChildren(this.childrenCheckbox.isChecked())
+            .setIds(selectedIds).
+            setExcludedIds(this.excludedIds).send().done(
             (jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
                 this.close();
                 PublishContentRequest.feedback(jsonResponse);
@@ -274,31 +291,70 @@ export class ContentPublishDialogAction extends api.ui.Action {
 
 export class PublishDialogDependantList extends DialogDependantList {
 
-    private clickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
+    private itemClickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
+
+    private removeClickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
+
+
+    clearItems() {
+        this.removeClass("contains-removable");
+        super.clearItems();
+    }
 
     createItemView(item: api.content.ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
         let view = super.createItemView(item, readOnly);
 
+        if(CompareStatus.NEWER == item.getCompareStatus()) {
+            view.addClass("removable");
+            if(!this.hasClass("contains-removable")) {
+                this.addClass("contains-removable");
+            }
+        }
+
+        view.onClicked((event) => {
+            if (new api.dom.ElementHelper(<HTMLElement>event.target).hasClass("remove")) {
+                this.notifyItemRemoveClicked(item);
+            } else {
+                this.notifyItemClicked(item)
+            }
+        });
+
         if (!isContentSummaryValid(item)) {
-            view.onClicked(() => this.notifyItemClicked(item));
             view.addClass("invalid");
+            view.getEl().setTitle("Edit invalid content");
         }
 
         return view;
     }
 
     onItemClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
-        this.clickListeners.push(listener);
+        this.itemClickListeners.push(listener);
     }
 
     unItemClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
-        this.clickListeners = this.clickListeners.filter((curr) => {
+        this.itemClickListeners = this.itemClickListeners.filter((curr) => {
             return curr !== listener;
         })
     }
 
     private notifyItemClicked(item) {
-        this.clickListeners.forEach(listener => {
+        this.itemClickListeners.forEach(listener => {
+            listener(item);
+        })
+    }
+
+    onItemRemoveClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
+        this.removeClickListeners.push(listener);
+    }
+
+    unItemRemoveClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
+        this.removeClickListeners = this.removeClickListeners.filter((curr) => {
+            return curr !== listener;
+        })
+    }
+
+    private notifyItemRemoveClicked(item) {
+        this.removeClickListeners.forEach(listener => {
             listener(item);
         })
     }
