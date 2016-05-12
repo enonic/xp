@@ -1,9 +1,9 @@
 package com.enonic.xp.inputtype;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import com.google.common.annotations.Beta;
 
@@ -49,35 +49,30 @@ final class DateTimeType
         final String defaultValue = input.getDefaultValue().getRootValue();
         if ( defaultValue != null )
         {
-            Value value = null;
+            final Boolean withTimezone = useTimeZone( input.getInputTypeConfig() );
 
-            if ( useTimeZone( input.getInputTypeConfig() ) ) {
-                value = parseDateTime( defaultValue );
-                if ( value != null )
-                {
-                    return value;
-                }
-            } else {
-                value = parseLocalDateTime( defaultValue );
-                if ( value != null )
-                {
-                    return value;
-                }
+            Value value = withTimezone ? parseDateTime( defaultValue ) : parseLocalDateTime( defaultValue );
+
+            if ( value != null )
+            {
+                return value;
             }
 
             final RelativeTime result = RelativeTimeParser.parse( defaultValue );
             if ( result != null )
             {
                 final Instant instant = Instant.now().plus( result.getTime() );
-                final LocalDateTime localDateTime = instant.atZone( ZoneId.systemDefault() ).toLocalDateTime();
-
                 final Period period = result.getDate();
 
-                return ValueFactory.newLocalDateTime( localDateTime.
+                final ZonedDateTime zonedDateTime = instant.atZone( ZoneId.systemDefault() ).
                     plusYears( period.getYears() ).
                     plusMonths( period.getMonths() ).
                     plusDays( period.getDays() ).
-                    withNano( 0 ) );
+                    withNano( 0 );
+
+                return withTimezone ?
+                    ValueFactory.newDateTime( zonedDateTime.toInstant() ) :
+                    ValueFactory.newLocalDateTime( zonedDateTime.toLocalDateTime() );
             }
             else
             {
