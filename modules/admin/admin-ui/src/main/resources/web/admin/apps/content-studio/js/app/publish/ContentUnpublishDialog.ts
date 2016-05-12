@@ -1,4 +1,5 @@
 import "../../api.ts";
+import {DependantItemsDialog} from "../dialog/DependantItemsDialog";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DialogButton = api.ui.dialog.DialogButton;
@@ -8,7 +9,7 @@ import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
 import ContentPublishItem = api.content.ContentPublishItem;
 import ListBox = api.ui.selector.list.ListBox;
-import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItemsDialog";
+import {DependantItemsDialog} from "../dialog/DependantItemsDialog";
 
 
 export class ContentUnpublishDialog extends DependantItemsDialog {
