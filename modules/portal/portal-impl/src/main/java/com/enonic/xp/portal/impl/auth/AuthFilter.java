@@ -31,9 +31,8 @@ public final class AuthFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        final MultiBodyReaderRequestMapper wrappedRequest = new MultiBodyReaderRequestMapper( req );
         final AuthControllerWorker authControllerWorker =
-            new AuthControllerWorker( securityService, authControllerScriptFactory, authDescriptorService, wrappedRequest );
+            new AuthControllerWorker( securityService, authControllerScriptFactory, authDescriptorService, req );
 
         // If the current user is not authenticated
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
@@ -44,7 +43,7 @@ public final class AuthFilter
 
         //Wraps the response to handle 403 errors
         final AuthResponseWrapper responseWrapper = new AuthResponseWrapper( res, authControllerWorker );
-        chain.doFilter( wrappedRequest, responseWrapper );
+        chain.doFilter( req, responseWrapper );
 
     }
 
