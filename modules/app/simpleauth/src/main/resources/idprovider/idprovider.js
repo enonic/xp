@@ -38,7 +38,7 @@ exports.login = function (req) {
     }
 
 
-    var view = resolve('identity.html');
+    var view = resolve('idprovider.html');
     var params = {
         userStoreKey: userStore.key,
         jQueryUrl: jQueryUrl,
