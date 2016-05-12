@@ -11,7 +11,6 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.serializer.RequestBodyReader;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
@@ -30,7 +29,10 @@ public class PortalRequestAdapter
         result.setMethod( HttpMethod.valueOf( req.getMethod().toUpperCase() ) );
         result.setRawRequest( req );
         result.setContentType( req.getContentType() );
-        result.setBody( RequestBodyReader.readBody( req ) );
+
+        //TODO Temporary fix until Admin/Portal full refactoring
+        //The Servlet request should be translated to Portal request only once
+//        result.setBody( RequestBodyReader.readBody( req ) );
 
         result.setScheme( ServletRequestUrlHelper.getScheme( req ) );
         result.setHost( ServletRequestUrlHelper.getHost( req ) );
