@@ -120,7 +120,7 @@ public class AuthResponseWrapper
         {
             try
             {
-                final boolean responseSerialized = authControllerWorker.serialize( "login", response );
+                final boolean responseSerialized = authControllerWorker.execute( "login", response );
                 if ( responseSerialized )
                 {
                     errorHandled = true;

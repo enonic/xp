@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -26,14 +27,19 @@ public class AuthControllerWorker
     public boolean execute( final String functionName )
         throws IOException
     {
-        return serialize( functionName, null );
+        return execute( functionName, null );
     }
 
-    public boolean serialize( final String functionName, final HttpServletResponse response )
+    public boolean execute( final String functionName, final HttpServletResponse response )
         throws IOException
     {
-        final UserStoreKey userStoreKey = retrieveUserStoreKey();
-        return authControllerService.serialize( userStoreKey, request, functionName, response );
+        final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+            userStoreKey( retrieveUserStoreKey() ).
+            functionName( functionName ).
+            request( request ).
+            response( response ).
+            build();
+        return authControllerService.execute( executionParams );
     }
 
     private UserStoreKey retrieveUserStoreKey()

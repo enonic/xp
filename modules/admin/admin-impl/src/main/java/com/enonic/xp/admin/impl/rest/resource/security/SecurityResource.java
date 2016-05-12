@@ -55,6 +55,7 @@ import com.enonic.xp.auth.AuthDescriptorMode;
 import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
+import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.Group;
@@ -196,10 +197,18 @@ public final class SecurityResource
         params.getKeys().stream().map( UserStoreKey::from ).forEach( ( userStoreKey ) -> {
             try
             {
-                System.out.println( "Synch begin: " + userStoreKey );
-                authControllerService.execute( userStoreKey, httpRequest, "synchUsers" );
-                authControllerService.execute( userStoreKey, httpRequest, "synchGroups" );
-                System.out.println( "Synch end: " + userStoreKey );
+                final AuthControllerExecutionParams synchUsersParams = AuthControllerExecutionParams.create().
+                    userStoreKey( userStoreKey ).
+                    functionName( "synchUsers" ).
+                    request( httpRequest ).
+                    build();
+                final AuthControllerExecutionParams synchGroupsParams = AuthControllerExecutionParams.create().
+                    userStoreKey( userStoreKey ).
+                    functionName( "synchGroups" ).
+                    request( httpRequest ).
+                    build();
+                authControllerService.execute( synchUsersParams );
+                authControllerService.execute( synchGroupsParams );
                 resultsJson.add( SynchUserStoreResultJson.success( userStoreKey ) );
             }
             catch ( Exception e )

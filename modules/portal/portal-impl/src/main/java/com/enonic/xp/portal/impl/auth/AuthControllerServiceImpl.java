@@ -4,7 +4,6 @@ package com.enonic.xp.portal.impl.auth;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
@@ -17,6 +16,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerScript;
 import com.enonic.xp.portal.auth.AuthControllerScriptFactory;
 import com.enonic.xp.portal.auth.AuthControllerService;
@@ -40,32 +40,26 @@ public class AuthControllerServiceImpl
     private SecurityService securityService;
 
     @Override
-    public boolean execute( final UserStoreKey userStoreKey, HttpServletRequest request, final String functionName )
+    public boolean execute( final AuthControllerExecutionParams params )
         throws IOException
     {
-        return serialize( userStoreKey, request, functionName, null );
-    }
-
-    @Override
-    public boolean serialize( final UserStoreKey userStoreKey, HttpServletRequest request, final String functionName,
-                              final HttpServletResponse response )
-        throws IOException
-    {
-        final UserStore userStore = retrieveUserStore( userStoreKey );
+        final UserStore userStore = retrieveUserStore( params.getUserStoreKey() );
         final AuthDescriptor authDescriptor = retrieveAuthDescriptor( userStore );
 
         if ( authDescriptor != null )
         {
-
             final AuthControllerScript authControllerScript = authControllerScriptFactory.fromScript( authDescriptor.getResourceKey() );
+            final String functionName = params.getFunctionName();
             if ( authControllerScript.hasMethod( functionName ) )
             {
                 final PortalRequest portalRequest = new PortalRequestAdapter().
-                    adapt( request );
+                    adapt( params.getRequest() );
                 portalRequest.setApplicationKey( authDescriptor.getKey() );
                 portalRequest.setUserStore( userStore );
 
                 final PortalResponse portalResponse = authControllerScript.execute( functionName, portalRequest );
+
+                final HttpServletResponse response = params.getResponse();
                 if ( response != null )
                 {
                     final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );

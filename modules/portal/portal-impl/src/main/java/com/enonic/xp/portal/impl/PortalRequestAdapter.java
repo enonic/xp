@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -19,7 +18,6 @@ public class PortalRequestAdapter
     public final static String BASE_URI = "/portal";
 
     public PortalRequest adapt( final HttpServletRequest req )
-        throws IOException
     {
         final PortalRequest result = new PortalRequest();
 
