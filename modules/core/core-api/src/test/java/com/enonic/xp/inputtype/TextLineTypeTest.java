@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.form.Input;
 
 import static org.junit.Assert.*;
 
@@ -47,12 +48,8 @@ public class TextLineTypeTest
     @Test
     public void testCreateDefaultValue()
     {
-        final InputTypeDefault config = InputTypeDefault.create().
-            property( InputTypeProperty.create( "default", "testString" ).
-                build() ).
-            build();
-
-        final Value value = this.type.createDefaultValue( config );
+        final Input input = getDefaultInputBuilder( InputTypeName.TEXT_LINE, "testString" ).build();
+        final Value value = this.type.createDefaultValue( input );
 
         assertNotNull( value );
         assertEquals( "testString", value.toString() );
