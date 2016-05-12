@@ -16,7 +16,8 @@ module api.macro {
                 setMaximumOccurrences(builder.maximumOccurrences).
                 setDelayedInputValueChangedHandling(750).
                 setOptionDisplayValueViewer(new MacroViewer).
-                setValue(builder.value);
+                setValue(builder.value).
+                setMaxHeight(250);
 
             super(richComboBoxBuilder);
 
