@@ -20,7 +20,7 @@ module api.content.form.inputtype.time {
         }
 
         newInitialValue(): Value {
-            return ValueTypes.LOCAL_TIME.newNullValue();
+            return super.newInitialValue() || ValueTypes.LOCAL_TIME.newNullValue();
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
