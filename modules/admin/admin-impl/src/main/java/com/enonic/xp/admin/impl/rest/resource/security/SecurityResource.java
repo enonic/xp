@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -13,6 +14,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
@@ -53,6 +55,7 @@ import com.enonic.xp.auth.AuthDescriptorMode;
 import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
+import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.Principal;
@@ -88,6 +91,8 @@ public final class SecurityResource
     private SecurityService securityService;
 
     private AuthDescriptorService authDescriptorService;
+
+    private AuthControllerService authControllerService;
 
     @GET
     @Path("userstore/list")
@@ -185,14 +190,16 @@ public final class SecurityResource
 
     @POST
     @Path("userstore/synch")
-    public SynchUserStoresResultJson synchUserStore( final SynchUserStoreJson params )
+    public SynchUserStoresResultJson synchUserStore( final SynchUserStoreJson params, @Context HttpServletRequest httpRequest )
     {
         final SynchUserStoresResultJson resultsJson = new SynchUserStoresResultJson();
         params.getKeys().stream().map( UserStoreKey::from ).forEach( ( userStoreKey ) -> {
             try
             {
-                //TODO
-                System.out.println( "Synch " + userStoreKey );
+                System.out.println( "Synch begin: " + userStoreKey );
+                authControllerService.execute( userStoreKey, httpRequest, "synchUsers" );
+                authControllerService.execute( userStoreKey, httpRequest, "synchGroups" );
+                System.out.println( "Synch end: " + userStoreKey );
                 resultsJson.add( SynchUserStoreResultJson.success( userStoreKey ) );
             }
             catch ( Exception e )
@@ -484,5 +491,11 @@ public final class SecurityResource
     public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
     {
         this.authDescriptorService = authDescriptorService;
+    }
+
+    @Reference
+    public void setAuthControllerService( final AuthControllerService authControllerService )
+    {
+        this.authControllerService = authControllerService;
     }
 }

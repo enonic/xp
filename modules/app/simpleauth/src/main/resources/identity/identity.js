@@ -58,6 +58,18 @@ exports.login = function (req) {
     };
 };
 
+exports.authFilter = function (req) {
+    log.info("authFilter: " + JSON.stringify(req, null, 2));
+};
+
+exports.synchUsers = function (req) {
+    log.info("synchUsers: " + JSON.stringify(req, null, 2));
+}
+
+exports.synchGroups = function (req) {
+    log.info("synchGroups: " + JSON.stringify(req, null, 2));
+}
+
 exports.logout = function (req) {
     authLib.logout();
     if (req.params.redirect) {
