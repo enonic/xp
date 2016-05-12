@@ -82,7 +82,7 @@ module api.security {
                 setDisplayName(this.displayName).
                 setKey(this.key.toString()).
                 setDescription(this.description).
-                setAuthConfig(this.authConfig.clone()).
+                setAuthConfig(this.authConfig ? this.authConfig.clone() : this.authConfig).
                 setIdProviderMode(this.idProviderMode).
                 setPermissions(this.permissions.clone()).
                 build();
