@@ -35,8 +35,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 
-import io.swagger.annotations.ApiOperation;
-
 import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
 import com.enonic.xp.admin.impl.json.content.CompareContentResultsJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
@@ -1031,7 +1029,6 @@ public final class ContentResource
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed(RoleKeys.ADMIN_ID)
-    @ApiOperation("Reprocesses content")
     public ReprocessContentResultJson reprocess( final ReprocessContentRequestJson request )
     {
         final List<ContentPath> updated = new ArrayList<>();

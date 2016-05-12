@@ -31,7 +31,6 @@ include 'web:web-dos'
 
 include 'jaxrs:jaxrs-api'
 include 'jaxrs:jaxrs-impl'
-include 'jaxrs:jaxrs-swagger'
 
 include 'portal:portal-api'
 include 'portal:portal-owasp'
