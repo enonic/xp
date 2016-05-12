@@ -23,6 +23,19 @@ public class ExtractedTextCleanerTest
     }
 
     @Test
+    public void strip_consecutive_linebreaks_and_whitespaces_2()
+        throws Exception
+    {
+        final String toBeCleaned = Resources.toString( this.getClass().getResource( "consecutive-linebreaks.txt" ), Charsets.UTF_8 );
+
+        final String cleanedText = ExtractedTextCleaner.clean( toBeCleaned );
+
+        final String expected = Resources.toString( this.getClass().getResource( "consecutive-linebreaks-cleaned.txt" ), Charsets.UTF_8 );
+
+        assertEquals( expected, cleanedText );
+    }
+
+    @Test
     public void strip_control_characters()
         throws Exception
     {

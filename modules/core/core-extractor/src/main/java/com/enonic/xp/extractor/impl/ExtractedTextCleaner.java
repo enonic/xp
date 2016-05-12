@@ -10,9 +10,9 @@ class ExtractedTextCleaner
 
     private static final String ANY_LINE_BREAK = "\\u000D\\u000A|[\\u000A\\u000B\\u000C\\u000D\\u0085\\u2028\\u2029]";
 
-    private final static String CONSECUTIVE_LINE_BREAKS = "(" + ANY_LINE_BREAK + ")+";
-
     private static final String ANY_HORIZONTAL_WHITESPACE = "\\h";
+
+    private final static String CONSECUTIVE_LINE_BREAKS = "(" + ANY_LINE_BREAK + "(" + ANY_HORIZONTAL_WHITESPACE + ")*)+";
 
     private final static String CONSECUTIVE_HORIZONTAL_WHITESPACE = "(" + ANY_HORIZONTAL_WHITESPACE + ")+";
 
