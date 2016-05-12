@@ -4,7 +4,9 @@ import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentType;
 
@@ -12,6 +14,7 @@ import com.enonic.xp.schema.content.ContentType;
 public class MediaAttachmentDataProcessor
     implements ContentProcessor
 {
+    public static final String CONTENT_DATA_MEDIA_TEXT_PROPERTY = "text";
 
     @Override
     public boolean supports( final ContentType contentType )
@@ -24,30 +27,76 @@ public class MediaAttachmentDataProcessor
     {
         final CreateContentParams createContentParams = params.getCreateContentParams();
 
-        final CreateAttachments createAttachments = createContentParams.getCreateAttachments();
+        final PropertyTree contentData = populateDataWithAttachmentText( params, createContentParams );
+
+        return new ProcessCreateResult( CreateContentParams.create( createContentParams ).
+            createAttachments( removeTextFromAttachments( params.getCreateContentParams().getCreateAttachments() ) ).
+            contentData( contentData ).
+            build() );
+    }
+
+    private PropertyTree populateDataWithAttachmentText( final ProcessCreateParams params, final CreateContentParams createContentParams )
+    {
+        final PropertyTree contentData = createContentParams.getData();
+
+        params.getCreateContentParams().getCreateAttachments().forEach( ( attachment ) -> {
+            contentData.addString( CONTENT_DATA_MEDIA_TEXT_PROPERTY, attachment.getTextContent() );
+        } );
+        return contentData;
+    }
+
+    private CreateAttachments removeTextFromAttachments( final CreateAttachments createAttachments )
+    {
+        if ( createAttachments == null )
+        {
+            return null;
+        }
 
         final CreateAttachments.Builder newCreateAttachments = CreateAttachments.create();
 
-        final PropertyTree contentData = createContentParams.getData();
-
-        for ( final CreateAttachment createAttachment : createAttachments )
-        {
-            contentData.addString( "text", createAttachment.getTextContent() );
-
-            newCreateAttachments.add( CreateAttachment.create( createAttachment ).
+        createAttachments.forEach( ( attachment ) -> {
+            newCreateAttachments.add( CreateAttachment.create( attachment ).
                 text( null ).
                 build() );
-        }
-
-        return new ProcessCreateResult( CreateContentParams.create( createContentParams ).
-            createAttachments( newCreateAttachments.build() ).
-            contentData( contentData ).
-            build() );
+        } );
+        return newCreateAttachments.build();
     }
 
     @Override
     public ProcessUpdateResult processUpdate( final ProcessUpdateParams params )
     {
-        return null;
+        return new ProcessUpdateResult( removeTextFromAttachments( params.getCreateAttachments() ),
+                                        new AttachmentEditor( params.getCreateAttachments() ) );
     }
+
+    private class AttachmentEditor
+        implements ContentEditor
+    {
+        private final CreateAttachments createAttachments;
+
+        public AttachmentEditor( final CreateAttachments createAttachments )
+        {
+            this.createAttachments = createAttachments;
+        }
+
+        @Override
+        public void edit( final EditableContent edit )
+        {
+            if ( createAttachments == null )
+            {
+                return;
+            }
+
+            // Should probably do some comparison of existing attachments here? Works now since media have no
+            // attachments
+
+            edit.data.removeProperty( CONTENT_DATA_MEDIA_TEXT_PROPERTY );
+
+            createAttachments.forEach( ( attachment ) -> {
+                edit.data.addString( CONTENT_DATA_MEDIA_TEXT_PROPERTY, attachment.getTextContent() );
+            } );
+
+        }
+    }
+
 }
