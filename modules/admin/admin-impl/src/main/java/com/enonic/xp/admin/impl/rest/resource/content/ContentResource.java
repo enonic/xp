@@ -131,6 +131,8 @@ import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.extractor.BinaryExtractor;
+import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
@@ -194,6 +196,8 @@ public final class ContentResource
     private RelationshipTypeService relationshipTypeService;
 
     private ContentIconUrlResolver contentIconUrlResolver;
+
+    private BinaryExtractor extractor;
 
     @POST
     @Path("create")
@@ -398,10 +402,10 @@ public final class ContentResource
         for ( final ContentPath contentToDelete : contentsToDeleteList )
         {
             final DeleteContentParams deleteContentParams = DeleteContentParams.create().
-                    contentPath( contentToDelete ).
+                contentPath( contentToDelete ).
                 deleteOnline( json.isDeleteOnline() ).
                 deletePending( json.isDeletePending() ).
-                    build();
+                build();
 
             try
             {
@@ -427,7 +431,7 @@ public final class ContentResource
                     if ( content != null )
                     {
                         jsonResult.addFailure( content.getId().toString(), content.getDisplayName(), content.getType().getLocalName(),
-                                e.getMessage() );
+                                               e.getMessage() );
                     }
                 }
                 catch ( final Exception e2 )
@@ -446,10 +450,12 @@ public final class ContentResource
     public PublishContentResultJson publish( final PublishContentJson params )
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
+        final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
 
         final PushContentsResult result = contentService.push( PushContentParams.create().
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
+            excludedContentIds( excludeContentIds ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( true ).
             build() );
@@ -467,6 +473,7 @@ public final class ContentResource
     {
         //Resolved the requested ContentPublishItem
         final ContentIds requestedContentIds = ContentIds.from( params.getIds() );
+        final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
         final List<ContentPublishItemJson> requestedContentPublishItemList = resolveContentPublishItems( requestedContentIds );
 
         //Resolves the publish dependencies
@@ -474,6 +481,7 @@ public final class ContentResource
             contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
                 target( ContentConstants.BRANCH_MASTER ).
                 contentIds( requestedContentIds ).
+                excludedContentIds( excludeContentIds ).
                 includeChildren( params.includeChildren() ).
                 build() );
 
@@ -1088,10 +1096,13 @@ public final class ContentResource
     {
         final MultipartItem mediaFile = form.get( "file" );
 
+        final ExtractedData extractedData = this.extractor.extract( mediaFile.getBytes() );
+
         final CreateAttachment attachment = CreateAttachment.create().
             name( attachmentName ).
             mimeType( mediaFile.getContentType().toString() ).
             byteSource( getFileItemByteSource( mediaFile ) ).
+            text( extractedData.getText() ).
             build();
 
         final UpdateContentParams params = new UpdateContentParams().
@@ -1157,7 +1168,7 @@ public final class ContentResource
         return result.getTotalHits();
     }
 
-    private QueryExpr constructExprToFindChildren(final ContentPaths contentsPaths )
+    private QueryExpr constructExprToFindChildren( final ContentPaths contentsPaths )
     {
         final FieldExpr fieldExpr = FieldExpr.from( "_path" );
 
@@ -1167,8 +1178,7 @@ public final class ContentResource
         {
             if ( !contentPath.equals( contentsPaths.first() ) )
             {
-                ConstraintExpr likeExpr =
-                    CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentPath + "/*" ) );
+                ConstraintExpr likeExpr = CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentPath + "/*" ) );
                 expr = LogicalExpr.or( expr, likeExpr );
             }
         }
@@ -1179,13 +1189,14 @@ public final class ContentResource
     private ContentSummaryListJson getDescendantsOfContents( final ContentPaths contentsPaths )
     {
         FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
-                contentQuery( ContentQuery.create().size( Integer.MAX_VALUE ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() ).
-                build() );
+            contentQuery(
+                ContentQuery.create().size( Integer.MAX_VALUE ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() ).
+            build() );
 
         final ContentListMetaData metaData = ContentListMetaData.create().
-                totalHits( result.getTotalHits() ).
-                hits( result.getHits() ).
-                build();
+            totalHits( result.getTotalHits() ).
+            hits( result.getHits() ).
+            build();
 
         return new ContentSummaryListJson( result.getContents(), metaData, contentIconUrlResolver );
     }
@@ -1234,5 +1245,11 @@ public final class ContentResource
     public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
     {
         this.relationshipTypeService = relationshipTypeService;
+    }
+
+    @Reference
+    public void setExtractor( final BinaryExtractor extractor )
+    {
+        this.extractor = extractor;
     }
 }

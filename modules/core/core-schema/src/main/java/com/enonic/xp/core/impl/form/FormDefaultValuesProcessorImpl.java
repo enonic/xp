@@ -51,8 +51,8 @@ public final class FormDefaultValuesProcessorImpl
                     catch ( IllegalArgumentException ex )
                     {
                         LOG.warn(
-                            "Invalid default value for [" + input.getInputType() + "] input type with name '" + input.getName() + "' : " +
-                                ex.toString(), ex );
+                            "Invalid default value for " + input.getInputType() + " input type with name '" + input.getName() + "': '" +
+                                input.getDefaultValue().getRootValue() + "'" + ( ex.getMessage() == null ? "" : " - " + ex.getMessage() ) );
                     }
                 }
             }

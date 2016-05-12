@@ -1,36 +1,7 @@
 .context-menu {
-  .reset(true);
-  .material-layer-shadow();
 
   z-index: @z-index-context-menu;
   position: absolute;
-  background: @admin-white;
-  list-style: none;
-  display: none;
-  margin: 0;
-  padding: 4px;
-  min-width: 120px;
-
-  li, dt, dd {
-    font-family: @admin-font-family;
-    background-color: transparent;
-    font-size: 14px;
-    border-width: 0;
-    color: @admin-font-gray3;
-    cursor: pointer;
-
-    padding: 5px;
-    margin: 0;
-
-    &:hover:not(.disabled) {
-      background-color: @admin-bg-light-gray;
-    }
-
-    &:disabled, &.disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
-  }
 
   dt.collapsible {
     &:after {

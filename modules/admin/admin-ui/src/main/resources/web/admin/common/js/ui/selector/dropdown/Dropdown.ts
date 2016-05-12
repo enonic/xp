@@ -3,7 +3,7 @@ module api.ui.selector.dropdown {
     import Option = api.ui.selector.Option;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import OptionFilterInputValueChangedEvent = api.ui.selector.OptionFilterInputValueChangedEvent;
-    import DropdownHandle = api.ui.selector.DropdownHandle;
+    import DropdownHandle = api.ui.button.DropdownHandle;
     import Viewer = api.ui.Viewer;
     import DefaultOptionDisplayValueViewer = api.ui.selector.DefaultOptionDisplayValueViewer;
 
@@ -24,6 +24,8 @@ module api.ui.selector.dropdown {
         skipExpandOnClick?: boolean;
 
         inputPlaceholderText?: string;
+
+        noOptionsText?: string;
     }
 
     export class Dropdown<OPTION_DISPLAY_VALUE> extends api.dom.FormInputEl {
@@ -48,6 +50,8 @@ module api.ui.selector.dropdown {
 
         private expandedListeners: {(event: api.ui.selector.DropdownExpandedEvent): void}[] = [];
 
+        private noOptionsText: string;
+
         /**
          * Indicates if Dropdown currently has focus
          * @type {boolean}
@@ -68,6 +72,8 @@ module api.ui.selector.dropdown {
             if (config.disableFilter) {
                 this.typeAhead = false;
             }
+
+            this.noOptionsText = config.noOptionsText;
 
             this.input = new DropdownOptionFilterInput(config.inputPlaceholderText);
             this.input.setVisible(this.typeAhead);
@@ -115,6 +121,10 @@ module api.ui.selector.dropdown {
 
         getInput(): DropdownOptionFilterInput {
             return this.input;
+        }
+
+        setEmptyDropdownText(label: string) {
+            this.dropdownList.setEmptyDropdownText(label);
         }
 
         reset() {
@@ -176,7 +186,11 @@ module api.ui.selector.dropdown {
             }
 
             this.doUpdateDropdownTopPositionAndWidth();
-            this.dropdownList.showDropdown([this.getSelectedOption()]);
+
+            var selectedOption = this.getSelectedOption();
+
+            this.dropdownList.showDropdown(!!selectedOption ? [selectedOption] : null, this.isInputEmpty() ? this.noOptionsText : null);
+
             this.dropdownHandle.down();
 
             this.dropdownList.renderDropdownGrid();
@@ -198,7 +212,11 @@ module api.ui.selector.dropdown {
         }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
-            this.dropdownList.setOptions(options);
+            this.dropdownList.setOptions(options, this.isInputEmpty() ? this.noOptionsText : null);
+        }
+
+        private isInputEmpty(): boolean {
+            return this.input.getValue() === "";
         }
 
         removeAllOptions() {
