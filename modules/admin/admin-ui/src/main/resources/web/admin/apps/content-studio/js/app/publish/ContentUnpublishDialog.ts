@@ -8,7 +8,6 @@ import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
 import ContentPublishItem = api.content.ContentPublishItem;
 import ListBox = api.ui.selector.list.ListBox;
-import {DependantView} from "../dialog/DependantView";
 import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItemsDialog";
 
 
