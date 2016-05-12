@@ -12,6 +12,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypeException;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.form.Input;
 
 @Beta
 final class DateTimeType
@@ -43,21 +44,25 @@ final class DateTimeType
     }
 
     @Override
-    public Value createDefaultValue( final InputTypeDefault defaultConfig )
+    public Value createDefaultValue( final Input input )
     {
-        final String defaultValue = defaultConfig.getRootValue();
+        final String defaultValue = input.getDefaultValue().getRootValue();
         if ( defaultValue != null )
         {
-            Value value = parseDateTime( defaultValue );
-            if ( value != null )
-            {
-                return value;
-            }
+            Value value = null;
 
-            value = parseLocalDateTime( defaultValue );
-            if ( value != null )
-            {
-                return value;
+            if ( useTimeZone( input.getInputTypeConfig() ) ) {
+                value = parseDateTime( defaultValue );
+                if ( value != null )
+                {
+                    return value;
+                }
+            } else {
+                value = parseLocalDateTime( defaultValue );
+                if ( value != null )
+                {
+                    return value;
+                }
             }
 
             final RelativeTime result = RelativeTimeParser.parse( defaultValue );
@@ -79,7 +84,7 @@ final class DateTimeType
                 throw new IllegalArgumentException( "Invalid DateTime format: " + defaultValue );
             }
         }
-        return super.createDefaultValue( defaultConfig );
+        return super.createDefaultValue( input );
     }
 
     @Override

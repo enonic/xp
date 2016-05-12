@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.form.Input;
 
 import static org.junit.Assert.*;
 
@@ -41,12 +42,9 @@ public class ComboBoxTypeTest
     @Test
     public void testCreateDefaultValue()
     {
-        final InputTypeDefault config = InputTypeDefault.create().
-            property( InputTypeProperty.create( "default", "testOption" ).
-                build() ).
-            build();
+        final Input input = getDefaultInputBuilder( InputTypeName.COMBO_BOX, "testOption" ).build();
 
-        final Value value = this.type.createDefaultValue( config );
+        final Value value = this.type.createDefaultValue( input );
 
         assertNotNull( value );
         assertEquals( "testOption", value.toString() );
