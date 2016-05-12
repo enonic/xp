@@ -624,7 +624,6 @@ public class SecurityResourceTest
         resource.createUser( params );
     }
 
-    //TODOGRI
     private UserStores createUserStores()
     {
         final UserStore userStore1 = UserStore.create().
