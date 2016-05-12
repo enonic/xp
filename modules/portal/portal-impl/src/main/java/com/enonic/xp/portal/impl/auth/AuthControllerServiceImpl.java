@@ -1,0 +1,132 @@
+package com.enonic.xp.portal.impl.auth;
+
+
+import java.io.IOException;
+import java.util.concurrent.Callable;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+import com.enonic.xp.auth.AuthDescriptor;
+import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.auth.AuthControllerScript;
+import com.enonic.xp.portal.auth.AuthControllerScriptFactory;
+import com.enonic.xp.portal.auth.AuthControllerService;
+import com.enonic.xp.portal.impl.PortalRequestAdapter;
+import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
+import com.enonic.xp.security.AuthConfig;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.UserStore;
+import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.auth.AuthenticationInfo;
+
+@Component
+public class AuthControllerServiceImpl
+    implements AuthControllerService
+{
+    private AuthControllerScriptFactory authControllerScriptFactory;
+
+    private AuthDescriptorService authDescriptorService;
+
+    private SecurityService securityService;
+
+    @Override
+    public boolean execute( final UserStoreKey userStoreKey, HttpServletRequest request, final String functionName )
+        throws IOException
+    {
+        return serialize( userStoreKey, request, functionName, null );
+    }
+
+    @Override
+    public boolean serialize( final UserStoreKey userStoreKey, HttpServletRequest request, final String functionName,
+                              final HttpServletResponse response )
+        throws IOException
+    {
+        final UserStore userStore = retrieveUserStore( userStoreKey );
+        final AuthDescriptor authDescriptor = retrieveAuthDescriptor( userStore );
+
+        if ( authDescriptor != null )
+        {
+
+            final AuthControllerScript authControllerScript = authControllerScriptFactory.fromScript( authDescriptor.getResourceKey() );
+            if ( authControllerScript.hasMethod( functionName ) )
+            {
+                final PortalRequest portalRequest = new PortalRequestAdapter().
+                    adapt( request );
+                portalRequest.setApplicationKey( authDescriptor.getKey() );
+                portalRequest.setUserStore( userStore );
+
+                final PortalResponse portalResponse = authControllerScript.execute( functionName, portalRequest );
+                if ( response != null )
+                {
+                    final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );
+                    serializer.serialize( response );
+                }
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private UserStore retrieveUserStore( final UserStoreKey userStoreKey )
+    {
+        if ( userStoreKey != null )
+        {
+            return runWithAdminRole( () -> securityService.getUserStore( userStoreKey ) );
+        }
+        return null;
+    }
+
+    private AuthDescriptor retrieveAuthDescriptor( final UserStore userStore )
+    {
+        if ( userStore != null )
+        {
+            final AuthConfig authConfig = userStore.getAuthConfig();
+            if ( authConfig != null )
+            {
+                return authDescriptorService.getDescriptor( authConfig.getApplicationKey() );
+            }
+        }
+        return null;
+    }
+
+    private <T> T runWithAdminRole( final Callable<T> callable )
+    {
+        final Context context = ContextAccessor.current();
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( context.getAuthInfo() ).
+            principals( RoleKeys.ADMIN ).
+            build();
+        return ContextBuilder.from( context ).
+            authInfo( authenticationInfo ).
+            build().
+            callWith( callable );
+    }
+
+    @Reference
+    public void setAuthControllerScriptFactory( final AuthControllerScriptFactory authControllerScriptFactory )
+    {
+        this.authControllerScriptFactory = authControllerScriptFactory;
+    }
+
+    @Reference
+    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
+    {
+        this.authDescriptorService = authDescriptorService;
+    }
+
+    @Reference
+    public void setSecurityService( final SecurityService securityService )
+    {
+        this.securityService = securityService;
+    }
+}
