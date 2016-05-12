@@ -2,10 +2,26 @@ package com.enonic.xp.extractor.impl;
 
 import org.junit.Test;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+
 import static org.junit.Assert.*;
 
 public class ExtractedTextCleanerTest
 {
+    @Test
+    public void strip_consecutive_linebreaks_and_whitespaces()
+        throws Exception
+    {
+        final String toBeCleaned = Resources.toString( this.getClass().getResource( "linebreaked.txt" ), Charsets.UTF_8 );
+
+        final String cleanedText = ExtractedTextCleaner.clean( toBeCleaned );
+
+        final String expected = Resources.toString( this.getClass().getResource( "linebreaked-clean.txt" ), Charsets.UTF_8 );
+
+        assertEquals( expected, cleanedText );
+    }
+
     @Test
     public void strip_control_characters()
         throws Exception

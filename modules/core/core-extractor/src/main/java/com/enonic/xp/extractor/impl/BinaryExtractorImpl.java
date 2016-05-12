@@ -35,7 +35,6 @@ public class BinaryExtractorImpl
         final BodyContentHandler handler = new BodyContentHandler();
         final Metadata metadata = new Metadata();
 
-        // Parse metadata
         try (final InputStream stream = source.openStream())
         {
             final AutoDetectParser autoDetectParser = new AutoDetectParser( this.detector, this.parser );
@@ -48,11 +47,6 @@ public class BinaryExtractorImpl
         }
 
         return ExtractorResultFactory.create( metadata, handler );
-    }
-
-    private String getContent( final BodyContentHandler contentHandler )
-    {
-        return ExtractedTextCleaner.clean( contentHandler.toString() );
     }
 
     @Reference

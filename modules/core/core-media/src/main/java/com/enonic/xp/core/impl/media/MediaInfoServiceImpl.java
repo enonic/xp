@@ -39,7 +39,6 @@ public final class MediaInfoServiceImpl
     {
         builder.mediaType( extractedData.get( HttpHeaders.CONTENT_TYPE ) );
 
-        // Append metadata to info object
         final Set<String> names = extractedData.names();
         for ( final String name : names )
         {

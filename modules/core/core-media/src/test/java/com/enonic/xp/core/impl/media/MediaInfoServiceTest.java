@@ -13,7 +13,6 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 
-import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.media.MediaInfo;
 
@@ -27,7 +26,7 @@ public class MediaInfoServiceTest
     public void setup()
     {
         this.service = new MediaInfoServiceImpl();
-        service.setBinaryExtractor( (BinaryExtractor) source -> {
+        service.setBinaryExtractor( source -> {
             Map<String, List<String>> data = Maps.newHashMap();
             data.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( "image/jpeg" ) );
             data.put( "myExtractedValue", Lists.newArrayList( "fisk" ) );
