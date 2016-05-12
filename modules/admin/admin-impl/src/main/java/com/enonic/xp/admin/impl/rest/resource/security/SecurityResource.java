@@ -36,6 +36,9 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.GroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalsJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.RoleJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.SynchUserStoreJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.SynchUserStoreResultJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.SynchUserStoresResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateGroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateRoleJson;
@@ -175,6 +178,26 @@ public final class SecurityResource
             catch ( Exception e )
             {
                 resultsJson.add( DeleteUserStoreResultJson.failure( userStoreKey, e.getMessage() ) );
+            }
+        } );
+        return resultsJson;
+    }
+
+    @POST
+    @Path("userstore/synch")
+    public SynchUserStoresResultJson synchUserStore( final SynchUserStoreJson params )
+    {
+        final SynchUserStoresResultJson resultsJson = new SynchUserStoresResultJson();
+        params.getKeys().stream().map( UserStoreKey::from ).forEach( ( userStoreKey ) -> {
+            try
+            {
+                //TODO
+                System.out.println( "Synch " + userStoreKey );
+                resultsJson.add( SynchUserStoreResultJson.success( userStoreKey ) );
+            }
+            catch ( Exception e )
+            {
+                resultsJson.add( SynchUserStoreResultJson.failure( userStoreKey, e.getMessage() ) );
             }
         } );
         return resultsJson;
