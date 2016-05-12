@@ -9,6 +9,7 @@ export interface ContentWizardToolbarParams {
     duplicateAction:api.ui.Action;
     deleteAction:api.ui.Action;
     publishAction:api.ui.Action;
+    publishTreeAction:api.ui.Action;
     unpublishAction:api.ui.Action;
     previewAction:api.ui.Action;
     showLiveEditAction:api.ui.Action;
@@ -35,7 +36,9 @@ export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
         this.componentsViewToggler = new TogglerButton("icon-clipboard", "Show Component View");
         this.contextWindowToggler = new TogglerButton("icon-cog", "Show Inspection Panel");
 
-        this.contentWizardToolbarPublishControls = new ContentWizardToolbarPublishControls(params.publishAction, params.unpublishAction);
+        this.contentWizardToolbarPublishControls = new ContentWizardToolbarPublishControls(
+            params.publishAction, params.publishTreeAction, params.unpublishAction
+        );
 
         super.addElement(this.contentWizardToolbarPublishControls);
         super.addElement(this.componentsViewToggler);
