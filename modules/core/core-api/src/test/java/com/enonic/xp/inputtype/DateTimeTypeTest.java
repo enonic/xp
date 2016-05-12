@@ -166,7 +166,12 @@ public class DateTimeTypeTest
     @Test
     public void testRelativeDefaultValue_only_relative_time_exists()
     {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1hour -5minutes -36s" ).build();
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1hour -5minutes -36s" ).
+            inputTypeConfig( InputTypeConfig.create().
+                property( InputTypeProperty.create( "timezone", "false" ).
+                    build() ).
+                build() ).
+            build();
 
         final Value value = this.type.createDefaultValue( input );
 
@@ -177,12 +182,17 @@ public class DateTimeTypeTest
     @Test
     public void testRelativeDefaultValue_date_time()
     {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1year -5months -36d +2minutes -1h" ).build();
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1year -5months -36d +2minutes -1h" ).
+            inputTypeConfig( InputTypeConfig.create().
+                property( InputTypeProperty.create( "timezone", "true" ).
+                    build() ).
+                build() ).
+            build();
 
         final Value value = this.type.createDefaultValue( input );
 
         assertNotNull( value );
-        assertSame( ValueTypes.LOCAL_DATE_TIME, value.getType() );
+        assertSame( ValueTypes.DATE_TIME, value.getType() );
     }
 
     @Test(expected = IllegalArgumentException.class)
