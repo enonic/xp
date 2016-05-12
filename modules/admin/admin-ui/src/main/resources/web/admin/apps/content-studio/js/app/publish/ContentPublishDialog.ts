@@ -124,6 +124,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
                 var dependants = result.getDependants().map(dependant => dependant.toContentSummaryAndCompareStatus());
                 this.setDependantItems(dependants);
                 this.setStashedItems(dependants.slice());
+                this.centerMyself();
 
                 // do not set requested contents as they are never going to change,
                 // but returned data contains less info than original summaries
@@ -135,6 +136,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
         } else {
             // apply the stash to avoid extra heavy request
             this.setDependantItems(stashedItems.slice());
+            this.centerMyself();
 
             return wemQ<void>(null);
         }
