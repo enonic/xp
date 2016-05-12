@@ -220,8 +220,10 @@ public class ImageServiceImpl
     private BufferedImage retrieveBufferedImage( final ByteSource blob )
         throws IOException
     {
-        final InputStream inputStream = blob.openStream();
-        return ImageHelper.toBufferedImage( inputStream );
+        try (final InputStream inputStream = blob.openStream())
+        {
+            return ImageHelper.toBufferedImage( inputStream );
+        }
     }
 
 

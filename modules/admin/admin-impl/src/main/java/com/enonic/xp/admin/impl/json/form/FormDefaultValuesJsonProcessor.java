@@ -39,7 +39,7 @@ final class FormDefaultValuesJsonProcessor
                     try
                     {
                         final Value defaultValue = InputTypes.BUILTIN.resolve( input.getInputType() ).
-                            createDefaultValue( input.getDefaultValue() );
+                            createDefaultValue( input );
                         if ( defaultValue != null )
                         {
                             inputJson.setDefaultValue( defaultValue );
