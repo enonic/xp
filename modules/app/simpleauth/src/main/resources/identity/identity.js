@@ -59,15 +59,18 @@ exports.login = function (req) {
 };
 
 exports.authFilter = function (req) {
-    log.info("authFilter: " + JSON.stringify(req, null, 2));
+    log.info("authFilter userstore: " + JSON.stringify(authLib.getUserStore(), null, 2));
+    log.info("authFilter req: " + JSON.stringify(req, null, 2));
 };
 
 exports.synchUsers = function (req) {
-    log.info("synchUsers: " + JSON.stringify(req, null, 2));
+    log.info("synchUsers userstore: " + JSON.stringify(authLib.getUserStore(), null, 2));
+    log.info("synchUsers req: " + JSON.stringify(req, null, 2));
 }
 
 exports.synchGroups = function (req) {
-    log.info("synchGroups: " + JSON.stringify(req, null, 2));
+    log.info("synchGroups userstore: " + JSON.stringify(authLib.getUserStore(), null, 2));
+    log.info("synchGroups req: " + JSON.stringify(req, null, 2));
 }
 
 exports.logout = function (req) {

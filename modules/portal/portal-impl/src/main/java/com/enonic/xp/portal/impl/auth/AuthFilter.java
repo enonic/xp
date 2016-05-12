@@ -8,10 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.portal.auth.AuthControllerScriptFactory;
-import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 
@@ -21,23 +19,19 @@ import com.enonic.xp.web.filter.OncePerRequestFilter;
 public final class AuthFilter
     extends OncePerRequestFilter
 {
-    private SecurityService securityService;
-
-    private AuthDescriptorService authDescriptorService;
-
-    private AuthControllerScriptFactory authControllerScriptFactory;
+    private AuthControllerService authControllerService;
 
     @Override
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        final AuthControllerWorker authControllerWorker =
-            new AuthControllerWorker( securityService, authControllerScriptFactory, authDescriptorService, req );
+        final AuthControllerWorker authControllerWorker = new AuthControllerWorker( authControllerService, req );
 
         // If the current user is not authenticated
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         if ( !authInfo.isAuthenticated() )
         {
+            //Execute the function authFilter of the IdProvider
             authControllerWorker.execute( "authFilter" );
         }
 
@@ -48,20 +42,8 @@ public final class AuthFilter
     }
 
     @Reference
-    public void setSecurityService( final SecurityService securityService )
+    public void setAuthControllerService( final AuthControllerService authControllerService )
     {
-        this.securityService = securityService;
-    }
-
-    @Reference
-    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
-    {
-        this.authDescriptorService = authDescriptorService;
-    }
-
-    @Reference
-    public void setAuthControllerScriptFactory( final AuthControllerScriptFactory authControllerScriptFactory )
-    {
-        this.authControllerScriptFactory = authControllerScriptFactory;
+        this.authControllerService = authControllerService;
     }
 }
