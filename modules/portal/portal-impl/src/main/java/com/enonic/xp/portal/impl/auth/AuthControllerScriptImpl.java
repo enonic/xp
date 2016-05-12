@@ -21,6 +21,12 @@ final class AuthControllerScriptImpl
     }
 
     @Override
+    public boolean hasMethod( final String functionName )
+    {
+        return this.scriptExports.hasMethod( functionName );
+    }
+
+    @Override
     public PortalResponse execute( final String functionName, final PortalRequest portalRequest )
     {
         PortalRequestAccessor.set( portalRequest );
