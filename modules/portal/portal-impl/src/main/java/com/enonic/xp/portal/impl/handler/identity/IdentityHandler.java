@@ -29,7 +29,7 @@ public class IdentityHandler
 
     public IdentityHandler()
     {
-        super( "identity" );
+        super( "idprovider" );
     }
 
     @Override

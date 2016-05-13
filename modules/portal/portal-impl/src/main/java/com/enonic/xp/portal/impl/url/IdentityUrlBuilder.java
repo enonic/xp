@@ -14,7 +14,7 @@ final class IdentityUrlBuilder
         super.buildUrl( url, params );
         appendPart( url, this.portalRequest.getContentPath().toString() );
         appendPart( url, "_" );
-        appendPart( url, "identity" );
+        appendPart( url, "idprovider" );
         appendPart( url, this.params.getUserStoreKey().toString() );
         appendPart( url, this.params.getIdProviderFunction() );
         params.put( "redirect", this.params.getRedirectionUrl() );
