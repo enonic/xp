@@ -25,8 +25,10 @@ var expected = {
     'status': 200,
     'message': 'OK',
     'body': 'POST request',
+    'contentType': 'text/plain',
     'headers': {
-        'Content-Length': '12'
+        'Content-Length': '12',
+        'content-type': 'text/plain'
     }
 };
 // END
