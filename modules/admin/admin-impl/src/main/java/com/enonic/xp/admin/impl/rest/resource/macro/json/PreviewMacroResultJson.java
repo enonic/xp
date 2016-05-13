@@ -15,10 +15,10 @@ public final class PreviewMacroResultJson
 
     public PreviewMacroResultJson( final Macro macro, final PortalResponse response )
     {
-        html = response.getAsString();
+        html = response != null ? response.getAsString() : "";
         pageContributions = new PageContributionsJson( response );
         macroStr = macro.toString();
-        success = response.getStatus() == null || response.getStatus().is2xxSuccessful();
+        success = response == null || response.getStatus() == null || response.getStatus().is2xxSuccessful();
     }
 
     public PageContributionsJson getPageContributions()

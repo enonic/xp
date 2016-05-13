@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.macro.json;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.enonic.xp.portal.PortalResponse;
@@ -17,10 +18,20 @@ public final class PageContributionsJson
 
     public PageContributionsJson( final PortalResponse response )
     {
-        this.headBegin = response.getContributions( HtmlTag.HEAD_BEGIN );
-        this.headEnd = response.getContributions( HtmlTag.HEAD_END );
-        this.bodyBegin = response.getContributions( HtmlTag.BODY_BEGIN );
-        this.bodyEnd = response.getContributions( HtmlTag.BODY_END );
+        if ( response != null )
+        {
+            this.headBegin = response.getContributions( HtmlTag.HEAD_BEGIN );
+            this.headEnd = response.getContributions( HtmlTag.HEAD_END );
+            this.bodyBegin = response.getContributions( HtmlTag.BODY_BEGIN );
+            this.bodyEnd = response.getContributions( HtmlTag.BODY_END );
+        }
+        else
+        {
+            this.headBegin = Collections.emptyList();
+            this.headEnd = Collections.emptyList();
+            this.bodyBegin = Collections.emptyList();
+            this.bodyEnd = Collections.emptyList();
+        }
     }
 
     public List<String> getHeadBegin()

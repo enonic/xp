@@ -70,7 +70,7 @@ public final class MacroResource
 
     @GET
     @Path("list")
-    public MacrosJson create()
+    public MacrosJson getMacros()
     {
         return new MacrosJson( this.macroDescriptorService.getAll(), this.macroIconUrlResolver );
     }
@@ -142,7 +142,8 @@ public final class MacroResource
         portalRequest.setScheme( "http" );
         portalRequest.setHost( "localhost" );
         portalRequest.setPort( 8080 );
-        portalRequest.setPath( portalUrlService.pageUrl( new PageUrlParams().path( contentPath.toString() ) ) );
+        final PageUrlParams pageUrlParams = new PageUrlParams().portalRequest( portalRequest ).path( contentPath.toString() );
+        portalRequest.setPath( portalUrlService.pageUrl( pageUrlParams ) );
         return portalRequest;
     }
 

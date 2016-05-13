@@ -23,8 +23,9 @@ public final class PreviewMacroJson
     private final ContentPath contentPath;
 
     @JsonCreator
-    PreviewMacroJson( @JsonProperty("macroKey") final String macroKeyStr, @JsonProperty("form") final List<PropertyArrayJson> macroForm,
-                      @JsonProperty("contentPath") final String contentPathStr )
+    public PreviewMacroJson( @JsonProperty("macroKey") final String macroKeyStr,
+                             @JsonProperty("form") final List<PropertyArrayJson> macroForm,
+                             @JsonProperty("contentPath") final String contentPathStr )
     {
         formData = PropertyTreeJson.fromJson( macroForm );
         macroKey = MacroKey.from( macroKeyStr );
