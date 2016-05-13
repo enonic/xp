@@ -113,7 +113,7 @@
           }
         }
 
-        .dropdown-handle {
+        .@{_COMMON_PREFIX}dropdown-handle {
           background-color: @admin-white;
 
           &:hover {
@@ -126,12 +126,12 @@
         .selected-option .option-value {
           margin: 0;
         }
-        .dropdown-handle {
+        .@{_COMMON_PREFIX}dropdown-handle {
           display: none;
         }
       }
 
-      .dropdown-handle {
+      .@{_COMMON_PREFIX}dropdown-handle {
         border-left: 1px solid #cccccc;
         border-right: 1px solid #cccccc;
         max-height: @widget-selector-height;
@@ -197,7 +197,7 @@
 
     .widget-selector {
       position: absolute;
-      .dropdown-handle.down {
+      .@{_COMMON_PREFIX}dropdown-handle.down {
         right: 5px;
       }
       .selected-option {
