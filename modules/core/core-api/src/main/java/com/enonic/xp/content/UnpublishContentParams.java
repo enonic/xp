@@ -6,19 +6,19 @@ import com.enonic.xp.branch.Branch;
 
 public class UnpublishContentParams
 {
-    private final ContentId contentId;
+    private final ContentIds contentIds;
 
     private final Branch unpublishBranch;
 
     private UnpublishContentParams( final Builder builder )
     {
-        contentId = builder.contentId;
+        contentIds = builder.contentIds;
         unpublishBranch = builder.unpublishBranch;
     }
 
-    public ContentId getContentId()
+    public ContentIds getContentIds()
     {
-        return contentId;
+        return contentIds;
     }
 
     public Branch getUnpublishBranch()
@@ -34,7 +34,7 @@ public class UnpublishContentParams
 
     public static final class Builder
     {
-        private ContentId contentId;
+        private ContentIds contentIds;
 
         private Branch unpublishBranch;
 
@@ -42,9 +42,9 @@ public class UnpublishContentParams
         {
         }
 
-        public Builder contentId( final ContentId val )
+        public Builder contentIds( final ContentIds val )
         {
-            contentId = val;
+            contentIds = val;
             return this;
         }
 
@@ -56,7 +56,7 @@ public class UnpublishContentParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( contentId, "contentId must be set" );
+            Preconditions.checkNotNull( contentIds, "contentId must be set" );
             Preconditions.checkNotNull( unpublishBranch, "unpublish-branch must be set" );
         }
 

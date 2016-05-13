@@ -50,6 +50,7 @@ import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
+import com.enonic.xp.admin.impl.json.content.UnpublishContentResultJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -81,6 +82,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishContent
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.UnpublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
@@ -926,15 +928,14 @@ public final class ContentResource
 
     @POST
     @Path("unpublish")
-    public ContentIdJson unpublish( @QueryParam("id") final String id )
+    public UnpublishContentResultJson unpublish( final UnpublishContentJson params )
     {
-
-        final ContentId contentId = this.contentService.unpublishContent( UnpublishContentParams.create().
-            contentId( ContentId.from( id ) ).
+        final ContentIds contentIds = this.contentService.unpublishContent( UnpublishContentParams.create().
+            contentIds( ContentIds.from( params.getIds() ) ).
             unpublishBranch( ContentConstants.BRANCH_MASTER ).
             build() );
 
-        return new ContentIdJson( contentId );
+        return new UnpublishContentResultJson( contentIds );
     }
 
     @GET

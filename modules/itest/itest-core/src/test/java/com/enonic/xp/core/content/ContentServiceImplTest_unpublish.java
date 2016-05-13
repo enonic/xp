@@ -51,7 +51,7 @@ public class ContentServiceImplTest_unpublish
         assertTrue( masterContext.callWith( () -> contentService.contentExists( content.getId() ) ) );
 
         this.contentService.unpublishContent( UnpublishContentParams.create().
-            contentId( content.getId() ).
+            contentIds( ContentIds.from( content.getId() ) ).
             unpublishBranch( ContentConstants.BRANCH_MASTER ).
             build() );
 
@@ -92,7 +92,7 @@ public class ContentServiceImplTest_unpublish
         assertTrue( masterContext.callWith( () -> contentService.contentExists( child.getId() ) ) );
 
         this.contentService.unpublishContent( UnpublishContentParams.create().
-            contentId( content.getId() ).
+            contentIds( ContentIds.from( content.getId() ) ).
             unpublishBranch( ContentConstants.BRANCH_MASTER ).
             build() );
 

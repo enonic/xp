@@ -1,8 +1,12 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.List;
+
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -15,14 +19,14 @@ public class UnpublishContentCommand
 {
     private final UnpublishContentParams params;
 
-    public UnpublishContentCommand( final Builder builder )
+    private UnpublishContentCommand( final Builder builder )
     {
         super( builder );
 
         this.params = builder.params;
     }
 
-    public ContentId execute()
+    public ContentIds execute()
     {
         final Context context = ContextAccessor.current();
 
@@ -30,9 +34,24 @@ public class UnpublishContentCommand
             branch( params.getUnpublishBranch() ).
             build();
 
-        final Node deletedNode = unpublishContext.callWith( () -> this.nodeService.deleteById( NodeId.from( params.getContentId() ) ) );
+        return unpublishContext.callWith( () -> unpublish() );
+    }
 
-        return ContentId.from( deletedNode.id().toString() );
+    private ContentIds unpublish()
+    {
+        List<ContentId> contentIds = Lists.newArrayList();
+
+        for ( final ContentId contentId : this.params.getContentIds() )
+        {
+            final Node node = this.nodeService.deleteById( NodeId.from( contentId ) );
+
+            if ( node != null )
+            {
+                contentIds.add( ContentId.from( node.id().toString() ) );
+            }
+        }
+
+        return ContentIds.from( contentIds );
     }
 
     public static Builder create()
