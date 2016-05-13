@@ -1,6 +1,7 @@
 .html-area-modal-dialog.macro-modal-dialog {
 
   .hasSelectedItemPreview();
+  .hideCancelTopButton();
 
   &.macro-selector {
     .showsSelectedOption(true);
@@ -19,9 +20,31 @@
     }
   }
 
+  .dialog-content > .docked-panel {
+    display: none;
+
+    .autosize-attendant {
+      display: none;
+    }
+  }
+
   &.shows-preview {
     .dialog-header {
       display: none;
+    }
+
+    .dialog-content > .docked-panel {
+      display: block;
+
+      .input-view.invalid:not(:last-child) {
+        margin-bottom: 15px;
+      }
+    }
+  }
+
+  .content-combo-box {
+    .options-container {
+      box-sizing: content-box;
     }
   }
 }

@@ -69,7 +69,7 @@ public class BuiltinMacroDescriptors
         final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, "code" );
 
         final Form form = Form.create().
-            addFormItem( createTextAreaInput( "body", "Body" ).occurrences( 1, 1 ).build() ).
+            addFormItem( createTextAreaInput( "body", "Code" ).occurrences( 1, 1 ).build() ).
             build();
 
         return create( macroKey, "Embedded code macro", "Embedded code macro", form );
@@ -80,7 +80,7 @@ public class BuiltinMacroDescriptors
         final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, "noformat" );
 
         final Form form = Form.create().
-            addFormItem( createTextAreaInput( "body", "Body" ).occurrences( 1, 1 ).build() ).
+            addFormItem( createTextAreaInput( "body", "Contents" ).occurrences( 1, 1 ).build() ).
             build();
 
         return create( macroKey, "No Format macro", "The contents of the body will not be formatted", form );
