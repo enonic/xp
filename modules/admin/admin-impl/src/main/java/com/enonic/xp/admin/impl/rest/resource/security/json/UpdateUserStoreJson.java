@@ -18,7 +18,8 @@ public final class UpdateUserStoreJson
 
     @JsonCreator
     public UpdateUserStoreJson( @JsonProperty("key") final String userStoreKey, @JsonProperty("displayName") final String displayName,
-                                @JsonProperty("permissions") final List<UserStoreAccessControlEntryJson> aclEntries )
+                                @JsonProperty("permissions") final List<UserStoreAccessControlEntryJson> aclEntries,
+                                @JsonProperty("description") final String description )
     {
         final UserStoreAccessControlEntry[] userStoreAclEntries = aclEntries == null ? null : aclEntries.stream().
             map( UserStoreAccessControlEntryJson::getEntry ).
@@ -29,6 +30,7 @@ public final class UpdateUserStoreJson
             key( UserStoreKey.from( userStoreKey ) ).
             displayName( displayName ).
             permissions( permissions ).
+            description( description ).
             build();
     }
 

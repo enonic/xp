@@ -22,4 +22,9 @@ public class UserStoreSummaryJson
     {
         return userStore.getKey().toString();
     }
+
+    public String getDescription()
+    {
+        return userStore.getDescription();
+    }
 }

@@ -11,7 +11,7 @@ import PrincipalKey = api.security.PrincipalKey;
 import UserStore = api.security.UserStore;
 import GetUserStoreByKeyRequest = api.security.GetUserStoreByKeyRequest;
 import {UserItemWizardPanel} from "./wizard/UserItemWizardPanel";
-import {UserStoreWizardPanel} from "./wizard/UserstoreWizardPanel";
+import {UserStoreWizardPanel} from "./wizard/UserStoreWizardPanel";
 import {PrincipalWizardPanel} from "./wizard/PrincipalWizardPanel";
 import {PrincipalWizardPanelFactory} from "./wizard/PrincipalWizardPanelFactory";
 import {UserStoreWizardPanelFactory} from "./wizard/UserStoreWizardPanelFactory";

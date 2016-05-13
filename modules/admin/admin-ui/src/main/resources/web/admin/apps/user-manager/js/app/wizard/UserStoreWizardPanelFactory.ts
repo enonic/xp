@@ -2,7 +2,7 @@ import "../../api.ts";
 
 import UserStore = api.security.UserStore;
 import UserStoreKey = api.security.UserStoreKey;
-import {UserStoreWizardPanel} from "./UserstoreWizardPanel";
+import {UserStoreWizardPanel} from "./UserStoreWizardPanel";
 import {UserStoreWizardPanelParams} from "./UserStoreWizardPanelParams";
 
 export class UserStoreWizardPanelFactory {

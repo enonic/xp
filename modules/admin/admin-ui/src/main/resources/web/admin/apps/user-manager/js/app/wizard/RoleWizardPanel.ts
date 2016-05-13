@@ -50,7 +50,7 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
 
         return wemQ.all(parallelPromises).spread<void>(() => {
             this.wizardHeader.setDisplayName(principal.getDisplayName());
-            this.getDescriptionWizardStepForm().layout(principal);
+            this.getDescriptionWizardStepForm().layout(principal.getDescription());
             this.getMembersWizardStepForm().layout(principal);
 
             return wemQ<void>(null);

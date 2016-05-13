@@ -31,16 +31,8 @@ export class PrincipalDescriptionWizardStepForm extends api.app.wizard.WizardSte
         this.appendChild(formView);
     }
 
-    layout(principal: api.security.Principal) {
-        if (api.ObjectHelper.iFrameSafeInstanceOf(principal, api.security.Role)
-            || api.ObjectHelper.iFrameSafeInstanceOf(principal, api.security.Group)) {
-            var description = principal.getDescription();
-            this.description.setValue(!!description ? description : "");
-        }
-        else {
-            this.description.setValue("");
-        }
-
+    layout(description?: string) {
+        this.description.setValue(!!description ? description : "");
     }
 
     giveFocus(): boolean {

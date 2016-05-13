@@ -841,6 +841,7 @@ public final class SecurityServiceImpl
     {
         final PropertyTree data = new PropertyTree();
         data.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, createUserStoreParams.getDisplayName() );
+        data.setString( UserStorePropertyNames.DESCRIPTION_KEY, createUserStoreParams.getDescription() );
 
         final Node node = callWithContext( () -> {
 
