@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content.processor;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -216,9 +217,9 @@ public final class ImageContentProcessor
 
     private BufferedImage toBufferedImage( final ByteSource source )
     {
-        try
+        try (InputStream stream = source.openStream())
         {
-            return ImageIO.read( source.openStream() );
+            return ImageIO.read( stream );
         }
         catch ( IOException e )
         {

@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.form.Input;
 
 import static org.junit.Assert.*;
 
@@ -51,12 +52,14 @@ public class DateTimeTypeTest
     @Test
     public void testCreateDefaultValue()
     {
-        final InputTypeDefault config = InputTypeDefault.create().
-            property( InputTypeProperty.create( "default", "2014-08-16T05:03:45" ).
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T05:03:45" ).
+            inputTypeConfig( InputTypeConfig.create().
+                property( InputTypeProperty.create( "timezone", "false" ).
+                    build() ).
                 build() ).
             build();
 
-        final Value value = this.type.createDefaultValue( config );
+        final Value value = this.type.createDefaultValue( input );
 
         assertNotNull( value );
         assertSame( ValueTypes.LOCAL_DATE_TIME, value.getType() );
@@ -67,12 +70,14 @@ public class DateTimeTypeTest
     @Test
     public void testCreateDefaultValue_withTimezone_format1()
     {
-        final InputTypeDefault config = InputTypeDefault.create().
-            property( InputTypeProperty.create( "default", "2014-08-16T10:03:45Z" ).
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T10:03:45Z" ).
+            inputTypeConfig( InputTypeConfig.create().
+                property( InputTypeProperty.create( "timezone", "true" ).
+                    build() ).
                 build() ).
             build();
 
-        final Value value = this.type.createDefaultValue( config );
+        final Value value = this.type.createDefaultValue( input );
 
         assertNotNull( value );
         assertSame( ValueTypes.DATE_TIME, value.getType() );
@@ -83,12 +88,14 @@ public class DateTimeTypeTest
     @Test
     public void testCreateDefaultValue_withTimezone_format2_plus()
     {
-        final InputTypeDefault config = InputTypeDefault.create().
-            property( InputTypeProperty.create( "default", "2014-08-16T10:03:45+03:00" ).
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T10:03:45+03:00" ).
+            inputTypeConfig( InputTypeConfig.create().
+                property( InputTypeProperty.create( "timezone", "true" ).
+                    build() ).
                 build() ).
             build();
 
-        final Value value = this.type.createDefaultValue( config );
+        final Value value = this.type.createDefaultValue( input );
 
         assertNotNull( value );
         assertSame( ValueTypes.DATE_TIME, value.getType() );
@@ -99,12 +106,14 @@ public class DateTimeTypeTest
     @Test
     public void testCreateDefaultValue_withTimezone_format2_minus()
     {
-        final InputTypeDefault config = InputTypeDefault.create().
-            property( InputTypeProperty.create( "default", "2014-08-16T10:03:45-03:00" ).
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T10:03:45-03:00" ).
+            inputTypeConfig( InputTypeConfig.create().
+                property( InputTypeProperty.create( "timezone", "true" ).
+                    build() ).
                 build() ).
             build();
 
-        final Value value = this.type.createDefaultValue( config );
+        final Value value = this.type.createDefaultValue( input );
 
         assertNotNull( value );
         assertSame( ValueTypes.DATE_TIME, value.getType() );
@@ -114,12 +123,14 @@ public class DateTimeTypeTest
     @Test
     public void testCreateDefaultValue_withTimezone_format2_day_change()
     {
-        final InputTypeDefault config = InputTypeDefault.create().
-            property( InputTypeProperty.create( "default", "2014-08-16T22:03:45-03:00" ).
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T22:03:45-03:00" ).
+            inputTypeConfig( InputTypeConfig.create().
+                property( InputTypeProperty.create( "timezone", "true" ).
+                    build() ).
                 build() ).
             build();
 
-        final Value value = this.type.createDefaultValue( config );
+        final Value value = this.type.createDefaultValue( input );
 
         assertNotNull( value );
         assertSame( ValueTypes.DATE_TIME, value.getType() );
@@ -127,28 +138,26 @@ public class DateTimeTypeTest
     }
 
 
-
-
     @Test(expected = IllegalArgumentException.class)
     public void testCreateDefaultValue_invalid()
     {
-        final InputTypeDefault config = InputTypeDefault.create().
-            property( InputTypeProperty.create( "default", "2014-18-16T05:03:45" ).
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-18-16T05:03:45" ).
+            inputTypeConfig( InputTypeConfig.create().
+                property( InputTypeProperty.create( "timezone", "true" ).
+                    build() ).
                 build() ).
             build();
 
-        this.type.createDefaultValue( config );
+        this.type.createDefaultValue( input );
     }
 
     @Test
     public void testRelativeDefaultValue_only_relative_date_exists()
     {
-        final InputTypeDefault config = InputTypeDefault.create().
-            property( InputTypeProperty.create( "default", "+1year -5months -36d" ).
-                build() ).
-            build();
 
-        final Value value = this.type.createDefaultValue( config );
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1year -5months -36d" ).build();
+
+        final Value value = this.type.createDefaultValue( input );
 
         assertNotNull( value );
         assertSame( ValueTypes.LOCAL_DATE_TIME, value.getType() );
@@ -157,12 +166,14 @@ public class DateTimeTypeTest
     @Test
     public void testRelativeDefaultValue_only_relative_time_exists()
     {
-        final InputTypeDefault config = InputTypeDefault.create().
-            property( InputTypeProperty.create( "default", "+1hour -5minutes -36s" ).
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1hour -5minutes -36s" ).
+            inputTypeConfig( InputTypeConfig.create().
+                property( InputTypeProperty.create( "timezone", "false" ).
+                    build() ).
                 build() ).
             build();
 
-        final Value value = this.type.createDefaultValue( config );
+        final Value value = this.type.createDefaultValue( input );
 
         assertNotNull( value );
         assertSame( ValueTypes.LOCAL_DATE_TIME, value.getType() );
@@ -171,26 +182,25 @@ public class DateTimeTypeTest
     @Test
     public void testRelativeDefaultValue_date_time()
     {
-        final InputTypeDefault config = InputTypeDefault.create().
-            property( InputTypeProperty.create( "default", "+1year -5months -36d +2minutes -1h" ).
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1year -5months -36d +2minutes -1h" ).
+            inputTypeConfig( InputTypeConfig.create().
+                property( InputTypeProperty.create( "timezone", "true" ).
+                    build() ).
                 build() ).
             build();
 
-        final Value value = this.type.createDefaultValue( config );
+        final Value value = this.type.createDefaultValue( input );
 
         assertNotNull( value );
-        assertSame( ValueTypes.LOCAL_DATE_TIME, value.getType() );
+        assertSame( ValueTypes.DATE_TIME, value.getType() );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testRelativeDefaultValue_date_time_invalid()
     {
-        final InputTypeDefault config = InputTypeDefault.create().
-            property( InputTypeProperty.create( "default", "+1year -5months -36d +2minutes -1haaur" ).
-                build() ).
-            build();
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1year -5months -36d +2minutes -1haaur" ).build();
 
-        final Value value = this.type.createDefaultValue( config );
+        final Value value = this.type.createDefaultValue( input );
     }
 
     @Test
