@@ -428,6 +428,7 @@ public class NodeServiceImpl
         return ResolveSyncWorkCommand.create().
             target( params.getBranch() ).
             nodeId( params.getNodeId() ).
+            excludedNodeIds( params.getExcludedNodeIds() ).
             includeChildren( params.isIncludeChildren() ).
             indexServiceInternal( indexServiceInternal ).
             storageService( this.storageService ).

@@ -20,6 +20,8 @@ public final class Attachment
 
     private final String label;
 
+    private final String textContent;
+
     public Attachment( final Builder builder )
     {
         Preconditions.checkNotNull( builder.name, "name is mandatory for an Attachment" );
@@ -30,6 +32,7 @@ public final class Attachment
         this.name = builder.name;
         this.size = builder.size;
         this.label = builder.label;
+        this.textContent = builder.textContent;
     }
 
     public String getMimeType()
@@ -65,6 +68,11 @@ public final class Attachment
     public long getSize()
     {
         return size;
+    }
+
+    public String getTextContent()
+    {
+        return textContent;
     }
 
     @Override
@@ -122,6 +130,8 @@ public final class Attachment
 
         private long size;
 
+        private String textContent;
+
         private Builder()
         {
 
@@ -133,6 +143,7 @@ public final class Attachment
             this.name = attachment.name;
             this.label = attachment.label;
             this.size = attachment.size;
+            this.textContent = attachment.textContent;
         }
 
         public Builder mimeType( final String mimeType )
@@ -156,6 +167,12 @@ public final class Attachment
         public Builder size( final long size )
         {
             this.size = size;
+            return this;
+        }
+
+        public Builder textContent( final String textContent )
+        {
+            this.textContent = textContent;
             return this;
         }
 

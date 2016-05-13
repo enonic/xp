@@ -104,6 +104,16 @@ public class FormItemPath
         return elements.size();
     }
 
+    public ImmutableList<String> getElements()
+    {
+        return elements;
+    }
+
+    public String[] getElementsAsArray()
+    {
+        return this.elements.toArray( new String[this.elementCount()] );
+    }
+
     public FormItemPath asNewWithoutFirstPathElement()
     {
         final List<String> pathElements = Lists.newArrayList();

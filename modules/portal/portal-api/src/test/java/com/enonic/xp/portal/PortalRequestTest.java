@@ -100,4 +100,15 @@ public class PortalRequestTest
         request.getParams().put( "name", "value" );
         assertEquals( 1, request.getParams().size() );
     }
+
+    @Test
+    public void setRemoteAddress()
+        throws Exception
+    {
+        final PortalRequest request = new PortalRequest();
+        assertNull( request.getRemoteAddress() );
+
+        request.setRemoteAddress( "10.0.0.1" );
+        assertEquals( "10.0.0.1", request.getRemoteAddress() );
+    }
 }

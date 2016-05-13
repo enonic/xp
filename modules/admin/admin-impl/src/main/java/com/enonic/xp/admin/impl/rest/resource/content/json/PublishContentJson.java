@@ -6,6 +6,8 @@ public class PublishContentJson
 {
     private Set<String> ids;
 
+    private Set<String> excludedIds;
+
     private boolean includeChildren;
 
     public boolean isIncludeChildren()
@@ -26,5 +28,15 @@ public class PublishContentJson
     public void setIds( final Set<String> ids )
     {
         this.ids = ids;
+    }
+
+    public Set<String> getExcludedIds()
+    {
+        return excludedIds;
+    }
+
+    public void setExcludedIds( final Set<String> excludedIds )
+    {
+        this.excludedIds = excludedIds;
     }
 }

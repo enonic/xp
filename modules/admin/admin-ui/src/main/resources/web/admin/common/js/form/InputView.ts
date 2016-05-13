@@ -134,7 +134,10 @@ module api.form {
 
                 propertySet.addPropertyArray(array);
 
-                var initialValue = this.inputTypeView.newInitialValue();
+                var initialValue = this.input.getDefaultValue();
+                if (!initialValue) {
+                    initialValue = this.inputTypeView.newInitialValue();
+                }
                 if (initialValue) {
                     array.add(initialValue);
                 }

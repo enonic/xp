@@ -129,5 +129,9 @@ module api.app {
             this.wrapperDivEl.getEl().setTitle(toolTip);
         }
 
+        static create(): NamesAndIconViewBuilder {
+            return new NamesAndIconViewBuilder();
+        }
+
     }
 }

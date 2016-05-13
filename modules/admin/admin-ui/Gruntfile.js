@@ -2,7 +2,8 @@
  * Common variables.
  */
 var baseDir = 'src/main/resources/web/admin';
-var assetsDir = 'src/main/resources/assets';
+var targetDir = 'target/resources/main/web/admin';
+var assetsTargetDir = 'target/resources/main/assets';
 
 /**
  * Clean all build files.
@@ -39,12 +40,12 @@ var less = {
 /**
  * Add less file paths.
  */
-less.all.files[baseDir + '/common/styles/_all.css'] = baseDir + '/common/styles/_module.less';
-less.all.files[baseDir + '/live-edit/styles/_all.css'] = baseDir + '/live-edit/styles/_module.less';
-less.all.files[baseDir + '/common/styles/_home.css'] = baseDir + '/common/styles/apps/home/home.less';
-less.all.files[baseDir + '/common/styles/api/util/htmlarea/html-editor.css'] =
+less.all.files[targetDir + '/common/styles/_all.css'] = baseDir + '/common/styles/_module.less';
+less.all.files[targetDir + '/live-edit/styles/_all.css'] = baseDir + '/live-edit/styles/_module.less';
+less.all.files[targetDir + '/common/styles/_home.css'] = baseDir + '/common/styles/apps/home/home.less';
+less.all.files[targetDir + '/common/styles/api/util/htmlarea/html-editor.css'] =
     baseDir + '/common/styles/api/util/htmlarea/html-editor.module.less';
-less.all.files[assetsDir + '/styles/_launcher.css'] = baseDir + '/common/styles/apps/launcher/launcher.less';
+less.all.files[assetsTargetDir + '/styles/_launcher.css'] = baseDir + '/common/styles/apps/launcher/launcher.less';
 
 /**
  * Typescript configuration.

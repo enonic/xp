@@ -1,82 +1,68 @@
 module api.content.page {
 
-    import Dropdown = api.ui.selector.dropdown.Dropdown;
-    import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import Option = api.ui.selector.Option;
     import SiteModel = api.content.site.SiteModel;
     import LiveEditModel = api.liveedit.LiveEditModel;
+    import DescriptorBasedDropdown = api.content.page.region.DescriptorBasedDropdown;
 
-    export class PageDescriptorDropdown extends Dropdown<PageDescriptor> {
+    export class PageDescriptorDropdown extends DescriptorBasedDropdown<PageDescriptor> {
 
-        private loader: api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>;
+        private loadedDataListeners: {(event: LoadedDataEvent<PageDescriptor>):void}[];
 
-        private loadedDataListeners: {(event: LoadedDataEvent<PageDescriptor>):void}[] = [];
-
-        private getPageDescriptorsByApplicationsRequest: GetPageDescriptorsByApplicationsRequest;
-
-        private siteModel: SiteModel;
+        private liveEditModel: LiveEditModel;
 
         constructor(model: LiveEditModel) {
-            super('page-controller', <DropdownConfig<PageDescriptor>>{
+
+            this.loadedDataListeners = [];
+
+            this.liveEditModel = model;
+
+            super('page-controller', this.createLoader(), {
                 optionDisplayValueViewer: new PageDescriptorViewer(),
                 dataIdProperty: 'value'
             });
 
-            this.siteModel = model.getSiteModel();
+            this.initListeners();
+        }
 
-            this.initLoader();
+        private createLoader(): api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor> {
+            var request = new GetPageDescriptorsByApplicationsRequest(this.liveEditModel.getSiteModel().getApplicationKeys());
 
+            return new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(request).setComparator(
+                new api.content.page.DescriptorByDisplayNameComparator());
+        }
 
+        handleLoadedData(event: LoadedDataEvent<PageDescriptor>) {
+            super.handleLoadedData(event);
+            this.notifyLoadedData(event);
+        }
+
+        private initListeners() {
             this.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.PageDescriptor>) => {
                 var pageDescriptor = event.getOption().displayValue;
                 var setController = new SetController(this).setDescriptor(pageDescriptor);
-                model.getPageModel().setController(setController);
+                this.liveEditModel.getPageModel().setController(setController);
             });
 
             var onApplicationAddedHandler = () => {
-                this.getPageDescriptorsByApplicationsRequest.setApplicationKeys(this.siteModel.getApplicationKeys());
-                this.removeAllOptions();
+                this.updateRequestApplicationKeys();
                 this.load();
             }
 
             var onApplicationRemovedHandler = () => {
-                this.getPageDescriptorsByApplicationsRequest.setApplicationKeys(this.siteModel.getApplicationKeys());
-                this.removeAllOptions();
+                this.updateRequestApplicationKeys();
                 this.load();
             }
 
-            this.siteModel.onApplicationAdded(onApplicationAddedHandler);
+            this.liveEditModel.getSiteModel().onApplicationAdded(onApplicationAddedHandler);
 
-            this.siteModel.onApplicationRemoved(onApplicationRemovedHandler);
+            this.liveEditModel.getSiteModel().onApplicationRemoved(onApplicationRemovedHandler);
 
             this.onRemoved(() => {
-                this.siteModel.unApplicationAdded(onApplicationAddedHandler);
-                this.siteModel.unApplicationRemoved(onApplicationRemovedHandler);
+                this.liveEditModel.getSiteModel().unApplicationAdded(onApplicationAddedHandler);
+                this.liveEditModel.getSiteModel().unApplicationRemoved(onApplicationRemovedHandler);
             })
-        }
-
-        private initLoader() {
-            this.getPageDescriptorsByApplicationsRequest = new GetPageDescriptorsByApplicationsRequest(this.siteModel.getApplicationKeys());
-
-            this.loader = new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(this.getPageDescriptorsByApplicationsRequest).
-                setComparator(new api.content.page.DescriptorByDisplayNameComparator());
-
-            this.loader.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
-                event.getData().forEach((descriptor: PageDescriptor) => {
-                    var option = <Option<PageDescriptor>>{
-                        value: descriptor.getKey().toString(),
-                        displayValue: descriptor,
-                        indices: [descriptor.getDisplayName(), descriptor.getName().toString()]
-                    };
-                    this.addOption(option);
-                });
-                this.notifyLoadedData(event);
-            });
-        }
-
-        load() {
-            this.loader.load();
         }
 
         onLoadedData(listener: (event: LoadedDataEvent<PageDescriptor>) => void) {
@@ -94,5 +80,11 @@ module api.content.page {
                 listener.call(this, event);
             });
         }
+
+        private updateRequestApplicationKeys() {
+            (<GetPageDescriptorsByApplicationsRequest>this.getLoader().getRequest()).setApplicationKeys(
+                this.liveEditModel.getSiteModel().getApplicationKeys());
+        }
+
     }
 }

@@ -1,0 +1,68 @@
+.publish-dialog {
+
+  @media screen and (max-height: 360px) {
+    max-height: 200px;
+  }
+
+  .dialog-buttons {
+    .@{_COMMON_PREFIX}button {
+      &.publish-action {
+        .button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 30%));
+        padding: 4px 19px 4px 19px;
+        margin-left: 11px;
+
+        &:disabled {
+          background-color: @admin-font-gray1;
+        }
+
+        &.spinner {
+          font-family: 'xp-admin-font-icon';
+
+          &:after {
+            .animation(rotate360, .5s, .0s, linear);
+            content: "\e007";
+            color: white;
+            display: inline-block;
+            margin-left: 5px;
+          }
+        }
+      }
+
+      &.cancel-button-bottom {
+        margin-left: 5px;
+      }
+    }
+
+    &.no-checkbox {
+      margin-top: 10px;
+    }
+  }
+
+  .include-child-check {
+    position: absolute;
+    bottom: 40px;
+    left: 38px;
+
+    input[type="checkbox"] + label {
+      color: @admin-blue !important;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    @media screen and (max-height: 360px) {
+      bottom: 25px;
+    }
+  }
+
+}
+
+.@{_COMMON_PREFIX}modal-dialog {
+  &._0-240, &._240-360 {
+    &.publish-dialog .include-child-check {
+      bottom: auto;
+      right: 10px;
+    }
+  }
+}

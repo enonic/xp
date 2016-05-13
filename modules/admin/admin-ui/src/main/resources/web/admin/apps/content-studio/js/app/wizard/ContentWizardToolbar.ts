@@ -1,14 +1,15 @@
 import "../../api.ts";
+import {ContentWizardToolbarPublishControls} from "./ContentWizardToolbarPublishControls";
 
 import CycleButton = api.ui.button.CycleButton;
 import TogglerButton = api.ui.button.TogglerButton;
-import {ContentWizardToolbarPublishControls} from "./ContentWizardToolbarPublishControls";
 
 export interface ContentWizardToolbarParams {
     saveAction:api.ui.Action;
     duplicateAction:api.ui.Action;
     deleteAction:api.ui.Action;
     publishAction:api.ui.Action;
+    unpublishAction:api.ui.Action;
     previewAction:api.ui.Action;
     showLiveEditAction:api.ui.Action;
     showFormAction:api.ui.Action;
@@ -28,12 +29,14 @@ export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
         super.addAction(params.deleteAction);
         super.addAction(params.duplicateAction);
         super.addAction(params.previewAction);
+        super.addAction(params.unpublishAction);
         super.addGreedySpacer();
 
         this.cycleViewModeButton = new CycleButton([params.showLiveEditAction, params.showFormAction]);
         this.componentsViewToggler = new TogglerButton("icon-clipboard", "Show Component View");
         this.contextWindowToggler = new TogglerButton("icon-cog", "Show Inspection Panel");
-        this.contentWizardToolbarPublishControls = new ContentWizardToolbarPublishControls(params.publishAction);
+
+        this.contentWizardToolbarPublishControls = new ContentWizardToolbarPublishControls(params.publishAction, params.unpublishAction);
 
         super.addElement(this.contentWizardToolbarPublishControls);
         super.addElement(this.componentsViewToggler);

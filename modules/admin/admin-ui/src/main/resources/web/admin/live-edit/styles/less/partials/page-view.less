@@ -6,16 +6,18 @@
       height: 100%;
       margin: 0;
 
-      .@{_COMMON_PREFIX}dropdown {
+      .@{_CLS_PREFIX}page-descriptor-placeholder {
+        position: absolute;
         top: 50%;
-        margin-top: -18px;
+        margin-top: -58px;
+        width: calc(~'100% - 30px');
       }
 
       .page-placeholder-info {
-        position: absolute;
-        left: 0px;
-        right: 0px;
-        top: 35%;
+
+        &.empty {
+          margin-left: 45px;
+        }
 
         .page-placeholder-info-line1 {
           font-size: 22px;
@@ -42,11 +44,24 @@
     }
   }
 
-}
-
-.@{_CLS_PREFIX}page-placeholder {
-
   &:before {
-    content: "\e004";
+    display: none;
   }
+
+  .@{_CLS_PREFIX}page-descriptor-dropdown {
+
+    margin-top: 20px;
+
+    &:after {
+      position: absolute;
+      content: "\e004";
+      color: @placeholder-icon;
+      font-family: 'xp-admin-font-icon' !important;
+      font-size: 105px;
+      left: 50%;
+      margin-left: -50px;
+      margin-top: 50px;
+    }
+  }
+
 }

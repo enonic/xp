@@ -166,7 +166,7 @@ module api.util.htmlarea.dialog {
         private createTargetCheckbox(id:string, isTabSelected:boolean):FormItem {
             var checkbox = new api.ui.Checkbox().setChecked(this.getTarget(isTabSelected));
 
-            return this.createFormItem(id, "Open new window/tab", null, null, checkbox);
+            return this.createFormItem(id, "Open in new tab", null, null, checkbox);
         }
 
         protected getMainFormItems():FormItem [] {

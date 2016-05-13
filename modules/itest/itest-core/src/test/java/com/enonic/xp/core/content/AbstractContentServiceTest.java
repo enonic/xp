@@ -7,15 +7,18 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
-import org.apache.tika.detect.DefaultDetector;
-import org.apache.tika.parser.DefaultParser;
 import org.junit.Before;
 import org.mockito.Mockito;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
+import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
@@ -37,6 +40,8 @@ import com.enonic.xp.core.impl.site.SiteDescriptorRegistry;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.extractor.BinaryExtractor;
+import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -188,9 +193,19 @@ public class AbstractContentServiceTest
 
         this.mixinService = Mockito.mock( MixinService.class );
 
+        Map<String, List<String>> metadata = Maps.newHashMap();
+        metadata.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( "image/jpg" ) );
+
+        final ExtractedData extractedData = ExtractedData.create().
+            metadata( metadata ).
+            build();
+
+        final BinaryExtractor extractor = Mockito.mock( BinaryExtractor.class );
+        Mockito.when( extractor.extract( Mockito.isA( ByteSource.class ) ) ).
+            thenReturn( extractedData );
+
         final MediaInfoServiceImpl mediaInfoService = new MediaInfoServiceImpl();
-        mediaInfoService.setDetector( new DefaultDetector() );
-        mediaInfoService.setParser( new DefaultParser() );
+        mediaInfoService.setBinaryExtractor( extractor );
 
         final SiteDescriptorRegistry siteDescriptorRegistry = Mockito.mock( SiteDescriptorRegistry.class );
         final SiteServiceImpl siteService = new SiteServiceImpl();
@@ -209,6 +224,8 @@ public class AbstractContentServiceTest
         this.contentService.setContentTypeService( contentTypeService );
         this.contentService.setMixinService( mixinService );
         this.contentService.setTranslator( this.translator );
+        this.contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
+        } );
 
         createContentRepository();
         waitForClusterHealth();
@@ -244,12 +261,12 @@ public class AbstractContentServiceTest
     }
 
 
-    protected CreateAttachments createAttachment( final String name, final String mimeType, final ByteSource image )
+    protected CreateAttachments createAttachment( final String name, final String mimeType, final ByteSource byteSource )
     {
         return CreateAttachments.from( CreateAttachment.create().
             name( name ).
             mimeType( mimeType ).
-            byteSource( image ).
+            byteSource( byteSource ).
             build() );
     }
 

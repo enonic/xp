@@ -19,7 +19,7 @@ module api.content.form.inputtype.geo {
         }
 
         newInitialValue(): Value {
-            return ValueTypes.GEO_POINT.newNullValue();
+            return super.newInitialValue() || ValueTypes.GEO_POINT.newNullValue();
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {

@@ -59,6 +59,11 @@ export class UserAccessWidgetItemView extends WidgetItemView {
     private layoutHeader(content: Content) {
         var entry = content.getPermissions().getEntry(api.security.RoleKeys.EVERYONE);
         this.everyoneAccessValue = null;
+
+        if (this.hasChild(this.headerEl)) {
+            this.removeChild(this.headerEl);
+        }
+
         if (entry) {
 
             this.everyoneAccessValue = AccessControlEntryView.getAccessValueFromEntry(entry);
@@ -70,7 +75,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
 
             this.headerEl.appendChild(new api.dom.DivEl("icon-menu4"));
             this.headerEl.appendChild(headerStrEl);
-            this.appendChild(this.headerEl);
+            this.prependChild(this.headerEl);
         }
     }
 
@@ -130,7 +135,6 @@ export class UserAccessWidgetItemView extends WidgetItemView {
             this.currentUser = loginResult.getUser();
             if (this.contentId) {
                 return new api.content.GetContentByIdRequest(this.contentId).sendAndParse().then((content: Content) => {
-                    this.removeChildren();
                     if (content) {
                         this.layoutHeader(content);
                         return this.layoutList(content).then(() => {

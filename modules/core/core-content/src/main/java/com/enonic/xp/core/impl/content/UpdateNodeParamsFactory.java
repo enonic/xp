@@ -4,23 +4,25 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.schema.content.ContentTypeService;
 
 public class UpdateNodeParamsFactory
 {
-    private static final ContentDataSerializer serializer = new ContentDataSerializer();
+    private static final ContentDataSerializer CONTENT_DATA_SERIALIZER = new ContentDataSerializer();
 
-    public static UpdateNodeParams create( final UpdateContentTranslatorParams params )
+    public static UpdateNodeParams create( final UpdateContentTranslatorParams params, final ContentTypeService contentTypeService )
     {
         final Content editedContent = params.getEditedContent();
         final CreateAttachments createAttachments = params.getCreateAttachments();
 
-        final NodeEditor nodeEditor = toNodeEditor( params );
+        final NodeEditor nodeEditor = toNodeEditor( params, contentTypeService );
 
         final UpdateNodeParams.Builder builder = UpdateNodeParams.create().
             id( NodeId.from( editedContent.getId() ) ).
@@ -36,13 +38,13 @@ public class UpdateNodeParamsFactory
         return builder.build();
     }
 
-    private static NodeEditor toNodeEditor( final UpdateContentTranslatorParams params )
+    private static NodeEditor toNodeEditor( final UpdateContentTranslatorParams params, final ContentTypeService contentTypeService )
     {
         final Content content = params.getEditedContent();
 
-        final PropertyTree nodeData = serializer.toNodeData( params );
+        final PropertyTree nodeData = CONTENT_DATA_SERIALIZER.toUpdateNodeData( params );
 
-        final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( content );
+        final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( content, contentTypeService );
 
         return editableNode -> {
             editableNode.name = NodeName.from( content.getName().toString() );

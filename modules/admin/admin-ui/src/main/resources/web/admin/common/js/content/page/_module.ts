@@ -9,6 +9,7 @@
 ///<reference path='Descriptor.ts' />
 ///<reference path='DescriptorKey.ts' />
 
+///<reference path='DescriptorBasedDropdown.ts' />
 ///<reference path='PageDescriptor.ts' />
 ///<reference path='PageDescriptorCache.ts' />
 ///<reference path='PageDescriptorResourceRequest.ts' />

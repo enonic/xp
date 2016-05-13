@@ -16,7 +16,6 @@ import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 import LayoutDescriptorLoader = api.content.page.region.LayoutDescriptorLoader;
 import LayoutDescriptorBuilder = api.content.page.region.LayoutDescriptorBuilder;
 import LayoutDescriptorDropdown = api.content.page.region.LayoutDescriptorDropdown;
-import LayoutDescriptorDropdownConfig = api.content.page.region.LayoutDescriptorDropdownConfig;
 import Option = api.ui.selector.Option;
 import SelectedOption = api.ui.selector.combobox.SelectedOption;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
@@ -52,9 +51,13 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
         var descriptorsRequest = new GetLayoutDescriptorsByApplicationsRequest(liveEditModel.getSiteModel().getApplicationKeys());
         var loader = new LayoutDescriptorLoader(descriptorsRequest);
         loader.setComparator(new DescriptorByDisplayNameComparator());
-        this.layoutSelector = new LayoutDescriptorDropdown("", {loader: loader});
+        this.layoutSelector = new LayoutDescriptorDropdown("", loader);
         this.layoutForm = new DescriptorBasedDropdownForm(this.layoutSelector, "Layout");
         loader.load();
+
+        liveEditModel.getSiteModel().onApplicationUnavailable(() => {
+            this.layoutSelector.hideDropdown();
+        });
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
 

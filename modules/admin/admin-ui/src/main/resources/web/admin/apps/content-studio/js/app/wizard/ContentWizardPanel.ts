@@ -50,6 +50,8 @@ import ImageErrorEvent = api.content.ImageErrorEvent;
 
 import Application = api.application.Application;
 import ApplicationKey = api.application.ApplicationKey;
+import ApplicationEvent = api.application.ApplicationEvent;
+import ApplicationEventType = api.application.ApplicationEventType;
 import Mixin = api.schema.mixin.Mixin;
 import MixinName = api.schema.mixin.MixinName;
 import MixinNames = api.schema.mixin.MixinNames;
@@ -124,6 +126,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private publishAction: api.ui.Action;
 
+    private unpublishAction: api.ui.Action;
+
     private contextWindowToggler: TogglerButton;
 
     private componentsViewToggler: TogglerButton;
@@ -151,6 +155,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private applicationAddedListener: (event: api.content.site.ApplicationAddedEvent) => void;
 
     private applicationRemovedListener: (event: api.content.site.ApplicationRemovedEvent) => void;
+
+    private applicationUnavailableListener: (event: ApplicationEvent) => void;
 
     /**
      * Whether constructor is being currently executed or not.
@@ -182,6 +188,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions = new ContentWizardActions(this);
         this.previewAction = this.wizardActions.getPreviewAction();
         this.publishAction = this.wizardActions.getPublishAction();
+        this.unpublishAction = this.wizardActions.getUnpublishAction();
 
         var mainToolbar = new ContentWizardToolbar({
             saveAction: this.wizardActions.getSaveAction(),
@@ -189,6 +196,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             duplicateAction: this.wizardActions.getDuplicateAction(),
             previewAction: this.wizardActions.getPreviewAction(),
             publishAction: this.wizardActions.getPublishAction(),
+            unpublishAction: this.wizardActions.getUnpublishAction(),
             showLiveEditAction: this.wizardActions.getShowLiveEditAction(),
             showFormAction: this.wizardActions.getShowFormAction(),
             showSplitEditAction: this.wizardActions.getShowSplitEditAction()
@@ -234,6 +242,39 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.applicationRemovedListener = (event: api.content.site.ApplicationRemovedEvent) => {
             this.removeMetadataStepForms();
+        };
+
+        this.applicationUnavailableListener = (event: ApplicationEvent) => {
+            var isAppFromSiteModelUnavailable: boolean = this.siteModel.getApplicationKeys().some((applicationKey: ApplicationKey) => {
+                return event.getApplicationKey().equals(applicationKey);
+            });
+
+            if (isAppFromSiteModelUnavailable) {
+                let message = "Required application " + event.getApplicationKey().toString() + " not available.";
+
+                if (this.isVisible()) {
+                    api.notify.showWarning(message);
+                }
+                else {
+                    let shownHandler = () => {
+                        new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse().then(
+                            (application: Application) => {
+                                if (application.getState() == "stopped") {
+                                    api.notify.showWarning(message);
+                                }
+                            }).catch((reason: any) => { //app was uninstalled
+                            api.notify.showWarning(message);
+                        });
+
+                        this.unShown(shownHandler);
+                    }
+
+                    this.onShown(shownHandler);
+
+                }
+
+            }
+
         };
 
         var isSiteOrWithinSite = this.site || this.createSite;
@@ -874,13 +915,15 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private initSiteModelListeners() {
-        this.siteModel.onApplicationAdded(this.applicationAddedListener.bind(this));
-        this.siteModel.onApplicationRemoved(this.applicationRemovedListener.bind(this));
+        this.siteModel.onApplicationAdded(this.applicationAddedListener);
+        this.siteModel.onApplicationRemoved(this.applicationRemovedListener);
+        this.siteModel.onApplicationUnavailable(this.applicationUnavailableListener);
     }
 
     private unbindSiteModelListeners() {
-        this.siteModel.unApplicationAdded(this.applicationAddedListener.bind(this));
-        this.siteModel.unApplicationRemoved(this.applicationRemovedListener.bind(this));
+        this.siteModel.unApplicationAdded(this.applicationAddedListener);
+        this.siteModel.unApplicationRemoved(this.applicationRemovedListener);
+        this.siteModel.unApplicationUnavailable(this.applicationUnavailableListener);
     }
 
     private removeMetadataStepForms() {

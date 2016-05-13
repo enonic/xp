@@ -3,6 +3,7 @@ package com.enonic.xp.resource;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.util.List;
 
 import com.google.common.base.Charsets;
@@ -39,7 +40,7 @@ public abstract class ResourceBase
     }
 
     @Override
-    public final Readable openReader()
+    public final Reader openReader()
     {
         try
         {

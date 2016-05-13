@@ -1,4 +1,12 @@
 import "../../api.ts";
+import {MostPopularItemsBlock} from "./MostPopularItemsBlock";
+import {NewContentDialogListItem} from "./NewContentDialogListItem";
+import {RecentItemsBlock} from "./RecentItemsBlock";
+import {MostPopularItem} from "./MostPopularItem";
+import {NewContentDialogList} from "./NewContentDialogList";
+import {NewContentDialogItemSelectedEvent} from "./NewContentDialogItemSelectedEvent";
+import {NewMediaUploadEvent} from "./NewMediaUploadEvent";
+import {NewContentEvent} from "./NewContentEvent";
 
 import GetAllContentTypesRequest = api.schema.content.GetAllContentTypesRequest;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
@@ -14,14 +22,6 @@ import ApplicationKey = api.application.ApplicationKey;
 import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
 import UploadItem = api.ui.uploader.UploadItem;
 import ListContentByPathRequest = api.content.ListContentByPathRequest;
-import {MostPopularItemsBlock} from "./MostPopularItemsBlock";
-import {NewContentDialogListItem} from "./NewContentDialogListItem";
-import {RecentItemsBlock} from "./RecentItemsBlock";
-import {MostPopularItem} from "./MostPopularItem";
-import {NewContentDialogList} from "./NewContentDialogList";
-import {NewContentDialogItemSelectedEvent} from "./NewContentDialogItemSelectedEvent";
-import {NewMediaUploadEvent} from "./NewMediaUploadEvent";
-import {NewContentEvent} from "./NewContentEvent";
 
 export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -380,7 +380,6 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
     private toggleMostPopularBlockShown() {
         if (this.mostPopularItems.length > 0) {
-            this.mostPopularItemsBlock.getMostPopularList().setItems(this.mostPopularItems);
             this.mostPopularItemsBlock.show();
         }
     }
@@ -403,7 +402,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
     private resetNewContentDialogContent() {
         if (this.listItems.length > 0) {
-            this.contentList.setItems(this.listItems);
+            this.contentList.setItems(this.listItems.slice());
             this.recentItemsBlock.getRecentItemsList().setItems(this.listItems);
             this.mostPopularItemsBlock.getMostPopularList().setItems(this.mostPopularItems);
         } else {

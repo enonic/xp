@@ -4,11 +4,13 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.data.Value;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeProperty;
@@ -22,6 +24,8 @@ public class InputJson
     private final OccurrencesJson occurrences;
 
     private final String inputType;
+
+    private Value defaultValue;
 
     public InputJson( final Input input )
     {
@@ -99,6 +103,17 @@ public class InputJson
         }
 
         return json;
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public PropertyValueJson getDefaultValue()
+    {
+        return defaultValue != null ? new PropertyValueJson( defaultValue ) : null;
+    }
+
+    public void setDefaultValue( final Value defaultValue )
+    {
+        this.defaultValue = defaultValue;
     }
 
     private static ArrayNode toJson( final Collection<InputTypeProperty> properties )

@@ -19,12 +19,15 @@ public class CreateAttachment
 
     private final ByteSource byteSource;
 
+    private final String textContent;
+
     private CreateAttachment( final Builder builder )
     {
         this.mimeType = builder.mimeType;
         this.name = builder.name;
         this.label = builder.label;
         this.byteSource = builder.byteSource;
+        this.textContent = builder.text;
     }
 
     public String getName()
@@ -62,9 +65,19 @@ public class CreateAttachment
         return BinaryReference.from( name );
     }
 
+    public String getTextContent()
+    {
+        return textContent;
+    }
+
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public static Builder create( final CreateAttachment source )
+    {
+        return new Builder( source );
     }
 
     public static class Builder
@@ -76,6 +89,21 @@ public class CreateAttachment
         private String name;
 
         private String label;
+
+        private String text;
+
+        public Builder()
+        {
+        }
+
+        public Builder( final CreateAttachment source )
+        {
+            this.name = source.name;
+            this.mimeType = source.mimeType;
+            this.label = source.label;
+            this.byteSource = source.byteSource;
+            this.text = source.textContent;
+        }
 
         public Builder mimeType( final String value )
         {
@@ -98,6 +126,12 @@ public class CreateAttachment
         public Builder byteSource( final ByteSource value )
         {
             byteSource = value;
+            return this;
+        }
+
+        public Builder text( final String value )
+        {
+            this.text = value;
             return this;
         }
 

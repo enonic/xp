@@ -11,12 +11,15 @@ public class SyncWorkResolverParams
 
     private NodeId nodeId;
 
+    private NodeIds excludedNodeIds;
+
     private boolean includeChildren;
 
     private SyncWorkResolverParams( Builder builder )
     {
         branch = builder.branch;
         nodeId = builder.nodeId;
+        excludedNodeIds = builder.excludedNodeIds;
         includeChildren = builder.includeChildren;
     }
 
@@ -28,6 +31,11 @@ public class SyncWorkResolverParams
     public NodeId getNodeId()
     {
         return nodeId;
+    }
+
+    public NodeIds getExcludedNodeIds()
+    {
+        return excludedNodeIds;
     }
 
     public boolean isIncludeChildren()
@@ -47,6 +55,8 @@ public class SyncWorkResolverParams
 
         private NodeId nodeId;
 
+        private NodeIds excludedNodeIds;
+
         private boolean includeChildren;
 
         private Builder()
@@ -65,6 +75,12 @@ public class SyncWorkResolverParams
             return this;
         }
 
+        public Builder excludedNodeIds( final NodeIds excludedNodeIds )
+        {
+            this.excludedNodeIds = excludedNodeIds;
+            return this;
+        }
+
         public Builder includeChildren( final boolean includeChildren )
         {
             this.includeChildren = includeChildren;
@@ -73,7 +89,7 @@ public class SyncWorkResolverParams
 
         public SyncWorkResolverParams build()
         {
-            return new SyncWorkResolverParams( this );
+             return new SyncWorkResolverParams( this );
         }
     }
 }

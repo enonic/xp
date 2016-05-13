@@ -120,16 +120,10 @@ public final class ResourceLocatorImpl
     public URL findResource( final String name )
         throws IOException
     {
-        final URL url1 = findFromDir( this.resourcesTargetDir, name );
-        if ( url1 != null )
+        final File file = findDevResource( name );
+        if ( file != null )
         {
-            return url1;
-        }
-
-        final URL url2 = findFromDir( this.resourcesSrcDir, name );
-        if ( url2 != null )
-        {
-            return url2;
+            return file.toURI().toURL();
         }
 
         for ( final Bundle bundle : this.bundles )
@@ -144,20 +138,36 @@ public final class ResourceLocatorImpl
         return null;
     }
 
-    private URL findFromDir( final File dir, final String name )
-        throws IOException
+    private File findDevResource( final String name )
     {
-        if ( dir == null )
+        if ( this.resourcesSrcDir == null )
         {
             return null;
         }
 
-        final File file = new File( dir, name );
-        if ( file.isFile() )
+        final File file1 = new File( this.resourcesSrcDir, name );
+        final File file2 = new File( this.resourcesTargetDir, name );
+
+        if ( file1.isFile() && file2.isFile() )
         {
-            return file.toURI().toURL();
+            return findNewestFile( file1, file2 );
+        }
+
+        if ( file1.isFile() )
+        {
+            return file1;
+        }
+
+        if ( file2.isFile() )
+        {
+            return file2;
         }
 
         return null;
+    }
+
+    private File findNewestFile( final File file1, final File file2 )
+    {
+        return file1.lastModified() > file2.lastModified() ? file1 : file2;
     }
 }

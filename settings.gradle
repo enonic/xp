@@ -13,6 +13,7 @@ include 'core:core-i18n'
 include 'core:core-media'
 include 'core:core-app'
 include 'core:core-service'
+include 'core:core-extractor'
 include 'core:core-blobstore'
 include 'core:core-macro'
 
@@ -31,7 +32,6 @@ include 'web:web-dos'
 
 include 'jaxrs:jaxrs-api'
 include 'jaxrs:jaxrs-impl'
-include 'jaxrs:jaxrs-swagger'
 
 include 'portal:portal-api'
 include 'portal:portal-owasp'

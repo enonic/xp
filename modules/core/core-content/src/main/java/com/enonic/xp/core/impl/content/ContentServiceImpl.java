@@ -12,6 +12,8 @@ import java.util.concurrent.ThreadFactory;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,8 +65,11 @@ import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.content.processor.ContentProcessor;
+import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.MoveNodeException;
@@ -124,6 +129,10 @@ public class ContentServiceImpl
 
     private IndexService indexService;
 
+    private ContentProcessors contentProcessors;
+
+    private FormDefaultValuesProcessor formDefaultValuesProcessor;
+
     public ContentServiceImpl()
     {
         final ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().
@@ -131,6 +140,7 @@ public class ContentServiceImpl
             setUncaughtExceptionHandler( ( t, e ) -> LOG.error( "Apply Permissions failed", e ) ).
             build();
         this.applyPermissionsExecutor = Executors.newFixedThreadPool( 5, namedThreadFactory );
+        this.contentProcessors = new ContentProcessors();
     }
 
     @Activate
@@ -166,6 +176,8 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             siteService( this.siteService ).
             mixinService( this.mixinService ).
+            contentProcessors( this.contentProcessors ).
+            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             params( createContentParams ).
             build().
             execute();
@@ -194,6 +206,8 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             siteService( this.siteService ).
             mixinService( this.mixinService ).
+            contentProcessors( this.contentProcessors ).
+            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             params( params ).
             build().
             execute();
@@ -227,6 +241,8 @@ public class ContentServiceImpl
             mediaInfoService( this.mediaInfoService ).
             siteService( this.siteService ).
             mixinService( this.mixinService ).
+            contentProcessors( this.contentProcessors ).
+            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             build().
             execute();
     }
@@ -242,6 +258,7 @@ public class ContentServiceImpl
             contentService( this ).
             siteService( this.siteService ).
             mixinService( this.mixinService ).
+            contentProcessors( this.contentProcessors ).
             build().
             execute();
     }
@@ -257,6 +274,7 @@ public class ContentServiceImpl
             mediaInfoService( this.mediaInfoService ).
             siteService( this.siteService ).
             mixinService( this.mixinService ).
+            contentProcessors( this.contentProcessors ).
             build().
             execute();
     }
@@ -283,6 +301,7 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( params.getContentIds() ).
+            excludedContentIds( params.getExcludedContentIds() ).
             target( params.getTarget() ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( params.isIncludeDependencies() ).
@@ -299,6 +318,7 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( params.getContentIds() ).
+            excludedContentIds( params.getExcludedContentIds() ).
             target( params.getTarget() ).
             includeChildren( params.isIncludeChildren() ).
             build().
@@ -721,9 +741,23 @@ public class ContentServiceImpl
         this.translator = translator;
     }
 
+    @SuppressWarnings("unused")
     @Reference
     public void setIndexService( final IndexService indexService )
     {
         this.indexService = indexService;
+    }
+
+    @SuppressWarnings("unused")
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void contentProcessors( final ContentProcessor contentProcessor )
+    {
+        this.contentProcessors.add( contentProcessor );
+    }
+
+    @Reference
+    public void setFormDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
+    {
+        this.formDefaultValuesProcessor = formDefaultValuesProcessor;
     }
 }

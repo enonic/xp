@@ -415,7 +415,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
                 if (!this.contextWindow.isFixed()) {
-                    if (itemView.isEmpty() && event.isSilent()) {
+                    if (itemView.isEmpty()) {
                         if (this.contextWindow.isFloating() && this.contextWindow.isShownOrAboutToBeShown()) {
                             toggler.setActive(false);
                         }
@@ -428,7 +428,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                 this.inspectComponent(<ComponentView<Component>>itemView);
             }
 
-            if (!this.pageView.isLocked()) {
+            if (!this.pageView.isLocked()  && !event.isRightClicked()) {
                 this.minimizeContentFormPanelIfNeeded();
             }
         });

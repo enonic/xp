@@ -1,6 +1,8 @@
 module api.content.site {
 
     import ApplicationKey = api.application.ApplicationKey;
+    import ApplicationEvent = api.application.ApplicationEvent;
+    import ApplicationEventType = api.application.ApplicationEventType;
 
     export class SiteModel {
 
@@ -19,6 +21,10 @@ module api.content.site {
         private applicationPropertyAddedListener: (event: api.data.PropertyAddedEvent) => void;
 
         private applicationPropertyRemovedListener: (event: api.data.PropertyRemovedEvent) => void;
+
+        private applicationGlobalEventsListener: (event: ApplicationEvent) => void;
+
+        private applicationUnavailableListeners: {(applicationEvent: ApplicationEvent):void}[] = [];
 
         constructor(site: Site) {
             this.initApplicationPropertyListeners();
@@ -49,6 +55,12 @@ module api.content.site {
                     this.notifyApplicationRemoved(applicationKey);
                 }
             };
+
+            this.applicationGlobalEventsListener = (event: ApplicationEvent) => {
+                if (ApplicationEventType.STOPPED == event.getEventType()) {
+                    this.notifyApplicationUnavailable(event);
+                }
+            }
         }
 
         private setup(site: Site) {
@@ -56,12 +68,14 @@ module api.content.site {
             this.siteConfigs = site.getSiteConfigs();
             this.site.getContentData().onPropertyAdded(this.applicationPropertyAddedListener);
             this.site.getContentData().onPropertyRemoved(this.applicationPropertyRemovedListener);
+            ApplicationEvent.on(this.applicationGlobalEventsListener);
         }
 
         update(site: Site) {
             if (this.site) {
                 this.site.getContentData().unPropertyAdded(this.applicationPropertyAddedListener);
                 this.site.getContentData().unPropertyRemoved(this.applicationPropertyRemovedListener);
+                ApplicationEvent.un(this.applicationGlobalEventsListener);
             }
 
             if (site) {
@@ -132,6 +146,23 @@ module api.content.site {
             var event = new ApplicationRemovedEvent(applicationKey);
             this.applicationRemovedListeners.forEach((listener: (event: ApplicationRemovedEvent)=>void) => {
                 listener(event);
+            })
+        }
+
+        onApplicationUnavailable(listener: (applicationEvent: ApplicationEvent)=>void) {
+            this.applicationUnavailableListeners.push(listener);
+        }
+
+        unApplicationUnavailable(listener: (applicationEvent: ApplicationEvent)=>void) {
+            this.applicationUnavailableListeners =
+                this.applicationUnavailableListeners.filter((curr: (applicationEvent: ApplicationEvent)=>void) => {
+                    return listener != curr;
+                });
+        }
+
+        private notifyApplicationUnavailable(applicationEvent: ApplicationEvent) {
+            this.applicationUnavailableListeners.forEach((listener: (applicationEvent: ApplicationEvent)=>void) => {
+                listener(applicationEvent);
             })
         }
     }

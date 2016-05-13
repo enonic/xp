@@ -6,6 +6,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueType;
+import com.enonic.xp.form.Input;
 
 @Beta
 public abstract class InputTypeBase
@@ -38,7 +39,7 @@ public abstract class InputTypeBase
     public abstract Value createValue( final Value value, final InputTypeConfig config );
 
     @Override
-    public Value createDefaultValue( final InputTypeDefault defaultConfig )
+    public Value createDefaultValue( final Input input )
     {
         return null;
     }
