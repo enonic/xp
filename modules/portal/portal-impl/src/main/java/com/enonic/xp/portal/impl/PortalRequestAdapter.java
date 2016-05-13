@@ -15,7 +15,9 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 public class PortalRequestAdapter
 {
-    public final static String BASE_URI = "/portal";
+    public final static String PORTAL_BASE_URI = "/portal";
+
+    public final static String ADMIN_BASE_URI = "/admin/portal/admin";
 
     public PortalRequest adapt( final HttpServletRequest req )
     {
@@ -55,7 +57,19 @@ public class PortalRequestAdapter
         }
         else
         {
-            to.setBaseUri( BASE_URI );
+            final String requestURI = from.getRequestURI();
+            if ( requestURI.startsWith( "/portal" ) )
+            {
+                to.setBaseUri( PORTAL_BASE_URI );
+            }
+            else if ( requestURI.startsWith( "/admin" ) )
+            {
+                to.setBaseUri( ADMIN_BASE_URI );
+            }
+            else
+            {
+                to.setBaseUri( requestURI );
+            }
         }
     }
 
