@@ -930,12 +930,12 @@ public final class ContentResource
     @Path("unpublish")
     public UnpublishContentResultJson unpublish( final UnpublishContentJson params )
     {
-        final ContentIds contentIds = this.contentService.unpublishContent( UnpublishContentParams.create().
+        final Contents contents = this.contentService.unpublishContent( UnpublishContentParams.create().
             contentIds( ContentIds.from( params.getIds() ) ).
             unpublishBranch( ContentConstants.BRANCH_MASTER ).
             build() );
 
-        return new UnpublishContentResultJson( contentIds );
+        return new UnpublishContentResultJson( contents );
     }
 
     @GET

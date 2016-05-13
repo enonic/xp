@@ -1,12 +1,9 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.List;
-
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -26,7 +23,7 @@ public class UnpublishContentCommand
         this.params = builder.params;
     }
 
-    public ContentIds execute()
+    public Contents execute()
     {
         final Context context = ContextAccessor.current();
 
@@ -37,9 +34,9 @@ public class UnpublishContentCommand
         return unpublishContext.callWith( () -> unpublish() );
     }
 
-    private ContentIds unpublish()
+    private Contents unpublish()
     {
-        List<ContentId> contentIds = Lists.newArrayList();
+        Contents.Builder contents = Contents.create();
 
         for ( final ContentId contentId : this.params.getContentIds() )
         {
@@ -47,11 +44,11 @@ public class UnpublishContentCommand
 
             if ( node != null )
             {
-                contentIds.add( ContentId.from( node.id().toString() ) );
+                contents.add( translator.fromNode( node, false ) );
             }
         }
 
-        return ContentIds.from( contentIds );
+        return contents.build();
     }
 
     public static Builder create()

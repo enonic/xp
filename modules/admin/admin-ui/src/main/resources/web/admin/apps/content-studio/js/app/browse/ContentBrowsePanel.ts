@@ -94,7 +94,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             if (event.getType() === 'updated') {
                 let browseItems = this.treeNodesToBrowseItems(event.getTreeNodes());
                 this.getBrowseItemPanel().updateItemViewers(browseItems);
-                
+
                 this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
                 this.mobileBrowseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
             }
@@ -136,7 +136,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
 
         this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
-        
+
         let contentPublishMenuManager = new ContentPublishMenuManager(this.browseActions);
         this.toolbar.appendChild(contentPublishMenuManager.getPublishMenuButton());
 
@@ -321,8 +321,16 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
 
         handler.onContentDeleted((data: api.content.event.ContentServerChangeItem[]) => {
-            var paths = data.map((changeItem) => changeItem.getPath());
-            this.handleContentDeleted(paths)
+            var paths = [];
+            data.forEach((changeItem) => {
+                // deleting from master is unpublishing and should not remove items from grid
+                if (changeItem.getBranch() != "master") {
+                    paths.push(changeItem.getPath());
+                }
+            });
+            if (paths.length > 0) {
+                this.handleContentDeleted(paths);
+            }
         });
 
         handler.onContentPending((data: ContentSummaryAndCompareStatus[]) => this.handleContentPending(data));
@@ -375,8 +383,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                             }),
                             !isFiltered
                         ).then((results) => {
-                            nodes = nodes.concat(results);
-                        });
+                                nodes = nodes.concat(results);
+                            });
                     }
                     break;
                 }
@@ -505,7 +513,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             }
         });
         this.contentTreeGrid.invalidate();
-        
+
         // Unpdate since CompareStatus changed
         let changedEvent = new DataChangedEvent<ContentSummaryAndCompareStatus>(changed, DataChangedEvent.UPDATED);
         this.contentTreeGrid.notifyDataChanged(changedEvent);

@@ -8,13 +8,13 @@ module api.content.event {
             super();
         }
 
-        addItem(contentId: ContentId, contentPath: api.content.ContentPath): ContentDeletedEvent {
-            this.contentDeletedItems.push(new ContentDeletedItem(contentId, contentPath, false));
+        addItem(contentId: ContentId, contentPath: api.content.ContentPath, branch: string): ContentDeletedEvent {
+            this.contentDeletedItems.push(new ContentDeletedItem(contentId, contentPath, branch, false));
             return this;
         }
 
         addPendingItem(contentId: ContentId, contentPath: api.content.ContentPath): ContentDeletedEvent {
-            this.contentDeletedItems.push(new ContentDeletedItem(contentId, contentPath, true));
+            this.contentDeletedItems.push(new ContentDeletedItem(contentId, contentPath, "master", true));
             return this;
         }
 
@@ -47,12 +47,19 @@ module api.content.event {
 
         private pending: boolean;
 
-        private contentId: ContentId
+        private contentId: ContentId;
 
-        constructor(contentId: ContentId, contentPath: api.content.ContentPath, pending: boolean = false) {
+        private branch: string;
+
+        constructor(contentId: ContentId, contentPath: api.content.ContentPath, branch: string, pending: boolean = false) {
             this.contentPath = contentPath;
             this.pending = pending;
             this.contentId = contentId;
+            this.branch = branch;
+        }
+
+        public getBranch(): string {
+            return this.branch;
         }
 
         public getContentPath(): ContentPath {

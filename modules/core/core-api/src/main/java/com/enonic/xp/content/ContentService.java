@@ -84,6 +84,6 @@ public interface ContentService
 
     Content reprocess( ContentId contentId );
 
-    ContentIds unpublishContent( final UnpublishContentParams params );
+    Contents unpublishContent( final UnpublishContentParams params );
 
 }
