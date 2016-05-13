@@ -102,6 +102,18 @@ public class MacroResourceTest
     }
 
     @Test
+    public void testMacrosSortedByDisplayName()
+        throws Exception
+    {
+        Mockito.when( this.macroDescriptorService.getAll() ).thenReturn( this.getTestDescriptors() );
+
+        String response = request().
+            path( "macro/list" ).
+            get().getAsString();
+        assertJson( "get_all_macros.json", response );
+    }
+
+    @Test
     public void testPreview()
         throws Exception
     {
@@ -140,17 +152,24 @@ public class MacroResourceTest
         final MacroDescriptor macroDescriptor1 = MacroDescriptor.create().
             key( MacroKey.from( "my-app1:macro1" ) ).
             description( "my description" ).
-            displayName( "my macro1 name" ).
+            displayName( "A macro" ).
             form( config ).
             build();
 
         final MacroDescriptor macroDescriptor2 = MacroDescriptor.create().
             key( MacroKey.from( "my-app2:macro2" ) ).
             description( "my description" ).
-            displayName( "my macro2 name" ).
+            displayName( "B macro" ).
             form( config ).
             build();
 
-        return MacroDescriptors.from( macroDescriptor1, macroDescriptor2 );
+        final MacroDescriptor macroDescriptor3 = MacroDescriptor.create().
+            key( MacroKey.from( "my-app3:macro3" ) ).
+            description( "my description" ).
+            displayName( "C macro" ).
+            form( config ).
+            build();
+
+        return MacroDescriptors.from( macroDescriptor3, macroDescriptor2, macroDescriptor1 );
     }
 }

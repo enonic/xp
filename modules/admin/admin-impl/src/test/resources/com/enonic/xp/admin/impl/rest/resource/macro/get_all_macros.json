@@ -2,23 +2,33 @@
   "macros": [
     {
       "description": "my description",
-      "displayName": "my macro1 name",
+      "displayName": "A macro",
       "form": {
         "formItems": []
       },
-      "iconUrl": "/admin/rest/resource/macro/macro1",
+      "iconUrl": "/admin/rest/macro/icon/macro1",
       "key": "my-app1:macro1",
       "name": "macro1"
     },
     {
       "description": "my description",
-      "displayName": "my macro2 name",
+      "displayName": "B macro",
       "form": {
         "formItems": []
       },
-      "iconUrl": "/admin/rest/resource/macro/macro2",
+      "iconUrl": "/admin/rest/macro/icon/macro2",
       "key": "my-app2:macro2",
       "name": "macro2"
+    },
+    {
+      "description": "my description",
+      "displayName": "C macro",
+      "form": {
+        "formItems": []
+      },
+      "iconUrl": "/admin/rest/macro/icon/macro3",
+      "key": "my-app3:macro3",
+      "name": "macro3"
     }
   ]
 }
