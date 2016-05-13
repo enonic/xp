@@ -60,6 +60,7 @@ import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.Context;
@@ -680,6 +681,19 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentService( this ).
+            build().
+            execute();
+    }
+
+    @Override
+    public ContentId unpublishContent( final UnpublishContentParams params )
+    {
+        return UnpublishContentCommand.create().
+            params( params ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
