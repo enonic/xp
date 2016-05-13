@@ -32,6 +32,8 @@ module api.content {
 
         private id: ContentId;
 
+        private path: ContentPath;
+
         private inputName: string;
 
         private contentTypeNames: string[] = [];
@@ -65,6 +67,14 @@ module api.content {
 
         getId(): ContentId {
             return this.id;
+        }
+
+        setPath(path: ContentPath) {
+            this.path = path;
+        }
+
+        getPath(): ContentPath {
+            return this.path;
         }
 
         setFrom(from: number) {
@@ -103,8 +113,9 @@ module api.content {
         }
 
         private createSearchExpression(searchString): Expression {
-            return new api.query.FulltextSearchExpressionBuilder()
+            return new api.query.PathMatchExpressionBuilder()
                         .setSearchString(searchString)
+                        .setPath(this.path ? this.path.toString() : "")
                         .addField(new QueryField(QueryField.DISPLAY_NAME, 5))
                         .addField(new QueryField(QueryField.NAME, 3))
                         .addField(new QueryField(QueryField.ALL))

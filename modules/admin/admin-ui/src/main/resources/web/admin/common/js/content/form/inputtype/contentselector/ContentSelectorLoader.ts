@@ -10,6 +10,7 @@ module api.content.form.inputtype.contentselector {
             this.contentSelectorQueryRequest = new ContentSelectorQueryRequest();
             super(this.contentSelectorQueryRequest);
             this.contentSelectorQueryRequest.setId(builder.id);
+            this.contentSelectorQueryRequest.setPath(builder.path);
             this.contentSelectorQueryRequest.setInputName(builder.inputName);
             this.contentSelectorQueryRequest.setContentTypeNames(builder.contentTypeNames);
             this.contentSelectorQueryRequest.setAllowedContentPaths(builder.allowedContentPaths);
@@ -56,6 +57,8 @@ module api.content.form.inputtype.contentselector {
 
         id: ContentId;
 
+        path: ContentPath;
+
         inputName: string;
 
         contentTypeNames: string[] = [];
@@ -66,6 +69,11 @@ module api.content.form.inputtype.contentselector {
 
         public setId(id: ContentId): Builder {
             this.id = id;
+            return this;
+        }
+
+        public setPath(path: ContentPath): Builder {
+            this.path = path;
             return this;
         }
 
