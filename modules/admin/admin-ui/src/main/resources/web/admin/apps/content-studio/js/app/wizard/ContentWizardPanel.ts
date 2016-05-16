@@ -1,4 +1,18 @@
 import "../../api.ts";
+import {DefaultModels} from "./page/DefaultModels";
+import {ContentWizardStepForm} from "./ContentWizardStepForm";
+import {SettingsWizardStepForm} from "./SettingsWizardStepForm";
+import {SecurityWizardStepForm} from "./SecurityWizardStepForm";
+import {DisplayNameScriptExecutor} from "./DisplayNameScriptExecutor";
+import {LiveFormPanel, LiveFormPanelConfig} from "./page/LiveFormPanel";
+import {ContentWizardToolbarPublishControls} from "./ContentWizardToolbarPublishControls";
+import {ContentWizardActions} from "./action/ContentWizardActions";
+import {ContentWizardPanelParams} from "./ContentWizardPanelParams";
+import {ContentWizardToolbar} from "./ContentWizardToolbar";
+import {ContentPermissionsAppliedEvent} from "./ContentPermissionsAppliedEvent";
+import {Router} from "../Router";
+import {PersistNewContentRoutine} from "./PersistNewContentRoutine";
+import {UpdatePersistedContentRoutine} from "./UpdatePersistedContentRoutine";
 
 import PropertyTree = api.data.PropertyTree;
 import FormView = api.form.FormView;
@@ -65,20 +79,6 @@ import ContentNamedEvent = api.content.event.ContentNamedEvent;
 import ActiveContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
 
 import DialogButton = api.ui.dialog.DialogButton;
-import {DefaultModels} from "./page/DefaultModels";
-import {ContentWizardStepForm} from "./ContentWizardStepForm";
-import {SettingsWizardStepForm} from "./SettingsWizardStepForm";
-import {SecurityWizardStepForm} from "./SecurityWizardStepForm";
-import {DisplayNameScriptExecutor} from "./DisplayNameScriptExecutor";
-import {LiveFormPanel, LiveFormPanelConfig} from "./page/LiveFormPanel";
-import {ContentWizardToolbarPublishControls} from "./ContentWizardToolbarPublishControls";
-import {ContentWizardActions} from "./action/ContentWizardActions";
-import {ContentWizardPanelParams} from "./ContentWizardPanelParams";
-import {ContentWizardToolbar} from "./ContentWizardToolbar";
-import {ContentPermissionsAppliedEvent} from "./ContentPermissionsAppliedEvent";
-import {Router} from "../Router";
-import {PersistNewContentRoutine} from "./PersistNewContentRoutine";
-import {UpdatePersistedContentRoutine} from "./UpdatePersistedContentRoutine";
 
 export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
@@ -125,6 +125,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private previewAction: api.ui.Action;
 
     private publishAction: api.ui.Action;
+
+    private publishTreeAction: api.ui.Action;
 
     private unpublishAction: api.ui.Action;
 
@@ -188,6 +190,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions = new ContentWizardActions(this);
         this.previewAction = this.wizardActions.getPreviewAction();
         this.publishAction = this.wizardActions.getPublishAction();
+        this.publishTreeAction = this.wizardActions.getPublishTreeAction();
         this.unpublishAction = this.wizardActions.getUnpublishAction();
 
         var mainToolbar = new ContentWizardToolbar({
@@ -196,6 +199,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             duplicateAction: this.wizardActions.getDuplicateAction(),
             previewAction: this.wizardActions.getPreviewAction(),
             publishAction: this.wizardActions.getPublishAction(),
+            publishTreeAction: this.wizardActions.getPublishTreeAction(),
             unpublishAction: this.wizardActions.getUnpublishAction(),
             showLiveEditAction: this.wizardActions.getShowLiveEditAction(),
             showFormAction: this.wizardActions.getShowFormAction(),
@@ -739,6 +743,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.contentWizardHeader.disableNameGeneration(this.contentCompareStatus !== CompareStatus.NEW);
 
                 this.contentWizardToolbarPublishControls.setCompareStatus(this.contentCompareStatus);
+                this.contentWizardToolbarPublishControls.setLeafContent(!contentSummaryAndCompareStatus.hasChildren());
                 this.managePublishButtonStateForMobile(this.contentCompareStatus);
             });
 
