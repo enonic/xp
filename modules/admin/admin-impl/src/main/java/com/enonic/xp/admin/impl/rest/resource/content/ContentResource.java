@@ -405,7 +405,6 @@ public final class ContentResource
             final DeleteContentParams deleteContentParams = DeleteContentParams.create().
                 contentPath( contentToDelete ).
                 deleteOnline( json.isDeleteOnline() ).
-                deletePending( json.isDeletePending() ).
                 build();
 
             try
