@@ -67,9 +67,9 @@ module api.ui.button {
             
             this.actionButton.onClicked(hideMenu);
 
-            this.dropdownHandle.onClicked(() => this.actionButton.giveFocus());
+            this.dropdownHandle.onClicked(() => this.dropdownHandle.giveFocus());
 
-            this.menu.onClicked(() => this.actionButton.giveFocus());
+            this.menu.onClicked(() => this.dropdownHandle.giveFocus());
 
             api.util.AppHelper.focusInOut(this, hideMenu);
         }
