@@ -2,6 +2,7 @@
 ///<reference path='LinkModalDialog.ts' />
 ///<reference path='ImageModalDialog.ts' />
 ///<reference path='AnchorModalDialog.ts' />
+///<reference path='MacroDockedPanel.ts' />
 ///<reference path='MacroModalDialog.ts' />
 ///<reference path='CreateHtmlAreaDialogEvent.ts' />
 ///<reference path='HTMLAreaDialogHandler.ts' />

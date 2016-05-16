@@ -1,4 +1,4 @@
-module api.macro {
+module api.macro.resource {
 
     export interface MacrosJson {
         macros: MacroJson[];
