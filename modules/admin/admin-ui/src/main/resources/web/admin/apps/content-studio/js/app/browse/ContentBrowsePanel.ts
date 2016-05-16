@@ -321,23 +321,16 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
 
         handler.onContentDeleted((data: api.content.event.ContentServerChangeItem[]) => {
-            var paths = [];
-            data.forEach((changeItem) => {
-                // deleting from master is unpublishing and should not remove items from grid
-                if (changeItem.getBranch() != "master") {
-                    paths.push(changeItem.getPath());
-                }
-            });
-            if (paths.length > 0) {
-                this.handleContentDeleted(paths);
-            }
+            this.handleContentDeleted(data.map(d => d.getPath()));
         });
 
         handler.onContentPending((data: ContentSummaryAndCompareStatus[]) => this.handleContentPending(data));
 
         handler.onContentDuplicated((data: ContentSummaryAndCompareStatus[]) => this.handleContentCreated(data));
 
-        handler.onContentPublished((data: ContentSummaryAndCompareStatus[]) => this.handleContentPublished(data));
+        handler.onContentPublished((data: ContentSummaryAndCompareStatus[]) => this.handleContentPublishedOrUnpublished(data));
+
+        handler.onContentUnpublished((data: ContentSummaryAndCompareStatus[]) => this.handleContentPublishedOrUnpublished(data));
 
         handler.onContentMoved((data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) => {
             // combination of delete and create
@@ -494,9 +487,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         this.contentTreeGrid.invalidate();
     }
 
-    private handleContentPublished(data: ContentSummaryAndCompareStatus[]) {
+    private handleContentPublishedOrUnpublished(data: ContentSummaryAndCompareStatus[]) {
         if (ContentBrowsePanel.debug) {
-            console.debug("ContentBrowsePanel: published", data);
+            console.debug("ContentBrowsePanel: published or unpublished", data);
         }
         var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
         var treeNodes: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);

@@ -73,8 +73,6 @@ import GetMixinByQualifiedNameRequest = api.schema.mixin.GetMixinByQualifiedName
 
 import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
 import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
-import ContentPublishedEvent = api.content.event.ContentPublishedEvent;
-import ContentsPublishedEvent = api.content.event.ContentsPublishedEvent;
 import ContentNamedEvent = api.content.event.ContentNamedEvent;
 import ActiveContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
 
@@ -267,8 +265,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                                     api.notify.showWarning(message);
                                 }
                             }).catch((reason: any) => { //app was uninstalled
-                            api.notify.showWarning(message);
-                        });
+                                api.notify.showWarning(message);
+                            });
 
                         this.unShown(shownHandler);
                     }
@@ -599,6 +597,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private listenToContentEvents() {
 
+        let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
+
         var deleteHandler = (event: api.content.event.ContentDeletedEvent) => {
             if (this.getPersistedItem()) {
                 event.getDeletedItems().filter((deletedItem) => {
@@ -616,17 +616,16 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
         };
 
-        var publishHandler = (event: api.content.event.ContentPublishedEvent) => {
-            if (this.isCurrentContentId(event.getContentId())) {
+        var publishOrUnpublishHandler = (contents: ContentSummaryAndCompareStatus[]) => {
+            contents.forEach(content => {
+                if (this.isCurrentContentId(content.getContentId())) {
 
-                this.contentWizardToolbarPublishControls.setCompareStatus(event.getCompareStatus());
-                this.contentCompareStatus = event.getCompareStatus();
+                    this.contentCompareStatus = content.getCompareStatus();
+                    this.contentWizardToolbarPublishControls.setCompareStatus(this.contentCompareStatus);
 
-                if (this.contentCompareStatus === CompareStatus.NEW) {
-                    this.contentWizardHeader.disableNameGeneration(true);
-                    ContentPublishedEvent.un(publishHandler);
+                    this.contentWizardHeader.disableNameGeneration(this.contentCompareStatus === CompareStatus.NEW);
                 }
-            }
+            });
         };
 
         var updateHandler = (contentId: ContentId, unchangedOnly: boolean = true) => {
@@ -661,14 +660,18 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         ActiveContentVersionSetEvent.on(activeContentVersionSetHandler);
         ContentUpdatedEvent.on(contentUpdatedHanlder);
-        ContentPublishedEvent.on(publishHandler);
         ContentDeletedEvent.on(deleteHandler);
+
+        serverEvents.onContentPublished(publishOrUnpublishHandler);
+        serverEvents.onContentUnpublished(publishOrUnpublishHandler);
 
         this.onClosed(() => {
             ActiveContentVersionSetEvent.un(activeContentVersionSetHandler);
             ContentUpdatedEvent.un(contentUpdatedHanlder);
-            ContentPublishedEvent.un(publishHandler);
             ContentDeletedEvent.un(deleteHandler);
+
+            serverEvents.unContentPublished(publishOrUnpublishHandler);
+            serverEvents.unContentUnpublished(publishOrUnpublishHandler);
         });
     }
 
@@ -793,7 +796,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     ConfirmationDialog.get().setQuestion(
                         "Received Content from server differs from what you have. Would you like to load changes from server?").setYesCallback(
                         () => this.doLayoutPersistedItem(persistedContent.clone())).setNoCallback(() => {/* Do nothing... */
-                    }).show();
+                        }).show();
                 }
             }
 
@@ -803,8 +806,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 .then(()=> {
                     deferred.resolve(null);
                 }).catch((reason: any) => {
-                deferred.reject(reason);
-            }).done();
+                    deferred.reject(reason);
+                }).done();
         }
         this.contentWizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
         this.contentWizardToolbarPublishControls.enableActionsForExisting(persistedContent);
@@ -1064,7 +1067,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var persistedContent = this.getPersistedItem();
         var viewedContent = this.assembleViewedContent(persistedContent.newBuilder()).build();
 
-        var updatePersistedContentRoutine = new UpdatePersistedContentRoutine(this, persistedContent, viewedContent).setUpdateContentRequestProducer(
+        var updatePersistedContentRoutine = new UpdatePersistedContentRoutine(this, persistedContent,
+            viewedContent).setUpdateContentRequestProducer(
             this.produceUpdateContentRequest);
 
         return updatePersistedContentRoutine.execute().then((content: Content) => {
@@ -1401,30 +1405,22 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private subscribePublishButtonForMobileToPublishEvents() {
 
-        var publishHandler = (event: ContentsPublishedEvent) => {
-            if (this.getPersistedItem() && event.getContentIds()) {
-                var isPublished = (event.getContentIds().some((obj: api.content.ContentId) => {
-                    return obj.toString() == this.getPersistedItem().getId();
-                }));
-                if (isPublished) {
+        var serverPublishOrUnpublishHandler = (contents: ContentSummaryAndCompareStatus[]) => {
+            contents.forEach(content => {
+                if (this.isCurrentContentId(content.getContentId())) {
                     this.managePublishButtonStateForMobile(CompareStatus.EQUAL);
                 }
-            }
+            });
         };
 
-        var publishHandlerOfServerEvent = (event: ContentPublishedEvent) => {
-            if (this.getPersistedItem() && event.getContentId() &&
-                (this.getPersistedItem().getId() === event.getContentId().toString())) {
-                this.managePublishButtonStateForMobile(CompareStatus.EQUAL);
-            }
-        };
 
-        ContentsPublishedEvent.on(publishHandler);
-        ContentPublishedEvent.on(publishHandlerOfServerEvent);
+        let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
+        serverEvents.onContentPublished(serverPublishOrUnpublishHandler);
+        serverEvents.onContentUnpublished(serverPublishOrUnpublishHandler);
 
         this.onClosed(() => {
-            ContentPublishedEvent.un(publishHandlerOfServerEvent);
-            ContentsPublishedEvent.un(publishHandler);
+            serverEvents.unContentPublished(serverPublishOrUnpublishHandler);
+            serverEvents.unContentUnpublished(serverPublishOrUnpublishHandler);
         });
     }
 
