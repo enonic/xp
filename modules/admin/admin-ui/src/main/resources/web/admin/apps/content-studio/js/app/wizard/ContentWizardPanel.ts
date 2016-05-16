@@ -1,4 +1,18 @@
 import "../../api.ts";
+import {DefaultModels} from "./page/DefaultModels";
+import {ContentWizardStepForm} from "./ContentWizardStepForm";
+import {SettingsWizardStepForm} from "./SettingsWizardStepForm";
+import {SecurityWizardStepForm} from "./SecurityWizardStepForm";
+import {DisplayNameScriptExecutor} from "./DisplayNameScriptExecutor";
+import {LiveFormPanel, LiveFormPanelConfig} from "./page/LiveFormPanel";
+import {ContentWizardToolbarPublishControls} from "./ContentWizardToolbarPublishControls";
+import {ContentWizardActions} from "./action/ContentWizardActions";
+import {ContentWizardPanelParams} from "./ContentWizardPanelParams";
+import {ContentWizardToolbar} from "./ContentWizardToolbar";
+import {ContentPermissionsAppliedEvent} from "./ContentPermissionsAppliedEvent";
+import {Router} from "../Router";
+import {PersistNewContentRoutine} from "./PersistNewContentRoutine";
+import {UpdatePersistedContentRoutine} from "./UpdatePersistedContentRoutine";
 
 import PropertyTree = api.data.PropertyTree;
 import FormView = api.form.FormView;
@@ -63,22 +77,9 @@ import ContentPublishedEvent = api.content.event.ContentPublishedEvent;
 import ContentsPublishedEvent = api.content.event.ContentsPublishedEvent;
 import ContentNamedEvent = api.content.event.ContentNamedEvent;
 import ActiveContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
+import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 
 import DialogButton = api.ui.dialog.DialogButton;
-import {DefaultModels} from "./page/DefaultModels";
-import {ContentWizardStepForm} from "./ContentWizardStepForm";
-import {SettingsWizardStepForm} from "./SettingsWizardStepForm";
-import {SecurityWizardStepForm} from "./SecurityWizardStepForm";
-import {DisplayNameScriptExecutor} from "./DisplayNameScriptExecutor";
-import {LiveFormPanel, LiveFormPanelConfig} from "./page/LiveFormPanel";
-import {ContentWizardToolbarPublishControls} from "./ContentWizardToolbarPublishControls";
-import {ContentWizardActions} from "./action/ContentWizardActions";
-import {ContentWizardPanelParams} from "./ContentWizardPanelParams";
-import {ContentWizardToolbar} from "./ContentWizardToolbar";
-import {ContentPermissionsAppliedEvent} from "./ContentPermissionsAppliedEvent";
-import {Router} from "../Router";
-import {PersistNewContentRoutine} from "./PersistNewContentRoutine";
-import {UpdatePersistedContentRoutine} from "./UpdatePersistedContentRoutine";
 
 export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
@@ -652,6 +653,18 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
         };
 
+        var sortedHandler = (data: ContentSummaryAndCompareStatus[]) => {
+            var indexOfCurrentContent;
+            var isThisContentWasSorted = data.some((sorted: ContentSummaryAndCompareStatus, index: number) => {
+                indexOfCurrentContent = index;
+                return this.isCurrentContentId(sorted.getContentId());
+            });
+
+            if (isThisContentWasSorted) {
+                this.contentWizardToolbarPublishControls.setCompareStatus(data[indexOfCurrentContent].getCompareStatus());
+            }
+        }
+
         var activeContentVersionSetHandler = (event: ActiveContentVersionSetEvent) => updateHandler(event.getContentId(), false);
         var contentUpdatedHanlder = (event: ContentUpdatedEvent) => updateHandler(event.getContentId());
 
@@ -659,12 +672,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         ContentUpdatedEvent.on(contentUpdatedHanlder);
         ContentPublishedEvent.on(publishHandler);
         ContentDeletedEvent.on(deleteHandler);
+        ContentServerEventsHandler.getInstance().onContentSorted(sortedHandler);
 
         this.onClosed(() => {
             ActiveContentVersionSetEvent.un(activeContentVersionSetHandler);
             ContentUpdatedEvent.un(contentUpdatedHanlder);
             ContentPublishedEvent.un(publishHandler);
             ContentDeletedEvent.un(deleteHandler);
+            ContentServerEventsHandler.getInstance().unContentSorted(sortedHandler);
         });
     }
 
