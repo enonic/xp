@@ -1,4 +1,5 @@
 import "../../api.ts";
+import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItemsDialog";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DialogButton = api.ui.dialog.DialogButton;
@@ -8,7 +9,7 @@ import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
 import ContentPublishItem = api.content.ContentPublishItem;
 import ListBox = api.ui.selector.list.ListBox;
-import {DependantItemsDialog, DialogDependantList} from "../dialog/DependantItemsDialog";
+import LoadMask = api.ui.mask.LoadMask;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -24,6 +25,10 @@ export class ContentPublishDialog extends DependantItemsDialog {
     private childrenCheckbox: api.ui.Checkbox;
 
     private excludedIds: ContentId[] = [];
+
+    private childrenLoaded: boolean = false;
+
+    private loadMask: LoadMask;
 
     // stashes previous checkbox state items, until selected items changed
     private stash: {[checked:string]:ContentSummaryAndCompareStatus[]} = {};
@@ -43,14 +48,18 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
         this.initChildrenCheckbox();
 
+        this.initLoadMask();
+
         this.getItemList().onItemsRemoved((items: ContentSummaryAndCompareStatus[]) => {
             if (!this.isIgnoreItemsChanged()) {
-                // clear the stash because it is no longer valid
-                this.clearStashedItems();
-
-                this.refreshPublishDependencies().done();
+                this.reloadPublishDependencies().done();
             }
         });
+    }
+
+    private initLoadMask() {
+        this.loadMask = new LoadMask(this.getContentPanel());
+        this.appendChildToContentPanel(this.loadMask);
     }
 
 
@@ -66,14 +75,15 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
         dependants.onItemRemoveClicked((item: ContentSummaryAndCompareStatus) => {
             this.excludedIds.push(item.getContentId());
-
-            // clear the stash because it is no longer valid
-            this.clearStashedItems();
-
-            this.refreshPublishDependencies().done();
+            this.reloadPublishDependencies().done();
         });
 
         return dependants;
+    }
+
+    show() {
+        super.show();
+        this.appendChildToContentPanel(this.loadMask);
     }
 
     open() {
@@ -83,11 +93,10 @@ export class ContentPublishDialog extends DependantItemsDialog {
             this.getButtonRow().addClass("no-checkbox");
         }
 
-        this.clearStashedItems();
-
-        this.refreshPublishDependencies().done(() => this.centerMyself());
+        this.reloadPublishDependencies(true).done();
 
         this.excludedIds = [];
+        this.childrenLoaded = false;
 
         super.open();
     }
@@ -106,40 +115,72 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
     private refreshPublishDependencies(): wemQ.Promise<void> {
 
-        let stashedItems = this.getStashedItems(),
-            dependantList = this.getDependantList();
-
-        // null - means we just opened or we had to clear it because of selection change
+        var stashedItems = this.getStashedItems();
+        // null - means items have not been loaded yet or we had to clear it because of selection change
         if (!stashedItems) {
-            dependantList.clearItems();
-            this.showLoadingSpinnerAtButton();
-            this.publishButton.setEnabled(false);
-
-            let ids = this.getContentToPublishIds(),
-                flag = this.childrenCheckbox.isChecked(),
-                resolveDependenciesRequest = new api.content.ResolvePublishDependenciesRequest(ids, this.excludedIds, flag);
-
-            return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
-
-                var dependants = result.getDependants().map(dependant => dependant.toContentSummaryAndCompareStatus());
-                this.setDependantItems(dependants);
-                this.setStashedItems(dependants.slice());
-                this.centerMyself();
-
-                // do not set requested contents as they are never going to change,
-                // but returned data contains less info than original summaries
-                this.childrenCheckbox.setVisible(this.doAnyHaveChildren(this.getItemList().getItems()));
-
-                this.hideLoadingSpinnerAtButton();
-            });
-
+            let childrenNotLoadedYet = this.childrenCheckbox.isChecked() && !this.childrenLoaded;
+            return this.reloadPublishDependencies(childrenNotLoadedYet);
         } else {
             // apply the stash to avoid extra heavy request
             this.setDependantItems(stashedItems.slice());
             this.centerMyself();
-
             return wemQ<void>(null);
         }
+    }
+
+    private reloadPublishDependencies(resetDependantItems?: boolean): wemQ.Promise<void> {
+        this.clearStashedItems();
+        this.showLoadingSpinnerAtButton();
+        this.publishButton.setEnabled(false);
+        this.loadMask.show();
+
+        return this.loadDependants().then((dependants: ContentSummaryAndCompareStatus[]) => {
+
+            if (resetDependantItems) { // just opened or first time loading children
+                this.setDependantItems(dependants);
+            }
+            else {
+                this.filterDependantItems(dependants);
+            }
+
+            this.loadMask.hide();
+
+            this.setStashedItems(dependants.slice());
+
+            if (this.childrenCheckbox.isChecked()) {
+                this.childrenLoaded = true;
+            }
+
+            // do not set requested contents as they are never going to change,
+            // but returned data contains less info than original summaries
+            this.childrenCheckbox.setVisible(this.doAnyHaveChildren(this.getItemList().getItems()));
+
+            this.hideLoadingSpinnerAtButton();
+
+            this.centerMyself();
+        });
+    }
+
+    private loadDependants(): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+        let ids = this.getContentToPublishIds(),
+            loadChildren = this.childrenCheckbox.isChecked(),
+            resolveDependenciesRequest = new api.content.ResolvePublishDependenciesRequest(ids, this.excludedIds, loadChildren);
+
+        return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
+            return result.getDependants().map(dependant => dependant.toContentSummaryAndCompareStatus());
+        });
+    }
+
+
+    private filterDependantItems(dependants: ContentSummaryAndCompareStatus[]) {
+        var itemsToRemove = this.getDependantList().getItems().filter(
+            (oldDependantItem: ContentSummaryAndCompareStatus) => !dependants.some(
+                (newDependantItem) => oldDependantItem.equals(newDependantItem)));
+        this.getDependantList().removeItems(itemsToRemove);
+
+        let count = this.countTotalToPublish();
+        this.updateSubTitle(count);
+        this.updatePublishButton(count);
     }
 
 
