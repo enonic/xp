@@ -1,16 +1,18 @@
 .modal-dialog-margin-mixin(@label-width: @form-label-width) {
-  .form-view .input-view {
-    label {
-      float: left;
-      max-width: @label-width - 10px;
+  .form-view {
+    .input-view {
+      label {
+        float: left;
+        max-width: @label-width - 10px;
+      }
+
+      label + .form-input,
+      label + .input-wrapper {
+        margin-left: @label-width;
+      }
     }
 
-    label + .form-input,
-    label + .input-wrapper {
-      margin-left: @label-width;
-    }
-
-    &.invalid {
+    &.display-validation-errors .input-view.invalid {
       label + .input-wrapper {
         margin-left: @label-width - 12px;
       }
@@ -36,7 +38,7 @@
   }
 }
 
-.showsSelectedOption(@displayIcon:false, @label-width: @form-label-width) {
+.showsSelectedOption(@displayIcon:false) {
 
   .selected-options .selected-option {
     margin: 0;
@@ -60,12 +62,6 @@
 
   .names-and-icon-view .names-view {
     margin-left: 0;
-  }
-
-  .form-view .input-view.invalid {
-    label + .input-wrapper {
-      margin-left: @label-width - 12px;
-    }
   }
 }
 
@@ -328,7 +324,7 @@
       }
 
       .selected-option:not([style*="display: none"]) + .dropdown-handle {
-          top: 4px;
+        top: 4px;
       }
     }
 
