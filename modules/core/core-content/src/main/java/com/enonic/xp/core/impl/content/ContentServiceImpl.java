@@ -29,7 +29,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentService;
@@ -687,7 +686,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public ContentIds unpublishContent( final UnpublishContentParams params )
+    public Contents unpublishContent( final UnpublishContentParams params )
     {
         return UnpublishContentCommand.create().
             params( params ).

@@ -17,12 +17,19 @@ module api.event {
 
         path: PATH_TYPE;
 
-        constructor(path: PATH_TYPE) {
+        branch: string;
+
+        constructor(path: PATH_TYPE, branch: string) {
             this.path = path;
+            this.branch = branch;
         }
 
         getPath(): PATH_TYPE {
             return this.path;
+        }
+
+        getBranch(): string {
+            return this.branch;
         }
     }
 

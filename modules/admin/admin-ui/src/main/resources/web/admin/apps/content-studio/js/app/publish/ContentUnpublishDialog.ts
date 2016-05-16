@@ -2,7 +2,7 @@ import "../../api.ts";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DialogButton = api.ui.dialog.DialogButton;
-import PublishContentRequest = api.content.PublishContentRequest;
+import UnpublishContentRequest = api.content.UnpublishContentRequest;
 import ResolvePublishDependenciesResult = api.content.ResolvePublishDependenciesResult;
 import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
@@ -96,7 +96,14 @@ export class ContentUnpublishDialog extends DependantItemsDialog {
 
         var selectedIds = this.getContentToUnpublishIds();
 
-        //TODO: make request and hide spinner and this.close();
+        new UnpublishContentRequest().setIds(selectedIds).send().then(
+            (jsonResponse: api.rest.JsonResponse<api.content.UnpublishContentResult>) => {
+                this.close();
+                UnpublishContentRequest.feedback(jsonResponse);
+            }).finally(() => {
+                this.hideLoadingSpinnerAtButton();
+                this.unpublishButton.setEnabled(true);
+            });
     }
 
     private countTotal(): number {

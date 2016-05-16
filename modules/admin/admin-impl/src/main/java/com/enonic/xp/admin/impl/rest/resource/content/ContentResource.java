@@ -35,8 +35,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 
-import io.swagger.annotations.ApiOperation;
-
 import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
 import com.enonic.xp.admin.impl.json.content.CompareContentResultsJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
@@ -134,6 +132,8 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.extractor.BinaryExtractor;
+import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
@@ -197,6 +197,8 @@ public final class ContentResource
     private RelationshipTypeService relationshipTypeService;
 
     private ContentIconUrlResolver contentIconUrlResolver;
+
+    private BinaryExtractor extractor;
 
     @POST
     @Path("create")
@@ -403,6 +405,7 @@ public final class ContentResource
             final DeleteContentParams deleteContentParams = DeleteContentParams.create().
                 contentPath( contentToDelete ).
                 deleteOnline( json.isDeleteOnline() ).
+                deletePending( json.isDeletePending() ).
                 build();
 
             try
@@ -930,12 +933,12 @@ public final class ContentResource
     @Path("unpublish")
     public UnpublishContentResultJson unpublish( final UnpublishContentJson params )
     {
-        final ContentIds contentIds = this.contentService.unpublishContent( UnpublishContentParams.create().
+        final Contents contents = this.contentService.unpublishContent( UnpublishContentParams.create().
             contentIds( ContentIds.from( params.getIds() ) ).
             unpublishBranch( ContentConstants.BRANCH_MASTER ).
             build() );
 
-        return new UnpublishContentResultJson( contentIds );
+        return new UnpublishContentResultJson( contents );
     }
 
     @GET
@@ -1041,7 +1044,6 @@ public final class ContentResource
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed(RoleKeys.ADMIN_ID)
-    @ApiOperation("Reprocesses content")
     public ReprocessContentResultJson reprocess( final ReprocessContentRequestJson request )
     {
         final List<ContentPath> updated = new ArrayList<>();
@@ -1106,10 +1108,13 @@ public final class ContentResource
     {
         final MultipartItem mediaFile = form.get( "file" );
 
+        final ExtractedData extractedData = this.extractor.extract( mediaFile.getBytes() );
+
         final CreateAttachment attachment = CreateAttachment.create().
             name( attachmentName ).
             mimeType( mediaFile.getContentType().toString() ).
             byteSource( getFileItemByteSource( mediaFile ) ).
+            text( extractedData.getText() ).
             build();
 
         final UpdateContentParams params = new UpdateContentParams().
@@ -1252,5 +1257,11 @@ public final class ContentResource
     public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
     {
         this.relationshipTypeService = relationshipTypeService;
+    }
+
+    @Reference
+    public void setExtractor( final BinaryExtractor extractor )
+    {
+        this.extractor = extractor;
     }
 }

@@ -85,7 +85,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
         this.clearStashedItems();
 
-        this.refreshPublishDependencies().done(() => this.centerMyself());
+        this.refreshPublishDependencies().done();
 
         this.excludedIds = [];
 
@@ -106,12 +106,11 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
     private refreshPublishDependencies(): wemQ.Promise<void> {
 
-        let stashedItems = this.getStashedItems(),
-            dependantList = this.getDependantList();
+        let stashedItems = this.getStashedItems();
 
         // null - means we just opened or we had to clear it because of selection change
         if (!stashedItems) {
-            dependantList.clearItems();
+            this.getDependantList().clearItems();
             this.showLoadingSpinnerAtButton();
             this.publishButton.setEnabled(false);
 
@@ -212,11 +211,14 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
         new PublishContentRequest().setIncludeChildren(this.childrenCheckbox.isChecked())
             .setIds(selectedIds).
-            setExcludedIds(this.excludedIds).send().done(
+            setExcludedIds(this.excludedIds).send().then(
             (jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
                 this.close();
                 PublishContentRequest.feedback(jsonResponse);
                 new api.content.event.ContentsPublishedEvent(selectedIds).fire();
+            }).finally(() => {
+                this.hideLoadingSpinnerAtButton();
+                this.publishButton.setEnabled(true);
             });
     }
 
@@ -306,9 +308,9 @@ export class PublishDialogDependantList extends DialogDependantList {
     createItemView(item: api.content.ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
         let view = super.createItemView(item, readOnly);
 
-        if(CompareStatus.NEWER == item.getCompareStatus()) {
+        if (CompareStatus.NEWER == item.getCompareStatus()) {
             view.addClass("removable");
-            if(!this.hasClass("contains-removable")) {
+            if (!this.hasClass("contains-removable")) {
                 this.addClass("contains-removable");
             }
         }

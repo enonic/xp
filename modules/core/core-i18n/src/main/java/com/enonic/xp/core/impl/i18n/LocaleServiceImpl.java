@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.i18n;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -81,9 +82,9 @@ public final class LocaleServiceImpl
 
         if ( resource.exists() )
         {
-            try
+            try (InputStream in = resource.openStream())
             {
-                properties.load( resource.openStream() );
+                properties.load( in );
             }
             catch ( final IOException e )
             {

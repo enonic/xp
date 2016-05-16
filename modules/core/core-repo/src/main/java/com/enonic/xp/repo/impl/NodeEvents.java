@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.Nodes;
@@ -136,6 +137,7 @@ public class NodeEvents
         return ImmutableMap.builder().
             put( "id", node.id().toString() ).
             put( "path", node.path().toString() ).
+            put( "branch", ContextAccessor.current().getBranch().getName() ).
             build();
 
 
