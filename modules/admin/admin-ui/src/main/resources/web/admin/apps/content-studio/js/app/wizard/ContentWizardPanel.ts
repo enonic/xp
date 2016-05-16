@@ -1,4 +1,18 @@
 import "../../api.ts";
+import {DefaultModels} from "./page/DefaultModels";
+import {ContentWizardStepForm} from "./ContentWizardStepForm";
+import {SettingsWizardStepForm} from "./SettingsWizardStepForm";
+import {SecurityWizardStepForm} from "./SecurityWizardStepForm";
+import {DisplayNameScriptExecutor} from "./DisplayNameScriptExecutor";
+import {LiveFormPanel, LiveFormPanelConfig} from "./page/LiveFormPanel";
+import {ContentWizardToolbarPublishControls} from "./ContentWizardToolbarPublishControls";
+import {ContentWizardActions} from "./action/ContentWizardActions";
+import {ContentWizardPanelParams} from "./ContentWizardPanelParams";
+import {ContentWizardToolbar} from "./ContentWizardToolbar";
+import {ContentPermissionsAppliedEvent} from "./ContentPermissionsAppliedEvent";
+import {Router} from "../Router";
+import {PersistNewContentRoutine} from "./PersistNewContentRoutine";
+import {UpdatePersistedContentRoutine} from "./UpdatePersistedContentRoutine";
 
 import PropertyTree = api.data.PropertyTree;
 import FormView = api.form.FormView;
@@ -63,22 +77,9 @@ import ContentPublishedEvent = api.content.event.ContentPublishedEvent;
 import ContentsPublishedEvent = api.content.event.ContentsPublishedEvent;
 import ContentNamedEvent = api.content.event.ContentNamedEvent;
 import ActiveContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
+import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 
 import DialogButton = api.ui.dialog.DialogButton;
-import {DefaultModels} from "./page/DefaultModels";
-import {ContentWizardStepForm} from "./ContentWizardStepForm";
-import {SettingsWizardStepForm} from "./SettingsWizardStepForm";
-import {SecurityWizardStepForm} from "./SecurityWizardStepForm";
-import {DisplayNameScriptExecutor} from "./DisplayNameScriptExecutor";
-import {LiveFormPanel, LiveFormPanelConfig} from "./page/LiveFormPanel";
-import {ContentWizardToolbarPublishControls} from "./ContentWizardToolbarPublishControls";
-import {ContentWizardActions} from "./action/ContentWizardActions";
-import {ContentWizardPanelParams} from "./ContentWizardPanelParams";
-import {ContentWizardToolbar} from "./ContentWizardToolbar";
-import {ContentPermissionsAppliedEvent} from "./ContentPermissionsAppliedEvent";
-import {Router} from "../Router";
-import {PersistNewContentRoutine} from "./PersistNewContentRoutine";
-import {UpdatePersistedContentRoutine} from "./UpdatePersistedContentRoutine";
 
 export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
@@ -655,16 +656,28 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var activeContentVersionSetHandler = (event: ActiveContentVersionSetEvent) => updateHandler(event.getContentId(), false);
         var contentUpdatedHanlder = (event: ContentUpdatedEvent) => updateHandler(event.getContentId());
 
+        var movedHandler = (data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) => {
+            var isThisWasMoved = oldPaths.some((oldPath: ContentPath) => {
+                return this.persistedItemPathIsDescendantOrEqual(oldPath);
+            });
+
+            if (isThisWasMoved) {
+                updateHandler(this.getPersistedItem().getContentId());
+            }
+        }
+
         ActiveContentVersionSetEvent.on(activeContentVersionSetHandler);
         ContentUpdatedEvent.on(contentUpdatedHanlder);
         ContentPublishedEvent.on(publishHandler);
         ContentDeletedEvent.on(deleteHandler);
+        ContentServerEventsHandler.getInstance().onContentMoved(movedHandler);
 
         this.onClosed(() => {
             ActiveContentVersionSetEvent.un(activeContentVersionSetHandler);
             ContentUpdatedEvent.un(contentUpdatedHanlder);
             ContentPublishedEvent.un(publishHandler);
             ContentDeletedEvent.un(deleteHandler);
+            ContentServerEventsHandler.getInstance().unContentMoved(movedHandler);
         });
     }
 
@@ -1370,6 +1383,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.updateThumbnailWithContent(content);
 
         this.contentWizardHeader.initNames(content.getDisplayName(), content.getName().toString(), true, false);
+
+        // case when content was moved
+        this.contentWizardHeader.setPath(
+            content.getPath().getParentPath().isRoot() ? "/" : content.getPath().getParentPath().toString() + "/");
     }
 
     private initPublishButtonForMobile() {
