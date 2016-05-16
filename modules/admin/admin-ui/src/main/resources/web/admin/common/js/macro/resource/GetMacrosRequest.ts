@@ -1,4 +1,4 @@
-module api.macro {
+module api.macro.resource {
 
     export class GetMacrosRequest extends MacroResourceRequest<MacrosJson, MacroDescriptor[]> {
 

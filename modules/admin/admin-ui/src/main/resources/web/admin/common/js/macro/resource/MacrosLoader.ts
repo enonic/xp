@@ -1,4 +1,4 @@
-module api.macro {
+module api.macro.resource {
 
     export class MacrosLoader extends api.util.loader.BaseLoader<MacrosJson, MacroDescriptor> {
 

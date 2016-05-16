@@ -100,7 +100,7 @@ module api.macro {
             return this;
         }
 
-        fromJson(json: MacroJson) {
+        fromJson(json: api.macro.resource.MacroJson) {
             this.macroKey = MacroKey.fromString(json.key);
             this.displayName = json.displayName;
             this.description = json.description;

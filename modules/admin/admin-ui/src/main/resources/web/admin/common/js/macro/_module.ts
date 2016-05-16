@@ -1,8 +1,7 @@
+///<reference path='resource/_module.ts' />
 ///<reference path='MacroKey.ts' />
 ///<reference path='MacroDescriptor.ts' />
-///<reference path='MacrosJson.ts' />
-///<reference path='MacroResourceRequest.ts' />
+///<reference path='PageContributions.ts' />
+///<reference path='MacroPreview.ts' />
 ///<reference path='MacroViewer.ts' />
-///<reference path='GetMacrosRequest.ts' />
 ///<reference path='MacroComboBox.ts' />
-///<reference path='MacrosLoader.ts' />

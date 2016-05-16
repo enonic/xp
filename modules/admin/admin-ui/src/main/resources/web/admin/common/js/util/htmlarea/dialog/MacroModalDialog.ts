@@ -1,51 +1,25 @@
 module api.util.htmlarea.dialog {
 
     import FormItem = api.ui.form.FormItem;
-    import Form = api.ui.form.Form;
-    import FormView = api.form.FormView;
     import Validators = api.ui.form.Validators;
     import Panel = api.ui.panel.Panel;
-    import DockedPanel = api.ui.panel.DockedPanel;
     import MacroDescriptor = api.macro.MacroDescriptor;
     import FormContext = api.form.FormContext;
 
     export class MacroModalDialog extends ModalDialog {
 
-        private macroSelector: api.macro.MacroComboBox;
-        private macroLoadMask: api.ui.mask.LoadMask;
+        private contentPath: api.content.ContentPath;
 
-        private static CONFIGURATION_TAB_NAME: string = "Configuration";
-        private static PREVIEW_TAB_NAME: string = "Preview";
+        private macroDockedPanel: MacroDockedPanel;
 
-        private configPanel: Panel;
-        private previewPanel: Panel;
-
-        constructor(editor: HtmlAreaEditor) {
+        constructor(editor: HtmlAreaEditor, contentPath: api.content.ContentPath) {
+            this.contentPath = contentPath;
             super(editor, new api.ui.dialog.ModalDialogHeader("Insert Macro"), "macro-modal-dialog");
-            this.macroLoadMask = new api.ui.mask.LoadMask(this);
         }
 
         protected layout() {
             super.layout();
-            this.appendChildToContentPanel(this.createDockedPanelForSelectedItem());
-        }
-
-        private createDockedPanelForSelectedItem(): DockedPanel {
-            var dockedPanel = new DockedPanel();
-            dockedPanel.addItem(MacroModalDialog.CONFIGURATION_TAB_NAME, true, this.createConfigurationPanel());
-            dockedPanel.addItem(MacroModalDialog.PREVIEW_TAB_NAME, true, this.createPreviewPanel());
-
-            return dockedPanel;
-        }
-
-        private createConfigurationPanel(): Panel {
-            return this.configPanel = new api.ui.panel.Panel();
-        }
-
-        private createPreviewPanel(): Panel {
-            var panel = new api.ui.panel.Panel();
-            panel.appendChild(new api.dom.LabelEl("Preview content"));
-            return this.previewPanel = panel;
+            this.appendChildToContentPanel(this.macroDockedPanel = new MacroDockedPanel(this.contentPath));
         }
 
         protected getMainFormItems(): FormItem[] {
@@ -59,13 +33,11 @@ module api.util.htmlarea.dialog {
         }
 
         private createMacroSelector(id: string): FormItem {
-            var loader = new api.macro.MacrosLoader(),
+            var loader = new api.macro.resource.MacrosLoader(),
                 macroSelector = api.macro.MacroComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
                 formItem = this.createFormItem(id, "Macro", Validators.required, api.util.StringHelper.EMPTY_STRING,
                     <api.dom.FormItemEl>macroSelector),
                 macroSelectorComboBox = macroSelector.getComboBox();
-
-            this.macroSelector = macroSelector;
 
             this.addClass("macro-selector");
 
@@ -73,8 +45,7 @@ module api.util.htmlarea.dialog {
                 formItem.addClass("selected-item-preview");
                 this.addClass("shows-preview");
 
-                var macroDescriptor: MacroDescriptor = selectedOption.getOption().displayValue;
-                this.renderSelectedItemViews(macroDescriptor);
+                this.macroDockedPanel.setMacroDescriptor(selectedOption.getOption().displayValue);
             });
 
             macroSelectorComboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
@@ -101,25 +72,6 @@ module api.util.htmlarea.dialog {
             return formItem;
         }
 
-        private renderSelectedItemViews(macroDescriptor: MacroDescriptor) {
-            this.renderConfigFormView(macroDescriptor);
-            this.renderPreview(macroDescriptor);
-        }
-
-        private renderConfigFormView(macroDescriptor: MacroDescriptor) {
-            this.configPanel.removeChildren();
-
-            var formView: FormView = new FormView(FormContext.create().build(), macroDescriptor.getForm(), new api.data.PropertySet());
-            formView.layout().then(() => {
-                this.configPanel.appendChild(formView);
-                api.ui.responsive.ResponsiveManager.fireResizeEvent();
-            });
-        }
-
-        private renderPreview(macroDescriptor: MacroDescriptor) {
-
-        }
-
         protected initializeActions() {
             var submitAction = new api.ui.Action("Insert");
             this.setSubmitAction(submitAction);
@@ -137,19 +89,9 @@ module api.util.htmlarea.dialog {
 
         protected validate(): boolean {
             var mainFormValid = super.validate(),
-                configPanelValid = this.validateConfigPanel();
+                configPanelValid = this.macroDockedPanel.validateMacroForm();
 
             return mainFormValid && configPanelValid;
-        }
-
-        private validateConfigPanel(): boolean {
-            var isValid = true,
-                form = <FormView>(this.configPanel.getFirstChild());
-            if (!!form) {
-                isValid = form.validate(false).isValid();
-                form.displayValidationErrors(!isValid);
-            }
-            return isValid;
         }
 
         private adjustSelectorDropDown(inputElement: api.dom.Element, dropDownElement: api.dom.ElementHelper) {

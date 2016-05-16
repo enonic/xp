@@ -4,6 +4,7 @@ module api.macro {
     import Option = api.ui.selector.Option;
     import RichComboBox = api.ui.selector.combobox.RichComboBox;
     import RichComboBoxBuilder = api.ui.selector.combobox.RichComboBoxBuilder;
+    import MacrosLoader = api.macro.resource.MacrosLoader;
 
     export class MacroComboBox extends RichComboBox<MacroDescriptor> {
 
