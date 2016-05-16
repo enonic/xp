@@ -30,6 +30,7 @@ export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
         super.addAction(params.deleteAction);
         super.addAction(params.duplicateAction);
         super.addAction(params.previewAction);
+        super.addAction(params.unpublishAction).addClass("unpublish-button");
         super.addGreedySpacer();
 
         this.cycleViewModeButton = new CycleButton([params.showLiveEditAction, params.showFormAction]);
