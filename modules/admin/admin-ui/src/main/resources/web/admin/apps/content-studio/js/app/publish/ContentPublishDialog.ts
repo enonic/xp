@@ -215,7 +215,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
             (jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
                 this.close();
                 PublishContentRequest.feedback(jsonResponse);
-                new api.content.event.ContentsPublishedEvent(selectedIds).fire();
             }).finally(() => {
                 this.hideLoadingSpinnerAtButton();
                 this.publishButton.setEnabled(true);
