@@ -9,6 +9,8 @@ module api.content {
 
         private contentQuery: query.ContentQuery;
 
+        private path: ContentPath;
+
         private request: ContentQueryRequest<json.ContentSummaryJson, ContentSummary>;
 
         constructor() {
@@ -24,6 +26,10 @@ module api.content {
 
         getRequestPath(): api.rest.Path {
             return this.request.getRequestPath();
+        }
+
+        getContentPath(): ContentPath {
+            return this.path;
         }
 
         getParams(): Object {
@@ -54,10 +60,16 @@ module api.content {
             this.contentQuery.setSize(size);
         }
 
+        setContentPath(path: ContentPath) {
+            this.path = path;
+        }
+
         setSearchQueryExpr(searchString: string, orderList?: OrderExpr[]) {
 
-            var fulltextExpression: Expression = new api.query.FulltextSearchExpressionBuilder().
+            debugger;
+            var fulltextExpression: Expression = new api.query.PathMatchExpressionBuilder().
                 setSearchString(searchString).
+                setPath(this.path ? this.path.toString() : "").
                 addField(new QueryField(QueryField.DISPLAY_NAME, 5)).
                 addField(new QueryField(QueryField.NAME, 3)).
                 addField(new QueryField(QueryField.ALL)).

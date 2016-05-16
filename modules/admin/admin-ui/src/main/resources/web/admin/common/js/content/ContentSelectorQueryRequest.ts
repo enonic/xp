@@ -30,9 +30,7 @@ module api.content {
 
         private expand: api.rest.Expand = api.rest.Expand.SUMMARY;
 
-        private id: ContentId;
-
-        private path: ContentPath;
+        private content: ContentSummary;
 
         private inputName: string;
 
@@ -61,20 +59,12 @@ module api.content {
             return this.inputName;
         }
 
-        setId(id: ContentId) {
-            this.id = id;
+        setContent(content: ContentSummary) {
+            this.content = content;
         }
 
-        getId(): ContentId {
-            return this.id;
-        }
-
-        setPath(path: ContentPath) {
-            this.path = path;
-        }
-
-        getPath(): ContentPath {
-            return this.path;
+        getContent(): ContentSummary {
+            return this.content;
         }
 
         setFrom(from: number) {
@@ -115,7 +105,7 @@ module api.content {
         private createSearchExpression(searchString): Expression {
             return new api.query.PathMatchExpressionBuilder()
                         .setSearchString(searchString)
-                        .setPath(this.path ? this.path.toString() : "")
+                        .setPath(this.content ? this.content.getPath().toString() : "")
                         .addField(new QueryField(QueryField.DISPLAY_NAME, 5))
                         .addField(new QueryField(QueryField.NAME, 3))
                         .addField(new QueryField(QueryField.ALL))
@@ -151,7 +141,7 @@ module api.content {
                 from: this.getFrom(),
                 size: this.getSize(),
                 expand: this.expandAsString(),
-                contentId: this.getId().toString(),
+                contentId: this.content.getId().toString(),
                 inputName: this.getInputName(),
                 contentTypeNames: this.contentTypeNames,
                 allowedContentPaths: this.allowedContentPaths,

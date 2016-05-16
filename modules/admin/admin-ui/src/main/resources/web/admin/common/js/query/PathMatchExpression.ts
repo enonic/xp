@@ -10,11 +10,11 @@ module api.query {
 
         static createWithPath(searchString: string, queryFields: QueryFields, path: string): api.query.expr.Expression {
 
-            var expression = FulltextSearchExpression.create(searchString,queryFields);
+            var expression = FulltextSearchExpression.create(searchString, queryFields);
 
             var args = [];
             args.push(ValueExpr.stringValue("_path"));
-            args.push(ValueExpr.stringValue("/content"+path));
+            args.push(ValueExpr.stringValue("/content" + path));
 
             var matchedExpr: FunctionExpr = new FunctionExpr("pathMatch", args);
             var matchedDynamicExpr: DynamicConstraintExpr = new DynamicConstraintExpr(matchedExpr);

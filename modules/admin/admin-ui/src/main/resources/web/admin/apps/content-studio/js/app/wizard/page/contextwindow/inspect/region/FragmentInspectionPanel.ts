@@ -86,10 +86,10 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
         if (contentId) {
             var fragment: ContentSummary = this.fragmentSelector.getSelection(contentId);
             if (fragment) {
-                this.setSelectorValue(fragment);
+                this.setFragment(fragment);
             } else {
                 new GetContentSummaryByIdRequest(contentId).sendAndParse().then((fragment: ContentSummary) => {
-                    this.setSelectorValue(fragment);
+                    this.setFragment(fragment);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
@@ -99,6 +99,11 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
         }
 
         this.registerComponentListeners(this.fragmentComponent);
+    }
+
+    private setFragment(fragment: ContentSummary) {
+        this.setSelectorValue(fragment);
+        this.loader.setContentPath(fragment.getPath());
     }
 
     private registerComponentListeners(component: FragmentComponent) {

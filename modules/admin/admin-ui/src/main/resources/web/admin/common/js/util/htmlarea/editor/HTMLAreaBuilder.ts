@@ -11,7 +11,7 @@ module api.util.htmlarea.editor {
 
     export class HTMLAreaBuilder {
 
-        private contentId: api.content.ContentId; // used for image dialog
+        private content: api.content.ContentSummary; // used for image dialog
 
         private assetsUri: string;
         private selector: string;
@@ -83,8 +83,8 @@ module api.util.htmlarea.editor {
             return this;
         }
 
-        setContentId(contentId: api.content.ContentId): HTMLAreaBuilder {
-            this.contentId = contentId;
+        setContent(content: api.content.ContentSummary): HTMLAreaBuilder {
+            this.content = content;
             return this;
         }
 
@@ -94,7 +94,7 @@ module api.util.htmlarea.editor {
         }
 
         private checkRequiredFieldsAreSet() {
-            if (!this.assetsUri || !this.selector || !this.contentId) {
+            if (!this.assetsUri || !this.selector || !this.content) {
                 throw new Error("some reruired field(s) is(are) missing for tinymce editor");
             }
         }
@@ -236,6 +236,7 @@ module api.util.htmlarea.editor {
             let event = CreateHtmlAreaDialogEvent.create().
                 setConfig(config).
                 setType(api.util.htmlarea.dialog.HtmlAreaDialogType.LINK).
+                setContent(this.content).
                 build();
             this.publishCreateDialogEvent(event);
         }
@@ -244,7 +245,7 @@ module api.util.htmlarea.editor {
             let event = CreateHtmlAreaDialogEvent.create().
                 setConfig(config).
                 setType(api.util.htmlarea.dialog.HtmlAreaDialogType.IMAGE).
-                setContentId(this.contentId).
+                setContent(this.content).
                 build();
             this.publishCreateDialogEvent(event);
         }

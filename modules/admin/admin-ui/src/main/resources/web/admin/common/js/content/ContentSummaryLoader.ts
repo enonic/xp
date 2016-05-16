@@ -21,6 +21,7 @@ module api.content {
 
             super(this.contentSummaryRequest);
 
+            debugger;
             this.setSearchQueryExpr();
         }
 
@@ -38,6 +39,10 @@ module api.content {
 
         setQueryExpr(queryExpr: QueryExpr) {
             this.contentSummaryRequest.setQueryExpr(queryExpr);
+        }
+
+        setContentPath(path: ContentPath) {
+            this.contentSummaryRequest.setContentPath(path);
         }
 
         private setSearchQueryExpr(searchString: string = "") {

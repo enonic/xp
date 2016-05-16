@@ -28,6 +28,7 @@ module api.content {
 
         setFilterContentPath(filterContentPath: ContentPath) {
             this.filterContentPath = filterContentPath;
+            this.contentSummaryRequest.setContentPath(this.filterContentPath);
         }
 
         setFilterSourceContentType(filterSourceContentType: ContentType) {

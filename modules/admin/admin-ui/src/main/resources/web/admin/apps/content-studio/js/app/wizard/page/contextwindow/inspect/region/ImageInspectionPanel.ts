@@ -3,6 +3,7 @@ import "../../../../../../api.ts";
 import ImageComponent = api.content.page.region.ImageComponent;
 import ContentSummary = api.content.ContentSummary;
 import ContentId = api.content.ContentId;
+import ContentSummaryLoader = api.content.ContentSummaryLoader;
 import GetContentSummaryByIdRequest = api.content.GetContentSummaryByIdRequest;
 import ContentComboBox = api.content.ContentComboBox;
 import ContentTypeName = api.schema.content.ContentTypeName;
@@ -25,6 +26,8 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
 
     private imageSelector: ContentComboBox;
 
+    private loader: ContentSummaryLoader;
+
     private imageSelectorForm: ImageSelectorForm;
 
     private handleSelectorEvents: boolean = true;
@@ -35,9 +38,9 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
         super(<ComponentInspectionPanelConfig>{
             iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("image", "icon-xlarge")
         });
-        var loader = new api.content.ContentSummaryLoader();
-        loader.setAllowedContentTypeNames([ContentTypeName.IMAGE]);
-        this.imageSelector = ContentComboBox.create().setMaximumOccurrences(1).setLoader(loader).build();
+        this.loader = new api.content.ContentSummaryLoader();
+        this.loader.setAllowedContentTypeNames([ContentTypeName.IMAGE]);
+        this.imageSelector = ContentComboBox.create().setMaximumOccurrences(1).setLoader(this.loader).build();
 
         this.imageSelectorForm = new ImageSelectorForm(this.imageSelector, "Image");
 
@@ -72,12 +75,10 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
         if (contentId) {
             var image: ContentSummary = this.imageSelector.getContent(contentId);
             if (image) {
-                this.setSelectorValue(image);
-                this.setupComponentForm(this.imageComponent);
+                this.setImage(image);
             } else {
                 new GetContentSummaryByIdRequest(contentId).sendAndParse().then((image: ContentSummary) => {
-                    this.setSelectorValue(image);
-                    this.setupComponentForm(this.imageComponent);
+                    this.setImage(image);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
@@ -136,6 +137,12 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
                 this.imageComponent.reset();
             }
         });
+    }
+
+    private setImage(image: ContentSummary) {
+        this.setSelectorValue(image);
+        this.loader.setContentPath(image.getPath());
+        this.setupComponentForm(this.imageComponent);
     }
 
     getComponentView(): ImageComponentView {
