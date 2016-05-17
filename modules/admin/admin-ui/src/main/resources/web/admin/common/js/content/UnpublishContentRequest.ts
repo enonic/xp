@@ -4,6 +4,8 @@ module api.content {
 
         private ids: ContentId[] = [];
 
+        private includeChildren: boolean;
+
         constructor(contentId?: ContentId) {
             super();
             this.setHeavyOperation(true);
@@ -23,8 +25,14 @@ module api.content {
             return this;
         }
 
+        setIncludeChildren(include: boolean): UnpublishContentRequest {
+            this.includeChildren = include;
+            return this;
+        }
+
         getParams(): Object {
             return {
+                includeChildren: this.includeChildren,
                 ids: this.ids.map((el) => {
                     return el.toString();
                 })

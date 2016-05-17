@@ -934,6 +934,7 @@ public final class ContentResource
     {
         final Contents contents = this.contentService.unpublishContent( UnpublishContentParams.create().
             contentIds( ContentIds.from( params.getIds() ) ).
+            includeChildren( params.isIncludeChildren() ).
             unpublishBranch( ContentConstants.BRANCH_MASTER ).
             build() );
 

@@ -96,7 +96,7 @@ export class ContentUnpublishDialog extends DependantItemsDialog {
 
         var selectedIds = this.getContentToUnpublishIds();
 
-        new UnpublishContentRequest().setIds(selectedIds).send().then(
+        new UnpublishContentRequest().setIds(selectedIds).setIncludeChildren(true).send().then(
             (jsonResponse: api.rest.JsonResponse<api.content.UnpublishContentResult>) => {
                 this.close();
                 UnpublishContentRequest.feedback(jsonResponse);

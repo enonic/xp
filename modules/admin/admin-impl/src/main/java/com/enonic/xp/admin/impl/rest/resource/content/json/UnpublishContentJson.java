@@ -6,9 +6,22 @@ public class UnpublishContentJson
 {
     private Set<String> ids;
 
+    private boolean includeChildren;
+
     public Set<String> getIds()
     {
         return ids;
+    }
+
+    public boolean isIncludeChildren()
+    {
+        return includeChildren;
+    }
+
+    @SuppressWarnings("unused")
+    public void setIncludeChildren( final boolean includeChildren )
+    {
+        this.includeChildren = includeChildren;
     }
 
     @SuppressWarnings("unused")
