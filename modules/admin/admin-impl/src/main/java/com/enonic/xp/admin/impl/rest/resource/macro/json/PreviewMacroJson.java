@@ -9,16 +9,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyArrayJson;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.PropertyTreeJson;
-import com.enonic.xp.macro.MacroKey;
 
 public final class PreviewMacroJson
+    extends PreviewStringMacroJson
 {
-
-    private final PropertyTree formData;
-
-    private final MacroKey macroKey;
 
     private final ContentPath contentPath;
 
@@ -27,21 +21,8 @@ public final class PreviewMacroJson
                              @JsonProperty("form") final List<PropertyArrayJson> macroForm,
                              @JsonProperty("contentPath") final String contentPathStr )
     {
-        formData = PropertyTreeJson.fromJson( macroForm );
-        macroKey = MacroKey.from( macroKeyStr );
+        super( macroKeyStr, macroForm );
         contentPath = ContentPath.from( contentPathStr );
-    }
-
-    @JsonIgnore
-    public PropertyTree getFormData()
-    {
-        return formData;
-    }
-
-    @JsonIgnore
-    public MacroKey getMacroKey()
-    {
-        return macroKey;
     }
 
     @JsonIgnore

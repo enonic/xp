@@ -25,6 +25,8 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.MacrosJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroResultJson;
+import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroStringResultJson;
+import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewStringMacroJson;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.Property;
@@ -129,6 +131,21 @@ public final class MacroResource
         final PortalResponse response = macroProcessor.process( context );
         final Macro macro = createMacro( macroDescriptor, previewMacroJson.getFormData() );
         return new PreviewMacroResultJson( macro, response );
+    }
+
+    @POST
+    @Path("previewString")
+    public PreviewMacroStringResultJson macroPreviewString( final PreviewStringMacroJson previewStringMacroJson )
+    {
+        final MacroKey macroKey = previewStringMacroJson.getMacroKey();
+        final MacroDescriptor macroDescriptor = this.macroDescriptorService.getByKey( macroKey );
+        if ( macroDescriptor == null )
+        {
+            throw new WebApplicationException( Response.Status.NOT_FOUND );
+        }
+
+        final Macro macro = createMacro( macroDescriptor, previewStringMacroJson.getFormData() );
+        return new PreviewMacroStringResultJson( macro );
     }
 
     private PortalRequest createPortalRequest( final HttpServletRequest req, final ContentPath contentPath )

@@ -27,6 +27,7 @@ module api.util.htmlarea.dialog {
         private contentPath: api.content.ContentPath;
         private macroDescriptor: MacroDescriptor;
         private previewResolved: boolean = false;
+        private macroPreview: MacroPreview;
         private data: PropertySet;
         private macroLoadMask: api.ui.mask.LoadMask;
 
@@ -62,25 +63,55 @@ module api.util.htmlarea.dialog {
                 if (this.validateMacroForm()) {
                     if (!!this.macroDescriptor && !this.previewResolved) {
                         this.previewPanel.removeChildren();
-                        this.macroLoadMask.show();
-                        new api.macro.resource.GetPreviewRequest().
-                            setMacroKey(this.macroDescriptor.getKey()).
-                            setData(new api.data.PropertyTree(this.data)).
-                            setPath(this.contentPath).
-                            sendAndParse().then((macroPreview: MacroPreview) => {
-                                this.previewResolved = true;
-                                this.renderPreview(macroPreview);
-                            }).catch((reason: any) => {
-                                api.DefaultErrorHandler.handle(reason);
-                                this.renderPreviewWithMessage(MacroDockedPanel.PREVIEW_LOAD_ERROR_MESSAGE);
-                            }).finally(() => {
-                                this.macroLoadMask.hide();
-                            });
+                        this.fetchPreview().then((macroPreview: MacroPreview) => {
+                            this.previewResolved = true;
+                            this.macroPreview = macroPreview;
+                            this.renderPreview(macroPreview);
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                            this.renderPreviewWithMessage(MacroDockedPanel.PREVIEW_LOAD_ERROR_MESSAGE);
+                        }).finally(() => {
+                            this.macroLoadMask.hide();
+                        });
                     }
                 } else {
                     this.renderPreviewWithMessage(MacroDockedPanel.MACRO_FORM_INCOMPLETE_MES);
                 }
             });
+        }
+
+        private fetchPreview(): wemQ.Promise<MacroPreview> {
+            this.macroLoadMask.show();
+
+            return new api.macro.resource.GetPreviewRequest(
+                new api.data.PropertyTree(this.data),
+                this.macroDescriptor.getKey(),
+                this.contentPath).
+                sendAndParse();
+        }
+
+        private fetchMacroString(): wemQ.Promise<string> {
+            this.macroLoadMask.show();
+
+            return new api.macro.resource.GetPreviewStringRequest(new api.data.PropertyTree(this.data), this.macroDescriptor.getKey()).
+                sendAndParse();
+        }
+
+        public getMacroPreviewString(): wemQ.Promise<string> {
+            var deferred = wemQ.defer<string>();
+            if (this.previewResolved) {
+                deferred.resolve(this.macroPreview.getMacroString());
+            } else {
+                this.fetchMacroString().then((macroString: string) => {
+                    deferred.resolve(macroString);
+                }).catch((reason: any) => {
+                    deferred.reject(reason);
+                }).finally(() => {
+                    this.macroLoadMask.hide();
+                });
+            }
+
+            return deferred.promise;
         }
 
         private renderPreviewWithMessage(message: string) {
