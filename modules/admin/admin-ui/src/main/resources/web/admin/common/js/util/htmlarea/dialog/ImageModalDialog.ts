@@ -102,6 +102,7 @@ module api.util.htmlarea.dialog {
 
             imageSelectorComboBox.onOptionDeselected(() => {
                 formItem.removeClass("selected-item-preview");
+                this.displayValidationErrors(false);
                 this.removePreview();
                 this.imageToolbar.remove();
                 this.showCaptionLabel();
@@ -341,6 +342,7 @@ module api.util.htmlarea.dialog {
             var submitAction = new api.ui.Action(this.imageElement ? "Update" : "Insert");
             this.setSubmitAction(submitAction);
             this.addAction(submitAction.onExecuted(() => {
+                this.displayValidationErrors(true);
                 if (this.validate()) {
                     this.createImageTag();
                     this.close();
