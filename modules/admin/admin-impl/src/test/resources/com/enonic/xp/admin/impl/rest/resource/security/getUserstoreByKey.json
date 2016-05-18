@@ -1,4 +1,5 @@
 {
+  "description": "local ldap",
   "displayName": "Local LDAP",
   "key": "local",
   "permissions": [

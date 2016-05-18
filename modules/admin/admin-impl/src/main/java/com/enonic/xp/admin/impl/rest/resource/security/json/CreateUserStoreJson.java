@@ -18,7 +18,8 @@ public final class CreateUserStoreJson
 
     @JsonCreator
     public CreateUserStoreJson( @JsonProperty("key") final String userStoreKey, @JsonProperty("displayName") final String displayName,
-                                @JsonProperty("permissions") final List<UserStoreAccessControlEntryJson> aclEntries )
+                                @JsonProperty("permissions") final List<UserStoreAccessControlEntryJson> aclEntries,
+                                @JsonProperty("description") final String description )
     {
         final UserStoreAccessControlEntry[] userStoreAclEntries = aclEntries.stream().map( UserStoreAccessControlEntryJson::getEntry ).
             toArray( UserStoreAccessControlEntry[]::new );
@@ -28,6 +29,7 @@ public final class CreateUserStoreJson
             key( UserStoreKey.from( userStoreKey ) ).
             displayName( displayName ).
             permissions( permissions ).
+            description( description ).
             build();
     }
 

@@ -1,4 +1,5 @@
 {
+  "description": "user store description",
   "displayName": "Enonic User Store",
   "key": "enonic",
   "permissions": [

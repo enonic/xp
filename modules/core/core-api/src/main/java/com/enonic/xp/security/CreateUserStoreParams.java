@@ -16,12 +16,15 @@ public final class CreateUserStoreParams
 
     private final UserStoreAccessControlList userStorePermissions;
 
+    private final String description;
+
     private CreateUserStoreParams( final Builder builder )
     {
         this.userStoreKey = checkNotNull( builder.userStoreKey, "userStoreKey is required" );
         this.displayName = checkNotNull( builder.displayName, "displayName is required" );
         this.userStorePermissions =
             builder.userStorePermissions == null ? UserStoreAccessControlList.empty() : builder.userStorePermissions;
+        this.description = builder.description;
     }
 
     public UserStoreKey getKey()
@@ -39,6 +42,11 @@ public final class CreateUserStoreParams
         return userStorePermissions;
     }
 
+    public String getDescription()
+    {
+        return description;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -51,6 +59,8 @@ public final class CreateUserStoreParams
         private String displayName;
 
         private UserStoreAccessControlList userStorePermissions;
+
+        private String description;
 
         private Builder()
         {
@@ -71,6 +81,12 @@ public final class CreateUserStoreParams
         public Builder permissions( final UserStoreAccessControlList permissions )
         {
             this.userStorePermissions = permissions;
+            return this;
+        }
+
+        public Builder description( final String value )
+        {
+            this.description = value;
             return this;
         }
 

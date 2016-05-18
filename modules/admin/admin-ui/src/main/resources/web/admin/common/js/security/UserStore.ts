@@ -4,11 +4,13 @@ module api.security {
         private displayName: string;
         private key: UserStoreKey;
         private permissions: api.security.acl.UserStoreAccessControlList;
+        private description: string;
 
         constructor(builder: UserStoreBuilder) {
             this.displayName = builder.displayName;
             this.key = builder.key;
             this.permissions = builder.permissions || new api.security.acl.UserStoreAccessControlList();
+            this.description = builder.description;
         }
 
         getDisplayName(): string {
@@ -21,6 +23,10 @@ module api.security {
 
         getPermissions(): api.security.acl.UserStoreAccessControlList {
             return this.permissions;
+        }
+
+        getDescription(): string {
+            return this.description;
         }
 
         isDeletable(): wemQ.Promise<boolean> {
@@ -54,14 +60,14 @@ module api.security {
 
             return this.key.equals(other.key) &&
                    this.displayName === other.displayName &&
-                   this.permissions.equals(other.permissions)
+                   this.permissions.equals(other.permissions) &&
+                   this.description === other.description;
         }
 
         clone(): UserStore {
             return UserStore.create().
-                setDisplayName(this.displayName).
-                setKey(this.key.toString()).
-                setPermissions(this.permissions.clone()).
+                setDisplayName(this.displayName).setKey(this.key.toString()).setPermissions(this.permissions.clone()).setDescription(
+                this.description).
                 build();
         }
 
@@ -78,6 +84,7 @@ module api.security {
         displayName: string;
         key: UserStoreKey;
         permissions: api.security.acl.UserStoreAccessControlList;
+        description: string;
 
         constructor() {
         }
@@ -86,6 +93,7 @@ module api.security {
             this.key = new UserStoreKey(json.key);
             this.displayName = json.displayName;
             this.permissions = json.permissions ? api.security.acl.UserStoreAccessControlList.fromJson(json.permissions) : null;
+            this.description = json.description;
             return this;
         }
 
@@ -101,6 +109,11 @@ module api.security {
 
         setPermissions(permissions: api.security.acl.UserStoreAccessControlList): UserStoreBuilder {
             this.permissions = permissions;
+            return this;
+        }
+
+        setDescription(description: string): UserStoreBuilder {
+            this.description = description;
             return this;
         }
 

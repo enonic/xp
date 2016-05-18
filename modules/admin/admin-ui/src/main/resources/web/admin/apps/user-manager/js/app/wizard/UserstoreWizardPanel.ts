@@ -195,6 +195,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         ];
 
         return wemQ.all(parallelPromises).spread<void>(() => {
+            this.descriptionWizardStepForm.layout(userStore.getDescription());
         });
     }
 
@@ -266,22 +267,25 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
     private assembleViewedUserStore(): UserStore {
         return new UserStoreBuilder().setDisplayName(this.wizardHeader.getDisplayName()).setKey(
-            this.getPersistedItem().getKey().toString()).setPermissions(this.permissionsWizardStepForm.getPermissions()).build();
+            this.getPersistedItem().getKey().toString()).setPermissions(this.permissionsWizardStepForm.getPermissions()).setDescription(
+            this.descriptionWizardStepForm.getDescription()).build();
     }
 
     private produceCreateUserStoreRequest(): CreateUserStoreRequest {
         var key = new UserStoreKey(this.wizardHeader.getName()),
             name = this.wizardHeader.getDisplayName(),
-            permissions = this.permissionsWizardStepForm.getPermissions();
-        return new CreateUserStoreRequest().setDisplayName(name).setKey(key).setPermissions(permissions);
+            permissions = this.permissionsWizardStepForm.getPermissions(),
+            description = this.descriptionWizardStepForm.getDescription();
+        return new CreateUserStoreRequest().setDisplayName(name).setKey(key).setPermissions(permissions).setDescription(description);
     }
 
     private produceUpdateUserStoreRequest(viewedUserStore: UserStore): UpdateUserStoreRequest {
         var key = this.getPersistedItem().getKey(),
             name = viewedUserStore.getDisplayName(),
-            permissions = viewedUserStore.getPermissions();
+            permissions = viewedUserStore.getPermissions(),
+            description = this.descriptionWizardStepForm.getDescription();
 
-        return new UpdateUserStoreRequest().setKey(key).setDisplayName(name).setPermissions(permissions);
+        return new UpdateUserStoreRequest().setKey(key).setDisplayName(name).setPermissions(permissions).setDescription(description);
     }
 
 

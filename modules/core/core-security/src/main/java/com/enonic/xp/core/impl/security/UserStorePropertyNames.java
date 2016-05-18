@@ -4,4 +4,5 @@ final class UserStorePropertyNames
 {
     public static final String DISPLAY_NAME_KEY = "displayName";
 
+    public static final String DESCRIPTION_KEY = "description";
 }
