@@ -207,4 +207,9 @@ module api.util.htmlarea.dialog {
         container: HTMLElement
         callback: Function
     }
+
+    export interface HtmlAreaMacro {
+        editor: HtmlAreaEditor
+        callback: Function
+    }
 }

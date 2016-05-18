@@ -48,8 +48,8 @@ module api.util.htmlarea.dialog {
             return this.openDialog(new AnchorModalDialog(editor));
         }
 
-        private static openMacroDialog(editor: HtmlAreaEditor, contentPath: api.content.ContentPath): ModalDialog {
-            return this.openDialog(new MacroModalDialog(editor, contentPath));
+        private static openMacroDialog(config: HtmlAreaMacro, contentPath: api.content.ContentPath): ModalDialog {
+            return this.openDialog(new MacroModalDialog(config, contentPath));
         }
 
         private static openDialog(dialog: ModalDialog): ModalDialog {

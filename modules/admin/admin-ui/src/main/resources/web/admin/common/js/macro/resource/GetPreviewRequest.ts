@@ -1,31 +1,12 @@
 module api.macro.resource {
 
-    export class GetPreviewRequest extends MacroResourceRequest<MacroPreviewJson, MacroPreview> {
+    export class GetPreviewRequest extends PreviewRequest<MacroPreviewJson, MacroPreview> {
 
-        private data: api.data.PropertyTree;
+        protected path: api.content.ContentPath;
 
-        private path: api.content.ContentPath;
-
-        private macroKey: api.macro.MacroKey;
-
-        constructor() {
-            super();
-            super.setMethod("POST");
-        }
-
-        setData(data: api.data.PropertyTree): GetPreviewRequest {
-            this.data = data;
-            return this;
-        }
-
-        setPath(path: api.content.ContentPath): GetPreviewRequest {
+        constructor(data: api.data.PropertyTree, macroKey: api.macro.MacroKey, path: api.content.ContentPath) {
+            super(data, macroKey);
             this.path = path;
-            return this;
-        }
-
-        setMacroKey(macroKey: api.macro.MacroKey): GetPreviewRequest {
-            this.macroKey = macroKey;
-            return this;
         }
 
         getParams(): Object {

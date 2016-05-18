@@ -1,8 +1,11 @@
 module api.macro.resource {
 
-    export interface MacroPreviewJson {
-        html: string;
+    export interface MacroPreviewStringJson {
         macro: string;
+    }
+
+    export interface MacroPreviewJson extends MacroPreviewStringJson {
+        html: string;
         pageContributions: PageContributionsJson;
     }
 

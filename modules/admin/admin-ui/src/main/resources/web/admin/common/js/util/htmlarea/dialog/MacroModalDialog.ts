@@ -12,9 +12,12 @@ module api.util.htmlarea.dialog {
 
         private macroDockedPanel: MacroDockedPanel;
 
-        constructor(editor: HtmlAreaEditor, contentPath: api.content.ContentPath) {
+        private callback: Function;
+
+        constructor(config: HtmlAreaMacro, contentPath: api.content.ContentPath) {
             this.contentPath = contentPath;
-            super(editor, new api.ui.dialog.ModalDialogHeader("Insert Macro"), "macro-modal-dialog");
+            this.callback = config.callback;
+            super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Macro"), "macro-modal-dialog");
         }
 
         protected layout() {
@@ -79,12 +82,21 @@ module api.util.htmlarea.dialog {
             this.addAction(submitAction.onExecuted(() => {
                 this.displayValidationErrors(true);
                 if (this.validate()) {
-
-                    this.close();
+                    this.insertMacroIntoTextArea();
                 }
             }));
 
             super.initializeActions();
+        }
+
+        private insertMacroIntoTextArea(): void {
+            this.macroDockedPanel.getMacroPreviewString().then((macroString: string) => {
+                var macro = this.callback(macroString);
+                this.close();
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+                api.notify.showError("Failed to generate macro.");
+            });
         }
 
         protected validate(): boolean {
