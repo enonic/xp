@@ -279,7 +279,7 @@ module api.liveedit {
         }
 
         highlight() {
-            Highlighter.get().highlightItemView(this);
+            Highlighter.get().setMode(HighlighterMode.CROSSHAIR).highlightItemView(this);
             if (this.isSelected()) {
                 // Remove selected hilighter to see the hover hilight
                 this.unhighlightSelected();
@@ -626,7 +626,8 @@ module api.liveedit {
             return this.getEl().hasAttribute('data-live-edit-selected');
         }
 
-        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false, rightClicked: boolean = false) {
+        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false,
+               rightClicked: boolean = false) {
             this.selectItem();
             this.showContextMenu(clickPosition, menuPosition);
             new ItemViewSelectedEvent(this, clickPosition, isNew, rightClicked).fire();
@@ -658,7 +659,7 @@ module api.liveedit {
             //this.shade();
             this.showCursor();
 
-            if(!pageView.isLocked()) {
+            if (!pageView.isLocked()) {
                 this.highlightSelected();
             }
 

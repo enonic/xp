@@ -1,0 +1,25 @@
+svg.@{_CLS_PREFIX}highlighter {
+  z-index: @z-index-shader;
+  pointer-events: none;
+  position: absolute;
+
+  rect {
+    stroke-width: 4;
+  }
+
+  path {
+    stroke-width: 2;
+  }
+
+  &.crosshair {
+    rect {
+      display: none;
+    }
+  }
+
+  &.rectangle {
+    path {
+      display: none;
+    }
+  }
+}
