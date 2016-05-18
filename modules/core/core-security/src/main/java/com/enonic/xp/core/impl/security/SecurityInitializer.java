@@ -3,14 +3,10 @@ package com.enonic.xp.core.impl.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.CreateUserStoreParams;
@@ -116,22 +112,6 @@ final class SecurityInitializer
     {
         LOG.info( "Initializing user store [" + UserStoreKey.system() + "]" );
 
-        final PropertySet backgroundSet = new PropertySet();
-        backgroundSet.setString( "application", "com.enonic.xp.system" );
-        backgroundSet.setString( "path", "common/images/background-1920.jpg" );
-        final PropertySet brandingSet = new PropertySet();
-        brandingSet.setString( "application", "com.enonic.xp.system" );
-        brandingSet.setString( "path", "common/images/enonic.svg" );
-        final PropertyTree config = new PropertyTree();
-        config.setString( "title", "Enonic XP - Login" );
-        config.addSet( "background", backgroundSet );
-        config.addSets( "branding", brandingSet );
-
-        final AuthConfig authConfig = AuthConfig.create().
-            applicationKey( ApplicationKey.from( "com.enonic.xp.system" ) ).
-            config( config ).
-            build();
-
         final UserStoreAccessControlList permissions =
             UserStoreAccessControlList.of( UserStoreAccessControlEntry.create().principal( RoleKeys.ADMIN ).access( ADMINISTRATOR ).build(),
                                            UserStoreAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access(
@@ -140,7 +120,6 @@ final class SecurityInitializer
         final CreateUserStoreParams createParams = CreateUserStoreParams.create().
             key( UserStoreKey.system() ).
             displayName( SYSTEM_USER_STORE_DISPLAY_NAME ).
-            authConfig( authConfig ).
             permissions( permissions ).
             build();
         this.securityService.createUserStore( createParams );

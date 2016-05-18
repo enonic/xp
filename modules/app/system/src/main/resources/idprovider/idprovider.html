@@ -7,19 +7,9 @@
     <title>{{title}}</title>
 
     <link rel="stylesheet" type="text/css" href="{{appLoginCssUrl}}">
-    <style>
-        #lazy-image {
-            background-image: url('{{backgroundUrl}}');
-        }
-
-        #branding h1 {
-            background: url('{{brandingUrl}}') 0 0 no-repeat;
-            background-size: 100%;
-        }
-    </style>
     <script>
         var CONFIG = {
-            userStoreKey: "{{userStoreKey}}",
+            userStoreKey: "system",
             appLoginServiceUrl: "{{appLoginServiceUrl}}"
         };
     </script>
@@ -30,7 +20,7 @@
     <div id="lazy-image" class="lazy-image"></div>
     <div class="center-panel">
         <div id="branding" class="branding">
-            <h1>{{title}}</h1>
+            <h1>Enonic XP - Login</h1>
         </div>
         <div class="login-panel">
             <form id="login-form" class="login-form">

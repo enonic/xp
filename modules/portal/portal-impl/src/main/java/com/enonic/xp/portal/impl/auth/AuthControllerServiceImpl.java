@@ -4,7 +4,6 @@ package com.enonic.xp.portal.impl.auth;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
@@ -44,7 +43,8 @@ public class AuthControllerServiceImpl
     public PortalResponse execute( final AuthControllerExecutionParams params )
         throws IOException
     {
-        final UserStore userStore = retrieveUserStore( params );
+        final UserStoreKey userStoreKey = retrieveUserStoreKey( params );
+        final UserStore userStore = retrieveUserStore( userStoreKey );
         final AuthDescriptor authDescriptor = retrieveAuthDescriptor( userStore );
 
         if ( authDescriptor != null )
@@ -73,31 +73,27 @@ public class AuthControllerServiceImpl
         return null;
     }
 
-    private UserStore retrieveUserStore( final AuthControllerExecutionParams params )
+    private UserStoreKey retrieveUserStoreKey( AuthControllerExecutionParams params )
     {
-        final UserStoreKey userStoreKey =
-            params.getUserStoreKey() == null ? retrieveUserStoreKey( params.getRequest() ) : params.getUserStoreKey();
+        UserStoreKey userStoreKey = params.getUserStoreKey();
+        if ( userStoreKey == null )
+        {
+            final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( params.getRequest() );
+            if ( virtualHost != null )
+            {
+                userStoreKey = virtualHost.getUserStoreKey();
+            }
+        }
+        return userStoreKey;
+    }
 
+    private UserStore retrieveUserStore( final UserStoreKey userStoreKey )
+    {
         if ( userStoreKey != null )
         {
             return runWithAdminRole( () -> securityService.getUserStore( userStoreKey ) );
         }
         return null;
-    }
-
-    private UserStoreKey retrieveUserStoreKey( HttpServletRequest request )
-    {
-        UserStoreKey userStoreKey = null;
-        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request );
-        if ( virtualHost != null )
-        {
-            userStoreKey = virtualHost.getUserStoreKey();
-        }
-        if ( userStoreKey == null )
-        {
-            userStoreKey = UserStoreKey.system();
-        }
-        return userStoreKey;
     }
 
     private AuthDescriptor retrieveAuthDescriptor( final UserStore userStore )
@@ -110,7 +106,8 @@ public class AuthControllerServiceImpl
                 return authDescriptorService.getDescriptor( authConfig.getApplicationKey() );
             }
         }
-        return null;
+
+        return authDescriptorService.getDefaultDescriptor();
     }
 
     private <T> T runWithAdminRole( final Callable<T> callable )
