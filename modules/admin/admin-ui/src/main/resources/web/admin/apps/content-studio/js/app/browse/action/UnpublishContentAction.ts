@@ -9,6 +9,8 @@ export class UnpublishContentAction extends Action {
     constructor(grid: ContentTreeGrid) {
         super("Unpublish");
 
+        this.setEnabled(false);
+
         this.onExecuted(() => {
             var contents: api.content.ContentSummaryAndCompareStatus[]
                 = grid.getSelectedDataList();
