@@ -75,6 +75,7 @@ import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
 import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
 import ContentNamedEvent = api.content.event.ContentNamedEvent;
 import ActiveContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
+import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 
 import DialogButton = api.ui.dialog.DialogButton;
 
@@ -658,9 +659,20 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var activeContentVersionSetHandler = (event: ActiveContentVersionSetEvent) => updateHandler(event.getContentId(), false);
         var contentUpdatedHanlder = (event: ContentUpdatedEvent) => updateHandler(event.getContentId());
 
+        var movedHandler = (data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) => {
+            var wasMoved = oldPaths.some((oldPath: ContentPath) => {
+                return this.persistedItemPathIsDescendantOrEqual(oldPath);
+            });
+
+            if (wasMoved) {
+                updateHandler(this.getPersistedItem().getContentId());
+            }
+        }
+
         ActiveContentVersionSetEvent.on(activeContentVersionSetHandler);
         ContentUpdatedEvent.on(contentUpdatedHanlder);
         ContentDeletedEvent.on(deleteHandler);
+        ContentServerEventsHandler.getInstance().onContentMoved(movedHandler);
 
         serverEvents.onContentPublished(publishOrUnpublishHandler);
         serverEvents.onContentUnpublished(publishOrUnpublishHandler);
@@ -669,6 +681,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             ActiveContentVersionSetEvent.un(activeContentVersionSetHandler);
             ContentUpdatedEvent.un(contentUpdatedHanlder);
             ContentDeletedEvent.un(deleteHandler);
+            ContentServerEventsHandler.getInstance().unContentMoved(movedHandler);
 
             serverEvents.unContentPublished(publishOrUnpublishHandler);
             serverEvents.unContentUnpublished(publishOrUnpublishHandler);
@@ -1379,6 +1392,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.updateThumbnailWithContent(content);
 
         this.contentWizardHeader.initNames(content.getDisplayName(), content.getName().toString(), true, false);
+
+        // case when content was moved
+        this.contentWizardHeader.setPath(
+            content.getPath().getParentPath().isRoot() ? "/" : content.getPath().getParentPath().toString() + "/");
     }
 
     private initPublishButtonForMobile() {
