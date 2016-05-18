@@ -38,12 +38,14 @@ public final class LayoutDescriptorServiceImpl
     {
         final ResourceProcessor<DescriptorKey, LayoutDescriptor> processor = newProcessor( key );
         final LayoutDescriptor descriptor = this.resourceService.processResource( processor );
-        if ( descriptor != null )
+        if ( descriptor == null )
         {
-            return descriptor;
+            return null;
         }
 
-        return null;
+        return LayoutDescriptor.copyOf( descriptor ).
+            config( this.mixinService.inlineFormItems( descriptor.getConfig() ) ).
+            build();
     }
 
     private ResourceProcessor<DescriptorKey, LayoutDescriptor> newProcessor( final DescriptorKey key )
@@ -102,11 +104,7 @@ public final class LayoutDescriptorServiceImpl
         final LayoutDescriptor.Builder builder = LayoutDescriptor.create();
         parseXml( resource, builder );
         builder.name( key.getName() ).key( key );
-        final LayoutDescriptor layoutDescriptor = builder.build();
-
-        return LayoutDescriptor.copyOf( layoutDescriptor ).
-            config( this.mixinService.inlineFormItems( layoutDescriptor.getConfig() ) ).
-            build();
+        return builder.build();
     }
 
     private void parseXml( final Resource resource, final LayoutDescriptor.Builder builder )
