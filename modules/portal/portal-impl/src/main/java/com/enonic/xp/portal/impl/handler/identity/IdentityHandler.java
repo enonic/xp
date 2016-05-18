@@ -6,13 +6,11 @@ import java.util.regex.Pattern;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.handler.PortalHandler;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
-import com.enonic.xp.portal.impl.auth.AuthControllerScriptFactory;
-import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UserStoreKey;
 
 @Component(immediate = true, service = PortalHandler.class)
@@ -21,11 +19,7 @@ public class IdentityHandler
 {
     private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
 
-    protected SecurityService securityService;
-
-    protected AuthDescriptorService authDescriptorService;
-
-    protected AuthControllerScriptFactory authControllerScriptFactory;
+    protected AuthControllerService authControllerService;
 
     public IdentityHandler()
     {
@@ -50,27 +44,13 @@ public class IdentityHandler
         final IdentityHandlerWorker worker = new IdentityHandlerWorker();
         worker.userStoreKey = userStoreKey;
         worker.idProviderFunction = idProviderFunction;
-        worker.securityService = this.securityService;
-        worker.authDescriptorService = this.authDescriptorService;
-        worker.authControllerScriptFactory = this.authControllerScriptFactory;
+        worker.authControllerService = this.authControllerService;
         return worker;
     }
 
     @Reference
-    public void setSecurityService( final SecurityService securityService )
+    public void setAuthControllerService( final AuthControllerService authControllerService )
     {
-        this.securityService = securityService;
-    }
-
-    @Reference
-    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
-    {
-        this.authDescriptorService = authDescriptorService;
-    }
-
-    @Reference
-    public void setAuthControllerScriptFactory( final AuthControllerScriptFactory authControllerScriptFactory )
-    {
-        this.authControllerScriptFactory = authControllerScriptFactory;
+        this.authControllerService = authControllerService;
     }
 }
