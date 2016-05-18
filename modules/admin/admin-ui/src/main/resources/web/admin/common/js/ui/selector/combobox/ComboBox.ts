@@ -162,6 +162,7 @@ module api.ui.selector.combobox {
             return this.comboBoxDropdown.isDropdownShown();
         }
 
+        // 
         showDropdown() {
 
             this.doUpdateDropdownTopPositionAndWidth();
@@ -532,7 +533,7 @@ module api.ui.selector.combobox {
                 this.preservedInputValueChangedEvent = event;
                 if (this.delayedInputValueChangedHandling == 0) {
                     this.handleInputValueChanged();
-                } else {
+                } else if (!event.valuesAreEqual()) {
                     this.setEmptyDropdownText("Just keep on typing...");
                     this.delayedHandleInputValueChangedFnCall.delayCall();
                 }
