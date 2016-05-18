@@ -75,6 +75,7 @@ import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
 import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
 import ContentNamedEvent = api.content.event.ContentNamedEvent;
 import ActiveContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
+import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 
 import DialogButton = api.ui.dialog.DialogButton;
 
@@ -655,12 +656,24 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
         };
 
+        var sortedHandler = (data: ContentSummaryAndCompareStatus[]) => {
+            var indexOfCurrentContent;
+            var wasSorted = data.some((sorted: ContentSummaryAndCompareStatus, index: number) => {
+                indexOfCurrentContent = index;
+                return this.isCurrentContentId(sorted.getContentId());
+            });
+            if (wasSorted) {
+                this.contentWizardToolbarPublishControls.setCompareStatus(data[indexOfCurrentContent].getCompareStatus());
+            }
+        }
+
         var activeContentVersionSetHandler = (event: ActiveContentVersionSetEvent) => updateHandler(event.getContentId(), false);
         var contentUpdatedHanlder = (event: ContentUpdatedEvent) => updateHandler(event.getContentId());
 
         ActiveContentVersionSetEvent.on(activeContentVersionSetHandler);
         ContentUpdatedEvent.on(contentUpdatedHanlder);
         ContentDeletedEvent.on(deleteHandler);
+        ContentServerEventsHandler.getInstance().onContentSorted(sortedHandler);
 
         serverEvents.onContentPublished(publishOrUnpublishHandler);
         serverEvents.onContentUnpublished(publishOrUnpublishHandler);
@@ -669,6 +682,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             ActiveContentVersionSetEvent.un(activeContentVersionSetHandler);
             ContentUpdatedEvent.un(contentUpdatedHanlder);
             ContentDeletedEvent.un(deleteHandler);
+            ContentServerEventsHandler.getInstance().unContentSorted(sortedHandler);
 
             serverEvents.unContentPublished(publishOrUnpublishHandler);
             serverEvents.unContentUnpublished(publishOrUnpublishHandler);
