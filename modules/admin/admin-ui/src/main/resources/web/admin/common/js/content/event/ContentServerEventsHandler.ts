@@ -24,6 +24,8 @@ module api.content.event {
 
         private contentPublishListeners: {(data: ContentSummaryAndCompareStatus[]):void}[] = [];
 
+        private contentUnpublishListeners: {(data: ContentSummaryAndCompareStatus[]):void}[] = [];
+
         private contentPendingListeners: {(data: ContentSummaryAndCompareStatus[]):void}[] = [];
 
         private contentDuplicateListeners: {(data: ContentSummaryAndCompareStatus[]):void}[] = [];
@@ -61,12 +63,12 @@ module api.content.event {
                 console.debug("ContentServerEventsHandler: received server event", event);
             }
 
-            var changes = event.getEvents().map((change) => change.getNodeChange());
+            let changes = event.getEvents().map((change) => change.getNodeChange());
             // use new paths in case content was renamed or moved
-            var useNewPaths = NodeServerChangeType.RENAME === event.getType() ||
+            let useNewPaths = NodeServerChangeType.RENAME === event.getType() ||
                               NodeServerChangeType.MOVE == event.getType();
 
-            if (event.getType() == NodeServerChangeType.DELETE) {
+            if (event.getType() == NodeServerChangeType.DELETE && this.hasNoMasterChanges(changes)) {
                 // content has already been deleted so no need to fetch summaries
                 var changeItems: ContentServerChangeItem[] = changes.reduce((total, change: ContentServerChange) => {
                     return total.concat(change.getChangeItems());
@@ -91,7 +93,9 @@ module api.content.event {
                             this.handleContentRenamed(summaries, this.extractContentPaths(changes));
                             break;
                         case NodeServerChangeType.DELETE:
-                            // has been handled without fetching summaries
+                            // delete from draft has been handled without fetching summaries,
+                            // deleting from master is unpublish
+                            this.handleContentUnpublished(summaries);
                             break;
                         case NodeServerChangeType.PENDING:
                             this.handleContentPending(summaries);
@@ -116,6 +120,14 @@ module api.content.event {
                         }
                     });
             }
+        }
+
+        private hasNoMasterChanges(changes: ContentServerChange[]): boolean {
+            return changes.every((change: ContentServerChange) => {
+                return change.getChangeItems().every(changeItem => {
+                    return changeItem.getBranch() != 'master';
+                })
+            })
         }
 
         private extractContentPaths(changes: ContentServerChange[], useNewPaths?: boolean): ContentPath[] {
@@ -159,7 +171,7 @@ module api.content.event {
             }
             var contentDeletedEvent = new ContentDeletedEvent();
             changeItems.forEach((changeItem) => {
-                contentDeletedEvent.addItem(changeItem.getContentId(), changeItem.getPath());
+                contentDeletedEvent.addItem(changeItem.getContentId(), changeItem.getPath(), changeItem.getBranch());
             });
             contentDeletedEvent.fire();
 
@@ -193,11 +205,16 @@ module api.content.event {
             if (ContentServerEventsHandler.debug) {
                 console.debug("ContentServerEventsHandler: published", data);
             }
-            // TODO: refactor publish event to contain multiple contents ?
-            data.forEach((el) => {
-                new ContentPublishedEvent(el.getContentSummary(), el.getCompareStatus()).fire();
-            });
+
             this.notifyContentPublished(data);
+        }
+
+        private handleContentUnpublished(data: ContentSummaryAndCompareStatus[]) {
+            if (ContentServerEventsHandler.debug) {
+                console.debug("ContentServerEventsHandler: unpublished", data);
+            }
+
+            this.notifyContentUnpublished(data);
         }
 
         private handleContentMoved(data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) {
@@ -332,6 +349,23 @@ module api.content.event {
 
         private notifyContentPublished(data: ContentSummaryAndCompareStatus[]) {
             this.contentPublishListeners.forEach((listener: (data: ContentSummaryAndCompareStatus[])=>void) => {
+                listener(data);
+            });
+        }
+
+        onContentUnpublished(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
+            this.contentUnpublishListeners.push(listener);
+        }
+
+        unContentUnpublished(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
+            this.contentUnpublishListeners =
+                this.contentUnpublishListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
+                    return currentListener != listener;
+                });
+        }
+
+        private notifyContentUnpublished(data: ContentSummaryAndCompareStatus[]) {
+            this.contentUnpublishListeners.forEach((listener: (data: ContentSummaryAndCompareStatus[])=>void) => {
                 listener(data);
             });
         }

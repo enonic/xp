@@ -1131,7 +1131,7 @@ module api.ui.treegrid {
             return this;
         }
 
-        private notifyDataChanged(event: DataChangedEvent<DATA>) {
+        notifyDataChanged(event: DataChangedEvent<DATA>) {
             this.dataChangeListeners.forEach((listener) => {
                 listener(event);
             });

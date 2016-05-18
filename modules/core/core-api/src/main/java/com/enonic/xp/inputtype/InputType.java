@@ -4,6 +4,7 @@ import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.form.Input;
 
 @Beta
 public interface InputType
@@ -15,7 +16,7 @@ public interface InputType
 
     Value createValue( Value value, InputTypeConfig config );
 
-    Value createDefaultValue( InputTypeDefault defaultConfig );
+    Value createDefaultValue( Input input );
 
     void validate( Property property, InputTypeConfig config );
 }

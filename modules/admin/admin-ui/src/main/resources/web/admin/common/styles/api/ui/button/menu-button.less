@@ -13,18 +13,18 @@
     }
   }
 
-  .dropdown-handle {
+  .@{_COMMON_PREFIX}dropdown-handle {
     left: 0;
     width: 40px;
     background-color: @admin-green;
-
+    
     &:after {
       margin-left: -6px;
       border-top: 10px solid @admin-white;
     }
 
     &:hover {
-      background-color: lighten(@admin-green, 30%);
+      background-color: lighten(@admin-green, 10%);
       span {
         color: @admin-white;
       }
@@ -51,7 +51,7 @@
     }
 
     &:not(:disabled):hover {
-      background-color: lighten(@admin-green, 30%);
+      background-color: lighten(@admin-green, 10%);
       span {
         color: @admin-white;
       }

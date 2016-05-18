@@ -3,6 +3,7 @@ package com.enonic.xp.script.serializer;
 import java.util.Stack;
 
 import com.google.common.annotations.Beta;
+import com.google.common.io.ByteSource;
 
 @Beta
 public abstract class MapGeneratorBase
@@ -140,6 +141,11 @@ public abstract class MapGeneratorBase
         }
 
         if ( value instanceof Boolean )
+        {
+            return value;
+        }
+
+        if ( value instanceof ByteSource )
         {
             return value;
         }

@@ -8,6 +8,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.form.Input;
 
 @Beta
 final class CheckBoxType
@@ -29,14 +30,18 @@ final class CheckBoxType
     }
 
     @Override
-    public Value createDefaultValue( final InputTypeDefault defaultConfig )
+    public Value createDefaultValue( final Input input )
     {
-        final String defaultValue = defaultConfig.getRootValue();
+        final String defaultValue = input.getDefaultValue().getRootValue();
+
         if ( StringUtils.isNotEmpty( defaultValue ) )
         {
-            return VALID_VALUE.equals( defaultValue ) ? ValueFactory.newBoolean( true ) : super.createDefaultValue( defaultConfig );
+            if ( VALID_VALUE.equals( defaultValue ) )
+            {
+                return ValueFactory.newBoolean( true );
+            }
         }
-        return super.createDefaultValue( defaultConfig );
+        return super.createDefaultValue( input );
     }
 
     @Override

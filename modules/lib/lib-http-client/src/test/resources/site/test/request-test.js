@@ -8,11 +8,13 @@ exports.simpleGetRequest = function (mockServer) {
     });
 
     var expectedJson = {
-        'status': 200,
-        'message': 'OK',
-        'body': 'GET request',
-        'headers': {
-            'Content-Length': '11'
+        "status": 200,
+        "message": "OK",
+        "body": "GET request",
+        "contentType": "text/plain",
+        "headers": {
+            "Content-Length": "11",
+            "content-type": "text/plain"
         }
     };
 
@@ -29,11 +31,13 @@ exports.simplePostRequest = function (mockServer) {
     });
 
     var expectedJson = {
-        'status': 200,
-        'message': 'OK',
-        'body': 'POST request',
-        'headers': {
-            'Content-Length': '12'
+        "status": 200,
+        "message": "OK",
+        "body": "POST request",
+        "contentType": "text/plain",
+        "headers": {
+            "Content-Length": "12",
+            "content-type": "text/plain"
         }
     };
 
@@ -54,15 +58,18 @@ exports.getRequestWithParams = function (mockServer) {
     });
 
     var expectedJson = {
-        'status': 200,
-        'message': 'OK',
-        'body': 'GET request',
-        'headers': {
-            'Content-Length': '11'
+        "status": 200,
+        "message": "OK",
+        "body": "GET request",
+        "contentType": "text/plain",
+        "headers": {
+            "Content-Length": "11",
+            "content-type": "text/plain"
         }
     };
 
     assert.assertJsonEquals('http.request result not equals', expectedJson, result);
+    assert.assertNotNull('http.request stream body null', result.bodyStream);
 
 };
 
@@ -79,11 +86,13 @@ exports.postRequestWithParams = function (mockServer) {
     });
 
     var expectedJson = {
-        'status': 200,
-        'message': 'OK',
-        'body': 'POST request',
-        'headers': {
-            'Content-Length': '12'
+        "status": 200,
+        "message": "OK",
+        "body": "POST request",
+        "contentType": "text/plain",
+        "headers": {
+            "Content-Length": "12",
+            "content-type": "text/plain"
         }
     };
 
@@ -102,11 +111,13 @@ exports.postJsonRequest = function (mockServer) {
 
 
     var expectedJson = {
-        'status': 200,
-        'message': 'OK',
-        'body': 'POST request',
-        'headers': {
-            'Content-Length': '12'
+        "status": 200,
+        "message": "OK",
+        "body": "POST request",
+        "contentType": "text/plain",
+        "headers": {
+            "Content-Length": "12",
+            "content-type": "text/plain"
         }
     };
 
@@ -125,11 +136,13 @@ exports.getWithHeadersRequest = function (mockServer) {
     });
 
     var expectedJson = {
-        'status': 200,
-        'message': 'OK',
-        'body': 'GET request',
-        'headers': {
-            'Content-Length': '11'
+        "status": 200,
+        "message": "OK",
+        "body": "GET request",
+        "contentType": "text/plain",
+        "headers": {
+            "Content-Length": "11",
+            "content-type": "text/plain"
         }
     };
 

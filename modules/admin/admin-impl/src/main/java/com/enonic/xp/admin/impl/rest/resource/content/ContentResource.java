@@ -35,8 +35,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 
-import io.swagger.annotations.ApiOperation;
-
 import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
 import com.enonic.xp.admin.impl.json.content.CompareContentResultsJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
@@ -50,6 +48,7 @@ import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
+import com.enonic.xp.admin.impl.json.content.UnpublishContentResultJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -81,6 +80,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishContent
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.UnpublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
@@ -128,6 +128,7 @@ import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.ContextAccessor;
@@ -404,7 +405,6 @@ public final class ContentResource
             final DeleteContentParams deleteContentParams = DeleteContentParams.create().
                 contentPath( contentToDelete ).
                 deleteOnline( json.isDeleteOnline() ).
-                deletePending( json.isDeletePending() ).
                 build();
 
             try
@@ -928,6 +928,19 @@ public final class ContentResource
         return new ContentIdJson( setActiveContentVersionResult.getContentId() );
     }
 
+    @POST
+    @Path("unpublish")
+    public UnpublishContentResultJson unpublish( final UnpublishContentJson params )
+    {
+        final Contents contents = this.contentService.unpublishContent( UnpublishContentParams.create().
+            contentIds( ContentIds.from( params.getIds() ) ).
+            includeChildren( params.isIncludeChildren() ).
+            unpublishBranch( ContentConstants.BRANCH_MASTER ).
+            build() );
+
+        return new UnpublishContentResultJson( contents );
+    }
+
     @GET
     @Path("locales")
     public LocaleListJson getLocales( @QueryParam("query") final String query )
@@ -1031,7 +1044,6 @@ public final class ContentResource
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed(RoleKeys.ADMIN_ID)
-    @ApiOperation("Reprocesses content")
     public ReprocessContentResultJson reprocess( final ReprocessContentRequestJson request )
     {
         final List<ContentPath> updated = new ArrayList<>();

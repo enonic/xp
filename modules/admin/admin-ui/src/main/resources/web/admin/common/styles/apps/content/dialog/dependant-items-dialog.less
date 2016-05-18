@@ -90,7 +90,7 @@
             padding-left: 0px;
 
             .dependant-item-viewer {
-              width: calc(~'100% - 80px');
+              width: calc(~'100% - 90px');
             }
 
             .names-and-icon-view .wrapper {
@@ -195,6 +195,22 @@
         }
       }
     }
+  }
+
+  .dialog-buttons {
+
+    button.spinner {
+      font-family: 'xp-admin-font-icon';
+
+      &:after {
+        .animation(rotate360, .5s, .0s, linear);
+        content: "\e007";
+        color: white;
+        display: inline-block;
+        margin-left: 5px;
+      }
+    }
+
   }
 
 }

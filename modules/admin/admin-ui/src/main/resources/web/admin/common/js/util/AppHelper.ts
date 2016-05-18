@@ -56,6 +56,25 @@ module api.util {
             event.initEvent(name, true, true);
             element.getHTMLElement().dispatchEvent(event);
         }
+
+        static focusInOut(element: api.dom.Element, onFocusOut: () => void, wait: number = 50, preventMouseDown: boolean = true) {
+            let focusOutTimeout = 0;
+
+            element.onFocusOut(() => {
+                focusOutTimeout = setTimeout(onFocusOut, wait);
+            });
+
+            element.onFocusIn(() => {
+                clearTimeout(focusOutTimeout);
+            });
+
+            // Prevent focus loss on mouse down
+            if (preventMouseDown) {
+                element.onMouseDown((e) => {
+                    e.preventDefault();
+                });
+            }
+        }
     }
 
 }

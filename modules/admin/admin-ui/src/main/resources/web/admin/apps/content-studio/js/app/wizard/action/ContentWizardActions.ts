@@ -3,6 +3,7 @@ import {ContentWizardPanel} from "../ContentWizardPanel";
 import {DuplicateContentAction} from "./DuplicateContentAction";
 import {DeleteContentAction} from "./DeleteContentAction";
 import {PublishAction} from "./PublishAction";
+import {PublishTreeAction} from "./PublishTreeAction";
 import {UnpublishAction} from "./UnpublishAction";
 import {PreviewAction} from "./PreviewAction";
 import {ShowLiveEditAction} from "./ShowLiveEditAction";
@@ -22,6 +23,8 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     private duplicate: api.ui.Action;
 
     private publish: api.ui.Action;
+    
+    private publishTree: api.ui.Action;
 
     private unpublish: api.ui.Action;
 
@@ -40,15 +43,16 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         this.close = new api.app.wizard.CloseAction(wizardPanel);
         this.saveAndClose = new api.app.wizard.SaveAndCloseAction(wizardPanel);
         this.publish = new PublishAction(wizardPanel);
+        this.publishTree = new PublishTreeAction(wizardPanel);
         this.unpublish = new UnpublishAction(wizardPanel);
         this.preview = new PreviewAction(wizardPanel);
         this.showLiveEditAction = new ShowLiveEditAction(wizardPanel);
         this.showFormAction = new ShowFormAction(wizardPanel);
         this.showSplitEditAction = new ShowSplitEditAction(wizardPanel);
 
-        super(this.save, this.delete, this.duplicate,
-            this.preview, this.publish, this.unpublish, this.close,
-            this.showLiveEditAction, this.showFormAction,
+        super(this.save, this.delete, this.duplicate, this.preview, 
+            this.publish, this.publishTree, this.unpublish, this.close,
+            this.showLiveEditAction, this.showFormAction, 
             this.showSplitEditAction, this.saveAndClose);
     }
 
@@ -91,6 +95,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
             }
             if (!hasPublishPermission) {
                 this.publish.setEnabled(false);
+                this.publishTree.setEnabled(false);
             } else {
                 // check if already published to show unpublish button
                 api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(existing)
@@ -153,6 +158,10 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     getPublishAction(): api.ui.Action {
         return this.publish;
+    }
+
+    getPublishTreeAction(): api.ui.Action {
+        return this.publishTree;
     }
 
     getUnpublishAction(): api.ui.Action {

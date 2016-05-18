@@ -59,6 +59,8 @@
 ///<reference path='UpdateContentRequest.ts' />
 ///<reference path='PublishContentRequest.ts' />
 ///<reference path='PublishContentResult.ts' />
+///<reference path='UnpublishContentRequest.ts' />
+///<reference path='UnpublishContentResult.ts' />
 ///<reference path='ResolvePublishRequestedContentsRequest.ts' />
 ///<reference path='ResolvePublishDependenciesRequest.ts' />
 ///<reference path='ResolvePublishDependenciesResult.ts' />

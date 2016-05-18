@@ -36,6 +36,7 @@ import ContentId = api.content.ContentId;
 import BatchContentServerEvent = api.content.event.BatchContentServerEvent;
 import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
 import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
+import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 
 export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
@@ -91,8 +92,11 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         this.getTreeGrid().onDataChanged((event: api.ui.treegrid.DataChangedEvent<ContentSummaryAndCompareStatus>) => {
             if (event.getType() === 'updated') {
-                var browseItems = this.treeNodesToBrowseItems(event.getTreeNodes());
+                let browseItems = this.treeNodesToBrowseItems(event.getTreeNodes());
                 this.getBrowseItemPanel().updateItemViewers(browseItems);
+
+                this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
+                this.mobileBrowseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
             }
         });
 
@@ -132,7 +136,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
 
         this.toolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
-        
+
         let contentPublishMenuManager = new ContentPublishMenuManager(this.browseActions);
         this.toolbar.appendChild(contentPublishMenuManager.getPublishMenuButton());
 
@@ -317,15 +321,16 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
 
         handler.onContentDeleted((data: api.content.event.ContentServerChangeItem[]) => {
-            var paths = data.map((changeItem) => changeItem.getPath());
-            this.handleContentDeleted(paths)
+            this.handleContentDeleted(data.map(d => d.getPath()));
         });
 
         handler.onContentPending((data: ContentSummaryAndCompareStatus[]) => this.handleContentPending(data));
 
         handler.onContentDuplicated((data: ContentSummaryAndCompareStatus[]) => this.handleContentCreated(data));
 
-        handler.onContentPublished((data: ContentSummaryAndCompareStatus[]) => this.handleContentPublished(data));
+        handler.onContentPublished((data: ContentSummaryAndCompareStatus[]) => this.handleContentPublishedOrUnpublished(data));
+
+        handler.onContentUnpublished((data: ContentSummaryAndCompareStatus[]) => this.handleContentPublishedOrUnpublished(data));
 
         handler.onContentMoved((data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) => {
             // combination of delete and create
@@ -371,8 +376,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                             }),
                             !isFiltered
                         ).then((results) => {
-                            nodes = nodes.concat(results);
-                        });
+                                nodes = nodes.concat(results);
+                            });
                     }
                     break;
                 }
@@ -398,27 +403,24 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
         var treeNodes: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
 
-        var results = [];
+        let changed = [];
         data.forEach((el) => {
-
             for (var i = 0; i < treeNodes.length; i++) {
                 if (treeNodes[i].getId() === el.getId()) {
                     treeNodes[i].updateNodeData(el);
-
                     this.updateStatisticsPreview(el); // update preview item
-
                     this.updateItemInDetailsPanelIfNeeded(el);
-
-                    results.push(treeNodes[i]);
+                    changed.push(...treeNodes[i].getNodes());
                     break;
                 }
             }
         });
-        // update actions state in case of permission changes
-        this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
-        this.mobileBrowseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
 
-        return this.contentTreeGrid.xPlaceContentNodes(results);
+        // Unpdate since CompareStatus changed
+        let changedEvent = new DataChangedEvent<ContentSummaryAndCompareStatus>(changed, DataChangedEvent.UPDATED);
+        this.contentTreeGrid.notifyDataChanged(changedEvent);
+
+        return this.contentTreeGrid.xPlaceContentNodes(changed);
     }
 
     private handleContentDeleted(paths: ContentPath[]) {
@@ -485,25 +487,29 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         this.contentTreeGrid.invalidate();
     }
 
-    private handleContentPublished(data: ContentSummaryAndCompareStatus[]) {
+    private handleContentPublishedOrUnpublished(data: ContentSummaryAndCompareStatus[]) {
         if (ContentBrowsePanel.debug) {
-            console.debug("ContentBrowsePanel: published", data);
+            console.debug("ContentBrowsePanel: published or unpublished", data);
         }
         var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
         var treeNodes: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
 
+        let changed = [];
         data.forEach((el) => {
             for (var i = 0; i < treeNodes.length; i++) {
                 if (treeNodes[i].getId() === el.getId()) {
                     treeNodes[i].updateNodeData(el);
-
                     this.updateItemInDetailsPanelIfNeeded(el);
-
+                    changed.push(...treeNodes[i].getNodes());
                     break;
                 }
             }
         });
         this.contentTreeGrid.invalidate();
+
+        // Unpdate since CompareStatus changed
+        let changedEvent = new DataChangedEvent<ContentSummaryAndCompareStatus>(changed, DataChangedEvent.UPDATED);
+        this.contentTreeGrid.notifyDataChanged(changedEvent);
     }
 
     private handleContentSorted(data: ContentSummaryAndCompareStatus[]) {

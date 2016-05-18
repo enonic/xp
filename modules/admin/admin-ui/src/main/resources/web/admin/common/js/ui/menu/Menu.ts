@@ -17,6 +17,10 @@ module api.ui.menu {
                 e.stopPropagation();
             });
         }
+        
+        isHideOnItemClick(): boolean {
+            return this.hideOnItemClick;
+        }
 
         addAction(action: api.ui.Action): Menu {
             var menuItem = this.createMenuItem(action);
@@ -80,7 +84,6 @@ module api.ui.menu {
             menuItem.onClicked((event: MouseEvent) => {
                 this.notifyItemClicked(menuItem);
                 if (this.hideOnItemClick) {
-                    this.removeClass('expanded');
                     this.hide();
                 }
                 event.preventDefault();

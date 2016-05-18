@@ -16,7 +16,7 @@ import com.enonic.xp.testing.script.ScriptTestSupport;
 
 import static org.junit.Assert.*;
 
-public class HttpClientScriptTest
+public class HttpRequestHandlerTest
     extends ScriptTestSupport
 {
     protected MockWebServer server;
@@ -49,6 +49,7 @@ public class HttpClientScriptTest
     {
         final MockResponse response = new MockResponse();
         response.setBody( body );
+        response.setHeader( "content-type", "text/plain" );
         this.server.enqueue( response );
         return response;
     }

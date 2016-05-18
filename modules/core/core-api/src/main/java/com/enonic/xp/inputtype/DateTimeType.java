@@ -1,9 +1,9 @@
 package com.enonic.xp.inputtype;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import com.google.common.annotations.Beta;
 
@@ -12,6 +12,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypeException;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.form.Input;
 
 @Beta
 final class DateTimeType
@@ -43,18 +44,15 @@ final class DateTimeType
     }
 
     @Override
-    public Value createDefaultValue( final InputTypeDefault defaultConfig )
+    public Value createDefaultValue( final Input input )
     {
-        final String defaultValue = defaultConfig.getRootValue();
+        final String defaultValue = input.getDefaultValue().getRootValue();
         if ( defaultValue != null )
         {
-            Value value = parseDateTime( defaultValue );
-            if ( value != null )
-            {
-                return value;
-            }
+            final Boolean withTimezone = useTimeZone( input.getInputTypeConfig() );
 
-            value = parseLocalDateTime( defaultValue );
+            Value value = withTimezone ? parseDateTime( defaultValue ) : parseLocalDateTime( defaultValue );
+
             if ( value != null )
             {
                 return value;
@@ -64,22 +62,24 @@ final class DateTimeType
             if ( result != null )
             {
                 final Instant instant = Instant.now().plus( result.getTime() );
-                final LocalDateTime localDateTime = instant.atZone( ZoneId.systemDefault() ).toLocalDateTime();
-
                 final Period period = result.getDate();
 
-                return ValueFactory.newLocalDateTime( localDateTime.
+                final ZonedDateTime zonedDateTime = instant.atZone( ZoneId.systemDefault() ).
                     plusYears( period.getYears() ).
                     plusMonths( period.getMonths() ).
                     plusDays( period.getDays() ).
-                    withNano( 0 ) );
+                    withNano( 0 );
+
+                return withTimezone ?
+                    ValueFactory.newDateTime( zonedDateTime.toInstant() ) :
+                    ValueFactory.newLocalDateTime( zonedDateTime.toLocalDateTime() );
             }
             else
             {
                 throw new IllegalArgumentException( "Invalid DateTime format: " + defaultValue );
             }
         }
-        return super.createDefaultValue( defaultConfig );
+        return super.createDefaultValue( input );
     }
 
     @Override

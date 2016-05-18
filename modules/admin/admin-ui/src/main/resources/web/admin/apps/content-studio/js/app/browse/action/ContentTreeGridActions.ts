@@ -132,6 +132,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             let publishEnabled = !this.isOnline(contentBrowseItems[0].getModel().getCompareStatus());
             let isPublished = this.isPublished(contentBrowseItems[0].getModel().getCompareStatus());
 
+
             if (this.isEveryLeaf(contentSummaries)) {
                 treePublishEnabled = false;
                 unpublishEnabled = isPublished;
