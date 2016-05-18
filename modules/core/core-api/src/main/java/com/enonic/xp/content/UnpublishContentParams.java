@@ -8,12 +8,15 @@ public class UnpublishContentParams
 {
     private final ContentIds contentIds;
 
+    private final boolean includeChildren;
+
     private final Branch unpublishBranch;
 
     private UnpublishContentParams( final Builder builder )
     {
         contentIds = builder.contentIds;
         unpublishBranch = builder.unpublishBranch;
+        includeChildren = builder.includeChildren;
     }
 
     public ContentIds getContentIds()
@@ -24,6 +27,11 @@ public class UnpublishContentParams
     public Branch getUnpublishBranch()
     {
         return unpublishBranch;
+    }
+
+    public boolean isIncludeChildren()
+    {
+        return includeChildren;
     }
 
     public static Builder create()
@@ -38,6 +46,8 @@ public class UnpublishContentParams
 
         private Branch unpublishBranch;
 
+        private boolean includeChildren;
+
         private Builder()
         {
         }
@@ -51,6 +61,12 @@ public class UnpublishContentParams
         public Builder unpublishBranch( final Branch val )
         {
             unpublishBranch = val;
+            return this;
+        }
+
+        public Builder includeChildren( final boolean val )
+        {
+            includeChildren = val;
             return this;
         }
 
