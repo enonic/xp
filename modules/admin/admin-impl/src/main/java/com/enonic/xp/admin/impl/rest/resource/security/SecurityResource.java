@@ -197,18 +197,12 @@ public final class SecurityResource
         params.getKeys().stream().map( UserStoreKey::from ).forEach( ( userStoreKey ) -> {
             try
             {
-                final AuthControllerExecutionParams synchUsersParams = AuthControllerExecutionParams.create().
+                final AuthControllerExecutionParams synchParams = AuthControllerExecutionParams.create().
                     userStoreKey( userStoreKey ).
-                    functionName( "synchUsers" ).
+                    functionName( "synch" ).
                     request( httpRequest ).
                     build();
-                final AuthControllerExecutionParams synchGroupsParams = AuthControllerExecutionParams.create().
-                    userStoreKey( userStoreKey ).
-                    functionName( "synchGroups" ).
-                    request( httpRequest ).
-                    build();
-                authControllerService.execute( synchUsersParams );
-                authControllerService.execute( synchGroupsParams );
+                authControllerService.execute( synchParams );
                 resultsJson.add( SynchUserStoreResultJson.success( userStoreKey ) );
             }
             catch ( Exception e )
