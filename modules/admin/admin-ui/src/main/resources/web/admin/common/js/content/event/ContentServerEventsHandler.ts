@@ -68,7 +68,7 @@ module api.content.event {
             let useNewPaths = NodeServerChangeType.RENAME === event.getType() ||
                               NodeServerChangeType.MOVE == event.getType();
 
-            if (event.getType() == NodeServerChangeType.DELETE && this.hasNoMasterChanges(changes)) {
+            if (event.getType() == NodeServerChangeType.DELETE && this.hasDraftBranchChanges(changes)) {
                 // content has already been deleted so no need to fetch summaries
                 var changeItems: ContentServerChangeItem[] = changes.reduce((total, change: ContentServerChange) => {
                     return total.concat(change.getChangeItems());
@@ -122,10 +122,10 @@ module api.content.event {
             }
         }
 
-        private hasNoMasterChanges(changes: ContentServerChange[]): boolean {
-            return changes.every((change: ContentServerChange) => {
-                return change.getChangeItems().every(changeItem => {
-                    return changeItem.getBranch() != 'master';
+        private hasDraftBranchChanges(changes: ContentServerChange[]): boolean {
+            return changes.some((change: ContentServerChange) => {
+                return change.getChangeItems().some(changeItem => {
+                    return changeItem.getBranch() == 'draft';
                 })
             })
         }
