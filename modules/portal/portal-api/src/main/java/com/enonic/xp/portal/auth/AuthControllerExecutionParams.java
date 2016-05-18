@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.security.UserStoreKey;
 
 public class AuthControllerExecutionParams
@@ -13,7 +14,9 @@ public class AuthControllerExecutionParams
 
     private final String functionName;
 
-    private final HttpServletRequest request;
+    private final HttpServletRequest servletRequest;
+
+    private final PortalRequest portalRequest;
 
     private final HttpServletResponse response;
 
@@ -21,7 +24,8 @@ public class AuthControllerExecutionParams
     {
         userStoreKey = builder.userStoreKey;
         functionName = builder.functionName;
-        request = builder.request;
+        servletRequest = builder.servletRequest;
+        portalRequest = builder.portalRequest;
         response = builder.response;
     }
 
@@ -35,9 +39,14 @@ public class AuthControllerExecutionParams
         return functionName;
     }
 
-    public HttpServletRequest getRequest()
+    public HttpServletRequest getServletRequest()
     {
-        return request;
+        return portalRequest == null ? servletRequest : portalRequest.getRawRequest();
+    }
+
+    public PortalRequest getPortalRequest()
+    {
+        return portalRequest;
     }
 
     public HttpServletResponse getResponse()
@@ -57,7 +66,9 @@ public class AuthControllerExecutionParams
 
         private String functionName;
 
-        private HttpServletRequest request;
+        private HttpServletRequest servletRequest;
+
+        private PortalRequest portalRequest;
 
         private HttpServletResponse response;
 
@@ -77,9 +88,15 @@ public class AuthControllerExecutionParams
             return this;
         }
 
-        public Builder request( final HttpServletRequest request )
+        public Builder portalRequest( final PortalRequest portalRequest )
         {
-            this.request = request;
+            this.portalRequest = portalRequest;
+            return this;
+        }
+
+        public Builder servletRequest( final HttpServletRequest servletRequest )
+        {
+            this.servletRequest = servletRequest;
             return this;
         }
 
@@ -92,7 +109,10 @@ public class AuthControllerExecutionParams
         private void validate()
         {
             Preconditions.checkNotNull( functionName, "functionName cannot be null" );
-            Preconditions.checkNotNull( request, "request cannot be null" );
+            if ( servletRequest == null && portalRequest == null )
+            {
+                throw new NullPointerException( String.valueOf( "servletRequest and portalRequest cannot be both null" ) );
+            }
         }
 
         public AuthControllerExecutionParams build()

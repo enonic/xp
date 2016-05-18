@@ -37,7 +37,7 @@ public class AuthControllerWorker
     {
         final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
             functionName( functionName ).
-            request( request ).
+            servletRequest( request ).
             response( response ).
             build();
         return authControllerService.execute( executionParams ) != null;

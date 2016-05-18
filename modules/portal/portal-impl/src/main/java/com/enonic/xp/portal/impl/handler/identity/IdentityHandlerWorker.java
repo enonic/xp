@@ -22,7 +22,7 @@ final class IdentityHandlerWorker
         final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
             userStoreKey( userStoreKey ).
             functionName( idProviderFunction ).
-            request( this.request.getRawRequest() ).
+            portalRequest( this.request ).
             build();
         final PortalResponse portalResponse = authControllerService.execute( executionParams );
 

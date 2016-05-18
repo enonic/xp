@@ -200,7 +200,7 @@ public final class SecurityResource
                 final AuthControllerExecutionParams synchParams = AuthControllerExecutionParams.create().
                     userStoreKey( userStoreKey ).
                     functionName( "synch" ).
-                    request( httpRequest ).
+                    servletRequest( httpRequest ).
                     build();
                 authControllerService.execute( synchParams );
                 resultsJson.add( SynchUserStoreResultJson.success( userStoreKey ) );

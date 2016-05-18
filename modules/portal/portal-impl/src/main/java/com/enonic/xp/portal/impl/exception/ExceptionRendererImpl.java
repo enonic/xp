@@ -55,7 +55,7 @@ public final class ExceptionRendererImpl
         {
             final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
                 functionName( "login" ).
-                request( req.getRawRequest() ).
+                portalRequest( req ).
                 build();
             try
             {

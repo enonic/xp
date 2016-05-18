@@ -53,8 +53,12 @@ public class AuthControllerServiceImpl
             final String functionName = params.getFunctionName();
             if ( authControllerScript.hasMethod( functionName ) )
             {
-                final PortalRequest portalRequest = new PortalRequestAdapter().
-                    adapt( params.getRequest() );
+                PortalRequest portalRequest = params.getPortalRequest();
+                if ( portalRequest == null )
+                {
+                    portalRequest = new PortalRequestAdapter().
+                        adapt( params.getServletRequest() );
+                }
                 portalRequest.setApplicationKey( authDescriptor.getKey() );
                 portalRequest.setUserStore( userStore );
 
@@ -78,7 +82,7 @@ public class AuthControllerServiceImpl
         UserStoreKey userStoreKey = params.getUserStoreKey();
         if ( userStoreKey == null )
         {
-            final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( params.getRequest() );
+            final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( params.getServletRequest() );
             if ( virtualHost != null )
             {
                 userStoreKey = virtualHost.getUserStoreKey();
