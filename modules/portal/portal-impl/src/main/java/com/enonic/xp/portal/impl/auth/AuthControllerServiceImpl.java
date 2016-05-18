@@ -43,26 +43,10 @@ public class AuthControllerServiceImpl
     private SecurityService securityService;
 
     @Override
-    public UserStoreKey retrieveUserStoreKey( HttpServletRequest request )
-    {
-        UserStoreKey userStoreKey = null;
-        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request );
-        if ( virtualHost != null )
-        {
-            userStoreKey = virtualHost.getUserStoreKey();
-        }
-        if ( userStoreKey == null )
-        {
-            userStoreKey = UserStoreKey.system();
-        }
-        return userStoreKey;
-    }
-
-    @Override
     public PortalResponse execute( final AuthControllerExecutionParams params )
         throws IOException
     {
-        final UserStore userStore = retrieveUserStore( params.getUserStoreKey() );
+        final UserStore userStore = retrieveUserStore( params );
         final AuthDescriptor authDescriptor = retrieveAuthDescriptor( userStore );
 
         if ( authDescriptor != null )
@@ -91,13 +75,31 @@ public class AuthControllerServiceImpl
         return null;
     }
 
-    private UserStore retrieveUserStore( final UserStoreKey userStoreKey )
+    private UserStore retrieveUserStore( final AuthControllerExecutionParams params )
     {
+        final UserStoreKey userStoreKey =
+            params.getUserStoreKey() == null ? retrieveUserStoreKey( params.getRequest() ) : params.getUserStoreKey();
+
         if ( userStoreKey != null )
         {
             return runWithAdminRole( () -> securityService.getUserStore( userStoreKey ) );
         }
         return null;
+    }
+
+    private UserStoreKey retrieveUserStoreKey( HttpServletRequest request )
+    {
+        UserStoreKey userStoreKey = null;
+        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request );
+        if ( virtualHost != null )
+        {
+            userStoreKey = virtualHost.getUserStoreKey();
+        }
+        if ( userStoreKey == null )
+        {
+            userStoreKey = UserStoreKey.system();
+        }
+        return userStoreKey;
     }
 
     private AuthDescriptor retrieveAuthDescriptor( final UserStore userStore )

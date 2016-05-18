@@ -29,7 +29,6 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
@@ -54,9 +53,7 @@ public final class ExceptionRendererImpl
     {
         if ( HttpStatus.UNAUTHORIZED == cause.getStatus() || HttpStatus.FORBIDDEN == cause.getStatus() )
         {
-            final UserStoreKey userStoreKey = authControllerService.retrieveUserStoreKey( req.getRawRequest() );
             final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
-                userStoreKey( userStoreKey ).
                 functionName( "login" ).
                 request( req.getRawRequest() ).
                 build();

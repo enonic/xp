@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerService;
-import com.enonic.xp.security.UserStoreKey;
 
 public class AuthControllerWorker
 {
@@ -36,9 +35,7 @@ public class AuthControllerWorker
     public boolean execute( final String functionName, final HttpServletResponse response )
         throws IOException
     {
-        final UserStoreKey userStoreKey = authControllerService.retrieveUserStoreKey( request );
         final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
-            userStoreKey( userStoreKey ).
             functionName( functionName ).
             request( request ).
             response( response ).

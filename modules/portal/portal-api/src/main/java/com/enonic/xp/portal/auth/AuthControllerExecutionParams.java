@@ -91,7 +91,6 @@ public class AuthControllerExecutionParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( userStoreKey, "userStoreKey cannot be null" );
             Preconditions.checkNotNull( functionName, "functionName cannot be null" );
             Preconditions.checkNotNull( request, "request cannot be null" );
         }
