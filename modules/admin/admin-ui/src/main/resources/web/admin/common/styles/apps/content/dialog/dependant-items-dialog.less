@@ -197,4 +197,20 @@
     }
   }
 
+  .dialog-buttons {
+
+    button.spinner {
+      font-family: 'xp-admin-font-icon';
+
+      &:after {
+        .animation(rotate360, .5s, .0s, linear);
+        content: "\e007";
+        color: white;
+        display: inline-block;
+        margin-left: 5px;
+      }
+    }
+
+  }
+
 }

@@ -83,4 +83,7 @@ public interface ContentService
     boolean contentExists( ContentPath contentPath );
 
     Content reprocess( ContentId contentId );
+
+    Contents unpublishContent( final UnpublishContentParams params );
+
 }

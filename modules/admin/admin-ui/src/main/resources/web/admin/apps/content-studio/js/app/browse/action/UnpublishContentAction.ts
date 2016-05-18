@@ -1,19 +1,18 @@
 import "../../../api.ts";
+import {ContentUnpublishPromptEvent} from "../ContentUnpublishPromptEvent";
+import {ContentTreeGrid} from "../ContentTreeGrid";
 
 import Action = api.ui.Action;
-import {ContentPublishPromptEvent} from "../ContentPublishPromptEvent";
-import {ContentTreeGrid} from "../ContentTreeGrid";
 
 export class UnpublishContentAction extends Action {
 
     constructor(grid: ContentTreeGrid) {
         super("Unpublish");
 
-        this.setVisible(false);
-        this.setEnabled(false);
-
         this.onExecuted(() => {
-            console.log('Unpublish');
+            var contents: api.content.ContentSummaryAndCompareStatus[]
+                = grid.getSelectedDataList();
+            new ContentUnpublishPromptEvent(contents).fire();
         });
     }
 }
