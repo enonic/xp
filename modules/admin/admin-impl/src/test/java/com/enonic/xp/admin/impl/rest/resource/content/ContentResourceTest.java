@@ -75,6 +75,7 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.util.BinaryReferences;
+import com.enonic.xp.util.Reference;
 
 import static com.enonic.xp.security.acl.Permission.READ;
 import static java.util.Arrays.asList;
@@ -248,6 +249,62 @@ public class ContentResourceTest
         String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).get().getAsString();
 
         assertJson( "get_content_full.json", jsonString );
+    }
+
+    private Content content1, content2, child1, child2;
+
+    @Test
+    public void get_dependencies() throws Exception
+    {
+       // Content cont/ent = createContent( "content-id", "content-name", "myapplication:content-type" );
+
+        final PropertyTree metadata = new PropertyTree();
+        metadata.setLong( "myProperty", 1L );
+
+
+        Content content1 = Content.create().
+            id( ContentId.from( "content1-id" ) ).
+            parentPath( ContentPath.ROOT ).
+            name( "content-name" ).
+            valid( true ).
+            createdTime( Instant.parse( this.currentTime ) ).
+            creator( PrincipalKey.from( "user:system:admin" ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
+            language( Locale.ENGLISH ).
+            displayName( "My Content" ).
+            modifiedTime( Instant.parse( this.currentTime ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            type( ContentTypeName.from( "myapplication:content-type" ) ).
+            addExtraData( new ExtraData( MixinName.from( "myApplication:myField" ), metadata ) ).
+            build();
+
+        final PropertyTree data = new PropertyTree();
+        data.addReference( "myRef", Reference.from( child1.getId().toString() ) );
+
+        Content child1 = Content.create().
+            id( ContentId.from( "child1-id" ) ).
+            parentPath( ContentPath.ROOT ).
+            name( "content-name" ).
+            data( data ).
+            parentPath( content1.getPath() ).
+            valid( true ).
+            createdTime( Instant.parse( this.currentTime ) ).
+            creator( PrincipalKey.from( "user:system:admin" ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
+            language( Locale.ENGLISH ).
+            displayName( "My Content" ).
+            modifiedTime( Instant.parse( this.currentTime ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            type( ContentTypeName.from( "myapplication:content-type" ) ).
+            addExtraData( new ExtraData( MixinName.from( "myApplication:myField" ), metadata ) ).
+            build();
+
+
+        String jsonString = request().path( "content/getDependencies" ).queryParam( "id", content2.getId().toString() ).
+            get().getAsString();
+
+
+
     }
 
     @Test
