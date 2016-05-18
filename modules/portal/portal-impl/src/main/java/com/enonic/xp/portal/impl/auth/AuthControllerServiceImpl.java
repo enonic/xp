@@ -18,8 +18,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
-import com.enonic.xp.portal.auth.AuthControllerScript;
-import com.enonic.xp.portal.auth.AuthControllerScriptFactory;
 import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.portal.impl.PortalRequestAdapter;
 import com.enonic.xp.portal.impl.serializer.ResponseSerializer;

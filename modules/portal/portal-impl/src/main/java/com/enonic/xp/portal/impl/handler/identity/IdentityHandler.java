@@ -8,10 +8,10 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.auth.AuthControllerScriptFactory;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.handler.PortalHandler;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
+import com.enonic.xp.portal.impl.auth.AuthControllerScriptFactory;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UserStoreKey;
 
