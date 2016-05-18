@@ -13,6 +13,26 @@ module api.macro {
             this.headEnd = builder.headEnd;
         }
 
+        getBodyBegin(): string [] {
+            return this.bodyBegin;
+        }
+
+        getBodyEnd(): string [] {
+            return this.bodyEnd;
+        }
+
+        getHeadBegin(): string [] {
+            return this.headBegin;
+        }
+
+        getHeadEnd(): string [] {
+            return this.headEnd;
+        }
+
+        hasAtLeastOneScript(): boolean {
+            return this.bodyBegin.length > 0 || this.bodyEnd.length > 0 || this.headBegin.length > 0 || this.headEnd.length > 0;
+        }
+
         equals(o: api.Equitable): boolean {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PageContributions)) {
                 return false;

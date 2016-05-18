@@ -122,10 +122,15 @@ module api.util.htmlarea.dialog {
         }
 
         private renderPreview(macroPreview: MacroPreview) {
-            var appendMe = new api.dom.DivEl("preview-content");
-            appendMe.setHtml(macroPreview.getHtml(), false);
-            this.previewPanel.appendChild(appendMe)
+            if (macroPreview.getPageContributions().hasAtLeastOneScript()) { // render in iframe if there are scripts to be included for preview rendering
+                this.previewPanel.appendChild(new MacroPreviewFrame(macroPreview));
+            } else {
+                var appendMe = new api.dom.DivEl("preview-content");
+                appendMe.setHtml(macroPreview.getHtml(), false);
+                this.previewPanel.appendChild(appendMe)
+            }
         }
+
 
         public validateMacroForm(): boolean {
             var isValid = true,
@@ -192,6 +197,58 @@ module api.util.htmlarea.dialog {
                 this.configPanel.appendChild(formView);
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
+        }
+    }
+
+    export class MacroPreviewFrame extends api.dom.IFrameEl {
+
+        private id: string = "macro-preview-frame-id";
+
+        constructor(macroPreview: MacroPreview) {
+            super("preview-iframe");
+            this.setId(this.id);
+
+            this.initFrameContent(macroPreview)
+        }
+
+        private initFrameContent(macroPreview: MacroPreview) {
+            this.onLoaded(() => {
+                this.adjustFrameHeightOnContentsUpdate();
+                wemjq("#" + this.id).contents().find('head').html(this.makeHeadForPreviewFrame(macroPreview));
+                wemjq("#" + this.id).contents().find('body').html(this.makeBodyForPreviewFrame(macroPreview));
+            });
+        }
+
+        private adjustFrameHeightOnContentsUpdate() {
+            var frameWindow = this.getHTMLElement()["contentWindow"];
+            if (!!frameWindow) {
+                var observer = new MutationObserver(() => {
+                    try {
+                        var scrollHeight = frameWindow.document.body.scrollHeight;
+                        this.getEl().setHeightPx(scrollHeight > 150
+                            ? frameWindow.document.body.scrollHeight
+                            : wemjq("#" + this.id).contents().find('body').outerHeight());
+                    } catch (error) {}
+                });
+
+                var config = {attributes: true, childList: true, characterData: true};
+                observer.observe(frameWindow.document.body, config);
+            }
+        }
+
+        private makeHeadForPreviewFrame(macroPreview: MacroPreview): string {
+            var result = "";
+            macroPreview.getPageContributions().getHeadBegin().forEach(script => result += script);
+            macroPreview.getPageContributions().getHeadEnd().forEach(script => result += script);
+            return result;
+        }
+
+        private makeBodyForPreviewFrame(macroPreview: MacroPreview): string {
+            var result = "";
+            macroPreview.getPageContributions().getBodyBegin().forEach(script => result += script);
+            result += macroPreview.getHtml();
+            macroPreview.getPageContributions().getBodyEnd().forEach(script => result += script);
+            return result;
         }
     }
 }
