@@ -65,6 +65,8 @@ public final class ExceptionRendererImpl
                 final PortalResponse portalResponse = authControllerService.execute( executionParams );
                 if ( portalResponse != null )
                 {
+                    req.getRawRequest().
+                        setAttribute( "idprovider.handled", Boolean.TRUE );
                     return portalResponse;
                 }
             }

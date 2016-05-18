@@ -22,6 +22,11 @@ public class AuthControllerWorker
         this.request = request;
     }
 
+    public HttpServletRequest getRequest()
+    {
+        return request;
+    }
+
     public boolean execute( final String functionName )
         throws IOException
     {

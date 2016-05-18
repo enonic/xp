@@ -120,10 +120,13 @@ public class AuthResponseWrapper
         {
             try
             {
-                final boolean responseSerialized = authControllerWorker.execute( "login", response );
-                if ( responseSerialized )
+                if ( Boolean.TRUE != authControllerWorker.getRequest().getAttribute( "idprovider.handled" ) )
                 {
-                    errorHandled = true;
+                    final boolean responseSerialized = authControllerWorker.execute( "login", response );
+                    if ( responseSerialized )
+                    {
+                        errorHandled = true;
+                    }
                 }
             }
             catch ( IOException e )
