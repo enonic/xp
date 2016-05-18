@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.exception;
 
+import java.io.IOException;
 import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Component;
@@ -19,6 +20,8 @@ import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
+import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.portal.impl.error.PortalError;
@@ -26,9 +29,11 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.web.HttpStatus;
 
 @Component
 public final class ExceptionRendererImpl
@@ -42,9 +47,33 @@ public final class ExceptionRendererImpl
 
     private ContentService contentService;
 
+    private AuthControllerService authControllerService;
+
     @Override
     public PortalResponse render( final PortalRequest req, final PortalException cause )
     {
+        if ( HttpStatus.UNAUTHORIZED == cause.getStatus() || HttpStatus.FORBIDDEN == cause.getStatus() )
+        {
+            final UserStoreKey userStoreKey = authControllerService.retrieveUserStoreKey( req.getRawRequest() );
+            final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+                userStoreKey( userStoreKey ).
+                functionName( "login" ).
+                request( req.getRawRequest() ).
+                build();
+            try
+            {
+                final PortalResponse portalResponse = authControllerService.execute( executionParams );
+                if ( portalResponse != null )
+                {
+                    return portalResponse;
+                }
+            }
+            catch ( IOException e )
+            {
+                LOG.error( "Exception while executing ID provider login function", e );
+            }
+        }
+
         if ( RenderMode.LIVE == req.getMode() || RenderMode.PREVIEW == req.getMode() )
         {
             try
@@ -181,6 +210,7 @@ public final class ExceptionRendererImpl
         }
     }
 
+
     @Reference
     public void setResourceService( final ResourceService resourceService )
     {
@@ -197,5 +227,11 @@ public final class ExceptionRendererImpl
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Reference
+    public void setAuthControllerService( final AuthControllerService authControllerService )
+    {
+        this.authControllerService = authControllerService;
     }
 }

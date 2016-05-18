@@ -4,6 +4,7 @@ package com.enonic.xp.portal.impl.auth;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
@@ -28,6 +29,8 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 @Component
 public class AuthControllerServiceImpl
@@ -40,7 +43,23 @@ public class AuthControllerServiceImpl
     private SecurityService securityService;
 
     @Override
-    public boolean execute( final AuthControllerExecutionParams params )
+    public UserStoreKey retrieveUserStoreKey( HttpServletRequest request )
+    {
+        UserStoreKey userStoreKey = null;
+        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request );
+        if ( virtualHost != null )
+        {
+            userStoreKey = virtualHost.getUserStoreKey();
+        }
+        if ( userStoreKey == null )
+        {
+            userStoreKey = UserStoreKey.system();
+        }
+        return userStoreKey;
+    }
+
+    @Override
+    public PortalResponse execute( final AuthControllerExecutionParams params )
         throws IOException
     {
         final UserStore userStore = retrieveUserStore( params.getUserStoreKey() );
@@ -65,11 +84,11 @@ public class AuthControllerServiceImpl
                     final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );
                     serializer.serialize( response );
                 }
-                return true;
+                return portalResponse;
             }
         }
 
-        return false;
+        return null;
     }
 
     private UserStore retrieveUserStore( final UserStoreKey userStoreKey )

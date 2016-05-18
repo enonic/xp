@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.web.vhost.VirtualHost;
-import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 public class AuthControllerWorker
 {
@@ -33,27 +31,13 @@ public class AuthControllerWorker
     public boolean execute( final String functionName, final HttpServletResponse response )
         throws IOException
     {
+        final UserStoreKey userStoreKey = authControllerService.retrieveUserStoreKey( request );
         final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
-            userStoreKey( retrieveUserStoreKey() ).
+            userStoreKey( userStoreKey ).
             functionName( functionName ).
             request( request ).
             response( response ).
             build();
-        return authControllerService.execute( executionParams );
-    }
-
-    private UserStoreKey retrieveUserStoreKey()
-    {
-        UserStoreKey userStoreKey = null;
-        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request );
-        if ( virtualHost != null )
-        {
-            userStoreKey = virtualHost.getUserStoreKey();
-        }
-        if ( userStoreKey == null )
-        {
-            userStoreKey = UserStoreKey.system();
-        }
-        return userStoreKey;
+        return authControllerService.execute( executionParams ) != null;
     }
 }
