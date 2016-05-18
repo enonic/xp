@@ -117,10 +117,10 @@ final class SecurityInitializer
         LOG.info( "Initializing user store [" + UserStoreKey.system() + "]" );
 
         final PropertySet backgroundSet = new PropertySet();
-        backgroundSet.setString( "application", "com.enonic.xp.simpleauth" );
+        backgroundSet.setString( "application", "com.enonic.xp.system" );
         backgroundSet.setString( "path", "common/images/background-1920.jpg" );
         final PropertySet brandingSet = new PropertySet();
-        brandingSet.setString( "application", "com.enonic.xp.simpleauth" );
+        brandingSet.setString( "application", "com.enonic.xp.system" );
         brandingSet.setString( "path", "common/images/enonic.svg" );
         final PropertyTree config = new PropertyTree();
         config.setString( "title", "Enonic XP - Login" );
@@ -128,7 +128,7 @@ final class SecurityInitializer
         config.addSets( "branding", brandingSet );
 
         final AuthConfig authConfig = AuthConfig.create().
-            applicationKey( ApplicationKey.from( "com.enonic.xp.simpleauth" ) ).
+            applicationKey( ApplicationKey.from( "com.enonic.xp.system" ) ).
             config( config ).
             build();
 

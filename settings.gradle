@@ -71,7 +71,7 @@ include 'launcher:launcher-main'
 
 include 'blobstore:blobstore-file'
 
-include 'app:simpleauth'
+include 'app:system'
 
 include 'distro'
 include 'docs'
