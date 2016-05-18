@@ -65,7 +65,11 @@ module api.ui.selector.list {
             }
         }
 
-        removeItem(...items: I[]) {
+        removeItem(item: I) {
+            this.removeItems([item]);
+        }
+
+        removeItems(items: I[]) {
             var itemsRemoved: I[] = [];
             this.items = this.items.filter((item) => {
                 for (var i = 0; i < items.length; i++) {
