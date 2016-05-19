@@ -638,6 +638,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
     xDeleteContentNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[],
                         update: boolean = true) {
 
+        this.deselectDeletedNodes(nodes);
+        
         nodes.forEach((node) => {
             this.xDeleteContentNode(node, false);
         });
@@ -645,6 +647,23 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         if (update) {
             this.initAndRender();
         }
+    }
+
+    private deselectDeletedNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[]) {
+        var deselected = [];
+        this.getSelectedDataList().forEach((content: ContentSummaryAndCompareStatus) => {
+
+            let wasDeleted = nodes.some((node: TreeNode<ContentSummaryAndCompareStatus>) => {
+                return content.getContentId().equals(node.getData().getContentId()) ||
+                       content.getPath().isDescendantOf(node.getData().getPath());
+            });
+
+            if (wasDeleted) {
+                deselected.push(content.getId());
+            }
+
+        });
+        this.deselectNodes(deselected);
     }
 
     xPopulateWithChildren(source: TreeNode<ContentSummaryAndCompareStatus>, dest: TreeNode<ContentSummaryAndCompareStatus>) {
