@@ -70,7 +70,7 @@ include 'launcher:launcher-main'
 
 include 'blobstore:blobstore-file'
 
-include 'app:system'
+include 'app:app-system'
 
 include 'distro'
 include 'docs'
