@@ -51,6 +51,22 @@ public final class ExceptionRendererImpl
     @Override
     public PortalResponse render( final PortalRequest req, final PortalException cause )
     {
+        if ( RenderMode.LIVE == req.getMode() || RenderMode.PREVIEW == req.getMode() )
+        {
+            try
+            {
+                final PortalResponse portalError = renderCustomError( req, cause );
+                if ( portalError != null )
+                {
+                    return portalError;
+                }
+            }
+            catch ( Exception e )
+            {
+                LOG.error( "Exception while executing custom error handler", e );
+            }
+        }
+
         if ( HttpStatus.UNAUTHORIZED == cause.getStatus() || HttpStatus.FORBIDDEN == cause.getStatus() )
         {
             final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
@@ -73,21 +89,6 @@ public final class ExceptionRendererImpl
             }
         }
 
-        if ( RenderMode.LIVE == req.getMode() || RenderMode.PREVIEW == req.getMode() )
-        {
-            try
-            {
-                final PortalResponse portalError = renderCustomError( req, cause );
-                if ( portalError != null )
-                {
-                    return portalError;
-                }
-            }
-            catch ( Exception e )
-            {
-                LOG.error( "Exception while executing custom error handler", e );
-            }
-        }
         return renderInternalErrorPage( req, cause );
     }
 
