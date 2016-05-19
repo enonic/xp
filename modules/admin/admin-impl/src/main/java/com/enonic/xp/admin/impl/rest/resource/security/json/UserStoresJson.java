@@ -1,19 +1,30 @@
 package com.enonic.xp.admin.impl.rest.resource.security.json;
 
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.enonic.xp.security.UserStore;
+import com.enonic.xp.security.UserStores;
 
 public final class UserStoresJson
 {
-    private final List<UserStoreJson> userStoreJsonList;
+    private final List<UserStoreSummaryJson> userStoresJson;
 
-    public UserStoresJson( final List<UserStoreJson> userStoreJsonList )
+    public UserStoresJson( final UserStores userStores )
     {
-        this.userStoreJsonList = userStoreJsonList;
+        this.userStoresJson = new ArrayList<>();
+        if ( userStores != null )
+        {
+            for ( UserStore userStore : userStores )
+            {
+                userStoresJson.add( new UserStoreSummaryJson( userStore ) );
+            }
+        }
     }
 
-    public List<UserStoreJson> getUserStores()
+    public List<UserStoreSummaryJson> getUserStores()
     {
-        return userStoreJsonList;
+        return userStoresJson;
     }
 }
