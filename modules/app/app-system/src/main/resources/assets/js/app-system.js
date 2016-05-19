@@ -4,7 +4,7 @@ function handleAuthenticateResponse(loginResult) {
         location.reload();
     } else {
         $("#message-container").html("Login failed!");
-        $("#message-container").focus();
+        $("#password-input").focus();
         $("#username-input, #password-input, #login-button").addClass("invalid");
     }
 }
@@ -60,3 +60,12 @@ $("#username-input, #password-input").keyup(function (event) {
     onInputTyped(event);
 });
 
+$("#username-input").click();// for mobile devices
+$("#username-input").focus();
+checkLoginButtonInterval = setInterval(function () { //workaround to show login button when browser autofills inputs
+    var fieldsEmpty = checkFieldsEmpty();
+    if (!fieldsEmpty) {
+        $("#login-button").show();
+        clearInterval(checkLoginButtonInterval);
+    }
+}, 100);
