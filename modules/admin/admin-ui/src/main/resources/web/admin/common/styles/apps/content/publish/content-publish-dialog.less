@@ -28,6 +28,23 @@
       }
     }
 
+    &.disabled {
+      opacity: 0.5;
+
+      input[type="checkbox"] + label {
+        color: @admin-font-gray2 !important;
+
+        &:hover {
+          cursor: default;
+        }
+      }
+
+
+
+    }
+
+
+
     @media screen and (max-height: 360px) {
       bottom: 25px;
     }

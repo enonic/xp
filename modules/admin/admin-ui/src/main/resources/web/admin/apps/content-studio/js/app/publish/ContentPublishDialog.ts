@@ -86,6 +86,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
     show() {
         super.show();
         this.appendChildToContentPanel(this.loadMask);
+        this.loadMask.show();
     }
 
     open() {
@@ -132,9 +133,9 @@ export class ContentPublishDialog extends DependantItemsDialog {
     }
 
     private reloadPublishDependencies(resetDependantItems?: boolean): wemQ.Promise<void> {
-        this.showLoadingSpinnerAtButton();
         this.publishButton.setEnabled(false);
         this.loadMask.show();
+        this.disableCheckbox();
 
         return this.loadDependants().then((dependants: ContentSummaryAndCompareStatus[]) => {
 
@@ -146,6 +147,7 @@ export class ContentPublishDialog extends DependantItemsDialog {
             }
 
             this.loadMask.hide();
+            this.enableCheckbox();
 
             this.setStashedItems(dependants.slice());
 
@@ -156,8 +158,6 @@ export class ContentPublishDialog extends DependantItemsDialog {
             // do not set requested contents as they are never going to change,
             // but returned data contains less info than original summaries
             this.childrenCheckbox.setVisible(this.doAnyHaveChildren(this.getItemList().getItems()));
-
-            this.hideLoadingSpinnerAtButton();
 
             this.centerMyself();
         });
@@ -325,6 +325,16 @@ export class ContentPublishDialog extends DependantItemsDialog {
 
     private hideLoadingSpinnerAtButton() {
         this.publishButton.removeClass("spinner");
+    }
+
+    private disableCheckbox() {
+        this.childrenCheckbox.setDisabled(true);
+        this.childrenCheckbox.addClass("disabled")
+    }
+
+    private enableCheckbox() {
+        this.childrenCheckbox.setDisabled(false);
+        this.childrenCheckbox.removeClass("disabled");
     }
 
 }
