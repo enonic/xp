@@ -38,6 +38,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.auth.AuthDescriptor;
+import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.SiteDescriptor;
@@ -59,6 +61,8 @@ public final class ApplicationResource
     private SiteService siteService;
 
     private MarketService marketService;
+
+    private AuthDescriptorService authDescriptorService;
 
     private final static String[] ALLOWED_PROTOCOLS = {"http", "https"};
 
@@ -90,10 +94,14 @@ public final class ApplicationResource
                 continue;
             }
             final ApplicationKey applicationKey = application.getKey();
-            if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( applicationKey ) )//Remove after 7.0.0 refactoring
+            if ( !ApplicationKey.from( "com.enonic.xp.admin.ui" ).equals( applicationKey ) &&
+                !ApplicationKey.from( "com.enonic.xp.system" ).equals( applicationKey ) )//Remove after 7.0.0 refactoring
             {
-                json.add( application, this.applicationService.isLocalApplication( applicationKey ),
-                          this.siteService.getDescriptor( applicationKey ) );
+                final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( application.getKey() );
+                final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( application.getKey() );
+                final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
+
+                json.add( application, localApplication, siteDescriptor, authDescriptor );
             }
         }
 
@@ -113,7 +121,8 @@ public final class ApplicationResource
 
         final boolean local = this.applicationService.isLocalApplication( appKey );
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( appKey );
-        return new ApplicationJson( application, local, siteDescriptor );
+        final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( appKey );
+        return new ApplicationJson( application, local, siteDescriptor, authDescriptor );
     }
 
     @POST
@@ -281,6 +290,12 @@ public final class ApplicationResource
     public void setMarketService( final MarketService marketService )
     {
         this.marketService = marketService;
+    }
+
+    @Reference
+    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
+    {
+        this.authDescriptorService = authDescriptorService;
     }
 }
 

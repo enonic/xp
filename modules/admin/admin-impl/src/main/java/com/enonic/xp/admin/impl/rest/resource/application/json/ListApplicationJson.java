@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.admin.impl.json.application.ApplicationJson;
 import com.enonic.xp.app.Application;
+import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.site.SiteDescriptor;
 
 public final class ListApplicationJson
@@ -17,9 +18,10 @@ public final class ListApplicationJson
         this.list = Lists.newArrayList();
     }
 
-    public void add( final Application application, final boolean local, final SiteDescriptor siteDescriptor )
+    public void add( final Application application, final boolean local, final SiteDescriptor siteDescriptor,
+                     final AuthDescriptor authDescriptor )
     {
-        this.list.add( new ApplicationJson( application, local, siteDescriptor ) );
+        this.list.add( new ApplicationJson( application, local, siteDescriptor, authDescriptor ) );
     }
 
     public int getTotal()

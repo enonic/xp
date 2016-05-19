@@ -28,7 +28,9 @@ function handleGet(req) {
     //Retrieves the profile informations
     var userIconUrl = portal.assetUrl({path: "icons/user.svg"});
     var launcherCss = portal.assetUrl({path: "styles/_launcher.css"});
-    var logoutServiceUrl = portal.serviceUrl({service: 'logout'});
+    var logoutUrl = portal.logoutUrl({
+        redirect: portal.url({path: "/admin/tool", type: "absolute"})
+    });
     var user = auth.getUser();
 
     var params = {
@@ -37,7 +39,7 @@ function handleGet(req) {
         adminTools: adminTools,
         userIconUrl: userIconUrl,
         user: user,
-        logoutServiceUrl: logoutServiceUrl,
+        logoutUrl: logoutUrl,
         homeUrl: uriScriptHelper.generateAdminToolUri(),
         installation: uriScriptHelper.getInstallation() || "Tools",
         launcherCss: launcherCss

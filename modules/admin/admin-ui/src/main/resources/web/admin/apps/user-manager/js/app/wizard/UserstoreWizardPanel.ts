@@ -20,11 +20,12 @@ import {SecurityWizardStepForm} from "./SecurityWizardStepForm";
 import {UserStoreWizardPanelParams} from "./UserStoreWizardPanelParams";
 import {UserStoreWizardActions} from "./action/UserStoreWizardActions";
 import {UserStoreWizardToolbar} from "./UserStoreWizardToolbar";
+import {UserStoreWizardStepForm} from "./UserStoreWizardStepForm";
 import {Router} from "../Router";
 
 export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
-    private descriptionWizardStepForm: PrincipalDescriptionWizardStepForm;
+    private userStoreWizardStepForm: UserStoreWizardStepForm;
 
     private permissionsWizardStepForm: SecurityWizardStepForm;
 
@@ -39,7 +40,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
     constructor(params: UserStoreWizardPanelParams, callback: (wizard: UserStoreWizardPanel) => void) {
 
-        this.descriptionWizardStepForm = new PrincipalDescriptionWizardStepForm();
+        this.userStoreWizardStepForm = new UserStoreWizardStepForm();
         this.permissionsWizardStepForm = new SecurityWizardStepForm();
 
         this.constructing = true;
@@ -55,7 +56,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         var iconUrl = api.dom.ImgEl.PLACEHOLDER;
         this.formIcon = new FormIcon(iconUrl, "Click to upload icon");
         this.formIcon.addClass("icon icon-xlarge");
-        this.formIcon.addClass("icon-shield");
+        this.formIcon.addClass("icon-address-book");
 
         this.wizardActions = new UserStoreWizardActions(this);
         this.toolbar = new UserStoreWizardToolbar({
@@ -144,7 +145,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
         var steps: WizardStep[] = [];
 
-        steps.push(new WizardStep("UserStore", this.descriptionWizardStepForm));
+        steps.push(new WizardStep("User Store", this.userStoreWizardStepForm));
         steps.push(new WizardStep("Permissions", this.permissionsWizardStepForm));
 
         this.setSteps(steps);
@@ -167,6 +168,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         var deferred = wemQ.defer<void>();
 
         this.wizardHeader.initNames("", this.userStorePath, false);
+        this.userStoreWizardStepForm.layout(null);
         this.permissionsWizardStepForm.layoutReadOnly(this.defaultUserStore);
 
         deferred.resolve(null);
@@ -202,6 +204,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         var deferred = wemQ.defer<void>();
 
         this.wizardHeader.initNames(existing.getDisplayName(), existing.getKey().getId(), false);
+        this.userStoreWizardStepForm.layout(existing.clone());
         this.permissionsWizardStepForm.layout(existing.clone(), this.defaultUserStore);
 
         deferred.resolve(null);
@@ -265,23 +268,42 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     private assembleViewedUserStore(): UserStore {
-        return new UserStoreBuilder().setDisplayName(this.wizardHeader.getDisplayName()).setKey(
-            this.getPersistedItem().getKey().toString()).setPermissions(this.permissionsWizardStepForm.getPermissions()).build();
+        return new UserStoreBuilder().
+            setDisplayName(this.wizardHeader.getDisplayName()).
+            setKey(this.getPersistedItem().getKey().toString()).
+            setDescription(this.userStoreWizardStepForm.getDescription()).
+            setAuthConfig(this.userStoreWizardStepForm.getAuthConfig()).
+            setPermissions(this.permissionsWizardStepForm.getPermissions()).
+            build();
     }
 
     private produceCreateUserStoreRequest(): CreateUserStoreRequest {
         var key = new UserStoreKey(this.wizardHeader.getName()),
             name = this.wizardHeader.getDisplayName(),
+            description = this.userStoreWizardStepForm.getDescription(),
+            authConfig = this.userStoreWizardStepForm.getAuthConfig(),
             permissions = this.permissionsWizardStepForm.getPermissions();
-        return new CreateUserStoreRequest().setDisplayName(name).setKey(key).setPermissions(permissions);
+        return new CreateUserStoreRequest().
+            setDisplayName(name).
+            setKey(key).
+            setDescription(description).
+            setAuthConfig(authConfig).
+            setPermissions(permissions);
     }
 
     private produceUpdateUserStoreRequest(viewedUserStore: UserStore): UpdateUserStoreRequest {
         var key = this.getPersistedItem().getKey(),
             name = viewedUserStore.getDisplayName(),
+            description = viewedUserStore.getDescription(),
+            authConfig = viewedUserStore.getAuthConfig(),
             permissions = viewedUserStore.getPermissions();
 
-        return new UpdateUserStoreRequest().setKey(key).setDisplayName(name).setPermissions(permissions);
+        return new UpdateUserStoreRequest().
+            setKey(key).
+            setDisplayName(name).
+            setDescription(description).
+            setAuthConfig(authConfig).
+            setPermissions(permissions);
     }
 
 

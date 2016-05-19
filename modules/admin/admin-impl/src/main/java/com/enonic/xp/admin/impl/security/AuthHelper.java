@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
@@ -18,9 +19,9 @@ public final class AuthHelper
         this.securityService = securityService;
     }
 
-    public AuthenticationInfo login( final String user, final String password, final boolean rememberMe )
+    public AuthenticationInfo login( final String user, final String password, final UserStoreKey userStoreKey, final boolean rememberMe )
     {
-        final AuthenticationInfo info = authenticate( user, password, rememberMe );
+        final AuthenticationInfo info = authenticate( user, password, userStoreKey, rememberMe );
 
         if ( info.isAuthenticated() )
         {
@@ -43,7 +44,8 @@ public final class AuthHelper
         }
     }
 
-    private AuthenticationInfo authenticate( final String user, final String password, final boolean rememberMe )
+    private AuthenticationInfo authenticate( final String user, final String password, final UserStoreKey userStoreKey,
+                                             final boolean rememberMe )
     {
         AuthenticationInfo authInfo = null;
         if ( isValidEmail( user ) )
@@ -51,6 +53,7 @@ public final class AuthHelper
             final EmailPasswordAuthToken emailAuthToken = new EmailPasswordAuthToken();
             emailAuthToken.setEmail( user );
             emailAuthToken.setPassword( password );
+            emailAuthToken.setUserStore( userStoreKey );
             emailAuthToken.setRememberMe( rememberMe );
             authInfo = securityService.authenticate( emailAuthToken );
         }
@@ -59,6 +62,7 @@ public final class AuthHelper
             final UsernamePasswordAuthToken usernameAuthToken = new UsernamePasswordAuthToken();
             usernameAuthToken.setUsername( user );
             usernameAuthToken.setPassword( password );
+            usernameAuthToken.setUserStore( userStoreKey );
             usernameAuthToken.setRememberMe( rememberMe );
             authInfo = securityService.authenticate( usernameAuthToken );
         }

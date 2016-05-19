@@ -13,7 +13,7 @@ export class UserTreeGridItemViewer extends api.ui.NamesAndIconViewer<UserTreeGr
 
     resolveUnnamedDisplayName(object: UserTreeGridItem): string {
         return object.getPrincipal() ? object.getPrincipal().getTypeName()
-            : object.getUserStore() ? "User Strore" : "";
+            : object.getUserStore() ? "User Store" : "";
     }
 
     resolveSubName(object: UserTreeGridItem, relativePath: boolean = false): string {
@@ -36,7 +36,7 @@ export class UserTreeGridItemViewer extends api.ui.NamesAndIconViewer<UserTreeGr
             return "icon-address-book icon-large";
         case UserTreeGridItemType.PRINCIPAL:
             if (object.getPrincipal().isRole()) {
-                return "icon-shield icon-large";
+                return "icon-masks icon-large";
             } else if (object.getPrincipal().isGroup()) {
                 return "icon-users icon-large";
             } else { // object.getPrincipal().isUser()

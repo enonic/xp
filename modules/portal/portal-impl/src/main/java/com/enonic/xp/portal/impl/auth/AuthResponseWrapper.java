@@ -1,54 +1,39 @@
-package com.enonic.xp.admin.ui.tool.simpleauth;
+package com.enonic.xp.portal.impl.auth;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URLEncoder;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.enonic.xp.util.Exceptions;
 
-import com.google.common.base.Strings;
 
-import com.enonic.xp.admin.ui.tool.UriScriptHelper;
-import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
-
-public class SimpleAuthResponseWrapper
+public class AuthResponseWrapper
     extends HttpServletResponseWrapper
 {
-    private final static Logger LOG = LoggerFactory.getLogger( SimpleAuthResponseWrapper.class );
+    private final HttpServletResponse response;
 
-    private final HttpServletRequest request;
+    private final AuthControllerWorker authControllerWorker;
 
-    private boolean redirected;
+    private boolean errorHandled;
 
-    public SimpleAuthResponseWrapper( final HttpServletRequest req, final HttpServletResponse response )
+    public AuthResponseWrapper( final HttpServletResponse response, final AuthControllerWorker authControllerWorker )
     {
         super( response );
-        this.request = req;
+        this.response = response;
+        this.authControllerWorker = authControllerWorker;
     }
 
     @Override
     public void setStatus( final int sc )
     {
-        if ( 403 == sc )
-        {
-            try
-            {
-                redirect();
-            }
-            catch ( IOException e )
-            {
-                LOG.error( "Failed to redirect to the login admin tool", e );
-            }
-        }
-        else
+        handleError( sc );
+
+        if ( !errorHandled )
         {
             super.setStatus( sc );
         }
@@ -58,7 +43,7 @@ public class SimpleAuthResponseWrapper
     public PrintWriter getWriter()
         throws IOException
     {
-        if ( redirected )
+        if ( errorHandled )
         {
             return new PrintWriter( new StringWriter() );
         }
@@ -69,7 +54,7 @@ public class SimpleAuthResponseWrapper
     public ServletOutputStream getOutputStream()
         throws IOException
     {
-        if ( redirected )
+        if ( errorHandled )
         {
             return new ServletOutputStream()
             {
@@ -99,7 +84,7 @@ public class SimpleAuthResponseWrapper
     @Override
     public void setHeader( final String name, final String value )
     {
-        if ( !redirected )
+        if ( !errorHandled )
         {
             super.setHeader( name, value );
         }
@@ -109,11 +94,9 @@ public class SimpleAuthResponseWrapper
     public void sendError( final int sc )
         throws IOException
     {
-        if ( 403 == sc )
-        {
-            redirect();
-        }
-        else
+        handleError( sc );
+
+        if ( !errorHandled )
         {
             super.sendError( sc );
         }
@@ -123,28 +106,33 @@ public class SimpleAuthResponseWrapper
     public void sendError( final int sc, final String msg )
         throws IOException
     {
-        if ( 403 == sc )
-        {
-            redirect();
-        }
-        else
+        handleError( sc );
+
+        if ( !errorHandled )
         {
             super.sendError( sc, msg );
         }
     }
 
-    private void redirect()
-        throws IOException
+    private void handleError( final int sc )
     {
-        StringBuffer uri = new StringBuffer( ServletRequestUrlHelper.createUri( request.getRequestURI() ) );
-        if ( !Strings.isNullOrEmpty( request.getQueryString() ) )
+        if ( 403 == sc || 401 == sc )
         {
-            uri.append( "?" ).
-                append( request.getQueryString() );
+            try
+            {
+                if ( Boolean.TRUE != authControllerWorker.getRequest().getAttribute( "idprovider.handled" ) )
+                {
+                    final boolean responseSerialized = authControllerWorker.execute( "login", response );
+                    if ( responseSerialized )
+                    {
+                        errorHandled = true;
+                    }
+                }
+            }
+            catch ( IOException e )
+            {
+                throw Exceptions.unchecked( e );
+            }
         }
-        final String callbackUri = URLEncoder.encode( uri.toString(), "UTF-8" );
-
-        sendRedirect( UriScriptHelper.generateAdminToolUri( "com.enonic.xp.admin.ui", "login" ) + "?callback=" + callbackUri );
-        redirected = true;
     }
 }

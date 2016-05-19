@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<id-provider xmlns="urn:enonic:xp:model:1.0">
+  <mode>LOCAL</mode>
+  <config>
+    <input name="title" type="TextLine">
+      <label>Title</label>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <item-set name="branding">
+      <label>Branding image</label>
+      <occurrences minimum="0" maximum="1"/>
+      <items>
+        <input name="application" type="TextLine">
+          <label>Application</label>
+          <occurrences minimum="1" maximum="1"/>
+        </input>
+        <input name="path" type="TextLine">
+          <label>Asset path</label>
+          <occurrences minimum="1" maximum="1"/>
+        </input>
+      </items>
+    </item-set>
+    <item-set name="background">
+      <label>Background image</label>
+      <occurrences minimum="0" maximum="1"/>
+      <items>
+        <input name="application" type="TextLine">
+          <label>Application</label>
+          <occurrences minimum="1" maximum="1"/>
+        </input>
+        <input name="path" type="TextLine">
+          <label>Asset path</label>
+          <occurrences minimum="1" maximum="1"/>
+        </input>
+      </items>
+    </item-set>
+  </config>
+</id-provider>

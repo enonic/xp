@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.exception;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -56,6 +58,9 @@ public class ExceptionRendererImplTest
         this.renderer.setContentService( contentService );
         this.renderer.setErrorHandlerScriptFactory( errorHandlerScriptFactory );
         this.request = new PortalRequest();
+
+        final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
+        this.request.setRawRequest( rawRequest );
     }
 
     @Test

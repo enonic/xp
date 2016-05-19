@@ -83,7 +83,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                 this.formIcon.addClass("icon-users");
                 break;
             case PrincipalType.ROLE:
-                this.formIcon.addClass("icon-shield");
+                this.formIcon.addClass("icon-masks");
                 break;
             }
 
@@ -213,7 +213,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                 ConfirmationDialog.get().setQuestion(
                     "Received Principal from server differs from what you have. Would you like to load changes from server?").setYesCallback(
                     () => this.doLayoutPersistedItem(persistedPrincipal.clone())).setNoCallback(() => {/* Do nothing */
-                }).show();
+                    }).show();
             }
 
             deferred.resolve(null);

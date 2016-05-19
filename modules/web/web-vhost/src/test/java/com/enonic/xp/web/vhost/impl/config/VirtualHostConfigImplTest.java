@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 public class VirtualHostConfigImplTest
@@ -60,7 +61,7 @@ public class VirtualHostConfigImplTest
         Assert.assertNotNull( mappings );
         Assert.assertEquals( 1, mappings.size() );
 
-        assertMapping( mappings.get( 0 ), "a", "localhost", "/status", "/full/path/status" );
+        assertMapping( mappings.get( 0 ), "a", "localhost", "/status", "/full/path/status", null );
     }
 
     @Test
@@ -76,9 +77,9 @@ public class VirtualHostConfigImplTest
         Assert.assertNotNull( mappings );
         Assert.assertEquals( 3, mappings.size() );
 
-        assertMapping( mappings.get( 1 ), "a", "localhost", "/status/a", "/full/path/status/a" );
-        assertMapping( mappings.get( 0 ), "b", "enonic.com", "/status/b", "/full/path/status/b" );
-        assertMapping( mappings.get( 2 ), "c", "localhost", "/status/c", "/full/path/status/c" );
+        assertMapping( mappings.get( 1 ), "a", "localhost", "/status/a", "/full/path/status/a", UserStoreKey.system() );
+        assertMapping( mappings.get( 0 ), "b", "enonic.com", "/status/b", "/full/path/status/b", UserStoreKey.from( "enonic" ) );
+        assertMapping( mappings.get( 2 ), "c", "localhost", "/status/c", "/full/path/status/c", null );
     }
 
     private void loadConfig( final String name )
@@ -97,11 +98,12 @@ public class VirtualHostConfigImplTest
     }
 
     private void assertMapping( final VirtualHostMapping mapping, final String name, final String host, final String source,
-                                final String target )
+                                final String target, final UserStoreKey userStoreKey )
     {
         Assert.assertEquals( name, mapping.getName() );
         Assert.assertEquals( host, mapping.getHost() );
         Assert.assertEquals( source, mapping.getSource() );
         Assert.assertEquals( target, mapping.getTarget() );
+        Assert.assertEquals( userStoreKey, mapping.getUserStoreKey() );
     }
 }

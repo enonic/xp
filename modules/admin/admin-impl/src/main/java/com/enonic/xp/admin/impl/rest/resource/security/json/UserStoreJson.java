@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.security.json;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enonic.xp.auth.AuthDescriptorMode;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.UserStore;
@@ -13,21 +14,39 @@ import com.enonic.xp.security.acl.UserStoreAccessControlList;
 public final class UserStoreJson
     extends UserStoreSummaryJson
 {
+    private final AuthDescriptorMode idProviderMode;
+
     private final List<UserStoreAccessControlEntryJson> permissions;
 
-    public UserStoreJson( final UserStore userStore, final UserStoreAccessControlList userStoreAccessControlList,
-                          final Principals principals )
+    public UserStoreJson( final UserStore userStore, final AuthDescriptorMode idProviderMode )
     {
         super( userStore );
+        this.idProviderMode = idProviderMode;
+        this.permissions = null;
+    }
+
+    public UserStoreJson( final UserStore userStore, final AuthDescriptorMode idProviderMode,
+                          final UserStoreAccessControlList userStoreAccessControlList, final Principals principals )
+    {
+        super( userStore );
+        this.idProviderMode = idProviderMode;
         this.permissions = new ArrayList<>();
-        for ( UserStoreAccessControlEntry entry : userStoreAccessControlList )
+        if ( userStoreAccessControlList != null )
         {
-            final Principal principal = principals.getPrincipal( entry.getPrincipal() );
-            if ( principal != null )
+            for ( UserStoreAccessControlEntry entry : userStoreAccessControlList )
             {
-                this.permissions.add( new UserStoreAccessControlEntryJson( entry, principal ) );
+                final Principal principal = principals.getPrincipal( entry.getPrincipal() );
+                if ( principal != null )
+                {
+                    this.permissions.add( new UserStoreAccessControlEntryJson( entry, principal ) );
+                }
             }
         }
+    }
+
+    public String getIdProviderMode()
+    {
+        return idProviderMode == null ? null : idProviderMode.toString();
     }
 
     public List<UserStoreAccessControlEntryJson> getPermissions()

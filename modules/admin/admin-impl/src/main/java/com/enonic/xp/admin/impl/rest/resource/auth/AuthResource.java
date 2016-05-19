@@ -33,7 +33,8 @@ public final class AuthResource
     public LoginResultJson login( final LoginRequest request )
     {
         final AuthHelper helper = new AuthHelper( this.securityService );
-        final AuthenticationInfo authInfo = helper.login( request.getUser(), request.getPassword(), request.isRememberMe() );
+        final AuthenticationInfo authInfo =
+            helper.login( request.getUser(), request.getPassword(), request.getUserStore(), request.isRememberMe() );
 
         if ( authInfo.isAuthenticated() && !authInfo.hasRole( RoleKeys.ADMIN_LOGIN ) )
         {
