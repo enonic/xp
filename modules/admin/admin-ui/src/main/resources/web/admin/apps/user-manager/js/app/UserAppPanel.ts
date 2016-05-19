@@ -287,18 +287,7 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
                 var tabId = this.getTabIdForUserItem(userItem);
 
                 if (userItem.getType() == UserTreeGridItemType.PRINCIPAL) {
-                    new PrincipalWizardPanelFactory().setAppBarTabId(tabId).setPrincipalType(
-                        userItem.getPrincipal().getType()).setPrincipalPath(
-                        userItem.getPrincipal().getKey().toPath(true)).setPrincipalToEdit(
-                        userItem.getPrincipal().getKey()).createForEdit().then((wizard: PrincipalWizardPanel) => {
-
-                            this.handleWizardUpdated(wizard, tabMenuItem, closeViewPanelMenuItem);
-
-                        }).catch((reason: any) => {
-                            api.DefaultErrorHandler.handle(reason);
-                        }).finally(() => {
-                            this.mask.hide();
-                        }).done();
+                    this.handlePrincipalEdit(userItem.getPrincipal(), tabId, tabMenuItem, closeViewPanelMenuItem);
                 } else if (userItem.getType() === UserTreeGridItemType.USER_STORE) {
 
                     new UserStoreWizardPanelFactory().setAppBarTabId(tabId).setUserStoreKey(
@@ -314,6 +303,51 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
                 }
             }
         });
+    }
+
+    private handlePrincipalEdit(principal: Principal, tabId: AppBarTabId, tabMenuItem: AppBarTabMenuItem,
+                                closeViewPanelMenuItem: AppBarTabMenuItem) {
+        var principalType = principal.getType();
+        if (PrincipalType.USER == principalType || PrincipalType.GROUP == principalType) {
+            var userStoreKey = principal.getKey().getUserStore();
+            new GetUserStoreByKeyRequest(userStoreKey).
+                sendAndParse().then((userStore: UserStore) => {
+                    if (PrincipalType.USER == principalType && !this.areUsersEditable(userStore)) {
+                        api.notify.showError("The ID Provider selected for this user store does not allow to edit users.");
+                        return;
+                    } else if (PrincipalType.GROUP == principalType && !this.areGroupsEditable(userStore)) {
+                        api.notify.showError("The ID Provider selected for this user store does not allow to edit groups.");
+                        return;
+                    } else {
+                        this.createPrincipalWizardPanelForEdit(principal, tabId, tabMenuItem, closeViewPanelMenuItem);
+                    }
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).finally(() => {
+                    this.mask.hide();
+                }).done();
+        } else {
+            this.createPrincipalWizardPanelForEdit(principal, tabId, tabMenuItem, closeViewPanelMenuItem);
+        }
+    }
+
+    private createPrincipalWizardPanelForEdit(principal: Principal, tabId: AppBarTabId, tabMenuItem: AppBarTabMenuItem,
+                                              closeViewPanelMenuItem: AppBarTabMenuItem) {
+        new PrincipalWizardPanelFactory().
+            setAppBarTabId(tabId).
+            setPrincipalType(principal.getType()).
+            setPrincipalPath(principal.getKey().toPath(true)).
+            setPrincipalToEdit(principal.getKey()).
+            createForEdit().
+            then((wizard: PrincipalWizardPanel) => {
+
+                this.handleWizardUpdated(wizard, tabMenuItem, closeViewPanelMenuItem);
+
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).finally(() => {
+                this.mask.hide();
+            }).done();
     }
 
     private handlePrincipalNamedEvent(event: api.event.Event) {
