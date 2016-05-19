@@ -52,10 +52,6 @@ module api.content {
                 }
                 this.selectOption(optionToSelect);
 
-                let loader = this.getLoader();
-                if(api.ObjectHelper.iFrameSafeInstanceOf(loader, ContentSummaryLoader)) {
-                    (<ContentSummaryLoader>loader).setContentPath(content.getPath());
-                }
             }
         }
 
