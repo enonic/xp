@@ -16,7 +16,7 @@ import com.enonic.xp.xml.parser.XmlAuthDescriptorParser;
 public final class AuthDescriptorServiceImpl
     implements AuthDescriptorService
 {
-    private static final ApplicationKey DEFAULT_AUTH_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.system" );
+    private static final ApplicationKey DEFAULT_AUTH_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
 
     private ResourceService resourceService;
 
