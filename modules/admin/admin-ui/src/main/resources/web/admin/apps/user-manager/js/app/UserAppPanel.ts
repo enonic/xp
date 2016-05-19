@@ -192,22 +192,16 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
 
             switch (userItem.getType()) {
             case UserTreeGridItemType.USERS:
-                if (!this.areUsersEditable(userItem.getUserStore())) {
-                    api.notify.showError("The ID Provider selected for this user store does not allow to create users.");
-                    return;
-                }
                 principalType = PrincipalType.USER;
                 principalPath = PrincipalKey.ofUser(userItem.getUserStore().getKey(), "none").toPath(true);
                 tabName = "User";
+                userStoreRequest = new GetUserStoreByKeyRequest(userItem.getUserStore().getKey()).sendAndParse();
                 break;
             case UserTreeGridItemType.GROUPS:
-                if (!this.areGroupsEditable(userItem.getUserStore())) {
-                    api.notify.showError("The ID Provider selected for this user store does not allow to create groups.");
-                    return;
-                }
                 principalType = PrincipalType.GROUP;
                 principalPath = PrincipalKey.ofGroup(userItem.getUserStore().getKey(), "none").toPath(true);
                 tabName = "Group";
+                userStoreRequest = new GetUserStoreByKeyRequest(userItem.getUserStore().getKey()).sendAndParse();
                 break;
             case UserTreeGridItemType.ROLES:
                 principalType = PrincipalType.ROLE;
@@ -241,14 +235,24 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
             if (userItem && userItem.getType() !== UserTreeGridItemType.USER_STORE) {
 
                 userStoreRequest.then((userStore: UserStore) => {
+                    if (principalType === PrincipalType.USER && !this.areUsersEditable(userStore)) {
+                        api.notify.showError("The ID Provider selected for this user store does not allow to create users.");
+                        return;
+                    }
+                    if (principalType === PrincipalType.GROUP && !this.areGroupsEditable(userStore)) {
+                        api.notify.showError("The ID Provider selected for this user store does not allow to create groups.");
+                        return;
+                    }
                     return new PrincipalWizardPanelFactory().setAppBarTabId(tabId).setPrincipalType(
                         principalType).setPrincipalPath(principalPath).setUserStore(userStore).setParentOfSameType(
                         userItem.getType() === UserTreeGridItemType.PRINCIPAL).createForNew();
                 }).then((wizard: PrincipalWizardPanel) => {
-                    this.handleWizardCreated(wizard, tabName);
-                    wizard.onPrincipalNamed((event: api.security.PrincipalNamedEvent) => {
-                        this.handlePrincipalNamedEvent(event);
-                    });
+                    if (wizard) {
+                        this.handleWizardCreated(wizard, tabName);
+                        wizard.onPrincipalNamed((event: api.security.PrincipalNamedEvent) => {
+                            this.handlePrincipalNamedEvent(event);
+                        });
+                    }
 
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
