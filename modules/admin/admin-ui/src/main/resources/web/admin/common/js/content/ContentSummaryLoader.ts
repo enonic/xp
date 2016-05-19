@@ -21,7 +21,6 @@ module api.content {
 
             super(this.contentSummaryRequest);
 
-            debugger;
             this.setSearchQueryExpr();
         }
 

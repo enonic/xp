@@ -66,7 +66,6 @@ module api.content {
 
         setSearchQueryExpr(searchString: string, orderList?: OrderExpr[]) {
 
-            debugger;
             var fulltextExpression: Expression = new api.query.PathMatchExpressionBuilder().
                 setSearchString(searchString).
                 setPath(this.path ? this.path.toString() : "").

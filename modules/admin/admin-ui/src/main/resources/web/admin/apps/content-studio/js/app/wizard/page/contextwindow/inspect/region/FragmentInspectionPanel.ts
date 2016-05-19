@@ -57,6 +57,7 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
         this.fragmentForm = new FragmentSelectorForm(this.fragmentSelector, "Fragment");
 
+        this.loader.setContentPath(liveEditModel.getContent().getPath());
         this.loader.load();
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
@@ -86,10 +87,10 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
         if (contentId) {
             var fragment: ContentSummary = this.fragmentSelector.getSelection(contentId);
             if (fragment) {
-                this.setFragment(fragment);
+                this.setSelectorValue(fragment);
             } else {
                 new GetContentSummaryByIdRequest(contentId).sendAndParse().then((fragment: ContentSummary) => {
-                    this.setFragment(fragment);
+                    this.setSelectorValue(fragment);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
@@ -99,11 +100,6 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
         }
 
         this.registerComponentListeners(this.fragmentComponent);
-    }
-
-    private setFragment(fragment: ContentSummary) {
-        this.setSelectorValue(fragment);
-        this.loader.setContentPath(fragment.getPath());
     }
 
     private registerComponentListeners(component: FragmentComponent) {

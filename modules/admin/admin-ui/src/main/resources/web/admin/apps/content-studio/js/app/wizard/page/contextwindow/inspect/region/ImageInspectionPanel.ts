@@ -7,6 +7,7 @@ import ContentSummaryLoader = api.content.ContentSummaryLoader;
 import GetContentSummaryByIdRequest = api.content.GetContentSummaryByIdRequest;
 import ContentComboBox = api.content.ContentComboBox;
 import ContentTypeName = api.schema.content.ContentTypeName;
+import LiveEditModel = api.liveedit.LiveEditModel;
 import ImageComponentView = api.liveedit.image.ImageComponentView;
 import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
 import Option = api.ui.selector.Option;
@@ -56,6 +57,11 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
 
         this.initSelectorListeners();
         this.appendChild(this.imageSelectorForm);
+    }
+
+    setModel(liveEditModel: LiveEditModel) {
+        super.setModel(liveEditModel);
+        this.loader.setContentPath(liveEditModel.getContent().getPath());
     }
 
     setComponent(component: ImageComponent) {
@@ -141,7 +147,6 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
 
     private setImage(image: ContentSummary) {
         this.setSelectorValue(image);
-        this.loader.setContentPath(image.getPath());
         this.setupComponentForm(this.imageComponent);
     }
 

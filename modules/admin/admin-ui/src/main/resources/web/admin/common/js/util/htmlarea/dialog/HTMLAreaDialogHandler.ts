@@ -34,7 +34,6 @@ module api.util.htmlarea.dialog {
         }
 
         private static openLinkDialog(config: HtmlAreaAnchor, content: api.content.ContentSummary): ModalDialog {
-            debugger;
             return this.openDialog(new LinkModalDialog(config, content));
         }
 
