@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.ContentId;
@@ -48,10 +49,19 @@ final class GetContentByIdsCommand
 
     private Contents doExecute()
     {
+        final Stopwatch getNodeIdsTimer = Stopwatch.createStarted();
         final NodeIds nodeIds = getAsNodeIds( this.params.getIds() );
-        final Nodes nodes = nodeService.getByIds( nodeIds );
+        System.out.println( "GetNodeIdsTimer: " + getNodeIdsTimer.stop().toString() );
 
-        return this.translator.fromNodes( nodes, true );
+        final Stopwatch getNodesTimer = Stopwatch.createStarted();
+        final Nodes nodes = nodeService.getByIds( nodeIds );
+        System.out.println( "GetNodesTimer: " + getNodesTimer.stop().toString() );
+
+        final Stopwatch translatorTimer = Stopwatch.createStarted();
+        final Contents contents = this.translator.fromNodes( nodes, true );
+        System.out.println( "translatorTimer: " + translatorTimer.stop().toString() );
+
+        return contents;
     }
 
     private NodeIds getAsNodeIds( final ContentIds contentIds )

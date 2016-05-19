@@ -70,9 +70,9 @@ public class ElasticsearchDaoImpl
 
     private final String searchPreference = "_local";
 
-    private final String searchTimeout = "5s";
+    private final String searchTimeout = "10s";
 
-    private final String storeTimeout = "5s";
+    private final String storeTimeout = "10s";
 
     private final String deleteTimeout = "5s";
 
@@ -105,7 +105,19 @@ public class ElasticsearchDaoImpl
                 source( xContentBuilder ).
                 refresh( indexDocument.isRefreshAfterOperation() ); //TODO Temporary fix. Should be corrected by XP-1986
 
-            this.client.index( req ).actionGet( storeTimeout );
+            try
+            {
+                this.client.index( req ).actionGet( storeTimeout );
+            }
+            catch ( Exception e )
+            {
+                final String msg = "Failed to store document with id [" + id + "] in index [" + indexDocument.getIndexName() + "] branch " +
+                    indexDocument.getIndexTypeName();
+
+                LOG.error( msg, e );
+
+                throw new IndexException( msg, e );
+            }
         }
     }
 

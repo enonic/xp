@@ -131,6 +131,8 @@ public class AbstractContentServiceTest
 
     private ElasticsearchSearchDao searchDao;
 
+    protected ContentTypeServiceImpl contentTypeService;
+
     @Before
     public void setUp()
         throws Exception
@@ -211,7 +213,7 @@ public class AbstractContentServiceTest
         final SiteServiceImpl siteService = new SiteServiceImpl();
         siteService.setSiteDescriptorRegistry( siteDescriptorRegistry );
 
-        final ContentTypeServiceImpl contentTypeService = new ContentTypeServiceImpl();
+        this.contentTypeService = new ContentTypeServiceImpl();
         contentTypeService.setMixinService( mixinService );
 
         this.translator = new ContentNodeTranslatorImpl();

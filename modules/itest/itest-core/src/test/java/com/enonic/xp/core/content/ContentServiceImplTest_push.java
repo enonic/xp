@@ -1,6 +1,8 @@
 package com.enonic.xp.core.content;
 
+import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
@@ -10,7 +12,11 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.util.Reference;
 
 import static org.junit.Assert.*;
@@ -48,6 +54,40 @@ public class ContentServiceImplTest_push
 
         assertEquals( 1, push.getPushedContents().getSize() );
     }
+
+    @Ignore
+    @Test
+    public void push_one_content_not_valid()
+        throws Exception
+    {
+
+        ContentType contentType = ContentType.create().
+            superType( ContentTypeName.structured() ).
+            name( "myapplication:test" ).
+            addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() ).
+            build();
+
+        Mockito.when( this.contentTypeService.getByName( GetContentTypeParams.from( contentType.getName() ) ) ).
+            thenReturn( contentType );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( contentType.getName() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final PushContentsResult push = this.contentService.push( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( CTX_OTHER.getBranch() ).
+            includeDependencies( false ).
+            build() );
+
+        assertEquals( 1, push.getPushedContents().getSize() );
+    }
+
 
     @Test
     public void push_deleted()

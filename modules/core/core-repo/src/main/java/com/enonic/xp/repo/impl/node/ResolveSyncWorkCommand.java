@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
@@ -80,9 +81,15 @@ public class ResolveSyncWorkCommand
     {
         final NodeVersionDiffResult diff = getInitialDiff();
 
+        LOG.info( "Initial diff done; found: " + diff.getNodesWithDifferences().getSize() + " nodes to be published" );
+
+        final Stopwatch timer = Stopwatch.createStarted();
+
         diff.getNodesWithDifferences().stream().
             filter( nodeId -> !this.excludedIds.contains( nodeId ) ).
             forEach( nodeId -> resolveDiff( nodeId ) );
+
+        LOG.info( "Resolving the diff after the initial; used " + timer.stop().toString() );
 
         return result.build();
     }

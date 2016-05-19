@@ -1,6 +1,8 @@
 package com.enonic.xp.content;
 
 import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -56,6 +58,11 @@ public final class ContentIds
     {
         final Collection<ContentId> pathList = Collections2.transform( list, new ParseFunction() );
         return ImmutableSet.copyOf( pathList );
+    }
+
+    public Set<String> asStrings()
+    {
+        return this.set.stream().map( ContentId::toString ).collect( Collectors.toSet() );
     }
 
     private final static class ParseFunction

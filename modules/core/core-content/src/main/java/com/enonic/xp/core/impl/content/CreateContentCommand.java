@@ -83,7 +83,12 @@ final class CreateContentCommand
         try
         {
             final Node createdNode = nodeService.create( createNodeParams );
-            nodeService.refresh( RefreshMode.SEARCH );
+
+            if ( params.isRefresh() )
+            {
+                nodeService.refresh( RefreshMode.SEARCH );
+            }
+
             return translator.fromNode( createdNode, false );
         }
         catch ( NodeAlreadyExistAtPathException e )

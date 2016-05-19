@@ -1,6 +1,10 @@
 package com.enonic.xp.core.impl.content;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResult;
@@ -37,6 +41,8 @@ public class PushContentCommand
 
     private final boolean includeChildren;
 
+    private final static Logger LOG = LoggerFactory.getLogger( PushContentCommand.class );
+
     private PushContentCommand( final Builder builder )
     {
         super( builder );
@@ -71,12 +77,16 @@ public class PushContentCommand
         NodeIds.Builder pushNodesIds = NodeIds.create();
         NodeIds.Builder deletedNodesIds = NodeIds.create();
 
+        LOG.info( "Ok, fetched " + contentIds.getSize() + " content ids that should be published, now get contentComparisons" );
+
+        final Stopwatch compareContentTimer = Stopwatch.createStarted();
         final CompareContentResults contentsComparisons = CompareContentsCommand.create().
             nodeService( this.nodeService ).
             contentIds( contentIds ).
             target( this.target ).
             build().
             execute();
+        LOG.info( "Compare content done in " + compareContentTimer.stop().toString() );
 
         for ( CompareContentResult compareResult : contentsComparisons )
         {
@@ -90,19 +100,48 @@ public class PushContentCommand
             }
         }
 
+        LOG.info( "Done sorting, now do other stuff, like validate" );
+        final Stopwatch timer = Stopwatch.createStarted();
+
+        final Stopwatch transformTimer = Stopwatch.createStarted();
         final ContentIds pushContentsIds = ContentIds.from( pushNodesIds.build().stream().
             map( ( n ) -> ContentId.from( n.toString() ) ).
             toArray( ContentId[]::new ) );
-        final Contents contentsToPush = getContentByIds( new GetContentByIdsParams( pushContentsIds ).setGetChildrenIds( false ) );
-        final boolean validContents = ensureValidContents( contentsToPush );
+        LOG.info( "Transform to contentIds from pushNodesIds [" + transformTimer.stop().toString() );
+
+        final boolean validContents = checkIfAllContentsValid( pushContentsIds );
 
         if ( !validContents )
         {
             return;
         }
 
+        LOG.info( "Validation is done in " + timer.stop().toString() );
+
         doPushNodes( pushNodesIds.build() );
         doDeleteNodes( deletedNodesIds.build() );
+    }
+
+    private boolean checkIfAllContentsValid( final ContentIds pushContentsIds )
+    {
+        return CheckContentsValidCommand.create().
+            translator( this.translator ).
+            nodeService( this.nodeService ).
+            eventPublisher( this.eventPublisher ).
+            contentTypeService( this.contentTypeService ).
+            contentIds( pushContentsIds ).
+            build().
+            execute();
+/*
+        final Stopwatch contentsToPushTimer = Stopwatch.createStarted();
+        final Contents contentsToPush = getContentByIds( new GetContentByIdsParams( pushContentsIds ).setGetChildrenIds( false ) );
+        LOG.info( "contentsToPushTimer [" + contentsToPushTimer.stop().toString() );
+
+        final Stopwatch validCheck = Stopwatch.createStarted();
+        final boolean validContents = ensureValidContents( contentsToPush );
+        LOG.info( "validCheck [" + validCheck.stop().toString() );
+        return validContents;
+*/
     }
 
     private ContentIds getWithDependents()
