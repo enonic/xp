@@ -43,6 +43,7 @@ module api.liveedit.image {
             });
 
             var loader = new api.content.ContentSummaryLoader();
+            loader.setContentPath(imageView.getLiveEditModel().getContent().getPath());
             loader.setAllowedContentTypeNames([ContentTypeName.IMAGE]);
 
             this.comboBox = api.content.ContentComboBox.create().

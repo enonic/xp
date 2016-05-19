@@ -4,6 +4,9 @@ module api.content {
     import Expression = api.query.expr.Expression;
     import OrderExpr = api.query.expr.OrderExpr;
     import QueryExpr = api.query.expr.QueryExpr;
+    import FieldExpr = api.query.expr.FieldExpr;
+    import FieldOrderExpr = api.query.expr.FieldOrderExpr;
+    import OrderDirection = api.query.expr.OrderDirection;
 
     export class ContentSummaryRequest extends api.rest.ResourceRequest<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary[]> {
 
@@ -12,6 +15,12 @@ module api.content {
         private path: ContentPath;
 
         private request: ContentQueryRequest<json.ContentSummaryJson, ContentSummary>;
+
+        public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("modifiedTime"), OrderDirection.DESC);
+
+        public static SCORE_DESC = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
+
+        public static DEFAULT_ORDER: OrderExpr[] = [ContentSummaryRequest.SCORE_DESC, ContentSummaryRequest.MODIFIED_TIME_DESC];
 
         constructor() {
             super();
@@ -62,20 +71,23 @@ module api.content {
 
         setContentPath(path: ContentPath) {
             this.path = path;
+            this.setSearchQueryExpr();
         }
 
-        setSearchQueryExpr(searchString: string, orderList?: OrderExpr[]) {
+        setSearchQueryExpr(searchString: string ="") {
+            var fulltextExpression = this.createSearchExpression(searchString);
 
-            var fulltextExpression: Expression = new api.query.PathMatchExpressionBuilder().
-                setSearchString(searchString).
-                setPath(this.path ? this.path.toString() : "").
-                addField(new QueryField(QueryField.DISPLAY_NAME, 5)).
-                addField(new QueryField(QueryField.NAME, 3)).
-                addField(new QueryField(QueryField.ALL)).
-                build();
+            this.contentQuery.setQueryExpr(new QueryExpr(fulltextExpression, ContentSummaryRequest.DEFAULT_ORDER));
+        }
 
-            var queryExpr: QueryExpr = new QueryExpr(fulltextExpression, orderList);
-            this.contentQuery.setQueryExpr(queryExpr);
+        private createSearchExpression(searchString): Expression {
+            return new api.query.PathMatchExpressionBuilder()
+                .setSearchString(searchString)
+                .setPath(this.path ? this.path.toString() : "")
+                .addField(new QueryField(QueryField.DISPLAY_NAME, 5))
+                .addField(new QueryField(QueryField.NAME, 3))
+                .addField(new QueryField(QueryField.ALL))
+                .build();
         }
 
         setQueryExpr(queryExpr: QueryExpr) {

@@ -18,8 +18,6 @@ module api.content {
 
         public static SCORE_DESC = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
 
-        public static ORDER_BY_MODIFIED_TIME_DESC: OrderExpr[] = [ContentSelectorQueryRequest.MODIFIED_TIME_DESC];
-
         public static DEFAULT_ORDER: OrderExpr[] = [ContentSelectorQueryRequest.SCORE_DESC, ContentSelectorQueryRequest.MODIFIED_TIME_DESC];
 
         private queryExpr: api.query.expr.QueryExpr;
@@ -61,6 +59,7 @@ module api.content {
 
         setContent(content: ContentSummary) {
             this.content = content;
+            this.setQueryExpr();
         }
 
         getContent(): ContentSummary {
@@ -96,10 +95,9 @@ module api.content {
         }
 
         setQueryExpr(searchString: string = "") {
-            var order = searchString ? ContentSelectorQueryRequest.DEFAULT_ORDER : ContentSelectorQueryRequest.ORDER_BY_MODIFIED_TIME_DESC;
-            var fulltextExpression = searchString ? this.createSearchExpression(searchString) : "";
+            var fulltextExpression = this.createSearchExpression(searchString);
 
-            this.queryExpr = new QueryExpr(fulltextExpression, order);
+            this.queryExpr = new QueryExpr(fulltextExpression, ContentSelectorQueryRequest.DEFAULT_ORDER);
         }
 
         private createSearchExpression(searchString): Expression {
