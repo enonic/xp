@@ -58,6 +58,8 @@ public final class ExceptionRendererImpl
                 final PortalResponse portalError = renderCustomError( req, cause );
                 if ( portalError != null )
                 {
+                    req.getRawRequest().
+                        setAttribute( "idprovider.handled", Boolean.TRUE );
                     return portalError;
                 }
             }
