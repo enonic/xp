@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.macro;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.macro.MacroProcessor;
+import com.enonic.xp.portal.postprocess.HtmlTag;
 
 public class TwitterMacroProcessor
     implements MacroProcessor
@@ -15,8 +16,7 @@ public class TwitterMacroProcessor
     private static final String URL_WILDCARD = "{URL}";
 
     private static final String TWITTER_OUTPUT =
-        "<blockquote class=\"twitter-tweet\" lang=\"{LANG}\"><a hidden=\"true\" href=\"{URL}\">Link to tweet</a></blockquote>\n" +
-            "<script src=\"//platform.twitter.com/widgets.js\" async=\"\" charset=\"utf-8\">";
+        "<blockquote class=\"twitter-tweet\" lang=\"{LANG}\"><a hidden=\"true\" href=\"{URL}\">Link to tweet</a></blockquote>\n";
 
     @Override
     public PortalResponse process( final MacroContext macroContext )
@@ -27,7 +27,8 @@ public class TwitterMacroProcessor
         }
         final String html =
             TWITTER_OUTPUT.replace( LANG_WILDCARD, getLanguageAttr( macroContext ) ).replace( URL_WILDCARD, getUrlAttr( macroContext ) );
-        return PortalResponse.create().body( html ).build();
+        return PortalResponse.create().body( html ).contribution( HtmlTag.BODY_END,
+                                                                  "<script src=\"//platform.twitter.com/widgets.js\" async=\"\" charset=\"utf-8\"></script>" ).build();
     }
 
     private boolean hasUrlAttr( final MacroContext macroContext )
