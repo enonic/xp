@@ -2,6 +2,7 @@ package com.enonic.xp.server.udc.impl;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.io.BaseEncoding;
@@ -13,24 +14,29 @@ final class UdcInfoGenerator
 {
     private final AtomicInteger count;
 
-    public UdcInfoGenerator()
+    private final long startTime;
+
+    UdcInfoGenerator()
     {
         this.count = new AtomicInteger( 0 );
+        this.startTime = System.currentTimeMillis();
     }
 
-    public UdcInfo generate()
+    UdcInfo generate()
         throws Exception
     {
         final UdcInfo info = new UdcInfo();
-        info.setCount( this.count.incrementAndGet() );
-        info.setHardwareAddress( getHardwareAddress() );
-        info.setJavaVersion( System.getProperty( "java.version" ) );
-        info.setMaxMemory( getMaxMemory() );
-        info.setNumCpu( getNumCpu() );
-        info.setProduct( "xp" );
-        info.setVersion( VersionInfo.get().getVersion() );
-        info.setVersionHash( ServerInfo.get().getBuildInfo().getHash() );
-        info.setOsName( System.getProperty( "os.name" ) );
+        info.hardwareAddress = getHardwareAddress();
+        info.javaVersion = System.getProperty( "java.version" );
+        info.maxMemory = getMaxMemory();
+        info.numCpu = getNumCpu();
+        info.product = "xp";
+        info.version = VersionInfo.get().getVersion();
+        info.versionHash = ServerInfo.get().getBuildInfo().getHash();
+        info.osName = System.getProperty( "os.name" );
+        info.timezone = TimeZone.getDefault().getID();
+        info.count = this.count.incrementAndGet();
+        info.upTime = System.currentTimeMillis() - this.startTime;
         return info;
     }
 

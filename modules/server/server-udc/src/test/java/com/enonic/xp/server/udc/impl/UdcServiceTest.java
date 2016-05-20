@@ -18,13 +18,14 @@ public class UdcServiceTest
 
         this.config = Mockito.mock( UdcConfig.class );
         Mockito.when( this.config.enabled() ).thenReturn( false );
-        Mockito.when( this.config.delay() ).thenReturn( 2000L );
-        Mockito.when( this.config.interval() ).thenReturn( 2000L );
+        Mockito.when( this.config.delay() ).thenReturn( 100L );
         Mockito.when( this.config.url() ).thenReturn( "http://localhost:8080" );
+        Mockito.when( this.config.interval() ).thenReturn( 10000L );
     }
 
     @Test
     public void testDisabled()
+        throws Exception
     {
         this.service.activate( this.config );
         this.service.deactivate();
@@ -37,6 +38,7 @@ public class UdcServiceTest
         Mockito.when( this.config.enabled() ).thenReturn( true );
 
         this.service.activate( this.config );
+        Thread.sleep( 200L );
         this.service.deactivate();
     }
 }
