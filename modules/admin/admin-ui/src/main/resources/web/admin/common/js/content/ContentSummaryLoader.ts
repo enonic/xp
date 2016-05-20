@@ -1,18 +1,8 @@
 module api.content {
 
-    import OrderExpr = api.query.expr.OrderExpr;
-    import FieldOrderExpr = api.query.expr.FieldOrderExpr;
-    import OrderDirection = api.query.expr.OrderDirection;
-    import FieldExpr = api.query.expr.FieldExpr;
     import QueryExpr = api.query.expr.QueryExpr;
 
     export class ContentSummaryLoader extends ContentSummaryPreLoader {
-
-        public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("modifiedTime"), OrderDirection.DESC);
-        public static SCORE = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
-
-        public static SCORE_MODIFIED_ORDER: OrderExpr[] = [ContentSummaryLoader.SCORE, ContentSummaryLoader.MODIFIED_TIME_DESC];
-        public static DEFAULT_ORDER: OrderExpr[] = [ContentSummaryLoader.MODIFIED_TIME_DESC];
 
         private contentSummaryRequest: ContentSummaryRequest;
 
@@ -40,9 +30,12 @@ module api.content {
             this.contentSummaryRequest.setQueryExpr(queryExpr);
         }
 
+        setContentPath(path: ContentPath) {
+            this.contentSummaryRequest.setContentPath(path);
+        }
+
         private setSearchQueryExpr(searchString: string = "") {
-            var order = searchString ? ContentSummaryLoader.SCORE_MODIFIED_ORDER : ContentSummaryLoader.DEFAULT_ORDER;
-            this.contentSummaryRequest.setSearchQueryExpr(searchString, order);
+            this.contentSummaryRequest.setSearchQueryExpr(searchString);
         }
 
         search(searchString: string): wemQ.Promise<ContentSummary[]> {

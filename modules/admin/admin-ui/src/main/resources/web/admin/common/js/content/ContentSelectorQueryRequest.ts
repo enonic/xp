@@ -18,8 +18,6 @@ module api.content {
 
         public static SCORE_DESC = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
 
-        public static ORDER_BY_MODIFIED_TIME_DESC: OrderExpr[] = [ContentSelectorQueryRequest.MODIFIED_TIME_DESC];
-
         public static DEFAULT_ORDER: OrderExpr[] = [ContentSelectorQueryRequest.SCORE_DESC, ContentSelectorQueryRequest.MODIFIED_TIME_DESC];
 
         private queryExpr: api.query.expr.QueryExpr;
@@ -30,7 +28,7 @@ module api.content {
 
         private expand: api.rest.Expand = api.rest.Expand.SUMMARY;
 
-        private id: ContentId;
+        private content: ContentSummary;
 
         private inputName: string;
 
@@ -59,12 +57,13 @@ module api.content {
             return this.inputName;
         }
 
-        setId(id: ContentId) {
-            this.id = id;
+        setContent(content: ContentSummary) {
+            this.content = content;
+            this.setQueryExpr();
         }
 
-        getId(): ContentId {
-            return this.id;
+        getContent(): ContentSummary {
+            return this.content;
         }
 
         setFrom(from: number) {
@@ -96,15 +95,15 @@ module api.content {
         }
 
         setQueryExpr(searchString: string = "") {
-            var order = searchString ? ContentSelectorQueryRequest.DEFAULT_ORDER : ContentSelectorQueryRequest.ORDER_BY_MODIFIED_TIME_DESC;
-            var fulltextExpression = searchString ? this.createSearchExpression(searchString) : "";
+            var fulltextExpression = this.createSearchExpression(searchString);
 
-            this.queryExpr = new QueryExpr(fulltextExpression, order);
+            this.queryExpr = new QueryExpr(fulltextExpression, ContentSelectorQueryRequest.DEFAULT_ORDER);
         }
 
         private createSearchExpression(searchString): Expression {
-            return new api.query.FulltextSearchExpressionBuilder()
+            return new api.query.PathMatchExpressionBuilder()
                         .setSearchString(searchString)
+                        .setPath(this.content ? this.content.getPath().toString() : "")
                         .addField(new QueryField(QueryField.DISPLAY_NAME, 5))
                         .addField(new QueryField(QueryField.NAME, 3))
                         .addField(new QueryField(QueryField.ALL))
@@ -140,7 +139,7 @@ module api.content {
                 from: this.getFrom(),
                 size: this.getSize(),
                 expand: this.expandAsString(),
-                contentId: this.getId().toString(),
+                contentId: this.content.getId().toString(),
                 inputName: this.getInputName(),
                 contentTypeNames: this.contentTypeNames,
                 allowedContentPaths: this.allowedContentPaths,

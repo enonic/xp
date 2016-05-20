@@ -251,7 +251,7 @@ module api.ui.selector.combobox {
             return options;
         }
 
-        getLoader(): api.util.loader.BaseLoader<api.item.ItemJson, OPTION_DISPLAY_VALUE> {
+        getLoader(): api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE> {
             return this.loader;
         }
 

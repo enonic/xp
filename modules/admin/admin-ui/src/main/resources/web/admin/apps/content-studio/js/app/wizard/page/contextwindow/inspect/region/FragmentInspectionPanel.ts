@@ -57,6 +57,7 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
         this.fragmentForm = new FragmentSelectorForm(this.fragmentSelector, "Fragment");
 
+        this.loader.setContentPath(liveEditModel.getContent().getPath());
         this.loader.load();
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {

@@ -71,7 +71,7 @@ module api.content.form.inputtype.contentselector {
             super.layout(input, propertyArray);
 
             var contentSelectorLoader = ContentSelectorLoader.create().
-                setId(this.config.contentId).
+                setContent(this.config.content).
                 setInputName(input.getName()).
                 setAllowedContentPaths(this.allowedContentPaths).
                 setContentTypeNames(this.allowedContentTypes).

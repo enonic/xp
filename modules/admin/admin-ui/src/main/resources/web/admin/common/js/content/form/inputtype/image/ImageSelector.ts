@@ -191,7 +191,7 @@ module api.content.form.inputtype.image {
                                    [ContentTypeName.IMAGE.toString()];
 
             var contentSelectorLoader = ContentSelectorLoader.create().
-                setId(this.config.contentId).
+                setContent(this.config.content).
                 setInputName(inputName).
                 setAllowedContentPaths(this.allowedContentPaths).
                 setContentTypeNames(contentTypes).
@@ -270,7 +270,7 @@ module api.content.form.inputtype.image {
 
                         this.contentRequestsAllowed = true;
 
-                        if (this.config.contentId) {
+                        if (this.config.content) {
                             comboBoxWrapper.appendChild(this.createUploader());
                         }
 
@@ -295,7 +295,7 @@ module api.content.form.inputtype.image {
 
             this.uploader = new api.content.ImageUploaderEl({
                 params: {
-                    parent: this.config.contentId.toString()
+                    parent: this.config.content.getContentId().toString()
                 },
                 operation: api.content.MediaUploaderElOperation.create,
                 name: 'image-selector-upload-dialog',
