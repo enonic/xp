@@ -113,12 +113,12 @@ export class ContentDeleteDialog extends DependantItemsDialog {
     private addDeleteActionHandler(deleteAction: api.ui.Action) {
         deleteAction.onExecuted(() => {
             if (this.isAnySiteToBeDeleted()) {
-                this.close();
                 new ConfirmContentDeleteDialog({
                     totalItemsToDelete: this.totalItemsToDelete,
                     deleteRequest: this.createDeleteRequest(),
                     yesCallback: this.yesCallback
                 }).open();
+                this.close();
                 return;
             }
 
@@ -230,18 +230,17 @@ export class ContentDeleteDialog extends DependantItemsDialog {
 
     private isAnySiteToBeDeleted(): boolean {
         var result = this.getItemList().getItems().some((item: ContentSummaryAndCompareStatus) => {
-            return item.getContentSummary().isSite() &&
-                   (!this.isStatusOnline(item.getCompareStatus()) || this.instantDeleteCheckbox.isChecked());
+            return item.getContentSummary().isSite();
         });
 
         if (result) {
             return true;
         }
+
         var dependantList = this.getDependantList();
         if (dependantList.getItemCount() > 0) {
             return dependantList.getItems().some((descendant: ContentSummaryAndCompareStatus) => {
-                return descendant.getContentSummary().isSite() &&
-                       (!this.isStatusOnline(descendant.getCompareStatus()) || this.instantDeleteCheckbox.isChecked());
+                return descendant.getContentSummary().isSite();
             });
         } else {
             return false;
