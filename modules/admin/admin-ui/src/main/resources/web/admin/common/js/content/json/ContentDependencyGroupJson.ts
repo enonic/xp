@@ -2,10 +2,10 @@ module api.content.json {
 
     export interface ContentDependencyGroupJson {
 
-        itemCount: number;
+        count: number;
 
         iconUrl: string;
 
-        contentType: string;
+        type: string;
     }
 }

@@ -95,9 +95,9 @@ export class DependencyGroupBuilder {
     }
 
     fromJson(json: ContentDependencyGroupJson): DependencyGroupBuilder {
-        this.itemCount = json.itemCount;
+        this.itemCount = json.count;
         this.iconUrl = json.iconUrl;
-        this.contentType = new ContentTypeName(json.contentType);
+        this.contentType = new ContentTypeName(json.type);
 
         return this;
     }
