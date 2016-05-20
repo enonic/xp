@@ -45,7 +45,6 @@ import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.json.content.ContentListJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryListJson;
-import com.enonic.xp.admin.impl.json.content.DependenciesAggregationJson;
 import com.enonic.xp.admin.impl.json.content.DependenciesJson;
 import com.enonic.xp.admin.impl.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson;
@@ -454,17 +453,10 @@ public final class ContentResource
 
         final ContentId contentId = ContentId.from( id );
 
-        final List<DependenciesAggregationJson> inbound = this.contentService.resolveInboundDependenciesAggregation( contentId ).stream().
-            map( aggregation -> {
-                return new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver);
-            } ).collect( Collectors.toList() );
+        final ResolveDependenciesAggregationFactory resolveDependenciesAggregationFactory =
+            new ResolveDependenciesAggregationFactory( contentTypeIconUrlResolver, contentService );
 
-        final List<DependenciesAggregationJson> outbound = this.contentService.resolveOutboundDependenciesAggregation( contentId ).stream().
-            map( aggregation -> {
-                return new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver);
-            } ).collect( Collectors.toList() );
-
-        return new DependenciesJson( inbound, outbound );
+        return resolveDependenciesAggregationFactory.create( contentId );
     }
 
     @POST

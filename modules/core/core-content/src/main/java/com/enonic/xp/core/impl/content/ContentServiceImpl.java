@@ -2,15 +2,12 @@ package com.enonic.xp.core.impl.content;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
-import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -20,11 +17,9 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.CompareContentParams;
 import com.enonic.xp.content.CompareContentResult;
@@ -36,7 +31,6 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
-import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.Contents;
@@ -62,7 +56,6 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ReprocessContentParams;
-import com.enonic.xp.content.ResolveDependenciesAggregationResult;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetActiveContentVersionResult;
@@ -75,7 +68,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.media.MediaInfoService;
@@ -92,8 +84,6 @@ import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
-import com.enonic.xp.query.aggregation.TermsAggregationQuery;
-import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -619,49 +609,6 @@ public class ContentServiceImpl
         final NodePath rootNodePath = ContentNodeHelper.translateContentPathToNodePath( rootContentPath );
         final Node rootNode = runAsContentAdmin( () -> nodeService.getByPath( rootNodePath ) );
         return rootNode != null ? rootNode.getPermissions() : AccessControlList.empty();
-    }
-
-    public Collection<ResolveDependenciesAggregationResult> resolveInboundDependenciesAggregation( final ContentId contentId ) {
-
-        final FindContentByQueryResult result = this.find( FindContentByQueryParams.create().
-            contentQuery( ContentQuery.create().
-                queryExpr( QueryParser.parse( "_references = '" + contentId.toString() + "'" ) ).
-                aggregationQuery( TermsAggregationQuery.create( "type" ).
-                    fieldName( "type" ).
-                    orderDirection( TermsAggregationQuery.Direction.DESC ).
-                    build() ).
-                build() ).
-            build() );
-
-        final BucketAggregation bucketAggregation = (BucketAggregation) result.getAggregations().get( "type" );
-
-        return bucketAggregation.getBuckets().getSet().stream().map( bucket -> {
-            return new ResolveDependenciesAggregationResult( bucket );
-        } ).collect( Collectors.toList() );
-    }
-
-    public Collection<ResolveDependenciesAggregationResult> resolveOutboundDependenciesAggregation(final ContentId contentId) {
-
-        final Content content = this.getById( contentId );
-        content.getData().getProperties( ValueTypes.REFERENCE );
-
-        Map<ContentTypeName, ResolveDependenciesAggregationResult> aggregationJsonMap = Maps.newHashMap();
-
-        content.getData().getProperties( ValueTypes.REFERENCE ).forEach( property -> {
-            final ContentId curContentID = ContentId.from( property.getValue().toString() );
-            final Content curContent = this.getById( curContentID );
-
-            if(curContent != null)
-            {
-                final ContentTypeName contentTypeName = curContent.getType();
-                if ( aggregationJsonMap.containsKey(contentTypeName) ) {
-                    aggregationJsonMap.get( contentTypeName ).increaseCount();
-                } else {
-                    aggregationJsonMap.put( contentTypeName, new ResolveDependenciesAggregationResult( contentTypeName.toString(), 1l ) );
-                }
-            }
-        });
-        return aggregationJsonMap.values();
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.enonic.xp.content;
 
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.concurrent.Future;
 
 import com.google.common.annotations.Beta;
@@ -78,10 +77,6 @@ public interface ContentService
     String getBinaryKey( ContentId contentId, BinaryReference binaryReference );
 
     AccessControlList getRootPermissions();
-
-    Collection<ResolveDependenciesAggregationResult> resolveInboundDependenciesAggregation( final ContentId contentId );
-
-    Collection<ResolveDependenciesAggregationResult> resolveOutboundDependenciesAggregation(final ContentId contentId);
 
     boolean contentExists( ContentId contentId );
 
