@@ -9,21 +9,20 @@ import com.google.common.collect.Lists;
 @Beta
 public class PushNodesResult
 {
-    private final Nodes successful;
+    private final NodeBranchEntries successful;
 
     private final ImmutableSet<Failed> failed;
 
     private PushNodesResult( Builder builder )
     {
-        successful = Nodes.from( builder.successful );
+        successful = NodeBranchEntries.from( builder.successful );
         failed = ImmutableSet.copyOf( builder.failed );
     }
 
-    public Nodes getSuccessful()
+    public NodeBranchEntries getSuccessful()
     {
         return successful;
     }
-
 
     public ImmutableSet<Failed> getFailed()
     {
@@ -37,7 +36,7 @@ public class PushNodesResult
 
     public static final class Builder
     {
-        private final List<Node> successful = Lists.newLinkedList();
+        private final List<NodeBranchEntry> successful = Lists.newLinkedList();
 
         private final List<Failed> failed = Lists.newLinkedList();
 
@@ -45,13 +44,13 @@ public class PushNodesResult
         {
         }
 
-        public Builder addSuccess( final Node success )
+        public Builder addSuccess( final NodeBranchEntry success )
         {
             this.successful.add( success );
             return this;
         }
 
-        public Builder addFailed( final Node failed, final Reason reason )
+        public Builder addFailed( final NodeBranchEntry failed, final Reason reason )
         {
             this.failed.add( new Failed( failed, reason ) );
             return this;
@@ -71,19 +70,19 @@ public class PushNodesResult
 
     public static final class Failed
     {
-        private final Node node;
+        private final NodeBranchEntry nodeBranchEntry;
 
         private final Reason reason;
 
-        public Failed( final Node node, final Reason reason )
+        public Failed( final NodeBranchEntry nodeBranchEntry, final Reason reason )
         {
-            this.node = node;
+            this.nodeBranchEntry = nodeBranchEntry;
             this.reason = reason;
         }
 
-        public Node getNode()
+        public NodeBranchEntry getNodeBranchEntry()
         {
-            return node;
+            return nodeBranchEntry;
         }
 
         public Reason getReason()

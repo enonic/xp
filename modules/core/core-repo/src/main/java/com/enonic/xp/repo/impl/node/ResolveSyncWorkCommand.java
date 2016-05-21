@@ -15,6 +15,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesWithVersionDifferenceParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -22,7 +23,6 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 import com.enonic.xp.repo.impl.search.SearchService;
 
 public class ResolveSyncWorkCommand
@@ -202,10 +202,10 @@ public class ResolveSyncWorkCommand
         {
             if ( !this.processedIds.contains( referredNodeId ) && !this.excludedIds.contains( referredNodeId ) )
             {
-                final NodeBranchMetadata nodeBranchMetadata =
+                final NodeBranchEntry nodeBranchEntry =
                     this.storageService.getBranchNodeVersion( referredNodeId, InternalContext.from( ContextAccessor.current() ) );
 
-                if ( nodeBranchMetadata != null )
+                if ( nodeBranchEntry != null )
                 {
                     resolveDiff( referredNodeId );
                 }
@@ -219,7 +219,7 @@ public class ResolveSyncWorkCommand
 
     private void includeChildren( final NodeId nodeId )
     {
-        final NodeBranchMetadata branchNodeVersion =
+        final NodeBranchEntry branchNodeVersion =
             this.storageService.getBranchNodeVersion( nodeId, InternalContext.from( ContextAccessor.current() ) );
 
         findNodesWithVersionDifference( branchNodeVersion.getNodePath() ).
@@ -227,7 +227,7 @@ public class ResolveSyncWorkCommand
             stream().
             filter( childNodeId -> !this.excludedIds.contains( childNodeId ) ).
             filter( childNodeId -> !this.processedIds.contains( childNodeId ) ).
-            forEach( childNodeId -> resolveDiff( childNodeId ) );
+            forEach( this::resolveDiff );
     }
 
     private boolean shouldBeResolvedDiffFor( final NodeComparison nodeComparison )

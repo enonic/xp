@@ -3,8 +3,11 @@ package com.enonic.xp.repo.impl.storage;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -21,9 +24,7 @@ import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.storage.MoveBranchParams;
-import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
-import com.enonic.xp.repo.impl.branch.storage.NodesBranchMetadata;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDao;
 import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
@@ -66,13 +67,13 @@ public class StorageServiceImpl
     @Override
     public Node move( final MoveNodeParams params, final InternalContext context )
     {
-        final NodeBranchMetadata nodeBranchMetadata = this.branchService.get( params.getNode().id(), context );
+        final NodeBranchEntry nodeBranchEntry = this.branchService.get( params.getNode().id(), context );
 
         final NodeVersionId nodeVersionId;
 
         if ( params.isUpdateMetadataOnly() )
         {
-            nodeVersionId = nodeBranchMetadata.getVersionId();
+            nodeVersionId = nodeBranchEntry.getVersionId();
 
         }
         else
@@ -82,7 +83,7 @@ public class StorageServiceImpl
 
         storeVersionMetadata( params.getNode(), context, nodeVersionId );
 
-        return moveInBranchAndReIndex( params.getNode(), nodeVersionId, nodeBranchMetadata.getNodePath(), context );
+        return moveInBranchAndReIndex( params.getNode(), nodeVersionId, nodeBranchEntry.getNodePath(), context );
     }
 
     @Override
@@ -96,14 +97,14 @@ public class StorageServiceImpl
     @Override
     public Node updateMetadata( final Node node, final InternalContext context )
     {
-        final NodeBranchMetadata nodeBranchMetadata = this.branchService.get( node.id(), context );
+        final NodeBranchEntry nodeBranchEntry = this.branchService.get( node.id(), context );
 
-        if ( nodeBranchMetadata == null )
+        if ( nodeBranchEntry == null )
         {
             throw new NodeNotFoundException( "Cannot find node with id: " + node.id() + " in branch " + context.getBranch() );
         }
 
-        final NodeVersionId nodeVersionId = nodeBranchMetadata.getVersionId();
+        final NodeVersionId nodeVersionId = nodeBranchEntry.getVersionId();
 
         storeBranchMetadata( node, context, nodeVersionId );
 
@@ -117,7 +118,7 @@ public class StorageServiceImpl
     @Override
     public void updateVersion( final Node node, final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        this.branchService.store( NodeBranchMetadata.create().
+        this.branchService.store( NodeBranchEntry.create().
             nodeVersionId( nodeVersionId ).
             nodeId( node.id() ).
             nodeState( node.getNodeState() ).
@@ -129,35 +130,50 @@ public class StorageServiceImpl
     }
 
     @Override
+    public void publish( final NodeBranchEntry nodeBranchEntry, final NodeVersionId nodeVersionId, final InternalContext context,
+                         final Branch source )
+    {
+        this.branchService.store( NodeBranchEntry.create().
+            nodeVersionId( nodeVersionId ).
+            nodeId( nodeBranchEntry.getNodeId() ).
+            nodeState( nodeBranchEntry.getNodeState() ).
+            timestamp( nodeBranchEntry.getTimestamp() ).
+            nodePath( nodeBranchEntry.getNodePath() ).
+            build(), context );
+
+        this.indexServiceInternal.copy( nodeBranchEntry.getNodeId(), context.getRepositoryId(), source, context.getBranch() );
+    }
+
+    @Override
     public Node get( final NodeId nodeId, final InternalContext context )
     {
-        final NodeBranchMetadata nodeBranchMetadata = this.branchService.get( nodeId, context );
+        final NodeBranchEntry nodeBranchEntry = this.branchService.get( nodeId, context );
 
-        return doGetNode( nodeBranchMetadata );
+        return doGetNode( nodeBranchEntry );
     }
 
     @Override
     public Node get( final NodePath nodePath, final InternalContext context )
     {
-        final NodeBranchMetadata nodeBranchMetadata = this.branchService.get( nodePath, context );
+        final NodeBranchEntry nodeBranchEntry = this.branchService.get( nodePath, context );
 
-        return doGetNode( nodeBranchMetadata );
+        return doGetNode( nodeBranchEntry );
     }
 
     @Override
     public Nodes get( final NodeIds nodeIds, final InternalContext context )
     {
-        final NodesBranchMetadata nodesBranchMetadata = this.branchService.get( nodeIds, context );
+        final NodeBranchEntries nodeBranchEntries = this.branchService.get( nodeIds, context );
 
-        return doReturnNodes( nodesBranchMetadata );
+        return doReturnNodes( nodeBranchEntries );
     }
 
     @Override
     public Nodes get( final NodePaths nodePaths, final InternalContext context )
     {
-        final NodesBranchMetadata nodesBranchMetadata = this.branchService.get( nodePaths, context );
+        final NodeBranchEntries nodeBranchEntries = this.branchService.get( nodePaths, context );
 
-        return doReturnNodes( nodesBranchMetadata );
+        return doReturnNodes( nodeBranchEntries );
     }
 
     @Override
@@ -170,14 +186,14 @@ public class StorageServiceImpl
             return null;
         }
 
-        final NodeBranchMetadata nodeBranchMetadata = branchService.get( nodeVersion.getId(), context );
+        final NodeBranchEntry nodeBranchEntry = branchService.get( nodeVersion.getId(), context );
 
-        if ( nodeBranchMetadata == null )
+        if ( nodeBranchEntry == null )
         {
             return null;
         }
 
-        return constructNode( nodeBranchMetadata, nodeVersion );
+        return constructNode( nodeBranchEntry, nodeVersion );
     }
 
     @Override
@@ -193,13 +209,13 @@ public class StorageServiceImpl
     }
 
     @Override
-    public NodeBranchMetadata getBranchNodeVersion( final NodeId nodeId, final InternalContext context )
+    public NodeBranchEntry getBranchNodeVersion( final NodeId nodeId, final InternalContext context )
     {
         return this.branchService.get( nodeId, context );
     }
 
     @Override
-    public NodesBranchMetadata getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context )
+    public NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context )
     {
         return this.branchService.get( nodeIds, context );
     }
@@ -213,17 +229,17 @@ public class StorageServiceImpl
     @Override
     public NodeId getIdForPath( final NodePath nodePath, final InternalContext context )
     {
-        final NodeBranchMetadata nodeBranchMetadata = this.branchService.get( nodePath, context );
+        final NodeBranchEntry nodeBranchEntry = this.branchService.get( nodePath, context );
 
-        return nodeBranchMetadata != null ? nodeBranchMetadata.getNodeId() : null;
+        return nodeBranchEntry != null ? nodeBranchEntry.getNodeId() : null;
     }
 
     @Override
     public NodePath getParentPath( final NodeId nodeId, final InternalContext context )
     {
-        final NodeBranchMetadata nodeBranchMetadata = this.branchService.get( nodeId, context );
+        final NodeBranchEntry nodeBranchEntry = this.branchService.get( nodeId, context );
 
-        return nodeBranchMetadata != null ? nodeBranchMetadata.getNodePath().getParentPath() : null;
+        return nodeBranchEntry != null ? nodeBranchEntry.getNodePath().getParentPath() : null;
     }
 
     @Override
@@ -245,21 +261,21 @@ public class StorageServiceImpl
         this.branchService.cachePath( params.getNodeId(), params.getNewPath(), context );
     }
 
-    private Node doGetNode( final NodeBranchMetadata nodeBranchMetadata )
+    private Node doGetNode( final NodeBranchEntry nodeBranchEntry )
     {
-        if ( nodeBranchMetadata == null )
+        if ( nodeBranchEntry == null )
         {
             return null;
         }
 
-        final NodeVersion nodeVersion = nodeVersionDao.get( nodeBranchMetadata.getVersionId() );
+        final NodeVersion nodeVersion = nodeVersionDao.get( nodeBranchEntry.getVersionId() );
 
-        return constructNode( nodeBranchMetadata, nodeVersion );
+        return constructNode( nodeBranchEntry, nodeVersion );
     }
 
-    private Node constructNode( final NodeBranchMetadata nodeBranchMetadata, final NodeVersion nodeVersion )
+    private Node constructNode( final NodeBranchEntry nodeBranchEntry, final NodeVersion nodeVersion )
     {
-        final Node node = NodeFactory.create( nodeVersion, nodeBranchMetadata );
+        final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );
 
         return canRead( node.getPermissions() ) ? node : null;
     }
@@ -282,24 +298,24 @@ public class StorageServiceImpl
     }
 
 
-    private Nodes doReturnNodes( final NodesBranchMetadata nodesBranchMetadata )
+    private Nodes doReturnNodes( final NodeBranchEntries nodeBranchEntries )
     {
         final NodeVersionIds.Builder builder = NodeVersionIds.create();
-        nodesBranchMetadata.forEach( ( nodeBranchVersion ) -> builder.add( nodeBranchVersion.getVersionId() ) );
+        nodeBranchEntries.forEach( ( nodeBranchVersion ) -> builder.add( nodeBranchVersion.getVersionId() ) );
 
         final NodeVersions nodeVersions = nodeVersionDao.get( builder.build() );
 
         final Nodes.Builder filteredNodes = Nodes.create();
 
         nodeVersions.stream().filter( ( nodeVersion ) -> canRead( nodeVersion.getPermissions() ) ).forEach(
-            ( nodeVersion ) -> filteredNodes.add( NodeFactory.create( nodeVersion, nodesBranchMetadata.get( nodeVersion.getId() ) ) ) );
+            ( nodeVersion ) -> filteredNodes.add( NodeFactory.create( nodeVersion, nodeBranchEntries.get( nodeVersion.getId() ) ) ) );
 
         return filteredNodes.build();
     }
 
     private void storeBranchMetadata( final Node node, final InternalContext context, final NodeVersionId nodeVersionId )
     {
-        this.branchService.store( NodeBranchMetadata.create().
+        this.branchService.store( NodeBranchEntry.create().
             nodeVersionId( nodeVersionId ).
             nodeId( node.id() ).
             nodeState( node.getNodeState() ).
@@ -314,7 +330,7 @@ public class StorageServiceImpl
         final NodeVersion nodeVersion = NodeVersion.from( node );
 
         this.branchService.move( MoveBranchParams.create().
-            branchNodeVersion( NodeBranchMetadata.create().
+            branchNodeVersion( NodeBranchEntry.create().
                 nodeVersionId( nodeVersionId ).
                 nodeId( nodeVersion.getId() ).
                 nodeState( node.getNodeState() ).

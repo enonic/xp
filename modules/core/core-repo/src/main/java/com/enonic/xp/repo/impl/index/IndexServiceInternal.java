@@ -1,10 +1,12 @@
 package com.enonic.xp.repo.impl.index;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.elasticsearch.ClusterHealthStatus;
+import com.enonic.xp.repository.RepositoryId;
 
 public interface IndexServiceInternal
 {
@@ -28,5 +30,6 @@ public interface IndexServiceInternal
 
     boolean isMaster();
 
+    void copy( final NodeId nodeId, final RepositoryId repositoryId, final Branch source, final Branch target );
 }
 

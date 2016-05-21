@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.branch.storage;
 import org.junit.Test;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
@@ -20,7 +21,7 @@ public class BranchStorageRequestFactoryTest
     public void create()
         throws Exception
     {
-        final StoreRequest storeRequest = BranchStorageRequestFactory.create( NodeBranchMetadata.create().
+        final StoreRequest storeRequest = BranchStorageRequestFactory.create( NodeBranchEntry.create().
             nodeId( NodeId.from( "nodeId" ) ).
             nodePath( NodePath.create( "nodePath" ).build() ).
             nodeState( NodeState.DEFAULT ).

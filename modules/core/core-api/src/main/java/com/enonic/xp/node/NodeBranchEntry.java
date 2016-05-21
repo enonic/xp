@@ -1,15 +1,10 @@
-package com.enonic.xp.repo.impl.branch.storage;
+package com.enonic.xp.node;
 
 import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
-import com.enonic.xp.node.NodeVersionId;
-
-public class NodeBranchMetadata
+public class NodeBranchEntry
 {
     private final NodeVersionId nodeVersionId;
 
@@ -21,7 +16,7 @@ public class NodeBranchMetadata
 
     private final NodeId nodeId;
 
-    private NodeBranchMetadata( Builder builder )
+    private NodeBranchEntry( Builder builder )
     {
         this.nodeVersionId = builder.nodeVersionId;
         this.nodeState = builder.state;
@@ -72,7 +67,7 @@ public class NodeBranchMetadata
             return false;
         }
 
-        final NodeBranchMetadata that = (NodeBranchMetadata) o;
+        final NodeBranchEntry that = (NodeBranchEntry) o;
 
         if ( nodeVersionId != null ? !nodeVersionId.equals( that.nodeVersionId ) : that.nodeVersionId != null )
         {
@@ -158,10 +153,10 @@ public class NodeBranchMetadata
             Preconditions.checkNotNull( this.state, "Nodestate must be set" );
         }
 
-        public NodeBranchMetadata build()
+        public NodeBranchEntry build()
         {
             validate();
-            return new NodeBranchMetadata( this );
+            return new NodeBranchEntry( this );
         }
     }
 }

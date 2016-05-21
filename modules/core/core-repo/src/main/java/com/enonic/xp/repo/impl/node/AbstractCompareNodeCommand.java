@@ -5,10 +5,10 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 import com.enonic.xp.repo.impl.storage.StorageService;
 
 public class AbstractCompareNodeCommand
@@ -25,8 +25,8 @@ public class AbstractCompareNodeCommand
 
     NodeComparison doCompareNodeVersions( final Context context, final NodeId nodeId )
     {
-        final NodeBranchMetadata sourceWsVersion = storageService.getBranchNodeVersion( nodeId, InternalContext.from( context ) );
-        final NodeBranchMetadata targetWsVersion = storageService.getBranchNodeVersion( nodeId, InternalContext.create( context ).
+        final NodeBranchEntry sourceWsVersion = storageService.getBranchNodeVersion( nodeId, InternalContext.from( context ) );
+        final NodeBranchEntry targetWsVersion = storageService.getBranchNodeVersion( nodeId, InternalContext.create( context ).
             branch( this.target ).
             build() );
 

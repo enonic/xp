@@ -22,7 +22,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 
@@ -169,17 +168,16 @@ public class PushContentCommand
             return;
         }
 
+        final Stopwatch nodeServicePushTimer = Stopwatch.createStarted();
         final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target );
+        System.out.println( "nodeService.push: " + nodeServicePushTimer.stop().toString() );
 
-        final Contents publishedContents = translator.fromNodes( pushNodesResult.getSuccessful(), false );
-        this.resultBuilder.setPushed( publishedContents );
+        this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( NodeIds.from( pushNodesResult.getSuccessful().getKeys() ) ) );
     }
 
     private void doDeleteNodes( final NodeIds nodeIdsToDelete )
     {
-        final Nodes deletedNodes = nodeService.getByIds( nodeIdsToDelete );
-        final Contents deletedContents = translator.fromNodes( Nodes.from( deletedNodes ), false );
-        this.resultBuilder.setDeleted( deletedContents );
+        this.resultBuilder.setDeleted( ContentNodeHelper.toContentIds( NodeIds.from( nodeIdsToDelete ) ) );
 
         final Context currentContext = ContextAccessor.current();
         deleteNodesInContext( nodeIdsToDelete, currentContext );

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
@@ -15,7 +16,7 @@ import com.enonic.xp.repo.impl.ReturnValues;
 
 public class NodeBranchVersionFactory
 {
-    public static NodeBranchMetadata create( final ReturnValues returnValues )
+    public static NodeBranchEntry create( final ReturnValues returnValues )
     {
         final Object path = returnValues.getSingleValue( BranchIndexPath.PATH.getPath() );
         final Object state = returnValues.getSingleValue( BranchIndexPath.STATE.getPath() );
@@ -25,7 +26,7 @@ public class NodeBranchVersionFactory
 
         final NodeIds referenceNodeIds = getReferences( returnValues );
 
-        return NodeBranchMetadata.create().
+        return NodeBranchEntry.create().
             nodePath( path != null ? NodePath.create( path.toString() ).build() : NodePath.ROOT ).
             nodeState( state != null ? NodeState.from( state.toString() ) : NodeState.DEFAULT ).
             nodeVersionId( NodeVersionId.from( versionId.toString() ) ).

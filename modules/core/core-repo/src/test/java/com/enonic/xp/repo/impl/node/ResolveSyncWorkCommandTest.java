@@ -693,6 +693,8 @@ public class ResolveSyncWorkCommandTest
         updateNode( "a2" );
         updateNode( "a2_1" );
 
+        refresh();
+
         final NodeIds result = resolveSyncWorkResult( "a2_1" );
 
         assertEquals( 1, result.getSize() );

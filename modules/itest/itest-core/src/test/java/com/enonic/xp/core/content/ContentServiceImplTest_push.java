@@ -52,6 +52,8 @@ public class ContentServiceImplTest_push
             includeDependencies( false ).
             build() );
 
+        assertEquals( 0, push.getDeletedContents().getSize() );
+        assertEquals( 0, push.getFailedContents().getSize() );
         assertEquals( 1, push.getPushedContents().getSize() );
     }
 
@@ -191,8 +193,8 @@ public class ContentServiceImplTest_push
         final PushContentsResult result = this.contentService.push( pushParams );
 
         assertEquals( 3, result.getPushedContents().getSize() );
-        assertFalse( result.getPushedContents().contains( child1 ) );
-        assertFalse( result.getPushedContents().contains( child3 ) );
+        assertFalse( result.getPushedContents().contains( child1.getId() ) );
+        assertFalse( result.getPushedContents().contains( child3.getId() ) );
     }
 
     @Test
@@ -212,8 +214,8 @@ public class ContentServiceImplTest_push
         final PushContentsResult result = this.contentService.push( pushParams );
 
         assertEquals( 2, result.getPushedContents().getSize() );
-        assertFalse( result.getPushedContents().contains( child1 ) );
-        assertFalse( result.getPushedContents().contains( child2 ) );
+        assertFalse( result.getPushedContents().contains( child1.getId() ) );
+        assertFalse( result.getPushedContents().contains( child2.getId() ) );
     }
 
 

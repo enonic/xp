@@ -9,6 +9,8 @@ import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -17,8 +19,6 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
-import com.enonic.xp.repo.impl.branch.storage.NodesBranchMetadata;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 import com.enonic.xp.repo.impl.search.SearchService;
 import com.enonic.xp.repo.impl.storage.MoveNodeParams;
@@ -148,7 +148,7 @@ public class MoveNodeCommand
             searchMode( SearchMode.SEARCH ).
             build(), InternalContext.from( ContextAccessor.current() ) );
 
-        final NodesBranchMetadata nodesBranchMetadata =
+        final NodeBranchEntries nodeBranchEntries =
             this.storageService.getBranchNodeVersions( nodeQueryResult.getNodeIds(), InternalContext.from( ContextAccessor.current() ) );
 
         final NodeName nodeName = ( newNodeName != null ) ? newNodeName : persistedNode.name();
@@ -181,9 +181,9 @@ public class MoveNodeCommand
             movedNode = doStore( nodeToMoveBuilder.build(), true );
         }
 
-        for ( final NodeBranchMetadata nodeBranchMetadata : nodesBranchMetadata )
+        for ( final NodeBranchEntry nodeBranchEntry : nodeBranchEntries )
         {
-            doMoveNode( nodeToMoveBuilder.build().path(), getNodeName( nodeBranchMetadata ), nodeBranchMetadata.getNodeId() );
+            doMoveNode( nodeToMoveBuilder.build().path(), getNodeName( nodeBranchEntry ), nodeBranchEntry.getNodeId() );
         }
 
         return movedNode;
@@ -197,9 +197,9 @@ public class MoveNodeCommand
             build(), InternalContext.from( ContextAccessor.current() ) );
     }
 
-    private NodeName getNodeName( final NodeBranchMetadata nodeBranchMetadata )
+    private NodeName getNodeName( final NodeBranchEntry nodeBranchEntry )
     {
-        return NodeName.from( nodeBranchMetadata.getNodePath().getLastElement().toString() );
+        return NodeName.from( nodeBranchEntry.getNodePath().getLastElement().toString() );
     }
 
     private void verifyNoExistingAtNewPath( final NodePath newParentPath, final NodeName newNodeName )

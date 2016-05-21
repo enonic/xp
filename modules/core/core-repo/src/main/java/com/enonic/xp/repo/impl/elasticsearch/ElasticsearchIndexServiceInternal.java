@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
@@ -16,7 +17,12 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRespon
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetRequestBuilder;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.Requests;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -24,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Stopwatch;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -34,6 +41,7 @@ import com.enonic.xp.repo.impl.index.IndexException;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.index.IndexSettings;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
+import com.enonic.xp.repository.RepositoryId;
 
 
 @Component
@@ -90,6 +98,34 @@ public class ElasticsearchIndexServiceInternal
             client.admin().cluster().state( requestBuilder.request() ).actionGet( CLUSTER_STATE_TIMEOUT );
 
         return clusterStateResponse.getState().nodes().localNodeMaster();
+    }
+
+    @Override
+    public void copy( final NodeId nodeId, final RepositoryId repositoryId, final Branch source, final Branch target )
+    {
+        final GetRequest request = new GetRequestBuilder( this.client ).setId( nodeId.toString() ).
+            setIndex( IndexNameResolver.resolveSearchIndexName( repositoryId ) ).
+            setType( source.getName() ).
+            request();
+
+        final GetResponse response = this.client.get( request ).actionGet();
+
+        if ( !response.isExists() )
+        {
+            throw new IndexException( "Could not copy entry with id [" + nodeId + "], does not exist" );
+        }
+
+        final Map<String, Object> sourceValues = response.getSource();
+
+        final IndexRequest req = Requests.indexRequest().
+            id( nodeId.toString() ).
+            index( IndexNameResolver.resolveSearchIndexName( repositoryId ) ).
+            type( target.getName() ).
+            source( sourceValues ).
+            refresh( false ); //TODO Temporary fix. Should be corrected by XP-1986
+
+        this.client.index( req ).actionGet();
+
     }
 
     @Override
@@ -220,7 +256,6 @@ public class ElasticsearchIndexServiceInternal
     @Override
     public void store( final Node node, final InternalContext context )
     {
-
         final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             branch( context.getBranch() ).

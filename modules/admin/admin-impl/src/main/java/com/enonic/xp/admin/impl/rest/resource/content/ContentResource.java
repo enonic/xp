@@ -460,10 +460,14 @@ public final class ContentResource
             includeDependencies( true ).
             build() );
 
+        final ContentIds pushedContents = result.getPushedContents();
+        final ContentIds deletedContents = result.getDeletedContents();
+        final ContentIds failedContents = result.getFailedContents();
+
         return PublishContentResultJson.create().
-            success( result.getPushedContents() ).
-            deleted( result.getDeletedContents() ).
-            failures( result.getFailedContents() ).
+            success( Contents.empty() ).
+            deleted( Contents.empty() ).
+            failures( Contents.empty() ).
             build();
     }
 

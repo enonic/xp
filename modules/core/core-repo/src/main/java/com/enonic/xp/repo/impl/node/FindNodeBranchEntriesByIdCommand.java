@@ -1,14 +1,11 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.ValueFilter;
@@ -17,25 +14,23 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.AclFilterB
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 import com.enonic.xp.repo.impl.search.SearchService;
 
-public class FindNodesByIdsCommand
+public class FindNodeBranchEntriesByIdCommand
     extends AbstractNodeCommand
 {
     private final NodeIds ids;
 
     private final OrderExpressions orderExpressions;
 
-    private FindNodesByIdsCommand( final Builder builder )
+    private FindNodeBranchEntriesByIdCommand( final Builder builder )
     {
         super( builder );
-        this.ids = builder.ids;
-        this.orderExpressions = builder.orderExpressions;
+        ids = builder.ids;
+        orderExpressions = builder.orderExpressions;
     }
 
-    public Nodes execute()
+    public NodeBranchEntries execute()
     {
         final Context context = ContextAccessor.current();
-
-        final Stopwatch queryTimer = Stopwatch.createStarted();
 
         final NodeQueryResult result = this.searchService.query( NodeQuery.create().
             addQueryFilters( Filters.create().
@@ -50,11 +45,9 @@ public class FindNodesByIdsCommand
             size( SearchService.GET_ALL_SIZE_FLAG ).
             build(), InternalContext.from( ContextAccessor.current() ) );
 
-        System.out.println( "findNodesByIdsCommand query: " + queryTimer.stop().toString() );
-
         final NodeIds nodeIds = result.getNodeIds();
 
-        return this.storageService.get( nodeIds, InternalContext.from( context ) );
+        return this.storageService.getBranchNodeVersions( nodeIds, InternalContext.from( context ) );
     }
 
     public static Builder create()
@@ -72,7 +65,7 @@ public class FindNodesByIdsCommand
     {
         private NodeIds ids;
 
-        private OrderExpressions orderExpressions = DEFAULT_ORDER_EXPRESSIONS;
+        private OrderExpressions orderExpressions;
 
         private Builder()
         {
@@ -84,29 +77,21 @@ public class FindNodesByIdsCommand
             super( source );
         }
 
-        public Builder ids( NodeIds ids )
+        public Builder ids( final NodeIds val )
         {
-            this.ids = ids;
+            ids = val;
             return this;
         }
 
-        public Builder orderExpressions( final OrderExpressions orderExpressions )
+        public Builder orderExpressions( final OrderExpressions val )
         {
-            this.orderExpressions = orderExpressions;
+            orderExpressions = val;
             return this;
         }
 
-        @Override
-        void validate()
+        public FindNodeBranchEntriesByIdCommand build()
         {
-            super.validate();
-            Preconditions.checkNotNull( this.ids );
-        }
-
-        public FindNodesByIdsCommand build()
-        {
-            this.validate();
-            return new FindNodesByIdsCommand( this );
+            return new FindNodeBranchEntriesByIdCommand( this );
         }
     }
 }

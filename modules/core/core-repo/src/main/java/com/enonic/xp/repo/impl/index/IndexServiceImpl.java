@@ -17,6 +17,7 @@ import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.index.UpdateIndexSettingsParams;
 import com.enonic.xp.index.UpdateIndexSettingsResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -26,7 +27,6 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
-import com.enonic.xp.repo.impl.branch.storage.NodeBranchMetadata;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionDao;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
@@ -76,11 +76,11 @@ public class IndexServiceImpl
                 branch( branch ).
                 build() );
 
-            for ( final NodeBranchMetadata nodeBranchMetadata : results )
+            for ( final NodeBranchEntry nodeBranchEntry : results )
             {
-                final NodeVersion nodeVersion = this.nodeVersionDao.get( nodeBranchMetadata.getVersionId() );
+                final NodeVersion nodeVersion = this.nodeVersionDao.get( nodeBranchEntry.getVersionId() );
 
-                final Node node = NodeFactory.create( nodeVersion, nodeBranchMetadata );
+                final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );
 
                 this.indexServiceInternal.store( node, InternalContext.create( ContextAccessor.current() ).
                     repositoryId( params.getRepositoryId() ).

@@ -9,6 +9,8 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.Nodes;
 
 public class NodeEvents
@@ -37,7 +39,7 @@ public class NodeEvents
         return event( NODE_CREATED_EVENT, createdNode );
     }
 
-    public static Event pushed( final Nodes pushedNodes )
+    public static Event pushed( final NodeBranchEntries pushedNodes )
     {
         if ( pushedNodes != null )
         {
@@ -122,6 +124,13 @@ public class NodeEvents
             value( "nodes", nodesToList( nodes ) );
     }
 
+    private static Event.Builder event( String type, NodeBranchEntries nodes )
+    {
+        return Event.create( type ).
+            distributed( true ).
+            value( "nodes", nodesToList( nodes ) );
+    }
+
     private static ImmutableList nodesToList( final Nodes nodes )
     {
         List<ImmutableMap> list = new LinkedList<>();
@@ -130,6 +139,25 @@ public class NodeEvents
             forEach( list::add );
 
         return ImmutableList.copyOf( list );
+    }
+
+    private static ImmutableList nodesToList( final NodeBranchEntries nodes )
+    {
+        List<ImmutableMap> list = new LinkedList<>();
+        nodes.stream().
+            map( NodeEvents::nodeToMap ).
+            forEach( list::add );
+
+        return ImmutableList.copyOf( list );
+    }
+
+    private static ImmutableMap nodeToMap( final NodeBranchEntry node )
+    {
+        return ImmutableMap.builder().
+            put( "id", node.getNodeId().toString() ).
+            put( "path", node.getNodePath().toString() ).
+            put( "branch", ContextAccessor.current().getBranch().getName() ).
+            build();
     }
 
     private static ImmutableMap nodeToMap( final Node node )
