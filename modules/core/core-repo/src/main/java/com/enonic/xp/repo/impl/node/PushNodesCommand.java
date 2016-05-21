@@ -140,7 +140,7 @@ public class PushNodesCommand
 
         final NodeIds children = FindNodeIdsByParentCommand.create( this ).
             params( FindNodesByParentParams.create().
-                parentPath( nodeBranchEntry.getNodePath().getParentPath() ).
+                parentPath( nodeBranchEntry.getNodePath() ).
                 childOrder( ChildOrder.from( NodeIndexPath.PATH + " asc" ) ).
                 build() ).
             build().
