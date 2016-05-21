@@ -5,28 +5,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.support.AbstractImmutableEntityList;
+import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 public class NodeBranchEntries
-    extends AbstractImmutableEntityList<NodeBranchEntry>
+    extends AbstractImmutableEntitySet<NodeBranchEntry>
 {
     private final Map<NodeId, NodeBranchEntry> branchNodeVersionMap = Maps.newHashMap();
 
     private NodeBranchEntries( final Builder builder )
     {
-        super( ImmutableList.copyOf( builder.branchNodeVersions ) );
+        super( ImmutableSet.copyOf( builder.branchNodeVersions ) );
 
-        for ( final NodeBranchEntry nodeBranchEntry : list )
+        for ( final NodeBranchEntry nodeBranchEntry : set )
         {
             branchNodeVersionMap.put( nodeBranchEntry.getNodeId(), nodeBranchEntry );
         }
     }
 
-    private NodeBranchEntries( final ImmutableList<NodeBranchEntry> list )
+    private NodeBranchEntries( final ImmutableSet<NodeBranchEntry> list )
     {
         super( list );
 
@@ -38,7 +38,7 @@ public class NodeBranchEntries
 
     public static NodeBranchEntries from( final Collection<NodeBranchEntry> nodeBranchEntries )
     {
-        return new NodeBranchEntries( ImmutableList.copyOf( nodeBranchEntries ) );
+        return new NodeBranchEntries( ImmutableSet.copyOf( nodeBranchEntries ) );
     }
 
     public static Builder create()
