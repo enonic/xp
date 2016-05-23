@@ -171,6 +171,7 @@ public class SecurityResourceTest
         final UserStore userStore = UserStore.create().
             key( UserStoreKey.from( "enonic" ) ).
             displayName( "Enonic User Store" ).
+            description( "user store description" ).
             build();
         Mockito.when( securityService.createUserStore( Mockito.isA( CreateUserStoreParams.class ) ) ).thenReturn( userStore );
 
@@ -202,6 +203,7 @@ public class SecurityResourceTest
         final UserStore userStore = UserStore.create().
             key( UserStoreKey.from( "enonic" ) ).
             displayName( "Enonic User Store" ).
+            description( "user store description" ).
             build();
         Mockito.when( securityService.updateUserStore( Mockito.isA( UpdateUserStoreParams.class ) ) ).thenReturn( userStore );
 
@@ -629,11 +631,13 @@ public class SecurityResourceTest
         final UserStore userStore1 = UserStore.create().
             key( USER_STORE_1 ).
             displayName( "Local LDAP" ).
+            description( "local ldap" ).
             build();
 
         final UserStore userStore2 = UserStore.create().
             key( USER_STORE_2 ).
             displayName( "File based user store" ).
+            description( "file based ustore description" ).
             build();
 
         return UserStores.from( userStore1, userStore2 );

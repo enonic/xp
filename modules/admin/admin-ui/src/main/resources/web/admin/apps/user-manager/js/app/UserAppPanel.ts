@@ -1,23 +1,22 @@
 import "../api.ts";
-
-import AppBarTabMenuItem = api.app.bar.AppBarTabMenuItem;
-import AppBarTabMenuItemBuilder = api.app.bar.AppBarTabMenuItemBuilder;
-import AppBarTabId = api.app.bar.AppBarTabId;
 import {UserTreeGridItem, UserTreeGridItemType, UserTreeGridItemBuilder} from "./browse/UserTreeGridItem";
-import {UserItemsTreeGrid} from "./browse/UserItemsTreeGrid";
-import Principal = api.security.Principal;
-import PrincipalType = api.security.PrincipalType;
-import PrincipalKey = api.security.PrincipalKey;
-import UserStore = api.security.UserStore;
-import GetUserStoreByKeyRequest = api.security.GetUserStoreByKeyRequest;
 import {UserItemWizardPanel} from "./wizard/UserItemWizardPanel";
-import {UserStoreWizardPanel} from "./wizard/UserstoreWizardPanel";
+import {UserStoreWizardPanel} from "./wizard/UserStoreWizardPanel";
 import {PrincipalWizardPanel} from "./wizard/PrincipalWizardPanel";
 import {PrincipalWizardPanelFactory} from "./wizard/PrincipalWizardPanelFactory";
 import {UserStoreWizardPanelFactory} from "./wizard/UserStoreWizardPanelFactory";
 import {NewPrincipalEvent} from "./browse/NewPrincipalEvent";
 import {EditPrincipalEvent} from "./browse/EditPrincipalEvent";
 import {UserBrowsePanel} from "./browse/UserBrowsePanel";
+
+import AppBarTabMenuItem = api.app.bar.AppBarTabMenuItem;
+import AppBarTabMenuItemBuilder = api.app.bar.AppBarTabMenuItemBuilder;
+import AppBarTabId = api.app.bar.AppBarTabId;
+import Principal = api.security.Principal;
+import PrincipalType = api.security.PrincipalType;
+import PrincipalKey = api.security.PrincipalKey;
+import UserStore = api.security.UserStore;
+import GetUserStoreByKeyRequest = api.security.GetUserStoreByKeyRequest;
 
 export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeGridItem> {
 
