@@ -19,7 +19,7 @@ public class MacroIconUrlResolver
 
     public String resolve( final MacroDescriptor macroDescriptor )
     {
-        final String baseUrl = REST_SCHEMA_ICON_URL + macroDescriptor.getName();
+        final String baseUrl = REST_SCHEMA_ICON_URL + macroDescriptor.getKey().toString();
         final Icon icon = macroDescriptor.getIcon();
         return generateIconUrl( baseUrl, icon );
     }

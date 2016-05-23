@@ -33,7 +33,7 @@ public class BuiltinMacroDescriptors
     private MacroDescriptors generateMacroDescriptors()
     {
         final ImmutableSet.Builder<MacroDescriptor> macroDescriptors = ImmutableSet.builder();
-        macroDescriptors.add( generateYouTrackMacroDescriptor() ).
+        macroDescriptors.add( generateYouTubeMacroDescriptor() ).
             add( generateTwitterMacroDescriptor() ).
             add( generateEmbeddedCodeMacroDescriptor() ).
             add( generateNoFormatMacroDescriptor() );
@@ -41,7 +41,7 @@ public class BuiltinMacroDescriptors
         return MacroDescriptors.from( macroDescriptors.build() );
     }
 
-    private MacroDescriptor generateYouTrackMacroDescriptor()
+    private MacroDescriptor generateYouTubeMacroDescriptor()
     {
         final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, "youtube" );
         final Form form = Form.create().
