@@ -361,15 +361,15 @@ module api.app.wizard {
             return deferred.promise;
         }
 
-        private startLayoutPersistedItem(persistedItem: EQUITABLE): wemQ.Promise<void> {
+        private startLayoutPersistedItem(persistedItem: EQUITABLE, skipValidation?: boolean): wemQ.Promise<void> {
 
             this.persistedItem = persistedItem;
             this.actions.enableActionsForExisting(persistedItem);
 
-            return this.layoutPersistedItem(persistedItem);
+            return this.layoutPersistedItem(persistedItem, skipValidation);
         }
 
-        layoutPersistedItem(persistedItem: EQUITABLE): wemQ.Promise<void> {
+        layoutPersistedItem(persistedItem: EQUITABLE, skipValidation?: boolean): wemQ.Promise<void> {
 
             var deferred = wemQ.defer<void>();
             deferred.resolve(null);
@@ -406,13 +406,13 @@ module api.app.wizard {
             new SaveBeforeCloseDialog(this).open();
         }
 
-        saveChanges(): wemQ.Promise<EQUITABLE> {
+        saveChanges(skipValidation?: boolean): wemQ.Promise<EQUITABLE> {
 
             if (this.isItemPersisted()) {
                 return this.updatePersistedItem().then((persistedItem: EQUITABLE) => {
 
                     this.isChanged = false;
-                    return this.startLayoutPersistedItem(persistedItem).
+                    return this.startLayoutPersistedItem(persistedItem, skipValidation).
                         then(() => persistedItem);
                 });
             } else {

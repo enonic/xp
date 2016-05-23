@@ -157,7 +157,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         this.startRememberFocus();
     }
 
-    saveChanges(): wemQ.Promise<Principal> {
+    saveChanges(skipValidation?: boolean): wemQ.Promise<Principal> {
         if (!this.wizardHeader.getName()) {
             var deferred = wemQ.defer<Principal>();
             api.notify.showError("Name can not be empty");
@@ -196,7 +196,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         return deferred.promise;
     }
 
-    layoutPersistedItem(persistedPrincipal: Principal): wemQ.Promise<void> {
+    layoutPersistedItem(persistedPrincipal: Principal, skipValidation?: boolean): wemQ.Promise<void> {
 
         var viewedPrincipal;
         if (!this.constructing) {

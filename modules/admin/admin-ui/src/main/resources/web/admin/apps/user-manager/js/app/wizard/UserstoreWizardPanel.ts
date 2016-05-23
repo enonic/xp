@@ -127,7 +127,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         this.startRememberFocus();
     }
 
-    saveChanges(): wemQ.Promise<UserStore> {
+    saveChanges(skipValidation?: boolean): wemQ.Promise<UserStore> {
         if (!this.wizardHeader.getName()) {
             var deferred = wemQ.defer<UserStore>();
             api.notify.showError("Name can not be empty");
@@ -175,7 +175,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         return deferred.promise;
     }
 
-    layoutPersistedItem(persistedUserStore: UserStore): wemQ.Promise<void> {
+    layoutPersistedItem(persistedUserStore: UserStore, skipValidation?: boolean): wemQ.Promise<void> {
 
         var viewedUserStore;
         if (!this.constructing) {

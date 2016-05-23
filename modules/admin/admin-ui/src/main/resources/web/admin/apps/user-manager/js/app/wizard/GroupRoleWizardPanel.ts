@@ -58,7 +58,7 @@ export class GroupRoleWizardPanel extends PrincipalWizardPanel {
         return deferred.promise;
     }
 
-    layoutPersistedItem(persistedPrincipal: Principal): wemQ.Promise<void> {
+    layoutPersistedItem(persistedPrincipal: Principal, skipValidation?: boolean): wemQ.Promise<void> {
         if (!this.constructing) {
 
             var deferred = wemQ.defer<void>();

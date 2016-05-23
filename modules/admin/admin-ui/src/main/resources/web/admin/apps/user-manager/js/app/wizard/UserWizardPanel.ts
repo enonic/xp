@@ -41,7 +41,7 @@ export class UserWizardPanel extends PrincipalWizardPanel {
         this.startRememberFocus();
     }
 
-    saveChanges(): wemQ.Promise<Principal> {
+    saveChanges(skipValidation?: boolean): wemQ.Promise<Principal> {
         if (this.userEmailWizardStepForm.isValid() && (this.getPersistedItem() || this.userPasswordWizardStepForm.isValid())) {
             return super.saveChanges();
         } else {
@@ -87,7 +87,7 @@ export class UserWizardPanel extends PrincipalWizardPanel {
         return deferred.promise;
     }
 
-    layoutPersistedItem(persistedPrincipal: Principal): wemQ.Promise<void> {
+    layoutPersistedItem(persistedPrincipal: Principal, skipValidation?: boolean): wemQ.Promise<void> {
         if (!this.constructing) {
 
             var deferred = wemQ.defer<void>();

@@ -43,7 +43,7 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
         return deferred.promise;
     }
 
-    doLayoutPersistedItem(principal: Principal): wemQ.Promise<void> {
+    doLayoutPersistedItem(principal: Principal, skipValidation?: boolean): wemQ.Promise<void> {
         var parallelPromises: wemQ.Promise<any>[] = [
             this.createSteps(principal)
         ];
