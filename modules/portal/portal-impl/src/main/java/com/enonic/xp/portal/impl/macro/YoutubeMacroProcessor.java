@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.macro.MacroProcessor;
+import com.enonic.xp.portal.postprocess.HtmlTag;
 
 public class YoutubeMacroProcessor
     implements MacroProcessor
@@ -12,11 +13,9 @@ public class YoutubeMacroProcessor
 
     private static final String URL_PARAM = "url";
 
-    private static final String WIDTH_PARAM = "width";
-
-    private static final String HEIGHT_PARAM = "height";
-
     private static final String YOUTUBE_EMBED_URL = "https://www.youtube.com/embed/";
+
+    private static final String COMMON_STYLE_FILE_PATH = "/css/macro/youtube/youtube.css";
 
     private static final Pattern YOUTUBE_URL_PATTERN =
         Pattern.compile( "^(https://|http://)?(www\\.)?(m\\.)?(youtu\\.be/|youtube\\.com/)(.)+" );
@@ -29,11 +28,33 @@ public class YoutubeMacroProcessor
             return null;
         }
 
-        final String html =
-            "<iframe src=\"" + convertUrl( context.getParam( URL_PARAM ) ) + "\"" + makeWidthAttr( context ) + makeHeightAttr( context ) +
-                "></iframe>";
+        final PortalResponse.Builder response = PortalResponse.create();
+        addBody( response, context );
+        addCommonStyleContribution( response, context );
+        return response.build();
+    }
 
-        return PortalResponse.create().body( html ).build();
+    private void addBody( final PortalResponse.Builder portalResponse, final MacroContext context )
+    {
+
+        final String html =
+            "<div class='youtube-video-wrapper'><iframe src='" + convertUrl( context.getParam( URL_PARAM ) ) + "'></iframe></div>";
+
+        portalResponse.body( html );
+    }
+
+    private void addCommonStyleContribution( final PortalResponse.Builder portalResponse, final MacroContext context )
+    {
+        if ( context.getSystemAssetsBaseUri() != null )
+        {
+            portalResponse.contribution( HtmlTag.HEAD_BEGIN, this.makeCommonStyleContributionRef( context ) );
+        }
+    }
+
+    private String makeCommonStyleContributionRef( final MacroContext context )
+    {
+        return "<link rel='stylesheet' type='text/css' href='" + context.getSystemAssetsBaseUri() + COMMON_STYLE_FILE_PATH +
+            "'/>";
     }
 
     private boolean isYoutubeUrl( final String url )
@@ -90,17 +111,5 @@ public class YoutubeMacroProcessor
     private boolean urlPathHasAttributes( final String path )
     {
         return path.contains( "?" );
-    }
-
-    private String makeWidthAttr( final MacroContext macroContext )
-    {
-        final String result = macroContext.getParam( WIDTH_PARAM );
-        return result != null ? " width=\"" + result + "\"" : "";
-    }
-
-    private String makeHeightAttr( final MacroContext macroContext )
-    {
-        final String result = macroContext.getParam( HEIGHT_PARAM );
-        return result != null ? " height=\"" + result + "\"" : "";
     }
 }

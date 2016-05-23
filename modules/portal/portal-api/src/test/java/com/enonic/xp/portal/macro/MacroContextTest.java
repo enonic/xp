@@ -22,11 +22,13 @@ public class MacroContextTest
         final MacroContext macroContext1 = MacroContext.create().name( "name" ).
             body( "body" ).param( "param1", "value1" ).
             param( "param2", "value2" ).
+            systemAssetsBaseUri( "some-uri" ).
             build();
 
         final MacroContext macroContext2 = MacroContext.create().name( "name" ).
             body( "body" ).param( "param1", "value1" ).
             param( "param2", "value2" ).
+            systemAssetsBaseUri( "some-uri" ).
             build();
 
         final MacroContext macroContext3 = MacroContext.create().name( "name" ).

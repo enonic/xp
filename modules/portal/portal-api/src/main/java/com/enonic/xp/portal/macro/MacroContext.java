@@ -17,11 +17,14 @@ public final class MacroContext
 
     private final ImmutableMap<String, String> params;
 
+    private final String systemAssetsBaseUri;
+
     private final PortalRequest request;
 
     private MacroContext( final Builder builder )
     {
         this.name = builder.name;
+        this.systemAssetsBaseUri = builder.systemAssetsBaseUri;
         this.body = builder.body;
         this.params = builder.paramsBuilder.build();
         this.request = builder.request;
@@ -30,6 +33,11 @@ public final class MacroContext
     public String getName()
     {
         return name;
+    }
+
+    public String getSystemAssetsBaseUri()
+    {
+        return systemAssetsBaseUri;
     }
 
     public String getBody()
@@ -70,6 +78,7 @@ public final class MacroContext
         }
         final MacroContext that = (MacroContext) o;
         return Objects.equals( name, that.name ) &&
+            Objects.equals( systemAssetsBaseUri, that.systemAssetsBaseUri ) &&
             Objects.equals( body, that.body ) &&
             Objects.equals( params, that.params ) &&
             Objects.equals( request, that.request );
@@ -78,7 +87,7 @@ public final class MacroContext
     @Override
     public int hashCode()
     {
-        return Objects.hash( name, body, params, request );
+        return Objects.hash( name, systemAssetsBaseUri, body, params, request );
     }
 
     @Override
@@ -86,6 +95,7 @@ public final class MacroContext
     {
         return MoreObjects.toStringHelper( this ).
             add( "name", name ).
+            add( "systemAssetsBaseUri", systemAssetsBaseUri ).
             add( "body", body ).
             add( "params", params ).
             add( "request", request ).toString();
@@ -108,6 +118,8 @@ public final class MacroContext
 
         private String body;
 
+        private String systemAssetsBaseUri;
+
         private final ImmutableMap.Builder<String, String> paramsBuilder;
 
         private PortalRequest request;
@@ -121,6 +133,7 @@ public final class MacroContext
         {
             this.name = macroContext.name;
             this.body = macroContext.body;
+            this.systemAssetsBaseUri = macroContext.systemAssetsBaseUri;
             this.paramsBuilder = ImmutableMap.builder();
             this.paramsBuilder.putAll( macroContext.params );
             this.request = macroContext.request;
@@ -129,6 +142,12 @@ public final class MacroContext
         public Builder name( final String name )
         {
             this.name = name;
+            return this;
+        }
+
+        public Builder systemAssetsBaseUri( final String systemAssetsBaseUri )
+        {
+            this.systemAssetsBaseUri = systemAssetsBaseUri;
             return this;
         }
 
