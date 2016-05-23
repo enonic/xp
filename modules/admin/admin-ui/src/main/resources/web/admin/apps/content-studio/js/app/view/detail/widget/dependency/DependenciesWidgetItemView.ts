@@ -88,57 +88,17 @@ export class DependenciesWidgetItemView extends WidgetItemView {
         });
     }
 
-    private mockJson(): ContentDependencyJson {
-
-        var inboundDependencies = new Array<ContentDependencyGroupJson>();
-        var outboundDependencies = new Array<ContentDependencyGroupJson>();
-
-        inboundDependencies.push(
-            <ContentDependencyGroupJson>{
-                itemCount: 1,
-                iconUrl: "/admin/rest/schema/content/icon/portal:site",
-                contentType: "base:site"
-            }
-        );
-        inboundDependencies.push(
-            <ContentDependencyGroupJson>{
-                itemCount: 10,
-                iconUrl: "/admin/rest/schema/content/icon/base:folder",
-                contentType: "base:folder"
-            }
-        );
-
-        outboundDependencies.push(
-            <ContentDependencyGroupJson>{
-                itemCount: 123,
-                iconUrl: "/admin/rest/schema/content/icon/media:image",
-                contentType: "media:image"
-            }
-        );
-
-        return <ContentDependencyJson>{
-            inbound: inboundDependencies,
-            outbound: outboundDependencies
-        };
-    }
-
     /**
      * Perform request to resolve dependency items of given item.
      */
     private resolveDependencies(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
-/*
-        var resolveDependenciesRequest = new api.content.ResolveDependenciesRequest([item.getContentId()], false);
+
+        var resolveDependenciesRequest = new api.content.ResolveDependenciesRequest(item.getContentId());
 
         return resolveDependenciesRequest.send().then((jsonResponse: api.rest.JsonResponse<ContentDependencyJson>) => {
             this.initResolvedDependenciesItems(jsonResponse.getResult());
-            this.renderContent();
+            this.renderContent(item);
         });
-*/
-
-        this.initResolvedDependenciesItems(this.mockJson());
-        this.renderContent(item);
-
-        return wemQ<any>(null);
     }
 
     /**
