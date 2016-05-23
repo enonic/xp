@@ -556,12 +556,12 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return deferred.promise;
     }
 
-    saveChanges(): wemQ.Promise<Content> {
+    saveChanges(skipValidation?: boolean): wemQ.Promise<Content> {
         if (this.liveFormPanel) {
             this.liveFormPanel.skipNextReloadConfirmation(true);
         }
         this.setRequireValid(false);
-        return super.saveChanges();
+        return super.saveChanges(skipValidation);
     }
 
     preLayoutNew(): wemQ.Promise<void> {
@@ -760,7 +760,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return result;
     }
 
-    layoutPersistedItem(persistedContent: Content): wemQ.Promise<void> {
+    layoutPersistedItem(persistedContent: Content, skipValidation?: boolean): wemQ.Promise<void> {
         this.updateThumbnailWithContent(persistedContent);
         this.notifyValidityChanged(persistedContent.isValid());
 
@@ -781,7 +781,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         if (!this.constructing) {
 
             viewedContent = this.assembleViewedContent(persistedContent.newBuilder()).build();
-            if (viewedContent.equals(persistedContent)) {
+            if (viewedContent.equals(persistedContent) || skipValidation) {
 
                 if (this.liveFormPanel) {
                     this.liveFormPanel.loadPage();
@@ -1089,7 +1089,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return deferred.promise;
     }
 
-    updatePersistedItem(): wemQ.Promise<Content> {
+    updatePersistedItem(skipValidation?: boolean): wemQ.Promise<Content> {
         var persistedContent = this.getPersistedItem();
         var viewedContent = this.assembleViewedContent(persistedContent.newBuilder()).build();
 
