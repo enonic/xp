@@ -4,8 +4,7 @@ function handlePost(req) {
     var body = JSON.parse(req.body);
     var loginResult = authLib.login({
         user: body.user,
-        password: body.password,
-        userStore: body.userStore
+        password: body.password
     });
     return {
         body: loginResult,

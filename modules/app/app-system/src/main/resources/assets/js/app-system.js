@@ -1,5 +1,4 @@
 function handleAuthenticateResponse(loginResult) {
-    console.log("handleAuthenticateResponse  + " + loginResult.authenticated);
     if (loginResult.authenticated) {
         location.reload();
     } else {
@@ -18,8 +17,7 @@ function loginButtonClick() {
 
     var data = {
         user: $("#username-input").val(),
-        password: $("#password-input").val(),
-        userStore: 'system'
+        password: $("#password-input").val()
     }
     $.ajax({
         url: CONFIG.appLoginServiceUrl,
