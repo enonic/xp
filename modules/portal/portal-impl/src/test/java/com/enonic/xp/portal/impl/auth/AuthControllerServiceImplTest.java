@@ -2,6 +2,9 @@ package com.enonic.xp.portal.impl.auth;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Vector;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,6 +33,8 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 public class AuthControllerServiceImplTest
 {
@@ -158,5 +163,56 @@ public class AuthControllerServiceImplTest
         Assert.assertNotNull( portalResponse );
         Assert.assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         Assert.assertEquals( "myapplication/myfunction", portalResponse.getBody() );
+    }
+
+
+    @Test
+    public void executeWithoutVirtualHost()
+        throws IOException
+    {
+        final HttpServletRequest httpServletRequest = createHttpServletRequest();
+        final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+            servletRequest( httpServletRequest ).
+            functionName( "myfunction" ).
+            build();
+        final PortalResponse portalResponse = authControllerService.execute( executionParams );
+        Assert.assertNotNull( portalResponse );
+        Assert.assertEquals( HttpStatus.OK, portalResponse.getStatus() );
+        Assert.assertEquals( "defaultapplication/myfunction", portalResponse.getBody() );
+    }
+
+
+    @Test
+    public void executeWithVirtualHost()
+        throws IOException
+    {
+        final HttpServletRequest httpServletRequest = createHttpServletRequest();
+
+        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        Mockito.when( virtualHost.getUserStoreKey() ).thenReturn( UserStoreKey.from( "myuserstore" ) );
+        Mockito.when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        VirtualHostHelper.setVirtualHost( httpServletRequest, virtualHost );
+
+        final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+            servletRequest( httpServletRequest ).
+            functionName( "myfunction" ).
+            build();
+        final PortalResponse portalResponse = authControllerService.execute( executionParams );
+        Assert.assertNotNull( portalResponse );
+        Assert.assertEquals( HttpStatus.OK, portalResponse.getStatus() );
+        Assert.assertEquals( "myapplication/myfunction", portalResponse.getBody() );
+    }
+
+    private HttpServletRequest createHttpServletRequest()
+    {
+        final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
+        Mockito.when( httpServletRequest.getMethod() ).thenReturn( "GET" );
+        Mockito.when( httpServletRequest.getScheme() ).thenReturn( "http" );
+        Mockito.when( httpServletRequest.getServerName() ).thenReturn( "localhost" );
+        Mockito.when( httpServletRequest.getLocalPort() ).thenReturn( 80 );
+        Mockito.when( httpServletRequest.getRequestURI() ).thenReturn( "/admin/tool" );
+        Mockito.when( httpServletRequest.getHeaderNames() ).thenReturn( new Vector<String>().elements() );
+        return httpServletRequest;
     }
 }
