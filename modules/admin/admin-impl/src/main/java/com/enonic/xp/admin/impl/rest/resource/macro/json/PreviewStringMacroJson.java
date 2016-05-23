@@ -12,9 +12,8 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyTreeJson;
 import com.enonic.xp.macro.MacroKey;
 
-public class PreviewStringMacroJson
+public final class PreviewStringMacroJson
 {
-
     private final PropertyTree formData;
 
     private final MacroKey macroKey;
@@ -38,4 +37,5 @@ public class PreviewStringMacroJson
     {
         return macroKey;
     }
+
 }

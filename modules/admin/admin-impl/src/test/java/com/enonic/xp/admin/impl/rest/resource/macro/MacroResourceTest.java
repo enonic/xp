@@ -132,6 +132,28 @@ public class MacroResourceTest
         assertJson( "preview_macro_result.json", response );
     }
 
+
+    @Test
+    public void testPreviewString()
+        throws Exception
+    {
+        final Form form = Form.create().build();
+        final MacroDescriptor macroDescriptor = MacroDescriptor.create().
+            key( MacroKey.from( "test:uppercase" ) ).
+            description( "Uppercase macro" ).
+            displayName( "Uppercase macro" ).
+            form( form ).
+            build();
+
+        Mockito.when( this.macroDescriptorService.getByKey( MacroKey.from( "test:uppercase" ) ) ).thenReturn( macroDescriptor );
+
+        String response = request().path( "macro/previewString" ).
+            entity( readFromFile( "preview_string_macro_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "preview_string_macro_result.json", response );
+    }
+
     private MacroDescriptors getTestDescriptors()
         throws Exception
     {
