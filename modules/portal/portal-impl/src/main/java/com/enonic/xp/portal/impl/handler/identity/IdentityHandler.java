@@ -35,7 +35,7 @@ public class IdentityHandler
 
         if ( !matcher.find() )
         {
-            throw notFound( "Not a valid identity url pattern" );
+            throw notFound( "Not a valid idprovider url pattern" );
         }
 
         final UserStoreKey userStoreKey = UserStoreKey.from( matcher.group( 1 ) );

@@ -9,6 +9,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
@@ -25,18 +26,20 @@ public final class AuthFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        final AuthControllerWorker authControllerWorker = new AuthControllerWorker( authControllerService, req );
-
         // If the current user is not authenticated
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         if ( !authInfo.isAuthenticated() )
         {
-            //Execute the function authFilter of the IdProvider
-            authControllerWorker.execute( "authFilter" );
+            //Executes the function authFilter of the IdProvider
+            AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+                functionName( "authFilter" ).
+                servletRequest( req ).
+                build();
+            authControllerService.execute( executionParams );
         }
 
         //Wraps the response to handle 403 errors
-        final AuthResponseWrapper responseWrapper = new AuthResponseWrapper( res, authControllerWorker );
+        final AuthResponseWrapper responseWrapper = new AuthResponseWrapper( authControllerService, req, res );
         chain.doFilter( req, responseWrapper );
 
     }
