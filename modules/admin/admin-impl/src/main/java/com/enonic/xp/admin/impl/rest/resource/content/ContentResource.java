@@ -45,6 +45,7 @@ import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.json.content.ContentListJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryListJson;
+import com.enonic.xp.admin.impl.json.content.DependenciesJson;
 import com.enonic.xp.admin.impl.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
@@ -82,6 +83,8 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDepende
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.CreateAttachment;
@@ -194,6 +197,8 @@ public final class ContentResource
     private RelationshipTypeService relationshipTypeService;
 
     private ContentIconUrlResolver contentIconUrlResolver;
+
+    private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
     @POST
     @Path("create")
@@ -398,10 +403,10 @@ public final class ContentResource
         for ( final ContentPath contentToDelete : contentsToDeleteList )
         {
             final DeleteContentParams deleteContentParams = DeleteContentParams.create().
-                    contentPath( contentToDelete ).
+                contentPath( contentToDelete ).
                 deleteOnline( json.isDeleteOnline() ).
                 deletePending( json.isDeletePending() ).
-                    build();
+                build();
 
             try
             {
@@ -427,7 +432,7 @@ public final class ContentResource
                     if ( content != null )
                     {
                         jsonResult.addFailure( content.getId().toString(), content.getDisplayName(), content.getType().getLocalName(),
-                                e.getMessage() );
+                                               e.getMessage() );
                     }
                 }
                 catch ( final Exception e2 )
@@ -439,6 +444,19 @@ public final class ContentResource
         }
 
         return jsonResult;
+    }
+
+    @GET
+    @Path("getDependencies")
+    public DependenciesJson getDependencies( @QueryParam("id") final String id )
+    {
+
+        final ContentId contentId = ContentId.from( id );
+
+        final ResolveDependenciesAggregationFactory resolveDependenciesAggregationFactory =
+            new ResolveDependenciesAggregationFactory( contentTypeIconUrlResolver, contentService );
+
+        return resolveDependenciesAggregationFactory.create( contentId );
     }
 
     @POST
@@ -1157,7 +1175,7 @@ public final class ContentResource
         return result.getTotalHits();
     }
 
-    private QueryExpr constructExprToFindChildren(final ContentPaths contentsPaths )
+    private QueryExpr constructExprToFindChildren( final ContentPaths contentsPaths )
     {
         final FieldExpr fieldExpr = FieldExpr.from( "_path" );
 
@@ -1167,8 +1185,7 @@ public final class ContentResource
         {
             if ( !contentPath.equals( contentsPaths.first() ) )
             {
-                ConstraintExpr likeExpr =
-                    CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentPath + "/*" ) );
+                ConstraintExpr likeExpr = CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentPath + "/*" ) );
                 expr = LogicalExpr.or( expr, likeExpr );
             }
         }
@@ -1179,13 +1196,14 @@ public final class ContentResource
     private ContentSummaryListJson getDescendantsOfContents( final ContentPaths contentsPaths )
     {
         FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
-                contentQuery( ContentQuery.create().size( Integer.MAX_VALUE ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() ).
-                build() );
+            contentQuery(
+                ContentQuery.create().size( Integer.MAX_VALUE ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() ).
+            build() );
 
         final ContentListMetaData metaData = ContentListMetaData.create().
-                totalHits( result.getTotalHits() ).
-                hits( result.getHits() ).
-                build();
+            totalHits( result.getTotalHits() ).
+            hits( result.getHits() ).
+            build();
 
         return new ContentSummaryListJson( result.getContents(), metaData, contentIconUrlResolver );
     }
@@ -1221,6 +1239,7 @@ public final class ContentResource
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentIconUrlResolver = new ContentIconUrlResolver( contentTypeService );
+        this.contentTypeIconUrlResolver = new ContentTypeIconUrlResolver( new ContentTypeIconResolver( contentTypeService ) );
     }
 
     @Reference
