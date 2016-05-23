@@ -6,7 +6,7 @@
       "form": {
         "formItems": []
       },
-      "iconUrl": "/admin/rest/macro/icon/macro1",
+      "iconUrl": "/admin/rest/macro/icon/my-app1:macro1",
       "key": "my-app1:macro1",
       "name": "macro1"
     },
@@ -16,7 +16,7 @@
       "form": {
         "formItems": []
       },
-      "iconUrl": "/admin/rest/macro/icon/macro2",
+      "iconUrl": "/admin/rest/macro/icon/my-app2:macro2",
       "key": "my-app2:macro2",
       "name": "macro2"
     },
@@ -26,7 +26,7 @@
       "form": {
         "formItems": []
       },
-      "iconUrl": "/admin/rest/macro/icon/macro3",
+      "iconUrl": "/admin/rest/macro/icon/my-app3:macro3",
       "key": "my-app3:macro3",
       "name": "macro3"
     }
