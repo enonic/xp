@@ -123,7 +123,7 @@ public class AuthResponseWrapper
 
     private void handleError( final int sc )
     {
-        if ( 403 == sc || 401 == sc )
+        if ( !errorHandled && ( 403 == sc || 401 == sc ) )
         {
             try
             {
