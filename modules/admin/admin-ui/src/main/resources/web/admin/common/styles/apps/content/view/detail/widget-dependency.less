@@ -1,14 +1,66 @@
 .widget-view.dependency-widget {
 
-  .widget-item-view {
-    height: 100%;
+  height: 100%;
 
-    overflow-y: auto;
+  .widget-item-view {
+    height: calc(~'100% - 175px');
+
+    &.no-inbound.no-outbound {
+      height: calc(~'100% - 60px');
+    }
+
+    &.no-inbound, &.no-outbound {
+      height: calc(~'100% - 115px');
+    }
+
+    &:not(.no-inbound) {
+      margin-top: 65px !important;
+    }
+
+    &.no-inbound .main-container:before {
+      top: 47px;
+    }
+
+    .main-container:before,
+    &.no-inbound.no-outbound .main-container:before {
+      height: calc(~'100% - 92px');
+    }
+
+    &.no-inbound .main-container:before, &.no-outbound .main-container:before{
+      height: calc(~'100% - 81px');
+    }
+
     padding: 20px 0  !important;
+
+    .btn-inbound, .btn-outbound{
+      position: absolute;
+      height: 35px;
+      left: 50%;
+      margin-left: -80px;
+    }
+
+    .btn-inbound {
+      top: -49px;
+    }
+
+    .btn-outbound {
+      bottom: -52px;
+    }
+
+    &:before {
+      content: '';
+      display: inline-block;
+      height: 100%;
+      vertical-align: middle;
+    }
 
     .main-container {
       width: 100%;
       max-width: 100%;
+      overflow-y: auto;
+
+      display: inline-block;
+      vertical-align: middle;
 
       &:before {
         content: '';
@@ -19,11 +71,38 @@
         top: 34px;
       }
 
+
+      &.no-outbound:before {
+        height: calc(~'100% - 92px');
+      }
+
       .dependencies-container {
         width: 50%;
 
+        &.inbound {
+          position: absolute;
+          top: 20px;
+        }
+
+        &.no-dependencies {
+          width: 100%;
+          position: absolute;
+
+          &.inbound {
+            top: 17px;
+          }
+
+          &.outbound {
+            bottom: 17px;
+            left: 0;
+          }
+        }
+
         &.outbound {
           float: right;
+          position: absolute;
+          bottom: 20px;
+          left: 50%;
 
           .names-and-icon-view {
             margin-top: 20px;
@@ -106,8 +185,7 @@
       }
 
       .names-and-icon-view.main-content {
-        margin: 49% 0;
-        box-sizing: border-box;
+        padding: 49% 0;
         overflow: visible;
 
         .wrapper {
