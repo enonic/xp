@@ -1,18 +1,13 @@
 package com.enonic.xp.portal.impl.handler.identity;
 
-import java.util.Map;
-
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.portal.PortalException;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.portal.handler.BaseHandlerTest;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -24,16 +19,10 @@ public class IdentityHandlerTest
 {
     private IdentityHandler handler;
 
-    private Map<Object, Resource> resources;
-
-    private Resource nullResource;
-
     @Override
     protected void configure()
         throws Exception
     {
-        this.resources = Maps.newHashMap();
-
         final AuthControllerService authControllerService = Mockito.mock( AuthControllerService.class );
 
         Mockito.when( authControllerService.execute( Mockito.any() ) ).thenAnswer( invocation -> {
