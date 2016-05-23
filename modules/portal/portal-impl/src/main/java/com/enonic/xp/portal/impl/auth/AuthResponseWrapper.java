@@ -6,26 +6,33 @@ import java.io.StringWriter;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
+import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.util.Exceptions;
 
 
 public class AuthResponseWrapper
     extends HttpServletResponseWrapper
 {
-    private final HttpServletResponse response;
+    private final AuthControllerService authControllerService;
 
-    private final AuthControllerWorker authControllerWorker;
+    private final HttpServletRequest request;
+
+    private final HttpServletResponse response;
 
     private boolean errorHandled;
 
-    public AuthResponseWrapper( final HttpServletResponse response, final AuthControllerWorker authControllerWorker )
+    public AuthResponseWrapper( final AuthControllerService authControllerService, final HttpServletRequest request,
+                                final HttpServletResponse response )
     {
         super( response );
+        this.authControllerService = authControllerService;
+        this.request = request;
         this.response = response;
-        this.authControllerWorker = authControllerWorker;
     }
 
     @Override
@@ -120,9 +127,14 @@ public class AuthResponseWrapper
         {
             try
             {
-                if ( Boolean.TRUE != authControllerWorker.getRequest().getAttribute( "idprovider.handled" ) )
+                if ( Boolean.TRUE != request.getAttribute( "idprovider.handled" ) )
                 {
-                    final boolean responseSerialized = authControllerWorker.execute( "login", response );
+                    final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+                        functionName( "login" ).
+                        servletRequest( request ).
+                        response( response ).
+                        build();
+                    final boolean responseSerialized = authControllerService.execute( executionParams ) != null;
                     if ( responseSerialized )
                     {
                         errorHandled = true;

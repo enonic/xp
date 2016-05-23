@@ -40,8 +40,6 @@ public class AuthControllerServiceImplTest
 {
     private AuthControllerServiceImpl authControllerService;
 
-    private ResourceService resourceService;
-
     @Before
     public void setup()
         throws Exception
@@ -90,7 +88,7 @@ public class AuthControllerServiceImplTest
         Mockito.when( applicationService.getInstalledApplication( ApplicationKey.from( "defaultapplication" ) ) ).thenReturn( application );
         Mockito.when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
 
-        this.resourceService = Mockito.mock( ResourceService.class );
+        ResourceService resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final URL resourceUrl =
@@ -100,7 +98,7 @@ public class AuthControllerServiceImplTest
 
         final ScriptRuntimeFactoryImpl runtimeFactory = new ScriptRuntimeFactoryImpl();
         runtimeFactory.setApplicationService( applicationService );
-        runtimeFactory.setResourceService( this.resourceService );
+        runtimeFactory.setResourceService( resourceService );
 
         final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl();
         scriptService.setScriptRuntimeFactory( runtimeFactory );
