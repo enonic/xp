@@ -131,7 +131,6 @@ module api.util.htmlarea.dialog {
             }
         }
 
-
         public validateMacroForm(): boolean {
             var isValid = true,
                 form = <FormView>(this.configPanel.getFirstChild());
@@ -213,38 +212,41 @@ module api.util.htmlarea.dialog {
 
         private initFrameContent(macroPreview: MacroPreview) {
             this.onLoaded(() => {
+
+                var doc = this.getHTMLElement()["contentWindow"] || this.getHTMLElement()["contentDocument"];
+                if (doc.document) {
+                    doc = doc.document;
+                }
+                doc.open();
+                doc.write(this.makeContentForPreviewFrame(macroPreview));
+                doc.close();
+
                 this.adjustFrameHeightOnContentsUpdate();
-                wemjq("#" + this.id).contents().find('head').html(this.makeHeadForPreviewFrame(macroPreview));
-                wemjq("#" + this.id).contents().find('body').html(this.makeBodyForPreviewFrame(macroPreview));
             });
         }
 
         private adjustFrameHeightOnContentsUpdate() {
             var frameWindow = this.getHTMLElement()["contentWindow"];
             if (!!frameWindow) {
-                var observer = new MutationObserver(() => {
+                var debouncedResizeHandler: () => void = api.util.AppHelper.debounce(() => {
                     try {
                         var scrollHeight = frameWindow.document.body.scrollHeight;
                         this.getEl().setHeightPx(scrollHeight > 150
                             ? frameWindow.document.body.scrollHeight
                             : wemjq("#" + this.id).contents().find('body').outerHeight());
                     } catch (error) {}
-                });
+                }, 300, false);
+                var observer = new MutationObserver(debouncedResizeHandler);
 
                 var config = {attributes: true, childList: true, characterData: true};
                 observer.observe(frameWindow.document.body, config);
             }
         }
 
-        private makeHeadForPreviewFrame(macroPreview: MacroPreview): string {
+        private makeContentForPreviewFrame(macroPreview: MacroPreview): string {
             var result = "";
             macroPreview.getPageContributions().getHeadBegin().forEach(script => result += script);
             macroPreview.getPageContributions().getHeadEnd().forEach(script => result += script);
-            return result;
-        }
-
-        private makeBodyForPreviewFrame(macroPreview: MacroPreview): string {
-            var result = "";
             macroPreview.getPageContributions().getBodyBegin().forEach(script => result += script);
             result += macroPreview.getHtml();
             macroPreview.getPageContributions().getBodyEnd().forEach(script => result += script);
