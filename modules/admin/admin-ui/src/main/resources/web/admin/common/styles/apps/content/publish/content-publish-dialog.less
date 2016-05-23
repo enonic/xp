@@ -5,32 +5,9 @@
   }
 
   .dialog-buttons {
-    .@{_COMMON_PREFIX}button {
-      &.publish-action {
-        .button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 30%));
-        padding: 4px 19px 4px 19px;
-        margin-left: 11px;
 
-        &:disabled {
-          background-color: @admin-font-gray1;
-        }
-
-        &.spinner {
-          font-family: 'xp-admin-font-icon';
-
-          &:after {
-            .animation(rotate360, .5s, .0s, linear);
-            content: "\e007";
-            color: white;
-            display: inline-block;
-            margin-left: 5px;
-          }
-        }
-      }
-
-      &.cancel-button-bottom {
-        margin-left: 5px;
-      }
+    button.publish-action {
+      .dialog-button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 10%));
     }
 
     &.no-checkbox {
@@ -50,6 +27,23 @@
         cursor: pointer;
       }
     }
+
+    &.disabled {
+      opacity: 0.5;
+
+      input[type="checkbox"] + label {
+        color: @admin-font-gray2 !important;
+
+        &:hover {
+          cursor: default;
+        }
+      }
+
+
+
+    }
+
+
 
     @media screen and (max-height: 360px) {
       bottom: 25px;

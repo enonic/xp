@@ -6,6 +6,9 @@ import org.junit.Test;
 
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
+import com.squareup.okhttp.mockwebserver.RecordedRequest;
+
+import static org.junit.Assert.*;
 
 public class PingSenderImplTest
 {
@@ -21,8 +24,7 @@ public class PingSenderImplTest
         this.server.start();
 
         final UdcInfoGenerator generator = new UdcInfoGenerator();
-        final UdcUrlBuilder urlBuilder = new UdcUrlBuilder( "http://localhost:" + this.server.getPort() );
-        this.sender = new PingSenderImpl( generator, urlBuilder );
+        this.sender = new PingSenderImpl( generator, "http://localhost:" + this.server.getPort() );
     }
 
     @After
@@ -34,11 +36,15 @@ public class PingSenderImplTest
 
     @Test
     public void testPing()
+        throws Exception
     {
         final MockResponse response = new MockResponse();
         response.setResponseCode( 200 );
 
         this.server.enqueue( response );
         this.sender.send();
+
+        final RecordedRequest req = this.server.takeRequest();
+        assertEquals( "POST", req.getMethod() );
     }
 }

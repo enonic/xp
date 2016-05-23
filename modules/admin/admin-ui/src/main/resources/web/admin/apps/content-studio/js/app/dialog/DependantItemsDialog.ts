@@ -1,9 +1,10 @@
 import "../../api.ts";
-
 import {StatusSelectionItem} from "./StatusSelectionItem";
 import {DependantItemViewer} from "./DependantItemViewer";
 
 import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
+import ContentSummary = api.content.ContentSummary;
+import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -37,7 +38,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.dialogName = dialogName;
 
         this.subTitle = new api.dom.H6El("sub-title")
-            .setHtml(dialogSubName);
+            .setHtml(dialogSubName, false);
         this.appendChildToTitle(this.subTitle);
 
         this.itemList = this.createItemList();
@@ -55,7 +56,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.itemList.onItemsRemoved(itemsChangedListener);
         this.itemList.onItemsAdded(itemsChangedListener);
 
-        this.dependantsHeader = new api.dom.H6El("dependants-header").setHtml(dependantsName);
+        this.dependantsHeader = new api.dom.H6El("dependants-header").setHtml(dependantsName, false);
 
         this.dependantList = this.createDependantList();
         this.dependantList.addClass("dependant-list");
@@ -106,6 +107,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     close() {
         super.close();
         this.remove();
+        this.itemList.clearItems();
+        this.dependantList.clearItems();
     }
 
     setAutoUpdateTitle(value: boolean) {
@@ -125,6 +128,20 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     setSubTitle(text: string) {
         this.subTitle.setHtml(text);
+    }
+
+    protected loadDescendants(summaries: ContentSummaryAndCompareStatus[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+        return new api.content.GetDescendantsOfContents()
+            .setContentPaths(summaries.map(summary => summary.getContentSummary().getPath())).sendAndParse()
+            .then((result: api.content.ContentResponse<ContentSummary>) => {
+
+                return api.content.CompareContentRequest.fromContentSummaries(result.getContents()).sendAndParse()
+                    .then((compareContentResults: api.content.CompareContentResults) => {
+
+                        return ContentSummaryAndCompareStatusFetcher
+                            .updateCompareStatus(result.getContents(), compareContentResults);
+                    });
+            });
     }
 
 }

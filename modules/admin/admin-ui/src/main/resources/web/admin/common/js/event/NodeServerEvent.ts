@@ -12,6 +12,7 @@ module api.event {
         id: string;
         path: string;
         newPath: string;
+        branch: string;
     }
 
     export class NodeServerEvent extends Event {

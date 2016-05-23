@@ -11,6 +11,7 @@ import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.ComponentUrlParams;
 import com.enonic.xp.portal.url.GenerateUrlParams;
+import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -61,6 +62,12 @@ public final class PortalUrlServiceImpl
     public String attachmentUrl( final AttachmentUrlParams params )
     {
         return build( new AttachmentUrlBuilder(), params );
+    }
+
+    @Override
+    public String identityUrl( final IdentityUrlParams params )
+    {
+        return build( new IdentityUrlBuilder(), params );
     }
 
     @Override

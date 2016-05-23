@@ -76,6 +76,11 @@ module api.form {
             return this;
         }
 
+        setMaximizeUIInputWidth(value: boolean): InputBuilder {
+            this.maximizeUIInputWidth = value;
+            return this;
+        }
+
         fromJson(json: json.InputJson): InputBuilder {
             this.name = json.name;
             this.inputType = InputTypeName.parseInputTypeName(json.inputType);

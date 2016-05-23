@@ -1,112 +1,46 @@
 package com.enonic.xp.server.udc.impl;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 final class UdcInfo
 {
-    private String product;
+    String product;
 
-    private String version;
+    String version;
 
-    private String versionHash;
+    String versionHash;
 
-    private String hardwareAddress;
+    String hardwareAddress;
 
-    private String javaVersion;
+    String javaVersion;
 
-    private String osName;
+    String osName;
 
-    private int count;
+    long maxMemory;
 
-    private long maxMemory;
+    int numCpu;
 
-    private int numCpu;
+    String timezone;
 
-    public String getProduct()
+    int count;
+
+    long upTime;
+
+    String toJson()
     {
-        return product;
-    }
-
-    public void setProduct( final String product )
-    {
-        this.product = product;
-    }
-
-    public String getVersion()
-    {
-        return version;
-    }
-
-    public void setVersion( final String version )
-    {
-        this.version = version;
-    }
-
-    public String getHardwareAddress()
-    {
-        return hardwareAddress;
-    }
-
-    public void setHardwareAddress( final String hardwareAddress )
-    {
-        this.hardwareAddress = hardwareAddress;
-    }
-
-    public String getJavaVersion()
-    {
-        return javaVersion;
-    }
-
-    public void setJavaVersion( final String javaVersion )
-    {
-        this.javaVersion = javaVersion;
-    }
-
-    public int getCount()
-    {
-        return count;
-    }
-
-    public void setCount( final int count )
-    {
-        this.count = count;
-    }
-
-    public long getMaxMemory()
-    {
-        return maxMemory;
-    }
-
-    public void setMaxMemory( final long maxMemory )
-    {
-        this.maxMemory = maxMemory;
-    }
-
-    public int getNumCpu()
-    {
-        return numCpu;
-    }
-
-    public void setNumCpu( final int numCpu )
-    {
-        this.numCpu = numCpu;
-    }
-
-    public String getVersionHash()
-    {
-        return versionHash;
-    }
-
-    public void setVersionHash( final String versionHash )
-    {
-        this.versionHash = versionHash;
-    }
-
-    public String getOsName()
-    {
-        return osName;
-    }
-
-    public void setOsName( final String osName )
-    {
-        this.osName = osName;
+        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+        json.put( "product", this.product );
+        json.put( "version", this.version );
+        json.put( "versionHash", this.versionHash );
+        json.put( "hardwareAddress", this.hardwareAddress );
+        json.put( "javaVersion", this.javaVersion );
+        json.put( "osName", this.osName );
+        json.put( "maxMemory", this.maxMemory );
+        json.put( "numCpu", this.numCpu );
+        json.put( "timezone", this.timezone );
+        json.put( "count", this.count );
+        json.put( "upTime", this.upTime );
+        return json.toString();
     }
 }

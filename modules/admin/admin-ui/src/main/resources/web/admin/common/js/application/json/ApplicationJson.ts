@@ -20,6 +20,8 @@ module api.application.json {
 
         config: api.form.json.FormJson;
 
+        authConfig: api.form.json.FormJson;
+
         applicationDependencies: string[];
 
         contentTypeDependencies: string[];

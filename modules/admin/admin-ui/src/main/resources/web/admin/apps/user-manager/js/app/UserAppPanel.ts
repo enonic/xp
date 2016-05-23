@@ -195,11 +195,13 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
                 principalType = PrincipalType.USER;
                 principalPath = PrincipalKey.ofUser(userItem.getUserStore().getKey(), "none").toPath(true);
                 tabName = "User";
+                userStoreRequest = new GetUserStoreByKeyRequest(userItem.getUserStore().getKey()).sendAndParse();
                 break;
             case UserTreeGridItemType.GROUPS:
                 principalType = PrincipalType.GROUP;
                 principalPath = PrincipalKey.ofGroup(userItem.getUserStore().getKey(), "none").toPath(true);
                 tabName = "Group";
+                userStoreRequest = new GetUserStoreByKeyRequest(userItem.getUserStore().getKey()).sendAndParse();
                 break;
             case UserTreeGridItemType.ROLES:
                 principalType = PrincipalType.ROLE;
@@ -233,14 +235,24 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
             if (userItem && userItem.getType() !== UserTreeGridItemType.USER_STORE) {
 
                 userStoreRequest.then((userStore: UserStore) => {
+                    if (principalType === PrincipalType.USER && !this.areUsersEditable(userStore)) {
+                        api.notify.showError("The ID Provider selected for this user store does not allow to create users.");
+                        return;
+                    }
+                    if (principalType === PrincipalType.GROUP && !this.areGroupsEditable(userStore)) {
+                        api.notify.showError("The ID Provider selected for this user store does not allow to create groups.");
+                        return;
+                    }
                     return new PrincipalWizardPanelFactory().setAppBarTabId(tabId).setPrincipalType(
                         principalType).setPrincipalPath(principalPath).setUserStore(userStore).setParentOfSameType(
                         userItem.getType() === UserTreeGridItemType.PRINCIPAL).createForNew();
                 }).then((wizard: PrincipalWizardPanel) => {
-                    this.handleWizardCreated(wizard, tabName);
-                    wizard.onPrincipalNamed((event: api.security.PrincipalNamedEvent) => {
-                        this.handlePrincipalNamedEvent(event);
-                    });
+                    if (wizard) {
+                        this.handleWizardCreated(wizard, tabName);
+                        wizard.onPrincipalNamed((event: api.security.PrincipalNamedEvent) => {
+                            this.handlePrincipalNamedEvent(event);
+                        });
+                    }
 
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
@@ -254,10 +266,10 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
                         this.handleWizardCreated(wizard, tabName);
 
                     }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                }).finally(() => {
-                    this.mask.hide();
-                }).done();
+                        api.DefaultErrorHandler.handle(reason);
+                    }).finally(() => {
+                        this.mask.hide();
+                    }).done();
             }
         }
     }
@@ -279,33 +291,67 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
                 var tabId = this.getTabIdForUserItem(userItem);
 
                 if (userItem.getType() == UserTreeGridItemType.PRINCIPAL) {
-                    new PrincipalWizardPanelFactory().setAppBarTabId(tabId).setPrincipalType(
-                        userItem.getPrincipal().getType()).setPrincipalPath(
-                        userItem.getPrincipal().getKey().toPath(true)).setPrincipalToEdit(
-                        userItem.getPrincipal().getKey()).createForEdit().then((wizard: PrincipalWizardPanel) => {
-
-                        this.handleWizardUpdated(wizard, tabMenuItem, closeViewPanelMenuItem);
-
-                    }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason);
-                    }).finally(() => {
-                        this.mask.hide();
-                    }).done();
+                    this.handlePrincipalEdit(userItem.getPrincipal(), tabId, tabMenuItem, closeViewPanelMenuItem);
                 } else if (userItem.getType() === UserTreeGridItemType.USER_STORE) {
 
                     new UserStoreWizardPanelFactory().setAppBarTabId(tabId).setUserStoreKey(
                         userItem.getUserStore().getKey()).createForEdit().then((wizard: UserStoreWizardPanel) => {
 
-                        this.handleWizardUpdated(wizard, tabMenuItem, closeViewPanelMenuItem);
+                            this.handleWizardUpdated(wizard, tabMenuItem, closeViewPanelMenuItem);
 
-                    }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason);
-                    }).finally(() => {
-                        this.mask.hide();
-                    }).done();
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                        }).finally(() => {
+                            this.mask.hide();
+                        }).done();
                 }
             }
         });
+    }
+
+    private handlePrincipalEdit(principal: Principal, tabId: AppBarTabId, tabMenuItem: AppBarTabMenuItem,
+                                closeViewPanelMenuItem: AppBarTabMenuItem) {
+        var principalType = principal.getType();
+        if (PrincipalType.USER == principalType || PrincipalType.GROUP == principalType) {
+            var userStoreKey = principal.getKey().getUserStore();
+            new GetUserStoreByKeyRequest(userStoreKey).
+                sendAndParse().then((userStore: UserStore) => {
+                    if (PrincipalType.USER == principalType && !this.areUsersEditable(userStore)) {
+                        api.notify.showError("The ID Provider selected for this user store does not allow to edit users.");
+                        return;
+                    } else if (PrincipalType.GROUP == principalType && !this.areGroupsEditable(userStore)) {
+                        api.notify.showError("The ID Provider selected for this user store does not allow to edit groups.");
+                        return;
+                    } else {
+                        this.createPrincipalWizardPanelForEdit(principal, tabId, tabMenuItem, closeViewPanelMenuItem);
+                    }
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).finally(() => {
+                    this.mask.hide();
+                }).done();
+        } else {
+            this.createPrincipalWizardPanelForEdit(principal, tabId, tabMenuItem, closeViewPanelMenuItem);
+        }
+    }
+
+    private createPrincipalWizardPanelForEdit(principal: Principal, tabId: AppBarTabId, tabMenuItem: AppBarTabMenuItem,
+                                              closeViewPanelMenuItem: AppBarTabMenuItem) {
+        new PrincipalWizardPanelFactory().
+            setAppBarTabId(tabId).
+            setPrincipalType(principal.getType()).
+            setPrincipalPath(principal.getKey().toPath(true)).
+            setPrincipalToEdit(principal.getKey()).
+            createForEdit().
+            then((wizard: PrincipalWizardPanel) => {
+
+                this.handleWizardUpdated(wizard, tabMenuItem, closeViewPanelMenuItem);
+
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).finally(() => {
+                this.mask.hide();
+            }).done();
     }
 
     private handlePrincipalNamedEvent(event: api.event.Event) {
@@ -364,6 +410,16 @@ export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeG
             appBarTabId = AppBarTabId.forEdit(userItem.getUserStore().getKey().getId());
         }
         return appBarTabId;
+    }
+
+    private areUsersEditable(userStore: UserStore): boolean {
+        var idProviderMode = userStore.getIdProviderMode();
+        return api.security.IdProviderMode.EXTERNAL != idProviderMode && api.security.IdProviderMode.MIXED != idProviderMode;
+    }
+
+    private areGroupsEditable(userStore: UserStore): boolean {
+        var idProviderMode = userStore.getIdProviderMode();
+        return api.security.IdProviderMode.EXTERNAL != idProviderMode;
     }
 
 }

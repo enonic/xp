@@ -1,6 +1,6 @@
 module api.ui.button {
 
-    export class DropdownHandle extends api.dom.DivEl {
+    export class DropdownHandle extends api.dom.ButtonEl {
 
         constructor() {
             super("dropdown-handle");

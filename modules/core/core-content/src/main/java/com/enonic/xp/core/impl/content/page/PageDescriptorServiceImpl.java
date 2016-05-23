@@ -39,12 +39,14 @@ public final class PageDescriptorServiceImpl
     {
         final ResourceProcessor<DescriptorKey, PageDescriptor> processor = newProcessor( key );
         final PageDescriptor descriptor = this.resourceService.processResource( processor );
-        if ( descriptor != null )
+        if ( descriptor == null )
         {
-            return descriptor;
+            return createDefaultDescriptor( key );
         }
 
-        return createDefaultDescriptor( key );
+        return PageDescriptor.copyOf( descriptor ).
+            config( this.mixinService.inlineFormItems( descriptor.getConfig() ) ).
+            build();
     }
 
     private ResourceProcessor<DescriptorKey, PageDescriptor> newProcessor( final DescriptorKey key )
@@ -124,12 +126,7 @@ public final class PageDescriptorServiceImpl
         final PageDescriptor.Builder builder = PageDescriptor.create();
         parseXml( resource, builder );
         builder.key( key );
-
-        final PageDescriptor pageDescriptor = builder.build();
-
-        return PageDescriptor.copyOf( pageDescriptor ).
-            config( mixinService.inlineFormItems( pageDescriptor.getConfig() ) ).
-            build();
+        return builder.build();
     }
 
     private PageDescriptor createDefaultDescriptor( final DescriptorKey key )

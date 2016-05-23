@@ -19,6 +19,7 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.region.Component;
+import com.enonic.xp.security.UserStore;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
@@ -57,6 +58,8 @@ public final class PortalRequest
     private String baseUri;
 
     private Site site;
+
+    private UserStore userStore;
 
     private Content content;
 
@@ -205,6 +208,16 @@ public final class PortalRequest
     public void setSite( final Site site )
     {
         this.site = site;
+    }
+
+    public UserStore getUserStore()
+    {
+        return userStore;
+    }
+
+    public void setUserStore( final UserStore userStore )
+    {
+        this.userStore = userStore;
     }
 
     public Content getContent()

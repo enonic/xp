@@ -13,6 +13,7 @@
   <xs:element name="service" type="serviceDescriptor"/>
   <xs:element name="widget" type="widgetDescriptor"/>
   <xs:element name="tool" type="adminToolDescriptor"/>
+  <xs:element name="id-provider" type="idProviderDescriptor"/>
   <xs:element name="relationship-type" type="relationshipType"/>
   <xs:element name="macro" type="macroType"/>
 
@@ -223,6 +224,21 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="idProviderDescriptor">
+    <xs:sequence>
+      <xs:element minOccurs="1" name="mode">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="LOCAL"/>
+            <xs:enumeration value="EXTERNAL"/>
+            <xs:enumeration value="MIXED"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="config" type="form"/>
     </xs:sequence>
   </xs:complexType>
 

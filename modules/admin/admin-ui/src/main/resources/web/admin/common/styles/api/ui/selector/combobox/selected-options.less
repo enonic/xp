@@ -31,9 +31,17 @@
       }
     }
 
+    .edit {
+      .icon-pencil2;
+      margin: 0px 20px;
+    }
+
     .remove {
-      &:extend(.icon);
       .icon-close;
+    }
+
+    .remove, .edit {
+      &:extend(.icon);
 
       float: right;
       font-size: 12px;

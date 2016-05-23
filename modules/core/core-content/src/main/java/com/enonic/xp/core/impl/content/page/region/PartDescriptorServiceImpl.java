@@ -39,12 +39,14 @@ public final class PartDescriptorServiceImpl
     {
         final ResourceProcessor<DescriptorKey, PartDescriptor> processor = newProcessor( key );
         final PartDescriptor descriptor = this.resourceService.processResource( processor );
-        if ( descriptor != null )
+        if ( descriptor == null )
         {
-            return descriptor;
+            return createDefaultDescriptor( key );
         }
 
-        return createDefaultDescriptor( key );
+        return PartDescriptor.copyOf( descriptor ).
+            config( this.mixinService.inlineFormItems( descriptor.getConfig() ) ).
+            build();
     }
 
     private ResourceProcessor<DescriptorKey, PartDescriptor> newProcessor( final DescriptorKey key )
@@ -103,11 +105,7 @@ public final class PartDescriptorServiceImpl
         final PartDescriptor.Builder builder = PartDescriptor.create();
         parseXml( resource, builder );
         builder.name( key.getName() ).key( key );
-        final PartDescriptor partDescriptor = builder.build();
-
-        return PartDescriptor.copyOf( partDescriptor ).
-            config( mixinService.inlineFormItems( partDescriptor.getConfig() ) ).
-            build();
+        return builder.build();
     }
 
     private PartDescriptor createDefaultDescriptor( final DescriptorKey key )

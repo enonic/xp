@@ -1,4 +1,9 @@
 import "../../api.ts";
+import {SortContentEvent} from "./SortContentEvent";
+import {ContentTreeGridActions} from "./action/ContentTreeGridActions";
+import {ContentBrowseSearchEvent} from "./filter/ContentBrowseSearchEvent";
+import {ContentBrowseResetEvent} from "./filter/ContentBrowseResetEvent";
+import {ContentBrowseRefreshEvent} from "./filter/ContentBrowseRefreshEvent";
 
 import Element = api.dom.Element;
 import ElementHelper = api.dom.ElementHelper;
@@ -34,12 +39,6 @@ import CompareStatus = api.content.CompareStatus;
 
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
-
-import {SortContentEvent} from "./SortContentEvent";
-import {ContentTreeGridActions} from "./action/ContentTreeGridActions";
-import {ContentBrowseSearchEvent} from "./filter/ContentBrowseSearchEvent";
-import {ContentBrowseResetEvent} from "./filter/ContentBrowseResetEvent";
-import {ContentBrowseRefreshEvent} from "./filter/ContentBrowseRefreshEvent";
 
 export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
@@ -603,17 +602,10 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         });
     }
 
-    xPlaceContentNodes(results: TreeNodesOfContentPath[]): wemQ.Promise<any> {
+    xPlaceContentNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): wemQ.Promise<any> {
         var parallelPromises: wemQ.Promise<any>[] = [];
 
-        var nodes = results.map((el) => {
-            return el.getNodes();
-        });
-        var merged = [];
-        // merge array of nodes arrays
-        merged = merged.concat.apply(merged, nodes);
-
-        merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
+        nodes.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
             parallelPromises.push(this.xPlaceContentNode(node.getParent(), node));
         });
 
@@ -646,6 +638,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
     xDeleteContentNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[],
                         update: boolean = true) {
 
+        this.deselectDeletedNodes(nodes);
+        
         nodes.forEach((node) => {
             this.xDeleteContentNode(node, false);
         });
@@ -653,6 +647,23 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         if (update) {
             this.initAndRender();
         }
+    }
+
+    private deselectDeletedNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[]) {
+        var deselected = [];
+        this.getSelectedDataList().forEach((content: ContentSummaryAndCompareStatus) => {
+
+            let wasDeleted = nodes.some((node: TreeNode<ContentSummaryAndCompareStatus>) => {
+                return content.getContentId().equals(node.getData().getContentId()) ||
+                       content.getPath().isDescendantOf(node.getData().getPath());
+            });
+
+            if (wasDeleted) {
+                deselected.push(content.getId());
+            }
+
+        });
+        this.deselectNodes(deselected);
     }
 
     xPopulateWithChildren(source: TreeNode<ContentSummaryAndCompareStatus>, dest: TreeNode<ContentSummaryAndCompareStatus>) {
