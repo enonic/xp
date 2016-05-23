@@ -1,41 +1,39 @@
 package com.enonic.xp.lib.thymeleaf;
 
-import java.util.Map;
 import java.util.Set;
 
-import org.thymeleaf.context.IProcessingContext;
-import org.thymeleaf.dialect.IExpressionEnhancingDialect;
+import org.thymeleaf.dialect.AbstractProcessorDialect;
+import org.thymeleaf.dialect.IExpressionObjectDialect;
+import org.thymeleaf.expression.IExpressionObjectFactory;
 import org.thymeleaf.processor.IProcessor;
-import org.thymeleaf.standard.StandardDialect;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 final class ExtensionDialectImpl
-    extends StandardDialect
-    implements IExpressionEnhancingDialect
+    extends AbstractProcessorDialect
+    implements IExpressionObjectDialect
 {
-    private final Map<String, Object> expressionObjects;
+    private final MapExpressionObjectFactory expressionObjectFactory;
 
-    public ExtensionDialectImpl()
+    ExtensionDialectImpl()
+    {
+        super( "Portal", "portal", 1000 );
+
+        this.expressionObjectFactory = new MapExpressionObjectFactory();
+        this.expressionObjectFactory.put( "js", new JavascriptExecutor() );
+    }
+
+    @Override
+    public Set<IProcessor> getProcessors( final String dialectPrefix )
     {
         final Set<IProcessor> processors = Sets.newHashSet();
-        processors.add( new ComponentProcessor() );
-        setAdditionalProcessors( processors );
-
-        this.expressionObjects = Maps.newHashMap();
-        this.expressionObjects.put( "js", new JavascriptExecutor() );
+        processors.add( new ComponentProcessor( dialectPrefix ) );
+        return processors;
     }
 
     @Override
-    public Map<String, Object> getAdditionalExpressionObjects( final IProcessingContext context )
+    public IExpressionObjectFactory getExpressionObjectFactory()
     {
-        return this.expressionObjects;
-    }
-
-    @Override
-    public String getPrefix()
-    {
-        return "portal";
+        return this.expressionObjectFactory;
     }
 }
