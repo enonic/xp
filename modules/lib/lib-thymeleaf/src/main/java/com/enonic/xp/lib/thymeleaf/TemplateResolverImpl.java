@@ -52,23 +52,28 @@ final class TemplateResolverImpl
         }
         catch ( final Exception e )
         {
-            return resolveHtmlFragment( base, location );
+            return doResolveResource( base, location );
         }
     }
 
-    private ResourceKey resolveHtmlFragment( final ResourceKey callingTemplate, final String name )
+    private ResourceKey doResolveResource( final ResourceKey callingTemplate, final String name )
     {
-        if ( !name.endsWith( ".html" ) )
-        {
-            return resolveHtmlFragment( callingTemplate, name + ".html" );
-        }
-
         if ( name.startsWith( "/" ) )
         {
-            return callingTemplate.resolve( name );
+            return doResolveResource( callingTemplate.resolve( name ) );
         }
 
-        return callingTemplate.resolve( "../" + name );
+        return doResolveResource( callingTemplate.resolve( "../" + name ) );
+    }
+
+    private ResourceKey doResolveResource( final ResourceKey key )
+    {
+        if ( key.getName().contains( "." ) )
+        {
+            return key;
+        }
+
+        return ResourceKey.from( key.getUri() + ".html" );
     }
 
     private Resource resolveResource( final ResourceKey key )
