@@ -81,6 +81,10 @@ module api.content {
             return this.contentSummary ? this.contentSummary.getDisplayName() : null;
         }
 
+        getIconUrl(): string {
+            return this.contentSummary ? this.contentSummary.getIconUrl() : null;
+        }
+
         hasChildren(): boolean {
             return !!this.contentSummary ? this.contentSummary.hasChildren() : false;
         }

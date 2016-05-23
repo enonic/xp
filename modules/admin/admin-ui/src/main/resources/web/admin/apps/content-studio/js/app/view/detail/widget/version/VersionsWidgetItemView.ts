@@ -1,13 +1,12 @@
-import "../../../api.ts";
+import "../../../../../api.ts";
 
-import ViewItem = api.app.view.ViewItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import {WidgetItemView} from "./WidgetItemView";
-import {AllContentVersionsView} from "../../view/AllContentVersionsView";
+import {WidgetItemView} from "../../WidgetItemView";
+import {VersionsView} from "./VersionsView";
 
 export class VersionsWidgetItemView extends WidgetItemView {
 
-    private allContentVersionsView: AllContentVersionsView;
+    private versionsView: VersionsView;
 
     private gridLoadDeferred: wemQ.Deferred<any>;
 
@@ -24,15 +23,15 @@ export class VersionsWidgetItemView extends WidgetItemView {
         this.removeChildren();
 
         return super.layout().then(() => {
-            this.allContentVersionsView = new AllContentVersionsView();
-            this.allContentVersionsView.onLoaded(() => {
+            this.versionsView = new VersionsView();
+            this.versionsView.onLoaded(() => {
                 if (this.gridLoadDeferred) {
                     this.gridLoadDeferred.resolve(null);
                     this.gridLoadDeferred = null;
                 }
             });
 
-            this.appendChild(this.allContentVersionsView);
+            this.appendChild(this.versionsView);
         });
     }
 
@@ -41,8 +40,8 @@ export class VersionsWidgetItemView extends WidgetItemView {
             console.debug('VersionsWidgetItemView.setItem: ', item);
         }
 
-        if (this.allContentVersionsView) {
-            this.allContentVersionsView.setContentData(item);
+        if (this.versionsView) {
+            this.versionsView.setContentData(item);
             return this.reloadActivePanel();
         }
         return wemQ<any>(null);
@@ -54,8 +53,8 @@ export class VersionsWidgetItemView extends WidgetItemView {
         }
 
         this.gridLoadDeferred = wemQ.defer<any>();
-        if (this.allContentVersionsView) {
-            this.allContentVersionsView.reload();
+        if (this.versionsView) {
+            this.versionsView.reload();
         } else {
             this.gridLoadDeferred.resolve(null);
         }

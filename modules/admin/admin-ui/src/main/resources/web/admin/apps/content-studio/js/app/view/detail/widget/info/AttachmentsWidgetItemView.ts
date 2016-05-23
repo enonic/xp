@@ -1,11 +1,11 @@
-import "../../../api.ts";
+import "../../../../../api.ts";
 
 import ContentSummary = api.content.ContentSummary;
 import Attachments = api.content.attachment.Attachments;
 import Attachment = api.content.attachment.Attachment;
 import ContentId = api.content.ContentId;
 import AttachmentName = api.content.attachment.AttachmentName;
-import {WidgetItemView} from "./WidgetItemView";
+import {WidgetItemView} from "../../WidgetItemView";
 
 export class AttachmentsWidgetItemView extends WidgetItemView {
 
