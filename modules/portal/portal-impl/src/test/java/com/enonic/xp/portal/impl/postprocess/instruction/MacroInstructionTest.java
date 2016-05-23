@@ -16,6 +16,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
+import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
@@ -37,18 +38,24 @@ public class MacroInstructionTest
 
     private PortalRequest portalRequest;
 
+    private PortalUrlService portalUrlService;
+
     @Before
     public void setUp()
     {
         macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
         macroProcessorScriptFactory = Mockito.mock( MacroProcessorScriptFactory.class );
+        portalUrlService = Mockito.mock( PortalUrlService.class );
+
+        Mockito.when( portalUrlService.assetUrl( Mockito.any() ) ).thenReturn( null );
 
         macroInstruction = new MacroInstruction();
         macroInstruction.setMacroDescriptorService( macroDescriptorService );
         macroInstruction.setMacroScriptFactory( macroProcessorScriptFactory );
+        macroInstruction.setPortalUrlService( portalUrlService );
 
         portalRequest = new PortalRequest();
-        Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
+        final Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
         portalRequest.setSite( site );
         portalRequest.setContent( site );
     }

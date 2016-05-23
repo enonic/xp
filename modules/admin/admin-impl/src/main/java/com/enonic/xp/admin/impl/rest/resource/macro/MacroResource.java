@@ -43,6 +43,7 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
+import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.security.RoleKeys;
@@ -178,6 +179,7 @@ public final class MacroResource
             }
         }
         context.request( portalRequest );
+        context.systemAssetsBaseUri( this.getSystemAssetsBaseUri( portalRequest ) );
         return context.build();
     }
 
@@ -194,6 +196,16 @@ public final class MacroResource
             }
         }
         return context.build();
+    }
+
+    private String getSystemAssetsBaseUri( final PortalRequest portalRequest )
+    {
+        final AssetUrlParams params = new AssetUrlParams().
+            portalRequest( portalRequest ).
+            application( "com.enonic.xp.app.system" ).
+            path( "" );
+
+        return this.portalUrlService.assetUrl( params );
     }
 
     private void applyMaxAge( int maxAge, final Response.ResponseBuilder responseBuilder )

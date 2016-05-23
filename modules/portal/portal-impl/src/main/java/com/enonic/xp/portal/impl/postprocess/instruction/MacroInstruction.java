@@ -16,6 +16,8 @@ import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
+import com.enonic.xp.portal.url.AssetUrlParams;
+import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.site.Site;
 
 @Component(immediate = true)
@@ -30,6 +32,8 @@ public final class MacroInstruction
     private MacroProcessorScriptFactory macroScriptFactory;
 
     private MacroDescriptorService macroDescriptorService;
+
+    private PortalUrlService portalUrlService;
 
     @Override
     public PortalResponse evaluate( final PortalRequest portalRequest, final String instruction )
@@ -118,7 +122,18 @@ public final class MacroInstruction
         }
         context.body( macroInstruction.attribute( MACRO_BODY ) );
         context.request( request );
+        context.systemAssetsBaseUri( this.getSystemAssetsBaseUri( request ) );
         return context.build();
+    }
+
+    private String getSystemAssetsBaseUri( final PortalRequest portalRequest )
+    {
+        final AssetUrlParams params = new AssetUrlParams().
+            portalRequest( portalRequest ).
+            application( "com.enonic.xp.app.system" ).
+            path( "" );
+
+        return this.portalUrlService.assetUrl( params );
     }
 
     @Reference
@@ -131,5 +146,11 @@ public final class MacroInstruction
     public void setMacroDescriptorService( final MacroDescriptorService macroDescriptorService )
     {
         this.macroDescriptorService = macroDescriptorService;
+    }
+
+    @Reference
+    public void setPortalUrlService( final PortalUrlService portalUrlService )
+    {
+        this.portalUrlService = portalUrlService;
     }
 }
