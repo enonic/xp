@@ -1,14 +1,67 @@
 .modal-dialog-margin-mixin(@label-width: @form-label-width) {
-  .form-view .input-view {
-    label {
-      float: left;
-      max-width: @label-width - 10px;
+  .form-view {
+    .input-view {
+      label {
+        float: left;
+        max-width: @label-width - 10px;
+      }
+
+      label + .form-input,
+      label + .input-wrapper {
+        margin-left: @label-width;
+      }
     }
 
-    label + .form-input,
-    label + .input-wrapper {
-      margin-left: @label-width;
+    &.display-validation-errors .input-view.invalid {
+      label + .input-wrapper {
+        margin-left: @label-width - 12px;
+      }
     }
+  }
+
+}
+
+.hasSelectedItemPreview() {
+  .selected-item-preview {
+    label {
+      display: none;
+    }
+    .input-wrapper {
+      margin-left: 0 !important;
+    }
+  }
+}
+
+.hideCancelTopButton() {
+  .modal-dialog-content-wrapper .cancel-button-top {
+    display: none;
+  }
+}
+
+.showsSelectedOption(@displayIcon:false) {
+
+  .selected-options .selected-option {
+    margin: 0;
+    width: 100%;
+    border: none;
+    overflow-y: hidden;
+
+    .wrapper {
+      display: none;
+    }
+
+    .wrapper when (@displayIcon = true) {
+      .flexbox()
+    }
+  }
+
+  .input-wrapper {
+    .flexbox();
+    overflow-y: hidden;
+  }
+
+  .names-and-icon-view .names-view {
+    margin-left: 0;
   }
 }
 
@@ -25,10 +78,6 @@
 
   &._540-720 {
     .modal-dialog-margin-mixin();
-
-    &.link-modal-dialog {
-      .modal-dialog-margin-mixin(@form-label-width + 20px);
-    }
   }
 
   .image-preview {
@@ -77,9 +126,6 @@
         padding-top: 10px;
       }
 
-      .input-view {
-        margin-right: 2px;
-      }
     }
 
     .checkbox.form-input {
@@ -93,7 +139,7 @@
     div.input-view.invalid + div.validation-viewer {
       background-color: @input-light-red;
       padding-bottom: 10px;
-      padding-left: @form-label-width + 10;
+      padding-left: @form-label-width;
     }
 
     .form-view {
@@ -187,11 +233,6 @@
       .names-and-icon-view .names-view {
         margin-left: 0;
       }
-
-      &.invalid .uploader-el {
-        margin-top: 10px;
-        margin-right: 10px;
-      }
     }
   }
 
@@ -282,7 +323,7 @@
         }
       }
 
-      .selected-option:not([style*="display: none"]) + .dropdown-handle {
+      .selected-option:not([style*="display: none"]) + .@{_COMMON_PREFIX}dropdown-handle {
           top: 4px;
       }
     }
@@ -382,6 +423,9 @@
       }
     }
 
+    .input-view.invalid .preview-panel-scroll-navigation-wrapper {
+      display: none;
+    }
   }
 
 }

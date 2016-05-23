@@ -85,23 +85,126 @@ public class ContentServiceImplTest_push
         assertEquals( 4, result.getPushedContents().getSize() );
     }
 
+    private Content content1, content2, child1, child2;
+
+
+    @Test
+    public void push_exclude_empty()
+        throws Exception
+    {
+
+        final PushContentParams.Builder builder = getPushParamsWithDependenciesBuilder();
+
+        final PushContentParams pushParams = builder.
+            contentIds( ContentIds.from( content1.getId() ) ).
+            excludedContentIds( ContentIds.from( content1.getId() ) ).
+            build();
+
+        refresh();
+
+        final PushContentsResult result = this.contentService.push( pushParams );
+
+        assertEquals( 0, result.getPushedContents().getSize() );
+    }
+
+    @Test
+    public void push_exclude_without_children()
+        throws Exception
+    {
+
+        final PushContentParams.Builder builder = getPushParamsWithDependenciesBuilder();
+
+        final PushContentParams pushParams = builder.
+            contentIds( ContentIds.from( content1.getId() ) ).
+            excludedContentIds( ContentIds.from( child1.getId() ) ).
+            includeChildren( false ).
+            build();
+
+        refresh();
+
+        final PushContentsResult result = this.contentService.push( pushParams );
+
+        assertEquals( 1, result.getPushedContents().getSize() );
+    }
+
+    @Test
+    public void push_exclude_with_children()
+        throws Exception
+    {
+
+        final PushContentParams.Builder builder = getPushParamsWithDependenciesBuilder();
+
+        final Content child3 = this.contentService.create( CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my child 3" ).
+            parent( child1.getPath() ).
+            type( ContentTypeName.folder() ).
+            build() );
+
+        refresh();
+
+        final PushContentParams pushParams = builder.
+            contentIds( ContentIds.from( content1.getId(), content2.getId() ) ).
+            excludedContentIds( ContentIds.from( child1.getId() ) ).
+            build();
+
+        final PushContentsResult result = this.contentService.push( pushParams );
+
+        assertEquals( 3, result.getPushedContents().getSize() );
+        assertFalse( result.getPushedContents().contains( child1 ) );
+        assertFalse( result.getPushedContents().contains( child3 ) );
+    }
+
+    @Test
+    public void push_exclude_without_dependencies()
+        throws Exception
+    {
+
+        final PushContentParams.Builder builder = getPushParamsWithDependenciesBuilder();
+
+        refresh();
+
+        final PushContentParams pushParams = builder.
+            contentIds( ContentIds.from( content1.getId(), content2.getId() ) ).
+            includeDependencies( false ).
+            build();
+
+        final PushContentsResult result = this.contentService.push( pushParams );
+
+        assertEquals( 2, result.getPushedContents().getSize() );
+        assertFalse( result.getPushedContents().contains( child1 ) );
+        assertFalse( result.getPushedContents().contains( child2 ) );
+    }
+
+
     private PushContentsResult doPushWithDependencies()
     {
-        final Content content1 = this.contentService.create( CreateContentParams.create().
+        final PushContentParams pushParams = getPushParamsWithDependenciesBuilder().
+            contentIds( ContentIds.from( child2.getId() ) ).
+            build();
+
+        refresh();
+        return this.contentService.push( pushParams );
+    }
+
+
+    private PushContentParams.Builder getPushParamsWithDependenciesBuilder()
+    {
+        this.content1 = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.folder() ).
             build() );
 
-        final Content content2 = this.contentService.create( CreateContentParams.create().
+        this.content2 = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "This is my content 2" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.folder() ).
             build() );
 
-        final Content child1 = this.contentService.create( CreateContentParams.create().
+        this.child1 = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "This is my child 1" ).
             parent( content1.getPath() ).
@@ -111,22 +214,14 @@ public class ContentServiceImplTest_push
         final PropertyTree data = new PropertyTree();
         data.addReference( "myRef", Reference.from( child1.getId().toString() ) );
 
-        final Content child2 = this.contentService.create( CreateContentParams.create().
+        this.child2 = this.contentService.create( CreateContentParams.create().
             contentData( data ).
             displayName( "This is my child 2" ).
             parent( content2.getPath() ).
             type( ContentTypeName.folder() ).
             build() );
 
-        final PushContentParams pushParams = PushContentParams.create().
-            contentIds( ContentIds.from( child2.getId() ) ).
-            target( CTX_OTHER.getBranch() ).
-            build();
-
-        refresh();
-
-        return this.contentService.push( pushParams );
+        return PushContentParams.create().
+            target( CTX_OTHER.getBranch() );
     }
-
-
 }

@@ -1,5 +1,8 @@
 {
+  "authConfig": null,
+  "description": "user store description",
   "displayName": "Enonic User Store",
+  "idProviderMode": null,
   "key": "enonic",
   "permissions": [
     {

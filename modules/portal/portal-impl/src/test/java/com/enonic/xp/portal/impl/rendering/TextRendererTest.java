@@ -1,8 +1,12 @@
 package com.enonic.xp.portal.impl.rendering;
 
+import java.util.function.Function;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.xp.macro.Macro;
+import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
@@ -29,7 +33,9 @@ public class TextRendererTest
     {
         portalRequest = new PortalRequest();
         portalResponse = PortalResponse.create().build();
-        service = new PortalUrlServiceImpl();
+        PortalUrlServiceImpl portalUrlService = new PortalUrlServiceImpl();
+        portalUrlService.setMacroService( new MockMacroService() );
+        service = portalUrlService;
         portalRequest.setMode( RenderMode.LIVE );
     }
 
@@ -111,5 +117,27 @@ public class TextRendererTest
 
         // verify
         assertEquals( "<div data-portal-component-type=\"text\"><section>" + text + "</section></div>", portalResponse.getAsString() );
+    }
+
+    private class MockMacroService
+        implements MacroService
+    {
+        @Override
+        public Macro parse( final String text )
+        {
+            return null;
+        }
+
+        @Override
+        public String evaluateMacros( final String text, final Function<Macro, String> macroProcessor )
+        {
+            return text;
+        }
+
+        @Override
+        public String postProcessInstructionSerialize( final Macro macro )
+        {
+            return null;
+        }
     }
 }

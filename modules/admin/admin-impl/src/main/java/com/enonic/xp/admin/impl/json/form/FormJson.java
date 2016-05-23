@@ -26,6 +26,7 @@ public class FormJson
         {
             items.add( FormItemJsonFactory.create( formItem ) );
         }
+        FormDefaultValuesJsonProcessor.setDefaultValues( form, this );
     }
 
     public List<FormItemJson> getFormItems()

@@ -4,23 +4,29 @@ import Action = api.ui.Action;
 import DialogButton = api.ui.dialog.DialogButton;
 import SpanEl = api.dom.SpanEl;
 import CompareStatus = api.content.CompareStatus;
+import MenuButton = api.ui.button.MenuButton;
 
 export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
 
-    private publishButton: DialogButton;
-    private contentStateSpan: SpanEl;
+    private publishButton: MenuButton;
     private publishAction: Action;
+    private publishTreeAction: Action;
+    private unpublishAction: Action;
+    private contentStateSpan: SpanEl;
     private contentCanBePublished: boolean = false;
     private userCanPublish: boolean = true;
+    private leafContent: boolean = true;
     private contentCompareStatus: CompareStatus;
 
-    constructor(action: Action) {
+    constructor(publish: Action, publishTree: Action, unpublish: Action) {
         super("toolbar-publish-controls");
 
-        this.publishAction = action;
+        this.publishAction = publish;
         this.publishAction.setIconClass("publish-action");
+        this.publishTreeAction = publishTree;
+        this.unpublishAction = unpublish;
 
-        this.publishButton = new DialogButton(action);
+        this.publishButton = new MenuButton(publish, [publishTree, unpublish]);
         this.publishButton.addClass("content-wizard-toolbar-publish-button");
 
         this.contentStateSpan = new SpanEl("content-status");
@@ -49,9 +55,22 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
         }
     }
 
+    public setLeafContent(leafContent: boolean, refresh: boolean = true) {
+        this.leafContent = leafContent;
+        if (refresh) {
+            this.refreshState();
+        }
+    }
+
     public refreshState() {
-        var canBeEnabled = this.contentCompareStatus !== CompareStatus.EQUAL && this.contentCanBePublished && this.userCanPublish;
-        this.publishAction.setEnabled(canBeEnabled);
+        let canBePublished = !this.isOnline() && this.contentCanBePublished && this.userCanPublish;
+        let canTreeBePublished = !this.leafContent && this.contentCanBePublished && this.userCanPublish;
+        let canBeUnpublished = this.contentCompareStatus != CompareStatus.NEW && this.contentCompareStatus != CompareStatus.UNKNOWN;
+        
+        this.publishAction.setEnabled(canBePublished);
+        this.publishTreeAction.setEnabled(canTreeBePublished);
+        this.unpublishAction.setEnabled(canBeUnpublished);
+
         this.contentStateSpan.setHtml(this.getContentStateValueForSpan(this.contentCompareStatus), false);
     }
 

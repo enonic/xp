@@ -17,7 +17,6 @@ module api.content.site.inputtype.siteconfigurator {
     import Application = api.application.Application;
     import ApplicationKey = api.application.ApplicationKey;
     import SiteConfig = api.content.site.SiteConfig
-    import GetApplicationRequest = api.application.GetApplicationRequest;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
     export class SiteConfigurator extends api.form.inputtype.support.BaseInputTypeManagingAdd<Application> {

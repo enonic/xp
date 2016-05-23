@@ -1,14 +1,14 @@
 import "../../../api.ts";
+import {ContentWizardPanel} from "../ContentWizardPanel";
+import {ContentPublishPromptEvent} from "../../browse/ContentPublishPromptEvent";
 
 import Content = api.content.Content;
 import ContentId = api.content.ContentId;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import {ContentWizardPanel} from "../ContentWizardPanel";
-import {ContentPublishPromptEvent} from "../../browse/ContentPublishPromptEvent";
 
 export class PublishAction extends api.ui.Action {
 
-    constructor(wizard: ContentWizardPanel) {
+    constructor(wizard: ContentWizardPanel, includeChildItems: boolean = false) {
         super("Publish");
 
         this.setEnabled(false);
@@ -22,14 +22,16 @@ export class PublishAction extends api.ui.Action {
                     this.setEnabled(false);
                     wizard.saveChanges().then((content) => {
                         if (content) {
-                            new ContentPublishPromptEvent([ContentSummaryAndCompareStatus.fromContentSummary(content)]).fire();
+                            let contentSummary = ContentSummaryAndCompareStatus.fromContentSummary(content);
+                            new ContentPublishPromptEvent([contentSummary], includeChildItems).fire();
                         }
                     }).catch((reason: any) => {
                         api.DefaultErrorHandler.handle(reason)
                     }).finally(() => this.setEnabled(true)).done();
                 } else {
-                    new ContentPublishPromptEvent([ContentSummaryAndCompareStatus.fromContentSummary(
-                        wizard.getPersistedItem())]).fire();
+                    let contentSummary = ContentSummaryAndCompareStatus.fromContentSummary(wizard.getPersistedItem());
+                    contentSummary.setCompareStatus(wizard.getContentCompareStatus());
+                    new ContentPublishPromptEvent([contentSummary], includeChildItems).fire();
                 }
             } else {
                 api.notify.showWarning('The content cannot be published yet. One or more form values are not valid.');

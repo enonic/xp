@@ -1,7 +1,7 @@
-module api.form.json{
+module api.form.json {
 
-    export class FormItemJson {
+    export interface FormItemJson {
 
-        name:string;
+        name: string;
     }
 }

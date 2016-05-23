@@ -53,7 +53,7 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
         this.loader.setQueryExpr(this.createParentSiteFragmentsOnlyQuery());
 
-        this.fragmentSelector = new FragmentDropdown("", {loader: this.loader});
+        this.fragmentSelector = new FragmentDropdown("", this.loader);
 
         this.fragmentForm = new FragmentSelectorForm(this.fragmentSelector, "Fragment");
 

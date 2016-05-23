@@ -1,11 +1,13 @@
 package com.enonic.xp.inputtype;
 
+import java.time.LocalDate;
 
 import org.junit.Test;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.form.Input;
 
 import static org.junit.Assert.*;
 
@@ -37,6 +39,38 @@ public class DateTypeTest
 
         assertNotNull( value );
         assertSame( ValueTypes.LOCAL_DATE, value.getType() );
+    }
+
+    @Test
+    public void testCreateDefaultValue()
+    {
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE, "2014-08-16" ).build();
+
+        final Value value = this.type.createDefaultValue( input );
+
+        assertNotNull( value );
+        assertSame( ValueTypes.LOCAL_DATE, value.getType() );
+        assertEquals( value.toString(), "2014-08-16" );
+    }
+
+    @Test
+    public void testRelativeDefaultValue()
+    {
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE, "+1year -5months -36d" ).build();
+
+        final Value value = this.type.createDefaultValue( input );
+
+        assertNotNull( value );
+        assertSame( ValueTypes.LOCAL_DATE, value.getType() );
+        assertEquals( value.getObject(), LocalDate.now().plusYears( 1 ).plusMonths( -5 ).plusDays( -36 ) );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateDefaultValue_invalid()
+    {
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE, "2014-18-16" ).build();
+
+        this.type.createDefaultValue( input );
     }
 
     @Test

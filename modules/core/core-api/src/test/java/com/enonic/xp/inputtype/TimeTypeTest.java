@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.form.Input;
 
 import static org.junit.Assert.*;
 
@@ -36,6 +37,27 @@ public class TimeTypeTest
 
         assertNotNull( value );
         assertSame( ValueTypes.LOCAL_TIME, value.getType() );
+    }
+
+    @Test
+    public void testCreateDefaultValue()
+    {
+        final Input input = getDefaultInputBuilder( InputTypeName.TIME, "08:08:08" ).build();
+
+        final Value value = this.type.createDefaultValue( input );
+
+        assertNotNull( value );
+        assertSame( ValueTypes.LOCAL_TIME, value.getType() );
+        assertEquals( value.toString(), "08:08:08" );
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateDefaultValue_invalid()
+    {
+        final Input input = getDefaultInputBuilder( InputTypeName.TIME, "25:08:08" ).build();
+
+        this.type.createDefaultValue( input );
     }
 
     @Test

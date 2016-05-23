@@ -13,7 +13,10 @@ include 'core:core-i18n'
 include 'core:core-media'
 include 'core:core-app'
 include 'core:core-service'
+include 'core:core-extractor'
 include 'core:core-blobstore'
+include 'core:core-auth'
+include 'core:core-macro'
 
 include 'server:server-shell'
 include 'server:server-status'
@@ -30,7 +33,6 @@ include 'web:web-dos'
 
 include 'jaxrs:jaxrs-api'
 include 'jaxrs:jaxrs-impl'
-include 'jaxrs:jaxrs-swagger'
 
 include 'portal:portal-api'
 include 'portal:portal-owasp'
@@ -68,6 +70,8 @@ include 'launcher:launcher-ui'
 include 'launcher:launcher-main'
 
 include 'blobstore:blobstore-file'
+
+include 'app:app-system'
 
 include 'distro'
 include 'docs'

@@ -8,7 +8,6 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import CompareStatus = api.content.CompareStatus;
 import Widget = api.content.Widget;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
-import ContentsPublishedEvent = api.content.event.ContentsPublishedEvent;
 import {WidgetView} from "./WidgetView";
 import {WidgetsSelectionRow} from "./WidgetsSelectionRow";
 import {VersionsWidgetItemView} from "./widget/version/VersionsWidgetItemView";
@@ -83,15 +82,18 @@ export class DetailsPanel extends api.ui.panel.Panel {
     }
 
     private managePublishEvent() {
-        ContentsPublishedEvent.on((event: ContentsPublishedEvent) => {
+
+        let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
+
+        serverEvents.onContentPublished((contents: ContentSummaryAndCompareStatus[]) => {
             if (this.getItem()) {
                 // check for item because it can be null after publishing pending for delete item
-                var itemId = this.getItem().getId();
-                var idPublished = event.getContentIds().some((id, index, array) => {
-                    return itemId === id.toString();
+                var itemId = this.getItem().getContentId();
+                var isPublished = contents.some((content, index, array) => {
+                    return itemId.equals(content.getContentId());
                 });
 
-                if (idPublished) {
+                if (isPublished) {
                     this.versionsWidgetItemView.reloadActivePanel();
                 }
             }

@@ -23,7 +23,7 @@ module api.ui.security {
     }
 
 
-    class PrincipalSelectedOptionView extends PrincipalViewer implements api.ui.selector.combobox.SelectedOptionView<Principal> {
+    export class PrincipalSelectedOptionView extends PrincipalViewer implements api.ui.selector.combobox.SelectedOptionView<Principal> {
 
         private option: Option<Principal>;
 
@@ -52,7 +52,7 @@ module api.ui.security {
 
     }
 
-    class PrincipalSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<Principal> {
+    export class PrincipalSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<Principal> {
 
         constructor() {
             super("principal-selected-options-view");

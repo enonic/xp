@@ -17,7 +17,7 @@ module api.content.form.inputtype.double {
         }
 
         newInitialValue(): Value {
-            return ValueTypes.DOUBLE.newNullValue();
+            return super.newInitialValue() || ValueTypes.DOUBLE.newNullValue();
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {

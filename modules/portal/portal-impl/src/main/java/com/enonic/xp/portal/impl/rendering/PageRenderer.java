@@ -89,7 +89,7 @@ public final class PageRenderer
         {
             html += "<body>";
         }
-        html += "<!--#" + COMPONENT_INSTRUCTION_PREFIX + FRAGMENT_COMPONENT + "-->";
+        html += "<!--#" + COMPONENT_INSTRUCTION_PREFIX + " " + FRAGMENT_COMPONENT + "-->";
         html += "</body></html>";
 
         return PortalResponse.create().

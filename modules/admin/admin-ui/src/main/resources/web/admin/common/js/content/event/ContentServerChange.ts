@@ -6,12 +6,12 @@ module api.content.event {
     import NodeServerChangeType = api.event.NodeServerChangeType;
     import NodeServerChangeItem = api.event.NodeServerChangeItem;
 
-    export class ContentServerChangeItem extends NodeServerChangeItem<ContentPath>{
+    export class ContentServerChangeItem extends NodeServerChangeItem<ContentPath> {
 
         contentId: api.content.ContentId;
 
-        constructor(contentPath: api.content.ContentPath, contentId: api.content.ContentId) {
-            super(contentPath);
+        constructor(contentPath: api.content.ContentPath, branch: string, contentId: api.content.ContentId) {
+            super(contentPath, branch);
             this.contentId = contentId;
         }
 
@@ -21,7 +21,7 @@ module api.content.event {
 
         static fromJson(node: NodeEventNodeJson): ContentServerChangeItem {
             return new ContentServerChangeItem(api.content.ContentPath.fromString(node.path.substr("/content".length)),
-                new api.content.ContentId(node.id));
+                node.branch, new api.content.ContentId(node.id));
         }
     }
 
@@ -32,7 +32,7 @@ module api.content.event {
         protected newContentPaths: ContentPath[];
 
         constructor(type: NodeServerChangeType, changeItems: ContentServerChangeItem[], newContentPaths?: ContentPath[]) {
-            super(type, changeItems ,newContentPaths);
+            super(type, changeItems, newContentPaths);
         }
 
         getChangeItems(): ContentServerChangeItem[] {
@@ -68,7 +68,7 @@ module api.content.event {
                 var newContentPaths = nodeEventJson.data.nodes.
                     filter((node) => node.newPath.indexOf("/content") === 0).
                     map((node: NodeEventNodeJson) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
-           
+
                 return new ContentServerChange(nodeEventType, changeItems, newContentPaths);
             } else {
                 return new ContentServerChange(nodeEventType, changeItems);

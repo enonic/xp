@@ -132,7 +132,7 @@ final class ControllerMappingsResolver
         }
 
         final ContentPath contentPath = ContentPath.from( contentSelector ).asAbsolute();
-        return getContentByPath( contentPath );
+        return resolveContentByPath( contentPath );
     }
 
     private String getContentSelector( final PortalRequest request )
@@ -150,6 +150,21 @@ final class ControllerMappingsResolver
         {
             return null;
         }
+    }
+
+    private Content resolveContentByPath( final ContentPath contentPath )
+    {
+        ContentPath path = contentPath;
+        Content content = null;
+        while ( content == null && path != null )
+        {
+            content = getContentByPath( path );
+            if ( content == null )
+            {
+                path = path.getParentPath();
+            }
+        }
+        return content;
     }
 
     private Content getContentByPath( final ContentPath contentPath )

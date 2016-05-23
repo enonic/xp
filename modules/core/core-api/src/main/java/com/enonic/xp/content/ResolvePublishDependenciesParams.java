@@ -9,6 +9,8 @@ public class ResolvePublishDependenciesParams
 {
     private final ContentIds contentIds;
 
+    private final ContentIds excludedContentIds;
+
     private final Branch target;
 
     private final boolean includeChildren;
@@ -18,6 +20,7 @@ public class ResolvePublishDependenciesParams
         contentIds = builder.contentIds;
         target = builder.target;
         includeChildren = builder.includeChildren;
+        excludedContentIds = builder.excludedContentIds;
     }
 
     public static Builder create()
@@ -28,6 +31,11 @@ public class ResolvePublishDependenciesParams
     public ContentIds getContentIds()
     {
         return contentIds;
+    }
+
+    public ContentIds getExcludedContentIds()
+    {
+        return excludedContentIds;
     }
 
     public Branch getTarget()
@@ -44,6 +52,8 @@ public class ResolvePublishDependenciesParams
     {
         private ContentIds contentIds;
 
+        private ContentIds excludedContentIds;
+
         private Branch target;
 
         private boolean includeChildren = true;
@@ -55,6 +65,12 @@ public class ResolvePublishDependenciesParams
         public Builder contentIds( ContentIds contentIds )
         {
             this.contentIds = contentIds;
+            return this;
+        }
+
+        public Builder excludedContentIds( ContentIds excludedContentIds )
+        {
+            this.excludedContentIds = excludedContentIds;
             return this;
         }
 

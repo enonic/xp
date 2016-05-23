@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.auth;
 
+import com.enonic.xp.security.UserStoreKey;
+
 public final class LoginRequest
 {
     protected boolean rememberMe;
@@ -8,9 +10,16 @@ public final class LoginRequest
 
     protected String password;
 
+    protected String userStore;
+
     public String getUser()
     {
         return user;
+    }
+
+    public UserStoreKey getUserStore()
+    {
+        return userStore == null ? null : UserStoreKey.from( userStore );
     }
 
     public String getPassword()

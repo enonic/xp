@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMappings;
 
@@ -46,7 +47,11 @@ final class VirtualHostConfigMap
         mapping.setHost( getString( prefix + "host" ) );
         mapping.setSource( getString( prefix + "source" ) );
         mapping.setTarget( getString( prefix + "target" ) );
-
+        final String userStoreKeyString = getString( prefix + "userstore" );
+        if ( userStoreKeyString != null )
+        {
+            mapping.setUserStoreKey( UserStoreKey.from( userStoreKeyString ) );
+        }
         return mapping;
     }
 
@@ -58,7 +63,7 @@ final class VirtualHostConfigMap
             return null;
         }
 
-        return value;
+        return value.trim();
     }
 
     private boolean getBoolean( final String name, final boolean defValue )

@@ -1,0 +1,3 @@
+{
+  "macro": "[uppercase param1=\"Param1\"]some text in body[/uppercase]"
+}

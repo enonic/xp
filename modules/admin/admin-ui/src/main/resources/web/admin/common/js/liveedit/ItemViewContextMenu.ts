@@ -1,6 +1,7 @@
 module api.liveedit {
 
     import MinimizeWizardPanelEvent = api.app.wizard.MinimizeWizardPanelEvent;
+    import Action = api.ui.Action;
 
     export enum ItemViewContextMenuOrientation {
         UP,
@@ -16,8 +17,8 @@ module api.liveedit {
 
         private orientationListeners: {(orientation: ItemViewContextMenuOrientation): void}[] = [];
 
-        constructor(menuTitle: ItemViewContextMenuTitle, actions: api.ui.Action[], showArrow: boolean = true) {
-            super('item-view-context-menu');
+        constructor(menuTitle: ItemViewContextMenuTitle, actions: Action[], showArrow: boolean = true, listenToWizard: boolean = true) {
+            super('menu item-view-context-menu');
 
             if (showArrow) {
                 this.arrow = new ItemViewContextMenuArrow();
@@ -85,7 +86,9 @@ module api.liveedit {
                 this.hide();
             };
 
-            MinimizeWizardPanelEvent.on(minimizeHandler);
+            if (listenToWizard) {
+                MinimizeWizardPanelEvent.on(minimizeHandler);
+            }
 
             this.onRemoved(() => MinimizeWizardPanelEvent.un(minimizeHandler));
 

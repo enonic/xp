@@ -14,15 +14,12 @@ module api.ui.selector.list {
         }
 
         setItems(items: I[]) {
-            if (this.items.length > 0) {
-                this.notifyItemsRemoved(this.items);
-            }
+            this.clearItems();
+
             this.items = items;
             if (items.length > 0) {
                 this.layoutList(items);
                 this.notifyItemsAdded(items);
-            } else {
-                this.clearItems();
             }
         }
 
@@ -42,34 +39,38 @@ module api.ui.selector.list {
 
         clearItems() {
             if (this.items.length > 0) {
-                this.notifyItemsRemoved(this.items);
+                let removedItems = this.items.slice();
+                // correct way to empty array
+                this.items.length = 0;
+                this.itemViews = {};
+                this.notifyItemsRemoved(removedItems);
+                this.layoutList(this.items);
             }
-            // correct way to empty array
-            this.items.length = 0;
-            this.layoutList(this.items);
         }
 
         addItem(...items: I[]) {
-            this.items = this.items.concat(items);
-            items.forEach((item) => {
-                this.addItemView(item);
-            });
-            if (items.length > 0) {
-                this.notifyItemsAdded(items);
-            }
+            this.doAddItem(false, items);
         }
 
         addItemReadOnly(...items: I[]) {
+            this.doAddItem(true, items);
+        }
+
+        private doAddItem(readOnly: boolean, items: I[]) {
             this.items = this.items.concat(items);
             items.forEach((item) => {
-                this.addItemView(item, true);
+                this.addItemView(item, readOnly);
             });
             if (items.length > 0) {
                 this.notifyItemsAdded(items);
             }
         }
 
-        removeItem(...items: I[]) {
+        removeItem(item: I) {
+            this.removeItems([item]);
+        }
+
+        removeItems(items: I[]) {
             var itemsRemoved: I[] = [];
             this.items = this.items.filter((item) => {
                 for (var i = 0; i < items.length; i++) {
@@ -90,11 +91,11 @@ module api.ui.selector.list {
             return this.items.length;
         }
 
-        createItemView(item: I, readOnly: boolean): api.dom.Element {
+        protected createItemView(item: I, readOnly: boolean): api.dom.Element {
             throw new Error("You must override createListItem to create views for list items");
         }
 
-        getItemId(item: I): string {
+        protected getItemId(item: I): string {
             throw new Error("You must override getItemId to find item views by items");
         }
 
@@ -121,19 +122,12 @@ module api.ui.selector.list {
             var itemView = this.itemViews[this.getItemId(item)];
             if (itemView) {
                 this.removeChild(itemView);
+                delete this.itemViews[this.getItemId(item)];
             }
         }
 
         private addItemView(item: I, readOnly: boolean = false) {
-            if(readOnly)
-            {
-                var itemView = this.createItemView(item, readOnly);
-            }
-            else
-            {
-                var itemView = this.createItemView(item, false);
-            }
-
+            var itemView = this.createItemView(item, readOnly);
             this.itemViews[this.getItemId(item)] = itemView;
             this.appendChild(itemView);
         }

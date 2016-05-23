@@ -1,4 +1,6 @@
 import "../../api.ts";
+import {LiveEditPageProxy} from "./page/LiveEditPageProxy";
+import {PageComponentsTreeGrid} from "./PageComponentsTreeGrid";
 
 import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
 import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
@@ -20,8 +22,6 @@ import Mask = api.ui.mask.Mask;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
-import {LiveEditPageProxy} from "./page/LiveEditPageProxy";
-import {PageComponentsTreeGrid} from "./PageComponentsTreeGrid";
 
 export class PageComponentsView extends api.dom.DivEl {
 
@@ -552,6 +552,7 @@ export class PageComponentsView extends api.dom.DivEl {
         return cellNumber == 1;
     }
 
+    //
     private showContextMenu(row: number, clickPosition: api.liveedit.Position) {
         var node = this.tree.getGrid().getDataView().getItem(row);
         if (node) {
@@ -569,7 +570,7 @@ export class PageComponentsView extends api.dom.DivEl {
         }
 
         if (!this.contextMenu) {
-            this.contextMenu = new api.liveedit.ItemViewContextMenu(null, contextMenuActions, false);
+            this.contextMenu = new api.liveedit.ItemViewContextMenu(null, contextMenuActions, false, false);
             this.contextMenu.onHidden(this.removeMenuOpenStyleFromMenuIcon.bind(this));
         } else {
             this.contextMenu.setActions(contextMenuActions);

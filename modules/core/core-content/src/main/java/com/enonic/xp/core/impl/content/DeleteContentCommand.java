@@ -76,7 +76,7 @@ final class DeleteContentCommand
             return;
         }
 
-        if ( isOnlineContentToBeDeleted( status ) )
+        if ( this.params.isDeleteOnline() )
         {
             final Context currentContext = ContextAccessor.current();
             deleteNodeInContext( nodeToDelete, currentContext );
@@ -119,11 +119,6 @@ final class DeleteContentCommand
             compare = this.nodeService.compare( nodeToDelete.id(), ContentConstants.BRANCH_DRAFT );
         }
         return compare.getCompareStatus();
-    }
-
-    private boolean isOnlineContentToBeDeleted( final CompareStatus status )
-    {
-        return this.params.isDeleteOnline() || ( this.params.isDeletePending() && status == CompareStatus.PENDING_DELETE );
     }
 
     private Node deleteNodeInContext( final Node nodeToDelete, final Context context )

@@ -155,17 +155,9 @@ module api.ui.time {
         private setupListeners(builder: DateTimePickerBuilder) {
 
             if (builder.closeOnOutsideClick) {
-                let focusoutTimeout = 0;
-
-                this.onFocusOut(() => {
-                    focusoutTimeout = setTimeout(() => {
-                        this.popup.hide();
-                    }, 50);
-                });
-
-                this.onFocusIn(() => {
-                    clearTimeout(focusoutTimeout);
-                });
+                api.util.AppHelper.focusInOut(this, () => {
+                    this.popup.hide();
+                }, 50, false);
 
                 // Prevent focus loss on mouse down
                 this.popup.onMouseDown((event: MouseEvent) => {

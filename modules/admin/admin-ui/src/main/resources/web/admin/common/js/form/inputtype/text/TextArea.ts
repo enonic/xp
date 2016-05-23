@@ -17,7 +17,7 @@ module api.form.inputtype.text {
         }
 
         newInitialValue(): Value {
-            return new Value("", ValueTypes.STRING);
+            return super.newInitialValue() || new Value("", ValueTypes.STRING);
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {

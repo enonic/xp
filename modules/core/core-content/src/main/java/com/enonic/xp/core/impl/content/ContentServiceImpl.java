@@ -60,6 +60,7 @@ import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.Context;
@@ -69,6 +70,7 @@ import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.MoveNodeException;
@@ -130,6 +132,7 @@ public class ContentServiceImpl
 
     private ContentProcessors contentProcessors;
 
+    private FormDefaultValuesProcessor formDefaultValuesProcessor;
 
     public ContentServiceImpl()
     {
@@ -175,6 +178,7 @@ public class ContentServiceImpl
             siteService( this.siteService ).
             mixinService( this.mixinService ).
             contentProcessors( this.contentProcessors ).
+            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             params( createContentParams ).
             build().
             execute();
@@ -204,6 +208,7 @@ public class ContentServiceImpl
             siteService( this.siteService ).
             mixinService( this.mixinService ).
             contentProcessors( this.contentProcessors ).
+            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             params( params ).
             build().
             execute();
@@ -238,6 +243,7 @@ public class ContentServiceImpl
             siteService( this.siteService ).
             mixinService( this.mixinService ).
             contentProcessors( this.contentProcessors ).
+            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             build().
             execute();
     }
@@ -296,6 +302,7 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( params.getContentIds() ).
+            excludedContentIds( params.getExcludedContentIds() ).
             target( params.getTarget() ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( params.isIncludeDependencies() ).
@@ -312,6 +319,7 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( params.getContentIds() ).
+            excludedContentIds( params.getExcludedContentIds() ).
             target( params.getTarget() ).
             includeChildren( params.isIncludeChildren() ).
             build().
@@ -678,6 +686,19 @@ public class ContentServiceImpl
     }
 
     @Override
+    public Contents unpublishContent( final UnpublishContentParams params )
+    {
+        return UnpublishContentCommand.create().
+            params( params ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
+    }
+
+    @Override
     @Deprecated
     public InputStream getBinaryInputStream( final ContentId contentId, final BinaryReference binaryReference )
     {
@@ -746,5 +767,11 @@ public class ContentServiceImpl
     public void contentProcessors( final ContentProcessor contentProcessor )
     {
         this.contentProcessors.add( contentProcessor );
+    }
+
+    @Reference
+    public void setFormDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
+    {
+        this.formDefaultValuesProcessor = formDefaultValuesProcessor;
     }
 }

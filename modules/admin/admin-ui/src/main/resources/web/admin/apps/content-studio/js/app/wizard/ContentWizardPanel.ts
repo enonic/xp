@@ -1,4 +1,18 @@
 import "../../api.ts";
+import {DefaultModels} from "./page/DefaultModels";
+import {ContentWizardStepForm} from "./ContentWizardStepForm";
+import {SettingsWizardStepForm} from "./SettingsWizardStepForm";
+import {SecurityWizardStepForm} from "./SecurityWizardStepForm";
+import {DisplayNameScriptExecutor} from "./DisplayNameScriptExecutor";
+import {LiveFormPanel, LiveFormPanelConfig} from "./page/LiveFormPanel";
+import {ContentWizardToolbarPublishControls} from "./ContentWizardToolbarPublishControls";
+import {ContentWizardActions} from "./action/ContentWizardActions";
+import {ContentWizardPanelParams} from "./ContentWizardPanelParams";
+import {ContentWizardToolbar} from "./ContentWizardToolbar";
+import {ContentPermissionsAppliedEvent} from "./ContentPermissionsAppliedEvent";
+import {Router} from "../Router";
+import {PersistNewContentRoutine} from "./PersistNewContentRoutine";
+import {UpdatePersistedContentRoutine} from "./UpdatePersistedContentRoutine";
 
 import PropertyTree = api.data.PropertyTree;
 import FormView = api.form.FormView;
@@ -50,6 +64,8 @@ import ImageErrorEvent = api.content.ImageErrorEvent;
 
 import Application = api.application.Application;
 import ApplicationKey = api.application.ApplicationKey;
+import ApplicationEvent = api.application.ApplicationEvent;
+import ApplicationEventType = api.application.ApplicationEventType;
 import Mixin = api.schema.mixin.Mixin;
 import MixinName = api.schema.mixin.MixinName;
 import MixinNames = api.schema.mixin.MixinNames;
@@ -57,26 +73,11 @@ import GetMixinByQualifiedNameRequest = api.schema.mixin.GetMixinByQualifiedName
 
 import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
 import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
-import ContentPublishedEvent = api.content.event.ContentPublishedEvent;
-import ContentsPublishedEvent = api.content.event.ContentsPublishedEvent;
 import ContentNamedEvent = api.content.event.ContentNamedEvent;
 import ActiveContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
+import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 
 import DialogButton = api.ui.dialog.DialogButton;
-import {DefaultModels} from "./page/DefaultModels";
-import {ContentWizardStepForm} from "./ContentWizardStepForm";
-import {SettingsWizardStepForm} from "./SettingsWizardStepForm";
-import {SecurityWizardStepForm} from "./SecurityWizardStepForm";
-import {DisplayNameScriptExecutor} from "./DisplayNameScriptExecutor";
-import {LiveFormPanel, LiveFormPanelConfig} from "./page/LiveFormPanel";
-import {ContentWizardToolbarPublishControls} from "./ContentWizardToolbarPublishControls";
-import {ContentWizardActions} from "./action/ContentWizardActions";
-import {ContentWizardPanelParams} from "./ContentWizardPanelParams";
-import {ContentWizardToolbar} from "./ContentWizardToolbar";
-import {ContentPermissionsAppliedEvent} from "./ContentPermissionsAppliedEvent";
-import {Router} from "../Router";
-import {PersistNewContentRoutine} from "./PersistNewContentRoutine";
-import {UpdatePersistedContentRoutine} from "./UpdatePersistedContentRoutine";
 
 export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
@@ -124,6 +125,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private publishAction: api.ui.Action;
 
+    private publishTreeAction: api.ui.Action;
+
+    private unpublishAction: api.ui.Action;
+
     private contextWindowToggler: TogglerButton;
 
     private componentsViewToggler: TogglerButton;
@@ -151,6 +156,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private applicationAddedListener: (event: api.content.site.ApplicationAddedEvent) => void;
 
     private applicationRemovedListener: (event: api.content.site.ApplicationRemovedEvent) => void;
+
+    private applicationUnavailableListener: (event: ApplicationEvent) => void;
 
     /**
      * Whether constructor is being currently executed or not.
@@ -182,6 +189,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.wizardActions = new ContentWizardActions(this);
         this.previewAction = this.wizardActions.getPreviewAction();
         this.publishAction = this.wizardActions.getPublishAction();
+        this.publishTreeAction = this.wizardActions.getPublishTreeAction();
+        this.unpublishAction = this.wizardActions.getUnpublishAction();
 
         var mainToolbar = new ContentWizardToolbar({
             saveAction: this.wizardActions.getSaveAction(),
@@ -189,6 +198,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             duplicateAction: this.wizardActions.getDuplicateAction(),
             previewAction: this.wizardActions.getPreviewAction(),
             publishAction: this.wizardActions.getPublishAction(),
+            publishTreeAction: this.wizardActions.getPublishTreeAction(),
+            unpublishAction: this.wizardActions.getUnpublishAction(),
             showLiveEditAction: this.wizardActions.getShowLiveEditAction(),
             showFormAction: this.wizardActions.getShowFormAction(),
             showSplitEditAction: this.wizardActions.getShowSplitEditAction()
@@ -234,6 +245,39 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.applicationRemovedListener = (event: api.content.site.ApplicationRemovedEvent) => {
             this.removeMetadataStepForms();
+        };
+
+        this.applicationUnavailableListener = (event: ApplicationEvent) => {
+            var isAppFromSiteModelUnavailable: boolean = this.siteModel.getApplicationKeys().some((applicationKey: ApplicationKey) => {
+                return event.getApplicationKey().equals(applicationKey);
+            });
+
+            if (isAppFromSiteModelUnavailable) {
+                let message = "Required application " + event.getApplicationKey().toString() + " not available.";
+
+                if (this.isVisible()) {
+                    api.notify.showWarning(message);
+                }
+                else {
+                    let shownHandler = () => {
+                        new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse().then(
+                            (application: Application) => {
+                                if (application.getState() == "stopped") {
+                                    api.notify.showWarning(message);
+                                }
+                            }).catch((reason: any) => { //app was uninstalled
+                                api.notify.showWarning(message);
+                            });
+
+                        this.unShown(shownHandler);
+                    }
+
+                    this.onShown(shownHandler);
+
+                }
+
+            }
+
         };
 
         var isSiteOrWithinSite = this.site || this.createSite;
@@ -554,6 +598,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private listenToContentEvents() {
 
+        let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
+
         var deleteHandler = (event: api.content.event.ContentDeletedEvent) => {
             if (this.getPersistedItem()) {
                 event.getDeletedItems().filter((deletedItem) => {
@@ -571,17 +617,16 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
         };
 
-        var publishHandler = (event: api.content.event.ContentPublishedEvent) => {
-            if (this.isCurrentContentId(event.getContentId())) {
+        var publishOrUnpublishHandler = (contents: ContentSummaryAndCompareStatus[]) => {
+            contents.forEach(content => {
+                if (this.isCurrentContentId(content.getContentId())) {
 
-                this.contentWizardToolbarPublishControls.setCompareStatus(event.getCompareStatus());
-                this.contentCompareStatus = event.getCompareStatus();
+                    this.contentCompareStatus = content.getCompareStatus();
+                    this.contentWizardToolbarPublishControls.setCompareStatus(this.contentCompareStatus);
 
-                if (this.contentCompareStatus === CompareStatus.NEW) {
-                    this.contentWizardHeader.disableNameGeneration(true);
-                    ContentPublishedEvent.un(publishHandler);
+                    this.contentWizardHeader.disableNameGeneration(this.contentCompareStatus === CompareStatus.NEW);
                 }
-            }
+            });
         };
 
         var updateHandler = (contentId: ContentId, unchangedOnly: boolean = true) => {
@@ -611,19 +656,48 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
         };
 
+        var sortedHandler = (data: ContentSummaryAndCompareStatus[]) => {
+            var indexOfCurrentContent;
+            var wasSorted = data.some((sorted: ContentSummaryAndCompareStatus, index: number) => {
+                indexOfCurrentContent = index;
+                return this.isCurrentContentId(sorted.getContentId());
+            });
+            if (wasSorted) {
+                this.contentWizardToolbarPublishControls.setCompareStatus(data[indexOfCurrentContent].getCompareStatus());
+            }
+        }
+
         var activeContentVersionSetHandler = (event: ActiveContentVersionSetEvent) => updateHandler(event.getContentId(), false);
         var contentUpdatedHanlder = (event: ContentUpdatedEvent) => updateHandler(event.getContentId());
 
+        var movedHandler = (data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) => {
+            var wasMoved = oldPaths.some((oldPath: ContentPath) => {
+                return this.persistedItemPathIsDescendantOrEqual(oldPath);
+            });
+
+            if (wasMoved) {
+                updateHandler(this.getPersistedItem().getContentId());
+            }
+        }
+
         ActiveContentVersionSetEvent.on(activeContentVersionSetHandler);
         ContentUpdatedEvent.on(contentUpdatedHanlder);
-        ContentPublishedEvent.on(publishHandler);
         ContentDeletedEvent.on(deleteHandler);
+        ContentServerEventsHandler.getInstance().onContentMoved(movedHandler);
+        ContentServerEventsHandler.getInstance().onContentSorted(sortedHandler);
+
+        serverEvents.onContentPublished(publishOrUnpublishHandler);
+        serverEvents.onContentUnpublished(publishOrUnpublishHandler);
 
         this.onClosed(() => {
             ActiveContentVersionSetEvent.un(activeContentVersionSetHandler);
             ContentUpdatedEvent.un(contentUpdatedHanlder);
-            ContentPublishedEvent.un(publishHandler);
             ContentDeletedEvent.un(deleteHandler);
+            ContentServerEventsHandler.getInstance().unContentMoved(movedHandler);
+            ContentServerEventsHandler.getInstance().unContentSorted(sortedHandler);
+
+            serverEvents.unContentPublished(publishOrUnpublishHandler);
+            serverEvents.unContentUnpublished(publishOrUnpublishHandler);
         });
     }
 
@@ -698,6 +772,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.contentWizardHeader.disableNameGeneration(this.contentCompareStatus !== CompareStatus.NEW);
 
                 this.contentWizardToolbarPublishControls.setCompareStatus(this.contentCompareStatus);
+                this.contentWizardToolbarPublishControls.setLeafContent(!contentSummaryAndCompareStatus.hasChildren());
                 this.managePublishButtonStateForMobile(this.contentCompareStatus);
             });
 
@@ -747,7 +822,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     ConfirmationDialog.get().setQuestion(
                         "Received Content from server differs from what you have. Would you like to load changes from server?").setYesCallback(
                         () => this.doLayoutPersistedItem(persistedContent.clone())).setNoCallback(() => {/* Do nothing... */
-                    }).show();
+                        }).show();
                 }
             }
 
@@ -757,8 +832,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 .then(()=> {
                     deferred.resolve(null);
                 }).catch((reason: any) => {
-                deferred.reject(reason);
-            }).done();
+                    deferred.reject(reason);
+                }).done();
         }
         this.contentWizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
         this.contentWizardToolbarPublishControls.enableActionsForExisting(persistedContent);
@@ -874,13 +949,15 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private initSiteModelListeners() {
-        this.siteModel.onApplicationAdded(this.applicationAddedListener.bind(this));
-        this.siteModel.onApplicationRemoved(this.applicationRemovedListener.bind(this));
+        this.siteModel.onApplicationAdded(this.applicationAddedListener);
+        this.siteModel.onApplicationRemoved(this.applicationRemovedListener);
+        this.siteModel.onApplicationUnavailable(this.applicationUnavailableListener);
     }
 
     private unbindSiteModelListeners() {
-        this.siteModel.unApplicationAdded(this.applicationAddedListener.bind(this));
-        this.siteModel.unApplicationRemoved(this.applicationRemovedListener.bind(this));
+        this.siteModel.unApplicationAdded(this.applicationAddedListener);
+        this.siteModel.unApplicationRemoved(this.applicationRemovedListener);
+        this.siteModel.unApplicationUnavailable(this.applicationUnavailableListener);
     }
 
     private removeMetadataStepForms() {
@@ -1016,7 +1093,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         var persistedContent = this.getPersistedItem();
         var viewedContent = this.assembleViewedContent(persistedContent.newBuilder()).build();
 
-        var updatePersistedContentRoutine = new UpdatePersistedContentRoutine(this, persistedContent, viewedContent).setUpdateContentRequestProducer(
+        var updatePersistedContentRoutine = new UpdatePersistedContentRoutine(this, persistedContent,
+            viewedContent).setUpdateContentRequestProducer(
             this.produceUpdateContentRequest);
 
         return updatePersistedContentRoutine.execute().then((content: Content) => {
@@ -1327,6 +1405,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.updateThumbnailWithContent(content);
 
         this.contentWizardHeader.initNames(content.getDisplayName(), content.getName().toString(), true, false);
+
+        // case when content was moved
+        this.contentWizardHeader.setPath(
+            content.getPath().getParentPath().isRoot() ? "/" : content.getPath().getParentPath().toString() + "/");
     }
 
     private initPublishButtonForMobile() {
@@ -1353,30 +1435,22 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private subscribePublishButtonForMobileToPublishEvents() {
 
-        var publishHandler = (event: ContentsPublishedEvent) => {
-            if (this.getPersistedItem() && event.getContentIds()) {
-                var isPublished = (event.getContentIds().some((obj: api.content.ContentId) => {
-                    return obj.toString() == this.getPersistedItem().getId();
-                }));
-                if (isPublished) {
+        var serverPublishOrUnpublishHandler = (contents: ContentSummaryAndCompareStatus[]) => {
+            contents.forEach(content => {
+                if (this.isCurrentContentId(content.getContentId())) {
                     this.managePublishButtonStateForMobile(CompareStatus.EQUAL);
                 }
-            }
+            });
         };
 
-        var publishHandlerOfServerEvent = (event: ContentPublishedEvent) => {
-            if (this.getPersistedItem() && event.getContentId() &&
-                (this.getPersistedItem().getId() === event.getContentId().toString())) {
-                this.managePublishButtonStateForMobile(CompareStatus.EQUAL);
-            }
-        };
 
-        ContentsPublishedEvent.on(publishHandler);
-        ContentPublishedEvent.on(publishHandlerOfServerEvent);
+        let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
+        serverEvents.onContentPublished(serverPublishOrUnpublishHandler);
+        serverEvents.onContentUnpublished(serverPublishOrUnpublishHandler);
 
         this.onClosed(() => {
-            ContentPublishedEvent.un(publishHandlerOfServerEvent);
-            ContentsPublishedEvent.un(publishHandler);
+            serverEvents.unContentPublished(serverPublishOrUnpublishHandler);
+            serverEvents.unContentUnpublished(serverPublishOrUnpublishHandler);
         });
     }
 
