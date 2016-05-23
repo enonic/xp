@@ -51,48 +51,48 @@ module api.form {
             });
         }
 
-        removeByPath(path: ValidationRecordingPath) {
+        /**
+         * @param path - path to remove
+         * @param strict - whether to match only exact matching paths
+         * @param includeChildren - param saying if nested children should be removed as well
+         */
+        removeByPath(path: ValidationRecordingPath, strict?: boolean, includeChildren?: boolean) {
 
-            this.removeUnreachedMinimumOccurrencesByPath(path);
-            this.removeBreachedMaximumOccurrencesByPath(path);
+            this.removeUnreachedMinimumOccurrencesByPath(path, strict, includeChildren);
+            this.removeBreachedMaximumOccurrencesByPath(path, strict, includeChildren);
         }
 
-        removeUnreachedMinimumOccurrencesByPath(path: ValidationRecordingPath) {
+        removeUnreachedMinimumOccurrencesByPath(path: ValidationRecordingPath, strict?: boolean, includeChildren?: boolean) {
 
             for (var i = this.breaksMinimumOccurrencesArray.length - 1; i >= 0; i--) {
-                if (this.breaksMinimumOccurrencesArray[i].toString().indexOf(path.toString()) == 0) {
+                let currentPath = this.breaksMinimumOccurrencesArray[i];
+                let remove = currentPath.equals(path) ||
+                             includeChildren && (strict && currentPath.contains(path) ||
+                                                 !strict && currentPath.toString().indexOf(path.toString()) == 0);
+                if (remove) {
                     this.breaksMinimumOccurrencesArray.splice(i, 1);
+                    if (!includeChildren) {
+                        break;
+                    }
                 }
             }
         }
 
-        removeBreachedMaximumOccurrencesByPath(path: ValidationRecordingPath) {
+        removeBreachedMaximumOccurrencesByPath(path: ValidationRecordingPath, strict?: boolean, includeChildren?: boolean) {
 
             for (var i = this.breaksMaximumOccurrencesArray.length - 1; i >= 0; i--) {
-                if (this.breaksMaximumOccurrencesArray[i].toString().indexOf(path.toString()) == 0) {
+                let currentPath = this.breaksMaximumOccurrencesArray[0];
+                let remove = currentPath.equals(path) ||
+                             includeChildren && (strict && currentPath.contains(path) ||
+                                                 !strict && currentPath.toString().indexOf(path.toString()) == 0);
+                if (remove) {
                     this.breaksMaximumOccurrencesArray.splice(i, 1);
+                    if (!includeChildren) {
+                        break;
+                    }
                 }
             }
         }
-
-        removeUnreachedMinimumOccurrencesByEqualPath(path: ValidationRecordingPath) {
-
-            for (var i = this.breaksMinimumOccurrencesArray.length - 1; i >= 0; i--) {
-                if (this.breaksMinimumOccurrencesArray[i].toString() == path.toString()) {
-                    this.breaksMinimumOccurrencesArray.splice(i, 1);
-                }
-            }
-        }
-
-        removeBreachedMaximumOccurrencesByEqualPath(path: ValidationRecordingPath) {
-
-            for (var i = this.breaksMaximumOccurrencesArray.length - 1; i >= 0; i--) {
-                if (this.breaksMaximumOccurrencesArray[i].toString() == path.toString()) {
-                    this.breaksMaximumOccurrencesArray.splice(i, 1);
-                }
-            }
-        }
-
 
         equals(other: ValidationRecording): boolean {
 

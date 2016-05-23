@@ -2,7 +2,7 @@ module api.form {
 
     import PropertyPath = api.data.PropertyPath;
 
-    export class ValidationRecordingPath {
+    export class ValidationRecordingPath implements api.Equitable {
 
         private parentDataSet: PropertyPath;
 
@@ -59,6 +59,27 @@ module api.form {
             return this.refString;
         }
 
+        equals(o: api.Equitable): boolean {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ValidationRecordingPath)) {
+                return false;
+            }
+            var other = <ValidationRecordingPath>o;
+
+            return api.ObjectHelper.stringEquals(this.refString, other.refString);
+        }
+
+        contains(other: ValidationRecordingPath): boolean {
+            let fullPath = PropertyPath.fromString(this.refString),
+                otherPath = PropertyPath.fromString(other.refString);
+
+            if (fullPath.elementCount() <= otherPath.elementCount()) {
+                return false;
+            }
+
+            return otherPath.getElements().every((whatEl, whatIdx) => {
+                return fullPath.getElement(whatIdx).toString() == whatEl.toString();
+            })
+        }
 
     }
 }

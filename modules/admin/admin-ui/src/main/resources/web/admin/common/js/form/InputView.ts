@@ -225,7 +225,8 @@ module api.form {
             }
 
             if (!silent && (recording.validityChanged(this.previousValidityRecording) || this.userInputValidityChanged(hasValidInput) )) {
-                this.notifyFormValidityChanged(new RecordingValidityChangedEvent(recording, validationRecordingPath, !hasValidInput));
+                this.notifyFormValidityChanged(new RecordingValidityChangedEvent(recording,
+                    validationRecordingPath).setInputValueBroken(!hasValidInput));
             }
             this.renderValidationErrors(recording, inputRecording.getAdditionalValidationRecord());
 
