@@ -369,7 +369,7 @@ module api.app.wizard {
             return this.layoutPersistedItem(persistedItem, skipValidation);
         }
 
-        layoutPersistedItem(persistedItem: EQUITABLE, force?: boolean): wemQ.Promise<void> {
+        layoutPersistedItem(persistedItem: EQUITABLE, skipValidation?: boolean): wemQ.Promise<void> {
 
             var deferred = wemQ.defer<void>();
             deferred.resolve(null);

@@ -76,7 +76,7 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
     }
 
 
-    saveChanges(): wemQ.Promise<USER_ITEM_TYPE> {
+    saveChanges(skipValidation?: boolean): wemQ.Promise<USER_ITEM_TYPE> {
         if (!this.wizardHeader.getName()) {
             var deferred = wemQ.defer<USER_ITEM_TYPE>();
             api.notify.showError("Name can not be empty");
@@ -107,7 +107,7 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
     }
 
 
-    layoutPersistedItem(persistedItem: USER_ITEM_TYPE): wemQ.Promise<void> {
+    layoutPersistedItem(persistedItem: USER_ITEM_TYPE, skipValidation?: boolean): wemQ.Promise<void> {
 
         throw new Error("Must be implemented by inheritors");
     }
