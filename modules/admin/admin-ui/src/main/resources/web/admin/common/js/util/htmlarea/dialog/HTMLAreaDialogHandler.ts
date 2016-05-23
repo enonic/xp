@@ -17,6 +17,9 @@ module api.util.htmlarea.dialog {
             case HtmlAreaDialogType.LINK:
                 modalDialog = this.openLinkDialog(event.getConfig());
                 break;
+            case HtmlAreaDialogType.MACRO:
+                modalDialog = this.openMacroDialog(event.getConfig(), event.getContentPath());
+                break;
             }
 
             if (modalDialog) {
@@ -43,6 +46,10 @@ module api.util.htmlarea.dialog {
 
         private static openAnchorDialog(editor: HtmlAreaEditor): ModalDialog {
             return this.openDialog(new AnchorModalDialog(editor));
+        }
+
+        private static openMacroDialog(config: HtmlAreaMacro, contentPath: api.content.ContentPath): ModalDialog {
+            return this.openDialog(new MacroModalDialog(config, contentPath));
         }
 
         private static openDialog(dialog: ModalDialog): ModalDialog {

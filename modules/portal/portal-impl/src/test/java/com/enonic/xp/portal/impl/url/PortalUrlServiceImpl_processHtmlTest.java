@@ -1,10 +1,17 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.io.IOException;
+import java.net.URL;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.CharSource;
+import com.google.common.io.Resources;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
@@ -306,5 +313,31 @@ public class PortalUrlServiceImpl_processHtmlTest
                           "block-300-126" +
                           "/" + media.getName() +
                           "\">Image</a>", processedHtml );
+    }
+
+    @Test
+    public void process_html_with_macros()
+        throws IOException
+    {
+        assertProcessHtml( "html-with-macros-input.txt", "html-with-macros-output.txt" );
+        assertProcessHtml( "html-with-unclosed-macro-input.txt", "html-with-unclosed-macro-output.txt" );
+    }
+
+    private void assertProcessHtml( String inputName, String expectedOutputName )
+        throws IOException
+    {
+        //Reads the input and output files
+        final URL inputUrl = this.getClass().getResource( inputName );
+        final CharSource inputCharSource = Resources.asCharSource( inputUrl, Charsets.UTF_8 );
+        final URL expectedOutputUrl = this.getClass().getResource( expectedOutputName );
+        final CharSource expectedOutputCharSource = Resources.asCharSource( expectedOutputUrl, Charsets.UTF_8 );
+
+        //Processes the input file
+        final ProcessHtmlParams processHtmlParams = new ProcessHtmlParams().
+            value( inputCharSource.read() );
+        final String processedHtml = this.service.processHtml( processHtmlParams );
+
+        //Checks that the processed text is equal to the expected output
+        assertEquals( expectedOutputCharSource.read(), processedHtml );
     }
 }

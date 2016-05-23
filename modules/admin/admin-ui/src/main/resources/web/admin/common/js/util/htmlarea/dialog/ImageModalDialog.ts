@@ -74,7 +74,7 @@ module api.util.htmlarea.dialog {
                         imageSelector.setValue(imageContent.getId());
                         this.createImgElForExistingImage(imageContent);
                         this.previewImage();
-                        formItem.addClass("image-preview");
+                        formItem.addClass("selected-item-preview");
                     }
                     loader.unLoadedData(singleLoadListener);
                 };
@@ -91,7 +91,7 @@ module api.util.htmlarea.dialog {
                 this.imageLoadMask.show();
                 this.createImgElForNewImage(imageContent);
                 this.previewImage();
-                formItem.addClass("image-preview");
+                formItem.addClass("selected-item-preview");
             });
 
             imageSelectorComboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
@@ -101,7 +101,8 @@ module api.util.htmlarea.dialog {
             });
 
             imageSelectorComboBox.onOptionDeselected(() => {
-                formItem.removeClass("image-preview");
+                formItem.removeClass("selected-item-preview");
+                this.displayValidationErrors(false);
                 this.removePreview();
                 this.imageToolbar.remove();
                 this.showCaptionLabel();
@@ -341,6 +342,7 @@ module api.util.htmlarea.dialog {
             var submitAction = new api.ui.Action(this.imageElement ? "Update" : "Insert");
             this.setSubmitAction(submitAction);
             this.addAction(submitAction.onExecuted(() => {
+                this.displayValidationErrors(true);
                 if (this.validate()) {
                     this.createImageTag();
                     this.close();
