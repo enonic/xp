@@ -5,6 +5,7 @@ import java.time.Instant;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -89,7 +90,7 @@ public class MacroResourceTest
         org.junit.Assert.assertArrayEquals( data, (byte[]) response.getEntity() );
     }
 
-    @Test
+    @Ignore @Test
     public void testGetAll()
         throws Exception
     {
