@@ -149,6 +149,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private inMobileViewMode: boolean;
 
+    private skipValidation: boolean;
+
     private contentCompareStatus: CompareStatus;
 
     private dataChangedListener: () => void;
@@ -171,6 +173,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.isSecurityWizardStepFormAllowed = false;
 
         this.requireValid = false;
+        this.skipValidation = false;
         this.contentNamedListeners = [];
         this.parentContent = params.parentContent;
         this.defaultModels = params.defaultModels;
@@ -781,7 +784,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         if (!this.constructing) {
 
             viewedContent = this.assembleViewedContent(persistedContent.newBuilder()).build();
-            if (viewedContent.equals(persistedContent)) {
+            if (viewedContent.equals(persistedContent) || this.skipValidation) {
 
                 if (this.liveFormPanel) {
                     this.liveFormPanel.loadPage();
@@ -838,6 +841,15 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.contentWizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
         this.contentWizardToolbarPublishControls.enableActionsForExisting(persistedContent);
         return deferred.promise;
+    }
+
+    saveChangesWithoutValidation(): wemQ.Promise<Content> {
+        this.skipValidation = true;
+
+        let result = this.saveChanges();
+        result.then(() => this.skipValidation = false);
+
+        return result;
     }
 
     private updateThumbnailWithContent(content: Content) {
