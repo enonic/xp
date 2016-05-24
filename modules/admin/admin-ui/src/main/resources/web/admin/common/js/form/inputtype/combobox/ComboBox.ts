@@ -144,7 +144,7 @@ module api.form.inputtype.combobox {
         }
 
         protected getNumberOfValids(): number {
-            return this.comboBox.countSelectedOptions();
+            return this.getPropertyArray().getSize();
         }
 
 
