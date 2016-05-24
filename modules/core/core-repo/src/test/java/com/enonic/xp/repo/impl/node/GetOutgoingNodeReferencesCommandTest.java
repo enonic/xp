@@ -13,7 +13,7 @@ import com.enonic.xp.util.Reference;
 
 import static org.junit.Assert.*;
 
-public class GetOutgoingReferencesCommandTest
+public class GetOutgoingNodeReferencesCommandTest
     extends AbstractNodeTest
 {
 
@@ -40,7 +40,7 @@ public class GetOutgoingReferencesCommandTest
             data( data ).
             build() );
 
-        final NodeIds references = GetOutgoingReferencesCommand.create().
+        final NodeIds references = GetOutgoingNodeReferencesCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             searchService( this.searchService ).
             storageService( this.storageService ).

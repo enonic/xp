@@ -16,11 +16,13 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeState;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
@@ -61,7 +63,7 @@ public class DeleteContentCommandTest
             thenReturn( node );
 
         Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Branch.class ) ) ).
-            thenReturn( new NodeComparison( id, CompareStatus.NEW ) );
+            thenReturn( new NodeComparison( createTarget( id ), createTarget( id ), CompareStatus.NEW ) );
 
         Mockito.when( this.nodeService.deleteById( node.id() ) ).
             thenReturn( node );
@@ -123,7 +125,7 @@ public class DeleteContentCommandTest
                 build() );
 
         Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Branch.class ) ) ).
-            thenReturn( new NodeComparison( id, CompareStatus.EQUAL ) );
+            thenReturn( new NodeComparison( createTarget( id ), createTarget( id ), CompareStatus.EQUAL ) );
 
         Mockito.when( this.nodeService.deleteByPath( Mockito.isA( NodePath.class ) ) ).
             thenReturn( node );
@@ -183,7 +185,7 @@ public class DeleteContentCommandTest
                 build() );
 
         Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Branch.class ) ) ).
-            thenReturn( new NodeComparison( id, CompareStatus.EQUAL ) );
+            thenReturn( new NodeComparison( createTarget( id ), createTarget( id ), CompareStatus.EQUAL ) );
 
         Mockito.when( this.nodeService.deleteByPath( Mockito.isA( NodePath.class ) ) ).
             thenReturn( node );
@@ -212,6 +214,16 @@ public class DeleteContentCommandTest
 
         assertEquals( 1, myContent.getSize() );
         Mockito.verify( this.nodeService, Mockito.times( 2 ) ).deleteById( node.id() );
+    }
+
+    private NodeBranchEntry createTarget( final NodeId id )
+    {
+        return NodeBranchEntry.create().
+            nodeId( id ).
+            nodePath( NodePath.ROOT ).
+            nodeState( NodeState.DEFAULT ).
+            nodeVersionId( NodeVersionId.from( "1" ) ).
+            build();
     }
 
 }

@@ -12,7 +12,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.SyncWorkResolverParams;
 
-public class ResolvePublishDependenciesCommand
+public class ResolveContentsToBePublishedCommand
     extends AbstractContentCommand
 {
     private final ContentIds contentIds;
@@ -25,7 +25,7 @@ public class ResolvePublishDependenciesCommand
 
     private final boolean includeChildren;
 
-    private ResolvePublishDependenciesCommand( final Builder builder )
+    private ResolveContentsToBePublishedCommand( final Builder builder )
     {
         super( builder );
         this.contentIds = builder.contentIds;
@@ -33,6 +33,11 @@ public class ResolvePublishDependenciesCommand
         this.target = builder.target;
         this.resultBuilder = ResolvePublishDependenciesResult.create();
         this.includeChildren = builder.includeChildren;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     ResolvePublishDependenciesResult execute()
@@ -55,7 +60,7 @@ public class ResolvePublishDependenciesCommand
     private NodeIds getWorkResult( final ContentId contentId, final ContentIds excludedContentIds, boolean includeChildren )
     {
 
-       final NodeIds nodeIds = excludedContentIds != null ? NodeIds.from( excludedContentIds.
+        final NodeIds nodeIds = excludedContentIds != null ? NodeIds.from( excludedContentIds.
             stream().
             map( id -> NodeId.from( id.toString() ) ).
             collect( Collectors.toList() ) ) : NodeIds.empty();
@@ -63,14 +68,9 @@ public class ResolvePublishDependenciesCommand
         return nodeService.resolveSyncWork( SyncWorkResolverParams.create().
             includeChildren( includeChildren ).
             nodeId( NodeId.from( contentId.toString() ) ).
-            excludedNodeIds(nodeIds ).
+            excludedNodeIds( nodeIds ).
             branch( this.target ).
             build() );
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     public static class Builder
@@ -116,10 +116,10 @@ public class ResolvePublishDependenciesCommand
             Preconditions.checkNotNull( contentIds );
         }
 
-        public ResolvePublishDependenciesCommand build()
+        public ResolveContentsToBePublishedCommand build()
         {
             validate();
-            return new ResolvePublishDependenciesCommand( this );
+            return new ResolveContentsToBePublishedCommand( this );
         }
 
     }

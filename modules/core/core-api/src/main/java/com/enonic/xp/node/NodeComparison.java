@@ -7,25 +7,40 @@ import com.enonic.xp.content.CompareStatus;
 @Beta
 public class NodeComparison
 {
-    private final NodeId nodeId;
+    private final NodeBranchEntry sourceEntry;
+
+    private final NodeBranchEntry targetEntry;
 
     private final CompareStatus compareStatus;
 
-    public NodeComparison( final NodeId nodeId, final CompareStatus compareStatus )
+    public NodeComparison( final NodeBranchEntry sourceEntry, final NodeBranchEntry targetEntry, final CompareStatus compareStatus )
     {
-        this.nodeId = nodeId;
+        this.sourceEntry = sourceEntry;
+        this.targetEntry = targetEntry;
         this.compareStatus = compareStatus;
     }
 
+
     public NodeId getNodeId()
     {
-        return nodeId;
+        return sourceEntry.getNodeId();
+    }
+
+    public NodeBranchEntry getSourceEntry()
+    {
+        return sourceEntry;
+    }
+
+    public NodeBranchEntry getTargetEntry()
+    {
+        return targetEntry;
     }
 
     public CompareStatus getCompareStatus()
     {
         return compareStatus;
     }
+
 
     @Override
     public boolean equals( final Object o )
@@ -34,29 +49,25 @@ public class NodeComparison
         {
             return true;
         }
-        if ( !( o instanceof NodeComparison ) )
+        if ( o == null || getClass() != o.getClass() )
         {
             return false;
         }
 
         final NodeComparison that = (NodeComparison) o;
 
-        if ( compareStatus != null ? !compareStatus.equals( that.compareStatus ) : that.compareStatus != null )
+        if ( sourceEntry != null ? !sourceEntry.equals( that.sourceEntry ) : that.sourceEntry != null )
         {
             return false;
         }
-        if ( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null )
-        {
-            return false;
-        }
+        return compareStatus == that.compareStatus;
 
-        return true;
     }
 
     @Override
     public int hashCode()
     {
-        int result = nodeId != null ? nodeId.hashCode() : 0;
+        int result = sourceEntry != null ? sourceEntry.hashCode() : 0;
         result = 31 * result + ( compareStatus != null ? compareStatus.hashCode() : 0 );
         return result;
     }

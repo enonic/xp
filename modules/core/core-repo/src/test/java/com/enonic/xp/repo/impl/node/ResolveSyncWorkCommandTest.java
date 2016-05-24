@@ -1,10 +1,15 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Iterator;
+import java.util.Set;
+
+import org.codehaus.jparsec.util.Strings;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
@@ -24,6 +29,9 @@ import static org.junit.Assert.*;
 public class ResolveSyncWorkCommandTest
     extends AbstractNodeTest
 {
+
+    public static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
+
     private final static NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
 
     @Before
@@ -418,7 +426,7 @@ public class ResolveSyncWorkCommandTest
             name( "node2" ).
             build() );
 
-        createNode( CreateNodeParams.create().
+        final Node node2_1 = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "node2_1" ) ).
             parent( node2.path() ).
             name( "node2_1" ).
@@ -426,8 +434,20 @@ public class ResolveSyncWorkCommandTest
 
         final NodeIds result = resolveSyncWorkResult( node1_1.id(), false );
 
-        assertEquals( 3, result.getSize() );
+        assertNodes( result, ExpectedNodes.create().
+            implicit( node1_1.id() ).
+            parent( node1.id() ).
+            referred( node2.id() ) );
     }
+
+
+    private String createAssertFailMessage( final NodeIds result, final ExpectedNodes expectedNodes )
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "Expected in result: [" + expectedNodes + "], got " + result.getAsStrings() );
+        return builder.toString();
+    }
+
 
     @Test
     public void reference_to_another_branch_with_another_branch_reference()
@@ -670,18 +690,6 @@ public class ResolveSyncWorkCommandTest
 
     }
 
-    /*
-     - S1 (E)
-         - A1 (E)
-         - A2 (U)
-             - A2_1 - Ref:B2_1 (U)
-     - S2 (E)
-         - B1 (E)
-         - B2 (E)
-             - B2_1 (E)
-
-      Resolve: A2_1
-    */
     @Test
     public void modified_parent_should_not_be_pushed()
         throws Exception
@@ -697,8 +705,10 @@ public class ResolveSyncWorkCommandTest
 
         final NodeIds result = resolveSyncWorkResult( "a2_1" );
 
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "a2_1" ) );
+
         assertEquals( 1, result.getSize() );
-        //assertRequested( requests, "a2_1" );
     }
 
 
@@ -732,14 +742,11 @@ public class ResolveSyncWorkCommandTest
 
         assertEquals( 6, result.getSize() );
 
-        /*
-        assertRequested( requests, "a2_1" );
-        assertReferredFrom( requests, "b2_1", "a2_1" );
-        assertParentFor( requests, "b2", "b2_1" );
-        assertParentFor( requests, "s2", "b2" );
-        assertParentFor( requests, "a2", "a2_1" );
-        assertParentFor( requests, "s1", "a2" );
-        */
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "a2_1" ).
+            parent( "a2", "s1" ).
+            referred( "b2_1" ).
+            parent( "b2", "s2" ) );
     }
 
     /*
@@ -953,6 +960,21 @@ public class ResolveSyncWorkCommandTest
         assertEquals( 5, result.getSize() );
     }
 
+
+    /*
+    - S1 (New)
+      - A1 (New)
+      - A2 (New)
+         - A2_1 - Ref:B2_1 (New)
+    - S2 (New)
+      - B1 (New)
+      - B2 (New)
+         - B2_1 (New)
+    - S1d (New)
+      - A1d (New)
+      - A2d (New)
+        - A2_1d - Ref:B2_1 (New)
+    */
     @Test
     public void pending_delete_with_children_and_reference()
     {
@@ -966,7 +988,16 @@ public class ResolveSyncWorkCommandTest
         markAsDelete( NodeId.from( "s2" ) );
 
         result = resolveSyncWorkResult( "s1" );
-        assertEquals( 4, result.getSize() );
+
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "s1" ).
+            child( "a1", "a2", "a2_1" ) );
+
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "s1" ).
+            child( "a1", "a2", "a2_1" ).
+            referred( "b2_1" ).
+            parent( "b2", "s2" ) );
 
         result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
         assertEquals( 4, result.getSize() );
@@ -995,10 +1026,15 @@ public class ResolveSyncWorkCommandTest
         refresh();
 
         NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "s1" ), true );
-        assertEquals( 6, result.getSize() );
+
+        assertNodes( result, ExpectedNodes.create().
+            child( NodeId.from( "a1" ), NodeId.from( "a2" ), NodeId.from( "a2_1" ) ).
+            referred( NodeId.from( "b2_1" ) ).
+            parent( NodeId.from( "b2" ), NodeId.from( "s2" ) ) );
 
         result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "s1" ), false );
-        assertEquals( 0, result.getSize() );
+
+        assertNodes( result, ExpectedNodes.create() );
     }
 
     @Test
@@ -1068,17 +1104,33 @@ public class ResolveSyncWorkCommandTest
         assertFalse( result.contains( NodeId.from( "s2" ) ) );
     }
 
+    /*
+        - S1 (New)
+          - A1 (New)
+          - A2 (New)
+             - A2_1 - Ref:B2_1 (New)
+        - S2 (New)
+          - B1 (New)
+          - B2 (New)
+             - B2_1 (New)
+        - S1d (New)
+          - A1d (New)
+          - A2d (New)
+            - A2_1d - Ref:B2_1 (New)
+        */
     @Test
     public void exclude_referencies_in_the_middle()
     {
         createS1S2Tree();
         refresh();
 
-        final NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "b2" ), true );
-        assertEquals( 5, result.getSize() );
+        final NodeIds result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
 
-        assertFalse( result.contains( NodeId.from( "b2" ) ) );
-        assertTrue( result.contains( NodeId.from( "b2_1" ) ) );
+        assertNodes( result, ExpectedNodes.create().
+            implicit( "s1" ).
+            child( "a1", "a2", "a2_1" ).
+            referred( "b2_1" ).
+            parent( "b2", "s2" ) );
     }
 
     @Ignore("Just for development testing")
@@ -1289,4 +1341,195 @@ public class ResolveSyncWorkCommandTest
     {
         return resolveSyncWorkResult( NodeId.from( nodeId ), false );
     }
+
+    private void assertNodes( final NodeIds result, final ExpectedNodes expectedNodes )
+    {
+        boolean fail = false;
+
+        StringBuilder builder = new StringBuilder();
+        builder.append( LINE_SEPARATOR );
+        builder.append( "Asserted size [" + expectedNodes.nodes.size() + "], actual [" + result.getSize() + "]" );
+        builder.append( LINE_SEPARATOR );
+
+        for ( final ExpectedNode expectedNode : expectedNodes )
+        {
+            builder.append( LINE_SEPARATOR );
+            final boolean ok = result.contains( expectedNode.nodeId );
+            if ( !ok )
+            {
+                fail = true;
+            }
+
+            builder.append( "Expected: " + expectedNode + ", " + ( ok ? "<OK>" : "<Missing>" ) );
+        }
+
+        for ( final NodeId resultNode : result )
+        {
+            final boolean ok = expectedNodes.contains( resultNode );
+
+            if ( !ok )
+            {
+                fail = true;
+            }
+
+            if ( !ok )
+            {
+                builder.append( LINE_SEPARATOR );
+                builder.append( "Unexpected: " + resultNode );
+            }
+        }
+
+        if ( fail )
+        {
+            fail( builder.toString() );
+        }
+
+        assertEquals( createAssertFailMessage( result, expectedNodes ), expectedNodes
+
+            .nodes.size(), result.getSize() );
+    }
+
+    private enum Reason
+    {
+        PARENT,
+        CHILD,
+        REFERRED,
+        IMPLICIT
+    }
+
+    private static class ExpectedNodes
+        implements Iterable<ExpectedNode>
+    {
+        final Set<ExpectedNode> nodes = Sets.newHashSet();
+
+        public static ExpectedNodes create()
+        {
+            return new ExpectedNodes();
+        }
+
+        @Override
+        public Iterator<ExpectedNode> iterator()
+        {
+            return nodes.iterator();
+        }
+
+        public boolean contains( final NodeId nodeId )
+        {
+            for ( final ExpectedNode node : nodes )
+            {
+                if ( node.nodeId.equals( nodeId ) )
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
+        public ExpectedNodes implicit( final NodeId... nodeIds )
+        {
+            for ( final NodeId nodeId : nodeIds )
+            {
+                this.nodes.add( new ExpectedNode( nodeId, Reason.IMPLICIT ) );
+            }
+
+            return this;
+        }
+
+        public ExpectedNodes implicit( final String... nodeIds )
+        {
+            for ( final String nodeId : nodeIds )
+            {
+                this.nodes.add( new ExpectedNode( NodeId.from( nodeId ), Reason.IMPLICIT ) );
+            }
+
+            return this;
+        }
+
+        public ExpectedNodes child( final String... nodeIds )
+        {
+            for ( final String nodeId : nodeIds )
+            {
+                this.nodes.add( new ExpectedNode( NodeId.from( nodeId ), Reason.CHILD ) );
+            }
+
+            return this;
+        }
+
+        public ExpectedNodes child( final NodeId... nodeIds )
+        {
+            for ( final NodeId nodeId : nodeIds )
+            {
+                this.nodes.add( new ExpectedNode( nodeId, Reason.CHILD ) );
+            }
+
+            return this;
+        }
+
+        public ExpectedNodes referred( final NodeId... nodeIds )
+        {
+            for ( final NodeId nodeId : nodeIds )
+            {
+                this.nodes.add( new ExpectedNode( nodeId, Reason.REFERRED ) );
+            }
+            return this;
+        }
+
+        public ExpectedNodes referred( final String... nodeIds )
+        {
+            for ( final String nodeId : nodeIds )
+            {
+                this.nodes.add( new ExpectedNode( NodeId.from( nodeId ), Reason.REFERRED ) );
+            }
+            return this;
+        }
+
+        public ExpectedNodes parent( final String... nodeIds )
+        {
+            for ( final String nodeId : nodeIds )
+            {
+                this.nodes.add( new ExpectedNode( NodeId.from( nodeId ), Reason.PARENT ) );
+            }
+
+            return this;
+        }
+
+
+        public ExpectedNodes parent( final NodeId... nodeIds )
+        {
+            for ( final NodeId nodeId : nodeIds )
+            {
+                this.nodes.add( new ExpectedNode( nodeId, Reason.PARENT ) );
+            }
+
+            return this;
+        }
+
+        @Override
+        public String toString()
+        {
+            return Strings.join( ", ", this.nodes.toArray() );
+        }
+    }
+
+    private static class ExpectedNode
+    {
+        private final Reason reason;
+
+        private final NodeId nodeId;
+
+        public ExpectedNode( final NodeId nodeId, final Reason reason )
+        {
+            this.reason = reason;
+            this.nodeId = nodeId;
+        }
+
+        @Override
+        public String toString()
+        {
+            return this.nodeId + " (" + reason.name() + ")";
+        }
+    }
+
 }

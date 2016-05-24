@@ -28,6 +28,8 @@ import com.enonic.xp.node.RefreshMode;
 public class PushContentCommand
     extends AbstractContentCommand
 {
+    private final static Logger LOG = LoggerFactory.getLogger( PushContentCommand.class );
+
     private final ContentIds contentIds;
 
     private final ContentIds excludedContentIds;
@@ -40,8 +42,6 @@ public class PushContentCommand
 
     private final boolean includeChildren;
 
-    private final static Logger LOG = LoggerFactory.getLogger( PushContentCommand.class );
-
     private PushContentCommand( final Builder builder )
     {
         super( builder );
@@ -51,6 +51,11 @@ public class PushContentCommand
         this.includeDependencies = builder.includeDependencies;
         this.includeChildren = builder.includeChildren;
         this.resultBuilder = PushContentsResult.create();
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     PushContentsResult execute()
@@ -145,7 +150,7 @@ public class PushContentCommand
 
     private ContentIds getWithDependents()
     {
-        final ResolvePublishDependenciesResult resolvedResult = ResolvePublishDependenciesCommand.create().
+        final ResolvePublishDependenciesResult resolvedResult = ResolveContentsToBePublishedCommand.create().
             contentIds( this.contentIds ).
             excludedContentIds( this.excludedContentIds ).
             includeChildren( this.includeChildren ).
@@ -159,7 +164,6 @@ public class PushContentCommand
 
         return resolvedResult.contentIds();
     }
-
 
     private void doPushNodes( final NodeIds nodesToPush )
     {
@@ -194,7 +198,6 @@ public class PushContentCommand
         } );
     }
 
-
     private boolean ensureValidContents( final Contents contents )
     {
         return contents.stream().allMatch( Content::isValid );
@@ -209,11 +212,6 @@ public class PushContentCommand
             eventPublisher( this.eventPublisher ).
             build().
             execute();
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     public static class Builder

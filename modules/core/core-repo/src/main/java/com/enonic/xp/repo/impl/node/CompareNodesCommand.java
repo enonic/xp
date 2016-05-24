@@ -56,7 +56,7 @@ public class CompareNodesCommand
                 build().
                 resolve();
 
-            builder.add( new NodeComparison( id, compareStatus ) );
+            builder.add( new NodeComparison( sourceVersions.get( id ), targetVersions.get( id ), compareStatus ) );
         }
 
         return builder.build();

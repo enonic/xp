@@ -36,6 +36,54 @@ public class FindNodeIdsByParentCommand
 
     public NodeIds execute()
     {
+        NodePath parentPath = getParentPath();
+
+        if ( parentPath == null )
+        {
+            return NodeIds.empty();
+        }
+
+        final ChildOrder order = NodeChildOrderResolver.create( this ).
+            nodePath( parentPath ).
+            childOrder( params.getChildOrder() ).
+            build().
+            resolve();
+
+        final NodeQueryResult nodeQueryResult =
+            this.searchService.query( createFindChildrenQuery( parentPath, order ), InternalContext.from( ContextAccessor.current() ) );
+
+        if ( nodeQueryResult.getHits() == 0 )
+        {
+            return NodeIds.empty();
+        }
+
+        return nodeQueryResult.getNodeIds();
+    }
+
+    private NodeQuery createFindChildrenQuery( final NodePath parentPath, final ChildOrder order )
+    {
+        final NodeQuery.Builder builder = NodeQuery.create().
+            from( params.getFrom() ).
+            size( params.getSize() ).
+            searchMode( params.isCountOnly() ? SearchMode.COUNT : SearchMode.SEARCH ).
+            setOrderExpressions( order.getOrderExpressions() ).
+            accurateScoring( true );
+
+        if ( !params.isRecursive() )
+        {
+            builder.parent( parentPath );
+        }
+        else
+        {
+            throw new RuntimeException( "implement this" );
+        }
+
+        return builder.build();
+
+    }
+
+    private NodePath getParentPath()
+    {
         NodePath parentPath = params.getParentPath();
 
         if ( parentPath == null )
@@ -47,33 +95,14 @@ public class FindNodeIdsByParentCommand
 
             if ( parent == null )
             {
-                return NodeIds.empty();
+                parentPath = null;
             }
-
-            parentPath = parent.path();
+            else
+            {
+                parentPath = parent.path();
+            }
         }
-
-        final ChildOrder order = NodeChildOrderResolver.create( this ).
-            nodePath( parentPath ).
-            childOrder( params.getChildOrder() ).
-            build().
-            resolve();
-
-        final NodeQueryResult nodeQueryResult = this.searchService.query( NodeQuery.create().
-            parent( parentPath ).
-            from( params.getFrom() ).
-            size( params.getSize() ).
-            searchMode( params.isCountOnly() ? SearchMode.COUNT : SearchMode.SEARCH ).
-            setOrderExpressions( order.getOrderExpressions() ).
-            accurateScoring( true ).
-            build(), InternalContext.from( ContextAccessor.current() ) );
-
-        if ( nodeQueryResult.getHits() == 0 )
-        {
-            return NodeIds.empty();
-        }
-
-        return nodeQueryResult.getNodeIds();
+        return parentPath;
     }
 
 

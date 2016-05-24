@@ -53,6 +53,12 @@ public class NodeIds
         return new Builder();
     }
 
+    private static ImmutableSet<NodeId> parseIds( final String... paths )
+    {
+        final Collection<String> list = Lists.newArrayList( paths );
+        final Collection<NodeId> pathList = Collections2.transform( list, new ParseFunction() );
+        return ImmutableSet.copyOf( pathList );
+    }
 
     public ImmutableSet<String> getAsStrings()
     {
@@ -64,13 +70,6 @@ public class NodeIds
         }
 
         return builder.build();
-    }
-
-    private static ImmutableSet<NodeId> parseIds( final String... paths )
-    {
-        final Collection<String> list = Lists.newArrayList( paths );
-        final Collection<NodeId> pathList = Collections2.transform( list, new ParseFunction() );
-        return ImmutableSet.copyOf( pathList );
     }
 
     private final static class ParseFunction
@@ -92,6 +91,13 @@ public class NodeIds
             this.nodeIds.add( nodeId );
             return this;
         }
+
+        public Builder addAll( final NodeIds nodeIds )
+        {
+            this.nodeIds.addAll( nodeIds.getSet() );
+            return this;
+        }
+
 
         public NodeIds build()
         {

@@ -37,7 +37,7 @@ public class AbstractCompareNodeCommand
             build().
             resolve();
 
-        return new NodeComparison( nodeId, compareStatus );
+        return new NodeComparison( sourceWsVersion, targetWsVersion, compareStatus );
     }
 
 

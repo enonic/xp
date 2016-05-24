@@ -11,15 +11,25 @@ import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.ReturnValues;
 
-public class GetOutgoingReferencesCommand
+public class GetOutgoingNodeReferencesCommand
     extends AbstractNodeCommand
 {
     private NodeId nodeId;
 
-    private GetOutgoingReferencesCommand( Builder builder )
+    private GetOutgoingNodeReferencesCommand( Builder builder )
     {
         super( builder );
         nodeId = builder.nodeId;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
     }
 
     public NodeIds execute()
@@ -43,18 +53,6 @@ public class GetOutgoingReferencesCommand
 
         return builder.build();
     }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
-    }
-
 
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>
@@ -82,9 +80,9 @@ public class GetOutgoingReferencesCommand
             super.validate();
         }
 
-        public GetOutgoingReferencesCommand build()
+        public GetOutgoingNodeReferencesCommand build()
         {
-            return new GetOutgoingReferencesCommand( this );
+            return new GetOutgoingNodeReferencesCommand( this );
         }
     }
 }
