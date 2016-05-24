@@ -471,20 +471,23 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         var paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
         var treeNodes: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(paths);
 
+        let changed = [];
         data.forEach((el) => {
             for (var i = 0; i < treeNodes.length; i++) {
                 if (treeNodes[i].getId() === el.getId()) {
-
                     treeNodes[i].updateNodeData(el);
-
                     this.updateItemInDetailsPanelIfNeeded(el);
-
+                    changed.push(...treeNodes[i].getNodes());
                     break;
                 }
             }
         });
 
         this.contentTreeGrid.invalidate();
+
+        // Unpdate since CompareStatus changed
+        let changedEvent = new DataChangedEvent<ContentSummaryAndCompareStatus>(changed, DataChangedEvent.UPDATED);
+        this.contentTreeGrid.notifyDataChanged(changedEvent);
     }
 
     private handleContentPublishedOrUnpublished(data: ContentSummaryAndCompareStatus[]) {
